@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -14,18 +16,29 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteDomain, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
+import { applyLayoutDelta } from './utils/apply-layout-delta';
+import { normalizeWpcomAdminSidebarHostLinks } from './utils/normalize-wpcom-admin-sidebar-host-links';
+import { relabelWooCommerceAsStoreSetup } from './utils/relabel-woocommerce-store-setup';
 
-const useSiteMenuItems = () => {
+const useSiteMenuItems = ( layoutDeltaOverride, transformBaseMenu ) => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
+	// Read the saved layout-delta so the redesigned (Phase 2) renderer applies
+	// the user's persisted overrides. `null` for sites without saved deltas;
+	// `applyLayoutDelta` is a no-op in that case so legacy callers see no
+	// behaviour change.
+	const savedLayoutDelta = useSelector( ( state ) =>
+		getAdminSidebarLayout( state, selectedSiteId )
+	);
+	const layoutDelta = layoutDeltaOverride ?? savedLayoutDelta;
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
@@ -56,6 +69,9 @@ const useSiteMenuItems = () => {
 	const shouldShowThemes = useSelector( ( state ) =>
 		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
 	);
+
+	const planSlug = useSelector( ( state ) => getSitePlanSlug( state, selectedSiteId ) );
+	const isEcommercePlanSite = !! planSlug && isEcommercePlan( planSlug );
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, selectedSiteId ) );
@@ -115,7 +131,21 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	const baseMenu = menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	const transformedBaseMenu =
+		typeof transformBaseMenu === 'function' ? transformBaseMenu( baseMenu ) : baseMenu;
+	const normalizedBaseMenu = normalizeWpcomAdminSidebarHostLinks( transformedBaseMenu );
+	// On eCommerce-plan sites (WordPress.com context only, since only wpcom
+	// plans carry the eCommerce slug), the WooCommerce entry is the store-setup
+	// destination, so relabel it accordingly.
+	const relabeledBaseMenu = isEcommercePlanSite
+		? relabelWooCommerceAsStoreSetup( normalizedBaseMenu )
+		: normalizedBaseMenu;
+	// Apply the user's saved layout-delta (Phase 2 task 2.5). When no delta
+	// is stored, `applyLayoutDelta` returns a copy of `baseMenu` unmodified.
+	// The cost on the no-delta path is one shallow array clone per render;
+	// memoisation lives upstream where the menu is read.
+	return applyLayoutDelta( relabeledBaseMenu, layoutDelta );
 };
 
 export default useSiteMenuItems;

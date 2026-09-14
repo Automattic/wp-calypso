@@ -4,6 +4,7 @@ import { chartBar } from '@wordpress/icons';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './performance-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 export function getPerformanceCalloutProps() {
 	return {

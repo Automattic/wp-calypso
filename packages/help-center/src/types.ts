@@ -35,10 +35,6 @@ export interface Article {
 	is_external?: boolean;
 }
 
-export interface FeatureFlags {
-	loadNextStepsTutorial: boolean;
-}
-
 export interface SearchResult {
 	railcar: {
 		railcar?: string;
@@ -85,6 +81,19 @@ interface Eligibility {
 	wapuu_assistant_enabled: boolean;
 	user_field_flow_name: string;
 	unified_agent_enabled?: boolean;
+}
+
+export interface HelpCenterCTAData {
+	id: string;
+	variant: string;
+	url: string;
+	title: string;
+	description?: string;
+	url_text?: string;
+	/** Unix timestamp (UTC) in seconds representing the time of purchase. */
+	purchased_at?: number;
+	/** Plan family slug (e.g. "business", "commerce"). */
+	plan_family?: string;
 }
 
 export interface SupportStatus {

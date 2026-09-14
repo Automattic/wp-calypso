@@ -2,13 +2,6 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.task-steps {
-	a {
-		text-decoration: underline;
-		color: unset;
-	}
-}
-
 .task-steps__steps {
 	display: flex;
 	flex-direction: column;
@@ -40,6 +33,11 @@
 .task-steps__subheading {
 	@include body-large;
 	color: var( --color-accent-60 );
+
+	a {
+		text-decoration: underline;
+		color: unset;
+	}
 }
 
 .task-step {

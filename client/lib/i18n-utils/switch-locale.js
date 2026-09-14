@@ -3,10 +3,11 @@ import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
+import { throttle } from '@wordpress/compose';
 import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { forEach, throttle } from 'lodash';
+import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
@@ -340,6 +341,7 @@ export default async function switchLocale( localeSlug ) {
 
 	// Propagate the locale to @automattic/number-formatters
 	setLocaleNumberFormatters( localeSlug );
+	loadAndSetCurrencyOverrides();
 
 	lastRequestedLocale = localeSlug;
 
@@ -532,17 +534,18 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
  */
 export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
+	const shouldUseRtlCss = isRTL && window.RTL_CSS_ENABLED !== false;
 
-	forEach( currentLinks, async ( currentLink ) => {
+	Array.from( currentLinks ).forEach( async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
-		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
+		const newHref = setRTLFlagOnCSSLink( currentHref, shouldUseRtlCss );
 		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );
 
 		if ( currentHref === newHref || isNewHrefAdded ) {
 			return;
 		}
 
-		const newLink = await loadCSS( newHref, currentLink );
+		const newLink = await loadCSS( newHref, currentLink, shouldUseRtlCss );
 
 		if ( newLink ) {
 			newLink.setAttribute( 'data-webpack', true );
@@ -555,16 +558,16 @@ export function switchWebpackCSS( isRTL ) {
  * Loads a CSS stylesheet into the page.
  * @param {string} cssUrl URL of a CSS stylesheet to be loaded into the page
  * @param {window.Element} currentLink an existing <link> DOM element before which we want to insert the new one
+ * @param {boolean} shouldUseRtlCss True when the loaded stylesheet should be RTL
  * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
  */
-function loadCSS( cssUrl, currentLink ) {
+function loadCSS( cssUrl, currentLink, shouldUseRtlCss = i18n.isRtl() ) {
 	return new Promise( ( resolve ) => {
 		// While looping the current links the RTL state might have changed
 		// This is a double-check to ensure the value of isRTL
-		const isRTL = i18n.isRtl();
 		const isRTLHref = currentLink.getAttribute( 'href' ).endsWith( '.rtl.css' );
 
-		if ( isRTL === isRTLHref ) {
+		if ( shouldUseRtlCss === isRTLHref ) {
 			return resolve( null );
 		}
 

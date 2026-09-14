@@ -33,7 +33,7 @@ import type {
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type { RequestTemplate } from '../templates';
-import type { Design, DesignOptions } from '@automattic/design-picker/src/types'; // Import from a specific file directly to avoid the circular dependencies
+import type { Design, DesignOptions } from '@automattic/design-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {

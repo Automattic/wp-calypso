@@ -18,11 +18,11 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { purchasesRoute } from '../../app/router/me';
+import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import type { Site, User } from '@automattic/api-core';
+import type { Purchase, Site, User } from '@automattic/api-core';
 
 interface ContentInfoProps {
 	site: Site;
@@ -37,7 +37,16 @@ function isSiteOwner( user: User, site: Site ) {
 	return user.ID === site.site_owner;
 }
 
-function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
+interface ContentHasPurchasesCancelableProps extends ContentInfoProps {
+	// Set only when exactly one purchase blocks leaving, so we can link straight to it.
+	purchase?: Purchase;
+}
+
+function ContentHasPurchasesCancelable( {
+	site,
+	onClose,
+	purchase,
+}: ContentHasPurchasesCancelableProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	const managePurchasesButtonProps = {
@@ -47,6 +56,39 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 		onClick: () => {
 			recordTracksEvent( 'calypso_dashboard_site_leave_modal_manage_purchases_click' );
 		},
+	};
+
+	const renderManagePurchasesButton = () => {
+		if ( isDashboardBackport() ) {
+			return (
+				<Button
+					{ ...managePurchasesButtonProps }
+					href={
+						purchase
+							? `/purchases/subscriptions/${ site.slug }/${ purchase.ID }`
+							: `/purchases/subscriptions/${ site.slug }`
+					}
+				/>
+			);
+		}
+
+		if ( purchase ) {
+			return (
+				<RouterLinkButton
+					{ ...managePurchasesButtonProps }
+					to={ purchaseSettingsRoute.fullPath }
+					params={ { purchaseId: purchase.ID } }
+				/>
+			);
+		}
+
+		return (
+			<RouterLinkButton
+				{ ...managePurchasesButtonProps }
+				to={ purchasesRoute.fullPath }
+				search={ { site: site.ID } }
+			/>
+		);
 	};
 
 	return (
@@ -62,18 +104,7 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
-				{ isDashboardBackport() ? (
-					<Button
-						{ ...managePurchasesButtonProps }
-						href={ `/purchases/subscriptions/${ site.slug }` }
-					/>
-				) : (
-					<RouterLinkButton
-						{ ...managePurchasesButtonProps }
-						to={ purchasesRoute.fullPath }
-						search={ { site: site.ID } }
-					/>
-				) }
+				{ renderManagePurchasesButton() }
 			</ButtonStack>
 		</>
 	);
@@ -214,23 +245,29 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 export default function ContentInfo( { site, onClose }: ContentInfoProps ) {
 	const { user } = useAuth();
-	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery( {
+	const { data: purchasesCancelable, isLoading: isLoadingPurchasesCancelable } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) =>
-			purchases.some(
+			purchases.filter(
 				( purchase ) =>
 					purchase.user_id === user.ID &&
 					( purchase.is_refundable || purchase.product_slug !== 'premium_theme' )
 			),
 	} );
 
-	if ( isLoadingHasPurchasesCancelable ) {
+	if ( isLoadingPurchasesCancelable ) {
 		return null;
 	}
 
 	const renderContent = () => {
-		if ( hasPurchasesCancelable ) {
-			return <ContentHasPurchasesCancelable site={ site } onClose={ onClose } />;
+		if ( purchasesCancelable?.length ) {
+			return (
+				<ContentHasPurchasesCancelable
+					site={ site }
+					onClose={ onClose }
+					purchase={ purchasesCancelable.length === 1 ? purchasesCancelable[ 0 ] : undefined }
+				/>
+			);
 		}
 
 		if ( isSiteOwner( user, site ) ) {

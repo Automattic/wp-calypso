@@ -13,7 +13,7 @@ import {
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
-import { fetchPluginsList } from 'calypso/lib/wporg';
+import { fetchPluginInformation, fetchPluginsList } from 'calypso/lib/wporg';
 import { useSelector } from 'calypso/state';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -44,6 +44,18 @@ export const getWPORGPluginsQueryParams = (
 			pagination: info,
 		} ) );
 	};
+	return { queryKey, queryFn };
+};
+
+export const getWPORGPluginQueryParams = (
+	slug: string,
+	locale: string
+): { queryKey: QueryKey; queryFn: QueryFunction } => {
+	const queryKey: QueryKey = [ WPORG_CACHE_KEY, 'plugin', slug, locale, 'normalized' ];
+	const queryFn = () =>
+		fetchPluginInformation( slug, locale ).then( ( data: any ) =>
+			normalizePluginData( { detailsFetched: Date.now() }, data )
+		);
 	return { queryKey, queryFn };
 };
 

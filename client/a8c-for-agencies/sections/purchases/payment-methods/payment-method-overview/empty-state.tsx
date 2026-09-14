@@ -6,7 +6,7 @@ import {
 	A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import CreditCardImg from 'calypso/assets/images/jetpack/credit-cards.png';
+import CreditCardImg from 'calypso/assets/images/jetpack/credit-cards.webp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isClientView } from '../lib/is-client-view';

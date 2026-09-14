@@ -20,10 +20,16 @@ const LogoPicker = ( { logo, onPick }: Props ) => {
 	const onImagePick = async ( file: File ) => {
 		setError( null );
 
-		const isValidDimensions = await validateLogoDimensions( file, {
-			requiredWidth: A4A_LOGO_REQUIRED_WIDTH,
-			requiredHeight: A4A_LOGO_REQUIRED_HEIGHT,
-		} );
+		let isValidDimensions = false;
+		try {
+			isValidDimensions = await validateLogoDimensions( file, {
+				requiredWidth: A4A_LOGO_REQUIRED_WIDTH,
+				requiredHeight: A4A_LOGO_REQUIRED_HEIGHT,
+			} );
+		} catch {
+			setError( translate( 'The image could not be read. Please use a valid JPG or PNG.' ) );
+			return;
+		}
 
 		if ( ! isValidDimensions ) {
 			setError( translate( 'Company logo must have 800px width and 320px height.' ) );

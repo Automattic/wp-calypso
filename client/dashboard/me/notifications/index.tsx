@@ -1,7 +1,7 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import { NotificationsCommentsSummary } from '../notifications-comments/summary';
 import { NotificationsEmailsSummary } from '../notifications-emails/summary';
 import { NotificationsExtrasSummary } from '../notifications-extras/summary';
@@ -20,12 +20,12 @@ function Notifications() {
 				/>
 			}
 		>
-			<VStack spacing={ 4 }>
+			<SummaryButtonList>
 				<NotificationsSitesSummary />
 				<NotificationsCommentsSummary />
 				<NotificationsEmailsSummary />
 				<NotificationsExtrasSummary />
-			</VStack>
+			</SummaryButtonList>
 		</PageLayout>
 	);
 }

@@ -10,6 +10,7 @@ export interface StatsNoticeProps {
 	onNoticeViewed?: () => void;
 	onNoticeDismissed?: () => void;
 	isWpcom?: boolean;
+	isAtomic?: boolean;
 	isVip?: boolean;
 	isP2?: boolean;
 	isOwnedByTeam51?: boolean;
@@ -18,13 +19,17 @@ export interface StatsNoticeProps {
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
-	isCommercialOwned?: boolean;
+	supportCommercialUse?: boolean;
 	hasPWYWPlanOnly?: boolean;
 	showPaywallNotice?: boolean;
 	hasSignificantViews?: boolean;
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
+	canManageOptions?: boolean;
+	hasCommercialStats?: boolean;
+	isPremiumAnalyticsEnabled?: boolean;
+	premiumAnalyticsDashboardUrl?: string | null;
 }
 
 export interface NoticeBodyProps {

@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { some, startsWith } from 'lodash';
 
 const exported = {
 	itemLinkClass: function ( path, currentPath, additionalClasses ) {
@@ -38,8 +37,8 @@ const exported = {
 	},
 
 	pathStartsWithOneOf: function ( paths, currentPath ) {
-		return some( paths, function ( path ) {
-			return startsWith( currentPath.toLowerCase(), path.toLowerCase() );
+		return ( paths ?? [] ).some( function ( path ) {
+			return currentPath.toLowerCase().startsWith( path.toLowerCase() );
 		} );
 	},
 };

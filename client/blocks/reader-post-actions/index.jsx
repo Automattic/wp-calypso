@@ -1,19 +1,28 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@wordpress/components';
+import { category } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
+import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
-import { shouldShowShare, shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import {
+	isCommentsOpen,
+	isSharable,
+	isRebloggable,
+	isLikeable,
+} from 'calypso/reader/post/capabilities';
+import { useShelfPicker } from 'calypso/reader/shelves/subscribe-with-shelf/use-shelf-picker';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
-import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
+/**
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; split?: boolean; }} props
+ */
 const ReaderPostActions = ( {
 	post,
 	site,
@@ -22,77 +31,98 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
+	variant = 'default',
+	split = false,
 } ) => {
 	const translate = useTranslate();
+	const showShelves = isEnabled( 'reader/shelves' );
+	const { openShelfPicker, shelfPickerModal } = useShelfPicker( {
+		feedId: post.feed_ID,
+		blogId: post.site_ID,
+		feedUrl: post.feed_URL || post.site_URL,
+		source: 'post_actions',
+	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
-	const showShare = shouldShowShare( post );
-	const showReblog = shouldShowReblog( post, hasSites );
-	const showComments = shouldShowComments( post );
-	const showLikes = shouldShowLikes( post );
-	const listClassnames = clsx( 'reader-post-actions', className );
-	const isAutomattician = useSelector( isA8cTeamMember );
-	const shouldShowFreshlyPressed = fullPost && isAutomattician;
+	const showShare = isSharable( post );
+	const showReblog = isRebloggable( post, hasSites );
+	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
+	const showLikes = isLikeable( post );
+	const listClassnames = clsx( 'reader-post-actions', className, {
+		'is-discreet': variant === 'discreet',
+		'is-split': split,
+	} );
 
 	return (
-		<ul className={ listClassnames }>
-			{ showShare && (
-				<li className="reader-post-actions__item">
-					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
-				</li>
-			) }
+		<>
+			<ul className={ listClassnames }>
+				{ showShelves && (
+					<li className="reader-post-actions__item">
+						<Button
+							className="reader-post-actions__shelf-button"
+							icon={ category }
+							iconSize={ iconSize }
+							label={ translate( 'Move site to a shelf' ) }
+							onClick={ openShelfPicker }
+						/>
+					</li>
+				) }
+				{ showShare && (
+					<li className="reader-post-actions__item">
+						<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
+					</li>
+				) }
 
-			{ showReblog && (
-				<li className="reader-post-actions__item">
-					<ShareButton
-						post={ post }
-						position="bottom"
-						tagName="div"
-						iconSize={ iconSize }
-						isReblogSelection
-					/>
-				</li>
-			) }
-			{ showComments && ! commentsApiDisabled && (
-				<li className="reader-post-actions__item">
-					<CommentButton
-						key="comment-button"
-						commentCount={ post.discussion.comment_count }
-						post={ post }
-						onClick={ onCommentClick }
-						tagName="button"
-						icon={ ReaderCommentIcon( {
-							iconSize,
-							viewBox: '0 -1 20 20',
-						} ) }
-						defaultLabel={ translate( 'Comment' ) }
-						alwaysShowTooltip
-					/>
-				</li>
-			) }
-			{ showLikes && (
-				<li className="reader-post-actions__item">
-					<LikeButton
-						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-						site={ site }
-						fullPost={ fullPost }
-						tagName="button"
-						forceCounter
-						iconSize={ iconSize }
-						showZeroCount={ false }
-						likeSource="reader"
-						defaultLabel={ translate( 'Like' ) }
-					/>
-				</li>
-			) }
-			{ shouldShowFreshlyPressed && (
-				<li className="reader-post-actions__item">
-					<ReaderFreshlyPressedButton blogId={ post.site_ID } postId={ post.ID } />
-				</li>
-			) }
-		</ul>
+				{ showReblog && (
+					<li className="reader-post-actions__item">
+						<ShareButton
+							post={ post }
+							position="bottom"
+							tagName="div"
+							iconSize={ iconSize }
+							isReblogSelection
+						/>
+					</li>
+				) }
+				{ isEnabled( 'reader/saved-posts' ) && (
+					<li className="reader-post-actions__item">
+						<ReaderSaveButton post={ post } iconSize={ iconSize } />
+					</li>
+				) }
+				{ showComments && ! commentsApiDisabled && (
+					<li className="reader-post-actions__item">
+						<CommentButton
+							key="comment-button"
+							commentCount={ post.discussion.comment_count }
+							onClick={ onCommentClick }
+							tagName="button"
+							icon={ ReaderCommentIcon( {
+								iconSize,
+								viewBox: '0 -1 20 20',
+							} ) }
+							alwaysShowTooltip
+						/>
+					</li>
+				) }
+				{ showLikes && (
+					<li className="reader-post-actions__item">
+						<LikeButton
+							key="like-button"
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							post={ post }
+							site={ site }
+							fullPost={ fullPost }
+							tagName="button"
+							forceCounter
+							iconSize={ iconSize }
+							showZeroCount={ false }
+							likeSource="reader"
+						/>
+					</li>
+				) }
+			</ul>
+			{ showShelves && shelfPickerModal }
+		</>
 	);
 };
 
@@ -103,6 +133,8 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
+	variant: PropTypes.oneOf( [ 'default', 'discreet' ] ),
+	split: PropTypes.bool,
 };
 
 export default ReaderPostActions;

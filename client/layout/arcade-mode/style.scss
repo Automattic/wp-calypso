@@ -1,0 +1,121 @@
+@import "https://fonts.googleapis.com/css?family=VT323&display=swap";
+
+// Konami code easter egg — Arcade Mode visuals.
+// All selectors are gated behind body.is-arcade-mode so they have no effect when off.
+
+body.is-arcade-mode {
+	text-shadow: 0 0 2px rgba(57, 255, 20, 0.5);
+
+	// CRT scan-line overlay across the whole viewport.
+	&::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: 99999;
+		background: repeating-linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, 0.18) 0,
+			rgba(0, 0, 0, 0.18) 1px,
+			transparent 1px,
+			transparent 3px
+		);
+		mix-blend-mode: multiply;
+	}
+
+	// Neon masterbar palette + retro font.
+	.masterbar {
+		--color-masterbar-background: #0d0221;
+		--color-masterbar-text: #39ff14;
+		--color-masterbar-icon: #39ff14;
+		// Highlight is used by the masterbar for hover/focus text and icon fill — must
+		// contrast strongly against the magenta hover background below.
+		--color-masterbar-highlight: #0d0221;
+		--color-masterbar-item-hover-background: #ff2bd6;
+		--color-masterbar-item-active-background: #ff2bd6;
+		--color-masterbar-unread-dot-background: #ff2bd6;
+		--color-masterbar-border: #39ff14;
+
+		font-family: 'VT323', 'Courier New', ui-monospace, monospace;
+		font-size: 18px;
+		letter-spacing: 0.05em;
+		border-bottom: 2px solid #39ff14;
+		box-shadow: 0 0 12px rgba(57, 255, 20, 0.4);
+	}
+
+	// Force readable icon + text colors when hovering masterbar items so the
+	// neon-green-on-magenta combination doesn't wash out.
+	.masterbar__item:hover {
+		color: var(--color-masterbar-highlight);
+
+		svg {
+			fill: var(--color-masterbar-highlight);
+		}
+	}
+
+	// Pixel-chunk hover for masterbar items and shared Calypso buttons.
+	.masterbar__item:hover,
+	.button:hover {
+		box-shadow: 4px 4px 0 currentColor;
+		transform: translate(-2px, -2px);
+		transition:
+			transform 0.05s steps(2),
+			box-shadow 0.05s steps(2);
+	}
+
+	// 30 LIVES counter — non-interactive, no hover effect.
+	.arcade-lives {
+		cursor: default;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding-inline: 12px;
+		color: #ff2bd6;
+
+		&:hover {
+			box-shadow: none;
+			transform: none;
+		}
+	}
+
+	.arcade-lives__icon {
+		font-size: 20px;
+	}
+}
+
+// One-shot activation banner (auto-removed after 1.5s).
+.arcade-mode-flash {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'VT323', 'Courier New', ui-monospace, monospace;
+	font-size: clamp(40px, 10vw, 120px);
+	color: #39ff14;
+	text-shadow:
+		0 0 12px #39ff14,
+		0 0 24px #ff2bd6;
+	letter-spacing: 0.1em;
+	pointer-events: none;
+	z-index: 100000;
+	background: rgba(13, 2, 33, 0.4);
+	animation: arcade-mode-flash 1.5s ease-out forwards;
+}
+
+@keyframes arcade-mode-flash {
+	0% {
+		opacity: 0;
+		transform: scale(1.1);
+	}
+	20% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

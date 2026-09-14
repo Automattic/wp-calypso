@@ -1,11 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual, merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import QueryMedia from 'calypso/components/data/query-media';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
@@ -16,13 +14,11 @@ import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
@@ -41,8 +37,7 @@ import DownloadCsv from '../stats-download-csv';
 import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
-import VideoPlayDetails from '../stats-video-details';
-import StatsVideoSummary from '../stats-video-summary';
+import VideosPerformance from '../stats-videos-performance';
 import VideoPressStatsModule from '../videopress-stats-module';
 
 import './style.scss';
@@ -131,15 +126,13 @@ class StatsSummary extends Component {
 			supportsUTMStats,
 			supportsArchiveStats,
 			shouldGateStatsCsvDownload,
-			lastScreen,
+			breadcrumbTrail,
 			statsStrings,
 		} = this.props;
 
 		const summaryViews = [];
 		let title;
 		let summaryView;
-		let chartTitle;
-		let barChart;
 		let path;
 		let statType;
 
@@ -164,7 +157,7 @@ class StatsSummary extends Component {
 			query.period = 'day'; // Override for custom date ranges.
 		}
 
-		const moduleQuery = merge( {}, statsQueryOptions, query );
+		const moduleQuery = { ...statsQueryOptions, ...query };
 		// TODO: Refactor the query params for posts module.
 		if ( 'posts' === this.props.context.params.module ) {
 			moduleQuery.skip_archives = isArchiveBreakdownEnabled ? '1' : '0';
@@ -306,13 +299,13 @@ class StatsSummary extends Component {
 				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
-						{ /* For CSV button to work, video page needs to pass custom data to the button.
-								It can't use the shared header as long as the CSV download button stays there. */ }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<VideosPerformance siteId={ siteId } query={ moduleQuery } />
 						<VideoPressStatsModule
 							path={ path }
 							moduleStrings={ statsStrings.videoplays }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							statType={ statType }
 							summary
 							listItemClassName={ listItemClassName }
@@ -336,47 +329,6 @@ class StatsSummary extends Component {
 							listItemClassName={ listItemClassName }
 						/>
 					</Fragment>
-				);
-				break;
-
-			case 'videodetails':
-				title = translate( 'Video' );
-				if ( this.props.media ) {
-					title = this.props.media.title;
-				}
-
-				// TODO: a separate StatsSectionTitle component should be created
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				chartTitle = (
-					<h3 key="summary-title" className="stats-section-title">
-						{ translate( 'Video Details' ) }
-					</h3>
-				);
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
-
-				if ( siteId ) {
-					summaryViews.push(
-						<QueryMedia key="query-media" siteId={ siteId } mediaId={ this.props.postId } />
-					);
-				}
-				summaryViews.push( chartTitle );
-				barChart = (
-					<StatsVideoSummary
-						key="video-chart"
-						postId={ this.props.postId }
-						period={ this.props.period.period }
-						statType={ urlParams.get( 'statType' ) }
-					/>
-				);
-
-				summaryViews.push( barChart );
-				summaryView = (
-					<VideoPlayDetails
-						key="page-embeds"
-						postId={ this.props.postId }
-						period={ this.props.period.period }
-						statType={ urlParams.get( 'statType' ) }
-					/>
 				);
 				break;
 
@@ -423,55 +375,55 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
+		let tabs = null;
+		if ( module === 'locations' ) {
+			tabs = (
+				<div className="stats-navigation stats-navigation--improved">
+					<LocationsNavTabs
+						period={ this.props.period }
+						query={ moduleQuery }
+						givenSiteId={ siteId }
+					/>
+				</div>
+			);
+		} else if ( isArchiveBreakdownEnabled && module === 'posts' ) {
+			tabs = (
+				<div className="stats-navigation stats-navigation--improved">
+					<PostsNavTabs query={ moduleQuery } />
+				</div>
+			);
+		}
+
 		return (
-			<Main fullWidthLayout>
+			<Main
+				fullWidthLayout
+				breadcrumbs={ [
+					...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+					{ label: title },
+				] }
+				pageTabs={ tabs }
+				pageActions={
+					<div className="stats-module__header-nav-button">
+						{ shouldGateStatsCsvDownload ? (
+							<DownloadCsvUpsell siteId={ siteId } borderless />
+						) : (
+							<DownloadCsv
+								statType={ statType }
+								query={ moduleQuery }
+								path={ this.getPath( statType, path ) }
+								period={ this.props.period }
+								skipQuery
+								hideIfNoData
+							/>
+						) }
+					</div>
+				}
+			>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
 				<div className="stats stats-summary-view">
-					<PageHeader
-						className="stats__section-header modernized-header"
-						titleProps={ { title, titleLogo: null } }
-						backLinkProps={ {
-							url: lastScreen.url,
-							text: lastScreen.text,
-						} }
-						rightSection={
-							<div className="stats-module__header-nav-button">
-								{ shouldGateStatsCsvDownload ? (
-									<DownloadCsvUpsell siteId={ siteId } borderless />
-								) : (
-									<DownloadCsv
-										statType={ statType }
-										query={ moduleQuery }
-										path={ this.getPath( statType, path ) }
-										period={ this.props.period }
-										skipQuery
-										hideIfNoData
-									/>
-								) }
-							</div>
-						}
-					/>
-
-					{ this.props.context.params.module === 'locations' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<LocationsNavTabs
-								period={ this.props.period }
-								query={ moduleQuery }
-								givenSiteId={ siteId }
-							/>
-						</div>
-					) }
-
-					{ /* TODO: Refactor to use the same component for both locations and posts */ }
-					{ isArchiveBreakdownEnabled && this.props.context.params.module === 'posts' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<PostsNavTabs query={ moduleQuery } />
-						</div>
-					) }
-
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (
 							<StatsGlobalValuesContext.Consumer>
@@ -497,7 +449,6 @@ class StatsSummary extends Component {
 						) : (
 							summaryViews
 						) }
-						<JetpackColophon />
 					</div>
 				</div>
 			</Main>
@@ -506,13 +457,15 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
+	const breadcrumbTrail = useStatsBreadcrumbTrail( props.context?.query );
 	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
 
-	return <StatsSummary { ...props } lastScreen={ lastScreen } statsStrings={ statsStrings } />;
+	return (
+		<StatsSummary { ...props } breadcrumbTrail={ breadcrumbTrail } statsStrings={ statsStrings } />
+	);
 };
 
-export default connect( ( state, { context, postId } ) => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	const { supportsUTMStats, supportsArchiveStats } = getEnvStatsFeatureSupportChecks(
@@ -523,7 +476,6 @@ export default connect( ( state, { context, postId } ) => {
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
-		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
 		supportsArchiveStats,
 		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),

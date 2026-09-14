@@ -38,13 +38,10 @@ export type WPCOMTransactionEndpointResponseFailed = {
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {
-	message: { payment_intent_client_secret: string } | '';
+	message: { payment_intent_client_secret: string } | { setup_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
 	qr_code?: string;
-	razorpay_order_id?: string;
-	razorpay_customer_id?: string;
-	razorpay_option_recurring?: boolean;
 };
 
 export type WPCOMTransactionEndpointResponsePayPal = {
@@ -59,6 +56,14 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponseFailed
 	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
+
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
 
 export interface TaxVendorInfo {
 	/**
@@ -114,7 +119,6 @@ export interface TransactionResponsePurchase {
 	registrar_support_url?: string;
 	user_email: string;
 	saas_redirect_url?: string;
-	will_auto_renew?: boolean;
 	tax_vendor_info?: TaxVendorInfo;
 	blog_id: number;
 	price_integer?: number;
@@ -144,9 +148,8 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	pan?: string | undefined;
-	gstin?: string | undefined;
-	nik?: string | undefined;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 }
@@ -198,9 +201,8 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	pan?: string;
-	gstin?: string;
-	nik?: string;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 };
@@ -266,6 +268,7 @@ type DomainContactDetailsErrorsExtra = {
 	ca?: CaDomainContactExtraDetailsErrors | null;
 	uk?: UkDomainContactExtraDetailsErrors | null;
 	fr?: FrDomainContactExtraDetailsErrors | null;
+	in?: InDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
@@ -285,6 +288,11 @@ export type FrDomainContactExtraDetailsErrors = {
 	registrantVatId?: string[] | TranslateResult[];
 	trademarkNumber?: string[] | TranslateResult[];
 	sirenSiret?: string[] | TranslateResult[];
+};
+
+export type InDomainContactExtraDetailsErrors = {
+	nexusDeclaration?: string | TranslateResult;
+	nexusConnectionType?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -308,6 +316,7 @@ export interface LineItemType {
 	id: string;
 	type: string;
 	label: string;
+	labelSuffix?: string;
 	formattedAmount: string;
 	hasDeleteButton?: boolean;
 }
@@ -321,12 +330,12 @@ export interface WPCOMCart {
 // translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
 	| 'pix'
+	| 'pix_automatico'
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
 	| 'card'
 	| 'ebanx'
-	| 'netbanking'
 	| 'eps'
 	| 'ideal'
 	| 'p24'
@@ -347,7 +356,8 @@ export type CheckoutPaymentMethodSlug =
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
-	| 'razorpay';
+	| 'stripe-upi'
+	| 'stripe-blik';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -358,19 +368,21 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
 	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
-	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_PayPal_PPCP'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'
 	| 'WPCOM_Billing_Stripe_Bancontact'
+	| 'WPCOM_Billing_Stripe_Eps'
 	| 'WPCOM_Billing_Stripe_Ideal'
 	| 'WPCOM_Billing_Stripe_P24'
 	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
-	| 'WPCOM_Billing_Razorpay';
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
+	| 'WPCOM_Billing_Stripe_Upi'
+	| 'WPCOM_Billing_Stripe_Blik';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 
@@ -408,6 +420,10 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
+	};
+	in?: {
+		nexusDeclaration?: T;
+		nexusConnectionType?: T;
 	};
 };
 
@@ -577,6 +593,10 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -595,6 +615,10 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_type?: string[];
 		trademark_number?: string[];
 		siren_siret?: string[];
+	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
 	};
 	is_for_business?: boolean;
 };

@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { UpcomingEventProps } from './types';

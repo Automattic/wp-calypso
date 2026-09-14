@@ -88,8 +88,11 @@ export const SitesSortingDropdown = ( {
 				<SortingButton
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
-					// translators: %s is the current sorting mode.
-					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), validSortingLabel ) }
+					aria-label={ sprintf(
+						// translators: %s is the current sorting mode.
+						__( 'Sorting by %s. Switch sorting mode' ),
+						validSortingLabel ?? ''
+					) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 					onKeyDown={ ( event: React.KeyboardEvent ) => {
@@ -101,7 +104,7 @@ export const SitesSortingDropdown = ( {
 				>
 					{
 						// translators: %s is the current sorting mode.
-						sprintf( __( 'Sort: %s' ), validSortingLabel )
+						sprintf( __( 'Sort: %s' ), validSortingLabel ?? '' )
 					}
 				</SortingButton>
 			) }

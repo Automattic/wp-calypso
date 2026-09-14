@@ -13,7 +13,6 @@ jest.mock( 'calypso/state/ui/selectors' );
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import {
 	getconnectedAccountDefaultCurrencyForSiteId,
@@ -70,7 +69,6 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		[ ...document.getElementsByClassName( 'ReactModalPortal' ) ].map( ( el ) => {
 			document.body.removeChild( el );

@@ -3,8 +3,10 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
+import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
 import Logo from './logo';
 import type {
@@ -20,13 +22,15 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: true,
 		reader: true,
 		help: true,
 		notifications: true,
+		resurrectedWelcomeModal: true,
 		me: {
 			billing: {
 				monetizeSubscriptions: true,
@@ -34,12 +38,16 @@ boot( {
 			security: {
 				sshKey: true,
 			},
-			privacy: true,
 			apps: true,
 		},
 		plugins: true,
-		commandPalette: false,
+		commandPalette: true,
 		domainOnlySites: true,
+		siteOverview: {
+			preview: false,
+		},
+		colorScheme: isEnabled( 'dark-mode' ),
+		darkMode: isEnabled( 'dark-mode' ),
 	},
 	optIn: true,
 	components: {
@@ -52,5 +60,6 @@ boot( {
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
+		domainsQuery: () => domainsQuery(),
 	},
 } );

@@ -1,3 +1,12 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+@import "@automattic/typography/styles/variables";
+
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 // Styles targeted at story content
 @import './content';
 
@@ -61,6 +70,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	@include breakpoint-deprecated( '<660px' ) {
 		top: 12px;
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 // Header Meta Component Styles
@@ -98,20 +112,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 }
 
-.reader-full-post__header-meta-avatars {
-	flex-shrink: 0;
-
-	.gravatar {
-		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-	}
-
-	.gridicons-globe {
-		fill: var( --color-neutral-70 );
-	}
-}
-
 .reader-full-post__header-meta-info {
 	flex: 1;
 	min-width: 0;
@@ -137,6 +137,15 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	&:hover {
 		color: var( --color-link );
+	}
+
+	&:visited {
+		color: var( --color-text );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 
@@ -167,7 +176,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button,
 	.like-button,
 	.post-edit-button,
+	.reader-full-post__view-original-button,
 	.reader-full-post__seen-button,
+	.reader-subscribe-with-shelf__shelves,
 	.follow-button {
 		margin: 0;
 		padding: 8px 16px;
@@ -182,6 +193,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		height: auto;
 		min-height: 40px;
 		color: var( --color-neutral-20 );
+
+		@include ui-mixins.when-dark-theme {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus {
+				border-color: var( --color-link );
+				color: var( --color-link );
+			}
+		}
 
 		&:hover {
 			border-color: var( --color-neutral-20 );
@@ -279,9 +302,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button__label,
 	.like-button__label,
 	.post-edit-button__label,
+	.reader-full-post__view-original-button-label,
 	.follow-button__label,
-	.reader-full-post__seen-button,
-	.freshly-pressed__button {
+	.reader-full-post__seen-button {
 		font-size: $font-body-small;
 		color: var( --color-text-subtle );
 	}
@@ -293,8 +316,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button:hover .comment-button__label,
 	.like-button:hover .like-button__label,
 	.post-edit-button:hover .post-edit-button__label,
-	.reader-full-post__seen-button:hover,
-	.freshly-pressed__button:hover {
+	.reader-full-post__view-original-button:hover .reader-full-post__view-original-button-label,
+	.reader-full-post__seen-button:hover {
 		color: var( --color-link );
 	}
 
@@ -356,6 +379,20 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			color: var( --color-link );
 		}
 	}
+
+	@include ui-mixins.when-dark-theme {
+		.comment-button.is-active,
+		.comment-button:hover,
+		.comment-button:focus,
+		.like-button:hover,
+		.like-button:focus,
+		.like-button.is-active,
+		.like-button.is-liked,
+		.post-edit-button:hover,
+		.post-edit-button:focus {
+			border-color: var( --color-link );
+		}
+	}
 }
 
 .reader-full-post__action-bar-left,
@@ -363,6 +400,30 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	display: flex;
 	align-items: center;
 	gap: 12px;
+}
+
+.reader-full-post__action-bar .reader-full-post__view-original-button {
+	min-height: auto;
+	text-decoration: none;
+
+	.reader-full-post__view-original-button-icon {
+		fill: var( --color-text-subtle );
+	}
+
+	&:hover .reader-full-post__view-original-button-icon {
+		fill: var( --color-link );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+}
+
+@media ( max-width: $break-large ) {
+	.reader-full-post__view-original-button-label {
+		display: none;
+	}
 }
 
 .reader-full-post__story {
@@ -377,6 +438,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	font-size: rem( 17px );
 	line-height: 28px;
 
+	a:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
 	figure.wp-block-table {
 		overflow: auto;
 	}
@@ -388,6 +454,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 	.wp-block-group p:last-child {
 		margin-bottom: 24px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		blockquote {
+			border-color: var( --color-border-subtle );
+		}
 	}
 }
 
@@ -405,10 +477,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 
 	a.reader-author-link {
-		color: var( --color-primary );
+		color: var( --color-link );
 
 		&:hover {
-			color: var( --color-primary-light );
+			color: var( --color-link-light );
 		}
 	}
 }
@@ -529,7 +601,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	@include breakpoint-deprecated( '<660px' ) {
 		align-items: flex-start;
-		background: var( --studio-white );
+		background: var( --color-surface );
 		display: flex;
 		border-bottom: 1px solid var( --color-neutral-0 );
 		flex-direction: row;
@@ -649,11 +721,39 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.reader-full-post__header-title-link {
 		display: block;
+		text-decoration: none;
+
+		&:focus-visible {
+			outline: 2px solid var( --studio-blue-50 );
+			outline-offset: 2px;
+		}
+
+		&::after {
+			content: "↗";
+			display: inline-block;
+			color: var( --color-neutral-10 );
+			font-size: 0.65em;
+			margin-inline-start: 8px;
+			opacity: 0;
+			position: relative;
+			top: -3px;
+			transition: opacity 0.2s ease;
+		}
+	}
+
+	.reader-full-post__header-title-link:hover::after {
+		opacity: 1;
 	}
 
 	.reader-full-post__header-title-link,
 	.reader-full-post__header-title-link:hover {
 		color: var( --color-neutral-70 );
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.reader-full-post__header-title-link::after {
+			color: var( --color-text-subtle );
+		}
 	}
 
 	.recent-feed__post-column & {
@@ -688,7 +788,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var( --color-link-light );
 	}
 }
 
@@ -707,7 +807,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post .reader-post-card__tag-link:hover {
-	color: var( --color-primary );
+	color: var( --color-link );
 }
 
 .reader-full-post__header {
@@ -719,7 +819,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__featured-image {
-	display: inline-flex;
+	display: block;
 	margin: 28px 0 26px;
 	position: relative;
 	&::after {
@@ -734,9 +834,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		border-radius: 5px; /* stylelint-disable-line scales/radii */
 	}
 	img {
-		box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.1 );
 		border-radius: 4px;
 		position: relative;
+		display: block;
+		inline-size: 100%;
 	}
 }
 
@@ -841,7 +942,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			}
 
 			.reader-full-post__site-icon {
-				border-radius: 50%;
 				height: 80px;
 				width: 80px;
 

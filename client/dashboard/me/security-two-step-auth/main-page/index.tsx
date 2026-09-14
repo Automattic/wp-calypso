@@ -1,5 +1,4 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -10,7 +9,6 @@ import Notice from '../../../components/notice';
 import TwoStepAuthActions from './actions';
 import ApplicationPasswords from './application-passwords';
 import BackupCodes from './backup-codes';
-import EnhancedSecurity from './enhanced-security';
 import SecurityKeys from './security-keys';
 import type { UserSettings } from '@automattic/api-core';
 
@@ -63,27 +61,30 @@ export default function SecurityTwoStepAuthMainPage( {
 					</>
 				) }
 
-				{ two_step_app_enabled &&
-					( two_step_enhanced_security_forced
-						? enforcedByOrganizationText
-						: createInterpolateElement(
-								__(
-									/* translators: followStepsLink is a link to the support article */
-									'Switching to a new device? <followStepsLink>Follow these steps</followStepsLink> to avoid losing access to your account.'
-								),
-								{
-									followStepsLink: (
-										<InlineSupportLink
-											supportPostId={ 39178 }
-											supportLink={ localizeUrl(
-												'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
-											) }
-										/>
+				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+				{ two_step_app_enabled && (
+					<span>
+						{ two_step_enhanced_security_forced
+							? enforcedByOrganizationText
+							: createInterpolateElement(
+									__(
+										/* translators: followStepsLink is a link to the support article */
+										'Switching to a new device? <followStepsLink>Follow these steps</followStepsLink> to avoid losing access to your account.'
 									),
-								}
-						  ) ) }
+									{
+										followStepsLink: (
+											<InlineSupportLink
+												supportPostId={ 39178 }
+												supportLink={ localizeUrl(
+													'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
+												) }
+											/>
+										),
+									}
+							  ) }
+					</span>
+				) }
 			</Notice>
-			{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
 			<SecurityKeys />
 			<ApplicationPasswords />
 			<BackupCodes />

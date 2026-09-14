@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 interface ReaderIconProps {
 	className?: string;
 	height?: number;

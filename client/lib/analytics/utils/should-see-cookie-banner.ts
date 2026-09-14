@@ -1,5 +1,4 @@
-import { TrackingPrefs } from '@automattic/calypso-analytics';
-import { isCountryInGdprZone } from 'calypso/dashboard/app/analytics/geo-privacy';
+import { type TrackingPrefs, isCountryInGdprZone } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 

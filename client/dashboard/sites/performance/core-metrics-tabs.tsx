@@ -7,6 +7,7 @@ import {
 	mapThresholdsToStatus,
 	getAvailableMetrics,
 } from '../../utils/site-performance';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import { MetricScore } from './core-metrics-score';
 import type { SitePerformanceReport } from '@automattic/api-core';
 
@@ -18,7 +19,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Tabs } = unlock( privateApis );
 
 const Tab = ( { children, tabId }: { children: React.ReactNode; tabId: string } ) => {
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 
 	return (
 		<Tabs.Tab tabId={ tabId } style={ { height: '100%' } }>
@@ -36,7 +37,7 @@ const CoreMetricsTabs = ( {
 	report: SitePerformanceReport;
 	compact?: boolean;
 } ) => {
-	const isSmall = useViewportMatch( 'small' );
+	const isSmall = useViewportMatch( VIEWPORT_BREAKPOINTS.small );
 
 	const availableMetrics = getAvailableMetrics( report );
 

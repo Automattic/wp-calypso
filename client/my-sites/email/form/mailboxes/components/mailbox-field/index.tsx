@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
-import { InvalidEvent, useState } from 'react';
+import { useState, type ChangeEvent, type InvalidEvent, type JSX } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -10,7 +10,6 @@ import type {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
-import type { ChangeEvent } from 'react';
 
 import './style.scss';
 

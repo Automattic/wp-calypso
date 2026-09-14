@@ -1,4 +1,7 @@
+@import "@automattic/typography/styles/variables";
+
 @import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 @import "../hundred-year-plan-step-wrapper/mixins";
 
@@ -101,17 +104,5 @@
 
 	.components-button.is-primary {
 		@include primary-button-black-theme;
-	}
-}
-
-.start-writing.site-picker {
-	.signup-header {
-		.wordpress-logo {
-			position: absolute;
-			inset-block-start: 20px;
-			inset-inline-start: 24px;
-			fill: var(--color-text);
-			transform-origin: 0 0;
-		}
 	}
 }

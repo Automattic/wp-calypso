@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Frame, Locator, Page } from 'playwright';
 
 export interface ExpectedFormField {
 	type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
@@ -34,8 +34,32 @@ export async function validatePublishedFormFields(
 ) {
 	for ( const expectedField of expectedFormFields ) {
 		const { type, accessibleName } = expectedField;
-		await publishedPage.getByRole( type, { name: accessibleName } ).first().waitFor();
+		const field = publishedPage.getByRole( type, { name: accessibleName } ).first();
+		// Wait for the element in the DOM first, then scroll to make it visible.
+		await field.waitFor( { state: 'attached' } );
+		await field.scrollIntoViewIfNeeded();
+		await field.waitFor( { state: 'visible' } );
 	}
+}
+
+/**
+ * Disables email notifications on a form block by updating its attributes
+ * via the WordPress block editor data store.
+ *
+ * @param {Frame | Page} editorFrame The editor frame or page to evaluate in.
+ * @param {Locator} blockLocator Locator for the form block.
+ */
+export async function disableFormEmailNotifications(
+	editorFrame: Frame | Page,
+	blockLocator: Locator
+) {
+	const domId = await blockLocator.getAttribute( 'id' );
+	const clientId = domId?.replace( /^block-/, '' );
+	await editorFrame.evaluate( ( cid ) => {
+		( window as any ).wp.data
+			.dispatch( 'core/block-editor' )
+			.updateBlockAttributes( cid, { emailNotifications: false } );
+	}, clientId );
 }
 
 /**
@@ -64,9 +88,18 @@ export async function labelFormFieldBlock(
 	if ( isRefactor && parentBlockName ) {
 		scope = scope.locator( makeSelectorFromBlockName( parentBlockName ) );
 	}
-	await scope
-		.locator( makeSelectorFromBlockName( blockName ) )
-		.getByRole( 'textbox', { name: accessibleLabelName } )
-		.first()
-		.fill( labelText );
+	const fieldBlock = scope.locator( makeSelectorFromBlockName( blockName ) );
+	const labelInput = fieldBlock.getByRole( 'textbox', { name: accessibleLabelName } ).first();
+	// The editor re-renders the field after the fill and can drop what was typed without the
+	// fill itself reporting anything. Read the label back and type it once more; left
+	// unchecked the flow publishes an unlabelled field and fails a minute later, on an
+	// assertion that cannot say which step lost the label.
+	const labelled = fieldBlock.getByText( labelText, { exact: true } ).first();
+	await labelInput.fill( labelText );
+	try {
+		await labelled.waitFor( { timeout: 5 * 1000 } );
+	} catch {
+		await labelInput.fill( labelText );
+		await labelled.waitFor( { timeout: 5 * 1000 } );
+	}
 }

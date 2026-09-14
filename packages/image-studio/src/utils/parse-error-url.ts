@@ -13,7 +13,34 @@ export interface ParsedErrorUrl {
 }
 
 /**
+ * Trusted domains whose URLs may be surfaced as clickable links in error notices.
+ */
+const ALLOWED_DOMAINS = [ 'wordpress.com', 'jetpack.com' ];
+
+function isAllowedDomain( hostname: string ): boolean {
+	const domain = hostname.replace( /:\d+$/, '' ).toLowerCase();
+
+	if ( ALLOWED_DOMAINS.includes( domain ) ) {
+		return true;
+	}
+
+	// Self-hosted Jetpack sites use their own admin URL for upgrade links.
+	// The current origin is always trusted — the user is already on that domain.
+	if ( typeof window !== 'undefined' ) {
+		try {
+			const currentHostname = new URL( window.location.origin ).hostname.toLowerCase();
+			return domain === currentHostname;
+		} catch {
+			// Invalid origin — fall through to reject.
+		}
+	}
+
+	return false;
+}
+
+/**
  * Parses an error message to extract a URL and determine if it's an upgrade URL.
+ * Only URLs from trusted domains are surfaced as clickable links.
  * @param errorMessage - The error message that may contain a URL
  * @returns Parsed result with content, url, and isUpgradeUrl flag
  */
@@ -39,6 +66,16 @@ export function parseErrorUrl( errorMessage: string ): ParsedErrorUrl {
 	const pathStart = urlWithoutProtocol.indexOf( '/' );
 	const pathAndQuery = pathStart >= 0 ? urlWithoutProtocol.slice( pathStart ) : '';
 	const hostname = pathStart >= 0 ? urlWithoutProtocol.slice( 0, pathStart ) : urlWithoutProtocol;
+
+	// Reject URLs from untrusted domains.
+	if ( ! isAllowedDomain( hostname ) ) {
+		return {
+			content,
+			url: null,
+			isUpgradeUrl: false,
+			isPlansPageUrl: false,
+		};
+	}
 
 	const isUpgradeUrl =
 		pathAndQuery.includes( '/plans/' ) ||

@@ -7,7 +7,10 @@ import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { ReactNode } from 'react';
+
+import './llm-notice.scss';
 
 const LLMNotice = ( {
 	children,
@@ -18,16 +21,10 @@ const LLMNotice = ( {
 	isLoading?: boolean;
 	actions?: ReactNode;
 } ) => {
-	const isMediumScreen = useViewportMatch( 'medium', '<' );
+	const isMediumScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.medium, '<' );
 
 	return (
-		<Card
-			size="xSmall"
-			style={ {
-				background:
-					'linear-gradient(0deg,#fffffff2,#fffffff2),linear-gradient(90deg,#4458e4,#069e08)',
-			} }
-		>
+		<Card className="llm-notice-card" size="xSmall">
 			<CardBody>
 				<HStack
 					direction={ isMediumScreen ? 'column' : 'row' }

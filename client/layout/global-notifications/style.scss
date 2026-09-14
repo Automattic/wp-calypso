@@ -1,4 +1,7 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 .global-notifications {
 	position: relative;
 	z-index: z-index("root", ".masterbar") + 1;
+	display: flex;
 }

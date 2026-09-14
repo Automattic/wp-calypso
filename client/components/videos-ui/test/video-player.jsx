@@ -2,12 +2,10 @@
  * @jest-environment jsdom
  */
 
-import ShallowRenderer from 'react-test-renderer/shallow';
+import { fireEvent, render } from '@testing-library/react';
 import VideoPlayer from '../video-player';
 
 describe( 'Video player', () => {
-	let renderer;
-
 	const videoData = {
 		poster: 'image.png',
 		url: 'video.mp4',
@@ -15,19 +13,26 @@ describe( 'Video player', () => {
 	const course = { slug: 'course-slug' };
 
 	beforeEach( () => {
-		renderer = new ShallowRenderer();
-
 		window._tkq = {
 			push: jest.fn(),
 		};
 	} );
 
-	test( 'Track event with intent prop', () => {
-		renderer.render( <VideoPlayer intent="build" course={ course } videoData={ videoData } /> );
-		const result = renderer.getRenderOutput();
+	const renderPlayer = ( props ) =>
+		render(
+			<VideoPlayer
+				course={ course }
+				videoData={ videoData }
+				onVideoPlayStatusChanged={ jest.fn() }
+				onVideoCompleted={ jest.fn() }
+				{ ...props }
+			/>
+		);
 
-		// Video element.
-		result.props.children[ 0 ].props.onPlay();
+	test( 'Track event with intent prop', () => {
+		const { container } = renderPlayer( { intent: 'build' } );
+
+		fireEvent.play( container.querySelector( 'video' ) );
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',
@@ -40,11 +45,9 @@ describe( 'Video player', () => {
 	} );
 
 	test( 'Track event without intent prop', () => {
-		renderer.render( <VideoPlayer course={ course } videoData={ videoData } /> );
-		const result = renderer.getRenderOutput();
+		const { container } = renderPlayer();
 
-		// Video element.
-		result.props.children[ 0 ].props.onPlay();
+		fireEvent.play( container.querySelector( 'video' ) );
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',

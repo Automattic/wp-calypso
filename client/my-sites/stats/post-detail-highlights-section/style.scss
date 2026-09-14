@@ -60,7 +60,6 @@
 
 	.post-stats-card {
 		margin: 0;
-		max-height: unset;
 
 		@media (max-width: $break-small) {
 			gap: 24px 12px;
@@ -93,7 +92,7 @@
 	}
 
 	// Overwrite the styles from component Count
-	.count {
+	.a8c-count {
 		margin-left: 8px;
 		padding: 4px 8px;
 		background-color: var(--color-neutral-5);

@@ -10,9 +10,9 @@ import {
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 } from '@automattic/calypso-products';
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import type { ReactElement } from 'react';
 
-export const Tags: Record< string, ReactJSXElement > = {
+export const Tags: Record< string, ReactElement > = {
 	[ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ]: (
 		<svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path

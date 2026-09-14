@@ -136,7 +136,10 @@ export class StatsPage {
 		// for this element.
 		// A loop is used here because multiple locators can match the CSS locator
 		// and to be safe, it's best to wait for all placeholders to be detached.
-		const locators = await this.page.locator( '.is-loading' ).all();
+		// Scope to the main content region: a page-wide `.is-loading` also matches
+		// unrelated chrome (e.g. the masterbar language picker) that stays hidden
+		// with the class instead of detaching, which would hang this wait.
+		const locators = await this.anchor.locator( '.is-loading' ).all();
 		for ( const locator of locators ) {
 			await locator.waitFor( { state: 'detached' } );
 		}

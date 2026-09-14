@@ -1,5 +1,3 @@
-const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
-
 const sections = [
 	{
 		name: 'root',
@@ -68,6 +66,12 @@ const sections = [
 		paths: [ '/me/developer' ],
 		module: 'calypso/me/developer',
 		group: 'me',
+	},
+	{
+		name: 'telegram-connect',
+		paths: [ '/telegram-connect' ],
+		module: 'calypso/telegram-connect',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',
@@ -172,7 +176,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
+		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},
@@ -197,6 +201,12 @@ const sections = [
 		name: 'settings-podcast',
 		paths: [ '/settings/podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-podcast',
+		group: 'sites',
+	},
+	{
+		name: 'podcasting',
+		paths: [ '/settings/podcast' ],
+		module: 'calypso/my-sites/podcast',
 		group: 'sites',
 	},
 	{
@@ -401,6 +411,7 @@ const sections = [
 			// Legacy paths that we need to support for backwards compatibility.
 			'/read(/?.*)',
 			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read', // For locale-specific reader.
+			'/recommendations',
 		],
 		module: 'calypso/reader',
 		group: 'reader',
@@ -452,14 +463,15 @@ const sections = [
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'reader',
 		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
@@ -472,21 +484,10 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [
-			'/reader/search',
-			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',
-			'/recommendations',
-		],
-		module: 'calypso/reader/search',
+		paths: [ '/read/saved' ],
+		module: 'calypso/reader/saved-stream',
 		group: 'reader',
-		enableLoggedOut: true,
 		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
-		paths: [ '/reader/list' ],
-		module: 'calypso/reader/list',
-		group: 'reader',
 	},
 	{
 		name: 'reader',
@@ -504,14 +505,67 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [
-			'/reader/subscriptions',
-			'/reader/subscriptions/comments',
-			'/reader/subscriptions/pending',
-			'^/reader/subscriptions/(\\d+)(/)?$',
-		],
-		module: 'calypso/reader/site-subscriptions-manager',
+		paths: [ '/reader/connections', '/reader/connections/new' ],
+		module: 'calypso/reader/connections',
 		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/reader/shelves', '/reader/shelves/:id' ],
+		module: 'calypso/reader/shelves',
+		group: 'reader',
+		enableLoggedOut: false,
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/atmosphere',
+			'/reader/atmosphere/connect',
+			'/reader/atmosphere/:id',
+			'/reader/atmosphere/:id/:tab',
+			'/reader/atmosphere/:id/thread/:did/:rkey',
+			'/reader/atmosphere/:id/profile/:actor',
+			'/reader/atmosphere/:id/profile/:actor/followers',
+			'/reader/atmosphere/:id/profile/:actor/following',
+		],
+		module: 'calypso/reader/atmosphere',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/mastodon',
+			'/reader/mastodon/connect',
+			'/reader/mastodon/oauth-callback',
+			'/reader/mastodon/:id',
+			'/reader/mastodon/:id/:tab',
+			'/reader/mastodon/:id/thread/:status_id',
+			'/reader/mastodon/:id/profile/:actor',
+			'/reader/mastodon/:id/profile/:actor/followers',
+			'/reader/mastodon/:id/profile/:actor/following',
+			'/reader/mastodon/:id/tag/:hashtag',
+		],
+		module: 'calypso/reader/mastodon',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/fediverse',
+			'/reader/fediverse/:id',
+			'/reader/fediverse/:id/:tab',
+			'/reader/fediverse/:id/profile/:actor',
+			'/reader/fediverse/:id/profile/:actor/followers',
+			'/reader/fediverse/:id/profile/:actor/following',
+		],
+		module: 'calypso/reader/fediverse',
+		group: 'reader',
+		enableLoggedOut: false,
 	},
 	{
 		name: 'auth',
@@ -561,12 +615,6 @@ const sections = [
 		paths: [ '/migrate' ],
 		module: 'calypso/my-sites/migrate',
 		group: 'sites',
-	},
-	{
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'calypso/devdocs',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'home',
@@ -644,14 +692,6 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
-	},
-	{
-		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
-		module: 'calypso/jetpack-cloud/sections/manage/pricing',
-		group: 'jetpack-cloud',
-		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
@@ -797,7 +837,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/need-setup' ],
+		paths: [ '/sites' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
@@ -846,7 +886,9 @@ const sections = [
 		paths: [
 			'/resources-and-tools',
 			'/resources-and-tools/learn',
+			'/resources-and-tools/agent-studio',
 			'/resources-and-tools/dev-tools',
+			'/resources-and-tools/benchmarks',
 		],
 		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',
@@ -931,6 +973,12 @@ const sections = [
 		name: 'a8c-for-agencies-exclusive-offers',
 		paths: [ '/exclusive-offers' ],
 		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-amplify',
+		paths: [ '/amplify' ],
+		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},
 ];

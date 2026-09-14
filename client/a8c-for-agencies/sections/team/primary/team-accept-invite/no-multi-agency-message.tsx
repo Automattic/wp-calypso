@@ -57,7 +57,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				<StepSectionItem
 					stepNumber={ 1 }
 					heading={
-						translate( 'Leave the %(currentAgencyName)s Dashboard', {
+						translate( 'Leave the %(currentAgencyName)s dashboard', {
 							args: { currentAgencyName: currentAgency.name },
 							comment: '%(currentAgencyName)s is an agency name',
 						} ) as string
@@ -85,7 +85,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				<StepSectionItem
 					stepNumber={ 2 }
 					heading={
-						translate( 'Join the %(targetAgencyName)s Dashboard', {
+						translate( 'Join the %(targetAgencyName)s dashboard', {
 							args: { targetAgencyName: targetAgency?.name },
 							comment: '%(targetAgencyName)s is an agency name',
 						} ) as string

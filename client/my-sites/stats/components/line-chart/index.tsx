@@ -1,11 +1,13 @@
 import { LineChart, type EventHandlerParams, type DataPointDate } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type JSX } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
+import { formatDatumPeriod } from './format-datum-period';
 
 import './styles.scss';
 
@@ -23,6 +25,7 @@ function StatsLineChart( {
 	),
 	zeroBaseline = true,
 	fixedDomain = false,
+	smartBaseline = false,
 	curveType = 'monotone',
 }: {
 	chartData: Array< {
@@ -37,6 +40,8 @@ function StatsLineChart( {
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	/** When true, calculates Y-axis baseline so data occupies ~50% of chart height, capped at 20% below min. */
+	smartBaseline?: boolean;
 	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
@@ -60,15 +65,12 @@ function StatsLineChart( {
 
 	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
 
-	const maxValue = useMemo(
-		() =>
-			Math.max(
-				...chartData.map( ( series ) =>
-					Math.max( ...series.data.map( ( d ) => d.value as number ) )
-				)
-			),
-		[ chartData ]
-	);
+	const [ minValue, maxValue ] = useMemo( () => {
+		const allValues = chartData.flatMap( ( series ) =>
+			series.data.map( ( d ) => d.value as number )
+		);
+		return [ Math.min( ...allValues ), Math.max( ...allValues ) ];
+	}, [ chartData ] );
 
 	const yNumTicks = useMemo( () => {
 		const uniqueValues = [
@@ -88,6 +90,26 @@ function StatsLineChart( {
 
 		return maxTicks - 1;
 	}, [ chartData, fixedDomain ] );
+
+	const yScaleDomain = useMemo( () => {
+		if ( fixedDomain ) {
+			return [ 0, maxValue ] as [ number, number ];
+		}
+		if ( smartBaseline && minValue > 0 ) {
+			const range = maxValue - minValue;
+			// Two padding strategies:
+			// 1. Range-based: padding = range, so data occupies ~50% of chart
+			// 2. Max 20% of min value to avoid excessive empty space
+			// Use the smaller of the two.
+			const rangePadding = range;
+			const maxPadding = minValue * 0.2;
+			const padding = Math.min( rangePadding, maxPadding );
+			const baseline = Math.max( 0, Math.floor( minValue - padding ) );
+
+			return [ baseline, maxValue ] as [ number, number ];
+		}
+		return undefined;
+	}, [ fixedDomain, smartBaseline, minValue, maxValue ] );
 
 	const yScaleType = useMemo( () => {
 		if ( chartData.length <= 1 ) {
@@ -173,14 +195,11 @@ function StatsLineChart( {
 		( { datum }: EventHandlerParams< DataPointDate > ) => {
 			// datum.date is always in the timezone of the browser, we need to use literal date here.
 			if ( datum && datum.date ) {
-				onClick &&
-					onClick( {
-						data: {
-							period: `${ datum.date.getFullYear() }-${
-								datum.date.getMonth() + 1
-							}-${ datum.date.getDate() }`,
-						},
-					} );
+				onClick?.( {
+					data: {
+						period: formatDatumPeriod( datum.date ),
+					},
+				} );
 			}
 		},
 		[ onClick ]
@@ -206,8 +225,8 @@ function StatsLineChart( {
 					options={ {
 						yScale: {
 							type: yScaleType,
-							...( fixedDomain && { domain: [ 0, maxValue ] } ),
-							zero: zeroBaseline,
+							...( yScaleDomain && { domain: yScaleDomain } ),
+							zero: ! smartBaseline && zeroBaseline,
 						},
 						axis: {
 							x: {

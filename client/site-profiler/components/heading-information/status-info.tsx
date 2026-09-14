@@ -64,7 +64,6 @@ export default function StatusInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-domain':
-		case 'transfer-google-domain':
 			return (
 				<p>
 					{ translate(
@@ -89,7 +88,6 @@ export default function StatusInfo( props: Props ) {
 			);
 
 		case 'transfer-domain-hosting':
-		case 'transfer-google-domain-hosting':
 			return (
 				<p>
 					{ translate(
@@ -102,7 +100,6 @@ export default function StatusInfo( props: Props ) {
 			);
 		case 'transfer-hosting-wp':
 		case 'transfer-domain-hosting-wp':
-		case 'transfer-google-domain-hosting-wp':
 			return (
 				<p>
 					{ translate(

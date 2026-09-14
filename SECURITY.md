@@ -14,7 +14,7 @@ Only the latest version of WordPress desktop is supported. To receive security u
 
 ## Reporting a Vulnerability
 
-[Calypso](https://developer.wordpress.com/calypso/) is an open-source wp-admin replacement. Our HackerOne program covers the software.
+Calypso is an open-source wp-admin replacement. Our HackerOne program covers the software.
 
 <!--eslint ignore no-emphasis-as-heading-->
 

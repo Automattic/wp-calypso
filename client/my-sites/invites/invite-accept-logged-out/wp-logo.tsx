@@ -1,12 +1,14 @@
 import React from 'react';
-import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface WpLoggedOutInviteLogoProps {
-	ciabConfig?: CiabPartnerConfig | null;
+	partnerConfig?: PartnerConfig | null;
 }
 
-export const WpLoggedOutInviteLogo: React.FC< WpLoggedOutInviteLogoProps > = ( { ciabConfig } ) => {
-	const logo = ciabConfig?.logo;
+export const WpLoggedOutInviteLogo: React.FC< WpLoggedOutInviteLogoProps > = ( {
+	partnerConfig,
+} ) => {
+	const logo = partnerConfig?.logo;
 
 	if ( logo?.src ) {
 		return (

@@ -1,4 +1,4 @@
-import { Spinner } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 
 import './placeholder.scss';
@@ -20,7 +20,7 @@ const StatsModulePlaceholder: React.FC< StatsModulePlaceholderProps > = ( {
 
 	return (
 		<div className={ classes }>
-			<Spinner baseClassName="calypso-spinner" />
+			<Spinner />
 		</div>
 	);
 };

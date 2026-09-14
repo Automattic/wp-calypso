@@ -1,3 +1,4 @@
+import { receiptQuery } from '@automattic/api-queries';
 import {
 	domainProductSlugs,
 	isCredits,
@@ -19,9 +20,10 @@ import {
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { css, Global } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, ComponentProps, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -76,6 +78,7 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { logStashEvent } from '../src/lib/analytics';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
@@ -85,6 +88,7 @@ import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
+import StudioHandoff from './studio-handoff';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -119,6 +123,7 @@ export interface CheckoutThankYouProps {
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
+	checkoutType?: string;
 }
 
 export interface CheckoutThankYouConnectedProps {
@@ -248,7 +253,9 @@ export class CheckoutThankYou extends Component<
 				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
 
 				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
-				window.fbq && window.fbq( ...params );
+				if ( window.fbq ) {
+					window.fbq( ...params );
+				}
 			}
 
 			// Custom conversion for Twitter Ads.
@@ -632,7 +639,11 @@ export class CheckoutThankYou extends Component<
 						/>
 					</>
 				);
-			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+			} else if (
+				this.props.receipt.data &&
+				isOnlyDomainPurchases( purchases ) &&
+				this.props.domainOnlySiteFlow
+			) {
 				if ( domainPurchases.length > 1 ) {
 					const domainsUrl = this.props.hasDashboardOptIn
 						? dashboardLink( '/domains' )
@@ -655,6 +666,7 @@ export class CheckoutThankYou extends Component<
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
 						transferComplete={ this.props.transferComplete }
+						checkoutType={ this.props.checkoutType }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
@@ -693,6 +705,8 @@ export class CheckoutThankYou extends Component<
 						{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 
 						{ this.getMasterBar() }
+
+						<StudioHandoff siteId={ siteId } receiptId={ this.props.receiptId } />
 
 						{ pageContent }
 					</Main>
@@ -772,11 +786,11 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
 }
 
-export default connect(
+const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
-		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
+		const sitePlugins = getInstalledPlugins( state, [ siteId ], undefined );
 		const receipt = getReceiptById( state, props.receiptId );
 
 		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {
@@ -829,3 +843,42 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
+
+function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
+	const {
+		data: receipt,
+		isLoading,
+		isError,
+		error,
+	} = useQuery( {
+		...receiptQuery( props.receiptId ),
+		enabled: !! props.receiptId,
+	} );
+
+	useEffect( () => {
+		if ( isError && error ) {
+			logStashEvent(
+				'checkout thank you receipt fetch error',
+				{
+					type: 'checkout_thank_you_receipt',
+					message: ( error as Error )?.message ?? String( error ),
+					tags: [ 'checkout-thank-you' ],
+				},
+				'warning'
+			);
+		}
+	}, [ isError, error ] );
+
+	if ( isLoading ) {
+		return <Loading />;
+	}
+
+	return (
+		<ConnectedCheckoutThankYou
+			{ ...props }
+			checkoutType={ receipt?.checkout_type ?? props.checkoutType }
+		/>
+	);
+}
+
+export default CheckoutThankYouWithReceipt;

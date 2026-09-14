@@ -15,12 +15,12 @@ const DomainEligibilityWarning = ( {
 		<InfoLabel label={ __( 'New' ) }>{ stagingDomain }</InfoLabel>
 		<p>
 			{ sprintf(
-				/* translators: %s: The wordpress domain (ex.: myawesomeblog.wordpress.com) */
+				/* translators: %1$s is the current wordpress.com subdomain (e.g. myawesomeblog.wordpress.com), %2$s is the new staging subdomain that traffic will be redirected to. */
 				__(
 					'By installing this product your subdomain will change. Your old subdomain (%1$s) will redirect to your new subdomain (%2$s). You can change it to a custom domain at anytime in the future.'
 				),
-				wpcomDomain,
-				stagingDomain
+				wpcomDomain ?? '',
+				stagingDomain ?? ''
 			) }
 		</p>
 	</Card>

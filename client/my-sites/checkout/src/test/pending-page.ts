@@ -200,6 +200,36 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/home' } );
 	} );
 
+	it( 'returns the thank-you page when the redirect is a bare root', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/',
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/12345' } );
+	} );
+
+	it( 'returns the thank-you page when the bare root carries a query or hash', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: '/?checkout_type=unified',
+				receiptId: 12345,
+				siteSlug: 'example.com',
+			} )
+		).toEqual( { url: '/checkout/thank-you/example.com/12345?checkout_type=unified' } );
+
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: '/#section',
+				receiptId: 12345,
+				siteSlug: 'example.com',
+			} )
+		).toEqual( { url: '/checkout/thank-you/example.com/12345#section' } );
+	} );
+
 	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
@@ -207,6 +237,19 @@ describe( 'getRedirectFromPendingPage', () => {
 			receiptId: 12345,
 		} );
 		expect( actual ).toEqual( { url: '/home/12345' } );
+	} );
+
+	it( 'preserves Studio query args while interpolating the receipt id', () => {
+		const studioSiteId = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: `/checkout/thank-you/example.com/:receiptId?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( {
+			url: `/checkout/thank-you/example.com/12345?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+		} );
 	} );
 
 	it( 'returns a simple absolute url if it is allowed and there is also a receipt', () => {
@@ -328,6 +371,67 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
+	} );
+
+	it( 'returns a purchase-id interpolated url if the transaction is successful and a purchaseId is provided', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			siteSlug: 'example.com',
+			purchaseId: 9876,
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://wordpress.com/me/billing/purchases/9876?upgraded=true',
+		} );
+	} );
+
+	it( 'falls back to the default thank-you URL if the URL needs a purchaseId but none is resolved', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
+	} );
+
+	it( 'interpolates both receiptId and purchaseId when both placeholders are present', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/done/:receiptId/:purchaseId',
+			siteSlug: 'example.com',
+			purchaseId: 9876,
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: 'https://wordpress.com/done/1234/9876' } );
+	} );
+
+	it( 'interpolates a purchaseId on the receipt-only path (no transaction)', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://wordpress.com/me/billing/purchases/:purchaseId?upgraded=true',
+			receiptId: 12345,
+			purchaseId: 9876,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://wordpress.com/me/billing/purchases/9876?upgraded=true',
+		} );
 	} );
 
 	it( 'returns a saas redirect url if saas redirect url is not empty', () => {
@@ -468,5 +572,40 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toBeUndefined();
+	} );
+
+	it( 'returns a url with preserved query params if there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/67890?checkout_type=unified',
+			receiptId: 67890,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/12345/67890?checkout_type=unified' } );
+	} );
+
+	it( 'returns a url with preserved query params if the transaction is successful', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/:receiptId?checkout_type=unified',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 67890,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/12345/67890?checkout_type=unified' } );
+	} );
+
+	it( 'returns a url with multiple preserved query params if there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/67890?checkout_type=unified&source=paid-media',
+			receiptId: 67890,
+		} );
+		expect( actual ).toEqual( {
+			url: '/checkout/thank-you/12345/67890?checkout_type=unified&source=paid-media',
+		} );
 	} );
 } );

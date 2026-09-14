@@ -1,7 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -44,6 +44,7 @@ export function redirectToSiteOverview( context: PageJSContext ) {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'site-overview' );
 			window.location.replace( dashboardLink( path ) );
 			return;
 		}
@@ -65,10 +66,6 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	if ( isMigrationInProgress( site ) || sshMigration ) {
 		// Temporarily show the v1 site migration overview page.
 		// @todo implement the page in v2.
-		return overview( context, next );
-	}
-
-	if ( ! isEnabled( 'dashboard/v2/backport/site-overview' ) ) {
 		return overview( context, next );
 	}
 

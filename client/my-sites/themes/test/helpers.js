@@ -1,4 +1,17 @@
-import { interlaceThemes } from 'calypso/my-sites/themes/helpers';
+import { interlaceThemes, shouldEnableThemesColorScheme } from 'calypso/my-sites/themes/helpers';
+
+jest.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordEvent: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/components/theme-tier/constants', () => ( {
+	THEME_TIERS: {
+		free: {},
+		premium: {},
+		business: {},
+		community: {},
+	},
+} ) );
 
 describe( 'helpers', () => {
 	describe( 'interlaceThemes', () => {
@@ -51,6 +64,48 @@ describe( 'helpers', () => {
 			);
 			expect( interlacedThemes[ 2 ].id ).toEqual( 'wporg-classic-theme' );
 			expect( interlacedThemes[ 3 ].id ).toEqual( 'wporg-block-theme' );
+		} );
+	} );
+
+	describe( 'shouldEnableThemesColorScheme', () => {
+		test( 'enables the themes color scheme for opted-in logged-in users on legacy non-site routes', () => {
+			expect(
+				shouldEnableThemesColorScheme( {
+					isSiteRoute: false,
+					isLoggedIn: true,
+					dashboardOptIn: true,
+				} )
+			).toBe( true );
+		} );
+
+		test( 'does not enable the themes color scheme for users who are not opted into dashboard', () => {
+			expect(
+				shouldEnableThemesColorScheme( {
+					isSiteRoute: false,
+					isLoggedIn: true,
+					dashboardOptIn: false,
+				} )
+			).toBe( false );
+		} );
+
+		test( 'does not enable the themes color scheme for logged-out users', () => {
+			expect(
+				shouldEnableThemesColorScheme( {
+					isSiteRoute: false,
+					isLoggedIn: false,
+					dashboardOptIn: true,
+				} )
+			).toBe( false );
+		} );
+
+		test( 'does not enable the themes color scheme on site routes', () => {
+			expect(
+				shouldEnableThemesColorScheme( {
+					isSiteRoute: true,
+					isLoggedIn: true,
+					dashboardOptIn: true,
+				} )
+			).toBe( false );
 		} );
 	} );
 } );

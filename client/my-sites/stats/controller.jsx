@@ -1,22 +1,44 @@
 import page from '@automattic/calypso-router';
+import { pick } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
 import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import { getSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSite, isSimpleSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { postEmailStatsAvailabilityQueryOptions } from './hooks/use-post-email-stats-availability-query';
 import { rangeOfPeriod, getSiteFilters } from './pages/shared/helpers';
 import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
-import { appendQueryStringForRedirection } from './utils';
+import { appendQueryStringForRedirection, normalizeChartDateParam } from './utils';
+
+const loadOverview = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview' );
+const loadSummary = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-summary" */ './summary' );
+const loadStatsPostDetail = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
+	);
+const loadStatsVideoDetail = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-video-detail" */ './stats-video-detail'
+	);
+const loadCommentFollows = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-comment-follows" */ './comment-follows'
+	);
+const loadWordads = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-wordads" */ './wordads' );
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -131,7 +153,7 @@ export function overview( context, next ) {
 
 	window.scrollTo( 0, 0 );
 
-	const activeFilter = find( filters(), ( filter ) => {
+	const activeFilter = filters().find( ( filter ) => {
 		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
@@ -148,7 +170,7 @@ export function overview( context, next ) {
 		siteId !== null ? (
 			<StatsPageLoader>
 				<AsyncLoad
-					require="calypso/my-sites/stats/overview"
+					require={ loadOverview }
 					placeholder={ PageLoading }
 					period={ activeFilter.period }
 					path={ context.pathname }
@@ -156,7 +178,7 @@ export function overview( context, next ) {
 			</StatsPageLoader>
 		) : (
 			<AsyncLoad
-				require="calypso/my-sites/stats/overview"
+				require={ loadOverview }
 				placeholder={ PageLoading }
 				period={ activeFilter.period }
 				path={ context.pathname }
@@ -172,6 +194,18 @@ export function site( context, next ) {
 		store,
 	} = context;
 
+	// Normalize chartStart/chartEnd once, here at the route boundary, so every
+	// downstream consumer of context.query (StatsSite and its children, plus
+	// redirects that forward context.query as-is) only ever sees a canonical
+	// YYYY-MM-DD string instead of whatever a hand-edited or old-format URL
+	// (e.g. an unpadded '2026-7-28') supplied.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
 
@@ -179,7 +213,7 @@ export function site( context, next ) {
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -231,10 +265,56 @@ export function redirectToDaySummary( context ) {
 	page.redirect( url );
 }
 
+// Resolve the summary page's date/date-range from the query string.
+// The modern `chartStart`/`chartEnd` pair (matching the Traffic page contract) takes precedence
+// when both are valid `YYYY-MM-DD` dates with `chartStart <= chartEnd`. Otherwise we fall back to
+// the legacy `startDate`/`endDate` params so existing links keep working.
+export function getSummaryDateRangeFromQuery( queryOptions, momentSiteZone, period ) {
+	const parseChartDate = ( value ) =>
+		value && moment( value, 'YYYY-MM-DD', true ).isValid()
+			? momentSiteZone( value ).locale( 'en' )
+			: null;
+
+	const chartStart = parseChartDate( queryOptions.chartStart );
+	const chartEnd = parseChartDate( queryOptions.chartEnd );
+
+	if ( chartStart && chartEnd && ! chartEnd.isBefore( chartStart ) ) {
+		return { date: chartStart, dateRange: { startDate: chartStart, endDate: chartEnd } };
+	}
+
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+	const date = isValidStartDate
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: momentSiteZone().endOf( period ).locale( 'en' );
+
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
+	return { date, dateRange };
+}
+
 export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
 	const queryOptions = context.query;
+
+	// See the matching comment in site() above: normalize chartStart/chartEnd
+	// once, here at the route boundary, before getSummaryDateRangeFromQuery's
+	// strict YYYY-MM-DD parsing ever sees them. An unpadded value otherwise
+	// fails that strict check, silently discarding the whole chartStart/
+	// chartEnd pair and falling back to the default range.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const contextModule = context.params.module;
 	const filters = [
 		{
@@ -266,7 +346,7 @@ export function summary( context, next ) {
 	const selectedSite = getSite( context.store.getState(), siteId );
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -280,22 +360,28 @@ export function summary( context, next ) {
 	}
 
 	const momentSiteZone = getMomentSiteZone( context.store.getState(), siteId );
-	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
-	const date = isValidStartDate
-		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
-		: momentSiteZone().endOf( activeFilter.period ).locale( 'en' );
+	const { date, dateRange } = getSummaryDateRangeFromQuery(
+		queryOptions,
+		momentSiteZone,
+		activeFilter.period
+	);
 	const period = rangeOfPeriod( activeFilter.period, date );
 
-	// Support for custom date ranges.
-	// Evaluate the endDate param if provided and create a date range object if valid.
-	// Valid means endDate is a valid date and is not before the startDate.
-	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
-	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
-	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
-	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
-
-	const extraProps =
-		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
+	// Video details has its own dedicated page, modeled on the single post page.
+	if ( context.params.module === 'videodetails' ) {
+		context.primary = (
+			<StatsPageLoader>
+				<AsyncLoad
+					require={ loadStatsVideoDetail }
+					placeholder={ PageLoading }
+					postId={ parseInt( queryOptions.post, 10 ) }
+					period={ period }
+					context={ context }
+				/>
+			</StatsPageLoader>
+		);
+		return next();
+	}
 
 	// The option is used for stats queries only.
 	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'viewType' ] );
@@ -307,7 +393,7 @@ export function summary( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/summary"
+				require={ loadSummary }
 				placeholder={ PageLoading }
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
@@ -315,7 +401,6 @@ export function summary( context, next ) {
 				dateRange={ dateRange }
 				context={ context }
 				period={ period }
-				{ ...extraProps }
 			/>
 		</StatsPageLoader>
 	);
@@ -334,10 +419,30 @@ export function post( context, next ) {
 		return next();
 	}
 
+	// Resolve email tab availability in parallel with the chunk download, so the
+	// tab strip doesn't pop in after the page renders.
+	const state = context.store.getState();
+	const { supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	// Module state is often not loaded yet at route time (QueryJetpackModules runs
+	// after mount, and /me/sites does not carry active_modules), so only a definite
+	// "inactive" skips the warm-up; the page's own `enabled` check stays strict.
+	// The module store is read directly first: the fallback variant discards a
+	// definite `false` and can fall through to an unknown site option.
+	const subscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
+	const canHaveEmailStats =
+		!! supportsEmailStats &&
+		( isSimpleSite( state, siteId ) ||
+			( subscriptionsModuleActive !== null
+				? subscriptionsModuleActive
+				: isJetpackModuleActive( state, siteId, 'subscriptions', true ) !== false ) );
+	if ( canHaveEmailStats && postId > 0 ) {
+		context.queryClient.prefetchQuery( postEmailStatsAvailabilityQueryOptions( siteId, postId ) );
+	}
+
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/stats-post-detail"
+				require={ loadStatsPostDetail }
 				placeholder={ PageLoading }
 				path={ context.path }
 				postId={ postId }
@@ -375,7 +480,7 @@ export function follows( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/comment-follows"
+				require={ loadCommentFollows }
 				placeholder={ PageLoading }
 				path={ context.path }
 				page={ pageNum }
@@ -397,7 +502,7 @@ export function wordAds( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const filters = getWordAdsFilters( siteId );
 
-	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
+	const activeFilter = filters.find( ( filter ) => context.params.period === filter.period );
 
 	if ( ! activeFilter ) {
 		return next();
@@ -421,7 +526,7 @@ export function wordAds( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/wordads"
+			require={ loadWordads }
 			placeholder={ PageLoading }
 			path={ context.pathname }
 			date={ date }
@@ -445,7 +550,7 @@ export function emailStats( context, next ) {
 
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
@@ -496,7 +601,7 @@ export function emailSummary( context, next ) {
 	}
 
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )

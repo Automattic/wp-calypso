@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/site-settings/init';
 
 /**
@@ -9,6 +7,6 @@ import 'calypso/state/site-settings/init';
  * @returns {?number} site UTC offset
  */
 export default function getSiteGmtOffset( state, siteId ) {
-	const gmt = get( state.siteSettings.items, [ siteId, 'gmt_offset' ], null );
+	const gmt = state.siteSettings.items?.[ siteId ]?.gmt_offset ?? null;
 	return gmt ? Number( gmt ) : gmt;
 }

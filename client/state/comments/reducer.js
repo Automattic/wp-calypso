@@ -1,16 +1,6 @@
+import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	filter,
-	orderBy,
-	has,
-	map,
-	reject,
-	isEqual,
-	get,
-	includes,
-	omit,
-	startsWith,
-} from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -45,16 +35,16 @@ const unionById = ( a = [], b = [] ) => [
 ];
 
 const isCommentManagementEdit = ( newProperties ) =>
-	has( newProperties, 'commentContent' ) &&
-	has( newProperties, 'authorDisplayName' ) &&
-	has( newProperties, 'authorUrl' );
+	Object.hasOwn( newProperties, 'commentContent' ) &&
+	Object.hasOwn( newProperties, 'authorDisplayName' ) &&
+	Object.hasOwn( newProperties, 'authorUrl' );
 
 const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
 	const updateLikeCount =
-		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
+		Object.hasOwn( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -105,19 +95,19 @@ export function items( state = {}, action ) {
 			const { status } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map( updateComment( commentId, { status } ) ),
 			};
 		}
 		case COMMENTS_EDIT: {
 			const { comment } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map( updateComment( commentId, comment ) ),
 			};
 		}
 		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -131,21 +121,19 @@ export function items( state = {}, action ) {
 		case COMMENTS_DELETE:
 			return {
 				...state,
-				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } ),
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).filter( ( comment ) => comment.ID !== commentId ),
 			};
 		case COMMENTS_LIKE:
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
@@ -154,8 +142,7 @@ export function items( state = {}, action ) {
 			const { error, errorType } = action;
 			return {
 				...state,
-				[ stateKey ]: map(
-					state[ stateKey ],
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).map(
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
@@ -202,7 +189,7 @@ export function pendingItems( state = {}, action ) {
 
 	switch ( type ) {
 		case COMMENTS_UPDATES_RECEIVE: {
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -215,12 +202,11 @@ export function pendingItems( state = {}, action ) {
 		}
 
 		case COMMENTS_RECEIVE: {
-			const receivedCommentIds = map( action.comments, 'ID' );
+			const receivedCommentIds = action.comments.map( ( comment ) => comment?.ID );
 			return {
 				...state,
-				[ stateKey ]: filter(
-					state[ stateKey ],
-					( _comment ) => ! includes( receivedCommentIds, _comment.ID )
+				[ stateKey ]: ( state[ stateKey ] ?? [] ).filter(
+					( _comment ) => ! receivedCommentIds.includes( _comment.ID )
 				),
 			};
 		}
@@ -242,7 +228,7 @@ const isValidExpansionsAction = ( action ) => {
 		siteId &&
 		postId &&
 		Array.isArray( commentIds ) &&
-		includes( Object.values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+		Object.values( POST_COMMENT_DISPLAY_TYPES ).includes( displayType )
 	);
 };
 
@@ -274,7 +260,7 @@ export const expansions = ( state = {}, action ) => {
 			const newVal = Object.fromEntries(
 				commentIds.map( ( id ) => {
 					if (
-						! has( currentExpansions, id ) ||
+						! Object.hasOwn( currentExpansions, id ) ||
 						expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
 					) {
 						return [ id, displayType ];
@@ -324,7 +310,7 @@ export const fetchStatus = ( state = {}, action ) => {
 				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
 
 			const nextState = {
-				...get( state, stateKey, fetchStatusInitialState ),
+				...( state?.[ stateKey ] ?? fetchStatusInitialState ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
 				[ hasReceivedDirection ]: true,
 			};
@@ -461,7 +447,7 @@ export const counts = ( state = {}, action ) => {
 		}
 		case COMMENTS_CHANGE_STATUS: {
 			const { siteId, postId = -1, status } = action;
-			const previousStatus = get( action, 'meta.comment.previousStatus' );
+			const previousStatus = action?.meta?.comment?.previousStatus;
 			if ( ! siteId || ! status || ! state[ siteId ] || ! previousStatus ) {
 				return state;
 			}
@@ -482,10 +468,10 @@ export const counts = ( state = {}, action ) => {
 		}
 		case COMMENTS_DELETE: {
 			const { siteId, postId = -1, commentId } = action;
-			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
+			if ( commentId && String( commentId ).startsWith( 'placeholder' ) ) {
 				return state;
 			}
-			const previousStatus = get( action, 'meta.comment.previousStatus' );
+			const previousStatus = action?.meta?.comment?.previousStatus;
 
 			if ( ! siteId || ! state[ siteId ] || ! previousStatus ) {
 				return state;
@@ -504,7 +490,7 @@ export const counts = ( state = {}, action ) => {
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		}
 		case COMMENTS_RECEIVE: {
-			if ( get( action, 'meta.comment.context' ) !== 'add' ) {
+			if ( action?.meta?.comment?.context !== 'add' ) {
 				return state;
 			}
 			const { siteId, postId = -1 } = action;
@@ -512,7 +498,7 @@ export const counts = ( state = {}, action ) => {
 				return state;
 			}
 			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
-			const status = get( action, [ 'comments', 0, 'status' ] );
+			const status = action?.comments?.[ 0 ]?.status;
 
 			const newSiteCounts = updateCount( siteCounts, status, 1 );
 			const newPostCounts = updateCount( postCounts, status, 1 );

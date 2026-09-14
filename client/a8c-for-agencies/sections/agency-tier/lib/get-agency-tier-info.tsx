@@ -161,7 +161,7 @@ const getAgencyTierInfo = (
 							"Advanced sales training sessions at request to sharpen your team's expertise."
 						),
 						translate( "Access to pre-qualified leads provided by Automattic's sales teams." ),
-						translate( 'Co-marketing opportunities.' ),
+						translate( 'Co-Marketing opportunities.' ),
 						translate( 'Access to the Automattic for Agencies advisory board.' ),
 					],
 					video:
@@ -207,7 +207,7 @@ const getAgencyTierInfo = (
 							'Invitation-only access to executive leadership sessions and strategic advisory boards.'
 						),
 						translate(
-							'Largest revenue share, marketing development funds, and co-branded campaign opportunities.'
+							'Largest Revenue Share, marketing development funds, and co-branded campaign opportunities.'
 						),
 						translate( 'Priority distribution of enterprise sales leads and referrals.' ),
 						translate(

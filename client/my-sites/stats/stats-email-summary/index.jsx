@@ -1,16 +1,18 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { useMemo, useLayoutEffect } from 'react';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
-import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import {
+	useStatsBreadcrumbTrail,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import { isRateKnown, toCount } from '../features/modules/stats-emails/is-rate-known';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -21,9 +23,12 @@ import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
+import '../features/modules/stats-emails/style.scss';
 
-// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
-const StatsEmailSummary = ( { period, query, context } ) => {
+// Inner component that records the current screen before the wrapper reads breadcrumb trail.
+// useLayoutEffect fires before the parent wrapper's useEffect in useStatsBreadcrumbTrail,
+// ensuring the navigation history is updated before the breadcrumb trail is read.
+const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) => {
 	const StatsStrings = useStatsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -61,22 +66,12 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	}, [ translate, siteSlug ] );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		recordCurrentScreen( 'emailsummary', {
 			queryParams: context.query,
 			period: period.period,
 		} );
 	}, [ context.query, period.period ] );
-
-	const backLinkProps = {
-		text: navigationItems[ 0 ].label,
-		url: navigationItems[ 0 ].href,
-	};
-	const titleProps = {
-		title: navigationItems[ 1 ].label,
-		// Remove the default logo for Odyssey stats.
-		titleLogo: null,
-	};
 
 	const downloadCsvElement = shouldGateCsvDownloads ? (
 		<DownloadCsvUpsell siteId={ siteId } borderless />
@@ -86,6 +81,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 			path="emails"
 			query={ query }
 			period={ period }
+			includeDates={ false }
 			headers={ [ 'title', 'opens_rate', 'unique_clicks', 'link' ] }
 			rowModifierFn={ ( row, data ) => {
 				if ( ! Array.isArray( row ) || row.length === 0 ) {
@@ -99,18 +95,16 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 	);
 
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			breadcrumbs={ [
+				...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+				{ label: navigationItems[ 1 ].label },
+			] }
+			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }
+		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
-				<PageHeader
-					className="stats__section-header modernized-header"
-					titleProps={ titleProps }
-					backLinkProps={ backLinkProps }
-					rightSection={
-						<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
-					}
-				/>
-
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					<div className="stats-summary-nav">
 						<div className="stats-summary-nav__header">
@@ -127,26 +121,37 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 							header: (
 								<>
 									<span>{ translate( 'Opens' ) }</span>
+									<span>{ translate( 'Open rate' ) }</span>
+									<span>{ translate( 'Clicks' ) }</span>
 								</>
 							),
 							body: ( item ) => {
-								const opensUnique = parseInt( item.unique_opens, 10 );
-								const opens = parseInt( item.opens, 10 );
-								const hasUniquesData = opensUnique > 0 || opens === 0;
+								const opens = toCount( item.opens );
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_opens ),
+									totals: opens,
+									sends: toCount( item.total_sends ),
+								} );
 								return (
-									<TooltipWrapper
-										value={
-											hasUniquesData
-												? `${ formatNumber( item.opens_rate, {
-														numberFormatOptions: {
-															maximumFractionDigits: 2,
-														},
-												  } ) }%`
-												: '—'
-										}
-										item={ item }
-										TooltipContent={ OpensTooltipContent }
-									/>
+									<>
+										<span>{ formatNumber( opens ) }</span>
+										<span>
+											<TooltipWrapper
+												value={
+													rateKnown
+														? `${ formatNumber( item.opens_rate ?? 0, {
+																numberFormatOptions: {
+																	maximumFractionDigits: 2,
+																},
+														  } ) }%`
+														: '—'
+												}
+												item={ item }
+												TooltipContent={ OpensTooltipContent }
+											/>
+										</span>
+										<span>{ formatNumber( toCount( item.clicks ) ) }</span>
+									</>
 								);
 							},
 						} }
@@ -157,18 +162,20 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 						statType="statsEmailsSummary"
 						mainItemLabel={ translate( 'Latest Emails' ) }
 						hideSummaryLink
-						metricLabel={ translate( 'Clicks' ) }
+						metricLabel={ translate( 'Click rate' ) }
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
-								const clicksUnique = parseInt( item.unique_clicks, 10 );
-								const clicks = parseInt( item.clicks, 10 );
-								const hasUniquesData = clicksUnique > 0 || clicks === 0;
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_clicks ),
+									totals: toCount( item.clicks ),
+									sends: toCount( item.total_sends ),
+								} );
 								return (
 									<TooltipWrapper
 										value={
-											hasUniquesData
-												? `${ formatNumber( item.clicks_rate, {
+											rateKnown
+												? `${ formatNumber( item.clicks_rate ?? 0, {
 														numberFormatOptions: {
 															maximumFractionDigits: 2,
 														},
@@ -183,12 +190,19 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 							return <span>{ value }</span>;
 						} }
 						listItemClassName="stats__summary--narrow-mobile"
+						className="stats-emails--four-columns"
 					/>
-					<JetpackColophon />
 				</div>
 			</div>
 		</Main>
 	);
+};
+
+// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
+const StatsEmailSummary = ( props ) => {
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
+
+	return <StatsEmailSummaryInner { ...props } breadcrumbTrail={ breadcrumbTrail } />;
 };
 
 export default StatsEmailSummary;

@@ -25,14 +25,17 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isWpComPlan,
 	planHasFeature,
 	getPlanClass,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
+import useTitleBadges from './use-title-badges';
 import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -174,7 +177,8 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+		case 'plans-ai-assembler-paid-only':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-new-hosted-site-business-only':
 			planTypes = [ TYPE_BUSINESS ];
@@ -219,6 +223,15 @@ export const usePlanTypesWithIntent = ( {
 			}
 			break;
 		}
+		case 'plans-upgrade-or-downgrade': {
+			// Show all plans — used when the current plan is expired and the user
+			// may want to downgrade as well as upgrade.
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			if ( isEnterpriseAvailable ) {
+				planTypes.push( TYPE_ENTERPRISE_GRID_WPCOM );
+			}
+			break;
+		}
 		case 'plans-jetpack-app':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -249,6 +262,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-business-trial':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-student':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
@@ -259,7 +275,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-playground':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-playground-premium':
 			// This plan intent is currently not utilized but will be soon
@@ -273,6 +289,11 @@ export const usePlanTypesWithIntent = ( {
 			break;
 		case 'plans-woo-hosted':
 			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
+			break;
+		// Used by the woo-hosting-solutions-flow ref: only show plans that support
+		// post-checkout WooCommerce auto-install.
+		case 'plans-woo-hosting-solutions':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
@@ -307,10 +328,15 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	isExperimentVariant,
+	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
+	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
+	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
@@ -356,7 +382,12 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
-		isExperimentVariant,
+	} );
+
+	const titleBadges = useTitleBadges( {
+		intent,
+		planSlugs: planSlugsForIntent,
+		titleBadgeOverrides,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
@@ -367,6 +398,7 @@ const useGridPlans: UseGridPlansType = ( {
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		reflectStorageSelectionInPlanPrices,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
 	// Null return would indicate that we are still loading the data. No grid without grid plans.
@@ -387,18 +419,141 @@ const useGridPlans: UseGridPlansType = ( {
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
+		let hasIntentSpecificTagline = false;
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
+		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			hasIntentSpecificTagline = true;
+			if ( isPersonalPlan( planSlug ) ) {
+				tagline = translate(
+					'Try out a store idea with low commitment. Custom domain and basic tools.'
+				);
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline = translate(
+					'A solid foundation for new stores. More design options and faster support when you need help.'
+				);
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline = translate(
+					'Built for real stores. 24/7 priority support, advanced features, and the performance your customers expect.'
+				);
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline = translate(
+					'For serious stores. Priority support, advanced extensions, and premium store themes.'
+				);
+			} else {
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				hasIntentSpecificTagline = false;
+			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
 
-		const productNameShort =
-			isWpcomEnterpriseGridPlan( planSlug ) && planConstantObj.getPathSlug
-				? planConstantObj.getPathSlug()
-				: planObject?.productNameShort ?? null;
+		/*
+		 * The focused copy is written for the standard WordPress.com plans, so it only replaces a
+		 * tagline that is not already specific to this surface: an intent that supplies its own
+		 * (newsletter, blog onboarding, Woo hosting solutions), or a plan outside the wpcom group
+		 * that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but GROUP_P2, is the live case.
+		 */
+		if ( useFocusedNewCopyTaglines && ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Start your WordPress journey.' )
+						? translate( 'Start your WordPress journey.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Build your presence with a site you can customize.' )
+						? translate( 'Build your presence with a site you can customize.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Accept payments on your site and reach more people.' )
+						? translate( 'Accept payments on your site and reach more people.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Grow your business with powerful tools and priority support.' )
+						? translate( 'Grow your business with powerful tools and priority support.' )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Run an online store and keep more of what you earn.' )
+						? translate( 'Run an online store and keep more of what you earn.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
+		}
+
+		if ( usePlansGridRedesignNewDescription ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For exploring WordPress.' )
+						? translate( 'For exploring WordPress.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For making a personal site or blog truly yours.' )
+						? translate( 'For making a personal site or blog truly yours.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For creators and professionals building a credible presence.' )
+						? translate( 'For creators and professionals building a credible presence.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation(
+						'For businesses and developers who need powerful tools and priority support.'
+					)
+						? translate(
+								'For businesses and developers who need powerful tools and priority support.'
+						  )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For merchants growing an online store.' )
+						? translate( 'For merchants growing an online store.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
+		}
+
+		// Per-flow tagline override wins over the computed/experiment copy above.
+		if ( taglineOverrides?.[ planSlug ] ) {
+			tagline = taglineOverrides[ planSlug ];
+		}
+
+		// The enterprise plan isn't returned by the plans endpoint, so it has no
+		// server-provided product name; fall back to its fixed path slug.
+		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
+			? 'enterprise'
+			: planObject?.productNameShort ?? null;
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =
@@ -432,6 +587,7 @@ const useGridPlans: UseGridPlansType = ( {
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
+			titleBadge: titleBadges[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
 		};
 	} );

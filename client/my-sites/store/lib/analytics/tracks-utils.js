@@ -1,8 +1,7 @@
-import { startsWith } from 'lodash';
 import { bumpStat } from 'calypso/state/analytics/actions';
 
 export const recordTrack = ( tracks, debug ) => ( eventName, eventProperties ) => {
-	if ( ! startsWith( eventName, 'calypso_woocommerce_' ) ) {
+	if ( ! ( eventName ?? '' ).startsWith( 'calypso_woocommerce_' ) ) {
 		debug( `invalid store track name: '${ eventName }', must start with 'calypso_woocommerce_'` );
 		return;
 	}

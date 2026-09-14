@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -52,7 +51,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 				locale: this.props.locale,
 				action: 'lostpassword', // TODO add jetpack/lostpassword
 				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-				from: get( this.props.currentQuery, 'from' ),
+				from: this.props.currentQuery?.from,
 			} )
 		);
 	};
@@ -76,7 +75,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 				<OneLoginFooter>
 					<p className="one-login__footer-text">
 						{ translate(
-							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
+							"Didn't get the email? You might want to double check if the email address is associated with your account, {{a}}or reset your password.{{/a}}",
 							{
 								components: {
 									a: (

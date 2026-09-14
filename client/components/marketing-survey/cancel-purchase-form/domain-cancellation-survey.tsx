@@ -6,12 +6,13 @@ import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getName } from 'calypso/lib/purchases';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { getName } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import enrichedSurveyData from './enriched-survey-data';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 /**
  * Style dependencies
@@ -23,9 +24,15 @@ interface Props {
 	purchase: Purchase;
 	purchaseListUrl: string;
 	isVisible: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	onClose: () => void;
 	onSurveyComplete: () => void;
 	cancellationInProgress?: boolean;
+	/**
+	 * True once the cancel mutation has already fired at confirm-time, so this
+	 * survey is an optional questionnaire rather than the destructive step.
+	 */
+	cancellationCompleted?: boolean;
 }
 
 interface DomainCancellationReason {
@@ -41,10 +48,12 @@ interface DomainCancellationReason {
 const DomainCancellationSurvey: React.FC< Props > = ( {
 	isVisible = false,
 	purchase,
+	intent,
 	...props
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const [ selectedReason, setSelectedReason ] = useState< string >( '' );
 	const [ message, setMessage ] = useState< string >( '' );
 
@@ -98,7 +107,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	const handleCloseDialog = () => {
 		props.onClose();
 		recordTracksEvent( 'calypso_domain_cancel_survey_close', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 		} );
 	};
 
@@ -115,14 +124,19 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 			dispatch(
 				submitSurvey(
 					'calypso-cancel-domain',
-					purchase.siteId,
-					enrichedSurveyData( surveyData, purchase )
+					purchase.blog_id,
+					enrichedSurveyData( surveyData, {
+						subscribedDate: purchase.subscribed_date,
+						blogCreatedDate: purchase.blog_created_date,
+						id: purchase.ID,
+						productSlug: purchase.product_slug,
+					} )
 				)
 			);
 		}
 
 		recordTracksEvent( 'calypso_domain_cancel_survey_submit', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 			reason: selectedReason,
 		} );
 
@@ -137,20 +151,56 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	}, [ selectedReason, cancellationReasons ] );
 
 	const renderButtons = () => {
-		const { disableButtons, cancellationInProgress } = props;
+		const { disableButtons, cancellationInProgress, cancellationCompleted } = props;
 		const disabled = disableButtons || ! selectedReason;
+		const isRemoveIntent = intent === 'remove';
+		// Once the cancellation has already fired, this survey performs nothing
+		// destructive — the buttons should read (and look) like a questionnaire.
+		const getCompleteLabel = () => {
+			if ( cancellationCompleted || ! isSplitEnabled ) {
+				return translate( 'Submit' );
+			}
+			return isRemoveIntent
+				? translate( 'Complete removal' )
+				: translate( 'Complete cancellation' );
+		};
+		const getCompletingLabel = () =>
+			isRemoveIntent ? translate( 'Completing removal' ) : translate( 'Completing cancellation' );
+		const primaryLabel =
+			isSplitEnabled && ! cancellationCompleted && cancellationInProgress
+				? getCompletingLabel()
+				: getCompleteLabel();
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
 					<Button
 						variant="primary"
+						isDestructive={ isSplitEnabled && ! cancellationCompleted }
 						isBusy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
-						{ translate( 'Submit' ) }
+						{ primaryLabel }
 					</Button>
+					{ ( cancellationCompleted || isSplitEnabled ) && disabled && (
+						<Button
+							variant="tertiary"
+							isDestructive={ ! cancellationCompleted }
+							isBusy={ cancellationInProgress }
+							disabled={ cancellationInProgress }
+							onClick={ handleSubmit }
+						>
+							{ ( () => {
+								if ( cancellationCompleted ) {
+									return translate( 'Skip survey' );
+								}
+								return isRemoveIntent
+									? translate( 'Skip and remove' )
+									: translate( 'Skip and cancel' );
+							} )() }
+						</Button>
+					) }
 				</div>
 			</div>
 		);

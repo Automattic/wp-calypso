@@ -1,16 +1,13 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { SiteSubscriptionsResponseItem } from '@automattic/data-stores/src/reader';
 import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
+import { useMemo } from 'react';
 import { Notice, NoticeType } from '../notice';
 import { VirtualizedList } from '../virtualized-list';
 import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
+import type { SiteSubscriptionItem } from '@automattic/data-stores/src/reader';
 
 type SiteSubscriptionsListProps = {
 	emptyComponent?: React.ComponentType;
@@ -24,8 +21,6 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	layout = 'full',
 } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const currentUserName = useSelector( getCurrentUserName );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const { filterOption, searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
@@ -37,13 +32,6 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 		() => subscriptions.filter( ( subscription ) => ! subscription.isDeleted ),
 		[ subscriptions ]
 	);
-
-	// Fetch recommended blogs data once for all subscription rows
-	useEffect( () => {
-		if ( currentUserName ) {
-			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
-		}
-	}, [ currentUserName, dispatch ] );
 
 	if ( error ) {
 		return (
@@ -140,7 +128,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 
-			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
+			<VirtualizedList< SiteSubscriptionItem > items={ filteredSubscriptions }>
 				{ ( { item, key, style, registerChild } ) => (
 					<SiteSubscriptionRow
 						{ ...item }

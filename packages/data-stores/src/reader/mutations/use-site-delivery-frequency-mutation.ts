@@ -1,16 +1,16 @@
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailDeliveryFrequency } from '../constants';
-import { callApi, applyCallbackToPages, buildQueryKey } from '../helpers';
+import { callApi } from '../helpers';
 import {
 	alterSiteSubscriptionDetails,
 	invalidateSiteSubscriptionDetails,
 } from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
-import type {
-	PagedQueryResult,
-	SiteSubscriptionsResponseItem,
-	SiteSubscriptionDetails,
-} from '../types';
+import type { SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: EmailDeliveryFrequency;
@@ -63,39 +63,35 @@ const useSiteDeliveryFrequencyMutation = () => {
 			return response;
 		},
 		onMutate: async ( { blog_id, delivery_frequency, subscriptionId } ) => {
-			const siteSubscriptionsCacheKey = buildQueryKey(
-				[ 'read', 'site-subscriptions' ],
-				isLoggedIn,
-				id
-			);
+			const siteSubscriptionsCacheKey = getSiteSubscriptionsQueryKey();
 
 			await queryClient.cancelQueries( { queryKey: siteSubscriptionsCacheKey } );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData<
-					PagedQueryResult< SiteSubscriptionsResponseItem, 'subscriptions' >
-				>( siteSubscriptionsCacheKey );
-			const mutatedSiteSubscriptions = applyCallbackToPages<
-				'subscriptions',
-				SiteSubscriptionsResponseItem
-			>( previousSiteSubscriptions, ( page ) => ( {
-				...page,
-				subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-					if ( siteSubscription.blog_ID === blog_id ) {
-						return {
-							...siteSubscription,
-							delivery_methods: {
-								...siteSubscription.delivery_methods,
-								email: {
-									...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
-									post_delivery_frequency: delivery_frequency,
-								},
-							},
-						};
-					}
-					return siteSubscription;
-				} ),
-			} ) );
+				queryClient.getQueryData< SiteSubscriptionsInfiniteData >( siteSubscriptionsCacheKey );
+			const mutatedSiteSubscriptions = previousSiteSubscriptions
+				? {
+						...previousSiteSubscriptions,
+						pages: previousSiteSubscriptions.pages.map( ( page ) => ( {
+							...page,
+							subscriptions: page.subscriptions.map( ( siteSubscription ) => {
+								if ( Number( siteSubscription.blog_ID ) === Number( blog_id ) ) {
+									return {
+										...siteSubscription,
+										delivery_methods: {
+											...siteSubscription.delivery_methods,
+											email: {
+												...( siteSubscription.delivery_methods?.email ?? { send_posts: false } ),
+												post_delivery_frequency: delivery_frequency,
+											},
+										},
+									};
+								}
+								return siteSubscription;
+							} ),
+						} ) ),
+				  }
+				: previousSiteSubscriptions;
 			queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
 			const previousSiteSubscriptionDetails = await alterSiteSubscriptionDetails(
@@ -122,7 +118,7 @@ const useSiteDeliveryFrequencyMutation = () => {
 		},
 		onError: ( err, _, context ) => {
 			queryClient.setQueryData(
-				buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
+				getSiteSubscriptionsQueryKey(),
 				context?.previousSiteSubscriptions
 			);
 			if ( context?.previousSiteSubscriptionDetails ) {

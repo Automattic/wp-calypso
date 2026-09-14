@@ -1,6 +1,7 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import {
 	getCreditsLineItemFromCart,
+	getSubtotalWithoutDiscountsForProduct,
 	getTaxLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCouponLineItemFromCart,
@@ -152,6 +153,57 @@ describe( 'getTaxLineItemFromCart', function () {
 
 		expect( getTaxLineItemFromCart( cartWithTaxes ) ).toStrictEqual( expected );
 	} );
+
+	it( 'adds business use details to the tax label', () => {
+		const cartWithBusinessUseTaxes = {
+			...cart,
+			total_tax_integer: 0,
+			tax: {
+				...cart.tax,
+				display_taxes: false,
+				location: {
+					...cart.tax.location,
+					is_for_business: true,
+					subdivision_code: 'CT',
+				},
+			},
+		};
+		const expected: LineItemType = {
+			id: 'tax-line-item',
+			type: 'tax',
+			label: 'Tax (CT business use)',
+			labelSuffix: 'CT business use',
+			formattedAmount: '¥0',
+		};
+
+		expect( getTaxLineItemFromCart( cartWithBusinessUseTaxes ) ).toStrictEqual( expected );
+	} );
+
+	it( 'derives business use tax state from the cart postal code', () => {
+		const cartWithBusinessUseTaxes = {
+			...cart,
+			total_tax_integer: 0,
+			tax: {
+				...cart.tax,
+				display_taxes: false,
+				location: {
+					...cart.tax.location,
+					country_code: 'US',
+					postal_code: '43215',
+					is_for_business: true,
+				},
+			},
+		};
+		const expected: LineItemType = {
+			id: 'tax-line-item',
+			type: 'tax',
+			label: 'Tax (OH business use)',
+			labelSuffix: 'OH business use',
+			formattedAmount: '¥0',
+		};
+
+		expect( getTaxLineItemFromCart( cartWithBusinessUseTaxes ) ).toStrictEqual( expected );
+	} );
 } );
 
 describe( 'getTaxBreakdownLineItemsFromCart', function () {
@@ -215,6 +267,41 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 
 		expect( getTaxBreakdownLineItemsFromCart( cartWithTaxes ) ).toStrictEqual( expected );
 	} );
+
+	it( 'adds business use details to tax breakdown labels', () => {
+		const cartWithTaxes: ResponseCart = {
+			...cart,
+			tax: {
+				...cart.tax,
+				display_taxes: false,
+				location: {
+					...cart.tax.location,
+					is_for_business: true,
+					subdivision_code: 'OH',
+				},
+			},
+			total_tax_breakdown: [
+				{
+					label: 'Tax',
+					rate_display: '6.35%',
+					tax_collected: 100,
+					tax_collected_integer: 100,
+					rate: 0.0635,
+				},
+			],
+		};
+		const expected: LineItemType[] = [
+			{
+				id: 'tax-line-item-Tax',
+				type: 'tax',
+				label: 'Tax (6.35%) (OH business use)',
+				labelSuffix: 'OH business use',
+				formattedAmount: '¥100',
+			},
+		];
+
+		expect( getTaxBreakdownLineItemsFromCart( cartWithTaxes ) ).toStrictEqual( expected );
+	} );
 } );
 
 describe( 'getCreditsLineItemFromCart', function () {
@@ -244,5 +331,109 @@ describe( 'getCreditsLineItemFromCart', function () {
 		};
 
 		expect( getCreditsLineItemFromCart( cartWithCredits ) ).toStrictEqual( expected );
+	} );
+} );
+
+describe( 'getSubtotalWithoutDiscountsForProduct', function () {
+	it( 'returns item_subtotal_integer when there are no cost overrides', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 8000,
+			item_original_subtotal_integer: 8000,
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 8000 );
+	} );
+
+	it( 'returns the intro offer new_subtotal for a premium domain with a price-increasing intro offer', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'dotart_domain',
+			item_subtotal_integer: 110000,
+			item_original_subtotal_integer: 8000,
+			introductory_offer_terms: {
+				enabled: true,
+				interval_unit: 'year' as const,
+				interval_count: 1,
+				transition_after_renewal_count: 0,
+				should_prorate_when_offer_ends: false,
+				do_not_use_offer: false,
+				reason: null,
+			},
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 110000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 110000 );
+	} );
+
+	it( 'returns the peak price for a premium domain with stacked overrides (intro offer + sale coupon)', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'dotart_domain',
+			item_subtotal_integer: 27500,
+			item_original_subtotal_integer: 8000,
+			introductory_offer_terms: {
+				enabled: true,
+				interval_unit: 'year' as const,
+				interval_count: 1,
+				transition_after_renewal_count: 0,
+				should_prorate_when_offer_ends: false,
+				do_not_use_offer: false,
+				reason: null,
+			},
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 110000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+				{
+					human_readable_reason: 'Item on sale',
+					old_subtotal_integer: 110000,
+					new_subtotal_integer: 27500,
+					override_code: 'sale-coupon-discount-1',
+					does_override_original_cost: false,
+					percentage: 75,
+					first_unit_only: true,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 110000 );
+	} );
+
+	it( 'returns the first override old_subtotal for a product with only a discount override', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 6000,
+			item_original_subtotal_integer: 8000,
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 6000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 8000 );
 	} );
 } );

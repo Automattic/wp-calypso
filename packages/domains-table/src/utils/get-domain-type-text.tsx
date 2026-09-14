@@ -9,7 +9,7 @@ type PartialDomainInfo = Pick<
 
 export function getDomainTypeText(
 	domain: PartialDomainInfo,
-	__: typeof __type = ( text: string ) => text,
+	__: typeof __type = ( ( text: string ) => text ) as typeof __type,
 	context = domainInfoContext.DOMAIN_ITEM
 ) {
 	const underMaintenance = domain?.tldMaintenanceEndTime && domain?.tldMaintenanceEndTime > 0;

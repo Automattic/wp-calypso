@@ -1,13 +1,15 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
+import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -21,9 +23,9 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getCiabConfig } from 'calypso/lib/partner-branding';
+import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -39,6 +41,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -109,12 +112,15 @@ export class Login extends Component {
 			'oauth2Client',
 			'isWooJPC',
 			'isJetpack',
+			'isJetpackApp',
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'ciabConfig',
+			'isFromJetpackConnector',
+			'connectorPlugins',
+			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
 			'translate',
@@ -167,6 +173,28 @@ export class Login extends Component {
 			return null;
 		}
 
+		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+		// passwordless magic-link branch and the client context, and wp-login.php has neither.
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( ! keepCalypsoForm ) {
+			return (
+				<a
+					className="one-login__footer-link"
+					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+					// the recovery-email and SMS steps hang off checkemail=confirm.
+					href={ lostPassword( { locale: this.props.locale } ) }
+					rel="external"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
+					}
+				>
+					{ this.props.translate( 'Lost your password?' ) }
+				</a>
+			);
+		}
+
 		return (
 			<a
 				className="one-login__footer-link"
@@ -183,7 +211,7 @@ export class Login extends Component {
 									? 'jetpack/lostpassword'
 									: 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 						} )
 					);
 				} }
@@ -205,7 +233,7 @@ export class Login extends Component {
 							redirectTo: this.props.redirectTo,
 							locale: this.props.locale,
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 							isJetpack: this.props.isJetpack,
 						} )
 					);
@@ -219,12 +247,12 @@ export class Login extends Component {
 
 	getSupportLink() {
 		return (
-			<a
+			<ExternalLink
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
 			>
 				{ this.props.translate( 'Support' ) }
-			</a>
+			</ExternalLink>
 		);
 	}
 
@@ -315,13 +343,28 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, action } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isGenericOauth,
+			isGravPoweredClient,
+			isJetpack,
+			action,
+			partnerConfig,
+		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
+
+		// Each returns null when it has nothing to say.
+		const notices = (
+			<>
+				<PasswordResetSuccessNotice />
+				<SignupExistingAccountNotice />
+			</>
+		);
 
 		const mainContent = (
 			<Main
@@ -334,7 +377,11 @@ export class Login extends Component {
 				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead
-					title={ translate( 'Log In' ) }
+					title={ getPartnerFormattedWindowTitle(
+						translate( 'Log In', { textOnly: true } ),
+						partnerConfig
+					) }
+					skipTitleFormatting
 					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					meta={ [
 						{
@@ -359,9 +406,13 @@ export class Login extends Component {
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
+						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
+						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
+						notice={ notices }
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -382,12 +433,15 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		ciabConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
+		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
 		isUserLoggedIn: isLoggedIn,
@@ -405,12 +459,15 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		ciabConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
+		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
 		translate,
@@ -423,6 +480,9 @@ function getInitialHeadingState( props, translate ) {
 		action,
 		translate,
 		isWooJPC,
+		partnerConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
 	} );
 
 	return {
@@ -450,11 +510,23 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
+const trimString = ( s ) => s.trim();
+
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
+
+		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
+		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
+		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
+		const connectorPlugins = isFromJetpackConnector
+			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
+					.split( ',' )
+					.map( trimString )
+					.filter( Boolean )
+			: [];
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -477,6 +549,7 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			isJetpackApp: getIsJetpackApp( state ),
 			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
 			isGenericOauth:
 				oauth2Client &&
@@ -491,13 +564,12 @@ export default connect(
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			ciabConfig: getCiabConfig(
-				get( getCurrentQueryArguments( state ), 'from' ) ||
-					get( getInitialQueryArguments( state ), 'from' )
-			),
+			isFromJetpackConnector,
+			connectorPlugins,
+			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),

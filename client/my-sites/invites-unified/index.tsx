@@ -1,12 +1,17 @@
+import { Step } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
-import { isAlreadyMemberError } from './utils';
+import InvalidInviteScreen from './screens/invalid-invite-screen';
+import { isAlreadyMemberError, isInvalidInviteError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
+
+import './style.scss';
 
 interface LegacyLoggedOutInvite {
 	inviteKey: string;
@@ -36,8 +41,19 @@ export function UnifiedInviteAccept( {
 	inviteError,
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
+	const branding =
+		blogDetails?.is_garden_site && blogDetails.garden
+			? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+					persistToSession: true,
+			  } )
+			: null;
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
+		<img { ...topBarLogoConfig } alt={ topBarLogoConfig.alt } />
+	) : undefined;
 	const legacyLoggedOutInvite = useMemo< LegacyLoggedOutInvite | null >( () => {
-		if ( ! inviteData ) {
+		if ( isLoggedIn || ! inviteData || ! ( inviteData as { invite?: unknown } ).invite ) {
 			return null;
 		}
 
@@ -49,21 +65,37 @@ export function UnifiedInviteAccept( {
 			activationKey,
 			authKey,
 		};
-	}, [ inviteData, inviteKey, activationKey, authKey ] );
+	}, [ isLoggedIn, inviteData, inviteKey, activationKey, authKey ] );
 
 	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
+		// Invalid invite → show invalid-invite screen (no user card needed)
+		if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+			return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
+		}
+
 		if ( ! legacyLoggedOutInvite ) {
 			return null;
 		}
 
-		return <LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />;
+		return (
+			<div className="invites-unified__logged-out-layout">
+				<Step.TopBar logo={ topBarLogo } />
+				<div className="invites-unified__logged-out-shell">
+					<LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />
+				</div>
+			</div>
+		);
 	}
 
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
-		const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
+	}
+
+	// Invalid invite → show invalid-invite screen
+	if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+		return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
 	}
 
 	const invite = { ...inviteData, inviteKey, activationKey } as Invite;

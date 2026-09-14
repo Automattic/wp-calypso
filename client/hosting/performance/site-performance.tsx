@@ -1,17 +1,22 @@
+import { domainsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
-import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
 } from 'calypso/hosting/performance/contexts/device-tab-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
@@ -51,9 +56,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	const { activeTab, setActiveTab } = useDeviceTab();
 	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
-	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const blog_public = getSiteSetting( 'blog_public' );
-	const isSitePublic = site && blog_public === 1;
+	const isSitePublic = site && ! ( site.is_coming_soon || site.is_private );
 	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSiteFlex = useSelector( ( state ) => isWpcomFlexSite( state, siteId ) );
 
@@ -148,6 +151,22 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
+	useQuery( {
+		...domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
+	} );
+
+	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
+
+	// A free, already-public, or A4A dev site never qualifies, so skip the bridge
+	// and let the CTA redirect instantly. A4A sends the CTA to WordPress.com
+	// instead, so the bridge never applies there either.
+	const isFreePlan = site?.plan?.is_free ?? false;
+	const canOfferPreLaunch =
+		! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan && ! isA8CForAgencies();
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+	const [ launchUrl, setLaunchUrl ] = useState( '' );
+
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -163,13 +182,21 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	};
 
 	const onLaunchSiteClick = () => {
+		// A4A has no site settings of its own, so launching happens on WordPress.com.
+		if ( isA8CForAgencies() ) {
+			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
+			window.location.assign(
+				`https://wordpress.com/sites/${ site?.slug }/settings/site-visibility`
+			);
+			return;
+		}
+
 		if ( site?.is_a4a_dev_site ) {
 			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
 			page( `/sites/settings/site/${ site.slug }` );
 			return;
 		}
 
-		dispatch( launchSite( siteId! ) );
 		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
 
 		// Additional event to align analysis across dashboards.
@@ -178,6 +205,29 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			context: 'site_performance',
 			path,
 		} );
+
+		// Gating: 'semi_gated_site_launch' is the shipped default, routing to
+		// `/start/launch-site` via the pre-launch bridge. Other branches are
+		// scaffolding for future experiments; see useSiteLaunchGatingVariant().
+		switch ( experimentVariant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				const url = addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: window.location.pathname,
+				} );
+
+				if ( ! canOfferPreLaunch ) {
+					window.location.assign( url );
+					return;
+				}
+
+				setLaunchUrl( url );
+				setIsLaunchModalOpen( true );
+				return;
+			}
+		}
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -299,7 +349,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				{ isMobile ? (
 					<MobileHeader
 						pageTitle={ currentPage?.label ?? '' }
-						pageSelector={ pageSelector }
+						{ ...( isSitePublic && { pageSelector } ) }
 						subtitle={ subtitle }
 					/>
 				) : (
@@ -309,13 +359,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						subtitle={ subtitle }
 					/>
 				) }
-				{ ! isMobile && pageSelector }
-				<DeviceTabControls
-					showTitle={ ! isMobile }
-					onDeviceTabChange={ handleDeviceTabChange }
-					disabled={ disableControls }
-					value={ activeTab }
-				/>
+				{ ! isMobile && isSitePublic && pageSelector }
+				{ isSitePublic && (
+					<DeviceTabControls
+						showTitle={ ! isMobile }
+						onDeviceTabChange={ handleDeviceTabChange }
+						disabled={ disableControls }
+						value={ activeTab }
+					/>
+				) }
 			</div>
 			{ isLoadingPages && isSitePublic ? (
 				<PerformanceReportLoading isLoadingPages />
@@ -323,7 +375,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				<>
 					{ ! isSitePublic ? (
 						<ReportUnavailable
-							isLaunching={ siteIsLaunching }
+							isLaunching={ siteIsLaunching || isExperimentLoading || isLaunchModalOpen }
 							onLaunchSiteClick={ onLaunchSiteClick }
 							ctaText={
 								site?.is_a4a_dev_site
@@ -347,6 +399,14 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
+			) }
+			{ canOfferPreLaunch && (
+				<PreLaunchSiteModal
+					siteId={ siteId ?? 0 }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
 			) }
 		</div>
 	);

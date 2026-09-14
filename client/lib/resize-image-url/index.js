@@ -1,5 +1,5 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 
 /**
  * Pattern matching valid http(s) URLs

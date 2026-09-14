@@ -1,5 +1,6 @@
-@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 @import "../../style";
 
 .main.promote-post-i2 {
@@ -26,6 +27,7 @@
 		color: var(--color-accent);
 		background-color: var(--color-surface);
 		box-shadow: none;
+		word-break: normal;
 	}
 
 	.campaign-item__post-details-button:hover {

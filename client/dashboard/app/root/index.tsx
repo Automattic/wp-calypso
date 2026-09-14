@@ -1,15 +1,36 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
-import { useQueryClient, useIsFetching } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
+import {
+	Suspense,
+	lazy,
+	useCallback,
+	useEffect,
+	useState,
+	useMemo,
+	useSyncExternalStore,
+} from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
+import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
-import Header from '../header';
+import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
+import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
+import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
+import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
+import Notifications from '../notifications';
+import { useOmnibarEvent } from '../omnibar/events';
+import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
+import { useSyncOmnibarSite } from '../omnibar/site';
+import ResponsiveSidebar from '../responsive-sidebar';
+import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -23,12 +44,65 @@ const WebpackBuildMonitor = lazy(
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
+// E2E tests append this suffix to the browser user agent (see
+// test/e2e playwright.config.ts). Detecting it lets us suppress the welcome
+// modal so it doesn't interfere with unrelated tests.
+function isE2ETest(): boolean {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( 'wp-e2e-tests' );
+}
+
 function Root() {
+	const isAccountRecoveryInterstitialEnabled = isEnabled(
+		'dashboard/account-recovery-interstitial'
+	);
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const isResurrectedWelcomeModalEnabled =
+		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
+	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
+	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
+	const [ resurrectedModalState, setResurrectedModalState ] = useState<
+		'pending' | 'eligible' | 'ineligible'
+	>( isResurrectedWelcomeModalEnabled ? 'pending' : 'ineligible' );
+	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	const handleResurrectedModalEligibility = useCallback( ( willDisplay: boolean ) => {
+		setResurrectedModalState( ( state ) => {
+			if ( state !== 'pending' ) {
+				return state;
+			}
+
+			return willDisplay ? 'eligible' : 'ineligible';
+		} );
+	}, [] );
+
+	useSyncOmnibarSite();
+	useTrackVisitedAreas();
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
+	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
+		if ( foundRoute ) {
+			event.preventDefault();
+			router.navigate( { to: path } );
+		}
+	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -94,13 +168,32 @@ function Root() {
 			.join( ' ‹ ' );
 	}, [ routeMeta ] );
 
+	const renderBody = () => {
+		if ( isVerySlowNavigation ) {
+			return null;
+		}
+
+		return (
+			<div className="dashboard-root__body">
+				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				<div className="dashboard-root__content">
+					<main>
+						<CatchNotFound fallback={ NotFound }>
+							<Outlet />
+						</CatchNotFound>
+					</main>
+				</div>
+			</div>
+		);
+	};
+
 	useEffect( () => {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
 
 	return (
 		<div className="dashboard-root__layout">
-			{ ( isFetching > 0 || isSlowNavigation ) && (
+			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={
 						isSlowNavigation || loadingQueryRequestedFullPageLoader ? 'progress' : 'spinner'
@@ -109,17 +202,22 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
-			{ ! isVerySlowNavigation && (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
-			) }
+			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
+			{ supports.notifications && <Notifications anchor /> }
+			{ supports.help && <OmnibarHelpCenter /> }
+			{ supports.help && <OmnibarAgentsManager /> }
+			<OmnibarSiteSwitcher />
 			<Snackbars />
+			<CheckoutSuccessFlashMessage />
+			{ isResurrectedWelcomeModalEnabled && (
+				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
+			) }
+			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
+				<AccountRecoveryInterstitial />
+			) }
 			<PageViewTracker />
+			<MutationErrorTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>

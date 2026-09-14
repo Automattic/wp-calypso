@@ -1,26 +1,22 @@
 import { Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import {
-	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-} from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { modeType } from './constants';
 
 import './style.scss';
 
 export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode } ) {
 	const { __ } = useI18n();
-	const supportLink = {
-		[ modeType.SUGGESTED ]: MAP_DOMAIN_CHANGE_NAME_SERVERS,
-		[ modeType.ADVANCED ]: MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-		[ modeType.DONE ]: MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	const supportContext = {
+		[ modeType.SUGGESTED ]: 'map-domain-change-name-servers',
+		[ modeType.ADVANCED ]: 'map-domain-update-a-records',
+		[ modeType.DONE ]: 'map-domain-change-name-servers',
 	};
 
-	if ( ! supportLink[ mode ] ) {
+	if ( ! supportContext[ mode ] ) {
 		return null;
 	}
 
@@ -37,7 +33,10 @@ export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode 
 				{ createInterpolateElement(
 					__( 'Not finding your way? You can read our detailed <a>support documentation</a>.' ),
 					{
-						a: createElement( 'a', { href: localizeUrl( supportLink[ mode ] ), target: '_blank' } ),
+						a: createElement( InlineSupportLink, {
+							supportContext: supportContext[ mode ],
+							showIcon: false,
+						} ),
 					}
 				) }
 			</span>

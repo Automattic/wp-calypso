@@ -1,0 +1,58 @@
+// Tree guide lines for the APM span tree.
+//
+// Each <li> draws its own vertical guide (::before) and elbow (::after) into
+// the enclosing <ul>'s left gutter (provided by `padding-inline-start`). When
+// a <li> is the last sibling, the vertical truncates at the elbow height so
+// the line doesn't drop past the corner.
+//
+// The root <ul> opts out of the gutter and skips the pseudo-elements: the
+// transaction-root span sits flush with the card edge and has no guide.
+
+$indent: 20px;
+$gutter: $indent * 0.5;
+// Lands roughly at the vertical midpoint of the category badge in a row.
+$elbow-top: 14px;
+
+.dashboard-apm-span-tree__list {
+	list-style: none;
+	margin: 0;
+	padding-inline-start: $indent;
+}
+
+.dashboard-apm-span-tree__list--root {
+	padding-inline-start: 0;
+}
+
+.dashboard-apm-span-tree__item {
+	position: relative;
+}
+
+.dashboard-apm-span-tree__list:not(.dashboard-apm-span-tree__list--root)
+	> .dashboard-apm-span-tree__item::before {
+	content: '';
+	position: absolute;
+	inset-inline-start: -$gutter;
+	inset-block-start: 0;
+	inset-block-end: 0;
+	border-inline-start: 1px solid var(--color-border);
+}
+
+.dashboard-apm-span-tree__list:not(.dashboard-apm-span-tree__list--root)
+	> .dashboard-apm-span-tree__item:last-child::before {
+	inset-block-end: auto;
+	height: $elbow-top;
+}
+
+.dashboard-apm-span-tree__list:not(.dashboard-apm-span-tree__list--root)
+	> .dashboard-apm-span-tree__item::after {
+	content: '';
+	position: absolute;
+	inset-inline-start: -$gutter;
+	inset-block-start: $elbow-top;
+	width: $gutter;
+	border-block-start: 1px solid var(--color-border);
+}
+
+.dashboard-apm-span-tree__row {
+	padding-block: 4px;
+}

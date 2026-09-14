@@ -14,12 +14,18 @@ export type HelpCenterFeatureConfig = {
 		filterByBotSlug: boolean;
 		/** Override the flow name for the Odie provider. */
 		flowName: string | null;
+		/** Treat the user as having premium support (bypass eligibility checks). */
+		hasPremiumSupport: boolean;
 		/** Skip fetching support status. */
 		skipSupportStatus: boolean;
 	};
 	home: {
 		/** Show the recent conversations section on the home screen. */
 		recentConversations: boolean;
+	};
+	contextualCta: {
+		/** Render the contextual CTAs served by the support-status endpoint. */
+		enabled: boolean;
 	};
 	moreResources: {
 		/** Show the entire More Resources section. */
@@ -30,8 +36,6 @@ export type HelpCenterFeatureConfig = {
 		courses: boolean;
 		/** Show the "Product updates" external link. */
 		productUpdates: boolean;
-		/** Show the "Share feedback" Survicate button. */
-		feedback: boolean;
 		/** URL for the "Support guides" external link. Null to hide. */
 		supportGuidesUrl: string | null;
 	};

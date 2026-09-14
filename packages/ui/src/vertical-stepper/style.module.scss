@@ -1,0 +1,81 @@
+// packages/ui/src/vertical-stepper/style.module.scss
+@use '@wordpress/base-styles/breakpoints';
+
+.root {
+	display: flex;
+	flex-direction: column;
+}
+
+.step {
+	display: flex;
+	flex-direction: column;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: connector line between steps
+// ---------------------------------------------------------------------------
+
+@media ( max-width: #{ breakpoints.$break-small - 1 } ) {
+	.step {
+		position: relative;
+
+		// Vertical connector from this step's indicator down to the next.
+		&:not( :last-child )::after {
+			content: '';
+			position: absolute;
+			// Align with indicator center: half the indicator diameter, rounded up for the 1px line.
+			inset-inline-start: calc( var( --a8c-ui-stepper-indicator-size ) * 0.5 );
+			top: calc( var( --wpds-dimension-padding-sm ) * 2 + var( --wpds-typography-line-height-sm ) );
+			bottom: 0;
+			width: 1px;
+			background: var( --wpds-color-stroke-surface-neutral-weak );
+		}
+	}
+}
+
+.indicator-wrapper {
+	display: flex;
+	align-items: center;
+	// Match the title line-height so the indicator stays optically aligned
+	// with the title text even when a description is present.
+	height: var( --wpds-typography-line-height-sm );
+	flex-shrink: 0;
+}
+
+.trigger {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding-block: var( --wpds-dimension-padding-sm );
+}
+
+.panel {
+	// Animate expand/collapse via base-ui's measured content height.
+	// base-ui sets --accordion-panel-height to the measured scrollHeight before
+	// applying [data-ending-style], so the browser sees a px value to transition
+	// from (instead of auto, which cannot be animated).
+	//
+	// [data-starting-style] is present when the panel is opening (transitionStatus='starting').
+	// [data-ending-style]   is present when the panel is closing  (transitionStatus='ending').
+	// Both target height: 0 so the transition runs in both directions.
+	//
+	// NOTE: padding must NOT be on this element — padding is included in scrollHeight
+	// and causes the bottom padding to linger visually at the tail end of the close
+	// animation. Spacing lives on .panel-content instead.
+	overflow: hidden;
+	height: var( --accordion-panel-height );
+
+	&[data-starting-style],
+	&[data-ending-style] {
+		height: 0;
+	}
+
+	@media ( prefers-reduced-motion: no-preference ) {
+		transition: height var( --wpds-motion-duration-md ) var( --wpds-motion-easing-balanced );
+	}
+}
+
+.panel-content {
+	padding-inline-start: calc( var( --a8c-ui-stepper-indicator-size ) + var( --wpds-dimension-gap-sm ) );
+	padding-block-end: var( --wpds-dimension-padding-lg );
+}

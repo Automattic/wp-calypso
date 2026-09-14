@@ -2,7 +2,7 @@
 // TODO: Remove this once we create a reusable component
 import { useState, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, type JSX } from 'react';
 
 import './woo-loader.scss';
 

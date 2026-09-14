@@ -1,6 +1,6 @@
 import { Popover } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { omit } from 'lodash';
 import './style.scss';
 
 const ReaderPopover = ( props ) => {

@@ -8,8 +8,8 @@ exports.id = \\"main\\";
 exports.ids = [\\"main\\"];
 exports.modules = {
 
-/***/ \\"./main.js\\":
-/***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
+/***/ \\"./main.js\\"
+(__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 
 // NAMESPACE OBJECT: ./default-import/config/index.js
@@ -417,7 +417,7 @@ if ( isEnabled( 'bar' ) ) {
 
 
 
-/***/ })
+/***/ }
 
 };
 ;

@@ -1,9 +1,9 @@
-import { omit, reduce } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_BLOCKS_REQUEST,
-	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_RECEIVE,
 	READER_SITE_UNBLOCK,
 } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -19,13 +19,16 @@ export const items = ( state = {}, action ) => {
 		case READER_SITE_UNBLOCK: {
 			return omit( state, action.payload.siteId );
 		}
-		case READER_SITE_REQUEST_SUCCESS: {
-			if ( ! action.payload.is_blocked ) {
+		case READER_SITE_RECEIVE: {
+			if ( action.payload.is_blocked === false ) {
 				if ( ! state[ action.payload.ID ] ) {
 					return state;
 				}
 
 				return omit( state, action.payload.ID );
+			}
+			if ( action.payload.is_blocked !== true ) {
+				return state;
 			}
 
 			return {
@@ -38,14 +41,10 @@ export const items = ( state = {}, action ) => {
 				return state;
 			}
 
-			const newBlocks = reduce(
-				action.payload.sites,
-				( obj, site ) => {
-					obj[ site.ID ] = true;
-					return obj;
-				},
-				{}
-			);
+			const newBlocks = action.payload.sites.reduce( ( obj, site ) => {
+				obj[ site.ID ] = true;
+				return obj;
+			}, {} );
 
 			return {
 				...state,

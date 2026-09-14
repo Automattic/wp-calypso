@@ -15,6 +15,7 @@ import { handleApprove, handleDeny } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
 import { getPermissionIcon } from '../utils/permission-icons';
 import SuccessMessage from './success-message';
+import type { JSX } from 'react';
 
 export interface AuthorizeActionsRenderProps {
 	onApprove: () => void;

@@ -65,8 +65,11 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 	}
 
 	static getFieldTooLongError( maximumStringLength: number ): FieldError {
-		// Translators: %s is the maximum length in characters.
-		return sprintf( __( "This field can't be longer than %s characters." ), maximumStringLength );
+		return sprintf(
+			// Translators: %s is the maximum length in characters.
+			__( "This field can't be longer than %s characters." ),
+			String( maximumStringLength )
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
@@ -200,7 +203,7 @@ class PasswordValidator extends BaseValidator< string > {
 		return sprintf(
 			// Translators: %s is the maximum length in characters.
 			__( "This field can't be longer than %s characters." ),
-			PasswordValidator.maximumPasswordLength
+			String( PasswordValidator.maximumPasswordLength )
 		);
 	}
 
@@ -215,8 +218,11 @@ class PasswordValidator extends BaseValidator< string > {
 	static getPasswordContainsForbiddenCharacterError(
 		firstForbiddenCharacter: string | undefined
 	): FieldError {
-		// Translators: %s denotes a single character that is not allowed in this field
-		return sprintf( __( "This field can't accept '%s' as character." ), firstForbiddenCharacter );
+		return sprintf(
+			// Translators: %s denotes a single character that is not allowed in this field
+			__( "This field can't accept '%s' as character." ),
+			firstForbiddenCharacter ?? ''
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {

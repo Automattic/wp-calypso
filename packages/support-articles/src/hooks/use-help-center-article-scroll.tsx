@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
  */
 export const useHelpCenterArticleScroll = (
 	postId: number | undefined,
-	scrollParentRef: React.RefObject< HTMLElement >
+	scrollParentRef: React.RefObject< HTMLElement | null >
 ) => {
 	const location = useLocation();
 	const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import { MaterialIcon } from '@automattic/components';
-import { StepContainer, GOOGLE_TRANSFER } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -9,15 +9,13 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, variantSlug } ) {
+const Intro: Step = function Intro( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 
 	const handleSubmit = () => {
 		submit?.();
 	};
-
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
 		<StepContainer
@@ -27,21 +25,13 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domain-transfer-header"
-					headerText={
-						isGoogleDomainsTransferFlow
-							? __( 'Transfer your Squarespace domains' )
-							: __( 'Transfer Your Domains' )
-					}
-					subHeaderText={
-						isGoogleDomainsTransferFlow
-							? __(
-									'Follow these three simple steps to transfer your Squarespace domains to WordPress.com.'
-							  )
-							: __( 'Follow these three simple steps to transfer your domains to WordPress.com.' )
-					}
+					headerText={ __( 'Transfer Your Domains' ) }
+					subHeaderText={ __(
+						'Follow these three simple steps to transfer your domains to WordPress.com.'
+					) }
 				/>
 			}
-			stepContent={ <IntroStep onSubmit={ handleSubmit } variantSlug={ variantSlug } /> }
+			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
 			showJetpackPowered={ false }

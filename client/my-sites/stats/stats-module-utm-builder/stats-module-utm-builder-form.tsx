@@ -1,11 +1,11 @@
 import { FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import StatsButton from '../components/stats-button';
 
 import './style.scss';
 
@@ -16,7 +16,7 @@ type InputFieldProps = {
 	placeholder: string;
 	value: string;
 	onChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
-	labelReference?: React.RefObject< HTMLLabelElement >;
+	labelReference?: React.Ref< HTMLLabelElement >;
 	ariaDescribedBy?: string;
 };
 
@@ -29,13 +29,14 @@ export type UtmBuilderProps = {
 	};
 };
 
-const utmKeys = [ 'url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term' ];
+type UtmKeyType = 'url' | 'utm_source' | 'utm_medium' | 'utm_campaign' | 'utm_content' | 'utm_term';
 
-type UtmKeyType = ( typeof utmKeys )[ number ];
+type InputValueKey = Extract< UtmKeyType, 'utm_campaign' | 'utm_source' | 'utm_medium' >;
+type FormLabelKey = Extract< UtmKeyType, 'url' | InputValueKey >;
 
-type inputValuesType = Record< UtmKeyType, string >;
+type inputValuesType = Record< InputValueKey, string >;
 type formLabelsType = Record<
-	UtmKeyType,
+	FormLabelKey,
 	{ label: string; placeholder: string; describedBy?: string }
 >;
 
@@ -205,7 +206,7 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 						ariaDescribedBy={ fromLabels.url.describedBy }
 						labelReference={ initialFieldReference }
 					/>
-					{ Object.keys( inputValues ).map( ( key ) => (
+					{ ( Object.keys( inputValues ) as InputValueKey[] ).map( ( key ) => (
 						<InputField
 							key={ key }
 							id={ key }
@@ -225,14 +226,14 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 				<div className="stats-utm-builder__url">{ utmString }</div>
 			</div>
 			<div className="stats-utm-builder__copy-area">
-				<StatsButton
+				<Button
 					className="stats-utm-builder__copy-button"
-					primary
+					variant="primary"
 					onClick={ handleCopy }
 					disabled={ ! url }
 				>
 					{ translate( 'Copy to clipboard' ) }
-				</StatsButton>
+				</Button>
 				<CopyConfirmation show={ showConfirmation } fadeOut={ fadeOut } />
 			</div>
 		</>

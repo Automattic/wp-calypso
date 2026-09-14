@@ -1,5 +1,5 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import isValidId from './validators';
 
 type callApiParams = {
@@ -47,7 +47,7 @@ async function callApi< ReturnType >( {
 			? `https://public-api.wordpress.com/wpcom/v2${ path }`
 			: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`;
 
-	return apiFetch( {
+	const res = await apiFetch( {
 		global: true,
 		path: apiPath,
 		apiVersion,
@@ -59,6 +59,7 @@ async function callApi< ReturnType >( {
 			'Content-Type': 'application/json',
 		},
 	} as APIFetchOptions );
+	return res as ReturnType;
 }
 
 interface PagedResult< T > {

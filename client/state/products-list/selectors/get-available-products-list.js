@@ -1,4 +1,4 @@
-import { pickBy } from 'lodash';
+import { pickBy } from '@automattic/js-utils';
 
 import 'calypso/state/products-list/init';
 

@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { SiteData, SiteError } from '../../types';
@@ -36,11 +37,10 @@ export default function useGetSiteErrors() {
 						{
 							components: {
 								a: (
-									<a
+									<ExternalLink
 										href={ wpOverviewUrl }
-										target="_blank"
-										rel="noreferrer"
 										onClick={ ( e ) => e.stopPropagation() }
+										children={ null }
 									/>
 								),
 							},

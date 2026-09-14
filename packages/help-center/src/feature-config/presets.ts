@@ -9,17 +9,20 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		enabled: true,
 		filterByBotSlug: false,
 		flowName: null,
+		hasPremiumSupport: false,
 		skipSupportStatus: false,
 	},
 	home: {
 		recentConversations: true,
+	},
+	contextualCta: {
+		enabled: true,
 	},
 	moreResources: {
 		visible: true,
 		supportHistory: true,
 		courses: true,
 		productUpdates: true,
-		feedback: true,
 		supportGuidesUrl: null,
 	},
 	contactForm: {
@@ -36,17 +39,20 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		enabled: false,
 		filterByBotSlug: false,
 		flowName: null,
+		hasPremiumSupport: false,
 		skipSupportStatus: false,
 	},
 	home: {
 		recentConversations: false,
+	},
+	contextualCta: {
+		enabled: false,
 	},
 	moreResources: {
 		visible: false,
 		supportHistory: false,
 		courses: true,
 		productUpdates: true,
-		feedback: false,
 		supportGuidesUrl: null,
 	},
 	contactForm: {
@@ -63,17 +69,20 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 		enabled: true,
 		filterByBotSlug: true,
 		flowName: 'messaging_flow_commerce_in_a_box',
+		hasPremiumSupport: true,
 		skipSupportStatus: true,
 	},
 	home: {
 		recentConversations: true,
+	},
+	contextualCta: {
+		enabled: false,
 	},
 	moreResources: {
 		visible: true,
 		supportHistory: true,
 		courses: false,
 		productUpdates: false,
-		feedback: true,
 		supportGuidesUrl: 'https://ciabattasupportguides.wpcomstaging.com/',
 	},
 	contactForm: {

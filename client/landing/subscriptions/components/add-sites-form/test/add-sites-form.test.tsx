@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { SubscriptionManager } from '@automattic/data-stores';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -13,6 +14,19 @@ import {
 import AddSitesForm from '../add-sites-form';
 
 jest.mock( '@automattic/calypso-router' );
+
+const mockSubscribeMutate = jest.fn();
+
+jest.mock( '@automattic/data-stores', () => {
+	const actual = jest.requireActual( '@automattic/data-stores' );
+	return {
+		...actual,
+		SubscriptionManager: {
+			...actual.SubscriptionManager,
+			useSiteSubscribeMutation: jest.fn(),
+		},
+	};
+} );
 
 type Props = React.ComponentProps< typeof AddSitesForm >;
 
@@ -29,6 +43,14 @@ describe( 'AddSitesForm', () => {
 		onChangeSubscribe: jest.fn(),
 		source: 'test-source',
 	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( SubscriptionManager.useSiteSubscribeMutation as jest.Mock ).mockReturnValue( {
+			mutate: mockSubscribeMutate,
+			isPending: false,
+		} );
+	} );
 
 	it( 'calls onChange when input value changes', async () => {
 		const onChange = jest.fn();
@@ -124,5 +146,32 @@ describe( 'AddSitesForm', () => {
 		await waitFor( () => {
 			expect( addButton ).toBeDisabled();
 		} );
+	} );
+
+	it( 'clears the shared search term after a successful subscribe', async () => {
+		const onChange = jest.fn();
+		const user = userEvent.setup();
+		mockSubscribeMutate.mockImplementation( ( _params, options ) => {
+			options.onSuccess( {
+				subscribed: true,
+				subscription: {
+					ID: '1',
+					blog_ID: '2',
+				},
+			} );
+			options.onSettled();
+		} );
+
+		renderWithContextProvider( <AddSitesForm { ...mockProps } onChange={ onChange } /> );
+
+		const input = screen.getByRole( 'searchbox' );
+		await user.type( input, 'https://example.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Add site' } ) );
+
+		await waitFor( () => {
+			expect( onChange ).toHaveBeenCalledWith( '' );
+		} );
+		expect( input ).toHaveValue( '' );
+		expect( mockProps.onChangeSubscribe ).toHaveBeenCalledWith( true );
 	} );
 } );

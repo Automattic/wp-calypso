@@ -44,6 +44,11 @@
 
 	.checklist-item__task {
 
+		.checklist-item__task-content {
+			border-radius: 0;
+			padding-inline: 16px;
+		}
+
 		.checklist-item__text {
 			@include body-medium;
 			color: var(--color-neutral-80);

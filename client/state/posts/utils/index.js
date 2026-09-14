@@ -1,4 +1,3 @@
-export { appendToPostEditsLog } from 'calypso/state/posts/utils/append-to-post-edits-log';
 export { applyPostEdits } from 'calypso/state/posts/utils/apply-post-edits';
 export { getDeserializedPostsQueryDetails } from 'calypso/state/posts/utils/get-deserialized-posts-query-details';
 export { getEditURL } from 'calypso/state/posts/utils/get-edit-url';

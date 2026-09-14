@@ -1,0 +1,60 @@
+.transfer-wait {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 682px;
+	margin-inline: auto;
+	padding-block-start: 40px;
+	padding-inline: 16px;
+	gap: 40px;
+}
+
+.transfer-wait__header {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+	text-align: center;
+}
+
+.transfer-wait__stage {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+	letter-spacing: -0.32px;
+	color: var( --studio-gray-50 );
+
+	strong {
+		font-weight: 500;
+		color: var( --studio-gray-100 );
+	}
+}
+
+.transfer-wait__overrun {
+	margin: 0;
+	font-size: 0.75rem;
+	color: var( --color-warning-60 );
+}
+
+.transfer-wait__progress {
+	width: 100%;
+	max-width: 440px;
+	line-height: 0;
+}
+
+.transfer-wait__progress-bar {
+	width: 100% !important;
+	background: var( --color-neutral-5 );
+
+	> div {
+		background: var( --color-accent );
+	}
+}
+
+.transfer-wait__escape {
+	display: flex;
+	margin-block-start: 16px;
+	margin-inline: auto;
+	font-size: 0.875rem;
+	line-height: 1.5;
+}

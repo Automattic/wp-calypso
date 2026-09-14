@@ -1,4 +1,6 @@
 @use "../variables";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .plugin-details-cta__container {
 	@extend %plugin-header;

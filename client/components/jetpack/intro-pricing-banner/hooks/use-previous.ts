@@ -8,7 +8,7 @@ import { useEffect, useRef } from '@wordpress/element';
  * @returns previous value of requested state or prop value
  */
 export function usePrevious< T >( value: T ): T | undefined {
-	const ref = useRef< T >();
+	const ref = useRef< T >( undefined );
 
 	useEffect( () => {
 		ref.current = value;

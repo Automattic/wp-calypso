@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/domains/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/domains/init';
  * @returns {boolean} If the request is in progress
  */
 export default function isRequestingWhois( state, domain ) {
-	return get( state, [ 'domains', 'management', 'isRequestingWhois', domain ], false );
+	return state?.domains?.management?.isRequestingWhois?.[ domain ] ?? false;
 }

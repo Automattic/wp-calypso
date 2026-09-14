@@ -125,6 +125,7 @@ export interface SiteDetails {
 	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
+	feed_ID?: number;
 	icon?: { ico: string; img: string; media_id: number };
 	is_a8c?: boolean;
 	is_coming_soon?: boolean;
@@ -258,6 +259,7 @@ export interface SiteDetailsOptions {
 	image_thumbnail_height?: number;
 	image_thumbnail_width?: number;
 	import_engine?: string | null;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;

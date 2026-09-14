@@ -77,7 +77,7 @@ export default function CommissionOverview() {
 									<div className="a4a-overview-hosting__logo-container">
 										<img width={ 45 } src={ WooLogoColor } alt="WooCommerce" />
 									</div>
-									<div>{ translate( 'WooPayments revenue share' ) }</div>
+									<div>{ translate( 'WooPayments Revenue Share' ) }</div>
 								</>
 							}
 							expanded
@@ -107,7 +107,7 @@ export default function CommissionOverview() {
 									</div>
 
 									<div>
-										{ translate( 'Hosting revenue share (WordPress.com and{{nbsp/}}Pressable)', {
+										{ translate( 'Hosting Revenue Share (WordPress.com and{{nbsp/}}Pressable)', {
 											components: {
 												nbsp: <>&nbsp;</>,
 											},

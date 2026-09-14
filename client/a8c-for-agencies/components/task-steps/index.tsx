@@ -2,7 +2,7 @@ import { FoldableCard } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -30,6 +30,7 @@ export interface TaskStepItemWithCompletion extends TaskStepItem {
 
 interface TaskStepProps {
 	step: TaskStepItemWithCompletion;
+	isExpanded: boolean;
 	toggleTaskStatus: ( step: TaskStepItem ) => void;
 }
 
@@ -40,7 +41,7 @@ interface TaskStepsProps {
 	sessionStorageKey: string;
 }
 
-export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
+export function TaskStep( { step, isExpanded, toggleTaskStatus }: TaskStepProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -65,7 +66,7 @@ export function TaskStep( { step, toggleTaskStatus }: TaskStepProps ) {
 					<div className="task-step__title">{ step.title }</div>
 				</div>
 			}
-			expanded={ ! step.isCompleted }
+			expanded={ isExpanded }
 			clickableHeader
 			summary={ false }
 		>
@@ -97,6 +98,16 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 	const updatedStepIds = JSON.parse( sessionStorage.getItem( sessionStorageKey ) || '[]' );
 	const [ completedStepIds, setCompletedStepIds ] = useState< string[] >( updatedStepIds );
 
+	const getStepToExpand = ( completedIds: string[], fromIndex: number ) => {
+		const isIncomplete = ( step: TaskStepItem ) => ! completedIds.includes( step.stepId );
+		const step = steps.slice( fromIndex ).find( isIncomplete ) ?? steps.find( isIncomplete );
+		return step?.stepId ?? null;
+	};
+
+	const [ expandedStepId, setExpandedStepId ] = useState< string | null >( () =>
+		getStepToExpand( updatedStepIds, 0 )
+	);
+
 	const updatedSteps = steps.map( ( step ) => {
 		return {
 			...step,
@@ -111,6 +122,10 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 			: [ ...completedStepIds, step.stepId ];
 		setCompletedStepIds( updatedStepIds );
 		sessionStorage.setItem( sessionStorageKey, JSON.stringify( updatedStepIds ) );
+		const stepIndex = steps.findIndex( ( { stepId } ) => stepId === step.stepId );
+		setExpandedStepId(
+			getStepToExpand( updatedStepIds, checkIfTaskIsCompleted ? stepIndex : stepIndex + 1 )
+		);
 		dispatch(
 			recordTracksEvent(
 				checkIfTaskIsCompleted
@@ -126,6 +141,7 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 	const resetAllTasks = () => {
 		setCompletedStepIds( [] );
 		sessionStorage.removeItem( sessionStorageKey );
+		setExpandedStepId( getStepToExpand( [], 0 ) );
 		dispatch( recordTracksEvent( 'calypso_a8c_for_agencies_reset_all_tasks' ) );
 	};
 
@@ -142,7 +158,12 @@ export function TaskSteps( { heading, subheading, steps, sessionStorageKey }: Ta
 			</div>
 			<div className="task-steps__steps">
 				{ updatedSteps.map( ( step ) => (
-					<TaskStep key={ step.stepId } step={ step } toggleTaskStatus={ toggleTaskStatus } />
+					<TaskStep
+						key={ step.stepId }
+						step={ step }
+						isExpanded={ step.stepId === expandedStepId }
+						toggleTaskStatus={ toggleTaskStatus }
+					/>
 				) ) }
 			</div>
 		</div>

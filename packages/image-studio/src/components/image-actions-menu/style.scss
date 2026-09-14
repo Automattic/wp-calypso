@@ -23,7 +23,7 @@
 
 			// When dropdown is open
 			&.is-pressed,
-			&[aria-expanded="true"] {
+			&[aria-expanded='true'] {
 				background-color: #404040;
 				border-radius: 2px;
 			}
@@ -37,7 +37,7 @@
 		background-color: #2a2a2a;
 		border: 1px solid #2f2f2f;
 		border-radius: 4px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+		box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.4 );
 	}
 
 	.components-dropdown-menu__menu {
@@ -46,13 +46,11 @@
 	}
 
 	.components-menu-item__button,
-	.components-button {
+	.components-button.components-dropdown-menu__menu-item {
 		color: #f0f0f0;
 		padding: 8px 16px;
 		width: 100%;
 		justify-content: flex-start;
-
-		&:hover,
 		&:focus {
 			background-color: #404040;
 			color: #fff;

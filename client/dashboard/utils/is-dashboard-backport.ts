@@ -10,7 +10,8 @@ export function isDashboardBackport() {
 	// in which case it's also not the backport.
 	if (
 		window?.location?.hostname?.startsWith( 'my.localhost' ) ||
-		window?.location?.hostname?.startsWith( 'my.woo.localhost' )
+		window?.location?.hostname?.startsWith( 'my.woo.localhost' ) ||
+		window?.location?.hostname?.startsWith( 'my.a4a.localhost' )
 	) {
 		return false;
 	}

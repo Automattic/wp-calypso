@@ -7,4 +7,5 @@ export interface JetpackSettings {
 	jetpack_waf_ip_block_list?: string;
 	jetpack_sso_match_by_email?: boolean;
 	jetpack_sso_require_two_step?: boolean;
+	post_by_email_address?: string;
 }

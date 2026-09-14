@@ -63,6 +63,7 @@ export interface Theme {
 	};
 	trending_rank: number;
 	version: string;
+	supports_theme_switch_headstart?: boolean;
 }
 
 interface MarketplaceThemeProductDetails {
@@ -138,5 +139,17 @@ declare global {
 		};
 		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
+		Blackbox?: {
+			configure: ( config: {
+				apiKey: string;
+				challengeContainer: string | HTMLElement;
+				onChallengeStart?: () => void;
+				onChallengeComplete?: () => void;
+				onChallengeFailure?: ( reason: 'timeout' | 'exhausted' ) => void;
+			} ) => void;
+			collect: () => Promise< string | { sessionId: string } >;
+			getSessionId: () => Promise< string >;
+			reset?: () => void;
+		};
 	}
 }

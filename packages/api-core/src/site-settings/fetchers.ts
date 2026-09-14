@@ -6,5 +6,8 @@ export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings
 		path: `/sites/${ siteId }/settings`,
 		apiVersion: '1.4',
 	} );
-	return settings;
+	return {
+		...settings,
+		gmt_offset: Number( settings.gmt_offset ) || 0,
+	};
 }

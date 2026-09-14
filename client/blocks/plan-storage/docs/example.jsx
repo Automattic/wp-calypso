@@ -5,7 +5,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -87,7 +86,7 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 };
 
 const ConnectedPlanStorageExample = connect( ( state ) => {
-	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
+	const siteId = getCurrentUser( state )?.primary_blog ?? null;
 	const siteSlug = getSiteSlug( state, siteId );
 
 	return {

@@ -48,6 +48,7 @@ export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps
 	return (
 		<VStack spacing={ 3 }>
 			<SelectControl
+				__next40pxDefaultSize
 				label={ __( 'Schedule' ) }
 				value={ scheduleType }
 				options={ PREDEFINED_SCHEDULES }
@@ -83,6 +84,7 @@ export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps
 						} }
 					/>
 					<SelectControl
+						__next40pxDefaultSize
 						label={ __( 'Frequency' ) }
 						hideLabelFromVision
 						disabled={ disabled }

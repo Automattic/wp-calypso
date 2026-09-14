@@ -1,10 +1,12 @@
 import { Domain } from '@automattic/api-core';
-import { Notice } from '@wordpress/components';
+import config from '@automattic/calypso-config';
+import { ExternalLink, Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { wpcomLink } from '../../utils/link';
 
-const CALYPSO_CONTACT = '/help/contact';
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 type EmailNonDomainOwnerMessageProps = {
 	domain?: Domain;
@@ -21,17 +23,14 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 		s: domain?.domain || '',
 	} );
 
-	const loginUrl = addQueryArgs( '/log-in/', {
-		redirect_to: window.location.pathname,
+	const loginUrl = addQueryArgs( config( 'wpcom_login_url' ) || wpcomLink( '/log-in' ), {
+		redirect_to: window.location.href,
 	} );
 
-	const placeholders = {
-		ownerUserName,
-		selectedDomainName: domain?.domain ?? '',
-	};
+	const selectedDomainName = domain?.domain ?? '';
 	const elements = {
-		contactSupportLink: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
-		loginLink: <a href={ loginUrl } rel="external" />,
+		contactSupportLink: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
+		loginLink: <ExternalLink href={ loginUrl } children={ null } />,
 		reachOutLink: isPrivacyAvailable ? (
 			<a href={ contactOwnerUrl } rel="noopener noreferrer" target="_blank" />
 		) : (
@@ -47,12 +46,9 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 			sprintf(
 				// Translators: %(ownerUserName)s is the user name of the owner of the domain, %(selectedDomainName)s is the domain name.
 				__(
-					'Email service can only be purchased by <strong>%(ownerUserName)s</strong>, ' +
-						'who is the owner of <strong>%(selectedDomainName)s</strong>. ' +
-						'If you have access to that account, please <loginLink>log in with the account</loginLink> to make a purchase. ' +
-						'Otherwise, please <reachOutLink>reach out to %(ownerUserName)s</reachOutLink> or <contactSupportLink>contact support</contactSupportLink>.'
+					'Email service can only be purchased by <strong>%(ownerUserName)s</strong>, who is the owner of <strong>%(selectedDomainName)s</strong>. If you have access to that account, please <loginLink>log in with the account</loginLink> to make a purchase. Otherwise, please <reachOutLink>reach out to %(ownerUserName)s</reachOutLink> or <contactSupportLink>contact support</contactSupportLink>.'
 				),
-				placeholders
+				{ ownerUserName, selectedDomainName }
 			),
 			elements
 		);
@@ -61,11 +57,9 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 			sprintf(
 				// Translators: %(selectedDomainName)s is the domain name.
 				__(
-					'Email service can only be purchased by the owner of <strong>%(selectedDomainName)s</strong>. ' +
-						'If you have access to that account, please log in with the account to make a purchase. ' +
-						'Otherwise, please <contactSupportLink>contact support</contactSupportLink>.'
+					'Email service can only be purchased by the owner of <strong>%(selectedDomainName)s</strong>. If you have access to that account, please log in with the account to make a purchase. Otherwise, please <contactSupportLink>contact support</contactSupportLink>.'
 				),
-				placeholders
+				{ selectedDomainName }
 			),
 			elements
 		);

@@ -8,6 +8,15 @@ type GenericMenuItems = 'Trash';
 type MenuItems = TrashedMenuItems | GenericMenuItems;
 type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trash';
 
+// wp-admin pluralizes the status filter labels ("Draft (1)" vs "Drafts (2)") and
+// translates them, so the tabs are located by the status they link to instead.
+const tabPostStatus: Record< PostsPageTabs, string > = {
+	Published: 'publish',
+	Drafts: 'draft',
+	Scheduled: 'future',
+	Trash: 'trash',
+};
+
 const selectors = {
 	// General
 	addNewPostButton: 'a.page-title-action, span.split-page-title-action>a',
@@ -18,7 +27,7 @@ const selectors = {
 		`a.row-title:has-text("${ title }"), strong>span:has-text("${ title }")`,
 
 	// Status Filter
-	statusItem: ( item: string ) => `ul.subsubsub a:has-text("${ item }")`,
+	statusItem: ( postStatus: string ) => `ul.subsubsub a[href*="post_status=${ postStatus }"]`,
 
 	// Actions
 	actionItem: ( item: string ) => `.row-actions a:has-text("${ item }")`,
@@ -44,8 +53,36 @@ export class PostsPage {
 	 *
 	 * Example {@link https://wordpress.com/posts}
 	 */
-	async visit(): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( 'posts' ) );
+	async visit( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< Response | null > {
+		const response = await this.page.goto( getCalypsoURL( 'posts' ) );
+
+		if ( siteSlug ) {
+			const siteLink = this.page.locator( `a:has-text("${ siteSlug }")` ).first();
+			const appeared = await siteLink
+				.waitFor( { state: 'visible', timeout: 5000 } )
+				.then( () => true )
+				.catch( () => false );
+
+			if ( appeared ) {
+				await siteLink.click( { noWaitAfter: true } );
+				await this.page.waitForFunction(
+					() => /\/posts\/|\/wp-admin\/edit\.php|\/home\//.test( window.location.pathname ),
+					undefined,
+					{ timeout: 20 * 1000 }
+				);
+			}
+
+			// Some account/site combinations can still land on Home after site selection.
+			// Force a site-scoped Posts route so wp-admin post table actions are available.
+			if ( /\/home\//.test( new URL( this.page.url() ).pathname ) ) {
+				await this.page.goto( getCalypsoURL( `posts/${ siteSlug }` ), {
+					timeout: 30 * 1000,
+					waitUntil: 'domcontentloaded',
+				} );
+			}
+		}
+
+		return response;
 	}
 
 	/**
@@ -55,7 +92,7 @@ export class PostsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PostsPageTabs ): Promise< void > {
-		const locator = this.page.locator( selectors.statusItem( name ) );
+		const locator = this.page.locator( selectors.statusItem( tabPostStatus[ name ] ) );
 		await locator.click();
 	}
 
@@ -87,12 +124,39 @@ export class PostsPage {
 	/**
 	 * Clicks on the `add new post` button.
 	 */
-	async newPost(): Promise< void > {
+	async newPost( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
-		await Promise.all( [
-			this.page.waitForNavigation( { url: /post-new.php/, timeout: 20 * 1000 } ),
-			locator.click(),
-		] );
+
+		const hasEditorPath = ( pathName: string ): boolean =>
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/wp-admin\/post-new\.php$)/.test(
+				pathName
+			);
+
+		const addNewVisible = await locator
+			.first()
+			.waitFor( { state: 'visible', timeout: 5000 } )
+			.then( () => true )
+			.catch( () => false );
+
+		if ( addNewVisible ) {
+			await Promise.all( [
+				this.page.waitForFunction(
+					( regexSource ) => new RegExp( regexSource ).test( window.location.pathname ),
+					/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/wp-admin\/post-new\.php$)/.source,
+					{ timeout: 20 * 1000 }
+				),
+				locator.click( { noWaitAfter: true } ),
+			] );
+		} else if ( siteSlug ) {
+			await this.page.goto( getCalypsoURL( `post/${ siteSlug }` ), {
+				timeout: 30 * 1000,
+				waitUntil: 'domcontentloaded',
+			} );
+		}
+
+		if ( ! hasEditorPath( new URL( this.page.url() ).pathname ) ) {
+			throw new Error( `Expected to navigate to a post editor route, got ${ this.page.url() }` );
+		}
 	}
 
 	/* Post actions */
@@ -106,8 +170,17 @@ export class PostsPage {
 	async clickPost( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
-		await locator.click();
+		const locator = this.page.locator(
+			`${ selectors.postRow } a.row-title:has-text("${ title }")`
+		);
+		// Navigate via href instead of click(): some wp-admin column widgets (e.g. jetpack_seo_schema)
+		// overlay the row and intercept pointer events, causing click() to time out.
+		await locator.waitFor( { state: 'visible' } );
+		const href = await locator.getAttribute( 'href' );
+		if ( ! href ) {
+			throw new Error( `No href found on row-title for post "${ title }"` );
+		}
+		await this.page.goto( href, { waitUntil: 'domcontentloaded', timeout: 30 * 1000 } );
 	}
 
 	/**

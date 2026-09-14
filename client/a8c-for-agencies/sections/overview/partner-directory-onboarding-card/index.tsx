@@ -6,7 +6,7 @@ import { StickyCard } from 'calypso/a8c-for-agencies/components/sticky-card';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { usePartnerDirectoryOnboardingCard } from './hooks/use-partner-directory-onboard-card';
-import banner from './partner-directories-banner.jpg';
+import banner from './partner-directories-banner.webp';
 
 import './style.scss';
 
@@ -35,7 +35,7 @@ export default function PartnerDirectoryOnboardingCard() {
 		<StickyCard
 			className="partner-directory-onboarding-card"
 			position="bottom right"
-			title="Announcing partner directories"
+			title="Announcing Partner Directories"
 			dismissable
 			onClose={ onDismiss }
 		>
@@ -49,7 +49,7 @@ export default function PartnerDirectoryOnboardingCard() {
 
 					<p className="partner-directory-onboarding-card__content-description">
 						{ translate(
-							'Complete your agency profile on our platform to be featured in our partner directories.'
+							'Complete your agency profile on our platform to be featured in our Partner Directories.'
 						) }
 					</p>
 				</div>

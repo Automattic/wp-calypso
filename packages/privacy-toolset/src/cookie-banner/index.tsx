@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { allBucketsTrue } from './consts';
+import { allBucketsTrue, essentialOnly } from './consts';
 import { CustomizedConsent } from './customized-consent';
 import { SimpleConsent } from './simple-consent';
 import type { Buckets, CustomizedConsentContent, SimpleConsentContent } from './types';
@@ -27,6 +27,9 @@ export const CookieBanner = ( { content, onAccept }: CookieBannerProps ) => {
 	const handleAcceptAll = useCallback( () => {
 		onAccept( allBucketsTrue );
 	}, [ onAccept ] );
+	const handleDeclineNonEssentials = useCallback( () => {
+		onAccept( essentialOnly );
+	}, [ onAccept ] );
 
 	return (
 		<div className="cookie-banner">
@@ -35,6 +38,7 @@ export const CookieBanner = ( { content, onAccept }: CookieBannerProps ) => {
 					content={ content.simpleConsent }
 					onAcceptAll={ handleAcceptAll }
 					onCustomize={ handleSetCustomizedView }
+					onDeclineNonEssential={ handleDeclineNonEssentials }
 				/>
 			) }
 			{ ConsentViewType.Customized === viewType && (

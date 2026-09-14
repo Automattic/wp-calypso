@@ -4,5 +4,6 @@ import type { ValidateTaxContactInfoParams } from '@automattic/api-core';
 
 export const validateTaxContactInformationMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'tax-contact-info-validate' },
 		mutationFn: ( params: ValidateTaxContactInfoParams ) => validateTaxContactInformation( params ),
 	} );

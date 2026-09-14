@@ -1,7 +1,6 @@
 import { Button, Spinner } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -99,8 +98,8 @@ class VerifyEmailDialog extends Component {
 				key="resend"
 				primary
 				disabled={
-					includes( [ 'requesting', 'sent', 'error' ], this.props.emailVerificationStatus ) ||
-					includes( [ 'requesting', 'sent', 'error' ], this.state.resendPendingStatus )
+					[ 'requesting', 'sent', 'error' ].includes( this.props.emailVerificationStatus ) ||
+					[ 'requesting', 'sent', 'error' ].includes( this.state.resendPendingStatus )
 				}
 				onClick={ this.verifyEmail }
 			>
@@ -198,7 +197,7 @@ VerifyEmailDialog.defaultProps = {
 export default connect(
 	( state ) => ( {
 		email: getCurrentUserEmail( state ),
-		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
+		emailVerificationStatus: state?.currentUser?.emailVerification?.status,
 		currentRoute: getCurrentRoute( state ),
 		isPendingEmailChange: isPendingEmailChange( state ),
 		userSettings: getUserSettings( state ),

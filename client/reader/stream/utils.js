@@ -1,4 +1,3 @@
-import { flatMap } from 'lodash';
 import moment from 'moment';
 
 export const RECS_PER_BLOCK = 2;
@@ -48,7 +47,7 @@ export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 
 	let recIndex = 0;
 
-	return flatMap( posts, ( post, index ) => {
+	return posts.flatMap( ( post, index ) => {
 		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
@@ -116,7 +115,7 @@ export function injectPrompts( posts, itemsBetweenPrompts ) {
 
 	let promptIndex = 0;
 
-	return flatMap( posts, ( post, index ) => {
+	return posts.flatMap( ( post, index ) => {
 		if ( index && index % itemsBetweenPrompts === 0 ) {
 			const promptBlock = {
 				isPromptBlock: true,

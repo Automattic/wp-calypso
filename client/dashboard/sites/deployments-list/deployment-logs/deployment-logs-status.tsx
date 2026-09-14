@@ -1,7 +1,14 @@
 import { DeploymentRunStatus } from '@automattic/api-core';
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, published, scheduled, error, warning, info } from '@wordpress/icons';
+import {
+	Icon,
+	published,
+	scheduled,
+	error,
+	cautionFilled as warning,
+	info,
+} from '@wordpress/icons';
 
 function formatDuration( startedOn: string, completedOn: string | number | null ) {
 	if ( ! startedOn ) {
@@ -61,7 +68,7 @@ const getStatusIcon = (
 		case 'queued':
 			return {
 				icon: scheduled,
-				fill: '#3b3b3b',
+				fill: 'var(--dashboard__text-muted-color)',
 			};
 		case 'success':
 			return {
@@ -112,7 +119,7 @@ export function DeploymentLogsStatus( {
 					} }
 				/>
 			) }
-			<Text size="small" style={ { color: '#3b3b3b' } }>
+			<Text size="small" style={ { color: 'var(--dashboard__text-muted-color)' } }>
 				{ getStatusText( status, startedOn, completedOn ) }
 			</Text>
 		</HStack>

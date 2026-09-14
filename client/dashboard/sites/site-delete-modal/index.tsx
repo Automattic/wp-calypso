@@ -25,6 +25,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import {
 	getProductionSiteId,
 	hasStagingSite,
@@ -212,7 +213,9 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							'Before deleting your site, consider <link>exporting your content as a backup</link>.'
 						),
 						{
-							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
+							link: (
+								<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) } children={ null } />
+							),
 						}
 					) }
 				</Text>

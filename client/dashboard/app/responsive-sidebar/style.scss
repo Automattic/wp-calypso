@@ -1,0 +1,25 @@
+@import './variables';
+
+.dashboard-responsive-sidebar {
+	flex-shrink: 0;
+	position: fixed;
+	top: var(--masterbar-height);
+	inset-inline-start: 0;
+	height: calc(100vh - var(--masterbar-height) );
+	width: $sidebar-width;
+	transform: translateX( -100% );
+	transition: transform 0.3s ease-in;
+	overflow: hidden;
+	z-index: 101; // Above content overlay
+
+	&.is-open {
+		transform: translateX( 0 );
+		overflow-y: auto;
+	}
+}
+
+.dashboard-responsive-sidebar__overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 100;
+}

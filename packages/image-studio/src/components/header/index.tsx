@@ -98,8 +98,8 @@ export const Header = ( {
 
 	const showTools = mode === ImageStudioMode.Edit;
 	const showTitle = mode === ImageStudioMode.Generate;
-	// Always show navigation pill in Edit mode if we have a filename to display
-	const showNavigationPill = mode === ImageStudioMode.Edit && !! config?.imageData?.filename;
+	const showNavigationPill =
+		mode === ImageStudioMode.Edit && !! config?.imageData?.filename && window.pagenow === 'upload';
 
 	// Generate classic editor URL if we have an attachment ID
 	const classicEditorUrl = config?.attachmentId
@@ -107,13 +107,14 @@ export const Header = ( {
 		: null;
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
-	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
+	const isNavDisabled = hasDrafts || hasUpdatedMetadata || isAiProcessing || isSaving;
 
 	// Get entry point from store with fallback for navigation
 	const entryPoint = useSelect(
 		( select ) => select( imageStudioStore ).getEntryPoint() as ImageStudioEntryPoint | null,
 		[]
 	);
+	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
 	// Helper function to get save button text based on entry point
 	const getSaveButtonText = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
@@ -124,6 +125,7 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+			case ImageStudioEntryPoint.JetpackAIFeaturedImage:
 				return __( 'Save & Apply', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:
@@ -140,17 +142,13 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+			case ImageStudioEntryPoint.JetpackAIFeaturedImage:
 				return __( 'Save and apply image', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:
 				return __( 'Save displayed image to Media Library', __i18n_text_domain__ );
 		}
 	};
-
-	let navButtonDisabledTooltip: string | undefined;
-	if ( hasDrafts || hasUpdatedMetadata ) {
-		navButtonDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
-	}
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasPendingAnnotations,
@@ -198,18 +196,21 @@ export const Header = ( {
 		<div className="image-studio-header">
 			<div className="image-studio-header__inner">
 				<div className="image-studio-header__left">
-					{ leftContent ? (
-						leftContent
-					) : (
-						<h2
-							className={ cn( 'components-modal__header-heading', 'image-studio-header__title', {
-								'image-studio-sr-only': showTitle,
-							} ) }
-						>
-							{ __( 'Image Editor', __i18n_text_domain__ ) }{ ' ' }
-							<span className="image-studio-badge">{ __( 'Beta', __i18n_text_domain__ ) }</span>
-						</h2>
-					) }
+					{ leftContent
+						? leftContent
+						: ! isVideoMode && (
+								<h2
+									className={ cn(
+										'components-modal__header-heading',
+										'image-studio-header__title',
+										{
+											'image-studio-sr-only': showTitle,
+										}
+									) }
+								>
+									{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
+								</h2>
+						  ) }
 				</div>
 
 				{ showNavigationPill && (
@@ -220,16 +221,12 @@ export const Header = ( {
 								icon={ chevronLeft }
 								onClick={ onNavigatePrevious }
 								disabled={ ! hasPreviousImage || isNavDisabled }
-								label={
-									navButtonDisabledTooltip ||
-									sprintf(
-										/* translators: %s: modifier key (command or control) */
-										__( 'Previous image %s←', __i18n_text_domain__ ),
-										modKeySymbol
-									)
-								}
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Previous image %s←', __i18n_text_domain__ ),
+									modKeySymbol
+								) }
 								showTooltip
-								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
@@ -240,16 +237,12 @@ export const Header = ( {
 								icon={ chevronRight }
 								onClick={ onNavigateNext }
 								disabled={ ! hasNextImage || isNavDisabled }
-								label={
-									navButtonDisabledTooltip ||
-									sprintf(
-										/* translators: %s: modifier key (command or control) */
-										__( 'Next image %s→', __i18n_text_domain__ ),
-										modKeySymbol
-									)
-								}
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Next image %s→', __i18n_text_domain__ ),
+									modKeySymbol
+								) }
 								showTooltip
-								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 						</div>
@@ -369,7 +362,11 @@ export const Header = ( {
 					) }
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close image editor', __i18n_text_domain__ ) }
+						label={
+							isVideoMode
+								? __( 'Close', __i18n_text_domain__ )
+								: __( 'Close image editor', __i18n_text_domain__ )
+						}
 						onClick={ () => onClose() }
 						disabled={ isSaving }
 					/>

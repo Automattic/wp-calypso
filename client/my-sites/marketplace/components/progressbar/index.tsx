@@ -20,7 +20,6 @@ export default function MarketplaceProgressBar( {
 	additionalStepsTimeout?: number;
 } ) {
 	const [ stepValue, setStepValue ] = useState( steps[ currentStep ] );
-	const [ additionalStepsTimeoutId, setAdditionalStepsTimeoutId ] = useState< NodeJS.Timeout >();
 	const [ currentAdditionalSteps, setCurrentAdditionalSteps ] = useState< TranslateResult[] >( [] );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 	useEffect( () => {
@@ -39,7 +38,7 @@ export default function MarketplaceProgressBar( {
 
 	useEffect( () => {
 		setStepValue( steps[ currentStep ] );
-		setAdditionalStepsTimeoutId( undefined );
+		setCurrentAdditionalSteps( [] );
 	}, [ steps, currentStep ] );
 
 	/**
@@ -52,37 +51,24 @@ export default function MarketplaceProgressBar( {
 			newAdditionalSteps.sort( () => 0.5 - Math.random() );
 			setCurrentAdditionalSteps( newAdditionalSteps );
 		}
-	} );
+	}, [ currentAdditionalSteps, additionalSteps ] );
 
 	// Show additional messages in order when available
 	useEffect( () => {
-		function updateStepValueAfterTimeout() {
-			if ( currentAdditionalSteps?.length ) {
-				const timeoutId = setTimeout( () => {
-					const newValue = currentAdditionalSteps.shift();
-
-					if ( newValue && newValue !== stepValue ) {
-						setStepValue( newValue );
-					}
-
-					updateStepValueAfterTimeout();
-				}, additionalStepsTimeout );
-
-				if ( additionalStepsTimeoutId ) {
-					clearTimeout( additionalStepsTimeoutId );
-				}
-				setAdditionalStepsTimeoutId( timeoutId );
-			}
+		if ( ! currentAdditionalSteps?.length ) {
+			return;
 		}
-
-		updateStepValueAfterTimeout();
-
-		return () => {
-			if ( additionalStepsTimeoutId ) {
-				clearTimeout( additionalStepsTimeoutId );
-			}
-		};
-	}, [ additionalSteps, currentStep ] );
+		const timeoutId = setTimeout( () => {
+			setCurrentAdditionalSteps( ( prev ) => {
+				const [ next, ...rest ] = prev;
+				if ( next ) {
+					setStepValue( ( current ) => ( next !== current ? next : current ) );
+				}
+				return rest;
+			} );
+		}, additionalStepsTimeout );
+		return () => clearTimeout( timeoutId );
+	}, [ currentAdditionalSteps, additionalStepsTimeout ] );
 
 	const isInStepContainerV2Context = useInitialIsInStepContainerV2FlowContext();
 

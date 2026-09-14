@@ -11,7 +11,7 @@ export function useInfiniteScroll( options?: Options ) {
 	const { offset = '0px', shouldStop = false, onLoadMore } = options ?? {};
 
 	const [ isLoading, setIsLoading ] = useState( false );
-	const observerRef = useRef< IntersectionObserver >();
+	const observerRef = useRef< IntersectionObserver | undefined >( undefined );
 	const targetRef = useRef( document.createElement( 'div' ) );
 
 	const containerRef: LegacyRef< HTMLElement > = ( container ) => {

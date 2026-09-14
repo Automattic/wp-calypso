@@ -52,42 +52,44 @@ describe( 'parseErrorUrl', () => {
 
 	describe( 'URL extraction', () => {
 		it( 'extracts http URL from message', () => {
-			const result = parseErrorUrl( 'Error occurred. See http://example.com for details.' );
-			expect( result.url ).toBe( 'http://example.com' );
+			const result = parseErrorUrl( 'Error occurred. See http://wordpress.com/help for details.' );
+			expect( result.url ).toBe( 'http://wordpress.com/help' );
 			expect( result.content ).toBe( 'Error occurred. See for details.' );
 		} );
 
 		it( 'extracts https URL from message', () => {
-			const result = parseErrorUrl( 'Error occurred. See https://example.com for details.' );
-			expect( result.url ).toBe( 'https://example.com' );
+			const result = parseErrorUrl( 'Error occurred. See https://wordpress.com/help for details.' );
+			expect( result.url ).toBe( 'https://wordpress.com/help' );
 			expect( result.content ).toBe( 'Error occurred. See for details.' );
 		} );
 
 		it( 'extracts URL with path and query params', () => {
-			const result = parseErrorUrl( 'Visit https://example.com/path?foo=bar&baz=qux' );
-			expect( result.url ).toBe( 'https://example.com/path?foo=bar&baz=qux' );
+			const result = parseErrorUrl( 'Visit https://wordpress.com/path?foo=bar&baz=qux' );
+			expect( result.url ).toBe( 'https://wordpress.com/path?foo=bar&baz=qux' );
 			expect( result.content ).toBe( 'Visit' );
 		} );
 
 		it( 'extracts first URL when multiple present', () => {
-			const result = parseErrorUrl( 'See https://first.com or https://second.com' );
-			expect( result.url ).toBe( 'https://first.com' );
+			const result = parseErrorUrl(
+				'See https://wordpress.com/first or https://jetpack.com/second'
+			);
+			expect( result.url ).toBe( 'https://wordpress.com/first' );
 		} );
 
 		it( 'trims content after URL removal', () => {
-			const result = parseErrorUrl( 'https://example.com' );
+			const result = parseErrorUrl( 'https://wordpress.com' );
 			expect( result.content ).toBe( '' );
 		} );
 
 		it( 'handles URL at start of message', () => {
-			const result = parseErrorUrl( 'https://example.com - click here for help' );
-			expect( result.url ).toBe( 'https://example.com' );
+			const result = parseErrorUrl( 'https://wordpress.com/help - click here for help' );
+			expect( result.url ).toBe( 'https://wordpress.com/help' );
 			expect( result.content ).toBe( '- click here for help' );
 		} );
 
 		it( 'handles URL at end of message', () => {
-			const result = parseErrorUrl( 'For more information visit https://example.com' );
-			expect( result.url ).toBe( 'https://example.com' );
+			const result = parseErrorUrl( 'For more information visit https://wordpress.com/help' );
+			expect( result.url ).toBe( 'https://wordpress.com/help' );
 			expect( result.content ).toBe( 'For more information visit' );
 		} );
 	} );
@@ -106,7 +108,7 @@ describe( 'parseErrorUrl', () => {
 		} );
 
 		it( 'identifies /upgrade/ with path as upgrade but not plans page', () => {
-			const result = parseErrorUrl( 'See https://example.com/upgrade/premium' );
+			const result = parseErrorUrl( 'See https://wordpress.com/upgrade/premium' );
 			expect( result.isUpgradeUrl ).toBe( true );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
@@ -119,22 +121,39 @@ describe( 'parseErrorUrl', () => {
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
-		it( 'identifies my-jetpack URL as upgrade but not plans page', () => {
-			const result = parseErrorUrl(
-				'Upgrade required https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
-			);
-			expect( result.isUpgradeUrl ).toBe( true );
-			expect( result.isPlansPageUrl ).toBe( false );
+		it( 'identifies my-jetpack URL on current origin as upgrade but not plans page', () => {
+			// jsdom defaults to http://localhost — simulate a self-hosted site
+			const savedOrigin = window.location.origin;
+			Object.defineProperty( window, 'location', {
+				value: { origin: 'https://example.com' },
+				writable: true,
+			} );
+
+			try {
+				const result = parseErrorUrl(
+					'Upgrade required https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
+				);
+				expect( result.isUpgradeUrl ).toBe( true );
+				expect( result.isPlansPageUrl ).toBe( false );
+				expect( result.url ).toBe(
+					'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
+				);
+			} finally {
+				Object.defineProperty( window, 'location', {
+					value: new URL( savedOrigin ),
+					writable: true,
+				} );
+			}
 		} );
 
-		it( 'returns false for non-upgrade URLs', () => {
-			const result = parseErrorUrl( 'See https://example.com/help' );
+		it( 'returns false for non-upgrade URLs on allowed domain', () => {
+			const result = parseErrorUrl( 'See https://wordpress.com/help' );
 			expect( result.isUpgradeUrl ).toBe( false );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
 		it( 'returns false for URL with "plans" not in path', () => {
-			const result = parseErrorUrl( 'See https://example.com?plans=true' );
+			const result = parseErrorUrl( 'See https://wordpress.com?plans=true' );
 			expect( result.isUpgradeUrl ).toBe( false );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
@@ -146,7 +165,7 @@ describe( 'parseErrorUrl', () => {
 		} );
 
 		it( 'returns false for URL with "jetpack.com/redirect" in path but different hostname', () => {
-			const result = parseErrorUrl( 'See https://evil.com/jetpack.com/redirect' );
+			const result = parseErrorUrl( 'See https://wordpress.com/jetpack.com/redirect' );
 			expect( result.isUpgradeUrl ).toBe( false );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
@@ -165,47 +184,100 @@ describe( 'parseErrorUrl', () => {
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
-		it( 'returns false for my-jetpack URL', () => {
-			const result = parseErrorUrl(
-				'Upgrade required https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
-			);
-			expect( result.isPlansPageUrl ).toBe( false );
-		} );
-
 		it( 'returns false for /upgrade URL', () => {
 			const result = parseErrorUrl( 'Upgrade required https://wordpress.com/upgrade' );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
 		it( 'returns false for non-upgrade URLs', () => {
-			const result = parseErrorUrl( 'See https://example.com/help' );
+			const result = parseErrorUrl( 'See https://wordpress.com/help' );
 			expect( result.isPlansPageUrl ).toBe( false );
+		} );
+	} );
+
+	describe( 'domain allowlist', () => {
+		it( 'allows wordpress.com URLs', () => {
+			const result = parseErrorUrl( 'See https://wordpress.com/help' );
+			expect( result.url ).toBe( 'https://wordpress.com/help' );
+		} );
+
+		it( 'allows jetpack.com URLs', () => {
+			const result = parseErrorUrl( 'See https://jetpack.com/help' );
+			expect( result.url ).toBe( 'https://jetpack.com/help' );
+		} );
+
+		it( 'rejects subdomains of trusted domains', () => {
+			const result = parseErrorUrl( 'See https://public-api.wordpress.com/help' );
+			expect( result.url ).toBeNull();
+		} );
+
+		it( 'allows URLs matching window.location.origin (self-hosted)', () => {
+			Object.defineProperty( window, 'location', {
+				value: { origin: 'https://my-selfhosted-site.org' },
+				writable: true,
+			} );
+
+			try {
+				const result = parseErrorUrl(
+					'See https://my-selfhosted-site.org/wp-admin/admin.php?page=my-jetpack'
+				);
+				expect( result.url ).toBe(
+					'https://my-selfhosted-site.org/wp-admin/admin.php?page=my-jetpack'
+				);
+			} finally {
+				Object.defineProperty( window, 'location', {
+					value: new URL( 'http://localhost' ),
+					writable: true,
+				} );
+			}
+		} );
+
+		it( 'rejects URLs from untrusted domains', () => {
+			const result = parseErrorUrl( 'See https://evil.com/phishing' );
+			expect( result.url ).toBeNull();
+			expect( result.content ).toBe( 'See' );
+		} );
+
+		it( 'rejects URLs that look like trusted domains but are not', () => {
+			const result = parseErrorUrl( 'See https://notwordpress.com/help' );
+			expect( result.url ).toBeNull();
+		} );
+
+		it( 'strips URL from content even when domain is rejected', () => {
+			const result = parseErrorUrl( 'Error occurred. See https://evil.com for details.' );
+			expect( result.url ).toBeNull();
+			expect( result.content ).toBe( 'Error occurred. See for details.' );
+		} );
+
+		it( 'handles hostname with port on allowed domain', () => {
+			const result = parseErrorUrl( 'See https://wordpress.com:8080/path' );
+			expect( result.url ).toBe( 'https://wordpress.com:8080/path' );
 		} );
 	} );
 
 	describe( 'edge cases', () => {
 		it( 'handles URL with fragment', () => {
-			const result = parseErrorUrl( 'See https://example.com/docs#section' );
-			expect( result.url ).toBe( 'https://example.com/docs#section' );
+			const result = parseErrorUrl( 'See https://wordpress.com/docs#section' );
+			expect( result.url ).toBe( 'https://wordpress.com/docs#section' );
 		} );
 
 		it( 'handles URL with port', () => {
-			const result = parseErrorUrl( 'See https://example.com:8080/path' );
-			expect( result.url ).toBe( 'https://example.com:8080/path' );
+			const result = parseErrorUrl( 'See https://wordpress.com:8080/path' );
+			expect( result.url ).toBe( 'https://wordpress.com:8080/path' );
 		} );
 
 		it( 'handles URL with encoded characters', () => {
-			const result = parseErrorUrl( 'See https://example.com/path%20with%20spaces' );
-			expect( result.url ).toBe( 'https://example.com/path%20with%20spaces' );
+			const result = parseErrorUrl( 'See https://wordpress.com/path%20with%20spaces' );
+			expect( result.url ).toBe( 'https://wordpress.com/path%20with%20spaces' );
 		} );
 
 		it( 'does not match ftp URLs', () => {
-			const result = parseErrorUrl( 'See ftp://example.com' );
+			const result = parseErrorUrl( 'See ftp://wordpress.com' );
 			expect( result.url ).toBeNull();
 		} );
 
 		it( 'does not match mailto links', () => {
-			const result = parseErrorUrl( 'Contact mailto:test@example.com' );
+			const result = parseErrorUrl( 'Contact mailto:test@wordpress.com' );
 			expect( result.url ).toBeNull();
 		} );
 	} );

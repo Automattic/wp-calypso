@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
+import { omit } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createElement, Component, Fragment } from 'react';

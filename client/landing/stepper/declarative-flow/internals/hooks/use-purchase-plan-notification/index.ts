@@ -36,8 +36,8 @@ export const usePurchasePlanNotification = (
 
 		const plan = getPlan( sitePlanSlug );
 		// Only display the notification after translation data has been loaded
-		const localeSlug = getLocaleData()[ '' ].localeSlug;
-		if ( ! localeSlug ) {
+		const metadata = getLocaleData()[ '' ] as { localeSlug?: string } | undefined;
+		if ( ! metadata?.localeSlug ) {
 			return;
 		}
 
@@ -46,7 +46,7 @@ export const usePurchasePlanNotification = (
 				sprintf(
 					/* translators: %(planName)s is the name of the plan, e.g. "Business Plan" */
 					__( "You're in! The %(planName)s Plan is now active." ),
-					{ planName: plan?.getTitle() || '' }
+					{ planName: String( plan?.getTitle() ?? '' ) }
 				)
 			)
 		);

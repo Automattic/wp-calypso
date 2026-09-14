@@ -1,18 +1,18 @@
 import { PremiumBadge } from '@automattic/components';
 import clsx from 'clsx';
-import { RefObject } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import type { ReactNode, Ref } from 'react';
 
 import './style.scss';
 
 type PatternsSectionProps = {
 	title: string;
 	id?: string;
-	forwardRef?: RefObject< HTMLDivElement >;
+	forwardRef?: Ref< HTMLDivElement >;
 	description: string;
 	theme?: 'blue' | 'dark' | 'gray';
 	bodyFullWidth?: boolean;
-	children: React.ReactNode;
+	children: ReactNode;
 	isPremium?: boolean;
 };
 

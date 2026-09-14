@@ -45,7 +45,6 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const url = site.URL;
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
@@ -70,17 +69,9 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 				</Text>
 			</MetadataItem>
 		);
-	} else {
-		fields.push(
-			<MetadataItem key="url">
-				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-					{ getSiteDisplayUrl( site ) }
-				</ExternalLink>
-			</MetadataItem>
-		);
 	}
 
-	if ( wpVersion ) {
+	if ( wpVersion && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="wp-version" title={ __( 'WordPress' ) }>
 				{ isSelfHostedJetpackConnected( site ) ? (
@@ -92,7 +83,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( hasPHPFeature ) {
+	if ( hasPHPFeature && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>

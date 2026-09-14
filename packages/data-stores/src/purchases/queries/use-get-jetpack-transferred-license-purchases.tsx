@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import { createPurchaseObject } from '../lib/assembler';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { RawPurchase, Purchase } from '../types';
@@ -16,8 +16,9 @@ export function getUseTransferredPurchasesOptions(
 		queryKey,
 		queryFn: async (): Promise< Purchase[] > => {
 			const purchases: RawPurchase[] = await wpcomRequest( {
-				path: '/me/purchases/transferred',
-				apiVersion: '1.1',
+				path: '/upgrades',
+				apiVersion: '1.2',
+				query: 'type=transferred',
 			} );
 
 			return purchases.map( ( rawPurchase ) => createPurchaseObject( rawPurchase ) );

@@ -191,17 +191,39 @@ describe( 'actions', () => {
 					invitation: 'test-invitation',
 					comment_follow: 'test-comment-follow',
 					welcome: 'test-welcome',
+					free_tier_description: 'test-free-description',
+					hide_free_tier: 1,
 					other: 'test-other',
 				},
 			};
 			return saveSiteSettings( 2916284, settings )( spy, getState ).then( () => {
 				const formattedOptions = savedSettings.subscription_options;
-				expect( Array.isArray( formattedOptions ) ).toBe( true );
-				expect( formattedOptions ).toEqual(
-					expect.arrayContaining( [ 'test-invitation', 'test-comment-follow', 'test-welcome' ] )
-				);
-				expect( formattedOptions.length ).toBe( 3 );
-				expect( formattedOptions ).not.toContain( 'test-other' );
+				// Must be a plain object keyed by name: the server filters by key, and
+				// an array's string keys would be dropped crossing the proxy boundary.
+				expect( Array.isArray( formattedOptions ) ).toBe( false );
+				expect( formattedOptions ).toEqual( {
+					invitation: 'test-invitation',
+					comment_follow: 'test-comment-follow',
+					welcome: 'test-welcome',
+					free_tier_description: 'test-free-description',
+					hide_free_tier: 1,
+				} );
+				// Disallowed keys are filtered out.
+				expect( formattedOptions ).not.toHaveProperty( 'other' );
+			} );
+		} );
+
+		test( 'should normalize hide_free_tier to 1/0 for Jetpack sites', () => {
+			const settings = {
+				subscription_options: {
+					// A boolean would otherwise form-encode to the string "false",
+					// which PHP treats as truthy — it must be coerced to 0.
+					hide_free_tier: false,
+				},
+			};
+			return saveSiteSettings( 2916284, settings )( spy, getState ).then( () => {
+				const formattedOptions = savedSettings.subscription_options;
+				expect( formattedOptions.hide_free_tier ).toBe( 0 );
 			} );
 		} );
 

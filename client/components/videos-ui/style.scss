@@ -1,7 +1,8 @@
-@import "@automattic/typography/styles/variables";
-@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/onboarding/styles/mixins";
 
 .videos-ui {
 	background: #101517;

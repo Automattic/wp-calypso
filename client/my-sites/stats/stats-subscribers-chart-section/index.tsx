@@ -19,6 +19,11 @@ import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
+const loadLineChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+	);
+
 interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
@@ -188,7 +193,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const subscriberLineStroke = useCssVariable( '--color-primary-light', containerRef.current );
+	const subscriberLineStroke = useCssVariable( '--color-accent-light', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
@@ -277,12 +282,13 @@ export default function SubscribersChartSection( {
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
-							require="calypso/my-sites/stats/components/line-chart"
+							require={ loadLineChart }
 							chartData={ lineChartData }
 							height={ 300 }
 							curveType="monotone" // can use smooth, linear, monotone
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
+							smartBaseline={ lineChartData.length === 1 }
 							formatTimeTick={ formatTimeTick }
 							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>

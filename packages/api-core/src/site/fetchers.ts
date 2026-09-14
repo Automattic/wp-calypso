@@ -37,22 +37,28 @@ export const SITE_FIELDS = [
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
 	'is_garden',
+	'is_multisite',
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',
+	'big_sky_enabled',
+	'atomic_email_block',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'apm_enabled',
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
+	'difm_lite_site_options',
 	'is_gating_business_q1',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
+	'jetpack_recovery_mode_status',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',
@@ -60,6 +66,10 @@ export const SITE_OPTIONS = [
 	'software_version',
 	'updated_at',
 	'woocommerce_is_active',
+	'wpcom_admin_interface',
+	'wpcom_ai_launchpad_enabled',
+	'wpcom_ai_launchpad_dismissed',
+	'wpcom_ai_launchpad_completed',
 	'wpcom_production_blog_id',
 ];
 

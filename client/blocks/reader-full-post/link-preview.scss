@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .reader-full-post__link-preview {
 	margin: 16px 0;
 	border-radius: 8px;
@@ -21,6 +23,13 @@
 
 		a {
 			color: var(--color-error);
+		}
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.reader-full-post__link-preview-type {
+			background: var( --dashboard-item-selected__background-color );
+			color: var( --color-text );
 		}
 	}
 }

@@ -42,7 +42,10 @@ export const CustomizedConsent = ( { content, onAccept }: Props ) => {
 				onChange={ handleChangeBucket( 'advertising' ) }
 				checked={ buckets.advertising }
 			/>
-			<button className="cookie-banner__accept-selection-button" onClick={ handleAccept }>
+			<button
+				className="a8c-cookie-banner__button cookie-banner__accept-selection-button"
+				onClick={ handleAccept }
+			>
 				{ content.acceptSelectionButton }
 			</button>
 		</div>

@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { handleActiveThrottles, recordResponseThrottle } from '../../throttle-flags';
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
@@ -6,7 +7,7 @@ import type { NewSiteResponse } from '../../../types/rest-api-client.types';
  * The plans page URL regex.
  */
 export const plansPageUrl =
-	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch.*/;
+	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -17,6 +18,11 @@ export class SignupPickPlanPage {
 	private page: Page;
 	private plansPage: PlansPage;
 	readonly theresAPlanForYouHeading: Locator;
+	/**
+	 * Site created by the last `selectPlan` call. Set as soon as `/sites/new` responds,
+	 * so a caller whose `selectPlan` then times out can still clean the site up.
+	 */
+	createdSite: NewSiteResponse | undefined;
 
 	/**
 	 * Constructs an instance of the component.
@@ -36,10 +42,12 @@ export class SignupPickPlanPage {
 	 * interception to avoid the race where the page navigates away before
 	 * the response body can be read through CDP.
 	 *
-	 * @see test/e2e/docs-new/creating_reliable_tests.md
+	 * @see test/e2e/docs/creating_reliable_tests.md
 	 * @returns {Promise<NewSiteResponse>}
 	 */
 	private captureNewSiteResponse(): Promise< NewSiteResponse > {
+		this.createdSite = undefined;
+
 		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
 			this.page.route(
 				/.*\/sites\/new\?.*/,
@@ -48,6 +56,14 @@ export class SignupPickPlanPage {
 						const response = await route.fetch();
 						const body = await response.body();
 						await route.fulfill( { response } );
+
+						// `/sites/new` is where the signup ban is answered, and this is the
+						// only place the suite reads what it answers with. A refusal parses
+						// as nothing and would otherwise leave a syntax error behind.
+						const throttle = await recordResponseThrottle( response );
+						if ( throttle ) {
+							handleActiveThrottles( [ throttle ] );
+						}
 
 						const parsed = JSON.parse( body.toString() );
 						const siteDetails: NewSiteResponse = parsed.body;
@@ -59,6 +75,7 @@ export class SignupPickPlanPage {
 						}
 
 						siteDetails.blog_details.blogid = Number( siteDetails.blog_details.blogid );
+						this.createdSite = siteDetails;
 						resolve( siteDetails );
 					} catch ( error ) {
 						reject( error );
@@ -85,14 +102,18 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
+		// Awaited alongside the redirect rather than after it: a refused creation
+		// never redirects, and a skip left to be read afterwards would spend the
+		// ninety seconds first and then be lost to the timeout that ends the wait.
 		const responsePromise = this.captureNewSiteResponse();
 
-		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+		const [ , , siteDetails ] = await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
 			this.plansPage.selectPlan( name ),
+			responsePromise,
 		] );
 
-		return responsePromise;
+		return siteDetails;
 	}
 
 	/**
@@ -116,7 +137,7 @@ export class SignupPickPlanPage {
 		}
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];
 
@@ -139,10 +160,79 @@ export class SignupPickPlanPage {
 		redirectUrl ??= new RegExp( '.*checkout.*' );
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectModalUpsellPlan( planName ),
 		];
 
 		await Promise.all( actions );
+	}
+
+	/**
+	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger.
+	 *
+	 * Use this when you need to inspect or assert modal content before committing to a plan.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async openEscapeHatch(): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+		await this.plansPage.openEscapeHatch();
+	}
+
+	/**
+	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
+	 *
+	 * @param {string} domainName The domain name that will be shown to visitors.
+	 * @returns {Promise<void>}
+	 */
+	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
+		await this.plansPage.validateNoCustomDomainWarning( domainName );
+	}
+
+	/**
+	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
+	 *
+	 * @param {string} domainName The domain name that will be shown to visitors.
+	 * @param {string} siteSlug The site slug.
+	 * @returns {Promise<void>}
+	 */
+	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
+		await this.plansPage.validateDomainRedirectWarning( domainName, siteSlug );
+	}
+
+	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 *
+	 * @param {string} siteSlug The site slug.
+	 * @returns {Promise<string>} Domain shown in the redirect warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		return this.plansPage.getDomainFromRedirectWarning( siteSlug );
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 *
+	 * @returns {Promise<string>} Domain shown as included.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		return this.plansPage.getIncludedDomain();
+	}
+
+	/**
+	 * Clicks the "Continue with Free" button in the escape hatch modal and waits for navigation.
+	 *
+	 * Intended for use after `openEscapeHatch()` when skipping to a free plan with no domain.
+	 *
+	 * @param {RegExp} redirectUrl Optional URL pattern to wait for after clicking.
+	 * @returns {Promise<void>}
+	 */
+	async continueWithFreeViaEscapeHatch( redirectUrl?: RegExp ): Promise< void > {
+		redirectUrl ??= new RegExp( '.*/home/.*' );
+
+		await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.plansPage.clickContinueWithFree(),
+		] );
 	}
 }

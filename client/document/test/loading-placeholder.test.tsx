@@ -23,8 +23,6 @@ const baseProps: DocumentProps = {
 	clientData: null,
 	commitChecksum: '',
 	commitSha: '',
-	devDocs: false,
-	devDocsURL: '',
 	entrypoint: {
 		js: [],
 		'css.ltr': [],
@@ -51,8 +49,9 @@ const baseProps: DocumentProps = {
 	renderedLayout: null,
 	sectionGroup: '',
 	sectionName: 'stepper',
-	hideWooHostedLogo: false,
+	path: '/',
 	storeSandboxHelper: false,
+	blackboxHelper: false,
 	target: 'evergreen',
 	user: null,
 	useTranslationChunks: false,
@@ -60,35 +59,106 @@ const baseProps: DocumentProps = {
 };
 
 describe( 'Document LoadingPlaceholder', () => {
-	it( 'hides the WordPress logo for Woo Hosted plans setup SSR', () => {
+	it( 'hides the WordPress logo on CIAB dashboard', () => {
 		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="stepper" />
+			<Document { ...baseProps } dashboard="ciab" sectionName="stepper" />
 		);
 
 		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'hides the WordPress logo for Woo Hosted checkout SSR', () => {
-		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="checkout" />
-		);
+	it( 'shows the WordPress logo on non-CIAB dashboard', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
 
-		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
+		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'shows the WordPress logo when hideWooHostedLogo is false', () => {
+	it( 'hides the WordPress boot logo on the WooCommerce QR login auth-check route', () => {
 		const html = renderToStaticMarkup(
 			<Document
 				{ ...baseProps }
-				query={ {
-					siteSlug: 'unabashedly-instant-starlight.commerce-garden.com',
-					dashboard: 'ciab',
-					sessionId: 'Z0',
-				} }
-				sectionName="stepper"
+				path="/me/security/qr-login"
+				query={ { origin: 'woocommerce' } }
+				sectionName="me"
+				showStepContainerV2Loader={ false }
 			/>
 		);
 
-		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
+		expect( html ).not.toContain( 'wpcom-site__logo' );
+		expect( html ).toContain( 'wpcom-loading__boot' );
+	} );
+} );
+
+describe( 'Document RTL CSS handling', () => {
+	const originalBuildRtlCss = process.env.BUILD_RTL_CSS;
+
+	afterEach( () => {
+		if ( originalBuildRtlCss === undefined ) {
+			delete process.env.BUILD_RTL_CSS;
+			return;
+		}
+
+		process.env.BUILD_RTL_CSS = originalBuildRtlCss;
+	} );
+
+	it( 'shows the RTL CSS disabled badge and uses LTR styles in RTL dev mode', () => {
+		delete process.env.BUILD_RTL_CSS;
+
+		const html = renderToStaticMarkup(
+			<Document
+				{ ...baseProps }
+				badge="dev"
+				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
+				lang="ar"
+				entrypoint={ {
+					...baseProps.entrypoint,
+					'css.ltr': [ '/calypso/evergreen/entry-main.css' ],
+					'css.rtl': [ '/calypso/evergreen/entry-main.rtl.css' ],
+				} }
+			/>
+		);
+
+		expect( html ).toContain( 'var RTL_CSS_ENABLED = false' );
+		expect( html ).toContain( 'RTLCSS off: set BUILD_RTL_CSS=true' );
+		expect( html ).toContain( '/calypso/evergreen/entry-main.css' );
+		expect( html ).not.toContain( '/calypso/evergreen/entry-main.rtl.css' );
+	} );
+
+	it( 'uses RTL styles and hides the badge when BUILD_RTL_CSS is true', () => {
+		process.env.BUILD_RTL_CSS = 'true';
+
+		const html = renderToStaticMarkup(
+			<Document
+				{ ...baseProps }
+				badge="dev"
+				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
+				lang="ar"
+				entrypoint={ {
+					...baseProps.entrypoint,
+					'css.ltr': [ '/calypso/evergreen/entry-main.css' ],
+					'css.rtl': [ '/calypso/evergreen/entry-main.rtl.css' ],
+				} }
+			/>
+		);
+
+		expect( html ).toContain( 'var RTL_CSS_ENABLED = true' );
+		expect( html ).not.toContain( 'RTLCSS off: set BUILD_RTL_CSS=true' );
+		expect( html ).not.toContain( '/calypso/evergreen/entry-main.css' );
+		expect( html ).toContain( '/calypso/evergreen/entry-main.rtl.css' );
+	} );
+
+	it( 'renders the helper in LTR dev mode so it can appear after a runtime RTL switch', () => {
+		delete process.env.BUILD_RTL_CSS;
+
+		const html = renderToStaticMarkup(
+			<Document
+				{ ...baseProps }
+				badge="dev"
+				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
+			/>
+		);
+
+		expect( html ).toContain( 'var RTL_CSS_ENABLED = false' );
+		expect( html ).toContain( 'RTLCSS off: set BUILD_RTL_CSS=true' );
 	} );
 } );

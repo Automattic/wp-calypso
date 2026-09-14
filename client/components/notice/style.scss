@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '../../assets/stylesheets/shared/mixins/breakpoints';
 @import '@automattic/typography/styles/variables';
 
@@ -22,6 +24,12 @@
 	color: var( --color-text-inverted );
 	line-height: 1.5;
 	align-items: center;
+
+	@include ui-mixins.when-dark-theme {
+		--color-neutral-80: var( --color-surface, var( --wp-components-color-background ) );
+		--color-neutral-20: var( --color-text-subtle, var( --wp-components-color-gray-700 ) );
+		--color-text-inverted: var( --color-text, var( --wp-components-color-foreground ) );
+	}
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 24px;

@@ -1,3 +1,5 @@
 import CommentSubscriptionsManager from './comment-subscriptions-manager';
 
-export default () => <CommentSubscriptionsManager />;
+const CommentSubscriptionsManagerRoute = () => <CommentSubscriptionsManager />;
+
+export default CommentSubscriptionsManagerRoute;

@@ -53,6 +53,17 @@ await loadScript( REMOTE_SCRIPT_URL, undefined, { id: 'my-script-tag-id' } );
 // Script tag id will be set to 'my-script-tag-id';
 ```
 
+`data-*` and `aria-*` keys are written as HTML attributes:
+
+```js
+await loadScript( REMOTE_SCRIPT_URL, undefined, {
+	'data-apikey': 'example-key',
+} );
+// Script tag includes data-apikey="example-key";
+```
+
+Other keys continue to be assigned as script element properties (for example `id`, `async`, `nonce`).
+
 ## Error handling
 
 If using the callback, it should expect a single argument, which will be `null` on success or an object on failure. This error object contains the `src` property, which will contain the src url of the script that failed to load. If using the Promise form, the error object will be passed to the nearest `catch` handler as a rejection.

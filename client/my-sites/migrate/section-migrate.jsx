@@ -7,8 +7,8 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
+import { omit, isEmpty } from '@automattic/js-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -71,7 +71,7 @@ export class SectionMigrate extends Component {
 
 	componentDidMount() {
 		const { targetSite, targetSiteId, targetSiteSlug, sourceSite, sourceSiteId } = this.props;
-		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+		const sourceSiteUrl = sourceSite?.URL ?? sourceSiteId;
 		clearMigrationStatus();
 
 		if ( this.isNonAtomicJetpack() ) {
@@ -274,7 +274,7 @@ export class SectionMigrate extends Component {
 			return;
 		}
 
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = targetSite?.plan?.product_slug;
 		if (
 			planSlug &&
 			! this._startedMigrationFromCart &&
@@ -315,8 +315,8 @@ export class SectionMigrate extends Component {
 
 	goToCart = () => {
 		const { sourceSite, targetSiteSlug, targetSite } = this.props;
-		const sourceSiteSlug = get( sourceSite, 'slug' );
-		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const sourceSiteSlug = sourceSite?.slug;
+		const currentPlanSlug = targetSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const plan = isEcommerceTrial ? PLAN_WOOEXPRESS_SMALL : PLAN_BUSINESS;
 
@@ -396,7 +396,7 @@ export class SectionMigrate extends Component {
 					/**
 					 * Renew the site if the backend upgraded do Atomic, but Calypso still has old data
 					 */
-					if ( isBackendAtomic && ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+					if ( isBackendAtomic && ! ( targetSite?.options?.is_wpcom_atomic ?? false ) ) {
 						this.props.requestSite( targetSiteId );
 					}
 
@@ -436,7 +436,7 @@ export class SectionMigrate extends Component {
 
 	renderMigrationComplete() {
 		const { targetSite, translate } = this.props;
-		const viewSiteURL = get( targetSite, 'URL' );
+		const viewSiteURL = targetSite?.URL;
 
 		return (
 			<>
@@ -501,8 +501,8 @@ export class SectionMigrate extends Component {
 
 	renderMigrationProgress() {
 		const { sourceSite, targetSite, translate } = this.props;
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const sourceSiteDomain = sourceSite?.domain;
+		const targetSiteDomain = targetSite?.domain;
 		const subHeaderText = (
 			<>
 				{ translate(
@@ -600,8 +600,8 @@ export class SectionMigrate extends Component {
 	renderProgressItem( progressState ) {
 		const { migrationStatus } = this.state;
 		const { sourceSite, targetSite, translate } = this.props;
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const sourceSiteDomain = sourceSite?.domain;
+		const targetSiteDomain = targetSite?.domain;
 
 		let progressItemText;
 		switch ( progressState ) {
@@ -672,7 +672,7 @@ export class SectionMigrate extends Component {
 
 	render() {
 		const { step, sourceSite, targetSite, targetSiteSlug, translate, targetSiteId } = this.props;
-		const sourceSiteSlug = get( sourceSite, 'slug' );
+		const sourceSiteSlug = sourceSite?.slug;
 
 		let migrationElement;
 
@@ -772,7 +772,7 @@ export class SectionMigrate extends Component {
 const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	const sourceSite = getSite( state, sourceSiteId );
-	const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+	const sourceSiteSlug = sourceSite?.slug ?? sourceSiteId;
 	const targetSiteSlug = getSelectedSiteSlug( state );
 
 	page( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
@@ -785,7 +785,7 @@ export const connector = connect(
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, targetSiteId ),
 			isTargetSiteJetpack: !! isJetpackSite( state, targetSiteId ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
-			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
+			startMigration: !! getCurrentQueryArguments( state )?.start,
 			sourceSiteHasJetpack: false,
 			targetSite: getSelectedSite( state ),
 			targetSiteId,

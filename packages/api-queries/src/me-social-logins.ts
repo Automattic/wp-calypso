@@ -6,6 +6,7 @@ import type { ConnectSocialUserArgs, PostLoginRequestArgs } from '@automattic/ap
 
 export const disconnectSocialUserMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'social-user-disconnect' },
 		mutationFn: ( service: string ) =>
 			disconnectSocialUser( {
 				service,
@@ -19,6 +20,7 @@ export const disconnectSocialUserMutation = () =>
 
 export const connectSocialUserMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'social-user-connect' },
 		mutationFn: ( data: ConnectSocialUserArgs ) =>
 			connectSocialUser( {
 				...data,
@@ -32,5 +34,6 @@ export const connectSocialUserMutation = () =>
 
 export const postLoginRequestMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'login-request-post' },
 		mutationFn: ( data: PostLoginRequestArgs ) => postLoginRequest( data ),
 	} );

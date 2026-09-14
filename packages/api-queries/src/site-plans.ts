@@ -12,7 +12,7 @@ export const siteCurrentPlanQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'plans', 'current' ],
 		queryFn: async () => {
-			const plans = await fetchSitePlans( siteId );
+			const { plans } = await fetchSitePlans( siteId );
 			const plan = plans.find( ( plan ) => plan.current_plan );
 			if ( ! plan ) {
 				throw new Error( 'No current plan found' );
@@ -25,7 +25,7 @@ export const sitePlanBySlugQuery = ( siteId: number, productSlug: string ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'plans', productSlug ],
 		queryFn: async () => {
-			const plans = await fetchSitePlans( siteId );
+			const { plans } = await fetchSitePlans( siteId );
 			const plan = plans.find( ( plan ) => plan.product_slug === productSlug );
 			if ( ! plan ) {
 				throw new Error( `The plan ${ productSlug } cannot be found` );
@@ -36,5 +36,6 @@ export const sitePlanBySlugQuery = ( siteId: number, productSlug: string ) =>
 
 export const sitePlanSoftwareRestoreMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-plan-sw-restore' },
 		mutationFn: () => restoreSitePlanSoftware( siteId ),
 	} );

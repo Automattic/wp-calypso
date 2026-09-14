@@ -9,6 +9,7 @@ import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
 interface WideLayoutProps {
 	topBar?: ContentProp;
 	heading?: ReactNode;
+	headingColumnWidth?: 4 | 5 | 6 | 8 | 10;
 	className?: string;
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
@@ -17,6 +18,7 @@ interface WideLayoutProps {
 export const WideLayout = ( {
 	topBar,
 	heading,
+	headingColumnWidth,
 	className,
 	children,
 	stickyBottomBar,
@@ -30,7 +32,7 @@ export const WideLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper>
-							{ heading && <ContentRow>{ heading }</ContentRow> }
+							{ heading && <ContentRow columns={ headingColumnWidth }>{ heading }</ContentRow> }
 							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />

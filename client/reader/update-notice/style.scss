@@ -1,3 +1,7 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+
 // New Posts Notice
 // Slides in when there are new posts available
 .reader-update-notice {
@@ -42,7 +46,7 @@
 }
 
 .reader-update-notice .gridicon {
-	fill: var( --studio-white );
+	fill: currentColor;
 	display: inline-block;
 	position: absolute;
 	left: 10px;

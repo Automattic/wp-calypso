@@ -10,8 +10,10 @@ export const cancellationOffersQuery = ( siteId: number, purchaseId: number ) =>
 
 export const applyCancellationOfferMutation = ( siteId: number, purchaseId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'cancellation-offer-apply' },
 		mutationFn: () => applyCancellationOffer( siteId, purchaseId ),
-		onSuccess: () => {
+		onSuccess: ( data ) => {
 			queryClient.invalidateQueries( cancellationOffersQuery( siteId, purchaseId ) );
+			return data;
 		},
 	} );

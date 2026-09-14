@@ -69,6 +69,19 @@ describe( 'leaveCheckout', () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/\\example.com' );
 		} );
 
+		it( 'should keep the query string when redirecting to the Studio return page', () => {
+			const studioSiteId = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
+			window.location.search = `?cancel_to=${ encodeURIComponent(
+				`/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
+			) }`;
+
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).toBe(
+				`/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
+			);
+		} );
+
 		it( 'should fall through to closeUrl when cancel_to is an invalid external URL', () => {
 			window.location.search = '?cancel_to=https://evil.com/malicious';
 

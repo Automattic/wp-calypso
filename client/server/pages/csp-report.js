@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { snakeCase } from '@automattic/js-utils';
 import bodyParser from 'body-parser';
-import { snakeCase } from 'lodash';
 import analytics from 'calypso/server/lib/analytics';
 
 /**

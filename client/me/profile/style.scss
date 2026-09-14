@@ -1,5 +1,7 @@
-@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 .profile__settings .edit-gravatar {
 	text-align: center;
@@ -73,12 +75,6 @@
 
 .profile__submit-button-wrapper {
 	margin-bottom: 0;
-}
-
-.profile-links__list {
-	.profile-link:last-of-type {
-		margin-bottom: 0;
-	}
 }
 
 main.profile {

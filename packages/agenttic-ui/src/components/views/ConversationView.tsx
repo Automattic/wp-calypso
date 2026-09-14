@@ -1,0 +1,127 @@
+import React, { useEffect } from 'react';
+import { ChatFooter } from '../chat/ChatFooter';
+import { ChatHeader } from '../chat/ChatHeader';
+import { Messages } from '../chat/Messages';
+import styles from './ConversationView.module.css';
+import type { Message, NoticeConfig, Suggestion } from '../../types';
+import type { ComponentType } from 'react';
+
+interface InputHandlers {
+	inputValue: string;
+	onInputChange: ( value: string ) => void;
+	onSubmit: () => void;
+	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
+	placeholder?: string | string[];
+	isProcessing: boolean;
+	onStop?: () => void;
+}
+
+interface ConversationViewProps extends InputHandlers {
+	// Core data
+	messages: Message[];
+
+	// Agent state
+	error?: string | null;
+
+	// UI state
+	fromCompact?: boolean;
+
+	// Header configuration
+	showHeader?: boolean;
+	onClose?: () => void;
+	onExpand?: () => void;
+
+	// Notifications
+	notice?: NoticeConfig;
+
+	// Empty state
+	emptyView?: React.ReactNode;
+
+	// Suggestions
+	suggestions?: Suggestion[];
+	clearSuggestions?: () => void;
+
+	// Markdown configuration
+	messageRenderer?: ComponentType< { children: string } >;
+
+	// Render an avatar next to agent text responses (defaults to off)
+	showAgentIcon?: boolean;
+
+	// Focus on mount
+	focusOnMount?: boolean;
+}
+
+export function ConversationView( {
+	messages,
+	error,
+	inputValue,
+	onInputChange,
+	onSubmit,
+	onKeyDown,
+	textareaRef,
+	placeholder,
+	isProcessing,
+	onStop,
+	fromCompact = false,
+	showHeader = false,
+	onClose,
+	onExpand,
+	notice,
+	emptyView,
+	suggestions,
+	clearSuggestions,
+	messageRenderer,
+	showAgentIcon,
+	focusOnMount = false,
+}: ConversationViewProps ) {
+	// Listen for escape key to close the chat. Overlays that handle Escape
+	// themselves (modals, dialogs, popovers) call preventDefault(), so skip
+	// those presses and let the innermost layer close alone.
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.defaultPrevented ) {
+				return;
+			}
+			if ( event.key === 'Escape' && onClose ) {
+				onClose();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeyDown );
+		return () => document.removeEventListener( 'keydown', handleKeyDown );
+	}, [ onClose ] );
+
+	return (
+		<div
+			data-slot="conversation-view"
+			className={ `${ styles.container }${ showHeader ? ` ${ styles.withHeader }` : '' }` }
+		>
+			{ showHeader && <ChatHeader onClose={ onClose } /> }
+			<Messages
+				messages={ messages }
+				isProcessing={ isProcessing }
+				error={ error }
+				emptyView={ emptyView }
+				messageRenderer={ messageRenderer }
+				showAgentIcon={ showAgentIcon }
+			/>
+			<ChatFooter
+				inputValue={ inputValue }
+				onInputChange={ onInputChange }
+				onSubmit={ onSubmit }
+				onKeyDown={ onKeyDown }
+				textareaRef={ textareaRef }
+				placeholder={ placeholder }
+				isProcessing={ isProcessing }
+				onStop={ onStop }
+				fromCompact={ fromCompact }
+				onExpand={ onExpand }
+				notice={ notice }
+				suggestions={ suggestions }
+				clearSuggestions={ clearSuggestions }
+				focusOnMount={ focusOnMount }
+			/>
+		</div>
+	);
+}

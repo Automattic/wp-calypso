@@ -8,7 +8,7 @@ import './style.scss';
 
 const noop = () => {};
 
-const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
+const GSuiteLearnMore = ( { onLearnMoreClick = noop, productSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -43,10 +43,6 @@ const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
 
 GSuiteLearnMore.propTypes = {
 	onLearnMoreClick: PropTypes.func,
-};
-
-GSuiteLearnMore.defaultProps = {
-	onLearnMoreClick: noop,
 };
 
 export default GSuiteLearnMore;

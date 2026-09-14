@@ -1,6 +1,6 @@
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 
-export type Density = 'low' | 'medium';
+export type Density = 'low' | 'medium-low' | 'medium';
 
 /**
  * `badges` property of `SummaryButton` component is used to display `Badge`
@@ -14,7 +14,7 @@ export type SummaryButtonBadgeProps = {
 	text: string;
 	/**
 	 * Optional property to specify the intent of the badge.
-	 * @default 'default'
+	 * @default 'draft'
 	 */
 	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };
@@ -30,6 +30,15 @@ export interface SummaryButtonProps {
 	 */
 	href?: string;
 	/**
+	 * The anchor `target` attribute, forwarded to the underlying element when
+	 * an `href` is given.
+	 */
+	target?: string;
+	/**
+	 * The anchor `rel` attribute, forwarded alongside `target`.
+	 */
+	rel?: string;
+	/**
 	 * A callback to handle clicking an item.
 	 */
 	onClick?: React.MouseEventHandler;
@@ -40,15 +49,13 @@ export interface SummaryButtonProps {
 	density?: Density;
 	/**
 	 * Optional supporting text that provides additional context or detail about the linked page.
-	 * For now, this property is only rendered in `low` density variant.
-	 * We might revisit adding this in more variants in the future.
+	 * Rendered in `low` and `medium-low` density variants.
 	 */
 	description?: React.ReactNode;
 	/**
 	 * A brief, optional line of text used to highlight important information,
 	 * such as a warning or status.
-	 * For now, this property is only rendered in `low` density variant.
-	 * We might revisit adding this in more variants in the future.
+	 * Only rendered in `low` density variant.
 	 */
 	strapline?: string;
 	/**

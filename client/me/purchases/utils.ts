@@ -1,12 +1,4 @@
-import { isDomainTransfer, is100Year } from '@automattic/calypso-products';
-import {
-	isCloseToExpiration,
-	isExpired,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isPaidWithCreditCard,
-} from 'calypso/lib/purchases';
-import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
+import { addNewPaymentMethod } from './paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 export function isDataLoading( props: {
@@ -16,61 +8,26 @@ export function isDataLoading( props: {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
-export function canEditPaymentDetails( purchase: Purchase ): boolean {
-	return (
-		! isExpired( purchase ) &&
-		! isOneTimePurchase( purchase ) &&
-		! isIncludedWithPlan( purchase ) &&
-		! isDomainTransfer( purchase ) &&
-		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) )
-	);
-}
-
-export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ): string {
-	if ( isPaidWithCreditCard( purchase ) && purchase.payment.creditCard ) {
-		return changePaymentMethod( siteSlug, purchase.id, purchase.payment.creditCard.id );
-	}
-
-	return addPaymentMethod( siteSlug, purchase.id );
-}
-
 export function getAddNewPaymentMethodPath(): string {
 	return addNewPaymentMethod;
 }
 
-export function isTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
-
-export function getTemporarySiteType( purchase: Purchase ): string | null {
+export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) ? productType : null;
+	return purchase.isAttachedToHoldingSite && productType === 'akismet';
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'akismet';
+	return purchase.isAttachedToHoldingSite && productType === 'saas_plugin';
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'saas_plugin';
+export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.isAttachedToHoldingSite && isA4ABillingDragonPurchase( purchase );
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'jetpack';
-}
-
-export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	const { meta } = purchase;
-	return isTemporarySitePurchase( purchase ) && meta === 'is-a4a';
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
 }
 
 export function getCancelPurchaseSurveyCompletedPreferenceKey(

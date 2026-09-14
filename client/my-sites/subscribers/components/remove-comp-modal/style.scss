@@ -1,0 +1,28 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.remove-comp-modal {
+	// Match the ConfirmModal styles used by UnsubscribeModal.
+	.components-modal__frame {
+		max-width: 563px;
+	}
+
+	.components-modal__header {
+		border-bottom-color: $studio-gray-0;
+		padding: 18px 24px;
+
+		.components-modal__header-heading {
+			font-size: $font-body;
+		}
+	}
+
+	.components-modal__content {
+		padding: 24px;
+	}
+
+	.remove-comp-modal__buttons {
+		display: flex;
+		gap: 10px;
+		justify-content: flex-end;
+	}
+}

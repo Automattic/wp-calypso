@@ -1,6 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { Story } from '@storybook/react';
-import React from 'react';
+import { StoryFn } from '@storybook/react';
+import { action } from 'storybook/actions';
 import { CookieBanner } from '.';
 import type { CookieBannerProps } from '.';
 
@@ -8,7 +7,8 @@ export default {
 	title: 'Cookie Banner',
 };
 
-export const Default: Story< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
+export const Default: StoryFn< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
+export const Decline: StoryFn< CookieBannerProps > = ( args ) => <CookieBanner { ...args } />;
 
 Default.args = {
 	onAccept: action( 'accept' ),
@@ -22,7 +22,7 @@ Default.args = {
 					Pellentesque habitant morbi tristique.
 				</>
 			),
-			acceptAllButton: 'Accept All',
+			acceptAllButton: 'Accept all',
 			customizeButton: 'Customize',
 		},
 		customizedConsent: {
@@ -82,6 +82,16 @@ Default.args = {
 				},
 			},
 			acceptSelectionButton: 'Accept Selection',
+		},
+	},
+};
+Decline.args = {
+	...Default.args,
+	content: {
+		...Default.args.content,
+		simpleConsent: {
+			...Default.args.content.simpleConsent,
+			declineNonEssentialButton: 'Decline Non-Essential Cookies',
 		},
 	},
 };

@@ -5,7 +5,8 @@ import {
 	type FeatureList,
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
+import { hasTailoredFeatureList } from '../../constants';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -22,12 +23,9 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	useLongSetFeatures,
-	useLongSetStackedFeatures,
-	useShortSetStackedFeatures,
-	useVar5Features,
+	useVar42NoAiFeatures,
+	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
-	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -35,12 +33,9 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	useLongSetFeatures?: boolean;
-	useLongSetStackedFeatures?: boolean;
-	useShortSetStackedFeatures?: boolean;
-	useVar5Features?: boolean;
+	useVar42NoAiFeatures?: boolean;
+	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
-	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -51,12 +46,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useLongSetFeatures,
-		useLongSetStackedFeatures,
-		useShortSetStackedFeatures,
-		useVar5Features,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
-		isVar1dVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -64,15 +56,14 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			useLongSetFeatures,
-			useLongSetStackedFeatures,
-			useShortSetStackedFeatures,
-			useVar5Features,
+			useVar42NoAiFeatures,
+			showPricingDifferentiationFeaturePills,
 			isExperimentVariant,
-			isVar1dVariant,
 		} );
 
 		return useMemo( () => {
+			// An intent that curates its own comparison list keeps it; see TAILORED_FEATURE_LIST_INTENTS.
+			const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
 			let previousPlan = null;
 			const planFeatureMap: Record< string, PlanFeaturesForGridPlan > = {};
 
@@ -84,11 +75,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
-				// when in an experiment variant. This ensures all features are displayed in the comparison grid
-				// regardless of which experiment variant (var1, var1d, var3, var4, var5) is active.
+				// Plans differentiators (non-control): use experiment comparison override when present.
 				if (
 					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -138,6 +128,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				let jetpackFeatures;
 				if (
 					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
 				) {
 					jetpackFeatures = getPlanFeaturesObject(
@@ -223,8 +214,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
+					// Labels follow the list: the experiment copy describes features the experiment
+					// override lists, so pairing it with a curated list mislabels the rows.
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
-						isExperimentVariant,
+						isExperimentVariant: isExperimentVariant && useDifferentiationFeatures,
 					} ),
 				};
 

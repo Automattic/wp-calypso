@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import PopoverMenu from 'calypso/components/popover-menu';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 

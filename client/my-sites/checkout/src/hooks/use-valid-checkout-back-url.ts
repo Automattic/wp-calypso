@@ -1,19 +1,20 @@
 import config from '@automattic/calypso-config';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { resemblesUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
-const getAllowedHosts = ( siteSlug?: string ) => {
-	const basicHosts = [
+const getAllowedHosts = ( siteSlug?: string ): string[] => {
+	const hostname = config< string >( 'hostname' );
+	const basicHosts: string[] = [
 		'akismet.com',
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
-		config( 'hostname' ),
-		...( ( siteSlug && [ siteSlug ] ) || [] ),
+		...( hostname ? [ hostname ] : [] ),
+		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
 	const languageSpecificJetpackHosts = getLanguageSlugs().map(
@@ -25,9 +26,11 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 
 const useValidCheckoutBackUrl = (
 	siteSlug: string | undefined,
-	siteId?: number
+	siteId?: number,
+	queryArgName = 'checkoutBackUrl'
 ): string | undefined => {
-	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
+	const queryArgs = useSelector( getInitialQueryArguments ) ?? {};
+	const backUrl = queryArgs[ queryArgName ] as string | undefined;
 	const selectedSiteId = useSelector(
 		( state ) => siteId ?? getSiteId( state, siteSlug as string | null )
 	);
@@ -39,7 +42,10 @@ const useValidCheckoutBackUrl = (
 	);
 
 	return useMemo( () => {
-		if ( ! checkoutBackUrl ) {
+		if ( ! backUrl ) {
+			if ( queryArgName !== 'checkoutBackUrl' ) {
+				return undefined;
+			}
 			// For akismet specific checkout, if navigated with direct link
 			// We shouldn't be navigated to `start\domain` but to `akismet\plans`
 			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
@@ -56,19 +62,12 @@ const useValidCheckoutBackUrl = (
 
 		const allowedHosts = getAllowedHosts( siteSlug );
 
-		let parsedUrl;
-		try {
-			parsedUrl = new URL( checkoutBackUrl );
-		} catch {
-			return undefined;
-		}
-		const { hostname } = parsedUrl;
-		if ( resemblesUrl( checkoutBackUrl ) && hostname && allowedHosts.includes( hostname ) ) {
-			return checkoutBackUrl;
+		if ( isAllowedRedirectUrl( backUrl, allowedHosts ) ) {
+			return backUrl;
 		}
 
 		return undefined;
-	}, [ checkoutBackUrl, isCommerce, jetpackSite, siteSlug ] );
+	}, [ backUrl, queryArgName, isCommerce, jetpackSite, siteSlug ] );
 };
 
 export default useValidCheckoutBackUrl;

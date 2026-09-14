@@ -1,4 +1,9 @@
-import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/onboarding';
+import {
+	ACCOUNT_FLOW,
+	HOSTING_LP_FLOW,
+	ENTREPRENEUR_FLOW,
+	READER_FLOW,
+} from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -50,23 +55,8 @@ const useSteps = ( {
 		case ACCOUNT_FLOW:
 		case HOSTING_LP_FLOW:
 		case ENTREPRENEUR_FLOW:
+		case READER_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
-			break;
-		case 'setup-site':
-			// Custom durations give a more believable loading effect while setting up
-			// the site with headstart. Which can take quite a long time.
-			steps = [
-				{ title: __( 'Laying the foundations' ), duration: 7000 },
-				{ title: __( 'Turning on the lights' ), duration: 3000 },
-				{ title: __( 'Making it beautiful' ), duration: 4000 },
-				{ title: __( 'Personalizing your site' ), duration: 7000 },
-				{ title: __( 'Sprinkling some magic' ), duration: 4000 },
-				{ title: __( 'Securing your data' ), duration: 9000 },
-				{ title: __( 'Enabling encryption' ), duration: 3000 },
-				{ title: __( 'Optimizing your content' ), duration: 6000 },
-				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-				{ title: __( 'Closing the loop' ) },
-			];
 			break;
 		case 'do-it-for-me':
 		case 'do-it-for-me-store':
@@ -138,7 +128,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 				progress={ progressValue }
 				subtitle={
 					totalSteps > 1 &&
-					// translators: these are progress steps. Eg: step 1 of 4.
+					// translators: %(currentStep)d is the current step number; %(totalSteps)d is the total number of steps. Eg: step 1 of 4.
 					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
 						currentStep: currentStep + 1,
 						totalSteps,

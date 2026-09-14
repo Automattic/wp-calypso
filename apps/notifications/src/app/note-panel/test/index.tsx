@@ -1,8 +1,18 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Navigator } from '@wordpress/components';
+import { useState } from 'react';
 import { renderWithProvider } from '../../../testing-library';
-import NodePanel, { NOTIFICATION_TABS } from '../index';
+import NodePanel, { getNotificationTabs } from '../index';
+import type { FilterName } from '../../types';
+
+const noop = () => {};
+
+const defaultProps = {
+	filterName: 'all' as FilterName,
+	setFilterName: noop,
+	selectedNoteId: undefined,
+	setSelectedNoteId: noop,
+};
 
 // Copied from https://github.com/WordPress/gutenberg/blob/adf3ef6d41df4e70f283a35f552631668131dd95/packages/components/src/tabs/test/index.tsx#L181.
 async function waitForComponentToBeInitializedWithSelectedTab(
@@ -35,27 +45,32 @@ async function waitForComponentToBeInitializedWithSelectedTab(
 
 describe( 'NotePanel', () => {
 	it( 'should render correctly', async () => {
-		const { getByText } = renderWithProvider( <NodePanel /> );
+		const { getByText } = renderWithProvider( <NodePanel { ...defaultProps } /> );
 
-		await waitForComponentToBeInitializedWithSelectedTab( NOTIFICATION_TABS[ 0 ].title );
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
 
-		NOTIFICATION_TABS.forEach( ( { title }: { title: string } ) => {
+		getNotificationTabs().forEach( ( { title }: { title: string } ) => {
 			expect( getByText( title ) ).toBeInTheDocument();
 		} );
 	} );
 
 	it( 'should select tab on click', async () => {
-		renderWithProvider(
-			<Navigator initialPath="/all">
-				<Navigator.Screen path="/:filterName">
-					<NodePanel />
-				</Navigator.Screen>
-			</Navigator>
-		);
+		const ControlledPanel = () => {
+			const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
+			return (
+				<NodePanel
+					filterName={ filterName }
+					setFilterName={ setFilterName }
+					selectedNoteId={ undefined }
+					setSelectedNoteId={ noop }
+				/>
+			);
+		};
+		renderWithProvider( <ControlledPanel /> );
 
-		await waitForComponentToBeInitializedWithSelectedTab( NOTIFICATION_TABS[ 0 ].title );
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
 
-		const nextSelectedTab = NOTIFICATION_TABS[ 1 ];
+		const nextSelectedTab = getNotificationTabs()[ 1 ];
 		await userEvent.click( screen.getByRole( 'tab', { name: nextSelectedTab.title } ) );
 		await waitFor( () =>
 			expect(

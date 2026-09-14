@@ -7,7 +7,6 @@ import {
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
 	sslDetailsQuery,
-	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
 	queryClient,
@@ -25,19 +24,22 @@ import {
 	createRoute,
 	createLazyRoute,
 	notFound,
-	redirect,
 	lazyRouteComponent,
 	Outlet,
 } from '@tanstack/react-router';
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
 	checkDomainContactInfoPermissions,
 	checkDomainDnsRecordsPermissions,
 	checkDomainContactVerificationPermissions,
+	checkDomainNotPendingRegistration,
 } from '../../utils/domain-permissions';
 import { queryParamToArray } from '../../utils/url';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
 const domainsRoute = createRoute( {
@@ -58,7 +60,7 @@ export const domainsIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { context } ) => {
 		await Promise.all( [
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
@@ -85,7 +87,7 @@ export const domainsContactInfoRoute = createRoute( {
 		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
 
 		if ( selected.length === 0 ) {
-			throw redirect( { to: '/domains' } );
+			throw dashboardRedirect( { to: '/domains' } );
 		}
 	},
 	loaderDeps: ( { search } ) => {
@@ -124,6 +126,7 @@ export const domainRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
@@ -131,6 +134,9 @@ export const domainRoute = createRoute( {
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
 		const isDnsSubRoute = location.pathname.includes( '/dns' );
 		const isContactVerificationSubRoute = location.pathname.includes( '/contact-verification' );
+		const isForwardingSubRoute = location.pathname.includes( '/forwarding' );
+		const isSecuritySubRoute = location.pathname.includes( '/security' );
+		const isGlueRecordsSubRoute = location.pathname.includes( '/glue-records' );
 
 		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
@@ -139,7 +145,18 @@ export const domainRoute = createRoute( {
 		}
 
 		if ( isTransferSubRoute ) {
-			checkDomainTransferPermissions( domain );
+			try {
+				checkDomainTransferPermissions( domain );
+			} catch ( error ) {
+				dispatch( noticesStore ).createWarningNotice(
+					__( 'You do not have permission to transfer this domain.' ),
+					{ type: 'snackbar' }
+				);
+				throw dashboardRedirect( {
+					to: '/domains/$domainName',
+					params: { domainName },
+				} );
+			}
 		}
 
 		if ( isContactInfoSubRoute ) {
@@ -154,15 +171,14 @@ export const domainRoute = createRoute( {
 			checkDomainContactVerificationPermissions( domain );
 		}
 
+		if ( isForwardingSubRoute || isSecuritySubRoute || isGlueRecordsSubRoute ) {
+			checkDomainNotPendingRegistration( domain );
+		}
+
 		return domain;
 	},
-} ).lazy( () =>
-	import( '../../domains/domain' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
@@ -172,9 +188,11 @@ export const domainOverviewRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
-		await queryClient.ensureQueryData(
-			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-		);
+
+		// The purchase can be forbidden as the domain owner may not be the current user.
+		if ( domain.subscription_id ) {
+			queryClient.prefetchQuery( purchaseQuery( parseInt( domain.subscription_id, 10 ) ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -244,7 +262,7 @@ export const domainDnsEditRoute = createRoute( {
 		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
 		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
 		if ( ! record ) {
-			throw redirect( { to: '/domains/$domainName/dns', params: { domainName } } );
+			throw dashboardRedirect( { to: '/domains/$domainName/dns', params: { domainName } } );
 		}
 	},
 	loader: ( { params: { domainName } } ) => {
@@ -579,7 +597,10 @@ export const domainTransferIndexRoute = createRoute( {
 
 		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
 			if ( ! domain.last_transfer_error ) {
-				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+				throw dashboardRedirect( {
+					to: domainTransferSetupRoute.fullPath,
+					params: { domainName },
+				} );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
 			return domain;
@@ -589,7 +610,7 @@ export const domainTransferIndexRoute = createRoute( {
 			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
 			DomainTransferStatus.CANCELLED !== domain.transfer_status
 		) {
-			throw redirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+			throw dashboardRedirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
 		}
 
 		return domain;

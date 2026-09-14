@@ -1,8 +1,10 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -17,6 +19,9 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const { recordTracksEvent } = useAnalytics();
+
+	useEffect( () => invokeSurvicateEvent( 'migrationCompleted' ), [] );
+
 	const sourceSiteDomain = site.options?.migration_source_site_domain;
 	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' );
 
@@ -52,23 +57,31 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 						<VStack spacing={ 4 }>
 							<SectionHeader title={ __( 'Connect your domain' ) } level={ 3 } />
 							<Text as="p" variant="muted">
-								{ siteDomain &&
-									createInterpolateElement(
-										__(
-											'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
-										),
-										{
-											siteLink: previewLink,
-											remoteDomain: <>{ siteDomain }</>,
-										}
-									) }
-								{ ! siteDomain &&
-									createInterpolateElement(
-										__( 'You can preview your new site at <siteLink />.' ),
-										{
-											siteLink: previewLink,
-										}
-									) }
+								{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+								{ siteDomain && (
+									<span>
+										{ createInterpolateElement(
+											__(
+												'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
+											),
+											{
+												siteLink: previewLink,
+												remoteDomain: <>{ siteDomain }</>,
+											}
+										) }
+									</span>
+								) }
+								{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+								{ ! siteDomain && (
+									<span>
+										{ createInterpolateElement(
+											__( 'You can preview your new site at <siteLink />.' ),
+											{
+												siteLink: previewLink,
+											}
+										) }
+									</span>
+								) }
 							</Text>
 							<ButtonStack justify="flex-start" expanded={ false }>
 								<Button

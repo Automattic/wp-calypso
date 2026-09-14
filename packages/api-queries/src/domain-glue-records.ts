@@ -16,6 +16,7 @@ export const domainGlueRecordsQuery = ( domainName: string ) =>
 
 export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-glue-create' },
 		mutationFn: ( glueRecord: DomainGlueRecord ) => createDomainGlueRecord( glueRecord ),
 		onSuccess: ( newData, createdGlueRecord ) => {
 			queryClient.setQueryData(
@@ -28,6 +29,7 @@ export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 
 export const domainGlueRecordUpdateMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-glue-update' },
 		mutationFn: ( glueRecord: DomainGlueRecord ) => updateDomainGlueRecord( glueRecord ),
 		onSuccess: ( newData, updatedGlueRecord ) => {
 			queryClient.setQueryData(
@@ -48,6 +50,7 @@ export const domainGlueRecordUpdateMutation = ( domainName: string ) =>
 
 export const domainGlueRecordDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-glue-delete' },
 		mutationFn: ( glueRecord: DomainGlueRecord ) =>
 			deleteDomainGlueRecord( domainName, glueRecord ),
 		onSuccess: ( newData, deletedGlueRecord ): void => {

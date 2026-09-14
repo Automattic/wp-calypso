@@ -2,7 +2,6 @@ import { Button, CompactCard } from '@automattic/components';
 import { useSendInvites } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import React from 'react';
 import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
@@ -226,7 +225,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 					<Button
 						className="people-list-item__remove-button"
 						onClick={ onRemove }
-						data-e2e-remove-login={ get( user, 'login', '' ) }
+						data-e2e-remove-login={ user?.login ?? '' }
 					>
 						<span>
 							{ translate( 'Remove', {

@@ -1,3 +1,5 @@
+@use '@automattic/typography/styles/variables' as typography;
+
 $base-background-color: var(--color-surface, #fff);
 $list-background: var(--color-surface, #fff);
 $border-color: var(--color-neutral-10, #c3c4c7);
@@ -21,7 +23,7 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10, #c3c4c7) 50%, 
 	border-radius: $border-radius;
 	box-shadow: $box-shadow;
 	z-index: 20010;
-	font-family: $sans;
+	font-family: typography.$sans;
 	width: 90%;
 
 	ul {

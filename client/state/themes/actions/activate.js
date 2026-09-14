@@ -23,6 +23,7 @@ import 'calypso/state/themes/init';
  * @param  {string}   [options.source]    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  [options.purchased] Whether the theme has been purchased prior to activation
  * @param  {boolean}  [options.isOnboardingFlow] Whether the activation happens in the onboarding flow
+ * @param  {'basic'|'full'} [options.setupChoice] The user's setup choice from the activation modal: `'full'` runs `/theme-headstart` after activation to add the theme's extra demo content; `'basic'` skips it. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}          Action thunk
  */
 export function activate( themeId, siteId, options ) {
@@ -33,6 +34,7 @@ export function activate( themeId, siteId, options ) {
 			isOnboardingFlow = typeof window !== 'undefined' &&
 				hasQueryArg( window.location.href, 'onboarding' ),
 			showSuccessNotice = true,
+			setupChoice,
 		} = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
@@ -76,6 +78,7 @@ export function activate( themeId, siteId, options ) {
 			source,
 			purchased,
 			showSuccessNotice,
+			setupChoice,
 		} )( dispatch, getState );
 	};
 }

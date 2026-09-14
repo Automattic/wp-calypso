@@ -3,7 +3,7 @@
 .help-center .help-center__container {
 	.back-button__help-center {
 		display: flex;
-		color: #000;
+		color: var(--color-text);
 		font-size: $font-body-small;
 		padding: 0;
 		gap: 4px;

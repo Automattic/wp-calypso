@@ -20,6 +20,7 @@ export interface Flow {
 	disallowResume?: boolean;
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
+	persistsDomainsOnReEntry?: boolean;
 	hideProgressIndicator?: boolean;
 	helpCenterButtonText?: string;
 	enableHotjar?: boolean;

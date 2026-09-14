@@ -11,11 +11,15 @@ type Output = {
 	isSubmissionSuccessful: boolean;
 };
 
-export default function useSubmitContactSupport(): Output {
+type Options = {
+	isSignup?: boolean;
+};
+
+export default function useSubmitContactSupport( { isSignup }: Options = {} ): Output {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { isError, isSuccess, mutate, isPending } = useSubmitSupportFormMutation();
+	const { isError, isSuccess, mutate, isPending } = useSubmitSupportFormMutation( { isSignup } );
 
 	useEffect( () => {
 		if ( isError ) {

@@ -112,7 +112,7 @@ test.describe(
 			pageImportContent,
 			pageImportLetsFindYourSite,
 			pageImportContentWordpressQuestion,
-			sitePublic,
+			sitePublicShared: sitePublic,
 		} ) => {
 			const wordpressSiteURL = 'https://test.wordpress.com/';
 
@@ -170,7 +170,7 @@ test.describe(
 			pageImportContentWordpressQuestion,
 			pageImportContentFromAnotherPlatformOrFile,
 			pageImportPlans,
-			sitePublic,
+			sitePublicShared: sitePublic,
 		} ) => {
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {
 				await pageImportContent.visit( sitePublic.blog_details.site_slug );

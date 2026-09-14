@@ -1,5 +1,6 @@
 import { Icon } from '@wordpress/icons';
 import { clsx } from 'clsx';
+import type { JSX } from 'react';
 
 interface SummaryStatProps {
 	count?: number;

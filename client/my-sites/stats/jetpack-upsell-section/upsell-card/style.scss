@@ -65,13 +65,13 @@
 	font-size: $font-body-small;
 	grid-area: link;
 	justify-self: end;
-	margin-bottom: 0.5em;
 	text-decoration: underline;
 
-	.gridicon {
-		align-self: flex-end;
+	&.external-link .gridicon {
+		align-self: center;
 		fill: var(--studio-gray-80);
-		margin-left: 3px;
+		// Cancel .external-link's baseline nudge; flex centering handles alignment.
+		top: 0;
 	}
 
 	&:visited {

@@ -26,7 +26,7 @@ export function editorSettings( isRTL: boolean ) {
 		allowedMimeTypes: null,
 		canLockBlocks: false,
 		enableOpenverseMediaCategory: false,
-		clearBlockSelection: true,
+		clearBlockSelection: false,
 		__experimentalCanUserUseUnfilteredHTML: false,
 		__experimentalBlockDirector: false,
 		__mobileEnablePageTemplates: false,
@@ -40,6 +40,11 @@ export function editorSettings( isRTL: boolean ) {
 		__unstableResolvedAssets: {
 			styles: [],
 			scripts: [],
+		},
+		__experimentalFeatures: {
+			typography: {
+				textAlign: true,
+			},
 		},
 	};
 }

@@ -1,0 +1,37 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"target": "ES2022",
+		"lib": [ "ES2022", "DOM" ],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"strict": true,
+		"noEmit": false,
+		"emitDeclarationOnly": true,
+		"moduleDetection": "force",
+		"allowImportingTsExtensions": false,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": false,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "dist",
+		// With a flat outDir the default buildinfo path is the package root, where it
+		// survives `rm -rf dist` and makes `tsc --build` skip re-emitting the deleted
+		// declarations. Keep it in dist so wiping dist forces a rebuild. Obsolete if
+		// the package ever moves to the standard dist/esm + dist/cjs layout.
+		"tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
+		"rootDir": "src",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
+		"types": []
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "dist", "node_modules", "**/*.test.ts" ]
+}

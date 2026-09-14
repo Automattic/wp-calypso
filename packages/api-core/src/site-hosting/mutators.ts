@@ -34,13 +34,20 @@ export async function restoreSitePlanSoftware( siteId: number ) {
 	} );
 }
 
-export async function updateWordPressVersion( siteId: number, version: string ) {
+export async function updateWordPressVersion(
+	siteId: number,
+	version: string,
+	deferUntilBackupComplete?: boolean
+) {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/hosting/wp-version`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ version }
+		{
+			version,
+			...( deferUntilBackupComplete && { defer_until_backup_complete: true } ),
+		}
 	);
 }
 

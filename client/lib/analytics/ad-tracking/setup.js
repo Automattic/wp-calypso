@@ -112,6 +112,9 @@ export function setup() {
 		if ( mayWeInitTracker( 'tiktok' ) ) {
 			setupTikTokGlobal();
 		}
+		if ( mayWeInitTracker( 'openai' ) ) {
+			setupOpenAIGlobal();
+		}
 	}
 }
 
@@ -300,6 +303,19 @@ function setupTikTokGlobal() {
 	} );
 }
 
+/**
+ * Sets up the OpenAI advertising pixel based on the obfuscated code provided by OpenAI.
+ */
+function setupOpenAIGlobal() {
+	if ( window.oaiq ) {
+		return;
+	}
+	const q = function () {
+		q.q.push( arguments );
+	};
+	q.q = [];
+	window.oaiq = q;
+}
 function setupGtag() {
 	if ( window.dataLayer && window.gtag ) {
 		return;

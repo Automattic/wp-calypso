@@ -66,7 +66,7 @@
 .signup-slider__slide.signup-slider__slide--3 .signup-slider__slide-content {
 	background-color: #3858e9;
 	background-image: radial-gradient( 50% 50% at 50% 75%, #3858e9 0%, rgba( 56, 88, 233, 0 ) 100% ),
-		url( ./images/pattern-01.png );
+		url( ./images/pattern-01.webp );
 	background-repeat: no-repeat, repeat;
 	background-position:
 		center center,
@@ -78,7 +78,7 @@
 .signup-slider__slide.signup-slider__slide--4 .signup-slider__slide-content {
 	background-color: #222;
 	background-image: radial-gradient( 50% 50% at 50% 75%, #222 0%, rgba( 34, 34, 34, 0 ) 100% ),
-		url( ./images/pattern-02.png );
+		url( ./images/pattern-02.webp );
 	background-repeat: no-repeat, repeat;
 	background-position:
 		center center,
@@ -122,7 +122,7 @@
 
 .signup-slider__slide--1 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/img-01@2x.png );
+		background-image: url( ./images/img-01@2x.webp );
 	}
 
 	/* This covers the case where there's no description in the slide */
@@ -134,7 +134,7 @@
 
 .signup-slider__slide--2 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/img-02@2x.png );
+		background-image: url( ./images/img-02@2x.webp );
 		background-position: center;
 		background-size: contain;
 		width: calc( 100% - 100px );
@@ -148,7 +148,7 @@
 
 .signup-slider__slide--3 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/img-03@2x.png );
+		background-image: url( ./images/img-03@2x.webp );
 		background-position: center;
 		background-size: contain;
 		width: calc( 100% - 80px );
@@ -168,7 +168,7 @@
 
 .signup-slider__slide--4 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/img-04@2x.png );
+		background-image: url( ./images/img-04@2x.webp );
 		margin-bottom: 12px;
 	}
 

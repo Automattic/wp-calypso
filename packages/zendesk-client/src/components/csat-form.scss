@@ -50,9 +50,8 @@
 	.zendesk-csat-form__feedback {
 		p {
 			padding-top: 12px;
-			padding-bottom: 20px;
+			padding-bottom: 20px !important;
 			background-color: unset !important;
-			color: var(--studio-gray-80);
 			line-height: 20px;
 		}
 

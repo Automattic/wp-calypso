@@ -2,6 +2,7 @@ import { useMatches } from '@tanstack/react-router';
 import { isValidElement } from 'react';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
+import './style.scss';
 
 const PageTitle = () => {
 	const title = useMatches( {

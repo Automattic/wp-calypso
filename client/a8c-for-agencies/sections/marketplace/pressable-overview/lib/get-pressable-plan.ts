@@ -14,6 +14,7 @@ export type PressablePlan = {
 	storage: number;
 	category: string;
 	worker?: number;
+	phpMemory?: number;
 	unit?: string;
 };
 
@@ -522,6 +523,56 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 0,
 		visits: 0,
 		storage: 1,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-2gb': {
+		slug: 'pressable-addon-storage-2gb',
+		install: 0,
+		visits: 0,
+		storage: 2,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-4gb': {
+		slug: 'pressable-addon-storage-4gb',
+		install: 0,
+		visits: 0,
+		storage: 4,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-8gb': {
+		slug: 'pressable-addon-storage-8gb',
+		install: 0,
+		visits: 0,
+		storage: 8,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-16gb': {
+		slug: 'pressable-addon-storage-16gb',
+		install: 0,
+		visits: 0,
+		storage: 16,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-32gb': {
+		slug: 'pressable-addon-storage-32gb',
+		install: 0,
+		visits: 0,
+		storage: 32,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-64gb': {
+		slug: 'pressable-addon-storage-64gb',
+		install: 0,
+		visits: 0,
+		storage: 64,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-php-memory-512mb': {
+		slug: 'pressable-addon-php-memory-512mb',
+		install: 0,
+		visits: 0,
+		storage: 0,
+		phpMemory: 512,
 		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	},
 };

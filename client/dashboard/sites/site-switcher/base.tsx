@@ -1,16 +1,16 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
-import { siteRoute } from '../../app/router/sites';
 import SiteIcon from '../../components/site-icon';
 import Switcher from '../../components/switcher';
-import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { canManageSite } from '../features';
+import type { SiteSwitcherProps } from './types';
 import type { SwitcherProps } from '../../components/switcher';
 import type { Site } from '@automattic/api-core';
 
@@ -25,45 +25,45 @@ const searchableFields = [
 	},
 ];
 
-export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children' > ) => {
+export const SiteSwitcherBase = (
+	props: Pick< SwitcherProps< Site >, 'children' > & SiteSwitcherProps
+) => {
+	const { site, ...switcherProps } = props;
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
-	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isSwitcherOpen } );
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: sites } = useQuery( {
+		...queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: false,
+		} ),
+		enabled: isSwitcherOpen,
+	} );
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
 	return (
 		<Switcher< Site >
-			{ ...props }
+			{ ...switcherProps }
+			renderItem={ ( { item, context } ) => (
+				<Switcher.Item
+					media={ <SiteIcon site={ item } size={ context === 'list' ? 32 : 16 } /> }
+					title={ getSiteDisplayName( item ) }
+					description={ context === 'list' ? getSiteDisplayUrl( item ) : undefined }
+				/>
+			) }
 			items={ sites }
+			loading={ { itemCount: user.visible_site_count, hasMedia: true, hasDescription: true } }
 			value={ site }
 			searchableFields={ searchableFields }
+			headerTitle={ __( 'Switch site' ) }
 			getItemUrl={ ( site ) => {
 				if ( canManageSite( site ) ) {
 					return buildCurrentRouteLink( { params: { siteSlug: site.slug } } );
 				}
 				return site.options?.admin_url ?? '';
 			} }
-			renderItemMedia={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
-			renderItemTitle={ ( { item } ) => (
-				<span
-					style={ {
-						fontWeight: 500,
-						overflow: 'hidden',
-						textOverflow: 'ellipsis',
-						whiteSpace: 'nowrap',
-					} }
-				>
-					{ getSiteDisplayName( item ) }
-				</span>
-			) }
-			renderItemDescription={ ( { item } ) => (
-				<Text variant="muted" truncate numberOfLines={ 1 }>
-					{ getSiteDisplayUrl( item ) }
-				</Text>
-			) }
 			open={ isSwitcherOpen }
 			onToggle={ ( willOpen: boolean ) => {
 				setIsSwitcherOpen( willOpen );

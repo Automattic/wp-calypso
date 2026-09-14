@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -42,7 +41,7 @@ const APP_STORE_BADGE_URLS: AppStoreBadgeUrls = {
 		},
 	},
 	android: {
-		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
+		defaultSrc: '/calypso/images/me/get-apps-google-play.webp',
 		src: 'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
 		getStoreLink: ( utm_campaign, utm_source = 'calypso', utm_medium = 'web' ) => {
@@ -62,7 +61,11 @@ interface AppsBadgeProps {
 	utm_source: string;
 	utm_campaign?: string;
 	utm_medium?: string;
-	recordTracksEvent: ( event: string, props: { utm_source_string: string } ) => void;
+	onClick?: () => void;
+	recordTracksEvent: (
+		event: string,
+		props: { utm_source_string: string; utm_campaign?: string }
+	) => void;
 }
 
 interface AppsBadgeState {
@@ -83,16 +86,23 @@ export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 		super( props );
 
 		const localeSlug = APP_STORE_BADGE_URLS[ props.storeName ].getLocaleSlug().toLowerCase();
-		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
+		const shouldLoadExternalImage = ! localeSlug.startsWith( 'en' );
 
 		this.state = {
 			imageSrc: shouldLoadExternalImage
 				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
 				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
 		};
+	}
 
+	componentDidMount(): void {
+		const localeSlug = APP_STORE_BADGE_URLS[ this.props.storeName ].getLocaleSlug().toLowerCase();
+		const shouldLoadExternalImage = ! localeSlug.startsWith( 'en' );
+
+		// Kick off the external image load in the commit phase rather than the
+		// constructor, which React can run multiple times (or discard) before a
+		// mount commits under concurrent rendering.
 		if ( shouldLoadExternalImage ) {
-			this.image = null;
 			this.loadImage();
 		}
 	}
@@ -118,10 +128,12 @@ export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 	};
 
 	onLinkClick = (): void => {
-		const { storeName, utm_source } = this.props;
+		const { storeName, utm_source, utm_campaign, onClick } = this.props;
 		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {
 			utm_source_string: utm_source,
+			utm_campaign,
 		} );
+		onClick?.();
 	};
 
 	render() {

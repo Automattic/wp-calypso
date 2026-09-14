@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import { getSerializedThemesQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
@@ -29,7 +28,7 @@ export const getThemesForQuery = createSelector(
 		// request's `found` value) but the items haven't been received. While
 		// we could impose this on the developer to accommodate, instead we
 		// simply return null when any `undefined` entries exist in the set.
-		if ( includes( themes, undefined ) ) {
+		if ( themes.includes( undefined ) ) {
 			return null;
 		}
 

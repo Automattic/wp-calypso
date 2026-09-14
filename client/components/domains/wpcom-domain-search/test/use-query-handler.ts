@@ -3,7 +3,7 @@
  */
 
 import { act, renderHook } from '@testing-library/react';
-import { useQueryHandler } from '../use-query-handler';
+import { clearSessionStorageQuery, useQueryHandler } from '../use-query-handler';
 
 describe( 'useQueryHandler', () => {
 	beforeEach( () => {
@@ -81,6 +81,14 @@ describe( 'useQueryHandler', () => {
 		act( () => {
 			result.current.clearQuery();
 		} );
+
+		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+	} );
+
+	it( 'should clear a stored query when clearSessionStorageQuery is called directly', () => {
+		sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+
+		clearSessionStorageQuery();
 
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
 	} );

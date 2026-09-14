@@ -8,6 +8,8 @@ import type {
 
 const client = isA8CForAgencies() ? wpcom : wpcomJpl;
 
+export const DASHBOARD_SITES_QUERY_KEY = 'jetpack-agency-dashboard-sites';
+
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
 	return {
 		...filter?.issueTypes?.reduce(
@@ -58,7 +60,7 @@ const useFetchDashboardSites = (
 	isEnabled = true
 ) => {
 	let queryKey = [
-		'jetpack-agency-dashboard-sites',
+		DASHBOARD_SITES_QUERY_KEY,
 		searchQuery,
 		currentPage,
 		filter,
@@ -70,7 +72,7 @@ const useFetchDashboardSites = (
 	// If perPage is not provided, we want to remove perPage from the query_key as existing tests don't pass otherwise.
 	if ( ! perPage ) {
 		queryKey = [
-			'jetpack-agency-dashboard-sites',
+			DASHBOARD_SITES_QUERY_KEY,
 			searchQuery,
 			currentPage,
 			filter,

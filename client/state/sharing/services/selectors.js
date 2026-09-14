@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
-import { filter } from 'lodash';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -24,7 +23,9 @@ export function getKeyringServices( state ) {
  * @returns {Array}        Keyring services, if known.
  */
 export function getKeyringServicesByType( state, type ) {
-	return filter( getKeyringServices( state ), { type } );
+	return Object.values( getKeyringServices( state ) ?? {} ).filter(
+		( service ) => service.type === type
+	);
 }
 
 /**

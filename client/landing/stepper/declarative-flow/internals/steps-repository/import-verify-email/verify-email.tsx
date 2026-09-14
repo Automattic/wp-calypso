@@ -22,7 +22,7 @@ const VerifyEmail = function VerifyEmail( props: Props ) {
 	const planType = PLAN_BUSINESS;
 	const plan = getPlan( planType );
 
-	const defaultButtonState = {
+	const defaultButtonState: { status: string; text: string } = {
 		status: 'default',
 		text: __( 'Resend verification email' ),
 	};
@@ -52,7 +52,7 @@ const VerifyEmail = function VerifyEmail( props: Props ) {
 					),
 					{
 						email: user.email,
-						planName: plan?.getTitle(),
+						planName: String( plan?.getTitle() ?? '' ),
 					}
 				) }
 			</SubTitle>

@@ -1,7 +1,9 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 .checkout-thank-you {
 	box-sizing: border-box;
@@ -225,7 +227,8 @@
 }
 
 .checkout-thank-you__verification-notice,
-.checkout-thank-you__verified-required {
+.checkout-thank-you__verified-required,
+.checkout-thank-you__studio-handoff {
 	width: 100%;
 	max-width: 500px;
 	text-align: left;
@@ -911,7 +914,7 @@ main.akismet-checkout-thank-you {
 	}
 
 	.akismet-checkout-thank-you__footer-img {
-		background-image: url(calypso/assets/images/akismet/akismet-thank-you-background-mobile.png);
+		background-image: url(calypso/assets/images/akismet/akismet-thank-you-background-mobile.webp);
 		background-size: cover;
 
 		width: 100%;

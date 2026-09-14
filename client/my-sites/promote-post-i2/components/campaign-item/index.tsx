@@ -79,13 +79,13 @@ export default function CampaignItem( props: Props ) {
 		spendString = is_evergreen
 			? sprintf(
 					/* translators: %s is a formatted amount */
-					translate( '%s weekly' ),
+					__( '%s weekly' ),
 					formattedTotalSpend
 			  )
 			: formattedTotalSpend;
 		spendStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
-			translate( '%s spend' ),
+			__( '%s spend' ),
 			formattedTotalSpend
 		);
 	}

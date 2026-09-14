@@ -44,7 +44,7 @@ const comingSoonTranslations: Record< string, string > = {
 };
 
 const getTranslation = ( lang?: string ) => {
-	let text = __( 'Coming Soon' );
+	let text: string = __( 'Coming Soon' );
 	let isRtl = isRTL();
 
 	if ( lang ) {

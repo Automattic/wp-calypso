@@ -11,6 +11,7 @@ const domainName = 'example.com';
 
 interface TestFormProps {
 	forceSubdomain?: boolean;
+	defaultSourceType?: FormData[ 'sourceType' ];
 	initialData?: any;
 	onSubmit?: ( data: FormData ) => void;
 	isSubmitting?: boolean;
@@ -37,7 +38,7 @@ test( 'renders domain forwarding form with correct fields', async () => {
 		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
-	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
 	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 	expect( screen.getByRole( 'button', { name: 'Add' } ) ).toBeInTheDocument();
 } );
@@ -50,7 +51,7 @@ test( 'hides source URL selector when forceSubdomain is true', async () => {
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
-	expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( /Type/ ) ).not.toBeInTheDocument();
 	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 } );
 
@@ -62,7 +63,48 @@ test( 'shows both root domain and subdomain options when forceSubdomain is false
 	} );
 
 	// Should show the source type selector when forceSubdomain is false
-	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
+} );
+
+test( 'selects the root domain as source when defaultSourceType is root', async () => {
+	const user = userEvent.setup();
+	const mockOnSubmit = jest.fn();
+
+	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
+
+	await waitFor( () => {
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+	} );
+
+	// The source URL field shows the root domain and is not editable
+	const sourceInput = screen.getByRole( 'textbox', { name: /source url/i } );
+	expect( sourceInput ).toBeDisabled();
+	expect( sourceInput ).toHaveValue( domainName );
+
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	await user.type( targetUrlInput, 'https://newsite.com' );
+
+	const submitButton = screen.getByRole( 'button', { name: 'Add' } );
+	await user.click( submitButton );
+
+	expect( mockOnSubmit ).toHaveBeenCalledWith( {
+		sourceType: 'root',
+		subdomain: '',
+		targetUrl: 'https://newsite.com',
+		isPermanent: false,
+		forwardPaths: false,
+	} );
+} );
+
+test( 'ignores defaultSourceType and keeps subdomain mode when forceSubdomain is true', async () => {
+	renderForm( { defaultSourceType: 'root', forceSubdomain: true } );
+
+	await waitFor( () => {
+		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+	} );
+
+	expect( screen.queryByText( /Type/ ) ).not.toBeInTheDocument();
+	expect( screen.getByRole( 'textbox', { name: /source url/i } ) ).toBeEnabled();
 } );
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {

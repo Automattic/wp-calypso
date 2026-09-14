@@ -1,3 +1,5 @@
+import type { SubscriptionBillPeriodValue } from '../constants';
+
 export interface PlanProductFeatureHighlight {
 	title?: string;
 	items: string[];
@@ -15,6 +17,14 @@ export interface PlanProduct {
 	product_id: number;
 	product_name: string;
 	product_slug: string;
+	/**
+	 * Short, human-readable URL alias for the plan, used in checkout and plan
+	 * routes (e.g. `business` for the `business-bundle` product). Distinct from
+	 * `product_slug`. Populated from a manually-maintained list server-side, so
+	 * it may be absent for some plans — callers should fall back to
+	 * `product_slug` when it is missing.
+	 */
+	path_slug?: string;
 	product_type: string;
 	meta: string | null;
 	bd_slug: string;
@@ -25,7 +35,7 @@ export interface PlanProduct {
 	bundle_product_ids: number[];
 
 	// Billing/pricing properties
-	bill_period: number;
+	bill_period: SubscriptionBillPeriodValue;
 	bill_period_label?: string;
 	orig_cost_integer: number;
 	orig_cost: number | null;
@@ -41,6 +51,16 @@ export interface PlanProduct {
 	description: string;
 	tagline: string | null;
 	features_highlight?: PlanProductFeatureHighlight[];
+
+	/**
+	 * Numeric ID shared by all billing-period variants of the same plan
+	 * family. A product tier is one plan for a service which offers multiple
+	 * levels of that plan. For example, on WPCOM we offer Personal, Premium,
+	 * Business, and Commerce, which are each tiers. Within the Personal plan
+	 * is Personal Monthly, Personal Annual, Personal Biennial, and Personal
+	 * Triennial.
+	 */
+	product_tier_id?: number;
 
 	// Downgrade options
 	downgrade_paths: PlanProductDowngrade[];

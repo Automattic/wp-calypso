@@ -1,4 +1,3 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -6,7 +5,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
@@ -16,7 +14,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
@@ -53,11 +51,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
-			{ /* Purchases are used to render the affected subscriptions when
-				removing a payment method. As such, we need to query all of a
-				user's purchases, instead of just the site-level purchases,
-				since a payment method can be used across sites. */ }
-			<QueryUserPurchases />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
 					title={ titles.sectionTitle }
@@ -158,9 +151,7 @@ export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-				<SiteLevelAddNewPaymentMethodForm { ...props } />
-			</RazorpayHookProvider>
+			<SiteLevelAddNewPaymentMethodForm { ...props } />
 		</StripeHookProvider>
 	);
 }

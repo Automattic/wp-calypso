@@ -1,4 +1,4 @@
-import { Icon, moreHorizontalMobile } from '@wordpress/icons';
+import { Icon, moreHorizontal as moreHorizontalMobile } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';

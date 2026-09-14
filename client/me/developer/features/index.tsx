@@ -6,6 +6,7 @@ import { GitHubDeploymentCard } from './github-deployment-card';
 import { StudioCard } from './studio-card';
 import { useFeaturesList } from './use-features-list';
 import { useHandleClickLink } from './use-handle-click-link';
+import { WordPressAgentCard } from './wordpress-agent-card';
 
 import './style.scss';
 
@@ -43,6 +44,7 @@ export const DeveloperFeatures = () => {
 			<div className="developer-features-list developer-features-list--latest">
 				<StudioCard />
 				<GitHubDeploymentCard />
+				<WordPressAgentCard />
 			</div>
 
 			<h2 className="developer-features-sub-title">{ translate( 'Popular features' ) }</h2>

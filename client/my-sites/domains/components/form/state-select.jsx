@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -78,7 +78,9 @@ class StateSelect extends PureComponent {
 							aria-describedby={ validationId }
 							id={ `${ this.constructor.name }-${ fieldId }` }
 							name={ name }
-							value={ value }
+							// An undefined value leaves the select uncontrolled, which makes the
+							// browser preselect the first state instead of the disabled placeholder.
+							value={ value ?? '' }
 							disabled={ disabled }
 							onBlur={ onBlur }
 							onChange={ onChange }

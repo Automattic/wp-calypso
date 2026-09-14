@@ -38,6 +38,7 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 		is_wpcom_staging_domain: false,
 		pending_registration: false,
 		pending_registration_at_registry: false,
+		pending_registration_at_registry_url: '',
 		pending_renewal: false,
 		pending_transfer: false,
 		points_to_wpcom: false,

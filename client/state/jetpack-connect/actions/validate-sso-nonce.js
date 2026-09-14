@@ -1,5 +1,5 @@
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -25,12 +25,27 @@ export function validateSSONonce( siteId, ssoNonce ) {
 
 		return wpcom.req
 			.post( `/jetpack-blogs/${ siteId }/sso-validate`, { sso_nonce: ssoNonce } )
-			.then( ( data ) => {
+			.then( async ( data ) => {
+				let blogDetails = data.blog_details;
+				const siteUrl = data.blog_details?.URL;
+
+				if ( siteUrl ) {
+					try {
+						const siteInfo = await wpcom.req.get( '/connect/site-info', { url: siteUrl } );
+						blogDetails = {
+							...data.blog_details,
+							isCommerceGarden: Boolean( siteInfo?.isCommerceGarden ),
+						};
+					} catch ( error ) {
+						debug( 'Failed to fetch /connect/site-info during SSO validation', error );
+					}
+				}
+
 				dispatch( recordTracksEvent( 'calypso_jpc_validate_sso_success' ) );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					success: data.success,
-					blogDetails: data.blog_details,
+					blogDetails,
 					sharedDetails: data.shared_details,
 				} );
 			} )

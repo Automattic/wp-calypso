@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/posts/init';
 
 /**
@@ -10,7 +8,7 @@ import 'calypso/state/posts/init';
  * @returns {boolean}          Whether request is in progress
  */
 export function isRequestingPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.requesting, [ siteId, postType ], false );
+	return state.posts.counts.requesting?.[ siteId ]?.[ postType ] ?? false;
 }
 
 /**
@@ -21,7 +19,7 @@ export function isRequestingPostCounts( state, siteId, postType ) {
  * @returns {Record<string, number>}          Post counts, keyed by status
  */
 export function getAllPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.counts, [ siteId, postType, 'all' ], null );
+	return state.posts.counts.counts?.[ siteId ]?.[ postType ]?.all ?? null;
 }
 
 /**
@@ -50,5 +48,5 @@ export function getAllPostCount( state, siteId, postType, status ) {
  * @returns {Object}          Post counts, keyed by status
  */
 export function getMyPostCounts( state, siteId, postType ) {
-	return get( state.posts.counts.counts, [ siteId, postType, 'mine' ], null );
+	return state.posts.counts.counts?.[ siteId ]?.[ postType ]?.mine ?? null;
 }

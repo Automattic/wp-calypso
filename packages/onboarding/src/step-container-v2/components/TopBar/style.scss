@@ -6,6 +6,7 @@
 	box-sizing: border-box;
 	display: flex;
 	align-items: center;
+	gap: 1rem;
 	padding: var( --step-container-v2-top-bar-padding );
 
 	@include break-small {
@@ -32,10 +33,6 @@
 .step-container-v2__top-bar-wordpress-logo {
 	color: var( --color-text );
 	margin: 0;
-
-	@include break-small {
-		margin-right: 0.5rem;
-	}
 }
 
 .step-container-v2__top-bar-wordpress-logo--wordmark {
@@ -61,20 +58,10 @@
 	}
 }
 
-.step-container-v2__top-bar-divider {
-	width: 1px;
-	height: 1rem;
-	background-color: var( --color-border-subtle );
-	margin-inline: 1rem 0;
-
-	@include break-small {
-		margin-inline: 1.5rem 0.75rem;
-	}
-}
-
 .step-container-v2__top-bar-right-element {
 	display: flex;
-	gap: 1.5rem;
+	align-items: center;
+	gap: 1rem;
 	margin-left: auto;
 	font-size: 0.875rem;
 	line-height: 1;

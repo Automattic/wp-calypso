@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { trademarkDecisionText } from './trademark-constants';
@@ -47,7 +46,7 @@ class TrademarkClaim extends Component {
 	};
 
 	renderGoodsAndServices = ( claim ) => {
-		const goodsAndServices = get( claim, 'goodsAndServices' );
+		const goodsAndServices = claim?.goodsAndServices;
 
 		return (
 			goodsAndServices &&
@@ -60,7 +59,7 @@ class TrademarkClaim extends Component {
 	};
 
 	renderInternationalClassification = ( claim ) => {
-		const classDesc = get( claim, 'classDesc' );
+		const classDesc = claim?.classDesc;
 
 		return (
 			classDesc &&
@@ -77,7 +76,7 @@ class TrademarkClaim extends Component {
 			return;
 		}
 
-		const addr = get( contact, 'addr' );
+		const addr = contact?.addr;
 
 		const contactData = [];
 		contact.name && contactData.push( this.renderItem( 'name', 'Name', contact.name ) );
@@ -99,7 +98,7 @@ class TrademarkClaim extends Component {
 	};
 
 	renderRegistrant = ( claim ) => {
-		const holder = get( claim, 'holder' );
+		const holder = claim?.holder;
 		return (
 			holder &&
 			this.renderItem( 'holder', 'Trademark Registrant', this.renderContactInfo( holder ) )
@@ -107,7 +106,7 @@ class TrademarkClaim extends Component {
 	};
 
 	renderContact = ( claim ) => {
-		const contact = get( claim, 'contact' );
+		const contact = claim?.contact;
 		return contact && this.renderItem( 'contact', 'Contact', this.renderContactInfo( contact ) );
 	};
 
@@ -139,14 +138,14 @@ class TrademarkClaim extends Component {
 	};
 
 	renderCases = ( claim ) => {
-		const notExactMatch = get( claim, 'notExactMatch' );
+		const notExactMatch = claim?.notExactMatch;
 
 		if ( ! notExactMatch ) {
 			return;
 		}
 
-		const courtCases = get( notExactMatch, 'court' );
-		const udrpCases = get( notExactMatch, 'udrp' );
+		const courtCases = notExactMatch?.court;
+		const udrpCases = notExactMatch?.udrp;
 
 		return (
 			<div className="trademark-claims-notice__claim-item" key="claim-cases">

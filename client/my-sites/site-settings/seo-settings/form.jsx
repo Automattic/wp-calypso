@@ -1,14 +1,15 @@
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
-	PLAN_BUSINESS,
-	TYPE_BUSINESS,
+	PLAN_PREMIUM,
+	TYPE_PREMIUM,
 	findFirstSimilarPlanKey,
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { mapValues, pickBy } from '@automattic/js-utils';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
@@ -256,14 +257,14 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
-							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
+							{ args: { planName: getPlan( PLAN_PREMIUM ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: TYPE_BUSINESS,
+								type: TYPE_PREMIUM,
 							} ),
 				  };
 
@@ -464,7 +465,7 @@ const mapStateToProps = ( state ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isAtomic: isAtomicSite( state, siteId ),
-		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
+		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),

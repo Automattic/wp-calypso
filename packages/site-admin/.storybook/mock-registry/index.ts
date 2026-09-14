@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createReduxStore, createRegistry } from '@wordpress/data';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 
 /**
  * Types

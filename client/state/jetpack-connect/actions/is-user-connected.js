@@ -1,5 +1,5 @@
+import { omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_REQUEST,

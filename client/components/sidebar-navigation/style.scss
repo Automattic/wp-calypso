@@ -1,9 +1,11 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 /**
  * Sidebar Navigation Header in Sections
  */
 .current-section {
 	position: relative;
-	margin: 0 -16px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: none;

@@ -3,6 +3,7 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import Badge from '../badge';
 import type { BadgeType } from '../badge';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface FlowQuestionProps {

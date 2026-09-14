@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/activity-log/init';
 
 /**
@@ -9,5 +7,5 @@ import 'calypso/state/activity-log/init';
  * @returns {?Object}              Activity log item if found, otherwise null
  */
 export default function getRequestedBackup( state, siteId ) {
-	return get( state, [ 'activityLog', 'backupRequest', siteId ], null );
+	return state?.activityLog?.backupRequest?.[ siteId ] ?? null;
 }

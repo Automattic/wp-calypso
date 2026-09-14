@@ -63,7 +63,11 @@ class RequireChunkCallbackPlugin {
 
 						var requireChunkCallback = new RequireChunkCallback();
 
-						window.__requireChunkCallback__ = requireChunkCallback;
+						var globalScope = typeof globalThis !== 'undefined' ? globalThis : self;
+						// When webpack executes CSS modules in Node window is not defined, so we need to add a global variable to the window object.
+						if ( globalScope.window ) {
+							globalScope.window.__requireChunkCallback__ = requireChunkCallback;
+						}
 					`,
 				] );
 			} );

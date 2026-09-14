@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.2.2
+
+- Use an npm-installable `@wordpress/compose` dependency range for package consumers.
+
+## 0.2.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
+## 0.2.0
+
+### Added
+
+- Add `fillWidth` layout property — items fill remaining columns in their row
+- Add AI agent context (`CLAUDE.md`, `AGENTS.md`)
+
 ## 0.1.3
 
 ### Bug Fixes

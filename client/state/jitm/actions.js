@@ -1,6 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
 import { dispatch as dataStoreDispatch } from '@wordpress/data';
-import { get } from 'lodash';
 import {
 	JITM_DISMISS,
 	JITM_FETCH,
@@ -55,7 +54,7 @@ export const clearJITM = ( siteId, messagePath ) => ( {
  * @param {Function} dispatch dispather function
  */
 export const setupDevTool = ( siteId, dispatch ) => {
-	if ( typeof window === 'undefined' || siteId === get( window, '_jitm.siteId' ) ) {
+	if ( typeof window === 'undefined' || siteId === window?._jitm?.siteId ) {
 		return;
 	}
 

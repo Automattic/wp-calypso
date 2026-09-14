@@ -8,7 +8,10 @@ import { DIFMFAQ } from './faq';
 import { DIFMServiceDescription } from './service-description';
 import { useDIFMHeading } from './use-difm-heading';
 
-import './difm-landing.scss';
+const loadSiteBuildShowcase = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ './site-build-showcase'
+	);
 
 const Wrapper = styled.div`
 	display: flex;
@@ -16,10 +19,6 @@ const Wrapper = styled.div`
 	padding: 32px;
 	max-width: 1040px;
 	margin: 0 auto;
-
-	.difmStartingPoint & {
-		padding: 12px;
-	}
 `;
 
 const ContentSection = styled.div`
@@ -134,7 +133,7 @@ export default function DIFMLanding( {
 				</ContentSection>
 				<ImageSection>
 					<AsyncLoad
-						require="./site-build-showcase"
+						require={ loadSiteBuildShowcase }
 						placeholder={ <LoadingEllipsis /> }
 						isStoreFlow={ isStoreFlow }
 					/>

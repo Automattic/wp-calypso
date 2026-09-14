@@ -1,5 +1,6 @@
 import { Icon, pending } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { type JSX } from 'react';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
 import type { Note } from '../app/types';
 

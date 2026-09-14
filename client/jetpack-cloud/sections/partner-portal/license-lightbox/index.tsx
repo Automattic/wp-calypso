@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { FunctionComponent, ReactNode, useCallback } from 'react';
+import { FunctionComponent, ReactNode, useCallback, type JSX } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import JetpackLightbox, {
 	JetpackLightboxAside,

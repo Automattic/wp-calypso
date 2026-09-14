@@ -1,3 +1,8 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+
 .people-profile {
 	position: relative;
 	@include clear-fix;

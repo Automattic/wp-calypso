@@ -1,0 +1,90 @@
+import { translate } from 'i18n-calypso';
+import titlecase from 'to-title-case';
+import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
+import { capitalPDangit } from 'calypso/lib/formatting';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+	getStartDate,
+} from 'calypso/reader/controller-helper';
+import { recordTrack } from 'calypso/reader/stats';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+
+const loadMain = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-tag-stream-main" */ 'calypso/reader/tag-stream/main'
+	);
+
+const analyticsPageTitle = 'Reader';
+
+export const tagListing = ( context, next ) => {
+	const basePath = '/tag/:slug';
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
+	const tagSlug = decodeURIComponent(
+		( context.params.tag ?? '' )
+			.trim()
+			.toLowerCase()
+			.replace( /\s+/g, '-' )
+			.replace( /-{2,}/g, '-' )
+	);
+	const state = context.store.getState();
+	const tagTitle = capitalPDangit(
+		titlecase( ( context.params.tag ?? '' ).trim() ).replace( /[-_]/g, ' ' )
+	);
+
+	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
+
+	// default to tags by recency unless the user explicitly selects 'relavance'
+	const streamKey =
+		context.query.sort === 'relevance' ? 'tag_popular:' + tagSlug : 'tag:' + tagSlug;
+
+	const mcKey = 'topic';
+	const startDate = getStartDate( context );
+
+	const currentRoute = getCurrentRoute( state );
+	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack(
+		'calypso_reader_tag_loaded',
+		{
+			tag: tagSlug,
+		},
+		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
+	);
+
+	context.primary = (
+		<>
+			<DocumentHead
+				title={ translate( 'Articles & Posts About %s ‹ Reader', {
+					args: [ tagTitle ],
+					comment: 'page title for reader tag pages. %s is the name of the tag e.g. "art"',
+				} ) }
+			/>
+			<AsyncLoad
+				require={ loadMain }
+				key={ 'tag-' + encodedTag }
+				streamKey={ streamKey }
+				encodedTagSlug={ encodedTag }
+				decodedTagSlug={ tagSlug }
+				initialTitle={ tagTitle }
+				sort={ context.query.sort }
+				trackScrollPage={ trackScrollPage.bind(
+					// eslint-disable-line
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				startDate={ startDate }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
+				placeholder={ null }
+			/>
+		</>
+	);
+	next();
+};

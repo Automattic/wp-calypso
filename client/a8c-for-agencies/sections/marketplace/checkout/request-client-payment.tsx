@@ -1,14 +1,21 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { referralsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { customLink, Icon, send, warning } from '@wordpress/icons';
+import { useQuery } from '@tanstack/react-query';
+import {
+	Button,
+	ExternalLink,
+	TextControl,
+	TextareaControl,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { customLink, Icon, send, cautionFilled as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
@@ -24,8 +31,6 @@ import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-util
 import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateAgencyReferralsLogo } from 'calypso/state/a8c-for-agencies/agency/actions';
 import {
@@ -35,7 +40,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -90,23 +94,21 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		logoUrl: string;
 	} | null >( null );
 
-	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
-
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
 	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
 
-	const onEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
-		setEmail( event.currentTarget.value );
+	const onEmailChange = ( value: string ) => {
+		setEmail( value.trim() );
 		if ( validationError.email ) {
 			setValidationError( { email: undefined } );
 		}
 	};
 
-	const onMessageChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
-		setMessage( event.currentTarget.value );
+	const onMessageChange = useCallback( ( value: string ) => {
+		setMessage( value );
 	}, [] );
 
 	const onReferralLogoChange = useCallback( ( choice: ReferralLogoChoice ) => {
@@ -120,15 +122,15 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
-	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
+	const { data: referrals, refetch: refetchReferrals } = useQuery( {
+		...referralsQuery( agencyId ?? 0 ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
 	const isDifferentLogoWithoutUpload =
-		isCobrandedCheckoutEnabled &&
-		referralLogo.option === 'different' &&
-		! referralLogo.file &&
-		! referralLogo.logoUrl;
+		referralLogo.option === 'different' && ! referralLogo.file && ! referralLogo.logoUrl;
 	const hasPressableAddonsInCheckout = useMemo(
 		() => checkoutItems.some( ( item ) => isPressableAddonProduct( item.slug ) ),
 		[ checkoutItems ]
@@ -152,10 +154,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const buildLogoPayload = useCallback( async (): Promise<
 		{ type: 'profile' | 'custom' | 'none'; url?: string } | undefined | 'error'
 	> => {
-		if ( ! isCobrandedCheckoutEnabled ) {
-			return undefined;
-		}
-
 		let logo: { type: 'profile' | 'custom' | 'none'; url?: string } | undefined;
 
 		if ( referralLogo.option === 'profile' ) {
@@ -180,11 +178,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					setIsUploadingLogo( true );
 					try {
 						const result = await uploadLogo( agencyId, referralLogo.file );
-						if ( result?.logo_url ) {
-							logoUrl = result.logo_url;
+						if ( result?.url ) {
+							logoUrl = result.url;
 							setLastUploadedFile( {
 								...fileSignature,
-								logoUrl: result.logo_url,
+								logoUrl: result.url,
 							} );
 						}
 					} catch ( error ) {
@@ -214,7 +212,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	}, [
 		agencyId,
 		dispatch,
-		isCobrandedCheckoutEnabled,
 		lastUploadedFile,
 		referralLogo.file,
 		referralLogo.logoUrl,
@@ -279,9 +276,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
 					{
 						term_pricing: termPricing,
-						...( isCobrandedCheckoutEnabled && referralLogo.option
-							? { logo_type: referralLogo.option }
-							: {} ),
+						...( referralLogo.option ? { logo_type: referralLogo.option } : {} ),
 					}
 				)
 			);
@@ -339,10 +334,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 											{
 												components: {
 													a: (
-														<a
+														<ExternalLink
 															href="https://automattic.com/for-agencies/program-incentives/"
-															target="_blank"
-															rel="noopener noreferrer"
+															children={ null }
 														/>
 													),
 												},
@@ -361,7 +355,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			hasPressableAddonsInCheckout,
 			dispatch,
 			termPricing,
-			isCobrandedCheckoutEnabled,
 			referralLogo.option,
 			buildLogoPayload,
 			requestPayment,
@@ -380,10 +373,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		<>
 			<div className="checkout__client-referral-form">
 				<FormFieldset>
-					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
-					<FormTextInput
+					<FormLabel htmlFor="referral-email">{ translate( 'Client’s email address' ) }</FormLabel>
+					<TextControl
+						__nextHasNoMarginBottom
+						id="referral-email"
 						name="email"
-						id="email"
 						value={ email }
 						onChange={ onEmailChange }
 						onClick={ () =>
@@ -400,11 +394,14 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					</div>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="message">{ translate( 'Custom message' ) }</FormLabel>
-					<FormTextarea
+					<FormLabel htmlFor="referral-message">{ translate( 'Custom message' ) }</FormLabel>
+					<TextareaControl
+						__nextHasNoMarginBottom
+						id="referral-message"
 						name="message"
-						id="message"
-						placeholder="Send a message to your client about this request for payment."
+						placeholder={ translate(
+							'Send a message to your client about this request for payment.'
+						) }
 						value={ message }
 						onChange={ onMessageChange }
 						onClick={ () =>
@@ -412,7 +409,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						}
 					/>
 				</FormFieldset>
-				{ isCobrandedCheckoutEnabled && <ReferralLogo onChange={ onReferralLogoChange } /> }
+				<ReferralLogo onChange={ onReferralLogoChange } />
 			</div>
 
 			<NoticeSummary type="request-client-payment" />
@@ -461,26 +458,28 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 							{
 								components: {
 									a: (
-										<a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />
+										<ExternalLink
+											href="https://wordpress.com/me"
+											style={ { color: 'var(--color-text-inverted)' } }
+											children={ null }
+										/>
 									),
 								},
 							}
 						) }
 					</Tooltip>
 				</div>
-				{ isCobrandedCheckoutEnabled && (
-					<Button
-						variant="link"
-						onClick={ async () => {
-							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
-							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
-							setPreviewLogoUrl( logoUrlForPreview );
-							setIsPreviewOpen( true );
-						} }
-					>
-						{ translate( 'Preview referral email' ) }
-					</Button>
-				) }
+				<Button
+					variant="link"
+					onClick={ async () => {
+						dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
+						const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
+						setPreviewLogoUrl( logoUrlForPreview );
+						setIsPreviewOpen( true );
+					} }
+				>
+					{ translate( 'Preview referral email' ) }
+				</Button>
 			</VStack>
 
 			<ReferralEmailPreviewModal

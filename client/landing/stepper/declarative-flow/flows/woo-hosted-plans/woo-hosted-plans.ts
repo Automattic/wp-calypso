@@ -102,9 +102,6 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 
 				// Woo Hosted only supports monthly and yearly plans
 				displayedIntervals: [ 'monthly', 'yearly' ],
-
-				// Hide the logo on the plans page
-				hideLogo: true,
 			},
 		};
 	},

@@ -1,8 +1,6 @@
-import { TitanMailSlugs } from '@automattic/api-core';
 import { MailboxForm, GSuiteProductUser } from '../entities/mailbox-form';
 import { MailboxProvider } from '../types';
 import { EmailProperties } from './get-email-product-properties';
-import { isMonthlyEmailProduct } from './is-monthly-email-product';
 import type { MinimalRequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 
 export interface TitanProductProps {
@@ -56,37 +54,23 @@ function titanMailProduct(
 	};
 }
 
-/**
- * Creates a new shopping cart item for Titan Mail Yearly.
- */
-export function titanMailYearly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG );
-}
-
-/**
- * Creates a new shopping cart item for Titan Mail Monthly.
- */
-export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
-	return titanMailProduct( properties, TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG );
-}
-
 const getTitanCartItems = (
 	mailboxes: MailboxForm< MailboxProvider >[],
 	mailProperties: EmailProperties
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
 	const email_users = mailboxes.map( ( mailbox ) => mailbox.getAsCartItem() );
-	const cartItemFunction = isMonthlyEmailProduct( emailProduct )
-		? titanMailMonthly
-		: titanMailYearly;
-	return cartItemFunction( {
-		domain: mailboxes[ 0 ].formFields.domain.value,
-		quantity,
-		extra: {
-			email_users,
-			new_quantity: newQuantity,
+	return titanMailProduct(
+		{
+			domain: mailboxes[ 0 ].formFields.domain.value,
+			quantity,
+			extra: {
+				email_users,
+				new_quantity: newQuantity,
+			},
 		},
-	} );
+		emailProduct.product_slug
+	);
 };
 
 const getGSuiteCartItems = (

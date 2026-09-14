@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { ReferralPurchase } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -32,7 +32,7 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 	}
 
 	if ( ! amount ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	const formatted = formatCurrency( amount, currency );

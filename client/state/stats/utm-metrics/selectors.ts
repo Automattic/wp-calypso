@@ -1,5 +1,5 @@
-import { get } from 'lodash';
 import { UTMMetricItem } from './types';
+import type { AppState } from 'calypso/types';
 import 'calypso/state/stats/init';
 
 const EMPTY_RESULT = [] as Array< UTMMetricItem >;
@@ -10,16 +10,16 @@ const EMPTY_RESULT = [] as Array< UTMMetricItem >;
  * @param   {number}  siteId   Site ID
  * @returns {Object}           Highlights object; see schema.
  */
-export function getMetrics( state: object, siteId: number, postId?: number ) {
+export function getMetrics( state: AppState, siteId: number, postId?: number ) {
 	const metrics = postId
-		? get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'metricsByPost', postId ], EMPTY_RESULT )
-		: get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'metrics' ], EMPTY_RESULT );
+		? state?.stats?.utmMetrics?.data?.[ siteId ]?.metricsByPost?.[ postId ] ?? EMPTY_RESULT
+		: state?.stats?.utmMetrics?.data?.[ siteId ]?.metrics ?? EMPTY_RESULT;
 
 	return metrics;
 }
 
-export function getTopPosts( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'utmMetrics', 'data', siteId, 'topPosts' ], {} );
+export function getTopPosts( state: AppState, siteId: number ) {
+	return state?.stats?.utmMetrics?.data?.[ siteId ]?.topPosts ?? {};
 }
 
 /**
@@ -28,6 +28,6 @@ export function getTopPosts( state: object, siteId: number ) {
  * @param   {number}  siteId   Site ID
  * @returns {boolean}          	 Array of stat types as strings
  */
-export function isLoading( state: object, siteId: number ) {
-	return get( state, [ 'stats', 'utmMetrics', 'isLoading', siteId ] );
+export function isLoading( state: AppState, siteId: number ) {
+	return state?.stats?.utmMetrics?.isLoading?.[ siteId ];
 }

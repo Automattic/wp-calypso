@@ -279,7 +279,7 @@ describe( 'UnavailableSearchResult', () => {
 
 				await waitFor( () => expect( availabilityQuery.isDone() ).toBe( true ) );
 
-				expect( container ).toBeEmptyDOMElement();
+				await waitFor( () => expect( container ).toBeEmptyDOMElement() );
 			}
 		);
 	} );

@@ -1,7 +1,7 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { debounce } from 'lodash';
 import { createRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';

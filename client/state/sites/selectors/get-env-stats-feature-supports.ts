@@ -48,11 +48,6 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		),
 		supportsUTMStats: ! isOdysseyStats || !! statsAdminVersion,
 		supportsDevicesStats: ! isOdysseyStats || !! statsAdminVersion,
-		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
-			statsAdminVersion,
-			'0.18.0-alpha',
-			isOdysseyStats
-		),
 		supportUserFeedback: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.22.0',

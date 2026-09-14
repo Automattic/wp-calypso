@@ -10,6 +10,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
@@ -60,7 +61,7 @@ function PerformanceCardContentWithFinishedTests( {
 	} else {
 		const recommendationCount = Object.keys( report.audits ).length;
 		description = sprintf(
-			// translators: %(days) is the number of days until the link expires.
+			// translators: %d: the number of performance recommendations available.
 			_n( '%d recommendation available.', '%d recommendations available.', recommendationCount ),
 			recommendationCount
 		);
@@ -140,7 +141,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Launch your site to test performance.' ) }
-				link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
@@ -151,7 +152,7 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No results' ) }
 				description={ __( 'Make your site public to test performance.' ) }
-				link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
+				link={ getSiteVisibilityURL( site ) }
 			/>
 		);
 	}
@@ -165,6 +166,10 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }

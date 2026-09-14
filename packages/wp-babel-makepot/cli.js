@@ -6,10 +6,37 @@ const program = require( 'commander' );
 const glob = require( 'glob' );
 const version = require( './package.json' ).version;
 const presets = require( './presets' );
+const processFiles = require( './process-files' );
 const concatPot = require( './utils/concat-pot' );
-const makePot = require( './index' );
 
 const presetsKeys = Object.keys( presets );
+const DEFAULT_JOBS = '1';
+
+const getAvailableParallelism = () =>
+	typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length;
+
+const getMatchingFiles = ( patterns, ignore ) =>
+	Array.from(
+		new Set(
+			patterns.flatMap( ( pattern ) =>
+				glob.sync( pattern, { nodir: true, absolute: true, ignore } )
+			)
+		)
+	).sort();
+
+const resolveJobs = ( jobsOption, fileCount ) => {
+	if ( jobsOption === 'auto' ) {
+		return Math.min( 16, fileCount || 1, Math.max( 1, getAvailableParallelism() - 1 ) );
+	}
+
+	const jobs = Number.parseInt( jobsOption, 10 );
+
+	if ( ! Number.isInteger( jobs ) || jobs < 1 ) {
+		throw new Error( '`--jobs` must be a positive integer or `auto`.' );
+	}
+
+	return Math.min( jobs, fileCount || 1 );
+};
 
 program
 	.version( version )
@@ -38,13 +65,16 @@ program
 		'-l, --lines-filter <file>',
 		'JSON file containing files and line numbers filters. Only included line numbers will be passed.'
 	)
-	.action( ( command, [ files = '.' ] = [] ) => {
+	.option(
+		'-j, --jobs <type>',
+		'Number of worker threads to use for extraction. Use `auto` to match local parallelism.',
+		DEFAULT_JOBS
+	)
+	.action( async ( command, [ files = '.' ] = [] ) => {
 		if ( ! presetsKeys.includes( program.preset ) ) {
-			console.log(
+			throw new Error(
 				`Invalid babel preset. Please use any of available options: ${ presetsKeys.join( ', ' ) }`
 			);
-
-			return;
 		}
 
 		// Replace `~` with actual home directory as glob can't use it.
@@ -52,19 +82,22 @@ program
 		const ignore = program.ignore && program.ignore.split( ',' );
 
 		const { preset, dir, base, output, linesFilter } = program;
+		const matchingFiles = getMatchingFiles( filesGlob, ignore );
+		const jobs = resolveJobs( program.jobs, matchingFiles.length );
 
-		filesGlob.forEach( ( pattern ) => {
-			glob.sync( pattern, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
-				makePot( filepath, {
-					preset,
-					base,
-					dir,
-				} )
-			);
+		await processFiles( matchingFiles, {
+			jobs,
+			preset,
+			base,
+			dir,
 		} );
 
 		if ( output && output !== 'false' ) {
 			concatPot( dir, output, linesFilter );
 		}
 	} )
-	.parse( process.argv );
+	.parseAsync( process.argv )
+	.catch( ( error ) => {
+		console.error( error.message );
+		process.exitCode = 1;
+	} );

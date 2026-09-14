@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',
@@ -41,16 +41,18 @@ function getStatusText( status: DeploymentStatusValue ) {
 function getStatusIntent( status: DeploymentStatusValue ) {
 	switch ( status ) {
 		case 'success':
-			return 'success';
+			return 'stable';
 		case 'failed':
-			return 'error';
+			return 'high';
 		case 'warnings':
-			return 'warning';
+			return 'medium';
 		case 'running':
 		case 'building':
-			return 'info';
+			return 'informational';
+		case 'pending':
+			return 'low';
 		default:
-			return 'default';
+			return 'draft';
 	}
 }
 

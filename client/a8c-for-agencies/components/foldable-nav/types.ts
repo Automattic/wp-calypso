@@ -1,4 +1,5 @@
 import { TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 export interface Props {
 	header: string;

@@ -1,7 +1,7 @@
 import { is100Year } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
@@ -86,7 +86,9 @@ export default function CurrentPlanPanel() {
 						) : (
 							<>
 								<h3>{ planName }</h3>
-								{ ! isA4APlan && ! is100YearPlan && <Badge>{ translate( 'Current plan' ) }</Badge> }
+								{ ! isA4APlan && ! is100YearPlan && (
+									<Badge intent="draft">{ translate( 'Current plan' ) }</Badge>
+								) }
 							</>
 						) }
 					</div>

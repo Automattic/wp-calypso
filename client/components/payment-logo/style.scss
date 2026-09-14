@@ -9,7 +9,7 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$payment-types: "alipay", "apple-pay", "bancontact", "eps", "ideal", "netbanking",
+	$payment-types: "alipay", "apple-pay", "bancontact", "eps", "ideal",
 		"paypal", "p24", "wechat", "sofort";
 
 	@each $type in $payment-types {
@@ -46,12 +46,6 @@
 		height: 20px;
 		background-size: 100px auto;
 		width: 100px;
-	}
-
-	&.is-netbanking {
-		width: 90px;
-		background-size: 84px auto;
-		margin-top: 2px;
 	}
 
 	&.is-p24 {

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import affiliatesIllustration from 'calypso/assets/images/customer-home/illustration--affiliates-growth.png';
+import affiliatesIllustration from 'calypso/assets/images/customer-home/illustration--affiliates-growth.webp';
 import { TASK_AFFILIATES } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 

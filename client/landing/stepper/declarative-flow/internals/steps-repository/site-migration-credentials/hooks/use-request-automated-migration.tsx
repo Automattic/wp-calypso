@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import { ApiError, CredentialsFormData } from '../types';
 
 interface AutomatedMigrationAPIResponse {
@@ -23,12 +23,14 @@ const requestAutomatedMigration = async (
 	payload: AutomatedMigration,
 	locale: string
 ): Promise< AutomatedMigrationAPIResponse > => {
-	return wpcomRequest( {
-		path: `/sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
-		apiNamespace: 'wpcom/v2',
-		method: 'POST',
-		body: payload,
-	} );
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		payload
+	);
 };
 
 export const useRequestAutomatedMigration = (

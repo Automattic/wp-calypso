@@ -2,7 +2,6 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-	READER_STREAMS_REMOVE_ITEM,
 } from 'calypso/state/reader/action-types';
 import {
 	followConversation,
@@ -14,7 +13,22 @@ import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/f
 type Dispatch = jest.Mock< any, any >;
 type GetState = () => Record< string, unknown >;
 
+const mockQueryClient = {};
+const mockRemoveStreamItemFromCache = jest.fn();
+
+jest.mock( 'calypso/state/query-client', () => ( {
+	getCalypsoQueryClient: () => mockQueryClient,
+} ) );
+
+jest.mock( 'calypso/reader/data/stream', () => ( {
+	removeStreamItemFromCache: ( ...args: unknown[] ) => mockRemoveStreamItemFromCache( ...args ),
+} ) );
+
 describe( 'actions', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	describe( '#followConversation', () => {
 		test( 'should return an action when a conversation is followed', () => {
 			const dispatch: Dispatch = jest.fn();
@@ -42,19 +56,13 @@ describe( 'actions', () => {
 					previousState: null,
 				},
 			} );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: READER_STREAMS_REMOVE_ITEM,
-				payload: {
-					postKey: { blogId: 123, postId: 456 },
-					streamKey: 'conversations',
-				},
+			expect( mockRemoveStreamItemFromCache ).toHaveBeenCalledWith( mockQueryClient, {
+				item: { blogId: 123, postId: 456 },
+				streamKey: 'conversations-a8c',
 			} );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: READER_STREAMS_REMOVE_ITEM,
-				payload: {
-					postKey: { blogId: 123, postId: 456 },
-					streamKey: 'conversations-a8c',
-				},
+			expect( mockRemoveStreamItemFromCache ).toHaveBeenCalledWith( mockQueryClient, {
+				item: { blogId: 123, postId: 456 },
+				streamKey: 'conversations',
 			} );
 		} );
 	} );

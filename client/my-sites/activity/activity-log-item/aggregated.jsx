@@ -1,10 +1,11 @@
 import { Button, FoldableCard } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { omit, flowRight as compose } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -62,13 +63,32 @@ class ActivityLogAggregatedItem extends Component {
 
 	renderHeader() {
 		const { activity, isBreakpointActive: isDesktop } = this.props;
-		const { actorAvatarUrl, actorName, actorRole, actorType, multipleActors, activityMedia } =
-			activity;
+		const {
+			actorAvatarUrl,
+			actorName,
+			actorRole,
+			actorType,
+			actorIsMcpAgent,
+			actorMcpClient,
+			multipleActors,
+			activityMedia,
+		} = activity;
 		let actor;
 		if ( multipleActors ) {
 			actor = <ActivityActor actorType="Multiple" />;
 		} else {
-			actor = <ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />;
+			actor = (
+				<ActivityActor
+					{ ...{
+						actorAvatarUrl,
+						actorName,
+						actorRole,
+						actorType,
+						actorIsMcpAgent,
+						actorMcpClient,
+					} }
+				/>
+			);
 		}
 
 		return (

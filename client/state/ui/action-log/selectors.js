@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { last } from 'lodash';
 
 import 'calypso/state/ui/init';
 
@@ -23,6 +22,6 @@ export function getActionLog( state ) {
  * @returns {Object}              The matching dispatched action
  */
 export const getLastAction = createSelector(
-	( state ) => last( state.ui.actionLog ) || false,
+	( state ) => state.ui.actionLog?.at( -1 ) || false,
 	( state ) => [ state.ui.actionLog ]
 );

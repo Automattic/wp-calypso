@@ -1,9 +1,8 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
@@ -11,6 +10,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 import './style.scss';
 
@@ -20,9 +20,13 @@ import './style.scss';
 function ClientCheckoutContent() {
 	const translate = useTranslate();
 
-	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout( {
-		expressMode: false,
-	} );
+	const { isReady, error, emailMismatchWithReferralClient, referral, wpcomHostingProductSlug } =
+		useClientCheckout( {
+			expressMode: false,
+		} );
+
+	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
+	const redirectTo = getClientCheckoutRedirectUrl( subscriptionsUrl, wpcomHostingProductSlug );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -61,7 +65,7 @@ function ClientCheckoutContent() {
 			</div>
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/client/subscriptions' }
+				redirectTo={ redirectTo }
 				customizedPreviousPath="/client/subscriptions"
 				siteSlug=""
 				siteId={ 0 }
@@ -80,9 +84,7 @@ export default function ClientCheckoutV2() {
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<ClientCheckoutContent />
-					</RazorpayHookProvider>
+					<ClientCheckoutContent />
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</CheckoutErrorBoundary>

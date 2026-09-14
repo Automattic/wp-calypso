@@ -97,6 +97,21 @@ export const TestDomainSearchWithCart = ( {
 
 					return Promise.resolve();
 				},
+				onRemoveBundle: async ( bundleGroupId ) => {
+					if ( operationPromise ) {
+						try {
+							await operationPromise;
+						} catch ( error ) {
+							return Promise.reject( error );
+						}
+					}
+
+					setTimeout( () => {
+						setItems( items.filter( ( item ) => item.bundle?.groupId !== bundleGroupId ) );
+					}, 0 );
+
+					return Promise.resolve();
+				},
 			} ) }
 		>
 			{ children }

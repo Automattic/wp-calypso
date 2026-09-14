@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
@@ -9,5 +8,5 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
  */
 export default function getIsSubscriptionOnly( state ) {
 	const currentUser = getCurrentUser( state );
-	return get( currentUser, 'is_subscription_only', null );
+	return currentUser?.is_subscription_only ?? null;
 }

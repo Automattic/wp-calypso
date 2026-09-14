@@ -1,5 +1,9 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .web-preview {
 	position: fixed;

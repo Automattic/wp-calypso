@@ -16,6 +16,7 @@ export type SimpleConsentContent = {
 	description: LongText;
 	customizeButton: ShortText;
 	acceptAllButton: ShortText;
+	declineNonEssentialButton?: ShortText;
 };
 
 export type CustomizedConsentContent = {

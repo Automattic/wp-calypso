@@ -5,6 +5,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
@@ -14,6 +15,7 @@ import Checkout from './checkout';
 import { MARKETPLACE_TYPE_SESSION_STORAGE_KEY } from './hoc/with-marketplace-type';
 import { TERM_PRICING_PREFERENCE_KEY, TERM_PRICING_YEARLY } from './hoc/with-term-pricing';
 import HostingOverview from './hosting-overview';
+import { getPressableOwnershipType } from './lib/get-pressable-ownership-type';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
@@ -58,7 +60,15 @@ export const marketplaceContext: Callback = ( context ) => {
 		purchaseType = purchase_type === 'referral' ? 'referral' : 'regular';
 	}
 	const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
-	page.redirect( A4A_MARKETPLACE_HOSTING_LINK + purchaseTypeURLQuery );
+
+	// Pressable owners primarily use the marketplace to buy products, so default them to Products.
+	const agency = getActiveAgency( context.store.getState() );
+	const ownsPressable = getPressableOwnershipType( agency ) !== 'none';
+
+	page.redirect(
+		( ownsPressable ? A4A_MARKETPLACE_PRODUCTS_LINK : A4A_MARKETPLACE_HOSTING_LINK ) +
+			purchaseTypeURLQuery
+	);
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {

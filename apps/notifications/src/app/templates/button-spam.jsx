@@ -20,6 +20,7 @@ const SpamButton = ( { note, spamNote, goBack } ) => {
 		<ActionButton
 			icon={ removeBug }
 			isActive={ false }
+			isDestructive
 			isBusy={ isBusy }
 			hotkey="s"
 			onToggle={ handleSpam }

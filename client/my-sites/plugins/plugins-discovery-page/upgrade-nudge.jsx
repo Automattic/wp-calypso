@@ -1,11 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
-	findFirstSimilarPlanKey,
 	getPlan,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	TYPE_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
@@ -100,7 +98,7 @@ const UpgradeNudge = ( {
 				href={
 					pluginsPlansPageFlag
 						? pluginsPlansPage
-						: `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }`
+						: `/checkout/${ siteSlug }/${ plansForInstallPurchasedPlugins[ 0 ] }`
 				}
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 				plan={ requiredPlan.getStoreSlug() }
@@ -110,9 +108,7 @@ const UpgradeNudge = ( {
 		);
 	}
 
-	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
-		type: TYPE_BUSINESS,
-	} );
+	const plan = plansForInstallPlugins[ 0 ];
 
 	// This banner upsells the ability to install free and paid plugins on a eCommerce plan.
 	if ( isEcommerceTrial ) {
@@ -132,12 +128,12 @@ const UpgradeNudge = ( {
 		);
 	}
 
-	const title = translate( 'Access thousands of plugins with the %(businessPlanName)s Plan', {
-		args: { businessPlanName: getPlan( plan )?.getTitle() },
+	const title = translate( 'Access thousands of plugins with the %(planName)s Plan', {
+		args: { planName: getPlan( plan )?.getTitle() },
 	} );
 
 	const description = translate( 'Free domain included.' );
-	// This banner upsells the ability to install free and paid plugins on a Business plan.
+	// This banner upsells the ability to install free and paid plugins.
 	return (
 		<UpsellNudge
 			compactButton={ false }

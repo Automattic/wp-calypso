@@ -1,5 +1,3 @@
-import { defer } from 'lodash';
-
 export default {
 	stepA: {
 		stepName: 'stepA',
@@ -17,7 +15,7 @@ export default {
 	asyncStep: {
 		stepName: 'asyncStep',
 		apiRequestFunction: function ( callback, dependencies, stepData ) {
-			defer( callback );
+			setTimeout( callback, 0 );
 			stepData.done();
 		},
 	},
@@ -27,10 +25,10 @@ export default {
 		dependencies: [ 'bearer_token' ],
 		providesDependencies: [ 'siteSlug' ],
 		apiRequestFunction: function ( callback, dependencies, stepData ) {
-			defer( function () {
+			setTimeout( function () {
 				callback( null, { siteSlug: 'testsite.wordpress.com' } );
 				stepData.stepCallback( dependencies );
-			} );
+			}, 0 );
 		},
 	},
 
@@ -39,9 +37,9 @@ export default {
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
 		apiRequestFunction: function ( callback ) {
-			defer( function () {
+			setTimeout( function () {
 				callback( null, { bearer_token: 'TOKEN' } );
-			} );
+			}, 0 );
 		},
 	},
 
@@ -50,7 +48,7 @@ export default {
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
 		apiRequestFunction: function ( callback ) {
-			defer( callback );
+			setTimeout( callback, 0 );
 		},
 	},
 
@@ -60,7 +58,7 @@ export default {
 		delayApiRequestUntilComplete: true,
 		apiRequestFunction: function ( callback, dependencies, stepData ) {
 			stepData.stepCallback();
-			defer( callback );
+			setTimeout( callback, 0 );
 		},
 	},
 

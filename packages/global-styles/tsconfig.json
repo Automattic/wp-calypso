@@ -12,6 +12,7 @@
 		{ "path": "../calypso-sentry" },
 		{ "path": "../calypso-products" },
 		{ "path": "../components" },
+		{ "path": "../design-types" },
 		{ "path": "../i18n-utils" }
 	]
 }

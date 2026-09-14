@@ -73,7 +73,7 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
-	const prevSubmitAttemptCount = useRef< number >();
+	const prevSubmitAttemptCount = useRef< number >( undefined );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
@@ -107,9 +107,9 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 
 	useEffect( () => {
 		if ( isSelectedFileValid && selectedFile ) {
-			onChangeIsImportValid && onChangeIsImportValid( true );
+			onChangeIsImportValid?.( true );
 		} else {
-			onChangeIsImportValid && onChangeIsImportValid( false );
+			onChangeIsImportValid?.( false );
 		}
 	}, [ isSelectedFileValid, selectedFile, onChangeIsImportValid ] );
 
@@ -122,8 +122,11 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		e.preventDefault();
 		setSubmitAttemptCount( submitAttemptCount + 1 );
 		onImportStarted?.( !! selectedFile );
-		selectedFile && importCsvSubscribers( siteId, selectedFile, [], selectedCategories );
-		! selectedFile && onImportFinished?.();
+		if ( selectedFile ) {
+			importCsvSubscribers( siteId, selectedFile, [], selectedCategories );
+		} else {
+			onImportFinished?.();
+		}
 	}
 
 	function isValidExtension( fileName: string ) {
@@ -143,7 +146,9 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		const isValid = isValidExtension( file.name );
 
 		setIsSelectedFileValid( isValid );
-		isValid && setSelectedFile( file );
+		if ( isValid ) {
+			setSelectedFile( file );
+		}
 		importCsvSubscribersUpdate( undefined );
 	}, [] );
 

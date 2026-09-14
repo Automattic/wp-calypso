@@ -28,18 +28,18 @@ export type StarProps = {
 
 const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	const {
-		index = 0,
+		index = 1,
 		rating,
 		hoverRating,
 		size = 24,
 		title,
-		onClick,
+		onClick = null,
 		className,
 		onMouseEnter,
 		onMouseLeave,
 		tracksEvent,
 		tracksProperties,
-		isChecked,
+		isChecked = false,
 		isInteractive,
 		ariaLabel,
 		tabIndex,
@@ -153,11 +153,6 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	);
 } );
 
-Star.defaultProps = {
-	index: 1,
-	size: 24,
-	onClick: null,
-	isChecked: false,
-};
+Star.displayName = 'Star';
 
 export default Star;

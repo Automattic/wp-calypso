@@ -1,0 +1,14 @@
+// Overrides the section-wide `.is-section-plugins .main .upsell-nudge` margin
+// (see my-sites/plugins/style.scss) for the upload page's upgrade banner.
+.is-section-plugins .main .upsell-nudge.plugin-upload__upgrade-nudge {
+	margin-block-start: 16px;
+}
+
+// When the drop zone is gated behind a plan it's wrapped in `FeatureExample`,
+// whose gradient overlay already dims (and click-shields) it. Drop the drop
+// zone's own `opacity: 0.2` so the two don't stack into a washed-out card. The
+// zone stays `disabled` — `DropZone` listens on `window` and hit-tests by
+// coordinates, so the overlay alone wouldn't block a native file drop.
+.is-section-plugins .main .feature-example .upload-drop-zone.is-disabled {
+	opacity: 1;
+}

@@ -1,9 +1,10 @@
-import { WordPressLogo, JetpackLogo, Gridicon } from '@automattic/components';
+import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { CheckboxControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useSelector } from 'calypso/state';
@@ -38,7 +39,7 @@ const TypeIcon = ( { siteId }: { siteId: number } ) => {
 	if ( isJetpack ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <JetpackLogo /> } />;
 	}
-	return <Gridicon icon="minus" />;
+	return <EmptyValueIndicator />;
 };
 
 export default function WPCOMSitesTable( {

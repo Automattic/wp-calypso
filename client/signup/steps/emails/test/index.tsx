@@ -40,8 +40,9 @@ describe( 'Email Step', () => {
 		);
 
 		// An empty first argument means we're fetching all products, so we'll
-		// have access to email product data. The second empty prop represents
-		// the React children (we have none).
-		expect( productListQuerySpy ).toHaveBeenCalledWith( {}, {} );
+		// have access to email product data. Assert only on that first argument:
+		// React 18 calls function components with a second argument (legacy
+		// context) while React 19 does not, so this stays version-agnostic.
+		expect( productListQuerySpy.mock.lastCall?.[ 0 ] ).toEqual( {} );
 	} );
 } );

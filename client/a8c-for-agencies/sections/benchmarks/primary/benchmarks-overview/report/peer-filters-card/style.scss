@@ -1,0 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.benchmarks-peer-filters {
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	padding: 24px;
+	margin-block-start: 24px;
+}
+
+.benchmarks-peer-filters__eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--color-neutral-60);
+	margin-block: 0 12px;
+}
+
+.benchmarks-peer-filters-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 20px;
+
+	.components-select-control__input {
+		min-inline-size: 120px;
+	}
+}
+
+.benchmarks-peer-filters-own {
+	font-size: 0.875rem;
+	color: var(--color-neutral-60);
+	margin-block: 0 16px;
+}
+
+.benchmarks-peer-filters-empty {
+	font-size: 0.875rem;
+	color: var(--color-warning-50);
+	margin: 8px 0 0;
+}

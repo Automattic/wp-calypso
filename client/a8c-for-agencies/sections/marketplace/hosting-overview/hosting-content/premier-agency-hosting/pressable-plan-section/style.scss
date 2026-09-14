@@ -55,11 +55,6 @@
 .pressable-plan-card-content__promo-footnote {
 	@include body-small;
 	color: var(--color-neutral-50);
-
-	a {
-		color: var(--color-text);
-		text-decoration: underline;
-	}
 }
 
 // We need to do this specifically to override the white-space.

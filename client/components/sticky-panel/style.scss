@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
 .sticky-panel {
 	// Force a new block formatting context to prevent margin collapsing. It's needed for
 	// correct measurement of `.sticky_panel__content` height and setting the spacer height.

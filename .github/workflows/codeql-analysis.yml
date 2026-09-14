@@ -1,0 +1,78 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ trunk ]
+  pull_request:
+    branches: [ trunk ]
+    paths:
+      - '.github/codeql/**'
+      - '.github/workflows/codeql-analysis.yml'
+  schedule:
+    - cron: '37 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: actions
+            language: actions
+            config-file: ./.github/codeql/actions.yml
+          - name: ruby
+            language: ruby
+            config-file: ./.github/codeql/ruby.yml
+          - name: js-client-state
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-state.yml
+          - name: js-client-my-sites
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-my-sites.yml
+          - name: js-client-dashboard
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-dashboard.yml
+          - name: js-client-components-lib
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-components-lib.yml
+          - name: js-client-product-surfaces
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-product-surfaces.yml
+          - name: js-client-other
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-client-other.yml
+          - name: js-packages
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-packages.yml
+          - name: js-apps-tools-tests
+            language: javascript-typescript
+            config-file: ./.github/codeql/js-apps-tools-tests.yml
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@dc73d59c2d7bd4f8194098a91219eeee6d8a1719 # v4
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ${{ matrix.config-file }}
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@dc73d59c2d7bd4f8194098a91219eeee6d8a1719 # v4
+        with:
+          category: /language:${{ matrix.language }}/component:${{ matrix.name }}

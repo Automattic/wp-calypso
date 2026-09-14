@@ -1,0 +1,804 @@
+{
+	"schema_version": 1,
+	"suites": {
+		"hash": [
+			{
+				"name": "empty_pair",
+				"seed": "",
+				"value": "",
+				"expected": 0.2305
+			},
+			{
+				"name": "ascii_a_1",
+				"seed": "a",
+				"value": "1",
+				"expected": 0.8633
+			},
+			{
+				"name": "ascii_a_2",
+				"seed": "a",
+				"value": "2",
+				"expected": 0.9601
+			},
+			{
+				"name": "flag_name_decimal_id",
+				"seed": "new_checkout_2026",
+				"value": "42",
+				"expected": 0.4318
+			},
+			{
+				"name": "unicode_e_acute",
+				"seed": "\u00e9",
+				"value": "1",
+				"expected": 0.312
+			},
+			{
+				"name": "unicode_cjk",
+				"seed": "中",
+				"value": "1",
+				"expected": 0.4171
+			},
+			{
+				"name": "unicode_emoji_surrogate_pair",
+				"seed": "\ud83c\udfaf",
+				"value": "1",
+				"expected": 0.6133
+			},
+			{
+				"name": "realistic_flag_name",
+				"seed": "wpcom_dashboard_redesign",
+				"value": "12345",
+				"expected": 0.9133
+			},
+			{
+				"name": "alt_flag",
+				"seed": "checkout_redesign",
+				"value": "99",
+				"expected": 0.5595
+			},
+			{
+				"name": "empty_seed",
+				"seed": "",
+				"value": "abc",
+				"expected": 0.9165
+			}
+		],
+		"bucket_ranges": [
+			{
+				"name": "equal_split_n2",
+				"num_variations": 2,
+				"coverage": 1,
+				"expected": [
+					[ 0, 0.5 ],
+					[ 0.5, 1 ]
+				]
+			},
+			{
+				"name": "equal_split_n3",
+				"num_variations": 3,
+				"coverage": 1,
+				"expected": [
+					[ 0, 0.3333333333333333 ],
+					[ 0.3333333333333333, 0.6666666666666666 ],
+					[ 0.6666666666666666, 1 ]
+				]
+			},
+			{
+				"name": "asymmetric_70_30",
+				"num_variations": 2,
+				"coverage": 1,
+				"weights": [ 0.7, 0.3 ],
+				"expected": [
+					[ 0, 0.7 ],
+					[ 0.7, 1 ]
+				]
+			},
+			{
+				"name": "partial_coverage_quarter",
+				"num_variations": 2,
+				"coverage": 0.25,
+				"expected": [
+					[ 0, 0.125 ],
+					[ 0.5, 0.625 ]
+				]
+			},
+			{
+				"name": "zero_coverage",
+				"num_variations": 2,
+				"coverage": 0,
+				"expected": [
+					[ 0, 0 ],
+					[ 0.5, 0.5 ]
+				]
+			},
+			{
+				"name": "invalid_weights_falls_back",
+				"num_variations": 2,
+				"coverage": 1,
+				"weights": [ 0.5, 0.4 ],
+				"expected": [
+					[ 0, 0.5 ],
+					[ 0.5, 1 ]
+				]
+			},
+			{
+				"name": "zero_variations_returns_empty",
+				"num_variations": 0,
+				"coverage": 1,
+				"expected": []
+			}
+		],
+		"choose_variation": [
+			{
+				"name": "first_range",
+				"n": 0,
+				"variations": [
+					{
+						"range": [ 0, 0.5 ]
+					},
+					{
+						"range": [ 0.5, 1 ]
+					}
+				],
+				"expected": 0
+			},
+			{
+				"name": "lower_bound_inclusive",
+				"n": 0.5,
+				"variations": [
+					{
+						"range": [ 0, 0.5 ]
+					},
+					{
+						"range": [ 0.5, 1 ]
+					}
+				],
+				"expected": 1
+			},
+			{
+				"name": "last_range",
+				"n": 0.999,
+				"variations": [
+					{
+						"range": [ 0, 0.5 ]
+					},
+					{
+						"range": [ 0.5, 1 ]
+					}
+				],
+				"expected": 1
+			},
+			{
+				"name": "upper_bound_exclusive",
+				"n": 0.5,
+				"variations": [
+					{
+						"range": [ 0, 0.5 ]
+					}
+				],
+				"expected": null
+			},
+			{
+				"name": "outside_coverage",
+				"n": 0.6,
+				"variations": [
+					{
+						"range": [ 0, 0.5 ]
+					}
+				],
+				"expected": null
+			}
+		],
+		"condition": [
+			{
+				"name": "shorthand_eq_match",
+				"attrs": {
+					"country": "US"
+				},
+				"cond": {
+					"country": "US"
+				},
+				"expected": true
+			},
+			{
+				"name": "shorthand_eq_non_match",
+				"attrs": {
+					"country": "CA"
+				},
+				"cond": {
+					"country": "US"
+				},
+				"expected": false
+			},
+			{
+				"name": "explicit_eq",
+				"attrs": {
+					"country": "US"
+				},
+				"cond": {
+					"country": {
+						"$eq": "US"
+					}
+				},
+				"expected": true
+			},
+			{
+				"name": "in_match",
+				"attrs": {
+					"country": "US"
+				},
+				"cond": {
+					"country": {
+						"$in": [ "US", "CA" ]
+					}
+				},
+				"expected": true
+			},
+			{
+				"name": "in_non_match",
+				"attrs": {
+					"country": "DE"
+				},
+				"cond": {
+					"country": {
+						"$in": [ "US", "CA" ]
+					}
+				},
+				"expected": false
+			},
+			{
+				"name": "in_empty_array",
+				"attrs": {
+					"country": "US"
+				},
+				"cond": {
+					"country": {
+						"$in": []
+					}
+				},
+				"expected": false
+			},
+			{
+				"name": "array_shorthand_in",
+				"attrs": {
+					"country": "US"
+				},
+				"cond": {
+					"country": [ "US", "CA" ]
+				},
+				"expected": true
+			},
+			{
+				"name": "exists_true_present",
+				"attrs": {
+					"wpcom_user_id": "42"
+				},
+				"cond": {
+					"wpcom_user_id": {
+						"$exists": true
+					}
+				},
+				"expected": true
+			},
+			{
+				"name": "exists_true_missing",
+				"attrs": [],
+				"cond": {
+					"wpcom_user_id": {
+						"$exists": true
+					}
+				},
+				"expected": false
+			},
+			{
+				"name": "exists_false_missing",
+				"attrs": [],
+				"cond": {
+					"wpcom_user_id": {
+						"$exists": false
+					}
+				},
+				"expected": true
+			},
+			{
+				"name": "exists_true_explicit_null_treated_as_absent",
+				"attrs": {
+					"wpcom_user_id": null
+				},
+				"cond": {
+					"wpcom_user_id": {
+						"$exists": true
+					}
+				},
+				"expected": false
+			},
+			{
+				"name": "exists_false_explicit_null_treated_as_absent",
+				"attrs": {
+					"wpcom_user_id": null
+				},
+				"cond": {
+					"wpcom_user_id": {
+						"$exists": false
+					}
+				},
+				"expected": true
+			},
+			{
+				"name": "and_pass_pass",
+				"attrs": {
+					"country": "US",
+					"language": "en"
+				},
+				"cond": {
+					"$and": [
+						{
+							"country": "US"
+						},
+						{
+							"language": "en"
+						}
+					]
+				},
+				"expected": true
+			},
+			{
+				"name": "and_pass_fail",
+				"attrs": {
+					"country": "US",
+					"language": "de"
+				},
+				"cond": {
+					"$and": [
+						{
+							"country": "US"
+						},
+						{
+							"language": "en"
+						}
+					]
+				},
+				"expected": false
+			},
+			{
+				"name": "or_fail_pass",
+				"attrs": {
+					"country": "CA"
+				},
+				"cond": {
+					"$or": [
+						{
+							"country": "US"
+						},
+						{
+							"country": "CA"
+						}
+					]
+				},
+				"expected": true
+			},
+			{
+				"name": "or_fail_fail",
+				"attrs": {
+					"country": "DE"
+				},
+				"cond": {
+					"$or": [
+						{
+							"country": "US"
+						},
+						{
+							"country": "CA"
+						}
+					]
+				},
+				"expected": false
+			},
+			{
+				"name": "mixed_top_level_or_and_field_pass",
+				"attrs": {
+					"country": "US",
+					"language": "en"
+				},
+				"cond": {
+					"$or": [
+						{
+							"country": "US"
+						},
+						{
+							"country": "CA"
+						}
+					],
+					"language": "en"
+				},
+				"expected": true
+			},
+			{
+				"name": "nested_and_containing_or",
+				"attrs": {
+					"country": "US",
+					"language": "es"
+				},
+				"cond": {
+					"$and": [
+						{
+							"country": "US"
+						},
+						{
+							"$or": [
+								{
+									"language": "en"
+								},
+								{
+									"language": "es"
+								}
+							]
+						}
+					]
+				},
+				"expected": true
+			}
+		],
+		"feature": [
+			{
+				"name": "empty_rules_returns_default",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": []
+				},
+				"attrs": [],
+				"expected": {
+					"value": "off",
+					"source": "default"
+				}
+			},
+			{
+				"name": "unconditional_force",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": [
+						{
+							"type": "force",
+							"value": "on"
+						}
+					]
+				},
+				"attrs": [],
+				"expected": {
+					"value": "on",
+					"source": "force"
+				}
+			},
+			{
+				"name": "force_with_passing_condition",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": [
+						{
+							"type": "force",
+							"value": "on",
+							"condition": {
+								"country": "US"
+							}
+						}
+					]
+				},
+				"attrs": {
+					"country": "US"
+				},
+				"expected": {
+					"value": "on",
+					"source": "force"
+				}
+			},
+			{
+				"name": "force_with_failing_condition_falls_through",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": [
+						{
+							"type": "force",
+							"value": "on",
+							"condition": {
+								"country": "US"
+							}
+						}
+					]
+				},
+				"attrs": {
+					"country": "CA"
+				},
+				"expected": {
+					"value": "off",
+					"source": "default"
+				}
+			},
+			{
+				"name": "experiment_in_coverage",
+				"feature": {
+					"value_type": "boolean",
+					"default_value": false,
+					"rules": [
+						{
+							"type": "experiment",
+							"experiment_id": 12345,
+							"hash_attribute": "wpcom_user_id",
+							"seed": "a",
+							"variations": [
+								{
+									"name": "control",
+									"value": false,
+									"is_default": true,
+									"experiment_variation_id": 9001,
+									"range": [ 0, 0.5 ]
+								},
+								{
+									"name": "treatment",
+									"value": true,
+									"is_default": false,
+									"experiment_variation_id": 9002,
+									"range": [ 0.5, 1 ]
+								}
+							]
+						}
+					]
+				},
+				"attrs": {
+					"wpcom_user_id": "1"
+				},
+				"expected": {
+					"value": true,
+					"source": "experiment",
+					"experiment_id": 12345,
+					"experiment_variation_id": 9002,
+					"hash_attribute": "wpcom_user_id",
+					"hash_value": "1"
+				}
+			},
+			{
+				"name": "experiment_missing_hash_attribute_falls_through",
+				"feature": {
+					"value_type": "boolean",
+					"default_value": false,
+					"rules": [
+						{
+							"type": "experiment",
+							"experiment_id": 12345,
+							"hash_attribute": "wpcom_user_id",
+							"seed": "a",
+							"variations": [
+								{
+									"name": "control",
+									"value": false,
+									"is_default": true,
+									"experiment_variation_id": 9001,
+									"range": [ 0, 0.5 ]
+								},
+								{
+									"name": "treatment",
+									"value": true,
+									"is_default": false,
+									"experiment_variation_id": 9002,
+									"range": [ 0.5, 1 ]
+								}
+							]
+						}
+					]
+				},
+				"attrs": {
+					"country": "US"
+				},
+				"expected": {
+					"value": false,
+					"source": "default"
+				}
+			},
+			{
+				"name": "experiment_with_failing_condition_falls_through",
+				"feature": {
+					"value_type": "boolean",
+					"default_value": false,
+					"rules": [
+						{
+							"type": "experiment",
+							"experiment_id": 12345,
+							"hash_attribute": "wpcom_user_id",
+							"seed": "a",
+							"variations": [
+								{
+									"name": "control",
+									"value": false,
+									"is_default": true,
+									"experiment_variation_id": 9001,
+									"range": [ 0, 0.5 ]
+								},
+								{
+									"name": "treatment",
+									"value": true,
+									"is_default": false,
+									"experiment_variation_id": 9002,
+									"range": [ 0.5, 1 ]
+								}
+							],
+							"condition": {
+								"country": "US"
+							}
+						}
+					]
+				},
+				"attrs": {
+					"wpcom_user_id": "1",
+					"country": "CA"
+				},
+				"expected": {
+					"value": false,
+					"source": "default"
+				}
+			},
+			{
+				"name": "force_then_experiment_fall_through",
+				"feature": {
+					"value_type": "boolean",
+					"default_value": false,
+					"rules": [
+						{
+							"type": "force",
+							"value": false,
+							"condition": {
+								"country": "RU"
+							}
+						},
+						{
+							"type": "experiment",
+							"experiment_id": 12345,
+							"hash_attribute": "wpcom_user_id",
+							"seed": "a",
+							"variations": [
+								{
+									"name": "control",
+									"value": false,
+									"is_default": true,
+									"experiment_variation_id": 9001,
+									"range": [ 0, 0.5 ]
+								},
+								{
+									"name": "treatment",
+									"value": true,
+									"is_default": false,
+									"experiment_variation_id": 9002,
+									"range": [ 0.5, 1 ]
+								}
+							]
+						}
+					]
+				},
+				"attrs": {
+					"country": "US",
+					"wpcom_user_id": "1"
+				},
+				"expected": {
+					"value": true,
+					"source": "experiment",
+					"experiment_id": 12345,
+					"experiment_variation_id": 9002,
+					"hash_attribute": "wpcom_user_id",
+					"hash_value": "1"
+				}
+			},
+			{
+				"name": "experiment_then_force_fall_through",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": [
+						{
+							"type": "experiment",
+							"experiment_id": 12345,
+							"hash_attribute": "wpcom_user_id",
+							"seed": "a",
+							"variations": [
+								{
+									"name": "control",
+									"value": "control_value",
+									"is_default": true,
+									"experiment_variation_id": 9001,
+									"range": [ 0, 0.5 ]
+								}
+							]
+						},
+						{
+							"type": "force",
+							"value": "fallback"
+						}
+					]
+				},
+				"attrs": {
+					"wpcom_user_id": "1"
+				},
+				"expected": {
+					"value": "fallback",
+					"source": "force"
+				}
+			},
+			{
+				"name": "typed_boolean_force_round_trip",
+				"feature": {
+					"value_type": "boolean",
+					"default_value": false,
+					"rules": [
+						{
+							"type": "force",
+							"value": true
+						}
+					]
+				},
+				"attrs": [],
+				"expected": {
+					"value": true,
+					"source": "force"
+				}
+			},
+			{
+				"name": "typed_json_object_default_round_trip",
+				"feature": {
+					"value_type": "json",
+					"default_value": {
+						"theme": "dark",
+						"cta": {
+							"label": "Buy",
+							"href": "/checkout"
+						},
+						"tracked": [ "a", "b" ]
+					},
+					"rules": []
+				},
+				"attrs": [],
+				"expected": {
+					"value": {
+						"theme": "dark",
+						"cta": {
+							"label": "Buy",
+							"href": "/checkout"
+						},
+						"tracked": [ "a", "b" ]
+					},
+					"source": "default"
+				}
+			},
+			{
+				"name": "first_match_wins_two_force_rules",
+				"feature": {
+					"value_type": "string",
+					"default_value": "off",
+					"rules": [
+						{
+							"type": "force",
+							"value": "first",
+							"condition": {
+								"country": "US"
+							}
+						},
+						{
+							"type": "force",
+							"value": "second",
+							"condition": {
+								"country": "CA"
+							}
+						}
+					]
+				},
+				"attrs": {
+					"country": "CA"
+				},
+				"expected": {
+					"value": "second",
+					"source": "force"
+				}
+			}
+		]
+	}
+}

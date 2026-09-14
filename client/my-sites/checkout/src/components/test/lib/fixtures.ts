@@ -299,6 +299,7 @@ export const storeData = () => ( {
 			},
 		},
 	},
+	preferences: { remoteValues: null },
 	ui: { selectedSiteId: 123 },
 	productsList: {
 		items: {

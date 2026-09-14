@@ -3,6 +3,9 @@ import {
 	getByPurchaseId,
 	getIncludedDomainPurchase,
 	getPurchases,
+	getRawByPurchaseId,
+	getRawSitePurchases,
+	getRawUserPurchases,
 	getSitePurchases,
 	isFetchingSitePurchases,
 	isFetchingUserPurchases,
@@ -48,22 +51,20 @@ describe( 'selectors', () => {
 
 	describe( 'getByPurchaseId', () => {
 		test( 'should return a purchase by its ID', () => {
+			const purchase = {
+				ID: 2,
+				product_name: 'premium plan',
+				blog_id: 1337,
+				is_rechargeable: true,
+				is_auto_renew_enabled: true,
+				refund_integer: 9600,
+				total_refund_integer: 9600,
+				total_refund_currency: 'USD',
+				subscription_status: 'inactive',
+			};
 			const state = {
 				purchases: {
-					data: [
-						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{
-							ID: 2,
-							product_name: 'premium plan',
-							blog_id: 1337,
-							is_rechargeable: true,
-							is_auto_renew_enabled: true,
-							refund_integer: 9600,
-							total_refund_integer: 9600,
-							total_refund_currency: 'USD',
-							subscription_status: 'inactive',
-						},
-					],
+					data: [ { ID: 1, product_name: 'domain registration', blog_id: 1337 }, purchase ],
 					error: null,
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: false,
@@ -72,82 +73,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getByPurchaseId( state, 2 ) ).toEqual( {
-				id: 2,
-				productName: 'premium plan',
-				siteId: 1337,
-				amount: NaN,
-				attachedToPurchaseId: NaN,
-				autoRenewCouponCode: undefined,
-				autoRenewCouponDiscountPercentage: NaN,
-				billPeriodDays: NaN,
-				billPeriodLabel: undefined,
-				blogCreatedDate: undefined,
-				canExplicitRenew: false,
-				canDisableAutoRenew: false,
-				canReenableAutoRenewal: false,
-				costToUnbundleText: '',
-				currencyCode: undefined,
-				currencySymbol: undefined,
-				description: undefined,
-				domain: undefined,
-				domainRegistrationAgreementUrl: null,
-				expiryDate: undefined,
-				expiryStatus: '',
-				iapPurchaseManagementLink: undefined,
-				includedDomain: undefined,
-				includedDomainPurchaseAmount: undefined,
-				introductoryOffer: null,
-				isAutoRenewEnabled: true,
-				isCancelable: false,
-				isDomain: false,
-				isDomainRegistration: false,
-				isLocked: false,
-				isHundredYearDomain: false,
-				isInAppPurchase: false,
-				isRechargeable: true,
-				isRefundable: false,
-				isRenewable: false,
-				isRenewal: false,
-				isWooExpressTrial: false,
-				meta: undefined,
-				mostRecentRenewDate: undefined,
-				ownershipId: NaN,
-				partnerKeyId: undefined,
-				partnerName: undefined,
-				partnerSlug: undefined,
-				payment: {
-					countryCode: undefined,
-					countryName: undefined,
-					name: undefined,
-					type: undefined,
-					storedDetailsId: undefined,
-				},
-				priceText: undefined,
-				productDisplayPrice: undefined,
-				productId: NaN,
-				productSlug: undefined,
-				pendingTransfer: false,
-				refundPeriodInDays: undefined,
-				totalRefundAmount: NaN,
-				totalRefundInteger: 9600,
-				totalRefundText: undefined,
-				totalRefundCurrency: 'USD',
-				refundAmount: NaN,
-				refundInteger: 9600,
-				refundOptions: undefined,
-				refundText: undefined,
-				regularPriceText: undefined,
-				renewDate: undefined,
-				saleAmount: undefined,
-				siteName: undefined,
-				subscribedDate: undefined,
-				subscriptionStatus: 'inactive',
-				taxAmount: undefined,
-				taxText: undefined,
-				purchaseRenewalQuantity: null,
-				userId: NaN,
-			} );
+			expect( getByPurchaseId( state, 2 ) ).toEqual( createPurchasesArray( [ purchase ] )[ 0 ] );
 		} );
 	} );
 
@@ -216,6 +142,66 @@ describe( 'selectors', () => {
 			expect( result ).toHaveLength( 2 );
 			expect( result[ 0 ].siteId ).toBe( 1234 );
 			expect( result[ 1 ].siteId ).toBe( 1234 );
+		} );
+	} );
+
+	describe( 'raw selectors', () => {
+		// The Redux fetch thunks store the response body untouched, so ids can still
+		// arrive as numeric strings; the raw selectors have to match them anyway.
+		const state = {
+			currentUser: { id: 123 },
+			purchases: {
+				data: [
+					{ ID: '81414', blog_id: '1234', user_id: '123' },
+					{ ID: '82867', blog_id: '1234', user_id: '456' },
+					{ ID: '105103', blog_id: '123', user_id: '123' },
+				],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		};
+
+		describe( 'getRawSitePurchases', () => {
+			test( 'should return the snake_case purchases of a specific site', () => {
+				const result = getRawSitePurchases( state, 1234 );
+
+				expect( result ).toHaveLength( 2 );
+				expect( result.map( ( purchase ) => purchase.ID ) ).toEqual( [ 81414, 82867 ] );
+				expect( result[ 0 ].blog_id ).toBe( 1234 );
+			} );
+		} );
+
+		describe( 'getRawUserPurchases', () => {
+			test( 'should return the snake_case purchases of the current user', () => {
+				const result = getRawUserPurchases( state );
+
+				expect( result.map( ( purchase ) => purchase.ID ) ).toEqual( [ 81414, 105103 ] );
+			} );
+
+			test( 'should return null until the user purchases have loaded', () => {
+				expect(
+					getRawUserPurchases( {
+						...state,
+						purchases: { ...state.purchases, hasLoadedUserPurchasesFromServer: false },
+					} )
+				).toBeNull();
+			} );
+		} );
+
+		describe( 'getRawByPurchaseId', () => {
+			test( 'should return a snake_case purchase by its id', () => {
+				expect( getRawByPurchaseId( state, 82867 ) ).toMatchObject( {
+					ID: 82867,
+					blog_id: 1234,
+				} );
+			} );
+
+			test( 'should return undefined when no purchase matches', () => {
+				expect( getRawByPurchaseId( state, 999 ) ).toBeUndefined();
+			} );
 		} );
 	} );
 

@@ -1,4 +1,5 @@
 import {
+	getConversationLimitReachedMessage,
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
 	getOdieThirdPartyMessageContent,
@@ -9,13 +10,14 @@ import {
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
+import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status-map';
 import {
 	interactionHasZendeskEvent,
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
 	getIsErrorMessage,
+	isStaleOdieChat,
 } from '../../utils';
-import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -79,12 +81,16 @@ export const UserMessage = ( {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
-	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
+	const { mostRecentSupportInteractionId: hasRecentOpenConversation, hasReachedLimit } =
+		useOpenLiveInteractions();
 	const isErrorMessage = getIsErrorMessage( message );
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	// A stale chat can't be replied to, so escalating out of it would open a live conversation
+	// hanging off an abandoned interaction. The closed footer is the only way forward.
+	const showGetSupport =
+		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const messageContent = () => {
@@ -94,6 +100,10 @@ export const UserMessage = ( {
 
 		if ( chat.provider === 'zendesk' ) {
 			return '';
+		}
+
+		if ( hasReachedLimit ) {
+			return getConversationLimitReachedMessage().content;
 		}
 
 		return getDisplayMessage(
@@ -121,10 +131,11 @@ export const UserMessage = ( {
 				<>
 					{ showGetSupport && (
 						<GetSupport
-							onClickAdditionalEvent={ ( destination ) => {
+							onClickAdditionalEvent={ ( destination, props ) => {
 								trackEvent( 'chat_get_support', {
 									location: 'user-message',
 									destination,
+									...props,
 								} );
 							} }
 						/>

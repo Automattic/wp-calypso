@@ -1,4 +1,4 @@
-FROM node:22.9.0
+FROM node:24.15.0
 
 # /src is where we expect source javascript to run our babel config over
 RUN mkdir /src
@@ -12,6 +12,9 @@ COPY ./package-lock.json /
 COPY ./index.js /
 COPY ./cli.js /
 COPY ./presets/ /presets/
+COPY ./process-files.js /
+COPY ./worker.js /
+COPY ./utils/ /utils/
 RUN npm install
 
 # /src is user code lives, /build is pot file output

@@ -5,6 +5,7 @@ export interface CancelPurchaseState {
 	cancelBundledDomain?: boolean;
 	cancelIntent?: 'refund' | null;
 	confirmCancelBundledDomain?: boolean;
+	confirmationPassed?: boolean;
 	customerConfirmedUnderstanding?: boolean;
 	domainConfirmationConfirmed?: boolean;
 	importQuestionRadio?: string;

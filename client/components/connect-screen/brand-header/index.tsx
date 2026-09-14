@@ -1,6 +1,6 @@
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX } from 'react';
 
 import './style.scss';
 

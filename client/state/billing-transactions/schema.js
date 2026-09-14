@@ -25,6 +25,8 @@ export const billingTransactionsSchema = {
 					cc_name: { type: 'string' },
 					cc_email: { type: 'string' },
 					credit: { type: 'string' },
+					tax_is_for_business: { type: [ 'boolean', 'null' ] },
+					tax_state: { type: 'string' },
 					items: {
 						type: 'array',
 						items: {

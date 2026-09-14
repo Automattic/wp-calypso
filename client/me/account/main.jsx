@@ -3,14 +3,16 @@ import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automatti
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ExternalLink } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, get, map, size } from 'lodash';
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { compose } from 'redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -35,6 +37,7 @@ import AccountEmailField from 'calypso/me/account/account-email-field';
 import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
 import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCurrentUserEmailVerified,
@@ -49,7 +52,6 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -88,13 +90,21 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
+const UsernameFormToggleTransition = ( { children, ...props } ) => {
+	const nodeRef = useRef( null );
+	return (
+		<CSSTransition
+			{ ...props }
+			nodeRef={ nodeRef }
+			classNames="account__username-form-toggle"
+			timeout={ { enter: 500, exit: 10 } }
+		>
+			<div ref={ nodeRef }>{ children }</div>
+		</CSSTransition>
+	);
+};
+
 class Account extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.props.removeUnsavedUserSetting( 'user_login' );
-	}
-
 	state = {
 		redirect: false,
 		showConfirmUsernameForm: false,
@@ -113,6 +123,8 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
+		this.props.removeUnsavedUserSetting( 'user_login' );
+
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'usernameChangeSuccess' ) === 'true' ) {
 			this.props.successNotice( this.props.translate( 'Username changed successfully!' ), {
@@ -138,13 +150,12 @@ class Account extends Component {
 
 	getUserSetting( settingName ) {
 		return (
-			get( this.props.unsavedUserSettings, settingName ) ??
-			this.getUserOriginalSetting( settingName )
+			this.props.unsavedUserSettings?.[ settingName ] ?? this.getUserOriginalSetting( settingName )
 		);
 	}
 
 	getUserOriginalSetting( settingName ) {
-		return get( this.props.userSettings, settingName );
+		return this.props.userSettings?.[ settingName ];
 	}
 
 	hasUnsavedUserSetting( settingName ) {
@@ -708,7 +719,7 @@ class Account extends Component {
 		 * If there are no actions or if there is only one action,
 		 * which we assume is the 'none' action, we ignore the actions.
 		 */
-		if ( size( actions ) <= 1 ) {
+		if ( Object.keys( actions ).length <= 1 ) {
 			return;
 		}
 
@@ -717,7 +728,7 @@ class Account extends Component {
 				<FormLabel>{ translate( 'Would you like a matching blog address too?' ) }</FormLabel>
 				{
 					// message is translated in the API
-					map( actions, ( message, key ) => (
+					Object.entries( actions ?? {} ).map( ( [ key, message ] ) => (
 						<FormLabel key={ key }>
 							<FormRadio
 								name="usernameAction"
@@ -946,13 +957,9 @@ class Account extends Component {
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
 						<TransitionGroup>
-							<CSSTransition
-								key={ renderUsernameForm ? 'username' : 'account' }
-								classNames="account__username-form-toggle"
-								timeout={ { enter: 500, exit: 10 } }
-							>
+							<UsernameFormToggleTransition key={ renderUsernameForm ? 'username' : 'account' }>
 								{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
-							</CSSTransition>
+							</UsernameFormToggleTransition>
 						</TransitionGroup>
 					</form>
 				</Card>
@@ -1041,8 +1048,9 @@ export default compose(
 	withGeoLocation,
 	protectForm,
 	withDefaultInterface,
+	withReaderTeams,
 	connect(
-		( state ) => ( {
+		( state, ownProps ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
@@ -1053,7 +1061,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isAutomattician: isA8cTeamMember( state ),
+			isAutomattician: isAutomatticTeamMember( ownProps.teams ),
 			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
 		} ),
 		{

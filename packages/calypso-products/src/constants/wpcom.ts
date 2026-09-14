@@ -68,6 +68,7 @@ export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
 export const PLAN_PERSONAL_3_YEARS = 'personal-bundle-3y';
+export const PLAN_STUDENT = 'wp_bundle_student_yearly';
 export const PLAN_BLOGGER = 'blogger-bundle';
 export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
@@ -119,6 +120,7 @@ export const WPCOM_PLANS = < const >[
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
+	PLAN_STUDENT,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,

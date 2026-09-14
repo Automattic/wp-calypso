@@ -1,19 +1,16 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { ALL_SITES_ID } from 'calypso/state/stats/lists/actions';
-import DatePicker from './stats-date-picker';
+import DatePicker from './stats-date-label';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';
@@ -31,7 +28,7 @@ class StatsOverview extends Component {
 		const statsPath = path === '/stats' ? '/stats/day' : path;
 		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
-			const gmtOffset = get( site, 'options.gmt_offset' );
+			const gmtOffset = site?.options?.gmt_offset;
 			if ( Number.isFinite( gmtOffset ) ) {
 				momentSiteZone = moment().utcOffset( gmtOffset );
 			}
@@ -62,7 +59,7 @@ class StatsOverview extends Component {
 		} );
 
 		const sitesList = sitesSorted.map( ( site, index ) => {
-			const gmtOffset = get( site, 'options.gmt_offset' );
+			const gmtOffset = site?.options?.gmt_offset;
 			const date = moment()
 				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 				.format( 'YYYY-MM-DD' );
@@ -96,9 +93,7 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<StatsNavigation selectedItem="traffic" interval={ period } isLegacy />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
-				<JetpackColophon />
 			</Main>
 		);
 	}

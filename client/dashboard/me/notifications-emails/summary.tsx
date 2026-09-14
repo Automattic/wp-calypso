@@ -1,5 +1,5 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import { Density, SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -8,20 +8,19 @@ import { useMemo } from 'react';
 import { notificationsEmailsRoute } from '../../app/router/me';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
-export const NotificationsEmailsSummary = () => {
+export const NotificationsEmailsSummary = ( { density }: { density?: Density } ) => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
 	const isAllWpcomEmailsDisabled = settings.subscription_delivery_email_blocked;
 
 	const badges = useMemo(
 		() =>
-			isAllWpcomEmailsDisabled
-				? [ { text: __( 'All emails are paused' ), intent: 'warning' } ]
-				: [],
+			isAllWpcomEmailsDisabled ? [ { text: __( 'All emails are paused' ), intent: 'medium' } ] : [],
 		[ isAllWpcomEmailsDisabled ]
 	) as SummaryButtonBadgeProps[];
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to={ notificationsEmailsRoute.fullPath }
 			title={ __( 'Emails' ) }
 			description={ __(

@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
@@ -7,7 +8,7 @@
 	z-index: 1;
 
 	.dashboard-section-header__heading-row {
-		min-height: 32px;
+		min-height: var( --dashboard-section-header__heading-row-min-height, 32px );
 	}
 }
 

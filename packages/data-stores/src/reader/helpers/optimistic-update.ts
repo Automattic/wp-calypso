@@ -1,3 +1,4 @@
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { SiteSubscriptionDetails } from '../types';
 import { buildQueryKey } from './index';
@@ -66,7 +67,7 @@ const invalidateSiteSubscriptionDetails = (
 	queryClient: QueryClient,
 	{ blogId, subscriptionId, isLoggedIn, id }: SiteSubScriptionDetailsParameters
 ) => {
-	queryClient.invalidateQueries( { queryKey: [ 'read', 'site-subscriptions' ] } );
+	queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 	queryClient.invalidateQueries( {
 		queryKey: buildQueryKey( [ 'read', 'site-subscription-details', blogId ], isLoggedIn, id ),
 	} );

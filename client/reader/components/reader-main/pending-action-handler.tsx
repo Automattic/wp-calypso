@@ -1,10 +1,10 @@
+import { likeSiteCommentMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { usePostLikeActions } from 'calypso/reader/data/post/likes';
+import { getFollowingSource, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { useDispatch, useSelector } from 'calypso/state';
-import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { like } from 'calypso/state/posts/likes/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/selectors';
 
@@ -12,6 +12,9 @@ export const ReaderPendingActionHandler = () => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
+	const { mutate: likeComment } = useMutation( likeSiteCommentMutation() );
+	const { mutate: followSite } = useFollowSite();
+	const { likePost, unlikePost } = usePostLikeActions();
 
 	useEffect( () => {
 		if ( ! isLoggedIn || ! pendingAction ) {
@@ -26,24 +29,32 @@ export const ReaderPendingActionHandler = () => {
 		setTimeout( () => {
 			switch ( pendingAction.type ) {
 				case 'like':
-					dispatch( like( pendingAction.siteId, pendingAction.postId ) );
+					likePost( pendingAction.siteId, pendingAction.postId );
+					break;
+				case 'unlike':
+					unlikePost( pendingAction.siteId, pendingAction.postId );
 					break;
 				case 'comment-like':
-					dispatch(
-						likeComment( pendingAction.siteId, pendingAction.postId, pendingAction.commentId )
-					);
+					if ( ! pendingAction.commentId ) {
+						break;
+					}
+					likeComment( {
+						siteId: pendingAction.siteId,
+						postId: pendingAction.postId,
+						commentId: pendingAction.commentId,
+					} );
 					break;
 				case 'follow-site':
-					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
-					break;
-				case 'follow-tag':
-					dispatch( requestFollowTag( pendingAction.tag ) );
+					followSite( {
+						feedUrl: pendingAction.siteUrl,
+						source: getFollowingSource(),
+					} );
 					break;
 			}
 		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
-	}, [ isLoggedIn, pendingAction, dispatch ] );
+	}, [ isLoggedIn, pendingAction, dispatch, likePost, unlikePost, likeComment, followSite ] );
 
 	return null;
 };

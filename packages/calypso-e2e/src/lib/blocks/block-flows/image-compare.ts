@@ -60,25 +60,42 @@ export class ImageCompareFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const slider = context.page.getByRole( 'slider', { name: 'Slide to compare images' } );
-		const originalBoundingBox = await slider.boundingBox();
-
 		await slider.waitFor();
+
+		// Wait for both images in the Image Compare block to fully load.
+		// With client-side media processing enabled, the uploaded images may
+		// load at different speeds, and the slider is not interactive until
+		// both images are rendered.
+		const images = context.page.locator( '.juxtapose img' );
+		for ( const img of await images.all() ) {
+			await img.evaluate(
+				( el: HTMLImageElement ) =>
+					el.complete || new Promise( ( resolve ) => el.addEventListener( 'load', resolve ) )
+			);
+		}
+
+		const originalBoundingBox = await slider.boundingBox();
+		if ( ! originalBoundingBox ) {
+			throw new Error( 'Image Compare: Failed to obtain slider bounding box.' );
+		}
+
 		// Hover over the slider not at the centre of the bounding box,
 		// because the left/right arrows intercept the clicks.
+		const startX = originalBoundingBox.x + 10;
+		const startY = originalBoundingBox.y + 10;
 		await slider.hover( { position: { x: 10, y: 10 } } );
 
-		// It's uncertain what the number here refers to. It could be the
-		// pixels, but the slider clearly doesn't move by 100px when the
-		// test runs.
+		// Drag the slider 100px to the left using absolute page coordinates.
+		// Use multiple steps so the drag gesture is recognized reliably.
 		await context.page.mouse.down();
-		await context.page.mouse.move( -100, 0 );
+		await context.page.mouse.move( startX - 100, startY, { steps: 10 } );
 		await context.page.mouse.up();
 
 		const newBoundingBox = await slider.boundingBox();
-
-		if ( ! originalBoundingBox || ! newBoundingBox ) {
-			throw new Error( 'Image Compare: Failed to obtain at least one or both bounding boxes.' );
+		if ( ! newBoundingBox ) {
+			throw new Error( 'Image Compare: Failed to obtain slider bounding box after drag.' );
 		}
+
 		// The slider should have moved.
 		if ( originalBoundingBox.x === newBoundingBox.x ) {
 			throw new Error(

@@ -1,7 +1,7 @@
 import './style.scss';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import giftingImage from 'calypso/assets/images/gifting/gifting-woman.png';
+import giftingImage from 'calypso/assets/images/gifting/gifting-woman.webp';
 
 export function GiftingCheckoutBanner( { siteSlug }: { siteSlug: string } ) {
 	const { __ } = useI18n();

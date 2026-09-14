@@ -1,7 +1,7 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
+import { omit } from '@automattic/js-utils';
 import { Icon } from '@wordpress/components';
 import clsx from 'clsx';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 

@@ -1,84 +1,81 @@
-import { Button } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
+import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
+import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
+import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
+import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
+import MigrationsTagSitesModal from 'calypso/dashboard/agency/earn/migrations/tag-sites-modal';
+import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import MigrationsCommissionsList from '../../commissions-list';
-import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
-import useCanTagSitesForCommission from '../../hooks/use-can-tag-sites-for-commission';
-import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
-import MigrationsTagSitesModal from '../../tag-sites-modal';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getSites from 'calypso/state/selectors/get-sites';
 import MigrationsCommissionsEmptyState from './empty-state';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
+const ClassicTableWrapper = ( { children }: { children: ReactNode } ) => (
+	<div className="redesigned-a8c-table full-width">{ children }</div>
+);
+
 export default function MigrationsCommissions() {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const sites = useSelector( getSites );
+	const locale = useLocale();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
-	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
+	const {
+		canTagSitesForCommission,
+		migrationTags,
+		isLoading: isTagEligibilityLoading,
+	} = useCanTagSitesForCommission();
 
-	const title = translate( 'Migrations: Commissions' );
+	const title = __( 'Migrations: commissions' );
+
+	const recordTracks = useCallback(
+		( name: string, properties?: Record< string, unknown > ) =>
+			dispatch( recordTracksEvent( name, properties ) ),
+		[ dispatch ]
+	);
+
+	const onSuccess = useCallback(
+		( message: string, options?: { id?: string; duration?: number } ) =>
+			dispatch( successNotice( message, options ) ),
+		[ dispatch ]
+	);
+
+	const onError = useCallback(
+		( message: string ) => dispatch( errorNotice( message ) ),
+		[ dispatch ]
+	);
+
+	const getSiteCreatedAt = useCallback(
+		( blogId: number ) => sites.find( ( s ) => s?.ID === blogId )?.options?.created_at,
+		[ sites ]
+	);
 
 	const onTagSitesClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
+		recordTracks( 'calypso_a8c_migrations_commissions_tag_sites_click' );
 		setShowAddSitesModal( true );
-	}, [ dispatch ] );
+	}, [ recordTracks ] );
 
-	const {
-		data: taggedSites,
-		isLoading,
-		refetch: fetchMigratedSites,
-	} = useFetchTaggedSitesForMigration();
-
-	const showEmptyState = ! taggedSites?.length;
-
-	const content = useMemo( () => {
-		if ( isLoading ) {
-			return (
-				<>
-					<TextPlaceholder />
-					<TextPlaceholder />
-				</>
-			);
-		}
-
-		return showEmptyState ? (
-			<MigrationsCommissionsEmptyState
-				setShowAddSitesModal={ setShowAddSitesModal }
-				canTagSitesForCommission={ canTagSitesForCommission }
-			/>
-		) : (
-			<div className="migrations-commissions__content">
-				<MigrationsConsolidatedCommissions items={ taggedSites } />
-				<MigrationsCommissionsList
-					items={ taggedSites }
-					fetchMigratedSites={ fetchMigratedSites }
-					migrationTags={ migrationTags }
-				/>
-			</div>
-		);
-	}, [
-		isLoading,
-		showEmptyState,
-		canTagSitesForCommission,
-		taggedSites,
-		fetchMigratedSites,
-		migrationTags,
-	] );
+	const { data, isLoading } = useFetchTaggedSitesForMigration();
+	const taggedSites = data ?? [];
+	const showEmptyState = taggedSites.length === 0;
 
 	return (
 		<Layout
@@ -95,19 +92,19 @@ export default function MigrationsCommissions() {
 						hideOnMobile
 						items={ [
 							{
-								label: translate( 'Migrations' ),
+								label: __( 'Migrations' ),
 								href: A4A_MIGRATIONS_LINK,
 							},
 							{
-								label: translate( 'Commissions' ),
+								label: __( 'Commissions' ),
 							},
 						] }
 					/>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-						{ canTagSitesForCommission && (
+						{ ! isTagEligibilityLoading && canTagSitesForCommission && (
 							<Button variant="primary" onClick={ onTagSitesClick }>
-								{ translate( 'Tag sites for commission' ) }
+								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) }
 					</Actions>
@@ -115,18 +112,49 @@ export default function MigrationsCommissions() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<>
-					{ content }
-					{ showAddSitesModal && (
-						<MigrationsTagSitesModal
-							onClose={ () => setShowAddSitesModal( false ) }
-							taggedSites={ taggedSites }
-							fetchMigratedSites={ fetchMigratedSites }
+				{ isLoading && (
+					<>
+						<TextSkeleton length={ 30 } />
+						<TextSkeleton length={ 30 } />
+					</>
+				) }
+				{ ! isLoading && showEmptyState && (
+					<MigrationsCommissionsEmptyState
+						recordTracksEvent={ recordTracks }
+						onTagSitesClick={ () => setShowAddSitesModal( true ) }
+						canTagSitesForCommission={ canTagSitesForCommission }
+					/>
+				) }
+				{ ! isLoading && ! showEmptyState && (
+					<VStack spacing={ 6 }>
+						{ canTagSitesForCommission && (
+							<MigrationsConsolidatedCommissions items={ taggedSites } />
+						) }
+						<MigrationsCommissionsList
+							items={ taggedSites }
 							migrationTags={ migrationTags }
+							recordTracksEvent={ recordTracks }
+							onSuccess={ onSuccess }
+							onError={ onError }
+							locale={ locale }
+							TableWrapper={ ClassicTableWrapper }
 						/>
-					) }
-				</>
+					</VStack>
+				) }
 			</LayoutBody>
+
+			{ showAddSitesModal && (
+				<MigrationsTagSitesModal
+					onClose={ () => setShowAddSitesModal( false ) }
+					taggedSites={ taggedSites }
+					migrationTags={ migrationTags }
+					recordTracksEvent={ recordTracks }
+					onSuccess={ onSuccess }
+					onError={ onError }
+					getSiteCreatedAt={ getSiteCreatedAt }
+					locale={ locale }
+				/>
+			) }
 		</Layout>
 	);
 }

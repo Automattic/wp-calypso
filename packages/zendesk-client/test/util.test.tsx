@@ -41,19 +41,11 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 	} );
 
-	describe( 'Test environments (development, horizon, stage)', () => {
+	describe( 'Test environments (development, staging)', () => {
 		const testConfigFiles = [
-			'stage',
-			'horizon',
 			'dashboard-development',
-			'dashboard-horizon',
-			'dashboard-stage',
 			'jetpack-cloud-development',
-			'jetpack-cloud-horizon',
-			'jetpack-cloud-stage',
 			'a8c-for-agencies-development',
-			'a8c-for-agencies-horizon',
-			'a8c-for-agencies-stage',
 		];
 
 		testConfigFiles.forEach( ( configFile ) => {
@@ -77,13 +69,21 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 	} );
 
-	describe( 'Production environments', () => {
+	describe( 'Production environments (including stage, horizon)', () => {
 		const productionConfigFiles = [
 			'production',
 			'wpcalypso',
 			'dashboard-production',
 			'jetpack-cloud-production',
 			'a8c-for-agencies-production',
+			'stage',
+			'horizon',
+			'dashboard-horizon',
+			'dashboard-stage',
+			'jetpack-cloud-horizon',
+			'jetpack-cloud-stage',
+			'a8c-for-agencies-horizon',
+			'a8c-for-agencies-stage',
 		];
 
 		productionConfigFiles.forEach( ( configFile ) => {
@@ -122,13 +122,50 @@ describe( 'isTestModeEnvironment', () => {
 			expect( isTestModeEnvironment() ).toBe( false );
 		} );
 
-		test( 'should automatically treat new test environment as test mode', () => {
+		test( 'should automatically treat new "-development"/"-staging" environment as test mode', () => {
+			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
+				if ( key === 'env_id' ) {
+					return 'new-product-staging';
+				}
+				if ( key === 'env' ) {
+					return 'production';
+				}
+				return undefined;
+			} );
+
+			expect( isTestModeEnvironment() ).toBe( true );
+		} );
+
+		test( 'should automatically treat new "-stage" environment as production', () => {
 			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'new-product-stage';
 				}
 				if ( key === 'env' ) {
 					return 'production';
+				}
+				return undefined;
+			} );
+
+			expect( isTestModeEnvironment() ).toBe( false );
+		} );
+
+		test( 'should default to production when config is unavailable (env undefined)', () => {
+			// Simulates contexts where window.configData is not set (e.g. Gutenberg editor
+			// before config.js executes), where config() returns undefined without throwing.
+			( config as unknown as jest.Mock ).mockReturnValue( undefined );
+
+			expect( isTestModeEnvironment() ).toBe( false );
+		} );
+
+		test( 'should treat proxied dev environment (staging env_id) as test mode', () => {
+			// apps/help-center/config.js sets env_id = env = 'staging' for proxied Automatticians.
+			( config as unknown as jest.Mock ).mockImplementation( ( key: string ) => {
+				if ( key === 'env_id' ) {
+					return 'staging';
+				}
+				if ( key === 'env' ) {
+					return 'staging';
 				}
 				return undefined;
 			} );

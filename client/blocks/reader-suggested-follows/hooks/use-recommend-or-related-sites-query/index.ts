@@ -61,7 +61,15 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 		enabled: shouldLoadRelatedSites && enabled,
 	} );
 
-	const data = recommendedFeeds?.length > 0 ? recommendedFeeds : relatedSites;
+	const filteredRecommendedFeeds = recommendedFeeds?.filter(
+		( feed ) => String( feed.siteId ) !== String( siteId )
+	);
+	const filteredRelatedSites = relatedSites?.filter( ( site ) => site.site_ID !== siteId );
+
+	const data =
+		filteredRecommendedFeeds && filteredRecommendedFeeds.length > 0
+			? filteredRecommendedFeeds
+			: filteredRelatedSites;
 	const isLoading = isLoadingRecommendedFeeds || isLoadingRelatedSites;
 	const isFetched = isFetchedRecommendedFeeds || isFetchedRelatedSites;
 
@@ -69,6 +77,6 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 		data: isFetched ? data : [],
 		isLoading,
 		isFetched,
-		resourceType: getResourceType( recommendedFeeds, relatedSites ),
+		resourceType: getResourceType( filteredRecommendedFeeds, filteredRelatedSites ),
 	};
 };

@@ -6,6 +6,7 @@ import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -17,6 +18,11 @@ import SitesDashboard from './components/sites-dashboard';
 import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
+
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -120,7 +126,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<ResurrectedWelcomeModalGate />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
 	);
@@ -183,6 +189,7 @@ export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => vo
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'site-list' );
 			window.location.replace( dashboardLink( '/sites' ) );
 			return;
 		}

@@ -1,5 +1,7 @@
 import { Button as CoreButton, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
+import { forwardRef } from 'react';
+import type { ComponentProps, ComponentRef } from 'react';
 
 export const Root = styled( CompactCard )( {
 	display: 'flex',
@@ -33,11 +35,18 @@ export const Date = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-export const Button = styled( CoreButton )( {
+const StyledButton = styled( CoreButton )( {
 	marginInlineStart: 'auto',
 	flexShrink: 0,
 } );
 
-Button.defaultProps = {
-	scary: true,
-};
+// `scary` defaults to true while staying overridable; wrapped in forwardRef so a ref
+// passed to SSHKeyCard.Button still reaches CoreButton.
+export const Button = forwardRef<
+	ComponentRef< typeof StyledButton >,
+	ComponentProps< typeof StyledButton >
+>( ( { scary = true, ...props }, ref ) => (
+	<StyledButton ref={ ref } scary={ scary } { ...props } />
+) );
+
+Button.displayName = 'Button';

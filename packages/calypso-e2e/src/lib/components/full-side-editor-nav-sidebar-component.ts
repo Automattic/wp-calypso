@@ -4,8 +4,6 @@ import { EditorComponent } from './editor-component';
 
 const selectors = {
 	exitButton: 'a[aria-label="Go back to the Dashboard"]',
-	templatePartsItem: 'button[id="/wp_template_part"]',
-	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 	navigationScreenTitle: '.edit-site-sidebar-navigation-screen__title',
 	styleVariation: ( styleVariationName: string ) =>
 		`.edit-site-global-styles-variations_item[aria-label="${ styleVariationName }"]`,
@@ -46,11 +44,23 @@ export class FullSiteEditorNavSidebarComponent {
 
 	/**
 	 * Clicks sidebar link to open the template parts list.
+	 *
+	 * Template parts moved under the "Patterns" navigation screen; the manager is
+	 * reached via "Patterns" -> "All template parts" (previously a dedicated
+	 * "Template Parts" item with a "Manage all template parts" link).
 	 */
 	async navigateToTemplatePartsManager(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		await editorParent.locator( selectors.templatePartsItem ).click();
-		await editorParent.locator( selectors.manageAllTemplatePartsItem ).click();
+		const patternsItem = editorParent
+			.getByRole( 'button', { name: 'Patterns', exact: true } )
+			.or( editorParent.getByRole( 'link', { name: 'Patterns', exact: true } ) );
+		await patternsItem.first().click();
+		// Substring match (no `exact`): this item's accessible name includes a count
+		// badge, e.g. "All template parts10", so an exact match would not resolve it.
+		const allTemplatePartsItem = editorParent
+			.getByRole( 'button', { name: 'All template parts' } )
+			.or( editorParent.getByRole( 'link', { name: 'All template parts' } ) );
+		await allTemplatePartsItem.first().click();
 	}
 
 	/**

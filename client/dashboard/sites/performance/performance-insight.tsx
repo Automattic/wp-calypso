@@ -1,5 +1,4 @@
 import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -13,6 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useAnalytics } from '../../app/analytics';
@@ -20,6 +20,7 @@ import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import LLMNotice from './llm-notice';
 import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
@@ -40,8 +41,8 @@ export const PerformanceInsightTitle = ( {
 	index: number;
 	isHightImpact: boolean;
 } ) => {
-	const isMediumScreen = useViewportMatch( 'medium', '<' );
-	const isSmallScreen = useViewportMatch( 'small', '<' );
+	const isMediumScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.medium, '<' );
+	const isSmallScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.small, '<' );
 	const intent = insight.type === 'fail' ? 'error' : 'warning';
 
 	return (
@@ -71,7 +72,7 @@ export const PerformanceInsightTitle = ( {
 				</HStack>
 			</HStack>
 			{ isHightImpact && (
-				<Badge intent="error" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
+				<Badge intent="high" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
 					{ __( 'High impact' ) }
 				</Badge>
 			) }
@@ -111,7 +112,7 @@ const PerformanceInsightTip = () => {
 	);
 };
 
-const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: string } ) => {
+const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: string; hash: string } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isSent, setIsSent ] = useState( false );
 	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
@@ -254,7 +255,7 @@ export const PerformanceInsight = ( {
 	showTip: boolean;
 } ) => {
 	const locale = useLocale();
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const { data: llmAnswer, isError } = useQuery( {
 		...odieAssistantPerformanceProfilerQuery( {
 			hash,

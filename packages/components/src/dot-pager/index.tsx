@@ -1,8 +1,8 @@
+import { times } from '@automattic/js-utils';
 import { Button } from '@wordpress/components';
 import { Icon, arrowRight, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
-import { times } from 'lodash';
 import { Children, useState, useEffect, ReactNode } from 'react';
 import { Swipeable } from '../swipeable';
 

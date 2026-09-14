@@ -9,7 +9,7 @@ import {
 	LineItemType,
 	getCouponLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
@@ -136,7 +136,7 @@ function PaymentMethodStep( {
 		page( ( event.target as HTMLAnchorElement ).href );
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
-	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );
+	const maskedCard = sprintf( __( '**** %s' ), card?.card_last_4 || '' );
 
 	return (
 		<PurchaseModalStep>
@@ -213,11 +213,11 @@ function PayButton( {
 	totalCostDisplay: string;
 } ) {
 	const translate = useTranslate();
-	// translators: %s is the total to be paid in localized currency
 	const payText =
 		totalCost === 0
 			? translate( 'Complete Checkout' )
-			: sprintf( translate( 'Pay %s' ), totalCostDisplay );
+			: // translators: %s is the total to be paid in localized currency
+			  sprintf( __( 'Pay %s' ), totalCostDisplay );
 	const processingText = translate( 'Processing…' );
 
 	return (

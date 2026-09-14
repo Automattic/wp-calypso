@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { map } from 'lodash';
 import { PureComponent } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
@@ -20,7 +19,7 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				{ map( sites, ( site ) => (
+				{ Object.values( sites ).map( ( site ) => (
 					<ConnectedReaderSubscriptionListItem key={ site.feedId || site.siteId } { ...site } />
 				) ) }
 				<ReaderSubscriptionListItemPlaceholder />

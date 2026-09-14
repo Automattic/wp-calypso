@@ -1,35 +1,81 @@
-import { HostingFeatures, LogType } from '@automattic/api-core';
+import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { TabPanel } from '@wordpress/components';
+import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
-import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
-import { Card, CardBody, CardHeader } from '../../components/card';
-import { DateRangePicker } from '../../components/date-range-picker';
-import { isLast7Days } from '../../components/date-range-picker/utils';
+import { useIntlLocale } from '../../app/locale';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import TimeMismatchNotice from '../../components/time-mismatch-notice';
+import TimeMismatchNotice, {
+	useShouldShowTimeMismatchNotice,
+} from '../../components/time-mismatch-notice';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
-import { LOG_TABS } from './utils';
 import './style.scss';
 
-function SiteLogs( { logType }: { logType: LogType } ) {
-	const locale = useLocale();
-	const { siteSlug } = siteRoute.useParams();
-	const router = useRouter();
+const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
+	gmtOffset: Number( s?.gmt_offset ) || 0,
+	timezoneString: s?.timezone_string || undefined,
+} );
+
+function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	// Sites with a Jetpack connection error can't reach the settings endpoint;
+	// fall back to UTC defaults so the Logs page remains accessible.
+	if ( site.__inaccessible_jetpack_error ) {
+		return (
+			<SiteLogsContent
+				site={ site }
+				logType={ logType }
+				gmtOffset={ 0 }
+				timezoneString={ undefined }
+			/>
+		);
+	}
+
+	return <SiteLogsForReachableSite site={ site } logType={ logType } />;
+}
+
+function SiteLogsForReachableSite( { site, logType }: { site: Site; logType: LogType } ) {
+	const { data } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: selectTimeZone,
+	} );
+
+	return (
+		<SiteLogsContent
+			site={ site }
+			logType={ logType }
+			gmtOffset={ data.gmtOffset }
+			timezoneString={ data.timezoneString }
+		/>
+	);
+}
+
+function SiteLogsContent( {
+	site,
+	logType,
+	gmtOffset,
+	timezoneString,
+}: {
+	site: Site;
+	logType: LogType;
+	gmtOffset: number;
+	timezoneString: string | undefined;
+} ) {
+	const locale = useIntlLocale();
 
 	const settingsUrl = site.options?.admin_url
 		? `${ site.options.admin_url }options-general.php`
@@ -40,6 +86,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	);
 
 	const siteId = site.ID;
+	const activitySearchParams = useSearch( { strict: false } );
+	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
+		siteTime: gmtOffset,
+		siteId,
+	} );
 
 	// Normalize any incoming ?from/&to query params to Unix seconds (canonical form)
 	useEffect( () => {
@@ -73,20 +124,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	}, [] );
 
-	const { data } = useSuspenseQuery( {
-		...siteSettingsQuery( siteId ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
-
-	const { gmtOffset, timezoneString } = data!;
-
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
@@ -115,19 +157,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		return true;
 	};
 
-	const handleTabChange = ( tab: LogType ) => {
-		if ( logType === tab ) {
-			return;
-		}
-
-		if ( tab === LogType.PHP ) {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
-		} else if ( tab === LogType.ACTIVITY ) {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
-		} else {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
-		}
-	};
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
@@ -139,7 +168,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Logs' ) }
 					description={ createInterpolateElement(
 						__( 'View and download various server logs. <learnMoreLink />' ),
 						{
@@ -162,37 +190,30 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			}
 			notices={
 				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					<TimeMismatchNotice
-						settingsUrl={ settingsUrl }
-						siteTime={ gmtOffset }
-						siteId={ siteId }
-					/>
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<Notice variant="warning">
+								{ __(
+									'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
+								) }
+							</Notice>
+						) }
+						{ showTimeMismatchNotice && (
+							<TimeMismatchNotice
+								settingsUrl={ settingsUrl }
+								siteTime={ gmtOffset }
+								siteId={ siteId }
+							/>
+						) }
+					</SitesNoticeArbiter>
 				</>
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
-				<CardHeader style={ { paddingBottom: '0' } }>
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if (
-								tabName === LogType.PHP ||
-								tabName === LogType.SERVER ||
-								tabName === LogType.ACTIVITY
-							) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => null }
-					</TabPanel>
-				</CardHeader>
 				<CardBody>
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
@@ -210,19 +231,18 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							/>
 						</HostingFeatureGatedWithCallout>
 					) : (
-						<>
-							<SiteActivityLogsDataViews
-								logType={ logType }
-								dateRange={ dateRange }
-								dateRangeVersion={ dateRangeVersion }
-								autoRefresh={ autoRefresh }
-								setAutoRefresh={ setAutoRefresh }
-								gmtOffset={ gmtOffset }
-								timezoneString={ timezoneString }
-								site={ site }
-								hasActivityLogsAccess={ hasActivityLogAccess }
-							/>
-						</>
+						<SiteActivityLogsDataViews
+							logType={ logType }
+							dateRange={ dateRange }
+							dateRangeVersion={ dateRangeVersion }
+							autoRefresh={ autoRefresh }
+							setAutoRefresh={ setAutoRefresh }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							site={ site }
+							hasActivityLogsAccess={ hasActivityLogAccess }
+							searchParams={ activitySearchParams }
+						/>
 					) }
 				</CardBody>
 			</Card>

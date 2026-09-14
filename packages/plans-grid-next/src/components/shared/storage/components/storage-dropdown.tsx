@@ -2,7 +2,7 @@
 import { type AddOnMeta, AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import DropdownOption from '../../../dropdown-option';
@@ -14,6 +14,8 @@ import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageOptionChange?: () => void;
+	openOnMount?: boolean;
 };
 
 type StorageDropdownOptionProps = {
@@ -72,9 +74,16 @@ const StorageDropdownOption = ( {
 	);
 };
 
-const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProps ) => {
+const StorageDropdown = ( {
+	planSlug,
+	onStorageAddOnClick,
+	onStorageOptionChange,
+	openOnMount,
+}: StorageDropdownProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
+	const containerRef = useRef< HTMLDivElement >( null );
+	const hasOpenedOnMount = useRef( false );
 
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -88,13 +97,12 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	const planStorage = usePlanStorage( planSlug );
 
 	useEffect( () => {
-		if ( ! selectedStorageOptionForPlan ) {
-			defaultStorageOptionSlug &&
-				setSelectedStorageOptionForPlan( {
-					addOnSlug: defaultStorageOptionSlug,
-					planSlug,
-					siteId,
-				} );
+		if ( ! selectedStorageOptionForPlan && defaultStorageOptionSlug ) {
+			setSelectedStorageOptionForPlan( {
+				addOnSlug: defaultStorageOptionSlug,
+				planSlug,
+				siteId,
+			} );
 		}
 	}, [
 		defaultStorageOptionSlug,
@@ -137,6 +145,26 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 		} );
 	}, [ availableStorageAddOns, defaultStorageOptionSlug, planStorage, storageAddOns ] );
 
+	useEffect( () => {
+		if ( ! openOnMount || hasOpenedOnMount.current || ! selectControlOptions?.length ) {
+			return;
+		}
+
+		const openDropdownTimeout = window.setTimeout( () => {
+			const trigger = containerRef.current?.querySelector< HTMLElement >( '[role="combobox"]' );
+
+			if ( ! trigger ) {
+				return;
+			}
+
+			hasOpenedOnMount.current = true;
+			trigger?.focus();
+			trigger?.click();
+		}, 0 );
+
+		return () => window.clearTimeout( openDropdownTimeout );
+	}, [ openOnMount, selectControlOptions?.length ] );
+
 	const selectedStorageAddOn = getSelectedStorageAddOn(
 		storageAddOns,
 		selectedStorageOptionForPlan
@@ -172,16 +200,25 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 			const addOnSlug = selectedItem?.key as AddOns.StorageAddOnSlug;
 
 			if ( addOnSlug ) {
-				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
+				if ( onStorageAddOnClick ) {
+					onStorageAddOnClick( addOnSlug );
+				}
 				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId } );
+				onStorageOptionChange?.();
 			}
 		},
-		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan, siteId ]
+		[
+			onStorageAddOnClick,
+			onStorageOptionChange,
+			planSlug,
+			setSelectedStorageOptionForPlan,
+			siteId,
+		]
 	);
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-		<div tabIndex={ 1 }>
+		<div ref={ containerRef } tabIndex={ 1 }>
 			<CustomSelectControl
 				__next40pxDefaultSize
 				hideLabelFromVision

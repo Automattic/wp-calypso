@@ -1,7 +1,7 @@
 import { SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import './style.scss';
 
 interface SearchThemesProps {
@@ -12,6 +12,10 @@ interface SearchThemesProps {
 const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordTracksEvent } ) => {
 	const translate = useTranslate();
 	const [ searchInput, setSearchInput ] = useState( query );
+
+	useEffect( () => {
+		setSearchInput( query );
+	}, [ query ] );
 
 	const onClearSearch = useCallback( () => {
 		onSearch( '' );

@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { fixMe } from 'i18n-calypso';
-import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
+import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.webp';
 import { normalizeFromSite } from '../utils';
 
 export default function ExportDataGuide( {

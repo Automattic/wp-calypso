@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
 import {
-	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	GOOGLE_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
@@ -15,12 +13,18 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
 	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	ART_PROMO_FLOW,
+	DIRECT_TO_CART_FLOW,
+	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
+	EDUCATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -29,6 +33,12 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
 		),
+
+	[ DIRECT_TO_CART_FLOW ]: () =>
+		import( /* webpackChunkName: "direct-to-cart-flow" */ './flows/direct-to-cart/direct-to-cart' ),
+
+	[ EDUCATION_FLOW ]: () =>
+		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -63,6 +73,15 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
 		),
+
+	[ ART_PROMO_FLOW ]: () =>
+		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
+
+	[ WRITE_ON_FLOW ]: () =>
+		import( /* webpackChunkName: "write-on-flow" */ './flows/write-on/write-on' ),
+
+	[ WRITE_NEW_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
 };
 
 /**
@@ -103,9 +122,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
 
-	[ START_WRITING_FLOW ]: () =>
-		import( /* webpackChunkName: "start-writing-flow" */ './flows/start-writing/start-writing' ),
-
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
 
@@ -116,9 +132,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './flows/domain-transfer/domain-transfer' ),
-
-	[ GOOGLE_TRANSFER ]: () =>
-		import( /* webpackChunkName: "google-transfer" */ './flows/google-transfer/google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import(
@@ -146,6 +159,14 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 		  }
 		: {};
 
+const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	{
+		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
+			import(
+				/* webpackChunkName: "ai-site-builder-onboarding-flow" */ './flows/ai-site-builder-onboarding/ai-site-builder-onboarding'
+			),
+	};
+
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 		import(
@@ -162,4 +183,5 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
+	...aiSiteBuilderOnboardingFlows,
 };

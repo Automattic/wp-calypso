@@ -14,7 +14,7 @@ export default function reactNodeToString( node: ReactNode ): string {
 	const arr: string[] = [];
 
 	const walkElt = ( elt: ReactElement ) => {
-		const items = elt.props.children;
+		const items = ( elt.props as { children?: ReactNode } ).children;
 
 		if ( 'string' === typeof items && items.trim() ) {
 			arr.push( items.trim() );

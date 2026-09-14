@@ -1,4 +1,4 @@
-import { forEach, get, merge, pickBy } from 'lodash';
+import { merge, pickBy } from '@automattic/js-utils';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -59,10 +59,10 @@ const createSettingsItemsReducer = () => {
 	return ( state, { siteId, settings } ) => {
 		let updatedState = state;
 		const moduleActivationState = pickBy( settings, ( settingValue, settingName ) => {
-			return get( state, [ siteId, settingName ] ) !== undefined;
+			return state?.[ siteId ]?.[ settingName ] !== undefined;
 		} );
 
-		forEach( moduleActivationState, ( active, moduleSlug ) => {
+		Object.entries( moduleActivationState ).forEach( ( [ moduleSlug, active ] ) => {
 			updatedState = Object.assign( {}, updatedState, {
 				[ siteId ]: {
 					...updatedState[ siteId ],

@@ -75,7 +75,7 @@ if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	if ( Settings.getSetting( 'proxy-pac' ) !== '' ) {
 		log.info( 'Proxy PAC: ' + Settings.getSetting( 'proxy-pac' ) );
 
-		// todo: this doesnt seem to work yet
+		// todo: this doesn't seem to work yet
 		app.commandLine.appendSwitch( 'proxy-pac-url', Settings.getSetting( 'proxy-pac' ) );
 	}
 }

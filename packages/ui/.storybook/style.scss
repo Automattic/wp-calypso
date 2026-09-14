@@ -1,4 +1,5 @@
 @use "@wordpress/base-styles/variables";
+@import "@wordpress/theme/design-tokens.css";
 
 body {
 	font-family: variables.$font-family-body;

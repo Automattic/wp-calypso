@@ -51,7 +51,7 @@ const createImportOrder = ( importerStatus ) =>
 		importerState: appStates.IMPORTING,
 	} );
 
-const updateImporter = ( siteId, importerStatus ) =>
+export const updateImporter = ( siteId, importerStatus ) =>
 	wp.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
@@ -70,6 +70,9 @@ export const uploadExportFile = ( siteId, params ) =>
 
 		if ( params.url ) {
 			formData.push( [ 'url', params.url ] );
+		}
+		if ( params.autoStart ) {
+			formData.push( [ 'autoStart', '1' ] );
 		}
 
 		const req = wp.req.post(

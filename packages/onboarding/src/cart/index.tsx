@@ -2,12 +2,11 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
-import { getTld } from '@automattic/domain-search';
+import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -15,6 +14,7 @@ import {
 	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
+import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -33,6 +33,10 @@ interface GetNewSiteParams {
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
+	provisionTarget?: string | null;
+	wowFunnel?: string;
+	wowFunnelArgs?: Record< string, string >;
+	wowFunnelFromWfm?: boolean;
 }
 
 type NewSiteParams = {
@@ -54,6 +58,10 @@ type NewSiteParams = {
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
 		site_intent?: string;
+		early_provision_target?: string;
+		wow_funnel?: string;
+		wow_funnel_args?: Record< string, string >;
+		from_wfm?: 1;
 	};
 	validate: boolean;
 };
@@ -69,8 +77,9 @@ const getBlogNameGenerationParams = ( {
 
 		return {
 			blog_name: blogName,
-			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
-			find_available_url: !! getTld( blogName ),
+			// Free subdomains (.wordpress.com and .blog) should use the exact URL.
+			// Only paid domains need find_available_url to generate a fallback free subdomain.
+			find_available_url: ! isFreeSubdomainQuery( siteUrl ) && !! getTld( blogName ),
 		};
 	}
 
@@ -105,6 +114,10 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		provisionTarget,
+		wowFunnel,
+		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -129,6 +142,16 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
+			...( provisionTarget && { early_provision_target: provisionTarget } ),
+			// WoW funnel: build the site's Atomic host before checkout. The slug names a
+			// registered funnel server-side (see wp-content/lib/atomic/funnels.php).
+			...( wowFunnel && { wow_funnel: wowFunnel } ),
+			// Input for the funnel's server-side follow-up (e.g. the blueprint archive to import).
+			...( wowFunnelArgs &&
+				Object.keys( wowFunnelArgs ).length > 0 && { wow_funnel_args: wowFunnelArgs } ),
+			// CTA opt-in to claim a pre-provisioned site from the WoW fleet. The server falls
+			// back to the ordinary funnel build when no fleet site can be claimed.
+			...( wowFunnel && wowFunnelFromWfm && { from_wfm: 1 as const } ),
 		},
 		validate: false,
 	};
@@ -152,7 +175,13 @@ export const createSite = async (
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
-	specId?: string | null
+	specId?: string | null,
+	ref?: string,
+	provisionTarget?: string | null,
+	aiLaunchpadEnabled?: boolean,
+	wowFunnel?: string,
+	wowFunnelArgs?: Record< string, string >,
+	wowFunnelFromWfm?: boolean
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -168,6 +197,10 @@ export const createSite = async (
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		provisionTarget,
+		wowFunnel,
+		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -184,11 +217,19 @@ export const createSite = async (
 	// This is the parameter that will contain the internal referral, e.g. a landing page.
 	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
-		path: '/sites/new',
-		apiVersion: '1.1',
-		method: 'POST',
-		body: {
+	// Through the shared client, never the bare proxy request. An account created in this session
+	// is signed in by a bearer token that only the shared client carries. A bare proxy request is
+	// authenticated by a JWT bound to the browser's login cookie instead, and any login, logout or
+	// second signup in the same browser invalidates that JWT while the token stays good. The gate
+	// polls /me through the shared client, so it reports the account verified right up to the
+	// moment this request answers authorization_required.
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post(
+		{
+			path: '/sites/new',
+			apiVersion: '1.1',
+		},
+		{},
+		{
 			...newSiteParams,
 			locale,
 			lang_id: getLanguage( locale as string )?.value,
@@ -209,16 +250,20 @@ export const createSite = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
-				...( refParam && { ref: refParam } ),
+				...( ( ref ?? refParam ) && { ref: ref ?? refParam } ),
+				// Enables the wp-admin AI Launchpad from the moment the site exists, so every
+				// post-checkout path (direct, chooser, Big Sky return) converges on it. The
+				// option is in the WoA transfer allowlist, so it survives the Atomic transfer.
+				...( aiLaunchpadEnabled && { wpcom_ai_launchpad_enabled: true } ),
 				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
 				...( flowName === AI_SITE_BUILDER_FLOW &&
 					gardenName === 'commerce' &&
 					specId && {
-						trigger_backend_build: true,
+						trigger_backend_build: false,
 					} ),
 			},
-		},
-	} );
+		}
+	);
 
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors
@@ -308,7 +353,7 @@ export async function setThemeOnSite(
 	themeSlugWithRepo: string,
 	themeStyleVariation?: string
 ) {
-	if ( isEmpty( themeSlugWithRepo ) ) {
+	if ( ! themeSlugWithRepo ) {
 		return;
 	}
 

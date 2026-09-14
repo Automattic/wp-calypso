@@ -1,8 +1,10 @@
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
 import { requestSiteSettings } from 'calypso/state/site-settings/actions';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import {
 	getActiveTheme,
@@ -23,6 +25,7 @@ import 'calypso/state/themes/init';
  * @param  {string}   source             The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased          Whether the theme has been purchased prior to activation
  * @param  {string}   styleVariationSlug The theme style slug
+ * @param  {'basic'|'full'} [setupChoice] The user's setup choice from the activation modal. Surfaces on the Tracks event as `setup_choice`. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}                   Action thunk
  */
 export function themeActivated(
@@ -30,7 +33,8 @@ export function themeActivated(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	styleVariationSlug
+	styleVariationSlug,
+	setupChoice
 ) {
 	const action = {
 		type: THEME_ACTIVATE_SUCCESS,
@@ -49,6 +53,7 @@ export function themeActivated(
 		const query = getLastThemeQuery( getState(), siteId );
 		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
+		const isPaidPlan = isCurrentPlanPaid( getState(), siteId );
 		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
 			theme: themeId,
 			previous_theme: previousThemeId,
@@ -59,8 +64,17 @@ export function themeActivated(
 			style_variation_slug: styleVariationSlug || '',
 			theme_type: getThemeType( getState(), themeId ),
 			theme_tier: getThemeTierForTheme( getState(), themeId )?.slug,
+			// Only include the modal-driven `setup_choice` when the activation
+			// was initiated with an explicit choice. Direct activate paths
+			// (e.g., when the modal isn't shown) pass undefined and the prop
+			// is omitted from the payload.
+			...( setupChoice !== undefined && { setup_choice: setupChoice } ),
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		if ( isPaidPlan ) {
+			invokeSurvicateEvent( 'themeActivated' );
+		}
 
 		// There are instances where switching themes toggles menu items. This action refreshes
 		// the admin bar to ensure that those updates are displayed in the UI.

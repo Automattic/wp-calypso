@@ -57,7 +57,6 @@ export function Login( {
 												'Open a new browser tab and go to the domain’s settings page. If the domain is under another WordPress.com account, use a different browser, log in to that account and follow the previous instructions. <a>More info can be found here</a>.'
 											),
 											{
-												em: <em />,
 												a: <InlineSupportLink supportContext="connect-subdomain" />,
 											}
 										) }

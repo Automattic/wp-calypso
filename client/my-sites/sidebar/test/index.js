@@ -53,16 +53,16 @@ describe( 'MySitesSidebar', () => {
 	describe( '#itemLinkMatches() edge cases', () => {
 		test( 'clicking a settings panel should not activate the posts menu', () => {
 			const isSelected = itemLinkMatches(
-				'/settings/taxonomies/category/example.wordpress.com',
+				'/settings/general/example.wordpress.com',
 				'/settings/discussion/cpapfree.wordpress.com'
 			);
 
 			expect( isSelected ).toBe( false );
 		} );
 
-		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
+		test( 'clicking a marketing panel should activate the marketing menu', () => {
 			const isSelected = itemLinkMatches(
-				'/marketing/tools/example.wordpress.com',
+				'/marketing/sharing-buttons/example.wordpress.com',
 				'/marketing/connections/cpapfree.wordpress.com'
 			);
 

@@ -2,9 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { InView } from 'react-intersection-observer';
@@ -19,11 +19,13 @@ import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-mo
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -42,6 +44,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import PlanUpgradeBanner from './banners-modern/plan-upgrade-banner';
 import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
@@ -50,13 +53,20 @@ import {
 	localizeThemesPath,
 	isStaticFilter,
 	constructThemeShowcaseUrl,
+	shouldEnableThemesColorScheme,
 } from './helpers';
+import SearchResultsModern from './search-results-modern';
+import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
+import ThemesFAQ from './themes-faq';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
+
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -77,6 +87,7 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 		this.showcaseRef = createRef();
+		this.sentinelRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -97,11 +108,13 @@ class ThemeShowcase extends Component {
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteECommerceFreeTrial: PropTypes.bool,
 		isSiteWooExpress: PropTypes.bool,
 		isSiteWooExpressOrEcomFreeTrial: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -267,6 +280,15 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// In the modern showcase, scroll to the filter bar sentinel when sticky.
+		if ( this.isThemeShowcaseModern() ) {
+			const sentinel = this.sentinelRef.current;
+			if ( sentinel && sentinel.getBoundingClientRect().top < 0 ) {
+				sentinel.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			}
+			return;
+		}
+
 		// Scroll to the top of the showcase
 		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
@@ -307,7 +329,7 @@ class ThemeShowcase extends Component {
 		const filters = searchString.match( filterRegex ) || [];
 
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
-		const filterString = compact( validFilters ).join( '+' );
+		const filterString = validFilters.filter( Boolean ).join( '+' );
 
 		const search = searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -450,6 +472,9 @@ class ThemeShowcase extends Component {
 							/>
 						</>
 					) }
+					{ this.isThemeShowcaseModern() && tier && (
+						<PlanUpgradeBanner planSlug={ THEME_TIERS[ tier ].minimumUpsellPlan } />
+					) }
 				</ThemesSelection>
 			</div>
 		);
@@ -500,7 +525,7 @@ class ThemeShowcase extends Component {
 		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
 			return (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ loadJitm }
 					placeholder={ null }
 					messagePath="calypso:themes:showcase-website-design"
 				/>
@@ -546,6 +571,37 @@ class ThemeShowcase extends Component {
 		const tabKey = this.getSelectedTabFilter().key;
 		const staticFilters = this.getStaticFilters();
 
+		if (
+			this.isThemeShowcaseModern() &&
+			! this.props.category &&
+			! this.props.isCollectionView &&
+			! this.props.filter &&
+			! this.props.vertical &&
+			! this.props.search &&
+			( ! this.props.tier || this.props.tier === 'all' )
+		) {
+			return (
+				<RecommendedSections
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
+		if ( this.isThemeShowcaseModern() && this.props.search && ! this.props.isCollectionView ) {
+			return (
+				<SearchResultsModern
+					search={ this.props.search }
+					filter={ this.props.filter || '' }
+					tier={ this.props.tier || '' }
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
@@ -574,6 +630,16 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	getThemeSource = ( staticFilters ) => {
+		if ( this.props.tier === 'community' ) {
+			return 'wporg';
+		}
+		if ( this.props.category === staticFilters.MYTHEMES?.key ) {
+			return null;
+		}
+		return 'wpcom';
 	};
 
 	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
@@ -643,7 +709,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.getThemeSource( staticFilters ),
 			isThemeShowcaseModern: this.isThemeShowcaseModern(),
 		};
 
@@ -658,7 +724,7 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		return (
+		const showcase = (
 			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
@@ -702,6 +768,7 @@ class ThemeShowcase extends Component {
 							) }
 							{ this.isThemeShowcaseModern() ? (
 								<FilterBarModern
+									sentinelRef={ this.sentinelRef }
 									categories={ Object.values( tabFilters ) }
 									selectedCategory={ this.getSelectedTabFilter().key }
 									onCategorySelect={ ( category ) =>
@@ -787,11 +854,12 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								search: '',
+								search: this.props.tier === 'community' ? this.props.search : '',
 								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							options={ { search: this.props.search } }
 							isLoggedIn={ isLoggedIn }
 						/>
 					) }
@@ -800,6 +868,7 @@ class ThemeShowcase extends Component {
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
+					{ this.isThemeShowcaseModern() && <ThemesFAQ /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
@@ -808,12 +877,20 @@ class ThemeShowcase extends Component {
 				</div>
 			</div>
 		);
+
+		return withColorScheme( showcase, {
+			bodyClass: 'is-themes-dark-mode',
+			enabled: this.props.isThemesColorSchemeEnabled,
+			Provider: ClassicColorSchemeProvider,
+		} );
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter } ) => {
+const mapStateToProps = ( state, { siteId, filter, isSiteRoute } ) => {
+	const isLoggedIn = isUserLoggedIn( state );
+
 	return {
-		isLoggedIn: isUserLoggedIn( state ),
+		isLoggedIn,
 		isAtomicSite: isAtomicSite( state, siteId ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		site: getSite( state, siteId ),
@@ -834,6 +911,11 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		themeTiers: getThemeTiers( state ),
+		isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+			isSiteRoute,
+			isLoggedIn,
+			dashboardOptIn: hasDashboardOptIn( state ),
+		} ),
 	};
 };
 

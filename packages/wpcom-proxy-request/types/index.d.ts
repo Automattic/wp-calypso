@@ -9,7 +9,6 @@ export interface WpcomRequestParams {
 	path?: string;
 	method?: string;
 	apiVersion?: string;
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	body?: object;
 	token?: string;
 	query?: string | Record< string, string | number >;
@@ -21,11 +20,19 @@ export interface WpcomRequestParams {
 	signal?: AbortSignal;
 	apiNamespace?: string;
 	formData?: ( string | File )[][];
+	// Search for allowedRequestHeaders to extend these.
+	headers?: {
+		'X-WPCOM-AI-Feature'?: string;
+		'X-Fingerprint'?: string;
+		Accept?: string;
+	};
 }
 
 export function reloadProxy(): void;
 
 export function canAccessWpcomApis(): boolean;
+
+export function isCookieAuthMissing(): boolean;
 
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
 

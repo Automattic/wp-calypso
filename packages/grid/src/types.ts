@@ -1,7 +1,7 @@
 /**
- * Grid layout item definition
+ * Base properties shared by all grid layout items.
  */
-export interface GridLayoutItem {
+interface GridLayoutItemBase {
 	/**
 	 * Unique key that matches a child component key.
 	 */
@@ -21,18 +21,24 @@ export interface GridLayoutItem {
 	 * Optional order value for responsive mode (lower values displayed first)
 	 */
 	order?: number;
-
-	/**
-	 * Whether this item should always span all available columns in responsive mode
-	 */
-	fullWidth?: boolean;
 }
 
-export interface NormalizedGridLayoutItem extends GridLayoutItem {
+/**
+ * Grid layout item definition.
+ *
+ * `fullWidth` and `fillWidth` are mutually exclusive:
+ * - `fullWidth` spans all columns (`grid-column: 1 / -1`).
+ * - `fillWidth` spans the remaining columns in the current row.
+ */
+export type GridLayoutItem =
+	| ( GridLayoutItemBase & { fullWidth?: false | undefined; fillWidth?: boolean } )
+	| ( GridLayoutItemBase & { fullWidth: true; fillWidth?: false | undefined } );
+
+export type NormalizedGridLayoutItem = GridLayoutItem & {
 	order: number;
 	width: number;
 	height: number;
-}
+};
 
 /**
  * Props for the Grid component

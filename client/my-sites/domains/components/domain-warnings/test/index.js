@@ -8,9 +8,9 @@ import {
 	MAP_SUBDOMAIN,
 } from '@automattic/urls';
 import moment from 'moment';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-dom/test-utils';
+import { createRef } from 'react';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { DomainWarnings } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
@@ -29,9 +29,9 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ) ).toBeNull();
+			expect( container ).toBeEmptyDOMElement();
 		} );
 
 		test( 'should render the highest priority notice when there are others', () => {
@@ -47,9 +47,9 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+			expect( container ).toHaveTextContent(
 				/If you are unable to access your site at \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\}/
 			);
 		} );
@@ -69,9 +69,9 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+			expect( container ).toHaveTextContent(
 				/We are setting up \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\} for you/
 			);
 		} );
@@ -97,11 +97,9 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
-				/We are setting up your new domains for you/
-			);
+			expect( container ).toHaveTextContent( /We are setting up your new domains for you/ );
 		} );
 	} );
 
@@ -121,13 +119,11 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( 'contact your domain registrar' );
+			expect( container ).toHaveTextContent( 'contact your domain registrar' );
 			expect( links.some( ( link ) => link.href === MAP_DOMAIN_CHANGE_NAME_SERVERS ) ).toBeTruthy();
 		} );
 
@@ -152,10 +148,9 @@ describe( 'index', () => {
 				moment,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
 			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
@@ -174,13 +169,11 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( 'DNS records need to be configured' );
+			expect( container ).toHaveTextContent( 'DNS records need to be configured' );
 			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
@@ -204,13 +197,13 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( "Some of your domains' DNS records need to be configured" );
+			expect( container ).toHaveTextContent(
+				"Some of your domains' DNS records need to be configured"
+			);
 			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
@@ -234,13 +227,11 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain(
+			expect( container ).toHaveTextContent(
 				"Some of your domains' name server records need to be configured"
 			);
 			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
@@ -270,13 +261,11 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( 'Please verify ownership of domains' );
+			expect( container ).toHaveTextContent( 'Please verify ownership of domains' );
 			expect(
 				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
@@ -311,13 +300,11 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const links = [].slice.call( container.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain(
+			expect( container ).toHaveTextContent(
 				'Your domains may be suspended because your email address is not verified.'
 			);
 			expect(
@@ -354,12 +341,9 @@ describe( 'index', () => {
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
 				moment,
 			};
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			const { container } = renderWithProvider( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component );
-			const textContent = domNode.textContent;
-
-			expect( textContent ).toContain(
+			expect( container ).toHaveTextContent(
 				'Some domains on this site are about to be suspended because their owner has not'
 			);
 		} );
@@ -367,31 +351,35 @@ describe( 'index', () => {
 
 	describe( 'Ruleset filtering', () => {
 		test( 'should only process allowed renderers', () => {
+			const ref = createRef();
 			const props = {
 				translate,
 				domain: { name: 'example.com' },
 				allowedRules: [],
 				selectedSite: {},
 				moment,
+				ref,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( component.getPipe().length ).toBe( 0 );
+			expect( ref.current.getPipe().length ).toBe( 0 );
 		} );
 
 		test( 'should not allow running extra functions other than defined in getPipe()', () => {
+			const ref = createRef();
 			const props = {
 				translate,
 				domain: { name: 'example.com' },
 				allowedRules: [ 'getDomains' ],
 				selectedSite: {},
 				moment,
+				ref,
 			};
 
-			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
+			renderWithProvider( <DomainWarnings { ...props } /> );
 
-			expect( component.getPipe().length ).toBe( 0 );
+			expect( ref.current.getPipe().length ).toBe( 0 );
 		} );
 	} );
 } );

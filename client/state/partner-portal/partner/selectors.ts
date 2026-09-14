@@ -1,4 +1,3 @@
-import find from 'lodash/find';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type {
 	APIError,
@@ -22,7 +21,8 @@ export function getActivePartnerKey( state: PartnerPortalStore ): PartnerKey | n
 	}
 
 	const keyId = getActivePartnerKeyId( state );
-	const partnerKey = find( partner.keys, ( key ) => key.id === keyId ) || null;
+	const partnerKey =
+		Object.values( partner.keys ?? {} ).find( ( key ) => key.id === keyId ) || null;
 
 	return partnerKey;
 }

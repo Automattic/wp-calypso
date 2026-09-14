@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const fs = require( 'fs' );
+const path = require( 'path' );
+const { pathToFileURL } = require( 'url' );
 const resolve = require( 'enhanced-resolve' );
 const sass = require( 'sass' );
 const yargs = require( 'yargs' );
@@ -12,8 +14,10 @@ const args = yargs
 	.option( 'out', { describe: 'Output file' } )
 	.demandOption( [ 'in', 'out' ] ).argv;
 
-// create a webpack resolver that finds SCSS files. Inspired by `sass-loader` resolver.
-const resolver = resolve.create( {
+const projectRoot = path.resolve( __dirname, '..' );
+
+// create a webpack-style resolver that finds SCSS files. Inspired by `sass-loader` resolver.
+const resolver = resolve.create.sync( {
 	conditionNames: [ 'sass', 'style' ],
 	mainFields: [ 'sass', 'style', 'main' ],
 	mainFiles: [ '_index', 'index' ],
@@ -22,33 +26,50 @@ const resolver = resolve.create( {
 	preferRelative: true,
 } );
 
-// `dart-sass` custom importer
-const importer = ( url, prev, done ) => {
-	// Strip the leading tilde.
-	url = url.replace( /^~/, '' );
-	resolver( prev, url, ( error, result ) => {
-		if ( error ) {
-			// If webpack can't resolve the module, let further importers resolve the original URL.
-			done( { file: url } );
-		} else {
-			// Resolve with the webpack result.
-			done( { file: result } );
-		}
-	} );
+// Resolve relative to the project root.
+// Convert missing file exceptions into return values so the importer can fallback.
+const rootResolver = ( tailPath ) => {
+	try {
+		return resolver( projectRoot, tailPath );
+	} catch {
+		return false;
+	}
 };
 
-sass.render(
-	{
-		file: args.in,
-		importer,
-		outputStyle: 'compressed',
-		includePaths: [ 'node_modules' ],
-	},
-	( err, output ) => {
-		if ( err ) {
-			console.error( 'error', err );
-			return;
+// `dart-sass` custom importer
+const importer = {
+	findFileUrl( url ) {
+		// Strip the leading tilde.
+		url = url.replace( /^~/, '' );
+
+		// Sass treats `foo/bar` and `foo/_bar` as equivalent (partials), but
+		// enhanced-resolve doesn't. Try the literal name first, then the
+		// underscore-prefixed partial form.
+		const dir = path.dirname( url );
+		const base = path.basename( url );
+		const result =
+			rootResolver( url ) || rootResolver( dir === '.' ? `_${ base }` : `${ dir }/_${ base }` );
+
+		if ( result ) {
+			return pathToFileURL( result );
 		}
-		fs.writeFileSync( args.out, output.css );
-	}
-);
+
+		// If we can't resolve the module, let further importers resolve the original URL.
+		return null;
+	},
+};
+
+try {
+	const output = sass.compile( args.in, {
+		importers: [ importer ],
+		loadPaths: [ path.join( projectRoot, 'node_modules' ) ],
+		style: 'compressed',
+		silenceDeprecations: [ 'mixed-decls' ],
+		quietDeps: true,
+	} );
+
+	fs.writeFileSync( args.out, output.css );
+} catch ( err ) {
+	console.error( 'error', err );
+	process.exitCode = 1;
+}

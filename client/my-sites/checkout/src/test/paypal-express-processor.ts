@@ -21,6 +21,10 @@ import {
 	setMockLocation,
 } from './util';
 
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
 describe( 'payPalExpressProcessor', () => {
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {

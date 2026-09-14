@@ -3,6 +3,79 @@ import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { AgentticMessage, ZendeskMessage } from './types';
 
+export const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
+export const MAX_ATTACHMENTS = 5;
+
+export function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
+
+let smoochContainer: HTMLDivElement | null = null;
+
+export function getSmoochContainer(): HTMLDivElement | null {
+	if ( typeof document === 'undefined' ) {
+		return null;
+	}
+
+	const existing = document.querySelector< HTMLDivElement >( '.smooch-container' );
+	if ( existing ) {
+		smoochContainer = existing;
+	} else if ( ! smoochContainer ) {
+		smoochContainer = document.createElement( 'div' );
+		smoochContainer.className = 'smooch-container';
+	}
+
+	// Keep the container hidden since we're using embedded mode.
+	smoochContainer.style.display = 'none';
+	smoochContainer.style.position = 'absolute';
+	smoochContainer.style.top = '0';
+	smoochContainer.style.left = '0';
+	smoochContainer.style.width = '100%';
+	smoochContainer.style.height = '100%';
+	smoochContainer.style.zIndex = '1000';
+
+	if ( ! document.body.contains( smoochContainer ) ) {
+		document.body.appendChild( smoochContainer );
+	}
+
+	return smoochContainer;
+}
+
+export const playNotificationSound = () => {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	// @ts-expect-error expected because of fallback webkitAudioContext
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	if ( ! AudioContextClass ) {
+		return;
+	}
+
+	try {
+		const audioContext = new AudioContextClass();
+		const duration = 0.7;
+		const oscillator = audioContext.createOscillator();
+		const gainNode = audioContext.createGain();
+
+		// Configure oscillator
+		oscillator.type = 'sine';
+		oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
+
+		// Configure gain for a smoother fade-out
+		gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
+		gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
+
+		// Connect & start
+		oscillator.connect( gainNode );
+		gainNode.connect( audioContext.destination );
+		oscillator.start();
+		oscillator.stop( audioContext.currentTime + duration );
+	} catch {
+		// Audio playback is not available in this environment
+	}
+};
+
 export const isTestModeEnvironment = () => {
 	// `env_id` may not be set in all environments (e.g., Gutenberg plugin context).
 	// `config()` throws in development and returns `undefined` in production when the key is missing.
@@ -20,8 +93,10 @@ export const isTestModeEnvironment = () => {
 		return false;
 	}
 
-	// Test environments are identified by env_id ending with development, horizon, or stage
-	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage' ];
+	// In the Calypso SPA context, only local development env_ids are test mode, e.g.
+	// 'development' or 'jetpack-cloud-development'. 'staging' is set by
+	// apps/agents-manager/config.js for dev-mode users and also maps to test mode.
+	const testEnvironmentSuffixes = [ 'development', 'staging' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
 		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
 	);
@@ -40,7 +115,8 @@ export const isTestModeEnvironment = () => {
 		console.warn( '[isTestModeEnvironment] failed to read `env` from config', error );
 	}
 
-	return env !== 'production';
+	// If `env` is not configured, default to production to avoid routing customers to staging.
+	return env !== undefined && env !== 'production';
 };
 
 export const getBadRatingReasons = () => {
@@ -62,6 +138,41 @@ export const getBadRatingReasons = () => {
 		{ label: __( 'The Happiness Engineer was unhelpful.', __i18n_text_domain__ ), value: '1003' },
 	];
 };
+
+/**
+ * A CSAT trigger message is a WPCOM-configured Zendesk message flagged with metadata.type
+ * 'csat', prompting the responder to rate their support experience via our own thumbs-up/down
+ * UI (as opposed to a `zd:surveys` message, which is Zendesk's native CSAT Survey feature).
+ */
+export const isCsatTriggerMessage = ( message: Pick< ZendeskMessage, 'metadata' > ) =>
+	message?.metadata?.type === 'csat';
+
+/**
+ * A CSAT Survey message is delivered via Zendesk's native Surveys feature, identified by its
+ * `source.type`. See https://developer.zendesk.com/api-reference/ticketing/ticket-management/csat_survey_responses/
+ */
+export const isZendeskSurveyMessage = ( message: Pick< ZendeskMessage, 'source' > ) =>
+	message?.source?.type === 'zd:surveys';
+
+/**
+ * Extracts a CSAT Survey Response's id from its action `uri` (the last path segment). Returns
+ * null if `uri` isn't a valid URL -- callers should treat that the same as "no survey response".
+ */
+export const getZendeskSurveyResponseId = ( uri: string ): string | null => {
+	try {
+		return new URL( uri ).pathname.split( '/' ).filter( Boolean ).pop() ?? null;
+	} catch {
+		return null;
+	}
+};
+
+/**
+ * The conversation metadata key a CSAT Survey Response's rating is persisted under (see
+ * useSurveyResponseRating in @automattic/odie-client). Shared so any other reader of a
+ * conversation's metadata -- e.g. a chat history list -- derives the same key.
+ */
+export const getSurveyResponseRatingMetadataKey = ( surveyResponseId: string ) =>
+	`zd_survey_rating_${ surveyResponseId }`;
 
 /**
  * Converts a ZendeskMessage to the agenttic-ui Message interface format

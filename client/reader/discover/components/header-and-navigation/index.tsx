@@ -1,31 +1,55 @@
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
-import clsx from 'clsx';
 import { useTranslate, fixMe } from 'i18n-calypso';
-import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
+import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
-	FIRST_POSTS_TAB,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
 	RECOMMENDED_TAB,
 	FRESHLY_PRESSED_TAB,
 	TAGS_TAB,
 	LATEST_TAB,
+	SEARCH_TAB,
 } from '../../helper';
+import type { JSX } from 'react';
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
 	selectedTag?: string;
 }
 
+function getSubtitle( selectedTab: string, translate: ReturnType< typeof useTranslate > ) {
+	switch ( selectedTab ) {
+		case TAGS_TAB:
+			return fixMe( {
+				text: 'Browse posts by popular tags.',
+				newCopy: translate( 'Browse posts by popular tags.' ),
+				oldCopy: '', // No previous translation available.
+			} );
+		case RECOMMENDED_TAB:
+			return translate( 'Explore popular blogs that inspire, educate, and entertain.' );
+		case SEARCH_TAB:
+			return translate( 'Search for specific topics, authors, or blogs.' );
+		case LATEST_TAB:
+			return fixMe( {
+				text: 'Explore recent posts related to the tags you follow.',
+				newCopy: translate( 'Explore recent posts related to the tags you follow.' ),
+				oldCopy: '', // No previous translation available.
+			} );
+		case FRESHLY_PRESSED_TAB:
+			return translate( "Freshly Pressed highlights our team's favorite blog posts." );
+	}
+}
+
 export default function DiscoverHeaderAndNavigation(
 	props: DiscoverHeaderAndNavigationProps
 ): JSX.Element {
 	const { selectedTab, selectedTag } = props;
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentLocale = useLocale();
 	const translate = useTranslate();
 
@@ -35,50 +59,16 @@ export default function DiscoverHeaderAndNavigation(
 		page.replace( addQueryArgs( { selectedTag: tag }, localizedPath ) );
 	}
 
-	let subHeaderText;
-	switch ( selectedTab ) {
-		case FIRST_POSTS_TAB:
-			subHeaderText = translate(
-				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-			);
-			break;
-		case TAGS_TAB:
-			subHeaderText = fixMe( {
-				text: 'Browse posts by popular tags.',
-				newCopy: translate( 'Browse posts by popular tags.' ),
-				oldCopy: '', // No previous translation available.
-			} );
-			break;
-		case ADD_NEW_TAB:
-			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
-			break;
-		case REDDIT_TAB:
-			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
-			break;
-		case RECOMMENDED_TAB:
-			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
-			break;
-		case LATEST_TAB:
-			subHeaderText = fixMe( {
-				text: 'Explore recent posts related to the tags you follow.',
-				newCopy: translate( 'Explore recent posts related to the tags you follow.' ),
-				oldCopy: '', // No previous translation available.
-			} );
-			break;
-
-		case FRESHLY_PRESSED_TAB:
-			subHeaderText = translate( "Our team's favorite blog posts." );
-			break;
-	}
-
 	return (
 		<>
-			<NavigationHeader
-				title={ translate( 'Discover' ) }
-				subtitle={ subHeaderText }
-				className={ clsx( 'discover-stream-header' ) }
-			/>
-			<AsyncLoad require="calypso/reader/onboarding" />
+			{ isLoggedIn && (
+				<NavigationHeader
+					title={ translate( 'Discover' ) }
+					subtitle={ getSubtitle( selectedTab, translate ) }
+					className="discover-stream-header"
+				/>
+			) }
+			<ReaderOnboardingGate />
 			<DiscoverNavigation selectedTab={ selectedTab } />
 
 			{ selectedTab === 'tags' && (

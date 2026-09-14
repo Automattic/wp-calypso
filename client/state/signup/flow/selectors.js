@@ -1,20 +1,19 @@
 import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
-import { get } from 'lodash';
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import 'calypso/state/signup/init';
 
 export function getCurrentFlowName( state ) {
-	return get( state, 'signup.flow.currentFlowName', '' );
+	return state?.signup?.flow?.currentFlowName ?? '';
 }
 
 export function getPreviousFlowName( state ) {
-	return get( state, 'signup.flow.previousFlowName', '' );
+	return state?.signup?.flow?.previousFlowName ?? '';
 }
 
 export function getExcludedSteps( state ) {
-	return get( state, 'signup.flow.excludedSteps', [] );
+	return state?.signup?.flow?.excludedSteps ?? [];
 }
 
 export const getIsOnboardingUnifiedFlow = ( state, source = undefined ) => {

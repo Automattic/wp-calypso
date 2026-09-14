@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.invites-unified__logged-out-layout {
+	background: #fdfdfd;
+	min-height: 100vh;
+	width: 100%;
+
+	.logged-out-wp-logo {
+		display: none;
+	}
+}
+
+.invites-unified__logged-out-shell {
+	box-sizing: border-box;
+	margin: 0 auto;
+	max-width: 32rem;
+	padding: 1.5rem 1rem 0;
+	width: 100%;
+}
+
+@media ( max-width: $break-mobile ) {
+	.invites-unified__logged-out-shell {
+		padding: 0;
+	}
+}

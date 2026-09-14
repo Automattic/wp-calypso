@@ -1,5 +1,6 @@
+// eslint-disable-next-line no-restricted-imports -- Helper functions for tracking preferences
+import { isCountryInGdprZone, isRegionInCcpaZone } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
-import { isCountryInGdprZone, isRegionInCcpaZone } from './geo-privacy';
 
 type TrackingPrefs = {
 	ok: boolean;

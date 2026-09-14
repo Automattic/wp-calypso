@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import request from 'wpcom-proxy-request';
+import request from '../wpcom-request';
 
 export type NewsletterCategory = {
 	id: number;

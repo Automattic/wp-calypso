@@ -1,5 +1,6 @@
+import type { TaxCustomerInfo } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
-import type { TaxVendorInfo } from '@automattic/wpcom-checkout';
+import type { TaxBreakdownEntry, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface BillingTransaction {
 	address: string;
@@ -57,9 +58,30 @@ export interface BillingTransaction {
 	 */
 	tax_integer: number;
 
+	/**
+	 * Whether the tax on this transaction is a business use tax.
+	 */
+	tax_is_for_business?: boolean | null;
+
+	/**
+	 * The state/region for which the business use tax applies (e.g. 'CA').
+	 */
+	tax_state?: string;
+
 	url: string;
 
 	tax_vendor_info?: TaxVendorInfo;
+
+	/**
+	 * The buyer's tax identity as the document currently standing for this
+	 * receipt states it, rather than the user's details today.
+	 *
+	 * Optional only because responses cached before this field shipped will not
+	 * carry it; the API always sends it.
+	 */
+	tax_customer_info?: TaxCustomerInfo;
+
+	tax_breakdown?: TaxBreakdownEntry[];
 }
 
 export interface BillingTransactionItem {
@@ -144,7 +166,7 @@ export interface BillingTransactionItem {
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
-	months_per_renewal_interval: number;
+	months_per_renewal_interval: number | null;
 	wpcom_product_slug: string;
 
 	/**

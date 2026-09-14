@@ -78,6 +78,8 @@ jest.mock( '../../store', () => ( {
 		EditorSidebar: 'editor_sidebar',
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
 		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
+		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
+		PostEditorFeatureClip: 'post_editor_feature_clip',
 	},
 } ) );
 
@@ -134,25 +136,44 @@ describe( 'Header', () => {
 		it( 'renders header with title in Generate mode', () => {
 			render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
 
-			expect( screen.getByText( 'Image Editor' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Beta' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Jetpack Image Editor' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders navigation pill in Edit mode with filename', () => {
-			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+		describe( 'navigation pill', () => {
+			const originalPagenow = ( window as any ).pagenow;
 
-			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
-		} );
+			afterEach( () => {
+				( window as any ).pagenow = originalPagenow;
+			} );
 
-		it( 'does not render navigation pill when filename is missing', () => {
-			const propsWithoutFilename = {
-				...defaultProps,
-				config: {},
-			};
+			it( 'renders in Edit mode with filename on the uploads page', () => {
+				( window as any ).pagenow = 'upload';
 
-			render( <Header { ...propsWithoutFilename } mode={ ImageStudioMode.Edit } /> );
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
 
-			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+				expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			} );
+
+			it( 'does not render when filename is missing', () => {
+				( window as any ).pagenow = 'upload';
+
+				const propsWithoutFilename = {
+					...defaultProps,
+					config: {},
+				};
+
+				render( <Header { ...propsWithoutFilename } mode={ ImageStudioMode.Edit } /> );
+
+				expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'does not render when not on the uploads page', () => {
+				( window as any ).pagenow = 'post';
+
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+
+				expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			} );
 		} );
 
 		it( 'renders toolbar in Edit mode', () => {
@@ -178,6 +199,35 @@ describe( 'Header', () => {
 			expect( screen.getByLabelText( 'Close image editor' ) ).toBeInTheDocument();
 		} );
 
+		describe( 'video mode (Feature Clip entry point)', () => {
+			beforeEach( () => {
+				mockUseSelect.mockImplementation( ( selector: any ) => {
+					const result = selector( () => ( {
+						getImageStudioAiProcessing: () => false,
+						getHasUpdatedMetadata: () => false,
+						getIsAnnotationMode: () => false,
+						getDraftIds: () => [],
+						getEntryPoint: () => ImageStudioEntryPoint.PostEditorFeatureClip,
+					} ) );
+					return result;
+				} );
+			} );
+
+			it( 'labels the close button with a plain Close label', () => {
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
+
+				expect( screen.getByLabelText( 'Close' ) ).toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Close image editor' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'does not render the image editor title', () => {
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
+
+				expect( screen.queryByText( 'Jetpack Image Editor' ) ).not.toBeInTheDocument();
+				expect( screen.queryByRole( 'heading' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
 		it( 'renders custom left content when provided', () => {
 			const customContent = <div>Custom Content</div>;
 			render( <Header { ...defaultProps } leftContent={ customContent } /> );
@@ -201,6 +251,25 @@ describe( 'Header', () => {
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
 					getEntryPoint: () => ImageStudioEntryPoint.EditorBlock,
+				} ) );
+				return result;
+			} );
+
+			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+
+			expect( screen.getByRole( 'button', { name: /Save and apply/i } ) ).toHaveTextContent(
+				'Save & Apply'
+			);
+		} );
+
+		it( 'renders save button with "Save & Apply" text for the JetpackAIFeaturedImage entry point', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => false,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getEntryPoint: () => ImageStudioEntryPoint.JetpackAIFeaturedImage,
 				} ) );
 				return result;
 			} );
@@ -474,6 +543,16 @@ describe( 'Header', () => {
 	} );
 
 	describe( 'Navigation', () => {
+		const originalPagenow = ( window as any ).pagenow;
+
+		beforeEach( () => {
+			( window as any ).pagenow = 'upload';
+		} );
+
+		afterEach( () => {
+			( window as any ).pagenow = originalPagenow;
+		} );
+
 		it( 'calls onNavigatePrevious when previous button is clicked', async () => {
 			const onNavigatePrevious = jest.fn();
 			const user = userEvent.setup();
@@ -555,12 +634,30 @@ describe( 'Header', () => {
 				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
 			);
 
-			// When there are drafts, the nav button labels change to a tooltip message
-			const navButtons = screen.getAllByLabelText( /Save or discard your changes/ );
-			expect( navButtons ).toHaveLength( 2 );
-			navButtons.forEach( ( button ) => {
-				expect( button ).toBeDisabled();
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
+		} );
+
+		it( 'disables navigation when metadata has been updated', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => true,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
+				} ) );
+				return result;
 			} );
+
+			render(
+				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
+			);
+
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
 		it( 'disables navigation when AI is processing', () => {

@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -47,7 +47,7 @@ export default function OverviewHeaderActions() {
 			) }
 			{ ! isNarrowView && (
 				<Button
-					primary
+					variant="primary"
 					href={ A4A_MARKETPLACE_PRODUCTS_LINK }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_a4a_overview_add_products_click' ) );

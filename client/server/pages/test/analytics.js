@@ -1,28 +1,32 @@
 import events from 'events';
-import config from '@automattic/calypso-config';
-import superagent from 'superagent';
-import * as statsdUtils from 'calypso/lib/analytics/statsd-utils';
-import { logSectionResponse } from 'calypso/server/pages/analytics';
 
 const TWO_SECONDS = 2000;
 const THREE_SECONDS = 3000;
 
 const noop = () => {};
 
-jest.mock( '@automattic/calypso-config' );
+// Always-enabled config; a factory so it survives the `jest.resetModules()` below.
+jest.mock( '@automattic/calypso-config', () => () => true );
 
 describe( 'index', () => {
-	beforeAll( () => {
-		// Enable analytics tracking on the server.
-		config.mockReturnValue( true );
-	} );
+	let superagent;
+	let statsdUtils;
+	let logSectionResponse;
 
 	beforeEach( () => {
+		// Fresh module registry per test so analytics.js's module-level throttle
+		// starts clean; re-acquire deps from the same registry so the spy applies.
+		jest.resetModules();
+		jest.useFakeTimers();
+		// eslint-disable-next-line no-restricted-modules -- statsd-utils calls superagent under the hood
+		superagent = require( 'superagent' );
+		statsdUtils = require( 'calypso/lib/analytics/statsd-utils' );
+		( { logSectionResponse } = require( 'calypso/server/pages/analytics' ) );
 		jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
 	} );
 
 	afterEach( () => {
-		superagent.get.mockClear();
+		jest.useRealTimers();
 	} );
 
 	describe( 'logSectionResponse middleware', () => {
@@ -38,8 +42,6 @@ describe( 'index', () => {
 			response = new events.EventEmitter();
 			response2 = new events.EventEmitter();
 			next = noop;
-			// Clear throttling
-			jest.advanceTimersByTime( TWO_SECONDS );
 		} );
 
 		// Parses the beacons sent in the URL to boom.gif
@@ -50,8 +52,6 @@ describe( 'index', () => {
 		};
 
 		describe( 'when rendering a section', () => {
-			jest.useFakeTimers();
-
 			beforeEach( () => {
 				request.context.sectionName = 'reader';
 			} );
@@ -112,10 +112,6 @@ describe( 'index', () => {
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
 				jest.spyOn( statsdUtils, 'logServerEvent' );
-			} );
-
-			afterEach( () => {
-				statsdUtils.logServerEvent.mockReset();
 			} );
 
 			test( 'does not log response time analytics', () => {

@@ -1,6 +1,5 @@
 import { Reader } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/number-formatters';
-import moment from 'moment';
 import {
 	PLAN_YEARLY_FREQUENCY,
 	PLAN_MONTHLY_FREQUENCY,
@@ -20,10 +19,11 @@ export type SiteSubscriptionDetailsProps = {
 };
 
 export type PaymentPlan = {
-	is_gift: boolean;
+	is_comp: boolean;
 	id: string;
+	title: string;
 	renewalPrice: string;
-	renewalDate: string;
+	rawEndDate: string | null;
 };
 
 export const getPaymentInterval = ( renew_interval: string ) => {
@@ -43,13 +43,4 @@ export function formatRenewalPrice( renewalPrice: string, currency: string ) {
 
 	const money = getCurrencyObject( parseFloat( renewalPrice ), currency );
 	return money.integer !== '0' ? `${ money.symbol }${ money.integer } /` : '';
-}
-
-export function formatRenewalDate( renewalDate: string, localeSlug: string ) {
-	if ( ! renewalDate ) {
-		return '';
-	}
-
-	const date = moment( renewalDate );
-	return date.locale( localeSlug ).format( 'LL' );
 }

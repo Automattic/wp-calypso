@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import { Component } from 'react';
+import { compose } from 'redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -29,4 +29,4 @@ class ManageConnection extends Component {
 	}
 }
 
-export default flowRight( localize, redirectNonJetpack() )( ManageConnection );
+export default compose( localize, redirectNonJetpack() )( ManageConnection );

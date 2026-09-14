@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useCallback, useMemo, useState } from 'react';
+import { ReactNode, createContext, useCallback, useMemo, useState, type JSX } from 'react';
 
 export type TourStep = {
 	id: string;

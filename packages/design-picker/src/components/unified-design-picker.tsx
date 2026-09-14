@@ -41,7 +41,7 @@ const useTrackDesignView = ( {
 	design,
 	isPremiumThemeAvailable,
 }: TrackDesignViewProps ): RefCallback< HTMLDivElement > => {
-	const observerRef = useRef< IntersectionObserver >();
+	const observerRef = useRef< IntersectionObserver >( undefined );
 	const [ viewedCategories, setViewedCategory ] = useState< string[] >( [] );
 
 	// Use a callback as the ref so we get called for both mount and unmount events

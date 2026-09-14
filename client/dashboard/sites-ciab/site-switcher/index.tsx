@@ -5,8 +5,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { SiteSwitcherBase } from '../../sites/site-switcher/base';
 import { wpcomLink } from '../../utils/link';
+import type { SiteSwitcherProps } from '../../sites/site-switcher/types';
 
-const CIABSiteSwitcher = () => {
+const CIABSiteSwitcher = ( props: SiteSwitcherProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const handleAddNewStore = () => {
 		recordTracksEvent( 'calypso_dashboard_site_switcher_new_site_button_click', {
@@ -23,7 +24,7 @@ const CIABSiteSwitcher = () => {
 	};
 
 	return (
-		<SiteSwitcherBase>
+		<SiteSwitcherBase { ...props }>
 			{ () => (
 				<MenuGroup>
 					<MenuItem onClick={ handleAddNewStore }>

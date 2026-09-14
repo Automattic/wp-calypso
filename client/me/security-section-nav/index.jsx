@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
@@ -20,6 +19,10 @@ export default class SecuritySectionNav extends Component {
 			{
 				title: i18n.translate( 'Social Login' ),
 				path: '/me/security/social-login',
+			},
+			{
+				title: i18n.translate( 'Telegram Bot (alpha)' ),
+				path: '/me/security/ai-assistant',
 			},
 			{
 				title: i18n.translate( 'Two-Step Authentication' ),
@@ -44,7 +47,7 @@ export default class SecuritySectionNav extends Component {
 	getSelectedText = () => {
 		let text = '';
 		const filteredPath = this.getFilteredPath();
-		const found = find( this.getNavtabs(), { path: filteredPath } );
+		const found = this.getNavtabs().find( ( navtab ) => navtab.path === filteredPath );
 
 		if ( 'undefined' !== typeof found ) {
 			text = String( found.title );

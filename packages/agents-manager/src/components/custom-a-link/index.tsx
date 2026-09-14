@@ -1,0 +1,51 @@
+import { isThisASupportArticleLink } from '@automattic/urls';
+import { useMemo } from '@wordpress/element';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FROM_CHAT } from '../../constants';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { uriTransformer } from '../../utils/uri-transformer';
+
+export default function CustomALink( {
+	href,
+	children,
+	...props
+}: React.AnchorHTMLAttributes< HTMLAnchorElement > ) {
+	const navigate = useNavigate();
+	const { pathname, state } = useLocation();
+	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
+
+	// Unsafe URL: render as plain text.
+	if ( ! transformedHref ) {
+		return <>{ children }</>;
+	}
+
+	return (
+		<a
+			{ ...props }
+			href={ transformedHref }
+			rel="noopener noreferrer"
+			onClick={ ( e ) => {
+				const isSupportArticle = isThisASupportArticleLink( transformedHref );
+				const isFromOrchestrator = pathname === '/chat';
+
+				// Open support article links in the post view.
+				if ( isSupportArticle ) {
+					e.preventDefault();
+					// Mark the chat origin (or forward the existing `state`) so the
+					// post view's back button returns to the right place.
+					navigate( `/post?link=${ encodeURIComponent( transformedHref ) }`, {
+						state: isFromOrchestrator ? { from: FROM_CHAT } : state,
+					} );
+				}
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
+					href: transformedHref,
+					link_type: isSupportArticle ? 'support_article' : 'external',
+					source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
+				} );
+			} }
+		>
+			{ children }
+		</a>
+	);
+}

@@ -1,7 +1,7 @@
-import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isValueTruthy,
@@ -15,7 +15,9 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,6 +33,7 @@ import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selecto
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -38,12 +41,16 @@ import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/us
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useHasNonRenewableDomainError } from '../hooks/use-has-non-renewable-domain-error';
+import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
+import blikProcessor from '../lib/blik-processor';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -51,9 +58,10 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
+import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
-import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -192,7 +200,6 @@ export default function CheckoutMain( {
 	} )();
 
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -211,8 +218,9 @@ export default function CheckoutMain( {
 			return marketplaceSiteSlug;
 		}
 
-		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
-		if ( sitelessCheckoutType === 'unified' ) {
+		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
+		// otherwise fall back to "no-user".
+		if ( sitelessCheckoutType === 'unified' || sitelessCheckoutType === 'wpcom' ) {
 			return undefined;
 		}
 
@@ -369,9 +377,9 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	// Display errors. Note that we display all errors if any of them change,
-	// because errorNotice() otherwise will remove the previously displayed
-	// errors.
+	// Display errors. These notices share an ID so that a new one replaces the
+	// last rather than stacking; that means each notice must render every error
+	// currently active, not just the ones which have changed.
 	const errorsToDisplay = [
 		cartLoadingError,
 		stripeLoadingError?.message,
@@ -379,11 +387,24 @@ export default function CheckoutMain( {
 	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
-			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
+			errorNotice(
+				errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ),
+				{ id: 'checkout-cart-error' }
+			)
 		);
 	} );
 
 	const responseCartErrors = responseCart.messages?.errors ?? [];
+
+	// A renewal for a subscription owned by another account gets its own screen
+	// rather than the generic empty cart page, because there is something the
+	// customer can do about it.
+	const isWrongAccountRenewal = useHasWrongAccountRenewalError( responseCart );
+
+	// Likewise for a domain renewal that arrived too late to be a renewal at
+	// all: the customer can still go and look for another domain.
+	const isNonRenewableDomain = useHasNonRenewableDomainError( responseCart );
+
 	const areThereErrors =
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
@@ -432,9 +453,6 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isRazorpayLoading,
-		razorpayLoadingError,
-		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -527,7 +545,6 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
-			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
 			isJetpackNotAtomic,
@@ -544,7 +561,6 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
@@ -566,6 +582,8 @@ export default function CheckoutMain( {
 				} ),
 			pix: ( transactionData: unknown ) =>
 				pixProcessor( transactionData, dataForProcessor, translate ),
+			pix_automatico: ( transactionData: unknown ) =>
+				pixAutomaticoProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -574,14 +592,21 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
-			netbanking: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
+			'stripe-upi': ( transactionData: unknown ) =>
+				upiProcessor(
+					transactionData,
+					dataForProcessor,
+					translate,
+					sitelessCheckoutType === 'a4a'
+				),
+			'stripe-blik': ( transactionData: unknown ) =>
+				blikProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -591,10 +616,8 @@ export default function CheckoutMain( {
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
-			razorpay: ( transactionData: unknown ) =>
-				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
-		[ dataForProcessor, translate ]
+		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);
 
 	// Gravatar Theme
@@ -648,6 +671,9 @@ export default function CheckoutMain( {
 	};
 
 	const isCheckoutV2ExperimentLoading = false;
+	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
+	const { isLoading: isMobileCheckoutStickySummaryLoading } =
+		useMobileCheckoutStickySummaryExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -673,6 +699,10 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{
+			name: translate( 'Loading checkout' ),
+			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+		},
 	];
 
 	if ( shouldSetMigrationSticker ) {
@@ -820,7 +850,7 @@ export default function CheckoutMain( {
 				translate( 'An error occurred during your purchase.' )
 			);
 
-			reduxDispatch( errorNotice( errorNoticeText ) );
+			reduxDispatch( errorNotice( errorNoticeText, { id: 'checkout-payment-error' } ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {
@@ -854,8 +884,19 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	const dashboard = getDashboardFromHostname( window?.location?.hostname );
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent: () => {},
+			logo: getDashboardStepperLogo( dashboard ),
+		} ),
+		[ dashboard ]
+	);
+
 	return (
-		<Fragment>
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -888,6 +929,8 @@ export default function CheckoutMain( {
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }
+						isWrongAccountRenewal={ isWrongAccountRenewal }
+						isNonRenewableDomain={ isNonRenewableDomain }
 						isInitialCartLoading={ isInitialCartLoading }
 						addItemToCart={ addItemAndLog }
 						changeSelection={ changeSelection }
@@ -918,7 +961,7 @@ export default function CheckoutMain( {
 					}
 				</CheckoutProvider>
 			</VGSCollectProvider>
-		</Fragment>
+		</Step.StepContainerV2Provider>
 	);
 }
 

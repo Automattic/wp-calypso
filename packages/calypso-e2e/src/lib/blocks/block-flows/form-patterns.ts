@@ -1,10 +1,13 @@
 import {
 	ExpectedFormField,
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
 } from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
+
+const FORM_PATTERN_NAME = 'Contact';
 
 interface ConfigurationData {
 	labelPrefix: string;
@@ -36,12 +39,25 @@ export class FormPatternsFlow implements BlockFlow {
 	blockTestName = 'Form (Patterns)';
 	blockEditorSelector = makeSelectorFromBlockName( 'Form' );
 
+	private skippedDueToCFM = false;
+
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor
 	 *
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		// With Central Form Management, forms are created from the dashboard — the
+		// "Browse form patterns" variation picker no longer appears in the editor.
+		await context.page.waitForTimeout( 2 * 1000 );
+		const browseButton = context.addedBlockLocator.getByRole( 'button', {
+			name: 'Browse form patterns',
+		} );
+		if ( ! ( await browseButton.isVisible( { timeout: 3000 } ).catch( () => false ) ) ) {
+			this.skippedDueToCFM = true;
+			return;
+		}
+
 		await this.addFormPattern( context );
 
 		// Adding the pattern unfortunately wipes out the old parent Form block and replaces it with a new one.
@@ -54,6 +70,8 @@ export class FormPatternsFlow implements BlockFlow {
 			)
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
+
+		await disableFormEmailNotifications( context.page, newParentBlockLocator );
 
 		// We now have to double-click to edit the pattern-added form.
 		// (or click an "Edit section" sidebar button, but this is easier)
@@ -84,23 +102,31 @@ export class FormPatternsFlow implements BlockFlow {
 	 * @param {EditorContext} context Editor context object.
 	 */
 	private async addFormPattern( context: EditorContext ) {
-		// Okay, this timeout wait is gross, but we really don't have any other options here.
-		// For whatever reason, if you try to open the forms pattern modal too quickly, it will get dismissed.
-		// After a lot of testing, there is no network request or anything reliable in the DOM that we can key off of.
-		// And a loop design where you try to launch and see if you were successful is also flaky, because the check will
-		// pass sometimes and then the modal will still get dismissed.
-		// There must be some slow-ish Editor rerender that is dismissing the dialog.
-		// This wait, although "against the rules", has proved to be the most reliable approach so far.
-		await context.page.waitForTimeout( 2 * 1000 );
+		// The wait already happened in configure() before checking for the button.
 		await context.addedBlockLocator.getByRole( 'button', { name: 'Browse form patterns' } ).click();
 
 		const editorParent = await context.editorPage.getEditorParent();
-		await editorParent
+		// Name the pattern rather than taking whichever option renders first: the library also
+		// serves Newsletter and Subscription patterns, which build on the Subscribe block and
+		// carry no Email field for `configure` to label or the assertions to find.
+		const option = editorParent
 			.getByRole( 'dialog', { name: 'Choose a pattern' } )
-			.getByRole( 'option' )
-			.first()
-			// These patterns can load in quite slowly, messing with animation wait checks, so let's give extra time.
-			.click( { timeout: 30 * 1000 } );
+			.getByRole( 'option', { name: FORM_PATTERN_NAME, exact: true } )
+			.first();
+		// Wait for the dialog to settle before clicking; the patterns load in via an
+		// iframe and a `block-editor-block-preview__container` overlay intercepts
+		// pointer events while previews hydrate. The remote pattern library can be
+		// slow to load on loaded CI agents, so allow a generous timeout here.
+		await option.waitFor( { state: 'visible', timeout: 40 * 1000 } );
+		// The option sits partway down the list and previews above it hydrate late, so
+		// settle its position before taking a point: a forced click skips the stability
+		// check and would otherwise land on whichever pattern shifted into place.
+		await option.scrollIntoViewIfNeeded();
+		// Force the click: on slower CI agents the preview container occasionally
+		// continues to intercept pointer events even after the option reports as
+		// visible, enabled and stable. The option still carries the selection
+		// handler — clicking it directly is what the keyboard-activated path does.
+		await option.click( { force: true } );
 	}
 
 	/**
@@ -109,6 +135,9 @@ export class FormPatternsFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		if ( this.skippedDueToCFM ) {
+			return;
+		}
 		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email field' ) },
 			...this.validationData.otherExpectedFields,

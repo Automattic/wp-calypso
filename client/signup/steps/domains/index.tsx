@@ -9,7 +9,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -28,7 +28,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -60,6 +60,7 @@ const DomainSearchUI = (
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
 		locale,
 		queryObject,
 		baseSubmitStepProps,
@@ -71,6 +72,7 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
 
 	const siteSlug = queryObject.siteSlug;
@@ -80,6 +82,8 @@ const DomainSearchUI = (
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	const currentSiteUrlHostname =
+		currentSiteUrl && isURL( currentSiteUrl ) ? new URL( currentSiteUrl ).hostname : undefined;
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
@@ -168,14 +172,14 @@ const DomainSearchUI = (
 						stepSectionName: '',
 						domainItem,
 						isPurchasingItem: true,
-						siteUrl: domainItem.meta,
+						siteUrl: currentSiteUrlHostname ?? domainItem.meta,
 						domainCart,
 					},
 					{
 						...baseSubmitProvidedDependencies,
 						signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.CUSTOM,
 						domainItem,
-						siteUrl: domainItem.meta,
+						siteUrl: currentSiteUrlHostname ?? domainItem.meta,
 						domainCart,
 					}
 				);
@@ -196,11 +200,48 @@ const DomainSearchUI = (
 						{ stepName: 'site-picker', wasSkipped: true },
 						{ themeSlugWithRepo: 'pub/twentysixteen' }
 					);
+				} else if ( isDomainOnlyFlow ) {
+					// Skip the 'Choose how to use your domain' step for domain-only purchases.
+					submitSignupStep(
+						{
+							stepName: 'site-or-domain',
+							domainItem,
+							designType: 'domain',
+							siteSlug: domainItem.meta,
+							siteUrl: domainItem.meta,
+							isPurchasingItem: true,
+							domainCart,
+						},
+						{ designType: 'domain', domainItem, siteUrl: domainItem.meta, domainCart }
+					);
+					submitSignupStep(
+						{ stepName: 'site-picker', wasSkipped: true, domainCart },
+						{ themeSlugWithRepo: 'pub/twentysixteen' }
+					);
+					submitSignupStep(
+						{ stepName: 'plans-site-selected', wasSkipped: true },
+						{ cartItems: null }
+					);
+
+					// For logged-out users the account step is still pending, so the flow isn't
+					// "every step submitted" and the default goToNextStep() advances by array index
+					// from 'domain-only' back onto the just-skipped 'site-or-domain' step. Advance
+					// from the last auto-submitted step instead: logged-out users go to the account
+					// step, logged-in users fall through to checkout.
+					const nextStep = getNextStepName( flowName, 'plans-site-selected', isLoggedIn );
+					if ( nextStep ) {
+						goToStep( nextStep );
+					} else {
+						goToNextStep();
+					}
+					return;
 				}
 
 				goToNextStep();
 			},
 			onSkip( suggestion?: FreeDomainSuggestion ) {
+				const siteUrl = suggestion?.domain_name ?? currentSiteUrlHostname;
+
 				submitSignupStep(
 					{
 						...baseSubmitStepProps,
@@ -208,7 +249,7 @@ const DomainSearchUI = (
 						domainItem: undefined,
 						isPurchasingItem: false,
 						domainCart: [],
-						siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
+						siteUrl: siteUrl?.replace( '.wordpress.com', '' ),
 					},
 					{
 						...baseSubmitProvidedDependencies,
@@ -216,7 +257,7 @@ const DomainSearchUI = (
 							? SIGNUP_DOMAIN_ORIGIN.FREE
 							: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
 						domainCart: [],
-						siteUrl: suggestion?.domain_name,
+						siteUrl,
 					}
 				);
 
@@ -231,11 +272,14 @@ const DomainSearchUI = (
 		clearQuery,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
+		isLoggedIn,
 		locale,
 		isDomainOnlyFlow,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,
+		currentSiteUrlHostname,
 	] );
 
 	const allowedTldParam = queryObject.tld;

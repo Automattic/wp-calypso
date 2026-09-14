@@ -5,8 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	FILTER_TYPE_INSTALL,
@@ -18,6 +17,7 @@ import {
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
+import getNormalizedSliderSelection from '../lib/get-normalized-slider-selection';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
@@ -65,13 +65,9 @@ export default function PlanSelectionFilter( {
 
 	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 
-	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
-
 	// Currently, we only want the premium plans for referral mode
 	const hasNewPremiumPlans =
-		isBDBillingSystem &&
-		isReferralMode &&
-		plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
+		isReferralMode && plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
 	const lowPlanOptions = useMemo(
 		() =>
@@ -135,28 +131,26 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedOptionIndex = useMemo( () => {
-		let options = [];
+	const selectedOptions = useMemo( (): Option[] => {
 		switch ( selectedTab ) {
 			case PLAN_CATEGORY_STANDARD:
 			case PLAN_CATEGORY_SIGNATURE:
-				options = lowPlanOptions;
-				break;
+				return lowPlanOptions;
 			case PLAN_CATEGORY_ENTERPRISE:
 			case PLAN_CATEGORY_SIGNATURE_HIGH:
-				options = highPlanOptions;
-				break;
+				return highPlanOptions;
 			case PLAN_CATEGORY_PREMIUM:
-				options = premiumPlanOptions;
-				break;
+				return premiumPlanOptions;
 			default:
-				return 0;
+				return [];
 		}
+	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions ] );
 
-		return options.findIndex(
+	const selectedOptionIndex = useMemo( () => {
+		return selectedOptions.findIndex(
 			( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
 		);
-	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions, selectedPlan ] );
+	}, [ selectedOptions, selectedPlan ] );
 
 	const onSelectFilterType = useCallback(
 		( value: FilterType ) => {
@@ -235,6 +229,22 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
+		const normalizedIndex = getNormalizedSliderSelection(
+			selectedOptionIndex,
+			getSliderMinimum( selectedTab, selectedOptions ),
+			selectedOptions.length
+		);
+
+		if ( normalizedIndex === selectedOptionIndex ) {
+			return;
+		}
+
+		const normalizedSlug = selectedOptions[ normalizedIndex ]?.value;
+		const normalizedPlan = plans.find( ( plan ) => plan.slug === normalizedSlug ) ?? null;
+		onSelectPlan( normalizedPlan );
+	}, [ getSliderMinimum, onSelectPlan, plans, selectedOptionIndex, selectedOptions, selectedTab ] );
+
+	useEffect( () => {
 		// Ensure standard tab is not disabled if no existing plan
 		if ( ! pressablePlan ) {
 			setDisableStandardTab( false );
@@ -262,36 +272,36 @@ export default function PlanSelectionFilter( {
 						{
 							name: PLAN_CATEGORY_SIGNATURE,
 							title: isDesktop
-								? translate( 'Signature Plans 1-10' )
+								? translate( 'Signature plans 1-10' )
 								: translate( 'Signature 1-10' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_SIGNATURE_HIGH,
 							title: isDesktop
-								? translate( 'Signature Plans 11-17' )
+								? translate( 'Signature plans 11-17' )
 								: translate( 'Signature 11-17' ),
 						},
 				  ]
 				: [
 						{
 							name: PLAN_CATEGORY_STANDARD,
-							title: isDesktop ? translate( 'Signature Plans' ) : translate( 'Signature' ),
+							title: isDesktop ? translate( 'Signature plans' ) : translate( 'Signature' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_ENTERPRISE,
-							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
+							title: isDesktop ? translate( 'Enterprise plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
 			hasNewPremiumPlans
 				? {
 						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium Plans 1-11' ) : translate( 'Premium 1-11' ),
+						title: isDesktop ? translate( 'Premium plans 1-11' ) : translate( 'Premium 1-11' ),
 				  }
 				: {
 						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
+						title: isDesktop ? translate( 'Premium plans' ) : translate( 'Premium' ),
 				  },
 		],
 		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]

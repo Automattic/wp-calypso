@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 
 interface Invitee {
 	email_or_username: string;

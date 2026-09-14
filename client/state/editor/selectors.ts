@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getEditedPost } from 'calypso/state/posts/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
@@ -63,7 +62,7 @@ export function getEditorPath(
 		return 'post';
 	}
 	const editedPost = getEditedPost( state, siteId, postId );
-	const type = get( editedPost, 'type', defaultType );
+	const type = editedPost?.type ?? defaultType;
 	let path = getEditorNewPostPath( state, siteId, type );
 
 	if ( postId ) {

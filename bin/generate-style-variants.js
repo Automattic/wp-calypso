@@ -1,4 +1,3 @@
-const _ = require( 'lodash' );
 const argv = require( 'yargs' ).argv;
 
 const [ baseName, colorName ] = argv._;
@@ -22,10 +21,10 @@ const suffixes = [
 ];
 
 suffixes.forEach( ( suffix ) => {
-	const propertyName = _.compact( [ '--color', baseName, suffix ] ).join( '-' );
-	const variableName = _.compact( [ '--studio', colorName, determineShadeIndex( suffix ) ] ).join(
-		'-'
-	);
+	const propertyName = [ '--color', baseName, suffix ].filter( Boolean ).join( '-' );
+	const variableName = [ '--studio', colorName, determineShadeIndex( suffix ) ]
+		.filter( Boolean )
+		.join( '-' );
 
 	printEntry( propertyName, variableName );
 } );

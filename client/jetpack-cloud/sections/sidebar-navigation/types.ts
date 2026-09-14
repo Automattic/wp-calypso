@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export type MenuItemProps = {
 	id?: string;
 	icon: JSX.Element;

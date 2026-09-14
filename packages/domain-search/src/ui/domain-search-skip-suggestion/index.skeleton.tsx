@@ -1,26 +1,20 @@
 import { Card, CardBody } from '@wordpress/components';
-import { useDomainSuggestionContainer } from '../../hooks/use-domain-suggestion-container';
+import { forwardRef } from 'react';
 import type { ComponentProps } from 'react';
 
-interface Props extends Omit< ComponentProps< typeof Card >, 'children' | 'title' > {
+interface Props extends Omit< ComponentProps< typeof Card >, 'children' | 'title' | 'size' > {
 	title: React.ReactNode;
 	subtitle: React.ReactNode;
 	right?: React.ReactNode;
+	activeQuery: 'small' | 'large';
 }
 
-export const DomainSearchSkipSuggestionSkeleton = ( {
-	title,
-	subtitle,
-	right,
-	...props
-}: Props ) => {
-	const { containerRef, activeQuery } = useDomainSuggestionContainer();
-
-	return (
+export const DomainSearchSkipSuggestionSkeleton = forwardRef< HTMLDivElement, Props >(
+	( { title, subtitle, right, activeQuery, ...cardProps }, ref ) => (
 		<Card
-			{ ...props }
+			{ ...cardProps }
 			className="domain-search-skip-suggestion"
-			ref={ containerRef }
+			ref={ ref }
 			size={ activeQuery === 'large' ? 'medium' : 'small' }
 		>
 			<CardBody>
@@ -31,5 +25,7 @@ export const DomainSearchSkipSuggestionSkeleton = ( {
 				{ right }
 			</CardBody>
 		</Card>
-	);
-};
+	)
+);
+
+DomainSearchSkipSuggestionSkeleton.displayName = 'DomainSearchSkipSuggestionSkeleton';

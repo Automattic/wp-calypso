@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { useSelector } from 'calypso/state';
 import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
@@ -61,7 +61,7 @@ const SubscriptionItem = ( {
 				<h3>{ translate( 'PRICE' ).toUpperCase() }</h3>
 				<p>
 					{ isBillingTypeBD && subscription.status === 'error' ? (
-						<Gridicon icon="minus" />
+						<EmptyValueIndicator />
 					) : (
 						<SubscriptionPrice
 							isFetching={ isFetching }

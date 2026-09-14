@@ -1,5 +1,5 @@
 import { ButtonStack } from '../../../components/button-stack';
-import { isNonDomainSubscription } from '../../../utils/purchase';
+import { isNonDomainSubscription, DisplayVariant } from '../../../utils/purchase';
 import CancelButton from './cancel-button';
 import CancelPurchaseDomainOptions from './domain-options';
 import KeepSubscriptionButton from './keep-subscription-button';
@@ -8,6 +8,7 @@ import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface DomainOptionsContentProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
@@ -18,6 +19,7 @@ interface DomainOptionsContentProps {
 
 export default function DomainOptionsContent( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
@@ -50,6 +52,7 @@ export default function DomainOptionsContent( {
 			<ButtonStack justify="flex-start">
 				<CancelButton
 					purchase={ purchase }
+					displayVariant={ displayVariant }
 					includedDomainPurchase={ includedDomainPurchase }
 					atomicTransfer={ atomicTransfer }
 					state={ state }
@@ -60,6 +63,7 @@ export default function DomainOptionsContent( {
 				/>
 				<KeepSubscriptionButton
 					purchase={ purchase }
+					intent={ displayVariant }
 					onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				/>
 			</ButtonStack>

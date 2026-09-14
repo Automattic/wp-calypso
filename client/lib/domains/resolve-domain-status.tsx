@@ -10,7 +10,8 @@ import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
-import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { shouldRenderExpiringCreditCard } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -19,7 +20,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
@@ -443,7 +444,17 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( isRecentlyRegistered( domain.registrationDate ) || domain.pendingRegistration ) {
+			if ( domain.pendingRegistration || domain.pendingRegistrationAtRegistry ) {
+				return {
+					statusText: translate( 'Registering' ),
+					statusClass: 'status-warning',
+					status: translate( 'Registering' ),
+					icon: 'cloud_upload',
+					listStatusWeight: 400,
+				};
+			}
+
+			if ( isRecentlyRegistered( domain.registrationDate ) ) {
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(

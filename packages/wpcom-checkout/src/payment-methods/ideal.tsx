@@ -1,119 +1,74 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
+interface IdealPaymentMethodStateShape {
+	customerName: string;
+}
 
-type NounsInStore = 'customerName';
-type IdealStore = PaymentMethodStore< NounsInStore >;
+type StateSubscriber = () => void;
 
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-};
+class IdealPaymentMethodState {
+	data: IdealPaymentMethodStateShape = {
+		customerName: '',
+	};
 
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName || '';
-	},
-};
+	subscribers: StateSubscriber[] = [];
 
-export function createIdealPaymentMethodStore(): IdealStore {
-	debug( 'creating a new ideal payment method store' );
-	const store = registerStore( 'ideal', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+	isTouched: boolean = false;
 
-	return store;
+	change = ( value: string ): void => {
+		this.data.customerName = value;
+		this.isTouched = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 export function createIdealMethod( {
-	store,
 	submitButtonContent,
 }: {
-	store: IdealStore;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new IdealPaymentMethodState();
+
 	return {
 		id: 'ideal',
 		hasRequiredFields: true,
 		paymentProcessorId: 'ideal',
 		label: <IdealLabel />,
-		activeContent: <IdealFields />,
-		submitButton: <IdealPayButton store={ store } submitButtonContent={ submitButtonContent } />,
-		inactiveContent: <IdealSummary />,
+		activeContent: <IdealFields state={ state } />,
+		submitButton: <IdealPayButton state={ state } submitButtonContent={ submitButtonContent } />,
+		inactiveContent: <IdealSummary state={ state } />,
 		getAriaLabel: ( __ ) => __( 'iDEAL' ),
 	};
 }
 
-function useCustomerData() {
-	const { customerName } = useSelect( ( select ) => {
-		const store = select( 'ideal' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-		};
-	}, [] );
-
-	return {
-		customerName,
-	};
-}
-
-function IdealFields() {
-	const { __ } = useI18n();
-
-	const { customerName } = useCustomerData();
-	const { changeCustomerName } = useDispatch( 'ideal' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	return (
-		<IdealFormWrapper>
-			<IdealField
-				id="ideal-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-		</IdealFormWrapper>
-	);
+function useSubscribeToEventEmitter( state: IdealPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const IdealFormWrapper = styled.div`
@@ -143,19 +98,41 @@ const IdealField = styled( Field )`
 	}
 `;
 
+function IdealFields( { state }: { state: IdealPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	return (
+		<IdealFormWrapper>
+			<IdealField
+				id="ideal-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.data.customerName }
+				onChange={ state.change }
+				isError={ state.isTouched && state.data.customerName.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+		</IdealFormWrapper>
+	);
+}
+
 function IdealPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: IdealStore;
+	state: IdealPaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -170,10 +147,10 @@ function IdealPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( state ) ) {
 					debug( 'submitting ideal payment' );
 					onClick( {
-						name: customerName?.value,
+						name: state.data.customerName,
 					} );
 				}
 			} }
@@ -186,45 +163,24 @@ function IdealPayButton( {
 	);
 }
 
-function IdealSummary() {
-	const { customerName } = useCustomerData();
+function IdealSummary( { state }: { state: IdealPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
-function isFormValid( store: IdealStore ) {
-	const customerName = selectors.getCustomerName( store.getState() );
-
-	if ( ! customerName?.value.length ) {
+function isFormValid( state: IdealPaymentMethodState ): boolean {
+	if ( ! state.data.customerName.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
-	}
-	if ( ! customerName?.value.length ) {
+		state.change( '' );
 		return false;
 	}
 	return true;
 }
-
-function IdealLabel() {
-	const { __ } = useI18n();
-	return (
-		<Fragment>
-			<span>{ __( 'iDEAL' ) }</span>
-			<PaymentMethodLogos className="ideal__logo payment-logos">
-				<IdealLogo />
-			</PaymentMethodLogos>
-		</Fragment>
-	);
-}
-
-const IdealLogo = styled( IdealLogoSvg )`
-	height: 20px;
-	transform: translateY( -3px );
-`;
 
 function IdealLogoSvg( { className }: { className?: string } ) {
 	return (
@@ -242,5 +198,22 @@ function IdealLogoSvg( { className }: { className?: string } ) {
 				fillRule="evenodd"
 			/>
 		</svg>
+	);
+}
+
+const IdealLogo = styled( IdealLogoSvg )`
+	height: 20px;
+	transform: translateY( -3px );
+`;
+
+function IdealLabel() {
+	const { __ } = useI18n();
+	return (
+		<Fragment>
+			<span>{ __( 'iDEAL' ) }</span>
+			<PaymentMethodLogos className="ideal__logo payment-logos">
+				<IdealLogo />
+			</PaymentMethodLogos>
+		</Fragment>
 	);
 }

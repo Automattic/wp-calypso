@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { fn } from '@storybook/test';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
+import { fn } from 'storybook/test';
 /**
  * Internal dependencies
  */

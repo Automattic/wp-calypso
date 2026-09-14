@@ -31,6 +31,10 @@ jest.mock( '../lib/create-ebanx-token-vgs', () => ( {
 	createEbanxTokenVgs: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
 async function createMockStripeToken( {
 	type,
 	card,
@@ -160,11 +164,8 @@ describe( 'multiPartnerCardProcessor', () => {
 			device_id: undefined, // VGS flow doesn't provide deviceId
 			document: 'ebanx-document-code',
 			email: undefined,
-			gstin: undefined,
 			ideal_bank: undefined,
 			name: 'test name',
-			nik: undefined,
-			pan: undefined,
 			payment_key: 'ebanx-token',
 			payment_method: 'WPCOM_Billing_Ebanx',
 			payment_partner: undefined,

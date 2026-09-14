@@ -2,13 +2,13 @@
 
 exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
 <div
-  className="gsuite-features__list"
+  class="gsuite-features__list"
 >
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Gmail Logo"
@@ -16,10 +16,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         A custom @testing123.com email address
       </h5>
@@ -29,10 +29,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Docs Logo"
@@ -40,10 +40,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Docs, spreadsheets and more
       </h5>
@@ -53,10 +53,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Drive Logo"
@@ -64,10 +64,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Keep all your files secure
       </h5>
@@ -77,10 +77,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Meet Logo"
@@ -88,10 +88,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Connect with your team
       </h5>
@@ -105,13 +105,13 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
 
 exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
 <div
-  className="gsuite-features__grid"
+  class="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Gmail Logo"
@@ -119,10 +119,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         A custom @testing123.com email address
       </h5>
@@ -132,10 +132,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Docs Logo"
@@ -143,10 +143,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Docs, spreadsheets and more
       </h5>
@@ -156,10 +156,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Drive Logo"
@@ -167,10 +167,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Keep all your files secure
       </h5>
@@ -180,10 +180,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Meet Logo"
@@ -191,10 +191,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Connect with your team
       </h5>
@@ -208,13 +208,13 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
 
 exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
 <div
-  className="gsuite-features__grid"
+  class="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Gmail Logo"
@@ -222,10 +222,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         A custom @testing123.com email address
       </h5>
@@ -235,10 +235,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Docs Logo"
@@ -246,10 +246,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Docs, spreadsheets and more
       </h5>
@@ -259,10 +259,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Drive Logo"
@@ -270,10 +270,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Keep all your files secure
       </h5>
@@ -283,10 +283,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Meet Logo"
@@ -294,10 +294,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Connect with your team
       </h5>
@@ -311,13 +311,13 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
 
 exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
 <div
-  className="gsuite-features__grid"
+  class="gsuite-features__grid"
 >
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Gmail Logo"
@@ -325,10 +325,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         A custom @testing123.com email address
       </h5>
@@ -338,10 +338,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Docs Logo"
@@ -349,10 +349,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Docs, spreadsheets and more
       </h5>
@@ -362,10 +362,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Drive Logo"
@@ -373,10 +373,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Keep all your files secure
       </h5>
@@ -386,10 +386,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
     </div>
   </div>
   <div
-    className="gsuite-features__feature"
+    class="gsuite-features__feature"
   >
     <div
-      className="gsuite-features__feature-image"
+      class="gsuite-features__feature-image"
     >
       <img
         alt="Google Meet Logo"
@@ -397,10 +397,10 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
       />
     </div>
     <div
-      className="gsuite-features__feature-block"
+      class="gsuite-features__feature-block"
     >
       <h5
-        className="gsuite-features__feature-header"
+        class="gsuite-features__feature-header"
       >
         Connect with your team
       </h5>

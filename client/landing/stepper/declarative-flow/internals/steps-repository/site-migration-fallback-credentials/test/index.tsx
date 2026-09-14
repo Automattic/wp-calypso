@@ -6,7 +6,6 @@ import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
@@ -19,8 +18,6 @@ jest.mock( 'calypso/lib/wp', () => ( {
 		post: jest.fn(),
 	},
 } ) );
-
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 ( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
@@ -77,11 +74,13 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( specialInstructionsInput(), 'notes' );
 		await userEvent.click( continueButton() );
 
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: {
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{
+				path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+				apiNamespace: 'wpcom/v2',
+			},
+			{},
+			{
 				migration_type: 'credentials',
 				blog_url: 'site-url.wordpress.com',
 				bypass_verification: false,
@@ -89,8 +88,8 @@ describe( 'SiteMigrationCredentials', () => {
 				from_url: 'site-url.com',
 				username: 'username',
 				password: 'password',
-			},
-		} );
+			}
+		);
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith( {
@@ -107,14 +106,14 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( skipButton() );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wpcomRequest ).not.toHaveBeenCalled();
+		expect( wp.req.post ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
 			data: {
 				params: {
@@ -138,7 +137,7 @@ describe( 'SiteMigrationCredentials', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
 			code: 'rest_other_error',
 			message: 'Error message from backend',
 		} );
@@ -156,7 +155,7 @@ describe( 'SiteMigrationCredentials', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {} );
+		( wp.req.post as jest.Mock ).mockRejectedValue( {} );
 
 		await fillAllFields();
 		await userEvent.click( continueButton() );
@@ -190,7 +189,7 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
 
-		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await fillAllFields();
 		userEvent.click( continueButton() );
@@ -215,7 +214,7 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
-			( wpcomRequest as jest.Mock ).mockRejectedValue( {
+			( wp.req.post as jest.Mock ).mockRejectedValue( {
 				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
 				data: {
 					response_code,
@@ -244,7 +243,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await fillAllFields();
 
-		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await userEvent.click( continueButton() );
 

@@ -5,7 +5,6 @@
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
@@ -136,7 +135,6 @@ describe( 'CouponsList', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
 	} );

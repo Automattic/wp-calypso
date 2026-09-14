@@ -1,21 +1,20 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useQuery } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { localize, useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 type Props = {
 	selectedSiteId: number | null;
@@ -91,31 +90,27 @@ const DomainsCard = ( {
 			{ domains.length === 0 ? (
 				<List>
 					<ListItem>
-						{ createInterpolateElement(
-							sprintf(
-								// translators: siteSlug is the current site slug, username is the user that the site is going to
-								// transer to
-								translate(
-									'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site.'
-								),
-								{ siteSlug, siteOwner }
-							),
-							{ strong: <Strong /> }
+						{ translate(
+							'The domain name {{strong}}%(siteSlug)s{{/strong}} will be transferred to {{strong}}%(siteOwner)s{{/strong}} and will remain working on the site.',
+							{
+								args: { siteSlug: siteSlug ?? '', siteOwner },
+								components: { strong: <Strong /> },
+								comment:
+									'%(siteSlug)s is the current site slug, %(siteOwner)s is the user that the site is going to transfer to',
+							}
 						) }
 					</ListItem>
 				</List>
 			) : (
 				<>
 					<Text>
-						{ createInterpolateElement(
-							sprintf(
-								// translators: username is the user that the site is going to transfer to
-								translate(
-									'The following domains will be transferred to <strong>%(siteOwner)s</strong> and will remain working on the site:'
-								),
-								{ siteOwner }
-							),
-							{ strong: <Strong /> }
+						{ translate(
+							'The following domains will be transferred to {{strong}}%(siteOwner)s{{/strong}} and will remain working on the site:',
+							{
+								args: { siteOwner },
+								components: { strong: <Strong /> },
+								comment: '%(siteOwner)s is the user that the site is going to transfer to',
+							}
 						) }
 					</Text>
 					<DomainsWrapper>
@@ -137,28 +132,26 @@ const UpgradesCard = ( {
 	siteSlug,
 	siteOwner,
 }: {
-	purchases: Purchase[];
+	purchases: Purchase[] | undefined;
 	siteSlug: string | null;
 	siteOwner: string;
 } ) => {
 	const translate = useTranslate();
-	if ( purchases.length === 0 ) {
+	if ( ! purchases?.length ) {
 		return null;
 	}
 	return (
 		<>
 			<Title>{ translate( 'Upgrades' ) }</Title>
 			<Text>
-				{ createInterpolateElement(
-					sprintf(
-						// translators: siteSlug is the current site slug, username is the user that the site is going to
-						// transer to
-						translate(
-							'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
-						),
-						{ siteSlug, siteOwner }
-					),
-					{ strong: <Strong /> }
+				{ translate(
+					'Your paid upgrades on {{strong}}%(siteSlug)s{{/strong}} will be transferred to {{strong}}%(siteOwner)s{{/strong}} and will remain with the site.',
+					{
+						args: { siteSlug: siteSlug ?? '', siteOwner },
+						components: { strong: <Strong /> },
+						comment:
+							'%(siteSlug)s is the current site slug, %(siteOwner)s is the user that the site is going to transfer to',
+					}
 				) }
 			</Text>
 		</>
@@ -180,53 +173,46 @@ const ContentAndOwnershipCard = ( {
 			<Title>{ translate( 'Content and ownership' ) }</Title>
 			<List>
 				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: siteSlug is the current site slug, userInfo is the user that the site is going to
-							// transer to
-							translate(
-								'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(siteOwner)s</strong> will be the new owner from now on.'
-							),
-							{ siteSlug, siteOwner }
-						),
-						{ strong: <Strong /> }
+					{ translate(
+						'You’ll be removed as owner of {{strong}}%(siteSlug)s{{/strong}} and {{strong}}%(siteOwner)s{{/strong}} will be the new owner from now on.',
+						{
+							args: { siteSlug: siteSlug ?? '', siteOwner },
+							components: { strong: <Strong /> },
+							comment:
+								'%(siteSlug)s is the current site slug, %(siteOwner)s is the user that the site is going to transfer to',
+						}
 					) }
 				</ListItem>
 				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: username is the user that the site is going to transer to
-							translate(
-								'You will keep your admin access unless <strong>%(siteOwner)s</strong> removes you.'
-							),
-							{ siteOwner }
-						),
-						{ strong: <Strong /> }
+					{ translate(
+						'You will keep your admin access unless {{strong}}%(siteOwner)s{{/strong}} removes you.',
+						{
+							args: { siteOwner },
+							components: { strong: <Strong /> },
+							comment: '%(siteOwner)s is the user that the site is going to transfer to',
+						}
 					) }
 				</ListItem>
 				<ListItem>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: siteSlug is the current site slug
-							translate(
-								'Your posts on <strong>%(siteSlug)s</strong> will remain authored by your account.'
-							),
-							{ siteSlug }
-						),
-						{ strong: <Strong /> }
+					{ translate(
+						'Your posts on {{strong}}%(siteSlug)s{{/strong}} will remain authored by your account.',
+						{
+							args: { siteSlug: siteSlug ?? '' },
+							components: { strong: <Strong /> },
+							comment: '%(siteSlug)s is the current site slug',
+						}
 					) }
 				</ListItem>
 				{ isAtomicSite && (
 					<ListItem>
-						{ createInterpolateElement(
-							sprintf(
-								// translators: siteSlug is the current site slug, username is the user that the site will be transerred to
-								translate(
-									'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(siteOwner)s</strong>.'
-								),
-								{ siteSlug, siteOwner }
-							),
-							{ strong: <Strong /> }
+						{ translate(
+							'If your site {{strong}}%(siteSlug)s{{/strong}} has a staging site, it will be transferred to {{strong}}%(siteOwner)s{{/strong}}.',
+							{
+								args: { siteSlug: siteSlug ?? '', siteOwner },
+								components: { strong: <Strong /> },
+								comment:
+									'%(siteSlug)s is the current site slug, %(siteOwner)s is the user that the site will be transferred to',
+							}
 						) }
 					</ListItem>
 				) }
@@ -251,7 +237,10 @@ const StartSiteOwnerTransfer = ( {
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
 	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( false );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( selectedSiteId ?? 0 ),
+		enabled: Boolean( selectedSiteId ),
+	} );
 
 	const { startSiteOwnerTransfer, isPending: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
@@ -304,7 +293,7 @@ const StartSiteOwnerTransfer = ( {
 			<FormToggleControl
 				disabled={ false }
 				label={
-					purchases.length === 0
+					! purchases?.length
 						? translate( 'I want to transfer the ownership of the site.' )
 						: translate( 'I want to transfer ownership of the site and all my related upgrades.' )
 				}

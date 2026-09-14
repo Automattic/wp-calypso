@@ -15,7 +15,7 @@ import {
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
@@ -38,6 +38,15 @@ import type { SiteSlug } from 'calypso/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+const loadPurchaseModalWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-upsell-nudge-purchase-modal-wrapper" */ './purchase-modal-wrapper'
+	);
+const loadIsEligibleForOneClickCheckoutWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-checkout-purchase-modal-is-eligible-for-one-click-checkout-wrapper" */ 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
+	);
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
@@ -95,6 +104,7 @@ type OwnProps = {
 	tracksDismissProperties?: Record< string, unknown >;
 	tracksImpressionName?: string;
 	tracksImpressionProperties?: Record< string, unknown >;
+	children?: ReactNode;
 };
 
 type Props = OwnProps & ConnectedProps;
@@ -150,6 +160,7 @@ export const UpsellNudge = ( {
 	isBusy,
 	isEligibleForOneClickCheckout,
 	isOneClickCheckoutEnabled = true,
+	children,
 }: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =
@@ -231,20 +242,10 @@ export const UpsellNudge = ( {
 		<>
 			{ showPurchaseModal && (
 				<AsyncLoad
-					require="./purchase-modal-wrapper"
+					require={ loadPurchaseModalWrapper }
 					plan={ upsellPlan }
 					siteSlug={ siteSlug }
 					setShowPurchaseModal={ setShowPurchaseModal }
-				/>
-			) }
-			{ ! isEligibleForOneClickCheckout?.isLoading && (
-				<TrackComponentView
-					eventName="calypso_upsell_nudge_impression"
-					eventProperties={ {
-						is_eligible_for_one_click_checkout: !! isEligibleForOneClickCheckout?.result,
-						plan: plan,
-						event,
-					} }
 				/>
 			) }
 			<Banner
@@ -288,7 +289,19 @@ export const UpsellNudge = ( {
 				isBusy={
 					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout?.isLoading )
 				}
-			/>
+			>
+				{ ! isEligibleForOneClickCheckout?.isLoading && (
+					<TrackComponentView
+						eventName="calypso_upsell_nudge_impression"
+						eventProperties={ {
+							is_eligible_for_one_click_checkout: !! isEligibleForOneClickCheckout?.result,
+							plan: plan,
+							event,
+						} }
+					/>
+				) }
+				{ children }
+			</Banner>
 		</>
 	);
 };
@@ -322,7 +335,7 @@ export default function Wrapper( props: OwnProps ) {
 	if ( isOneClickCheckoutEnabled && plan ) {
 		return (
 			<AsyncLoad
-				require="../../my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper"
+				require={ loadIsEligibleForOneClickCheckoutWrapper }
 				component={ ConnectedUpsellNudge }
 				componentProps={ props }
 			/>

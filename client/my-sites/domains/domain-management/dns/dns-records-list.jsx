@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { MaterialIcon } from '@automattic/components';
-import { edit, Icon, info, redo, trash } from '@wordpress/icons';
+import { pencil as edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';

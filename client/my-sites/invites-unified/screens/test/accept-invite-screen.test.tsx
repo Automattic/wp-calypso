@@ -8,6 +8,24 @@ import configureStore from 'redux-mock-store';
 import { AcceptInviteScreen } from '../accept-invite-screen';
 import type { Invite } from '../../types';
 
+const mockCenteredColumnLayout = jest.fn(
+	( {
+		children,
+		heading,
+		topBar,
+	}: {
+		children: React.ReactNode;
+		heading: React.ReactNode;
+		topBar: React.ReactNode;
+	} ) => (
+		<div data-testid="step-layout">
+			{ topBar }
+			{ heading }
+			{ children }
+		</div>
+	)
+);
+
 // Mock external dependencies
 jest.mock(
 	'@automattic/calypso-router',
@@ -39,21 +57,13 @@ jest.mock(
 			TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
 				<div data-testid="step-topbar">{ logo }</div>
 			),
-			CenteredColumnLayout: ( {
-				children,
-				heading,
-				topBar,
-			}: {
+			CenteredColumnLayout: ( props: {
 				children: React.ReactNode;
 				heading: React.ReactNode;
 				topBar: React.ReactNode;
-			} ) => (
-				<div data-testid="step-layout">
-					{ topBar }
-					{ heading }
-					{ children }
-				</div>
-			),
+				columnWidth: number;
+				verticalAlign: string;
+			} ) => mockCenteredColumnLayout( props ),
 		},
 	} ),
 	{ virtual: true }
@@ -126,7 +136,13 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: ( url: string ) => mockNavigate( url ),
 } ) );
 
+const mockNavigateToLandingPage = jest.fn( () => ( { type: 'TEST_NAVIGATE_TO_LANDING_PAGE' } ) );
+jest.mock( 'calypso/lib/landing-page', () => ( {
+	navigateToLandingPage: () => mockNavigateToLandingPage(),
+} ) );
+
 const mockWooBranding = {
+	windowTitleSuffix: 'Woo',
 	logo: {
 		src: 'https://example.com/woo-logo.png',
 		alt: 'Woo',
@@ -142,12 +158,17 @@ const mockWooBranding = {
 };
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	getCiabConfigFromGarden: ( partner: string, name: string ) => {
+	detectPartnerConfig: () => null,
+	getPartnerConfigFromGarden: ( partner: string, name: string ) => {
 		if ( partner === 'woo' && name === 'commerce' ) {
 			return mockWooBranding;
 		}
 		return null;
 	},
+	getPartnerFormattedWindowTitle: (
+		title: string,
+		partnerConfig: { windowTitleSuffix?: string } | null
+	) => `${ title } — ${ partnerConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {
@@ -157,6 +178,7 @@ jest.mock( 'calypso/lib/paths', () => ( {
 
 const mockGetRedirectAfterAccept = jest.fn( () => '/redirect-url' );
 jest.mock( 'calypso/my-sites/invites/utils', () => ( {
+	...jest.requireActual( 'calypso/my-sites/invites/utils' ),
 	getRedirectAfterAccept: ( ...args: Parameters< typeof mockGetRedirectAfterAccept > ) =>
 		mockGetRedirectAfterAccept( ...args ),
 } ) );
@@ -244,6 +266,7 @@ const setupUser = ( userOverrides = {} ) => {
 describe( 'AcceptInviteScreen', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCenteredColumnLayout.mockClear();
 		mockAcceptInvite.mockReturnValue( { type: 'ACCEPT_INVITE' } );
 		mockDispatch.mockImplementation( ( action: unknown ) => {
 			if ( typeof action === 'function' ) {
@@ -255,6 +278,25 @@ describe( 'AcceptInviteScreen', () => {
 	} );
 
 	describe( 'rendering', () => {
+		test( 'passes centered layout props', () => {
+			const store = createStore();
+			const invite = createInvite();
+
+			render(
+				<Provider store={ store }>
+					<AcceptInviteScreen invite={ invite } />
+				</Provider>
+			);
+
+			expect( mockCenteredColumnLayout ).toHaveBeenCalled();
+			expect( mockCenteredColumnLayout.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( {
+					columnWidth: 4,
+					verticalAlign: 'center',
+				} )
+			);
+		} );
+
 		test( 'renders the user card with current user info', () => {
 			const store = createStore();
 			const invite = createInvite();
@@ -378,6 +420,32 @@ describe( 'AcceptInviteScreen', () => {
 			expect( screen.getByText( /invited@example.com/i ) ).toBeInTheDocument();
 		} );
 
+		test( 'does not show EmailMismatchScreen when emails differ only by letter case', () => {
+			setupUser( { email: 'Invited@Example.com' } );
+			const store = createStore();
+			const invite = createInvite( {
+				invite: {
+					blog_id: '123',
+					invite_slug: 'test',
+					meta: {
+						role: 'administrator',
+						sent_to: 'invited@example.com',
+						force_matching_email: true,
+						blog_id: 123,
+					},
+				},
+			} );
+
+			render(
+				<Provider store={ store }>
+					<AcceptInviteScreen invite={ invite } />
+				</Provider>
+			);
+
+			expect( screen.queryByTestId( 'email-mismatch-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'action-buttons' ) ).toBeInTheDocument();
+		} );
+
 		test( 'does not show EmailMismatchScreen when emails match', () => {
 			setupUser( { email: 'invited@example.com' } );
 			const store = createStore();
@@ -446,8 +514,7 @@ describe( 'AcceptInviteScreen', () => {
 	} );
 
 	describe( 'decline flow', () => {
-		test( 'redirects to home on decline', () => {
-			const page = require( '@automattic/calypso-router' ).default;
+		test( 'navigates to the landing destination on decline', () => {
 			const store = createStore();
 			const invite = createInvite();
 
@@ -459,7 +526,7 @@ describe( 'AcceptInviteScreen', () => {
 
 			fireEvent.click( screen.getByTestId( 'secondary-button' ) );
 
-			expect( page ).toHaveBeenCalledWith( '/' );
+			expect( mockNavigateToLandingPage ).toHaveBeenCalled();
 		} );
 
 		test( 'tracks decline button click', () => {

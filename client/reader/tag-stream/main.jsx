@@ -1,25 +1,24 @@
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import titleCase from 'to-title-case';
-import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
-import QueryReaderTag from 'calypso/components/data/query-reader-tag';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useFollowedTags, useTagBySlug } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
-import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
-import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
+
+// Matches emoji and keycap sequences (# / * / 0-9 + optional U+FE0F + U+20E3).
+const EMOJI_TITLE_PATTERN =
+	/\p{Emoji_Presentation}|\p{Extended_Pictographic}|[#*0-9]\uFE0F?\u20E3/u;
 
 class TagStream extends Component {
 	static propTypes = {
@@ -28,25 +27,16 @@ class TagStream extends Component {
 	};
 
 	state = {
-		isEmojiTitle: false,
+		emojiText: null,
 	};
 
 	_isMounted = false;
 
 	componentDidMount() {
 		this._isMounted = true;
-		asyncRequire( 'emoji-text' ).then( ( emojiText ) => {
+		import( /* webpackChunkName: "async-load-emoji-text" */ 'emoji-text' ).then( ( emojiText ) => {
 			if ( this._isMounted ) {
 				this.setState( { emojiText: emojiText.default } );
-			}
-		} );
-		asyncRequire( 'twemoji' ).then( ( twemoji ) => {
-			if ( this._isMounted ) {
-				const title = this.props.decodedTagSlug;
-				this.setState( {
-					twemoji: twemoji.default,
-					isEmojiTitle: title && twemoji.default.test( title ),
-				} );
 			}
 		} );
 	}
@@ -55,18 +45,8 @@ class TagStream extends Component {
 		this._isMounted = false;
 	}
 
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( ! prevState.twemoji || ! nextProps.decodedTagSlug ) {
-			return null;
-		}
-
-		return {
-			isEmojiTitle: prevState.twemoji.test( nextProps.decodedTagSlug ),
-		};
-	}
-
 	isSubscribed = () => {
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
 		return !! ( tag && tag.isFollowing );
 	};
 
@@ -74,13 +54,6 @@ class TagStream extends Component {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-
-		if ( ! this.props.isLoggedIn ) {
-			return this.props.registerLastActionRequiresLogin( {
-				type: 'follow-tag',
-				tag: decodedTagSlug,
-			} );
-		}
 
 		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
@@ -98,7 +71,7 @@ class TagStream extends Component {
 
 	render() {
 		const emptyContent = () => <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
 		const titleText =
 			tag?.title ||
 			this.props.initialTitle ||
@@ -107,24 +80,24 @@ class TagStream extends Component {
 		let encodedTagSlug = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
-		if ( this.state.emojiText && this.state.isEmojiTitle ) {
+		const isEmojiTitle =
+			!! this.props.decodedTagSlug && EMOJI_TITLE_PATTERN.test( this.props.decodedTagSlug );
+		if ( this.state.emojiText && isEmojiTitle ) {
 			encodedTagSlug = this.state.emojiText.convert( this.props.decodedTagSlug, {
 				delimiter: '',
 			} );
 		}
 
-		if ( tag && tag.error ) {
+		if ( this.props.isNotFound ) {
 			return (
 				<ReaderMain className="tag-stream__main">
-					<QueryReaderFollowedTags />
-					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					<TagStreamHeader
 						title={ titleText }
 						encodedTagSlug={ encodedTagSlug }
-						// This shouldn not be necessary as user should not have been able to
-						// subscribe to an error tag. Nevertheless, we should give them a route to
-						// unfollow if that was the case.
-						showFollow={ tag.id && this.isSubscribed() }
+						// Should not be necessary because the user shouldn't have been able to
+						// subscribe to a missing tag, but still give them a route to unfollow
+						// if that's somehow the case.
+						showFollow={ this.isSubscribed() }
 						showSort={ false }
 					/>
 					{ emptyContent() }
@@ -141,11 +114,12 @@ class TagStream extends Component {
 				showFollow={ !! ( tag && tag.id ) }
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
+				followDisabled={ this.props.isTogglingFollow }
 				showSort={ showSort }
 				sort={ this.props.sort }
 			/>
 		);
-		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
+		const sidebarProps = {
 			streamSidebar: () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } />,
 			sidebarTabTitle: this.props.translate( 'Related' ),
 		};
@@ -170,29 +144,81 @@ class TagStream extends Component {
 				useCompactCards
 				wideLayout
 				{ ...sidebarProps }
-			>
-				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-			</Stream>
+			/>
 		);
 	}
 }
 
+function withReaderTags( Inner ) {
+	return function WithReaderTags( props ) {
+		const { data: followedTags } = useFollowedTags();
+		const { data: currentTag, isNotFound } = useTagBySlug( props.decodedTagSlug );
+
+		// Annotate the active tag with isFollowing so the existing isSubscribed()
+		// check on the class works against the same shape as the followed list.
+		const annotatedCurrent = currentTag
+			? {
+					...currentTag,
+					isFollowing: followedTags?.some( ( t ) => t.slug === currentTag.slug ) ?? false,
+			  }
+			: null;
+
+		const tags = [ annotatedCurrent, ...( followedTags ?? [] ) ].filter( Boolean );
+
+		return (
+			<Inner
+				{ ...props }
+				tags={ tags }
+				followedTags={ followedTags }
+				description={ currentTag?.description }
+				isNotFound={ isNotFound }
+			/>
+		);
+	};
+}
+
+function withTagFollowMutations( Inner ) {
+	return function WithTagFollowMutations( props ) {
+		const queryClient = useQueryClient();
+		const dispatch = useDispatch();
+		const { mutate: follow, isPending: isFollowPending } = useMutation(
+			followReadTagMutation( queryClient )
+		);
+		const { mutate: unfollow, isPending: isUnfollowPending } = useMutation(
+			unfollowReadTagMutation( queryClient )
+		);
+
+		const followTag = ( tag ) =>
+			follow( tag, {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+		const unfollowTag = ( tag ) =>
+			unfollow( tag, {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not unfollow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+
+		return (
+			<Inner
+				{ ...props }
+				followTag={ followTag }
+				unfollowTag={ unfollowTag }
+				isTogglingFollow={ isFollowPending || isUnfollowPending }
+			/>
+		);
+	};
+}
+
 export default connect(
-	( state, { decodedTagSlug, sort } ) => {
-		const tag = getReaderTagBySlug( state, decodedTagSlug );
-		return {
-			description: tag?.description,
-			followedTags: getReaderFollowedTags( state ),
-			tags: getReaderTags( state ),
-			isLoggedIn: isUserLoggedIn( state ),
-			sort,
-		};
-	},
+	( state, { sort } ) => ( {
+		sort,
+	} ),
 	{
-		followTag: requestFollowTag,
 		recordReaderTracksEvent,
-		unfollowTag: requestUnfollowTag,
-		registerLastActionRequiresLogin,
 	}
-)( localize( TagStream ) );
+)( withReaderTags( withTagFollowMutations( localize( TagStream ) ) ) );

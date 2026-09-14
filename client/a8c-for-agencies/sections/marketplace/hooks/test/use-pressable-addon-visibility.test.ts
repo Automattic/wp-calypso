@@ -1,4 +1,7 @@
-import { getPressableAddonLicenseVisibility } from '../use-pressable-addon-visibility';
+import {
+	canShowPressableAddonsInMarketplace,
+	getPressableAddonLicenseVisibility,
+} from '../use-pressable-addon-visibility';
 import type { License } from 'calypso/state/partner-portal/types';
 
 const buildLicense = ( {
@@ -32,11 +35,10 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 	it( 'returns no visibility for empty input', () => {
 		expect( getPressableAddonLicenseVisibility( [] ) ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
 	} );
 
-	it( 'OFF mode case: only referral pressable plan license does not grant agency visibility', () => {
+	it( 'does not grant agency visibility for a referral Pressable plan license', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( {
 				licenseKey: 'pressable-premium',
@@ -46,22 +48,20 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: true,
 		} );
 	} );
 
-	it( 'ON mode case: only non-referral pressable plan license does not grant referral visibility', () => {
+	it( 'grants agency visibility for a non-referral Pressable plan license', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( { licenseKey: 'pressable-premium' } ),
 		] );
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: true,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
 	} );
 
-	it( 'marks both visibilities when both license types exist', () => {
+	it( 'grants agency visibility when both license types exist', () => {
 		const visibility = getPressableAddonLicenseVisibility( [
 			buildLicense( { licenseKey: 'pressable-premium' } ),
 			buildLicense( {
@@ -72,7 +72,6 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: true,
-			hasActiveReferralPressablePlanLicense: true,
 		} );
 	} );
 
@@ -88,7 +87,35 @@ describe( 'getPressableAddonLicenseVisibility', () => {
 
 		expect( visibility ).toEqual( {
 			hasActiveAgencyPressablePlanLicense: false,
-			hasActiveReferralPressablePlanLicense: false,
 		} );
+	} );
+} );
+
+describe( 'canShowPressableAddonsInMarketplace', () => {
+	it( 'shows add-ons in referral mode without an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: true,
+				hasActiveAgencyPressablePlanLicense: false,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'shows add-ons in regular mode with an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: false,
+				hasActiveAgencyPressablePlanLicense: true,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'hides add-ons in regular mode without an agency Pressable plan license', () => {
+		expect(
+			canShowPressableAddonsInMarketplace( {
+				isReferralMode: false,
+				hasActiveAgencyPressablePlanLicense: false,
+			} )
+		).toBe( false );
 	} );
 } );

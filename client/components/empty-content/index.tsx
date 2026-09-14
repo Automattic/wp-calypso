@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { LegacyRef, RefObject } from 'react';
+import React, { LegacyRef, RefObject, type JSX } from 'react';
 import './style.scss';
 
 interface EmptyContentProps {
@@ -17,7 +17,7 @@ interface EmptyContentProps {
 	actionCallback?: () => void;
 	actionTarget?: string;
 	actionDisabled?: boolean;
-	actionRef?: RefObject< HTMLElement > | LegacyRef< HTMLButtonElement >;
+	actionRef?: RefObject< HTMLElement | null > | LegacyRef< HTMLButtonElement >;
 	secondaryAction?: React.ReactNode;
 	secondaryActionURL?: string;
 	secondaryActionCallback?: () => void;

@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import StatsImage from 'calypso/assets/images/jetpack/rna-image-stats.png';
+import StatsImage from 'calypso/assets/images/jetpack/rna-image-stats.webp';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import { Site } from '../../../types';
 
@@ -32,7 +32,7 @@ const UpsellStatsCard = ( { site }: Props ) => {
 		[ translate ]
 	);
 	const footerText = translate(
-		'Commercial sites require a paid plan, which you can purchase at a discount within {{a}}the marketplace{{/a}}.',
+		'A paid plan is required to unlock premium features. You can purchase one at a discount within {{a}}the marketplace{{/a}}.',
 		{
 			components: {
 				a: <a href="/marketplace/products?search_query=stats" />,

@@ -14,6 +14,7 @@ export * from './domain-search-component';
 export * from './isolated-block-editor-component';
 export * from './block-widget-editor-component';
 export * from './notice-component';
+export * from './dashboard-snackbar-component';
 export * from './react-modal-component';
 export * from './editor-component';
 export * from './editor-inline-block-inserter-component';
@@ -39,6 +40,7 @@ export * from './jetpack-instant-search-modal-component';
 export * from './select-items-component';
 export * from './wp-admin-notice-component';
 export * from './wp-admin-sidebar-component';
+export * from './launch-celebration-component';
 
 export * from './me';
 

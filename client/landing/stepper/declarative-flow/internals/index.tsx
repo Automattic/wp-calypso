@@ -1,5 +1,4 @@
-import { WooDashboardLogo } from '@automattic/components';
-import { Step, WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect, useMemo } from 'react';
@@ -8,6 +7,8 @@ import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -27,6 +28,7 @@ import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
+import { componentTypeOf, recordStepComponentType } from './step-mount-registry';
 import { PRIVATE_STEPS } from './steps';
 import { AssertConditionState, FlowV2, StepProps, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
@@ -44,6 +46,7 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 		);
 		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
+	recordStepComponentType( flowStep.slug, componentTypeOf( lazyComponent ) );
 	return lazyComponent;
 }
 
@@ -120,30 +123,23 @@ export const FlowRenderer: React.FC< {
 		flow.useAssertConditions?.( navigate ) ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
-	const shouldHideLogo = flow.name === WOO_HOSTED_PLANS_FLOW;
 
+	const dashboard = getDashboardFromHostname( window?.location?.hostname );
 	const stepContainerV2Context = useMemo( () => {
-		// Detect CIAB dashboard for Woo branding.
-		// Query params persist between step changes so this is stable.
-		const isWooDashboard =
-			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
-
 		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
-			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+			logo: getDashboardStepperLogo( dashboard ),
 		};
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, dashboard ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {
 			switch ( assertCondition.state ) {
 				case AssertConditionState.CHECKING:
 					return shouldUseStepContainerV2( flow.name ) ? (
-						<Step.Loading hideLogo={ shouldHideLogo } />
+						<Step.Loading />
 					) : (
 						<Loading className="wpcom-loading__boot" />
 					);
@@ -198,6 +194,7 @@ export const FlowRenderer: React.FC< {
 					stepName="user"
 					redirectTo={ postAuthStepPath }
 					signupUrl={ signupUrl }
+					{ ...stepsProps?.[ PRIVATE_STEPS.USER.slug ] }
 				/>
 			);
 		}
@@ -236,16 +233,16 @@ export const FlowRenderer: React.FC< {
 	useSignUpStartTracking( { flow } );
 
 	const fallback = shouldUseStepContainerV2( flow.name ) ? (
-		<Step.Loading hideLogo={ shouldHideLogo } />
+		<Step.Loading />
 	) : (
 		<Loading className="wpcom-loading__boot" />
 	);
 
 	return (
-		<Boot fallback={ fallback }>
-			<DocumentHead title={ getDocumentHeadTitle() } />
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+			<Boot fallback={ fallback }>
+				<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 				<Routes>
 					{ flowSteps.map( ( step ) => (
 						<Route
@@ -274,7 +271,7 @@ export const FlowRenderer: React.FC< {
 						}
 					/>
 				</Routes>
-			</Step.StepContainerV2Provider>
-		</Boot>
+			</Boot>
+		</Step.StepContainerV2Provider>
 	);
 };

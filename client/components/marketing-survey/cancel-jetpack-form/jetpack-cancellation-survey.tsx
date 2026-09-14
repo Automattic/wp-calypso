@@ -24,7 +24,7 @@ export default function JetpackCancellationSurvey( {
 }: JetpackCancellationSurveyProps ) {
 	const translate = useTranslate();
 	const [ customAnswerText, setCustomAnswerText ] = useState( '' );
-	const customAnswerInputRef = useRef< HTMLInputElement | null >();
+	const customAnswerInputRef = useRef< HTMLInputElement | null >( null );
 
 	const choices: Choice[] = [
 		{

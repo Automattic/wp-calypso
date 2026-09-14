@@ -64,6 +64,23 @@ The HOC has the following arguments. In order to set the cart key, you must prov
 - `Component: React.ComponentType`. The component to wrap; it will receive the additional props above.
 - `mapPropsToCartKey?: ( props ) => number | 'no-site' | 'no-user' | undefined`. A function that can be used to set the current cart key based on the component's props. If not set, it will try to use `props.cartKey`.
 
+## useShoppingCartManagerClient
+
+A React hook that returns the [ShoppingCartManagerClient](#createShoppingCartManagerClient) provided by the surrounding [ShoppingCartProvider](#ShoppingCartProvider) without subscribing to any particular cart key.
+
+Useful for code paths that need to dispatch an action against a cart that the calling component does not otherwise render. Calling [useShoppingCart](#useShoppingCart) for that purpose would eagerly fetch the cart on every render; this hook avoids that by giving you the manager client directly so you can call `forCartKey( key )` on demand and dispatch actions through its `actions` property.
+
+For example, to clear several carts (including ones the component doesn't render) before navigating away:
+
+```ts
+const managerClient = useShoppingCartManagerClient();
+await Promise.all(
+	[ activeCartKey, 'no-site', 'no-user' ].map( ( key ) =>
+		managerClient.forCartKey( key ).actions.replaceProductsInCart( [] )
+	)
+);
+```
+
 ## createRequestCartProduct
 
 A helper function that creates a `RequestCartProduct`, which can then be passed to shopping cart functions like `addProductsToCart()`.

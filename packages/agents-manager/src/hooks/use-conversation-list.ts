@@ -1,6 +1,5 @@
 import {
 	listConversationsFromServer,
-	createOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
@@ -9,21 +8,28 @@ import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { LocalConversationListItem } from '../types';
+import { getConversationBotId } from '../utils/conversation-bot-id';
 import { parseUTCTimestamp } from '../utils/conversation-history-formatters';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
 export default function useConversationList() {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, site, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
-	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+	const botId = getConversationBotId( agentId, hasAgentParam );
+	const isReaderChat = isReaderChatAgent( agentId );
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Only fetch Zendesk conversations if the unified agent flag is enabled
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		useGetZendeskConversations( !! shouldUseUnifiedAgent );
+		useGetZendeskConversations(
+			!! shouldUseUnifiedAgent && ! isReaderChat,
+			zendeskSmoochIntegrationKey,
+			site?.ID
+		);
 
 	const {
 		data: orchestratorConversations,

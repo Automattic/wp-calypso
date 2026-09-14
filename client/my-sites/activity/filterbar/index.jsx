@@ -8,6 +8,7 @@ import BackButton from 'calypso/components/back-button';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import ActorSelector from './actor-selector';
 import DateRangeSelector from './date-range-selector';
 import TextSelector from './text-selector';
 import ActivityTypeSelector from './type-selector/activity-type-selector';
@@ -17,7 +18,7 @@ import './style.scss';
 
 export class Filterbar extends Component {
 	static defaultProps = {
-		selectorTypes: { dateRange: true, actionType: true, text: true },
+		selectorTypes: { dateRange: true, actionType: true, actor: true, text: true },
 		variant: 'default',
 	};
 
@@ -25,6 +26,7 @@ export class Filterbar extends Component {
 		showActivityTypes: false,
 		showActivityDates: false,
 		showIssueTypes: false,
+		showActors: false,
 	};
 
 	goBack = () => {
@@ -41,6 +43,7 @@ export class Filterbar extends Component {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
 			showIssueTypes: false,
+			showActors: false,
 		} );
 		this.scrollIntoView();
 	};
@@ -54,12 +57,27 @@ export class Filterbar extends Component {
 			showActivityTypes: ! this.state.showActivityTypes,
 			showActivityDates: false,
 			showIssueTypes: false,
+			showActors: false,
 		} );
 		this.scrollIntoView();
 	};
 
 	closeActivityTypes = () => {
 		this.setState( { showActivityTypes: false } );
+	};
+
+	toggleActorsSelector = () => {
+		this.setState( {
+			showActors: ! this.state.showActors,
+			showActivityTypes: false,
+			showActivityDates: false,
+			showIssueTypes: false,
+		} );
+		this.scrollIntoView();
+	};
+
+	closeActors = () => {
+		this.setState( { showActors: false } );
 	};
 
 	toggleIssueTypesSelector = () => {
@@ -88,7 +106,7 @@ export class Filterbar extends Component {
 			return;
 		}
 
-		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+		if ( filter && ( filter.group || filter.before || filter.after || filter.actor ) ) {
 			return (
 				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
 					<Gridicon icon="cross" />
@@ -113,7 +131,14 @@ export class Filterbar extends Component {
 		if ( ! filter ) {
 			return true;
 		}
-		if ( filter.group || filter.on || filter.before || filter.after || filter.textSearch ) {
+		if (
+			filter.group ||
+			filter.on ||
+			filter.before ||
+			filter.after ||
+			filter.textSearch ||
+			filter.actor
+		) {
 			return false;
 		}
 		if ( filter.page !== 1 ) {
@@ -189,6 +214,18 @@ export class Filterbar extends Component {
 								/>
 							</li>
 						) }
+						{ selectorTypes.actor && (
+							<li>
+								<ActorSelector
+									filter={ filter }
+									siteId={ siteId }
+									isVisible={ this.state.showActors }
+									onButtonClick={ this.toggleActorsSelector }
+									onClose={ this.closeActors }
+									variant={ variant }
+								/>
+							</li>
+						) }
 						{ selectorTypes.issueType && (
 							<li>
 								<IssueTypeSelector
@@ -218,7 +255,14 @@ const mapDispatchToProps = ( dispatch ) => ( {
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
+				updateFilter( siteId, {
+					group: null,
+					after: null,
+					before: null,
+					on: null,
+					actor: null,
+					page: 1,
+				} )
 			)
 		),
 } );

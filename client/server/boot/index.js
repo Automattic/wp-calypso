@@ -2,7 +2,7 @@ import path from 'path';
 import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import userAgent from 'express-useragent';
+import { express as userAgentMiddleware } from 'express-useragent';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import api from 'calypso/server/api';
 import config from 'calypso/server/config';
@@ -22,8 +22,14 @@ export default function setup() {
 	// for nginx
 	app.enable( 'trust proxy' );
 
+	// Lightweight health check endpoint for container readiness probes.
+	// Registered before any middleware to avoid unnecessary overhead.
+	app.get( '/health', ( req, res ) => {
+		res.status( 200 ).send( 'ok' );
+	} );
+
 	app.use( cookieParser() );
-	app.use( userAgent.express() );
+	app.use( userAgentMiddleware() );
 	app.use( loggerMiddleware() );
 
 	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
@@ -104,10 +110,6 @@ export default function setup() {
 		response.setHeader( 'content-type', 'application/javascript' );
 		response.end( "console.log('Stats are disabled');" );
 	} );
-
-	if ( config.isEnabled( 'devdocs' ) ) {
-		app.use( require( 'calypso/server/devdocs' ).default() );
-	}
 
 	app.use( api() );
 

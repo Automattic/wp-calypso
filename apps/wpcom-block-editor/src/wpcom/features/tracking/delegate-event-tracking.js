@@ -5,6 +5,7 @@ import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
 import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
+import wpcomBlockEditorMissingBlockActionClick from './wpcom-block-editor-missing-block-action-click';
 import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
 import {
 	wpcomBlockEditorSaveClick,
@@ -72,6 +73,7 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartChooseBubble(),
 	wpcomTemplatePartReplaceBubble(),
 	wpcomBlockEditorListViewSelect(),
+	wpcomBlockEditorMissingBlockActionClick(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
 	wpcomBlockEditorPostPublishAddNewClick(),
 	wpcomBlockEditorSaveClick(),

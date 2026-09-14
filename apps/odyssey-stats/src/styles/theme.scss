@@ -1,13 +1,47 @@
 @import "variables";
+@import "admin-theme-handback";
+@import "calypso/my-sites/stats/interactive-colors";
 
-:root,
-.color-scheme.is-jetpack {
-	@include jetpack-theme-for-odyssey-stats;
+.jp-stats-dashboard {
+	@include odyssey-stats-base-vars;
 }
 
-// Stats Dashboard
+// wp-admin sets the interactive colour on <body>, and Calypso's scheme blocks alias it to the
+// decorative accent on whatever carries `color-scheme is-<scheme>` — which in Odyssey is a nested
+// element, not <body>. Every element `useWPAdminTheme` tags needs the property handed back, or it
+// re-shadows the value for everything inside it: the Stats mount, the <body> child RootChild tags
+// for popovers and dialogs, and three components that tag themselves — the interval dropdown's
+// panel, the UTM builder's modal overlay and the infotip popup.
+//
+// The last three are anchored on `body` because they portal out of the Stats mount, so the CSS
+// scoping would otherwise prefix them into rules asking each element to be its own ancestor.
+@include odyssey-admin-theme-handback(
+	".stats-main.color-scheme",
+	"body > .color-scheme",
+	"body .stats-interval-dropdown__container.color-scheme",
+	"body .stats-utm-builder__overlay.color-scheme",
+	"body .stats-infotip__popup.color-scheme"
+);
+
+// Stats Dashboard, and Stats popups including the date range picker and tooltips.
+//
+// `--wp-components-color-accent` is the first variable @wordpress/components resolves its accent
+// from, so setting it here decides the colour for every design-system control in Stats, not just the
+// ones with a rule of their own. It points at the colour wp-admin publishes for interactive UI so
+// that toggles, checkboxes, selects and the rest follow the surrounding admin, rather than the
+// decorative highlight that fails WCAG AA on several schemes.
 .stats-main.color-scheme,
-// Stats popups including date range picker and tooltips etc.
 .popover.color-scheme {
-	--wp-components-color-accent: var(--color-accent);
+	--wp-components-color-accent: var(--wp-admin-theme-color, var(--color-accent));
+	--wp-components-color-accent-darker-10: var(--wp-admin-theme-color-darker-10, var(--color-accent-60));
+	--wp-components-color-accent-darker-20: var(--wp-admin-theme-color-darker-20, var(--color-accent-60));
+}
+
+// A @wordpress/components Modal puts its overlay on <body> with no scheme class, so the Stats
+// upsell and feedback modals sit outside every root the interactive colours are applied at. Anchored
+// on `body` so the CSS scoping leaves it alone: the overlay is a <body> child, and prefixing would
+// ask it to be a descendant of the Stats mount. Calypso covers the same overlay from
+// client/my-sites/stats/components/stats-main/style.scss, qualified with `.is-section-stats`.
+body .components-modal__screen-overlay {
+	@include stats-interactive-colors;
 }

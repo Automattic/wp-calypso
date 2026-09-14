@@ -1,0 +1,79 @@
+import { useCallback } from '@wordpress/element';
+import CopyActionButton from '../components/copy-action-button';
+import {
+	getDisplayMessageFromToolData,
+	isDisplayableToolMessageTool,
+} from '../utils/tool-message-utils';
+import type { UIMessage } from '@automattic/agenttic-client';
+import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
+
+/**
+ * Extracts copyable text from a message. For tool messages, only known tools with
+ * displayable content are included. Returns an empty string if nothing is copyable.
+ */
+function getCopyableText( message: UIMessage ): string {
+	const textParts = message.content?.filter( ( part ) => part.type === 'text' );
+	if ( ! textParts?.length ) {
+		return '';
+	}
+
+	const copyableTexts: string[] = [];
+
+	for ( const part of textParts ) {
+		const text = part.text ?? '';
+
+		try {
+			const parsed = JSON.parse( text );
+
+			// Tool messages (JSON text with a `tool_id` field).
+			if ( parsed.tool_id ) {
+				if (
+					parsed.tool_id === 'big_sky__wordpress_com_support' &&
+					typeof parsed.data === 'string'
+				) {
+					copyableTexts.push( parsed.data.trim() );
+				} else if ( isDisplayableToolMessageTool( parsed.tool_id ) ) {
+					const toolMessageText = getDisplayMessageFromToolData( parsed.data );
+					if ( toolMessageText ) {
+						copyableTexts.push( toolMessageText );
+					}
+				}
+				// Other tools: skip (not copyable).
+				continue;
+			}
+		} catch {
+			// Not JSON — regular text.
+		}
+
+		copyableTexts.push( text );
+	}
+
+	return copyableTexts.join( '\n' ).trim();
+}
+
+/**
+ * Returns a copy action for agent messages that have copyable text content.
+ */
+export default function useCopyAction(): ( message: UIMessage ) => MessageAction[] {
+	return useCallback( ( message: UIMessage ) => {
+		if ( message.role !== 'agent' ) {
+			return [];
+		}
+
+		const text = getCopyableText( message );
+
+		if ( ! text ) {
+			return [];
+		}
+
+		return [
+			{
+				type: 'component',
+				id: 'copy',
+				component: CopyActionButton,
+				componentProps: { text },
+				order: 4,
+			},
+		];
+	}, [] );
+}

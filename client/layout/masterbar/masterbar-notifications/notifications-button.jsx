@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { wpcomLink } from 'calypso/dashboard/utils/link';
 import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
@@ -18,6 +19,7 @@ class MasterbarItemNotifications extends Component {
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: TranslatableString,
+		ariaLabel: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
@@ -85,7 +87,8 @@ class MasterbarItemNotifications extends Component {
 	render() {
 		const classes = clsx( this.props.className, 'masterbar-notifications', {
 			'is-active':
-				this.props.isNotificationsOpen || window.location.pathname === '/reader/notifications',
+				this.props.isNotificationsOpen ||
+				( typeof window !== 'undefined' && window.location.pathname === '/reader/notifications' ),
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
@@ -93,11 +96,12 @@ class MasterbarItemNotifications extends Component {
 		return (
 			<>
 				<MasterbarItem
-					url="/notifications"
+					url={ wpcomLink( '/notifications' ) }
 					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
+					ariaLabel={ this.props.ariaLabel }
 					className={ classes }
 					key={ this.state.animationState }
 				/>

@@ -1,0 +1,674 @@
+import { Popover } from '@automattic/components';
+import { debounce } from '@wordpress/compose';
+import clsx from 'clsx';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import DateRangePicker from './date-range-picker';
+import DateRangeFooter from './footer';
+import DateRangeHeader from './header';
+import DateRangeInputs from './inputs';
+import Shortcuts from './shortcuts';
+import DateRangeTrigger from './trigger';
+
+import './style.scss';
+
+/**
+ * Module variables
+ */
+const NO_DATE_SELECTED_VALUE = null;
+const POPOVER_GUTTER = 16;
+const noop = () => {};
+
+export class DateRange extends Component {
+	static propTypes = {
+		selectedStartDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		selectedEndDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		selectedShortcutId: PropTypes.string,
+		onDateSelect: PropTypes.func,
+		onDateCommit: PropTypes.func,
+		firstSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		lastSelectableDate: PropTypes.oneOfType( [
+			PropTypes.instanceOf( Date ),
+			PropTypes.instanceOf( moment ),
+		] ),
+		triggerText: PropTypes.func,
+		isCompact: PropTypes.bool,
+		showTriggerClear: PropTypes.bool,
+		renderTrigger: PropTypes.func,
+		renderHeader: PropTypes.func,
+		renderFooter: PropTypes.func,
+		renderInputs: PropTypes.func,
+		displayShortcuts: PropTypes.bool,
+		rootClass: PropTypes.string,
+		useArrowNavigation: PropTypes.bool,
+		overlay: PropTypes.node,
+		customTitle: PropTypes.string,
+		onShortcutClick: PropTypes.func,
+		trackExternalDateChanges: PropTypes.bool,
+		shortcutList: PropTypes.array,
+	};
+
+	static defaultProps = {
+		onDateSelect: noop,
+		onDateCommit: noop,
+		isCompact: false,
+		focusedMonth: null,
+		showTriggerClear: true,
+		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
+		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
+		renderFooter: ( props ) => <DateRangeFooter { ...props } />,
+		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		displayShortcuts: false,
+		rootClass: '',
+		useArrowNavigation: false,
+		overlay: null,
+		customTitle: '',
+		trackExternalDateChanges: false,
+	};
+
+	constructor( props ) {
+		super( props );
+
+		// Define the date range that is selectable (ie: not disabled)
+		const firstSelectableDate =
+			this.props.firstSelectableDate && this.props.moment( this.props.firstSelectableDate );
+		const lastSelectableDate =
+			this.props.lastSelectableDate && this.props.moment( this.props.lastSelectableDate );
+
+		// Clamp start/end dates to ranges (if specified)
+		let startDate =
+			this.props.selectedStartDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
+
+		let endDate =
+			this.props.selectedEndDate == null
+				? NO_DATE_SELECTED_VALUE
+				: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
+						dateFrom: firstSelectableDate,
+						dateTo: lastSelectableDate,
+				  } );
+
+		const selectedShortcutId = this.props.selectedShortcutId || null;
+
+		// Ensure start is before end otherwise flip the values
+		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
+			// flip values via array destructuring (think about it...)
+			[ startDate, endDate ] = [ endDate, startDate ];
+		}
+
+		// Build initial state
+		this.state = {
+			popoverVisible: false,
+			staleStartDate: null,
+			staleEndDate: null,
+			startDate: startDate,
+			endDate: endDate,
+			selectedShortcutId,
+			staleDatesSaved: false,
+			// this needs to be independent from startDate because we must independently validate them
+			// before updating the central source of truth (ie: startDate)
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+			initialStartDate: startDate, // cache values in case we need to reset to them
+			initialEndDate: endDate, // cache values in case we need to reset to them
+			focusedMonth: this.props.focusedMonth,
+			availableWidth: null,
+			numberOfMonths: 2,
+			isPopoverStacked: false,
+		};
+
+		// Ref to the Trigger <button> used to position the Popover component
+		this.triggerButtonRef = createRef();
+		this.throttledHandleResize = debounce( () => {
+			this.setState( this.getOptimisticPopoverLayoutState() );
+		}, 250 );
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	componentDidUpdate() {
+		this.settleLayout();
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	/**
+	 * Opens the popover
+	 * Note this does not commit the current date state
+	 */
+	openPopover = () => {
+		const newState = {
+			popoverVisible: true,
+			...this.getOptimisticPopoverLayoutState(),
+		};
+		if ( this.props.trackExternalDateChanges ) {
+			newState.startDate = this.props.selectedStartDate;
+			newState.endDate = this.props.selectedEndDate;
+			newState.selectedShortcutId = this.props.selectedShortcutId;
+			newState.textInputStartDate = this.toDateString( this.props.selectedStartDate );
+			newState.textInputEndDate = this.toDateString( this.props.selectedEndDate );
+			newState.staleStartDate = this.props.selectedStartDate;
+			newState.staleEndDate = this.props.selectedEndDate;
+		}
+		this.setState( newState );
+	};
+
+	/**
+	 * Closes the popover
+	 * Note this does not commit the current date state
+	 */
+	closePopover = () => {
+		this.setState( {
+			popoverVisible: false,
+		} );
+	};
+
+	/**
+	 * Toggles the popover between open/closed
+	 * Note this does not commit the current date state
+	 */
+	togglePopover = () => {
+		if ( this.state.popoverVisible ) {
+			this.closePopover();
+		} else {
+			this.openPopover();
+		}
+	};
+
+	closePopoverAndRevert = () => {
+		this.closePopover();
+		this.revertDates();
+	};
+
+	closePopoverAndCommit = () => {
+		this.closePopover();
+		this.commitDates();
+	};
+
+	/**
+	 * Updates state with current value of start/end
+	 * text inputs
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
+	 */
+	handleInputChange = ( val, startOrEnd ) => {
+		this.setState( {
+			[ `textInput${ startOrEnd }Date` ]: val,
+			selectedShortcutId: null, // clear any selected shortcut because user is manually entering dates.
+		} );
+	};
+
+	/**
+	 * Updates the state when the date text inputs are blurred
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
+	 */
+	handleInputBlur = ( val, startOrEnd ) => {
+		if ( val === '' ) {
+			return;
+		}
+		const date = this.props.moment( val, this.getLocaleDateFormat() );
+
+		if ( ! date.isValid() ) {
+			return; // bail out
+		}
+
+		// Either `startDate` or `endDate`
+		const stateKey = `${ startOrEnd.toLowerCase() }Date`;
+
+		const isSameDate =
+			this.state[ stateKey ] !== null ? this.state[ stateKey ].isSame( date, 'day' ) : false;
+
+		if ( isSameDate ) {
+			return;
+		}
+		// Should we juggle the dates more??
+		if ( ! this.state.startDate ) {
+			this.setState( {
+				startDate: date,
+			} );
+			return;
+		}
+
+		this.setState( {
+			[ stateKey ]: date,
+		} );
+	};
+
+	/**
+	 * Updates the currently focused date picker month when one of the
+	 * inputs is focused.
+	 * http://react-day-picker.js.org/api/DayPicker/#month
+	 * @param  {string} val        the value of the input
+	 * @param  {string} startOrEnd either "Start" or "End"
+	 */
+	handleInputFocus = ( val, startOrEnd ) => {
+		if ( val === '' ) {
+			return;
+		}
+
+		const date = this.props.moment( val, this.getLocaleDateFormat() );
+
+		if ( ! date.isValid() ) {
+			return; // bail out
+		}
+
+		const numMonthsShowing = this.state.numberOfMonths; // 2 or 1
+
+		// If we focused the endDate and we're showing more than 1 month
+		// then the picker should focus the month before
+		if ( startOrEnd === 'End' && numMonthsShowing > 1 ) {
+			// moment isn't immutable so this modifies
+			// the existing moment instance
+			date.subtract( 1, 'months' );
+		}
+
+		this.setState( {
+			focusedMonth: date.toDate(),
+		} );
+	};
+
+	/**
+	 * Updates the "stale" data to reflect the current start/end dates
+	 * This causes any cached data to be lost and thus the current start/end
+	 * dates are persisted. Typically called when user clicks "Apply"
+	 */
+	commitDates = () => {
+		this.setState(
+			( previousState ) => ( {
+				staleStartDate: previousState.startDate, // update cached stale dates
+				staleEndDate: previousState.endDate, // update cached stale dates
+				staleDatesSaved: false,
+			} ),
+			() => {
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
+				this.closePopover();
+			}
+		);
+	};
+
+	/**
+	 * Reverts current start/end dates to the cache "stale" versions
+	 * Typically required when the user makes a selection but then dismisses
+	 * the DateRange without clicking "Apply"
+	 */
+	revertDates = () => {
+		this.setState(
+			( previousState, props ) => {
+				const startDate = previousState.staleStartDate;
+				const endDate = previousState.staleEndDate;
+				const previousAppliedShortcutId = props.selectedShortcutId;
+
+				const newState = {
+					staleDatesSaved: false,
+					startDate: startDate,
+					endDate: endDate,
+					selectedShortcutId: previousAppliedShortcutId,
+					textInputStartDate: this.toDateString( startDate ),
+					textInputEndDate: this.toDateString( endDate ),
+				};
+
+				return newState;
+			},
+			() => {
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
+			}
+		);
+	};
+
+	/**
+	 * Resets any currently selected (not commmited!) dates
+	 * but leaves stale dates untouched. This makes it possible
+	 * for the user to revert back to the previous dates should
+	 * they so choose. Required for scenario where user selects dates
+	 * then wants to clear that selection entirely but then clicks away
+	 * without selecting any dates
+	 */
+	resetDates = () => {
+		this.setState( ( previousState, props ) => {
+			const startDate = previousState.initialStartDate;
+			const endDate = previousState.initialEndDate;
+			const previousAppliedShortcutId = props.selectedShortcutId;
+
+			const newState = {
+				staleDatesSaved: false,
+				startDate: startDate,
+				endDate: endDate,
+				selectedShortcutId: previousAppliedShortcutId,
+				textInputStartDate: this.toDateString( startDate ),
+				textInputEndDate: this.toDateString( endDate ),
+			};
+
+			return newState;
+		} );
+	};
+
+	/**
+	 * Fully clears all dates to empty values
+	 * affectively saying "get rid of all dates"
+	 */
+	clearDates = () => {
+		this.setState(
+			{
+				startDate: null,
+				endDate: null,
+				selectedShortcutId: null,
+				staleStartDate: null,
+				staleEndDate: null,
+				textInputStartDate: '',
+				textInputEndDate: '',
+			},
+			() => {
+				// Fired to ensure date change is propagated upwards
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
+			}
+		);
+	};
+
+	/**
+	 * Formats a given date to the appropriate format for the
+	 * current locale
+	 * @param  {import('moment').Moment | Date} date the date to be converted
+	 * @returns {string}      the date as a formatted locale string
+	 */
+	formatDateToLocale( date ) {
+		return this.props.moment( date ).format( 'L' );
+	}
+
+	/**
+	 * 	Gets the locale appropriate date format (eg: "MM/DD/YYYY")
+	 * @returns {string} date format as a string
+	 */
+	getLocaleDateFormat() {
+		return this.props.moment.localeData().longDateFormat( 'L' );
+	}
+
+	/**
+	 * Enforces that given date is within the bounds of the
+	 * range specified
+	 * @param  {import('moment').Moment}  date             momentJS instance
+	 * @param  {Object} options          date range
+	 * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
+	 * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
+	 * @returns {import('moment').Moment}                  the date clamped to be within the range
+	 */
+	clampDateToRange( date, { dateFrom, dateTo } ) {
+		// Ensure endDate is within bounds of firstSelectableDate
+		if ( dateFrom && date.isBefore( dateFrom ) ) {
+			date = dateFrom;
+		}
+
+		if ( dateTo && date.isAfter( dateTo ) ) {
+			date = dateTo;
+		}
+
+		return date;
+	}
+
+	/**
+	 * Converts date-like object to a string suitable
+	 * for display in a text input. Also converts
+	 * to locale appropriate format.
+	 * @param  {import('moment').Moment | Date} date the date for conversion
+	 * @returns {string}      the date expressed as a locale appropriate string or if null
+	 *                       then returns the locale format (eg: MM/DD/YYYY)
+	 */
+	toDateString( date ) {
+		if ( this.props.moment.isMoment( date ) || this.props.moment.isDate( date ) ) {
+			return this.formatDateToLocale( this.props.moment( date ) );
+		}
+
+		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
+	}
+
+	getContentAreaElement() {
+		return (
+			this.triggerButtonRef?.current?.closest( '.main, #wpcontent, .layout__content' ) ||
+			document.body
+		);
+	}
+
+	getAvailableWidth() {
+		return this.getContentAreaElement().getBoundingClientRect().width || window.innerWidth;
+	}
+
+	getPopoverAvailableWidth( availableWidth ) {
+		return Math.max( 0, availableWidth - 2 * POPOVER_GUTTER );
+	}
+
+	getOptimisticPopoverLayoutState() {
+		return {
+			availableWidth: this.getAvailableWidth(),
+			numberOfMonths: 2,
+			isPopoverStacked: false,
+		};
+	}
+
+	setPopoverContentRef = ( element ) => {
+		this.popoverContentElement = element;
+
+		if ( element ) {
+			this.settleLayout();
+		}
+	};
+
+	settleLayout = () => {
+		const contentElement = this.popoverContentElement;
+		if ( ! this.state.popoverVisible || ! contentElement ) {
+			return;
+		}
+
+		// Ignore a single pixel of overflow caused by subpixel layout rounding.
+		if ( contentElement.scrollWidth <= contentElement.clientWidth + 1 ) {
+			return;
+		}
+
+		// A settle cycle only degrades; open and resize restore the optimistic layout.
+		if ( this.state.numberOfMonths === 2 ) {
+			this.setState( { numberOfMonths: 1 } );
+		} else if ( ! this.state.isPopoverStacked ) {
+			this.setState( { isPopoverStacked: true } );
+		}
+	};
+
+	handleDateRangeChange = ( startDate, endDate ) => {
+		this.setState( {
+			startDate,
+			endDate,
+			selectedShortcutId: null,
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+		} );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	};
+
+	handleDateRangeChangeByShortcutClick = ( startDate, endDate, shortcut ) => {
+		this.handleDateRangeChange( startDate, endDate );
+
+		this.setState( {
+			selectedShortcutId: shortcut.id,
+		} );
+	};
+
+	// Expose both close helpers to the parent component for shortcut clicks.
+	// Commit applies the shortcut's range; the plain close neither commits nor
+	// reverts (used by shortcuts that navigate elsewhere, e.g. "All time" —
+	// revert would fire onDateCommit with the stale range and navigate back).
+	handleShortcutClick = ( shortcut ) => {
+		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit, this.closePopover );
+	};
+
+	/**
+	 * Renders the Popover component
+	 * @returns {import('react').Element} the Popover component
+	 */
+	renderPopover() {
+		const popoverMaxWidth =
+			this.state.availableWidth != null
+				? this.getPopoverAvailableWidth( this.state.availableWidth )
+				: undefined;
+		const headerProps = {
+			customTitle: this.props.customTitle,
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
+			resetDates: this.resetDates,
+		};
+
+		const footerProps = {
+			onApplyClick: this.commitDates,
+			onCancelClick: this.closePopoverAndRevert,
+			isApplyDisabled: Boolean( this.state.startDate ) !== Boolean( this.state.endDate ),
+		};
+
+		const inputsProps = {
+			startDateValue: this.state.textInputStartDate,
+			endDateValue: this.state.textInputEndDate,
+			onInputChange: this.handleInputChange,
+			onInputBlur: this.handleInputBlur,
+			onInputFocus: this.handleInputFocus,
+		};
+
+		return (
+			<Popover
+				className={ clsx( 'date-range__popover', {
+					'date-range__popover--stacked': this.state.isPopoverStacked,
+				} ) }
+				isVisible={ this.state.popoverVisible }
+				context={ this.triggerButtonRef.current }
+				leftBoundary={ () => {
+					const contentAreaRect = this.getContentAreaElement().getBoundingClientRect();
+					return contentAreaRect.left + window.scrollX + POPOVER_GUTTER;
+				} }
+				rightBoundary={ () => {
+					const contentAreaRect = this.getContentAreaElement().getBoundingClientRect();
+					return contentAreaRect.left + contentAreaRect.width + window.scrollX - POPOVER_GUTTER;
+				} }
+				position="bottom"
+				onClose={ this.closePopover }
+			>
+				<div
+					ref={ this.setPopoverContentRef }
+					className="date-range__popover-content"
+					style={ popoverMaxWidth != null ? { maxWidth: popoverMaxWidth } : undefined }
+				>
+					<div
+						className={ clsx( 'date-range__popover-inner', {
+							'date-range__popover-inner__hasoverlay': !! this.props.overlay,
+						} ) }
+					>
+						{ this.props.overlay && (
+							<div className="date-range__popover-inner-overlay">{ this.props.overlay }</div>
+						) }
+						<div { ...( this.props.overlay && { 'aria-hidden': true, inert: '' } ) }>
+							{ this.props.renderHeader( headerProps ) }
+							{ this.props.renderInputs( inputsProps ) }
+							{ this.renderDatePicker() }
+							{ this.props.renderFooter( footerProps ) }
+						</div>
+					</div>
+					{ /* Render shortcuts to the right of the calendar */ }
+					{ this.props.displayShortcuts && (
+						<div className="date-range-picker-shortcuts">
+							<Shortcuts
+								selectedShortcutId={ this.state.selectedShortcutId }
+								shortcutList={ this.props.shortcutList }
+								onClick={ this.handleDateRangeChangeByShortcutClick }
+								locked={ !! this.props.overlay }
+								startDate={ this.state.startDate }
+								endDate={ this.state.endDate }
+								onShortcutClick={ this.handleShortcutClick } // for tracking shortcut clicks
+							/>
+						</div>
+					) }
+				</div>
+			</Popover>
+		);
+	}
+
+	/**
+	 * Renders the DatePicker component
+	 * @returns {import('react').Element} the DatePicker component
+	 */
+	renderDatePicker() {
+		return (
+			<DateRangePicker
+				firstSelectableDate={ this.props.firstSelectableDate }
+				lastSelectableDate={ this.props.lastSelectableDate }
+				selectedStartDate={ this.state.startDate }
+				selectedEndDate={ this.state.endDate }
+				onDateRangeChange={ this.handleDateRangeChange }
+				focusedMonth={ this.state.focusedMonth }
+				numberOfMonths={ this.state.numberOfMonths }
+				useArrowNavigation={ this.props.useArrowNavigation }
+			/>
+		);
+	}
+
+	/**
+	 * Renders the component
+	 * @returns {import('react').Element} the DateRange component
+	 */
+	render() {
+		const rootClassNames = clsx(
+			{
+				'date-range': true,
+				'toggle-visible': this.state.popoverVisible,
+			},
+			this.props.rootClass
+		);
+
+		const triggerProps = {
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
+			startDateText: this.toDateString( this.state.startDate ),
+			endDateText: this.toDateString( this.state.endDate ),
+			buttonRef: this.triggerButtonRef,
+			onTriggerClick: this.togglePopover,
+			onClearClick: this.clearDates,
+			triggerText: this.props.triggerText,
+			isCompact: this.props.isCompact,
+			showClearBtn: this.props.showTriggerClear,
+		};
+
+		return (
+			<div className={ rootClassNames }>
+				{ this.props.renderTrigger( triggerProps ) }
+				{ this.renderPopover() }
+			</div>
+		);
+	}
+}
+
+export default localize( withLocalizedMoment( DateRange ) );

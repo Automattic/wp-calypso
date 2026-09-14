@@ -1,3 +1,51 @@
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-scan {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
+
+	.scan__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
+
+}
+
+// Card on both Calypso and A4A needs flex
+body.is-section-scan,
+.hosting-dashboard-item-view__content {
+
+	.scan__content > .card {
+
+		.security-icon {
+			margin: 0 auto;
+			padding: 0;
+		}
+
+		@include break-mobile {
+			display: flex;
+			gap: 24px;
+			align-items: flex-start;
+			justify-content: center;
+
+			.scan__header {
+				flex-shrink: 0;
+			}
+
+			.security-icon {
+				width: 48px;
+				margin: 0;
+			}
+		}
+	}
+}
+
 .scan .formatted-header.is-left-align {
 	margin-top: 20px;
 
@@ -147,6 +195,64 @@
 	.security-icon {
 		height: 120px;
 		width: auto;
+	}
+
+	.scan__upsell-callout {
+		display: flex;
+		align-items: stretch;
+		gap: 24px;
+		max-width: 600px;
+		margin-block: 48px;
+		margin-inline: auto;
+		padding: 24px;
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		background: var(--color-surface);
+
+		@include breakpoint-deprecated( "<660px" ) {
+			flex-direction: column;
+		}
+	}
+
+	.scan__upsell-callout-content {
+		display: flex;
+		flex: 1 1 0;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.scan__upsell-callout-icon {
+		fill: var(--color-text);
+	}
+
+	.scan__upsell-callout-title {
+		@include heading-large;
+		margin: 0;
+		color: var(--color-text);
+	}
+
+	.scan__upsell-callout-description {
+		@include body-medium;
+		margin: 0;
+		color: var(--color-text-subtle);
+	}
+
+	.scan__upsell-callout-image {
+		position: relative;
+		flex: 1 1 0;
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
 	}
 }
 

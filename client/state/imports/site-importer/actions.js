@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { get } from 'lodash';
 import { stringify } from 'qs';
 import { convertPlatformName } from 'calypso/blocks/import/util.ts';
 import { prefetchmShotsPreview } from 'calypso/lib/mshots';
@@ -65,7 +64,7 @@ export const setValidationError = ( message ) => ( {
 export const startMappingSiteImporterAuthors =
 	( { importerStatus, site, targetSiteUrl } ) =>
 	( dispatch, getState ) => {
-		const singleAuthorSite = get( site, 'single_user_site', true );
+		const singleAuthorSite = site?.single_user_site ?? true;
 		const siteId = site.ID;
 		const { importerId } = importerStatus;
 
@@ -76,7 +75,7 @@ export const startMappingSiteImporterAuthors =
 				...currentUserData,
 				name: currentUserData.display_name,
 			};
-			const sourceAuthors = get( importerStatus, 'customData.sourceAuthors', [] );
+			const sourceAuthors = importerStatus?.customData?.sourceAuthors ?? [];
 
 			// map all the authors to the current user
 			// TODO: when converting to redux, allow for multiple mappings in a single action
@@ -86,7 +85,7 @@ export const startMappingSiteImporterAuthors =
 
 			// Check if all authors are mapped before starting the import.
 			const newState = getImporterStatus( getState(), importerId );
-			const areAllAuthorsMapped = get( newState, 'customData.sourceAuthors', [] ).every(
+			const areAllAuthorsMapped = ( newState?.customData?.sourceAuthors ?? [] ).every(
 				( { mappedTo } ) => mappedTo
 			);
 

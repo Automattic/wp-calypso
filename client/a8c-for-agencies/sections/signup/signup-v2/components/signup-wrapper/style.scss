@@ -209,6 +209,27 @@
 	}
 }
 
+.signup-wrapper__loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 400px;
+
+	.signup-wrapper__loader-logo {
+		animation: signup-loader-pulse 1.5s ease-in-out infinite alternate;
+	}
+}
+
+@keyframes signup-loader-pulse {
+	0% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 .blueprint-form__radio-group {
 	display: flex;
 	flex-direction: column;

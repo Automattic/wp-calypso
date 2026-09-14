@@ -7,7 +7,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
-	getPlanPath,
 	getYearlyPlanByMonthly,
 	isMonthly,
 	planMatches,
@@ -17,7 +16,6 @@ import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { compact } from 'lodash';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -49,6 +47,7 @@ import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
 import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
 import EarnLaunchpad from './launchpad';
+import { getUpsellCheckoutQueryArgs, getUpsellReturnUrl } from './upsell-return-url';
 
 import './style.scss';
 
@@ -181,13 +180,14 @@ const Home = () => {
 					},
 			  }
 			: {
-					text: translate( 'Unlock this feature' ),
+					text: translate( 'Upgrade' ),
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						const url = addQueryArgs( `/plans/${ site?.slug }`, {
 							feature: FEATURE_SIMPLE_PAYMENTS,
 							plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							redirect_to: getUpsellReturnUrl(),
 						} );
 						/**
 						 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
@@ -402,19 +402,24 @@ const Home = () => {
 					disabled: isPeerReferralCtaDisabled,
 			  }
 			: {
-					text: translate( 'Unlock this feature' ),
+					text: translate( 'Upgrade' ),
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug ? getPlanPath( annualPlanSlug ) : undefined;
+							const planPath = annualPlanSlug || undefined;
 							if ( planPath ) {
-								page( `/checkout/${ site.slug }/${ planPath }` );
+								page(
+									addQueryArgs(
+										`/checkout/${ site.slug }/${ planPath }`,
+										getUpsellCheckoutQueryArgs()
+									)
+								);
 								return;
 							}
 						}
-						page( `/plans/${ site?.slug }` );
+						page( addQueryArgs( `/plans/${ site?.slug }`, { redirect_to: getUpsellReturnUrl() } ) );
 					},
 			  };
 
@@ -479,13 +484,14 @@ const Home = () => {
 						},
 				  }
 				: {
-						text: translate( 'Unlock this feature' ),
+						text: translate( 'Upgrade' ),
 						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
 							const url = addQueryArgs( `/plans/${ site?.slug }`, {
 								feature: FEATURE_WORDADS_INSTANT,
 								plan: PLAN_PREMIUM,
+								redirect_to: getUpsellReturnUrl(),
 							} );
 							/**
 							 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
@@ -538,7 +544,7 @@ const Home = () => {
 	};
 
 	const promos: PromoSectionProps = {
-		promos: compact( [
+		promos: [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
 			getPremiumContentCard(),
@@ -546,7 +552,7 @@ const Home = () => {
 			getSimplePaymentsCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
-		] ),
+		].filter( ( card ): card is PromoSectionCardProps => Boolean( card ) ),
 	};
 
 	if ( ! isUserAdmin ) {

@@ -12,3 +12,4 @@ export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as resolveRelativePath } from './resolve-relative-path';
 export { pathToUrl } from './path-to-url';
+export { default as toCalypsoHref } from './to-calypso-href';

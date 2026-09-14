@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/variables';
 
 /**
- * DotCom theme variables for dashboard
+ * CIAB theme variables for dashboard
  */
 
 :root {
@@ -24,6 +24,10 @@
 	--dashboard__foreground-color-warning: #b36100;
 	--dashboard__foreground-color-error: #{$alert-red};
 	--dashboard__text-color: #{$gray-900};
+	--dashboard__text-muted-color: #757575;
+	--dashboard-subtle__color: var( --dashboard__text-muted-color );
+	--dashboard-surface__background-color: #{$white};
+	--dashboard-surface__border-color: #{$gray-200};
 
 	// Header bar
 	--dashboard-header__background-color: #{$gray-100};
@@ -33,11 +37,8 @@
 	--dashboard-header__divider-color: #{$gray-900};
 
 	// Menu
-	--dashboard-menu-item__color: #{$gray-700};
+	--dashboard-menu-item__color: var( --wpds-color-fg-interactive-neutral-weak, #707070 );
 	--dashboard-menu-item-active__color: #{$gray-900};
-
-	// Secondary menu
-	--dashboard-secondary-menu-item__color: #{$gray-900};
 
 	// Headings
 	--dashboard-h1__font-size: 40px;

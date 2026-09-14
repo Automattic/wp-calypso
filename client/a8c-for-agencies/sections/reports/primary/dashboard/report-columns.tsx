@@ -1,14 +1,17 @@
-import { type BadgeType, Gridicon, Tooltip } from '@automattic/components';
+import { Tooltip } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
+import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import { getTimeframeText } from 'calypso/a8c-for-agencies/sections/reports/lib/timeframes';
 import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { ReportStatus } from '../../types';
 
-export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( site );
+export const ReportSiteColumn = ( { site }: { site: string } ) => (
+	<span className="reports-list__site">{ urlToSlug( site ) }</span>
+);
 
 export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
@@ -26,28 +29,28 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 	const translate = useTranslate();
 
 	const statusConfig = {
-		pending: { type: 'info', text: translate( 'Preparing' ) },
-		processed: { type: 'success', text: translate( 'Ready to send' ) },
-		sent: { type: 'success', text: translate( 'Sent' ) },
-		error: { type: 'error', text: translate( 'Error' ) },
+		pending: { intent: 'informational' as const, text: translate( 'Preparing' ) },
+		processed: { intent: 'stable' as const, text: translate( 'Ready to send' ) },
+		sent: { intent: 'stable' as const, text: translate( 'Sent' ) },
+		error: { intent: 'high' as const, text: translate( 'Error' ) },
 	};
 
 	const config = statusConfig[ status ];
 
 	if ( ! config ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
-	return <StatusBadge statusProps={ { children: config.text, type: config.type as BadgeType } } />;
+	return <Badge intent={ config.intent }>{ config.text }</Badge>;
 };
 
 export const ReportDateColumn = ( { date }: { date: number | null } ) => {
 	if ( ! date ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	const dateObj = new Date( date * 1000 );
-	return <FormattedDate date={ dateObj } format="DD MMM YYYY HH:mm" />;
+	return <FormattedDate date={ dateObj } format="ll HH:mm" />;
 };
 
 export const ReportTimeframeColumn = ( {
@@ -83,8 +86,8 @@ export const ReportTimeframeColumn = ( {
 					{ timeframeText }
 				</span>
 				<Tooltip context={ tooltipRef.current } isVisible={ showTooltip } position="top">
-					<FormattedDate date={ startDateObj } format="DD MMM YYYY" /> -
-					<FormattedDate date={ endDateObj } format="DD MMM YYYY" />
+					<FormattedDate date={ startDateObj } format="ll" /> -
+					<FormattedDate date={ endDateObj } format="ll" />
 				</Tooltip>
 			</>
 		);
@@ -99,7 +102,7 @@ export const ReportClientEmailsColumn = ( { emails }: { emails: string[] } ) => 
 	const translate = useTranslate();
 
 	if ( ! emails || emails.length === 0 ) {
-		return <Gridicon icon="minus" />;
+		return <EmptyValueIndicator />;
 	}
 
 	if ( emails.length === 1 ) {

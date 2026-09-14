@@ -1,5 +1,7 @@
 module.exports = {
 	rules: {
+		'wpcalypso/no-conditional-text-nodes-with-siblings': 'error',
+		'wpcalypso/no-return-text-nodes': 'error',
 		'no-restricted-imports': [
 			'error',
 			{
@@ -13,17 +15,24 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
+							// Allowed: calypso/lib/ai-launchpad
 							// Allowed: calypso/lib/explat
+							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
 							// Allowed: calypso/lib/logstash
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
+							'!calypso/lib/ai-launchpad',
+							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							// Allowed: calypso/lib/use-site-launch-gating-variant (temporary)
+							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
+							'!calypso/lib/version-compare',
 							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
@@ -55,6 +64,8 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/components/src/resurrected-welcome-modal',
+							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
@@ -63,11 +74,20 @@ module.exports = {
 							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
+							'!@automattic/language-picker',
 							'!@automattic/load-script',
+							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
+							'!@automattic/onboarding',
+							'@automattic/onboarding/*',
+							'!@automattic/onboarding/src',
+							'@automattic/onboarding/src/*',
+							'!@automattic/onboarding/src/utils',
+							'@automattic/onboarding/src/utils/*',
+							'!@automattic/onboarding/src/utils/email-validation',
 							'!@automattic/search',
-							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
+							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
@@ -76,16 +96,13 @@ module.exports = {
 							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
+							'!@automattic/omnibar',
 							'!@automattic/posthog',
+							'!@automattic/site-launch-modals',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
-					},
-					{
-						group: [ 'lodash' ],
-						message:
-							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
 					},
 				],
 				paths: [
@@ -94,17 +111,24 @@ module.exports = {
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
 					},
 					{
+						name: 'calypso/lib/color-scheme',
+						importNames: [ 'ClassicColorSchemeProvider' ],
+						message:
+							'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
+					},
+					{
 						name: '@automattic/components',
 						message:
 							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
 					},
 					{
-						name: 'i18n-calypso',
-						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
+						name: '@automattic/onboarding',
+						message:
+							'Do not import from the barrel file. Only @automattic/onboarding/src/utils/email-validation is allowed in the dashboard; the rest of the package carries Calypso onboarding concepts.',
 					},
 					{
-						name: 'lodash',
-						message: 'Please use native JavaScript instead of lodash.',
+						name: 'i18n-calypso',
+						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
 					},
 					{
 						name: 'moment',
@@ -121,6 +145,12 @@ module.exports = {
 							'CardMedia',
 						],
 						message: 'Use local components exported from client/dashboard/components/card instead.',
+					},
+					{
+						name: '@tanstack/react-router',
+						importNames: [ 'redirect' ],
+						message:
+							'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 					},
 					{
 						name: '@automattic/api-queries',
@@ -168,5 +198,15 @@ module.exports = {
 			},
 		],
 		'@tanstack/query/exhaustive-deps': 'error',
+		'no-restricted-syntax': [
+			'error',
+			{
+				// Spreading an api-queries factory and then setting `meta` replaces the
+				// whole object, dropping the factory's `meta.statId`.
+				selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+				message:
+					'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+			},
+		],
 	},
 };

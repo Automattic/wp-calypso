@@ -65,7 +65,9 @@ export default function BlazeDisabled() {
 						</svg>
 					</div>
 					<h3 className="setup-pages__title wp-brand-font">
-						{ translate( 'Set up Blaze and start advertising' ) }
+						{ translate( 'Set up %(productName)s and start advertising', {
+							args: { productName: 'Blaze Ads' },
+						} ) }
 					</h3>
 					<p className="setup-pages__body">
 						{ translate(
@@ -92,7 +94,11 @@ export default function BlazeDisabled() {
 						</li>
 						<li>
 							<span>2</span>
-							<div>{ translate( 'Set Blaze as active.' ) }</div>
+							<div>
+								{ translate( 'Set %(productName)s as active.', {
+									args: { productName: 'Blaze Ads' },
+								} ) }
+							</div>
 						</li>
 						<li>
 							<span>3</span>

@@ -6,10 +6,10 @@ import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
-import { ADD_NEW_TAB, REDDIT_TAB } from 'calypso/reader/discover/helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
+import { FreshlyPressedBadge } from './freshly-pressed-badge';
 
 /**
  * Rather than create complex logic to create context or pass props
@@ -21,17 +21,7 @@ const shouldShowFollowButton = () => {
 		return false;
 	}
 
-	// Do not show if the user is not on the discover page.
-	if ( path[ 1 ] !== 'discover' ) {
-		return false;
-	}
-
-	// Do not show for feed previews available on the "Add New" and "Reddit" tab.
-	if ( [ ADD_NEW_TAB, REDDIT_TAB ].includes( path[ 2 ] ) ) {
-		return false;
-	}
-
-	return true;
+	return path[ 1 ] === 'discover';
 };
 
 const CompactPost = ( props ) => {
@@ -45,13 +35,14 @@ const CompactPost = ( props ) => {
 		postByline,
 		teams,
 		openSuggestedFollows,
+		freshlyPressedOn,
 	} = props;
 
 	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
-	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded ?? true );
+	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded );
 	const imagePostWithoutExcerpt = ( post.canonical_media && ! hasExcerpt ) || ! showExcerpt;
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
@@ -100,6 +91,7 @@ const CompactPost = ( props ) => {
 				<div className="reader-post-card__post-details">
 					<div className="reader-post-card__post-heading">
 						<div className="reader-post-card__post-title-meta">
+							{ freshlyPressedOn && <FreshlyPressedBadge displayedOn={ freshlyPressedOn } /> }
 							<AutoDirection>
 								<h2 className="reader-post-card__title">
 									<a className="reader-post-card__title-link" href={ post.URL }>
@@ -143,6 +135,7 @@ CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
 	postByline: PropTypes.object,
 	openSuggestedFollows: PropTypes.func,
+	freshlyPressedOn: PropTypes.string,
 };
 
 export default CompactPost;

@@ -104,7 +104,7 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
         </div>
       </div>
       <button
-        class="cookie-banner__accept-selection-button"
+        class="a8c-cookie-banner__button cookie-banner__accept-selection-button"
       >
         acceptSelectionButton
       </button>
@@ -130,12 +130,12 @@ exports[`CookieBanner renders in simple consent correctly 1`] = `
         class="cookie-banner__button-container"
       >
         <button
-          class="cookie-banner__customize-button"
+          class="a8c-cookie-banner__button cookie-banner__customize-button"
         >
           customizeButton
         </button>
         <button
-          class="cookie-banner__accept-all-button"
+          class="a8c-cookie-banner__button cookie-banner__accept-all-button"
         >
           acceptAllButton
         </button>

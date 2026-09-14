@@ -1,9 +1,13 @@
-import renderer from 'react-test-renderer';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import GSuiteLearnMore from '../';
 
 describe( 'GSuiteLearnMore', () => {
 	test( 'it renders GSuiteLearnMore with no props', () => {
-		const tree = renderer.create( <GSuiteLearnMore /> ).toJSON();
-		expect( tree ).toMatchSnapshot();
+		const { container } = render( <GSuiteLearnMore /> );
+
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 } );

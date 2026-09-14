@@ -1,4 +1,5 @@
 import type { Preference } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type { JSX } from 'react';
 
 const ONE_DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 

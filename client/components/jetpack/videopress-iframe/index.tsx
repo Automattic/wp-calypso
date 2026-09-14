@@ -6,18 +6,18 @@ interface Props {
 	videoURL: string;
 	title?: string;
 	className?: string;
-	maintainAspectRatio: boolean;
-	fullWidth: boolean;
-	allowFullScreen: boolean;
+	maintainAspectRatio?: boolean;
+	fullWidth?: boolean;
+	allowFullScreen?: boolean;
 }
 
 const VideoPressIframe = ( {
 	videoURL,
 	title,
 	className,
-	maintainAspectRatio,
-	fullWidth,
-	allowFullScreen,
+	maintainAspectRatio = true,
+	fullWidth = true,
+	allowFullScreen = true,
 }: Props ) => {
 	return (
 		<iframe
@@ -34,12 +34,6 @@ const VideoPressIframe = ( {
 			allowFullScreen={ allowFullScreen }
 		></iframe>
 	);
-};
-
-VideoPressIframe.defaultProps = {
-	maintainAspectRatio: true,
-	fullWidth: true,
-	allowFullScreen: true,
 };
 
 export default VideoPressIframe;

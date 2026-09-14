@@ -17,6 +17,7 @@ describe( 'Phone Validation Library', () => {
 	test.each( [
 		{ country: 'UK', input: '+447941952721' }, // Valid United Kingdom number
 		{ country: 'US', input: '+14631234567' }, // Valid United States number
+		{ country: 'US', input: '+13502197449' }, // Valid United States 350 area code (CA, assigned 2022)
 		{ country: 'AR', input: '+542231234567' }, // Valid Argentina without leading 9
 		{ country: 'AR', input: '+5492231234567' }, // Valid Argentina with leading 9
 		{ country: 'HR', input: '+38598123456' }, // Valid Croatian number

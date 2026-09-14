@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -24,15 +25,12 @@ export default function EnableSftpCard( {
 	siteId: number;
 	canUseSsh: boolean;
 } ) {
-	const mutation = useMutation( {
-		...siteSftpUsersCreateMutation( siteId ),
-		meta: {
-			snackbar: {
-				success: __( 'SFTP/SSH credentials saved.' ),
-				error: __( 'Failed to save SFTP/SSH credentials. Please refresh the page and try again.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteSftpUsersCreateMutation( siteId ), {
+			success: __( 'SFTP/SSH credentials saved.' ),
+			error: __( 'Failed to save SFTP/SSH credentials. Please refresh the page and try again.' ),
+		} )
+	);
 
 	const handleCreateCredentials = () => {
 		mutation.mutate( undefined );

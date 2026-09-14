@@ -1,44 +1,46 @@
-import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { Link } from '@tanstack/react-router';
+import { cancelPurchaseRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import {
-	hasAmountAvailableToRefund,
-	shouldShowRefundEligibilityNotice,
-} from '../../../utils/purchase';
+import { hasAmountAvailableToRefund } from '../../../utils/purchase';
+import { getRefundEligibilityPromoCopy, getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
-interface RefundEligibilityNoticeProps {
-	purchase: Purchase;
-	onClaimRefund: () => void;
-}
+type RefundEligibilityNoticeProps =
+	| { mode?: 'confirmed'; purchase: Purchase }
+	| { mode: 'refund-eligibility'; purchase: Purchase };
 
-export default function RefundEligibilityNotice( {
-	purchase,
-	onClaimRefund,
-}: RefundEligibilityNoticeProps ) {
-	if (
-		! shouldShowRefundEligibilityNotice( purchase ) ||
-		! hasAmountAvailableToRefund( purchase )
-	) {
+export default function RefundEligibilityNotice( props: RefundEligibilityNoticeProps ) {
+	const { purchase } = props;
+
+	if ( ! hasAmountAvailableToRefund( purchase ) ) {
 		return null;
 	}
 
-	return (
-		<Notice variant="info">
-			{ createInterpolateElement(
-				/* translators: <refundAmount /> is a monetary amount in the form "[currency-symbol][amount]" */
-				__(
-					"You're eligible for a <refundAmount /> refund if you remove your plan now. Your features will be unavailable right away."
-				),
-				{
-					refundAmount: <RefundAmountString purchase={ purchase } cancelBundledDomain={ false } />,
+	const refundAmount = RefundAmountString( { purchase, cancelBundledDomain: false } );
+	if ( ! refundAmount ) {
+		return null;
+	}
+
+	if ( props.mode === 'refund-eligibility' ) {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount } );
+		return (
+			<Notice
+				variant="info"
+				actions={
+					<Link
+						to={ cancelPurchaseRoute.fullPath }
+						params={ { purchaseId: String( purchase.ID ) } }
+						search={ { intent: 'remove' as const } }
+					>
+						{ linkLabel }
+					</Link>
 				}
-			) }{ ' ' }
-			<Button variant="link" onClick={ onClaimRefund }>
-				{ __( 'Remove plan and claim refund' ) }
-			</Button>
-		</Notice>
-	);
+			>
+				{ prompt }
+			</Notice>
+		);
+	}
+
+	return <Notice variant="info">{ getRefundNoticeCopy( { purchase, refundAmount } ) }</Notice>;
 }

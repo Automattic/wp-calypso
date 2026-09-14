@@ -2,7 +2,7 @@
  * Tests for tool provider utilities
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
-import { registerUpdateCanvasImageAbility } from '../abilities';
+import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
 import {
 	ALLOWED_ABILITIES,
 	initializeAbilities,
@@ -20,6 +20,7 @@ jest.mock( '@wordpress/abilities', () => ( {
 // Mock abilities registration
 jest.mock( '../abilities', () => ( {
 	registerUpdateCanvasImageAbility: jest.fn(),
+	registerUpdateCanvasVideoAbility: jest.fn(),
 } ) );
 
 // Mock console methods
@@ -40,6 +41,7 @@ describe( 'Tool Provider', () => {
 		it( 'should define allowed abilities list', () => {
 			expect( ALLOWED_ABILITIES ).toEqual( [
 				'image-studio/update-canvas-image',
+				'image-studio/update-canvas-video',
 				'image-studio/render-images',
 			] );
 		} );
@@ -50,6 +52,7 @@ describe( 'Tool Provider', () => {
 			await initializeAbilities();
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 			expect( consoleLogSpy ).toHaveBeenCalledWith( '[Image Studio] Abilities registered' );
 
 			// Call again - should not register again
@@ -57,6 +60,7 @@ describe( 'Tool Provider', () => {
 			await initializeAbilities();
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

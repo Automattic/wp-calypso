@@ -1,9 +1,9 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { orderBy } from '@automattic/js-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { orderBy } from 'lodash';
 import { useState, useEffect, useCallback } from 'react';
 import { shallowEqual } from 'react-redux';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
@@ -49,7 +49,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	const paid_subscriptions = useSelector(
 		( state ) => getOwnershipsForSiteId( state, site?.ID ),
 		shallowEqual
-	);
+	) as Record< string, PaidSubscription >;
 
 	const totalSubscribers = useSelector( ( state ) =>
 		getTotalSubscribersForSiteId( state, site?.ID )

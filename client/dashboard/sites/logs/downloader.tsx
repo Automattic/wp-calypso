@@ -271,7 +271,7 @@ export function LogsDownloader( {
 							? sprintf(
 									/* translators: %s: percentage value */
 									__( '%s%% downloaded' ),
-									Math.round( progress * 100 )
+									String( Math.round( progress * 100 ) )
 							  )
 							: label
 					}

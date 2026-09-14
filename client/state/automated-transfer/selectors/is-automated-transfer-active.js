@@ -19,6 +19,7 @@ export const isActive = ( status ) =>
 				transferStates.REVERTED,
 				transferStates.CONFLICTS,
 				transferStates.INQUIRING,
+				transferStates.CLIENT_TIMEOUT,
 		  ].includes( status )
 		: false;
 /**

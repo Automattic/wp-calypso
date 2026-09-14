@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WordPressWordmark, WordPressLogo } from '@automattic/components';
 import {
 	isDefaultLocale,
@@ -13,9 +12,11 @@ import { withCurrentRoute } from 'calypso/components/route';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import EmptyMasterbar from './empty';
 import Item from './item';
 import Masterbar from './masterbar';
+
+const loadCheckout = () =>
+	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
 
 class MasterbarLoggedOut extends Component {
 	static propTypes = {
@@ -25,7 +26,6 @@ class MasterbarLoggedOut extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
-		isCIABSite: PropTypes.bool,
 
 		// Connected props
 		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -38,23 +38,9 @@ class MasterbarLoggedOut extends Component {
 		title: '',
 	};
 
-	renderTagsItem() {
-		const { translate } = this.props;
-		const tagsUrl = addLocaleToPathLocaleInFront( '/tags' );
-
-		return (
-			<Item url={ tagsUrl }>
-				{ translate( 'Popular Tags', {
-					context: 'Toolbar',
-					comment: 'Should be shorter than ~15 chars',
-				} ) }
-			</Item>
-		);
-	}
-
 	renderSearchItem() {
 		const { translate } = this.props;
-		const searchUrl = addLocaleToPathLocaleInFront( '/reader/search' );
+		const searchUrl = addLocaleToPathLocaleInFront( '/discover/search' );
 
 		return (
 			<Item url={ searchUrl }>
@@ -114,23 +100,6 @@ class MasterbarLoggedOut extends Component {
 					comment: 'Should be shorter than ~12 chars',
 				} ) }
 			</Item>
-		);
-	}
-
-	renderHelpCenter() {
-		if ( ! isEnabled( 'help-center/logged-out' ) ) {
-			return null;
-		}
-
-		const { siteId, translate } = this.props;
-
-		return (
-			<AsyncLoad
-				require="./masterbar-help-center"
-				siteId={ siteId }
-				tooltip={ translate( 'Help' ) }
-				placeholder={ null }
-			/>
 		);
 	}
 
@@ -234,18 +203,12 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName, isCIABSite } =
-			this.props;
-
-		// Hide the masterbar entirely during checkout CIAB flows; they will use TopBar instead
-		if ( ( isCheckout || isCheckoutPending ) && isCIABSite ) {
-			return <EmptyMasterbar />;
-		}
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
-					require="calypso/layout/masterbar/checkout.tsx"
+					require={ loadCheckout }
 					placeholder={ null }
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }
@@ -261,7 +224,6 @@ class MasterbarLoggedOut extends Component {
 				{ sectionName === 'reader' && (
 					<div className="masterbar__login-links">
 						{ this.renderDiscoverItem() }
-						{ this.renderTagsItem() }
 						{ this.renderSearchItem() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
@@ -269,7 +231,6 @@ class MasterbarLoggedOut extends Component {
 				) }
 				{ sectionName !== 'reader' && (
 					<div className="masterbar__login-links">
-						{ this.renderHelpCenter() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
 					</div>

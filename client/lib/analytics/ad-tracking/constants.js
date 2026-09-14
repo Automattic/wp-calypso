@@ -40,6 +40,7 @@ export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
 export const PARSLEY_SCRIPT_URL = 'https://cdn.parsely.com/keys/wordpress.com/p.js?ver=3.3.2';
 // We're storing the pixel ID separately to reuse it, but it needs to be passed in the URL.
 export const TIKTOK_SCRIPT_URL = 'https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=';
+export const OPENAI_SCRIPT_URL = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
 	criteo: '31321',
@@ -47,7 +48,6 @@ export const TRACKING_IDS = {
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
 	facebookAkismetInit: '485349158311379',
-	logRocket: 'fsw5w8/jetpack-logrocket-trial',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',
@@ -78,6 +78,7 @@ export const TRACKING_IDS = {
 	parselyTracker: 'wordpress.com',
 	wpcomLinkedinId: '7224796',
 	tiktokPixelId: 'D5JLDS3C77UAODHQ56P0',
+	openAIPixelId: 'P5UDeK78Yenagza4gXqkds',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';

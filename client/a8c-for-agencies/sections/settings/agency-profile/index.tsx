@@ -1,7 +1,9 @@
+import { __ } from '@wordpress/i18n';
+
 const AgencyProfile = () => {
 	return (
 		<div>
-			<h2>Agency Profile Form</h2>
+			<h2>{ __( 'Agency profile form' ) }</h2>
 		</div>
 	);
 };

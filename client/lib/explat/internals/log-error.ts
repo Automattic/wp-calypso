@@ -54,3 +54,16 @@ export const logError = ( error: Record< string, string > & { message: string } 
 		onError( e );
 	}
 };
+
+/**
+ * Log an info message.
+ * Works in SSR.
+ */
+export const logInfo = ( info: { message: string } ): void => {
+	if ( typeof window === 'undefined' ) {
+		getLogger().info( `[ExPlat] ${ info.message }` );
+	} else {
+		// eslint-disable-next-line no-console
+		console.log( '[ExPlat] ', info.message );
+	}
+};

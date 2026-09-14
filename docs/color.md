@@ -2,6 +2,8 @@
 
 This document provides guidance on the technical use of color in Calypso. Please see our documentation on our [Brand Guide](https://dotcombrand.wordpress.com/colors/) for guidance related to general color usage.
 
+For Dashboard dark-mode implementation details, see [Dark Mode](dark-mode.md).
+
 ## CSS Custom Properties
 
 We use CSS custom properties for all color usage. Unless an edge case requires another solution, you should rely on [theme properties](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/calypso-color-schemes/src/shared/color-schemes/_default.scss).
@@ -68,7 +70,7 @@ Please note that `--color-primary` in the default color scheme is a different sh
 
 All of the above has been systematized with WordPress.com’s dashboard color schemes in mind. Please test new designs under of all them.
 
-![Color scheme thumbnails](../packages/calypso-color-schemes/screenshot@2x.png)
+![Color scheme thumbnails](../packages/calypso-color-schemes/screenshot@2x.webp)
 
 ### Adding a New Scheme
 

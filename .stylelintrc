@@ -1,11 +1,17 @@
 {
 	"extends": [ "@wordpress/stylelint-config/scss" ],
-	"plugins": [ "@signal-noise/stylelint-scales" ],
+	"plugins": [
+		"@signal-noise/stylelint-scales",
+		"@wordpress/theme/stylelint-plugins/no-unknown-ds-tokens",
+		"@wordpress/theme/stylelint-plugins/no-setting-wpds-custom-properties"
+	],
 	"reportInvalidScopeDisables": true,
 	"reportNeedlessDisables": true,
 	"rules": {
 		"at-rule-empty-line-before": null,
 		"at-rule-no-unknown": null,
+		"plugin-wpds/no-unknown-ds-tokens": null,
+		"plugin-wpds/no-setting-wpds-custom-properties": null,
 		"comment-empty-line-before": null,
 		"font-weight-notation": null,
 		"no-descending-specificity": null,

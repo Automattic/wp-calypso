@@ -21,6 +21,7 @@ export interface Variables {
 
 export const userNotificationsSettingsMutation = () =>
 	mutationOptions< UserNotificationSettings, Error, Variables >( {
+		meta: { statId: 'user-notifs-settings-update' },
 		mutationFn: ( newData: Variables ) =>
 			updateUserNotificationSettings( newData.data, newData.applyToAll ),
 		mutationKey: [ 'me', 'notifications', 'settings' ],

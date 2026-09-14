@@ -17,7 +17,6 @@ type PostThumbnail = {
 
 type Post = {
 	date: string | null;
-	dont_email_post_to_subs: boolean | null;
 	title: string;
 	type: string | null;
 	like_count: number | null;
@@ -72,7 +71,9 @@ export default function PostDetailHighlightsSection( {
 
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">
-							<span>{ translate( 'Post likes' ) }</span>
+							<span>
+								{ post?.type === 'page' ? translate( 'Page likes' ) : translate( 'Post likes' ) }
+							</span>
 							<Count count={ post?.like_count || 0 } />
 						</div>
 						<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />

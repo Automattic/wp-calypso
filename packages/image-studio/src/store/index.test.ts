@@ -1,7 +1,7 @@
-/* eslint-disable import/order */
 /**
- * Tests for Image Studio Store
+ * @jest-environment jsdom
  */
+/* eslint-disable import/order */
 import type { ImageStudioState, ImageStudioEntryPoint, AnnotationCanvasRef } from './index';
 // Mock localStorage
 const localStorageMock = ( () => {
@@ -84,6 +84,7 @@ describe( 'Image Studio Store', () => {
 				lastSavedAttachmentId: null,
 				isExitConfirmed: false,
 				entryPoint: null,
+				blockType: null,
 				onCloseCallback: null,
 				notices: [],
 				navigableAttachmentIds: [],
@@ -91,9 +92,10 @@ describe( 'Image Studio Store', () => {
 				navigationCurrentPage: 1,
 				navigationHasMorePages: true,
 				isSidebarOpen: false,
-				selectedStyle: '',
+				selectedStyle: null,
 				selectedAspectRatio: null,
 				lastAgentMessageId: null,
+				imageRatings: {},
 			} );
 		} );
 
@@ -135,6 +137,7 @@ describe( 'Image Studio Store', () => {
 					payload: {
 						attachmentId: 123,
 						entryPoint: 'media_library',
+						blockType: null,
 						onCloseCallback: callback,
 					},
 				} );
@@ -148,9 +151,21 @@ describe( 'Image Studio Store', () => {
 					payload: {
 						attachmentId: null,
 						entryPoint: null,
+						blockType: null,
 						onCloseCallback: null,
 					},
 				} );
+			} );
+
+			it( 'stores blockType when provided', () => {
+				const action = actions.openImageStudio(
+					123,
+					null,
+					'editor_block' as ImageStudioEntryPoint,
+					'core/image'
+				);
+
+				expect( action.payload.blockType ).toBe( 'core/image' );
 			} );
 		} );
 
@@ -243,6 +258,31 @@ describe( 'Image Studio Store', () => {
 
 				expect( action1.payload.id ).not.toBe( action2.payload.id );
 			} );
+
+			it( 'defaults warning notices to non-dismissible', () => {
+				const action = actions.addNotice( 'Quota exceeded', 'warning' );
+				expect( action.payload.dismissible ).toBe( false );
+			} );
+
+			it( 'defaults error notices to dismissible', () => {
+				const action = actions.addNotice( 'Something failed', 'error' );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'defaults success notices to dismissible', () => {
+				const action = actions.addNotice( 'Saved', 'success' );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'allows overriding dismissible to true for warnings', () => {
+				const action = actions.addNotice( 'Low credits', 'warning', undefined, true );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'allows overriding dismissible to false for non-warnings', () => {
+				const action = actions.addNotice( 'Critical error', 'error', undefined, false );
+				expect( action.payload.dismissible ).toBe( false );
+			} );
 		} );
 	} );
 
@@ -265,6 +305,7 @@ describe( 'Image Studio Store', () => {
 				expect( state.imageStudioAttachmentId ).toBe( 123 );
 				expect( state.originalAttachmentId ).toBe( 123 );
 				expect( state.entryPoint ).toBe( 'media_library' );
+				expect( state.blockType ).toBeNull();
 				expect( state.notices ).toEqual( [] );
 				expect( state.draftIds ).toEqual( [] );
 				expect( state.savedAttachmentIds ).toEqual( [] );
@@ -275,6 +316,20 @@ describe( 'Image Studio Store', () => {
 
 				expect( state.originalAttachmentId ).toBeNull();
 				expect( state.imageStudioAttachmentId ).toBeNull();
+			} );
+
+			it( 'stores blockType from payload', () => {
+				const state = reducer(
+					getInitialState(),
+					actions.openImageStudio(
+						123,
+						null,
+						'editor_block' as ImageStudioEntryPoint,
+						'core/image'
+					)
+				);
+
+				expect( state.blockType ).toBe( 'core/image' );
 			} );
 
 			it( 're-reads sidebar state from localStorage on open', () => {
@@ -496,6 +551,34 @@ describe( 'Image Studio Store', () => {
 				expect( state.notices[ 0 ].content ).toBe( 'Message 2' );
 			} );
 
+			it( 'deduplicates notices with the same message content', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Low credits', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+
+				state = reducer( state, actions.addNotice( 'Low credits', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+			} );
+
+			it( 'allows multiple warnings with different messages', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Low credits', 'warning' ) );
+				state = reducer( state, actions.addNotice( 'Upgrade required', 'warning' ) );
+				expect( state.notices ).toHaveLength( 2 );
+			} );
+
+			it( 'deduplicates across notice types', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Same message', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Same message', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+				expect( state.notices[ 0 ].type ).toBe( 'error' );
+			} );
+
+			it( 'allows multiple notices with different messages', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Error 1', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Error 2', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Success 1', 'success' ) );
+				expect( state.notices ).toHaveLength( 3 );
+			} );
+
 			it( 'handles removing non-existent notice', () => {
 				const previousState: ImageStudioState = {
 					...getInitialState(),
@@ -567,6 +650,7 @@ describe( 'Image Studio Store', () => {
 					annotatedAttachmentIds: [ 77 ],
 					isAnnotationMode: true,
 					notices: [ { id: '1', content: 'Notice', type: 'error' } ],
+					blockType: 'core/image',
 				};
 
 				const state = reducer( previousState, actions.navigateToAttachment( 20 ) );
@@ -577,6 +661,7 @@ describe( 'Image Studio Store', () => {
 				expect( state.annotatedAttachmentIds ).toEqual( [] );
 				expect( state.isAnnotationMode ).toBe( false );
 				expect( state.notices ).toEqual( [] );
+				expect( state.blockType ).toBeNull();
 			} );
 
 			it( 'preserves navigation and user preferences when navigating', () => {
@@ -767,6 +852,67 @@ describe( 'Image Studio Store', () => {
 
 				expect( state.lastAgentMessageId ).toBe( 'msg-123' );
 			} );
+
+			it( 'SET_IMAGE_RATING records a rating for an attachment', () => {
+				const state = reducer( getInitialState(), actions.setImageRating( 123, 'up' ) );
+
+				expect( state.imageRatings ).toEqual( { 123: 'up' } );
+			} );
+
+			it( 'SET_IMAGE_RATING preserves ratings for other attachments', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				const state = reducer( initial, actions.setImageRating( 456, 'down' ) );
+
+				expect( state.imageRatings ).toEqual( { 123: 'up', 456: 'down' } );
+			} );
+
+			it( 'preserves imageRatings when UPDATE_IMAGE_STUDIO_CANVAS fires', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				const state = reducer(
+					initial,
+					actions.updateImageStudioCanvas( 'https://example.com/v2.jpg', 456 )
+				);
+
+				expect( state.imageRatings ).toEqual( { 123: 'up' } );
+			} );
+
+			it( 'resets imageRatings on OPEN_IMAGE_STUDIO', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				const state = reducer( initial, actions.openImageStudio( 123 ) );
+
+				expect( state.imageRatings ).toEqual( {} );
+			} );
+
+			it( 'resets imageRatings on CLOSE_IMAGE_STUDIO', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'down' },
+				};
+				const state = reducer( initial, actions.closeImageStudio() );
+
+				expect( state.imageRatings ).toEqual( {} );
+			} );
+
+			it( 'resets imageRatings on NAVIGATE_TO_ATTACHMENT (new working session)', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 100: 'up' },
+					navigableAttachmentIds: [ 100, 200 ],
+					currentNavigationIndex: 0,
+				};
+				const state = reducer( initial, actions.navigateToAttachment( 200 ) );
+
+				expect( state.imageRatings ).toEqual( {} );
+			} );
 		} );
 	} );
 
@@ -883,6 +1029,11 @@ describe( 'Image Studio Store', () => {
 			expect( selectors.getEntryPoint( state ) ).toBe( 'media_library' );
 		} );
 
+		it( 'getBlockType', () => {
+			const state: ImageStudioState = { ...getInitialState(), blockType: 'core/image' };
+			expect( selectors.getBlockType( state ) ).toBe( 'core/image' );
+		} );
+
 		it( 'getNotices', () => {
 			const notices = [ { id: '1', content: 'Test', type: 'error' as const } ];
 			const state: ImageStudioState = { ...getInitialState(), notices };
@@ -933,6 +1084,39 @@ describe( 'Image Studio Store', () => {
 		it( 'getLastAgentMessageId', () => {
 			const state: ImageStudioState = { ...getInitialState(), lastAgentMessageId: 'msg-123' };
 			expect( selectors.getLastAgentMessageId( state ) ).toBe( 'msg-123' );
+		} );
+
+		describe( 'getImageRating', () => {
+			it( 'returns the rating for an attachment', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up', 456: 'down' },
+				};
+				expect( selectors.getImageRating( state, 123 ) ).toBe( 'up' );
+				expect( selectors.getImageRating( state, 456 ) ).toBe( 'down' );
+			} );
+
+			it( 'returns null for an unrated attachment', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				expect( selectors.getImageRating( state, 999 ) ).toBeNull();
+			} );
+
+			it( 'returns null when attachmentId is null', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				expect( selectors.getImageRating( state, null ) ).toBeNull();
+			} );
+		} );
+
+		it( 'getImageRatings returns the full map', () => {
+			const ratings = { 123: 'up' as const, 456: 'down' as const };
+			const state: ImageStudioState = { ...getInitialState(), imageRatings: ratings };
+			expect( selectors.getImageRatings( state ) ).toEqual( ratings );
 		} );
 
 		describe( 'getHasUnsavedChanges', () => {

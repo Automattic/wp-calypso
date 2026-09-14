@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationKeyCta } from './migration-key-cta';
 import { StepAddMigrationKey } from './step-add-migration-key';

@@ -5,9 +5,7 @@ export default class SpinnerButtonExample extends Component {
 	render() {
 		return (
 			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/spinner-button">Spinner Button</a>
-				</h2>
+				<h2>Spinner Button</h2>
 				<div>
 					<SpinnerButton text="Default Text" />
 				</div>

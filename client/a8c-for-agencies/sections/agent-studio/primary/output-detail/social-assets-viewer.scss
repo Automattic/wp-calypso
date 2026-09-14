@@ -1,0 +1,203 @@
+.a4a-agent-studio-social-assets {
+	position: relative;
+	max-width: none;
+	height: clamp(420px, calc(100dvh - 140px), 9999px);
+	margin-block-end: 24px;
+	overflow: auto;
+	border-radius: 4px;
+	background: #050505;
+	cursor: grab;
+	overscroll-behavior: contain;
+	user-select: none;
+}
+
+.a4a-agent-studio-social-assets.is-panning {
+	cursor: grabbing;
+}
+
+.a4a-agent-studio-social-assets__canvas {
+	display: flex;
+	align-items: flex-start;
+	gap: clamp(26px, 2.4vw, 46px);
+	width: max-content;
+	padding: clamp(40px, 4vw, 72px);
+}
+
+.a4a-agent-studio-social-assets__col {
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	gap: clamp(24px, 2.6vw, 46px);
+	width: clamp(196px, 14vw, 256px);
+}
+
+.a4a-agent-studio-social-assets__tile {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+	margin: 0;
+	transform: scale(0.77);
+	transform-origin: center;
+	opacity: 0.78;
+	transition:
+		transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+		opacity 200ms ease;
+	will-change: transform;
+}
+
+.a4a-agent-studio-social-assets__tile:hover,
+.a4a-agent-studio-social-assets__tile:focus-within {
+	z-index: 5;
+	transform: scale(1) translateY(-6px);
+	opacity: 1;
+}
+
+.a4a-agent-studio-social-assets__tile-frame {
+	position: relative;
+	overflow: hidden;
+	border: 0;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.18),
+		0 22px 44px -22px rgba(0, 0, 0, 0.55);
+	transition: box-shadow 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.a4a-agent-studio-social-assets__tile:hover .a4a-agent-studio-social-assets__tile-frame,
+.a4a-agent-studio-social-assets__tile:focus-within .a4a-agent-studio-social-assets__tile-frame {
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.2),
+		0 40px 70px -28px rgba(0, 0, 0, 0.7);
+}
+
+.a4a-agent-studio-social-assets__html {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	pointer-events: none;
+	user-select: none;
+}
+
+.a4a-agent-studio-social-assets__ghost {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	background: #ececea;
+}
+
+.a4a-agent-studio-social-assets__ghost::after {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.65) 50%,
+		transparent 100%
+	);
+	content: '';
+	transform: translateX(-100%);
+	animation: social-assets-ghost-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes social-assets-ghost-shimmer {
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.a4a-agent-studio-social-assets__ghost::after {
+		animation: none;
+	}
+}
+
+.a4a-agent-studio-social-assets__download {
+	position: absolute;
+	inset-block-start: 12px;
+	inset-inline-end: 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	min-width: 64px;
+	padding: 0 18px;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 24px;
+	background: rgba(255, 255, 255, 0.94);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	color: var(--color-neutral-100);
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	opacity: 0;
+	pointer-events: none;
+	text-decoration: none;
+	transform: translateY(-2px);
+	transition:
+		opacity 120ms ease,
+		transform 120ms ease,
+		background-color 120ms ease;
+}
+
+.a4a-agent-studio-social-assets__tile:hover .a4a-agent-studio-social-assets__download,
+.a4a-agent-studio-social-assets__tile:focus-within .a4a-agent-studio-social-assets__download {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.a4a-agent-studio-social-assets__download:hover {
+	background: #fff;
+}
+
+.a4a-agent-studio-social-assets__download:disabled {
+	cursor: default;
+	opacity: 0.55;
+}
+
+.a4a-agent-studio-social-assets__caption {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 12px;
+	line-height: 1.25;
+}
+
+.a4a-agent-studio-social-assets__format {
+	flex: 0 0 auto;
+	color: rgba(255, 255, 255, 0.78);
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.a4a-agent-studio-social-assets__name {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+	.a4a-agent-studio-social-assets {
+		height: clamp(320px, calc(100dvh - 120px), 9999px);
+		margin-block-end: 16px;
+	}
+
+	.a4a-agent-studio-social-assets__canvas {
+		gap: 22px;
+		padding: 32px;
+	}
+
+	.a4a-agent-studio-social-assets__col {
+		width: clamp(200px, 44vw, 280px);
+		gap: 28px;
+	}
+}

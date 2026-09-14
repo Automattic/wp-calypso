@@ -1,4 +1,8 @@
-import { makeSelectorFromBlockName, validatePublishedFormFields } from './shared';
+import {
+	disableFormEmailNotifications,
+	makeSelectorFromBlockName,
+	validatePublishedFormFields,
+} from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -73,6 +77,8 @@ export class FormAiFlow implements BlockFlow {
 		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
 		await aiInputBusyLocator.waitFor( { state: 'detached' } );
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {
 			sampleInputLabel: await this.getFirstTextFieldLabel( context ),

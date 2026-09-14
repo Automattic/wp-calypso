@@ -1,5 +1,5 @@
-import { DomainSubtype, EmailBox } from '@automattic/api-core';
-import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -7,12 +7,12 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
-import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
@@ -28,12 +28,13 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
+	const { queries } = useAppContext();
 	const navigate = useNavigate();
 	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
-	const { data: allDomains } = useSuspenseQuery( domainsQuery() );
+	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
-		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	// Aggregate all domains into a single array
@@ -43,15 +44,13 @@ function Emails() {
 		return domains.filter( ( d ) => domainsWithEmailsList.includes( d.domain ) );
 	}, [ allEmailAccounts, domains ] );
 
-	const emails: Email[] = useMemo( () => {
+	const emails = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		return allEmailAccounts
-			.flatMap( ( account ) =>
-				account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
-			)
-			.filter( ( email ) => email.canUserManage ) as Email[];
+		return allEmailAccounts.flatMap( ( account ) =>
+			account.emails.map( ( box ) => mapMailboxToEmail( box, account ) )
+		);
 	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings
@@ -134,7 +133,7 @@ function Emails() {
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
@@ -185,7 +184,6 @@ function Emails() {
 					}
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="emails" /> }
 		>
 			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			{ renderContent() }

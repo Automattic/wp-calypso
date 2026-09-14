@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/ui/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/ui/init';
  * @returns {boolean} true  - if notifications is open.
  */
 export default function isNotificationsOpen( state ) {
-	return get( state, 'ui.isNotificationsOpen', false );
+	return state?.ui?.isNotificationsOpen ?? false;
 }

@@ -1,9 +1,9 @@
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import connectSite from 'calypso/lib/reader-connect-site';
-import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '.';
 
 const noop = () => {};
@@ -22,6 +22,7 @@ class ConnectedSubscriptionListItem extends Component {
 		isEmailBlocked: PropTypes.bool,
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
+		followApiSource: PropTypes.string,
 		railcar: PropTypes.object,
 		disableSuggestedFollows: PropTypes.bool,
 		onItemClick: PropTypes.func,
@@ -67,6 +68,7 @@ class ConnectedSubscriptionListItem extends Component {
 			showFollowedOnDate,
 			isFollowing,
 			followSource,
+			followApiSource,
 			railcar,
 			disableSuggestedFollows,
 			onItemClick,
@@ -87,6 +89,7 @@ class ConnectedSubscriptionListItem extends Component {
 				showFollowedOnDate={ showFollowedOnDate }
 				isFollowing={ isFollowing }
 				followSource={ followSource }
+				followApiSource={ followApiSource }
 				railcar={ railcar }
 				disableSuggestedFollows={ disableSuggestedFollows }
 				replaceStreamClickWithItemClick={ replaceStreamClickWithItemClick }
@@ -105,13 +108,18 @@ const normalizeUrl = ( url ) => {
 	return url.match( /^https?:\/\// ) ? url : `http://${ url }`;
 };
 
-export default compose(
-	connect( ( state, ownProps ) => ( {
-		isFollowing: isFollowingSelector( state, {
-			feedId: ownProps.feedId ?? null,
-			blogId: ownProps.siteId ?? null,
-		} ),
+const ConnectedWithSite = compose(
+	connect( ( _state, ownProps ) => ( {
 		url: normalizeUrl( ownProps.url ?? '' ),
 	} ) ),
 	connectSite
 )( ConnectedSubscriptionListItem );
+
+export default function SubscriptionListItemContainer( props ) {
+	const isFollowing = useIsSubscribed( {
+		feedId: props.feedId ?? null,
+		blogId: props.siteId ?? null,
+	} );
+
+	return <ConnectedWithSite { ...props } isFollowing={ isFollowing } />;
+}

@@ -1,5 +1,6 @@
 import { createElement } from '@wordpress/element';
 import type { TranslateResult } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 type TranslateFn = (
 	text: string,

@@ -1,4 +1,4 @@
-import { get, flowRight as compose } from 'lodash';
+import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
 
@@ -9,7 +9,7 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync status state sub-tree for a site
  * @returns {string} status of transfer
  */
-export const getStatusData = ( state: AppState ): string | null => get( state, 'status', null );
+export const getStatusData = ( state: AppState ): string | null => state?.status ?? null;
 
 /**
  * Returns status info for sync state

@@ -6,7 +6,7 @@
 		margin-bottom: 24px;
 
 		&__hint {
-			color: $studio-gray-50;
+			color: var( --studio-gray-50 );
 			font-size: $font-body-extra-small;
 			text-align: left;
 		}
@@ -16,7 +16,7 @@
 			font-size: $font-body-small;
 			line-height: $font-title-small;
 			font-weight: 400;
-			color: $studio-gray-100;
+			color: var( --studio-gray-100 );
 		}
 
 		&__label {
@@ -31,7 +31,7 @@
 		&__app-hint {
 			margin: 16px 0 8px;
 			padding: 16px;
-			background-color: $studio-gray-0;
+			background-color: var( --studio-gray-0 );
 			font-size: $font-body-extra-small;
 			text-align: left;
 			display: flex;
@@ -47,7 +47,7 @@
 			}
 
 			a {
-				color: $studio-gray-90;
+				color: var( --studio-gray-90 );
 				text-decoration: underline;
 			}
 		}

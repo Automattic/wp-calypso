@@ -97,7 +97,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			);
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why adding the ssh key failed.
+					// translators: %(reason)s is why adding the ssh key failed.
 					sprintf( __( 'Failed to save SSH key: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
@@ -121,7 +121,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			);
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why deleting the ssh key failed.
+					// translators: %(reason)s is why deleting the ssh key failed.
 					sprintf( __( 'Failed to delete SSH key: %(reason)s' ), { reason: error.message } ),
 					noticeOptions
 				)
@@ -148,7 +148,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			);
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why adding the ssh key failed.
+					// translators: %(reason)s is why adding the ssh key failed.
 					sprintf( __( 'Failed to update SSH key: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
@@ -200,8 +200,8 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 							__(
 								'Once added, attach the SSH key to a site with a %1$s or %2$s plan to enable SSH key authentication for that site.'
 							),
-							getPlan( PLAN_BUSINESS )?.getTitle() || '',
-							getPlan( PLAN_ECOMMERCE )?.getTitle() || ''
+							( getPlan( PLAN_BUSINESS )?.getTitle() ?? '' ) as string,
+							( getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '' ) as string
 						) }
 					</p>
 					<p style={ isLoading || hasKeys ? { marginBlockEnd: 0 } : undefined }>
@@ -210,7 +210,6 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 								'If the SSH key is removed from your WordPress.com account, it will also be removed from all attached sites. <a>Read more.</a>'
 							),
 							{
-								br: <br />,
 								a: <InlineSupportLink supportContext="generate-ssh-key" showIcon={ false } />,
 							}
 						) }

@@ -1,4 +1,4 @@
-import { keyBy, map } from 'lodash';
+import { keyBy } from '@automattic/js-utils';
 
 export const comments = [
 	{
@@ -175,5 +175,5 @@ export const comments = [
 
 export const commentsTree = {
 	...keyBy( comments, 'ID' ),
-	children: map( comments, 'ID' ),
+	children: comments.map( ( c ) => c?.ID ),
 };

@@ -1,34 +1,37 @@
-import { Navigator } from '@wordpress/components';
-import { useEffect, useState } from 'react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
+import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
-import RestClient from '../panel/rest-client';
-import { init as initAPI } from '../panel/rest-client/wpcom';
-import { init as initStore } from '../panel/state';
+import { logError } from '../panel/helpers/log-error';
+import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { getClient, initClient } from './client';
 import { AppProvider } from './context';
+import ErrorBoundary from './error-boundary';
 import Note from './note';
+import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import type { FilterName } from './types';
 
-let client: any;
-
-let store = initStore();
+import './style.scss';
 
 repliesCache.cleanup();
 
 /**
  * Force a manual refresh of the notes data
  */
-export const refreshNotes = () => client && client.refreshNotes.call( client );
+export const refreshNotes = () => getClient()?.refreshNotes();
 
 const defaultHandlers = {
 	APP_REFRESH_NOTES: [
 		( _store: any, action: any ) => {
+			const client = getClient();
 			if ( ! client ) {
 				return;
 			}
@@ -48,6 +51,71 @@ const defaultHandlers = {
 	],
 };
 
+const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
+	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
+	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
+	const isDetailOpen = selectedNoteId !== undefined;
+
+	// Hold the last selected note id so it keeps rendering through the
+	// slide-out animation, then clear it on transitionend.
+	const [ exitingNoteId, setExitingNoteId ] = useState< string | undefined >( undefined );
+	useEffect( () => {
+		if ( selectedNoteId !== undefined ) {
+			setExitingNoteId( selectedNoteId );
+		}
+	}, [ selectedNoteId ] );
+	const displayedNoteId = selectedNoteId ?? exitingNoteId;
+
+	const handleDetailPaneTransitionEnd = ( event: TransitionEvent< HTMLDivElement > ) => {
+		if ( event.target !== event.currentTarget ) {
+			return;
+		}
+		if ( event.propertyName !== 'transform' ) {
+			return;
+		}
+		if ( ! isDetailOpen ) {
+			setExitingNoteId( undefined );
+		}
+	};
+
+	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+
+	return (
+		<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
+			<div
+				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
+				onTransitionEnd={ handleDetailPaneTransitionEnd }
+				// Keep the pane interactive through the exit transition: it's
+				// still on-screen sliding out and `displayedNoteId` is still
+				// set. Flipping `inert` synchronously on `isDetailOpen` (the
+				// "should be open" intent) instead of `displayedNoteId` (what's
+				// actually showing) drops focus from the Back button mid-render
+				// and trips the host popover's focus-outside close on mobile.
+				// @ts-expect-error React 18 types don't include `inert`.
+				inert={ displayedNoteId === undefined ? '' : undefined }
+			>
+				<ErrorBoundary>
+					<Note
+						isDismissible={ isDismissible }
+						noteId={ displayedNoteId }
+						setSelectedNoteId={ setSelectedNoteId }
+						noteNavigation={ noteNavigation }
+					/>
+				</ErrorBoundary>
+			</div>
+			<div className="wpnc-app__list-pane">
+				<NotePanel
+					isDismissible={ isDismissible }
+					filterName={ filterName }
+					setFilterName={ setFilterName }
+					selectedNoteId={ selectedNoteId }
+					setSelectedNoteId={ setSelectedNoteId }
+				/>
+			</div>
+		</HStack>
+	);
+};
+
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
@@ -61,40 +129,30 @@ const NotificationApp = ( {
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
-	const [ isReady, setIsReady ] = useState( !! client );
+	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
+		initClient( wpcom );
+		setIsReady( true );
+
 		store.dispatch( { type: 'APP_IS_READY' } );
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
-		client?.setVisibility( { isShowing: true, isVisible: true } );
+		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			client?.setVisibility( { isShowing: false, isVisible: false } );
+			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [] );
-
-	useEffect( () => {
-		initAPI( wpcom );
-
-		if ( ! client ) {
-			client = new RestClient();
-			client.locale = locale;
-			client?.setVisibility( { isShowing: true, isVisible: true } );
-			setIsReady( true );
-		}
 	}, [ wpcom ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {
-			store = initStore( { customEnhancer } );
+			initStore( { customEnhancer } );
 		}
 	}, [ customEnhancer ] );
 
 	useEffect( () => {
-		if ( client ) {
-			client.locale = locale;
-		}
+		getClient()?.setLocale( locale );
 	}, [ locale ] );
 
 	useEffect( () => {
@@ -109,6 +167,22 @@ const NotificationApp = ( {
 
 	useEffect( () => {
 		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+	}, [] );
+
+	useEffect( () => {
+		const handleError = ( event: ErrorEvent ) => {
+			logError( event.error ?? event.message );
+		};
+		const handleRejection = ( event: PromiseRejectionEvent ) => {
+			logError( event.reason );
+		};
+
+		window.addEventListener( 'error', handleError );
+		window.addEventListener( 'unhandledrejection', handleRejection );
+		return () => {
+			window.removeEventListener( 'error', handleError );
+			window.removeEventListener( 'unhandledrejection', handleRejection );
+		};
 	}, [] );
 
 	useEffect( () => {
@@ -147,24 +221,13 @@ const NotificationApp = ( {
 	}
 
 	return (
-		<Provider store={ store }>
-			<AppProvider client={ client } locale={ locale }>
-				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
-					<Navigator.Screen
-						path="/:filterName"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<NotePanel isDismissible={ isDismissible } />
-					</Navigator.Screen>
-					<Navigator.Screen
-						path="/:filterName/notes/:noteId"
-						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
-					>
-						<Note isDismissible={ isDismissible } />
-					</Navigator.Screen>
-				</Navigator>
-			</AppProvider>
-		</Provider>
+		<ErrorBoundary>
+			<Provider store={ store }>
+				<AppProvider client={ getClient() } locale={ locale }>
+					<NotificationContent isDismissible={ isDismissible } />
+				</AppProvider>
+			</Provider>
+		</ErrorBoundary>
 	);
 };
 

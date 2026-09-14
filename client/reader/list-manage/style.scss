@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .list-manage__site-card {
 	display: flex;
 	justify-content: space-between;
@@ -51,10 +53,6 @@
 	align-self: flex-start;
 	margin-right: 8px;
 	flex: 0 0 auto;
-}
-
-.list-item__img {
-	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
 }
 
 .list-item__info {
@@ -116,10 +114,9 @@
 
 .list-manage__item-adder {
 	.list-manage__query-input {
-		@media (min-width: 480px) {
-			padding: 12px;
-		}
+		padding: 0;
 	}
+
 	.search {
 		margin: 0;
 	}

@@ -4,18 +4,15 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import {
-	FIRST_POSTS_TAB,
+	FRESHLY_PRESSED_TAB,
 	LATEST_TAB,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
 	RECOMMENDED_TAB,
+	SEARCH_TAB,
+	TAGS_TAB,
 } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { isDiscoverV3Enabled } from 'calypso/reader/utils';
-import { useDispatch, useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { FRESHLY_PRESSED_TAB } from '../../helper';
 import './style.scss';
 
 interface Tab {
@@ -31,7 +28,6 @@ interface Props {
 const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const recordTabClick = ( tab: string ) => {
 		recordAction( 'click_discover_tab' );
@@ -45,22 +41,22 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 
 	const baseTabs: Tab[] = [
 		{
-			slug: FRESHLY_PRESSED_TAB,
-			title: translate( 'Freshly Pressed' ),
+			slug: RECOMMENDED_TAB,
+			title: translate( 'Recommended' ),
 			path: '/discover',
 		},
 		{
-			slug: RECOMMENDED_TAB,
-			title: translate( 'Recommended' ),
-			path: '/discover/recommended',
+			slug: SEARCH_TAB,
+			title: translate( 'Search' ),
+			path: '/discover/search',
 		},
 		{
-			slug: FIRST_POSTS_TAB,
-			title: translate( 'First posts' ),
-			path: '/discover/firstposts',
+			slug: FRESHLY_PRESSED_TAB,
+			title: translate( 'Freshly Pressed' ),
+			path: '/discover/freshly-pressed',
 		},
 		{
-			slug: 'tags',
+			slug: TAGS_TAB,
 			title: translate( 'Tags' ),
 			path: '/discover/tags?selectedTag=dailyprompt',
 		},
@@ -73,28 +69,8 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		},
 	];
 
-	if ( ! isDiscoverV3Enabled() ) {
-		baseTabs.push(
-			{
-				slug: ADD_NEW_TAB,
-				title: translate( 'Add new' ),
-				path: '/discover/add-new',
-			},
-			{
-				slug: REDDIT_TAB,
-				title: translate( 'Reddit' ),
-				path: '/discover/reddit',
-			}
-		);
-	}
-
-	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
-	const filteredTabs = baseTabs.filter(
-		( tab ) => ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn
-	);
-
 	// Add localization to paths if needed.
-	const tabs = filteredTabs.map( ( tab ) => ( {
+	const tabs = baseTabs.map( ( tab ) => ( {
 		...tab,
 		path: getLocalizedPath( tab.path ),
 	} ) );

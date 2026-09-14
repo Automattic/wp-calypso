@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { action } from '@storybook/addon-actions';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { action } from 'storybook/actions';
 /**
  * Internal dependencies
  */

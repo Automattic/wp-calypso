@@ -14,6 +14,8 @@ type Props = {
 	children: ReactNode;
 	isRequired?: boolean;
 	error?: string;
+	className?: string;
+	fieldName?: string;
 };
 
 function FormField( {
@@ -25,11 +27,13 @@ function FormField( {
 	showOptionalLabel,
 	isRequired,
 	error,
+	className,
+	fieldName,
 }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div className="a4a-form__section-field">
+		<div className={ clsx( 'a4a-form__section-field', className ) } data-field-name={ fieldName }>
 			<div className="a4a-form__section-field-heading">
 				<label className="a4a-form__section-field-label" htmlFor={ labelFor }>
 					{ label } { isRequired && <span className="a4a-form__section-field-required">*</span> }

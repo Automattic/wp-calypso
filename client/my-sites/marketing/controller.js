@@ -4,7 +4,6 @@ import { createElement } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
-import MarketingTools from 'calypso/sites/marketing/tools';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -51,12 +50,9 @@ export const redirectDefaultConnectionsDomain = async ( context ) => {
 	redirectConnections( context );
 };
 
-export const redirectMarketingTools = ( context ) => {
-	page.redirect( '/marketing/tools/' + context.params.domain );
-};
-
-export const redirectMarketingBusinessTools = ( context ) => {
-	page.redirect( '/marketing/tools/' + context.params.domain );
+export const redirectHome = ( context ) => {
+	const siteFragment = context.params.domain;
+	page.redirect( siteFragment ? `/home/${ siteFragment }` : '/home' );
 };
 
 export const redirectSharingButtons = ( context ) => {
@@ -64,9 +60,9 @@ export const redirectSharingButtons = ( context ) => {
 };
 
 export const layout = ( context, next ) => {
-	const { contentComponent, pathname } = context;
+	const { contentComponent } = context;
 
-	context.primary = createElement( Sharing, { contentComponent, pathname } );
+	context.primary = createElement( Sharing, { contentComponent } );
 
 	next();
 };
@@ -93,12 +89,6 @@ export const connections = ( context, next ) => {
 	next();
 };
 
-export const marketingTools = ( context, next ) => {
-	context.contentComponent = createElement( MarketingTools );
-
-	next();
-};
-
 export const sharingButtons = ( context, next ) => {
 	const { store } = context;
 	const state = store.getState();
@@ -121,6 +111,7 @@ export const sharingButtons = ( context, next ) => {
 };
 
 export const traffic = ( context, next ) => {
+	context.section.name = 'marketing-traffic';
 	context.primary = createElement( Traffic );
 
 	next();

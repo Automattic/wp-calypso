@@ -1,0 +1,150 @@
+diff --git a/build/api/raw-handling/markdown-converter.cjs b/build/api/raw-handling/markdown-converter.cjs
+index b569511e891cec47fc7fc416383cd0b1a765f4f0..e35e9808a052146a4f6b0994bcce1772a653fc80 100644
+--- a/build/api/raw-handling/markdown-converter.cjs
++++ b/build/api/raw-handling/markdown-converter.cjs
+@@ -34,14 +34,16 @@ __export(markdown_converter_exports, {
+ });
+ module.exports = __toCommonJS(markdown_converter_exports);
+ var import_showdown = __toESM(require("showdown"));
+-var converter = new import_showdown.default.Converter({
+-  noHeaderId: true,
+-  tables: true,
+-  literalMidWordUnderscores: true,
+-  omitExtraWLInCodeBlocks: true,
+-  simpleLineBreaks: true,
+-  strikethrough: true
++var converter = new import_showdown.default({
++  breaks: true,
++  html: true
+ });
++function normalizeMarkdownOutput(html) {
++  return html.trim().replace(/<br>/g, "<br />").replace(/<s>/g, "<del>").replace(/<\/s>/g, "</del>").replace(
++    /<code class="language-([^"]+)">/g,
++    '<code class="$1 language-$1">'
++  ).replace(/\n<\/code><\/pre>/g, "</code></pre>");
++}
+ function slackMarkdownVariantCorrector(text) {
+   return text.replace(
+     /((?:^|\n)```)([^\n`]+)(```(?:$|\n))/,
+@@ -65,10 +67,12 @@ var correctors = [
+   slackMarkdownVariantCorrector
+ ];
+ function markdownConverter(text) {
+-  return converter.makeHtml(
+-    correctors.reduce(
+-      (current, corrector) => corrector(current),
+-      text
++  return normalizeMarkdownOutput(
++    converter.render(
++      correctors.reduce(
++        (current, corrector) => corrector(current),
++        text
++      )
+     )
+   );
+ }
+diff --git a/build-module/api/raw-handling/markdown-converter.mjs b/build-module/api/raw-handling/markdown-converter.mjs
+index efdb184ffbd1bb2da66da72832c1f75392a00843..ebacd409a77eacf2e87edd5b786dee770397a765 100644
+--- a/build-module/api/raw-handling/markdown-converter.mjs
++++ b/build-module/api/raw-handling/markdown-converter.mjs
+@@ -1,13 +1,15 @@
+ // packages/blocks/src/api/raw-handling/markdown-converter.ts
+-import showdown from "showdown";
+-var converter = new showdown.Converter({
+-  noHeaderId: true,
+-  tables: true,
+-  literalMidWordUnderscores: true,
+-  omitExtraWLInCodeBlocks: true,
+-  simpleLineBreaks: true,
+-  strikethrough: true
++import MarkdownIt from "showdown";
++var converter = new MarkdownIt({
++  breaks: true,
++  html: true
+ });
++function normalizeMarkdownOutput(html) {
++  return html.trim().replace(/<br>/g, "<br />").replace(/<s>/g, "<del>").replace(/<\/s>/g, "</del>").replace(
++    /<code class="language-([^"]+)">/g,
++    '<code class="$1 language-$1">'
++  ).replace(/\n<\/code><\/pre>/g, "</code></pre>");
++}
+ function slackMarkdownVariantCorrector(text) {
+   return text.replace(
+     /((?:^|\n)```)([^\n`]+)(```(?:$|\n))/,
+@@ -31,10 +33,12 @@ var correctors = [
+   slackMarkdownVariantCorrector
+ ];
+ function markdownConverter(text) {
+-  return converter.makeHtml(
+-    correctors.reduce(
+-      (current, corrector) => corrector(current),
+-      text
++  return normalizeMarkdownOutput(
++    converter.render(
++      correctors.reduce(
++        (current, corrector) => corrector(current),
++        text
++      )
+     )
+   );
+ }
+diff --git a/src/api/raw-handling/markdown-converter.ts b/src/api/raw-handling/markdown-converter.ts
+index 28da6259e84ea20d49739ab44f770592197d7d7a..d1d74671f4c9b60bfe66de0ccf0c18472e1da57c 100644
+--- a/src/api/raw-handling/markdown-converter.ts
++++ b/src/api/raw-handling/markdown-converter.ts
+@@ -1,19 +1,28 @@
+ /**
+  * External dependencies
+  */
+-// @ts-ignore
+-import showdown from 'showdown';
++// @ts-ignore - resolved to markdown-it by Calypso's package resolution.
++import MarkdownIt from 'showdown';
+ 
+-// Reuse the same showdown converter.
+-const converter = new showdown.Converter( {
+-	noHeaderId: true,
+-	tables: true,
+-	literalMidWordUnderscores: true,
+-	omitExtraWLInCodeBlocks: true,
+-	simpleLineBreaks: true,
+-	strikethrough: true,
++// Reuse the same Markdown converter.
++const converter = new MarkdownIt( {
++	breaks: true,
++	html: true,
+ } );
+ 
++function normalizeMarkdownOutput( html: string ): string {
++	return html
++		.trim()
++		.replace( /<br>/g, '<br />' )
++		.replace( /<s>/g, '<del>' )
++		.replace( /<\/s>/g, '</del>' )
++		.replace(
++			/<code class="language-([^"]+)">/g,
++			'<code class="$1 language-$1">'
++		)
++		.replace( /\n<\/code><\/pre>/g, '</code></pre>' );
++}
++
+ /**
+  * Corrects the Slack Markdown variant of the code block.
+  * If uncorrected, it will be converted to inline code.
+@@ -63,10 +72,12 @@ const correctors = [
+  * @return HTML.
+  */
+ export default function markdownConverter( text: string ): string {
+-	return converter.makeHtml(
+-		correctors.reduce(
+-			( current, corrector ) => corrector( current ),
+-			text
++	return normalizeMarkdownOutput(
++		converter.render(
++			correctors.reduce(
++				( current, corrector ) => corrector( current ),
++				text
++			)
+ 		)
+ 	);
+ }

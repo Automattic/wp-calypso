@@ -39,6 +39,16 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
  woocommerce_store_postcode?: string;
  woocommerce_default_country?: string;
  woocommerce_onboarding_profile?: Array;
+ subscription_options?: {
+ invitation?: string;
+ comment_follow?: string;
+ welcome?: string;
+ subscribe_modal_heading?: string;
+ free_tier_description?: string;
+ hide_free_tier?: boolean | number;
+ };
+ supports_free_tier_customization?: boolean;
+ free_tier_description_rendered?: string;
  }} SiteSettingsItem
  */
 

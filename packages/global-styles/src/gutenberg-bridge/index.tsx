@@ -2,13 +2,28 @@
  * Unlock the private apis for the global styles related functionalities and re-export them
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
+ *
+ * The deep imports from `@wordpress/global-styles-ui/build-module/*` rely on a
+ * yarn patch that widens the package's `exports` field; they aren't reachable
+ * through the package's public entry.
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
+import { getBlockTypes } from '@wordpress/blocks';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import {
+	areGlobalStylesEqual as areGlobalStyleConfigsEqual,
+	generateGlobalStyles,
+} from '@wordpress/global-styles-engine';
+import { GlobalStylesContext as UntypedGSContext } from '@wordpress/global-styles-ui/build-module/context';
+import {
+	useSetting as useGlobalSetting,
+	useStyle as useGlobalStyle,
+} from '@wordpress/global-styles-ui/build-module/hooks';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
+import { useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
@@ -17,17 +32,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'@wordpress/block-editor'
 );
 
-const {
-	cleanEmptyObject,
-	ExperimentalBlockEditorProvider,
-	GlobalStylesContext: UntypedGSContext,
-	areGlobalStyleConfigsEqual,
-	useGlobalStylesOutput,
-	useGlobalSetting,
-	useGlobalStyle,
-} = unlock( blockEditorPrivateApis );
+const { cleanEmptyObject, ExperimentalBlockEditorProvider } = unlock( blockEditorPrivateApis );
 
-const GlobalStylesContext: React.Context< GlobalStylesContextObject > = UntypedGSContext;
+const GlobalStylesContext: React.Context< GlobalStylesContextObject > =
+	UntypedGSContext as unknown as React.Context< GlobalStylesContextObject >;
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
 	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;
@@ -46,23 +54,29 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesO
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		const settings = {};
-		return ( props: OuterProps ) => (
+		const WithExperimentalBlockEditorProvider = ( props: OuterProps ) => (
 			<ExperimentalBlockEditorProvider settings={ settings }>
 				<InnerComponent { ...props } />
 			</ExperimentalBlockEditorProvider>
 		);
+		return WithExperimentalBlockEditorProvider;
 	},
 	'withExperimentalBlockEditorProvider'
 );
 
-const useSafeGlobalStylesOutput = () => {
+const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] => {
+	const { merged } = useContext( GlobalStylesContext );
 	try {
-		return useGlobalStylesOutput();
+		const [ stylesheets, settings ] = generateGlobalStyles(
+			merged as Parameters< typeof generateGlobalStyles >[ 0 ],
+			getBlockTypes()
+		);
+		return [ stylesheets ?? [], settings ?? {} ];
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Error: Unable to get the output of global styles. Reason: %s', error );
 		captureException( error );
-		return [];
+		return [ [], {} ];
 	}
 };
 
@@ -108,9 +122,20 @@ const isVariationWithProperties = ( variation: GlobalStylesObject, properties: s
 	const clonedVariation = window.structuredClone
 		? window.structuredClone( variation )
 		: JSON.parse( JSON.stringify( variation ) );
-	const variationWithProperties = filterObjectByProperties( clonedVariation, properties );
+	const variationWithProperties = filterObjectByProperties(
+		clonedVariation,
+		properties
+	) as GlobalStylesObject;
 
-	return areGlobalStyleConfigsEqual( variationWithProperties, variation );
+	// Calypso's GlobalStylesObject differs structurally from the
+	// `@wordpress/global-styles-engine` `GlobalStylesConfig` (notably
+	// `styles.color`), but `areGlobalStylesEqual` only deep-equals the
+	// `styles` and `settings` slices, so the runtime contract holds.
+	type AreEqualParam = Parameters< typeof areGlobalStyleConfigsEqual >[ 0 ];
+	return areGlobalStyleConfigsEqual(
+		variationWithProperties as unknown as AreEqualParam,
+		variation as unknown as AreEqualParam
+	);
 };
 
 const isColorVariation = ( variation?: GlobalStylesObject ) =>

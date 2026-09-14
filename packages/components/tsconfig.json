@@ -13,6 +13,6 @@
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
 		{ "path": "../i18n-utils" },
-		{ "path": "../ui" }
+		{ "path": "../js-utils" }
 	]
 }

@@ -1,0 +1,34 @@
+.zendesk-attachment-message {
+	&__link {
+		display: inline-block;
+	}
+
+	&__image {
+		max-width: 100%;
+		max-height: 280px;
+		height: auto;
+		border-radius: 4px;
+		object-fit: contain;
+	}
+
+	&__file-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 8px 12px;
+		background: var(--color-neutral-0, #fff);
+		border: 1px solid var(--color-neutral-10, #dcdcde);
+		border-radius: 4px;
+		text-decoration: none;
+		color: var(--color-neutral-70, #1e1e1e);
+
+		&:hover {
+			border-color: var(--color-neutral-20, #c3c4c7);
+			color: var(--color-primary, #2271b1);
+		}
+	}
+
+	&__file-icon {
+		font-size: 1em;
+	}
+}

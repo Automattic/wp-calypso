@@ -2,6 +2,7 @@
  * Image Studio Store
  */
 import { createReduxStore, register, select } from '@wordpress/data';
+import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES } from '../types';
 import type { ImageData } from '../utils/get-image-data';
 
 /**
@@ -26,25 +27,32 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success' | 'warning';
+export type NoticeType = 'error' | 'success' | 'warning' | 'info';
 export interface NoticeAction {
 	label: string;
 	url: string;
 	openInNewTab?: boolean;
+	onClick?: () => void;
 }
 export interface Notice {
 	id: string;
 	content: string;
 	type: NoticeType;
 	actions?: NoticeAction[];
+	dismissible?: boolean;
 }
 
 export enum ImageStudioEntryPoint {
 	MediaLibrary = 'media_library',
 	EditorBlock = 'editor_block',
 	EditorSidebar = 'editor_sidebar',
+	// Post-editor "Generate Feature Clip" sidebar panel — video-only entrypoint.
+	PostEditorFeatureClip = 'post_editor_feature_clip',
 	JetpackExternalMediaBlock = 'jetpack_external_media_block',
 	JetpackExternalMediaFeaturedImage = 'jetpack_external_media_featured_image',
+	// Entry points for jetpack.ai.imageGenerationHandler filter
+	JetpackAIFeaturedImage = 'jetpack_ai_featured_image',
+	JetpackAISocialMedia = 'jetpack_ai_social_media',
 }
 
 export interface ImageStudioState {
@@ -78,6 +86,8 @@ export interface ImageStudioState {
 	isExitConfirmed: boolean;
 	// Entry point for tracking where Image Studio was opened from
 	entryPoint: ImageStudioEntryPoint | null;
+	// Block type for tracking which block was the entry point for image studio
+	blockType: string | null;
 	// Callback from the opener. Despite being non-serializable, it is stored here to support cross-bundle access.
 	onCloseCallback: ImageStudioCloseCallback | null;
 	// Array of notices to display
@@ -98,6 +108,10 @@ export interface ImageStudioState {
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
+	// Ratings the user has submitted in this session, keyed by attachment ID.
+	// Once a rating is recorded for an image it stays for the session so the
+	// buttons remain disabled when navigating back to that image.
+	imageRatings: Record< number, 'up' | 'down' >;
 }
 
 /**
@@ -109,6 +123,7 @@ type OpenImageStudioAction = {
 		attachmentId: number | null;
 		entryPoint: ImageStudioEntryPoint | null;
 		onCloseCallback: ImageStudioCloseCallback | null;
+		blockType?: string | null; // Optional block type for additional context (e.g. 'core/image')
 	};
 };
 
@@ -246,6 +261,14 @@ type SetLastAgentMessageIdAction = {
 	payload: string | null;
 };
 
+type SetImageRatingAction = {
+	type: 'SET_IMAGE_RATING';
+	payload: {
+		attachmentId: number;
+		rating: 'up' | 'down';
+	};
+};
+
 type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
@@ -277,7 +300,22 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
+	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
+
+/**
+ * Resolve the dismissible flag for a notice.
+ *
+ * When the caller provides an explicit value it is used as-is.
+ * Otherwise, warning notices default to non-dismissible (e.g. hard
+ * quota errors), while all other notice types default to dismissible.
+ */
+function resolveNoticeDismissible( type: NoticeType, explicit?: boolean ): boolean {
+	if ( explicit !== undefined ) {
+		return explicit;
+	}
+	return type !== 'warning';
+}
 
 /**
  * Key for localStorage persistence
@@ -319,6 +357,7 @@ const initialState: ImageStudioState = {
 	lastSavedAttachmentId: null,
 	isExitConfirmed: false,
 	entryPoint: null,
+	blockType: null,
 	onCloseCallback: null,
 	notices: [],
 	navigableAttachmentIds: [],
@@ -326,9 +365,10 @@ const initialState: ImageStudioState = {
 	navigationCurrentPage: 1,
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
-	selectedStyle: '',
+	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
+	imageRatings: {},
 };
 
 /**
@@ -359,6 +399,8 @@ const reducer = (
 				lastSavedAttachmentId: null,
 				// Store entry point for tracking
 				entryPoint: action.payload.entryPoint,
+				// Store blockType for entry point tracking
+				blockType: action.payload.blockType ?? null,
 				onCloseCallback: action.payload.onCloseCallback ?? null,
 				// Reset notices for new session
 				notices: [],
@@ -493,11 +535,18 @@ const reducer = (
 				isExitConfirmed: action.payload,
 			};
 
-		case 'ADD_NOTICE':
+		case 'ADD_NOTICE': {
+			// Deduplicate notices by message content: if a notice with the
+			// same text already exists, skip adding it again.
+			if ( state.notices.some( ( n ) => n.content === action.payload.content ) ) {
+				return state;
+			}
+
 			return {
 				...state,
 				notices: [ ...state.notices, action.payload ],
 			};
+		}
 
 		case 'REMOVE_NOTICE':
 			return {
@@ -557,6 +606,9 @@ const reducer = (
 				isExitConfirmed: false,
 				onCloseCallback: null,
 				entryPoint: null,
+				blockType: null,
+				// Reset ratings for the new file since it's a new working session
+				imageRatings: {},
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -599,6 +651,15 @@ const reducer = (
 				lastAgentMessageId: action.payload,
 			};
 
+		case 'SET_IMAGE_RATING':
+			return {
+				...state,
+				imageRatings: {
+					...state.imageRatings,
+					[ action.payload.attachmentId ]: action.payload.rating,
+				},
+			};
+
 		case 'RESET_CANVAS_HISTORY':
 			// Reset canvas editing history to initial values (as if modal was freshly opened)
 			// Used when reverting to original image
@@ -627,7 +688,8 @@ export interface ImageStudioActions {
 	openImageStudio: (
 		attachmentId?: number,
 		onCloseCallback?: ImageStudioCloseCallback,
-		entryPoint?: ImageStudioEntryPoint
+		entryPoint?: ImageStudioEntryPoint,
+		blockType?: string | null
 	) => Promise< OpenImageStudioAction >;
 	closeImageStudio: () => Promise< CloseImageStudioAction >;
 	updateImageStudioCanvas: (
@@ -659,7 +721,8 @@ export interface ImageStudioActions {
 	addNotice: (
 		content: string,
 		type: NoticeType,
-		noticeActions?: NoticeAction[]
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
 	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
@@ -675,6 +738,10 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
+	setImageRating: (
+		attachmentId: number,
+		rating: 'up' | 'down'
+	) => Promise< SetImageRatingAction >;
 	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
 }
 
@@ -685,7 +752,8 @@ const actions = {
 	openImageStudio(
 		attachmentId?: number,
 		onCloseCallback?: ImageStudioCloseCallback,
-		entryPoint?: ImageStudioEntryPoint
+		entryPoint?: ImageStudioEntryPoint,
+		blockType?: string | null
 	): OpenImageStudioAction {
 		return {
 			type: 'OPEN_IMAGE_STUDIO',
@@ -693,6 +761,7 @@ const actions = {
 				attachmentId: attachmentId ?? null,
 				entryPoint: entryPoint ?? null,
 				onCloseCallback: onCloseCallback ?? null,
+				blockType: blockType ?? null,
 			},
 		};
 	},
@@ -807,7 +876,12 @@ const actions = {
 		};
 	},
 
-	addNotice( content: string, type: NoticeType, noticeActions?: NoticeAction[] ): AddNoticeAction {
+	addNotice(
+		content: string,
+		type: NoticeType,
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
+	): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
 			payload: {
@@ -815,6 +889,7 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
+				dismissible: resolveNoticeDismissible( type, dismissible ),
 				...( noticeActions?.length && {
 					actions: noticeActions,
 				} ),
@@ -884,6 +959,13 @@ const actions = {
 		};
 	},
 
+	setImageRating( attachmentId: number, rating: 'up' | 'down' ): SetImageRatingAction {
+		return {
+			type: 'SET_IMAGE_RATING',
+			payload: { attachmentId, rating },
+		};
+	},
+
 	resetCanvasHistory(): ResetCanvasHistoryAction {
 		return {
 			type: 'RESET_CANVAS_HISTORY',
@@ -914,6 +996,7 @@ export interface ImageStudioSelectors {
 	getHasUnsavedChanges: ( state: ImageStudioState ) => boolean;
 	getIsExitConfirmed: ( state: ImageStudioState ) => boolean;
 	getEntryPoint: ( state: ImageStudioState ) => ImageStudioEntryPoint | null;
+	getBlockType: ( state: ImageStudioState ) => string | null;
 	getNotices: ( state: ImageStudioState ) => Notice[];
 	getOnCloseCallback: ( state: ImageStudioState ) => ImageStudioCloseCallback | null;
 	getNavigableAttachmentIds: ( state: ImageStudioState ) => number[];
@@ -928,6 +1011,9 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
+	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
+	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
+	getSupportedMimeTypes: () => readonly string[];
 }
 
 /**
@@ -1032,6 +1118,10 @@ const selectors = {
 		return state.entryPoint;
 	},
 
+	getBlockType( state: ImageStudioState ): string | null {
+		return state.blockType ?? null;
+	},
+
 	getOnCloseCallback( state: ImageStudioState ): ImageStudioCloseCallback | null {
 		return state.onCloseCallback;
 	},
@@ -1095,6 +1185,21 @@ const selectors = {
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
 		return state.lastAgentMessageId;
+	},
+
+	getImageRatings( state: ImageStudioState ): Record< number, 'up' | 'down' > {
+		return state.imageRatings;
+	},
+
+	getImageRating( state: ImageStudioState, attachmentId: number | null ): 'up' | 'down' | null {
+		if ( attachmentId === null ) {
+			return null;
+		}
+		return state.imageRatings[ attachmentId ] ?? null;
+	},
+
+	getSupportedMimeTypes(): readonly string[] {
+		return IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 	},
 };
 

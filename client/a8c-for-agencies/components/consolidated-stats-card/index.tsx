@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
+import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 
 import './style.scss';
@@ -13,7 +14,7 @@ import './style.scss';
 interface CardInfoProps {
 	title?: string;
 	children?: React.ReactNode;
-	wrapperRef: React.RefObject< HTMLElement >;
+	wrapperRef: React.RefObject< HTMLElement | null >;
 	footerText: string;
 	footerAction?: React.ReactNode;
 }
@@ -33,19 +34,20 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 				<div className="consolidated-stats-card__label">
 					{ footerText }
 					{ ! isMobile && (
-						<span
+						<A4APopoverTrigger
 							className="consolidated-stats-card__info-icon"
-							onClick={ () => setShowPopover( true ) }
-							role="button"
-							tabIndex={ 0 }
-							onKeyDown={ ( event ) => {
-								if ( event.key === 'Enter' ) {
-									setShowPopover( true );
-								}
-							} }
+							title={ translate( 'Click to learn more' ) }
+							aria-label={
+								title
+									? ( translate( 'Learn more about %(statName)s', {
+											args: { statName: title },
+									  } ) as string )
+									: translate( 'Learn more' )
+							}
+							onActivate={ () => setShowPopover( true ) }
 						>
 							<Gridicon icon="info-outline" size={ 16 } />
-						</span>
+						</A4APopoverTrigger>
 					) }
 				</div>
 				{ isMobile && (
@@ -71,6 +73,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 						title=""
 						offset={ 12 }
 						wrapperRef={ wrapperRef }
+						focusOnMount
 						onFocusOutside={ () => setShowPopover( false ) }
 					>
 						{ children }

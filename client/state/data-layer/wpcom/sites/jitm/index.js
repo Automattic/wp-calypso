@@ -13,8 +13,11 @@ import schema from './schema.json';
 
 const noop = () => {};
 // Clean this up when we release a major version of Odyssey Stats e.g. v1.1.
+// The blog id check comes first because a site with no WordPress.com connection reports 0 and
+// ships no `intial_state` at all — reading that key would throw in development builds.
 const isRunningInLegacyJetpackSite =
 	config.isEnabled( 'is_running_in_jetpack_site' ) &&
+	!! config( 'blog_id' ) &&
 	! getEnvStatsFeatureSupportChecksMemoized( config( 'intial_state' ), config( 'blog_id' ) )
 		.supportsWpcomV3Jitm;
 const jitmSchema = ! isRunningInLegacyJetpackSite

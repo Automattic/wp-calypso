@@ -1,10 +1,16 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+
 // Add a New Comment Form
 .comments__form {
 	position: relative;
 	padding: 0 0 0 42px;
 	margin-top: 24px;
 
-	.gravatar {
+	.user-avatar {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -16,7 +22,7 @@
 		padding: 5px 10px;
 	}
 
-	button:not(.components-button) {
+	button:not(.components-button):not(.follow-button) {
 		opacity: 0;
 		position: absolute;
 		margin: 16px 0 0;
@@ -35,13 +41,30 @@
 	}
 
 	button:focus {
-		outline: dotted 1px var(--color-primary);
-		color: var(--color-primary);
+		outline: dotted 1px var(--color-link);
+		color: var(--color-link);
 	}
 
 	.comments__cancel-reply {
 		font-size: $font-body-extra-small;
 		cursor: pointer;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.form-textarea {
+			background: var( --color-surface );
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text );
+
+			&::placeholder {
+				color: var( --color-text-subtle );
+			}
+
+			&:focus {
+				border-color: var( --color-link );
+				box-shadow: 0 0 0 1px var( --color-link );
+			}
+		}
 	}
 }
 

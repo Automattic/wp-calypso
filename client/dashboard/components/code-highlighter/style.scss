@@ -5,11 +5,11 @@
 	align-self: stretch;
 
 	.language-yaml {
-		color: #2a46ce !important;
+		color: var( --studio-wordpress-blue-60, #2a46ce ) !important;
 		text-wrap: pretty;
 	}
 
 	.token.key.atrule {
-		color: #008a20 !important;
+		color: var( --studio-green-50, #008a20 ) !important;
 	}
 }

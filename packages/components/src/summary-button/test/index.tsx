@@ -51,4 +51,16 @@ describe( 'SummaryButton', () => {
 		expect( screen.queryByText( 'Test Description' ) ).toBeNull();
 		expect( screen.queryByText( 'Test Strapline' ) ).toBeNull();
 	} );
+	test( 'should render description but not strapline in medium-low density mode', () => {
+		render(
+			<SummaryButton
+				title="Test Title"
+				description="Test Description"
+				strapline="Test Strapline"
+				density="medium-low"
+			/>
+		);
+		expect( screen.getByText( 'Test Description' ) ).toBeVisible();
+		expect( screen.queryByText( 'Test Strapline' ) ).toBeNull();
+	} );
 } );

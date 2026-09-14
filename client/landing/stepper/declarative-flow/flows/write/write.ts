@@ -4,11 +4,8 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { USER_STORE } from '../../../stores';
@@ -34,16 +31,6 @@ const write: Flow = {
 		return WRITE_FLOW_STEPS;
 	},
 	useTracksEventProps() {
-		const site = useSite();
-		const step = getStepFromURL();
-		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
-			//prevent track events from firing until we're sure we won't redirect away from Launchpad
-			return {
-				isLoading: true,
-				eventsProperties: {},
-			};
-		}
-
 		return {
 			isLoading: false,
 			eventsProperties: {},
@@ -145,7 +132,7 @@ const write: Flow = {
 		// /setup/write/launchpad route which has no locale in the path so we need to
 		// redirect off of the first render.
 		// This effects both /setup/write/<locale> starting points and /setup/write/launchpad/<locale> urls.
-		// The double call also hapens on urls without locale.
+		// The double call also happens on urls without locale.
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				const logInUrl = getStartUrl();

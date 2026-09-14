@@ -1,0 +1,579 @@
+@import '@wordpress/base-styles/mixins';
+
+/* How it works */
+// Each top-level section is rendered as a PageSectionColumns, so the outer
+// section wrapper and the section-level background colors are handled by that
+// component. Inner-content styles below are still scoped to .amplify-landing-*.
+.amplify-landing-how {
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+
+.amplify-landing-how-header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: flex-end;
+	}
+}
+
+/* Browser mock */
+.amplify-landing-how-browser {
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06), 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.amplify-landing-how-browser-chrome {
+	background: var(--color-neutral-0);
+	border-block-end: 1px solid var(--color-border-subtle);
+	padding-block: 10px;
+	padding-inline: 16px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.amplify-landing-how-browser-dots {
+	display: flex;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.amplify-landing-how-browser-dot {
+	inline-size: 11px;
+	block-size: 11px;
+	border-radius: 16px;
+}
+
+.amplify-landing-how-browser-dot.is-r {
+	background: #ff5f57;
+}
+
+.amplify-landing-how-browser-dot.is-y {
+	background: #ffbd2e;
+}
+
+.amplify-landing-how-browser-dot.is-g {
+	background: #28ca41;
+}
+
+.amplify-landing-how-browser-address {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+}
+
+.amplify-landing-how-browser-bar {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 4px;
+	padding-block: 4px;
+	padding-inline: 16px;
+	font-size: 12px;
+	color: var(--color-text-subtle);
+	font-family: "SF Mono", "Fira Code", monospace;
+	max-inline-size: 260px;
+	inline-size: 100%;
+	text-align: center;
+}
+
+.amplify-landing-how-preview {
+	position: relative;
+	block-size: 640px;
+	overflow: hidden;
+}
+
+/* Fake agency site */
+.amplify-landing-how-mock {
+	inline-size: 100%;
+	block-size: 100%;
+	background: #f7f7f5;
+	user-select: none;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.amplify-landing-how-mock-nav {
+	background: #0d1117;
+	block-size: 60px;
+	padding-inline: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-shrink: 0;
+}
+
+.amplify-landing-how-mock-logo {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+}
+
+.amplify-landing-how-mock-logo-mark {
+	inline-size: 28px;
+	block-size: 28px;
+	border-radius: 4px;
+	background: #3b82f6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 700;
+	color: #fff;
+}
+
+.amplify-landing-how-mock-logo-name {
+	font-size: 14px;
+	font-weight: 700;
+	color: #fff;
+}
+
+.amplify-landing-how-mock-nav-links {
+	display: flex;
+	gap: 28px;
+}
+
+.amplify-landing-how-mock-nav-links span {
+	font-size: 13px;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.amplify-landing-how-mock-nav-cta {
+	font-size: 12px;
+	font-weight: 600;
+	color: #0d1117;
+	background: #fff;
+	padding-block: 7px;
+	padding-inline: 16px;
+	border-radius: 4px;
+}
+
+.amplify-landing-how-mock-hero {
+	background: #fff;
+	padding-block: 56px 48px;
+	padding-inline: 48px;
+	display: grid;
+	grid-template-columns: 1fr 0.65fr;
+	gap: 40px;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.amplify-landing-how-mock-hero-eyebrow {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 1.4px;
+	text-transform: uppercase;
+	color: #3b82f6;
+	margin-block-end: 14px;
+}
+
+.amplify-landing-how-mock-hero-h1 {
+	font-size: 42px;
+	font-weight: 700;
+	line-height: 1.07;
+	letter-spacing: -1.5px;
+	color: #0d1117;
+	margin-block-end: 16px;
+}
+
+.amplify-landing-how-mock-hero-sub {
+	font-size: 14px;
+	color: #64748b;
+	line-height: 1.7;
+	max-inline-size: 340px;
+	margin-block-end: 28px;
+}
+
+.amplify-landing-how-mock-cta-row {
+	display: flex;
+	gap: 10px;
+}
+
+.amplify-landing-how-mock-btn-dark {
+	font-size: 12px;
+	font-weight: 600;
+	background: #0d1117;
+	color: #fff;
+	padding-block: 10px;
+	padding-inline: 20px;
+	border-radius: 8px;
+}
+
+.amplify-landing-how-mock-btn-outline {
+	font-size: 12px;
+	font-weight: 500;
+	background: transparent;
+	color: #64748b;
+	border: 1px solid #e2e8f0;
+	padding-block: 10px;
+	padding-inline: 20px;
+	border-radius: 8px;
+}
+
+.amplify-landing-how-mock-hero-right {
+	border-radius: 8px;
+	background: linear-gradient(135deg, #0d1117 0%, #1e293b 100%);
+	block-size: 220px;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.amplify-landing-how-mock-hero-right::before {
+	content: "";
+	position: absolute;
+	inline-size: 220px;
+	block-size: 220px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+	inset-block-start: -60px;
+	inset-inline-end: -60px;
+}
+
+.amplify-landing-how-mock-stat-label {
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.35);
+	position: relative;
+}
+
+.amplify-landing-how-mock-stat-num {
+	font-size: 58px;
+	font-weight: 700;
+	letter-spacing: -3px;
+	color: #fff;
+	line-height: 1;
+	position: relative;
+}
+
+.amplify-landing-how-mock-stat-sub {
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.4);
+	position: relative;
+}
+
+.amplify-landing-how-mock-projects {
+	padding-block: 28px;
+	padding-inline: 48px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 14px;
+	flex: 1;
+}
+
+.amplify-landing-how-mock-card {
+	background: #fff;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 1px solid #eaecef;
+}
+
+.amplify-landing-how-mock-card-thumb {
+	block-size: 80px;
+}
+
+.amplify-landing-how-mock-card-body {
+	padding-block: 10px 12px;
+	padding-inline: 14px;
+}
+
+.amplify-landing-how-mock-card-client {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	color: #94a3b8;
+	margin-block-end: 3px;
+}
+
+.amplify-landing-how-mock-card-title {
+	font-size: 12px;
+	font-weight: 600;
+	color: #0d1117;
+	line-height: 1.3;
+}
+
+/* Pins overlay */
+.amplify-landing-how-pins {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.amplify-landing-how-pin {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	opacity: 0;
+	transform: translateY(6px) scale(0.92);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.amplify-landing-how-pin.is-visible {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+}
+
+.amplify-landing-how-pin-dot {
+	inline-size: 14px;
+	block-size: 14px;
+	border-radius: 16px;
+	flex-shrink: 0;
+	position: relative;
+	box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+.amplify-landing-how-pin-dot::after {
+	content: "";
+	position: absolute;
+	inset: -4px;
+	border-radius: 16px;
+	border: 1.5px solid currentColor;
+	opacity: 0.3;
+	animation: amplify-landing-pin-pulse 2s ease-in-out infinite;
+}
+
+@keyframes amplify-landing-pin-pulse {
+	0%, 100% {
+		transform: scale(1);
+		opacity: 0.3;
+	}
+
+	50% {
+		transform: scale(1.4);
+		opacity: 0;
+	}
+}
+
+.amplify-landing-how-pin-dot.good {
+	background: var(--color-success);
+	color: var(--color-success);
+}
+
+.amplify-landing-how-pin-dot.warn {
+	background: var(--color-warning-50);
+	color: var(--color-warning-50);
+}
+
+.amplify-landing-how-pin-dot.danger {
+	background: var(--color-error);
+	color: var(--color-error);
+}
+
+.amplify-landing-how-pin-label {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1px;
+	padding-block: 5px;
+	padding-inline: 10px;
+	border-radius: 8px;
+	white-space: nowrap;
+	color: var(--color-text-inverted);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	line-height: 1.2;
+}
+
+.amplify-landing-how-pin-label-criterion {
+	font-size: 9px;
+	font-weight: 500;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	opacity: 0.85;
+}
+
+.amplify-landing-how-pin-label-text {
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.amplify-landing-how-pin-label-score {
+	margin-inline-start: 6px;
+	font-weight: 500;
+	opacity: 0.78;
+	font-variant-numeric: tabular-nums;
+}
+
+.amplify-landing-how-pin-label.good {
+	background: var(--color-success);
+}
+
+.amplify-landing-how-pin-label.warn {
+	background: var(--color-warning-50);
+}
+
+.amplify-landing-how-pin-label.danger {
+	background: var(--color-error);
+}
+
+/* Floating overlay panel */
+.amplify-landing-how-overlay {
+	position: absolute;
+	inset-block-end: 20px;
+	inset-inline-end: 20px;
+	inline-size: 220px;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	padding: 16px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+}
+
+.amplify-landing-how-overlay-mode {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	color: var(--color-accent);
+	margin-block-end: 10px;
+}
+
+.amplify-landing-how-overlay-score-row {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin-block-end: 4px;
+}
+
+.amplify-landing-how-overlay-num {
+	font-size: 36px;
+	font-weight: 700;
+	letter-spacing: -2px;
+	color: var(--color-text-black);
+	line-height: 1;
+}
+
+.amplify-landing-how-overlay-num.good {
+	color: var(--color-success);
+}
+
+.amplify-landing-how-overlay-num.warn {
+	color: var(--color-warning-50);
+}
+
+.amplify-landing-how-overlay-num.danger {
+	color: var(--color-error);
+}
+
+.amplify-landing-how-overlay-of {
+	font-size: 12px;
+	color: var(--color-text-subtle);
+}
+
+.amplify-landing-how-overlay-title {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--color-text-black);
+	margin-block-end: 12px;
+}
+
+.amplify-landing-how-overlay-title.good {
+	color: var(--color-success);
+}
+
+.amplify-landing-how-overlay-title.warn {
+	color: var(--color-warning-50);
+}
+
+.amplify-landing-how-overlay-title.danger {
+	color: var(--color-error);
+}
+
+.amplify-landing-how-overlay-bars {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.amplify-landing-how-overlay-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 6px;
+}
+
+.amplify-landing-how-overlay-row-label {
+	font-size: 10px;
+	color: var(--color-text-subtle);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.amplify-landing-how-overlay-track {
+	block-size: 4px;
+	background: var(--color-neutral-5);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.amplify-landing-how-overlay-fill {
+	block-size: 100%;
+	border-radius: 2px;
+	transition: inline-size 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.amplify-landing-how-overlay-fill.good {
+	background: var(--color-success);
+}
+
+.amplify-landing-how-overlay-fill.warn {
+	background: var(--color-warning-50);
+}
+
+.amplify-landing-how-overlay-fill.danger {
+	background: var(--color-error);
+}
+
+.amplify-landing-how-overlay-val {
+	font-size: 10px;
+	font-weight: 600;
+	text-align: end;
+	color: var(--color-text-subtle);
+}
+
+.amplify-landing-how-overlay-val.good {
+	color: var(--color-success);
+}
+
+.amplify-landing-how-overlay-val.warn {
+	color: var(--color-warning-50);
+}
+
+.amplify-landing-how-overlay-val.danger {
+	color: var(--color-error);
+}
+
+.amplify-landing-how-overlay-btn {
+	display: block;
+	inline-size: 100%;
+	margin-block-start: 10px;
+	padding-block: 8px;
+	padding-inline: 0;
+	background: var(--color-accent);
+	color: var(--color-text-inverted);
+	font-size: 11px;
+	font-weight: 700;
+	text-align: center;
+	border-radius: 4px;
+	letter-spacing: 0.2px;
+}
+

@@ -5,17 +5,17 @@ const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 	gcm_sender_id: '87234302238',
 	icons: [
 		{
-			src: '/calypso/images/manifest/icon-144x144.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/icon-144x144.webp' + environmentUrlSuffix,
 			sizes: '144x144',
 			type: 'image/png',
 		},
 		{
-			src: '/calypso/images/manifest/icon-192x192.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/icon-192x192.webp' + environmentUrlSuffix,
 			sizes: '192x192',
 			type: 'image/png',
 		},
 		{
-			src: '/calypso/images/manifest/icon-512x512.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/icon-512x512.webp' + environmentUrlSuffix,
 			sizes: '512x512',
 			type: 'image/png',
 		},
@@ -35,17 +35,17 @@ const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 const getJetpackCloudOptions = ( environmentUrlSuffix ) => ( {
 	icons: [
 		{
-			src: '/calypso/images/manifest/jetpack-icon-144x144.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/jetpack-icon-144x144.webp' + environmentUrlSuffix,
 			sizes: '144x144',
 			type: 'image/png',
 		},
 		{
-			src: '/calypso/images/manifest/jetpack-icon-192x192.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/jetpack-icon-192x192.webp' + environmentUrlSuffix,
 			sizes: '192x192',
 			type: 'image/png',
 		},
 		{
-			src: '/calypso/images/manifest/jetpack-icon-512x512.png' + environmentUrlSuffix,
+			src: '/calypso/images/manifest/jetpack-icon-512x512.webp' + environmentUrlSuffix,
 			sizes: '512x512',
 			type: 'image/png',
 		},

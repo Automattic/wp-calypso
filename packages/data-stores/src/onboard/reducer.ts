@@ -11,8 +11,7 @@ import type {
 import type { FeatureId } from '../shared-types';
 import type { GlobalStyles } from '../site';
 import type { DomainSuggestion } from '@automattic/api-core';
-// somewhat hacky, but resolves the circular dependency issue
-import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
@@ -376,6 +375,26 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
+const transferStatus: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_TRANSFER_STATUS' ) {
+		return action.transferStatus;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const transferStartedAt: Reducer< number | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_TRANSFER_STARTED_AT' ) {
+		return action.transferStartedAt;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return [ ...action.goals ];
@@ -675,6 +694,8 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
+	transferStatus,
+	transferStartedAt,
 	goals,
 	hideFreePlan,
 	hidePlansFeatureComparison,

@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
@@ -11,7 +10,7 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
@@ -45,7 +44,7 @@ class InviteAcceptLoggedOut extends Component {
 
 	clickSignInLink = () => {
 		const linkParams = { redirectTo: window.location.href };
-		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
+		if ( this.props.invite?.site?.is_wpforteams_site ?? false ) {
 			linkParams.from = 'p2';
 		}
 
@@ -67,10 +66,11 @@ class InviteAcceptLoggedOut extends Component {
 
 		const enhancedUserData = { ...userData };
 
-		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+		if ( invite?.site?.is_wpforteams_site ?? false ) {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
+		let submitError;
 		this.props
 			.createAccount( enhancedUserData, invite )
 			.then( ( response ) => {
@@ -79,11 +79,12 @@ class InviteAcceptLoggedOut extends Component {
 				this.setState( { bearerToken, userData } );
 			} )
 			.catch( ( error ) => {
+				submitError = error;
 				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
 			} )
-			.finally( afterSubmitCallback );
+			.finally( () => afterSubmitCallback( submitError ) );
 	};
 
 	handleSocialResponse = ( service, access_token, id_token = null, socialUserData = {} ) => {
@@ -100,7 +101,7 @@ class InviteAcceptLoggedOut extends Component {
 
 		const enhancedUserData = { ...socialUserData };
 
-		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+		if ( invite?.site?.is_wpforteams_site ?? false ) {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
@@ -129,7 +130,7 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<InviteFormHeaderLoggedOut
 				site={ this.props.invite?.site }
-				ciabConfig={ this.getCiabConfig() }
+				partnerConfig={ this.getCiabConfig() }
 			/>
 		);
 	};
@@ -139,7 +140,7 @@ class InviteAcceptLoggedOut extends Component {
 		const gardenName = site?.garden?.name;
 		const gardenPartner = site?.garden?.partner;
 
-		return getCiabConfigFromGarden( gardenPartner, gardenName );
+		return getPartnerConfigFromGarden( gardenPartner, gardenName, { persistToSession: true } );
 	};
 
 	loginUser = () => {
@@ -215,21 +216,21 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	render() {
-		const ciabConfig = this.getCiabConfig();
+		const partnerConfig = this.getCiabConfig();
 
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return (
 				<>
 					<BodySectionCssClass
-						bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+						bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 					/>
-					<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+					<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 					{ this.renderSignInLinkOnly() }
 				</>
 			);
 		}
 
-		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
+		if ( this.props.invite?.site?.is_wpforteams_site ?? false ) {
 			return P2InviteAcceptLoggedOut( {
 				...this.props,
 				onClickSignInLink: this.clickSignInLink,
@@ -244,9 +245,9 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<>
 				<BodySectionCssClass
-					bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+					bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 				/>
-				<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+				<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm

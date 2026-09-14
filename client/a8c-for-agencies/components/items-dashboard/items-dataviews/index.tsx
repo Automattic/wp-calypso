@@ -1,6 +1,6 @@
 import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useLayoutEffect } from 'react';
+import { ReactNode, useRef, useLayoutEffect } from 'react';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType } from './interfaces';
 
@@ -22,11 +22,19 @@ export type ItemsDataViewsProps = {
 	data: ItemsDataViewsType< any >;
 	isLoading?: boolean;
 	className?: string;
+	children?: ReactNode;
+	empty?: ReactNode;
 };
 
-const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsProps ) => {
+const ItemsDataViews = ( {
+	data,
+	isLoading = false,
+	className,
+	children,
+	empty,
+}: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
-	const scrollContainerRef = useRef< HTMLElement >();
+	const scrollContainerRef = useRef< HTMLElement >( undefined );
 	const previousDataViewsState = usePrevious( data.dataViewsState );
 
 	useLayoutEffect( () => {
@@ -39,7 +47,8 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 
 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
 			window.setTimeout(
-				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				() =>
+					scrollContainerRef.current?.querySelector( '[role="row"].is-selected' )?.scrollIntoView(),
 				300
 			);
 			return;
@@ -63,9 +72,8 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				getItemId={
 					data.getItemId ??
 					( ( item: any ) => {
-						// todo: this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
-						item.id = data.itemFieldId && getIdByPath( item, data.itemFieldId );
-						return item.id;
+						const id = data.itemFieldId && getIdByPath( item, data.itemFieldId );
+						return id === undefined ? '' : String( id );
 					} )
 				}
 				isLoading={ isLoading }
@@ -74,7 +82,10 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				selection={ data.selection }
 				onChangeSelection={ data.onSelectionChange }
 				header={ data.header }
-			/>
+				empty={ empty }
+			>
+				{ children }
+			</DataViews>
 		</div>
 	);
 };

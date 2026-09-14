@@ -5,9 +5,14 @@
 		"checkJs": false,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src"
+		"rootDir": "src",
+		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/__tests__/*" ],
-	"references": [ { "path": "../viewport" }, { "path": "../support-articles" } ]
+	"references": [
+		{ "path": "../agenttic-client" },
+		{ "path": "../agenttic-ui" },
+		{ "path": "../viewport" },
+		{ "path": "../support-articles" }
+	]
 }

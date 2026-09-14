@@ -1,12 +1,20 @@
 export default [
 	{
 		icon: 'dashicons-feedback',
+		itemId: 'plugin:jetpack/jetpack.php:-:feedback',
+		source: 'plugin',
+		default_weight: 100,
+		reassignable: true,
 		slug: 'feedback',
 		title: 'Feedback',
 		type: 'menu-item',
 		url: 'https://examplewebsite.wordpress.com/wp-admin/admin.php?page=feedback',
 		children: [
 			{
+				itemId: 'plugin:jetpack/jetpack.php:feedback:edit.php?post_type=feedback',
+				source: 'plugin',
+				default_weight: 101,
+				reassignable: true,
 				parent: 'feedback',
 				slug: 'edit-phppost_typefeedback',
 				title: 'Feedback',

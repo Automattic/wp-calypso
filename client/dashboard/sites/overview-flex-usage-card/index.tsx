@@ -19,7 +19,7 @@ function formatBytes( bytes: number ) {
 function formatHours( hours: number ) {
 	const rounded = Math.round( hours * 10 ) / 10;
 	// translators: %s is the number of hours of compute used
-	return sprintf( _n( '%s hr', '%s hrs', rounded === 1 ? 1 : 2 ), rounded );
+	return sprintf( _n( '%s hr', '%s hrs', rounded === 1 ? 1 : 2 ), String( rounded ) );
 }
 
 const symbolsBytesPerMonth = {

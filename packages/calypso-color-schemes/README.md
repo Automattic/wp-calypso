@@ -2,7 +2,7 @@
 
 This package contains a number of CSS custom properties used in Calypso.
 
-![Color scheme thumbnails](screenshot@2x.png)
+![Color scheme thumbnails](screenshot@2x.webp)
 
 ## Installation
 

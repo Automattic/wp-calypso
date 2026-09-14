@@ -1,7 +1,7 @@
 import { type Context } from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
-import { isAlreadyMemberError } from './utils';
+import { isAlreadyMemberError, isInvalidInviteError } from './utils';
 import UnifiedInviteAccept from './index';
 import type { InviteBlogDetails } from './types';
 
@@ -82,7 +82,10 @@ export async function maybeUseUnifiedInvite( context: Context, next: () => void 
 		// Handle "already a member" errors in unified flow.
 		// The error response may include garden data we use to determine if the site is CIAB.
 		const apiError = error as ApiError;
-		if ( apiError.error && isAlreadyMemberError( apiError.error ) ) {
+		if (
+			apiError.error &&
+			( isAlreadyMemberError( apiError.error ) || isInvalidInviteError( apiError.error ) )
+		) {
 			const blogDetails = getBlogDetailsFromError( apiError );
 
 			if ( shouldUseUnifiedFlow( blogDetails ) ) {

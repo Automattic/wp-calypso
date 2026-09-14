@@ -1,5 +1,5 @@
+import { snakeCase } from '@automattic/js-utils';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { snakeCase } from 'lodash';
 import { STEPPER_TRACKS_EVENTS_STEP_NAV } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

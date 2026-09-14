@@ -1,11 +1,12 @@
 import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
-import { hasSubmittedCSATRating, isCSATMessage } from '../../utils';
+import { hasSubmittedCSATRating, isCSATMessage, isZendeskSurveyMessage } from '../../utils';
 import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message/introduction-message';
 import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
+import { ZendeskSurveyRating } from './zendesk-survey-rating';
 import type { Message } from '../../types';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
@@ -17,6 +18,7 @@ export const MessageContent = ( {
 	header?: React.ReactNode;
 } ) => {
 	const isFeedbackMessage = isCSATMessage( message );
+	const isSurveyMessage = isZendeskSurveyMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		'agenttic',
@@ -28,7 +30,7 @@ export const MessageContent = ( {
 			'is-sending': message.role === 'user' && ! message.received && message.metadata?.temporary_id,
 		},
 		{
-			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
+			'odie-chatbox-message-conversation-feedback': isFeedbackMessage || isSurveyMessage,
 		}
 	);
 	const { chat } = useOdieAssistantContext();
@@ -74,6 +76,9 @@ export const MessageContent = ( {
 			{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
 			{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
 				<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
+			) }
+			{ isSurveyMessage && message.feedbackOptions?.[ 0 ] && (
+				<ZendeskSurveyRating action={ message.feedbackOptions[ 0 ] } />
 			) }
 		</div>
 	);

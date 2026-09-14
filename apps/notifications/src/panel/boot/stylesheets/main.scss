@@ -481,7 +481,7 @@ $with-sidebar-min-page-width: 1114px;
 			@extend %headertext;
 			color: var(--color-neutral-40);
 			padding: 6px 0;
-			background: rgba(255, 255, 255, 0.95);
+			background: color-mix(in srgb, var(--color-surface) 95%, transparent);
 			border-bottom: 1px solid var(--color-neutral-5);
 
 			.gridicons-time {

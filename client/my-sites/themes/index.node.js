@@ -3,6 +3,7 @@ import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { setupPreferences } from 'calypso/controller/preferences';
 import {
+	fetchModernShowcaseData,
 	fetchThemeData,
 	fetchThemeFilters,
 	redirectSearchAndType,
@@ -25,8 +26,8 @@ export default function ( router ) {
 	const showcaseRoutes = [
 		`/${ langParam }/themes/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/${ tierParam }/filter/:filter?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/${ tierParam }/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/${ tierParam }/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/${ tierParam }/filter/:filter/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/filter/:filter/:view(collection)?`,
 	];
@@ -39,6 +40,7 @@ export default function ( router ) {
 		validateVertical,
 		validateFilters,
 		fetchThemeData,
+		fetchModernShowcaseData,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
 		renderThemes,
@@ -64,5 +66,12 @@ export default function ( router ) {
 			redirectToThemeDetails( res.redirect, site, theme, section, next )
 	);
 	// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
-	router( '/themes/*', setupPreferences, fetchThemeData, renderThemes, makeLayout );
+	router(
+		'/themes/*',
+		setupPreferences,
+		fetchThemeData,
+		fetchModernShowcaseData,
+		renderThemes,
+		makeLayout
+	);
 }

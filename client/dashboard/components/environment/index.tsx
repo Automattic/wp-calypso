@@ -1,4 +1,8 @@
-import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { staging, production } from '../icons';
 
@@ -9,19 +13,13 @@ interface EnvironmentProps {
 }
 
 const Environment = ( { environmentType }: EnvironmentProps ) => {
-	if ( environmentType === 'staging' ) {
-		return (
-			<HStack justify="flex-start" spacing={ 1 } expanded={ false } style={ { flexShrink: 0 } }>
-				<Icon icon={ staging } />
-				<span>{ __( 'Staging' ) }</span>
-			</HStack>
-		);
-	}
+	const icon = environmentType === 'staging' ? staging : production;
+	const label = environmentType === 'staging' ? __( 'Staging' ) : __( 'Production' );
 
 	return (
-		<HStack justify="flex-start" spacing={ 1 } expanded={ false } style={ { flexShrink: 0 } }>
-			<Icon icon={ production } />
-			<span>{ __( 'Production' ) }</span>
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false } style={ { flexShrink: 0 } }>
+			<Icon icon={ icon } size={ 20 } />
+			<Text weight={ 500 }>{ label }</Text>
 		</HStack>
 	);
 };

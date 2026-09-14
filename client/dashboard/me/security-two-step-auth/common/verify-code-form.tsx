@@ -110,7 +110,7 @@ export default function VerifyCodeForm( {
 					<DataForm< TwoStepAuthAppFormData >
 						data={ formData }
 						fields={ [ field ] }
-						form={ { layout: { type: 'regular' as const }, fields: [ field ] } }
+						form={ { layout: { type: 'regular' as const }, fields: [ field.id ] } }
 						onChange={ ( edits: Partial< TwoStepAuthAppFormData > ) => {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }

@@ -7,9 +7,24 @@ interface Props {
 	noArrow?: boolean;
 	offset?: number;
 	position?: React.ComponentProps< typeof Popover >[ 'position' ];
-	wrapperRef: React.MutableRefObject< HTMLElement | null >;
+	/**
+	 * Legacy prop kept for backward compatibility. The current
+	 * `@wordpress/components` `Popover` no longer reads `context`, so this
+	 * prop is effectively a no-op at runtime — existing call sites have
+	 * always been anchoring via the popover's DOM render position. Prefer
+	 * the `anchor` prop below for new code that needs explicit anchoring.
+	 */
+	wrapperRef?: React.MutableRefObject< HTMLElement | null >;
+	/**
+	 * Explicit element to anchor the popover to. When provided, the popover
+	 * positions itself relative to this element rather than its DOM render
+	 * position. Store the element in state (via a ref callback) so the
+	 * popover repositions when the element mounts.
+	 */
+	anchor?: HTMLElement | null;
 	title: string;
 	className?: string;
+	focusOnMount?: React.ComponentProps< typeof Popover >[ 'focusOnMount' ];
 	onFocusOutside: ( event: React.SyntheticEvent ) => void;
 	children: React.ReactNode;
 }
@@ -18,9 +33,10 @@ export default function A4APopover( {
 	noArrow = false,
 	offset = 0,
 	position = 'bottom',
-	wrapperRef,
+	anchor,
 	title,
 	className,
+	focusOnMount,
 	onFocusOutside,
 	children,
 }: Props ) {
@@ -30,8 +46,9 @@ export default function A4APopover( {
 			noArrow={ noArrow }
 			offset={ offset }
 			className={ clsx( 'a4a-popover', className ) }
-			context={ wrapperRef.current }
+			anchor={ anchor ?? undefined }
 			position={ position }
+			focusOnMount={ focusOnMount }
 			onFocusOutside={ onFocusOutside }
 		>
 			<div className="a4a-popover__content">

@@ -24,7 +24,7 @@ import {
 	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -34,12 +34,28 @@ import {
 	RestorableProductsProvider,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
+import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import {
+	useCallback,
+	useMemo,
+	useRef,
+	useState,
+	type JSX,
+	type PropsWithChildren,
+	type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
+import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
+import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
+import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -59,8 +75,14 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
+import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
+import {
+	SubmitButtonSlotContext,
+	useSubmitButtonSlot,
+} from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -72,7 +94,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
-import { isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
@@ -87,13 +108,19 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
-import { GoogleDomainsCopy } from './google-transfers-copy';
+import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
+import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
+import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
+import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
+import { getRefundWindowCopy } from './refund-policies';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import {
@@ -102,6 +129,7 @@ import {
 } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
+import { LogInToCorrectAccountButton, WrongAccountRenewal } from './wrong-account-renewal';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
@@ -114,7 +142,6 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -176,13 +203,21 @@ function ConditionalContactDetailsMessage( {
 	contactDetailsType: ContactDetailsType;
 } ) {
 	const translate = useTranslate();
-	return contactDetailsType === 'domain' ? (
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	if ( contactDetailsType !== 'domain' ) {
+		return null;
+	}
+	return (
 		<ContactDetailsFormDescription>
-			{ translate(
-				'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-			) }
+			{ isMobileCheckoutStickySummary
+				? translate(
+						'Required for domain registration. Your details are protected for eligible domains.'
+				  )
+				: translate(
+						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+				  ) }
 		</ContactDetailsFormDescription>
-	) : null;
+	);
 }
 
 function LoadingSidebarContent() {
@@ -209,13 +244,25 @@ const ContactFormTitle = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	if ( contactDetailsType === 'domain' ) {
+		if ( isMobileCheckoutStickySummary ) {
+			return <>{ String( translate( 'Contact information' ) ) }</>;
+		}
+
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
 		return (
 			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
+				{ titleText }{ ' ' }
+				<InlineSupportLink
+					supportContext="domain-contact-information-requirements"
+					showIcon={ false }
+				/>
 			</>
 		);
 	}
@@ -255,7 +302,14 @@ const ContactFormTitle = () => {
 
 const OrderReviewTitle = () => {
 	const translate = useTranslate();
-	return <>{ String( translate( 'Your order' ) ) }</>;
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	return (
+		<>
+			{ String(
+				isMobileCheckoutStickySummary ? translate( 'Order details' ) : translate( 'Your order' )
+			) }
+		</>
+	);
 };
 
 const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
@@ -333,6 +387,34 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
+// awareness) while portaling its output into the sidebar slot registered via
+// SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
+// button — no hidden main-column button, no querySelector click proxy.
+function PortaledCheckoutFormSubmit( {
+	validateForm,
+	submitButtonHeader,
+	disableSubmitButton,
+}: {
+	validateForm?: () => Promise< boolean >;
+	submitButtonHeader?: ReactNode;
+	disableSubmitButton?: boolean;
+} ) {
+	const { slotEl } = useSubmitButtonSlot();
+	if ( ! slotEl ) {
+		return null;
+	}
+	return createPortal(
+		<CheckoutFormSubmit
+			validateForm={ validateForm }
+			continueToNextIncompleteStep
+			submitButtonHeader={ submitButtonHeader }
+			disableSubmitButton={ disableSubmitButton }
+		/>,
+		slotEl
+	);
+}
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -350,6 +432,8 @@ export default function CheckoutMainContent( {
 	siteUrl,
 	isRemovingProductFromCart,
 	areThereErrors,
+	isWrongAccountRenewal,
+	isNonRenewableDomain,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -373,6 +457,8 @@ export default function CheckoutMainContent( {
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
+	isWrongAccountRenewal: boolean;
+	isNonRenewableDomain: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -392,17 +478,53 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-userless-checkout',
+		suspended: ! isLoggedOutCart,
+	} );
+
+	// Shared sidebar slot for the active payment-method submit button. We render
+	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
+	// awareness, but createPortal its output into this slot in the sidebar — the
+	// sidebar Pay button IS the real submit button (including native Apple Pay /
+	// Google Pay buttons that require a genuine user click).
+	const [ submitButtonSlotEl, setSubmitButtonSlotEl ] = useState< HTMLElement | null >( null );
+	const submitButtonSlotValue = useMemo(
+		() => ( { slotEl: submitButtonSlotEl, setSlotEl: setSubmitButtonSlotEl } ),
+		[ submitButtonSlotEl ]
+	);
 
 	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
+	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl ?? '',
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	// The flow that redirected to checkout may pass a step indicator via the
+	// `steps_current` / `steps_total` query params. Checkout has no per-flow
+	// knowledge — any flow can opt in by including the params. Mobile-only.
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
+	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const hasStepCount =
+		Number.isInteger( stepsCurrent ) &&
+		stepsCurrent > 0 &&
+		Number.isInteger( stepsTotal ) &&
+		stepsTotal > 0 &&
+		stepsCurrent <= stepsTotal;
+	const stepCounter =
+		isMobileViewport && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
+	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
+	// arrived preselected, so the grid was never among them.
+	const shouldHidePlansStep =
+		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
-	);
-
-	const isWooHostedCheckout = useSelector( ( state ) =>
-		siteId ? isCommerceGardenSite( state, siteId ) : false
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
@@ -435,8 +557,24 @@ export default function CheckoutMainContent( {
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( true );
+	const [
+		shouldShowContactDetailsValidationErrors,
+		setShouldShowContactDetailsValidationErrorsState,
+	] = useState( true );
+	// Mirror the flag in a ref so the step-completion validation — which runs
+	// synchronously right after the contact-form autocomplete sets this to
+	// `false` — reads the current value instead of a stale render closure. Under
+	// React 19's update timing the state setter hasn't propagated to the
+	// `isCompleteCallback` closure yet, which would otherwise surface validation
+	// errors for cached details the user never entered.
+	// See `use-prefill-checkout-contact-form`.
+	const shouldShowContactDetailsValidationErrorsRef = useRef(
+		shouldShowContactDetailsValidationErrors
+	);
+	const setShouldShowContactDetailsValidationErrors = useCallback( ( value: boolean ) => {
+		shouldShowContactDetailsValidationErrorsRef.current = value;
+		setShouldShowContactDetailsValidationErrorsState( value );
+	}, [] );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -515,7 +653,14 @@ export default function CheckoutMainContent( {
 
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
-	const isUsingTopBar = isStepContainerV2 || isWooHostedCheckout;
+
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+	const originalPriceForHeader = responseCart.products.reduce(
+		( sum, product ) => sum + product.item_original_subtotal_integer,
+		0
+	);
+	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
@@ -530,11 +675,11 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		if ( isUsingTopBar ) {
+		if ( isStepContainerV2 ) {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading hideLogo={ isWooHostedCheckout } />
+					<Step.Loading />
 				</>
 			);
 		}
@@ -551,6 +696,45 @@ export default function CheckoutMainContent( {
 		);
 	}
 
+	// This must be checked before the empty cart page below: the renewal was
+	// rejected by the cart, so the cart is also empty, but "you have no items in
+	// your cart" tells the customer nothing they can act on.
+	if ( isWrongAccountRenewal ) {
+		debug( 'rendering wrong account renewal page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<WrongAccountRenewal />
+					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
+	// Same reasoning as above: the domain renewal was rejected, so the cart is
+	// empty, and "you have no items in your cart" explains none of it.
+	if ( isNonRenewableDomain ) {
+		debug( 'rendering non-renewable domain page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<NonRenewableDomain />
+					<CheckoutFormSubmit submitButton={ <SearchForNewDomainButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
@@ -564,9 +748,11 @@ export default function CheckoutMainContent( {
 		return (
 			<WPCheckoutWrapper>
 				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
 					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 					<EmptyCart />
 					<CheckoutFormSubmit
 						submitButton={
@@ -598,67 +784,159 @@ export default function CheckoutMainContent( {
 		<WPCheckoutSidebarContent className="checkout-sidebar-content">
 			{ isLoading && <LoadingSidebarContent /> }
 			{ ! isLoading && (
-				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-					<CheckoutErrorBoundary
-						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-						onError={ onSummaryError }
-					>
-						<CheckoutSummaryTitleLink
-							className="checkout__summary-button"
-							onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+				<>
+					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+						<CheckoutErrorBoundary
+							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+							onError={ onSummaryError }
 						>
-							<CheckoutSummaryTitleContent className="checkout__summary-title">
-								<CheckoutSummaryTitle>
-									{ ! isUsingTopBar && (
-										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-									) }
-									{ translate( 'Purchase Details' ) }
-									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-								</CheckoutSummaryTitle>
-								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-									{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-										isSmallestUnit: true,
-										stripZeros: true,
-									} ) }
-								</CheckoutSummaryTitlePrice>
-							</CheckoutSummaryTitleContent>
-						</CheckoutSummaryTitleLink>
-
-						<CheckoutSummaryBody className="checkout__summary-body">
-							{ shouldShowSitePreview && (
-								<div className="checkout-site-preview">
-									<SitePreviewWrapper>
-										<SitePreview showEditSite={ false } showSiteDetails={ false } />
-									</SitePreviewWrapper>
-								</div>
+							{ ! isMobileCheckoutStickySummary && isCheckoutUiRedesignV1 && (
+								<CheckoutSummaryTitleLinkRedesign
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											<CheckoutSummaryBagIconWrapper>
+												<MaterialIcon icon="shopping_cart" size={ 24 } />
+											</CheckoutSummaryBagIconWrapper>
+											{ translate( 'Purchase details' ) }
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryPricesWrapper>
+											{ hasDiscountForHeader && (
+												<CheckoutSummaryOriginalPrice>
+													{ formatCurrency( originalPriceForHeader, responseCart.currency, {
+														isSmallestUnit: true,
+														stripZeros: true,
+													} ) }
+												</CheckoutSummaryOriginalPrice>
+											) }
+											<CheckoutSummaryCurrentPrice>
+												{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+													isSmallestUnit: true,
+													stripZeros: true,
+												} ) }
+											</CheckoutSummaryCurrentPrice>
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryPricesWrapper>
+									</CheckoutSummaryTitleContentRedesign>
+								</CheckoutSummaryTitleLinkRedesign>
+							) }
+							{ ! isMobileCheckoutStickySummary && ! isCheckoutUiRedesignV1 && (
+								<CheckoutSummaryTitleLink
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContent className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											{ ! isStepContainerV2 && (
+												<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+											) }
+											{ translate( 'Purchase Details' ) }
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+											{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</CheckoutSummaryTitlePrice>
+									</CheckoutSummaryTitleContent>
+								</CheckoutSummaryTitleLink>
 							) }
 
-							<WPCheckoutOrderSummary />
-							<CheckoutSidebarNudge
-								addItemToCart={ addItemToCart }
-								areThereDomainProductsInCart={ areThereDomainProductsInCart }
-							/>
-						</CheckoutSummaryBody>
-					</CheckoutErrorBoundary>
-				</CheckoutSummaryArea>
+							<CheckoutSummaryBody className="checkout__summary-body">
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
+								) }
+
+								<WPCheckoutOrderSummary />
+								{ ! isCheckoutUiRedesignV1 && (
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								) }
+							</CheckoutSummaryBody>
+						</CheckoutErrorBoundary>
+						{ isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+							<CheckoutSummaryNudgeArea>
+								<CheckoutSidebarNudge
+									addItemToCart={ addItemToCart }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
+								/>
+							</CheckoutSummaryNudgeArea>
+						) }
+					</CheckoutSummaryArea>
+				</>
 			) }
 		</WPCheckoutSidebarContent>
 	);
 
+	// Control (and the non-portaled mobile fallback below) shows the money-back
+	// guarantee under the submit button.
+	const mobileSubmitButtonFooter = hasCartJetpackProductsOnly ? (
+		<JetpackCheckoutSeals />
+	) : (
+		<CheckoutMoneyBackGuarantee cart={ responseCart } />
+	);
+	// In the sticky bar the terms line rides above the CTA (header slot). The
+	// money-back guarantee is surfaced up in the payment step instead (see
+	// paymentStepRefundCopy) — reassurance at the moment of entering card
+	// details — so the footer slot below the CTA stays empty.
+	const blackboxChallengeHeader =
+		isLoggedOutCart && blackbox.challenge ? (
+			<BlackboxChallengeWrapper>{ blackbox.challenge }</BlackboxChallengeWrapper>
+		) : null;
+	const portaledSubmitButtonHeader = (
+		<>
+			{ isLargeViewport ? null : <SubmitButtonHeader /> }
+			{ blackboxChallengeHeader }
+		</>
+	);
+	const mobileSubmitButtonHeader = (
+		<>
+			<SubmitButtonHeader />
+			{ blackboxChallengeHeader }
+		</>
+	);
+	// Refund copy, no icon, that continues the secure-encryption notice at payment
+	// entry. getRefundWindowCopy is null when no refund window applies; mirror
+	// CheckoutMoneyBackGuarantee's all-domains guard.
+	const refundWindowCopy = getRefundWindowCopy( responseCart, translate );
+	const allCartItemsAreDomains = responseCart.products.every(
+		( product ) => product.is_domain_registration === true
+	);
+	const paymentStepRefundCopy =
+		refundWindowCopy && ! allCartItemsAreDomains ? refundWindowCopy : null;
+
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
-			<WPCheckoutMainContent className="checkout-main-content">
+			<WPCheckoutMainContent
+				className="checkout-main-content"
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+			>
 				<CheckoutOrderBanner />
-				{ isUsingTopBar ? (
+				{ isStepContainerV2 ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
 						align="left"
 						size={ ! isLargeViewport ? 'small' : undefined }
 					/>
 				) : (
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 				) }
-				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
+				<CheckoutStepGroup
+					loadingHeader={ loadingHeader }
+					onStepChanged={ onStepChanged }
+					scrollToStepOnForwardNavigation={ ! isLargeViewport }
+				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 
@@ -692,8 +970,15 @@ export default function CheckoutMainContent( {
 							stepId="contact-form"
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
+								// Read from the ref: autocomplete suppresses errors by setting the
+								// flag to `false` immediately before invoking this callback, and the
+								// state update would not yet be visible in this closure.
+								const shouldDisplayValidationErrors =
+									shouldShowContactDetailsValidationErrorsRef.current;
 								// Touch the fields so they display validation errors
-								shouldShowContactDetailsValidationErrors && touchContactFields();
+								if ( shouldDisplayValidationErrors ) {
+									touchContactFields();
+								}
 								const validationResponse = await validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
@@ -703,7 +988,7 @@ export default function CheckoutMainContent( {
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
-									shouldShowContactDetailsValidationErrors
+									shouldDisplayValidationErrors
 								);
 								if ( validationResponse ) {
 									// When the contact details change, update the VAT details on the server.
@@ -717,10 +1002,18 @@ export default function CheckoutMainContent( {
 										}
 									} catch ( error ) {
 										reduxDispatch( removeNotice( 'vat_info_notice' ) );
-										if ( shouldShowContactDetailsValidationErrors ) {
-											reduxDispatch(
-												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
-											);
+										if ( shouldDisplayValidationErrors ) {
+											const vatError = error as { error?: string; message: string };
+											// `invalid_vat` means the VAT ID could not be validated right now
+											// (service down/busy), so the shopper can still finish without one.
+											const vatErrorMessage =
+												vatError.error === 'invalid_vat'
+													? `${ vatError.message } ${ translate(
+															'You can uncheck “Add VAT details” to finish your purchase now without a VAT ID.',
+															{ textOnly: true }
+													  ) }`
+													: vatError.message;
+											reduxDispatch( errorNotice( vatErrorMessage, { id: 'vat_info_notice' } ) );
 										}
 										return false;
 									}
@@ -786,7 +1079,10 @@ export default function CheckoutMainContent( {
 								</>
 							}
 							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+							editButtonElement={
+								isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+							}
 							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
 							nextStepButtonText={ nextStepButtonText }
 							nextStepButtonAriaLabel={ String(
@@ -798,16 +1094,16 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={
-							<>
-								<GoogleDomainsCopy responseCart={ responseCart } />
-								<PaymentMethodFilter
-									areStoredCardsFiltered={ areStoredCardsFiltered }
-									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-								/>
-							</>
+							<PaymentMethodFilter
+								areStoredCardsFiltered={ areStoredCardsFiltered }
+								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							/>
 						}
 						canEditStep={ canEditPaymentStep() }
-						editButtonText={ String( translate( 'Edit' ) ) }
+						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+						editButtonElement={
+							isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+						}
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
 						nextStepButtonAriaLabel={ String(
@@ -817,6 +1113,25 @@ export default function CheckoutMainContent( {
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
 						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+						{ ...( isMobileCheckoutStickySummary && {
+							/* Figma 3971:13237 — the active heading reads "Payment method"
+							   under the experiment (vs. composite-checkout's default
+							   "Pick a payment method"). */
+							titleContent: <>{ translate( 'Payment method' ) }</>,
+							/* Figma 3971:13239 — secure-encryption notice sits as a
+							   13/regular/Gray 60 paragraph between the step heading
+							   and the methods card. activeStepHeader renders directly
+							   above activeStepContent, so the default methods card is
+							   left untouched. */
+							activeStepHeader: (
+								<p className="checkout-payment-method__secure-notice">
+									{ translate( 'All transactions are secure and encrypted.' ) }
+									{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
+									     needs one to sit in prose here. */ }
+									{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
+								</p>
+							),
+						} ) }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
 							// payment method selected and it does not have required fields.
@@ -842,85 +1157,585 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						isLargeViewport={ isLargeViewport }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					{ isLargeViewport ||
+					( isStepContainerV2 && ! isLargeViewport && isMobileCheckoutStickySummary ) ? (
+						<PortaledCheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ portaledSubmitButtonHeader }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
+						/>
+					) : (
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ mobileSubmitButtonHeader }
+							submitButtonFooter={ mobileSubmitButtonFooter }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
+						/>
+					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
 	);
 
-	if ( ! isUsingTopBar ) {
+	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
-				{ checkoutSummary }
-				{ checkoutMainContent }
-			</WPCheckoutWrapper>
+			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+				<WPCheckoutWrapper
+					className="checkout-wrapper"
+					isLargeViewport={ isLargeViewport }
+					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				>
+					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+							{ translate( 'Checkout' ) }
+						</WPCheckoutTitle>
+					) }
+					{ checkoutSummary }
+					{ checkoutMainContent }
+					{ isLargeViewport && (
+						<>
+							<CheckoutProcessorNotice />
+							<CheckoutTrustCards cart={ responseCart } />
+						</>
+					) }
+				</WPCheckoutWrapper>
+			</SubmitButtonSlotContext.Provider>
 		);
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
-			<Step.TwoColumnLayout
-				firstColumnWidth={ 8 }
-				secondColumnWidth={ 4 }
-				topBar={ ( { isLargeViewport } ) => {
-					const topBar = (
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-							rightElement={
-								<span className="checkout-skip-button">
-									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink }
-									</Step.LinkButton>
-								</span>
-							}
-							hideLogo={ isWooHostedCheckout }
-						/>
-					);
-
-					if ( isLargeViewport ) {
-						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
-					}
-
-					return (
-						<>
-							{ topBar }
-							{ checkoutSummary }
-						</>
-					);
-				} }
+		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+			<StepContainerV2CheckoutFixer
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
-				{ ( { isLargeViewport } ) => {
-					if ( isLargeViewport ) {
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 8 }
+					secondColumnWidth={ 4 }
+					heading={
+						showProgress ? (
+							<OnboardingProgress
+								currentStep="checkout"
+								shouldHidePlansStep={ shouldHidePlansStep }
+								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
+								onStepSelect={ ( step ) =>
+									handleProgressStepSelect( step, {
+										forceCheckoutBackUrlDomains,
+										forceCheckoutBackUrl,
+										clickStepBack: leaveModalProps.clickStepBack,
+										clickClose: leaveModalProps.clickClose,
+									} )
+								}
+							/>
+						) : undefined
+					}
+					topBar={ ( { isLargeViewport } ) => {
+						const topBar = (
+							<Step.TopBar
+								leftElement={
+									showProgress ? undefined : (
+										<Step.BackButton
+											onClick={ leaveModalProps.clickClose }
+											disabled={ leaveModalProps.isLeaveDisabled }
+											accessibleWhenDisabled
+										/>
+									)
+								}
+								rightElement={
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										<span className="checkout-skip-button">
+											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ helpCenterButtonLink }
+											</Step.LinkButton>
+										</span>
+									</>
+								}
+							/>
+						);
+
+						if ( isLargeViewport ) {
+							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+						}
+
+						return (
+							<>
+								{ topBar }
+								{ isCheckoutUiRedesignV1 && (
+									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+								) }
+								{ ! isMobileCheckoutStickySummary && checkoutSummary }
+							</>
+						);
+					} }
+				>
+					{ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return (
+								<>
+									<div className="checkout-main-column">
+										{ checkoutMainContent }
+										<CheckoutProcessorNotice />
+										<CheckoutTrustCards cart={ responseCart } />
+									</div>
+									{ checkoutSummary }
+								</>
+							);
+						}
+
 						return (
 							<>
 								{ checkoutMainContent }
-								{ checkoutSummary }
+								{ isMobileCheckoutStickySummary && <MobileCheckoutStickySummary /> }
 							</>
 						);
-					}
-
-					return checkoutMainContent;
-				} }
-			</Step.TwoColumnLayout>
-			<LeaveCheckoutModal { ...leaveModalProps } />
-		</StepContainerV2CheckoutFixer>
+					} }
+				</Step.TwoColumnLayout>
+				<LeaveCheckoutModal { ...leaveModalProps } />
+			</StepContainerV2CheckoutFixer>
+		</SubmitButtonSlotContext.Provider>
 	);
 }
 
+/**
+ * Styles for the mobile sticky order summary experiment
+ * (`calypso_mobile_checkout_sticky_summary_v1_1`).
+ *
+ * Interpolated last in `StepContainerV2CheckoutFixer` so that for a user
+ * enrolled in both this and the checkout UI redesign, these rules win the
+ * cascade. `isMobileCheckoutStickySummary` is already false above the `small`
+ * breakpoint, so no additional viewport guard is needed here.
+ */
+const mobileCheckoutStickySummaryStyles = css`
+	/* The submit button is portaled into the fixed sticky bar, so the native
+	   last-step reservation for it (--submit-button-height) is dead weight —
+	   zero it, or it stacks with the padding below into an odd trailing gap.
+	   The terms block already leaves most of the clearance; a small top-up
+	   lifts the last line clear of the bar. */
+	.checkout-main-content {
+		padding-block-end: 60px;
+	}
+	.checkout__step-wrapper.checkout__step-wrapper--last-step {
+		margin-bottom: 0;
+	}
+	.checkout-contact-form-step {
+		padding-block: 0 32px;
+	}
+	.checkout__payment-method-step {
+		padding-block-start: 0;
+	}
+	.checkout-step.is-active.checkout__payment-method-step {
+		padding-bottom: 16px;
+	}
+	/* Figma 2392:15311/15425/15448 — under the mobile sticky experiment
+	   every step renders as a plain heading; the stepper circle (number
+	   / green check) is dropped on all three steps. */
+	.checkout-step__stepper {
+		display: none;
+	}
+	.checkout-step__header h2 {
+		font-size: 20px;
+		line-height: 24px;
+		letter-spacing: -0.46px;
+	}
+	.checkout-step__header h2 > span {
+		font-weight: 500;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+	/* Figma 2392:15428 — Contact step description. */
+	.checkout-contact-form-step .checkout-steps__step-content > p {
+		font-size: 13px;
+		line-height: 20px;
+		color: ${ colorStudio.colors[ 'Gray 60' ] };
+	}
+	.checkout-review-order__signed-in {
+		font-size: 14px;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		/* WPDS scales/grays — fallback hex matches @wordpress/base-styles
+		   defaults, since Calypso doesn't declare these vars globally. */
+		color: var( --wp-components-color-gray-700, #757575 );
+		margin: 0;
+	}
+	.checkout-review-order__signed-in strong {
+		font-weight: 400;
+		color: var( --wp-components-color-gray-800, #2f2f2f );
+	}
+	/* Figma 2392:15317 — 32px between the "signed in as …" line and the
+	   first cart row (vs. the default 24px from WPOrderReviewList), and
+	   drop the first row's top padding so the gap is exactly the list's
+	   margin, not stacked with the line item's own padding. Subsequent
+	   rows keep their 16px+16px rhythm; the last row drops its trailing
+	   padding so it sits flush against the section end. */
+	.wp-checkout__review-order-step .order-review-line-items {
+		margin-block-start: 32px;
+	}
+	.wp-checkout__review-order-step .order-review-line-items > li:first-child .checkout-line-item {
+		padding-block-start: 0;
+	}
+	.wp-checkout__review-order-step .order-review-line-items > li:last-child .checkout-line-item {
+		padding-block-end: 0;
+	}
+	/* Figma 2392:15320 — product name typography. */
+	.wp-checkout__review-order-step .checkout-line-item .checkout-line-item__title {
+		font-size: 16px;
+		line-height: 24px;
+	}
+	/* Figma 2392:15321/15325/15326 — price typography:
+	   – Outer .checkout-line-item__price carries the "/mo" text node,
+	     so it gets the 13/regular/-0.08 cadence.
+	   – Inner LineItemPriceWrapper span (the actual amount + the
+	     <s> strikethrough) inherits up to 16/24/-0.32.
+	   – Strikethrough recolors to scales/grays/gray-700. */
+	.wp-checkout__review-order-step .checkout-line-item__price {
+		/* LineItemPriceWrapper is display:flex, so without making the
+		   outer span a flex container the sibling "/mo" text node ends
+		   up offset above the price baseline. */
+		display: flex;
+		align-items: baseline;
+		font-size: 13px;
+		line-height: 20px;
+		letter-spacing: -0.08px;
+		font-weight: 400;
+	}
+	.wp-checkout__review-order-step .checkout-line-item__price > span {
+		font-size: 16px;
+		line-height: 24px;
+		/* 8px between the strikethrough and the live price (Figma
+		   3838:3618 gap-[8px]); overrides LineItemPriceWrapper's
+		   default 4px gap. */
+		gap: 8px;
+	}
+	.wp-checkout__review-order-step .checkout-line-item__price > span > span {
+		font-weight: 500;
+	}
+	.wp-checkout__review-order-step .checkout-line-item__price > span > s {
+		color: var( --wp-components-color-gray-700, #757575 );
+	}
+	/* Figma 2392:15397 — "Remove plan/domain/email" link. */
+	.wp-checkout__review-order-step .checkout-line-item__remove-product {
+		font-size: 13px;
+		line-height: 20px;
+		font-weight: 400;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+	/* "Have a coupon?" — match the secondary-link treatment above (Gray 100)
+	   instead of the lighter shared default, and drop the 24px area padding
+	   that leaves it stranded and inset from the rest of the column. */
+	.checkout__coupon-area {
+		padding-block: 8px;
+		padding-inline: 0;
+	}
+	.wp-checkout-order-review__show-coupon-field-button {
+		line-height: 20px;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+	/* Payment method card group — Figma 3971:13242. Container and
+	   divider borders track WPDS gray-200; the V1 baseline ships
+	   #e0e0e0 / #f0f0f0 — here both land on #e0e0e0 so the field
+	   reads as a single chrome instead of two tones. */
+	.checkout-payment-methods {
+		border-color: var( --wp-components-color-gray-200, #e0e0e0 );
+	}
+	.checkout-payment-methods .has-highlight {
+		border-bottom-color: var( --wp-components-color-gray-200, #e0e0e0 );
+	}
+	/* Selected row — Figma 3971:13243 — picks up a 4% Studio Blue
+	   tint on the background and an 8% Studio Blue inset border
+	   (drawn as a box-shadow so toggling selection doesn't shift
+	   the row by 1px). Drops V1's diagonal "selected" gradient. */
+	.checkout-payment-methods .has-highlight.is-checked {
+		background: rgba( 56, 88, 233, 0.04 );
+		box-shadow: inset 0 0 0 1px rgba( 56, 88, 233, 0.08 );
+	}
+	/* The composite-checkout primitive lays the Label out as a flex
+	   column with font-size 14px and min-height 72px below the
+	   400px smallPhoneUp breakpoint. The experiment runs on phones
+	   (small viewports) so lock to row + 13/52px (Figma 3971:13286
+	   row height) so each row matches Figma with logos sitting
+	   beside the title even on the narrowest devices. Font size
+	   lives here (not only in the V1 block) so mobile-checkout-sticky-summary users
+	   on the non-V1 baseline still get 13px. */
+	.checkout-payment-methods .has-highlight > label {
+		${ mobileCheckoutStickySummaryRadioDotStyles }
+		min-height: 52px;
+		padding-block: 16px;
+		padding-inline: 48px 16px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		font-size: 13px;
+		font-weight: 400;
+	}
+	/* Brand logos render as 32x22 chips with a 4px radius and a
+	   1px gray-200 border (Figma 3971:13251 etc.). The brand SVG
+	   inside scales to fit the padded inner area while preserving
+	   its intrinsic aspect ratio (preserveAspectRatio defaults to
+	   xMidYMid meet, centering the path). PaymentMethodLogos spans
+	   render with either .credit-card__logos (credit card) or
+	   .payment-logos (PayPal, Bancontact, Apple Pay, etc.) — cover
+	   both. */
+	.checkout-payment-methods .credit-card__logos,
+	.checkout-payment-methods .payment-logos {
+		flex: 0 0 auto;
+		flex-wrap: nowrap;
+		gap: 4px;
+	}
+	/* PaymentLogo lays its wrappers out for the legacy row: the brand
+	   wrapper nudges itself down 4px and the fallback lock icon is
+	   absolutely positioned (top 14px / right 10px), so it escapes the
+	   row and lands over the divider. Flatten both so every chip is an
+	   in-flow flex item the row can centre. */
+	.checkout-payment-methods .credit-card__logos > span,
+	.checkout-payment-methods .payment-logos > span {
+		position: static;
+		transform: none;
+	}
+	.checkout-payment-methods .credit-card__logos svg,
+	.checkout-payment-methods .payment-logos svg {
+		position: static;
+		background: ${ colorStudio.colors[ 'White' ] };
+		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+		border-radius: 4px;
+		padding: 4px 6px;
+		box-sizing: border-box;
+		height: 22px;
+		width: 32px;
+	}
+	/* "+N" overflow pill — Figma 3971:13264. Same 32x22 chip
+	   silhouette as the brand logos, but the inner content is a
+	   centered 11px medium label instead of an SVG. */
+	.checkout-payment-methods .credit-card__logos-overflow {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 22px;
+		height: 22px;
+		padding: 0 6px;
+		background: ${ colorStudio.colors[ 'White' ] };
+		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 20px;
+		color: var( --wp-components-color-gray-900, #1e1e1e );
+		flex: 0 0 auto;
+	}
+	/* Lock icon at the end of the Card number input — Figma
+	   3971:13273. The StripeFieldWrapper.number is the chrome
+	   around Stripe's iframe; flatten it to a flex container,
+	   lift the visible border / padding / bg / height onto the
+	   wrapper itself, and zero out the inner StripeElement so
+	   only one chrome renders and the lock sits inside it. */
+	.credit-card-fields-inner-wrapper .number {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		height: 40px;
+		padding: 0 16px;
+		border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+		border-radius: 2px;
+		background: ${ colorStudio.colors[ 'White' ] };
+		box-sizing: border-box;
+	}
+	.credit-card-fields-inner-wrapper .number .StripeElement {
+		flex: 1 1 auto;
+		border: none;
+		padding: 0;
+		background: transparent;
+		height: auto;
+	}
+	.credit-card-fields-inner-wrapper .credit-card-number-field__lock-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+	.credit-card-fields-inner-wrapper .credit-card-number-field__brand-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 25px;
+		height: 16px;
+	}
+	.credit-card-fields-inner-wrapper .credit-card-number-field__brand-icon img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+	/* Expiry + CVC + CVC card-back hint share one flex row under
+	   the experiment (Figma 3971:13274). Expiry and CVC each take
+	   1fr; the hint is a fixed 38px column with the card-back
+	   placeholder image rendered at 40px tall. */
+	.credit-card-fields-inner-wrapper .credit-card-fields__expiry-cvc-row {
+		display: flex;
+		gap: 8px;
+		align-items: flex-end;
+	}
+	.credit-card-fields-inner-wrapper .credit-card-fields__expiry-cvc-row > label {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+	.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint {
+		display: flex;
+		flex: 0 0 38px;
+		width: 38px;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+	}
+	.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint svg,
+	.credit-card-fields-inner-wrapper .credit-card-fields__cvc-hint img {
+		width: 100%;
+		height: auto;
+		object-fit: contain;
+	}
+	/* "Use this payment method…" checkbox renders via WPDS
+	   CheckboxControl. The default --checkbox-input-size is 24px;
+	   Figma 3971:13283 specs it at 16×16. The token drives the
+	   input box, the check icon, and all hover/active outlines
+	   so a single override scales every part of the control
+	   without breaking states. */
+	.credit-card-fields-inner-wrapper
+		.assign-to-all-payment-methods-checkbox.components-checkbox-control {
+		--checkbox-input-size: 16px;
+	}
+	/* Expanded credit-card form sits 24px below the radio row
+	   (Figma 3971:13243 gap-[24px]). V1's wrapper rule already
+	   adds 16px padding on three sides; lift the top to 8px so
+	   the label's own 16px bottom padding sums to the 24px gap. */
+	div:has( > .credit-card-fields-inner-wrapper ) {
+		padding: 8px 16px 16px 16px;
+	}
+	/* Field rhythm matches the contact-information step — switch
+	   from CreditCardField / FieldRow's 16px margin-top to a flex
+	   column with a unified 16px gap so every field-to-field
+	   cadence lands on the same grid as the contact form. */
+	.credit-card-fields-inner-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+	.credit-card-fields-inner-wrapper > * {
+		margin-top: 0;
+	}
+	/* Field typography inside the credit-card form (Figma
+	   3971:13267–13276): labels 13/medium/Gray 100 with 6px below,
+	   inputs 40px tall with a 2px radius and Gray 10 border,
+	   descriptions 13/regular (not italic) with Gray 700 — Field
+	   from @automattic/wpcom-checkout renders its own emotion
+	   <label>/<input>/<p>, so we target by element rather than
+	   by class.
+
+	   Two label structures exist:
+	   - Field (Cardholder name): <label>text</label> as a sibling
+	     of the input.
+	   - Stripe (Card number / Expiry / CVC): <label><span>text</span>
+	     <wrapper>…</wrapper></label> — the span (LabelText) carries
+	     its own font + color from the styled-component, so we have
+	     to override on the span too. */
+	.credit-card-fields-inner-wrapper label,
+	.credit-card-fields-inner-wrapper label > span {
+		font-size: 13px;
+		line-height: 20px;
+		font-weight: 500;
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+	}
+	/* Gap between label text and its input — applies to both shapes
+	   (the span as the first child of a Stripe-label, the bare
+	   label as a sibling of the input for Field). */
+	.credit-card-fields-inner-wrapper label > span {
+		display: block;
+		margin-bottom: 6px;
+	}
+	.credit-card-fields-inner-wrapper > div > label[for] {
+		display: block;
+		margin-bottom: 6px;
+	}
+	/* Text-style inputs only — :not() excludes the "Use for all
+	   subscriptions" checkbox (and any stray radios), which would
+	   otherwise inherit the 40px height + 10/16 padding and render
+	   as a tall rectangle. White background re-establishes the
+	   field surface on top of the selected card's 4% blue tint. */
+	.credit-card-fields-inner-wrapper input:not( [type='checkbox'] ):not( [type='radio'] ) {
+		height: 40px;
+		font-size: 13px;
+		padding: 10px 16px;
+		border-radius: 2px;
+		border-color: ${ colorStudio.colors[ 'Gray 10' ] };
+		background: ${ colorStudio.colors[ 'White' ] };
+	}
+	/* Stripe Elements render in an iframe wrapped by a styled span;
+	   the wrapper's baseline is 12/14 padding + 16px font on a
+	   non-fixed height. Re-pin to match the Cardholder name input
+	   (40px tall, 10/16 padding, 2px radius, Gray 10 border, white
+	   bg) so card-number / expiry / CVC share the same rhythm. */
+	.credit-card-fields-inner-wrapper .StripeElement,
+	.credit-card-fields-inner-wrapper .stripe-element {
+		background: ${ colorStudio.colors[ 'White' ] };
+		height: 40px;
+		padding: 10px 16px;
+		border-radius: 2px;
+		border-color: ${ colorStudio.colors[ 'Gray 10' ] };
+		box-sizing: border-box;
+	}
+	/* Secure-encryption notice — Figma 3971:13239 — sits below the
+	   "Payment method" heading at 13/regular/Gray 60 with a 16px
+	   gap to the card group. The <p> is injected via
+	   activeStepHeader above. */
+	.checkout__payment-method-step .checkout-payment-method__secure-notice {
+		font-size: 13px;
+		line-height: 20px;
+		font-weight: 400;
+		color: ${ colorStudio.colors[ 'Gray 60' ] };
+		margin: 0 0 16px;
+	}
+	.credit-card-fields-inner-wrapper p {
+		font-style: normal;
+		font-size: 13px;
+		line-height: 20px;
+		font-weight: 400;
+		color: ${ colorStudio.colors[ 'Gray 50' ] };
+		margin: 8px 0 0;
+	}
+	/* "Use this payment method for all subscriptions…" — the
+	   AssignToAllPaymentMethods checkbox uses WPDS' CheckboxControl
+	   whose label is informational text, not a field label. The
+	   broader label rule above paints field labels 13/medium/Gray
+	   100; restyle the checkbox label to 13/regular/Gray 50 so it
+	   reads as helper copy (Figma 3971:13285). Also reset the
+	   wrapper's margin-top to 0 — the inner-wrapper's flex+gap
+	   already supplies the 16px cadence. */
+	.credit-card-fields-inner-wrapper .components-checkbox-control label {
+		font-size: 13px;
+		line-height: 20px;
+		font-weight: 400;
+		color: ${ colorStudio.colors[ 'Gray 50' ] };
+		margin-bottom: 0;
+	}
+	.credit-card-fields-inner-wrapper .components-checkbox-control label a {
+		color: ${ colorStudio.colors[ 'Gray 100' ] };
+		text-decoration: underline;
+	}
+`;
+
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
+	isCheckoutUiRedesignV1?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1023,17 +1838,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				background: none;
 				position: relative;
 				height: 100%;
-
-				&:before {
-					content: '';
-					display: block;
-					background: var( --color-neutral-0 );
-					position: fixed;
-					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-					transform: translateX( calc( var( --left-padding ) * -1 ) );
-					width: 100vw;
-					bottom: 0;
-				}
 			}
 
 			.checkout__summary-area,
@@ -1057,7 +1861,23 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	${ ( props ) =>
 		props.isLargeViewport &&
 		css`
-			div:has( .checkout-sidebar-content ) {
+			/*
+			 * Stick the inner summary area, not the sidebar wrapper.
+			 *
+			 * Earlier versions targeted div:has( .checkout-sidebar-content )
+			 * which matched multiple ancestors; making each sticky with no
+			 * positioned containing block let the upsell paint over the trust
+			 * cards row at scroll-bottom. Targeting .checkout-sidebar-content
+			 * directly didn't help either: when the sidebar is the sticky
+			 * element it equals its containing block's height (the column
+			 * stretches it), leaving no room to actually stick — so the
+			 * sticky degenerated to static and the Pay CTA scrolled away.
+			 *
+			 * .checkout__summary-area is shorter than the sidebar (just the
+			 * order card + upsell), so it has room to slide within the
+			 * stretched sidebar's bounds and pin to top: 32px.
+			 */
+			.checkout__summary-area {
 				position: sticky;
 				top: 32px;
 			}
@@ -1065,7 +1885,351 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout-loading-sidebar {
 				min-width: 384px;
 			}
+			/*
+			 * Give the sticky .checkout__summary-area room to slide.
+			 *
+			 * TwoColumnLayout's row uses align-items: flex-start at break-large
+			 * (packages/onboarding/.../TwoColumnLayout/style.scss), so its
+			 * column wrappers size to content instead of stretching to row
+			 * height. With the right column collapsed, .checkout-sidebar-content
+			 * inside it is just as short as the .checkout__summary-area it
+			 * contains — so the sticky rule above has zero distance to travel.
+			 *
+			 * Override the row's align-items to stretch (so both column wrappers
+			 * match row height), then promote the sidebar's column wrapper to a
+			 * flex column so .checkout-sidebar-content fills it. The legacy
+			 * WPCheckoutWrapper path gets this for free via grid-area stretching.
+			 */
+			.step-container-v2__content-row--two-column-layout {
+				align-items: stretch;
+			}
+			.step-container-v2__content-row--two-column-layout > div:has( > .checkout-sidebar-content ) {
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout-sidebar-content {
+				flex: 1;
+			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky order
+			 * card and the two-year upsell isn't collapsed when the sticky area
+			 * reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
+				flex-shrink: 0;
+			}
 		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.step-container-v2__top-bar-wrapper .step-container-v2__heading {
+				padding-inline: 16px;
+				margin-bottom: 4px;
+			}
+			.checkout-main-content .step-container-v2__heading {
+				display: none;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-size: 28px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				padding-inline-end: 22px;
+				margin-bottom: 0;
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+				min-height: 52px;
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				min-height: 52px;
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+			.checkout-step__header h2 {
+				font-size: 15px;
+			}
+			.checkout-step__header h2 > span {
+				font-weight: 590;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				@media ( max-width: 699px ) {
+					display: none;
+				}
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
+			}
+		` }
+	${ ( props ) => props.isMobileCheckoutStickySummary && mobileCheckoutStickySummaryStyles }
 `;
 
 const CheckoutSummary = styled.div`
@@ -1247,12 +2411,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	isLargeViewport,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	isLargeViewport: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1262,9 +2428,18 @@ function CheckoutTermsAndCheckboxes( {
 
 	const translate = useTranslate();
 
+	const needsConsentCheckbox = hasMarketplaceProduct || has100YearPlan;
+
 	return (
 		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
-			<BeforeSubmitCheckoutHeader />
+			{
+				// Keep the inline legal block above the consent checkbox so
+				// "I have read and agree to all of the above" still refers to
+				// something visible. On desktop without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal;
+				// mobile has no sidebar modal, so always render it inline.
+				( ! isLargeViewport || needsConsentCheckbox ) && <BeforeSubmitCheckoutHeader />
+			}
 
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
@@ -1288,13 +2463,19 @@ function CheckoutTermsAndCheckboxes( {
 	);
 }
 
+const BlackboxChallengeWrapper = styled.div`
+	.login__form-blackbox-challenge.has-visible-challenge {
+		margin-block-end: 8px;
+	}
+`;
+
 function SubmitButtonHeader() {
 	const translate = useTranslate();
 
 	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
 
 	return (
-		<SubmitButtonHeaderWrapper>
+		<SubmitButtonHeaderWrapper className="checkout-steps__submit-button-header">
 			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
 				components: {
 					button: <button onClick={ scrollToTOS } />,
@@ -1428,29 +2609,43 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
+	isCheckoutUiRedesignV1?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content';
+	grid-template-areas:
+		'sidebar-content'
+		'main-content'
+		'processor-notice'
+		'trust-cards';
+	align-content: start;
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		grid-template-areas:
+			'main-content main-content sidebar-content sidebar-content'
+			'. processor-notice sidebar-content sidebar-content'
+			'. trust-cards sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+	}
 
-		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			min-height: 100vh;
-		}
+	& > .checkout-trust-cards {
+		grid-area: trust-cards;
+		justify-self: center;
+	}
+
+	& > .checkout-processor-notice {
+		grid-area: processor-notice;
+		justify-self: center;
 	}
 
 	& *:focus {
@@ -1468,6 +2663,375 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-loading-sidebar,
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
+			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky
+			 * order card and the two-year upsell isn't collapsed when the
+			 * sticky area reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
+				flex-shrink: 0;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			grid-template-areas:
+				'checkout-title-area'
+				'sidebar-content'
+				'main-content'
+				'processor-notice'
+				'trust-cards';
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.checkout__redesign-header {
+				grid-area: checkout-title-area;
+				margin-top: var( --masterbar-checkout-height );
+				margin-bottom: 12px;
+				padding-inline: 16px;
+			}
+			.checkout-sidebar-content {
+				margin-top: 0;
+			}
+			.checkout-main-content .checkout__main-title {
+				display: none;
+			}
+			.checkout-main-content {
+				margin-top: 12px;
+			}
+			.wp-checkout__review-order-step {
+				padding-block-start: 0;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+
+				@media ( max-width: 699px ) {
+					font-size: 28px;
+				}
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				margin-bottom: 0;
+			}
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				.checkout__summary-card {
+					background: ${ colorStudio.colors[ 'White' ] };
+					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+					border-radius: 8px;
+					padding: 24px;
+				}
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+					min-height: 64px;
+					padding-top: 2px;
+					padding-bottom: 0;
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {
+					min-height: 72px;
+				}
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+
+			.checkout-step__header h2 > span {
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				font-size: 18px;
+					@media ( ${ props.theme.breakpoints.desktopUp } ) {
+						font-size: 20px;
+					}
+				}
+
+			.checkout-step__header {
+				margin-bottom: 16px;
+			}
+
+			.wp-checkout__review-order-step .checkout-step__header {
+				margin-bottom: 0;
+			}
+
+			.checkout-line-item {
+				padding-top: 24px;
+				padding-bottom: 0;
+			}
+
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				@media ( max-width: 699px ) {
+					display: none;
+				}
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 14px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 50' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 16px;
+				line-height: 20px;
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__subtotal:first-child,
+			.wp-checkout-order-summary__total:first-child {
+				margin-bottom: 4px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 14px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-top: 0;
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };S
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-area {
+				padding-top: 50px;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -1490,10 +3054,11 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< {
+	isMobileCheckoutStickySummary?: boolean;
+} >`
 	grid-area: main-content;
 	margin-top: 50px;
-	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -1503,11 +3068,18 @@ const WPCheckoutMainContent = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: calc( var( --masterbar-checkout-height ) + 24px );
 		max-width: 688px;
-		padding: 0 64px 0 24px;
+		padding-block: 0;
+		padding-inline-start: 24px;
+		padding-inline-end: 64px;
+	}
 
-		.rtl & {
-			padding: 0 24px 0 64px;
-		}
+	/* On narrower desktops the 64px between form and sidebar is too tight
+	   when stacked with the sidebar's own 64px left padding. Drop the form's
+	   right padding so its content reaches col-2's right edge, matching the
+	   trust cards row beneath. Restored above 1024px where the layout has
+	   room to breathe. */
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
+		padding-inline-end: 0;
 	}
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
@@ -1521,11 +3093,134 @@ const WPCheckoutMainContent = styled.div`
 		}
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
 		.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
-			gap: 10px;
+			gap: ${ props.isMobileCheckoutStickySummary ? '16px' : '10px' };
 		}
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
-			margin-bottom: 10px;
+			margin-bottom: ${ props.isMobileCheckoutStickySummary ? '0' : '10px' };
 		}
+		${ props.isMobileCheckoutStickySummary &&
+		css`
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
+				margin-top: 0;
+			}
+			/* "+ Add Address Line 2" / "+ Add organization name" toggles
+			   come from .form__hidden-input. Reset its 5px margin-top so
+			   the link sits at the parent's flex-gap rhythm, and match the
+			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
+			   so all destructive/secondary links read as one family. */
+			.form-fieldset.contact-details-form-fields .form__hidden-input a {
+				margin-top: 0;
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				text-decoration: underline;
+			}
+			/* .vat-form__row carries its own 16px margin-top (plus a
+			   16px margin-block-start on stacked rows on mobile) — both
+			   redundant now that we drive spacing through column gaps. */
+			.checkout-contact-form-step .vat-form__row,
+			.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
+				margin-top: 0;
+				margin-block-start: 0;
+			}
+			/* The VAT form lives inside .__extra-fields (not flex by default)
+			   and each .vat-form__row stacks fields on mobile. Promote both
+			   plus the expanded-fields wrapper to flex columns with the
+			   unified 16px gap so the whole block matches the rest of the
+			   contact form's rhythm. */
+			.checkout-contact-form-step .contact-details-form-fields__extra-fields,
+			.checkout-contact-form-step .vat-form__expanded,
+			.checkout-contact-form-step .vat-form__row {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			/* Expanded VAT fields render as a quiet card to signal they
+			   form a distinct section toggled by the checkbox above. */
+			.checkout-contact-form-step .vat-form__expanded {
+				background: ${ colorStudio.colors[ 'Gray 0' ] };
+				border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+				border-radius: 4px;
+				padding: 16px;
+				margin-top: 8px;
+			}
+			/* Figma 2392:15444 — VAT details checkbox renders at 16x16.
+			   WPDS' .components-checkbox-control drives every dimension
+			   (input, checkmark icon, hover/active/disabled outlines)
+			   off --checkbox-input-size, so a single var override gives
+			   a properly-scaled checkbox with all states intact. */
+			.checkout-contact-form-step .vat-form__expand-button.components-checkbox-control {
+				--checkbox-input-size: 16px;
+			}
+			/* CheckboxControl's HStack ships with alignment="top" which makes
+			   the box sit at the line-box top while the text's cap-height
+			   sits a few pixels lower — visible misalignment. Center the
+			   pair instead. */
+			.checkout-contact-form-step
+				.vat-form__expand-button.components-checkbox-control
+				.components-h-stack {
+				align-items: center;
+			}
+			/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
+			   the contact step: the payment step's own labels are handled by the
+			   .credit-card-fields-inner-wrapper rules. */
+			.checkout-contact-form-step .form-label {
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			/* The VAT form (Field from @automattic/wpcom-checkout) renders
+			   a plain <label> via emotion, not .form-label, so it doesn't
+			   pick up the contact-form label styling. Match it here. */
+			.checkout-contact-form-step .vat-form__row label {
+				font-size: 13px;
+				line-height: 20px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				margin-bottom: 6px;
+			}
+			/* The "ES"/country-code prefix in front of the VAT ID input
+			   carries a 3.5rem min-width and 14px font that push the input
+			   over and leave a yawning gap. Match it to the input rhythm. */
+			.checkout-contact-form-step .vat-form__row .field__overlay-prefix {
+				font-size: 13px;
+				min-width: 0;
+				padding-inline: 12px;
+			}
+			/* Figma 2461:4947 — "Continue to payment" spans the full column. */
+			.checkout-next-step-button {
+				width: 100%;
+			}
+			/* Unified 16px vertical rhythm between every row. The outer
+			   FormFieldset is already flex-column but ships without a gap,
+			   and First/Last name is rendered as its sibling — not inside
+			   __contact-details. So the gap needs to live on all of:
+			   the outer FormFieldset, __contact-details itself, and both
+			   wrapper divs from RegionAddressFieldsets. */
+			.form-fieldset.contact-details-form-fields,
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets,
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			/* …except the street-address wrapper, which pairs an input with its
+			   toggle link ("+ Add Address Line 2") as a "Field + Action" group —
+			   Figma 2392:15432 puts those 8px apart, not 16. */
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+				gap: 8px;
+			}
+			/* Same rhythm for the "Add organization name" row — it sits in
+			   its own __row but is conceptually a Field+Action paired with
+			   the Last name field above. Negative margin compensates the
+			   parent's 16px column gap down to 8px. Only fires while the
+			   HiddenInput link is showing; once toggled to an input the
+			   row drops back to full 16px spacing. */
+			.contact-details-form-fields__row:has( .form__hidden-input ) {
+				margin-top: -8px;
+			}
+		` }
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
 		}
@@ -1552,10 +3247,11 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 144px 64px;
+		background: ${ colorStudio.colors[ 'White' ] };
+		padding: 144px 24px 24px 64px;
 
 		.rtl & {
-			padding: 144px 64px 0 24px;
+			padding: 144px 64px 24px 24px;
 		}
 	}
 `;
@@ -1594,5 +3290,71 @@ const WPCheckoutTitle = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0;
+	}
+`;
+
+// Redesign V1 styled components for summary header
+const CheckoutSummaryTitleLinkRedesign = styled.button`
+	background: transparent;
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryTitleContentRedesign = styled.span`
+	color: ${ ( props ) => props.theme.colors.textColor };
+	display: flex;
+	font-size: 13px;
+	font-weight: 400;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 auto;
+	padding: 16px;
+	max-width: 600px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 16px 0;
+	}
+`;
+
+const CheckoutSummaryPricesWrapper = styled.span`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+`;
+
+const CheckoutSummaryOriginalPrice = styled.s`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-size: 13px;
+`;
+
+const CheckoutSummaryCurrentPrice = styled.span`
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+`;
+
+const CheckoutSummaryBagIconWrapper = styled.span`
+	opacity: 0.5;
+	display: flex;
+	align-items: center;
+	margin-inline-end: 6px;
+	& svg {
+		width: 16px;
+		height: 16px;
+	}
+`;
+
+const CheckoutSummaryNudgeArea = styled.div`
+	margin: 8px 16px 12px;
+	flex-shrink: 0;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin-inline: 0;
+		margin-block-start: 24px;
+		max-width: 288px;
 	}
 `;

@@ -4,14 +4,16 @@ import { Component, Fragment } from 'react';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const SecurityCheckupNavigationItemContents = function ( props ) {
-	const { materialIcon, materialIconStyle, text, description } = props;
+	const { icon, materialIcon, materialIconStyle, text, description } = props;
 	return (
 		<Fragment>
-			<MaterialIcon
-				icon={ materialIcon }
-				style={ materialIconStyle }
-				className="security-checkup__nav-item-icon"
-			/>
+			{ icon ?? (
+				<MaterialIcon
+					icon={ materialIcon }
+					style={ materialIconStyle }
+					className="security-checkup__nav-item-icon"
+				/>
+			) }
 			<div>
 				<div>{ text }</div>
 				<small>{ description }</small>
@@ -24,6 +26,7 @@ class SecurityCheckupNavigationItem extends Component {
 	static propTypes = {
 		description: PropTypes.node,
 		external: PropTypes.bool,
+		icon: PropTypes.node,
 		isPlaceholder: PropTypes.bool,
 		materialIcon: PropTypes.string,
 		materialIconStyle: PropTypes.string,
@@ -47,6 +50,7 @@ class SecurityCheckupNavigationItem extends Component {
 				disabled={ this.props.disabled }
 			>
 				<SecurityCheckupNavigationItemContents
+					icon={ this.props.icon }
 					materialIcon={ this.props.materialIcon }
 					materialIconStyle={ this.props.materialIconStyle ?? 'outline' }
 					text={ this.props.text }

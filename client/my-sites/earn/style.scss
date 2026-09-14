@@ -1,9 +1,70 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/components/src/styles/typography";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 
-#earn-navigation {
-	margin-bottom: 30px;
+// The same `calypso/my-sites/earn` module is registered under two section
+// names: `earn` on Calypso (route `/earn`) and `jetpack-monetize` on Jetpack
+// Cloud (route `/monetize`) — see `client/sections.js`. The body class
+// follows the section name, so the layout mixin must be applied to both
+// to cover every environment that renders this page.
+body.is-section-earn,
+body.is-section-jetpack-monetize {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-sticky-footer;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+}
+
+.earn-navigation {
+	.section-nav {
+		box-shadow: none;
+		border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+	}
+
+	// Keep the nav transparent on the earn page surface: the base bar, the
+	// minimal-variation mobile dropdown header, and the expanded mobile panel
+	// each paint their own background that we don't want here.
+	.section-nav,
+	.section-nav.minimal .section-nav__mobile-header,
+	.section-nav.is-open .section-nav__panel {
+		background: none;
+	}
+
+	// In the tabs view, keep the first tab's label flush with the page content
+	// instead of carrying the tab's own inline-start padding.
+	@include break-mobile {
+		.section-nav-tab:first-child .section-nav-tab__link {
+			padding-inline-start: 0;
+		}
+	}
+
+	// Scroll the tab bar horizontally when the tabs overflow (mobile) so every
+	// section stays reachable instead of being clipped off the edge. The edge
+	// fade below signals the overflow, so hide the native scrollbar.
+	.section-nav-tabs:not( .is-dropdown ) .section-nav-tabs__list {
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+
+	// From the mobile breakpoint up the tabs fit and the first tab sits flush, so
+	// drop the edge fade there (the left fade would otherwise dim that flush
+	// label). Below it the bar scrolls, so keep the fade as a "more tabs" cue.
+	@include break-mobile {
+		.section-nav-tabs:not( .is-dropdown ) .section-nav-tabs__list {
+			&.is-overflowing-first,
+			&.is-overflowing-last,
+			&.is-overflowing-first.is-overflowing-last {
+				mask-image: none;
+			}
+		}
+	}
 }
 
 // Small override for card component headers
@@ -141,23 +202,28 @@
 		background: none;
 	}
 
-	.section-nav-tab {
-		&:hover:not(.is-selected) {
-			border-bottom-color: transparent;
-		}
-		&.is-selected {
-			border-bottom: none;
-			.section-nav-tab__link {
-				color: var(--color-text);
+	// Desktop tab styling only. On mobile the nav collapses to a dropdown, so
+	// these link colors/padding would override the default dropdown styling and
+	// leave the selected item dark-on-blue.
+	@include breakpoint-deprecated( ">480px" ) {
+		.section-nav-tab {
+			&:hover:not(.is-selected) {
+				border-bottom-color: transparent;
+			}
+			&.is-selected {
+				border-bottom: none;
+				.section-nav-tab__link {
+					color: var(--color-text);
+				}
 			}
 		}
-	}
-	.section-nav-tab__link {
-		padding: 0 20px 10px 0;
-		color: var(--color-link);
-		&:hover {
-			background-color: transparent;
+		.section-nav-tab__link {
+			padding: 0 20px 10px 0;
 			color: var(--color-link);
+			&:hover {
+				background-color: transparent;
+				color: var(--color-link);
+			}
 		}
 	}
 }
@@ -179,6 +245,30 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	text-decoration: none;
 }
 
+/* Card's own `margin: 0 auto` would center these once the width is capped. */
+.earn__upsell-card.promo-card {
+	max-width: 660px;
+	margin-inline: 0 auto;
+
+	/* For an upsell that is a whole tab's content, with nothing beside it to line
+	   up with. Ones sitting in a stack of cards keep the cap and align instead. */
+	&.is-content-width {
+		max-width: fit-content;
+	}
+}
+
+/* The benefits continue the paragraph, so the 20px gap moves below them. */
+.earn__upsell-card p:has(+ .earn__upsell-card-benefits) {
+	margin-bottom: 8px;
+}
+
+.earn__upsell-card-benefits {
+	margin-block: 0 20px;
+	margin-inline-start: 0;
+	padding-inline-start: 20px;
+	list-style: disc;
+}
+
 .earn__notes {
 	clear: both;
 	padding-bottom: 12px;
@@ -195,47 +285,11 @@ h3.highlight-cards-heading,
 h3.ads__table-header-title {
 	font-size: 18px;
 }
-body:not(.theme-jetpack-cloud) {
-	.earn__ads-header {
-		margin: 20px 0;
-
-		h2.formatted-header__title {
-			margin: 0 0 12px;
-			font-size: $font-size-header-small;
-		}
-
-		.section-nav {
-			box-shadow: none;
-		}
-
-		.section-nav-tab {
-			&:hover:not(.is-selected) {
-				border-bottom-color: transparent;
-			}
-			&.is-selected {
-				border-bottom: none;
-			}
-			.section-nav-tab__link {
-				padding: 0 20px 10px 0;
-				&:hover {
-					background-color: transparent;
-				}
-			}
-		}
-	}
-}
 
 .earn__cancel-dialog {
 	width: 580px;
 	max-width: 98%;
 	h1 {
 		margin-bottom: 1em;
-	}
-}
-
-/* Media Queries */
-@media (max-width: $break-large) {
-	.earn.main {
-		padding: 20px;
 	}
 }

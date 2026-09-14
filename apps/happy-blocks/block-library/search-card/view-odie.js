@@ -23,10 +23,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				return;
 			}
 
-			recordTracksEvent( 'calypso_happyblocks_support_suggested_search', {
-				query,
-				location: window.location.href,
-			} );
+			const website = this.getAttribute( 'data-website' ) || '';
+			recordTracksEvent(
+				website === 'forums'
+					? 'calypso_happyblocks_forums_suggested_search'
+					: 'calypso_happyblocks_support_suggested_search',
+				{
+					query,
+					location: window.location.href,
+				}
+			);
 
 			e.preventDefault();
 			input.value = query;
@@ -45,10 +51,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				// Use the submitted value, not the input.value since it's already cleared.
 				const searchQuery = new FormData( form ).get( 'odie-query' );
 
-				recordTracksEvent( 'calypso_happyblocks_support_ask_odie', {
-					query: searchQuery,
-					location: window.location.href,
-				} );
+				const website = form.getAttribute( 'data-website' ) || '';
+				recordTracksEvent(
+					website === 'forums'
+						? 'calypso_happyblocks_forums_ask_odie'
+						: 'calypso_happyblocks_support_ask_odie',
+					{
+						query: searchQuery,
+						location: window.location.href,
+					}
+				);
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
 				if ( isLoggedOut ) {
@@ -57,6 +69,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
+							input.value = '';
 							helpCenterDispatch.setNavigateToRoute(
 								'/odie?query=' + encodeURIComponent( searchQuery ),
 								true
@@ -67,6 +80,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				} else if ( window.wp?.data?.dispatch ) {
 					// Logged in variant is already loaded.
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+					input.value = '';
 					helpCenterDispatch.setNavigateToRoute(
 						'/odie?query=' + encodeURIComponent( searchQuery ),
 						true

@@ -1,10 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight as compose } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import DateRangePicker from 'calypso/components/date-range';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { updateFilter } from 'calypso/state/activity-log/actions';

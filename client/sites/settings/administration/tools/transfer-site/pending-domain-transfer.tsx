@@ -1,7 +1,5 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
@@ -17,15 +15,13 @@ const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 			<>
 				<PanelCardHeading>{ translate( 'Pending domain transfers' ) }</PanelCardHeading>
 				<p>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: %s is the domain name
-							translate(
-								'There are pending domain transfers for <strong>%s</strong>. Please complete them before transferring the site.'
-							),
-							domain.name
-						),
-						{ strong: <Strong /> }
+					{ translate(
+						'There are pending domain transfers for {{strong}}%(domainName)s{{/strong}}. Please complete them before transferring the site.',
+						{
+							args: { domainName: domain.name },
+							components: { strong: <Strong /> },
+							comment: '%(domainName)s is the domain name',
+						}
 					) }
 				</p>
 			</>

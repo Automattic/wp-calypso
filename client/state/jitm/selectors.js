@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/jitm/init';
@@ -10,7 +9,7 @@ import 'calypso/state/jitm/init';
  * @returns {Array} An array of jitms
  */
 export const getJITM = ( state, messagePath ) =>
-	get( state, [ 'jitm', 'sitePathJITM', messagePath + getSelectedSiteId( state ) ], [] );
+	state?.jitm?.sitePathJITM?.[ messagePath + getSelectedSiteId( state ) ] ?? [];
 
 /**
  * Get the top jitm available for the current site/section
@@ -29,4 +28,4 @@ export const getTopJITM = ( state, messagePath ) => {
 };
 
 export const isFetchingJITM = ( state, messagePath ) =>
-	get( state, [ 'jitm', 'isFetchingJITM', messagePath + getSelectedSiteId( state ) ], false );
+	state?.jitm?.isFetchingJITM?.[ messagePath + getSelectedSiteId( state ) ] ?? false;

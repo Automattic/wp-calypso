@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteEngagementStatsResponse } from './types';
+import type { SiteEngagementStatsResponse, SiteHourlyViewsResponse } from './types';
 
 export async function fetchSiteEngagementStats(
 	siteId: number
@@ -18,5 +18,13 @@ export async function fetchSiteEngagementMonthlyStats(
 		unit: 'month',
 		quantity: 24,
 		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
+}
+
+export async function fetchSiteHourlyViews( siteId: number ): Promise< SiteHourlyViewsResponse > {
+	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, {
+		unit: 'hour',
+		quantity: 48,
+		stat_fields: 'views',
 	} );
 }

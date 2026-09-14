@@ -17,10 +17,6 @@ interface TimeSinceProps {
 	 * CSS class for the <time> element.
 	 */
 	className?: string;
-	/**
-	 * BCP 47 locale string (e.g., "en", "es-ES"). Defaults to the user's locale.
-	 */
-	locale?: string;
 }
 
 /**
@@ -29,6 +25,7 @@ interface TimeSinceProps {
 function useRelativeTime( date: string, dateFormat = 'll' ) {
 	const [ now, setNow ] = useState( () => new Date() );
 	const translate = useTranslate();
+	const { localeSlug } = translate;
 
 	useEffect( () => {
 		const intervalId = setInterval( () => setNow( new Date() ), 10000 );
@@ -41,7 +38,7 @@ function useRelativeTime( date: string, dateFormat = 'll' ) {
 
 		// Handle invalid or future dates
 		if ( isNaN( dateObj.getTime() ) || millisAgo < 0 ) {
-			return formatDate( dateObj, dateFormat );
+			return formatDate( dateObj, dateFormat, localeSlug );
 		}
 
 		const secondsAgo = Math.floor( millisAgo / 1000 );
@@ -79,8 +76,8 @@ function useRelativeTime( date: string, dateFormat = 'll' ) {
 		}
 
 		// For older dates, use the date format
-		return formatDate( dateObj, dateFormat, translate.localeSlug );
-	}, [ now, date, dateFormat, translate ] );
+		return formatDate( dateObj, dateFormat, localeSlug );
+	}, [ now, date, dateFormat, translate, localeSlug ] );
 }
 
 /**

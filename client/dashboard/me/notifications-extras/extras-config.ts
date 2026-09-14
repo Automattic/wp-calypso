@@ -10,6 +10,7 @@ export const WPCOM_OPTION_KEYS = [
 	'digest',
 	'reports',
 	'news_developer',
+	'ai_tips',
 	'scheduled_updates',
 ] as const;
 
@@ -27,6 +28,7 @@ export const WPCOM_TITLES: Record< WpcomOptionKey, string > = {
 	digest: __( 'Digests' ),
 	reports: __( 'Reports' ),
 	news_developer: __( 'Developer Newsletter' ),
+	ai_tips: __( 'AI Tips' ),
 	scheduled_updates: __( 'Scheduled updates' ),
 };
 
@@ -39,6 +41,7 @@ export const WPCOM_DESCRIPTIONS: Record< WpcomOptionKey, string > = {
 	digest: __( 'Popular content from the blogs you follow.' ),
 	reports: __( 'Complimentary reports and updates regarding site performance and traffic.' ),
 	news_developer: __( 'A once-monthly roundup of notable news for WordPress developers.' ),
+	ai_tips: __( 'AI insights, breakthroughs, tips, and new feature highlights.' ),
 	scheduled_updates: __( 'Complimentary reports regarding scheduled plugin updates.' ),
 };
 

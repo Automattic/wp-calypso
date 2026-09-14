@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 // View: placeholder with gradient
 .theme-upload {
 	.feature-example {
@@ -46,4 +49,10 @@
 	.button {
 		margin: 0 20px 0 0;
 	}
+}
+
+// View: the install phase ran past its deadline
+.theme-upload__timeout-message {
+	margin: 0;
+	color: var(--color-text-subtle);
 }

@@ -39,7 +39,7 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 		<div className="referral-purchases-mobile">
 			<div className="referral-purchases-mobile__content">
 				<div className="referral-purchases-mobile__header">
-					<h3>{ translate( 'Product Details' ).toUpperCase() }</h3>
+					<h3>{ translate( 'Product details' ).toUpperCase() }</h3>
 				</div>
 				<p className="referral-purchases-mobile__product-name">
 					<ProductDetails purchase={ purchase } isFetching={ isFetching } data={ data } />
@@ -52,7 +52,7 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 				</p>
 			</div>
 			<div className="referral-purchases-mobile__content">
-				<h3>{ translate( 'Site Details' ).toUpperCase() }</h3>
+				<h3>{ translate( 'Site details' ).toUpperCase() }</h3>
 				{ isPressablePlan && (
 					<ExternalLink href={ EXTERNAL_PRESSABLE_AUTH_URL }>
 						{ translate( 'Manage in Pressable' ) }

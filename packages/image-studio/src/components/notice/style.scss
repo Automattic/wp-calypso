@@ -48,9 +48,10 @@
 	}
 }
 
-// Warning notice styling (quota exceeded)
+// Inline notice styling — warning (e.g. quota exceeded) and info.
 .image-studio-modal__notices {
-	.components-notice.is-warning {
+	.components-notice.is-warning,
+	.components-notice.is-info {
 		max-width: 400px;
 		margin: 0 0 8px;
 

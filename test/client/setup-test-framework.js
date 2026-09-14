@@ -27,6 +27,22 @@ global.TextDecoder = TextDecoder;
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
+// jsdom doesn't implement IntersectionObserver, which is used by
+// @wordpress/dataviews' infinite-scroll hook.
+global.IntersectionObserver = class IntersectionObserver {
+	constructor() {
+		this.root = null;
+		this.rootMargin = '';
+		this.thresholds = [];
+	}
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+	takeRecords() {
+		return [];
+	}
+};
+
 global.fetch = jest.fn( () =>
 	Promise.resolve( {
 		json: () => Promise.resolve(),
@@ -38,6 +54,7 @@ global.fetch = jest.fn( () =>
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	canAccessWpcomApis: jest.fn(),
+	isCookieAuthMissing: jest.fn( () => false ),
 	reloadProxy: jest.fn(),
 	requestAllBlogsAccess: jest.fn(),
 } ) );

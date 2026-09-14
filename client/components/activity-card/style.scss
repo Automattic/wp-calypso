@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .activity-card {
 	position: relative;
 
@@ -31,6 +34,13 @@
 	.activity-card__activity-title {
 		font-size: 0.75rem;
 		color: rgb(100, 105, 112);
+	}
+
+	.activity-card__actor-mcp {
+		font-size: 0.75rem;
+		color: rgb(100, 105, 112);
+		display: block;
+		margin-block-start: 2px;
 	}
 
 	.activity-card__activity-title {

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features-2.png';
+import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features-2.webp';
 import { STATS_FEATURE_PAGE_INSIGHTS } from '../constants';
 import StatsUpsell from './index';
 

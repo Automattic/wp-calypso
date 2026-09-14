@@ -1,3 +1,21 @@
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+@import "calypso/assets/stylesheets/shared/mixins/banner";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-backup {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
+
+	.backup__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
+}
+
 .backup__page {
 	.filterbar .filterbar__wrap.card {
 		display: flex;
@@ -6,25 +24,6 @@
 .theme-jetpack-cloud .backup__page .components-button {
 	--color-accent: var(--color-jetpack);
 	--color-accent-60: var(--studio-jetpack-green-70);
-}
-
-.backup__last-backup-status {
-	background: var(--studio-white);
-	padding: 16px 16px 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		background: var(--color-surface-backdrop);
-		padding: 0;
-		margin: 0;
-	}
-}
-.backup__page .main {
-	overflow-y: auto;
-	padding-bottom: 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		overflow-y: visible;
-	}
 }
 
 .backup__main .formatted-header.is-left-align {
@@ -37,15 +36,19 @@
 }
 
 .backup__main-wrap {
-	display: flex;
-	flex-direction: column;
-	height: calc(100vh - 120px);
-	margin-left: -16px;
-	margin-right: -16px;
+	// Plain block layout (not flex). Cards inside have `margin: 0 auto` from
+	// `.card`, which is harmless on block children (computes to 0) but in a
+	// flex column container would override `align-items: stretch` and shrink
+	// each card to its content width.
+	display: block;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		height: auto;
-	}
+	// The page-layout content column is a flex column and this wrap is one of its
+	// items. The DotPager/Swipeable "tips" carousel sizes its slides from a
+	// ResizeObserver measurement of its own width with no upper bound, so an
+	// uncapped flex item lets that measurement feed back on itself and run the
+	// column out to the layout engine's 2^24px ceiling (huge horizontal scroll).
+	// Capping the item at its container width breaks the loop.
+	max-width: 100%;
 }
 
 .backup__search {
@@ -115,13 +118,8 @@
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__main-wrap {
-		margin-left: initial;
-		margin-right: initial;
-	}
-
-	.backup__last-backup-status {
-		padding: initial;
-		background: initial;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.button {
@@ -179,6 +177,64 @@
 			@include breakpoint-deprecated( ">1280px" ) {
 				flex: 1 1 calc(50% - 1em);
 			}
+		}
+	}
+
+	.backup__upsell-callout {
+		display: flex;
+		align-items: stretch;
+		gap: 24px;
+		max-width: 600px;
+		margin-block: 48px;
+		margin-inline: auto;
+		padding: 24px;
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		background: var(--color-surface);
+
+		@include breakpoint-deprecated( "<660px" ) {
+			flex-direction: column;
+		}
+	}
+
+	.backup__upsell-callout-content {
+		display: flex;
+		flex: 1 1 0;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.backup__upsell-callout-icon {
+		fill: var(--color-text);
+	}
+
+	.backup__upsell-callout-title {
+		@include heading-large;
+		margin: 0;
+		color: var(--color-text);
+	}
+
+	.backup__upsell-callout-description {
+		@include body-medium;
+		margin: 0;
+		color: var(--color-text-subtle);
+	}
+
+	.backup__upsell-callout-image {
+		position: relative;
+		flex: 1 1 0;
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
 		}
 	}
 }

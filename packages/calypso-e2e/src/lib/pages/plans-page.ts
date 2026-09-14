@@ -1,7 +1,7 @@
-import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
+import type { Page } from 'playwright';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plans =
@@ -26,14 +26,7 @@ const selectors = {
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
-	selectPlanButton: ( name: Plans ) => {
-		if ( name === 'Free' ) {
-			// Free plan is a pseudo-button presented as a
-			// link.
-			return `button:text-matches("${ name }", "i"):visible`;
-		}
-		return `button.is-${ name.toLowerCase() }-plan:visible`;
-	},
+	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
 	// Navigation
 	mobileNavTabsToggle: 'button.section-nav__mobile-header',
@@ -52,6 +45,16 @@ const selectors = {
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
+
+/**
+ * Escapes a string so it can be safely used in a regular expression.
+ *
+ * @param {string} value String to escape.
+ * @returns {string} Escaped string.
+ */
+function escapeRegExp( value: string ): string {
+	return value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+}
 
 /**
  * Page representing the Plans page under `/plans` endpoint.
@@ -101,6 +104,11 @@ export class PlansPage {
 		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
 
 		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
+		// Callers resolve on API responses (e.g. `/users/new?`), which can
+		// return before the React step transition has rendered the plans grid.
+		// Wait for the combobox itself so the action timeout is spent on the
+		// click, not on the preceding navigation.
+		await comboboxSelect.first().waitFor( { state: 'visible', timeout: 30_000 } );
 		await comboboxSelect.first().click();
 
 		const comboboxOption = combobox.locator(
@@ -116,9 +124,144 @@ export class PlansPage {
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
+		// Wait for the page to settle after any preceding navigation before
+		// clicking, to avoid the navigation consuming the action timeout budget.
+		await locator.first().waitFor( { state: 'visible', timeout: 30_000 } );
 		// In the `/plans` view, there are two buttons for "Upgrade" on the
 		// plan comparison chart. Select the first one.
 		await locator.first().click();
+	}
+
+	/**
+	 * Validates that the plan's selection CTA is offered in the grid.
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 */
+	async validatePlanIsAvailable( plan: Plans ): Promise< void > {
+		await this.page
+			.locator( selectors.selectPlanButton( plan ) )
+			.first()
+			.waitFor( { state: 'visible', timeout: 30_000 } );
+	}
+
+	/**
+	 * Validates that the plan is not offered in the grid (e.g. the free plan is hidden).
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 * @throws If the plan's selection CTA is present.
+	 */
+	async validatePlanIsNotAvailable( plan: Plans ): Promise< void > {
+		const count = await this.page.locator( selectors.selectPlanButton( plan ) ).count();
+		if ( count > 0 ) {
+			throw new Error(
+				`Expected the ${ plan } plan to not be offered, but found ${ count } CTA(s).`
+			);
+		}
+	}
+
+	/**
+	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
+	 */
+	async openEscapeHatch(): Promise< void > {
+		const trigger = this.page
+			.getByRole( 'button', {
+				name: 'start with a free plan',
+				exact: true,
+			} )
+			.first();
+		await trigger.waitFor( { state: 'visible', timeout: 30_000 } );
+		// The click handler calls both `onUpgradeClick(null)` and `onSubmit(null)`,
+		// the latter of which can kick off a step navigation that Playwright's
+		// default click() will wait on, exceeding the action timeout. Opt out of
+		// the post-click navigation wait since we only need the dialog to appear.
+		await trigger.click( { noWaitAfter: true } );
+
+		const escapeHatchDialog = this.page
+			.getByRole( 'dialog' )
+			.filter( {
+				has: this.page.getByRole( 'button', {
+					name: /Continue with Free|Get Personal|Get Premium/,
+				} ),
+			} )
+			.first();
+		await escapeHatchDialog.waitFor( { state: 'visible' } );
+	}
+
+	/**
+	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
+	 */
+	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
+		await this.page
+			.getByText( `No free custom domain: Your site will be shown to visitors as ${ domainName }` )
+			.waitFor();
+	}
+
+	/**
+	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
+	 */
+	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
+		const redirectedDomain = await this.getDomainFromRedirectWarning( siteSlug );
+		if ( redirectedDomain !== domainName ) {
+			throw new Error(
+				`Expected domain redirect warning for ${ domainName }, but found ${ redirectedDomain }.`
+			);
+		}
+	}
+
+	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		const warningPattern = new RegExp( `^(\\S+) redirects to ${ escapeRegExp( siteSlug ) }$` );
+		const warning = this.page.getByText( warningPattern ).first();
+		// Same late-render budget as getIncludedDomain: the warning appears
+		// after the escape-hatch/step transition, past the 10s action timeout.
+		await warning.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		const warningText = ( await warning.textContent() )?.trim();
+		const match = warningText?.match( warningPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( `Failed to read domain redirect warning for ${ siteSlug }.` );
+		}
+
+		return match[ 1 ];
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		const includedDomainPattern = /^(\S+) is included$/;
+		const includedDomain = this.page.getByText( includedDomainPattern ).first();
+		// The plans grid renders after a step transition the caller does not
+		// wait on, so the included-domain line can appear later than the 10s
+		// action timeout. Match the 30s budget used by selectPlan/selectAddOn.
+		await includedDomain.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		const includedDomainText = ( await includedDomain.textContent() )?.trim();
+		const match = includedDomainText?.match( includedDomainPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( 'Failed to read included domain from plans grid.' );
+		}
+
+		return match[ 1 ];
+	}
+
+	/**
+	 * Clicks the "Continue with Free" button in the escape hatch modal.
+	 *
+	 * This handles both the FreePlanFreeDomainDialog ("Continue with Free") and
+	 * the FreePlanPaidDomainDialog ("Continue with Free plan") variants.
+	 */
+	async clickContinueWithFree(): Promise< void > {
+		const continueWithFreePlanButton = this.page.getByRole( 'button', {
+			name: 'Continue with Free plan',
+		} );
+		if ( await continueWithFreePlanButton.isVisible() ) {
+			await continueWithFreePlanButton.click();
+		} else {
+			await this.page.getByRole( 'button', { name: 'Continue with Free' } ).click();
+		}
 	}
 
 	/**
@@ -131,17 +274,16 @@ export class PlansPage {
 			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
 		}
 
-		const locator = this.page.getByText( 'start with a free plan' );
+		await this.openEscapeHatch();
 
-		await locator.first().click();
-
-		const continueWithPlanButton = this.page.getByRole( 'button', {
-			name: `Continue with ${ plan } plan`,
-		} );
-		if ( await continueWithPlanButton.isVisible() ) {
-			await continueWithPlanButton.click();
+		if ( plan === 'Free' ) {
+			await this.clickContinueWithFree();
 		} else {
-			await this.page.getByRole( 'button', { name: `Get ${ plan } plan` } ).click();
+			// Button text is "Get Personal - $X/month" so we match partially.
+			await this.page
+				.getByRole( 'button', { name: new RegExp( `Get ${ plan }` ) } )
+				.first()
+				.click();
 		}
 	}
 
@@ -158,6 +300,15 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile stacks the plans and surfaces the owned plan in the "My Plan"
+			// card, not the desktop spotlight card. Confirm both the plan name
+			// (scoped to the card title) and the owned-plan "Manage plan" control,
+			// which renders as an anchor rather than a button.
+			await this.page.locator( selectors.myPlanTitle( expectedPlan ) ).first().waitFor();
+			await this.page.locator( selectors.managePlanButton ).first().waitFor();
+			return;
+		}
 		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
 	}
 

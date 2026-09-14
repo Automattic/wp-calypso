@@ -4,7 +4,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-import { find, isEqual, cloneDeep } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -338,7 +338,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 		select( 'core/block-editor' ).getSettings();
 	const patterns = select( 'core/block-editor' ).__experimentalGetAllowedPatterns();
 
-	const meta = find( actionData, ( item ) => item?.patternName );
+	const meta = actionData?.find( ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
@@ -739,12 +739,12 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( updates.settings ),
-			styles: cloneDeep( updates.styles ),
+			settings: structuredClone( updates.settings ),
+			styles: structuredClone( updates.styles ),
 		};
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
@@ -788,12 +788,12 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const entityContent = {
-			settings: cloneDeep( savedEntity.settings ),
-			styles: cloneDeep( savedEntity.styles ),
+			settings: structuredClone( savedEntity.settings ),
+			styles: structuredClone( savedEntity.styles ),
 		};
 		const updatedContent = {
-			settings: cloneDeep( editedEntity.settings ),
-			styles: cloneDeep( editedEntity.styles ),
+			settings: structuredClone( editedEntity.settings ),
+			styles: structuredClone( editedEntity.styles ),
 		};
 
 		buildGlobalStylesContentEvents(
@@ -988,6 +988,7 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
+	// eslint-disable-next-line react-hooks/rules-of-hooks -- `use` is the @wordpress/data registry plugin API, not a React hook.
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
@@ -1046,12 +1047,49 @@ if (
 		delegateEventTracking( true, event );
 	};
 
+	// Gutenberg renders the block canvas inside an iframe. Events there don't
+	// bubble to the parent document, so we also attach our delegate listeners
+	// to each iframe's document and re-attach on `load` (it's recreated on
+	// preview mode changes).
+	const EDITOR_CANVAS_IFRAME_SELECTOR = 'iframe[name="editor-canvas"]';
+	const attachedIframes = new WeakSet();
+	const attachedDocuments = new WeakSet();
+
+	const attachDelegateListeners = ( doc ) => {
+		if ( ! doc || attachedDocuments.has( doc ) ) {
+			return;
+		}
+		attachedDocuments.add( doc );
+		EVENT_TYPES.forEach( ( eventType ) => {
+			doc.addEventListener( eventType, delegateNonCaptureListener );
+			doc.addEventListener( eventType, delegateCaptureListener, true );
+		} );
+	};
+
+	const attachToEditorCanvasIframe = ( iframe ) => {
+		if ( attachedIframes.has( iframe ) ) {
+			return;
+		}
+		attachedIframes.add( iframe );
+		// Re-attach on every load - the iframe document is recreated on preview-mode changes.
+		attachDelegateListeners( iframe.contentDocument );
+		iframe.addEventListener( 'load', () => attachDelegateListeners( iframe.contentDocument ) );
+	};
+
+	const attachToEditorCanvasIframes = () => {
+		document
+			.querySelectorAll( EDITOR_CANVAS_IFRAME_SELECTOR )
+			.forEach( attachToEditorCanvasIframe );
+	};
+
 	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( ( eventType ) => {
-				document.addEventListener( eventType, delegateNonCaptureListener );
-				document.addEventListener( eventType, delegateCaptureListener, true );
+			attachDelegateListeners( document );
+			attachToEditorCanvasIframes();
+			new window.MutationObserver( attachToEditorCanvasIframes ).observe( document.body, {
+				childList: true,
+				subtree: true,
 			} );
 			return null;
 		},

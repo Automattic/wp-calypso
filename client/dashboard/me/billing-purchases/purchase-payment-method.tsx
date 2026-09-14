@@ -2,7 +2,13 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf, _x } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../app/router/me';
-import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
+import {
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isAkismetFreeProduct,
+	isRemoved,
+	mightStillAutoRenew,
+	isA4ABillingDragonPurchase,
+} from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
 import type { Purchase } from '@automattic/api-core';
 
@@ -31,10 +37,11 @@ export function PurchasePaymentMethod( {
 	}
 
 	if (
-		isExpired( purchase ) ||
-		purchase.partner_name ||
+		isRemoved( purchase ) ||
+		isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ||
+		( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) ||
 		isAkismetFreeProduct( purchase ) ||
-		( isSiteMissing && ! purchase.is_domain )
+		( isSiteMissing && ! purchase.is_domain && ! isA4ABillingDragonPurchase( purchase ) )
 	) {
 		return null;
 	}
@@ -49,7 +56,7 @@ export function PurchasePaymentMethod( {
 		);
 	}
 
-	if ( ! isRenewing( purchase ) ) {
+	if ( ! mightStillAutoRenew( purchase ) ) {
 		return null;
 	}
 
@@ -61,7 +68,7 @@ export function PurchasePaymentMethod( {
 		const maskedCardNumber = sprintf(
 			/** Translators: %s is last four digits of card number */
 			_x( '**** **** **** %s', 'Long-form masked credit card number.' ),
-			purchase.payment_details
+			purchase.payment_details ?? ''
 		);
 
 		return (

@@ -5,6 +5,7 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isStudentPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -13,6 +14,11 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Plans } from '@automattic/data-stores';
@@ -46,7 +52,6 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -56,10 +61,14 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import StudentPlansPage from './student-plans-page';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
+
+// Plan tiers from lowest to highest, used to filter the visible plans list
+const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 
 class PlansComponent extends Component {
 	static propTypes = {
@@ -70,6 +79,7 @@ class PlansComponent extends Component {
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
 		redirectTo: PropTypes.string,
+		pluginSlug: PropTypes.string,
 		selectedSite: PropTypes.object,
 	};
 
@@ -140,7 +150,7 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const { selectedSite, isUntangled, isWPForTeamsSite } = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, isFreePlan, currentPlan } = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -159,6 +169,18 @@ class PlansComponent extends Component {
 		// The Jetpack mobile app wants to display a specific selection of plans
 		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 
+		// De-emphasize the current plan card: relabel it instead of spotlighting it.
+		const highlightLabelOverrides = currentPlan?.productSlug
+			? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
+			: undefined;
+
+		// Filter the visible plan tiers to those at or above the current plan.
+		const currentTier = getPlan( currentPlan?.productSlug )?.type;
+		const visiblePlanTiers =
+			currentTier && PLAN_TIERS.includes( currentTier )
+				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
+				: PLAN_TIERS;
+
 		return (
 			<PlansFeaturesMain
 				isInSiteDashboard={ isUntangled }
@@ -168,13 +190,20 @@ class PlansComponent extends Component {
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
+				pluginSlug={ this.props.pluginSlug }
 				coupon={ this.props.coupon }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ ! isUntangled }
+				highlightLabelOverrides={ highlightLabelOverrides }
+				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
+				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
+				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
+				hideEnterprisePlan={ isFreePlan }
+				hideEcommercePlan={ isFreePlan }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -237,10 +266,32 @@ class PlansComponent extends Component {
 		);
 	}
 
+	renderStudentPlansPage() {
+		const { currentPlan, selectedSite, intervalType } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		return (
+			<StudentPlansPage
+				currentPlan={ currentPlan }
+				selectedSite={ selectedSite }
+				intervalType={ intervalType }
+				isOwner={ selectedSite.plan?.user_is_owner }
+				coupon={ this.props.coupon }
+				redirectTo={ this.props.redirectTo }
+				pluginSlug={ this.props.pluginSlug }
+				discountEndDate={ this.props.discountEndDate }
+			/>
+		);
+	}
+
 	renderMainContent( {
 		isEcommerceTrial,
 		isBusinessTrial,
 		isWooExpressPlan,
+		isStudent,
 		isA4APlan,
 		is100YearPlan,
 	} ) {
@@ -252,6 +303,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isStudent ) {
+			return this.renderStudentPlansPage();
 		}
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
@@ -301,6 +355,7 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
+		const isStudent = isStudentPlan( currentPlan.productSlug );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
@@ -350,13 +405,17 @@ class PlansComponent extends Component {
 								subHeaderText={ subHeaderText }
 							/>
 						) }
-						<div id={ isUntangled ? 'site-plans' : 'plans' } className="plans plans__has-sidebar">
+						<div
+							id={ isUntangled ? 'site-plans' : 'plans' }
+							className="plans plans__has-sidebar is-de-emphasized-current-plan"
+						>
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ this.renderMainContent( {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isStudent,
 									isA4APlan,
 									is100YearPlan,
 								} ) }
@@ -403,9 +462,6 @@ export default function PlansWrapper( props ) {
 	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-
-	// Initialize Global Styles.
-	useSiteGlobalStylesOnPersonal();
 
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,

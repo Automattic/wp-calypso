@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_PLANS_FETCH,
@@ -74,7 +73,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plans, createSitePlanObject ),
+		plans: Object.values( plans ?? {} ).map( createSitePlanObject ),
 	};
 }
 

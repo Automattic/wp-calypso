@@ -1,0 +1,86 @@
+@import "@wordpress/base-styles/breakpoints";
+
+body.is-section-plans.is-student-plan {
+	.student-plans-page__price-card {
+		display: flex;
+		flex-wrap: wrap;
+		border-radius: 2px 2px 0 0;
+		padding: 24px 32px;
+		margin-block: 40px;
+
+		@media (max-width: $break-mobile) {
+			flex-direction: column;
+			margin-block: 0 40px;
+			margin-inline: 20px;
+			padding: 32px 20px;
+		}
+	}
+
+	.student-plans-page__price-card-text {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.student-plans-page__price-card-label {
+		font-size: 0.75rem;
+		font-weight: 500;
+		background-color: var(--color-neutral-0);
+		border-radius: 4px;
+		margin-block-end: 8px;
+		padding-inline: 10px;
+		width: fit-content;
+	}
+
+	.student-plans-page__price-card-title {
+		font-size: 1.5rem;
+	}
+
+	.student-plans-page__price-card-subtitle {
+		flex: 1;
+		font-size: 0.875rem;
+		color: var(--color-neutral-80);
+	}
+
+	.student-plans-page__price-card-conditions {
+		display: flex;
+		flex-direction: column;
+		text-align: end;
+
+		@media (max-width: $break-mobile) {
+			text-align: start;
+		}
+	}
+
+	.student-plans-page__price-card-value {
+		font-size: 2rem;
+		font-weight: 500;
+
+		@media (max-width: $break-mobile) {
+			margin-block-start: 30px;
+			font-weight: 400;
+		}
+	}
+
+	.student-plans-page__price-card-interval {
+		color: var(--color-neutral-50);
+		font-size: 0.75rem;
+	}
+
+	.student-plans-page__price-card-cta-wrapper {
+		width: 100%;
+		margin-block-start: 20px;
+
+		@media (max-width: $break-mobile) {
+			margin-block-start: 0;
+		}
+	}
+
+	.student-plans-page__price-card-cta {
+		@media (max-width: $break-mobile) {
+			width: 100%;
+			margin-block-start: 25px;
+			line-height: 30px;
+		}
+	}
+}

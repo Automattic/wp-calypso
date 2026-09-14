@@ -1,11 +1,19 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
-import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import {
+	seen,
+	pencil as edit,
+	cog,
+	check,
+	chartBar,
+	postList,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
+import { PARTNERS } from 'calypso/lib/partner-branding';
 import {
 	AppleLoginButton,
 	GithubSocialButton,
@@ -324,14 +332,14 @@ export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper >
 		<LoginPageWrapper
 			title="Log in to Woo"
 			branding={ {
-				logo: CIAB_PARTNERS.woo.logo.src,
-				logoAlt: CIAB_PARTNERS.woo.logo.alt,
-				logoWidth: CIAB_PARTNERS.woo.logo.width,
-				logoHeight: CIAB_PARTNERS.woo.logo.height,
-				topBarLogo: CIAB_PARTNERS.woo.compactLogo?.src,
-				topBarLogoAlt: CIAB_PARTNERS.woo.compactLogo?.alt,
-				topBarLogoWidth: CIAB_PARTNERS.woo.compactLogo?.width,
-				topBarLogoHeight: CIAB_PARTNERS.woo.compactLogo?.height,
+				logo: PARTNERS.woo.logo.src,
+				logoAlt: PARTNERS.woo.logo.alt,
+				logoWidth: PARTNERS.woo.logo.width,
+				logoHeight: PARTNERS.woo.logo.height,
+				topBarLogo: PARTNERS.woo.compactLogo?.src,
+				topBarLogoAlt: PARTNERS.woo.compactLogo?.alt,
+				topBarLogoWidth: PARTNERS.woo.compactLogo?.width,
+				topBarLogoHeight: PARTNERS.woo.compactLogo?.height,
 			} }
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }

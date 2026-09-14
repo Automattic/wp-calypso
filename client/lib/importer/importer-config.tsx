@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { orderBy } from '@automattic/js-utils';
 import { TranslateResult, translate } from 'i18n-calypso';
-import { filter, orderBy, values } from 'lodash';
 import { type ImporterOption } from 'calypso/blocks/import/list';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { appStates } from 'calypso/state/imports/constants';
@@ -407,7 +407,11 @@ export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTit
 		delete importerConfig.substack;
 	}
 
-	const importers = orderBy( values( importerConfig ), [ 'weight', 'title' ], [ 'desc', 'asc' ] );
+	const importers = orderBy(
+		Object.values( importerConfig ),
+		[ 'weight', 'title' ],
+		[ 'desc', 'asc' ]
+	);
 
 	return importers;
 }
@@ -416,7 +420,7 @@ export function getImporterByKey(
 	key: string,
 	args: ImporterConfigArgs = { siteSlug: '', siteTitle: '' }
 ) {
-	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
+	return getImporters( args ).find( ( importer ) => importer.key === key );
 }
 
 export function isSupportedImporterEngine( engine: string ): boolean {

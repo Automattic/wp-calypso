@@ -27,6 +27,9 @@ function FileBrowserHeader( { rewindId }: { rewindId: number } ) {
 					checked={ rootNode ? rootNode.checkState === 'checked' : false }
 					indeterminate={ rootNode?.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
+					aria-label={
+						rootNode?.checkState === 'unchecked' ? __( 'Select all' ) : __( 'Deselect all' )
+					}
 				/>
 				<Text size="small">
 					{ browserCheckList.totalItems } { __( 'files selected' ) }

@@ -1,18 +1,15 @@
-import { IntentScreen, GOOGLE_TRANSFER } from '@automattic/onboarding';
+import { IntentScreen } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import GoogleDomainsModal from 'calypso/landing/stepper/declarative-flow/internals/components/google-domains-transfer-instructions';
 import { preventWidows } from 'calypso/lib/formatting';
 
 interface Props {
 	onSubmit: () => void;
-	variantSlug: string | undefined;
 }
 
-const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
+const Intro: React.FC< Props > = ( { onSubmit } ) => {
 	const { __ } = useI18n();
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 
 	return (
 		<>
@@ -22,18 +19,11 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 						key: 'unlock',
 						title: __( 'Unlock your domains' ),
 						description: (
-							<>
-								<p>
-									{ __(
-										"Your current registrar's domain management interface should have an option for you to remove the lock."
-									) }
-								</p>
-								{ isGoogleDomainsTransferFlow && (
-									<GoogleDomainsModal className="unlock-instructions__cta">
-										{ __( 'Show me how' ) }
-									</GoogleDomainsModal>
+							<p>
+								{ __(
+									"Your current registrar's domain management interface should have an option for you to remove the lock."
 								) }
-							</>
+							</p>
 						),
 						icon: <Icon icon={ unlock } />,
 						value: 'firstPost',
@@ -56,13 +46,7 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						description: (
-							<p>
-								{ __(
-									"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
-								) }
-							</p>
-						),
+						description: <p>{ __( 'Review your payment and contact details.' ) }</p>,
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,

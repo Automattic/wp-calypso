@@ -7,7 +7,9 @@ export type EditContactInfoPageProps = {
 	selectedDomainName: string;
 	selectedSite: SiteDetails | null;
 	context?: {
-		showPageHeader?: boolean;
+		params?: {
+			showPageHeader?: boolean;
+		};
 	};
 };
 

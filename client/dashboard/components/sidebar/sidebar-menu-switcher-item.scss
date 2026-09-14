@@ -1,0 +1,23 @@
+@import '@wordpress/base-styles/variables';
+
+.sidebar-menu-switcher-item {
+	height: 40px;
+	padding-inline-start: $grid-unit-15;
+	// This makes it align with toggle carets in the sidebar.
+	padding-inline-end: calc(#{$grid-unit-15} - 3px);
+
+	.sidebar-menu-switcher-item__switcher {
+		flex-shrink: 0;
+
+		button {
+			color: var(--dashboard-menu-item__color);
+			min-width: 0;
+			padding: 0;
+
+			svg {
+				width: 18px;
+				height: 18px;
+			}
+		}
+	}
+}

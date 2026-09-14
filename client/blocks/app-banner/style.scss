@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+
 .app-banner-overlay {
 	position: fixed;
 	height: 100vh;

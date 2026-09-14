@@ -1,6 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import isEqual from 'fast-deep-equal/es6';
 import { localize, translate } from 'i18n-calypso';
-import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -22,7 +22,7 @@ import { PluginActions } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginsListDataViews from './plugins-list-dataviews';
 
-import( './style.scss' );
+import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;

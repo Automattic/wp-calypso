@@ -5,15 +5,28 @@ import { render } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '..';
 
+jest.mock( 'calypso/reader/data/feed', () => ( {
+	useFeedQuery: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	getFollowingSource: jest.fn(),
+	useSiteSubscriptionForFeed: jest.fn(),
+	useFollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
+	useIsSubscribed: jest.fn( () => false ),
+	useUnfollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
+} ) );
+
 const defaultStoreState = {
-	reader: {
-		feeds: { items: {} },
-		follows: { items: {} },
-	},
 	currentUser: { id: 123 },
 };
+
+const mockUseFeedQuery = useFeedQuery as jest.Mock;
+const mockUseFollowForFeed = useSiteSubscriptionForFeed as jest.Mock;
 
 const renderComponent = (
 	props: ComponentProps< typeof ReaderSubscriptionListItem > = {},
@@ -42,6 +55,11 @@ const getPlaceholder = () =>
 	document.querySelector( '.reader-subscription-list-item__placeholder' );
 
 describe( 'ReaderSubscriptionListItem', () => {
+	beforeEach( () => {
+		mockUseFeedQuery.mockReturnValue( { data: undefined, isError: false } );
+		mockUseFollowForFeed.mockReturnValue( undefined );
+	} );
+
 	it( 'should render placeholder when no site, feed, or potential feed URL exists', () => {
 		renderComponent( {
 			url: undefined,
@@ -79,24 +97,17 @@ describe( 'ReaderSubscriptionListItem', () => {
 	} );
 
 	it( 'should render normally when site data exists', () => {
-		const storeState = {
-			...defaultStoreState,
-			reader: {
-				...defaultStoreState.reader,
-				feeds: {
-					items: {
-						123: {
-							feed_ID: 123,
-							name: 'Test Blog',
-							URL: 'https://testblog.com',
-							feed_URL: 'https://testblog.com/feed',
-						},
-					},
-				},
+		mockUseFeedQuery.mockReturnValue( {
+			data: {
+				feed_ID: 123,
+				name: 'Test Blog',
+				URL: 'https://testblog.com',
+				feed_URL: 'https://testblog.com/feed',
 			},
-		};
+			isError: false,
+		} );
 
-		renderComponent( { feedId: 123 }, storeState );
+		renderComponent( { feedId: 123 } );
 
 		expect( getSiteTitleLink() ).toBeVisible();
 		expect( getSiteTitleLink() ).toHaveTextContent( 'Test Blog' );
@@ -107,22 +118,9 @@ describe( 'ReaderSubscriptionListItem', () => {
 	} );
 
 	it( 'should return null when feed has an error', () => {
-		const storeState = {
-			...defaultStoreState,
-			reader: {
-				...defaultStoreState.reader,
-				feeds: {
-					items: {
-						123: {
-							feed_ID: 123,
-							is_error: true,
-						},
-					},
-				},
-			},
-		};
+		mockUseFeedQuery.mockReturnValue( { data: undefined, isError: true } );
 
-		const { container } = renderComponent( { feedId: 123 }, storeState );
+		const { container } = renderComponent( { feedId: 123 } );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );

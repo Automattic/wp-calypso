@@ -19,7 +19,7 @@ export default function A4APluginsJetpackBanner() {
 	return (
 		<div className="a4a-plugins-jetpack-banner-container">
 			<Banner
-				title={ translate( 'Jetpack Required for Plugin Management' ) }
+				title={ translate( 'Jetpack required for plugin management' ) }
 				description={ translate(
 					'To manage plugins, Jetpack must be activated on each site. Your Pressable plan includes Jetpack Complete for free. Activate it to access plugin management in this dashboard.'
 				) }

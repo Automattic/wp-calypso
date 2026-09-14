@@ -1,4 +1,4 @@
-@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
 
 .plans-grid-next-header-price {
 	padding: 0 20px;
@@ -25,7 +25,7 @@
 
 			.plan-price__currency-symbol,
 			.plan-price__tax-amount {
-				color: var(--color-text-subtle);
+				color: var(--studio-gray-20);
 			}
 
 			.plan-price__integer {
@@ -95,6 +95,12 @@
 	white-space: nowrap;
 	width: fit-content;
 
+	// Same colors as Badge type="info-green" (@automattic/components); only for pricing differentiators experiment (non-control).
+	&.is-plan-differentiators-experiment-badge {
+		background-color: rgba(184, 230, 191, 0.64);
+		color: var(--studio-green-80);
+	}
+
 	&.is-hidden {
 		visibility: hidden;
 	}
@@ -104,11 +110,26 @@
 	justify-content: flex-end;
 	display: flex;
 	flex-direction: row-reverse;
-	align-items: flex-end;
+	align-items: last baseline;
 	gap: 4px;
 
 	&.is-large-currency {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+}
+
+.plan-features-2023-grid__table-item.plan-price:has(.plans-grid-next-header-price__enterprise-logos) {
+	vertical-align: bottom;
+}
+
+.plans-grid-next-header-price__enterprise-logos {
+	padding: 0 20px 10px;
+	column-gap: 18px;
+	row-gap: 8px;
+	align-items: center;
+
+	.plans-grid-next.is-large & {
+		justify-content: space-between;
 	}
 }

@@ -10,9 +10,9 @@ jest.mock( '../../queries/use-site-purchases' );
 
 describe( 'useSitePurchasesByProductSlug', () => {
 	const mockData = {
-		1: { id: 1, productSlug: 'foo' },
-		2: { id: 2, productSlug: 'bar' },
-		3: { id: 3, productSlug: 'foo' },
+		1: { ID: 1, product_slug: 'foo' },
+		2: { ID: 2, product_slug: 'bar' },
+		3: { ID: 3, product_slug: 'foo' },
 	};
 
 	beforeEach( () => {
@@ -37,8 +37,8 @@ describe( 'useSitePurchasesByProductSlug', () => {
 		);
 
 		expect( result.current ).toEqual( {
-			1: { id: 1, productSlug: 'foo' },
-			3: { id: 3, productSlug: 'foo' },
+			1: { ID: 1, product_slug: 'foo' },
+			3: { ID: 3, product_slug: 'foo' },
 		} );
 	} );
 

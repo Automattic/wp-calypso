@@ -30,12 +30,22 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
 
 /**
  * Query the automated transfer status of a given site.
+ *
+ * `pollingMode` opts the fetch into the data layer's managed polling:
+ * - 'start': begins a new wait — resets the site's poll deadline and retries failed
+ *   requests until it expires.
+ * - 'continue': a poll belonging to an already-started wait (used by the data layer's
+ *   own polling chain).
+ * - 'single': one isolated check — no polling chain, no deadline interaction.
+ * - null (default): a plain fetch that fails once and stops, as it always did.
  * @param {number} siteId The id of the site to query.
+ * @param {'start'|'continue'|'single'|null} [pollingMode] See above.
  * @returns {Object} An action object
  */
-export const fetchAutomatedTransferStatus = ( siteId ) => ( {
+export const fetchAutomatedTransferStatus = ( siteId, pollingMode = null ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
+	...( pollingMode ? { pollingMode } : {} ),
 } );
 
 /**
@@ -65,10 +75,11 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * @param {string} param.error The error string received
  * @returns {Object} An action object
  */
-export const automatedTransferStatusFetchingFailure = ( { siteId, error } ) => ( {
+export const automatedTransferStatusFetchingFailure = ( { siteId, error, errorCode } ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
 	error,
+	errorCode,
 } );
 
 /**

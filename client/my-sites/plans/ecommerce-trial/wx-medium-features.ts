@@ -1,10 +1,10 @@
 import { translate as i18nTranslate } from 'i18n-calypso';
-import customization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/customization.png';
-import generalFeatures from 'calypso/assets/images/plans/wpcom/ecommerce-trial/general-features.png';
-import growth from 'calypso/assets/images/plans/wpcom/ecommerce-trial/growth.png';
-import payments from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payments.png';
-import productManagement from 'calypso/assets/images/plans/wpcom/ecommerce-trial/product-management.png';
-import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping.png';
+import customization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/customization.webp';
+import generalFeatures from 'calypso/assets/images/plans/wpcom/ecommerce-trial/general-features.webp';
+import growth from 'calypso/assets/images/plans/wpcom/ecommerce-trial/growth.webp';
+import payments from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payments.webp';
+import productManagement from 'calypso/assets/images/plans/wpcom/ecommerce-trial/product-management.webp';
+import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping.webp';
 import type { WooExpressMediumPlanFeatureSet } from 'calypso/my-sites/plans/components/trial-feature-card';
 
 type WooExpressMediumFeatureSetProps = {

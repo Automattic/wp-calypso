@@ -32,7 +32,7 @@ type LogstashPerfMarks = Record< string, LogstashMark >;
  * the request context by reference.
  * @param context  The request.context object.
  * @param markName A name for the marker being logged.
- * @param isChild  Optionally note this occured as part of a different mark.
+ * @param isChild  Optionally note this occurred as part of a different mark.
  */
 export default function performanceMark(
 	context: PartialContext,

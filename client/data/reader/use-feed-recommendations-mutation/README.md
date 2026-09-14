@@ -38,44 +38,24 @@ const SiteSubscriptionRow = ( { feed_ID: feedId, /* other props */ } ) => {
 
 ```typescript
 interface useFeedRecommendationsMutationResult {
-	isRecommended: boolean;    // Current recommendation state (from Redux)
-	isUpdating: boolean;       // Whether operation is in progress  
+	isRecommended: boolean;    // Current recommendation state, derived from React Query cache
+	isUpdating: boolean;       // Whether operation is in progress
 	canToggle: boolean;        // Whether toggle is allowed
 	toggleRecommended: () => void; // Function to toggle state
 }
 ```
 
-## Error Recovery Flow
+## Behavior
 
-The implementation uses the established WordPress.com `bypassDataLayer` pattern:
-
-### Successful Operation
-```
-1. User toggles → READER_LIST_ITEM_ADD_FEED dispatched
-2. Reducer immediately adds feed (optimistic update)
-3. API succeeds → READER_LIST_ITEM_ADD_FEED_RECEIVE ensures feed is in list
-4. UI shows new state ✅
-```
-
-### Failed Operation with Automatic Recovery
-```
-1. User toggles → READER_LIST_ITEM_ADD_FEED dispatched  
-2. Reducer immediately adds feed (optimistic update)
-3. API fails → Data layer dispatches bypassDataLayer(READER_LIST_ITEM_DELETE_FEED)
-4. Reducer removes feed, reverting to original state
-5. UI automatically reverts toggle to previous position ✅
-6. Error notice shown to user
-```
+`useFeedRecommendationsMutation` reads the recommended-blogs list items from
+React Query (`readListItemsAllQuery`) and toggles membership through
+`addReadListFeedMutation` / `deleteReadListFeedMutation`. Both mutations apply
+optimistic updates against the same query cache and roll back on failure, so
+the UI reverts automatically when the API call errors out. Success/failure
+notices are dispatched from the consumer.
 
 ## Testing
 
-### Running Tests
-
 ```bash
-yarn test-client client/data/reader/use-recommended-site/index.test.ts
-yarn test-client client/state/reader/lists/test/reducer.js
+yarn test-client client/data/reader/use-feed-recommendations-mutation
 ```
-
-## Related Files
-
-See `client/state/reader/lists/`

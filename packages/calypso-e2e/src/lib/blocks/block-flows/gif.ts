@@ -38,7 +38,7 @@ export class GifFlow implements BlockFlow {
 
 		await block
 			.frameLocator( `iframe[src="${ this.configurationData.query }"]` )
-			.locator( '.embed' )
+			.locator( 'video' )
 			.waitFor();
 	}
 

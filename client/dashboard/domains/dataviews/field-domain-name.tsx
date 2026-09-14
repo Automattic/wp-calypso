@@ -1,8 +1,9 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
@@ -20,12 +21,14 @@ export const DomainNameField = ( {
 	value: string;
 	showPrimaryDomainBadge?: boolean;
 } ) => {
+	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
 
 	const siteSlug = site?.slug ?? domain.site_slug;
 
 	const href =
 		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
+		domain.domain_status.id !== DomainStatus.TRANSFER_ERROR &&
 		config.isEnabled( 'domain-transfer-redesign' )
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
@@ -73,7 +76,17 @@ export const DomainNameField = ( {
 	};
 
 	return (
-		<Link to={ href } params={ { siteSlug, domainName: domain.domain } } search={ searchParams() }>
+		<Link
+			to={ href }
+			params={ { siteSlug, domainName: domain.domain } }
+			search={ searchParams() }
+			onClick={ () =>
+				recordTracksEvent( 'calypso_dashboard_domains_domain_name_clicked', {
+					domain: domain.domain,
+					site_id: domain.blog_id,
+				} )
+			}
+		>
 			{ content }
 		</Link>
 	);

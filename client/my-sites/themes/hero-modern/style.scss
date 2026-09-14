@@ -3,19 +3,8 @@
 
 $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 
-.is-section-themes.is-theme-showcase-modern.has-no-sidebar {
-	.masterbar-menu .masterbar {
-		background: transparent;
-		border-bottom-color: transparent;
-		height: 56px;
-		position: relative;
-	}
-
-	.cta-btn-nav {
-		color: var(--studio-gray-100) !important;
-		background: inherit !important;
-		border: 1px solid var(--studio-gray-100);
-	}
+.is-theme-showcase-modern.has-no-sidebar .themes__selection {
+	padding-inline: 24px;
 }
 
 
@@ -23,6 +12,23 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	margin-top: -$hero-modern-navbar-height;
 	padding: $hero-modern-navbar-height 0 0;
 	background: linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
+
+	// 2026 path: pull the gradient up behind the fixed nav and re-pad content down by the
+	// same, so the nav floats over the hero. Legacy pull-up above is untouched.
+	.layout:has(.x-nav--2026-redesign) & {
+		margin-top: calc(-1 * var(--nav-2026-sticky-offset));
+		padding-top: var(--nav-2026-sticky-offset);
+	}
+
+	.layout:has(.x-nav--2026-redesign) main.is-logged-out & {
+		.full-width-section__content {
+			padding-top: 96px;
+
+			@media (min-width: $break-small) {
+				padding-top: 108px;
+			}
+		}
+	}
 
 	.full-width-section__content {
 		max-width: 1220px;
@@ -41,7 +47,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 
 .hero-modern__content {
 	flex: 1;
-	max-width: 700px;
+	max-width: 800px;
 	padding: 0 24px;
 
 	@media ( min-width: $break-wide ) {
@@ -56,6 +62,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	font-weight: 400;
 	line-height: 1;
 	margin: 0 0 8px 0;
+	text-wrap: balance;
 
 	@media ( min-width: $break-small ) {
 		font-size: rem(70px);
@@ -67,6 +74,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	font-size: $font-body-large;
 	line-height: 1.5;
 	margin: 0;
+	text-wrap: balance;
 }
 
 .hero-modern__search {
@@ -81,11 +89,15 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 		height: 55px;
 
 		.components-input-control__container {
+			.components-input-control__prefix {
+				color: var(--studio-gray-30);
+			}
 			input.components-input-control__input {
+				color: var(--studio-gray-90);
 				font-size: $font-body;
 			}
 			.components-input-control__backdrop {
-				border-color: var(--studio-gray-5);
+				border-color: transparent;
 				border-radius: 4px;
 			}
 		}

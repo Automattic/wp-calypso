@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import {
 	GlyphDiamond,
@@ -80,11 +81,12 @@ function useSiteMetricsData(
 							values[ statusCode ] = [];
 						}
 
-						values.hasOwnProperty( statusCode ) &&
+						if ( values.hasOwnProperty( statusCode ) ) {
 							values[ statusCode ].push( {
 								date,
 								value: count > 0 ? Math.round( count * 60 * 100 ) / 100 : 0, // Convert to requests per minute and round to 2 decimals.
 							} );
+						}
 					} );
 				}
 			}
@@ -264,7 +266,7 @@ export default function MonitoringHttpResponsesCard( {
 						x: xAxisOptions,
 					},
 				} }
-				legendPosition="top"
+				legend={ { position: 'top' } }
 			/>
 		</MonitoringCard>
 	);

@@ -1,4 +1,4 @@
-import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected, isSimple } from './site-types';
 import type { Site } from '@automattic/api-core';
 
 export type SiteTypeFeatureSupports = {
@@ -64,6 +64,26 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			settingsGeneralDotcomSiteVisibility: false,
 			settingsServer: false,
 			settingsSecurity: false,
+		};
+	}
+
+	if ( site.is_multisite && ! isSimple( site ) ) {
+		return {
+			deployments: true,
+			performance: true,
+			monitoring: true,
+			logs: true,
+			backups: false,
+			scan: false,
+			domains: true,
+			emails: true,
+			settings: true,
+			settingsGeneral: true,
+			settingsGeneralAITools: true,
+			settingsGeneralRedirect: true,
+			settingsGeneralDotcomSiteVisibility: true,
+			settingsServer: true,
+			settingsSecurity: true,
 		};
 	}
 

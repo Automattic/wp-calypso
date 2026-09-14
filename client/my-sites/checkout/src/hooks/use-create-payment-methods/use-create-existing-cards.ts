@@ -18,7 +18,7 @@ export default function useCreateExistingCards( {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	storedCards: StoredPaymentMethod[];
-	submitButtonContent: ReactNode;
+	submitButtonContent: ReactNode | ( ( card: StoredPaymentMethodCard ) => ReactNode );
 	allowEditingTaxInfo?: boolean;
 	isTaxInfoRequired?: boolean;
 } ): PaymentMethod[] {
@@ -53,7 +53,10 @@ export default function useCreateExistingCards( {
 					storedDetailsId: storedDetails.stored_details_id,
 					paymentMethodToken: storedDetails.mp_ref,
 					paymentPartnerProcessorId: storedDetails.payment_partner,
-					submitButtonContent,
+					submitButtonContent:
+						typeof submitButtonContent === 'function'
+							? submitButtonContent( storedDetails )
+							: submitButtonContent,
 					allowEditingTaxInfo,
 					isTaxInfoRequired,
 				} )

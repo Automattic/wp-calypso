@@ -1,5 +1,5 @@
-/* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
-@import "@wordpress/base-styles/_variables";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 
 /* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
@@ -15,6 +15,10 @@
 
 // Import styles for carousel blocks (Newspack Post Carousel, Jetpack Slideshow).
 @import "carousel";
+
+// Import styles for the Jetpack Podcast Episode block. The block's own
+// stylesheet is not loaded in the Reader, so its styles are ported here.
+@import "podcast-episode";
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;

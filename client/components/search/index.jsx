@@ -1,10 +1,10 @@
 import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { SearchControl } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { Icon, search, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import i18n from 'i18n-calypso';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';

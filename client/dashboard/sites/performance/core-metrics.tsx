@@ -5,6 +5,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useState } from 'react';
 import { Card, CardBody } from '../../components/card';
 import { getAvailableMetrics } from '../../utils/site-performance';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import CoreMetricsContent from './core-metrics-content';
 import CoreMetricsTabs from './core-metrics-tabs';
 import type { SitePerformanceReport } from '@automattic/api-core';
@@ -34,7 +35,7 @@ export default function CoreMetrics( {
 } ) {
 	const firstAvailableTab = getFirstAvailableTab( report );
 	const [ activeTab, setActiveTab ] = useState< Metrics | null >( firstAvailableTab );
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 
 	if ( ! activeTab ) {
 		return null;

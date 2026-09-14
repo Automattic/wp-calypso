@@ -16,11 +16,12 @@ const buildRules = () => {
 			meta: {
 				type: 'suggestion',
 				fixable: 'code',
+				schema: false,
 			},
 			create: ( context ) => ( {
 				Program: ( programNode ) => {
 					const options = context.options?.[ 0 ] ?? {};
-					const json = context.parserServices.getJSON();
+					const json = context.sourceCode.parserServices.getJSON();
 					const rule = npmPackageJsonLint.rules.get( ruleName );
 
 					// I think the second argument is just used for the report, so we can ignore it

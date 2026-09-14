@@ -37,7 +37,7 @@ const A4ASelectSiteTable = ( {
 		[ dispatch, setSelectedSite ]
 	);
 
-	const prevSelectedSiteId = useRef< number | undefined >();
+	const prevSelectedSiteId = useRef< number | undefined >( undefined );
 
 	// Only update when selectedSiteId actually changes, not when items array is recreated
 	useEffect( () => {

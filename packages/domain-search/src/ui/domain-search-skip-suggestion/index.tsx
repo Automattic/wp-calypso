@@ -5,6 +5,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { chevronRight } from '@wordpress/icons';
+import { useDomainSuggestionContainer } from '../../hooks/use-domain-suggestion-container';
 import { DomainSearchSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSearchSkipSuggestionSkeleton } from './index.skeleton';
 
@@ -12,24 +14,52 @@ import './style.scss';
 
 interface Props {
 	freeSuggestion?: string;
+	unavailableDomain?: string;
 	existingSiteUrl?: string;
+	/**
+	 * Overrides the default "Start free with %(domain)s" title of the
+	 * free-subdomain card. May include the `%(domain)s` placeholder.
+	 */
+	title?: string;
+	/** Overrides the default "Start Free" CTA of the free-subdomain card. */
+	buttonText?: string;
+	/**
+	 * Render a plain "set up a domain later" control with no domain shown, for flows that never
+	 * keep a free subdomain. `title`/`buttonText` still override the defaults.
+	 */
+	chooseLaterOnly?: boolean;
 	onSkip: () => void;
+	onSuggestionClick?: () => void;
 	disabled?: boolean;
 	isBusy?: boolean;
 }
 
 const DomainSearchSkipSuggestion = ( {
 	freeSuggestion,
+	unavailableDomain,
 	existingSiteUrl,
+	title: titleOverride,
+	buttonText: buttonTextOverride,
+	chooseLaterOnly,
 	onSkip,
+	onSuggestionClick,
 	disabled,
 	isBusy,
 }: Props ) => {
+	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const isSmall = activeQuery === 'small';
+
 	let title;
 	let subtitle;
-	let buttonText = __( 'Skip purchase' );
+	let buttonText: string = __( 'Skip purchase' );
+	let showButton = true;
+	let chevronOnMobile = false;
 
-	if ( existingSiteUrl ) {
+	if ( chooseLaterOnly ) {
+		title = titleOverride ?? __( 'Set up a domain later' );
+		subtitle = __( 'You can add a custom domain after your site is set up.' );
+		buttonText = buttonTextOverride ?? __( 'Set up a domain later' );
+	} else if ( existingSiteUrl ) {
 		const [ domain, ...tld ] = existingSiteUrl.split( '.' );
 
 		title = __( 'Current address' );
@@ -47,10 +77,34 @@ const DomainSearchSkipSuggestion = ( {
 				tld: <strong style={ { whiteSpace: 'nowrap' } } />,
 			}
 		);
+	} else if ( freeSuggestion && unavailableDomain ) {
+		title = sprintf(
+			// translators: %(domain)s is the WordPress.com subdomain the user searched for
+			__( '%(domain)s is not available' ),
+			{ domain: unavailableDomain }
+		);
+		subtitle = createInterpolateElement(
+			sprintf(
+				// translators: %(suggestion)s is an alternative free WordPress.com subdomain
+				__( 'Try <link>%(suggestion)s</link> instead?' ),
+				{ suggestion: freeSuggestion }
+			),
+			{
+				link: <Button variant="link" onClick={ () => onSuggestionClick?.() } />,
+			}
+		);
+		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = __( 'Start free with a WordPress.com subdomain' );
+		title = titleOverride
+			? titleOverride.replace( '%(domain)s', freeSuggestion )
+			: sprintf(
+					// translators: %(domain)s is the free WordPress.com subdomain
+					__( 'Start free with %(domain)s' ),
+					{ domain: freeSuggestion }
+			  );
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
-		buttonText = __( 'Start Free' );
+		buttonText = buttonTextOverride ?? __( 'Start Free' );
+		chevronOnMobile = true;
 	}
 
 	if ( ! title ) {
@@ -58,29 +112,75 @@ const DomainSearchSkipSuggestion = ( {
 	}
 
 	const domain = existingSiteUrl ?? freeSuggestion;
+	const showChevron = chevronOnMobile && isSmall;
+	const skipLabel = chooseLaterOnly
+		? buttonText
+		: sprintf(
+				// translators: %(domain)s is the domain name
+				__( 'Skip purchase and continue with %(domain)s' ),
+				{ domain: domain ?? '' }
+		  );
+
+	const renderRight = () => {
+		if ( ! showButton ) {
+			return undefined;
+		}
+
+		if ( showChevron ) {
+			return (
+				<Button
+					className="domain-search-skip-suggestion__chevron"
+					variant="tertiary"
+					label={ skipLabel }
+					onClick={ onSkip }
+					icon={ chevronRight }
+					disabled={ disabled }
+					isBusy={ isBusy && ! disabled }
+				/>
+			);
+		}
+
+		return (
+			<Button
+				className="domain-search-skip-suggestion__btn"
+				variant="secondary"
+				label={ skipLabel }
+				onClick={ onSkip }
+				disabled={ disabled }
+				isBusy={ isBusy && ! disabled }
+				__next40pxDefaultSize
+			>
+				{ buttonText }
+			</Button>
+		);
+	};
 
 	return (
 		<DomainSearchSkipSuggestionSkeleton
+			ref={ containerRef }
+			activeQuery={ activeQuery }
 			title={
-				<Heading level="4" weight="normal">
-					{ title }
-				</Heading>
+				isSmall ? (
+					<Heading level="4" size="body" weight={ 500 }>
+						{ title }
+					</Heading>
+				) : (
+					<Heading level="4" weight="normal">
+						{ title }
+					</Heading>
+				)
 			}
-			subtitle={ subtitle && <Text>{ subtitle }</Text> }
-			right={
-				<Button
-					className="domain-search-skip-suggestion__btn"
-					variant="secondary"
-					// translators: %(domain)s is the domain name
-					label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), { domain } ) }
-					onClick={ onSkip }
-					disabled={ disabled }
-					isBusy={ isBusy && ! disabled }
-					__next40pxDefaultSize
-				>
-					{ buttonText }
-				</Button>
+			subtitle={
+				subtitle &&
+				( isSmall ? (
+					<Text size="subheadline" variant="muted">
+						{ subtitle }
+					</Text>
+				) : (
+					<Text>{ subtitle }</Text>
+				) )
 			}
+			right={ renderRight() }
 		/>
 	);
 };

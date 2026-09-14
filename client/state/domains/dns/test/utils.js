@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { validateAllFields } from '../utils';
 
 describe( 'utils', () => {

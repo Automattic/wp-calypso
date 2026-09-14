@@ -18,8 +18,8 @@ const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
 
 /**
- * Native Sort - replacement of _.sortBy Lodash function
- * @returns Sorted array.
+ * Comparator that orders entries alphabetically by `to.name`.
+ * @returns A negative, zero, or positive number for use with `Array#sort`.
  */
 const compareByName = ( objA, objB ) => {
 	if ( objA.to.name > objB.to.name ) {
@@ -35,8 +35,7 @@ const compareByName = ( objA, objB ) => {
  */
 
 /**
- * pickBy function is a replacement for the Lodash _.pickby
- *
+ * Returns a new object containing only the entries for which `fn( value, key )` is truthy.
  */
 const pickBy = ( palette, fn ) =>
 	Object.keys( palette ?? {} )
@@ -91,7 +90,7 @@ const SVG_IGNORE_PATHS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|emergent-paywall|eps|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat|razorpay)/,
+	/upgrades\/(?:alipay|bancontact|emergent-paywall|eps|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)/,
 
 	// Color scheme thumbnails that rely on .org colors
 	/color-scheme-thumbnail-(?:blue|classic-dark|coffee|ectoplasm|light|modern|ocean|sunrise)\.svg$/,

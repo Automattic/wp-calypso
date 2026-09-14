@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { DataPointPercentage, PieChart, Legend } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -58,7 +59,6 @@ function useResponseTypesData( siteId: number, timeRange: number ): ResponseType
 						label:
 							method === 'php' ? 'Dynamic' : method.slice( 0, 1 ).toUpperCase() + method.slice( 1 ),
 						value: value,
-						percentage: valuePercentage,
 						valueDisplay: ( Math.round( valuePercentage * 10 ) / 10 ).toString() + '%',
 						color: chartColors[ index % chartColors.length ],
 					};

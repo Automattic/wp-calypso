@@ -55,7 +55,7 @@ export default function Reports( { reports, actions }: { reports: Report[]; acti
 			},
 			{
 				id: 'client-emails',
-				label: translate( 'Client Emails' ),
+				label: translate( 'Client emails' ),
 				getValue: () => '-',
 				render: ( { item }: { item: Report } ) => (
 					<ReportClientEmailsColumn emails={ item.data.client_emails } />

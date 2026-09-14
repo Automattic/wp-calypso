@@ -1,9 +1,11 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRoot } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import config from '../lib/config-api';
 import {
 	DEFAULT_DATE_RANGE_ID,
@@ -18,6 +20,7 @@ import DateRangeControl from './date-range-control';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import type { FunctionComponent } from 'react';
 
 import './index.scss';
 
@@ -72,6 +75,7 @@ export function init() {
 		}
 		const App: FunctionComponent = () => {
 			const translate = useTranslate();
+			const customTheme = useWPAdminTheme();
 			// One range drives both the chart and the highlights, so they can never
 			// describe different windows.
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
@@ -85,7 +89,10 @@ export function init() {
 			};
 
 			return (
-				<div id="stats-widget-content" className="stats-widget-content">
+				<div
+					id="stats-widget-content"
+					className={ clsx( 'stats-widget-content', 'color-scheme', customTheme ) }
+				>
 					<div className="stats-widget-header">
 						<h3 className="stats-widget-header__title">{ translate( 'Overview' ) }</h3>
 						<DateRangeControl value={ rangeId } onChange={ onRangeChange } />

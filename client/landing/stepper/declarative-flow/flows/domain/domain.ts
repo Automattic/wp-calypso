@@ -99,6 +99,7 @@ const domain: FlowV2< typeof initialize > = {
 		const isCiab = dashboard === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
+		const backTo = useQuery().get( 'back_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
 
 		const goToCheckout = ( siteSlug: string ) => {
@@ -130,6 +131,14 @@ const domain: FlowV2< typeof initialize > = {
 				}
 			}
 
+			// For CIAB domain registrations, include the purchased domain name
+			// in the redirect URL so the CIAB admin can show a setup notification.
+			if ( isCiab && domainCartItems?.length && domainCartItems[ 0 ].meta ) {
+				destination = addQueryArgs( destination, {
+					domain_purchased: domainCartItems[ 0 ].meta,
+				} );
+			}
+
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
@@ -139,6 +148,7 @@ const domain: FlowV2< typeof initialize > = {
 						addQueryArgs( '/setup/domain', {
 							siteSlug,
 							redirect_to: redirectTo,
+							...( backTo && { back_to: backTo } ),
 							...( dashboard && { dashboard } ),
 						} ),
 						window.location.href
@@ -191,6 +201,7 @@ const domain: FlowV2< typeof initialize > = {
 								addQueryArgs( '/setup/domain', {
 									siteSlug,
 									redirect_to: redirectTo,
+									...( backTo && { back_to: backTo } ),
 									...( dashboard && { dashboard } ),
 								} ),
 								window.location.href
@@ -220,7 +231,7 @@ const domain: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -316,7 +327,10 @@ const domain: FlowV2< typeof initialize > = {
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
-									addQueryArgs( '/setup/domain/new-or-existing-site', window.location.search ),
+									addQueryArgs(
+										'/setup/domain/new-or-existing-site',
+										getQueryArgs( window.location.search )
+									),
 									window.location.href
 								).href,
 							} )

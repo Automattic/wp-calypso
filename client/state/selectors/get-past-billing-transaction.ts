@@ -14,16 +14,43 @@ const getIndividualBillingTransaction = (
 ): BillingTransaction | null =>
 	state.billingTransactions?.individualTransactions?.[ id ]?.data ?? null;
 
+function mergeTaxIsForBusiness(
+	individualValue?: boolean | null,
+	pastValue?: boolean | null
+): boolean | null | undefined {
+	if ( individualValue === true || pastValue === true ) {
+		return true;
+	}
+
+	return individualValue ?? pastValue;
+}
+
 /**
  * Returns a past billing transaction.
  * Looks for the transaction in the most recent billing transactions and then looks for individually-fetched transactions
  * Returns null if the billing transactions have not been fetched yet, or there is no transaction with that ID.
  */
 export default createSelector(
-	( state: IAppState, id: number ) =>
-		getPastBillingTransactions( state )?.find(
+	( state: IAppState, id: number ) => {
+		const pastTransaction = getPastBillingTransactions( state )?.find(
 			( transaction ) => String( transaction.id ) === String( id )
-		) || getIndividualBillingTransaction( state, id ),
+		);
+		const individualTransaction = getIndividualBillingTransaction( state, id );
+
+		if ( pastTransaction && individualTransaction ) {
+			return {
+				...pastTransaction,
+				...individualTransaction,
+				tax_is_for_business: mergeTaxIsForBusiness(
+					individualTransaction.tax_is_for_business,
+					pastTransaction.tax_is_for_business
+				),
+				tax_state: individualTransaction.tax_state || pastTransaction.tax_state,
+			};
+		}
+
+		return individualTransaction || pastTransaction || null;
+	},
 	( state: IAppState, id: number ) => [
 		getPastBillingTransactions( state ),
 		getIndividualBillingTransaction( state, id ),

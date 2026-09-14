@@ -13,12 +13,12 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
-import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import type { Domain } from '@automattic/api-core';
 
 export const domainLockMutation = ( domain: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-lock-update' },
 		mutationFn: ( enabled: boolean ) => updateDomainLock( domain, enabled ),
 		onSuccess: ( _, enabled ) => {
 			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
@@ -32,6 +32,7 @@ export const domainLockMutation = ( domain: string ) =>
 
 export const domainTransferCodeMutation = ( domain: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-code-request' },
 		mutationFn: () => requestTransferCode( domain ),
 	} );
 
@@ -43,6 +44,7 @@ export const ipsTagListQuery = () =>
 
 export const ipsTagMutation = ( domain: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-ips-tag-save' },
 		mutationFn: ( ipsTag: string ) => saveIpsTag( domain, ipsTag ),
 	} );
 
@@ -54,6 +56,7 @@ export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =
 
 export const updateDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-req-update' },
 		mutationFn: ( email: string ) => updateDomainTransferRequest( domain, siteSlug, email ),
 		onSuccess: ( _, email ) => {
 			// Manually update the cache before invalidating the query
@@ -67,6 +70,7 @@ export const updateDomainTransferRequestMutation = ( domain: string, siteSlug: s
 
 export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-req-delete' },
 		mutationFn: () => deleteDomainTransferRequest( domain, siteSlug ),
 		onSuccess: () => {
 			// Manually update the cache before invalidating the query
@@ -77,14 +81,16 @@ export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: s
 
 export const domainTransferToUserMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-owner-xfer' },
 		mutationFn: ( userId: string ) => domainTransferToUser( domain, siteId, userId ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );
 
 export const transferDomainToSiteMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-site-xfer' },
 		mutationFn: ( targetSiteId: number ) => transferDomainToSite( domain, siteId, targetSiteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
@@ -99,10 +105,11 @@ export const domainInboundTransferStatusQuery = ( domainName: string ) =>
 
 export const startDomainInboundTransferMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-xfer-in-start' },
 		mutationFn: ( authCode: string ) => startDomainInboundTransfer( siteId, domain, authCode ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
 			queryClient.invalidateQueries( domainInboundTransferStatusQuery( domain ) );
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );

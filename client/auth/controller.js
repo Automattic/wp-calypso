@@ -2,6 +2,15 @@ import store from 'store';
 
 // Store token into local storage
 export function storeToken( context ) {
+	// Validate the OAuth state parameter to prevent login CSRF / session fixation.
+	const returnedState = context.hash?.state;
+	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
+	sessionStorage.removeItem( 'wpcom_oauth_state' );
+	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
+		document.location.replace( '/' );
+		return;
+	}
+
 	if ( context.hash?.access_token ) {
 		store.set( 'wpcom_token', context.hash.access_token );
 	}
@@ -11,5 +20,8 @@ export function storeToken( context ) {
 	}
 
 	const { next = '/' } = context.query;
-	document.location.replace( next );
+
+	// Validate that next is a safe relative path to prevent DOM XSS and open redirect.
+	const isSafe = next.startsWith( '/' ) && ! next.startsWith( '//' );
+	document.location.replace( isSafe ? next : '/' );
 }

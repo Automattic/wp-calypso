@@ -2,11 +2,10 @@ import { Button, Gridicon, FormLabel, Tooltip } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import ButtonGroup from 'calypso/components/button-group';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -42,8 +41,10 @@ class Security2faBackupCodesList extends Component {
 	downloadCodesButtonRef = createRef();
 
 	componentDidMount() {
-		// Configure clipboard to be triggered on clipboard button press
-		const button = ReactDom.findDOMNode( this.copyCodesButtonRef.current );
+		// Configure clipboard to be triggered on clipboard button press.
+		// `Button` forwards its ref to the underlying DOM element, so the ref's
+		// current value is already the node (no `findDOMNode`, removed in React 19).
+		const button = this.copyCodesButtonRef.current;
 		this.clipboard = new Clipboard( button, {
 			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
 		} );

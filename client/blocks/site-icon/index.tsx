@@ -1,6 +1,6 @@
+import './style.scss';
 import { Gridicon, Spinner } from '@automattic/components';
 import clsx from 'clsx';
-import { get } from 'lodash';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -11,8 +11,7 @@ import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
 import { getSite } from 'calypso/state/sites/selectors';
-
-import './style.scss';
+import type { JSX } from 'react';
 
 export type Site = {
 	ID?: number;
@@ -24,7 +23,7 @@ export type Site = {
 export type SiteIconVariant = 'primary' | 'blank';
 
 type SiteIconProps = {
-	siteId?: number;
+	siteId?: number; // To get site from Redux state or fetch site data if not available.
 	site?: object;
 	iconUrl?: string | null;
 	size?: number;
@@ -65,11 +64,10 @@ export function SiteIcon( {
 	const style = {
 		height: size,
 		width: size,
-		lineHeight: size + 'px',
-		fontSize: size + 'px',
 	};
 
-	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />;
+	// Using relative size for default icon to ensure that background appears nicely for any size.
+	const icon = defaultIcon || <Gridicon icon="globe" size={ Math.round( size / 1.2 ) } />;
 
 	const children = (
 		<>
@@ -112,7 +110,7 @@ type SiteIconContainerProps = {
 
 export default connect( ( state, { site, siteId }: SiteIconContainerProps ) => {
 	// Always prefer site from Redux state if available
-	const stateSite = getSite( state as object, get( site, 'ID', siteId ) );
+	const stateSite = getSite( state as object, site?.ID ?? siteId );
 
 	// Until all sites state is within Redux, we provide compatibility in cases
 	// where sites-list object is passed to use the icon.img property as URL.

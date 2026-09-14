@@ -77,3 +77,25 @@ export type Mailbox = {
 	temporary?: boolean;
 	target: string;
 };
+
+// Raw shape of a domain entry in the `/sites/${ siteId }/domains` API response
+type RawDomain = {
+	domain: string;
+	email_forwards_count: number;
+};
+
+// Raw query cache shape for the email accounts query (`useGetEmailAccountsQuery`)
+export type EmailAccountsQueryData = {
+	accounts: EmailAccount[];
+};
+
+// Raw query cache shape for the domains query (`useGetDomainsQuery`)
+export type DomainsQueryData = {
+	domains: RawDomain[];
+};
+
+// Response from the `/domains/${ domain }/email/new` API endpoint
+export type AddEmailForwardResponse = Array< {
+	created: boolean;
+	verified: boolean;
+} >;

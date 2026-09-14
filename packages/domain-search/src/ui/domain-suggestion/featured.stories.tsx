@@ -1,6 +1,7 @@
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
 import { DomainSuggestionPrimaryCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
+import { bullseyeIcon } from '../icons/bullseye-icon';
 import { DomainSuggestion } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -57,6 +58,30 @@ export const Highlighted = () => {
 				isHighlighted
 				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
 				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
+				cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
+			/>
+		</StoryWrapper>
+	);
+};
+
+export const ExactMatch = () => {
+	return (
+		<StoryWrapper>
+			<DomainSuggestion.Featured
+				badges={
+					<>
+						<DomainSuggestionBadge>
+							{ bullseyeIcon }
+							Exact match
+						</DomainSuggestionBadge>
+						<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
+					</>
+				}
+				domain="thalasso"
+				tld="blog"
+				isHighlighted
+				matchReasons={ [ '".blog" is the natural home for your writing' ] }
+				price={ <DomainSuggestionPrice salePrice="$3.30" price="$33" renewPrice="$33" /> }
 				cta={ <DomainSuggestionPrimaryCTA>Add to cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>

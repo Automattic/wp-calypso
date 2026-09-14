@@ -1,5 +1,5 @@
+import { keyBy, omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { keyBy, get, omit } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -30,7 +30,7 @@ const addStep = ( state, step ) => {
 
 const updateStep = ( state, newStepState ) => {
 	const { stepName, status } = newStepState;
-	const stepState = get( state, stepName );
+	const stepState = state?.[ stepName ];
 
 	if ( ! stepState ) {
 		return state;
@@ -90,22 +90,18 @@ const invalidateStep = ( state, { step, errors } ) => {
 const processStep = ( state, { step } ) => updateStep( state, { ...step, status: 'processing' } );
 
 const saveStep = ( state, { step } ) => {
-	const status = get( state, [ step.stepName, 'status' ] );
+	const status = state?.[ step.stepName ]?.status;
 
 	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, {
 				...step,
-				// The pending status means this step needs to delay api requests until the setup-site flow completes
-				// In case the user goes back to an earlier step and changes their intent
-				// So we can mark status as in-progress
-				status:
-					status === 'pending' && step.lastKnownFlow === 'setup-site' ? 'in-progress' : status,
+				status,
 		  } )
 		: addStep( state, { ...step, status: 'in-progress' } );
 };
 
 const submitStep = ( state, { step } ) => {
-	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
+	const stepHasApiRequestFunction = stepsConfig?.[ step.stepName ]?.apiRequestFunction;
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	return state.hasOwnProperty( step.stepName )

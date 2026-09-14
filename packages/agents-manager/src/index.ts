@@ -1,13 +1,22 @@
 // Main component exports
 export { default } from './components/agents-manager';
 export type { AgentsManagerProps } from './components/agents-manager';
-export { default as HeadlessAgentInitializer } from './components/headless-agent-initializer';
-export type { HeadlessAgentInitializerProps } from './components/headless-agent-initializer';
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
-// Utility for checking unified experience from inline script data
-export { getUseUnifiedExperienceFromInlineData } from './utils/load-external-providers';
+// Utility for agents manager inline data
+export { getAgentsManagerInlineData } from './utils/get-agents-manager-inline-data';
+
+// Tracks wrapper, so entry points outside the package attach the unified base props
+export { recordAgentsManagerTracksEvent } from './utils/tracks';
+
+// Host-facing controls for the chat dock, for entry points outside it
+export {
+	closeAgentsManagerChat,
+	getAgentsManagerChatRoute,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './utils/chat-actions';
 
 // Extension API types for other plugins to hook into
 export type {
@@ -21,8 +30,14 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
+export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
 
 // Feedback exports
-export { default as useFeedback, submitFeedback, rateMessage } from './hooks/use-feedback';
-export type { UseFeedbackConfig, UseFeedbackReturn } from './hooks/use-feedback';
+export {
+	default as useFeedbackAction,
+	submitFeedback,
+	rateMessage,
+} from './hooks/use-feedback-action';
+export type { UseFeedbackActionConfig, UseFeedbackActionReturn } from './hooks/use-feedback-action';
 export { default as FeedbackInput } from './components/feedback-input';

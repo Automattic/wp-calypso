@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import { get } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
 
 export function userCan( capability, site ) {
@@ -77,8 +76,8 @@ export function isMainNetworkSite( site ) {
 	}
 
 	if ( site.is_multisite ) {
-		const unmappedUrl = get( site.options, 'unmapped_url', null );
-		const mainNetworkSite = get( site.options, 'main_network_site', null );
+		const unmappedUrl = site.options?.unmapped_url ?? null;
+		const mainNetworkSite = site.options?.main_network_site ?? null;
 		if ( ! unmappedUrl || ! mainNetworkSite ) {
 			return false;
 		}

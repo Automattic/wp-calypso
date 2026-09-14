@@ -1,6 +1,5 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -174,12 +173,12 @@ class CloneStartStep extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const originSiteSlug = get( ownProps, 'stepSectionName', '' );
+		const originSiteSlug = ownProps?.stepSectionName ?? '';
 		const site = getSiteBySlug( state, originSiteSlug );
-		const originSiteName = get( site, 'name', '' );
+		const originSiteName = site?.name ?? '';
 
 		return {
-			originBlogId: get( site, 'ID', -Infinity ),
+			originBlogId: site?.ID ?? -Infinity,
 			originSiteName,
 			originSiteSlug,
 		};

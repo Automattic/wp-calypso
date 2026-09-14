@@ -1,5 +1,4 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { get } from 'lodash';
 import {
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UNSAVED_CLEAR,
@@ -40,7 +39,11 @@ export const unsavedSettings = ( state = {}, action ) => {
 			return removeValue( state, settingNames );
 		}
 		case USER_SETTINGS_UNSAVED_SET: {
-			if ( get( state, action.settingName ) === action.value ) {
+			// `settingName` may be a nested path (array of keys), matching `setValue`.
+			const path = Array.isArray( action.settingName )
+				? action.settingName
+				: [ action.settingName ];
+			if ( path.reduce( ( value, key ) => value?.[ key ], state ) === action.value ) {
 				return state;
 			}
 			return setValue( state, action.settingName, action.value );

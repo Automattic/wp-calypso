@@ -2,10 +2,10 @@
 
 exports[`GSuiteSingleFeature it renders GSuiteSingleFeature 1`] = `
 <div
-  className="gsuite-features__feature"
+  class="gsuite-features__feature"
 >
   <div
-    className="gsuite-features__feature-image"
+    class="gsuite-features__feature-image"
   >
     <img
       alt="image alt"
@@ -13,10 +13,10 @@ exports[`GSuiteSingleFeature it renders GSuiteSingleFeature 1`] = `
     />
   </div>
   <div
-    className="gsuite-features__feature-block"
+    class="gsuite-features__feature-block"
   >
     <h5
-      className="gsuite-features__feature-header"
+      class="gsuite-features__feature-header"
     >
       title
     </h5>

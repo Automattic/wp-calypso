@@ -12,6 +12,7 @@ import {
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
 	stagingSiteNotSupportedRedirect,
+	a4aDevSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
@@ -64,6 +65,7 @@ function getCommonHandlers( {
 		navigation,
 		wpForTeamsGeneralNotSupportedRedirect,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 	];
 
 	if ( noSitePath ) {
@@ -108,6 +110,7 @@ export default function () {
 		],
 		handlers: [
 			stagingSiteNotSupportedRedirect,
+			a4aDevSiteNotSupportedRedirect,
 			domainManagementController.domainManagementEmailRedirect,
 		],
 	} );
@@ -269,7 +272,13 @@ export default function () {
 		domainManagementController.domainManagementEdit,
 		[
 			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }` ),
+			maybeRedirectToMultiSiteDashboard( ( { domain, site } ) => {
+				if ( site && domain.endsWith( '.wordpress.com' ) ) {
+					return `/sites/${ site }/domains?action=change-site-address`;
+				}
+
+				return `/domains/${ domain }`;
+			} ),
 		]
 	);
 
@@ -296,6 +305,7 @@ export default function () {
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -307,6 +317,7 @@ export default function () {
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -318,6 +329,7 @@ export default function () {
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -329,6 +341,7 @@ export default function () {
 		domainsController.domainsAddRedirectHeader,
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -342,6 +355,7 @@ export default function () {
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.domainSearch,
 		makeLayout,
 		clientRender
@@ -354,6 +368,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.emailUpsellForDomainRegistration,
 		makeLayout,
 		clientRender
@@ -367,6 +382,7 @@ export default function () {
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.redirectToDomainSearchSuggestion
 	);
 
@@ -377,6 +393,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add/mapping' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.mapDomain,
 		makeLayout,
 		clientRender
@@ -392,6 +409,7 @@ export default function () {
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.mapDomainSetup,
 		makeLayout,
 		clientRender
@@ -404,6 +422,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.siteRedirect,
 		makeLayout,
 		clientRender
@@ -416,6 +435,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.transferDomain,
 		makeLayout,
 		clientRender
@@ -425,13 +445,12 @@ export default function () {
 		paths.domainUseMyDomain( ':site' ),
 		siteSelection,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
-			( params, queries ) => `/domains/${ queries.initialQuery }/domain-transfer-setup`
-		),
+		domainsController.maybeRedirectUseMyDomainToDashboardSetup,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.useMyDomain,
 		makeLayout,
 		clientRender
@@ -444,6 +463,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/manage' ),
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.transferDomainPrecheck,
 		makeLayout,
 		clientRender
@@ -456,6 +476,7 @@ export default function () {
 			( params ) => `/domains/${ params.domain }?back_to=site-domains`
 		),
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainsController.redirectDomainToSite,
 		makeLayout,
 		clientRender
@@ -467,6 +488,7 @@ export default function () {
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
 		stagingSiteNotSupportedRedirect,
+		a4aDevSiteNotSupportedRedirect,
 		domainManagementController.domainManagementIndex,
 		makeLayout,
 		clientRender

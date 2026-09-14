@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -14,8 +15,8 @@ import {
 	getStatusText,
 	mapThresholdsToStatus,
 } from '../../utils/site-performance';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
-import '@automattic/charts/line-chart/style.css';
 
 const WEEK_TO_SHOW = 8;
 
@@ -152,29 +153,32 @@ export default function CoreMetricsChart( {
 	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
 	const { good, needsImprovement } = metricsThresholds[ metric ];
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const lineChartData = useLineChartData( metric, report.history );
 
 	const formatThresholdValue = ( valuation: Valuation ) => {
 		const unit = getDisplayUnit( metric );
 		if ( valuation === 'good' ) {
-			return sprintf( '(0–%(to)s%(unit)s)', {
-				to: getFormattedValue( metric, good ),
+			// translators: %(to)s is the upper bound of the metric value, %(unit)s is its unit (e.g. "ms" or "s"). Renders a range like "(0–2.5s)".
+			return sprintf( __( '(0–%(to)s%(unit)s)' ), {
+				to: String( getFormattedValue( metric, good ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'needsImprovement' ) {
-			return sprintf( '(%(from)s–%(to)s%(unit)s)', {
-				from: getFormattedValue( metric, good ),
-				to: getFormattedValue( metric, needsImprovement ),
+			// translators: %(from)s and %(to)s are the lower and upper bounds of the metric value, %(unit)s is its unit (e.g. "ms" or "s"). Renders a range like "(2.5–4s)".
+			return sprintf( __( '(%(from)s–%(to)s%(unit)s)' ), {
+				from: String( getFormattedValue( metric, good ) ),
+				to: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}
 
 		if ( valuation === 'bad' ) {
-			return sprintf( '(Over %(from)s%(unit)s)', {
-				from: getFormattedValue( metric, needsImprovement ),
+			// translators: %(from)s is the lower threshold of the metric value, %(unit)s is its unit (e.g. "ms" or "s"). Renders like "(Over 4s)".
+			return sprintf( __( '(Over %(from)s%(unit)s)' ), {
+				from: String( getFormattedValue( metric, needsImprovement ) ),
 				unit,
 			} );
 		}

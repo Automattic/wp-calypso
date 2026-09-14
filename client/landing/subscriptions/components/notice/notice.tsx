@@ -1,7 +1,8 @@
 import './style.scss';
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
-import closeIcon from './images/close.svg';
 import errorIcon from './images/error.svg';
 import successIcon from './images/success.svg';
 import warningIcon from './images/warning.svg';
@@ -44,21 +45,6 @@ const Notice = ( {
 				className
 			) }
 		>
-			{ onClose && (
-				<a
-					className="subscription-management__notice-close"
-					href="#close"
-					onClick={ ( e ) => {
-						e.preventDefault();
-						onClose?.();
-					} }
-				>
-					<img
-						src={ closeIcon }
-						alt={ translate( 'Close', { context: 'Hide the notice' } ) as string }
-					/>
-				</a>
-			) }
 			<div className="subscription-management__notice-icon">
 				<img
 					src={ { success: successIcon, warning: warningIcon, error: errorIcon }[ type ] }
@@ -67,6 +53,14 @@ const Notice = ( {
 			</div>
 			<div className="subscription-management__notice-content">{ children }</div>
 			{ action && <div className="subscription-management__notice-action">{ action }</div> }
+			{ onClose && (
+				<Button
+					className="subscription-management__notice-close"
+					icon={ closeSmall }
+					label={ __( 'Dismiss notice' ) }
+					onClick={ onClose }
+				/>
+			) }
 		</div>
 	) : null;
 };

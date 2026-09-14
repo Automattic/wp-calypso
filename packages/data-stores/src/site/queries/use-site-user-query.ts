@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
 import { Member } from '../../users/types';
+import wpcomRequest from '../../wpcom-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 
 export function getUseSiteUserQueryOptions(

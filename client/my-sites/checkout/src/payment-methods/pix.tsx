@@ -84,6 +84,25 @@ export function createPixPaymentMethod( {
 	};
 }
 
+export function createPixAutomaticoPaymentMethod( {
+	submitButtonContent,
+}: {
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
+	const state = new PixPaymentMethodState();
+
+	return {
+		id: 'pix_automatico',
+		paymentProcessorId: 'pix_automatico',
+		label: <PixAutomaticoLabel />,
+		activeContent: <PixForm state={ state } />,
+		submitButton: (
+			<PixAutomaticoPayButton submitButtonContent={ submitButtonContent } state={ state } />
+		),
+		getAriaLabel: () => 'Pix Automático',
+	};
+}
+
 function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 	const [ , forceReload ] = useState( 0 );
 	useEffect( () => {
@@ -173,9 +192,15 @@ function PixForm( { state }: { state: PixPaymentMethodState } ) {
 				onChange={ ( value: string ) => {
 					state.change( 'taxpayerId', value );
 				} }
-				label={ translate( 'CPF', {
+				label={ translate( 'CPF/CNPJ', {
 					textOnly: true,
-					comment: 'The taxpayer identification number for Brazil',
+					comment:
+						'The taxpayer identification number for Brazil (CPF for individuals, CNPJ for companies)',
+				} ) }
+				placeholder={ translate( '111.444.777-XX or 11.444.777/0001-XX', {
+					textOnly: true,
+					comment:
+						'Example formats for a Brazilian CPF (individual) or CNPJ (company) taxpayer identification number',
 				} ) }
 				value={ state.data.taxpayerId }
 				disabled={ formStatus !== FormStatus.READY }
@@ -286,7 +311,50 @@ function PixPayButton( {
 			fullWidth
 		>
 			{ submitButtonContent }
-			<div className="pix-modal-target" />
+		</Button>
+	);
+}
+
+function PixAutomaticoPayButton( {
+	disabled,
+	onClick,
+	submitButtonContent,
+	state,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	submitButtonContent: ReactNode;
+	state: PixPaymentMethodState;
+} ) {
+	const { formStatus } = useFormStatus();
+
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; PixAutomaticoPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
+
+	return (
+		<Button
+			disabled={ disabled }
+			onClick={ () => {
+				onClick( {
+					name: state.data.cardholderName,
+					countryCode: countryCode,
+					state: state.data.state,
+					city: state.data.city,
+					postalCode: state.data.postalCode,
+					address: state.data.address,
+					streetNumber: state.data.streetNumber,
+					phoneNumber: state.data.phoneNumber,
+					document: state.data.taxpayerId,
+				} );
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
+			fullWidth
+		>
+			{ submitButtonContent }
 		</Button>
 	);
 }
@@ -311,6 +379,17 @@ function PixLabel() {
 	return (
 		<Fragment>
 			<span>Pix</span>
+			<PixLogoWrapper>
+				<PixLogo />
+			</PixLogoWrapper>
+		</Fragment>
+	);
+}
+
+function PixAutomaticoLabel() {
+	return (
+		<Fragment>
+			<span>Pix Automático</span>
 			<PixLogoWrapper>
 				<PixLogo />
 			</PixLogoWrapper>

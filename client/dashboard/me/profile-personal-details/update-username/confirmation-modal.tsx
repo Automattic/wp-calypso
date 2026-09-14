@@ -36,12 +36,9 @@ export default function UsernameUpdateConfirmationModal( {
 		>
 			{ createInterpolateElement(
 				sprintf(
-					/* translators: currentUsername is the current username that will be changed.
-					newUsername is the new username */
+					/* translators: %(currentUsername)s is the current username that will be changed, %(newUsername)s is the new username */
 					__(
-						'You are about to change your username, <strong>%(currentUsername)s</strong>, to <strong>%(newUsername)s</strong>. <break />' +
-							'Once changed, you will not be able to revert it. <break />' +
-							'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+						'You are about to change your username, <strong>%(currentUsername)s</strong>, to <strong>%(newUsername)s</strong>. <break/>Once changed, you will not be able to revert it. <break/>Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
 					),
 					{ currentUsername, newUsername }
 				),

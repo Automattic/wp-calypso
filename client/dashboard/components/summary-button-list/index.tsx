@@ -21,10 +21,11 @@ export function SummaryButtonList( {
 	title,
 	description,
 	density = 'medium',
+	actions,
 	children,
 }: SummaryButtonListProps ) {
 	const titleId = useInstanceId( SummaryButtonList, 'dashboard-summary-button-list__title' );
-	const isMediumDensity = density === 'medium';
+	const useCardWrapper = density === 'medium' || density === 'medium-low';
 	// Clone children and override their density prop.
 	const clonedChildren = Children.map( children, ( child ) => {
 		if ( isValidElement( child ) ) {
@@ -37,7 +38,13 @@ export function SummaryButtonList( {
 		return child;
 	} );
 	const header = title && (
-		<SectionHeader headingId={ titleId } level={ 3 } title={ title } description={ description } />
+		<SectionHeader
+			headingId={ titleId }
+			level={ 3 }
+			title={ title }
+			description={ description }
+			actions={ actions }
+		/>
 	);
 	const className = clsx( 'dashboard-summary-button-list', `has-density-${ density }` );
 	const childrenList = (
@@ -48,7 +55,7 @@ export function SummaryButtonList( {
 			{ clonedChildren }
 		</ul>
 	);
-	if ( isMediumDensity ) {
+	if ( useCardWrapper ) {
 		return (
 			<Card className={ className }>
 				{ header && <CardHeader>{ header }</CardHeader> }

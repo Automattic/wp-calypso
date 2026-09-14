@@ -1,4 +1,4 @@
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from './wpcom-request';
 
 export async function uploadAndSetSiteLogo( siteId: string | number | undefined, file: File ) {
 	const formData = [ [ 'media[]', file ] ];

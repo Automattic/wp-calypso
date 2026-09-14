@@ -1,0 +1,23 @@
+diff --git a/package.json b/package.json
+index 7b063ae0e66802086767ccf080ece98b7f2c589d..7fb6a24a6f15d0ae5e390218f67a69a9457c7fae 100644
+--- a/package.json
++++ b/package.json
+@@ -40,7 +40,17 @@
+ 			"default": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/": "./build-style/"
++		"./build-style/": "./build-style/",
++		"./build-module/hooks": {
++			"types": "./build-types/hooks.d.ts",
++			"import": "./build-module/hooks.mjs",
++			"default": "./build/hooks.cjs"
++		},
++		"./build-module/context": {
++			"types": "./build-types/context.d.ts",
++			"import": "./build-module/context.mjs",
++			"default": "./build/context.cjs"
++		}
+ 	},
+ 	"react-native": "src/index",
+ 	"dependencies": {

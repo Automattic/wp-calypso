@@ -8,6 +8,7 @@ const createDomain = ( overrides: Partial< Domain > = {} ): Domain =>
 		is_redeemable: false,
 		pending_registration: false,
 		pending_registration_at_registry: false,
+		pending_registration_at_registry_url: '',
 		move_to_new_site_pending: false,
 		aftermarket_auction: false,
 		can_transfer_to_any_user: true,

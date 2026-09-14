@@ -10,6 +10,7 @@ export const siteStaticFile404SettingQuery = ( siteId: number ) =>
 
 export const siteStaticFile404SettingMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-static-file404-update' },
 		mutationFn: ( setting: string ) => updateStaticFile404Setting( siteId, setting ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteStaticFile404SettingQuery( siteId ) );

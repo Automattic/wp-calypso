@@ -9,9 +9,6 @@ import type {
 export type CONVERSION_ACTION =
 	| 'register-domain'
 	| 'transfer-domain'
-	| 'transfer-google-domain'
-	| 'transfer-google-domain-hosting'
-	| 'transfer-google-domain-hosting-wp'
 	| 'transfer-hosting'
 	| 'transfer-hosting-wp'
 	| 'transfer-domain-hosting'
@@ -27,7 +24,6 @@ export default function useDefineConversionAction(
 	const [ conversionAction, setConversionAction ] = useState< CONVERSION_ACTION | undefined >();
 
 	const isDomainAvailable = siteProfilerData?.is_domain_available;
-	const isEligibleGoogleTransfer = siteProfilerData?.eligible_google_transfer;
 
 	const isWpDomain = domain.toLowerCase().includes( 'wordpress.com' );
 	const isWpAtomicDomain = domain.toLowerCase().includes( 'wpcomstaging.com' );
@@ -58,12 +54,6 @@ export default function useDefineConversionAction(
 			isWpPlatform
 				? setConversionAction( 'transfer-hosting-wp' )
 				: setConversionAction( 'transfer-hosting' );
-		} else if ( ! isA8cDomain && isEligibleGoogleTransfer && isA8cHosting ) {
-			setConversionAction( 'transfer-google-domain' );
-		} else if ( ! isA8cDomain && isEligibleGoogleTransfer && ! isA8cHosting ) {
-			isWpPlatform
-				? setConversionAction( 'transfer-google-domain-hosting-wp' )
-				: setConversionAction( 'transfer-google-domain-hosting' );
 		} else if ( ! isA8cDomain && isA8cHosting ) {
 			setConversionAction( 'transfer-domain' );
 		} else if ( ! isA8cDomain && ! isA8cHosting ) {

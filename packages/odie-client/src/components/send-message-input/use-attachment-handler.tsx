@@ -1,5 +1,4 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
@@ -10,6 +9,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { error, image, Icon } from '@wordpress/icons';
+import { HELP_CENTER_STORE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { AttachmentPreviews } from '../attachment-preview';
 
@@ -36,13 +36,13 @@ const getFileType = ( file: File ) => {
 
 const getPlaceholderAttachmentMessage = ( file: File ) => {
 	return zendeskMessageConverter( {
+		id: String( new Date().getTime() ),
 		role: 'user',
 		type: getFileType( file ),
 		text: '',
-		id: String( new Date().getTime() ),
 		received: new Date().getTime(),
 		metadata: {
-			temporary_id: crypto.randomUUID(),
+			temporary_id: crypto.randomUUID() as string,
 			local_timestamp: Date.now() / 1000,
 		},
 		source: { type: 'web', id: '', integrationId: '' },

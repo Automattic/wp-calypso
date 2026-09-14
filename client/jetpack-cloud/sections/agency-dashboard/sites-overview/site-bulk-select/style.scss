@@ -1,9 +1,11 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .bulk-select {
 	display: inline-block;
-	.count {
+	.a8c-count {
 		display: none;
 	}
 }

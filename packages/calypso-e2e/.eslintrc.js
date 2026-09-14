@@ -5,7 +5,7 @@ module.exports = {
 	rules: {
 		...nodeConfig.rules,
 
-		'require-jsdoc': [
+		'jsdoc/require-jsdoc': [
 			'error',
 			{
 				require: {

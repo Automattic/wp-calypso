@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -62,7 +63,7 @@ const OverviewBodyProducts = () => {
 		title: translate( 'WooCommerce' ),
 		titleIcon: <img width={ 40 } src={ WooLogoColor } alt="WooCommerce" />,
 		description: translate(
-			'WooCommerce is the platform that offers unlimited potential to build the perfect ecommerce experiences for your clients. No matter what success looks like, you can do it with WooCommerce. Purchase Woo extensions in bulk to save big.'
+			'WooCommerce is the platform that offers unlimited potential to build perfect ecommerce experiences for your clients. No matter what success looks like, you can do it with WooCommerce. Purchase Woo extensions in bulk to save big.'
 		),
 		highlights: [
 			translate( 'AutomateWoo: Grow sales with less effort using powerful marketing automation.' ),
@@ -76,14 +77,13 @@ const OverviewBodyProducts = () => {
 			),
 			translate( 'Subscriptions: Enable weekly, monthly, or annual subscriptions.' ),
 			translate(
-				'WooPayments: Earn a recurring 5bps commission on Total Payment Volume (TPV) for any new clients referred. {{a}}Learn{{nbsp/}}more ↗{{/a}}',
+				'WooPayments: Earn a recurring 5bps commission on Total Payment Volume (TPV) for any new clients referred. {{a}}Learn{{nbsp/}}more{{/a}}',
 				{
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href="https://automattic.com/for-agencies/program-incentives/"
-								target="_blank"
-								rel="noreferrer noopener"
+								children={ null }
 							/>
 						),
 						nbsp: <>&nbsp;</>,

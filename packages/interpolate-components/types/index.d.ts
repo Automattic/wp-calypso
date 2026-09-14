@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 interface InterpolateOptions {
 	mixedString: string;
 	components?: Record< string, JSX.Element >;

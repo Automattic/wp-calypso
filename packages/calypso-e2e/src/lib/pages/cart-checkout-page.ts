@@ -1,7 +1,8 @@
-import { Frame, Page } from 'playwright';
+import { errors } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import envVariables from '../../env-variables';
+import { waitForElementEnabled } from '../../element-helper';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
+import type { Page } from 'playwright';
 
 const selectors = {
 	// Modal
@@ -49,6 +50,7 @@ const selectors = {
 
 	// Payment field
 	cardholderName: 'input[id="cardholder-name"]',
+	cardPaymentRadio: 'input#card[type="radio"]',
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
 	cardExpiryFrame: 'iframe[title="Secure expiration date input frame"]',
@@ -62,10 +64,10 @@ const selectors = {
 	couponCodeApplyButton: 'button:text("Apply")',
 	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: '.checkout-submit-button button',
-	totalAmount:
-		envVariables.VIEWPORT_NAME === 'mobile'
-			? '.wp-checkout__total-price'
-			: '.wp-checkout-order-summary__total-price',
+	// The mobile and desktop checkouts render the total in different elements;
+	// match whichever variant is visible so the check stays a user-visible-price
+	// assertion on both viewports.
+	totalAmount: '.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible',
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -122,10 +124,12 @@ export class CartCheckoutPage {
 		if ( expectedDescription ) {
 			return this.page
 				.locator( selectors.cartItem( expectedCartItemName ), { hasText: expectedDescription } )
-				.waitFor( { state: 'visible' } );
+				.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		}
 
-		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		await this.page
+			.locator( selectors.cartItem( expectedCartItemName ) )
+			.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 	}
 
 	/**
@@ -144,12 +148,38 @@ export class CartCheckoutPage {
 	 * Validates that the cart contains the expected number of items.
 	 */
 	async validateCartItemsCount( totalItems: number ): Promise< void > {
-		await this.page.waitForSelector( selectors.cartItems );
 		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		const itemsCount = await cartItemsLocator.count();
 		if ( itemsCount !== totalItems ) {
 			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
 		}
+	}
+
+	/**
+	 * Validates that the cart contains no plan line item.
+	 *
+	 * Plan rows carry `data-product-type="plan"`, so this asserts the
+	 * "plan was skipped" contract directly; a strict item count would break on
+	 * unrelated rows such as auto-added free-domain entitlements.
+	 */
+	async validateNoPlanInCart(): Promise< void > {
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		const planItem = this.page.locator( `${ selectors.cartItems }[data-product-type="plan"]` );
+		try {
+			// Inverted wait: give a late cart update a bounded window to add a plan
+			// row; timing out here is the success path. A plan row added later than
+			// this window is not caught.
+			await planItem.first().waitFor( { state: 'visible', timeout: 5 * 1000 } );
+		} catch ( error ) {
+			if ( error instanceof errors.TimeoutError ) {
+				return;
+			}
+			throw error;
+		}
+		const planLabel = ( await planItem.first().innerText() ).split( '\n' )[ 0 ];
+		throw new Error( `Expected no plan in cart, but found: ${ planLabel }` );
 	}
 
 	/**
@@ -158,8 +188,9 @@ export class CartCheckoutPage {
 	 * @returns {string} Content of the payment button.
 	 */
 	async getPaymentButtonText(): Promise< string > {
-		const elementHandle = await this.page.waitForSelector( selectors.paymentButton );
-		return await elementHandle.innerText();
+		const paymentButtonLocator = this.page.locator( selectors.paymentButton );
+		await paymentButtonLocator.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		return await paymentButtonLocator.innerText();
 	}
 
 	/**
@@ -220,7 +251,7 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const totalAmountLocator = this.page.locator( selectors.totalAmount );
+		const totalAmountLocator = this.page.locator( selectors.totalAmount ).first();
 		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();
@@ -242,6 +273,12 @@ export class CartCheckoutPage {
 	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
 	 */
 	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		// The registrar form appears after a checkout page navigation. Wait for it
+		// to be visible with a generous timeout before filling to avoid timing out
+		// while the page is still loading.
+		await this.page
+			.locator( selectors.firstNameInput )
+			.waitFor( { state: 'visible', timeout: 30_000 } );
 		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
 		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
 		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
@@ -302,32 +339,48 @@ export class CartCheckoutPage {
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
-		// Click on the Credit or debit card input in order
-		// to expand the fields.
-		const cardInputLocator = await this.page.waitForSelector(
-			'span:has-text("Credit or debit card")'
+		// Select the Credit or debit card payment method to expand the fields.
+		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
+		// over the card label, so a real click can't reach it. Wait for the
+		// underlying radio input to become enabled, then dispatch the click and
+		// wait for the form fields that prove the payment method is ready.
+		const cardPaymentRadio = this.page.locator( selectors.cardPaymentRadio );
+		await cardPaymentRadio.waitFor( { state: 'attached', timeout: 15 * 1000 } );
+		await waitForElementEnabled( this.page, selectors.cardPaymentRadio, { timeout: 30 * 1000 } );
+		await cardPaymentRadio.dispatchEvent( 'click' );
+		await this.page.waitForFunction(
+			( selector ) => document.querySelector< HTMLInputElement >( selector )?.checked === true,
+			selectors.cardPaymentRadio,
+			{ timeout: 30 * 1000 }
 		);
-		await cardInputLocator.click();
+		await this.validatePaymentForm();
 
 		// Begin filling in the card details from
 		// top to bottom.
 		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 
-		const cardNumberFrameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
-		const cardNumberFrame = ( await cardNumberFrameHandle.contentFrame() ) as Frame;
-		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
-		await cardNumberInput.fill( paymentDetails.cardNumber );
+		// Stripe remounts its split-field iframes (__privateStripeFrame ids change),
+		// so resolve each lazily via frameLocator; a cached contentFrame handle goes
+		// stale. Explicit timeout because the 10s global actionTimeout is too short
+		// for a cold Stripe.js mount.
+		const fillTimeout = 30 * 1000;
 
-		const expiryFrameHandle = await this.page.waitForSelector( selectors.cardExpiryFrame );
-		const expiryFrame = ( await expiryFrameHandle.contentFrame() ) as Frame;
-		const expiryInput = await expiryFrame.waitForSelector( selectors.cardExpiryInput );
-		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
+		const cardNumberInput = this.page
+			.frameLocator( selectors.cardNumberFrame )
+			.locator( selectors.cardNumberInput );
+		await cardNumberInput.fill( paymentDetails.cardNumber, { timeout: fillTimeout } );
 
-		const cvvFrame = ( await (
-			await this.page.waitForSelector( selectors.cardCVVFrame )
-		).contentFrame() ) as Frame;
-		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
-		await cvvInput.fill( paymentDetails.cvv );
+		const expiryInput = this.page
+			.frameLocator( selectors.cardExpiryFrame )
+			.locator( selectors.cardExpiryInput );
+		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }`, {
+			timeout: fillTimeout,
+		} );
+
+		const cvvInput = this.page
+			.frameLocator( selectors.cardCVVFrame )
+			.locator( selectors.cardCVVInput );
+		await cvvInput.fill( paymentDetails.cvv, { timeout: fillTimeout } );
 	}
 
 	/**
@@ -336,7 +389,9 @@ export class CartCheckoutPage {
 	async purchase( { timeout }: { timeout: number } = { timeout: 60000 } ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
-			this.page.getByRole( 'button', { name: 'Pay now' } ).click(),
+			// The submit button reads "Pay now" by default, but "Pay with **** 1234"
+			// when a saved card is selected, so match either label.
+			this.page.getByRole( 'button', { name: /Pay (now|with)/ } ).click(),
 		] );
 	}
 

@@ -1,4 +1,4 @@
-import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSite } from 'calypso/state/sites/selectors';
 
 /**
  * Returns true if the site is unlaunched
@@ -7,7 +7,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  * @returns {boolean} True if site is unlaunched
  */
 export default function isUnlaunchedSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+	const site = getSite( state, siteId );
 
 	return site?.launch_status === 'unlaunched';
 }

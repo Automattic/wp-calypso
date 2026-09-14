@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -73,4 +73,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsCommentFollows );
+export default compose( connectComponent, localize )( StatsCommentFollows );

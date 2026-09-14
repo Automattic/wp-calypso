@@ -1,14 +1,19 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { getEmailAddressError } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
-import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch, useSelector } from 'calypso/state';
+import {
+	getAccountRecoveryEmail,
+	getAccountRecoveryPhone,
+	isAccountRecoverySettingsReady,
+} from 'calypso/state/account-recovery/settings/selectors';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
@@ -35,11 +40,13 @@ export type AccountEmailFieldProps = {
 
 const EMAIL_VALIDATION_REASON_EMPTY = 'empty';
 const EMAIL_VALIDATION_REASON_INVALID = 'invalid';
+const EMAIL_VALIDATION_REASON_UNKNOWN_TLD = 'unknown_tld';
 const EMAIL_VALIDATION_REASON_IS_VALID = null;
 
 type AccountEmailValidationReason =
 	| typeof EMAIL_VALIDATION_REASON_EMPTY
 	| typeof EMAIL_VALIDATION_REASON_INVALID
+	| typeof EMAIL_VALIDATION_REASON_UNKNOWN_TLD
 	| typeof EMAIL_VALIDATION_REASON_IS_VALID;
 
 const getUserSetting = ( {
@@ -52,6 +59,18 @@ const getUserSetting = ( {
 	userSettings: UserSettingsType;
 } ) => {
 	return unsavedUserSettings?.[ settingName ] ?? userSettings?.[ settingName ] ?? '';
+};
+
+/**
+ * Extracts the domain part of an email address (lowercased). Returns null
+ * if the value does not look like an email with a domain.
+ */
+const getEmailDomain = ( email: string ): string | null => {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex < 0 || atIndex === email.length - 1 ) {
+		return null;
+	}
+	return email.slice( atIndex + 1 ).toLowerCase();
 };
 
 const AccountEmailValidationNotice = ( {
@@ -73,29 +92,125 @@ const AccountEmailValidationNotice = ( {
 		return null;
 	}
 
+	const email = getUserSetting( {
+		settingName: 'user_email',
+		unsavedUserSettings,
+		userSettings,
+	} ) as string;
+
 	let noticeText;
 
 	if ( emailInvalidReason === EMAIL_VALIDATION_REASON_EMPTY ) {
 		noticeText = translate( 'Email address can not be empty.' );
 	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_INVALID ) {
-		noticeText = translate( '%(email)s is not a valid email address.', {
-			args: {
-				email: getUserSetting( {
-					settingName: 'user_email',
-					unsavedUserSettings,
-					userSettings,
-				} ) as string,
-			},
-		} );
+		noticeText = translate( '%(email)s is not a valid email address.', { args: { email } } );
+	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_UNKNOWN_TLD ) {
+		noticeText = translate(
+			'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
+			{ args: { domain: getEmailDomain( email ) ?? email } }
+		);
 	}
 
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
+/**
+ * Well-known free email providers whose addresses are not at risk of expiry.
+ * Anything not on this list is treated as a custom domain that could expire.
+ */
+const FREE_EMAIL_PROVIDERS = new Set( [
+	'gmail.com',
+	'googlemail.com',
+	'yahoo.com',
+	'yahoo.co.uk',
+	'yahoo.fr',
+	'yahoo.de',
+	'yahoo.es',
+	'yahoo.it',
+	'yahoo.ca',
+	'yahoo.com.au',
+	'hotmail.com',
+	'hotmail.co.uk',
+	'hotmail.fr',
+	'hotmail.de',
+	'hotmail.es',
+	'hotmail.it',
+	'outlook.com',
+	'outlook.co.uk',
+	'outlook.fr',
+	'outlook.de',
+	'live.com',
+	'live.co.uk',
+	'live.fr',
+	'live.de',
+	'msn.com',
+	'icloud.com',
+	'me.com',
+	'mac.com',
+	'aol.com',
+	'protonmail.com',
+	'proton.me',
+	'tutanota.com',
+	'tutamail.com',
+	'zoho.com',
+	'fastmail.com',
+	'fastmail.fm',
+	'yandex.com',
+	'yandex.ru',
+	'mail.ru',
+	'gmx.com',
+	'gmx.de',
+	'gmx.net',
+	'web.de',
+	'wp.pl',
+] );
+
+/**
+ * Returns true if the email domain is a custom domain (i.e. not a well-known
+ * free email provider), meaning it is subject to expiry risk.
+ */
+const isCustomDomainEmail = ( email: string ): boolean => {
+	const domain = getEmailDomain( email );
+	return domain !== null && ! FREE_EMAIL_PROVIDERS.has( domain );
+};
+
+const AccountEmailCustomDomainNotice = ( { email }: { email: string } ) => {
+	const translate = useTranslate();
+	const isSettingsReady = useSelector( isAccountRecoverySettingsReady );
+	const recoveryEmail = useSelector( getAccountRecoveryEmail );
+	const recoveryPhone = useSelector( getAccountRecoveryPhone );
+
+	if ( ! isCustomDomainEmail( email ) ) {
+		return null;
+	}
+
+	const hasRecoveryMethod = !! recoveryEmail || !! recoveryPhone;
+
+	return (
+		<>
+			<QueryAccountRecoverySettings />
+			{ isSettingsReady && ! hasRecoveryMethod && (
+				<FormInputValidation
+					isError={ false }
+					isWarning
+					text={ translate(
+						"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. {{a}}Set up a recovery email or phone number{{/a}} to keep access to your account.",
+						{
+							components: {
+								a: <a href="/me/security/account-recovery" />,
+							},
+						}
+					) }
+				/>
+			) }
+		</>
+	);
+};
+
 const EmailFieldExplanationText = ( {
 	unlockRef,
 }: {
-	unlockRef: React.RefObject< HTMLButtonElement >;
+	unlockRef: React.RefObject< HTMLButtonElement | null >;
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -175,9 +290,13 @@ const AccountEmailField = ( {
 
 		let emailValidationReason: AccountEmailValidationReason = EMAIL_VALIDATION_REASON_IS_VALID;
 
+		const emailError = getEmailAddressError( value );
+
 		if ( value === '' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_EMPTY;
-		} else if ( ! emailValidator.validate( value ) ) {
+		} else if ( emailError === 'unknown_tld' ) {
+			emailValidationReason = EMAIL_VALIDATION_REASON_UNKNOWN_TLD;
+		} else if ( emailError ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_INVALID;
 		}
 
@@ -225,7 +344,6 @@ const AccountEmailField = ( {
 
 	return (
 		<>
-			<QueryAllDomains />
 			<FormFieldset>
 				<FormLabel htmlFor={ emailInputId }>{ translate( 'Email address' ) }</FormLabel>
 				<FormTextInput
@@ -244,6 +362,10 @@ const AccountEmailField = ( {
 					unsavedUserSettings={ unsavedUserSettings }
 					userSettings={ userSettings }
 				/>
+
+				{ emailInvalidReason === EMAIL_VALIDATION_REASON_IS_VALID && (
+					<AccountEmailCustomDomainNotice email={ String( emailAddress ) } />
+				) }
 
 				<FormSettingExplanation>
 					<EmailFieldExplanationText unlockRef={ unlockRef } />

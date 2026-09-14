@@ -14,6 +14,7 @@ export interface FetchSitesOptions {
 	source?: string;
 	site_visibility: 'all' | 'visible' | 'hidden' | 'deleted';
 	include_a8c_owned: boolean;
+	include_staging?: boolean;
 }
 
 export interface FetchPaginatedSitesOptions extends FetchSitesOptions {
@@ -33,7 +34,7 @@ export interface FetchPaginatedSitesResponse {
 
 export async function fetchSites(
 	site_types: FetchSiteTypes,
-	{ source, site_visibility, include_a8c_owned }: FetchSitesOptions
+	{ source, site_visibility, include_a8c_owned, include_staging }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
 		{
@@ -47,6 +48,7 @@ export async function fetchSites(
 			site_activity: 'active',
 			site_visibility,
 			include_a8c_owned,
+			include_staging,
 			include_domain_only: false,
 			filters: site_types !== 'all' ? site_types.join( ',' ) : undefined,
 		}
@@ -60,6 +62,7 @@ export async function fetchPaginatedSites(
 		source,
 		site_visibility,
 		include_a8c_owned,
+		include_staging,
 		search,
 		plan,
 		visibility,
@@ -81,6 +84,7 @@ export async function fetchPaginatedSites(
 			site_activity: 'active',
 			site_visibility,
 			include_a8c_owned,
+			include_staging,
 			include_domain_only: false,
 			filters: site_types !== 'all' ? site_types.join( ',' ) : undefined,
 			search,

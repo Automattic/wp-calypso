@@ -13,12 +13,18 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserEmail,
+} from 'calypso/state/current-user/selectors';
 import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -46,6 +52,12 @@ const SiteSummary = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		margin-top: -8px;
+	}
+`;
+
+const EmailSummary = styled( SiteSummary )`
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		margin-top: 0;
 	}
 `;
 
@@ -134,6 +146,8 @@ export default function WPCheckoutOrderReview( {
 	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -144,6 +158,8 @@ export default function WPCheckoutOrderReview( {
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
+	const currentUserEmail = useSelector( getCurrentUserEmail ) as string | undefined;
+	const isGiftPurchase = Boolean( responseCart.gift_details?.receiver_blog_slug );
 
 	return (
 		<>
@@ -154,9 +170,37 @@ export default function WPCheckoutOrderReview( {
 					isSummary && 'is-summary',
 				] ) }
 			>
-				{ domainUrl && <SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary> }
+				{ isMobileCheckoutStickySummary ? (
+					currentUserEmail &&
+					! isGiftPurchase && (
+						<p className="checkout-review-order__signed-in">
+							{ translate( 'You’re signed in as {{em}}%(email)s{{/em}}.', {
+								args: { email: currentUserEmail },
+								components: { em: <strong /> },
+								comment: 'Shown at the top of mobile checkout under the order details heading.',
+							} ) }
+						</p>
+					)
+				) : (
+					<>
+						{ domainUrl && (
+							<SiteSummary className="checkout-review-order__site">
+								{ isCheckoutUiRedesignV1
+									? domainUrl
+									: translate( 'Site: %s', { args: domainUrl } ) }
+							</SiteSummary>
+						) }
+						{ currentUserEmail && ! isGiftPurchase && (
+							<EmailSummary className="checkout-review-order__email">
+								{ isCheckoutUiRedesignV1
+									? currentUserEmail
+									: translate( 'Account: %s', { args: currentUserEmail } ) }
+							</EmailSummary>
+						) }
+					</>
+				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
-					<SiteSummary>
+					<SiteSummary className="checkout-review-order__site">
 						{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
 							args: selectedSiteData.name,
 							components: {
@@ -224,7 +268,7 @@ export function CouponFieldArea( {
 
 	if ( isCouponFieldVisible ) {
 		return (
-			<CouponAreaWrapper>
+			<CouponAreaWrapper className="checkout__coupon-area">
 				<CouponField
 					id="order-review-coupon"
 					disabled={ formStatus !== FormStatus.READY }
@@ -236,7 +280,7 @@ export function CouponFieldArea( {
 	}
 
 	return (
-		<CouponAreaWrapper>
+		<CouponAreaWrapper className="checkout__coupon-area">
 			<CouponLinkWrapper>
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"

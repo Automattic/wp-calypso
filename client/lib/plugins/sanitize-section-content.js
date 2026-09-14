@@ -1,5 +1,4 @@
 import { addQueryArgs } from '@wordpress/url';
-import { filter } from 'lodash';
 import validUrl from 'valid-url';
 import { allowedTags, customTags } from './allowed-tags';
 
@@ -137,13 +136,14 @@ export const sanitizeSectionContent = ( content ) => {
 		// as we go on the first pass.
 		//
 		// @see https://developer.mozilla.org/en-US/docs/Web/API/Element/attributes
-		filter(
-			node.attributes,
-			( { name, value } ) =>
-				! isAllowedAttr( isYoutube ? customTags.YOUTUBE : tagName, name ) ||
-				// only valid http(s) URLs are allowed
-				( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
-		).forEach( ( { name } ) => node.removeAttribute( name ) );
+		Array.from( node.attributes ?? [] )
+			.filter(
+				( { name, value } ) =>
+					! isAllowedAttr( isYoutube ? customTags.YOUTUBE : tagName, name ) ||
+					// only valid http(s) URLs are allowed
+					( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
+			)
+			.forEach( ( { name } ) => node.removeAttribute( name ) );
 
 		// of course, all links need to be normalized since
 		// they now exist inside of the Calypso context

@@ -1,14 +1,23 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, render, waitFor } from '@testing-library/react';
+import config from '@automattic/calypso-config';
+import { act, screen, render, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
 } ) );
+
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -22,6 +31,13 @@ Object.defineProperty( window, 'location', {
 describe( 'LostPasswordForm', () => {
 	afterEach( () => {
 		mockFetch.mockClear();
+		// Restore the flags to the enabled baseline from config/test.json.
+		config.enable( 'blackbox' );
+		config.enable( 'blackbox-lost-password' );
+		getBlackboxSessionId.mockClear();
+		getBlackboxSessionId.mockResolvedValue( undefined );
+		MockBlackboxChallenge.blocked = false;
+		delete window.Blackbox;
 	} );
 
 	test( 'displays a lost password form without errors', () => {
@@ -155,6 +171,17 @@ describe( 'LostPasswordForm', () => {
 		expect( screen.queryByRole( 'alert' ) ).toBeNull();
 	} );
 
+	test( 'renders the "Need more help?" link below the submit button', () => {
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		const btn = screen.getByRole( 'button', { name: /Reset my password/i } );
+		const helpLink = screen.getByRole( 'link', { name: /Need more help/i } );
+
+		// eslint-disable-next-line no-bitwise
+		const isFollowing = btn.compareDocumentPosition( helpLink ) & Node.DOCUMENT_POSITION_FOLLOWING;
+		expect( isFollowing ).toBeTruthy();
+	} );
+
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {
 		const mockHTMLResponse = `
 			<body id="error-page">
@@ -185,5 +212,150 @@ describe( 'LostPasswordForm', () => {
 				/You have exceeded the password reset limit/i
 			);
 		} );
+	} );
+
+	test( 'includes blackbox_session_id in the lost password request when available', async () => {
+		// Gate + lost-password surface both on (the enabled baseline).
+		getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest.fn().mockResolvedValue( '<html></html>' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalled();
+		} );
+
+		const [ url, options ] = mockFetch.mock.calls[ 0 ];
+		expect( url ).toBe( 'https://example.com/wp-login.php?action=lostpassword' );
+		expect( options.body.get( 'user_login' ) ).toBe( 'user@example.com' );
+		expect( options.body.get( 'blackbox_session_id' ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+	} );
+
+	test( 'omits blackbox_session_id when the lost-password feature flag is off', async () => {
+		// Gate on, but the lost-password surface itself is disabled.
+		config.disable( 'blackbox-lost-password' );
+		getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest.fn().mockResolvedValue( '<html></html>' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalled();
+		} );
+
+		const [ , options ] = mockFetch.mock.calls[ 0 ];
+		expect( options.body.get( 'blackbox_session_id' ) ).toBeNull();
+		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
+	} );
+
+	test( 'resets Blackbox when the lost password POST fails', async () => {
+		window.Blackbox = { reset: jest.fn() };
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: false,
+			status: 400,
+			text: jest.fn().mockResolvedValue( '' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => {
+			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	test( 'resets Blackbox when the lost password request cannot find a user', async () => {
+		window.Blackbox = { reset: jest.fn() };
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest
+				.fn()
+				.mockResolvedValue( 'Lost Password [...] Unable to reset password [...] More help' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		await waitFor( () => {
+			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	test( 'sends no request when Enter submits while a challenge is blocking', async () => {
+		MockBlackboxChallenge.blocked = true;
+		getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		fireEvent.submit(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ).closest( 'form' )
+		);
+
+		await waitFor( () => expect( getBlackboxSessionId ).not.toHaveBeenCalled() );
+		expect( mockFetch ).not.toHaveBeenCalled();
+	} );
+
+	test( 'stops the submit button spinning when a challenge appears mid-submit', async () => {
+		getBlackboxSessionId.mockReturnValue( new Promise( () => {} ) );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		const submitButton = screen.getByRole( 'button', { name: /Reset my password/i } );
+		expect( submitButton ).toHaveClass( 'is-busy' );
+
+		act( () => MockBlackboxChallenge.setBlocked( true ) );
+
+		expect( submitButton ).not.toHaveClass( 'is-busy' );
+		expect( submitButton ).toBeDisabled();
 	} );
 } );

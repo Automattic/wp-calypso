@@ -1,11 +1,14 @@
-import { formatCurrency } from '@automattic/number-formatters';
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { isAkismetPro500Plan } from '../../utils/akismet';
 import {
 	isDIFMProduct,
 	isGoogleWorkspace,
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
 	isJetpackSearch,
+	isJetpackStatsPaidProductSlug,
 } from '../../utils/purchase';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
@@ -153,6 +156,22 @@ function renderJetpackSearchQuantitySummary( licensedQuantity: number, isRenewal
 	);
 }
 
+function renderJetpackStatsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of views per month */
+			__( 'Renewal for %s views per month' ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of views per month */
+		__( 'Purchase for %s views per month' ),
+		formatNumber( licensedQuantity )
+	);
+}
+
 function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
@@ -165,6 +184,46 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 	return sprintf(
 		/* translators: %d: number of gigabytes */
 		__( 'Purchase of %d GB' ),
+		licensedQuantity
+	);
+}
+
+function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of AI credits */
+			_n( 'Renewal for %s AI credit', 'Renewal for %s AI credits', licensedQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of AI credits */
+		_n( 'Purchase of %s AI credit', 'Purchase of %s AI credits', licensedQuantity ),
+		formatNumber( licensedQuantity )
+	);
+}
+
+function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %d: number of 500 API call licenses */
+			_n(
+				'Renewal for %d 500 API call license',
+				'Renewal for %d 500 API call licenses',
+				licensedQuantity
+			),
+			licensedQuantity
+		);
+	}
+
+	return sprintf(
+		/* translators: %d: number of 500 API call licenses */
+		_n(
+			'Purchase of %d 500 API call license',
+			'Purchase of %d 500 API call licenses',
+			licensedQuantity
+		),
 		licensedQuantity
 	);
 }
@@ -224,6 +283,10 @@ export function renderTransactionQuantitySummary( {
 		return renderJetpackSearchQuantitySummary( licensedQuantity, isRenewal );
 	}
 
+	if ( isJetpackStatsPaidProductSlug( wpcom_product_slug ) ) {
+		return renderJetpackStatsQuantitySummary( licensedQuantity, isRenewal );
+	}
+
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
 		return renderTransactionQuantitySummaryForMailboxes(
 			licensedQuantity,
@@ -239,6 +302,14 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		return renderSpaceAddOnquantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
+		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensedQuantity, isRenewal );
 	}
 
 	if ( isRenewal ) {
@@ -342,9 +413,9 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		costOverrides?.some( ( costOverride ) => {
-			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
-		} )
+		costOverrides?.some(
+			( costOverride ) => ! isOverrideCodeIntroductoryOffer( costOverride.override_code )
+		)
 	) {
 		return false;
 	}

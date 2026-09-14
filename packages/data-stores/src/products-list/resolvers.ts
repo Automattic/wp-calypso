@@ -1,4 +1,4 @@
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import { RawAPIProductsList, ProductsListFailure, Dispatch } from './types';
 
 /**

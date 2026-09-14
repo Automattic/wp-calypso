@@ -1,8 +1,10 @@
 import page from '@automattic/calypso-router';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import ensurePartnerPortalReturnUrl from '../lib/ensure-partner-portal-return-url';
 
@@ -110,15 +112,18 @@ export { default as useIssueAndAssignLicenses } from './use-issue-and-assign-lic
  * @param productSlug
  * @returns
  */
-export function useProductDescription( productSlug: string ): {
+export function useProductDescription(
+	productSlug: string,
+	pressableMemoryTargetSite?: string
+): {
 	description: TranslateResult | null;
 	features: ReadonlyArray< TranslateResult >;
 } {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		let description = '';
-		const features = [];
+		let description: TranslateResult | null = null;
+		const features: TranslateResult[] = [];
 
 		if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
 			description = translate( 'Add additional storage capacity to your Pressable plan limit.' );
@@ -128,6 +133,32 @@ export function useProductDescription( productSlug: string ): {
 			description = translate(
 				'Add additional monthly visits capacity to your Pressable plan limit.'
 			);
+		}
+
+		if ( productSlug.startsWith( 'pressable-addon-php-memory-' ) ) {
+			const plan = getPressablePlan( productSlug );
+			const phpMemory =
+				plan?.phpMemory != null ? `${ formatNumber( plan.phpMemory ) } MB` : '512 MB';
+
+			description = pressableMemoryTargetSite
+				? translate(
+						'Add %(phpMemory)s of PHP memory for each PHP worker/process on %(siteDomain)s.',
+						{
+							args: {
+								phpMemory,
+								siteDomain: pressableMemoryTargetSite,
+							},
+							comment: '%(siteDomain)s is the target site/domain for the add-on.',
+						}
+				  )
+				: translate(
+						'Add %(phpMemory)s of PHP memory for each PHP worker/process on one Pressable site/domain.',
+						{
+							args: {
+								phpMemory,
+							},
+						}
+				  );
 		}
 
 		switch ( productSlug ) {
@@ -521,7 +552,7 @@ export function useProductDescription( productSlug: string ): {
 			description,
 			features,
 		};
-	}, [ productSlug, translate ] );
+	}, [ pressableMemoryTargetSite, productSlug, translate ] );
 }
 
 type Params = Array< { key: string; value: string } >;

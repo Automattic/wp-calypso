@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { filter } from 'lodash';
 import { stringify } from 'qs';
 import { addQueryArgs } from 'calypso/lib/url';
 import { isUnderEmailManagementAll, isUnderCheckoutRoute } from 'calypso/my-sites/email/paths';
@@ -52,7 +51,7 @@ function domainManagementTransferBase(
 	return domainManagementEditBase(
 		siteName,
 		domainName,
-		filter( [ 'transfer', transferType ] ).join( '/' ),
+		[ 'transfer', transferType ].filter( Boolean ).join( '/' ),
 		relativeTo
 	);
 }
@@ -130,7 +129,7 @@ export function domainManagementList( siteName, relativeTo = null, isDomainOnlyS
 	) {
 		return domainManagementRoot();
 	}
-	return domainManagementRoot() + '/' + siteName ?? '';
+	return domainManagementRoot() + '/' + siteName;
 }
 
 /**

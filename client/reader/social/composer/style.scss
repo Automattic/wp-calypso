@@ -1,0 +1,323 @@
+@use "@wordpress/base-styles/breakpoints" as bp;
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+// Below `$break-small` the WordPress Modal renders as a bottom sheet —
+// the overlay covers the layout viewport (`top: 0; bottom: 0`) and the
+// modal frame is `align-self: flex-end`. When the on-screen keyboard
+// opens, mobile browsers shrink the *visual* viewport but leave the
+// *layout* viewport unchanged, so the bottom of the overlay (and the
+// sheet's footer + Post button) ends up behind the keyboard.
+//
+// `composer-modal.tsx` writes `window.visualViewport.height` into
+// `--composer-modal-viewport-height` while the modal is open. Releasing
+// `bottom` and setting `height` to that variable lets the overlay shrink
+// with the keyboard. `:has(.social-composer)` scopes the override to
+// this modal instead of monkey-patching every WordPress Modal in Calypso.
+@media (max-width: bp.$break-small) {
+	.components-modal__screen-overlay:has(.social-composer) {
+		bottom: auto;
+		height: var(--composer-modal-viewport-height, 100dvh);
+	}
+}
+
+.social-compose-pill {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 10px 16px;
+	background: var( --color-surface, var( --studio-white, #fff ) );
+	border: 1px solid var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	// 6px matches the Reader's existing compose entry (`.quick-post`)
+	// and the search / stream input radii. The fully-rounded `999px`
+	// idiom (Bluesky / X) is unique in `client/reader/` and reads as
+	// out-of-place next to the surrounding cards.
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	cursor: pointer;
+	text-align: start;
+	font: inherit;
+	color: inherit;
+
+	&:hover {
+		border-color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--studio-blue-50, #3858e9);
+		outline-offset: 2px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		background: var( --color-surface );
+		border-color: var( --dashboard-field__border-color );
+		color: var( --color-text );
+
+		&:hover {
+			border-color: var( --color-link );
+		}
+	}
+}
+
+.social-compose-pill__avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	flex: 0 0 32px;
+	object-fit: cover;
+	background: var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+}
+
+.social-compose-pill__placeholder {
+	flex: 1;
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+	font-size: 15px;
+}
+
+.social-compose-pill__icon {
+	color: var( --color-neutral-light, var( --studio-gray-30, #8c8f94 ) );
+	flex: 0 0 auto;
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+	}
+}
+
+.social-compose-fab {
+	position: fixed;
+	inset-block-end: 40px;
+	// Align the FAB's trailing edge with the right edge of the centered
+	// `<Main>` content (max-width 720px, sitting in the content area to
+	// the right of the global sidebar) so the FAB tracks the column
+	// instead of hugging the far viewport edge on wide screens. On
+	// narrower viewports the calc goes negative and the `max()` floor
+	// clamps to a 24px gutter.
+	inset-inline-end: max(
+		24px,
+		calc((100vw - var(--sidebar-width-max, 0px) - 720px) / 2)
+	);
+	height: auto;
+	min-height: 40px;
+	padding: 8px 16px;
+	gap: 6px;
+	// 6px matches `.social-compose-pill` and the rest of the
+	// Reader's compose surfaces (search, stream input, `.quick-post`).
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	// `.main` sits at z-index 20 in Calypso's global stacking scheme
+	// (see `_z-index.scss`), and the FAB is rendered as its sibling.
+	// Anything below 20 lets post images and embeds inside the feed
+	// paint over the FAB. 25 keeps it above feed content while staying
+	// under the modal/popover layer (>=30).
+	z-index: 25;
+	transition: background-color 150ms ease, box-shadow 150ms ease;
+
+	&.is-hidden {
+		display: none;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.social-composer {
+	// Per-protocol header icon (Bluesky / Mastodon glyph) passed via the WP
+	// `<Modal icon>` slot. The icon components bake in `.sidebar__menu-icon`
+	// so the sidebar can spec its own size and color — that class has a
+	// global `color/fill: var(--color-sidebar-gridicon-fill)` rule which
+	// would otherwise paint the glyph near-white inside the modal header
+	// and ship the `margin-right: 11px` sidebar offset on top of the WP
+	// heading-container's own spacing. Reset to inherit from the heading,
+	// and size the glyph to track the 16px heading instead of the sidebar's
+	// 24px default so it doesn't overshoot the cap-height of the title.
+	.components-modal__icon-container {
+		display: inline-flex;
+		align-items: center;
+		margin-inline-end: 6px;
+
+		.sidebar__menu-icon {
+			color: currentColor;
+			fill: currentColor;
+			width: 18px;
+			height: 18px;
+			margin: 0;
+		}
+	}
+
+	// The default 20px WP modal heading reads oversized against the
+	// "New post · @handle" composition — drop a couple of sizes so the
+	// destination context sits closer to a label than a hero title.
+	.components-modal__header-heading {
+		font-size: 16px;
+	}
+
+	.social-composer__pinned-context {
+		padding: 8px 12px;
+		background: var( --studio-gray-0, #f6f7f7 );
+		border-radius: 4px;
+		margin-block-end: 8px;
+		// Long unbreakable strings (URLs, gibberish) in the snippet, display
+		// name, or handle would otherwise overflow the fixed-width modal and
+		// add a horizontal scrollbar. `overflow-wrap` is inherited.
+		overflow-wrap: anywhere;
+	}
+
+	.social-composer__pinned-author {
+		font-weight: 600;
+	}
+
+	.social-composer__pinned-handle {
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+		margin-inline-start: 6px;
+		font-weight: 400;
+	}
+
+	.social-composer__pinned-snippet {
+		margin-block: 4px 0;
+	}
+
+	.social-composer__textarea {
+		width: 100%;
+		min-height: 80px;
+		resize: none;
+		border: none;
+		outline: none;
+		font: inherit;
+		padding: 8px 0;
+		background: transparent;
+	}
+
+	.social-composer__error {
+		color: #b32d2e;
+		padding: 0 12px;
+		margin-block: 8px;
+	}
+
+	.social-composer__footer {
+		margin-block-start: 8px;
+	}
+
+	// Keep the media-trigger and any per-protocol extras pill on the
+	// same row as inline siblings; without explicit flex the second
+	// child wraps under the first and crashes into the count cell on
+	// the right. The `flex: 1 1 auto` claims the left cell's share of
+	// the row so a long pill label has room before wrapping — the
+	// surrounding `<HStack>` otherwise stretches the right cell to fill.
+	.social-composer__footer-left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	// The right cell only needs to hug its content (count + Post
+	// button). `<HStack>` emits `width: 100%` via its own emotion
+	// class, which would otherwise stretch the cell to the full row
+	// and crush the pill on the left. The gap matches the modal's
+	// content-edge padding so the count sits as far from the button as
+	// the button sits from the modal's right edge.
+	.social-composer__footer-right {
+		flex: 0 0 auto;
+		width: auto;
+		gap: 24px;
+	}
+
+	.social-composer__media {
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 4px;
+		// 4px matches the radius the focus-visible outline rounds to,
+		// so the hover background and focus ring share the same shape.
+		border-radius: 4px;
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+		transition: color 120ms ease, background-color 120ms ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		// `@wordpress/icons` SVGs do not all inherit `fill` from
+		// `currentColor` automatically (the `image` glyph used here is one
+		// of the holdouts). Mirror the FAB's pattern so the icon tracks
+		// the button's text color through hover / focus / disabled states.
+		svg {
+			fill: currentColor;
+		}
+
+		&:hover {
+			color: var(--studio-blue-50, #3858e9);
+			background-color: var( --studio-blue-0, #f0f6fc );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--studio-blue-50, #3858e9);
+			outline-offset: 2px;
+		}
+
+		// Native `disabled` would block focus; the button uses
+		// `aria-disabled` instead so AT users can still discover the
+		// "Maximum N images" tooltip via keyboard. Mirror that with the
+		// not-allowed cursor + muted color, and suppress the hover
+		// affordance so the button visually reads as inert.
+		&[aria-disabled='true'] {
+			cursor: not-allowed;
+			color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
+
+			&:hover {
+				color: var( --color-border, var( --studio-gray-20, #a7aaad ) );
+				background-color: transparent;
+			}
+		}
+	}
+
+	.social-composer__count {
+		color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+		font-variant-numeric: tabular-nums;
+
+		&.is-warn {
+			color: #b26200;
+		}
+
+		&.is-over {
+			color: #b32d2e;
+			font-weight: 600;
+		}
+	}
+}
+
+.composer-extras-pill__trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding-block: 4px;
+	padding-inline: 12px;
+	border-radius: 9999px; /* stylelint-disable-line scales/radii */
+	border: 1px solid var( --color-border-subtle );
+	background: var( --color-surface );
+	color: var( --color-text );
+	font-size: 13px;
+	line-height: 1.4;
+
+	&:hover {
+		background: var( --color-surface-backdrop );
+	}
+}
+
+.composer-extras-pill__icon {
+	display: inline-flex;
+	align-items: center;
+}
+
+.composer-extras-pill__label {
+	white-space: nowrap;
+}
+
+.composer-extras-pill__content {
+	padding: 16px;
+	min-width: 280px;
+	max-width: 360px;
+}

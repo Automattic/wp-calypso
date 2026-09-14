@@ -10,11 +10,11 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { createElement, ReactNode } from 'react';
-import successImageAntiSpam from 'calypso/assets/images/jetpack/licensing-activation-success-Anti-Spam.png';
-import successImageComplete from 'calypso/assets/images/jetpack/licensing-activation-success-Complete.png';
-import successImageDefault from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
-import successImageScan from 'calypso/assets/images/jetpack/licensing-activation-success-Scan.png';
-import successImageSearch from 'calypso/assets/images/jetpack/licensing-activation-success-Search.png';
+import successImageAntiSpam from 'calypso/assets/images/jetpack/licensing-activation-success-Anti-Spam.webp';
+import successImageComplete from 'calypso/assets/images/jetpack/licensing-activation-success-Complete.webp';
+import successImageDefault from 'calypso/assets/images/jetpack/licensing-activation-success-Default.webp';
+import successImageScan from 'calypso/assets/images/jetpack/licensing-activation-success-Scan.webp';
+import successImageSearch from 'calypso/assets/images/jetpack/licensing-activation-success-Search.webp';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, getJetpackAdminUrl } from 'calypso/state/sites/selectors';
 

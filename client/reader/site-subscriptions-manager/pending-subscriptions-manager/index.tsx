@@ -1,3 +1,5 @@
 import PendingSubscriptionsManager from './pending-subscriptions-manager';
 
-export default () => <PendingSubscriptionsManager />;
+const PendingSubscriptionsManagerRoute = () => <PendingSubscriptionsManager />;
+
+export default PendingSubscriptionsManagerRoute;

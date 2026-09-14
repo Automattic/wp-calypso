@@ -4,24 +4,27 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
 	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
 } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
+import { getEmailForwardingRestrictionCode } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailManagementPath,
 	getPurchaseNewEmailAccountPath,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsBySiteId,
@@ -60,11 +63,14 @@ const EmailForwardsAdd = ( {
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
-	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
-	const isGravatarRestrictedDomain =
-		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
-	const isDomainStateRestricted =
-		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED;
+
+	const domainDns = useSelector( ( state ) => getDomainDns( state, selectedDomainName ) );
+	const hasMxRecords = ( domainDns?.records ?? [] ).some(
+		( record: { type: string } ) => record.type === 'MX'
+	);
+	const showMxWarning = !! selectedDomain?.hasWpcomNameservers && hasMxRecords;
+
+	const forwardingRestrictionCode = getEmailForwardingRestrictionCode( selectedDomain );
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {
@@ -88,7 +94,7 @@ const EmailForwardsAdd = ( {
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
 	const renderRestrictedDomainStatus = () => {
-		if ( isGravatarRestrictedDomain ) {
+		if ( forwardingRestrictionCode === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ) {
 			return (
 				<Notice showDismiss={ false } className="email-forwards-add__notice">
 					{ translate(
@@ -97,7 +103,7 @@ const EmailForwardsAdd = ( {
 				</Notice>
 			);
 		}
-		if ( isDomainStateRestricted ) {
+		if ( forwardingRestrictionCode === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ) {
 			return (
 				<Notice showDismiss={ false } className="email-forwards-add__notice">
 					{ translate(
@@ -119,34 +125,36 @@ const EmailForwardsAdd = ( {
 		}
 	};
 
-	const content =
-		isGravatarRestrictedDomain || isDomainStateRestricted ? (
-			renderRestrictedDomainStatus()
-		) : (
-			<Card>
-				{ areDomainsLoading && (
-					<div className="email-forwards-add__placeholder">
-						<p />
-						<p />
-						<Button disabled />
-					</div>
-				) }
+	const content = forwardingRestrictionCode ? (
+		renderRestrictedDomainStatus()
+	) : (
+		<Card>
+			{ areDomainsLoading && (
+				<div className="email-forwards-add__placeholder">
+					<p />
+					<p />
+					<Button disabled />
+				</div>
+			) }
 
-				{ ! areDomainsLoading && (
-					<EmailForwardingAddNewCompactList
-						onAddedEmailForwards={ onAddedEmailForwards }
-						selectedDomainName={ selectedDomainName }
-						showFormHeader={ showFormHeader }
-					/>
-				) }
-			</Card>
-		);
+			{ ! areDomainsLoading && (
+				<EmailForwardingAddNewCompactList
+					onAddedEmailForwards={ onAddedEmailForwards }
+					selectedDomainName={ selectedDomainName }
+					showFormHeader={ showFormHeader }
+					showMxWarning={ showMxWarning }
+				/>
+			) }
+		</Card>
+	);
 
 	return (
 		<>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+
+			{ selectedDomainName && <QueryDomainDns domain={ selectedDomainName } /> }
 
 			<Main wideLayout className="email-forwards-add">
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />

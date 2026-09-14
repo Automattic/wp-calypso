@@ -39,7 +39,7 @@ export const useResendVerificationAction = (): Action< Email > => {
 							/* translators: %1$s is the forwarding source email address, %2$s is the destination address. */
 							__( 'Successfully sent confirmation email for %1$s to %2$s.' ),
 							email.emailAddress,
-							email.forwardingTo
+							email.forwardingTo ?? ''
 						),
 						{ type: 'snackbar' }
 					);
@@ -53,15 +53,13 @@ export const useResendVerificationAction = (): Action< Email > => {
 							/* translators: %1$s is the forwarding source email address, %2$s is the destination address. */
 							__( 'Failed to send confirmation email for %1$s to %2$s. Please try again.' ),
 							email.emailAddress,
-							email.forwardingTo
+							email.forwardingTo ?? ''
 						),
 						{ type: 'snackbar' }
 					);
 				} );
 		},
 		isEligible: ( item: Email ) =>
-			item.type === 'forwarding' &&
-			item.status === 'unverified_forwards' &&
-			!! ( item?.forwardingTo ?? false ),
+			item.type === 'forwarding' && item.status === 'unverified_forwards' && !! item.forwardingTo,
 	};
 };

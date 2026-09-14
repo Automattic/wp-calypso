@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
 import cookie from 'cookie';
 import { getPageViewParams } from './page-view-params';
+import { getConnectionSpeedData } from './utils/connection-speed-data';
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
@@ -44,7 +45,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?67' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?69' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -352,6 +353,7 @@ export function getGenericSuperPropsGetter( config: ( key: string ) => string ) 
 			Object.assign( superProps, {
 				vph: window.innerHeight,
 				vpw: window.innerWidth,
+				...getConnectionSpeedData(),
 			} );
 		}
 

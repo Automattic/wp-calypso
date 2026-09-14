@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .vertical-nav-item {
 	> .gridicon {
 		box-sizing: border-box;

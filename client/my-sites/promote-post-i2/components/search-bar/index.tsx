@@ -353,7 +353,11 @@ export default function SearchBar( props: Props ) {
 										selected={ postType === option.value }
 										onClick={ () => onChangePostTypeFilter( option.value ) }
 									>
-										<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>
+										<span
+											ref={ ( el ) => {
+												tabsRef.current[ option.value ] = el;
+											} }
+										>
 											{ ' ' }
 											{ option.label }{ ' ' }
 										</span>

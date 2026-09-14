@@ -13,7 +13,7 @@
 	color: $studio-gray-100;
 }
 
-%count {
+%a8c-count {
 	background: $studio-gray-5;
 	border: none;
 	border-radius: 2px;
@@ -65,8 +65,8 @@
 					@include tab-text;
 				}
 
-				.count {
-					@extend %count;
+				.a8c-count {
+					@extend %a8c-count;
 				}
 			}
 		}
@@ -131,7 +131,7 @@
 						line-height: $font-title-medium;
 					}
 
-					.count {
+					.a8c-count {
 						font-size: $font-body-extra-small;
 						line-height: $font-title-small;
 					}

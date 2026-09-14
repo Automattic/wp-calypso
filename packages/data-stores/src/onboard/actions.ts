@@ -8,8 +8,7 @@ import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
 import type { FeatureId } from '../shared-types';
 import type { DomainSuggestion } from '@automattic/api-core';
-// somewhat hacky, but resolves the circular dependency issue
-import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 // copied from design picker to avoid a circular dependency
@@ -247,6 +246,16 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
+export const setTransferStatus = ( transferStatus: string | null ) => ( {
+	type: 'SET_TRANSFER_STATUS' as const,
+	transferStatus,
+} );
+
+export const setTransferStartedAt = ( transferStartedAt: number | null ) => ( {
+	type: 'SET_TRANSFER_STARTED_AT' as const,
+	transferStartedAt,
+} );
+
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -414,6 +423,8 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
+	| typeof setTransferStatus
+	| typeof setTransferStartedAt
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal

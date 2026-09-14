@@ -12,9 +12,7 @@ function DismissibleCardExample() {
 
 	return (
 		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/dismissible-card">Dismissible Card</a>
-			</h2>
+			<h2>Dismissible Card</h2>
 			<DismissibleCard preferenceName="example-local" temporary>
 				<span>I will be dismissed for a page load</span>
 			</DismissibleCard>

@@ -54,7 +54,26 @@ const StatsListCard = ( {
 
 		if ( listItemData?.page ) {
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } Summary Link in List` );
-			page( listItemData.page );
+			// `page` is usually an in-app path, but it can be a full URL when the
+			// destination lives outside the current app (e.g. Odyssey Stats in
+			// wp-admin linking to the subscriber details page). Use a full page load
+			// for genuinely external origins and for same-origin wp-admin URLs, which
+			// are never in-app SPA routes. Other same-origin absolute URLs still use
+			// the router.
+			try {
+				const parsedUrl = new URL( listItemData.page );
+				if (
+					parsedUrl.origin !== window.location.origin ||
+					parsedUrl.pathname.includes( '/wp-admin/' )
+				) {
+					window.location.href = listItemData.page;
+				} else {
+					page( parsedUrl.pathname + parsedUrl.search + parsedUrl.hash );
+				}
+			} catch {
+				// Not an absolute URL; treat as an in-app path.
+				page( listItemData.page );
+			}
 		} else if ( listItemData?.link ) {
 			// downloads component and some old search items (not all)
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } External Link in List` );

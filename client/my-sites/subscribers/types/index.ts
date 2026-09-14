@@ -3,6 +3,7 @@ import { SubscribersFilterBy, SubscribersSortBy } from '../constants';
 export type SubscriberEndpointResponse = {
 	per_page: number;
 	total: number;
+	total_unfiltered?: number;
 	page: number;
 	pages: number;
 	subscribers: Subscriber[];
@@ -10,8 +11,11 @@ export type SubscriberEndpointResponse = {
 };
 
 export type SubscriptionPlan = {
-	is_gift: boolean;
-	gift_id: number;
+	subscription_id?: number;
+	is_comp: boolean;
+	comp_id?: number;
+	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
+	is_gift?: boolean;
 	paid_subscription_id: string;
 	status: string;
 	title: string;
@@ -25,7 +29,7 @@ export type SubscriptionPlan = {
 };
 
 export type Subscriber = {
-	user_id: number;
+	user_id: number | string;
 	// Fields for new helper library
 	email_subscription_id?: number;
 	wpcom_subscription_id?: number;

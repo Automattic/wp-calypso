@@ -1,10 +1,13 @@
+import { Icon, globe } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { isLikeable } from 'calypso/reader/post/capabilities';
+import { SubscribeWithShelfButton } from 'calypso/reader/shelves/subscribe-with-shelf';
+import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
 const ReaderFullPostActionBar = ( {
@@ -20,11 +23,18 @@ const ReaderFullPostActionBar = ( {
 	siteUrl,
 	onFollowToggle,
 } ) => {
+	const translate = useTranslate();
 	const canEdit = site && userCan( 'edit_post', post );
-	const showLikes = shouldShowLikes( post );
+	const showLikes = isLikeable( post );
 	const followUrl = feedUrl || siteUrl;
 	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
 	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
+	const viewOriginalUrl = post.URL;
+
+	const handleViewOriginalClick = () => {
+		recordAction( 'clicked_view_original' );
+		recordPermalinkClick( 'full_post_visit_link', post );
+	};
 
 	return (
 		<div className="reader-full-post__action-bar">
@@ -34,7 +44,7 @@ const ReaderFullPostActionBar = ( {
 						key="comment-button"
 						commentCount={ commentCount }
 						onClick={ onCommentClick }
-						tagName="div"
+						tagName="button"
 						icon={ ReaderCommentIcon( { iconSize: 24 } ) }
 						alwaysShowTooltip
 					/>
@@ -45,10 +55,29 @@ const ReaderFullPostActionBar = ( {
 						siteId={ siteId }
 						postId={ +post.ID }
 						fullPost
-						tagName="div"
+						tagName="button"
 						likeSource="reader"
 						iconSize={ 24 }
 					/>
+				) }
+
+				{ viewOriginalUrl && (
+					<a
+						className="reader-full-post__view-original-button"
+						href={ viewOriginalUrl }
+						target="_blank"
+						rel="external noopener noreferrer"
+						onClick={ handleViewOriginalClick }
+					>
+						<Icon
+							icon={ globe }
+							size={ 24 }
+							className="reader-full-post__view-original-button-icon"
+						/>
+						<span className="reader-full-post__view-original-button-label">
+							{ translate( 'View original' ) }
+						</span>
+					</a>
 				) }
 
 				{ renderMarkAsSeenButton && renderMarkAsSeenButton() }
@@ -59,7 +88,7 @@ const ReaderFullPostActionBar = ( {
 					<PostEditButton post={ post } site={ site } iconSize={ 24 } onClick={ onEditClick } />
 				) }
 				{ followUrl && (
-					<ReaderFollowButton
+					<SubscribeWithShelfButton
 						feedId={ feedId }
 						siteId={ siteId }
 						siteUrl={ followUrl }

@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -6,16 +8,9 @@
 	.gridicon {
 		fill: var( --color-jetpack );
 	}
-
-	a,
-	a:visited,
-	a:hover {
-		text-decoration: underline;
-		color: var( --color-text );
-	}
 }
 
-.pressable-overview-plan-selection__plan-category-tabpanel {
+.theme-a8c-for-agencies .pressable-overview-plan-selection__plan-category-tabpanel {
 	.components-tab-panel__tabs {
 		justify-content: center;
 		flex-wrap: wrap;
@@ -49,10 +44,14 @@
 			}
 
 			&.pressable-overview-plan-selection__plan-category-tab-is-active {
-				background-color: var( --color-primary-50 );
-				border-color: var( --color-primary-50 );
-				fill: var( --color-text-inverted );
-				color: var( --color-text-inverted );
+				&,
+				&:hover,
+				&:focus-visible {
+					background-color: var( --color-primary-50 );
+					border-color: var( --color-primary-50 );
+					fill: var( --color-text-inverted );
+					color: var( --color-text-inverted );
+				}
 			}
 		}
 	}

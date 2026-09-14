@@ -27,6 +27,8 @@ function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) 
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
 			tracksClickName="calypso_upgrade_nudge_cta_click"
 			tracksImpressionName="calypso_upgrade_nudge_impression"
+			dismissPreferenceName="reader-sidebar-free-to-paid-nudge"
+			tracksDismissName="calypso_reader_sidebar_nudge_dismiss"
 		/>
 	);
 }

@@ -15,7 +15,7 @@ export default function AgencySiteShareCard( { site }: { site: Site } ) {
 			icon={ link }
 			heading={ heading }
 			description={ __( 'Collaborators with the link can view your site.' ) }
-			link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
+			link={ getSiteVisibilityURL( site ) }
 			title={ __( 'Share' ) }
 			tracksId="site-overview-agency-site-share"
 		/>

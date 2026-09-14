@@ -4,4 +4,20 @@
 	border-radius: 4px;
 	font-size: 1rem;
 	flex-shrink: 0;
+
+	&.is-icon-only {
+		width: 36px;
+		min-width: 36px;
+		height: 36px;
+		padding: 0;
+		border-radius: 2px;
+		flex-shrink: 0;
+
+		svg {
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			fill: #fff;
+		}
+	}
 }

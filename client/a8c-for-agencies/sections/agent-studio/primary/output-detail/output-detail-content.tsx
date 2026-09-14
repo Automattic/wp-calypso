@@ -1,0 +1,366 @@
+import { useQuery } from '@tanstack/react-query';
+import {
+	Button,
+	Notice,
+	Spinner,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useAgentStudioCollateral, {
+	type AgentStudioCollateralVariant,
+} from '../../data/use-agent-studio-collateral';
+import useAgentStudioRun, {
+	NON_TERMINAL_RUN_STATUSES,
+	type AgentStudioRunPayload,
+} from '../../data/use-agent-studio-run';
+import useAgentStudioVariantHtml from '../../data/use-agent-studio-variant-html';
+import usePrefetchAgentStudioVariantHtml from '../../data/use-prefetch-agent-studio-variant-html';
+import {
+	composeSocialAssetsFromBrief,
+	type ServerSocialBrief,
+} from '../../social-design/create-social-assets';
+import AnnotationViewer, { type PageAnnotation } from './annotation-viewer';
+import { formatAnnotationInstructions } from './format-annotation-instructions';
+import { type PdfViewerPage } from './pdf-viewer';
+import RefineWithAiDock from './refine-with-ai-dock';
+import SocialAssetsViewer from './social-assets-viewer';
+import { splitIntoPages, wrapAsDocument } from './split-pages';
+import type { AgentStudioOutput } from '../../types';
+
+interface Props {
+	output: AgentStudioOutput;
+}
+
+const extractPostId = ( payload: unknown ): number | undefined => {
+	if ( ! payload || typeof payload !== 'object' ) {
+		return undefined;
+	}
+	const candidate = ( payload as AgentStudioRunPayload ).post_id;
+	return typeof candidate === 'number' && candidate > 0 ? candidate : undefined;
+};
+
+const pickInitialVariantIndex = (
+	variants: AgentStudioCollateralVariant[],
+	selectedVariantId: string | null | undefined
+): number => {
+	if ( ! variants.length || ! selectedVariantId ) {
+		return 0;
+	}
+	const idx = variants.findIndex( ( variant ) => variant.variant_id === selectedVariantId );
+	return idx >= 0 ? idx : 0;
+};
+
+function StateMessage( { children, spinner }: { children: ReactNode; spinner?: boolean } ) {
+	return (
+		<VStack className="a4a-agent-studio-output-detail__state" alignment="center" spacing={ 3 }>
+			{ spinner && <Spinner /> }
+			{ children }
+		</VStack>
+	);
+}
+
+function OnePagerOutputDetail( { output }: Props ) {
+	const dispatch = useDispatch();
+	const run = useAgentStudioRun( output.id );
+	const postId = extractPostId( run.data?.payload );
+	const collateral = useAgentStudioCollateral( postId );
+	const [ isRefineOpen, setIsRefineOpen ] = useState( false );
+	const [ isAnnotating, setIsAnnotating ] = useState( false );
+	// Each annotate submission produces a fresh array; the dock enqueues it by
+	// identity and reports back so it can be cleared (a remount must not
+	// replay a stale batch).
+	const [ autoSubmitInstructions, setAutoSubmitInstructions ] = useState< string[] >( [] );
+
+	const startAnnotating = useCallback( () => {
+		setIsAnnotating( true );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agent_studio_annotate_open', { output_id: output.id } )
+		);
+	}, [ dispatch, output.id ] );
+
+	const exitAnnotating = useCallback( () => {
+		setIsAnnotating( false );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agent_studio_annotate_cancel', { output_id: output.id } )
+		);
+	}, [ dispatch, output.id ] );
+
+	const handleAnnotationsSubmit = useCallback(
+		( annotations: PageAnnotation[] ) => {
+			const instructions = formatAnnotationInstructions( annotations );
+			setIsAnnotating( false );
+			setAutoSubmitInstructions( instructions );
+			setIsRefineOpen( true );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_annotate_submit', {
+					output_id: output.id,
+					annotation_count: annotations.length,
+					page_count: instructions.length,
+				} )
+			);
+		},
+		[ dispatch, output.id ]
+	);
+
+	const handleAutoSubmitConsumed = useCallback( () => {
+		setAutoSubmitInstructions( ( prev ) => ( prev.length === 0 ? prev : [] ) );
+	}, [] );
+
+	const variants = useMemo< AgentStudioCollateralVariant[] >(
+		() => collateral.data?.variants ?? [],
+		[ collateral.data?.variants ]
+	);
+	usePrefetchAgentStudioVariantHtml( variants.map( ( variant ) => variant.html_url ) );
+
+	const [ activeIndex, setActiveIndex ] = useState( () =>
+		pickInitialVariantIndex( variants, collateral.data?.selected_variant_id )
+	);
+	const safeIndex = variants.length > 0 ? Math.min( activeIndex, variants.length - 1 ) : 0;
+	const selectedVariant = variants[ safeIndex ];
+
+	// Cover comes from the selected variant; body pages come from
+	// variant 0 always. Per cover-variant-picker-v2 ADR-0001 the theme
+	// is scoped to the cover only, so body srcDocs are stable across
+	// chevron flips and React skips the body shadow-root rebuild.
+	const selectedVariantHtml = useAgentStudioVariantHtml( selectedVariant?.html_url );
+	const baseVariantHtml = useAgentStudioVariantHtml( variants[ 0 ]?.html_url );
+
+	const coverSrcDoc = useMemo< string | undefined >( () => {
+		if ( ! selectedVariantHtml.data ) {
+			return undefined;
+		}
+		const split = splitIntoPages( selectedVariantHtml.data );
+		return split[ 0 ] ? wrapAsDocument( split[ 0 ] ) : undefined;
+	}, [ selectedVariantHtml.data ] );
+
+	const bodySrcDocs = useMemo< string[] >( () => {
+		if ( ! baseVariantHtml.data ) {
+			return [];
+		}
+		const split = splitIntoPages( baseVariantHtml.data );
+		return split.slice( 1 ).map( ( page ) => wrapAsDocument( page ) );
+	}, [ baseVariantHtml.data ] );
+
+	const pages = useMemo< PdfViewerPage[] >( () => {
+		if ( ! coverSrcDoc ) {
+			return [];
+		}
+		return [
+			{ srcDoc: coverSrcDoc, role: 'cover' as const },
+			...bodySrcDocs.map( ( srcDoc ) => ( { srcDoc, role: 'body' as const } ) ),
+		];
+	}, [ coverSrcDoc, bodySrcDocs ] );
+
+	if ( output.status === 'generating' || ( ! postId && run.isLoading ) ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Generating your deliverable…' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( output.status === 'failed' ) {
+		return (
+			<StateMessage>
+				<Text size={ 15 } weight={ 600 }>
+					{ __( 'Generation failed' ) }
+				</Text>
+				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
+			</StateMessage>
+		);
+	}
+
+	if ( ! postId ) {
+		return (
+			<StateMessage>
+				<Text>{ __( 'No preview is available for this deliverable yet.' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( collateral.isLoading ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Loading preview…' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( collateral.isError || ! variants.length ) {
+		return (
+			<StateMessage>
+				<Notice status="warning" isDismissible={ false }>
+					{ __( 'We couldn’t load the preview for this deliverable.' ) }
+				</Notice>
+			</StateMessage>
+		);
+	}
+
+	// Annotating needs at least one body page — the cover can't be refined.
+	const canAnnotate = pages.length > 1;
+
+	return (
+		<div
+			className={ clsx( 'a4a-agent-studio-output-detail__content', {
+				'is-refine-open': isRefineOpen && !! postId,
+			} ) }
+		>
+			<VStack spacing={ 4 } className="a4a-agent-studio-output-detail__main">
+				{ ( selectedVariant?.pdf_download_url || canAnnotate ) && (
+					<HStack
+						className="a4a-agent-studio-output-detail__actions"
+						justify="flex-end"
+						spacing={ 2 }
+					>
+						{ canAnnotate && (
+							<Button variant="secondary" onClick={ startAnnotating } disabled={ isAnnotating }>
+								{ __( 'Annotate' ) }
+							</Button>
+						) }
+						{ selectedVariant?.pdf_download_url && (
+							<Button
+								variant="primary"
+								href={ selectedVariant.pdf_download_url }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ __( 'Download PDF' ) }
+							</Button>
+						) }
+					</HStack>
+				) }
+				{ ! coverSrcDoc && ( selectedVariantHtml.isLoading || baseVariantHtml.isLoading ) ? (
+					<StateMessage spinner>
+						<Text>{ __( 'Loading preview…' ) }</Text>
+					</StateMessage>
+				) : (
+					<AnnotationViewer
+						pages={ pages }
+						coverNavigation={
+							variants.length > 1
+								? {
+										count: variants.length,
+										activeIndex: safeIndex,
+										onSelect: setActiveIndex,
+								  }
+								: undefined
+						}
+						isAnnotating={ isAnnotating }
+						onExit={ exitAnnotating }
+						onSubmit={ handleAnnotationsSubmit }
+					/>
+				) }
+			</VStack>
+			{ isRefineOpen && postId && (
+				<RefineWithAiDock
+					collateralPostId={ postId }
+					totalPages={ pages.length }
+					autoSubmitInstructions={ autoSubmitInstructions }
+					onAutoSubmitConsumed={ handleAutoSubmitConsumed }
+					onClose={ () => setIsRefineOpen( false ) }
+				/>
+			) }
+		</div>
+	);
+}
+
+interface SocialRunPayload extends AgentStudioRunPayload {
+	brief?: ServerSocialBrief;
+}
+
+const extractSocialBrief = ( payload: unknown ): ServerSocialBrief | undefined => {
+	if ( ! payload || typeof payload !== 'object' ) {
+		return undefined;
+	}
+	const brief = ( payload as SocialRunPayload ).brief;
+	if ( ! brief || typeof brief !== 'object' || typeof brief.headline !== 'string' ) {
+		return undefined;
+	}
+	return brief;
+};
+
+function SocialOutputDetail( { output }: Props ) {
+	const run = useAgentStudioRun( output.id );
+	const brief = extractSocialBrief( run.data?.payload );
+	const postId = extractPostId( run.data?.payload );
+
+	// Compose tiles client-side. The deterministic projector and the
+	// HTML composer live in `social-design/`; this query memoises the
+	// result so the canvas doesn't re-fit every render.
+	const composed = useQuery( {
+		queryKey: [ 'a4a-agent-studio-social-tiles', output.id, brief ],
+		queryFn: () => composeSocialAssetsFromBrief( { brief: brief as ServerSocialBrief } ),
+		enabled: !! brief,
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
+	} );
+
+	const runStatus = run.data?.status;
+	const isRunFailed = output.status === 'failed' || runStatus === 'a4a_failed';
+	// The server-reported status of the run can lag the optimistic
+	// outputs-list status set right after submit, and the polling on
+	// `useAgentStudioRun` won't have settled the response yet. Treat
+	// "we don't have run.data yet" and "the server says still running"
+	// the same way — keep the spinner up until the persist ability
+	// emits a brief into payload. Without this, the page briefly
+	// renders "No preview is available" between the outputs-list
+	// refetch and the first run-payload arrival.
+	const isRunInProgress =
+		! isRunFailed &&
+		( output.status === 'generating' ||
+			( runStatus !== undefined && NON_TERMINAL_RUN_STATUSES.has( runStatus ) ) ||
+			( ! run.data && ! run.isError ) );
+
+	if ( isRunFailed ) {
+		return (
+			<StateMessage>
+				<Text size={ 15 } weight={ 600 }>
+					{ __( 'Generation failed' ) }
+				</Text>
+				{ output.errorMessage && <Text variant="muted">{ output.errorMessage }</Text> }
+			</StateMessage>
+		);
+	}
+
+	if ( isRunInProgress ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Generating your deliverable…' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( ! brief || ! postId ) {
+		return (
+			<StateMessage>
+				<Text>{ __( 'No preview is available for this deliverable yet.' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	if ( composed.isLoading || ! composed.data ) {
+		return (
+			<StateMessage spinner>
+				<Text>{ __( 'Loading preview…' ) }</Text>
+			</StateMessage>
+		);
+	}
+
+	return (
+		<SocialAssetsViewer assets={ composed.data.assets } title={ output.title } postId={ postId } />
+	);
+}
+
+export default function OutputDetailContent( { output }: Props ) {
+	if ( output.deliverableType === 'social-assets' ) {
+		return <SocialOutputDetail output={ output } />;
+	}
+
+	return <OnePagerOutputDetail output={ output } />;
+}

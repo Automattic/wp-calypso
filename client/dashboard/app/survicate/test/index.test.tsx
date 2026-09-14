@@ -35,6 +35,7 @@ jest.mock( '@automattic/survicate', () => ( {
 	shouldLoadSurvicate: jest.fn(),
 	loadSurvicateScript: jest.fn(),
 	setSurvicateVisitorTraits: jest.fn(),
+	getAccountAgeInDays: jest.fn( () => 42 ),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
@@ -94,8 +95,15 @@ describe( 'useSurvicate', () => {
 		// Flush microtasks so the loadSurvicateScript promise resolves
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( mockedLoadScript ).toHaveBeenCalledWith( SURVICATE_WORKSPACE_ID );
-		expect( mockedSetTraits ).toHaveBeenCalledWith( { email: 'test@example.com' } );
+		expect( mockedLoadScript ).toHaveBeenCalledWith(
+			SURVICATE_WORKSPACE_ID,
+			expect.any( AbortSignal )
+		);
+		expect( mockedSetTraits ).toHaveBeenCalledWith( {
+			user_id: '1',
+			email: 'test@example.com',
+			account_age_in_days: 42,
+		} );
 	} );
 
 	test( 'skips loading when config flag is disabled', () => {

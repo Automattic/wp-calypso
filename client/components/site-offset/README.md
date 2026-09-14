@@ -58,14 +58,13 @@ The `SiteOffsetProvider` component takes one prop: `site`. It is a string that i
 ### Usage
 
 ```jsx
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 
-ReactDom.render(
+createRoot( document.getElementById( 'root' ) ).render(
 	<SiteOffsetProvider siteId={ siteId }>
 		<Label date="2019-02-26T16:20:00" />
-	</SiteOffsetProvider>,
-	document.getElementById( 'root' )
+	</SiteOffsetProvider>
 );
 ```
 

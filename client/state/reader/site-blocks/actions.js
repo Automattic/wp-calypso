@@ -1,3 +1,5 @@
+import { readSiteQuery } from '@automattic/api-queries';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_REQUEST,
@@ -10,7 +12,25 @@ import 'calypso/state/data-layer/wpcom/me/blocks/sites';
 
 import 'calypso/state/reader/init';
 
+function updateCachedReadSiteBlockStatus( siteId, isBlocked ) {
+	const queryClient = getCalypsoQueryClient();
+	if ( ! queryClient || ! siteId ) {
+		return;
+	}
+
+	queryClient.setQueryData( readSiteQuery( siteId ).queryKey, ( site ) =>
+		site
+			? {
+					...site,
+					is_blocked: isBlocked,
+			  }
+			: site
+	);
+}
+
 export function blockSite( siteId ) {
+	updateCachedReadSiteBlockStatus( siteId, true );
+
 	return {
 		type: READER_SITE_BLOCK,
 		payload: {
@@ -20,6 +40,8 @@ export function blockSite( siteId ) {
 }
 
 export function unblockSite( siteId ) {
+	updateCachedReadSiteBlockStatus( siteId, false );
+
 	return {
 		type: READER_SITE_UNBLOCK,
 		payload: {

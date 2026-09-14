@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/i18n/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/i18n/init';
  * @returns {Array|null} an array of guessed locales for the user
  */
 export default function getLocaleSuggestions( state ) {
-	return get( state, 'i18n.localeSuggestions', null );
+	return state?.i18n?.localeSuggestions ?? null;
 }

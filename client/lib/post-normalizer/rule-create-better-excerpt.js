@@ -1,4 +1,3 @@
-import { trim, forEach } from 'lodash';
 import striptags from 'striptags';
 import { domForHtml } from './utils';
 
@@ -46,7 +45,7 @@ function buildStrippedDom( content ) {
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors =
 		'.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
-	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	Array.from( dom.querySelectorAll( stripSelectors ) ).forEach( removeElement );
 	return dom.innerHTML;
 }
 
@@ -60,7 +59,7 @@ export function formatExcerpt( content ) {
 
 	// strip any p's that are empty
 	Array.from( dom.querySelectorAll( 'p' ) )
-		.filter( ( element ) => trim( element.textContent ).length === 0 )
+		.filter( ( element ) => ( element.textContent ?? '' ).trim().length === 0 )
 		.forEach( removeElement );
 
 	// remove styles for all p's that remain
@@ -72,8 +71,7 @@ export function formatExcerpt( content ) {
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach(
-		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+	Array.from( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ) ).forEach(
 		function ( element, index ) {
 			if ( index >= 3 ) {
 				element.parentNode && element.parentNode.removeChild( element );
@@ -82,7 +80,7 @@ export function formatExcerpt( content ) {
 	);
 
 	// trim and replace &nbsp; entities
-	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );
+	const betterExcerpt = dom.innerHTML.replace( /&nbsp;/g, ' ' ).trim();
 	dom.innerHTML = '';
 	return betterExcerpt;
 }
@@ -94,10 +92,10 @@ export default function createBetterExcerpt( post ) {
 
 	const strippedDom = buildStrippedDom( post.content );
 
-	post.content_no_html = trim( striptags( strippedDom ) );
+	post.content_no_html = striptags( strippedDom ).trim();
 
 	post.better_excerpt = formatExcerpt( strippedDom );
-	post.better_excerpt_no_html = trim( striptags( post.better_excerpt ) );
+	post.better_excerpt_no_html = striptags( post.better_excerpt ).trim();
 
 	// also make a shorter excerpt...
 	if ( post.better_excerpt_no_html ) {

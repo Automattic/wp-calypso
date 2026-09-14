@@ -1,21 +1,9 @@
 import { SearchControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { forwardRef } from 'react';
 import './input.scss';
 
-export const DomainSearchControlsInput = ( {
-	value,
-	label,
-	placeholder,
-	onChange,
-	onReset,
-	autoFocus,
-	onBlur,
-	onKeyDown,
-	minLength,
-	maxLength,
-	dir,
-	'aria-describedby': ariaDescribedBy,
-}: {
+interface DomainSearchControlsInputProps {
 	value: string;
 	label?: string;
 	placeholder?: string;
@@ -28,11 +16,33 @@ export const DomainSearchControlsInput = ( {
 	maxLength?: number;
 	dir?: 'ltr' | 'rtl';
 	'aria-describedby'?: string;
-} ) => {
+}
+
+export const DomainSearchControlsInput = forwardRef<
+	HTMLInputElement,
+	DomainSearchControlsInputProps
+>( function DomainSearchControlsInput(
+	{
+		value,
+		label,
+		placeholder,
+		onChange,
+		onReset,
+		autoFocus,
+		onBlur,
+		onKeyDown,
+		minLength,
+		maxLength,
+		dir,
+		'aria-describedby': ariaDescribedBy,
+	},
+	ref
+) {
 	const { __ } = useI18n();
 
 	return (
 		<SearchControl
+			ref={ ref }
 			className="domain-search-controls__input"
 			__nextHasNoMarginBottom
 			hideLabelFromVision
@@ -51,4 +61,4 @@ export const DomainSearchControlsInput = ( {
 			aria-describedby={ ariaDescribedBy }
 		/>
 	);
-};
+} );

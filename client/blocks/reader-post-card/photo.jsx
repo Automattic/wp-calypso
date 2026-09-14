@@ -1,5 +1,5 @@
+import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';

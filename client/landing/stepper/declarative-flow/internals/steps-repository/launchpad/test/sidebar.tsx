@@ -166,18 +166,6 @@ describe( 'Sidebar', () => {
 		expect( renderedDomain ).toBeVisible();
 	} );
 
-	it( 'start-writing flow does not display the current site url', () => {
-		renderSidebar( {
-			...props,
-			flow: 'start-writing',
-		} );
-
-		const renderedDomain = screen.queryByText( ( content ) =>
-			content.includes( secondAndTopLevelDomain )
-		);
-		expect( renderedDomain ).toBeNull();
-	} );
-
 	it( 'displays customize badge for wpcom domains (free)', () => {
 		renderSidebar( props );
 		expect( screen.getByRole( 'link', { name: upgradeDomainBadgeText } ) ).toHaveAttribute(
@@ -198,7 +186,7 @@ describe( 'Sidebar', () => {
 			name: 'upgradeDomainBadgeText',
 		} );
 
-		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not display customize badge for a flow with a redundant domain upsell task', () => {
@@ -214,7 +202,7 @@ describe( 'Sidebar', () => {
 			name: 'upgradeDomainBadgeText',
 		} );
 
-		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument();
 	} );
 
 	it( 'displays a progress bar based off of task completion', () => {

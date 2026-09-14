@@ -19,7 +19,7 @@ export default function OverviewBodyNextSteps() {
 		<Card>
 			<div className="next-steps">
 				<div className="next-steps__header">
-					<h2>{ isCompleted ? translate( '🎉 Congratulations!' ) : translate( 'Next Steps' ) }</h2>
+					<h2>{ isCompleted ? translate( '🎉 Congratulations!' ) : translate( 'Next steps' ) }</h2>
 
 					{ isCompleted ? (
 						<Button variant="tertiary" onClick={ dismiss }>

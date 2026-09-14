@@ -4,6 +4,7 @@ import {
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	ExternalLink,
@@ -30,12 +31,13 @@ import {
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale, useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
 import type { Field } from '@wordpress/dataviews';
 
@@ -301,7 +303,7 @@ function StagingSiteSyncModalInner( {
 		[ updateFilesAndFoldersCheckState ]
 	);
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const displayBackupDate = lastKnownBackupAttempt
 		? new Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'short' } ).format(
 				new Date( lastKnownBackupAttempt.activityTs )
@@ -393,7 +395,7 @@ function StagingSiteSyncModalInner( {
 			description: sprintf(
 				/* translators: %s: site domain */
 				__( 'The site domain is: %s' ),
-				productionSiteSlug
+				productionSiteSlug ?? ''
 			),
 		},
 	];
@@ -403,7 +405,12 @@ function StagingSiteSyncModalInner( {
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
-						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
+						a: (
+							<ExternalLink
+								href={ wpcomLink( `/activity-log/${ targetSiteSlug }` ) }
+								children={ null }
+							/>
+						),
 					} ) }
 				</Text>
 				<HStack
@@ -511,10 +518,12 @@ function StagingSiteSyncModalInner( {
 														date: <span>{ displayBackupDate }</span>,
 													}
 												) }{ ' ' }
-												<ExternalLink
-													href={ `/backup/${ querySiteSlug as string }` }
-													children={ __( 'Create new backup' ) }
-												/>
+												<Link
+													to="/sites/$siteSlug/backups"
+													params={ { siteSlug: querySiteSlug as string } }
+												>
+													{ __( 'Create new backup' ) }
+												</Link>
 											</Text>
 										</HStack>
 									) }
@@ -575,7 +584,10 @@ function StagingSiteSyncModalInner( {
 						<DataForm< StagingSiteSyncFormData >
 							data={ formData }
 							fields={ fields }
-							form={ { layout: { type: 'regular' as const }, fields } }
+							form={ {
+								layout: { type: 'regular' as const },
+								fields: fields.map( ( field ) => field.id ),
+							} }
 							onChange={ ( edits: Partial< StagingSiteSyncFormData > ) => {
 								setFormData( ( data ) => ( {
 									...data,
@@ -592,7 +604,7 @@ function StagingSiteSyncModalInner( {
 									a: (
 										<InlineSupportLink
 											onClick={ handleClose }
-											supportContext="hosting-staging-site"
+											supportContext="hosting-staging-site-sync"
 										/>
 									),
 								} ) }

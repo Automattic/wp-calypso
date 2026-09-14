@@ -1,0 +1,14 @@
+// Button-mode AddMenuItem: the global reset strips button chrome but leaves it
+// shrink-to-fit, with the UA font and no pointer cursor — unlike the anchor
+// rows it sits next to. Also restore a keyboard focus ring (the sidebar
+// removes the default outline), mirroring `.sidebar__expandable-button`.
+button.sidebar__menu-link {
+	inline-size: 100%;
+	cursor: pointer;
+	font-family: inherit;
+	text-align: start;
+
+	.accessible-focus &:focus {
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
+	}
+}

@@ -1,4 +1,16 @@
-.site-settings {
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-marketing-traffic {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
+	@include admin-ui-page-sticky-footer;
+}
+
+.settings-traffic.site-settings {
 	font-size: $font-body-small;
 
 	fieldset {
@@ -133,14 +145,12 @@
 		}
 	}
 
+	.card.promo-card-block {
+		display: flex;
+	}
 
 	.promo-card .button {
 		float: none;
-	}
-
-	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
-		min-width: 80px;
-		text-align: center;
 	}
 
 	.seo-settings__seo-sitemap {
@@ -287,6 +297,14 @@
 .settings-traffic {
 	.promo-card-block {
 		margin-top: 0;
+
+		@media screen and (max-width: 910px) {
+			padding: 24px;
+		}
+
+		@media screen and (max-width: 480px) {
+			padding: 20px;
+		}
 	}
 
 	.promo-card-block .button {
@@ -295,6 +313,36 @@
 
 	.promo-card-block img {
 		max-width: 170px;
+
+		@media screen and (max-width: 910px) {
+			max-width: 120px;
+			margin-bottom: 16px;
+		}
+
+		@media screen and (max-width: 480px) {
+			max-width: 96px;
+			margin-bottom: 12px;
+		}
+	}
+
+	.promo-card-block .formatted-header__title {
+		@media screen and (max-width: 910px) {
+			font-size: $font-title-medium;
+		}
+
+		@media screen and (max-width: 480px) {
+			font-size: $font-title-small;
+		}
+	}
+
+	.promo-card-block p {
+		@media screen and (max-width: 910px) {
+			font-size: $font-body-small;
+		}
+
+		@media screen and (max-width: 480px) {
+			margin-bottom: 16px;
+		}
 	}
 
 	.panel-card {

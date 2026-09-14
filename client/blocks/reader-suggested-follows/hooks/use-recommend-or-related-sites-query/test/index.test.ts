@@ -181,6 +181,64 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		} );
 	} );
 
+	it( 'filters out the current site from recommended feeds', () => {
+		const mockRecommendedFeeds = [
+			{
+				ID: 1,
+				name: 'Recommended Feed',
+				feedId: 1,
+				siteId: '123',
+			},
+			{
+				ID: 2,
+				name: 'Other Feed',
+				feedId: 2,
+				siteId: '456',
+			},
+		];
+
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: mockRecommendedFeeds,
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { author: fakeAuthor, siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current.data ).toEqual( [
+			{ ID: 2, name: 'Other Feed', feedId: 2, siteId: '456' },
+		] );
+		expect( result.current.resourceType ).toBe( 'recommended' );
+	} );
+
+	it( 'filters out the current site from related sites', () => {
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const mockRelatedSites = [
+			{ site_ID: 123, name: 'Current Site' },
+			{ site_ID: 789, name: 'Other Site' },
+		];
+
+		( useRelatedSites as jest.Mock ).mockReturnValue( {
+			data: mockRelatedSites,
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current.data ).toEqual( [ { site_ID: 789, name: 'Other Site' } ] );
+		expect( result.current.resourceType ).toBe( 'related' );
+	} );
+
 	it( 'returns an empty array when there is no recommended or related sites', () => {
 		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
 			data: [],

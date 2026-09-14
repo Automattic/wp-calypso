@@ -1,14 +1,24 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+.partner-directory__dashboard {
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: 700px;
+	}
+}
+
 .partner-directory-agency-cta__footer {
 	display: flex;
+	align-items: center;
 	flex-direction: row;
 	justify-content: flex-end;
 	gap: 8px;
 	margin-block-start: -16px;
 
 	@include breakpoint-deprecated("<660px") {
+		align-items: stretch;
 		flex-direction: column;
 	}
 }

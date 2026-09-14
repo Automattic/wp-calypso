@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 
 /**
@@ -15,13 +14,6 @@ interface StreamErrorProps {
 
 export const StreamError = ( { onTryAgain, streamKey }: StreamErrorProps ) => {
 	const translate = useTranslate();
-
-	useEffect( () => {
-		recordTracksEvent( 'calypso_reader_stream_error', {
-			stream_key: streamKey,
-			path: window.location.pathname,
-		} );
-	}, [ streamKey ] );
 
 	const handleTryAgain = () => {
 		recordTracksEvent( 'calypso_reader_stream_error_try_again', {

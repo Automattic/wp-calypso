@@ -31,16 +31,16 @@ export default function ( router ) {
 	const routesWithoutSites = [
 		`/${ langParam }/themes/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/${ tierParam }/filter/:filter/:view(collection)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/${ tierParam }/:view(collection)?`,
-		`/${ langParam }/themes/:category(all|my-themes)?/${ tierParam }/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/${ tierParam }/filter/:filter/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/filter/:filter/:view(collection)?`,
 	];
 	const routesWithSites = [
 		`/${ langParam }/themes/${ tierParam }/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/${ tierParam }/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/${ tierParam }/:view(collection)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:category(all|my-themes)?/${ tierParam }/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/${ tierParam }/:view(collection)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:category(all|my-themes|recommended)?/${ tierParam }/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/:view(collection)?/:site_id(${ siteId })`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/filter/:filter/:view(collection)?/:site_id(${ siteId })`,
 	];

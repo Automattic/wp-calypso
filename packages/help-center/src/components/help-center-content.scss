@@ -23,7 +23,7 @@
 				height: #{$height}px;
 				margin-top: -79px;
 				z-index: 1;
-				background: linear-gradient( to bottom, transparent, #fff );
+				background: linear-gradient( to bottom, transparent, var(--color-surface) );
 				position: absolute;
 				width: 100%;
 				pointer-events: none;

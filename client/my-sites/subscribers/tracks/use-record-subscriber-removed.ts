@@ -6,7 +6,7 @@ const useRecordSubscriberRemoved = () => {
 	return ( tracksProps: {
 		site_id?: number | null;
 		subscription_id?: number;
-		user_id?: number;
+		user_id?: number | string;
 	} ) => {
 		recordSubscribersTracksEvent( 'calypso_subscribers_subscriber_removed', tracksProps );
 	};

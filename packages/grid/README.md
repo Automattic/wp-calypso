@@ -1,6 +1,8 @@
 # Grid
 
-A flexible grid component for React applications. This component uses CSS Grid to create layouts with automatic positioning of elements.
+A data-driven grid layout component for React. It uses CSS Grid for rendering and provides a JS layer on top for drag-and-drop reordering, resize, responsive column computation, and dynamic width modes (`fillWidth`, `fullWidth`).
+
+The layout is defined as a serializable array of items — the consumer describes intent (`width: 2`, `fillWidth: true`) and the component translates that into CSS Grid properties.
 
 ## Installation
 
@@ -43,7 +45,8 @@ The main component exported by this package.
   - `width` (number): The number of columns this item spans
   - `height` (number, optional): The number of rows this item spans (defaults to 1)
   - `order` (number, optional): In responsive mode, determines the order of items (lower values displayed first)
-  - `fullWidth` (boolean, optional): In responsive mode, forces an item to always span all available columns
+  - `fullWidth` (boolean, optional): Forces an item to always span all available columns (`grid-column: 1 / -1`)
+  - `fillWidth` (boolean, optional): Spans the remaining columns in the current row, accounting for sibling widths
 - `columns` (required): Total number of columns in the grid
 - `className` (optional): Additional CSS class to apply to the grid container
 - `spacing` (optional): Grid gap multiplier size, defaults to 2 (e.g. A spacing of 2 results in a gap of 8px, it's multiplied by 4)
@@ -118,3 +121,27 @@ When `minColumnWidth` is provided, the Grid activates responsive mode, which aut
 	<div key="c">Item C (always full width)</div>
 </Grid>
 ```
+
+## Width Modes
+
+Each layout item supports three width modes:
+
+- **Fixed width** (`width: N`): Spans exactly N columns, clamped to the current column count.
+- **Full width** (`fullWidth: true`): Always spans all columns in the grid (`grid-column: 1 / -1`). Pure CSS, no JS computation.
+- **Fill width** (`fillWidth: true`): Spans the remaining columns in its row. The grid simulates CSS Grid row packing to determine how many columns are left after accounting for sibling items.
+
+```jsx
+// Main panel fills remaining space, sidebar takes 1 column
+<Grid
+	layout={ [
+		{ key: 'main', fillWidth: true, order: 0 },
+		{ key: 'sidebar', width: 1, order: 1 },
+	] }
+	columns={ 6 }
+>
+	<div key="main">Main (spans 5 columns)</div>
+	<div key="sidebar">Sidebar (spans 1 column)</div>
+</Grid>
+```
+
+`fillWidth` adapts automatically when the column count changes in responsive mode — no hardcoded spans needed.

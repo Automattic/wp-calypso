@@ -22,11 +22,12 @@ const getSubscribersCacheKey = ( {
 const getSubscriberDetailsCacheKey = (
 	siteId: number | undefined | null,
 	subscriptionId: number | undefined,
-	userId: number | undefined,
+	userId: number | string | undefined,
 	type: string
 ) => [ 'subscriber-details', siteId, subscriptionId, userId, type ];
 
-const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
+const getSubscriberDetailsType = ( userId: number | string | undefined ) =>
+	userId ? 'wpcom' : 'email';
 
 const getSubscriptionIdFromSubscriber = ( subscriber: Subscriber ): number => {
 	return (

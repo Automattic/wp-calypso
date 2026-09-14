@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import AccountDeletionConfirmModal from './account-deletion-modal';
 
@@ -13,15 +14,12 @@ export default function AccountDeletionSection() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const mutation = useMutation( {
-		...closeAccountMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Account deletion initiated.' ),
-				error: __( 'Failed to delete account.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( closeAccountMutation(), {
+			success: __( 'Account deletion initiated.' ),
+			error: __( 'Failed to delete account.' ),
+		} )
+	);
 	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( {
 		...userPurchasesQuery(),
 		enabled: showConfirmModal,

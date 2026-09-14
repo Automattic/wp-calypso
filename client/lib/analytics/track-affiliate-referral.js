@@ -1,5 +1,5 @@
+import { pick } from '@automattic/js-utils';
 import debug from 'debug';
-import { pick } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const referDebug = debug( 'calypso:analytics:refer' );

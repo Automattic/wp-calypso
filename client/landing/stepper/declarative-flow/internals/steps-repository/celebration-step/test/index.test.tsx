@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -36,6 +35,13 @@ const stepContentProps = {
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: () => ( {
+		data: { checklist_statuses: { first_post_published: true } },
+	} ),
 } ) );
 
 const user = {
@@ -77,11 +83,9 @@ function renderCelebrationScreen( flow ) {
 }
 
 describe( 'The celebration step', () => {
-	describe( `The ${ START_WRITING_FLOW } flow`, () => {
-		const flow = START_WRITING_FLOW;
-
+	describe( 'when the first post is published', () => {
 		it( 'renders correct content and CTAs', () => {
-			renderCelebrationScreen( flow );
+			renderCelebrationScreen( '' );
 
 			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();

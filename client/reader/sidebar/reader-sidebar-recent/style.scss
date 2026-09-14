@@ -1,8 +1,6 @@
-.reader-sidebar-recent {
-	$recent-item-padding-x: 18px;
-	$recent-site-icon-size: 16px;
-	$recent-item-gap: 8px;
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+.reader-sidebar-recent {
 	&__site {
 		&-name {
 			overflow: hidden;
@@ -10,15 +8,29 @@
 			text-overflow: ellipsis;
 		}
 
-		&-icon {
-			border-radius: 50%;
-			width: $recent-site-icon-size;
-			height: $recent-site-icon-size;
-		}
-
 		&-count {
 			font-weight: 400;
 			margin-right: 6px; // To get alignment with menu chevron icon; bleh
+		}
+	}
+
+	&__item {
+		@include ui-mixins.when-dark-theme {
+			&:hover,
+			&:focus {
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+			}
+
+			&:hover .sidebar__menu-item-sitename,
+			&:focus .sidebar__menu-item-sitename {
+				color: var( --color-sidebar-menu-hover-text );
+			}
+
+			&:hover .sidebar__menu-item-last-updated,
+			&:focus .sidebar__menu-item-last-updated {
+				color: var( --color-text-subtle );
+			}
 		}
 	}
 }

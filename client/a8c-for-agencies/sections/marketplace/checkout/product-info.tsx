@@ -1,4 +1,5 @@
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
@@ -191,10 +192,8 @@ export default function ProductInfo( {
 							translate( 'By {{a/}}', {
 								components: {
 									a: (
-										<a
+										<ExternalLink
 											href={ vendor.vendorUrl }
-											target="_blank"
-											rel="noopener noreferrer"
 											onClick={ () => {
 												dispatch(
 													recordTracksEvent( 'calypso_marketplace_products_overview_vendor_click', {
@@ -204,7 +203,7 @@ export default function ProductInfo( {
 											} }
 										>
 											{ vendor.vendorName }
-										</a>
+										</ExternalLink>
 									),
 								},
 							} ) }

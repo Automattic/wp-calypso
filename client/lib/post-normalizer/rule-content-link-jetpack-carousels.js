@@ -1,5 +1,3 @@
-import { forEach, get } from 'lodash';
-
 /**
  * The linkJetpackCarousels rule modifies all of the WordPress galleries in the content
  * to link you to their host website's carousel instead of the permalink for that specific image.
@@ -14,8 +12,8 @@ import { forEach, get } from 'lodash';
 export default function linkJetpackCarousels( post, dom ) {
 	const galleries = dom.querySelectorAll( '.tiled-gallery' );
 
-	forEach( galleries, ( gallery ) => {
-		let extra = get( gallery, [ 'dataset', 'carouselExtra' ], false );
+	Array.from( galleries ).forEach( ( gallery ) => {
+		let extra = gallery?.dataset?.carouselExtra ?? false;
 		if ( ! extra ) {
 			// this only really exists for jsdom. See https://github.com/tmpvar/jsdom/issues/961
 			extra = gallery.getAttribute( 'data-carousel-extra' );
@@ -34,7 +32,7 @@ export default function linkJetpackCarousels( post, dom ) {
 		}
 		// find all the links and rewrite them to point to the carousel instead of the permalink
 		const links = gallery.querySelectorAll( '.tiled-gallery-item > a' );
-		forEach( links, ( link ) => {
+		Array.from( links ).forEach( ( link ) => {
 			const img = link.querySelector( 'img' );
 			const attachmentId = img && img.getAttribute( 'data-attachment-id' );
 			if ( attachmentId ) {

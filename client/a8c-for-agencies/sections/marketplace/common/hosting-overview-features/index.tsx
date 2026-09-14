@@ -1,4 +1,5 @@
 import { Icon } from '@wordpress/icons';
+import type { JSX } from 'react';
 
 import './style.scss';
 

@@ -139,6 +139,7 @@ export interface I18N {
 
 declare const i18n: I18N;
 export default i18n;
+export declare const I18N: new () => I18N;
 export declare const translate: typeof i18n.translate;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;

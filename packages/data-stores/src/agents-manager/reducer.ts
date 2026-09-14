@@ -1,9 +1,9 @@
 import { combineReducers } from '@wordpress/data';
+import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { AgentsManagerAction } from './actions';
-import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
-const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
+const isOpen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_OPEN':
 			return action.isOpen;
@@ -11,7 +11,7 @@ const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, act
 	return state;
 };
 
-const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
+const isDocked: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_DOCKED':
 			return action.isDocked;
@@ -19,13 +19,32 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
-const routerHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
-	AgentsManagerAction
-> = ( state, action ) => {
+export const isMinimized: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_MINIMIZED':
+			return action.isMinimized;
+	}
+	return state;
+};
+
+const routerHistory: Reducer< PerSiteRouterHistory | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_ROUTER_HISTORY':
 			return action.history;
+	}
+	return state;
+};
+
+const lastActivity: Reducer< PerSiteLastActivity | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_LAST_ACTIVITY':
+			return action.lastActivity;
 	}
 	return state;
 };
@@ -57,13 +76,53 @@ const floatingPosition: Reducer< 'left' | 'right', AgentsManagerAction > = (
 	return state;
 };
 
+const freeDragPosition: Reducer< { x: number; y: number } | null, AgentsManagerAction > = (
+	state = null,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_FREE_DRAG_POSITION':
+			return action.freeDragPosition;
+	}
+	return state;
+};
+
+const floatingSize: Reducer< { width: number; height: number } | null, AgentsManagerAction > = (
+	state = null,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_FLOATING_SIZE':
+			return action.floatingSize;
+	}
+	return state;
+};
+
+export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_SPLIT_SCREEN':
+			return action.isSplitScreen;
+		// Split-screen only makes sense while docked. Reset on undock so an
+		// out-of-band `setIsDocked(false)` (e.g. from `window.__agentsManagerActions`)
+		// can't leave a stale `true` that re-applies on the next dock.
+		case 'AGENTS_MANAGER_SET_DOCKED':
+			return action.isDocked ? state : false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
+	isMinimized,
 	routerHistory,
+	lastActivity,
 	isLoading,
 	hasLoaded,
 	floatingPosition,
+	freeDragPosition,
+	floatingSize,
+	isSplitScreen,
 } );
 
 export type State = ReturnType< typeof reducer >;

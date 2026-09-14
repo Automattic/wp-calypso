@@ -7,12 +7,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status-map';
 
 import './get-support.scss';
 
 interface GetSupportProps {
-	onClickAdditionalEvent?: ( destination: string ) => void;
+	onClickAdditionalEvent?: ( destination: string, props?: Record< string, unknown > ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
 	forceEmailSupport?: boolean;
@@ -49,7 +49,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
-	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
+	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
+		useOpenLiveInteractions();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
 		mostRecentSupportInteractionId || null
@@ -75,6 +76,19 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						onClickAdditionalEvent?.( 'email' );
 						params.set( 'wapuuFlow', 'true' );
 						navigate( '/contact-form?' + params.toString() );
+					},
+				} );
+			} else if ( isConversationLimitReached ) {
+				buttons.push( {
+					text: (
+						<>
+							{ __( 'View my conversations', __i18n_text_domain__ ) }
+							<Icon icon={ chevronRight } />
+						</>
+					),
+					action: async () => {
+						trackEvent( 'chat_view_support_history_from_limit' );
+						navigate( '/chat-history' );
 					},
 				} );
 			} else {
@@ -116,12 +130,12 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							? __( 'No, connect me with someone new', __i18n_text_domain__ )
 							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
-							onClickAdditionalEvent?.( 'chat' );
-							if ( isChatLoaded ) {
-								createZendeskConversation( {
-									createdFrom: 'chat_support_button',
-								} );
-							}
+							onClickAdditionalEvent?.( 'chat', {
+								has_open_conversation: !! supportInteraction,
+							} );
+							await createZendeskConversation( {
+								createdFrom: 'chat_support_button',
+							} );
 						},
 					} );
 				}

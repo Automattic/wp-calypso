@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import './style.scss';
-import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.png';
+import photoBanner from 'calypso/assets/images/blaze/wp-blaze-banner@3x.webp';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 export default function PostsListBanner() {
@@ -10,7 +10,9 @@ export default function PostsListBanner() {
 				<section className="posts-list-banner__text-section">
 					<div className="posts-list-banner__header">
 						<BlazeLogo size={ 16 } className="blaze" colorStart="#E65054" colorEnd="#E65054" />
-						{ translate( 'Powered by Blaze' ) }
+						{ translate( 'Powered by %(productName)s', {
+							args: { productName: 'Blaze Ads' },
+						} ) }
 					</div>
 					<div className="posts-list-banner__title wp-brand-font">
 						{ translate( 'Transform content to an ad with a click.' ) }

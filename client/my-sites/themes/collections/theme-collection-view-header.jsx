@@ -7,10 +7,21 @@ import CollectionBackButton from 'calypso/my-sites/themes/collections/collection
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import './theme-collection-view-header.scss';
 
-export default function ThemeCollectionViewHeader( { backUrl, filter, tier, isLoggedIn } ) {
+export default function ThemeCollectionViewHeader( {
+	backUrl,
+	filter,
+	tier,
+	options,
+	isLoggedIn,
+} ) {
 	const keyParts = [ tier, filter ];
 	const key = keyParts.filter( ( part ) => !! part ).join( '-' ) || 'recommended';
-	const { title, description } = THEME_COLLECTIONS[ key ];
+	const collection = THEME_COLLECTIONS[ key ];
+	const title = collection.title;
+	const description =
+		typeof collection.description === 'function'
+			? collection.description( options )
+			: collection.description;
 
 	const classnames = clsx( 'theme-collection-view-header', {
 		'is-logged-in': isLoggedIn,

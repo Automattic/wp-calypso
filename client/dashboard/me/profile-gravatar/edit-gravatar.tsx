@@ -5,6 +5,7 @@ import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -16,7 +17,7 @@ interface EditGravatarProps {
 }
 
 const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGravatarProps ) => {
-	const [ tempImage, setTempImage ] = useState< string | null >( null );
+	const [ avatarVersion, setAvatarVersion ] = useState< number | null >( null );
 	const [ showEmailVerificationNotice, setShowEmailVerificationNotice ] =
 		useState< boolean >( false );
 	const [ isOverlayVisible, setIsOverlayVisible ] = useState< boolean >( false );
@@ -27,15 +28,6 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 	// Initialize the Gravatar Quick Editor to manage avatars in a dedicated Gravatar UI
 	const quickEditorRef = useRef< GravatarQuickEditorCore | null >( null );
-	const avatarUrlRef = useRef( avatarUrl );
-
-	// Update the avatar URL reference when the prop changes
-	useEffect( () => {
-		avatarUrlRef.current = avatarUrl;
-	}, [ avatarUrl ] );
-
-	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
-	const displayUrl = addQueryArgs( avatarUrlRef.current, { ver: Date.now() } );
 
 	useEffect( () => {
 		quickEditorRef.current = new GravatarQuickEditorCore( {
@@ -44,7 +36,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			utm: 'wpcomme',
 			onProfileUpdated: () => {
 				// Bust cache so the <img> reloads the latest avatar immediately
-				setTempImage( addQueryArgs( avatarUrlRef.current, { ver: Date.now() } ) as string );
+				setAvatarVersion( Date.now() );
 			},
 		} );
 
@@ -114,6 +106,10 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		transition: 'opacity 0.2s',
 	};
 
+	const displayUrl = avatarVersion
+		? ( addQueryArgs( avatarUrl, { ver: avatarVersion } ) as string )
+		: avatarUrl;
+
 	const openGravatarEditor = () => {
 		handleUnverifiedUserClick();
 		if ( isEmailVerified ) {
@@ -153,7 +149,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						aria-label={ uploadButtonLabel }
 					>
 						<img
-							src={ tempImage || displayUrl }
+							src={ displayUrl }
 							alt={ __( 'Gravatar' ) }
 							width={ 48 }
 							height={ 48 }
@@ -163,11 +159,11 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						<div className="overlay-hover" style={ overlayStyle }>
 							<div style={ { color: '#fff' } }>
 								{ ! isEmailVerified && (
-									<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ caution } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 
 								{ isEmailVerified && (
-									<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ upload } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 							</div>
 						</div>
@@ -179,21 +175,9 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
-				<div
-					style={ {
-						backgroundColor: '#fff8e5',
-						padding: 12,
-						margin: '8px 0',
-						borderLeft: '3px solid #f0b849',
-					} }
-				>
-					<p style={ { marginBottom: 8 } }>
-						{ __( 'Please verify your email address to change your profile photo.' ) }
-					</p>
-					<Button onClick={ closeVerifyEmailDialog } variant="secondary">
-						{ __( 'Close' ) }
-					</Button>
-				</div>
+				<Notice variant="warning" onClose={ closeVerifyEmailDialog }>
+					{ __( 'Please verify your email address to change your profile photo.' ) }
+				</Notice>
 			) }
 		</VStack>
 	);

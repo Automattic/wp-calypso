@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { formatNumberCompact } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -106,7 +107,9 @@ export default function PostStatsCard( {
 			{ ( isLoading || ( ! post?.post_thumbnail && uploadHref ) ) && (
 				<div className="post-stats-card__upload">
 					<Button
-						className="post-stats-card__upload-btn is-compact"
+						variant="secondary"
+						size="compact"
+						className="post-stats-card__upload-btn"
 						onClick={ recordClickOnUploadImageButton }
 					>
 						{ translate( 'Add featured image' ) }

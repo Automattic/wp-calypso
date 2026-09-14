@@ -25,6 +25,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePricingMetaForGridPlans: jest.fn(),
+		useSitePlans: jest.fn(),
 	},
 } ) );
 
@@ -34,6 +35,7 @@ const plans: PlanSlug[] = [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINES
 describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
+		Plans.useSitePlans.mockImplementation( () => ( { data: {} } ) );
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
 			[ PLAN_FREE ]: {
 				originalPrice: { full: 2000 },
@@ -71,6 +73,29 @@ describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 			useMaxPlanUpgradeCredits( { siteId, plans } )
 		);
 		expect( result.current ).toEqual( 1000 );
+	} );
+
+	test( 'Return total multi-year proration credit from cost_overrides when recent-plan-proration override is present', () => {
+		Plans.useSitePlans.mockImplementation( () => ( {
+			data: {
+				[ PLAN_ECOMMERCE ]: {
+					pricing: {
+						costOverrides: [
+							// old_price / new_price are in major currency units (dollars), not cents
+							{ overrideCode: 'multiterm-upgrade', oldPrice: 100, newPrice: 500 },
+							{ overrideCode: 'recent-plan-proration', oldPrice: 500, newPrice: 4.04 },
+						],
+					},
+				},
+			},
+		} ) );
+
+		const { result } = renderHookWithProvider( () =>
+			useMaxPlanUpgradeCredits( { siteId, plans } )
+		);
+		// recent-plan-proration: (500 - 4.04) * 100 = 49596 cents ≈ $495.96, which is larger
+		// than any originalPrice - discountedPrice from the mock (max = 1000 cents for ecommerce)
+		expect( result.current ).toEqual( 49596 );
 	} );
 
 	test( 'Return the next correct credit amount when ecommerce plan is not available for purchase', () => {

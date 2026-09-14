@@ -2,11 +2,13 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { po } = require( 'gettext-parser' );
 const glob = require( 'glob' );
-const merge = require( 'lodash.mergewith' );
+const mergeWith = require( './merge-with' );
 
 const mergeDeep = ( left, right, key ) => {
-	if ( typeof left === 'object' && typeof right === 'object' ) {
-		return merge( left, right, mergeDeep );
+	// `typeof null === 'object'`, so exclude null before recursing (parsed POT
+	// data has none); a null side falls through to `right || left`.
+	if ( left !== null && typeof left === 'object' && right !== null && typeof right === 'object' ) {
+		return mergeWith( left, right, mergeDeep );
 	}
 
 	if ( typeof left === 'undefined' ) {
@@ -84,7 +86,7 @@ const addWarningComments = ( fileContent ) =>
 
 module.exports = ( dir, output, linesFilter ) => {
 	const potGlob = path.resolve( dir, '*.pot' );
-	const potFiles = glob.sync( potGlob, { nodir: true, absolute: true } );
+	const potFiles = glob.sync( potGlob, { nodir: true, absolute: true } ).sort();
 
 	const concatPOT = potFiles.reduce( ( acc, filePath ) => {
 		return mergeDeep( acc, po.parse( fs.readFileSync( filePath, 'utf8' ) ) );

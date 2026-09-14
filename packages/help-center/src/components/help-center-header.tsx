@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { isPlansPresalesExperience } from '@automattic/odie-client/src/constants';
 import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
 	CardHeader,
@@ -27,8 +28,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
+import { ZendeskStagingBadge } from './help-center-zendesk-staging-badge';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -55,6 +58,7 @@ const EllipsisMenu = () => {
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { currentUser } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -82,7 +86,12 @@ const EllipsisMenu = () => {
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Help Center Options', __i18n_text_domain__ ) }>
+		<DropdownMenu
+			icon={ moreVertical }
+			label={ __( 'Help Center Options', __i18n_text_domain__ ) }
+			// Render the popover inside the panel node so opening the menu doesn't blur the panel
+			popoverProps={ { inline: true } }
+		>
 			{ ( { onClose } ) => (
 				<>
 					<MenuGroup>
@@ -145,10 +154,17 @@ const useHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { launcherContext } = useHelpCenterContext();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const isConversationWithZendesk = currentSupportInteraction?.events.some(
 		( event ) => event.event_source === 'zendesk'
 	);
+	// Same gate as the greeting, plus the title's own translation so a locale
+	// never shows an English title over a localized panel.
+	const isPlansPresales =
+		isPlansPresalesExperience( launcherContext, hasEnTranslation ) &&
+		hasEnTranslation( 'Plans Assistant', undefined, __i18n_text_domain__ );
 
 	return useMemo( () => {
 		switch ( pathname ) {
@@ -164,8 +180,11 @@ const useHeaderText = () => {
 			case '/success':
 				return __( 'Message Submitted', __i18n_text_domain__ );
 			case '/odie':
-				return isConversationWithZendesk
-					? __( 'Support Team', __i18n_text_domain__ )
+				if ( isConversationWithZendesk ) {
+					return __( 'Support Team', __i18n_text_domain__ );
+				}
+				return isPlansPresales
+					? __( 'Plans Assistant', __i18n_text_domain__ )
 					: __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'Support history', __i18n_text_domain__ );
@@ -174,7 +193,7 @@ const useHeaderText = () => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, isConversationWithZendesk, pathname ] );
+	}, [ __, isConversationWithZendesk, isPlansPresales, pathname ] );
 };
 
 const HeaderText = () => {
@@ -227,8 +246,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		}
 	);
 
-	const userAskingSupport =
-		pathname.startsWith( '/odie' ) || pathname.startsWith( '/contact-form' );
+	const isOdieRoute = pathname.startsWith( '/odie' );
+	const userAskingSupport = isOdieRoute || pathname.startsWith( '/contact-form' );
 	const isHelpCenterHome = pathname === '/';
 	// Show the back button if it's not the help center home page and:
 	// - it's a chat and the hideBackButton option is not set
@@ -248,6 +267,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />
+						{ isOdieRoute && <ZendeskStagingBadge /> }
 					</HStack>
 					<Icon icon={ chevronUp } />
 				</HStack>
@@ -260,6 +280,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
+				{ isOdieRoute && <ZendeskStagingBadge /> }
 				{ featureConfig.header.ellipsisMenu ? (
 					<EllipsisMenu />
 				) : (

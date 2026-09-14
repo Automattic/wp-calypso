@@ -12,6 +12,7 @@ import {
 
 type Props = {
 	isCustomDomainAllowedOnFreePlan?: boolean | null;
+	isDomainRetainedOnFreePlan?: boolean;
 	flowName?: string | null;
 	paidDomainName?: string | null;
 	intent?: string | null;
@@ -23,6 +24,7 @@ type Props = {
  */
 export function useModalResolutionCallback( {
 	isCustomDomainAllowedOnFreePlan,
+	isDomainRetainedOnFreePlan,
 	flowName,
 	paidDomainName,
 	intent,
@@ -48,6 +50,12 @@ export function useModalResolutionCallback( {
 				return FREE_PLAN_FREE_DOMAIN_DIALOG;
 			}
 
+			// The domain can still be purchased on the free plan (as a non-primary
+			// address), so show the dialog that keeps it in the cart.
+			if ( paidDomainName && isDomainRetainedOnFreePlan ) {
+				return FREE_PLAN_PAID_DOMAIN_DIALOG;
+			}
+
 			// TODO: look into decoupling the flowName from here as well.
 			if (
 				paidDomainName &&
@@ -61,6 +69,13 @@ export function useModalResolutionCallback( {
 
 			return null;
 		},
-		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent, selectedThemeType ]
+		[
+			isCustomDomainAllowedOnFreePlan,
+			isDomainRetainedOnFreePlan,
+			flowName,
+			paidDomainName,
+			intent,
+			selectedThemeType,
+		]
 	);
 }

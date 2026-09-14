@@ -1,15 +1,18 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import SecurityAccountRecoverySummary from '../security-account-recovery/summary';
 import SecurityConnectedAppsSummary from '../security-connected-apps/summary';
+import SecurityLegacyContactSummary from '../security-legacy-contact/summary';
 import SecurityPasswordSummary from '../security-password/summary';
 import SecuritySocialLoginsSummary from '../security-social-logins/summary';
 import SecuritySshKeySummary from '../security-ssh-key/summary';
 import SecurityTwoStepAuthSummary from '../security-two-step-auth/summary';
+import RecoveryNudgeNotice from './recovery-nudge-notice';
 
 function Security() {
 	const { supports } = useAppContext();
@@ -28,15 +31,17 @@ function Security() {
 					description={ __( 'Manage your account security settings and authentication methods.' ) }
 				/>
 			}
+			notices={ <RecoveryNudgeNotice /> }
 		>
-			<VStack spacing={ 6 }>
+			<SummaryButtonList>
 				<SecurityPasswordSummary />
 				<SecurityAccountRecoverySummary />
 				<SecurityTwoStepAuthSummary />
-				{ supportsSecurity.sshKey && <SecuritySshKeySummary /> }
+				{ supportsSecurity.sshKey ? <SecuritySshKeySummary /> : null }
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
-			</VStack>
+				{ isEnabled( 'me/legacy-contact' ) ? <SecurityLegacyContactSummary /> : null }
+			</SummaryButtonList>
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

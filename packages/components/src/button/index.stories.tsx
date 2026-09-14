@@ -1,6 +1,8 @@
-import { fn } from '@storybook/test';
-import { Button } from '.';
+import { fn } from 'storybook/test';
+import { Button, type ButtonProps } from '.';
 import type { Meta, StoryObj } from '@storybook/react';
+
+type LinkArgs = ButtonProps & { href: string; target?: string };
 
 /**
  * This button has been deprecated due to aggressive and generic CSS that breaks many other buttons when imported.
@@ -21,7 +23,7 @@ const meta: Meta< typeof Button > = {
 };
 export default meta;
 
-type Story = StoryObj< typeof meta >;
+type Story = StoryObj< ButtonProps >;
 
 export const Default: Story = {
 	args: {
@@ -69,7 +71,7 @@ export const Disabled: Story = {
 	},
 };
 
-export const Link: Story = {
+export const Link: StoryObj< LinkArgs > = {
 	...Default,
 	args: {
 		...Default.args,

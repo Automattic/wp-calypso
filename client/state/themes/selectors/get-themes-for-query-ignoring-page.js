@@ -14,7 +14,7 @@ import 'calypso/state/themes/init';
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
  * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
+ * @param  {number|string}  siteId Site ID or theme source (e.g. 'wpcom', 'wporg')
  * @param  {Object}  query  Theme query object
  * @returns {?Array}         Themes for the theme query
  */

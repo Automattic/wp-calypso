@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -12,6 +11,7 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -25,12 +25,12 @@ import {
 	page as pageIcon,
 	verse,
 } from '@wordpress/icons';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
 import PlaceholderLines from './placeholder-lines';
@@ -208,6 +208,7 @@ function HelpSearchResults( {
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site, product = 'wpcom' } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
 		[]
@@ -295,9 +296,15 @@ function HelpSearchResults( {
 
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
-				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
+				if ( openAdminInNewTab ) {
+					window.open( link, '_blank' );
+				} else {
+					page( link );
+				}
+			} else if ( openAdminInNewTab ) {
+				window.open( link, '_blank' );
 			} else {
-				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
+				window.open( link, '_self' );
 			}
 			return;
 		}
@@ -305,7 +312,8 @@ function HelpSearchResults( {
 		const eventData = {
 			link,
 			post_id,
-			blog_id,
+			// Article blog, not the site the user needs help with.
+			article_blog_id: blog_id,
 			source,
 			search_term: searchQuery,
 			location,

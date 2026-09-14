@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -10,10 +9,16 @@ import { UserCard, type UserCardUser } from 'calypso/components/connect-screen/u
 import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { navigate } from 'calypso/lib/navigate';
-import { getCiabConfigFromGarden, type CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import {
+	detectPartnerConfig,
+	getPartnerConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+	type PartnerConfig,
+} from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
@@ -41,6 +46,7 @@ function toLegacyInvite( invite: Invite ) {
 			domain: blogDetails?.domain || '',
 			admin_url: blogDetails?.admin_url || '',
 			is_vip: blogDetails?.is_vip || false,
+			is_garden_site: blogDetails?.is_garden_site || false,
 		},
 		role: invite.invite?.meta?.role || '',
 		sentTo: invite.invite?.meta?.sent_to || '',
@@ -50,12 +56,14 @@ function toLegacyInvite( invite: Invite ) {
 /**
  * Get CIAB branding config from blog details
  */
-function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): CiabPartnerConfig | null {
+function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): PartnerConfig | null {
 	if ( ! blogDetails?.is_garden_site || ! blogDetails?.garden ) {
 		return null;
 	}
 
-	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name );
+	return getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+		persistToSession: true,
+	} );
 }
 
 interface AcceptInviteScreenProps {
@@ -157,10 +165,11 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Check if the invite requires a specific email that doesn't match the current user
 	const forceMatchingEmail =
-		invite?.invite?.meta?.force_matching_email && user?.email !== inviteSentTo;
+		invite?.invite?.meta?.force_matching_email && ! isSameEmail( user?.email, inviteSentTo );
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );
+	const titleBranding = branding ?? detectPartnerConfig();
 	const gardenName = invite?.blog_details?.garden?.name || null;
 	const gardenPartner = invite?.blog_details?.garden?.partner || null;
 
@@ -209,7 +218,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 	const handleDecline = useCallback( () => {
 		recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click', trackingProps );
 		dispatch( infoNotice( translate( 'You declined to join.' ), { displayOnNextPage: true } ) );
-		page( '/' );
+		dispatch( navigateToLandingPage() );
 	}, [ dispatch, trackingProps, translate ] );
 
 	const getLoginUrl = useCallback( () => {
@@ -248,6 +257,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 				inviteSentTo={ inviteSentTo }
 				isKnownUser={ isKnownUser }
 				topBarLogo={ topBarLogo }
+				partnerConfig={ titleBranding }
 				trackingProps={ trackingProps }
 			/>
 		);
@@ -255,7 +265,13 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					titleBranding
+				) }
+				skipTitleFormatting
+			/>
 			<BodySectionCssClass
 				bodyClass={ [
 					'is-section-accept-invite-unified',

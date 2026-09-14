@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
 import { REWIND_BACKUP, REWIND_GRANULAR_BACKUP_REQUEST } from 'calypso/state/action-types';
 import {
 	rewindBackupUpdateError,

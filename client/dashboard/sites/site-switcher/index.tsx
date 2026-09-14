@@ -11,14 +11,14 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import AddNewSite from '../add-new-site';
 import { SiteSwitcherBase } from './base';
+import type { SiteSwitcherProps } from './types';
 
-const SiteSwitcher = () => {
+const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isAddSiteModalOpen, setIsAddSiteModalOpen ] = useState( false );
-
 	return (
 		<>
-			<SiteSwitcherBase>
+			<SiteSwitcherBase { ...props }>
 				{ ( { onClose } ) => (
 					<MenuGroup>
 						<MenuItem
@@ -41,7 +41,10 @@ const SiteSwitcher = () => {
 					title={ __( 'Add new site' ) }
 					onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 				>
-					<AddNewSite context="sites-dashboard" />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
+					/>
 				</Modal>
 			) }
 		</>

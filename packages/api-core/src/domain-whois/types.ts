@@ -33,6 +33,10 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -74,6 +78,10 @@ export type ContactValidationResponseMessagesExtra = {
 		trademark_number?: string[];
 		siren_siret?: string[];
 	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
+	};
 	is_for_business?: boolean;
 };
 
@@ -109,6 +117,7 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -129,6 +138,20 @@ export type FrDomainContactExtraDetails = {
 	trademarkNumber?: string;
 	sirenSiret?: string;
 };
+/**
+ * ccTLD registrant details the registrar stores alongside the WHOIS contact.
+ *
+ * Only present for TLDs that declare extra contact fields (for example `.uk`,
+ * which stores `registrant_type`). The keys are the registrar's own snake_case
+ * names and differ per TLD, so this stays deliberately loose.
+ */
+export type WhoisContactExtra = Record< string, string >;
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
+};
+
 export interface WhoisDataEntry {
 	fname: string;
 	lname: string;
@@ -145,6 +168,7 @@ export interface WhoisDataEntry {
 	fax: string;
 	state: string;
 	type: WhoisType;
+	extra?: WhoisContactExtra;
 }
 
 export interface WhoisEmailRecord {

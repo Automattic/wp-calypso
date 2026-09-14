@@ -1,10 +1,15 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { useDomainSuggestionContainer } from '../../hooks/use-domain-suggestion-container';
 import { DomainSearchSkipSuggestionSkeleton } from './index.skeleton';
 
 export const DomainSearchSkipSuggestionPlaceholder = () => {
+	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+
 	return (
 		<DomainSearchSkipSuggestionSkeleton
+			ref={ containerRef }
+			activeQuery={ activeQuery }
 			role="status"
 			aria-busy="true"
 			aria-label={ __( 'Loading free domain suggestion' ) }

@@ -1,6 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import debug from 'debug';
-import { translate } from 'i18n-calypso';
-import { isEqual, omit } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -13,7 +13,6 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 /**
@@ -21,41 +20,18 @@ import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
  */
 const log = debug( 'calypso:middleware-media' );
 
-export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
-	receiveMedia( siteId, mediaItem ),
-];
-
-export const updateMediaError = ( { siteId, originalMediaItem } ) => [
-	receiveMedia( siteId, originalMediaItem ),
-	errorNotice( translate( 'We were unable to process this media item.' ), {
-		id: `update-media-notice-${ originalMediaItem.ID }`,
-	} ),
-];
-
 export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
 
 	const { siteId, query } = action;
 
-	const path =
-		query && query.source ? `/meta/external-media/${ query.source }` : `/sites/${ siteId }/media`;
-
-	const googlePhotosPicker = query.source === 'google_photos' && query.session_id;
-	const fetchOptions = googlePhotosPicker
-		? {
-				apiNamespace: 'wpcom/v2',
-		  }
-		: {
-				apiVersion: '1.1',
-		  };
-
 	return [
 		http(
 			{
 				method: 'GET',
-				path,
+				path: `/sites/${ siteId }/media`,
 				query,
-				...fetchOptions,
+				apiVersion: '1.1',
 			},
 			action
 		),

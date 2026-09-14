@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import useConversationList from '../../hooks/use-conversation-list';
 import { LocalConversationListItem } from '../../types';
 import ConversationListItem from '../conversation-list-item';
@@ -9,10 +10,11 @@ import './style.scss';
 
 interface Props {
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
-	onNewChat: () => void;
 }
 
-export default function ConversationHistoryView( { onSelectConversation, onNewChat }: Props ) {
+export default function ConversationHistoryView( { onSelectConversation }: Props ) {
+	const navigate = useNavigate();
+
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
@@ -30,16 +32,14 @@ export default function ConversationHistoryView( { onSelectConversation, onNewCh
 				) }
 				{ ! isLoading && isError && (
 					<div className="agents-manager-conversation-history-view__error">
-						<p>
-							{ __( 'Failed to load conversations. Please try again.', '__i18n_text_domain__' ) }
-						</p>
+						<p>{ __( 'Failed to load conversations. Please try again.', __i18n_text_domain__ ) }</p>
 					</div>
 				) }
 				{ ! isLoading && ! isError && conversations.length === 0 && (
 					<div className="agents-manager-conversation-history-view__empty">
-						<p>{ __( 'No past conversations', '__i18n_text_domain__' ) }</p>
+						<p>{ __( 'No past conversations', __i18n_text_domain__ ) }</p>
 						<p className="agents-manager-conversation-history-view__empty-hint">
-							{ __( 'Start a new chat to begin', '__i18n_text_domain__' ) }
+							{ __( 'Start a new chat to begin', __i18n_text_domain__ ) }
 						</p>
 					</div>
 				) }
@@ -60,10 +60,10 @@ export default function ConversationHistoryView( { onSelectConversation, onNewCh
 			<div className="agents-manager-conversation-history-view__footer">
 				<Button
 					variant="primary"
-					onClick={ onNewChat }
+					onClick={ () => navigate( '/' ) }
 					className="agents-manager-conversation-history-view__new-chat-btn"
 				>
-					{ __( 'Start a new chat', '__i18n_text_domain__' ) }
+					{ __( 'Start a new chat', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 		</div>

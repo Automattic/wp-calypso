@@ -8,9 +8,12 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	legacyContactQuery,
+	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -32,20 +35,34 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import {
+	SITE_ACTION_TITLES,
+	getEligiblePurchases,
+	isSiteAction,
+	type SiteAction,
+} from '../../me/billing-purchases/site-level-actions/constants';
+import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
+import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
-	isTemporarySitePurchase,
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
+	getDisplayVariant,
+	getRenewUrlForPurchases,
+	hasQueryableSite,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
+	type CancelIntent,
 } from '../../utils/purchase';
+import { AUTH_QUERY_KEY } from '../auth';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
@@ -68,32 +85,27 @@ export const meRoute = createRoute( {
 			window.location.href = reauthRequiredLink();
 		}
 	},
-} ).lazy( () =>
-	import( '../../me' ).then( ( d ) =>
-		createLazyRoute( 'me' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/profile' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 
-export const profileRoute = createRoute( {
+export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Profile' ),
+				title: __( 'Account' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: 'profile',
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -101,8 +113,8 @@ export const profileRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
+	import( '../../me/account' ).then( ( d ) =>
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)
@@ -118,6 +130,11 @@ export const preferencesRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
+} );
+
+export const preferencesIndexRoute = createRoute( {
+	getParentRoute: () => preferencesRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -172,6 +189,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -193,7 +224,9 @@ export const receiptRoute = createRoute( {
 	loader: async ( { params: { receiptId } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
+			queryClient.ensureQueryData( userReceiptsQuery() ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
 		] );
 	},
 	path: '$receiptId',
@@ -226,11 +259,23 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
 		queryClient.prefetchQuery( allSitesQuery() );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+		removed?: string;
+		removedDomain?: string;
+		removedId?: number;
+	} => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'number' ? search.site : undefined,
+			removed: typeof search.removed === 'string' ? search.removed : undefined,
+			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
+			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
 		};
 	},
 } ).lazy( () =>
@@ -257,9 +302,34 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: (
+		search
+	): {
+		refunded?: true;
+		upgraded?: true;
+		cancelled?: true;
+		downgraded?: true;
+		plan_changed?: true;
+		delayed_downgrade_scheduled?: true;
+		intent?: 'auto-renew';
+	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
+		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		const isDowngraded = search.downgraded === true || search.downgraded === 'true';
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
+		const isDelayedDowngradeScheduled =
+			search.delayed_downgrade_scheduled === true || search.delayed_downgrade_scheduled === 'true';
+		const intent = search.intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined;
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isUpgraded ? { upgraded: true } : {} ),
+			...( isCancelled ? { cancelled: true } : {} ),
+			...( isDowngraded ? { downgraded: true } : {} ),
+			...( isPlanChanged ? { plan_changed: true } : {} ),
+			...( isDelayedDowngradeScheduled ? { delayed_downgrade_scheduled: true } : {} ),
+			...( intent ? { intent } : {} ),
+		};
 	},
 } );
 
@@ -270,7 +340,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 
 		// Preload site and storage data for wpcom plans
-		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.site_slug && purchase.blog_id && ! purchase.is_attached_to_holding_site ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
@@ -370,41 +440,128 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
-		const purchase = loaderData?.purchase;
+	head: ( {
+		loaderData,
+	}: {
+		loaderData?: {
+			purchase?: Purchase;
+			intent?: CancelIntent;
+		};
+	} ) => {
+		// URL intent is authoritative; when absent, fall back to the flow-type
+		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
+		// the tab title tracks the same cancel/remove decision the screen uses.
+		const { purchase, intent = null } = loaderData ?? {};
+		const flowType = purchase
+			? getPurchaseCancellationFlowType( purchase )
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		const title =
-			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-				? __( 'Remove' )
-				: __( 'Cancel' );
+			getDisplayVariant( intent, flowType ) === 'remove' ? __( 'Remove' ) : __( 'Cancel' );
 		return {
-			meta: [
-				{
-					title,
-				},
-			],
+			meta: [ { title } ],
 		};
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	loader: async ( { parentMatchPromise } ) => {
+	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+		return {
+			...( search.intent === 'cancel' ||
+			search.intent === 'remove' ||
+			search.intent === 'auto-renew'
+				? { intent: search.intent }
+				: {} ),
+			...( typeof search.additionalPurchaseIds === 'string'
+				? { additionalPurchaseIds: search.additionalPurchaseIds }
+				: {} ),
+		};
+	},
+	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
+	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( ! purchase ) {
-			return { purchase: undefined };
+			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
-			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			...( hasQueryableSite( purchase )
+				? [
+						// `hasQueryableSite` only rules out holding sites. The owner can also
+						// have been removed from a real site — a disconnected Jetpack site, or a
+						// deleted one — and those requests 403. Load the flow without this data
+						// rather than failing the whole route (SHILL-1442).
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
+				  ]
+				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
-			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
-		return { purchase };
+		return { purchase, intent };
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
 		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
+	)
+);
+
+export const siteActionsRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: isSiteAction( params.action ) ? SITE_ACTION_TITLES[ params.action ] : '',
+			},
+		],
+	} ),
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'site-actions/$action',
+	parseParams: ( { action } ): { action: SiteAction } => ( {
+		action: action as SiteAction,
+	} ),
+	stringifyParams: ( { action } ) => ( { action } ),
+	beforeLoad: ( { params } ) => {
+		if ( ! isSiteAction( params.action ) ) {
+			throw dashboardRedirect( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: params.purchaseId },
+			} );
+		}
+	},
+	loader: async ( { parentMatchPromise, params: { action } } ) => {
+		const parentMatch = await parentMatchPromise;
+		const purchase = parentMatch.loaderData?.purchase;
+		if ( ! purchase ) {
+			throw dashboardRedirect( { to: purchasesRoute.fullPath } );
+		}
+
+		const allPurchases = await queryClient.ensureQueryData( userPurchasesQuery() );
+		const eligiblePurchases = getEligiblePurchases( allPurchases, purchase, action as SiteAction );
+
+		if ( purchase.is_attached_to_holding_site || eligiblePurchases.length <= 1 ) {
+			if ( action === 'renew' ) {
+				throw dashboardRedirect( { href: getRenewUrlForPurchases( [ purchase ] ) } );
+			}
+
+			let intent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+			if ( action === 'remove' ) {
+				intent = 'remove';
+			} else if ( action === 'auto-renew' ) {
+				intent = 'auto-renew';
+			}
+			throw dashboardRedirect( {
+				to: cancelPurchaseRoute.fullPath,
+				params: { purchaseId: String( purchase.ID ) },
+				search: { intent },
+			} );
+		}
+
+		return { action };
+	},
+} ).lazy( () =>
+	import( '../../me/billing-purchases/site-level-actions' ).then( ( d ) =>
+		createLazyRoute( 'site-level-actions' )( { component: d.default } )
 	)
 );
 
@@ -498,6 +655,9 @@ export const securityIndexRoute = createRoute( {
 			queryClient.ensureQueryData( accountRecoveryQuery() ),
 			queryClient.ensureQueryData( connectedApplicationsQuery() ),
 			queryClient.ensureQueryData( sshKeysQuery() ),
+			...( isEnabled( 'me/legacy-contact' )
+				? [ queryClient.ensureQueryData( legacyContactsQuery() ) ]
+				: [] ),
 		] );
 	},
 } ).lazy( () =>
@@ -583,7 +743,7 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getAppSetupTitle(),
 			},
 		],
 	} ),
@@ -607,7 +767,7 @@ export const securityTwoStepAuthSMSRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getSMSSetupTitle(),
 			},
 		],
 	} ),
@@ -712,6 +872,56 @@ export const securitySocialLoginsRoute = createRoute( {
 	)
 );
 
+export const securityLegacyContactRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/legacy-contact',
+	loader: () => queryClient.ensureQueryData( legacyContactsQuery() ),
+} );
+
+export const securityLegacyContactIndexRoute = createRoute( {
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityLegacyContactPrintRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Legacy contact' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityLegacyContactRoute,
+	path: '/print',
+	loader: async () => {
+		const [ contact ] = await queryClient.ensureQueryData( legacyContactsQuery() );
+		if ( contact ) {
+			// The access key shown on this page is only returned by the
+			// single-contact endpoint, so prefetch it here.
+			await queryClient.ensureQueryData( legacyContactQuery( contact.legacy_contact_id ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/security-legacy-contact/print' ).then( ( d ) =>
+		createLazyRoute( 'security-legacy-contact-print' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const privacyRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -720,7 +930,7 @@ export const privacyRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
@@ -822,7 +1032,11 @@ export const notificationsExtrasRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/extras',
-	loader: () => queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {
@@ -839,11 +1053,151 @@ export const blockedSitesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'blocked-sites',
 } ).lazy( () =>
 	import( '../../me/blocked-sites' ).then( ( d ) =>
 		createLazyRoute( 'blocked-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const hostingDashboardRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New hosting dashboard' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'hosting-dashboard',
+	beforeLoad: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		if ( ! isOptInToggleVisible( preferences[ 'hosting-dashboard-opt-in' ], user?.ID ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/hosting-dashboard' ).then( ( d ) =>
+		createLazyRoute( 'hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const appearanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Appearance' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'appearance',
+	beforeLoad: async ( { context } ) => {
+		if (
+			! context.config.supports.darkMode ||
+			! context.config.supports.colorScheme ||
+			isDashboardBackport()
+		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+
+		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+
+		if ( ! isEnabled( 'dashboard/dark-mode-rollout' ) && ! hasUsedColorScheme ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/appearance' ).then( ( d ) =>
+		createLazyRoute( 'appearance' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Account defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -867,18 +1221,92 @@ export const appsRoute = createRoute( {
 	)
 );
 
-export const mcpRoute = createRoute( {
+export const mcpLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+	},
+} );
+
+export const privacyLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'privacy',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/privacy' } );
+	},
+} );
+
+export const blockedSitesLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/blocked-sites' } );
+	},
+} );
+
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/account' } );
+	},
+} );
+
+const validateAgentConnectionSearch = (
+	search: Record< string, unknown >
+): {
+	pair_token?: string;
+	slack?: string;
+	telegram_id?: string;
+	token?: string;
+	ts?: string;
+	bot?: string;
+} => ( {
+	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+	...( typeof search.token === 'string' ? { token: search.token } : {} ),
+	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+} );
+
+export const agentRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Account Settings' ),
+				title: __( 'WordPress Agent' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
+	path: 'agent',
+	validateSearch: validateAgentConnectionSearch,
+	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
+} ).lazy( () =>
+	import( '../../me/agent' ).then( ( d ) =>
+		createLazyRoute( 'agent' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI and MCP' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 
@@ -911,12 +1339,114 @@ export const mcpSetupRoute = createRoute( {
 	)
 );
 
+export const mcpMcpSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add MCP to specific sites' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'mcp-sites',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/mcp-sites' ).then( ( d ) =>
+		createLazyRoute( 'mcp-mcp-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpReadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Read' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'read',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/read' ).then( ( d ) =>
+		createLazyRoute( 'mcp-read' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpWriteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Write' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/write' ).then( ( d ) =>
+		createLazyRoute( 'mcp-write' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
+	if ( config.supports.reader ) {
+		preferencesChildren.push( blockedSitesRoute );
+	}
+	if ( config.optIn ) {
+		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
+	}
+	if ( config.supports.darkMode && config.supports.colorScheme ) {
+		preferencesChildren.push( appearanceRoute );
+	}
+	if ( isEnabled( 'mcp-settings' ) ) {
+		preferencesChildren.push(
+			mcpRoute.addChildren( [
+				mcpIndexRoute,
+				mcpSetupRoute,
+				mcpMcpSitesRoute,
+				mcpReadRoute,
+				mcpWriteRoute,
+			] )
+		);
+	}
+	const meRoutes: AnyRoute[] = [
+		meIndexRoute,
+		accountRoute,
+		preferencesChildren.length > 0
+			? preferencesRoute.addChildren( preferencesChildren )
+			: preferencesRoute,
+		mcpLegacyRedirectRoute,
+		privacyLegacyRedirectRoute,
+		blockedSitesLegacyRedirectRoute,
+		profileLegacyRedirectRoute,
+	];
 
 	meRoutes.push(
 		billingRoute.addChildren( [
@@ -936,6 +1466,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
+					siteActionsRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
@@ -959,6 +1490,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 				: [] ),
 			securityConnectedAppsRoute,
 			securitySocialLoginsRoute,
+			...( isEnabled( 'me/legacy-contact' )
+				? [
+						securityLegacyContactRoute.addChildren( [
+							securityLegacyContactIndexRoute,
+							securityLegacyContactPrintRoute,
+						] ),
+				  ]
+				: [] ),
 		] )
 	);
 
@@ -972,20 +1511,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		] )
 	);
 
-	if ( config.supports.me.privacy ) {
-		meRoutes.push( privacyRoute );
-	}
-
-	if ( config.supports.reader ) {
-		meRoutes.push( blockedSitesRoute );
+	if ( config.supports.me.apps ) {
+		meRoutes.push( appsRoute );
 	}
 
 	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
-	}
-
-	if ( config.supports.me.apps ) {
-		meRoutes.push( appsRoute );
+		meRoutes.push( agentRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

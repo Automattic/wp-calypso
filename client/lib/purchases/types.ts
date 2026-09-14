@@ -1,5 +1,6 @@
 import { Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { type JSX } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { ResponseDomain } from '../domains/types';
 

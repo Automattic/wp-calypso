@@ -1,13 +1,15 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import { isOnboardingFlow } from '@automattic/onboarding';
-import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
-import { sectionify } from 'calypso/lib/route';
+import {
+	getLegacyPlanFlowRedirect,
+	shouldRedirectLegacyPlanFlow,
+} from 'calypso/lib/signup/legacy-plan-flows';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -40,11 +42,6 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-/**
- * Constants
- */
-const basePageTitle = 'Signup'; // used for analytics, doesn't require translation
-
 /**
  * Module variables
  */
@@ -108,6 +105,19 @@ export default {
 		}
 
 		next();
+	},
+
+	// The server redirect only sees hard navigations; `/start` is also a client route, so an
+	// in-app link reaches this router instead. Runs before anything touches signup state so
+	// the hand-off to Stepper leaves nothing half-written behind.
+	redirectLegacyPlanFlow( context, next ) {
+		const { flowName, lang } = context.params;
+
+		if ( ! shouldRedirectLegacyPlanFlow( flowName ) ) {
+			return next();
+		}
+
+		window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
 	},
 
 	async redirectToFlow( context, next ) {
@@ -213,14 +223,11 @@ export default {
 
 	async start( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
-		const basePath = sectionify( context.path );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
-			flowName,
-			userLoggedIn
-		);
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
+			flows.getFlow( flowName, userLoggedIn );
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
@@ -236,12 +243,6 @@ export default {
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
-
-		const params = {
-			flow: flowName,
-		};
-
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
@@ -263,13 +264,13 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// Hydrate the store with domains dependencies from session storage,
-		// only in the onboarding flow.
+		// Hydrate the store with domains dependencies from session storage so re-entering via
+		// browser back from checkout skips the domains step instead of recreating the site.
 		const domainsDependencies = getDomainsDependencies();
 		if (
 			domainsDependencies &&
 			isManageSiteFlow &&
-			flowName === 'onboarding' &&
+			persistsDomainsOnReEntry &&
 			stepName !== 'domains'
 		) {
 			const { step, dependencies } = JSON.parse( domainsDependencies );
@@ -290,7 +291,7 @@ export default {
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		const localeSlug = context.params.lang;
-		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup dependency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
 		const themeType = query && query.theme_type;
 		const styleVariation = query && query.style_variation;
@@ -322,6 +323,13 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
+		if ( 'launch-site' === flowName ) {
+			// The dependency store persists between visits, and `redirect_to` is optional, so an
+			// abandoned launch would otherwise decide where the next one leaves the user. Re-read it
+			// from the query the flow was entered with.
+			context.store.dispatch( updateDependencies( { redirect_to: query?.redirect_to ?? null } ) );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -346,7 +354,7 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 		let siteIdOrSlug;
 
-		if ( 'woocommerce-install' === flowName ) {
+		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
 			// forces query precedence on woocommerce-install
 			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
 		} else {

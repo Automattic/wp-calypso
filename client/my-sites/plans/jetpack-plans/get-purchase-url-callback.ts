@@ -1,4 +1,5 @@
 import { getCurrentUser, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
@@ -55,9 +56,12 @@ export function buildCheckoutURL(
 		}
 	}
 	// host maybe needed in either siteless or userless checkout below
+	// `config( 'port' )` is only read inside the development branch because in
+	// Odyssey dev builds the config accessor throws (rather than returning
+	// undefined) for keys absent from the filtered production config.
 	const host =
 		'development' === urlQueryArgs.calypso_env
-			? 'http://calypso.localhost:3000'
+			? `http://calypso.localhost:${ config( 'port' ) ?? 3000 }`
 			: 'https://wordpress.com';
 
 	// siteless checkout

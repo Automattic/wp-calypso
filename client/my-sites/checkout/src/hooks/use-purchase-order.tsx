@@ -26,6 +26,7 @@ export type PurchaseOrderStatus =
 	| 'error'
 	| 'processing'
 	| 'async-pending'
+	| 'payment-confirmed'
 	| 'payment-failure'
 	| 'success';
 type OrderTransactionStatus =
@@ -41,6 +42,14 @@ export interface RawOrder {
 	user_id: number;
 	receipt_id: number | undefined;
 	processing_status: PurchaseOrderStatus;
+	/**
+	 * On a Stripe `payment-failure`, the backend returns a customer-facing
+	 * failure code and an already-translated message, matching what synchronous
+	 * card failures return. Both are absent on non-Stripe or non-failure orders.
+	 * See SHILL-1811.
+	 */
+	error_code?: string;
+	error_message?: string;
 }
 
 function transformPurchaseOrderStatusToOrderTransactionStatus(
@@ -52,6 +61,8 @@ function transformPurchaseOrderStatusToOrderTransactionStatus(
 		case 'processing':
 			return PROCESSING;
 		case 'async-pending':
+			return ASYNC_PENDING;
+		case 'payment-confirmed':
 			return ASYNC_PENDING;
 		case 'payment-failure':
 			return FAILURE;
@@ -122,6 +133,9 @@ function isOrderComplete( order: undefined | OrderTransaction ): boolean {
 		return false;
 	}
 	if ( order.processingStatus === PROCESSING ) {
+		return false;
+	}
+	if ( order.processingStatus === ASYNC_PENDING ) {
 		return false;
 	}
 	return true;

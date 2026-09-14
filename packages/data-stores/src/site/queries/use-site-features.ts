@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { SiteFeatures } from '../types';
 

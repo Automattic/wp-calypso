@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .sidebar {
 	// Setting the position and clearing some
 	// margins and paddings.
@@ -38,7 +41,7 @@
 		list-style: none;
 	}
 
-	.count {
+	.a8c-count {
 		margin-left: 8px;
 		background-color: var(--color-sidebar-menu-hover-background);
 		border-color: var(--color-sidebar-menu-hover-background);
@@ -74,7 +77,7 @@
 .sidebar__menu-icon {
 	fill: var(--color-sidebar-gridicon-fill);
 	color: var(--color-sidebar-gridicon-fill);
-	margin-right: 11px;
+	margin-right: 8px;
 	flex-shrink: 0;
 }
 
@@ -144,7 +147,7 @@
 			fill: var(--color-sidebar-menu-hover-text);
 		}
 
-		.count {
+		.a8c-count {
 			border-color: var(--color-sidebar-menu-hover-text);
 		}
 	}
@@ -177,7 +180,7 @@
 			fill: var(--color-sidebar-menu-selected-text);
 		}
 
-		.count {
+		.a8c-count {
 			background-color: transparent;
 			border-color: var(--color-sidebar-menu-selected-text);
 			color: var(--color-sidebar-menu-selected-text);
@@ -242,7 +245,7 @@
 				fill: var(--color-sidebar-menu-hover-text);
 			}
 
-			.count {
+			.a8c-count {
 				background-color: transparent;
 				border-color: var(--color-sidebar-submenu-selected-text);
 				color: var(--color-sidebar-submenu-selected-text);
@@ -254,6 +257,18 @@
 		flex: 1 1 0;
 	}
 
+	.sidebar__actions-and-count {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-inline-start: 8px;
+		justify-content: flex-end;
+
+		.a8c-count {
+			margin-left: 0;
+		}
+	}
+
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
 		fill: var(--color-sidebar-gridicon-fill);
@@ -263,7 +278,7 @@
 		.sidebar__expandable-arrow {
 			transform: rotate(180deg);
 		}
-		.count {
+		.a8c-count {
 			background-color: transparent;
 			border-color: var(--color-sidebar-submenu-selected-text);
 			color: var(--color-sidebar-submenu-selected-text);

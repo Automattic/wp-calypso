@@ -68,15 +68,3 @@ export async function getStripeConfiguration( requestArgs ) {
 	debug( 'Stripe configuration', config );
 	return config;
 }
-
-export async function getRazorpayConfiguration( requestArgs ) {
-	const config = await wp.req.get( '/me/razorpay-configuration', requestArgs );
-	debug( 'RazorPay configuration', config );
-	return config;
-}
-
-export async function confirmRazorpayOrder( requestArgs ) {
-	const response = await wp.req.post( '/me/razorpay-confirm-payment', requestArgs );
-	debug( 'Razorpay order confirmation response', response );
-	return response;
-}

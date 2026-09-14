@@ -9,7 +9,7 @@ After a tour is shown, it is recorded in the user's [guided tours history](https
 
 In the following example, the tours `gdocsIntegrationTour` and `editorInsertMenu` were already seen by the user, so they won't be shown again.
 
-![Tour seen](./img/tour-seen.png)
+![Tour seen](./img/tour-seen.webp)
 
 Currently, there is no systematic way of clearing a user's history for debugging. One way you can clear it is by applying the [`clean-history.patch`](./patch/clean-history.patch) to your working tree.
 

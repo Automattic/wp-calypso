@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
 
 function findParsedFilter( filter, content ) {
 	const splitFilters = filter?.replace( 'subject:', '' )?.split( '+' ) || [];
@@ -16,6 +17,7 @@ function findParsedFilter( filter, content ) {
 
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
+	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 
 	/**
 	 * SEO content:
@@ -28,10 +30,16 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			recommended: {
 				all: {
 					title: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
-					header: translate( 'Find the perfect theme for your website' ),
-					description: translate(
-						'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
-					),
+					header: isThemeShowcaseModern
+						? translate( 'Beautiful themes for every idea' )
+						: translate( 'Find the perfect theme for your website' ),
+					description: isThemeShowcaseModern
+						? translate(
+								'Choose from thousands of free and premium themes to launch your blog, portfolio, store, or business—and customize every detail to make it your own.'
+						  )
+						: translate(
+								'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
+						  ),
 				},
 				free: {
 					title: translate( 'Free WordPress Themes' ),
@@ -898,7 +906,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				},
 			},
 		} ),
-		[ translate ]
+		[ isThemeShowcaseModern, translate ]
 	);
 
 	const parsedFilter =

@@ -187,15 +187,15 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 				return sprintf(
 					/* translators: %1$s Number of valid domains, %2$s: total price formatted */
 					__( 'Transfer %1$s domains for %2$s' ),
-					numberOfValidDomains,
-					formattedTotalPrice
+					String( numberOfValidDomains ),
+					String( formattedTotalPrice )
 				);
 			}
 
 			return sprintf(
 				/* translators: %s: total price formatted */
 				__( 'Transfer for %s' ),
-				formattedTotalPrice
+				String( formattedTotalPrice )
 			);
 		}
 

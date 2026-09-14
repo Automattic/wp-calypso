@@ -40,7 +40,7 @@ export default function AgencySettingsSummary( {
 					  }
 					: {
 							text: __( 'WordPress.com features enabled' ),
-							intent: 'info',
+							intent: 'informational',
 					  },
 			] }
 		/>

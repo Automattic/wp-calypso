@@ -1,12 +1,12 @@
 import { Step } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
-import { DEFAULT_PLAN_INTENT } from './lib/constants';
+import { DEFAULT_PLAN_INTENT, SESSION_KEY_PLAYGROUND_WOO_INTENT } from './lib/constants';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 import './style.scss';
@@ -21,20 +21,18 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
-	const [ pgIntent, setPgIntent ] = useState< string >( DEFAULT_PLAN_INTENT );
+	useEffect( () => {
+		if ( query.get( 'intent' ) === 'woocommerce' ) {
+			sessionStorage.setItem( SESSION_KEY_PLAYGROUND_WOO_INTENT, '1' );
+		}
+	}, [ query ] );
+
+	const isWooCommerceIntent =
+		query.get( 'intent' ) === 'woocommerce' ||
+		sessionStorage.getItem( SESSION_KEY_PLAYGROUND_WOO_INTENT ) === '1';
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
-	};
-
-	const fetchIntent = () => {
-		setPgIntent( DEFAULT_PLAN_INTENT ); // hardcode
-		const playgroundId = query.get( 'playground' );
-		if ( playgroundId ) {
-			const keyName = 'playground-plans-intent-' + playgroundId;
-			window.localStorage.setItem( keyName, DEFAULT_PLAN_INTENT );
-			window.localStorage.setItem( keyName + '-ts', String( Math.floor( Date.now() / 1000 ) ) );
-		}
 	};
 
 	const launchSite = async () => {
@@ -49,7 +47,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				flow,
 				step: 'playground',
 				blueprint: getBlueprintLabelForTracking( query ),
-				intent: pgIntent,
+				intent: DEFAULT_PLAN_INTENT,
 			} );
 
 			submit();
@@ -68,10 +66,11 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 						rightElement={
 							<Step.PrimaryButton
 								onClick={ launchSite }
-								onMouseEnter={ fetchIntent }
 								disabled={ isLaunching || ! readyForLaunch }
 							>
-								{ __( 'Launch on WordPress.com' ) }
+								{ isWooCommerceIntent
+									? __( 'Launch free trial' )
+									: __( 'Launch on WordPress.com' ) }
 							</Step.PrimaryButton>
 						}
 					/>
@@ -79,7 +78,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			>
 				<PlaygroundIframe
 					className="playground__onboarding-iframe"
-					playgroundClient={ playgroundClientRef.current }
+					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 					setPlaygroundClient={ setPlaygroundClient }
 				/>
 			</Step.PlaygroundLayout>

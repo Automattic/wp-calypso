@@ -27,19 +27,19 @@
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/agents-manager",
 		"prepack": "yarn run clean && yarn run build",
-		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/agents-manager.pot' && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
+		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --jobs 4 --output './dist/agents-manager.pot' && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/block-notes": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
+		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
-		"@wordpress/compose": "^7.23.0",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/i18n": "^6.13.0",
-		"@wordpress/plugins": "^7.23.0"
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/plugins": "^7.48.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -47,13 +47,16 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
+		"copy-webpack-plugin": "^10.2.4",
+		"postcss-prefix-selector": "^1.16.1",
+		"sass": "1.77.8",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/element": "^6.23.0",
-		"postcss": "^8.5.3",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
+		"postcss": "^8.5.15",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^5.0.1"

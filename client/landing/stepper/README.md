@@ -337,6 +337,98 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 1. Flow-specific styling should be done in a `style.scss` file put in the flow's folder. Each step should have the basic styling necessary to operate on its own.
 2. Steps should not do `if ( flow === 'X' ) do Y`. This is a very common pattern. It was a necessary evil before we introduced `useStepsProps`. But now, it's an unnecessary evil 😬
 
+#### Adding `accepts:` props to an existing step
+
+When a step is reusable in concept but rigid in practice (hardcoded copy, a fixed
+list of options, etc.), the right fix is usually to widen its `accepts:` type so
+flows can customize it without duplicating the step. Follow these rules so existing
+flows keep working unchanged:
+
+1. **Name props after their visible effect.** `headerText`, `hideUseMyDomainLink`,
+   `hideFreeDomainPromo`. No abbreviations. Avoid generic names like `options`
+   or `config`.
+2. **Make every prop optional, with defaults that reproduce today's behavior.**
+   A flow that doesn't pass anything must see exactly the same UI as before.
+   This is the load-bearing claim — it's how you keep dozens of existing flows
+   from regressing.
+3. **Apply the prop in every render branch.** Many steps have multiple render
+   paths (e.g. `shouldUseStepContainerV2 ? v2 : v1`). A prop wired in only one
+   branch is a latent bug — usually surfaces as "works in onboarding, broken
+   in the new flow."
+4. **Translate at the flow, not the step.** When a flow passes a `headerText`,
+   the flow's caller is responsible for translating it (`useTranslate()`,
+   `translate()`, etc.). The step's only job is to render the string it
+   receives. Step-side defaults still use `translate()` as today.
+5. **Don't touch `submits:`.** `accepts:` and `submits:` are independent.
+   Adding props to `accepts:` should never change the submit shape — if it
+   would, you're solving a different problem (a follow-up PR with broader
+   review).
+6. **Test the defaults and each prop.** One test that renders the step with
+   no props and asserts current behavior, then one test per prop that asserts
+   the override applied. Colocate the test under the step's `test/` folder.
+7. **Document the prop on the flow side.** When a flow opts into a prop via
+   `useStepsProps()`, the flow file is the canonical record of the customization.
+   Keep the README sketch above in mind: if a future maintainer can't tell
+   what the flow customizes just from reading the flow file, the prop is
+   misnamed.
+
+**Worked example.**
+
+- The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
+  (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
+  `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`
+  and `freeDomainPromoSubtitle` (copy overrides for that banner), `freeSubdomainTitle` and
+  `freeSubdomainButtonLabel` (copy overrides for the "Start free with %(domain)s" free-subdomain
+  skip card and its "Start Free" button — the title may keep the `%(domain)s` placeholder, which
+  the `@automattic/domain-search` package interpolates; these win over the per-flow default in
+  `getSkipSuggestionCopy`), `allowedTlds` (per-flow TLD filter that the URL `?tld=` query param
+  can override), and `freeForFirstYearTlds` (TLDs priced as free for the first year in suggestions
+  and the cart). All optional and default-safe; each is applied across all three render paths
+  (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`) — the
+  subdomain-copy props travel via the shared `config` object, which all three branches render. See
+  [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
+- `%(domain)s` is interpolated only on the free-subdomain card itself. A `?wow_funnel` request
+  hides that card (`hideFreeSubdomainSuggestion`) and renders a skip-only control that has no
+  subdomain to substitute, so a `freeSubdomainTitle` carrying the placeholder renders it
+  literally there.
+- The `unified-plans` (`plans`) step exposes `headerText` and `subHeaderText` (override the
+  per-intent header/subheader chains in `getHeaderText()` / `getSubheaderText()`), the
+  plan-visibility toggles `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`,
+  `hidePremiumPlan`, `hideEcommercePlan` and `hidePlanTypeSelector` (each OR-ed over today's
+  computed value, so passing nothing preserves the theme- and downgrade-based defaults),
+  `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
+  while the URL still wins once the user switches), `highlightLabelOverrides` (a
+  `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path), and `titleBadgeOverrides`
+  / `taglineOverrides` (both `{ [PlanSlug]: TranslateResult }` maps — the first overrides a plan's
+  `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
+  a plan's `tagline`, the line under the title, winning over the computed and experiment copy in
+  `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
+  field). All optional and default-safe. See
+  [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
+- The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
+  top-level "Log in" link in the V2 top bar / V1 footer — note the email-first account-step
+  variant keeps its own in-form "Have an account? Log in" link, and existing users can still sign
+  in via the social / email buttons regardless) and `allowedSocialServices` (restricts
+  which social sign-in providers are offered). This step is special: it is **auto-injected** by
+  `injectUserStepInSteps()` when a flow marks a step `requiresLoggedInUser`, so it is not in the
+  flow's `initialize()` array. Its props are therefore passed under the reserved `user` key of
+  `useStepsProps()` — the return type is widened with
+  `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>` so a flow can set them once. All
+  optional and default-safe. See
+  [`steps-repository/__user/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/__user/index.tsx).
+- The `processing` (`processing-step`) step exposes `loadingMessages` (a
+  `{ title: string; subtitle?: ReactNode; duration?: number }[]` override for the rotating
+  loading-carousel copy — the "Laying the foundations" / "Turning on the lights" / … sequence).
+  When a flow passes it via `useStepsProps()` it replaces the default per-flow / per-intent carousel
+  computed by `useProcessingLoadingMessages`; omitting it preserves today's messages. `duration` is
+  optional; `useLoadingMessageIndex` holds a message for 5s when it omits a usable duration. The
+  override applies to both the V2 `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
+  newsletter / update-design) and hundred-year processing screens short-circuit earlier and keep
+  their own dedicated copy, so they are intentionally out of scope. The pre-existing `title` /
+  `subtitle` props still override the single visible frame and win over the carousel. See
+  [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
+
 #### Renaming steps
 
 There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to [`getStepOldSlug`](client/landing/stepper/declarative-flow/helpers/get-step-old-slug.ts) mapping. This ensures that tracks events will fire with both the new step slug and the old step slug.
@@ -431,3 +523,7 @@ const YourStep: Step< {
 ## Help and feedback
 
 Please feel free to reach out to Team T-Rex, or post in `#dotcom-stepper` for any feedback or if you need help.
+
+## Preloading
+
+Stepper uses the order of the steps in the steps array of your flow as a signal to preload steps before the user lands at them. Sort your steps as closely as possible to expected user behavior.

@@ -7,7 +7,9 @@ import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import type { Activity, ActivityDescription } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn( () => '' ) );
+jest.mock( '@automattic/calypso-config', () =>
+	jest.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) )
+);
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn( () => false ) );
 
@@ -191,7 +193,7 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Example' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/reader/blogs/123/posts/77' );
+		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/reader/blogs/123/posts/77' );
 	} );
 
 	it( 'renders comment links with anchors', () => {
@@ -259,7 +261,7 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Example' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/theme/example/example.com' );
+		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/theme/example/example.com' );
 	} );
 
 	it( 'renders external theme links with target and rel attributes', () => {
@@ -306,6 +308,6 @@ describe( 'ActivityEvent', () => {
 		render( <ActivityEvent activity={ activity } /> );
 
 		const link = screen.getByRole( 'link', { name: 'backup' } );
-		expect( link.getAttribute( 'href' ) ).toBe( '/backup/site-slug' );
+		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/backup/site-slug' );
 	} );
 } );

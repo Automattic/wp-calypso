@@ -12,12 +12,14 @@ import {
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
+import type { SupportedLayouts } from '@wordpress/dataviews';
 import './style.scss';
 
 interface Props {
@@ -28,8 +30,6 @@ interface Props {
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
-
-const defaultLayouts = { table: {}, list: {} };
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
@@ -50,6 +50,13 @@ export default function PluginsListDataViews( {
 	const dispatch = useDispatch();
 	const isDesktopView = isDesktop();
 	const shouldUseListView = pluginSlug !== undefined || ! isDesktopView;
+
+	// In A4A, the list layout offers no benefit and hides vital information, so we restrict the
+	// available layouts to the one actually in use, which also removes the layout switcher option.
+	let defaultLayouts: SupportedLayouts = { table: {}, list: {} };
+	if ( isA8CForAgencies() ) {
+		defaultLayouts = shouldUseListView ? { list: {} } : { table: {} };
+	}
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
@@ -145,7 +152,7 @@ export default function PluginsListDataViews( {
 
 	useEffect( () => {
 		if ( dataViewsState.search !== initialSearch ) {
-			onSearch && onSearch( dataViewsState.search || '' );
+			onSearch?.( dataViewsState.search || '' );
 		}
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
 

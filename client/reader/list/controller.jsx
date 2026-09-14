@@ -1,0 +1,177 @@
+import AsyncLoad from 'calypso/components/async-load';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'calypso/reader/controller-helper';
+import { recordTrack } from 'calypso/reader/stats';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+
+const loadListManage = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+	);
+const loadList = () =>
+	import( /* webpackChunkName: "async-load-calypso-reader-list" */ 'calypso/reader/list' );
+
+const analyticsPageTitle = 'Reader';
+
+export const createList = ( context, next ) => {
+	const basePath = '/reader/list/new';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > Create`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_create_loaded' );
+
+	context.primary = (
+		<AsyncLoad require={ loadListManage } key="list-manage" isCreateForm placeholder={ null } />
+	);
+	next();
+};
+
+/**
+ * Returns a unique stream key for a list based on the owner and slug.
+ * @param {string} owner
+ * @param {string} slug
+ * @returns {string}
+ */
+export const getListStreamKey = ( owner, slug ) => {
+	return `list:${ JSON.stringify( { owner, slug } ) }`;
+};
+
+export const listListing = ( context, next ) => {
+	const basePath = '/reader/list/:owner/:slug';
+	const view = context.params.view || 'posts';
+	const fullAnalyticsPageTitle =
+		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
+	const mcKey = 'list';
+	const state = context.store.getState();
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack(
+		'calypso_reader_list_loaded',
+		{
+			list_owner: context.params.user,
+			list_slug: context.params.list,
+		},
+		{ pathnameOverride: getCurrentRoute( state ) }
+	);
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadList }
+			key={ 'list-' + context.params.user + '-' + context.params.list }
+			streamKey={ getListStreamKey( context.params.user, context.params.list ) }
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			view={ view }
+			trackScrollPage={ trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			placeholder={ null }
+		/>
+	);
+	next();
+};
+
+export const editList = ( context, next ) => {
+	const basePath = '/reader/list/:owner/:slug/edit';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_edit_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadListManage }
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			selectedSection="details"
+			placeholder={ null }
+		/>
+	);
+	next();
+};
+
+export const editListItems = ( context, next ) => {
+	const basePath = '/reader/list/:owner/:slug/edit/items';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Items`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_edit_items_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadListManage }
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			selectedSection="items"
+			placeholder={ null }
+		/>
+	);
+	next();
+};
+
+export const exportList = ( context, next ) => {
+	const basePath = '/reader/list/:owner/:slug/export';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Export`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_export_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadListManage }
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			selectedSection="export"
+			placeholder={ null }
+		/>
+	);
+	next();
+};
+
+export const deleteList = ( context, next ) => {
+	const basePath = '/reader/list/:owner/:slug/delete';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Delete`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_delete_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadListManage }
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			selectedSection="delete"
+			placeholder={ null }
+		/>
+	);
+	next();
+};

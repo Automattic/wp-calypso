@@ -23,7 +23,7 @@
 		"teamcity:build-app": "yarn run build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/blaze-dashboard/v1",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
-		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/blaze-dashboard-strings.pot' && build-app-languages --stringsFilePath='./dist/blaze-dashboard-strings.pot'"
+		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --jobs 4 --output './dist/blaze-dashboard-strings.pot' && build-app-languages --stringsFilePath='./dist/blaze-dashboard-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
@@ -33,12 +33,13 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.1.0",
+		"@automattic/number-formatters": "^1.2.0",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^30.9.0",
-		"@wordpress/data": "^10.23.0",
-		"@wordpress/element": "^6.23.0",
-		"@wordpress/icons": "^10.23.0",
+		"@wordpress/admin-ui": "^2.3.0",
+		"@wordpress/components": "^37.0.0",
+		"@wordpress/data": "^10.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/icons": "^13.3.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.1",
@@ -54,7 +55,6 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
@@ -67,9 +67,8 @@
 		"autoprefixer": "^10.4.21",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",
-		"lodash": "^4.17.21",
 		"path-browserify": "^1.0.1",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}

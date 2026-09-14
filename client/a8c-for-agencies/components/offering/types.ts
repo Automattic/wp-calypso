@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 export type OfferingCardProps = {
 	title: string;
 	description: string;

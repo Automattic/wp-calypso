@@ -1,0 +1,22 @@
+// The preview lists are read-only, but the DataViews list layout renders a
+// clickable selection overlay and applies an accent-colored hover to each row.
+// Neutralize both so the rows look static (same intent as the Site overview's
+// Latest activity card).
+.referrals-preview-list-card {
+	.dataviews-view-list {
+		button.dataviews-view-list__item {
+			display: none;
+		}
+
+		div[role="row"]:not(.is-selected):hover {
+			color: inherit;
+			background-color: transparent;
+
+			.dataviews-view-list__title-field,
+			.dataviews-title-field,
+			.dataviews-view-list__fields {
+				color: inherit;
+			}
+		}
+	}
+}

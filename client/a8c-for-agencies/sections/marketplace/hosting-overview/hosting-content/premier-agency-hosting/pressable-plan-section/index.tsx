@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -18,8 +17,7 @@ import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
@@ -111,8 +109,6 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
-	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
-
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
 			return [];
@@ -122,8 +118,7 @@ export default function PressablePlanSection( {
 			return pressablePlans.filter(
 				( plan ) =>
 					plan.slug.startsWith( 'pressable-signature-' ) ||
-					( isEnabled( 'a4a-pressable-premium-plans' ) &&
-						plan.slug.startsWith( 'pressable-premium-' ) )
+					plan.slug.startsWith( 'pressable-premium-' )
 			);
 		}
 
@@ -281,7 +276,6 @@ export default function PressablePlanSection( {
 	const isCustomPlan = ! selectedPlan;
 
 	const hasNewPremiumPlans =
-		isBDBillingSystem &&
 		isReferralMode &&
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
@@ -321,10 +315,10 @@ export default function PressablePlanSection( {
 					<p>
 						{ areSignaturePlans || isStandardPlan
 							? translate(
-									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
 							  )
 							: translate(
-									'With Enterprise Plans, your traffic & storage limits are shared amongst your total sites.'
+									'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
 							  ) }
 					</p>
 				) }

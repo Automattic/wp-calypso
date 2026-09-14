@@ -1,4 +1,3 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -8,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
@@ -18,8 +17,11 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
+import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
+import getSuccessRedirectUrl from './lib/get-success-redirect-url';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -34,11 +36,13 @@ function BillingDragonCheckoutContent( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
@@ -187,6 +191,7 @@ function BillingDragonCheckoutContent( {
 						isA4ASitelessCheckout: true,
 						agency_id: agency.id,
 						cart_item_index: cartItemIndex++,
+						...( product.site_domain ? { a4a_pressable_site_domain: product.site_domain } : {} ),
 					},
 				};
 				debug( '[A4A Checkout] Processing product to add: ', product_cart );
@@ -248,7 +253,11 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/purchases/licenses' }
+				redirectTo={ getSuccessRedirectUrl(
+					window.location.origin,
+					shouldClearCartOnSuccess && ! isPlanCheckout,
+					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+				) }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
@@ -262,11 +271,13 @@ export default function BillingDragonCheckout( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -276,15 +287,15 @@ export default function BillingDragonCheckout( {
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+				<CartMessageCleanup />
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<BillingDragonCheckoutContent
-							cartItems={ cartItems }
-							withA8cLogo={ withA8cLogo }
-							siteSlug={ siteSlug }
-							planSlug={ planSlug }
-						/>
-					</RazorpayHookProvider>
+					<BillingDragonCheckoutContent
+						cartItems={ cartItems }
+						withA8cLogo={ withA8cLogo }
+						siteSlug={ siteSlug }
+						planSlug={ planSlug }
+						shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
+					/>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</CheckoutErrorBoundary>

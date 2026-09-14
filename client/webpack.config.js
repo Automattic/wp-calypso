@@ -26,7 +26,6 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
-const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
@@ -47,6 +46,7 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
+const shouldBuildRtlCss = ! isDevelopment || process.env.BUILD_RTL_CSS === 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -77,6 +77,51 @@ if ( ! sourceMapType && shouldCreateSentryRelease ) {
 } else if ( ! sourceMapType && isDevelopment ) {
 	sourceMapType = 'eval';
 }
+
+const webpackCacheBuildDependencies = [
+	__filename,
+	// Top-level config inputs that change compilation behavior
+	path.resolve( __dirname, '../package.json' ),
+	path.resolve( __dirname, '../babel.config.js' ),
+	// Config modules used by this webpack config
+	require.resolve( './webpack.common' ),
+	require.resolve( './server/config' ),
+	// Local build tools that influence compilation
+	require.resolve( '../build-tools/babel/babel-loader-cache-identifier' ),
+	require.resolve( '../build-tools/webpack/assets-writer-plugin.js' ),
+	require.resolve( '../build-tools/webpack/generate-chunks-map-plugin' ),
+	require.resolve( '../build-tools/webpack/require-chunk-callback-plugin' ),
+	require.resolve( '../build-tools/webpack/sections-loader' ),
+	// Workspace config helper modules used to build rules/plugins
+	require.resolve( '@automattic/calypso-build/webpack/file-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-runtime-full-hash' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-with-rtl' ),
+	require.resolve( '@automattic/calypso-build/webpack/minify' ),
+	require.resolve( '@automattic/calypso-build/webpack/sass' ),
+	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
+	require.resolve( '@automattic/calypso-build/webpack/util' ),
+	// Dependency graph changes
+	path.resolve( __dirname, '../yarn.lock' ),
+	path.resolve( __dirname, '../.yarnrc.yml' ),
+];
+
+const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
+const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
+
+// Inputs that should invalidate a cache flavor.
+const webpackCacheVersion = JSON.stringify( {
+	bundleEnv,
+	nodeEnv: process.env.NODE_ENV || null,
+	calypsoEnv: process.env.CALYPSO_ENV || null,
+	buildChunksMap: shouldBuildChunksMap,
+	minify: shouldMinify,
+	entryLimit: process.env.ENTRY_LIMIT || null,
+	sectionLimit: process.env.SECTION_LIMIT || null,
+	emitStats: shouldEmitStats,
+	concatenateModules: shouldConcatenateModules,
+	hotReload: shouldHotReload,
+	profile: shouldProfile,
+} );
 
 if ( shouldCreateSentryRelease ) {
 	console.log(
@@ -150,8 +195,11 @@ if ( isDevelopment ) {
 	outputChunkFilename = '[name].js';
 }
 
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const cssFilename = cssNameFromFilename( outputFilename ).replace( '[contenthash]', '[chunkhash]' );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename ).replace(
+	'[contenthash]',
+	'[chunkhash]'
+);
 
 const outputDir = path.resolve( '.' );
 
@@ -187,6 +235,7 @@ const webpackConfig = {
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
+		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
 		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
@@ -218,6 +267,14 @@ const webpackConfig = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
@@ -236,7 +293,6 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -244,19 +300,6 @@ const webpackConfig = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				// Since `prelude` string will be appended to each Sass file
-				// We need to ensure that the import path (inside a sass file) is a posix path, regardless of the OS/platform
-				// Final result should be something like `@use 'client/assets/stylesheets/shared/_utils.scss' as *;`
-				prelude: `@use '${
-					path
-						// Path, relative to Node CWD
-						.relative(
-							process.cwd(),
-							path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' )
-						)
-						.split( path.sep ) // Break any path (posix/win32) by path separator
-						.join( path.posix.sep ) // Convert the path explicitly to posix to ensure imports work fine
-				}' as *;`,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -276,7 +319,7 @@ const webpackConfig = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: Object.assign( {
@@ -294,9 +337,6 @@ const webpackConfig = {
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
-		fallback: {
-			stream: require.resolve( 'stream-browserify' ),
-		},
 	},
 	node: false,
 	plugins: [
@@ -322,6 +362,7 @@ const webpackConfig = {
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
+			rtl: shouldBuildRtlCss,
 		} ),
 		new AssetsWriter( {
 			filename: `assets.json`,
@@ -383,8 +424,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
-
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
 			new SentryCliPlugin( {
@@ -397,13 +436,15 @@ const webpackConfig = {
 				errorHandler: ( err, invokeErr, compilation ) => {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+					console.error( 'Sentry CLI Plugin Error:', err.message );
+					console.error( 'Sentry Full error:', err );
 				},
 			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
 				overlay: false,
-				exclude: [ /node_modules/, /devdocs/ ],
+				exclude: [ /node_modules/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
@@ -412,24 +453,23 @@ const webpackConfig = {
 		? {
 				cache: {
 					type: 'filesystem',
+					name: webpackCacheName,
 					buildDependencies: {
-						config: [ __filename ],
+						config: webpackCacheBuildDependencies,
 					},
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
-					profile: true,
-					version: [
-						// No need to add BROWSERSLIST, as it is already part of the cacheDirectory
-						shouldBuildChunksMap,
-						shouldMinify,
-						process.env.ENTRY_LIMIT,
-						process.env.SECTION_LIMIT,
-						process.env.NODE_ENV,
-						process.env.CALYPSO_ENV,
-					].join( '-' ),
+					profile: shouldProfile,
+					version: webpackCacheVersion,
+					readonly: shouldUseReadonlyCache,
+					compression: 'brotli',
 				},
-				infrastructureLogging: {
-					debug: /webpack\.cache/,
-				},
+				...( shouldProfile
+					? {
+							infrastructureLogging: {
+								debug: /webpack\.cache/,
+							},
+					  }
+					: {} ),
 				snapshot: {
 					managedPaths: [
 						path.resolve( __dirname, '../node_modules' ),

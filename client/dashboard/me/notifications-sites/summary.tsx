@@ -3,10 +3,12 @@ import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
 import { notificationsSitesRoute } from '../../app/router/me';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export const NotificationsSitesSummary = () => {
+export const NotificationsSitesSummary = ( { density }: { density?: Density } ) => {
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to={ notificationsSitesRoute.fullPath }
 			title={ __( 'Sites' ) }
 			description={ __(

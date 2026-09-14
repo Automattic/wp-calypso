@@ -4,7 +4,6 @@ import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
@@ -30,7 +29,6 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 
 	const dispatch = useDispatch();
 	useEffect( () => {
-		recordLogRocketEvent( 'calypso_jetpack_backup_in_progress' );
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_in_progress' ) );
 	}, [ dispatch ] );
 

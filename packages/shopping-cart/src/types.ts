@@ -493,7 +493,12 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
-	next_domain_condition: '' | 'blog';
+	/**
+	 * Comma-separated TLD allow-list the free-domain credit applies to ('' means no restriction).
+	 * The listed literals document known values for autocomplete; `string & {}` keeps the type from
+	 * collapsing to plain `string` so new backend values don't require a type change here.
+	 */
+	next_domain_condition: '' | 'blog' | 'blog,art' | ( string & {} );
 	bundled_domain?: string;
 
 	/**
@@ -859,6 +864,14 @@ export type DomainLegalAgreementTitle = string;
 export type DomainLegalAgreements = Record< DomainLegalAgreementUrl, DomainLegalAgreementTitle >;
 
 /**
+ * A bundled domain product's role within its domain bundle.
+ *
+ * The `primary` product is the SLD the user searched for; `companion` products are
+ * the additional TLDs offered as part of the bundle.
+ */
+export type DomainBundleRole = 'primary' | 'companion';
+
+/**
  * Miscellaneous data attached to the shopping cart item.
  */
 export interface ResponseCartProductExtra {
@@ -875,6 +888,49 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
+
+	/**
+	 * Domain bundle fields. Present only on domain products that belong to a
+	 * domain bundle (the "intelligent bundle recommender" feature). All four are
+	 * optional and absent on non-bundled products.
+	 *
+	 * These names are a contract with the wpcom backend cart validator — they must
+	 * match the snake_case names it reads/writes exactly. See DOMAINS-2164.
+	 */
+
+	/**
+	 * Server-issued identifier shared by every domain product in the same bundle.
+	 * The backend issues this at suggestion time and verifies it before applying
+	 * any bundle discount or all-or-nothing logic; the client never mints it.
+	 */
+	domain_bundle_group_id?: string;
+
+	/**
+	 * This product's role within its bundle. The `primary` is the searched SLD;
+	 * `companion` products are the additional bundled TLDs.
+	 */
+	domain_bundle_role?: DomainBundleRole;
+
+	/**
+	 * The bundle discount as a percentage, for display only. The backend
+	 * recomputes the actual discount from its catalogue on every cart sync and
+	 * overwrites this value; never use it for price math on the client.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` before display.
+	 */
+	domain_bundle_discount_percent?: string;
+
+	/**
+	 * The number of domain products the bundle is expected to contain. Used by the
+	 * backend all-or-nothing invariant to detect a partially-removed bundle.
+	 *
+	 * Typed as a string because cart `extra` round-trips numeric values as
+	 * strings; coerce with `Number()` if you need to compare counts.
+	 */
+	expected_bundle_size?: string;
+
+	is_art_promo?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -896,6 +952,12 @@ export interface ResponseCartProductExtra {
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
+
+	/**
+	 * A4A Pressable PHP Memory add-on target domain.
+	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
+	 */
+	a4a_pressable_site_domain?: string;
 
 	/**
 	 * Marketplace properties
@@ -931,6 +993,7 @@ export type SitelessCheckoutType =
 	| 'marketplace'
 	| 'a4a'
 	| 'unified'
+	| 'wpcom'
 	| undefined;
 
 /**
@@ -961,6 +1024,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 */
 	isUnifiedSitelessCheckout?: boolean;
 
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
+	 */
+	isWpcomSitelessCheckout?: boolean;
+
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
@@ -981,6 +1049,16 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	privacy_available?: boolean;
 	privacy?: boolean;
 	selected_page_titles?: string[];
+	/**
+	 * Ordered list of DIFM-selected page instances captured in page picker.
+	 * Each array item represents one selected page tile:
+	 * - id: unique instance identifier for this selection (for example CUSTOM_PAGE, CUSTOM_PAGE_2)
+	 * - type: canonical page type used by downstream logic (for example CUSTOM_PAGE, SERVICES_PAGE)
+	 *
+	 * The array order matches user selection/display order and is used to initialize
+	 * website-content sections without collisions when multiple pages share the same type.
+	 */
+	selected_page_instances?: Array< { id: string; type: string } >;
 	site_title?: string;
 	signup_flow?: string;
 	import_dns_records?: boolean;
@@ -1006,13 +1084,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 *
 	 */
 	hosting_intent?: string;
-
-	/**
-	 * Indicates the user was in a treatment variation of the pricing
-	 * differentiation experiment (calypso_pricing_differentiation_202601_v1).
-	 * Used to add the `gating-business-q1` blog sticker on purchase.
-	 */
-	is_gating_business_q1?: boolean;
 }
 
 export interface GSuiteProductUser {
@@ -1053,6 +1124,7 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1072,6 +1144,11 @@ export type FrDomainContactExtraDetails = {
 	registrantVatId?: string;
 	trademarkNumber?: string;
 	sirenSiret?: string;
+};
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
 };
 
 export interface TermsOfServiceRecord {

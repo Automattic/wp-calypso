@@ -4,10 +4,9 @@ import { useEffect } from 'react';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
-import withDimensions from 'calypso/lib/with-dimensions';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSite } from 'calypso/reader/data/site';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -15,9 +14,7 @@ import Stream from 'calypso/reader/stream';
 import FeedStreamSidebar from 'calypso/reader/stream/site-feed-sidebar';
 import { useSelector } from 'calypso/state';
 import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
 
 const emptyContent = () => <EmptyContent />;
@@ -25,8 +22,8 @@ const emptyContent = () => <EmptyContent />;
 const SiteStream = ( props ) => {
 	const { className = 'is-site-stream', siteId } = props;
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
-	const feed = useSelector( ( state ) => site && site.feed_ID && getFeed( state, site.feed_ID ) );
+	const { site, siteError } = useSite( siteId );
+	const { data: feed, isError: isFeedError } = useFeedQuery( site?.feed_ID );
 	const isBlocked = useSelector( ( state ) => isSiteBlocked( state, siteId ) );
 	const postCount = useSelector(
 		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
@@ -47,17 +44,18 @@ const SiteStream = ( props ) => {
 		return <SiteBlocked title={ title } siteId={ siteId } />;
 	}
 
-	if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
+	if ( siteError || ( site && site.is_error ) || isFeedError || ( feed && feed.is_error ) ) {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
-	const streamSidebar = () => (
+	const streamSidebar = ( isWideLayout ) => (
 		<FeedStreamSidebar
 			feed={ feed }
 			followerCount={ followerCount }
 			postCount={ postCount }
-			showFollow={ props.width > 900 }
+			isWideLayout={ isWideLayout }
 			site={ site }
+			streamKey={ props.streamKey }
 			tags={ siteTags.data }
 		/>
 	);
@@ -83,10 +81,8 @@ const SiteStream = ( props ) => {
 			/>
 			<ReaderFeedHeader site={ site } feed={ feed } streamKey={ props.streamKey } />
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
-			{ ! site && <QueryReaderSite siteId={ siteId } /> }
-			{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
 		</Stream>
 	);
 };
 
-export default withDimensions( SiteStream );
+export default SiteStream;

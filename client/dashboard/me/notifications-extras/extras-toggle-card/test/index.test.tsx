@@ -23,6 +23,7 @@ const defaultExtraSettings: Partial< WpcomNotificationSettings > = {
 	digest: false,
 	reports: false,
 	news_developer: false,
+	ai_tips: false,
 	scheduled_updates: false,
 };
 
@@ -72,6 +73,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Digests' ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Reports' ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Developer Newsletter' ) ).toBeVisible();
+		expect( screen.getByLabelText( 'AI Tips' ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
@@ -140,6 +142,7 @@ describe( 'ExtrasToggleCard', () => {
 				digest: true,
 				reports: true,
 				news_developer: true,
+				ai_tips: true,
 				scheduled_updates: true,
 			},
 			'subscribe-all'

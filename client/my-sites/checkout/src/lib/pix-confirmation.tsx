@@ -107,6 +107,7 @@ export function PixConfirmation( {
 	cancel,
 	isAkismet,
 	isJetpackNotAtomic,
+	isPixAutomatico,
 }: {
 	qrCode: string;
 	priceInteger: number;
@@ -114,6 +115,7 @@ export function PixConfirmation( {
 	cancel: () => void;
 	isAkismet: boolean;
 	isJetpackNotAtomic: boolean;
+	isPixAutomatico: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ hasCopied, setHasCopied ] = useState( false );
@@ -131,7 +133,9 @@ export function PixConfirmation( {
 			<button className="pix-confirmation__cancel" onClick={ () => cancel() }>
 				{ translate( 'Cancel' ) }
 			</button>
-			<h2 className="pix-confirmation__title">{ translate( 'Pay with Pix' ) }</h2>
+			<h2 className="pix-confirmation__title">
+				{ isPixAutomatico ? translate( 'Pay with Pix Automático' ) : translate( 'Pay with Pix' ) }
+			</h2>
 			<div className="pix-confirmation__content">
 				<p className="pix-confirmation__instructions">
 					{ translate(

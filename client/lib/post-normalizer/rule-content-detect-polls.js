@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import { forEach } from 'lodash';
 import { domForHtml } from './utils';
 
 const pollLinkSelectors = [
@@ -20,7 +19,7 @@ export default function detectPolls( post, dom ) {
 	// which contains the information we need, and replace it with a paragraph.
 	const noscripts = dom.querySelectorAll( 'noscript' );
 
-	forEach( noscripts, ( noscript ) => {
+	Array.from( noscripts ).forEach( ( noscript ) => {
 		if ( ! noscript.firstChild ) {
 			return;
 		}

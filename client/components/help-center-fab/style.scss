@@ -1,0 +1,111 @@
+// 44px matches Apple HIG's minimum tap target.
+
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+$help-center-fab-size: 44px;
+$help-center-fab-offset: 24px;
+$help-center-fab-bottom-bar-gap: 16px;
+$help-center-fab-gap: 8px;
+// Sits 16px above any persistent bottom bar (--bottom-bar-height); otherwise
+// clears the iOS home indicator with a 24px minimum from the viewport edge.
+$help-center-fab-inset-block-end: max(
+	calc( var( --bottom-bar-height, 0px ) + #{ $help-center-fab-bottom-bar-gap } ),
+	#{ $help-center-fab-offset },
+	env( safe-area-inset-bottom )
+);
+$help-center-fab-bg-default: color-mix(
+	in srgb,
+	var( --studio-blue-50 ) 10%,
+	var( --color-surface )
+);
+$help-center-fab-bg-hover: color-mix(
+	in srgb,
+	var( --studio-blue-50 ) 16%,
+	var( --color-surface )
+);
+$help-center-fab-bg-active: color-mix(
+	in srgb,
+	var( --studio-blue-50 ) 28%,
+	var( --color-surface )
+);
+$help-center-fab-shadow:
+	0 4px 4px color-mix( in srgb, var( --color-neutral-100 ) 1%, transparent ),
+	0 3px 3px color-mix( in srgb, var( --color-neutral-100 ) 2%, transparent ),
+	0 1px 2px color-mix( in srgb, var( --color-neutral-100 ) 2%, transparent ),
+	0 1px 1px color-mix( in srgb, var( --color-neutral-100 ) 3%, transparent );
+
+.components-button.help-center-fab {
+	position: fixed;
+	inset-block-end: $help-center-fab-inset-block-end;
+	// On the inline axis we max over both physical insets so the rule works the
+	// same in LTR and RTL — only one of them is ever non-zero (landscape notch
+	// on a single side).
+	inset-inline-end: max(
+		#{ $help-center-fab-offset },
+		env( safe-area-inset-left ),
+		env( safe-area-inset-right )
+	);
+	z-index: z-index( "root", ".help-center-fab" );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: $help-center-fab-size;
+	block-size: $help-center-fab-size;
+	padding: 0;
+	border: 1px solid color-mix( in srgb, var( --color-neutral-100 ) 10%, transparent );
+	border-radius: 50%;
+	background: $help-center-fab-bg-default;
+	color: var( --color-neutral-100 );
+	box-shadow: $help-center-fab-shadow;
+	transition:
+		background-color 0.15s ease-in-out,
+		border-color 0.15s ease-in-out,
+		inset-block-end 0.2s ease-in-out;
+
+	&:hover {
+		background: $help-center-fab-bg-hover;
+		border-color: color-mix( in srgb, var( --color-neutral-100 ) 14%, transparent );
+		// Override @wordpress/components Button's hover tint so the icon stays dark.
+		color: var( --color-neutral-100 );
+	}
+
+	&.is-active {
+		background: $help-center-fab-bg-active;
+		border-color: color-mix( in srgb, var( --color-neutral-100 ) 16%, transparent );
+		color: var( --color-neutral-100 );
+	}
+
+	// Override the @wordpress/components Button accent focus-ring box-shadow.
+	&:focus:not( :disabled ) {
+		box-shadow: $help-center-fab-shadow;
+	}
+
+	&:focus:not( :focus-visible ):not( :disabled ) {
+		outline: none;
+	}
+
+	&:focus-visible:not( :disabled ) {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+// Anchor the panel above the FAB by overriding the base `is-desktop`
+// rule (which pins `right: 50px; bottom: 50px` and runs a `slideIn`
+// animation `forwards`). `inset-inline-start: auto` clears the base's
+// physical `right` in RTL; we use only logical properties because the
+// CSS pipeline alphabetises declarations, so a physical `right: auto`
+// declared alongside `inset-inline-end` would clobber it in LTR.
+body.has-help-center-fab .help-center .help-center__container.is-desktop {
+	animation: none;
+	inset-inline-start: auto;
+	inset-inline-end: $help-center-fab-offset;
+	// Stay 8px above the FAB, mirroring its inset-block-end shift.
+	inset-block-end: calc(
+		#{ $help-center-fab-inset-block-end } + #{ $help-center-fab-size + $help-center-fab-gap }
+	);
+}

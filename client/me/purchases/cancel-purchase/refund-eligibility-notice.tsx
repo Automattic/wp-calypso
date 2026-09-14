@@ -1,37 +1,62 @@
-import { useTranslate } from 'i18n-calypso';
+import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import Notice from 'calypso/components/notice';
-import CancelPurchaseButton from './button';
-import type { CancelPurchaseButtonProps } from './button';
-import type moment from 'moment';
+import {
+	getRefundEligibilityPromoCopy,
+	getRefundNoticeCopy,
+} from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import type { Purchase } from '@automattic/api-core';
 
-interface RefundEligibilityNoticeProps {
+interface RefundEligibilityNoticeBaseProps {
 	refundAmount: string;
-	cancelButtonProps: CancelPurchaseButtonProps & { moment: typeof moment };
+	purchase: Purchase;
 }
 
-const RefundEligibilityNotice = ( {
-	refundAmount,
-	cancelButtonProps,
-}: RefundEligibilityNoticeProps ) => {
-	const translate = useTranslate();
+interface RefundEligibilityNoticeRefundEligibilityProps extends RefundEligibilityNoticeBaseProps {
+	mode?: 'refund-eligibility';
+}
+
+interface RefundEligibilityNoticeConfirmedProps extends RefundEligibilityNoticeBaseProps {
+	mode: 'confirmed';
+}
+
+type RefundEligibilityNoticeProps =
+	| RefundEligibilityNoticeRefundEligibilityProps
+	| RefundEligibilityNoticeConfirmedProps;
+
+const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
+	if ( props.mode === 'confirmed' ) {
+		return (
+			<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
+				<p className="cancel-purchase__refund-eligibility-text">
+					{ getRefundNoticeCopy( {
+						purchase: props.purchase,
+						refundAmount: props.refundAmount,
+					} ) }
+				</p>
+			</Notice>
+		);
+	}
+
+	const onRemoveClick = () => {
+		page( `${ window.location.pathname }?intent=remove` );
+	};
+
+	const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
+		refundAmount: props.refundAmount,
+	} );
 
 	return (
 		<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
 			<p className="cancel-purchase__refund-eligibility-text">
-				{ translate(
-					"You're eligible for a %(refundText)s refund if you remove your plan now. Your features will be unavailable right away.",
-					{
-						args: { refundText: refundAmount },
-						context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
-					}
-				) }{ ' ' }
-				<CancelPurchaseButton
-					{ ...cancelButtonProps }
-					textVariant="remove-plan-and-claim-refund"
-					isLinkStyle
-					isInline
-					cancelIntentOverride="refund"
-				/>
+				{ prompt }{ ' ' }
+				<Button
+					variant="link"
+					className="cancel-purchase__refund-eligibility-link"
+					onClick={ onRemoveClick }
+				>
+					{ linkLabel }
+				</Button>
 			</p>
 		</Notice>
 	);

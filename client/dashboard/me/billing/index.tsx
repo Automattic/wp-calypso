@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution, currencyDollar } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
@@ -13,6 +13,7 @@ import {
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import { getMonetizeSubscriptionsPageTitle } from '../billing-monetize-subscriptions/title';
 
 function Billing() {
@@ -33,7 +34,7 @@ function Billing() {
 				/>
 			}
 		>
-			<VStack spacing={ 4 }>
+			<SummaryButtonList>
 				<RouterLinkSummaryButton
 					title={ __( 'Active upgrades' ) }
 					description={ __(
@@ -42,20 +43,20 @@ function Billing() {
 					decoration={ <Icon icon={ receipt } /> }
 					to={ purchasesRoute.to }
 				/>
+				{ supportsBilling.monetizeSubscriptions ? (
+					<RouterLinkSummaryButton
+						title={ getMonetizeSubscriptionsPageTitle() }
+						description={ __( 'Manage memberships and donations from other WordPress.com sites.' ) }
+						decoration={ <Icon icon={ currencyDollar } /> }
+						to={ monetizeSubscriptionsRoute.to }
+					/>
+				) : null }
 				<RouterLinkSummaryButton
 					title={ __( 'Billing history' ) }
 					description={ __( 'View email receipts for past purchases.' ) }
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
 				/>
-				{ supportsBilling.monetizeSubscriptions && (
-					<RouterLinkSummaryButton
-						title={ getMonetizeSubscriptionsPageTitle() }
-						description={ __( 'Manage Monetize subscriptions.' ) }
-						decoration={ <Icon icon={ currencyDollar } /> }
-						to={ monetizeSubscriptionsRoute.to }
-					/>
-				) }
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage credit cards saved to your account.' ) }
@@ -68,7 +69,7 @@ function Billing() {
 					decoration={ <Icon icon={ institution } /> }
 					to={ taxDetailsRoute.to }
 				/>
-			</VStack>
+			</SummaryButtonList>
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

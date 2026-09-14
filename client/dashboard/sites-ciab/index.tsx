@@ -2,7 +2,6 @@ import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { type View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../app/analytics';
@@ -13,7 +12,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useSiteListQuery } from '../sites';
+import { useSiteListQuery, filterSortAndPaginateSites } from '../sites';
 import {
 	SitesDataViews,
 	useActions,
@@ -23,8 +22,9 @@ import {
 	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
-import { SitesNotices } from '../sites/notices';
+import { SitesNoticeArbiter } from '../sites/notice-arbiter';
 import { wpcomLink } from '../utils/link';
+import type { View } from '@wordpress/dataviews';
 
 export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
@@ -49,7 +49,7 @@ export default function CIABSites() {
 		sanitizeFields,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData } = useSiteListQuery( view, {
+	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery( view, {
 		isRestoringAccount,
 		isAutomattician,
 	} );
@@ -73,7 +73,7 @@ export default function CIABSites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No stores found' ) : __( 'No stores' );
 
-	let emptyDescription = __( 'Get started by creating a new store.' );
+	let emptyDescription: string = __( 'Get started by creating a new store.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
 			// Translators: %s is the search term used when looking for stores by title or domain name.
@@ -91,7 +91,11 @@ export default function CIABSites() {
 		ref: 'new-site-popover',
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
+	);
 
 	const emptyState = (
 		<DataViewsEmptyState
@@ -130,36 +134,34 @@ export default function CIABSites() {
 	);
 
 	return (
-		<>
-			<PageLayout
-				header={
-					<PageHeader
-						actions={
-							<Button
-								variant="primary"
-								href={ addNewStoreUrl }
-								onClick={ handleAddNewStore }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new store' ) }
-							</Button>
-						}
-					/>
-				}
-				notices={ <SitesNotices /> }
-			>
-				<SitesDataViews
-					view={ view }
-					sites={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
-					paginationInfo={ paginationInfo }
-					empty={ emptyState }
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
+		<PageLayout
+			header={
+				<PageHeader
+					actions={
+						<Button
+							variant="primary"
+							href={ addNewStoreUrl }
+							onClick={ handleAddNewStore }
+							__next40pxDefaultSize
+						>
+							{ __( 'Add new store' ) }
+						</Button>
+					}
 				/>
-			</PageLayout>
-		</>
+			}
+			notices={ <SitesNoticeArbiter /> }
+		>
+			<SitesDataViews
+				view={ view }
+				sites={ filteredData }
+				fields={ fields }
+				actions={ actions }
+				isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
+				paginationInfo={ paginationInfo }
+				empty={ emptyState }
+				onChangeView={ handleViewChange }
+				onReset={ resetView }
+			/>
+		</PageLayout>
 	);
 }

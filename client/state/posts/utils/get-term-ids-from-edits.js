@@ -1,4 +1,4 @@
-import { isEmpty, map, mapValues, reduce } from 'lodash';
+import { mapValues, isEmpty } from '@automattic/js-utils';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
@@ -12,9 +12,8 @@ export function getTermIdsFromEdits( post ) {
 
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
-	const taxonomies = reduce(
-		post.terms,
-		( prev, taxonomyTerms, taxonomyName ) => {
+	const taxonomies = Object.entries( post.terms ).reduce(
+		( prev, [ taxonomyName, taxonomyTerms ] ) => {
 			// Ensures we are working with an array
 			const termsArray = Object.values( taxonomyTerms );
 			if (
@@ -38,7 +37,7 @@ export function getTermIdsFromEdits( post ) {
 	return {
 		...post,
 		terms_by_id: mapValues( taxonomies, ( taxonomy ) => {
-			const termIds = map( taxonomy, 'ID' );
+			const termIds = taxonomy.map( ( t ) => t?.ID );
 
 			// Hack: qs omits empty arrays in wpcom.js request, which prevents
 			// removing all terms for a given taxonomy since the empty array is not sent to the API

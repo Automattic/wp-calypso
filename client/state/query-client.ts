@@ -4,7 +4,7 @@ import {
 	Persister,
 	persistQueryClient,
 } from '@tanstack/react-query-persist-client';
-import { throttle } from 'lodash';
+import { throttle } from '@wordpress/compose';
 import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
 import { shouldPersist } from 'calypso/state/initial-state';
 import {
@@ -27,13 +27,16 @@ type CreateQueryClientReturn = {
 	unsubscribePersister: () => void;
 };
 
-declare module '@tanstack/react-query' {
-	interface Register {
-		queryMeta: {
-			persist?: boolean | ( ( data: any ) => boolean );
-			fullPageLoader?: boolean;
-		};
+declare module '@automattic/api-queries' {
+	interface ApiQueriesQueryMeta {
+		fullPageLoader?: boolean;
 	}
+}
+
+let calypsoQueryClient: QueryClient | null = null;
+
+export function getCalypsoQueryClient(): QueryClient | null {
+	return calypsoQueryClient;
 }
 
 export async function createQueryClient(
@@ -43,6 +46,7 @@ export async function createQueryClient(
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
+	calypsoQueryClient = queryClient;
 	const { persister, unsubscribePersister } = await hydrateBrowserState(
 		queryClient,
 		persistenceKey
@@ -80,7 +84,7 @@ export async function hydrateBrowserState(
 		const storeKey = `query-state-${ persistenceKey ?? 'logged-out' }`;
 		const persister = {
 			persistClient: throttle(
-				( state: PersistedClient ) => {
+				( ( state: PersistedClient ) => {
 					state.clientState.queries.forEach( ( query ) => {
 						if ( typeof query.meta?.persist === 'function' ) {
 							query.meta.persist = query.meta.persist( query.state.data );
@@ -88,10 +92,10 @@ export async function hydrateBrowserState(
 					} );
 
 					return storePersistedStateItem( storeKey, state );
-				},
+				} ) as ( ...args: unknown[] ) => unknown,
 				SERIALIZE_THROTTLE,
 				{ leading: false, trailing: true }
-			),
+			) as DebouncedFunc< ( state: PersistedClient ) => Promise< void > >,
 			restoreClient: () => getPersistedStateItem( storeKey ),
 			removeClient: () => {
 				// not implemented

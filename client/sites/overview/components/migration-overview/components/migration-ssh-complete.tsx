@@ -1,5 +1,7 @@
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { HostingCard } from 'calypso/components/hosting-card';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -9,6 +11,9 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
+
+	useEffect( () => invokeSurvicateEvent( 'migrationCompleted' ), [] );
+
 	const sourceSiteDomain = site?.options?.migration_source_site_domain
 		? urlToDomain( site.options.migration_source_site_domain )
 		: null;

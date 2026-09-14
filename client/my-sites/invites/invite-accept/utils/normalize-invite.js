@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 function filterObjectProperties( object ) {

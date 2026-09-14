@@ -1,5 +1,3 @@
-import { forEach } from 'lodash';
-
 function matches( element, selector ) {
 	const ep = Element.prototype;
 	// modern browsers support `matches` but IE11 and older safari support it as `matchesSelector` with a prefix
@@ -33,21 +31,21 @@ export default function removeContentStyles( post, dom ) {
 
 	// remove most style attributes
 	const styled = dom.querySelectorAll( '[style]' );
-	forEach( styled, function ( element ) {
+	Array.from( styled ).forEach( function ( element ) {
 		if ( ! matches( element, allowedMarkupSelector ) ) {
 			element.removeAttribute( 'style' );
 		}
 	} );
 
 	// remove all style elements outside of galleries and embeds
-	forEach( dom.querySelectorAll( 'style' ), function ( element ) {
+	Array.from( dom.querySelectorAll( 'style' ) ).forEach( function ( element ) {
 		if ( ! matches( element, allowedMarkupSelector ) ) {
 			element.parentNode && element.parentNode.removeChild( element );
 		}
 	} );
 
 	// remove align from non images. Unlike above, img align is permitted anywhere.
-	forEach( dom.querySelectorAll( '[align]' ), ( element ) => {
+	Array.from( dom.querySelectorAll( '[align]' ) ).forEach( ( element ) => {
 		if ( element.tagName !== 'IMG' ) {
 			element.removeAttribute( 'align' );
 		}

@@ -1,4 +1,8 @@
 import {
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
@@ -7,6 +11,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getCurrentPlan } from '.';
@@ -27,6 +35,14 @@ export default function isSiteBigSkyTrial( state: AppState, siteId: number ) {
 
 	const currentPlan = getCurrentPlan( state, siteId );
 	const bigSkyPlans = [
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_MONTHLY,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PERSONAL_3_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_MONTHLY,
+		PLAN_ECOMMERCE_2_YEARS,
+		PLAN_ECOMMERCE_3_YEARS,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS_2_YEARS,

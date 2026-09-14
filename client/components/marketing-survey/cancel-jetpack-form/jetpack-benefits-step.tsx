@@ -15,11 +15,11 @@ import JetpackBenefits from 'calypso/blocks/jetpack-benefits';
 import JetpackGeneralBenefits from 'calypso/blocks/jetpack-benefits/general-benefits';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import type { Purchase } from '@automattic/api-core';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface Props {
 	siteId: number;
@@ -36,7 +36,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 	const moment = useLocalizedMoment();
 
 	const getTimeRemainingForSubscription = ( purchase: Purchase ) => {
-		const purchaseExpiryDate = moment.utc( purchase.expiryDate );
+		const purchaseExpiryDate = moment.utc( purchase.expiry_date );
 
 		return moment.duration( purchaseExpiryDate.diff( moment.utc() ) );
 	};
@@ -80,7 +80,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 		}
 
 		// if this product/ plan is partner managed, it won't really "expire" from the user's perspective
-		if ( isPartnerPurchase( purchase ) || ! purchase.expiryDate ) {
+		if ( isPartnerPurchase( purchase ) || ! purchase.expiry_date ) {
 			return (
 				<React.Fragment>
 					{ translate(

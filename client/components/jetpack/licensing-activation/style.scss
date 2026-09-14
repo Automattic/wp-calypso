@@ -1,6 +1,8 @@
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 @mixin jetpack-primary-button() {
 	background-color: var(--studio-black);

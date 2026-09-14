@@ -1,11 +1,15 @@
+import {
+	getSiteSubscriptionsQueryKey,
+	type SiteSubscriptionsInfiniteData,
+} from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { buildQueryKey, callApi } from '../helpers';
+import { callApi } from '../helpers';
 import {
 	alterSiteSubscriptionDetails,
 	invalidateSiteSubscriptionDetails,
 } from '../helpers/optimistic-update';
 import { useIsLoggedIn } from '../hooks';
-import type { SiteSubscriptionsPages, SiteSubscriptionDetails } from '../types';
+import type { SiteSubscriptionDetails } from '../types';
 
 type SiteSubscriptionEmailMeNewPostsParams = {
 	send_posts: boolean;
@@ -50,16 +54,12 @@ const useSiteEmailMeNewPostsMutation = () => {
 			return response;
 		},
 		onMutate: async ( { blog_id, send_posts, subscriptionId } ) => {
-			const siteSubscriptionsQueryKey = buildQueryKey(
-				[ 'read', 'site-subscriptions' ],
-				isLoggedIn,
-				id
-			);
+			const siteSubscriptionsQueryKey = getSiteSubscriptionsQueryKey();
 
 			await queryClient.cancelQueries( { queryKey: siteSubscriptionsQueryKey } );
 
 			const previousSiteSubscriptions =
-				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
+				queryClient.getQueryData< SiteSubscriptionsInfiniteData >( siteSubscriptionsQueryKey );
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsQueryKey, {
 					...previousSiteSubscriptions,
@@ -67,7 +67,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 						return {
 							...page,
 							subscriptions: page.subscriptions.map( ( siteSubscription ) => {
-								if ( siteSubscription.blog_ID === blog_id ) {
+								if ( Number( siteSubscription.blog_ID ) === Number( blog_id ) ) {
 									return {
 										...siteSubscription,
 										delivery_methods: {
@@ -75,6 +75,10 @@ const useSiteEmailMeNewPostsMutation = () => {
 											email: {
 												...siteSubscription.delivery_methods?.email,
 												send_posts: send_posts,
+												// Pausing deletes the subscription server-side, dropping the
+												// stored cadence. Mirror that so the cached frequency doesn't
+												// linger as stale data once email delivery is off.
+												...( ! send_posts && { post_delivery_frequency: undefined } ),
 											},
 										},
 									};
@@ -102,6 +106,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 							email: {
 								...siteSubscriptionDetails.delivery_methods?.email,
 								send_posts: send_posts,
+								...( ! send_posts && { post_delivery_frequency: undefined } ),
 							},
 						},
 					} as SiteSubscriptionDetails;
@@ -116,7 +121,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 		onError: ( _err, _, context ) => {
 			if ( context?.previousSiteSubscriptions ) {
 				queryClient.setQueryData(
-					buildQueryKey( [ 'read', 'site-subscriptions' ], isLoggedIn, id ),
+					getSiteSubscriptionsQueryKey(),
 					context.previousSiteSubscriptions
 				);
 			}

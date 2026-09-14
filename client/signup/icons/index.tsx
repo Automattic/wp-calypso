@@ -95,15 +95,6 @@ export const tip = (
 	</SVG>
 );
 
-export const bulb = (
-	<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M3.2 14.4H8V16H3.2V14.4ZM9.5248 9.3696C10.3488 8.4048 11.2 7.4072 11.2 5.6C11.2 2.5128 8.6872 0 5.6 0C2.5128 0 0 2.5128 0 5.6C0 7.428 0.8536 8.4224 1.6808 9.384C1.9672 9.7184 2.264 10.0648 2.548 10.4632C2.6632 10.628 2.852 11.26 3.0208 12H2.4V13.6H8.8V12H8.1808C8.3512 11.2584 8.5408 10.6248 8.6552 10.46C8.9368 10.0576 9.236 9.708 9.5248 9.3696ZM7.3456 9.54C6.9984 10.0336 6.7088 11.2 6.5408 12H4.66C4.4928 11.1984 4.2024 10.0296 3.8512 9.536C3.551 9.12347 3.23172 8.72517 2.8944 8.3424C2.1152 7.4352 1.6 6.8352 1.6 5.6C1.6 3.3944 3.3944 1.6 5.6 1.6C7.8056 1.6 9.6 3.3944 9.6 5.6C9.6 6.8168 9.0856 7.4192 8.308 8.3304C8.0096 8.6808 7.6712 9.0768 7.3456 9.54V9.54Z"
-			fill="#A7AAAD"
-		/>
-	</svg>
-);
-
 export const upload = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path d="M12 13V21" stroke="#8C8F94" strokeWidth="1.5" strokeLinecap="square" />
@@ -115,65 +106,6 @@ export const upload = (
 		/>
 		<Path d="M16 16L12 12L8 16" stroke="#8C8F94" strokeWidth="1.5" strokeLinecap="square" />
 	</SVG>
-);
-
-export const truck = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M16 3H1V16H16V3Z"
-			stroke="#787C82"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M16 8H20L23 11V16H16V8Z"
-			stroke="#787C82"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M5.5 21C6.88071 21 8 19.8807 8 18.5C8 17.1193 6.88071 16 5.5 16C4.11929 16 3 17.1193 3 18.5C3 19.8807 4.11929 21 5.5 21Z"
-			stroke="#787C82"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M18.5 21C19.8807 21 21 19.8807 21 18.5C21 17.1193 19.8807 16 18.5 16C17.1193 16 16 17.1193 16 18.5C16 19.8807 17.1193 21 18.5 21Z"
-			stroke="#787C82"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
-
-export const shoppingBag = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z"
-			stroke="#8C8F94"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M3 6H21"
-			stroke="#8C8F94"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10"
-			stroke="#8C8F94"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
 );
 
 export const shoppingCart = (

@@ -125,7 +125,9 @@ export default function ThemeShowcaseHeader( {
 		if ( isThemeShowcaseModern ) {
 			return (
 				<HeroModern
+					filter={ filter }
 					searchQuery={ search || '' }
+					tier={ tier }
 					onSearch={ onSearch }
 					onSearchTracksEvent={ onSearchTracksEvent }
 				/>

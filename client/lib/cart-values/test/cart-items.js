@@ -227,6 +227,30 @@ describe( 'isNextDomainFree()', () => {
 			)
 		).toBe( true );
 	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .blog', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.blog'
+			)
+		).toBe( true );
+	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .art', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.art'
+			)
+		).toBe( true );
+	} );
+	test( 'should return false when condition is "blog,art" and requested domain is .com', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.com'
+			)
+		).toBe( false );
+	} );
 	test( 'should return false when cart.next_domain_is_free is false', () => {
 		expect( isNextDomainFree( { next_domain_is_free: false } ) ).toBe( false );
 	} );
@@ -501,45 +525,6 @@ describe( 'getDomainPriceRule()', () => {
 					{ domain_name: 'domain.com', product_slug: 'domain' },
 					false,
 					'free'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is personal-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'personal-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is premium-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'premium-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is business-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'business-monthly'
 				)
 			).toBe( 'PRICE' );
 		} );

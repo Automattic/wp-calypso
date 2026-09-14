@@ -146,6 +146,12 @@ export interface PricingMetaForGridPlan {
 	 */
 	introOffer?: PlanPricing[ 'introOffer' ];
 	expiry?: SitePlan[ 'expiry' ];
+	/**
+	 * The renewal price for the current plan when it differs from originalPrice
+	 * (e.g. when the current billing term has an active intro offer).
+	 * Used by renewal pricing text to show what the plan will cost after the offer ends.
+	 */
+	renewalPrice?: PlanPricing[ 'originalPrice' ];
 }
 
 export interface SitePlan {

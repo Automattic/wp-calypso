@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 #billing-history {
 	padding: 8px 0 0;
 
@@ -263,4 +265,27 @@
 	 * billing-history DataViews is not using the title field yet, we have to
 	 * hack it. */
 	color: #2f2f2f;
+}
+
+.billing-history__item-meta {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	margin-top: 0.25rem;
+}
+
+.billing-history__item-meta-label {
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 20px;
+	text-transform: uppercase;
+	color: var( --color-text );
+
+	&::after {
+		content: ":";
+	}
+}
+
+.billing-history__item-meta-value {
+	color: var( --color-text-subtle );
 }

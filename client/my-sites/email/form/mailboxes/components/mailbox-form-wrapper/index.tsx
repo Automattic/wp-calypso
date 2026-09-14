@@ -1,5 +1,4 @@
 import { TranslateResult, useRtl } from 'i18n-calypso';
-import { PropsWithChildren } from 'react';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import {
@@ -10,6 +9,7 @@ import {
 	MutableFormFieldNames,
 	TitanMailboxFormFields,
 } from 'calypso/my-sites/email/form/mailboxes/types';
+import type { JSX, PropsWithChildren } from 'react';
 
 interface MailboxFormWrapperProps {
 	fieldLabelTexts: Partial< Record< MutableFormFieldNames, TranslateResult > >;

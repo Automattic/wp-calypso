@@ -1,0 +1,16 @@
+diff --git a/package.json b/package.json
+index 2b7f4512990ee3c4bb8da81caaf0a67a1788dfee..6c2a35c59e80103278364c677c7b1a7bf30ea004 100644
+--- a/package.json
++++ b/package.json
+@@ -42,6 +42,11 @@
+   "peerDependencies": {
+     "react-native": ">=0.14.0 <1"
+   },
++  "peerDependenciesMeta": {
++    "react-native": {
++      "optional": true
++    }
++  },
+   "homepage": "https://emotion.sh",
+   "license": "MIT",
+   "repository": "https://github.com/emotion-js/emotion/tree/main/packages/native",

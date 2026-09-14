@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 import { clients, initialClientsData } from '../reducer';
 

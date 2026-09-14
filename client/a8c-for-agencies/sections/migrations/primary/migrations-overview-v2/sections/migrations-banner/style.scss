@@ -2,6 +2,57 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+// The banner sits between the sticky breadcrumb and the body, so it carries
+// its own dark-teal surface (the `__top-wrapper` background no longer reaches
+// it). Light text on dark teal for readability.
+.migrations-banner__section {
+	// Sit behind the body's stacking context (z-index: 1) so the body slides
+	// up over the banner as the user scrolls.
+	position: relative;
+	z-index: 0;
+
+	// `useBannerParallax` writes `--banner-translate-y` on the scroll container
+	// per frame; the value cascades down to here. Translating down at a
+	// fraction of scroll speed makes the banner scroll up slower than the
+	// body, so the body catches up and covers it — a classic parallax effect.
+	transform: translateY(var(--banner-translate-y, 0));
+	will-change: transform;
+
+	background: var(--color-overview-header-background);
+
+	// `PageSection`'s default `padding: 40px 0` strips the layout's horizontal
+	// padding from the wrapper, and its inner `.page-section` then adds its
+	// own 16/40px `padding-inline`. Restore the layout's 16/64px on the
+	// wrapper and zero out the inner padding so the heading aligns with the
+	// breadcrumb above it.
+	&.page-section-wrapper {
+		padding-inline: 16px;
+
+		@include break-small {
+			padding-inline: 64px;
+		}
+
+		> * {
+			padding-inline: 0;
+		}
+	}
+
+	.page-section__header-title,
+	.page-section__header-description {
+		color: var(--color-text-inverted);
+	}
+
+	// Hide the decorative migration-incentive icon on mobile to keep the
+	// banner compact; restore at small+.
+	.pressable-premium-plan-migration__icon {
+		display: none;
+
+		@include break-small {
+			display: block;
+		}
+	}
+}
+
 .migrations-banner {
 	padding: 24px 32px;
 }

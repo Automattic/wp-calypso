@@ -5,7 +5,7 @@ import {
 	removePurchaseMutation,
 	purchaseQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -16,16 +16,19 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
 import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../app/router/me';
+import { getCurrentDashboard } from '../../app/routing';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { getDomainRenewalUrl } from '../../utils/domain';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import {
 	shouldShowTransferAction,
 	shouldShowTransferInAction,
@@ -42,9 +45,10 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: purchase } = useSuspenseQuery(
-		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-	);
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
+		enabled: !! domain.subscription_id,
+	} );
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )
 	);
@@ -91,7 +95,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	);
 
 	const availableActions = {
-		renew: purchase.is_renewable && domain.current_user_is_owner,
+		renew: !! purchase?.is_renewable && domain.current_user_is_owner,
 		transfer: shouldShowTransferAction( domain ),
 		transferIn: shouldShowTransferInAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),
@@ -108,7 +112,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 		<VStack spacing={ 4 }>
 			<SectionHeader level={ 3 } title={ __( 'Actions' ) } />
 			<ActionList>
-				{ availableActions.renew && (
+				{ availableActions.renew && purchase && (
 					<ActionList.ActionItem
 						title={ __( 'Renew' ) }
 						description={ __( 'Renew domain registration.' ) }
@@ -116,7 +120,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 							<Button
 								size="compact"
 								variant="secondary"
-								href={ getDomainRenewalUrl( domain, purchase ) }
+								href={ getRenewalUrlFromPurchase( purchase ) }
 								disabled={ isDisabled }
 							>
 								{ __( 'Renew' ) }
@@ -150,15 +154,20 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						title={ __( 'Bring your domain to WordPress.com' ) }
 						description={ __( 'Manage your site and domain all in one place.' ) }
 						actions={
-							<RouterLinkButton
+							<Button
 								size="compact"
 								variant="secondary"
-								// TODO: use the correct route once the domain transfer in route is created
-								to={ domainTransferRoute.fullPath }
-								params={ { domainName } }
+								href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+									initialQuery: domainName,
+									initialMode: 'transfer-domain',
+									siteSlug: domain.site_slug,
+									dashboard: getCurrentDashboard(),
+									back_to: redirectToDashboardLink(),
+								} ) }
+								disabled={ isDisabled }
 							>
 								{ __( 'Transfer' ) }
-							</RouterLinkButton>
+							</Button>
 						}
 					/>
 				) }
@@ -183,7 +192,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						}
 					/>
 				) }
-				{ availableActions.remove && (
+				{ availableActions.remove && purchase && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
@@ -200,7 +209,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						}
 					/>
 				) }
-				{ availableActions.cancel && (
+				{ availableActions.cancel && purchase && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }

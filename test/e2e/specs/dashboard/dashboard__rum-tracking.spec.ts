@@ -1,3 +1,4 @@
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { expect, tags, test } from '../../lib/pw-base';
 
 interface PerfNavEvent {
@@ -73,13 +74,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'Full page load to site list sends perf.nav with correct ID', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 	} ) => {
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'When I navigate directly to the sites page', async function () {
@@ -102,6 +105,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'In-app navigation sends perf.nav with fullPage false', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 		viewportName,
@@ -109,7 +113,8 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'And I am on the sites page', async function () {
@@ -122,25 +127,39 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				.toBeTruthy();
 		} );
 
-		await test.step( 'When I navigate in-app to the plugins page', async function () {
-			if ( viewportName === 'mobile' ) {
+		await test.step( 'When I navigate in-app to the domains page', async function () {
+			// The dashboard/omnibar feature flag changes the navigation structure.
+			// Detect it by the presence of `#wpcom-omnibar`, the hydration root.
+			const isOmnibarEnabled = ( await page.locator( '#wpcom-omnibar' ).count() ) > 0;
+
+			if ( isOmnibarEnabled ) {
+				// With omnibar: click Domains in the responsive sidebar.
+				// On mobile, open the sidebar first via the masterbar menu button.
+				if ( viewportName === 'mobile' ) {
+					await page.getByRole( 'button', { name: 'Menu', exact: true } ).first().click();
+				}
+				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domains' } ).click();
+			} else if ( viewportName === 'mobile' ) {
 				await page.getByRole( 'button', { name: 'Menu' } ).click();
-				await page.getByRole( 'menuitem', { name: 'Plugins' } ).click();
+				await page
+					.getByRole( 'link', { name: 'Domains' } )
+					.or( page.getByRole( 'menuitem', { name: 'Domains' } ) )
+					.click();
 			} else {
-				await page.getByRole( 'link', { name: 'Plugins' } ).click();
+				await page.getByRole( 'link', { name: 'Domains' } ).click();
 			}
-			await page.waitForURL( /\/plugins\/manage/ );
+			await page.waitForURL( /domains$/ );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for /plugins/manage with fullPage false', async function () {
+		await test.step( 'Then a perf.nav event is sent for /domains with fullPage false', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === '/plugins/manage' ), {
+				.poll( () => events.find( ( e ) => e.id === '/domains' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "/plugins/manage"',
+					message: 'Expected logstash request with id "/domains"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === '/plugins/manage' )!;
+			const event = events.find( ( e ) => e.id === '/domains' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 			expect( event.fullPage ).toBe( false );
 		} );

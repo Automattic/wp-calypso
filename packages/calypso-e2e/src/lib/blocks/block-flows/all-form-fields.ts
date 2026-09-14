@@ -1,5 +1,7 @@
+import { ElementHandle } from 'playwright';
 import { OpenInlineInserter } from '../../pages';
 import {
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
@@ -36,6 +38,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Determine if we are working with the refactored form fields (released June 2025)
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const initailBlock = editorCanvas.locator( makeSelectorFromBlockName( 'Text input field' ) );
@@ -50,9 +54,30 @@ export class AllFormFieldsFlow implements BlockFlow {
 		} );
 		let lastBlockName = 'Text input field';
 
+		// Name field is named differently in WP 7.0 vs 7.1. Sigh.
+		// @todo Merge back into `remainingBlocksToAdd` once WP 7.1 is the minimum version tested against.
+		const nameFieldHandle = await this.addFieldBlockToForm(
+			context,
+			'Name field',
+			lastBlockName,
+			isRefactor,
+			// prettier-ignore
+			`:is( ${ makeSelectorFromBlockName( 'Name' ) }, ${ makeSelectorFromBlockName( 'Name field' ) } )`
+		);
+		const nameFieldName = await nameFieldHandle.getAttribute( 'data-title' );
+		if ( nameFieldName === null ) {
+			throw new Error( 'Name field element has no data-title\n' + nameFieldHandle );
+		}
+		lastBlockName = nameFieldName;
+		await labelFormFieldBlock( context.addedBlockLocator, {
+			blockName: lastBlockName,
+			accessibleLabelName: 'Add label…',
+			labelText: this.addLabelPrefix( 'Name field' ),
+			isRefactor,
+		} );
+
 		// Add remaining field blocks, labeling as we go.
 		const remainingBlocksToAdd = [
-			[ 'Name', 'Add label…', 'Name field' ],
 			[ 'Email field', 'Add label…' ],
 			[ 'Website field', 'Add label…' ],
 			[ 'Date picker', 'Add label…' ],
@@ -64,18 +89,12 @@ export class AllFormFieldsFlow implements BlockFlow {
 			[ 'Dropdown field', 'Add label' ],
 			[ 'Terms consent', 'Add implicit consent message…' ],
 		];
-		for ( const [ blockName, accessibleLabelName, inserterBlockName ] of remainingBlocksToAdd ) {
-			await this.addFieldBlockToForm(
-				context,
-				inserterBlockName ?? blockName,
-				blockName,
-				lastBlockName,
-				isRefactor
-			);
+		for ( const [ blockName, accessibleLabelName ] of remainingBlocksToAdd ) {
+			await this.addFieldBlockToForm( context, blockName, lastBlockName, isRefactor );
 			await labelFormFieldBlock( context.addedBlockLocator, {
 				blockName,
 				accessibleLabelName,
-				labelText: this.addLabelPrefix( inserterBlockName ?? blockName ),
+				labelText: this.addLabelPrefix( blockName ),
 				isRefactor,
 			} );
 			lastBlockName = blockName;
@@ -154,18 +173,19 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * Adds a field block to the form using the inline inserter.
 	 *
 	 * @param {EditorContext} context The editor context object.
-	 * @param {string} inserterBlockName Name of the block in the inserter.
-	 * @param {string} selectorBlockName Name of the block for the selector.
+	 * @param {string} blockName Name of the block.
 	 * @param {string} lastBlockName The name of the previously inserted block.
 	 * @param {boolean} isRefactor Whether the block is part of the refactored form fields.
+	 * @param {string} [blockSelector] Selector for the block. Defaults to `makeSelectorFromBlockName( blockName )`.
+	 * @returns An element handle to the added block.
 	 */
 	private async addFieldBlockToForm(
 		context: EditorContext,
-		inserterBlockName: string,
-		selectorBlockName: string,
+		blockName: string,
 		lastBlockName: string,
-		isRefactor: boolean
-	) {
+		isRefactor: boolean,
+		blockSelector?: string
+	): Promise< ElementHandle > {
 		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
 			if ( isRefactor ) {
 				await context.editorPage.selectParentBlock( lastBlockName );
@@ -176,9 +196,9 @@ export class AllFormFieldsFlow implements BlockFlow {
 
 			await editorCanvas.getByRole( 'button', { name: 'Add block' } ).first().click();
 		};
-		await context.editorPage.addBlockInline(
-			inserterBlockName,
-			makeSelectorFromBlockName( selectorBlockName ),
+		return await context.editorPage.addBlockInline(
+			blockName,
+			blockSelector || makeSelectorFromBlockName( blockName ),
 			openInlineInserter
 		);
 	}

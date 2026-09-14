@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
-import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
-import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
+import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.webp';
+import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.webp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 

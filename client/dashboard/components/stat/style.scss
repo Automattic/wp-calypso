@@ -5,19 +5,19 @@
 	font-size: $font-size-x-small;
 	line-height: $font-line-height-medium;
 	font-weight: $font-weight-medium;
-	color: $gray-700;
+	color: var(--dashboard-menu-item__color);
 	text-transform: uppercase;
 }
 
 .dashboard-stat__metric {
-	color: $gray-900;
+	color: var(--dashboard__text-color);
 	font-weight: $font-weight-medium;
 }
 
 .dashboard-stat__description {
 	font-size: $font-size-small;
 	line-height: $font-line-height-small;
-	color: $gray-700;
+	color: var(--dashboard-menu-item__color);
 }
 
 .dashboard-stat__progress-bar {

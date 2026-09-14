@@ -37,11 +37,11 @@ export class SidebarComponent {
 	 * Waits for the WordPress.com Calypso sidebar to be ready on the page.
 	 */
 	async waitForSidebarInitialization(): Promise< void > {
-		const sidebarLocator = this.page.locator( selectors.sidebar );
+		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
 		await Promise.all( [
-			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
-			sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
+			this.page.waitForLoadState( 'load', { timeout: 30 * 1000 } ),
+			sidebarLocator.waitFor( { timeout: 30 * 1000 } ),
 		] );
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),
@@ -49,10 +49,8 @@ export class SidebarComponent {
 		if ( await this.sidebarIsCollapsed() ) {
 			const sidebarCollapseToggle = this.page.locator( selectors.linkWithText( 'Collapse menu' ) );
 			// Wait until the collapsed sidebar CSS is detached from DOM, ie. it is no longer collapsed.
-			await Promise.all( [
-				this.page.waitForSelector( selectors.collapsedSidebar, { state: 'detached' } ),
-				sidebarCollapseToggle.dispatchEvent( 'click' ),
-			] );
+			await sidebarCollapseToggle.click();
+			await this.page.locator( selectors.collapsedSidebar ).waitFor( { state: 'detached' } );
 		}
 	}
 
@@ -82,13 +80,20 @@ export class SidebarComponent {
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
-			const subitemSelector = `.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`;
-			const hrefSubItemSelector = ( await this.page.getAttribute(
-				subitemSelector,
-				'href'
-			) ) as string;
+			// Clicking the top-level item may trigger a client-side React
+			// navigation or a full page load. Either way, wait for the
+			// expanded submenu and the specific subitem link to be visible
+			// before interacting with it. Use a single locator instance for
+			// all operations to avoid inconsistency if the DOM changes.
+			const subitemLocator = this.page
+				.locator(
+					`.is-toggle-open a:has(:text-is("${ subitem }")), .wp-menu-open .wp-submenu a:text-is("${ subitem }")`
+				)
+				.first();
+			await subitemLocator.waitFor();
+			const hrefSubItemSelector = ( await subitemLocator.getAttribute( 'href' ) ) as string;
 
-			await this.page.dispatchEvent( subitemSelector, 'click' );
+			await subitemLocator.dispatchEvent( 'click' );
 			await this.page.waitForURL( `**${ hrefSubItemSelector }`, {
 				waitUntil: 'domcontentloaded',
 			} );
@@ -118,9 +123,15 @@ export class SidebarComponent {
 			selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ subitem }")`;
 		}
 
-		// Verify the expected item or subitem is selected.
+		// Verify the expected item or subitem is selected. Some Calypso routes
+		// redirect out of Calypso shortly after loading (eg. to the Multi-site
+		// Dashboard), and may do so after the out-of-Calypso check above has
+		// already passed. Treat leaving Calypso as an alternative success signal.
 		const locator = this.page.locator( selectedMenuItem );
-		await locator.waitFor( { state: 'attached' } );
+		await Promise.any( [
+			locator.waitFor( { state: 'attached' } ),
+			this.page.waitForURL( ( url ) => ! url.href.startsWith( getCalypsoURL() ) ),
+		] );
 	}
 
 	/**

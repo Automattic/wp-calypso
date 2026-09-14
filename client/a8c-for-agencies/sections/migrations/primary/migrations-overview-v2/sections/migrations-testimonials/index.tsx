@@ -1,11 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType6 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingTestimonialsSection from 'calypso/a8c-for-agencies/sections/marketplace/common/hosting-testimonials-section';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
-import ProfileAvatar5 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
-import ProfileAvatar4 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
-import ProfileAvatar3 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-3.png';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
+import ProfileAvatar5 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
+import ProfileAvatar4 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
+import ProfileAvatar3 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-3.webp';
 
 import './style.scss';
 

@@ -14,7 +14,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
 import { isWpComProductRenewal as isRenewal, isValueTruthy } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { has100YearPlan, has100YearDomain } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from './checkout-terms-item';
@@ -234,6 +234,107 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 	} );
 
 	return Array.from( new Set( refundWindows ) ).filter( isValueTruthy );
+}
+
+export type RefundWindowSummary = {
+	days: number;
+	usePlanProductName: boolean;
+	hasMultipleWindows: boolean;
+};
+
+/**
+ * Picks the headline refund-window day count to surface to the user, plus a
+ * flag indicating whether the headline copy should name the plan product.
+ *
+ * Returns null when no refund window applies (cart is non-refundable, contains
+ * only domains, or has no refund windows). When multiple windows exist, picks
+ * the longest plan window for renewal-only / monthly-bundle carts and the
+ * shortest window otherwise. The product-name flag captures the cases the
+ * money-back copy renders as "X-day money back guarantee for %(product)s";
+ * see getRefundWindowCopy, which is the shared consumer of this flag.
+ */
+export function getRefundWindowSummary( cart: ResponseCart ): RefundWindowSummary | null {
+	const refundPolicies = getRefundPolicies( cart );
+	const refundWindows = getRefundWindows( refundPolicies );
+
+	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+		return null;
+	}
+
+	if ( refundWindows.length === 1 ) {
+		const usePlanProductName = refundPolicies.some(
+			( refundPolicy ) =>
+				refundPolicy === RefundPolicy.PlanBiennialBundle ||
+				refundPolicy === RefundPolicy.PlanYearlyBundle
+		);
+		return { days: refundWindows[ 0 ], usePlanProductName, hasMultipleWindows: false };
+	}
+
+	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRenewal ||
+			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
+			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
+			refundPolicy === RefundPolicy.PlanBiennialRenewal
+	);
+	if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
+		return {
+			days: Math.max( ...refundWindows ),
+			usePlanProductName: true,
+			hasMultipleWindows: true,
+		};
+	}
+
+	return {
+		days: Math.min( ...refundWindows ),
+		usePlanProductName: false,
+		hasMultipleWindows: true,
+	};
+}
+
+/**
+ * Builds the headline money-back-guarantee copy for a cart. When the refund
+ * window is tied to a specific plan, the copy names that plan (e.g. "14-day
+ * money back guarantee for WordPress.com Personal") so the day count is never
+ * shown without the product it applies to; otherwise it states the bare
+ * window. Returns null when no refund window applies. Shared by the sidebar
+ * summary and the checkout trust footer so both surface the same copy.
+ */
+export function getRefundWindowCopy(
+	cart: ResponseCart,
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult | null {
+	const summary = getRefundWindowSummary( cart );
+	if ( ! summary ) {
+		return null;
+	}
+	const { days, usePlanProductName } = summary;
+
+	const planProduct = usePlanProductName ? cart.products.find( isPlan ) : undefined;
+	if ( planProduct ) {
+		return translate(
+			'%(days)d-day money back guarantee for %(product)s',
+			'%(days)d-day money back guarantee for %(product)s',
+			{
+				count: days,
+				args: {
+					days,
+					product: planProduct.product_name,
+				},
+			}
+		);
+	}
+
+	return translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+		count: days,
+		args: { days },
+		comment: 'The number of days until the shortest refund window in the cart expires.',
+	} );
 }
 
 function RefundPolicyItem( {

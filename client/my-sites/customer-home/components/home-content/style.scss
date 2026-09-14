@@ -1,5 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/grid-mixins";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 body.is-section-home.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);

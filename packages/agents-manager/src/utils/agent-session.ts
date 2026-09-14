@@ -1,90 +1,137 @@
 /**
- * Utilities for managing persistent Agent session IDs.
- * Sessions are stored in localStorage after first server response and expire after 24 hours.
- * No temporary session IDs - server generates UUID on first message.
+ * Utilities for the tab-scoped Agent session ID.
  *
- * Session lifecycle:
- * 1. New chat: sessionId = '' (empty)
- * 2. First message sent: server generates UUID and returns it
- * 3. Client stores UUID in localStorage via setSessionId()
- * 4. Subsequent loads: retrieve UUID from localStorage
+ * The active session ID lives in `sessionStorage`, keyed per user, per site and
+ * per agent, so each tab resumes its own conversation and a new tab starts
+ * fresh. The tab's lifetime bounds the session — no expiry needed.
+ *
+ * The user belongs in the key because `sessionStorage` survives a logout and
+ * login in the same tab: without it, the next account resumes the previous
+ * account's conversation.
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
+import { generateUUID } from './generate-uuid';
+import { getResolvedAgentId } from './resolved-agent-id';
 
-export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
-const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+/** Base storage key; `getTabSessionKey` scopes it per agent, site and user. */
+const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
-/**
- * Session storage format.
- */
-export function getSessionStorageKey( agentId?: string ): string {
-	if ( agentId && agentId !== ORCHESTRATOR_AGENT_ID ) {
-		return `${ SESSION_STORAGE_KEY }-${ agentId }`;
-	}
-	return SESSION_STORAGE_KEY;
-}
+/** Scope placeholders for a chat with no selected site, or no logged-in user. */
+const NO_SITE = 'no-site';
+const NO_USER = 'no-user';
 
-interface StoredSession {
-	sessionId: string;
-	timestamp: number;
-}
+let activeSiteKey = NO_SITE;
+let activeUserId = NO_USER;
 
 /**
- * Get existing session ID from localStorage if not expired.
- * Returns empty string if no session exists or session expired.
- * @returns The current session ID, or an empty string if no valid session exists.
+ * Set the site scope for the storage key. Published by the hosts on commit
+ * for callers without React context (e.g. tracks); React callers pass their
+ * scope explicitly instead.
  */
-export function getSessionId( agentId?: string ): string {
+export function setSessionSiteKey( siteKey: string ): void {
+	activeSiteKey = siteKey;
+}
+
+/** Set the user scope for the storage key. Published alongside the site scope. */
+export function setSessionUserId( userId?: string | number ): void {
+	activeUserId = normalizeUserId( userId );
+}
+
+function normalizeUserId( userId?: string | number ): string {
+	return userId === undefined || userId === null ? NO_USER : String( userId );
+}
+
+function getTabSessionKey(
+	agentId?: string,
+	siteKey: string = activeSiteKey,
+	userId?: string | number
+): string {
+	const agentSuffix = agentId && agentId !== ORCHESTRATOR_AGENT_ID ? `-${ agentId }` : '';
+	// An omitted user falls through to the published scope, as `siteKey` does.
+	const resolvedUserId = userId === undefined ? activeUserId : normalizeUserId( userId );
+	return `${ SESSION_STORAGE_KEY }${ agentSuffix }-${ siteKey }-${ resolvedUserId }`;
+}
+
+/**
+ * Get this tab's session ID, or an empty string if none exists. Pass `siteKey`
+ * and `userId` to read a specific scope instead of the current one.
+ */
+export function getSessionId(
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): string {
 	try {
-		const key = getSessionStorageKey( agentId );
-		const stored = localStorage.getItem( key );
-		if ( stored ) {
-			const session: StoredSession = JSON.parse( stored );
-
-			// Check if session has expired
-			if ( Date.now() - session.timestamp < SESSION_EXPIRY_MS ) {
-				return session.sessionId;
-			}
-
-			// Session expired, clear it
-			localStorage.removeItem( key );
-		}
+		return sessionStorage.getItem( getTabSessionKey( agentId, siteKey, userId ) ) || '';
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error loading session ID:', error );
+		return '';
 	}
-
-	// No existing session - return empty string
-	// Server will generate UUID on first message
-	return '';
 }
 
 /**
- * Save session ID to localStorage.
- * @param sessionId - The session ID to save.
+ * The active session ID for non-React callers (ability callbacks, the Tracks
+ * wrapper) — read under the agent scope the Provider publishes, so the answer
+ * matches the mounted chat's on every surface, Dolly included.
  */
-export function setSessionId( sessionId: string, agentId?: string ): void {
+export function getActiveSessionId(): string {
+	return getSessionId( getResolvedAgentId() );
+}
+
+/**
+ * Save the given session ID as this tab's session. Pass `siteKey` and `userId`
+ * to write under a specific scope instead of the current one.
+ */
+export function saveSessionId(
+	sessionId: string,
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): void {
 	try {
-		const session: StoredSession = {
-			sessionId,
-			timestamp: Date.now(),
-		};
-		localStorage.setItem( getSessionStorageKey( agentId ), JSON.stringify( session ) );
+		sessionStorage.setItem( getTabSessionKey( agentId, siteKey, userId ), sessionId );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.error( '[agent-session] Error storing session ID:', error );
+		console.error( '[agent-session] Error saving session ID:', error );
 	}
 }
 
 /**
- * Reset to a new chat (clear session).
- * Returns empty string - server will generate UUID on first message.
+ * Clear the stored session to start a new chat. Pass `siteKey` and `userId` to
+ * clear a specific scope instead of the current one.
  */
-export function clearSessionId( agentId?: string ): void {
+export function clearSessionId(
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): void {
 	try {
-		localStorage.removeItem( getSessionStorageKey( agentId ) );
+		sessionStorage.removeItem( getTabSessionKey( agentId, siteKey, userId ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error clearing session ID:', error );
 	}
+}
+
+/**
+ * Get this tab's session ID, or create + persist a new client-side UUID.
+ * Used by reader chat, where blog frontends reload on every navigation and
+ * the orchestrator honors client-generated session IDs.
+ */
+export function getOrCreateSessionId(
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): string {
+	const existing = getSessionId( agentId, siteKey, userId );
+	if ( existing ) {
+		return existing;
+	}
+
+	saveSessionId( generateUUID(), agentId, siteKey, userId );
+
+	// Read back so unavailable storage yields a stable '' instead of a fresh
+	// UUID per call, which would re-initialize the agent on every render.
+	return getSessionId( agentId, siteKey, userId );
 }

@@ -25,6 +25,7 @@ import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.s
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
 import caseStudies from 'calypso/signup/difm/images/page-descriptions/case-studies.svg';
 import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-page.svg';
+import customPage from 'calypso/signup/difm/images/page-descriptions/custom-page.svg';
 import donate from 'calypso/signup/difm/images/page-descriptions/donate.svg';
 import eventsPage from 'calypso/signup/difm/images/page-descriptions/events.svg';
 import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
@@ -149,7 +150,8 @@ const pageIdToThumbnailImageMap: Record< PageId, string | null > = {
 	[ VIDEO_GALLERY_PAGE ]: videoGallery,
 	[ PORTFOLIO_PAGE ]: portfolio,
 	[ SERVICES_PAGE ]: services,
-	[ CUSTOM_PAGE ]: null,
+	// Blank-browser style for Custom Page instance tiles; "Add a Custom Page" uses thumbnailOverride.
+	[ CUSTOM_PAGE ]: customPage,
 	[ CAREERS_PAGE ]: faqPage,
 	[ EVENTS_PAGE ]: eventsPage,
 	[ DONATE_PAGE ]: donate,
@@ -163,15 +165,17 @@ export function BrowserView( {
 	isClickDisabled,
 	selectedIndex,
 	onClick,
+	thumbnailOverride,
 }: {
 	pageId: PageId;
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
 	selectedIndex: number;
 	onClick: () => void;
+	thumbnailOverride?: string | null;
 } ) {
 	const selectionProps = { isSelected, isClickDisabled };
-	const imageSrc = pageIdToThumbnailImageMap[ pageId ];
+	const imageSrc = thumbnailOverride ?? pageIdToThumbnailImageMap[ pageId ];
 	return (
 		<Container { ...selectionProps } onClick={ onClick }>
 			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }

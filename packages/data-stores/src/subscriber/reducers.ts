@@ -1,5 +1,4 @@
 import { combineReducers } from '@wordpress/data';
-import { findIndex } from 'lodash';
 import type { Action } from './actions';
 import type { SubscriberState } from './types';
 import type { Reducer } from 'redux';
@@ -79,8 +78,12 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 	 */
 	if ( action.type === 'GET_SUBSCRIBERS_IMPORT_SUCCESS' ) {
 		const imports = state.imports ? Array.from( state.imports ) : [];
-		const i = findIndex( imports, { id: action.importJob.id } );
-		i !== -1 ? ( imports[ i ] = action.importJob ) : imports.push( action.importJob );
+		const i = imports.findIndex( ( importJob ) => importJob.id === action.importJob.id );
+		if ( i !== -1 ) {
+			imports[ i ] = action.importJob;
+		} else {
+			imports.push( action.importJob );
+		}
 
 		return Object.assign( {}, state, {
 			imports,

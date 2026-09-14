@@ -2,10 +2,10 @@ import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -143,6 +143,8 @@ class ActivityLogItem extends Component {
 				actorName,
 				actorRole,
 				actorType,
+				actorIsMcpAgent,
+				actorMcpClient,
 				activityMedia,
 				isBreakpointActive: isDesktop,
 			},
@@ -170,7 +172,16 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
+				<ActivityActor
+					{ ...{
+						actorAvatarUrl,
+						actorName,
+						actorRole,
+						actorType,
+						actorIsMcpAgent,
+						actorMcpClient,
+					} }
+				/>
 				{ activityMedia && isDesktop && (
 					<ActivityMedia
 						className={ clsx( {

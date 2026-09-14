@@ -1,9 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+// eslint-disable-next-line no-restricted-imports
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -79,7 +79,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-google-photos.png',
+					src: '/calypso/images/sharing/connections-google-photos.webp',
 					alt: this.props.translate(
 						'Connect to use photos stored in your Google Photos library directly inside the editor',
 						{ textOnly: true }
@@ -122,7 +122,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
+					src: '/calypso/images/google-my-business/stats-screenshot-cropped.webp',
 					alt: this.props.translate( 'Manage Google Business Profile locations', {
 						textOnly: true,
 					} ),
@@ -144,7 +144,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-instagram.png',
+					src: '/calypso/images/sharing/connections-instagram.webp',
 					alt: this.props.translate( 'Add the Latest Instagram Posts block', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -171,7 +171,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					src: '/calypso/images/sharing/slack-screenshot-1.webp',
 					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
 						textOnly: true,
 					} ),
@@ -187,7 +187,7 @@ class SharingServiceExamples extends Component {
 			},
 			{
 				image: {
-					src: '/calypso/images/sharing/slack-screenshot-2.png',
+					src: '/calypso/images/sharing/slack-screenshot-2.webp',
 					alt: this.props.translate( 'Preview posts and pages directly from Slack.', {
 						textOnly: true,
 					} ),
@@ -208,7 +208,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/github-screenshot.png',
+					src: '/calypso/images/sharing/github-screenshot.webp',
 					alt: this.props.translate( 'Get GitHub previews inside your P2 posts.', {
 						textOnly: true,
 					} ),
@@ -229,7 +229,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/mailchimp-screenshot.png',
+					src: '/calypso/images/sharing/mailchimp-screenshot.webp',
 					alt: this.props.translate( 'Add subscribers to Mailchimp', { textOnly: true } ),
 				},
 				label: this.props.translate(
@@ -240,7 +240,7 @@ class SharingServiceExamples extends Component {
 	}
 
 	render() {
-		if ( ! includes( SERVICES_WITH_EXAMPLES, this.props.service.ID ) ) {
+		if ( ! SERVICES_WITH_EXAMPLES.includes( this.props.service.ID ) ) {
 			/**
 			 * TODO: Refactoring this line has to be tackled in a seperate diff.
 			 * Touching this changes services-group.jsx which changes service.jsx

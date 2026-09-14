@@ -4,7 +4,6 @@ import {
 } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { maybeAddLogRocketScript } from 'calypso/lib/analytics/logrocket';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -16,6 +15,7 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'calypso/state/action-types';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) => gaRecordEvent( category, action, label, value ),
@@ -29,17 +29,16 @@ const pageViewServices = {
 	default: ( { url, title, options, ...params } ) => recordPageView( url, title, params, options ),
 };
 
-const loadTrackingTool = ( trackingTool ) => {
+const loadTrackingTool = ( trackingTool, store ) => {
 	if ( trackingTool === 'HotJar' ) {
 		addHotJarScript();
 	}
 
-	if ( trackingTool === 'LogRocket' ) {
-		maybeAddLogRocketScript();
-	}
-
 	if ( trackingTool === 'Survicate' ) {
-		addSurvicate();
+		const user = getCurrentUser( store.getState() );
+		if ( user?.email && user?.date ) {
+			addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
+		}
 	}
 };
 
@@ -63,10 +62,10 @@ const dispatcher = ( action ) => {
 	} );
 };
 
-export const analyticsMiddleware = () => ( next ) => ( action ) => {
+export const analyticsMiddleware = ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case ANALYTICS_TRACKING_ON:
-			loadTrackingTool( action.trackingTool );
+			loadTrackingTool( action.trackingTool, store );
 			return;
 
 		case ANALYTICS_TRACKS_OPT_OUT:

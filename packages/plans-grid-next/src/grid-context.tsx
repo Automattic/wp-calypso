@@ -30,12 +30,12 @@ interface PlansGridContext {
 	hideUnsupportedFeatures?: boolean;
 	hideFeatureGroupTitles?: boolean;
 	enterpriseFeaturesList?: string[];
+	isEnterpriseA4AIndia?: boolean;
 	reflectStorageSelectionInPlanPrices?: boolean;
 	showSimplifiedBillingDescription?: boolean;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
-	isVar1dVariant?: boolean;
-	isVar4Variant?: boolean;
 	isExperimentVariant?: boolean;
+	showFeatureCheckmarks?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -60,12 +60,12 @@ const PlansGridContextProvider = ( {
 	hideUnsupportedFeatures,
 	hideFeatureGroupTitles,
 	enterpriseFeaturesList,
+	isEnterpriseA4AIndia,
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
-	isVar1dVariant,
-	isVar4Variant,
 	isExperimentVariant,
+	showFeatureCheckmarks,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -99,12 +99,12 @@ const PlansGridContextProvider = ( {
 				hideUnsupportedFeatures,
 				hideFeatureGroupTitles,
 				enterpriseFeaturesList,
+				isEnterpriseA4AIndia,
 				reflectStorageSelectionInPlanPrices,
 				showSimplifiedBillingDescription,
 				showBillingDescriptionForIncreasedRenewalPrice,
-				isVar1dVariant,
-				isVar4Variant,
 				isExperimentVariant,
+				showFeatureCheckmarks,
 			} }
 		>
 			{ children }

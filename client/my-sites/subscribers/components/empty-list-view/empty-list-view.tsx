@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';

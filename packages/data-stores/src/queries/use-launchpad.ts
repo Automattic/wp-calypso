@@ -3,7 +3,7 @@ import * as oauthToken from '@automattic/oauth-token';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from '../wpcom-request';
 
 interface APIFetchOptions {
 	global: boolean;

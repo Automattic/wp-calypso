@@ -10,11 +10,13 @@ type Props = {
 	onAddedEmailForwards: () => void;
 	selectedDomainName: string;
 	showFormHeader?: boolean;
+	showMxWarning?: boolean;
 };
 
 const EmailForwardingAddNewCompactList = ( {
 	onAddedEmailForwards,
 	selectedDomainName,
+	showMxWarning,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
@@ -57,6 +59,7 @@ const EmailForwardingAddNewCompactList = ( {
 					existingEmailForwards={ existingEmailForwards }
 					selectedDomainName={ selectedDomainName }
 					disabled={ isAddingEmailForward }
+					showMxWarning={ showMxWarning }
 				/>
 			</div>
 		</form>

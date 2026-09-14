@@ -10,6 +10,7 @@ interface Props {
 	onCancelClick: () => void;
 	applyButtonText: string | null | undefined;
 	cancelButtonText: string | null | undefined;
+	isApplyDisabled?: boolean;
 }
 
 const DateRangeFooter: FunctionComponent< Props > = ( {
@@ -17,6 +18,7 @@ const DateRangeFooter: FunctionComponent< Props > = ( {
 	onApplyClick = noop,
 	cancelButtonText,
 	applyButtonText,
+	isApplyDisabled = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -40,6 +42,7 @@ const DateRangeFooter: FunctionComponent< Props > = ( {
 				variant="primary"
 				size="compact"
 				aria-label={ applyText }
+				disabled={ isApplyDisabled }
 			>
 				{ applyText }
 			</Button>

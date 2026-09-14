@@ -8,7 +8,6 @@ import {
 } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -86,7 +85,7 @@ class TransferDomainPrecheck extends Component {
 
 	refreshStatus = () => {
 		this.props.refreshStatus( this.statusRefreshed ).then( ( result ) => {
-			const isUnlocked = get( result, 'inboundTransferStatus.unlocked' );
+			const isUnlocked = result?.inboundTransferStatus?.unlocked;
 			this.props.recordUnlockedCheckButtonClick( this.props.domain, isUnlocked );
 		} );
 	};
@@ -104,7 +103,7 @@ class TransferDomainPrecheck extends Component {
 
 	checkAuthCode = () => {
 		this.props.checkAuthCode( this.props.domain, this.state.authCode ).then( ( result ) => {
-			const authCodeValid = get( result, 'authCodeValid' );
+			const authCodeValid = result?.authCodeValid;
 			this.props.recordAuthCodeCheckButtonClick( this.props.domain, authCodeValid );
 		} );
 	};

@@ -1,14 +1,13 @@
 package _self.projects
 
 import _self.bashNodeScript
+import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -43,7 +42,6 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
-					"design-system-docs-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -76,15 +74,6 @@ object CalypsoApps: BuildType({
 	features {
 		perfmon {
 		}
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
 		commitStatusPublisher {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
@@ -98,10 +87,7 @@ object CalypsoApps: BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+			branchFilter = "+:<default>"
 			triggerRules = """
 				-:test/e2e/**
 				-:docs/**.md
@@ -113,6 +99,7 @@ object CalypsoApps: BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -126,7 +113,6 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
-		apps/design-system-docs/dist => design-system-docs.zip
 	""".trimIndent()
 
 	steps {
@@ -206,6 +192,7 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		// Only needed so that we can test the job in different branches.
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 

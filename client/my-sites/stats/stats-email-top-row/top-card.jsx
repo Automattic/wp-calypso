@@ -1,5 +1,6 @@
-import { Card, Spinner } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
 /* This is a very stripped down version of HighlightCard
@@ -10,7 +11,7 @@ const TopCardValue = ( { value, isLoading } ) => {
 	const isNumber = Number.isFinite( value );
 
 	if ( isLoading ) {
-		return <Spinner baseClassName="calypso-spinner" />;
+		return <Spinner />;
 	}
 	if ( value === null ) {
 		return <span className="highlight-card-count-value">-</span>;

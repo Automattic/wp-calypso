@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type JSX, ReactNode } from 'react';
 
 export interface TaskExtraData {
 	about_page_id?: number;
@@ -65,7 +65,10 @@ export interface PermittedActions {
 
 export type EventHandlers = {
 	onSiteLaunched?: () => void;
-	onTaskClick?: ( task: Task ) => void;
+	/**
+	 * If the function returns false, the default task will not be executed.
+	 */
+	onTaskClick?: ( task: Task ) => void | boolean;
 };
 
 export interface LaunchpadTaskActionsProps {

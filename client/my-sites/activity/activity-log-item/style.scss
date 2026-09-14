@@ -1,5 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .activity-log-item {
 	display: flex;
@@ -307,6 +309,13 @@
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body-small;
 	}
+}
+
+.activity-log-item__actor-mcp {
+	font-size: $font-body-extra-small;
+	color: var(--color-text-subtle);
+	display: block;
+	margin-block-start: 2px;
 }
 
 .activity-log-item__description-content {

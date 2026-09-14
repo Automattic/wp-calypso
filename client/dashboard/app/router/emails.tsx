@@ -1,18 +1,20 @@
 import { EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
-	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
+	siteProductsQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { createLazyRoute, createRoute, redirect, Outlet } from '@tanstack/react-router';
+import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
-import { IntervalLength, MailboxProvider } from '../../emails/types';
+import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../emails/types';
+import { isTitanPlanTier } from '../../emails/utils/titan-tiers';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -36,10 +38,10 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -65,7 +67,7 @@ const redirectIfInvalidDomain = async ( domainName: string ) => {
 				( [ code, errorType ] ) => error.statusCode === code && error.error === errorType
 			)
 		) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: emailsRoute.fullPath,
 				search: {
 					domainName,
@@ -85,8 +87,8 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-domain',
-	loader: async () => {
-		queryClient.prefetchQuery( domainsQuery() );
+	loader: async ( { context } ) => {
+		queryClient.prefetchQuery( context.config.queries.domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>
@@ -106,16 +108,26 @@ export const chooseEmailSolutionRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-email-solution/$domain',
+	validateSearch: ( search ): { intent?: 'upgrade' } => {
+		return {
+			intent: search.intent === 'upgrade' ? 'upgrade' : undefined,
+		};
+	},
 	beforeLoad: async ( { params: { domain: domainName } } ) => {
 		await redirectIfInvalidDomain( domainName );
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
-		const products = queryClient.ensureQueryData( productsQuery() );
-
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		// Warm the same products query useEmailProduct reads (site-specific when
+		// the domain has a site) so prices render on the first load instead of
+		// flashing a $0 fallback.
+		const products = domain.blog_id
+			? queryClient.ensureQueryData( siteProductsQuery( domain.blog_id ) )
+			: queryClient.ensureQueryData( productsQuery() );
 		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
 
-		await Promise.all( [ products, site, domain ] );
+		await Promise.all( [ products, site ] );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-email-solution' ).then( ( d ) =>
@@ -138,6 +150,11 @@ export const addMailboxRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'add-mailbox/$domain/$provider/$interval',
+	validateSearch: ( search ): { tier?: TitanPlanTier } => {
+		return {
+			tier: isTitanPlanTier( search.tier ) ? search.tier : undefined,
+		};
+	},
 	beforeLoad: async ( { params: { domain: domainName, provider, interval } } ) => {
 		await redirectIfInvalidDomain( domainName );
 
@@ -147,22 +164,27 @@ export const addMailboxRoute = createRoute( {
 			// @ts-expect-error The interval param can be anything.
 			! Object.values( IntervalLength ).includes( interval )
 		) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: chooseEmailSolutionRoute.to,
 				params: { domain: domainName },
 			} );
 		}
 	},
 	loader: async ( { params: { domain: domainName } } ) => {
-		const products = queryClient.ensureQueryData( productsQuery() );
-
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		// useEmailProduct reads site-specific products when the domain has a
+		// blog_id and only falls back to the global products list otherwise, so
+		// warm the same query the component will read to avoid a cold-load crash.
+		const products = domain.blog_id
+			? queryClient.ensureQueryData( siteProductsQuery( domain.blog_id ) )
+			: queryClient.ensureQueryData( productsQuery() );
 		const site = queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
-		const mailboxAccounts = await queryClient.ensureQueryData(
+		const mailboxAccounts = queryClient.ensureQueryData(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
-		await Promise.all( [ products, site, domain, mailboxAccounts ] );
+		await Promise.all( [ products, site, mailboxAccounts ] );
 	},
 } ).lazy( () =>
 	import( '../../emails/add-mailbox' ).then( ( d ) =>
@@ -200,7 +222,7 @@ export const setUpMailboxRoute = createRoute( {
 		const hasUnusedMailbox = !! unusedMailboxesCount;
 
 		if ( ! hasUnusedMailbox ) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: emailsRoute.fullPath,
 				search: {
 					domainName,
@@ -228,7 +250,7 @@ export const addEmailForwarderRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add Email Forwarder' ),
+				title: __( 'Add email forwarder' ),
 			},
 		],
 	} ),

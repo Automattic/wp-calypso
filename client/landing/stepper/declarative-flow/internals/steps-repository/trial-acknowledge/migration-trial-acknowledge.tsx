@@ -97,7 +97,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 							__(
 								"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the %(planName)s plan."
 							),
-							{ planName: plan?.getTitle() }
+							{ planName: String( plan?.getTitle() ?? '' ) }
 						),
 						{ br: <br /> }
 					) }
@@ -126,14 +126,14 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 				__(
 					'Give the %(planName)s plan a try with the 7-day free trial, and migrate your site without costs'
 				),
-				{ planName: plan?.getTitle() }
+				{ planName: String( plan?.getTitle() ?? '' ) }
 			) }
 			supportingCopy={ sprintf(
 				/* translators: the planName could be "Pro" or "Business" */
 				__(
 					'The 7-day trial includes every feature in the %(planName)s plan with a few exceptions. To enjoy all the features without limits, upgrade to the paid plan at any time before your trial ends.'
 				),
-				{ planName: plan?.getTitle() }
+				{ planName: String( plan?.getTitle() ?? '' ) }
 			) }
 			callToAction={
 				<NextButton isBusy={ isAddingTrial } onClick={ onStartTrialClick }>

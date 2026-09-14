@@ -1,8 +1,21 @@
 import deepFreeze from 'deep-freeze';
 import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { menus as menusReducer, requesting as requestingReducer } from '../reducer';
+import {
+	groupsBySite as groupsBySiteReducer,
+	menus as menusReducer,
+	requesting as requestingReducer,
+} from '../reducer';
 import menuFixture from './fixture/menu-fixture';
+
+const groupsFixture = [
+	{
+		id: 'plugins',
+		label: 'My Plugins',
+		default_expanded: false,
+		signal: { attention: true, count: 3 },
+	},
+];
 
 describe( 'reducer', () => {
 	describe( 'menus reducer', () => {
@@ -123,6 +136,39 @@ describe( 'reducer', () => {
 					expect( state ).toEqual( defaultReducerState );
 				}
 			);
+		} );
+	} );
+
+	describe( 'groupsBySite reducer', () => {
+		test( 'returns default state when no arguments provided', () => {
+			expect( groupsBySiteReducer( undefined, {} ) ).toEqual( {} );
+		} );
+
+		test( 'adds groups to state keyed by provided siteId', () => {
+			const action = {
+				type: ADMIN_MENU_RECEIVE,
+				siteId: 123456,
+				menu: menuFixture,
+				groups: groupsFixture,
+			};
+			const initialState = deepFreeze( {} );
+
+			expect( groupsBySiteReducer( initialState, action ) ).toEqual( {
+				123456: groupsFixture,
+			} );
+		} );
+
+		test( 'clears groups when a legacy flat response is received', () => {
+			const initialState = deepFreeze( {
+				123456: groupsFixture,
+			} );
+			const action = {
+				type: ADMIN_MENU_RECEIVE,
+				siteId: 123456,
+				menu: menuFixture,
+			};
+
+			expect( groupsBySiteReducer( initialState, action ) ).toEqual( {} );
 		} );
 	} );
 
