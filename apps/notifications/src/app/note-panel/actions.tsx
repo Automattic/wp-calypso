@@ -14,6 +14,7 @@ import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-s
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
 import { useSavePreference } from './use-save-preference';
+import type { LayoutStyle } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -24,7 +25,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 // full-width group separator match what people already see there.
 const { Menu } = unlock( privateApis );
 
-const LAYOUTS = [
+const LAYOUTS: { value: LayoutStyle; label: string }[] = [
 	{ value: 'classic', label: __( 'Classic' ) },
 	{ value: 'simplified', label: __( 'Simplified' ) },
 ];
@@ -51,7 +52,7 @@ export default function NotePanelActions() {
 			revert: () => actions.ui.setViewSettingsSeen( false ),
 		} );
 
-	const setLayoutStyle = ( value: string ) => {
+	const setLayoutStyle = ( value: LayoutStyle ) => {
 		recordTracksEvent( 'calypso_notification_layout_style_change', {
 			from: layoutStyle,
 			to: value,

@@ -17,7 +17,7 @@ import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
 import { splitSubject } from './simplified-subject';
-import type { Note } from '../types';
+import type { LayoutStyle, Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
@@ -68,20 +68,13 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-/**
- * Split a note's subject into what happened and the post it happened to.
- *
- * Temporary, and only good enough to put the layout in front of people. The API renders
- * the subject as one finished sentence, so leading with the action means cutting that
- * sentence up here — which holds in English and gives up in any locale whose word order
- * differs. The fix belongs on the server: notes would have to carry the action as its own
- * translated string. Until they do, `splitSubject` returns null whenever it is not
- * confident and the row falls back to the classic layout.
- */
-const simplify = ( item: Note, layoutStyle: 'classic' | 'simplified' ) =>
+// Temporary and English-only: the API sends the subject as one finished sentence, so
+// splitting it here relies on word order. Returns null when unsure and the row falls back
+// to the classic layout. The real fix is the server carrying the action as its own string.
+const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
-export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): Field< Note >[] {
+export function getFields( layoutStyle: LayoutStyle = 'classic' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
