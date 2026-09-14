@@ -2,6 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
+import { type StoredView } from '../common/premade-views';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
@@ -25,13 +26,14 @@ repliesCache.cleanup();
 
 export type NotificationPreferences = {
 	layoutStyle?: LayoutStyle | null;
+	views?: StoredView[] | null;
 	viewSettingsSeen?: boolean | null;
 };
 
 let hasResolvedPreferences = false;
 
 const applyPreferences = (
-	{ layoutStyle, viewSettingsSeen }: NotificationPreferences,
+	{ layoutStyle, views, viewSettingsSeen }: NotificationPreferences,
 	isViewSettingsEnabled: boolean
 ) => {
 	// Unset means never chosen: start those people on the simplified layout wherever the
@@ -39,6 +41,10 @@ const applyPreferences = (
 	store.dispatch(
 		actions.ui.setLayoutStyle( layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'classic' ) )
 	);
+
+	if ( views ) {
+		store.dispatch( actions.ui.setViews( views ) );
+	}
 
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };

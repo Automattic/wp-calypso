@@ -53,6 +53,7 @@ export default function Notifications( {
 
 		return {
 			layoutStyle: userPreferences[ 'notifications-layout-style' ],
+			views: userPreferences[ 'notifications-views' ],
 			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
 		};
 	}, [ userPreferences ] );

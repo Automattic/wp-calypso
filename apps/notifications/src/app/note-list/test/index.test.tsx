@@ -373,3 +373,39 @@ describe( 'NoteList loading state', () => {
 		expect( active[ 0 ].textContent ).toContain( 'Open me' );
 	} );
 } );
+
+// A filtered view's fetch adds its notes to the shared store, and those can fall outside
+// All's window — an achievement from months ago, say. All renders its own window, so they
+// must not turn up appended below it.
+describe( 'NoteList All window', () => {
+	beforeAll( () => {
+		Element.prototype.scrollIntoView = noop;
+	} );
+
+	it( 'leaves out store notes that fall outside the window the server returned', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [
+				{ ...makeNote( 800, 'In the window' ), timestamp: '2026-06-08T00:00:00+00:00' },
+				{ ...makeNote( 801, 'Old achievement' ), timestamp: '2020-01-01T00:00:00+00:00' },
+			] )
+		);
+		store.dispatch( actions.notes.setFilteredNoteIds( 'all', [ 800 ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		expect( screen.getByText( 'In the window' ) ).toBeVisible();
+		expect( screen.queryByText( 'Old achievement' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'falls back to the store before All has ever fetched', () => {
+		const store = initStore();
+		store.dispatch( actions.notes.addNotes( [ makeNote( 802, 'No window yet' ) ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		expect( screen.getByText( 'No window yet' ) ).toBeVisible();
+	} );
+} );
