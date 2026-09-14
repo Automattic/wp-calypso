@@ -1,5 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getActiveSessionId } from '../../utils/agent-session';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import {
 	getPendingNavigation,
 	isContinuationSent,
@@ -62,6 +63,12 @@ export async function wpAdminNavigateCallback(
 	if ( ! savePendingNavigation( destination, sessionId, toolCallId, toolId ) ) {
 		return errorResult( 'Failed to store the navigation resume state.' );
 	}
+
+	// The route only: other query values can carry search terms and IDs.
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_start', {
+		destination_path: destinationUrl.pathname,
+		destination_page: destinationUrl.searchParams.get( 'page' ) ?? '',
+	} );
 
 	setTimeout( () => {
 		// Answered or cleared during the delay — a message sent before the

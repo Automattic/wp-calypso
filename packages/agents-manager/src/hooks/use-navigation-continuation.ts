@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
+import { recordAgentsManagerTracksEvent } from '../utils/tracks';
 import {
 	completePendingNavigation,
 	isContinuationSent,
@@ -246,6 +247,10 @@ export function useNavigationContinuation( {
 				try {
 					await sendToolResultRef.current( { toolCallId, toolId, message, sessionId } );
 					completePendingNavigation( pendingNavigation );
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_complete', {
+						navigated,
+						matched,
+					} );
 				} catch ( error ) {
 					// Unmark, so a later mount retries; the 5-minute expiry bounds it.
 					unmarkContinuationSent( pendingNavigation );

@@ -5,8 +5,12 @@ let mockSessionId: string;
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
 } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 
 import { renderHook } from '@testing-library/react';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import {
 	markContinuationSent,
 	NAVIGATION_PENDING_EVENT,
@@ -54,6 +58,7 @@ function parkNavigationFromPreviousLoad( overrides: Record< string, unknown > = 
 
 beforeEach( () => {
 	jest.useFakeTimers();
+	jest.clearAllMocks();
 	sessionStorage.clear();
 	mockSessionId = 'session-1';
 	window.history.replaceState( {}, '', '/wp-admin/plugins.php?paged=2' );
@@ -705,5 +710,46 @@ describe( 'useNavigationContinuation', () => {
 
 		expect( retry.sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
+	} );
+} );
+
+describe( 'useNavigationContinuation Tracks', () => {
+	it( 'records an arrival once the continuation is delivered', async () => {
+		renderContinuation();
+		await jest.runAllTimersAsync();
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_complete',
+			{ navigated: true, matched: true }
+		);
+	} );
+
+	it( 'records a declined redirect', async () => {
+		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
+
+		const { result } = renderContinuation();
+		await result.current.flushPendingNavigation();
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_complete',
+			{ navigated: false, matched: false }
+		);
+	} );
+
+	it( 'records nothing for a failed send, and once for its successful retry', async () => {
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
+		const sendToolResult = jest
+			.fn()
+			.mockRejectedValueOnce( new Error( 'network' ) )
+			.mockResolvedValue( undefined );
+		const { result } = renderContinuation( { sendToolResult } );
+
+		await result.current.flushPendingNavigation();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+
+		await result.current.flushPendingNavigation();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
