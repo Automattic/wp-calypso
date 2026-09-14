@@ -41,7 +41,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 
 `recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
 `BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
-Each event is also recorded as `calypso_agents_manager_<same suffix>` with the unified properties.
+Chat and feedback events (message send, suggestions, responses, thumbs) are also recorded as `calypso_agents_manager_<same suffix>` with the unified properties; other names are recorded under the Big Sky name only.
 
 ## Ready signal
 

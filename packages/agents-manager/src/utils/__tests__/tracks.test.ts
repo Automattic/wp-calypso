@@ -240,11 +240,31 @@ describe( 'tracks wrappers', () => {
 			expect( props ).not.toHaveProperty( 'big_sky_version' );
 		} );
 
-		it( 'skips events whose unified counterpart fires at the call site', () => {
-			recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_more_options_click', { type: 'dock' } );
+		it.each( [
+			'chat_input_send_message',
+			'chat_suggestions_rendered',
+			'chat_suggestion_click',
+			'chat_response_rendered',
+			'chat_response_action',
+			'response_action_thumbs_up',
+			'response_action_thumbs_down',
+		] )( 'mirrors the %s chat and feedback event', ( suffix ) => {
+			recordBigSkyTracksEvent( `jetpack_big_sky_${ suffix }` );
 
-			expect( recordedEventNames() ).toEqual( [ 'jetpack_big_sky_ai_chat_more_options_click' ] );
+			expect( recordedEventNames() ).toEqual( [
+				`jetpack_big_sky_${ suffix }`,
+				`calypso_agents_manager_${ suffix }`,
+			] );
 		} );
+
+		it.each( [ 'ai_chat_docked', 'file_upload_success', 'ai_chat_more_options_click', 'x' ] )(
+			'keeps %s Big Sky-only',
+			( suffix ) => {
+				recordBigSkyTracksEvent( `jetpack_big_sky_${ suffix }` );
+
+				expect( recordedEventNames() ).toEqual( [ `jetpack_big_sky_${ suffix }` ] );
+			}
+		);
 	} );
 
 	describe( 'recordAgentsManagerTracksEvent', () => {
