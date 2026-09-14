@@ -39,7 +39,10 @@ const noteAboutAPost = () => ( {
 	],
 } );
 
-const renderList = ( layoutStyle?: 'classic' | 'simplified' ) => {
+const renderList = (
+	layoutStyle?: 'classic' | 'simplified',
+	{ isViewSettingsEnabled = true }: { isViewSettingsEnabled?: boolean } = {}
+) => {
 	const store = initStore();
 	store.dispatch( actions.notes.addNotes( [ noteAboutAPost() ] ) );
 	store.dispatch( actions.ui.loadedNotes() );
@@ -50,7 +53,11 @@ const renderList = ( layoutStyle?: 'classic' | 'simplified' ) => {
 
 	return render(
 		<Provider store={ store }>
-			<AppProvider client={ client as never } locale="en">
+			<AppProvider
+				client={ client as never }
+				locale="en"
+				isViewSettingsEnabled={ isViewSettingsEnabled }
+			>
 				<NoteList
 					filterName={ 'all' as FilterName }
 					selectedNoteId={ undefined }
@@ -70,6 +77,15 @@ describe( 'NoteList simplified layout', () => {
 	// elements for its ranges, so assert on the row's text rather than a single node.
 	it( 'shows the whole sentence and the excerpt by default', () => {
 		const { container } = renderList();
+
+		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
+		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
+	} );
+
+	// The setting is only offered where the flag is on. Somewhere it is off there is no
+	// way back to classic, so a preference saved elsewhere must not follow the account in.
+	it( 'ignores a saved simplified layout where the setting is not offered', () => {
+		const { container } = renderList( 'simplified', { isViewSettingsEnabled: false } );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
 		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
