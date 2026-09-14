@@ -3,7 +3,15 @@ import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-export function recordUnifiedAdminPageView( { path, route }: { path: string; route?: string } ) {
+export function recordUnifiedAdminPageView( {
+	path,
+	route,
+	app: appOverride,
+}: {
+	path: string;
+	route?: string;
+	app?: string;
+} ) {
 	const source = 'calypso';
 	let app = 'calypso';
 	if ( isJetpackCloud() ) {
@@ -15,6 +23,6 @@ export function recordUnifiedAdminPageView( { path, route }: { path: string; rou
 		source,
 		path,
 		...( route ? { route } : {} ),
-		app,
+		app: appOverride ?? app,
 	} );
 }
