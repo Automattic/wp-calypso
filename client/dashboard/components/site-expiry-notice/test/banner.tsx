@@ -4,40 +4,35 @@
 
 import { DotcomPlans } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as testingLibraryRender, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import nock from 'nock';
-import { getPlanExpiryNotice } from '../../plan-expiry-notice';
+import { render } from '../../../test-utils';
 import {
 	NOW,
 	SITE_ID,
 	expiryInDays,
 	grace,
 	makePurchase,
-	postGrace,
 } from '../../plan-expiry-notice/test/fixtures';
 import { SiteExpiryNoticeBanner } from '../banner';
-import type { SiteExpiryNoticeState } from '../use-site-expiry-notice';
+import type { SiteExpiryNoticeState, SiteExpiryPurchaseState } from '../use-site-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 const DISMISS_KEY = 'wp_wpcom_plan_expiry_notice_dismiss';
+const REVERTED_AT = Date.UTC( 2026, 1, 14, 12 );
 
-function makeState( purchase: Purchase, isReverted = false ): SiteExpiryNoticeState {
-	const notice = getPlanExpiryNotice( purchase, { scope: 'sitewide', locale: 'en', isReverted } );
-	if ( ! notice?.stage ) {
-		throw new Error( 'fixture produces no notice' );
-	}
-	const stage = notice.stage;
-	return {
-		purchase,
-		stage,
-		isDismissible: stage === 'post-grace',
-		isReverted,
-		isPlanOwner: true,
-		dismissMetaKey: stage === 'post-grace' ? DISMISS_KEY : undefined,
-	};
+function purchaseState(
+	purchase: Purchase,
+	stage: 'early-warning' | 'final-window' | 'grace'
+): SiteExpiryPurchaseState {
+	return { kind: 'purchase', purchase, stage, isPlanOwner: true };
+}
+
+function revertedState( dismissMetaKey: string | undefined = DISMISS_KEY ): SiteExpiryNoticeState {
+	return { kind: 'reverted', revertedAt: REVERTED_AT, dismissMetaKey };
 }
 
 function renderBanner(
@@ -45,114 +40,147 @@ function renderBanner(
 	extra: Partial< ComponentProps< typeof SiteExpiryNoticeBanner > > = {}
 ) {
 	const recordTracksEvent = jest.fn();
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-	} );
+	const onContactSupport = jest.fn();
 	render(
-		<QueryClientProvider client={ queryClient }>
-			<SiteExpiryNoticeBanner
-				siteId={ SITE_ID }
-				state={ state }
-				locale="en"
-				surface="test"
-				recordTracksEvent={ recordTracksEvent }
-				{ ...extra }
-			/>
-		</QueryClientProvider>
+		<SiteExpiryNoticeBanner
+			siteId={ SITE_ID }
+			state={ state }
+			locale="en"
+			surface="test"
+			recordTracksEvent={ recordTracksEvent }
+			onContactSupport={ onContactSupport }
+			{ ...extra }
+		/>
 	);
-	return { recordTracksEvent };
+	return { recordTracksEvent, onContactSupport };
 }
 
 beforeEach( () => MockDate.set( NOW ) );
-afterEach( () => {
-	MockDate.reset();
-	nock.cleanAll();
-} );
+afterEach( () => MockDate.reset() );
 
-test( 'renders the notice without a close button before post-grace', () => {
-	renderBanner( makeState( makePurchase( { expiry_date: expiryInDays( 3 ) } ) ) );
+test( 'a purchase state renders the plan notice with no close button', () => {
+	const { recordTracksEvent } = renderBanner(
+		purchaseState( makePurchase( { expiry_date: expiryInDays( 3 ) } ), 'final-window' )
+	);
 	expect( screen.getByText( 'Your Business plan expires in 3 days' ) ).toBeVisible();
 	expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
+	expect( recordTracksEvent ).toHaveBeenCalledWith(
+		'calypso_purchases_plan_expiry_notice_impression',
+		expect.objectContaining( {
+			surface: 'test',
+			purchase_id: 1234,
+			product_slug: DotcomPlans.BUSINESS,
+			stage: 'final-window',
+		} )
+	);
 } );
 
-test( 'dismisses post-grace: hides at once, writes the meta, records the event', async () => {
+test( 'offers "View other plans" during grace when a URL is given', () => {
+	renderBanner( purchaseState( grace(), 'grace' ), { viewOtherPlansUrl: '/plans/x' } );
+	expect( screen.getByRole( 'link', { name: 'View other plans' } ) ).toHaveAttribute(
+		'href',
+		'/plans/x'
+	);
+	expect( screen.getByRole( 'link', { name: 'Renew now' } ) ).toBeVisible();
+} );
+
+test( 'a non-owner purchase state renders the explanation with no actions', () => {
+	renderBanner( { ...purchaseState( grace(), 'grace' ), isPlanOwner: false } );
+	expect( screen.getByText( /purchased by a different WordPress.com account/ ) ).toBeVisible();
+	expect( screen.queryByRole( 'link', { name: 'Renew now' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'the reverted state renders the generic copy, records an impression, and opens support', async () => {
+	const { recordTracksEvent, onContactSupport } = renderBanner( revertedState() );
+
+	expect( screen.getByText( 'Your plan has expired' ) ).toBeVisible();
+	expect( screen.getByText( /moved to the Free plan and set to private/ ) ).toBeVisible();
+	expect( recordTracksEvent ).toHaveBeenCalledWith(
+		'calypso_purchases_plan_expiry_notice_impression',
+		{ surface: 'test', stage: 'post-grace', state: 'expired', days_remaining: -10 }
+	);
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Contact support' } ) );
+	expect( onContactSupport ).toHaveBeenCalledWith(
+		'My plan expired and I need your help getting it restored.'
+	);
+	expect( recordTracksEvent ).toHaveBeenCalledWith(
+		'calypso_purchases_plan_expiry_notice_click',
+		expect.objectContaining( { stage: 'post-grace', action: 'contact-support', cta: 'support' } )
+	);
+} );
+
+test( 'the reverted state records the impression once across re-renders', () => {
+	// `render` from test-utils wraps every call in its own fresh provider tree,
+	// so its `rerender` unmounts and remounts rather than re-rendering the same
+	// instance; render directly here, with just the QueryClientProvider this
+	// notice needs, so the same instance survives the rerender.
+	const recordTracksEvent = jest.fn();
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const tree = () => (
+		<QueryClientProvider client={ queryClient }>
+			<SiteExpiryNoticeBanner
+				siteId={ SITE_ID }
+				state={ revertedState() }
+				locale="en"
+				surface="test"
+				recordTracksEvent={ recordTracksEvent }
+				eventProperties={ { page: 'overview' } }
+			/>
+		</QueryClientProvider>
+	);
+	const { rerender } = testingLibraryRender( tree() );
+	rerender( tree() );
+	expect(
+		recordTracksEvent.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_purchases_plan_expiry_notice_impression'
+		)
+	).toHaveLength( 1 );
+} );
+
+test( 'without a support handler the reverted notice has no action', () => {
+	renderBanner( revertedState(), { onContactSupport: undefined } );
+	expect( screen.queryByRole( 'button', { name: 'Contact support' } ) ).not.toBeInTheDocument();
+} );
+
+test( 'dismisses the reverted state: hides at once, writes the meta, records the event', async () => {
 	const scope = nock( 'https://public-api.wordpress.com' )
 		.post( `/wp/v2/sites/${ SITE_ID }/users/me`, { meta: { [ DISMISS_KEY ]: 1 } } )
 		.query( true )
 		.reply( 200, { id: 1, name: 'me', slug: 'me', meta: { [ DISMISS_KEY ]: 1 } } );
 
-	const { recordTracksEvent } = renderBanner( makeState( postGrace() ) );
+	const { recordTracksEvent } = renderBanner( revertedState() );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
-	expect( screen.queryByText( 'Your Business plan has expired' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Your plan has expired' ) ).not.toBeInTheDocument();
 	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	expect( recordTracksEvent ).toHaveBeenCalledWith(
 		'calypso_purchases_plan_expiry_notice_dismiss',
-		expect.objectContaining( {
-			surface: 'test',
-			purchase_id: 1234,
-			product_slug: DotcomPlans.BUSINESS,
-			stage: 'post-grace',
-			state: 'expired',
-			is_plan_owner: true,
-			days_remaining: -40,
-		} )
+		{ surface: 'test', stage: 'post-grace', state: 'expired', days_remaining: -10 }
 	);
 } );
 
-test( 'restores the notice when the dismissal fails', async () => {
+test( 'restores the reverted notice when the dismissal fails', async () => {
 	nock( 'https://public-api.wordpress.com' )
 		.post( `/wp/v2/sites/${ SITE_ID }/users/me` )
 		.query( true )
 		.reply( 500, { message: 'nope' } );
 
-	const { recordTracksEvent } = renderBanner( makeState( postGrace() ) );
+	const { recordTracksEvent } = renderBanner( revertedState() );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 	await waitFor( () =>
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_purchases_plan_expiry_notice_dismiss_failed',
-			expect.objectContaining( {
-				surface: 'test',
-				purchase_id: 1234,
-				product_slug: DotcomPlans.BUSINESS,
-				stage: 'post-grace',
-				days_remaining: -40,
-				error_message: expect.any( String ),
-			} )
+			expect.objectContaining( { stage: 'post-grace', error_message: expect.any( String ) } )
 		)
 	);
-	expect( screen.getByText( 'Your Business plan has expired' ) ).toBeVisible();
+	expect( screen.getByText( 'Your plan has expired' ) ).toBeVisible();
 } );
 
-test( 'offers "View other plans" during grace when a URL is given', () => {
-	renderBanner( makeState( grace() ), { viewOtherPlansUrl: '/plans/x' } );
-	expect( screen.getByRole( 'link', { name: 'View other plans' } ) ).toHaveAttribute(
-		'href',
-		'/plans/x'
-	);
-} );
-
-test( 'an un-reverted Atomic site past grace hears the grace copy, not post-grace’s', () => {
-	renderBanner( {
-		purchase: postGrace(),
-		stage: 'grace',
-		isDismissible: false,
-		isReverted: false,
-		isPlanOwner: true,
-	} );
-
-	expect(
-		screen.getByText(
-			'Your site will move to the Free plan. That means losing plugins, custom themes, and 50 GB of storage. But it’s not too late. Renew now to keep your site as it is.'
-		)
-	).toBeVisible();
-	expect( screen.getByRole( 'link', { name: 'Restore site' } ) ).toBeVisible();
-	expect( screen.queryByRole( 'link', { name: 'View other plans' } ) ).not.toBeInTheDocument();
-} );
-
-test( 'a non-owner state renders the explanation with no actions', () => {
-	renderBanner( { ...makeState( postGrace(), true ), isPlanOwner: false } );
-	expect( screen.getByText( /purchased by a different WordPress.com account/ ) ).toBeVisible();
-	expect( screen.queryByRole( 'button', { name: 'Contact support' } ) ).not.toBeInTheDocument();
+test( 'without a dismiss key the reverted notice has no close button', () => {
+	// Not `revertedState( undefined )`: the default parameter kicks in for an
+	// explicit `undefined` argument too, so that call still carries DISMISS_KEY.
+	renderBanner( { kind: 'reverted', revertedAt: REVERTED_AT } );
+	expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
 } );

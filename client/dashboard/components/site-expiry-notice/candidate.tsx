@@ -7,7 +7,7 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { SiteExpiryNoticeBanner } from './banner';
-import { isUrgentStage, useSiteExpiryNotice } from './use-site-expiry-notice';
+import { isUrgentState, useSiteExpiryNotice } from './use-site-expiry-notice';
 import type { SiteExpiryNoticeBannerProps } from './banner';
 import type { ReactNode } from 'react';
 
@@ -57,7 +57,7 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 	}
 
 	return {
-		isUrgent: isUrgentStage( state.stage ),
+		isUrgent: isUrgentState( state ),
 		node: (
 			<CandidateBanner
 				siteId={ site.ID }

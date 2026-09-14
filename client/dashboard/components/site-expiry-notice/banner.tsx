@@ -1,8 +1,5 @@
-import { siteCurrentUserMetaMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { getCalendarDaysUntil } from '../../utils/datetime';
-import { PlanExpiryNotice, getExpiryStateName } from '../plan-expiry-notice';
+import { PlanExpiryNotice } from '../plan-expiry-notice';
+import { SiteRevertedNotice } from './site-reverted-notice';
 import type { SiteExpiryNoticeState } from './use-site-expiry-notice';
 
 export interface SiteExpiryNoticeBannerProps {
@@ -27,65 +24,35 @@ export function SiteExpiryNoticeBanner( {
 	locale,
 	surface,
 	recordTracksEvent,
-	eventProperties: extraEventProperties,
+	eventProperties,
 	renewReturnUrl,
 	viewOtherPlansUrl,
 	onContactSupport,
 }: SiteExpiryNoticeBannerProps ) {
-	const { purchase, stage, isDismissible, isReverted, isPlanOwner, dismissMetaKey } = state;
-	const [ isDismissed, setIsDismissed ] = useState( false );
-	const { mutate: updateMeta } = useMutation( siteCurrentUserMetaMutation( siteId ) );
-
-	const eventProperties = {
-		...extraEventProperties,
-		surface,
-		purchase_id: purchase.ID,
-		product_slug: purchase.product_slug,
-		stage,
-		state: getExpiryStateName( stage ),
-		days_remaining: getCalendarDaysUntil( new Date( purchase.expiry_date ) ),
-		is_plan_owner: isPlanOwner,
-	};
-
-	const dismiss = () => {
-		if ( ! dismissMetaKey ) {
-			return;
-		}
-		setIsDismissed( true );
-		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_dismiss', eventProperties );
-		updateMeta(
-			{ [ dismissMetaKey ]: 1 },
-			{
-				onError: ( error ) => {
-					setIsDismissed( false );
-					recordTracksEvent( 'calypso_purchases_plan_expiry_notice_dismiss_failed', {
-						...eventProperties,
-						error_message: error instanceof Error ? error.message : String( error ),
-					} );
-				},
-			}
+	if ( state.kind === 'reverted' ) {
+		return (
+			<SiteRevertedNotice
+				siteId={ siteId }
+				state={ state }
+				surface={ surface }
+				recordTracksEvent={ recordTracksEvent }
+				eventProperties={ eventProperties }
+				onContactSupport={ onContactSupport }
+			/>
 		);
-	};
-
-	if ( isDismissed ) {
-		return null;
 	}
 
 	return (
 		<PlanExpiryNotice
-			purchase={ purchase }
+			purchase={ state.purchase }
 			scope="sitewide"
-			isReverted={ isReverted }
-			isPlanOwner={ isPlanOwner }
-			stage={ stage }
+			isPlanOwner={ state.isPlanOwner }
 			locale={ locale }
 			surface={ surface }
 			recordTracksEvent={ recordTracksEvent }
-			eventProperties={ extraEventProperties }
+			eventProperties={ eventProperties }
 			renewReturnUrl={ renewReturnUrl }
 			viewOtherPlansUrl={ viewOtherPlansUrl }
-			onContactSupport={ onContactSupport }
-			onClose={ isDismissible && dismissMetaKey ? dismiss : undefined }
 		/>
 	);
 }
