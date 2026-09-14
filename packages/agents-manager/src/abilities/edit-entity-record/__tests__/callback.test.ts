@@ -448,6 +448,20 @@ describe( 'editEntityRecordCallback', () => {
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
+		// Refused up front: asking the user to confirm a deletion that then
+		// cannot happen wastes the question.
+		it( 'refuses without a router before asking to confirm', async () => {
+			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+
+			const result = await editEntityRecordCallback( {
+				deleteEntities: [ page( 7 ) ],
+				confirmationMessage: 'Delete the About page?',
+			} );
+
+			expect( result.result.error ).toContain( 'cannot leave it first' );
+			expect( result.result.error ).not.toContain( 'confirm' );
+		} );
+
 		// The post editor opens posts too, and has no router to leave by.
 		it( 'refuses to delete the post open in the post editor', async () => {
 			open( 'post', 7 );
