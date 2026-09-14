@@ -2,9 +2,10 @@
 
 ### Breaking Changes
 
-- `SummaryButton`: badge intents now come from `Badge` in `@wordpress/ui` rather than `@automattic/ui`, so the accepted values change from `default | info | success | warning | error` to `draft | informational | stable | low | medium | high | none` ([#111378](https://github.com/Automattic/wp-calypso/pull/111378)). The old and new sets are disjoint, so every existing value needs updating; `default` maps to `draft`, `info` to `informational`, `success` to `stable`, `warning` to `medium`, and `error` to `high`.
+- `SummaryButton`: badge intents now come from `Badge` in `@wordpress/ui` rather than `@automattic/ui`, so the accepted values change from `default | info | success | warning | error` to `draft | informational | stable | low | medium | high | none` ([#111378](https://github.com/Automattic/wp-calypso/pull/111378)). The old and new sets are disjoint, so every existing value needs updating; `default` maps to `draft`, `info` to `informational`, `success` to `stable`, `warning` to `medium`, and `error` to `high`. Badge styling, markup, and status icons also change: the previous implementation rendered an icon per intent, and the new one does not.
 - `Count`: no longer accepts a `forwardRef` prop, so consumers relying on it lose the DOM ref. The default export is also no longer wrapped in `localize`, which injected an unused `translate`/`locale` pair ([#112469](https://github.com/Automattic/wp-calypso/pull/112469), [#112921](https://github.com/Automattic/wp-calypso/pull/112921)).
 - `Tabs`: a controlled `selectedTabId` change now moves focus. Previously the focused tab was preserved when the active tab was recomputed ([#112947](https://github.com/Automattic/wp-calypso/pull/112947)).
+- `Tooltip`: `context` is now typed. It accepts an element, a ref to one, or either wrapped in an object exposing `getDOMNode()`, matching what `Popover` has resolved since 3.0.5.
 - Drop the `react-router-dom` dependency. Nothing in this package imported it, and it imposed a Node >= 20 engine requirement on every consumer.
 
 ### Other changes
