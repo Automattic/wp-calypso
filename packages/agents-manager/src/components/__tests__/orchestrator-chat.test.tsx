@@ -3946,9 +3946,11 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'does not abort while the agent is moving the canvas itself', () => {
-			// `editor-navigate` clears the binding before it runs, so the unmount and
-			// remount it causes are not read as the user walking away. Without this the
-			// agent's own navigation would abort the agent's own request.
+			// A canvas-moving ability drops the binding before it runs when its
+			// destination is not a page the binding can follow — `wp-admin/navigate`,
+			// or `editor-navigate` opening the pages list — so the unmount and remount
+			// it causes are not read as the user walking away. Without this the agent's
+			// own navigation would abort the agent's own request.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest } = mockUseAgentChat();
 
