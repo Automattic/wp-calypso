@@ -24,6 +24,8 @@ import {
 	trackImageStudioGenericShareFailed,
 	trackImageStudioFeatureClipAddedToPost,
 	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
 } from './tracking';
 
 // Mock session
@@ -618,5 +620,35 @@ describe( 'feature clip tracking helpers', () => {
 				placement: 'post_editor_feature_clip',
 			} )
 		);
+	} );
+} );
+
+describe( 'upgrade notice tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+	} );
+
+	it( 'records the trigger with the shown event so on-open and post-error notices can be split', () => {
+		trackImageStudioUpgradeNoticeShown( { mode: ImageStudioMode.Generate, trigger: 'open' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_shown',
+			expect.objectContaining( { mode: 'generate', trigger: 'open' } )
+		);
+	} );
+
+	it( 'records the trigger with the click event and keeps the product-wide upgrade button event', () => {
+		trackImageStudioUpgradeNoticeClick( { mode: ImageStudioMode.Edit, trigger: 'error' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { mode: 'edit', trigger: 'error' } )
+		);
+		expect( recordTracksEventMock ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			placement: 'image-studio-limit-notice',
+		} );
 	} );
 } );
