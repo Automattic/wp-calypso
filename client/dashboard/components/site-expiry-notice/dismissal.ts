@@ -1,5 +1,5 @@
 import { PLAN_EXPIRY_NOTICE_DISMISS_META_KEY_SUFFIX } from '@automattic/api-core';
-import type { Purchase, SiteUserMeta } from '@automattic/api-core';
+import type { SiteUserMeta } from '@automattic/api-core';
 
 /**
  * The server prefixes the base name per site (`wp_` on Atomic, `wp_{blog_id}_`
@@ -15,15 +15,18 @@ export function findPlanExpiryNoticeDismissMetaKey(
 
 /**
  * A dismissal only counts for the term it was made in: a stamp older than the
- * current expiry date belongs to a previous term and the notice comes back.
- * Same rule as `Expiry_Notice_Dismiss::is_dismissed()` in jetpack-mu-wpcom.
+ * reference time (the revert that put the site in post-grace) belongs to a
+ * previous term and the notice comes back. Same rule as
+ * `Expiry_Notice_Dismiss::is_dismissed()` in jetpack-mu-wpcom.
+ * @param dismissedAt   Unix seconds, as `users/me` meta stores it.
+ * @param referenceTime Milliseconds since the epoch.
  */
 export function isPlanExpiryNoticeDismissed(
 	dismissedAt: number | undefined,
-	purchase: Purchase
+	referenceTime: number
 ): boolean {
 	if ( ! dismissedAt ) {
 		return false;
 	}
-	return dismissedAt * 1000 >= new Date( purchase.expiry_date ).getTime();
+	return dismissedAt * 1000 >= referenceTime;
 }
