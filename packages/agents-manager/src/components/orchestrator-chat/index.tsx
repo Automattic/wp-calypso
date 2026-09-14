@@ -63,7 +63,10 @@ import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
+import {
+	getOrchestratorErrorMessage,
+	getOrchestratorErrorType,
+} from '../../utils/orchestrator-error-message';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -714,6 +717,18 @@ export default function OrchestratorChat( {
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
 
+	// One event per error the chat shows. `error` returns to null between
+	// attempts, so the same failure repeating on a later send counts again.
+	const lastTrackedErrorRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( error && error !== lastTrackedErrorRef.current ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+				error_type: getOrchestratorErrorType( error ),
+			} );
+		}
+		lastTrackedErrorRef.current = error;
+	}, [ error ] );
+
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
 	// client-held history (see the hook's docblock).
@@ -1345,9 +1360,15 @@ export default function OrchestratorChat( {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
 		if ( imageUpload?.abortUpload?.() ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
+				stopped_during: 'upload',
+			} );
 			return;
 		}
 		abortCurrentRequest();
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
+			stopped_during: 'response',
+		} );
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(
