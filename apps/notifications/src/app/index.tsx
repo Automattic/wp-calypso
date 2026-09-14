@@ -24,16 +24,21 @@ import './style.scss';
 repliesCache.cleanup();
 
 export type NotificationPreferences = {
-	layoutStyle?: string;
-	viewSettingsSeen?: boolean;
+	layoutStyle?: string | null;
+	viewSettingsSeen?: boolean | null;
 };
 
 let hasResolvedPreferences = false;
 
-const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
-	if ( layoutStyle ) {
-		store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
-	}
+const applyPreferences = (
+	{ layoutStyle, viewSettingsSeen }: NotificationPreferences,
+	isViewSettingsEnabled: boolean
+) => {
+	// Unset means never chosen: start those people on the simplified layout wherever the
+	// picker exists to change it back.
+	store.dispatch(
+		actions.ui.setLayoutStyle( layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'classic' ) )
+	);
 
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };
@@ -174,8 +179,8 @@ const NotificationApp = ( {
 		}
 
 		hasResolvedPreferences = true;
-		applyPreferences( preferences );
-	}, [ preferences ] );
+		applyPreferences( preferences, isViewSettingsEnabled );
+	}, [ preferences, isViewSettingsEnabled ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {

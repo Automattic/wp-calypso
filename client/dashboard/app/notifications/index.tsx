@@ -52,12 +52,10 @@ export default function Notifications( {
 		}
 
 		return {
-			layoutStyle:
-				userPreferences[ 'notifications-layout-style' ] ??
-				( isViewSettingsEnabled ? ( 'simplified' as const ) : undefined ),
+			layoutStyle: userPreferences[ 'notifications-layout-style' ],
 			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
 		};
-	}, [ userPreferences, isViewSettingsEnabled ] );
+	}, [ userPreferences ] );
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
