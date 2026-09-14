@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
@@ -173,7 +173,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( requiresPlanUpgrade( site ) ) {
+	if ( site.plan?.is_free ) {
 		return (
 			<DomainUpsellCardContent
 				site={ site }
@@ -183,6 +183,24 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
+	}
+
+	if ( site.plan?.billing_period === 'Monthly' ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ sprintf(
+					/* translators: %s: the site plan name */
+					__(
+						'Switch your %s plan to annual billing to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+					),
+					site.plan?.product_name_short ?? ''
+				) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Switch to annual billing' ) }
 			/>
 		);
 	}
