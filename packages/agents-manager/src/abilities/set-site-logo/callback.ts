@@ -1,13 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import {
-	checkpointKeys,
-	clearCheckpoint,
-	hasCheckpoint,
-	setCheckpoint,
-} from '../../utils/checkpoints';
+import { checkpointKeys, withCheckpoint } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { hasSiteLogoBlock, setSiteLogo } from '../../utils/site-logo';
-import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
 
@@ -19,6 +13,7 @@ interface SetSiteLogoInput {
 		url?: string;
 	};
 	summary?: string;
+	toolCallId?: string;
 }
 
 /**
@@ -27,7 +22,7 @@ interface SetSiteLogoInput {
  * `restore-checkpoint` can undo it.
  */
 export async function setSiteLogoCallback( input: SetSiteLogoInput ): Promise< AbilityResult > {
-	const { fileObj, summary } = input;
+	const { fileObj, summary, toolCallId } = input;
 	const attachmentId = fileObj?.attachment_id;
 
 	if ( ! attachmentId ) {
@@ -51,29 +46,19 @@ export async function setSiteLogoCallback( input: SetSiteLogoInput ): Promise< A
 			: ( typeof summary === 'string' && summary.trim() ) ||
 			  __( 'Logo set successfully.', __i18n_text_domain__ );
 
-	// Keep the first snapshot taken for a tool call: a repeat call must not
-	// overwrite the pre-change logo with the one it just set.
-	const toolCallId = getToolCallIdFromConversationHistory( SET_SITE_LOGO_TOOL_ID );
-	const checkpointId = toolCallId && ! hasCheckpoint( toolCallId ) ? toolCallId : null;
-
 	try {
-		if ( checkpointId ) {
-			setCheckpoint( checkpointId, [ checkpointKeys.LOGO ], {
+		await withCheckpoint(
+			{
 				toolId: SET_SITE_LOGO_TOOL_ID,
+				toolCallId,
+				keys: [ checkpointKeys.LOGO ],
 				summary: successMessage,
-			} );
-		}
-
-		setSiteLogo( attachmentId );
+			},
+			() => setSiteLogo( attachmentId )
+		);
 
 		return successResult( successMessage, { attachmentId, url: fileObj?.url } );
 	} catch ( error ) {
-		// A failed edit leaves the logo unchanged — drop the checkpoint so it
-		// does not advertise an undo for a change that never happened.
-		if ( checkpointId ) {
-			clearCheckpoint( checkpointId );
-		}
-
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] Error setting the site logo:', error );
 

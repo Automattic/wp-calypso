@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { getEmailAddressError } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
-import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
@@ -40,11 +40,13 @@ export type AccountEmailFieldProps = {
 
 const EMAIL_VALIDATION_REASON_EMPTY = 'empty';
 const EMAIL_VALIDATION_REASON_INVALID = 'invalid';
+const EMAIL_VALIDATION_REASON_UNKNOWN_TLD = 'unknown_tld';
 const EMAIL_VALIDATION_REASON_IS_VALID = null;
 
 type AccountEmailValidationReason =
 	| typeof EMAIL_VALIDATION_REASON_EMPTY
 	| typeof EMAIL_VALIDATION_REASON_INVALID
+	| typeof EMAIL_VALIDATION_REASON_UNKNOWN_TLD
 	| typeof EMAIL_VALIDATION_REASON_IS_VALID;
 
 const getUserSetting = ( {
@@ -57,6 +59,18 @@ const getUserSetting = ( {
 	userSettings: UserSettingsType;
 } ) => {
 	return unsavedUserSettings?.[ settingName ] ?? userSettings?.[ settingName ] ?? '';
+};
+
+/**
+ * Extracts the domain part of an email address (lowercased). Returns null
+ * if the value does not look like an email with a domain.
+ */
+const getEmailDomain = ( email: string ): string | null => {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex < 0 || atIndex === email.length - 1 ) {
+		return null;
+	}
+	return email.slice( atIndex + 1 ).toLowerCase();
 };
 
 const AccountEmailValidationNotice = ( {
@@ -78,20 +92,23 @@ const AccountEmailValidationNotice = ( {
 		return null;
 	}
 
+	const email = getUserSetting( {
+		settingName: 'user_email',
+		unsavedUserSettings,
+		userSettings,
+	} ) as string;
+
 	let noticeText;
 
 	if ( emailInvalidReason === EMAIL_VALIDATION_REASON_EMPTY ) {
 		noticeText = translate( 'Email address can not be empty.' );
 	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_INVALID ) {
-		noticeText = translate( '%(email)s is not a valid email address.', {
-			args: {
-				email: getUserSetting( {
-					settingName: 'user_email',
-					unsavedUserSettings,
-					userSettings,
-				} ) as string,
-			},
-		} );
+		noticeText = translate( '%(email)s is not a valid email address.', { args: { email } } );
+	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_UNKNOWN_TLD ) {
+		noticeText = translate(
+			'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
+			{ args: { domain: getEmailDomain( email ) ?? email } }
+		);
 	}
 
 	return <FormInputValidation isError text={ noticeText } />;
@@ -147,18 +164,6 @@ const FREE_EMAIL_PROVIDERS = new Set( [
 	'web.de',
 	'wp.pl',
 ] );
-
-/**
- * Extracts the domain part of an email address (lowercased). Returns null
- * if the value does not look like an email with a domain.
- */
-const getEmailDomain = ( email: string ): string | null => {
-	const atIndex = email.lastIndexOf( '@' );
-	if ( atIndex < 0 || atIndex === email.length - 1 ) {
-		return null;
-	}
-	return email.slice( atIndex + 1 ).toLowerCase();
-};
 
 /**
  * Returns true if the email domain is a custom domain (i.e. not a well-known
@@ -285,9 +290,13 @@ const AccountEmailField = ( {
 
 		let emailValidationReason: AccountEmailValidationReason = EMAIL_VALIDATION_REASON_IS_VALID;
 
+		const emailError = getEmailAddressError( value );
+
 		if ( value === '' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_EMPTY;
-		} else if ( ! emailValidator.validate( value ) ) {
+		} else if ( emailError === 'unknown_tld' ) {
+			emailValidationReason = EMAIL_VALIDATION_REASON_UNKNOWN_TLD;
+		} else if ( emailError ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_INVALID;
 		}
 

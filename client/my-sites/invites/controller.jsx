@@ -11,7 +11,7 @@ import {
 	getPartnerFormattedWindowTitle,
 } from 'calypso/lib/partner-branding';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -39,7 +39,7 @@ export function acceptInvite( context, next ) {
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
-		if ( getCurrentUserEmail( context.store.getState() ) === acceptedInvite.sentTo ) {
+		if ( isSameEmail( getCurrentUserEmail( context.store.getState() ), acceptedInvite.sentTo ) ) {
 			debug( 'Setting email_verified in user object' );
 			context.store.dispatch( setUserEmailVerified( true ) );
 		}

@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { StatsNoticeProps } from './types';
 
+export const PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG = 'stats/premium-analytics-preview-atomic';
 export const PREMIUM_ANALYTICS_PREVIEW_FLAG = 'stats/premium-analytics-preview';
 
 /** The dashboard page, relative to the site's wp-admin. Where accepting the invitation lands. */
@@ -8,6 +10,7 @@ export const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analy
 type PreviewCohortSignals = Pick<
 	StatsNoticeProps,
 	| 'isWpcom'
+	| 'isAtomic'
 	| 'isVip'
 	| 'isP2'
 	| 'canManageOptions'
@@ -25,6 +28,8 @@ type PreviewCohortSignals = Pick<
  *
  * `isWpcom` is a rollout boundary rather than eligibility: Simple and Atomic go first, and
  * self-hosted Jetpack sites join by deleting that one clause.
+ * Atomic is held until 16.3-a.1 reaches WP Cloud, with the Atomic flag allowing
+ * Automatticians to test on Atomic meanwhile.
  *
  * `premiumAnalyticsDashboardUrl` is null when the site record carries no `admin_url`. Accepting
  * would then switch the dashboard on and drop the customer on a 404, so such a site is not
@@ -33,6 +38,7 @@ type PreviewCohortSignals = Pick<
  */
 export default function isPremiumAnalyticsPreviewCohort( {
 	isWpcom,
+	isAtomic,
 	isVip,
 	isP2,
 	canManageOptions,
@@ -45,6 +51,7 @@ export default function isPremiumAnalyticsPreviewCohort( {
 		hasCommercialStats &&
 		premiumAnalyticsDashboardUrl &&
 		! isVip &&
-		! isP2
+		! isP2 &&
+		( ! isAtomic || isEnabled( PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG ) )
 	);
 }

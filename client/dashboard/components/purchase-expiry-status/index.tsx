@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,6 +12,7 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import { getDowngradeTargetProductName } from '../../utils/downgrade-target-name';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -318,9 +319,9 @@ export function PurchaseExpiryStatus( {
 	// renew at its current price — it changes to a lower-tier plan. Say so instead
 	// of the usual "Renews ... on <date>" line.
 	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const planNames = getPlanNames() as Record< string, string | undefined >;
-		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const targetPlanName = getDowngradeTargetProductName(
+			purchase.delayed_downgrade_to_product_slug
+		);
 		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );

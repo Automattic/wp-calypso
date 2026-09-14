@@ -10,18 +10,6 @@
 		flex-direction: row;
 	}
 
-	.design-picker__header {
-		@include onboarding-heading-padding;
-
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.design-picker__heading {
-		flex-grow: 1;
-	}
-
 	.components-toolbar {
 		background-color: transparent;
 	}
@@ -270,10 +258,6 @@
 			margin: 0;
 		}
 	}
-	.design-picker__override-premium-badge .premium-badge {
-		background: var(--studio-black);
-		padding: 0 10px 0 9px;
-	}
 
 	.design-picker__button-link.components-button.is-link {
 		text-decoration: none;
@@ -407,13 +391,6 @@
 				row-gap: 40px;
 			}
 		}
-	}
-
-	.unified-design-picker__title {
-		font-size: $font-title-small;
-		font-weight: 600;
-		margin-top: 40px;
-		margin-bottom: 5px;
 	}
 
 	.theme-card {

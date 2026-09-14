@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 export function useStageTitles(): Record< InstallStageKey, ReactNode > {
 	const translate = useTranslate();
 	return {
-		preparing: translate( 'Preparing a dedicated server for your site' ),
+		preparing: translate( 'Preparing a dedicated server' ),
 		moving: translate( 'Moving your site to its new server' ),
 		finishing: translate( 'Finishing up' ),
 	};
@@ -21,7 +21,7 @@ export function useStageSentences( isPluginInstall = true ): Record< InstallStag
 	const translate = useTranslate();
 	return {
 		preparing: translate(
-			'We’re {{strong}}preparing a dedicated server for your site{{/strong}}.',
+			'We’re {{strong}}preparing a dedicated server{{/strong}} for your site.',
 			{
 				components: { strong: <strong /> },
 			}

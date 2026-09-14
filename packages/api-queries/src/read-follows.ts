@@ -94,14 +94,6 @@ export const getSiteSubscriptionsCountFromData = (
 	return Math.max( totalCount, followingCount );
 };
 
-export const getSiteSubscriptionByBlogIdFromData = (
-	data: SiteSubscriptionsInfiniteData | undefined,
-	blogId: number | string
-): SiteSubscriptionItem | undefined =>
-	getSiteSubscriptionsFromData( data ).find(
-		( subscription ) => Number( subscription.blog_ID ) === Number( blogId )
-	);
-
 export const getSiteSubscriptionByFeedIdFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
 	feedId: number | string

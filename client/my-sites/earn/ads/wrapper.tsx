@@ -6,6 +6,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -42,6 +43,7 @@ import {
 	getWordAdsSuccessForSite,
 } from 'calypso/state/wordads/approve/selectors';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
+import { getUpsellCheckoutQueryArgs, getUpsellReturnUrl } from '../upsell-return-url';
 
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
@@ -303,7 +305,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				translate( 'Instantly enroll into the WordAds network.' ),
 				translate( 'Earn money from your content and traffic.' ),
 			],
-			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM ),
+			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM, getUpsellCheckoutQueryArgs() ),
 			tracksClickName: 'calypso_upgrade_nudge_cta_click',
 			learnMoreUrl: 'https://wordads.co/',
 			fitToContent: true,
@@ -315,7 +317,10 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			body: translate(
 				'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 			),
-			href: `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`,
+			href: addQueryArgs(
+				`/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`,
+				getUpsellCheckoutQueryArgs()
+			),
 			tracksClickName: 'calypso_upgrade_nudge_click',
 			ctaName: 'calypso_upgrade_nudge_impression',
 		} );
@@ -339,7 +344,11 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const renderContentWithUpsell = ( component: ReactNode ) => {
 		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
 		const isAllowedSection = section && allowedSections.includes( section );
-		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
+		const url = addQueryArgs( `/plans/${ siteSlug }`, {
+			feature: FEATURE_WORDADS_INSTANT,
+			plan: PLAN_PREMIUM,
+			redirect_to: getUpsellReturnUrl(),
+		} );
 		return (
 			<>
 				{ ! isWPForTeams &&

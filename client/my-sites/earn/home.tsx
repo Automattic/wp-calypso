@@ -47,6 +47,7 @@ import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
 import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
 import EarnLaunchpad from './launchpad';
+import { getUpsellCheckoutQueryArgs, getUpsellReturnUrl } from './upsell-return-url';
 
 import './style.scss';
 
@@ -186,6 +187,7 @@ const Home = () => {
 						const url = addQueryArgs( `/plans/${ site?.slug }`, {
 							feature: FEATURE_SIMPLE_PAYMENTS,
 							plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							redirect_to: getUpsellReturnUrl(),
 						} );
 						/**
 						 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
@@ -408,11 +410,16 @@ const Home = () => {
 							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
 							const planPath = annualPlanSlug || undefined;
 							if ( planPath ) {
-								page( `/checkout/${ site.slug }/${ planPath }` );
+								page(
+									addQueryArgs(
+										`/checkout/${ site.slug }/${ planPath }`,
+										getUpsellCheckoutQueryArgs()
+									)
+								);
 								return;
 							}
 						}
-						page( `/plans/${ site?.slug }` );
+						page( addQueryArgs( `/plans/${ site?.slug }`, { redirect_to: getUpsellReturnUrl() } ) );
 					},
 			  };
 
@@ -484,6 +491,7 @@ const Home = () => {
 							const url = addQueryArgs( `/plans/${ site?.slug }`, {
 								feature: FEATURE_WORDADS_INSTANT,
 								plan: PLAN_PREMIUM,
+								redirect_to: getUpsellReturnUrl(),
 							} );
 							/**
 							 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
