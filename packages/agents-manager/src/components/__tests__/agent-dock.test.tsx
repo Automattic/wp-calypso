@@ -187,8 +187,12 @@ const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jes
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
-	const { pathname } = useLocation();
-	return <div data-testid="location">{ pathname }</div>;
+	const { pathname, state } = useLocation();
+	return (
+		<div data-testid="location" data-is-new-chat={ String( !! state?.isNewChat ) }>
+			{ pathname }
+		</div>
+	);
 }
 
 function renderAgentDock(
@@ -494,6 +498,17 @@ describe( 'AgentDock', () => {
 				type: 'reset_chat',
 			}
 		);
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'true' );
+	} );
+
+	it( 'does not treat the initial fallback as a new chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/' );
+
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'false' );
 	} );
 
 	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {

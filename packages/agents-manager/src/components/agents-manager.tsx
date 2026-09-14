@@ -13,6 +13,7 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
+import { useUrlSessionId } from '../hooks/use-url-session-id';
 import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import {
@@ -100,6 +101,8 @@ export default function AgentsManager( {
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
+	const urlSessionId = useUrlSessionId();
+
 	// Wait for the store to load so persisted UI state (open/docked/minimized)
 	// is restored before the dock first renders.
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
@@ -132,7 +135,7 @@ export default function AgentsManager( {
 						zendeskTicketProductFieldValue,
 					} }
 				>
-					<AgentSetup agentId={ agentId } />
+					<AgentSetup agentId={ agentId } initialSessionId={ urlSessionId } />
 				</AgentsManagerContextProvider>
 			</PersistentRouter>
 		</QueryClientProvider>
@@ -162,7 +165,13 @@ function resolveTabSessionId(
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
+function AgentSetup( {
+	agentId: hostAgentId,
+	initialSessionId,
+}: {
+	agentId?: string;
+	initialSessionId: string;
+} ): JSX.Element | null {
 	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const userId = currentUser?.ID;
@@ -193,8 +202,12 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const urlSessionId = new URL( window.location.href ).searchParams.get( 'wp-agent-chat' ) || '';
-	const sessionId = urlSessionId || resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	let sessionId: string;
+	if ( initialSessionId && ! agentConfig ) {
+		sessionId = initialSessionId;
+	} else {
+		sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	}
 
 	useWebMcpTools( {
 		toolProvider: loadedProvidersRef.current?.toolProvider,
@@ -208,14 +221,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		if ( isAgentConfigLoading ) {
 			return;
 		}
-
-		if ( urlSessionId ) {
-			saveSessionId( urlSessionId, agentId, siteKey, userId );
-			const url = new URL( window.location.href );
-			url.searchParams.delete( 'wp-agent-chat' );
-			window.history.replaceState( window.history.state, '', url );
+		if ( ! agentConfigRef.current && initialSessionId ) {
+			saveSessionId( initialSessionId, agentId, siteKey, userId );
 		}
-
 		// A dep change supersedes this run mid-await — a stale initialization
 		// must not navigate or publish its config over the newer run's.
 		let isSuperseded = false;
@@ -331,6 +339,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		isAgentConfigLoading,
 		isChatViewShowing,
 		isNewChat,
+		initialSessionId,
 		navigate,
 		sessionId,
 		sectionName,
@@ -338,7 +347,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		site?.ID,
 		siteKey,
 		userId,
-		urlSessionId,
 		version,
 	] );
 
