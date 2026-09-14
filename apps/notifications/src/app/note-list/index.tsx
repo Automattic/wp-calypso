@@ -61,7 +61,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
-	const { client } = useAppContext();
+	const { client, isViewSettingsEnabled } = useAppContext();
 
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
@@ -134,7 +134,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const startPosition = view.startPosition ?? 1;
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const layoutStyle = useSelector( getLayoutStyle );
+	// The setting is only offered where the flag is on, so only honour it there. A host
+	// without the flag has no way to change it back, and a preference saved from one that
+	// does would otherwise follow the account into it.
+	const storedLayoutStyle = useSelector( getLayoutStyle );
+	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'classic';
 	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
