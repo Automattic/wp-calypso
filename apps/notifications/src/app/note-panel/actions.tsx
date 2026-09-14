@@ -113,10 +113,6 @@ export default function NotePanelActions() {
 							/>
 						}
 					/>
-					{ /* A modal menu lays a backdrop over the page, and the click that
-					   dismisses it lands there rather than on what it looks like it hit.
-					   The panel never learns focus left it and stays open behind the
-					   closed menu. */ }
 					<Menu.Popover modal={ false }>
 						<Menu.Group>
 							<Menu.GroupLabel>
