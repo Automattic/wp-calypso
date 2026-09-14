@@ -41,7 +41,6 @@ import { useNavigationContinuation } from '../../hooks/use-navigation-continuati
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
-import { applyTurnActionPolicy } from '../../utils/apply-turn-action-policy';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -49,9 +48,9 @@ import {
 	isCanvasWritingAgent,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
-import { isContextOnlyMessage } from '../../utils/context-only-message';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
+	isContextOnlyMessage,
 } from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
@@ -64,10 +63,10 @@ import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getAgentTurnPositions } from '../../utils/message-turns';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
+import { applyResponseActionVisibility } from '../../utils/response-action-visibility';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -83,7 +82,6 @@ import type {
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
-import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
 
 const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
 let activeStreamedCheckpointSession:
@@ -140,20 +138,14 @@ function activateLiveStreamedCheckpointSession(
 	return nextLiveFinalMessageIds;
 }
 
-// UI-only notice ids: kept on screen but never part of the agent's history.
-const CANVAS_MOVE_ABORT_ID_PREFIX = 'canvas-move-abort-';
+function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'agent' ) {
+			return messages[ index ].id;
+		}
+	}
 
-function hasPressedAction( actions: MessageAction[] = [] ): boolean {
-	return actions.some( ( action ) => action.type !== 'component' && action.pressed === true );
-}
-
-function hasDisabledCheckpointAction( actions: MessageAction[] = [] ): boolean {
-	return actions.some(
-		( action ) =>
-			action.type === 'component' &&
-			action.id === 'checkpoint' &&
-			action.componentProps?.disabled === true
-	);
+	return null;
 }
 
 function getLatestUserMessageIndex( messages: UIMessage[] ): number {
@@ -573,7 +565,7 @@ export default function OrchestratorChat( {
 		// have, so `filterUiOnlyMessages` keeps it on screen and it is never sent
 		// back to the server as conversation history.
 		addMessage( {
-			id: `${ CANVAS_MOVE_ABORT_ID_PREFIX }${ generateUUID() }`,
+			id: `canvas-move-abort-${ generateUUID() }`,
 			role: 'agent',
 			content: [
 				{
@@ -1587,29 +1579,21 @@ export default function OrchestratorChat( {
 			isProcessing,
 		} );
 
-		const feedbackActionsByMessageId = new Map(
-			currentMessages.map( ( message ) => [ message.id, getFeedbackActionsForMessage( message ) ] )
-		);
-		// Disabled replies cannot take clicks and UI-only notices are not the
-		// agent's answer, so neither may carry the turn's rating; a reply that
-		// already holds a vote keeps carrying it as its turn grows.
-		const agentTurnPositions = getAgentTurnPositions( currentMessages, {
-			canCarryTurnActions: ( message ) =>
-				! ( message as AgentsManagerUIMessage ).disabled &&
-				! message.id.startsWith( CANVAS_MOVE_ABORT_ID_PREFIX ) &&
-				! supersededCheckpointMessageIds.has( message.id ) &&
-				! hasDisabledCheckpointAction( checkpointActionsByMessageId.get( message.id ) ),
-			hasTurnActions: ( message ) =>
-				hasPressedAction( feedbackActionsByMessageId.get( message.id ) ),
-		} );
+		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
+		// Everything after the user's latest reply is the turn in progress.
+		const latestTurnStartIndex = getLatestUserMessageIndex( currentMessages ) + 1;
 
-		currentMessages = currentMessages.map( ( message ) => {
+		currentMessages = currentMessages.map( ( message, index ) => {
 			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
+			const hasDisabledCheckpointAction = checkpointActions.some(
+				( action ) =>
+					action.type === 'component' &&
+					action.id === 'checkpoint' &&
+					action.componentProps?.disabled === true
+			);
 			const shouldDisableCheckpointMessage =
-				hasDisabledCheckpointAction( checkpointActions ) ||
-				supersededCheckpointMessageIds.has( message.id );
+				hasDisabledCheckpointAction || supersededCheckpointMessageIds.has( message.id );
 			const traceId = getTraceIdForMessage( message.id );
-			const turnPosition = agentTurnPositions.get( message.id );
 			const messageWithTraceId =
 				traceId || shouldDisableCheckpointMessage
 					? {
@@ -1621,9 +1605,12 @@ export default function OrchestratorChat( {
 
 			const directActions = [
 				...checkpointActions,
-				...( feedbackActionsByMessageId.get( message.id ) ?? [] ),
+				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
-				...getRegenerateActionsForMessage( message ),
+				...getRegenerateActionsForMessage( message, {
+					isLatestAgentMessage: message.id === latestAgentMessageId,
+					isStreaming: isProcessing,
+				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
 				( action ) => action.id === 'checkpoint'
@@ -1646,7 +1633,10 @@ export default function OrchestratorChat( {
 
 			return {
 				...messageWithTraceId,
-				actions: applyTurnActionPolicy( actions, turnPosition, isProcessing ),
+				actions: applyResponseActionVisibility( actions, {
+					isLatestTurn: index >= latestTurnStartIndex,
+					isStreaming: isProcessing,
+				} ),
 			};
 		} );
 
