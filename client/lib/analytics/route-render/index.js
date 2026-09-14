@@ -7,14 +7,7 @@ let lastContext = null;
 
 /**
  * Records that a route rendered, keyed by the matched route pattern.
- *
- * This is a temporary audit event: it fires from the shared render layer so it can be compared
- * against `calypso_page_view`, which each view opts into individually. A context that renders
- * more than once (for example a handler that re-renders while it loads) is counted once.
- *
- * Only the route pattern is recorded, never the concrete path: some routes carry invitation
- * and activation keys in the URL.
- * @param {Object} context - Router context of the rendered route
+// Temporary audit event — remove after comparison with calypso_page_view.
  */
 export function recordRouteRender( context ) {
 	if ( ! context || context === lastContext ) {
