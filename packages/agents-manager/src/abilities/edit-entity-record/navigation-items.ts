@@ -30,48 +30,54 @@ export interface NavigationItemInput {
 	items?: NavigationItemInput[];
 }
 
-// Absent, or a string with something in it: an empty one names nothing and
-// would clear what it landed on.
-const isOptionalText = ( value: unknown ) =>
-	value === undefined || ( typeof value === 'string' && value.trim() !== '' );
+// `null` counts as absent throughout: the model writes it for a field it has
+// no value for, as often as it leaves the field out.
+const isText = ( value: unknown ) => typeof value === 'string' && value.trim() !== '';
 
-const isOptionalId = ( value: unknown ) =>
-	value === undefined ||
+const isId = ( value: unknown ) =>
 	( typeof value === 'number' && value > 0 ) ||
 	( typeof value === 'string' && /^[1-9]\d*$/.test( value ) );
 
-const NAVIGATION_ITEM_KEYS = [
-	'clientId',
-	'label',
-	'url',
-	'id',
-	'kind',
-	'type',
-	'opensInNewTab',
-	'items',
-];
-
 /**
- * The schema validates nothing below the first level, and the callback runs on
- * raw arguments anyway, so every entry is checked here before it reaches a
- * block attribute. Unknown keys are refused as the schema says: a misspelt one
- * would otherwise be dropped and the edit reported as done.
+ * What is wrong with a raw item, or nothing. The schema validates nothing
+ * below the first level and the callback runs on raw arguments, so each field
+ * the rebuild reads is checked here. Keys it does not read are ignored: the
+ * agent echoes whatever attributes the page structure showed it, and refusing
+ * the batch for one of them would help no one.
  */
-const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =>
-	isRecord( value ) &&
-	Object.keys( value ).every( ( key ) => NAVIGATION_ITEM_KEYS.includes( key ) ) &&
-	( value.clientId !== undefined ||
-		value.label !== undefined ||
-		value.url !== undefined ||
-		value.id !== undefined ) &&
-	isOptionalText( value.clientId ) &&
-	isOptionalText( value.label ) &&
-	isOptionalText( value.url ) &&
-	isOptionalText( value.kind ) &&
-	isOptionalText( value.type ) &&
-	isOptionalId( value.id ) &&
-	( value.opensInNewTab === undefined || typeof value.opensInNewTab === 'boolean' ) &&
-	( value.items === undefined || Array.isArray( value.items ) );
+function itemProblem( value: unknown ): string | undefined {
+	if ( ! isRecord( value ) ) {
+		return 'an entry that is not an object';
+	}
+
+	const { clientId, label, url, id, opensInNewTab, items } = value;
+
+	if ( clientId == null && label == null && url == null && id == null ) {
+		return 'an entry naming no clientId, label, url or id';
+	}
+
+	const wrongText = ( [ 'clientId', 'label', 'url', 'kind', 'type' ] as const ).find(
+		( field ) => value[ field ] != null && ! isText( value[ field ] )
+	);
+
+	if ( wrongText ) {
+		return `a ${ wrongText } that is not a non-empty string`;
+	}
+
+	if ( id != null && ! isId( id ) ) {
+		return 'an id that is not a positive number';
+	}
+
+	if ( opensInNewTab != null && typeof opensInNewTab !== 'boolean' ) {
+		return 'an opensInNewTab that is not true or false';
+	}
+
+	if ( items != null && ! Array.isArray( items ) ) {
+		return 'items that is not an array';
+	}
+
+	return undefined;
+}
 
 /**
  * A list of items at every level, refused rather than filtered when an entry is
@@ -83,25 +89,28 @@ function checkNavigationItems( items: unknown, where: string ): NavigationItemIn
 		throw new Error( `navigationItems ${ where } must be an array of menu items.` );
 	}
 
-	if ( ! items.every( isNavigationItemInput ) ) {
-		throw new Error(
-			`Invalid navigation items ${ where }: each entry must be an object naming a clientId, ` +
-				'label, url or id — non-empty strings, or a positive number for the id — with any ' +
-				'kind and type as strings, opensInNewTab as a boolean, items as an array, and no other keys.'
-		);
+	for ( const [ index, item ] of items.entries() ) {
+		const problem = itemProblem( item );
+
+		if ( problem ) {
+			throw new Error(
+				`Invalid navigation items ${ where }: entry ${ index + 1 } has ${ problem }. ` +
+					'Nothing was changed.'
+			);
+		}
 	}
 
-	items.forEach(
+	( items as NavigationItemInput[] ).forEach(
 		( item ) =>
-			item.items !== undefined &&
-			checkNavigationItems( item.items, `under "${ item.label ?? '' }"` )
+			item.items != null && checkNavigationItems( item.items, `under "${ item.label ?? '' }"` )
 	);
 
 	return items;
 }
 
 /** An item's children, or none — an absent list keeps the existing children. */
-const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined => item.items;
+const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
+	item.items ?? undefined;
 
 /**
  * Refuses a malformed menu record before anything in the batch is written. A raw
