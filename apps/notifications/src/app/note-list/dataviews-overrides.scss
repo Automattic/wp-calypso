@@ -95,12 +95,6 @@
 			:has(.dataviews-view-list__field:not(:empty))
 		) {
 		align-items: center !important;
-
-		// The media wrapper carries a 4px top nudge for top-aligned rows; centring
-		// would otherwise centre its margin box and sit 4px low.
-		.dataviews-view-list__media-wrapper {
-			margin-block-start: 0;
-		}
 	}
 
 	// We override styles with the selected styles for unread items.
