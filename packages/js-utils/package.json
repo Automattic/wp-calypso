@@ -13,7 +13,8 @@
 		".": {
 			"calypso:src": "./src/index.ts",
 			"types": "./dist/types/index.d.ts",
-			"import": "./dist/cjs/index.js",
+			"node": "./dist/cjs/index.js",
+			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		}
 	},
