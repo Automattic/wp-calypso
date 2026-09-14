@@ -9,10 +9,6 @@ import type { MigrationWizardProgressStep } from '../../internals/steps-reposito
  */
 export const getMigrationWizardSteps = (): MigrationWizardProgressStep[] => [
 	{ slug: STEPS.SITE_MIGRATION_IDENTIFY.slug, label: __( 'Your site' ) },
-	{ slug: STEPS.SITE_MIGRATION_SCAN.slug, label: __( 'Scan' ) },
-	{ slug: STEPS.SITE_MIGRATION_DESTINATION.slug, label: __( 'Choose' ) },
-	{ slug: STEPS.SITE_MIGRATION_PREVIEW.slug, label: __( 'Preview' ) },
-	{ slug: STEPS.SITE_MIGRATION_DOMAIN.slug, label: __( 'Domain' ) },
-	{ slug: STEPS.SITE_MIGRATION_SEO.slug, label: __( 'SEO' ) },
+	{ slug: STEPS.SITE_MIGRATION_CAPTURE.slug, label: __( 'Reading your site' ) },
 	{ slug: STEPS.SITE_MIGRATION_REVIEW.slug, label: __( 'Review' ) },
 ];

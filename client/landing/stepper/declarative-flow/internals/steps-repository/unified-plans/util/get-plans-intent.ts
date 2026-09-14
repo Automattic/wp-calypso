@@ -7,6 +7,7 @@ import {
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
+	SITE_MIGRATION_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -60,6 +61,11 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
 			break;
+		case SITE_MIGRATION_FLOW:
+			// The imported site is delivered to an Atomic site, and the free plan does not
+			// grant that. Personal and Premium do, so this hides the free plan rather than
+			// pushing everyone to Business.
+			return 'plans-ai-assembler-paid-only';
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:

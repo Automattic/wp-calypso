@@ -30,40 +30,61 @@ export async function attachSwitchRun( {
 	);
 }
 
+/**
+ * Start a session for a source URL.
+ *
+ * No site is involved: reading and rebuilding the source site needs a URL and
+ * nothing else, so the session belongs to the user until it is approved.
+ */
 export async function createStaticSiteImportSession(
-	siteId: number,
 	sourceUrl: string
 ): Promise< StaticSiteImportSession > {
 	return wpcom.req.post(
 		{
-			path: `/sites/${ siteId }/static-site-import-session`,
+			path: '/static-site-import-session',
 			apiNamespace: 'wpcom/v2',
 		},
 		{ source_url: sourceUrl }
 	);
 }
 
+/**
+ * Approve a built site and send it to a destination.
+ *
+ * This is the only call that names a site, and the only one that changes
+ * anything. Approval is hash-bound: `archiveHash` has to be the hash the session
+ * reported, or the API refuses rather than shipping something the user did not
+ * see.
+ */
 export async function approveStaticSiteImportSession( {
-	siteId,
 	sessionId,
-	planHash,
+	archiveHash,
+	destinationBlogId,
 }: ApproveStaticSiteImportSessionParams ): Promise< StaticSiteImportSession > {
 	return wpcom.req.post(
 		{
-			path: `/sites/${ siteId }/static-site-import-session/${ encodeURIComponent(
-				sessionId
-			) }/approve`,
+			path: `/static-site-import-session/${ encodeURIComponent( sessionId ) }/approve`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ plan_hash: planHash }
+		{ archive_hash: archiveHash, destination_blog_id: destinationBlogId }
 	);
 }
 
 /**
- * Approval is hash-bound: the API rejects a `plan_hash` that no longer matches
- * the plan it would apply with a 409, meaning the preview the user approved is
- * stale and has to be re-read before approving again.
+ * The API's own error code for a failed request, or null.
+ *
+ * Several unrelated failures come back as a 409, so the status cannot be used to
+ * tell them apart. WP REST errors carry the code on `code`; the older JSON API
+ * shape carries it on `error`, and both reach here through the same client.
  */
-export function isStaticSiteImportPlanHashMismatch( error: unknown ): boolean {
-	return isWpError( error ) && error.status === 409;
+export function getStaticSiteImportErrorCode( error: unknown ): string | null {
+	if ( ! isWpError( error ) ) {
+		return null;
+	}
+
+	if ( typeof error.code === 'string' ) {
+		return error.code;
+	}
+
+	return typeof error.error === 'string' ? error.error : null;
 }

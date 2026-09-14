@@ -15,12 +15,17 @@ export async function fetchSwitchRunPreview( runId: string ): Promise< SwitchRun
 	} );
 }
 
+/**
+ * Read a session.
+ *
+ * The session belongs to the user, not to a site: it can be read before the
+ * destination site exists.
+ */
 export async function fetchStaticSiteImportSession(
-	siteId: number,
 	sessionId: string
 ): Promise< StaticSiteImportSession > {
 	return wpcom.req.get( {
-		path: `/sites/${ siteId }/static-site-import-session/${ encodeURIComponent( sessionId ) }`,
+		path: `/static-site-import-session/${ encodeURIComponent( sessionId ) }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }
