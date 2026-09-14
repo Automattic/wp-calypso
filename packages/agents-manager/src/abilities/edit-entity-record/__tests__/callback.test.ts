@@ -448,8 +448,6 @@ describe( 'editEntityRecordCallback', () => {
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
-		// Refused up front: asking the user to confirm a deletion that then
-		// cannot happen wastes the question.
 		it( 'refuses without a router before asking to confirm', async () => {
 			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
 
