@@ -377,13 +377,30 @@ describe( 'input validation', () => {
 		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
 		{ case: 'an id that is not a positive integer', items: [ { id: 'abc' } ] },
 		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },
-		{ case: 'a key the schema does not name', items: [ { label: 'A', openInNewTab: true } ] },
 	] )( 'refuses $case', async ( { items } ) => {
 		withMenu( [ item( 'a', 'Home' ) ] );
 
 		await expect( buildNavigationItems( 10, { navigationItems: items } ) ).rejects.toThrow(
 			'Invalid navigation items'
 		);
+	} );
+
+	// The agent echoes attributes the page structure showed it, and writes
+	// `null` for a field it has no value for.
+	it( 'ignores keys it does not read, and takes null as absent', async () => {
+		withMenu( [ item( 'a', 'Home' ) ] );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { label: 'Home', url: null, items: null, rel: 'nofollow', ref: 10 } ],
+		} );
+
+		expect( ( result.blocks as { clientId: string }[] )[ 0 ].clientId ).toBe( 'a' );
+	} );
+
+	it( 'names the entry and the field it refuses', async () => {
+		await expect(
+			buildNavigationItems( 10, { navigationItems: [ { label: 'Home' }, { label: 7 } ] } )
+		).rejects.toThrow( 'entry 2 has a label that is not a non-empty string' );
 	} );
 
 	it( 'refuses raw blocks that are not an array', async () => {
