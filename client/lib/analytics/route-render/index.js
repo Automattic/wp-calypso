@@ -18,11 +18,11 @@ export function recordRouteRender( context ) {
 	}
 	lastContext = context;
 
-	const { routePath, pathname, section } = context;
+	const { currentRoutePattern, pathname, section } = context;
 
 	recordTracksEvent( ROUTE_RENDER_EVENT, {
 		app: 'calypso',
-		path: typeof routePath === 'string' ? routePath : pathname,
+		path: currentRoutePattern ?? pathname,
 		pathname,
 		section: section?.name,
 	} );

@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Record the pattern of the most recently matched string route on `ctx.routePath`.
+- Expose the matched route pattern through the read-only `page.currentRoutePattern` getter.
 
 ## 0.7.0
 

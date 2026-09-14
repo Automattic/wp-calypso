@@ -960,6 +960,12 @@ function createPage() {
 		},
 	} );
 
+	Object.defineProperty( pageFn, 'currentRoutePattern', {
+		get: function () {
+			return pageInstance.prevContext?.currentRoutePattern;
+		},
+	} );
+
 	// In 2.0 these can be named exports
 	pageFn.Context = Context;
 	pageFn.Route = Route;
@@ -1144,9 +1150,20 @@ Route.prototype.middleware = function ( fn ) {
 	const handler = ( ctx, next ) => fn( ctx, next );
 	handler.match = ( ctx ) => {
 		const matched = this.match( ctx.path, ctx.params );
-		if ( matched && typeof this.path === 'string' && this.path !== '(.*)' ) {
-			ctx.routePath = this.path;
+		if ( matched && this.path !== '(.*)' ) {
+			try {
+				const pattern = Array.isArray( this.path )
+					? this.path.find( ( candidate ) =>
+							new Route( candidate, null, this.page ).match( ctx.path, {} )
+					  )
+					: this.path;
+
+				ctx.currentRoutePattern = pattern?.toString();
+			} catch {
+				ctx.currentRoutePattern = undefined;
+			}
 		}
+
 		return matched;
 	};
 	return handler;

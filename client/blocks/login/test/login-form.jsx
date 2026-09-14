@@ -48,8 +48,9 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
-		expect( notice ).toBeInTheDocument();
+		const notice = screen.getByText( /already a WordPress.com account for/i );
+		expect( notice ).toBeVisible();
+		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'displays notice when social account is linking and last used authentication method is set', async () => {
@@ -59,7 +60,7 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeInTheDocument();
 	} );
 
@@ -89,7 +90,7 @@ describe( 'LoginForm', () => {
 		const username = screen.getByLabelText( /username/i );
 		await userEvent.type( username, 'test@example.com' );
 
-		const notice = screen.queryByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.queryByText( /already a WordPress.com account for/i );
 		expect( notice ).not.toBeInTheDocument();
 	} );
 

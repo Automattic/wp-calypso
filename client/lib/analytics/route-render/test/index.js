@@ -10,7 +10,7 @@ describe( 'recordRouteRender', () => {
 
 	test( 'records the matched route pattern, the pathname, and the section', () => {
 		recordRouteRender( {
-			routePath: '/plans/:site?',
+			currentRoutePattern: '/plans/:site?',
 			pathname: '/plans/example.wordpress.com',
 			section: { name: 'plans' },
 		} );
@@ -23,7 +23,7 @@ describe( 'recordRouteRender', () => {
 		} );
 	} );
 
-	test( 'falls back to the pathname when no string route matched', () => {
+	test( 'falls back to the pathname when no route pattern was recorded', () => {
 		recordRouteRender( { pathname: '/sites', section: { name: 'sites-dashboard' } } );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -33,7 +33,7 @@ describe( 'recordRouteRender', () => {
 	} );
 
 	test( 'counts a context that renders more than once only once', () => {
-		const context = { routePath: '/me', pathname: '/me', section: { name: 'me' } };
+		const context = { currentRoutePattern: '/me', pathname: '/me', section: { name: 'me' } };
 
 		recordRouteRender( context );
 		recordRouteRender( context );

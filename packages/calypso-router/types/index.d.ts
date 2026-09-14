@@ -179,6 +179,11 @@ interface Page {
 	current: string;
 
 	/**
+	 * Current route pattern
+	 */
+	readonly currentRoutePattern: string | undefined;
+
+	/**
 	 * Navigate back to the previous route
 	 */
 	back: ( path: string ) => void;
@@ -288,11 +293,6 @@ class Context {
 	 * The parameters from the url, e.g. /user/:id => Context.params.id
 	 */
 	params: { [ idx: string ]: any };
-	/**
-	 * The pattern of the most recently matched string route, e.g. "/user/:id".
-	 * Catch-all ("*") and RegExp routes are not recorded.
-	 */
-	routePath?: string;
 }
 
 const page: Page;

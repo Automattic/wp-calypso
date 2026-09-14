@@ -1,5 +1,5 @@
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getRawUserPurchases } from 'calypso/state/purchases/selectors';
 import 'calypso/state/purchases/init';
 
 /**
@@ -11,7 +11,7 @@ import 'calypso/state/purchases/init';
  * @returns {boolean} if the user currently has any purchases that can be canceled.
  */
 export const hasCancelableUserPurchases = ( state ) => {
-	const purchases = getUserPurchases( state );
+	const purchases = getRawUserPurchases( state );
 	const subscriptions = getAllSubscriptions( state );
 
 	if ( ! purchases || ! subscriptions ) {
@@ -19,7 +19,7 @@ export const hasCancelableUserPurchases = ( state ) => {
 	}
 
 	const hasRefundablePurchases = purchases.some(
-		( purchase ) => purchase.isRefundable || purchase.productSlug !== 'premium_theme'
+		( purchase ) => purchase.is_refundable || purchase.product_slug !== 'premium_theme'
 	);
 	const hasRenewableSubscriptions = subscriptions.some(
 		( subscription ) => subscription.status === 'active' && subscription.is_renewable
