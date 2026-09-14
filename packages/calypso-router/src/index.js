@@ -1151,13 +1151,17 @@ Route.prototype.middleware = function ( fn ) {
 	handler.match = ( ctx ) => {
 		const matched = this.match( ctx.path, ctx.params );
 		if ( matched && this.path !== '(.*)' ) {
-			const pattern = Array.isArray( this.path )
-				? this.path.find( ( candidate ) =>
-						new Route( candidate, null, this.page ).match( ctx.path, {} )
-				  )
-				: this.path;
+			try {
+				const pattern = Array.isArray( this.path )
+					? this.path.find( ( candidate ) =>
+							new Route( candidate, null, this.page ).match( ctx.path, {} )
+					  )
+					: this.path;
 
-			ctx.currentRoutePattern = pattern?.toString();
+				ctx.currentRoutePattern = pattern?.toString();
+			} catch {
+				ctx.currentRoutePattern = undefined;
+			}
 		}
 
 		return matched;
