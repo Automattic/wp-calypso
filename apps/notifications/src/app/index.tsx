@@ -40,8 +40,7 @@ const applyPreferences = ( { layoutStyle, views, viewSettingsSeen }: Notificatio
 	if ( views ) {
 		store.dispatch( actions.ui.setViews( views ) );
 	}
-	// Always dispatched, so an absent preference resolves to "not seen" rather
-	// than staying unknown.
+
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };
 
@@ -150,10 +149,6 @@ const NotificationApp = ( {
 	locale?: string;
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
-	/**
-	 * Supplied by hosts that already hold the user's preferences, so the panel does
-	 *  not have to fetch them and paint its defaults while it waits.
-	 */
 	preferences?: NotificationPreferences;
 	customEnhancer?: any;
 	actionHandlers?: any;
@@ -169,14 +164,10 @@ const NotificationApp = ( {
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
 		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
-		// Once per session, not per mount: in the dashboard the panel lives inside a
-		// dropdown and remounts on every open, and a late response would also overwrite a
-		// change the view picker had just made.
+		// Apply preferences on the first mount.
 		if ( ! hasResolvedPreferences ) {
 			hasResolvedPreferences = true;
-			// A host that already holds these hands them over, and they land before the
-			// panel first paints. Fetching them here instead would paint the defaults and
-			// then move the tabs under the reader.
+
 			if ( preferences ) {
 				applyPreferences( preferences );
 			} else {

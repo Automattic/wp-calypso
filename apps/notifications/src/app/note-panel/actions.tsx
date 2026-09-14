@@ -115,10 +115,10 @@ export default function NotePanelActions() {
 							/>
 						}
 					/>
-					{ /* Without the modal backdrop a press outside reports what it actually
-				   landed on, which is what lets the host tell "dismiss the menu" from
-				   "close the panel". The backdrop covers the panel too, so every press
-				   would look the same. */ }
+					{ /* A modal menu lays a backdrop over the page, and the click that
+					   dismisses it lands there rather than on what it looks like it hit.
+					   The panel never learns focus left it and stays open behind the
+					   closed menu. */ }
 					<Menu.Popover modal={ false }>
 						<Menu.Group>
 							<Menu.GroupLabel>
