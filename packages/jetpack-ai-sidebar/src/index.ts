@@ -32,14 +32,10 @@ import './components/base-suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {
-	type CheckpointApi,
-	type CheckpointField,
 	applyReviewEdit,
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
-	setModuleCheckpointApi,
-	getModuleCheckpointApi,
 	startBlockShimmer,
 	stopBlockShimmer,
 	getSelectedOrRememberedBlock,
@@ -67,7 +63,6 @@ import {
 } from './utils/preview-features';
 import {
 	getCurrentEditorPostIdFromStore as getCurrentEditorPostId,
-	normalizeEditorPostId,
 	type EditorPostId,
 } from './utils/review-post-context';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
@@ -76,7 +71,6 @@ import {
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
-import { getResponseRenderedTrackingProperties } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
@@ -131,6 +125,19 @@ function getEditorBlocksSignature( blocks: any[] | undefined ): string | undefin
 	} catch {
 		return undefined;
 	}
+}
+
+/** Puts the block back as the snapshot recorded it, if the editor still matches. */
+function revertBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
+	return (
+		canSwapBlockEditSnapshot( snapshot ) &&
+		undoBlockEdit(
+			snapshot.clientId,
+			snapshot.contentBefore,
+			snapshot.contentAfter,
+			snapshot.editableAttribute
+		)
+	);
 }
 
 function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
@@ -565,15 +572,10 @@ function applySuggestionLimit< T extends { id: string } >(
 	];
 }
 
-// ---------- Show-component ability ----------
+// ---------- Chat components ----------
 
-const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
-const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
-const UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID = 'wpcom__update_block_content';
-const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
-const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
-const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
-
+// The components AM's `big-sky/show-component` ability renders for Jetpack's
+// picker types, resolved through `getChatComponent`. The ability lives in AM.
 const CHAT_COMPONENTS: Record< string, ComponentType > = {
 	'excerpt-picker': ExcerptPicker as ComponentType,
 	'title-picker': TitlePicker as ComponentType,
@@ -584,254 +586,6 @@ const CHAT_COMPONENTS: Record< string, ComponentType > = {
 	'post-feedback': PostFeedback as ComponentType,
 	proofread: Proofread as ComponentType,
 };
-
-const SHOW_COMPONENT_TYPES = Object.keys( CHAT_COMPONENTS );
-
-function hasPickerOptions(
-	props: Record< string, unknown >,
-	optionsKey: string,
-	valueKey: string
-): boolean {
-	const options = props[ optionsKey ];
-	return (
-		Array.isArray( options ) &&
-		options.length > 0 &&
-		options.every( ( option ) => {
-			if ( ! option || typeof option !== 'object' || Array.isArray( option ) ) {
-				return false;
-			}
-			const value = ( option as Record< string, unknown > )[ valueKey ];
-			return typeof value === 'string' && value.trim() !== '';
-		} )
-	);
-}
-
-function hasRenderableShowComponentProps( type: string, props: unknown ): boolean {
-	if ( ! props || typeof props !== 'object' || Array.isArray( props ) ) {
-		return false;
-	}
-
-	const componentProps = props as Record< string, unknown >;
-	switch ( type ) {
-		case 'excerpt-picker':
-			return hasPickerOptions( componentProps, 'excerpts', 'excerpt' );
-		case 'title-picker':
-		case 'seo-title-picker':
-			return hasPickerOptions( componentProps, 'titles', 'title' );
-		case 'seo-description-picker':
-			return hasPickerOptions( componentProps, 'descriptions', 'description' );
-		case 'image-alt-text-picker':
-			return (
-				hasPickerOptions( componentProps, 'images', 'alt' ) &&
-				( componentProps.images as unknown[] ).every( ( image ) => {
-					const clientId = ( image as Record< string, unknown > ).clientId;
-					return typeof clientId === 'string' && clientId.trim() !== '';
-				} )
-			);
-		case 'ai-editorial-review':
-		case 'post-feedback':
-		case 'proofread':
-			return typeof componentProps.summary === 'string' && componentProps.summary.trim() !== '';
-		default:
-			return false;
-	}
-}
-
-/**
- * Client-side ability definition for `jetpack-ai/show-component`.
- *
- * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
- * recognizes Jetpack-owned component tool calls. Same pattern as
- * update-block-content.
- */
-const SHOW_COMPONENT_ABILITY: any = {
-	id: SHOW_COMPONENT_TOOL_ID,
-	name: SHOW_COMPONENT_ABILITY_NAME,
-	label: 'Show component',
-	category: 'jetpack-ai',
-	description: 'Render an interactive component in the chat.',
-	input_schema: {
-		type: 'object',
-		properties: {
-			type: { type: 'string', enum: SHOW_COMPONENT_TYPES },
-			props: { type: 'object' },
-			summary: {
-				type: 'string',
-				description:
-					'One line naming what this step produced, in the language of the current user message. Recorded as the completed step, so a multi-step request continues from it. For example: "Proofread the post and found 2 typos."',
-			},
-		},
-		required: [ 'type', 'props' ],
-	},
-};
-
-const LEGACY_SHOW_COMPONENT_ABILITY: any = {
-	...SHOW_COMPONENT_ABILITY,
-	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
-	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
-	input_schema: {
-		...SHOW_COMPONENT_ABILITY.input_schema,
-		properties: {
-			...SHOW_COMPONENT_ABILITY.input_schema.properties,
-			type: { type: 'string' },
-		},
-	},
-};
-
-function hasShowComponentType( type: unknown ): type is string {
-	return typeof type === 'string' && type.trim() !== '';
-}
-
-function isJetpackShowComponentType( type: unknown ): boolean {
-	return hasShowComponentType( type ) && !! getChatComponent( type );
-}
-
-function shouldDelegateLegacyShowComponent( input: any ): boolean {
-	const type = input?.type;
-	return hasShowComponentType( type ) && ! isJetpackShowComponentType( type );
-}
-
-/**
- * Handle Jetpack show-component calls by returning an agentMessage envelope.
- * Title picker opts into AM's
- * message-level Undo because the checkpoint API snapshots the post title.
- * @param {any} input - Tool call arguments: `{ type, props, summary, toolCallId, ... }`.
- * @returns {Object} `{ result, returnToAgent, agentMessage }` — the picker
- * renders from `agentMessage`, and `result` tells the agent it was shown.
- */
-/**
- * Build a show-component failure the agent can recover from.
- *
- * Returns to the agent: a withheld failure ends the turn silently, leaving the
- * user with no picker and no explanation. The backend shows `message` to the
- * user and hands `error` to the model, so a failure carries both.
- * @param {string} error - Technical reason, for the model.
- * @returns {Object} `{ result, returnToAgent }`.
- */
-function showComponentError( error: string ): any {
-	return {
-		result: {
-			success: false,
-			message: __(
-				'There was an error with this request. Please try again.',
-				__i18n_text_domain__
-			),
-			error,
-		},
-		returnToAgent: true,
-	};
-}
-
-function handleShowComponent( input: any ): any {
-	const { type, props } = input || {};
-
-	if ( ! hasShowComponentType( type ) ) {
-		return showComponentError( 'show-component: missing type' );
-	}
-
-	if ( ! getChatComponent( type ) ) {
-		return showComponentError( `show-component: no component registered for type "${ type }"` );
-	}
-
-	if ( ! hasRenderableShowComponentProps( type, props ) ) {
-		return showComponentError(
-			`show-component: props do not contain renderable data for type "${ type }"`
-		);
-	}
-
-	const componentProps: Record< string, unknown > = { ...props };
-	const data: Record< string, unknown > = {
-		type,
-		props: componentProps,
-		isCurrent: true,
-		hideZoomAction: true,
-	};
-	const responseTrackingProperties = getResponseRenderedTrackingProperties( type, componentProps );
-	if ( responseTrackingProperties ) {
-		data.responseTrackingProperties = responseTrackingProperties;
-	}
-	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
-		const reviewedPostId =
-			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
-		if ( reviewedPostId ) {
-			componentProps.postId = reviewedPostId;
-			data.postId = reviewedPostId;
-		}
-	}
-
-	if (
-		type === 'title-picker' ||
-		type === 'excerpt-picker' ||
-		type === 'seo-title-picker' ||
-		type === 'seo-description-picker' ||
-		type === 'image-alt-text-picker'
-	) {
-		// Snapshot state for Undo (these pickers mutate post data / block
-		// attributes). Tool call id doubles as the checkpoint id so it matches
-		// the identifier AM reads from the rendered message. Only the
-		// supported post fields for this picker are snapshot (title/excerpt —
-		// meta and block-attribute changes aren't checkpointed), so restoring
-		// its checkpoint cannot clobber later edits to other fields.
-		const checkpointFields: CheckpointField[] =
-			type === 'excerpt-picker' ? [ 'excerpt' ] : [ 'title' ];
-		const checkpointId: string =
-			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
-		const checkpointApi = getModuleCheckpointApi();
-		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
-			try {
-				checkpointApi.setCheckpoint( checkpointId, checkpointFields );
-			} catch {
-				// Non-fatal — Undo just won't attach if the snapshot fails.
-			}
-		}
-		data.calypsoCheckpointId = checkpointId;
-	}
-
-	data.followUpTasks = input?.followUpTasks ?? false;
-
-	// Echo the tool call id at the top level: the server-stored copy of this
-	// message carries it, and AM dedupes show-component messages by
-	// `tool_call_id|type|summary` — without it the two copies of the same tool
-	// call get different identities and both render after a reload.
-	const toolCallId =
-		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
-	const agentMessage = JSON.stringify( {
-		tool_id: SHOW_COMPONENT_TOOL_ID,
-		...( toolCallId && { tool_call_id: toolCallId } ),
-		data,
-	} );
-
-	const summary = typeof input?.summary === 'string' ? input.summary.trim() : '';
-	const message = summary || __( 'Choose from the options I provided.', __i18n_text_domain__ );
-
-	// The picker renders from the structured `agentMessage`, while the tool
-	// result tells the agent the picker was shown. Always return to the agent:
-	// the backend acks a `{ success, message }` echo without another LLM turn,
-	// whereas a withheld result leaves the tool call unanswered and the model
-	// re-plans the whole request. Mirrors `big-sky/show-component`.
-	return {
-		// Keep the standard ability-result contract complete even when an older
-		// caller omits the model-written summary.
-		result: {
-			success: true,
-			message,
-			details: { type },
-		},
-		returnToAgent: true,
-		agentMessage,
-	};
-}
-
-async function handleLegacyShowComponent( input: any ): Promise< any > {
-	if ( shouldDelegateLegacyShowComponent( input ) ) {
-		const executeAbility = getAbilitiesExecuteAbility();
-		if ( executeAbility ) {
-			return executeAbility( 'big-sky/show-component', input );
-		}
-	}
-
-	return handleShowComponent( input );
-}
 
 /**
  * Check whether the `@wordpress/abilities` API is available.
@@ -911,17 +665,7 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 	);
 }
 
-function isShowComponentTool( toolId: string ): boolean {
-	return (
-		SHOW_COMPONENT_TOOL_IDS.includes( toolId ) ||
-		toolId === SHOW_COMPONENT_ABILITY_NAME ||
-		toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME
-	);
-}
-
-function isLegacyShowComponentTool( toolId: string ): boolean {
-	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
-}
+const UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID = 'wpcom__update_block_content';
 
 function createUpdateBlockContentAgentMessage(
 	toolCallId: string,
@@ -1016,8 +760,9 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
-	 * (block edits + summary) and Jetpack show-component tools (interactive
-	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
+	 * (block edits + summary), ahead of whatever the WordPress abilities
+	 * registry holds. Show-component is Agents Manager's, so it is neither
+	 * advertised nor filtered here.
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -1037,28 +782,12 @@ export const toolProvider = {
 		}
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
-			abilities = filterAbility( abilities, toolId );
+		if ( isBlockTransformationsEnabled() ) {
+			abilities.unshift( {
+				...UPDATE_BLOCK_CONTENT_ABILITY,
+				callback: handleUpdateBlockContentForChat,
+			} );
 		}
-		const jetpackAbilities = [
-			...( isBlockTransformationsEnabled()
-				? [
-						{
-							...UPDATE_BLOCK_CONTENT_ABILITY,
-							callback: handleUpdateBlockContentForChat,
-						},
-				  ]
-				: [] ),
-			{
-				...SHOW_COMPONENT_ABILITY,
-				callback: handleShowComponent,
-			},
-			{
-				...LEGACY_SHOW_COMPONENT_ABILITY,
-				callback: handleLegacyShowComponent,
-			},
-		];
-		abilities.unshift( ...jetpackAbilities );
 		return abilities;
 	},
 
@@ -1074,22 +803,6 @@ export const toolProvider = {
 			return {
 				result,
 				returnToAgent: false,
-				...( result.agentMessage && { agentMessage: result.agentMessage } ),
-			};
-		}
-
-		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
-			const executeAbility = getAbilitiesExecuteAbility();
-			if ( executeAbility ) {
-				return executeAbility( 'big-sky/show-component', args );
-			}
-		}
-
-		if ( isShowComponentTool( name ) ) {
-			const result = handleShowComponent( args );
-			return {
-				result,
-				returnToAgent: result.returnToAgent,
 				...( result.agentMessage && { agentMessage: result.agentMessage } ),
 			};
 		}
@@ -1215,32 +928,16 @@ export function getChatComponent( type: string ): ComponentType | null {
 // ---------- useCheckpoint ----------
 
 /**
- * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component and block-edit messages. Snapshots the selected
- * top-level post fields (title by default, excerpt for the excerpt picker) on
- * `setCheckpoint(id, fields)` and restores exactly those fields on
- * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
- * checkpoint must not clobber another field's later edits. Block-edit snapshots
- * are captured by `handleUpdateBlockContentForChat`; meta (SEO pickers) and
- * image alt text changes are not checkpointed. Stubs the rest of AM's
- * `UseCheckpointReturn` interface; block-edit checkpoints also support safe
- * inline Undo and Redo through `canSwapCheckpoint` and `swapCheckpoint`.
+ * Provider hook consumed by AM's `use-checkpoint-action`: block-edit snapshots
+ * from `handleUpdateBlockContentForChat`, keyed by tool call id, with inline
+ * Undo and Redo. Picker checkpoints live in AM's engine, so the rest of AM's
+ * `UseCheckpointReturn` interface is stubbed.
  * @returns {Object} The checkpoint API AM consumes.
  */
-const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
-
 export function useCheckpoint(): any {
-	const api: CheckpointApi = {
-		setCheckpoint( id: string, fields: CheckpointField[] = [ 'title' ] ) {
-			const editor = ( window as any ).wp?.data?.select?.( 'core/editor' );
-			const snapshot: Partial< Record< CheckpointField, string > > = {};
-			for ( const field of fields ) {
-				snapshot[ field ] = ( editor?.getEditedPostAttribute?.( field ) as string ) ?? '';
-			}
-			postSnapshots.set( id, snapshot );
-		},
+	return {
 		hasCheckpoint( id: string ): boolean {
-			return postSnapshots.has( id ) || blockEditSnapshots.has( id );
+			return blockEditSnapshots.has( id );
 		},
 		canSwapCheckpoint( id: string ): boolean | undefined {
 			const snapshot = blockEditSnapshots.get( id );
@@ -1248,16 +945,7 @@ export function useCheckpoint(): any {
 		},
 		async swapCheckpoint( id: string ): Promise< void > {
 			const snapshot = blockEditSnapshots.get( id );
-			if (
-				! snapshot ||
-				! canSwapBlockEditSnapshot( snapshot ) ||
-				! undoBlockEdit(
-					snapshot.clientId,
-					snapshot.contentBefore,
-					snapshot.contentAfter,
-					snapshot.editableAttribute
-				)
-			) {
+			if ( ! snapshot || ! revertBlockEditSnapshot( snapshot ) ) {
 				throw new Error( 'Failed to swap block edit checkpoint.' );
 			}
 
@@ -1270,40 +958,12 @@ export function useCheckpoint(): any {
 			} );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
-			const blockEditSnapshot = blockEditSnapshots.get( id );
-			if ( blockEditSnapshot ) {
-				if ( ! canSwapBlockEditSnapshot( blockEditSnapshot ) ) {
-					throw new Error( 'Failed to restore block edit checkpoint.' );
-				}
-				const didRestore = undoBlockEdit(
-					blockEditSnapshot.clientId,
-					blockEditSnapshot.contentBefore,
-					blockEditSnapshot.contentAfter,
-					blockEditSnapshot.editableAttribute
-				);
-				if ( ! didRestore ) {
-					throw new Error( 'Failed to restore block edit checkpoint.' );
-				}
-				return;
+			const snapshot = blockEditSnapshots.get( id );
+			if ( snapshot && ! revertBlockEditSnapshot( snapshot ) ) {
+				throw new Error( 'Failed to restore block edit checkpoint.' );
 			}
-
-			const previous = postSnapshots.get( id );
-			if ( previous === undefined ) {
-				return;
-			}
-			const wpData = ( window as any ).wp?.data;
-			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { ...previous } );
-			// Keep snapshot so the user can re-Undo back to the original values.
-			// clearCheckpoint() removes it when AM resets the session.
 		},
-	};
-	setModuleCheckpointApi( api );
-
-	// Return the full shape AM's UseCheckpointReturn expects. Methods we
-	// don't implement are safe no-op stubs — AM only calls the three above
-	// for the show-component and block-edit flows.
-	return {
-		...api,
+		setCheckpoint: () => undefined,
 		getLastEditorState: () => null,
 		addCheckpointKeys: () => undefined,
 		addNewPageToCheckpoint: () => undefined,
@@ -1311,7 +971,6 @@ export function useCheckpoint(): any {
 		addPageRemovalToCheckpoint: () => undefined,
 		getLatestUserMessageId: () => undefined,
 		clearCheckpoint: ( id: string ) => {
-			postSnapshots.delete( id );
 			blockEditSnapshots.delete( id );
 		},
 	};

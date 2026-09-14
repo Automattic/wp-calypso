@@ -10,28 +10,7 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
 import { countOccurrences } from './blocks';
 
-/**
- * Post fields a picker checkpoint can snapshot and restore.
- */
-export type CheckpointField = 'title' | 'excerpt';
-
-/**
- * Checkpoint API shared between the React `useCheckpoint` hook (which AM
- * calls) and the synchronous `handleShowComponent` callback. `setCheckpoint`
- * captures only the fields the triggering picker can write, so restoring one
- * picker's checkpoint never clobbers another field's later edits.
- */
-export interface CheckpointApi {
-	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
-	hasCheckpoint: ( id: string ) => boolean;
-	restoreCheckpoint: ( id: string ) => Promise< void >;
-	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
-	swapCheckpoint?: ( id: string ) => Promise< void >;
-}
-
 // ---------- Module state ----------
-
-let moduleCheckpointApi: CheckpointApi | null = null;
 const processingEffectTimeouts = new WeakMap< HTMLElement, ReturnType< typeof setTimeout > >();
 const processingEffectElements = new Set< HTMLElement >();
 let rememberedSelectedBlockClientId: string | null = null;
@@ -65,14 +44,6 @@ function getWindowBlockEditorDispatch(): any | null {
 	} catch {
 		return null;
 	}
-}
-
-export function setModuleCheckpointApi( api: CheckpointApi | null ): void {
-	moduleCheckpointApi = api;
-}
-
-export function getModuleCheckpointApi(): CheckpointApi | null {
-	return moduleCheckpointApi;
 }
 
 export function rememberSelectedBlock( block: any ): void {

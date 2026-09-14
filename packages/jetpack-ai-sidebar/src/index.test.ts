@@ -60,11 +60,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
-const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
-const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
-const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
-const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -199,8 +195,8 @@ jest.mock( '@wordpress/data', () => ( {
 		} ),
 } ) );
 
-// Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title and current editor entity id via the core/editor store.
+// Stub @wordpress/data on window so the provider can read the post title and
+// the current editor entity id via the core/editor store.
 type EditorPostId = number | string;
 
 const UNSUPPORTED_POST_LEVEL_SUGGESTION_ENTITIES: Array<
@@ -3126,28 +3122,26 @@ describe( 'toolProvider', () => {
 	} );
 
 	describe( 'getAbilities', () => {
-		it( 'includes update-block-content and show-component abilities', async () => {
+		it( 'advertises update-block-content with a callback, and no show-component ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const names = abilities.map( ( a: any ) => a.name );
 
-			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
-			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
-			expect( names ).not.toContain( SHOW_COMPONENT_TOOL_ID );
-			expect( names ).not.toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+			expect( abilities.map( ( a: any ) => a.name ) ).toEqual( [ 'wpcom/update-block-content' ] );
+			expect( typeof abilities[ 0 ].callback ).toBe( 'function' );
 		} );
 
-		it( 'wires a callback on each provided ability', async () => {
-			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
-			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
-			);
-			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+		it( 'passes registry abilities through after its own, deduping only its own', async () => {
+			( window as any ).wp.abilities = {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [
+						{ name: 'big-sky/show-component' },
+						{ name: 'wpcom/update-block-content' },
+					] ),
+			};
 
-			expect( typeof showComponent?.callback ).toBe( 'function' );
-			expect( typeof legacyShowComponent?.callback ).toBe( 'function' );
-			expect( typeof updateBlock?.callback ).toBe( 'function' );
+			const names = ( await toolProvider.getAbilities() ).map( ( a: any ) => a.name );
+
+			expect( names ).toEqual( [ 'wpcom/update-block-content', 'big-sky/show-component' ] );
 		} );
 
 		it( 'emits an updated outcome with a restorable block checkpoint', async () => {
@@ -3549,568 +3543,37 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
-		it( 'asks for a step summary in the show-component schema', async () => {
-			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
-			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
-			);
-
-			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
-			expect( showComponent?.input_schema?.required ).toEqual(
-				expect.arrayContaining( [ 'type', 'props' ] )
-			);
-			expect( showComponent?.input_schema?.properties?.type?.enum ).toEqual(
-				expect.arrayContaining( [
-					'title-picker',
-					'seo-description-picker',
-					'image-alt-text-picker',
-					'proofread',
-				] )
-			);
-			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
-				'seo-description'
-			);
-			// The migration ability still delegates component types owned by Big Sky.
-			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
-		} );
-
-		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
-			const args = {
-				type: 'color-picker',
-				props: { colors: [] },
-			};
-			const executeAbility = jest.fn().mockResolvedValue( {
-				result: 'Big Sky component displayed successfully',
-				returnToAgent: false,
-			} );
-			( window as any ).wp.abilities = {
-				getAbilities: jest.fn().mockResolvedValue( [] ),
-				executeAbility,
-			};
-
-			const abilities = await toolProvider.getAbilities();
-			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
-			);
-			const result = await legacyShowComponent.callback( args );
-
-			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
-			expect( result ).toEqual( {
-				result: 'Big Sky component displayed successfully',
-				returnToAgent: false,
-			} );
-		} );
-
-		it.each( [
-			[ 'empty', '' ],
-			[ 'whitespace-only', '   ' ],
-		] )( 'does not delegate %s legacy show-component callbacks', async ( _label, type ) => {
-			const executeAbility = jest.fn();
-			( window as any ).wp.abilities = {
-				getAbilities: jest.fn().mockResolvedValue( [] ),
-				executeAbility,
-			};
-
-			const abilities = await toolProvider.getAbilities();
-			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
-			);
-			const result = await legacyShowComponent.callback( {
-				type,
-				props: {},
-			} );
-
-			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result.result ).toMatchObject( { success: false } );
-			expect( result.result.error ).toMatch( /missing type/ );
-		} );
-
 		it( 'omits update-block-content when block transformations are disabled', async () => {
 			installAiEditorialReviewData( { blockTransformations: false } );
 
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
-			expect( names ).not.toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
-			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
+			expect( names ).toEqual( [] );
 		} );
 	} );
 
-	describe( 'executeAbility for show-component tools', () => {
-		beforeEach( () => {
-			installWpDataMock( 'Original Title' );
-		} );
-
-		it( 'returns an error when type is missing', async () => {
-			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
-			expect( result.result ).toMatchObject( { success: false } );
-			expect( result.result.error ).toMatch( /missing type/ );
-		} );
-
-		it( 'returns an error for an unknown component type', async () => {
-			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'nonexistent-picker',
-				props: {},
-			} );
-			expect( result.result ).toMatchObject( { success: false } );
-			expect( result.result.error ).toMatch( /no component registered/ );
-		} );
-
-		it.each( [
-			[ 'omitted', undefined ],
-			[ 'empty', {} ],
-			[ 'not an object', 'some text' ],
-			[ 'an array', [ { description: 'Description' } ] ],
-			[ 'the wrong option property', { titles: [ { title: 'Title' } ] } ],
-			[ 'an empty option array', { descriptions: [] } ],
-			[ 'invalid option entries', { descriptions: [ {} ] } ],
-		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
-			// New executions need enough data to render a useful component. Old
-			// history remains tolerant inside the components themselves.
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'seo-description-picker',
-					props,
-				}
-			) ) as any;
-
-			expect( returnToAgent ).toBe( true );
-			expect( result.result.success ).toBe( false );
-			expect( result.result.error ).toMatch( /props/i );
-			expect( result.agentMessage ).toBeUndefined();
-		} );
-
-		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
-			// `seo-description` is what the model sent when it skipped the
-			// generate-seo-description ability and called this tool itself. The
-			// registered type is `seo-description-picker`, so the call fails —
-			// and the agent has to hear about it to correct itself.
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'seo-description',
-					props: { descriptions: [] },
-				}
-			) ) as any;
-
-			expect( returnToAgent ).toBe( true );
-			expect( result.result.error ).toBe(
-				'show-component: no component registered for type "seo-description"'
-			);
-			// The backend shows `message` to the user and hands `error` to the
-			// model, so a failure needs both.
-			expect( typeof result.result.message ).toBe( 'string' );
-			expect( result.result.message.length ).toBeGreaterThan( 0 );
-		} );
-
-		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
-			'accepts Jetpack show-component as %s',
-			async ( name ) => {
-				const { result } = ( await toolProvider.executeAbility( name, {
-					type: 'title-picker',
-					props: { titles: [ { title: 'Title' } ] },
-				} ) ) as any;
-
-				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
-			}
-		);
-
-		it( 'returns an agentMessage envelope for a valid title-picker call', async () => {
-			const titles = [
-				{ title: 'Title 1', explanation: 'a' },
-				{ title: 'Title 2', explanation: 'b' },
-				{ title: 'Title 3', explanation: 'c' },
-			];
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'title-picker',
-				props: { titles },
-				toolCallId: 'call_test_123',
-			} ) ) as any;
-
-			expect( typeof result.agentMessage ).toBe( 'string' );
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
-			expect( parsed.data.type ).toBe( 'title-picker' );
-			expect( parsed.data.props ).toEqual( { titles } );
-			expect( parsed.data.postId ).toBeUndefined();
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
-			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
-			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
-		} );
-
-		it( 'returns to the agent with a structured success result', async () => {
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'title-picker',
-					props: { titles: [ { title: 'Title' } ] },
-				}
-			) ) as any;
-
-			// The backend acks a `{ success, message }` echo without another LLM
-			// turn. Withholding the result leaves the tool call unanswered, and
-			// the model re-plans the whole request instead of continuing it.
-			expect( returnToAgent ).toBe( true );
-			expect( result.returnToAgent ).toBe( true );
-			expect( result.result ).toEqual( {
-				success: true,
-				message: 'Choose from the options I provided.',
-				details: { type: 'title-picker' },
-			} );
-		} );
-
-		it( 'reports the supplied summary as the result message', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'proofread',
-				props: { summary: 'Proofread complete.', items: [] },
-				summary: 'Proofread complete. Fixed 2 typos.',
-			} ) ) as any;
-
-			// The backend records this text as the completed step, so a
-			// multi-step request continues from it instead of starting over.
-			expect( result.result.message ).toBe( 'Proofread complete. Fixed 2 typos.' );
-		} );
-
-		it.each( [
-			[ 'no summary', undefined ],
-			[ 'a whitespace-only summary', '   ' ],
-		] )( 'defaults the result message given %s', async ( _label, summary ) => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'title-picker',
-				props: { titles: [ { title: 'Title' } ] },
-				summary,
-			} ) ) as any;
-
-			expect( result.result.message ).toBe( 'Choose from the options I provided.' );
-		} );
-
-		it.each( [
-			[
-				'proofread',
-				{ summary: 'Proofread complete.', items: [ {}, {} ] },
-				{ suggested_edit_count: 2 },
-			],
-			[
-				'post-feedback',
-				{ summary: 'Feedback complete.', items: [ {} ] },
-				{ suggested_edit_count: 1 },
-			],
-			[
-				'ai-editorial-review',
-				{
-					summary: 'Review complete.',
-					suggested_edits: [ {}, {} ],
-					conflicts: [ {} ],
-					implications: [],
-					guideline_violations: [
-						{ guideline_quote: 'Use sentence case.' },
-						{ guideline_quote: '' },
-						{ guideline_quote: 'Prefer active voice.' },
-					],
-					review_context: 'notes_and_guidelines',
-					cache_hit: true,
-				},
-				{
-					suggested_edit_count: 2,
-					conflict_count: 1,
-					implication_count: 0,
-					guideline_violation_count: 2,
-					review_context: 'notes_and_guidelines',
-					cache_hit: true,
-				},
-			],
-		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type,
-				props,
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.responseTrackingProperties ).toEqual( expected );
-		} );
-
-		it( 'echoes the tool call id at the envelope top level', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'title-picker',
-				props: { titles: [ { title: 'T', explanation: 'a' } ] },
-				toolCallId: 'call_identity_1',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
-		} );
-
-		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'title-picker',
-				props: { titles: [ { title: 'T', explanation: 'a' } ] },
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
-		} );
-
-		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
-			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'seo-title-picker',
-				props: { titles },
-				toolCallId: 'call_seo_title',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'seo-title-picker' );
-			expect( parsed.data.props ).toEqual( { titles } );
-			// SEO meta pickers snapshot for Undo, like title-picker.
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
-		} );
-
-		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-description-picker call', async () => {
-			const descriptions = [ { description: 'An SEO description', explanation: 'a' } ];
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'seo-description-picker',
-				props: { descriptions },
-				toolCallId: 'call_seo_desc',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'seo-description-picker' );
-			expect( parsed.data.props ).toEqual( { descriptions } );
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
-		} );
-
-		it( 'returns an agentMessage envelope with an Undo checkpoint for an excerpt-picker call', async () => {
-			const excerpts = [ { excerpt: 'A short summary.', explanation: 'a' } ];
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'excerpt-picker',
-				props: { excerpts },
-				toolCallId: 'call_excerpt',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'excerpt-picker' );
-			expect( parsed.data.props ).toEqual( { excerpts } );
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_excerpt' );
-		} );
-
-		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
-			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'image-alt-text-picker',
-				props: { images },
-				toolCallId: 'call_alt',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
-			expect( parsed.data.props ).toEqual( { images } );
-			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
-		} );
-
-		it.each( [ LEGACY_SHOW_COMPONENT_ABILITY_NAME, LEGACY_SHOW_COMPONENT_TOOL_ID ] )(
-			'accepts the legacy Big Sky show-component ability as %s during migration',
-			async ( name ) => {
-				const { result } = ( await toolProvider.executeAbility( name, {
-					type: 'ai-editorial-review',
-					props: {
-						summary: 'Summary.',
-						conflicts: [],
-						implications: [],
-						suggested_edits: [],
-						guideline_violations: [],
-					},
-				} ) ) as any;
-
-				const parsed = JSON.parse( result.agentMessage );
-				expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
-				expect( parsed.data.type ).toBe( 'ai-editorial-review' );
-			}
-		);
-
-		it.each( [
-			[ 'Jetpack AI', SHOW_COMPONENT_TOOL_ID ],
-			[ 'legacy Big Sky', LEGACY_SHOW_COMPONENT_TOOL_ID ],
-		] )( 'rejects an unknown component type through the %s tool', async ( _label, toolId ) => {
-			const { result } = ( await toolProvider.executeAbility( toolId, {
-				type: 'unregistered-component',
-				props: {},
-			} ) ) as any;
-
-			expect( result.result ).toMatchObject( {
-				success: false,
-				error: 'show-component: no component registered for type "unregistered-component"',
-			} );
-			expect( result.returnToAgent ).toBe( true );
-			expect( result.agentMessage ).toBeUndefined();
-		} );
-
-		it( 'delegates non-Jetpack legacy show-component calls to Big Sky', async () => {
-			const args = {
-				type: 'color-picker',
-				props: { colors: [] },
-			};
-			const executeAbility = jest.fn().mockResolvedValue( {
-				result: 'Big Sky component displayed successfully',
-				returnToAgent: false,
-			} );
+	describe( 'executeAbility', () => {
+		it( 'hands an ability it does not own to the WordPress abilities API', async () => {
+			const executeAbility = jest.fn().mockResolvedValue( { result: 'handled by the registry' } );
 			( window as any ).wp.abilities = { executeAbility };
+			const args = { type: 'color-picker', props: { variations: [] } };
 
-			const result = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, args );
+			const result = await toolProvider.executeAbility( 'big-sky/show-component', args );
 
 			expect( executeAbility ).toHaveBeenCalledWith( 'big-sky/show-component', args );
-			expect( result ).toEqual( {
-				result: 'Big Sky component displayed successfully',
-				returnToAgent: false,
-			} );
+			expect( result ).toEqual( { result: 'handled by the registry' } );
 		} );
 
-		it.each( [
-			[ 'empty', '' ],
-			[ 'whitespace-only', '   ' ],
-		] )( 'does not delegate %s legacy show-component calls to Big Sky', async ( _label, type ) => {
-			const executeAbility = jest.fn();
-			( window as any ).wp.abilities = { executeAbility };
-
-			const { result } = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
-				type,
-				props: {},
-			} );
-
-			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result.result ).toMatchObject( { success: false } );
-			expect( result.result.error ).toMatch( /missing type/ );
-		} );
-
-		it( 'does not attach a title checkpoint to AI Editorial Review components', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'ai-editorial-review',
-				props: {
-					summary: 'Summary.',
-					conflicts: [],
-					implications: [],
-					suggested_edits: [],
-					guideline_violations: [],
-				},
-				toolCallId: 'call_ai_editorial_review_123',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'ai-editorial-review' );
-			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
-			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
-			expect( parsed.data.postId ).toBe( 123 );
-			expect( parsed.data.props.postId ).toBe( 123 );
-		} );
-
-		it( 'preserves the reviewed post ID on AI Editorial Review components', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'ai-editorial-review',
-				props: {
-					summary: 'Summary.',
-					conflicts: [],
-					implications: [],
-					suggested_edits: [],
-					guideline_violations: [],
-					postId: 77,
-				},
-				toolCallId: 'call_ai_editorial_review_456',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'ai-editorial-review' );
-			expect( parsed.data.postId ).toBe( 77 );
-			expect( parsed.data.props.postId ).toBe( 77 );
-		} );
-
-		it( 'stamps post-feedback components with the current editor entity ID', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'post-feedback',
-				props: {
-					summary: 'Summary.',
-					items: [],
-				},
-				toolCallId: 'call_post_feedback_123',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'post-feedback' );
-			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
-			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
-			expect( parsed.data.postId ).toBe( 123 );
-			expect( parsed.data.props.postId ).toBe( 123 );
-		} );
-
-		it( 'stamps post-feedback components with the current site editor entity ID', async () => {
-			installWpDataMock( 'Original Title', 'theme//front-page' );
-
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'post-feedback',
-				props: {
-					summary: 'Summary.',
-					items: [],
-				},
-				toolCallId: 'call_post_feedback_template',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'post-feedback' );
-			expect( parsed.data.postId ).toBe( 'theme//front-page' );
-			expect( parsed.data.props.postId ).toBe( 'theme//front-page' );
-		} );
-
-		it( 'preserves the reviewed post ID on post-feedback components', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'post-feedback',
-				props: {
-					summary: 'Summary.',
-					items: [],
-					postId: 77,
-				},
-				toolCallId: 'call_post_feedback_456',
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'post-feedback' );
-			expect( parsed.data.postId ).toBe( 77 );
-			expect( parsed.data.props.postId ).toBe( 77 );
-		} );
-
-		it( 'does not stamp AI Editorial Review components without a saved editor post ID', async () => {
-			installWpDataMock( 'Original Title', 0 );
-
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
-				type: 'ai-editorial-review',
-				props: {
-					summary: 'Summary.',
-					conflicts: [],
-					implications: [],
-					suggested_edits: [],
-					guideline_violations: [],
-				},
-			} ) ) as any;
-
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.data.type ).toBe( 'ai-editorial-review' );
-			expect( parsed.data.postId ).toBeUndefined();
-			expect( parsed.data.props.postId ).toBeUndefined();
-		} );
-
-		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
-			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+		it( 'reports an ability it does not own when the abilities API is absent', async () => {
+			const result = await toolProvider.executeAbility( 'jetpack-ai/show-component', {
 				type: 'title-picker',
-				props: { titles: [ { title: 'x' } ] },
-			} ) ) as any;
+				props: { titles: [ { title: 'A' } ] },
+			} );
 
-			const parsed = JSON.parse( result.agentMessage );
-			expect( typeof parsed.data.calypsoCheckpointId ).toBe( 'string' );
-			expect( parsed.data.calypsoCheckpointId.length ).toBeGreaterThan( 0 );
+			expect( result ).toEqual( {
+				result: { error: 'Unknown ability: jetpack-ai/show-component' },
+			} );
 		} );
 	} );
 } );
@@ -4120,90 +3583,36 @@ describe( 'useCheckpoint', () => {
 		installWpDataMock( 'Original Title' );
 	} );
 
-	it( 'snapshots the post title on setCheckpoint and restores it on restoreCheckpoint', async () => {
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'ignores setCheckpoint, since AM\u2019s engine snapshots the pickers now', () => {
 		const api = useCheckpoint();
 
-		// Snapshot original.
 		api.setCheckpoint( 'cp-1' );
-		expect( api.hasCheckpoint( 'cp-1' ) ).toBe( true );
 
-		// Change title.
-		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( { title: 'New Title' } );
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
-		).toBe( 'New Title' );
-
-		// Restore.
-		await api.restoreCheckpoint( 'cp-1' );
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
-		).toBe( 'Original Title' );
+		expect( api.hasCheckpoint( 'cp-1' ) ).toBe( false );
 	} );
 
-	it( 'restores only the excerpt for an excerpt checkpoint, leaving later title edits intact', async () => {
-		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+	it( 'removes a block-edit checkpoint when clearCheckpoint is called', async () => {
+		jest.useFakeTimers();
+		installWpDataMockWithBlockEditor();
 		const api = useCheckpoint();
+		const abilities = await toolProvider.getAbilities();
+		const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
+		const pending = updateBlock.callback( {
+			clientId: '550e8400-e29b-41d4-a716-446655440000',
+			content: 'Edited block content.',
+			toolCallId: 'call-clear',
+		} );
+		jest.advanceTimersByTime( 1000 );
+		await pending;
+		expect( api.hasCheckpoint( 'call-clear' ) ).toBe( true );
 
-		api.setCheckpoint( 'cp-excerpt', [ 'excerpt' ] );
+		api.clearCheckpoint( 'call-clear' );
 
-		( window as any ).wp.data
-			.dispatch( 'core/editor' )
-			.editPost( { title: 'Edited Title', excerpt: 'AI generated excerpt' } );
-		await api.restoreCheckpoint( 'cp-excerpt' );
-
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
-		).toBe( 'Original excerpt' );
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
-		).toBe( 'Edited Title' );
-	} );
-
-	it( 'restores only the title for a default checkpoint, leaving later excerpt edits intact', async () => {
-		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
-		const api = useCheckpoint();
-
-		api.setCheckpoint( 'cp-title' );
-
-		( window as any ).wp.data
-			.dispatch( 'core/editor' )
-			.editPost( { title: 'AI Title', excerpt: 'User excerpt' } );
-		await api.restoreCheckpoint( 'cp-title' );
-
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
-		).toBe( 'Original Title' );
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
-		).toBe( 'User excerpt' );
-	} );
-
-	it( 'keeps the checkpoint after restore so Undo can be used repeatedly', async () => {
-		const api = useCheckpoint();
-		api.setCheckpoint( 'cp-2' );
-
-		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( { title: 'Try 1' } );
-		await api.restoreCheckpoint( 'cp-2' );
-		expect( api.hasCheckpoint( 'cp-2' ) ).toBe( true );
-
-		( window as any ).wp.data.dispatch( 'core/editor' ).editPost( { title: 'Try 2' } );
-		await api.restoreCheckpoint( 'cp-2' );
-		expect(
-			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
-		).toBe( 'Original Title' );
-	} );
-
-	it( 'removes the checkpoint when clearCheckpoint is called', () => {
-		const api = useCheckpoint();
-		api.setCheckpoint( 'cp-3' );
-		expect( api.hasCheckpoint( 'cp-3' ) ).toBe( true );
-		api.clearCheckpoint( 'cp-3' );
-		expect( api.hasCheckpoint( 'cp-3' ) ).toBe( false );
-	} );
-
-	it( 'hasCheckpoint returns false for unknown ids', () => {
-		const api = useCheckpoint();
-		expect( api.hasCheckpoint( 'never-set' ) ).toBe( false );
+		expect( api.hasCheckpoint( 'call-clear' ) ).toBe( false );
 	} );
 } );
 

@@ -3,7 +3,6 @@
  */
 
 import {
-	getResponseRenderedTrackingProperties,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
 	type BigSkyEventName,
@@ -114,70 +113,5 @@ describe( 'Jetpack AI sidebar tracking', () => {
 
 		expect( trackSplitScreenGuideRendered( { componentType: 'proofread' } ) ).toBe( false );
 		expect( trackSplitScreenGuideClick( { componentType: 'proofread' } ) ).toBe( false );
-	} );
-
-	it.each( [ 'proofread', 'post-feedback' ] )(
-		'counts suggested edits in %s responses',
-		( componentType ) => {
-			expect(
-				getResponseRenderedTrackingProperties( componentType, {
-					items: [ { title: 'First' }, null, { title: 'Second' } ],
-				} )
-			).toEqual( { suggested_edit_count: 2 } );
-		}
-	);
-
-	it( 'counts each AI Editorial Review finding type', () => {
-		expect(
-			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
-				suggested_edits: [ {}, {} ],
-				conflicts: [ {} ],
-				implications: [ {}, null ],
-				guideline_violations: [
-					{ guideline_quote: 'Use sentence case.' },
-					{ guideline_quote: '' },
-					{ guideline_quote: 'Prefer active voice.' },
-				],
-				review_context: 'notes_and_guidelines',
-			} )
-		).toEqual( {
-			suggested_edit_count: 2,
-			conflict_count: 1,
-			implication_count: 1,
-			guideline_violation_count: 2,
-			review_context: 'notes_and_guidelines',
-		} );
-	} );
-
-	it( 'omits an unknown AI Editorial Review context', () => {
-		expect(
-			getResponseRenderedTrackingProperties( 'ai-editorial-review', {
-				review_context: 'unknown-context',
-			} )
-		).not.toHaveProperty( 'review_context' );
-	} );
-
-	it( 'relays the server-declared AI Editorial Review cache signal', () => {
-		expect(
-			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: true } )
-		).toMatchObject( { cache_hit: true } );
-		expect(
-			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: false } )
-		).toMatchObject( { cache_hit: false } );
-	} );
-
-	it( 'omits a non-boolean or absent cache signal', () => {
-		expect(
-			getResponseRenderedTrackingProperties( 'ai-editorial-review', { cache_hit: 'yes' } )
-		).not.toHaveProperty( 'cache_hit' );
-		expect( getResponseRenderedTrackingProperties( 'ai-editorial-review', {} ) ).not.toHaveProperty(
-			'cache_hit'
-		);
-	} );
-
-	it( 'omits response metadata for components without review findings', () => {
-		expect(
-			getResponseRenderedTrackingProperties( 'title-picker', { titles: [ { title: 'Title' } ] } )
-		).toBeUndefined();
 	} );
 } );
