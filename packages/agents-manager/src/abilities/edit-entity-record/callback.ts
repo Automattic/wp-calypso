@@ -651,22 +651,25 @@ async function applyEdits(
 }
 
 /**
+ * Why a deletion cannot go ahead, or nothing: the record is open in an editor
+ * with no router to leave by. Only the site editor's router can leave without
+ * a full page load, which could cut the delete off.
+ */
+const stuckDelete = ( { entityName, recordId }: Entity< 'delete' > ): string | undefined =>
+	isOpenInEditor( entityName, recordId ) && ! getEditorHistory()
+		? `Cannot delete ${ entityName } ${ recordId }: it is open in this editor, which cannot ` +
+		  'leave it first. Ask the user to open a different page, then call again.'
+		: undefined;
+
+/**
  * Routes the editor off a record about to be deleted: to the front page, or the
  * pages list when the site shows posts there or the page is the front page.
  *
  * It navigates without saving, since pending edits are the user's to publish.
- * The post editor refuses: only the site editor's router can leave without a
- * full page load, which could cut the delete off. The canvas binding is handed
- * over first, or the move reads as the user leaving and aborts the request.
+ * The canvas binding is handed over first, or the move reads as the user
+ * leaving and aborts the request.
  */
-async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
-	if ( ! getEditorHistory() ) {
-		throw new Error(
-			`Cannot delete ${ entityName } ${ recordId }: it is open in this editor, which cannot ` +
-				'leave it first. Ask the user to open a different page, then call again.'
-		);
-	}
-
+async function leaveRecord( recordId: number | string ): Promise< void > {
 	// `page_on_front` lingers after a site switches to showing posts, so it
 	// counts only while the site shows a page there.
 	const site = getSiteRecord();
@@ -695,7 +698,7 @@ async function applyDeletes(
 		// Deleting the record on screen would leave the editor showing one that
 		// no longer exists.
 		if ( isOpenInEditor( entityName, recordId ) ) {
-			await leaveRecord( entityName, recordId );
+			await leaveRecord( recordId );
 		}
 
 		// Resolved first so the record is in the store: deleting one that was
@@ -763,6 +766,14 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 
 	if ( batch instanceof Error ) {
 		return errorResult( batch.message, failureMessage );
+	}
+
+	// Refused before the confirmation: a deletion that cannot happen is not
+	// worth asking the user about.
+	const stuck = batch.deletes.map( stuckDelete ).find( Boolean );
+
+	if ( stuck ) {
+		return errorResult( stuck, failureMessage );
 	}
 
 	// The backend asks the model for a `confirmationMessage` before anything
