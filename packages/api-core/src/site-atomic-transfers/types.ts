@@ -18,6 +18,10 @@ export interface AtomicTransfer {
 	blog_id: number;
 	status: AtomicTransferStatus;
 	created_at: string;
+	/** When the site was reverted to Simple (`Y-m-d H:i:s`, UTC), or null while it has not been. */
+	reverted_at: string | null;
+	/** Whether the revert was the automatic one that follows an expired plan. */
+	reverted_for_expired_plan: boolean;
 	is_stuck: boolean;
 	is_stuck_reset: boolean;
 	in_lossless_revert: boolean;

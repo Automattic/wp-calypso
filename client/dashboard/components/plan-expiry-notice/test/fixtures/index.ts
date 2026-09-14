@@ -1,5 +1,5 @@
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
-import type { Purchase } from '@automattic/api-core';
+import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
 export const NOW = '2026-02-24T12:00:00Z';
 export const SITE_ID = 99;
@@ -47,15 +47,6 @@ export const renewing = ( overrides: Partial< Purchase > = {} ) =>
 		...overrides,
 	} );
 
-/** Past the expiry date with the subscription removed: the post-grace window. */
-export const removed = ( daysAgo: number, overrides: Partial< Purchase > = {} ) =>
-	makePurchase( {
-		expiry_date: expiryInDays( -daysAgo ),
-		expiry_status: 'expired',
-		subscription_status: 'inactive',
-		...overrides,
-	} );
-
 /** Past the expiry date with the subscription still active: the grace period. */
 export const grace = ( overrides: Partial< Purchase > = {} ) =>
 	makePurchase( {
@@ -65,4 +56,22 @@ export const grace = ( overrides: Partial< Purchase > = {} ) =>
 		...overrides,
 	} );
 
-export const postGrace = () => removed( 40 );
+/** A transfer reverted for an expired plan `daysAgo` days before NOW. */
+export function revertedTransfer(
+	daysAgo: number,
+	overrides: Partial< AtomicTransfer > = {}
+): AtomicTransfer {
+	const revertedAt = new Date( Date.UTC( 2026, 1, 24 - daysAgo, 12 ) );
+	return {
+		atomic_transfer_id: 555,
+		blog_id: SITE_ID,
+		status: 'reverted',
+		created_at: '2025-06-01 09:00:00',
+		reverted_at: revertedAt.toISOString().slice( 0, 19 ).replace( 'T', ' ' ),
+		reverted_for_expired_plan: true,
+		is_stuck: false,
+		is_stuck_reset: false,
+		in_lossless_revert: false,
+		...overrides,
+	};
+}
