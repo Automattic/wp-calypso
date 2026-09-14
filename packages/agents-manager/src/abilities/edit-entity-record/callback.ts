@@ -796,6 +796,9 @@ export async function editEntityRecordCallback(
 	).catch( ( error ) => error as Error );
 
 	if ( failure ) {
+		// eslint-disable-next-line no-console
+		console.error( '[AgentsManager] Error editing the entity record:', failure );
+
 		// A partial failure has to say so. The model gets two attempts, and one
 		// told only that the call failed would repeat the writes that already
 		// landed and duplicate them.
