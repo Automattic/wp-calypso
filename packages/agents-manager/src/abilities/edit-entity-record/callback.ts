@@ -732,6 +732,19 @@ async function applyDeletes(
 export async function editEntityRecordCallback(
 	input: EditEntityRecordInput
 ): Promise< AbilityResult > {
+	const result = await editEntityRecord( input );
+
+	// Every refusal, not only a failed write: the model paraphrases them, so
+	// the console is where the reason can be read.
+	if ( ! result.result.success ) {
+		// eslint-disable-next-line no-console
+		console.error( '[AgentsManager] edit-entity-record refused:', result.result.error );
+	}
+
+	return result;
+}
+
+async function editEntityRecord( input: EditEntityRecordInput ): Promise< AbilityResult > {
 	const failureMessage = __( 'I could not make that change.', __i18n_text_domain__ );
 
 	// Every branch below writes editor state, so the guard travels with them.
@@ -796,9 +809,6 @@ export async function editEntityRecordCallback(
 	).catch( ( error ) => error as Error );
 
 	if ( failure ) {
-		// eslint-disable-next-line no-console
-		console.error( '[AgentsManager] Error editing the entity record:', failure );
-
 		// A partial failure has to say so. The model gets two attempts, and one
 		// told only that the call failed would repeat the writes that already
 		// landed and duplicate them.
