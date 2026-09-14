@@ -385,8 +385,6 @@ describe( 'input validation', () => {
 		);
 	} );
 
-	// The agent echoes attributes the page structure showed it, and writes
-	// `null` for a field it has no value for.
 	it( 'ignores keys it does not read, and takes null as absent', async () => {
 		withMenu( [ item( 'a', 'Home' ) ] );
 
