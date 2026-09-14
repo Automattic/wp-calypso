@@ -442,13 +442,15 @@ export async function buildNavigationItems(
 	if ( unresolved.length ) {
 		// Model-facing, so deliberately untranslated: this is an instruction the
 		// agent has to act on, and the user never sees it. The menu's own labels
-		// are listed so the retry needs no further reading.
+		// are listed so the retry needs no further reading — and it must not
+		// re-read: the page structure it holds for this turn is what named the
+		// stale ids, so a re-read returns them again.
 		const labels = labelsOf( current ).map( ( label ) => `"${ label }"` );
 
 		throw new Error(
 			`Navigation items not found: ${ [ ...new Set( unresolved ) ].join( ', ' ) }. ` +
-				'Identify each existing item by its clientId from the page structure, its label, ' +
-				`its url or its page id — this menu holds ${ labels.join( ', ' ) || 'no items' }. ` +
+				'Do not re-read the page structure; its ids are stale. Send each existing item by ' +
+				`its label instead — this menu holds ${ labels.join( ', ' ) || 'no items' }. ` +
 				'A new item needs a label. Nothing was changed.'
 		);
 	}
