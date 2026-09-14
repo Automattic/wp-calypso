@@ -10,7 +10,10 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { Steps } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 const SITE_ID = 1;
-const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
+const SITE_URL = 'https://example.wordpress.com';
+const SITE_SLUG = 'example.wordpress.com';
+const ADMIN_URL = `${ SITE_URL }/wp-admin/`;
+const NEWSLETTER_URL = `${ ADMIN_URL }admin.php?page=jetpack-newsletter`;
 
 const doneSteps = {
 	content: { status: 'done', content: undefined },
@@ -21,16 +24,24 @@ const doneSteps = {
 	summary: { status: 'done' },
 } as unknown as Steps;
 
-function renderSummary( { isJetpack = false }: { isJetpack?: boolean } = {} ) {
+function renderSummary( {
+	isJetpack = false,
+	jetpackVersion,
+	adminUrl = ADMIN_URL,
+}: {
+	isJetpack?: boolean;
+	jetpackVersion?: string;
+	adminUrl?: string | null;
+} = {} ) {
 	const store = configureStore()( {
 		ui: { selectedSiteId: SITE_ID },
 		sites: {
 			items: {
 				[ SITE_ID ]: {
 					ID: SITE_ID,
-					URL: 'https://example.wordpress.com',
+					URL: SITE_URL,
 					jetpack: isJetpack,
-					options: { admin_url: ADMIN_URL },
+					options: { admin_url: adminUrl, jetpack_version: jetpackVersion },
 				},
 			},
 		},
@@ -42,8 +53,8 @@ function renderSummary( { isJetpack = false }: { isJetpack?: boolean } = {} ) {
 				selectedSite={
 					{
 						ID: SITE_ID,
-						slug: 'example.wordpress.com',
-						URL: 'https://example.wordpress.com',
+						slug: SITE_SLUG,
+						URL: SITE_URL,
 						name: 'Example',
 					} as SiteDetails
 				}
@@ -58,31 +69,46 @@ function renderSummary( { isJetpack = false }: { isJetpack?: boolean } = {} ) {
 	);
 }
 
+const customizeHref = () =>
+	screen.getByRole( 'link', { name: 'Customize your newsletter' } ).getAttribute( 'href' );
+const subscribersHref = () =>
+	screen.getByRole( 'link', { name: 'Manage subscribers' } ).getAttribute( 'href' );
+
 describe( '<Summary> next steps', () => {
-	it( 'asks for the settings tab, since the Newsletter page opens on Subscribers', () => {
+	it( 'asks for the settings route, since the Newsletter page opens on Subscribers', () => {
 		renderSummary();
 
-		expect( screen.getByRole( 'link', { name: 'Customize your newsletter' } ) ).toHaveAttribute(
-			'href',
-			`${ ADMIN_URL }admin.php?page=jetpack-newsletter&tab=settings`
-		);
+		expect( customizeHref() ).toBe( `${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsettings` );
 	} );
 
 	it( 'sends subscriber management to wp-admin on a WordPress.com site', () => {
 		renderSummary();
 
-		expect( screen.getByRole( 'link', { name: 'Manage subscribers' } ) ).toHaveAttribute(
-			'href',
-			`${ ADMIN_URL }admin.php?page=jetpack-newsletter`
-		);
+		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
 	} );
 
-	it( 'sends subscriber management to wp-admin on a Jetpack site too', () => {
+	it( 'sends subscriber management to wp-admin on Jetpack 16.1 and above', () => {
+		renderSummary( { isJetpack: true, jetpackVersion: '16.1' } );
+
+		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
+	} );
+
+	it( 'keeps Jetpack Cloud below 16.1, where wp-admin has no Subscribers tab yet', () => {
+		renderSummary( { isJetpack: true, jetpackVersion: '16.0' } );
+
+		expect( subscribersHref() ).toBe( `https://cloud.jetpack.com/subscribers/${ SITE_SLUG }` );
+	} );
+
+	it( 'keeps Jetpack Cloud when the Jetpack version is unknown', () => {
 		renderSummary( { isJetpack: true } );
 
-		expect( screen.getByRole( 'link', { name: 'Manage subscribers' } ) ).toHaveAttribute(
-			'href',
-			`${ ADMIN_URL }admin.php?page=jetpack-newsletter`
-		);
+		expect( subscribersHref() ).toBe( `https://cloud.jetpack.com/subscribers/${ SITE_SLUG }` );
+	} );
+
+	it( 'falls back to the site URL when the admin URL is missing', () => {
+		renderSummary( { adminUrl: null } );
+
+		expect( customizeHref() ).toBe( `${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsettings` );
+		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
 	} );
 } );
