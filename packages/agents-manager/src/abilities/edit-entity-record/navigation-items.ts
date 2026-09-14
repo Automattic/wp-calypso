@@ -30,8 +30,6 @@ export interface NavigationItemInput {
 	items?: NavigationItemInput[];
 }
 
-// `null` counts as absent throughout: the model writes it for a field it has
-// no value for, as often as it leaves the field out.
 const isText = ( value: unknown ) => typeof value === 'string' && value.trim() !== '';
 
 const isId = ( value: unknown ) =>
@@ -39,11 +37,11 @@ const isId = ( value: unknown ) =>
 	( typeof value === 'string' && /^[1-9]\d*$/.test( value ) );
 
 /**
- * What is wrong with a raw item, or nothing. The schema validates nothing
- * below the first level and the callback runs on raw arguments, so each field
- * the rebuild reads is checked here. Keys it does not read are ignored: the
- * agent echoes whatever attributes the page structure showed it, and refusing
- * the batch for one of them would help no one.
+ * What is wrong with a raw item, or nothing. The schema stops at the first
+ * level, so each field the rebuild reads is checked here. Other keys are
+ * ignored, since the agent echoes what the page structure showed it, and
+ * `null` counts as absent, since the agent writes it for a field it has no
+ * value for.
  */
 function itemProblem( value: unknown ): string | undefined {
 	if ( ! isRecord( value ) ) {
