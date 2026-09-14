@@ -69,6 +69,7 @@ export async function wpAdminNavigateCallback(
 	recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_start', {
 		destination_path: destinationRoute.path,
 		destination_page: destinationRoute.page,
+		destination_post_type: destinationRoute.postType,
 	} );
 
 	setTimeout( () => {

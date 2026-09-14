@@ -726,7 +726,9 @@ describe( 'useNavigationContinuation Tracks', () => {
 				matched: true,
 				destination_path: '/wp-admin/plugins.php',
 				destination_page: '',
+				destination_post_type: '',
 				landed_page: '',
+				landed_post_type: '',
 			}
 		);
 	} );
@@ -744,7 +746,9 @@ describe( 'useNavigationContinuation Tracks', () => {
 				matched: false,
 				destination_path: '/wp-admin/edit.php',
 				destination_page: '',
+				destination_post_type: '',
 				landed_page: '',
+				landed_post_type: '',
 			}
 		);
 	} );
@@ -763,7 +767,9 @@ describe( 'useNavigationContinuation Tracks', () => {
 				matched: false,
 				destination_path: '/wp-admin/edit.php',
 				destination_page: '',
+				destination_post_type: 'shop_order',
 				landed_page: 'wc-orders',
+				landed_post_type: '',
 			}
 		);
 	} );

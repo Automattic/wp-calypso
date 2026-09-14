@@ -88,7 +88,11 @@ describe( 'wpAdminNavigateCallback', () => {
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_wp_admin_navigate_start',
-			{ destination_path: '/wp-admin/admin.php', destination_page: 'wc-admin' }
+			{
+				destination_path: '/wp-admin/admin.php',
+				destination_page: 'wc-admin',
+				destination_post_type: '',
+			}
 		);
 	} );
 
@@ -97,7 +101,24 @@ describe( 'wpAdminNavigateCallback', () => {
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_wp_admin_navigate_start',
-			{ destination_path: '/wp-admin/plugins.php', destination_page: '' }
+			{
+				destination_path: '/wp-admin/plugins.php',
+				destination_page: '',
+				destination_post_type: '',
+			}
+		);
+	} );
+
+	it( 'records the post type that names an edit.php list', async () => {
+		await wpAdminNavigateCallback( { path: '/wp-admin/edit.php?post_type=shop_order&s=private' } );
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_start',
+			{
+				destination_path: '/wp-admin/edit.php',
+				destination_page: '',
+				destination_post_type: 'shop_order',
+			}
 		);
 	} );
 
