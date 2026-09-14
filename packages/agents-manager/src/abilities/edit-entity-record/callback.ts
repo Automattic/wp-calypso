@@ -608,11 +608,10 @@ async function applyRecordEdit(
 
 	if ( isRename ) {
 		// Snapshot the menus the rename will relabel: a restore puts each back as
-		// it was rather than relabelling, so the item's label returns exactly.
-		// Discarded together when the rename fails: it reads every menu before
-		// writing any, and its writes are local dispatches that fail for every
-		// menu or none, so a rename that fails changed nothing — and a snapshot
-		// of an untouched menu would let an undo overwrite the user's later edits.
+		// it was, so the label returns exactly. Discarded together on failure —
+		// the rewrite reads every menu before writing any, and its local writes
+		// fail for all or none, so nothing was changed and a stale snapshot would
+		// let an undo overwrite the user's later edits.
 		const captured: MenuId[] = [];
 
 		try {
@@ -748,10 +747,9 @@ export async function editEntityRecordCallback(
 
 	// The backend asks the model for a `confirmationMessage` before anything
 	// destructive. Confirmation is conversational: this writes nothing, the agent
-	// asks, and the user answers in the chat, where Big Sky renders Yes/No
-	// buttons from its own chat store. The refusal comes back as a client-tool
-	// failure and the model runs again, so the `error` has to be directive — it
-	// gets two attempts before the backend gives up.
+	// asks, and the user answers in the chat, where Big Sky renders the Yes/No
+	// buttons. The refusal returns as a client-tool failure and the model runs
+	// again, so the `error` has to be directive — it gets two attempts.
 	if ( typeof input.confirmationMessage === 'string' && input.confirmationMessage.trim() ) {
 		return errorResult(
 			`Nothing was changed yet. Ask the user to confirm: "${ input.confirmationMessage.trim() }" — then call this tool again with the same arguments and no confirmationMessage.`,
@@ -768,11 +766,10 @@ export async function editEntityRecordCallback(
 	// agent create it again.
 	const applied: AppliedChanges = { unsavedMenus: [], created: [], updated: [], deleted: [] };
 
-	// The write returns its failure rather than throwing it, so a batch that
-	// partly applied keeps the checkpoint — the earlier writes are still in
-	// place and it is the only way back past them. It throws only when nothing
-	// landed, letting `withCheckpoint()` drop a checkpoint that would restore
-	// nothing. The trailing `catch` takes that rethrow.
+	// The write returns its failure rather than throwing, so a batch that partly
+	// applied keeps the checkpoint — the writes that landed have no other way
+	// back. It throws only when nothing landed, letting `withCheckpoint()` drop a
+	// checkpoint that would restore nothing.
 	const failure = await withCheckpoint(
 		{
 			toolId: EDIT_ENTITY_RECORD_TOOL_ID,

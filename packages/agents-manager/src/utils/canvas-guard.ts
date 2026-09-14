@@ -27,16 +27,13 @@ import type { Ability, AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
 
 // Abilities that write to the page open in the editor. `apply-update-theme` and
-// `set-site-logo` are site-wide and `show-component` is not a write, so moving
+// `set-site-logo` are site-wide and `show-component` is not a write, so a move
 // between pages cannot make them wrong. `edit-entity-record` names its own
-// target (`entityType`/`entityName`/`recordId`, often site-level like
-// `root`/`site`), so guarding it would refuse legitimate site-level edits; it
-// moves the canvas itself through `bindToEditorPath()` before deleting the open
-// page.
+// target, often site-level, so guarding it would refuse legitimate edits; it
+// moves the canvas itself through `bindToEditorPath()`.
 //
-// Checked on the merged provider, so it covers AM's abilities and external ones
-// alike. Normalized, because the agent invokes `big-sky/apply-block-edits` as
-// `big_sky__apply_block_edits` — matching the registered form would never hit.
+// Normalized, because the agent invokes `big-sky/apply-block-edits` as
+// `big_sky__apply_block_edits` — the registered form would never match.
 const CANVAS_BOUND_ABILITIES = new Set(
 	[ 'big-sky/apply-block-edits', 'big-sky/stream-page-design', 'big-sky/restore-checkpoint' ].map(
 		normalizeAbilityName
@@ -60,10 +57,9 @@ const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' 
  * Hands the binding to an editor navigation about to run.
  *
  * Only a page path names a destination the binding can follow; `all-pages` drops
- * it instead. Exported for `edit-entity-record`, which leaves the page it is about
- * to delete by calling the navigate callback directly, outside the dispatch this
- * policy wraps — without the handoff, its own move reads as the user leaving and
- * aborts the request.
+ * it. Exported for `edit-entity-record`, which calls the navigate callback
+ * directly to leave a page it is deleting: without the handoff, its own move
+ * reads as the user leaving and aborts the request.
  * @param path The editor path being navigated to.
  * @returns A rollback for a navigation that never happens; see `canvas-binding`.
  */
@@ -131,12 +127,7 @@ type CanvasPolicy = {
 };
 
 /**
- * Applies the canvas policy to one about-to-run ability.
- *
- * Shared by both dispatch paths, which is the whole point: agenttic-client calls an
- * ability's own `callback` when it has one and only falls back to the provider's
- * `executeAbility` when it does not, so a policy installed on one path alone is
- * inert for every ability that takes the other.
+ * Applies the canvas policy to one about-to-run ability, on both dispatch paths.
  * @param name The ability name, in either form.
  * @param args The ability arguments.
  * @returns The refusal to return instead of running it, and how to undo the binding it took.
@@ -172,17 +163,6 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	return { refusal: null, rollbackBinding: null };
 }
 
-/**
- * Whether an ability answered that it did not do what it was asked.
- *
- * Abilities answer with the `AbilityResult` envelope, but the provider contract
- * types both dispatch paths as `Promise< any >`, so this reads defensively and
- * accepts the bare form too. Anything it cannot recognize counts as success: a
- * navigation whose result shape drifts should leave the binding where a working
- * navigation leaves it, not somewhere new.
- * @param result Whatever the ability answered.
- * @returns Whether it reported failure.
- */
 interface FailureAnswer {
 	success?: unknown;
 	details?: { navigated?: unknown };
@@ -192,6 +172,10 @@ interface FailureAnswer {
  * A failure that never moved. One carrying `navigated` changed the route
  * before failing — `editor-navigate`'s load timeout — so its destination is
  * still where the editor is heading.
+ *
+ * Read defensively: the provider contract types both dispatch paths as
+ * `Promise< any >`, so the bare result shape is accepted too, and anything
+ * unrecognized counts as success.
  */
 function failedWithoutMoving( result: unknown ): boolean {
 	const answer = result as ( FailureAnswer & { result?: FailureAnswer } ) | undefined;
@@ -203,11 +187,10 @@ function failedWithoutMoving( result: unknown ): boolean {
 /**
  * Dispatches one ability under the policy, undoing a move that never happened.
  *
- * The abilities that take the binding forward can fail without navigating —
- * `editor-navigate` answers `{ success: false }` on a save conflict, a stale page
- * id or a network error, and can throw outright. Without this, the destination it
- * was handed stays bound to a page the editor is never going to open, and every
- * later canvas write in the turn goes through unguarded.
+ * `editor-navigate` can fail without navigating — a save conflict, a stale page
+ * id, a network error — or throw outright. Without this, the binding stays on a
+ * page the editor is never going to open, and every later canvas write in the
+ * turn goes through unguarded.
  * @param name     The ability name, in either form.
  * @param args     The ability arguments.
  * @param dispatch Runs the ability itself.

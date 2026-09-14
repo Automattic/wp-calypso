@@ -15,7 +15,8 @@ import { sameUrl, urlKey } from '../../utils/same-url';
  * The agent sends `navigationItems` — the menu as it should end up — and each
  * item names an existing one by its `clientId`, `label`, `url` or page `id`.
  * Reordering the list reorders the menu, omitting an item removes it, and an
- * item with a label or url that matches nothing is added.
+ * item with a label that matches nothing is added — a clientId, url or id that
+ * names nothing is refused.
  */
 
 export interface NavigationItemInput {
@@ -103,10 +104,9 @@ function checkNavigationItems( items: unknown, where: string ): NavigationItemIn
 const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined => item.items;
 
 /**
- * Refuses a malformed menu record before anything in the batch is written.
- * Both halves of a raw edit are checked: `content` is what persists, `blocks`
- * what the editor reads, and anything but serialized blocks would persist
- * while the editor kept its own.
+ * Refuses a malformed menu record before anything in the batch is written. A raw
+ * `content` edit must be serialized blocks, or it would persist while the editor
+ * kept its own.
  */
 export function checkMenuRecord( record: Record< string, unknown > ): void {
 	const { blocks, content, navigationItems } = record;
@@ -175,12 +175,12 @@ const pageStructure = (): PageStructure | undefined =>
 	providerSelectors< { getFullPageStructure?: () => PageStructure } >()?.getFullPageStructure?.();
 
 /**
- * The identities an input can claim, in two groups claimed one after the
- * other: what is known about the item — the editor clientId its short id maps
- * to, and the attributes the page structure recorded for it — and then its own
- * values. Its own come second because they may be new: a re-link's page id
- * would otherwise claim whichever item already points at that page. An id the
- * structure does not know is taken as an editor clientId.
+ * The identities an input can claim, in two groups. `known` is what the page
+ * structure holds for the item: the editor clientId its short id maps to, and
+ * the attributes it recorded. `own` is the input's own values, claimed second
+ * because they may be new — a re-link's page id would otherwise claim whichever
+ * item already points at that page. An id the structure does not know is taken
+ * as an editor clientId.
  */
 const identitiesOf = ( item: NavigationItemInput ): { known: string[]; own: string[] } => {
 	const structure = pageStructure();
@@ -383,11 +383,10 @@ export async function buildNavigationItems(
 			const existing = resolved.get( input );
 
 			// A clientId names an existing item, so one that resolves to nothing is
-			// refused rather than rebuilt from the label: the block it meant would be
-			// dropped with everything the request did not restate. A new item needs
-			// a label — a url or id alone makes a link with no text, which reads as
-			// the menu having been wiped. Collected rather than thrown so every
-			// offending item can be named at once.
+			// refused, not rebuilt: the block it meant would be dropped along with
+			// everything the request did not restate. A new item needs a label, since
+			// a url or id alone makes a link with no text. Collected, not thrown, so
+			// every offending item is named at once.
 			const missing = ! existing && ( input.clientId || ! input.label );
 
 			if ( missing ) {
@@ -407,11 +406,11 @@ export async function buildNavigationItems(
 			const name = blockName( block, innerBlocks );
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			// A page id makes a page link — on a new item, or whatever the block
-			// linked before; a category can carry the same number as a page. A new
-			// url without one makes a custom link, as the editor's own link control
-			// does: the page it used to point at must not follow it into renames and
-			// deletions. The id may have only identified the item.
+			// A page id re-links the item to that page, unless it already points
+			// there — then the id only identified it. The type counts too: a category
+			// can carry a page's number. A new url with no id makes a custom link, as
+			// the editor's own link control does, so the old page does not follow it
+			// through renames and deletions.
 			const sameEntity =
 				String( input.id ) === String( existing?.attributes?.id ) &&
 				( input.type ?? 'page' ) === ( existing?.attributes?.type ?? 'page' );
