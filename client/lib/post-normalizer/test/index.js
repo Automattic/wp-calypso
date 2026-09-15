@@ -1039,5 +1039,21 @@ describe( 'index', () => {
 			const normalized = withContentDOM( [ linkJetpackCarousels ] )( { content: source } );
 			expect( normalized.content.trim() ).toEqual( expected.trim() );
 		} );
+
+		test( 'should leave links alone when the permalink is not a web address', () => {
+			const source = `
+				<div class="tiled-gallery"
+					data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)//&quot;}">
+					<div class="tiled-gallery-item">
+						<a href="https://example.com/foo/bar/">
+							<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />
+						</a>
+					</div>
+				</div>
+			`;
+			const normalized = withContentDOM( [ linkJetpackCarousels ] )( { content: source } );
+			expect( normalized.content ).toContain( 'href="https://example.com/foo/bar/"' );
+			expect( normalized.content ).not.toContain( 'href="javascript:' );
+		} );
 	} );
 } );

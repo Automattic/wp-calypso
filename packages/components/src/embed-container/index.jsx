@@ -36,7 +36,118 @@ const SLIDESHOW_URLS = {
 	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
 
+// Characters that let an attribute value escape its attribute, or open an element, when the
+// value is written back into an HTML string.
+const UNSAFE_IN_ATTRIBUTE_VALUE = /["'<>]/;
+
+// Data attributes that legitimately carry a quoted payload and reach text-only sinks: the
+// carousel metadata the post normalizer reads, and the caption/title markup the gallery
+// components strip before rendering.
+const DATA_ATTRIBUTES_ALLOWED_TO_CONTAIN_MARKUP = [
+	'data-carousel-extra',
+	'data-image-caption',
+	'data-image-description',
+	'data-image-meta',
+	'data-image-title',
+];
+
+/**
+ * Remove any markup from a Jetpack slideshow payload.
+ *
+ * A slideshow is described by a JSON array in data-gallery, so the attribute has to keep its
+ * quotes to stay parseable. The shortcode script assigns each slide's caption to innerHTML, so
+ * the captions are the one part of that payload that is parsed as markup.
+ *
+ * A slide is rebuilt as a flat record of primitives. Dropping the nested values matters as much
+ * as flattening the captions: innerHTML takes a string, so an array of markup would be joined
+ * straight back into the markup it holds.
+ * @param {string} value the raw data-gallery attribute value
+ * @returns {string|null} an equivalent payload with inert captions, or null if unparseable
+ */
+function sanitizeSlideshowGallery( value ) {
+	let gallery;
+
+	try {
+		gallery = JSON.parse( value );
+	} catch ( e ) {
+		return null;
+	}
+
+	if ( ! Array.isArray( gallery ) ) {
+		return null;
+	}
+
+	return JSON.stringify( gallery.map( sanitizeSlideshowSlide ) );
+}
+
+/**
+ * @param {unknown} slide one entry of a data-gallery payload
+ * @returns {Object} the slide reduced to primitive fields, with any caption flattened to text
+ */
+function sanitizeSlideshowSlide( slide ) {
+	if ( ! slide || typeof slide !== 'object' ) {
+		return {};
+	}
+
+	return Object.fromEntries(
+		Object.entries( slide )
+			.filter( ( [ , field ] ) => typeof field !== 'object' )
+			.map( ( [ name, field ] ) =>
+				name === 'caption' && typeof field === 'string'
+					? [ name, field.replace( /<[^>]*>/g, '' ) ]
+					: [ name, field ]
+			)
+	);
+}
+
+/**
+ * Make an embed's data attributes safe to read back out of the DOM.
+ *
+ * Embed runtimes read their configuration with getAttribute(), which returns the entity-decoded
+ * value, and several of them interpolate the result into an HTML string that the browser parses
+ * a second time. A value holding a quote therefore closes the attribute the runtime was building
+ * and can introduce an event handler that never existed in the post content. Post content is
+ * author controlled, so the values have to be safe before any runtime sees them.
+ *
+ * This sweeps the whole content subtree rather than the nodes our own selectors matched: the
+ * runtimes we load scan the document for their own markers, so a node Calypso never dispatched
+ * is still reachable once a sibling embed has pulled the script in.
+ * @param {window.Element} domNode a subtree of post content
+ */
+function removeUnsafeEmbedAttributes( domNode ) {
+	[ domNode, ...domNode.querySelectorAll( '*' ) ].forEach( ( node ) => {
+		Array.from( node.attributes ).forEach( ( { name, value } ) => {
+			if ( ! name.startsWith( 'data-' ) ) {
+				return;
+			}
+
+			if ( name === 'data-gallery' ) {
+				const sanitized = sanitizeSlideshowGallery( value );
+				if ( sanitized === null ) {
+					node.removeAttribute( name );
+				} else if ( sanitized !== value ) {
+					node.setAttribute( name, sanitized );
+				}
+				return;
+			}
+
+			if ( DATA_ATTRIBUTES_ALLOWED_TO_CONTAIN_MARKUP.includes( name ) ) {
+				return;
+			}
+
+			if ( ! UNSAFE_IN_ATTRIBUTE_VALUE.test( value ) ) {
+				return;
+			}
+
+			debug( 'removing unsafe attribute %s from', name, node );
+			node.removeAttribute( name );
+		} );
+	} );
+}
+
 function processEmbeds( domNode ) {
+	removeUnsafeEmbedAttributes( domNode );
+
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
 		Array.from( nodes ).filter( nodeNeedsProcessing ).forEach( fn );
