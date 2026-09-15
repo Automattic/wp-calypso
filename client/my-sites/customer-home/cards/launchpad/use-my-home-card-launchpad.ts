@@ -2,7 +2,7 @@ import {
 	TemporaryDismiss,
 	useLaunchpadDismisser,
 	useSortedLaunchpadTasks,
-} from '@automattic/data-stores';
+} from '@automattic/launchpad';
 import { type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';

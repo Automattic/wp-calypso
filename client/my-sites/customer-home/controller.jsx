@@ -1,7 +1,7 @@
 import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
-import { fetchLaunchpad } from '@automattic/data-stores';
+import { fetchLaunchpad } from '@automattic/launchpad';
 import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
 import { getHomeLayoutQueryParams } from 'calypso/data/home/use-home-layout-query-params';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';

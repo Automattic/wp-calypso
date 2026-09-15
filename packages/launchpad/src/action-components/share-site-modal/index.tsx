@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
@@ -13,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { copy, share, check } from '@wordpress/icons';
 import { useState, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
+import { updateLaunchpadSettings } from '../../use-launchpad';
 import type { LaunchpadSiteDetails } from '../../site-type';
 import type { Task } from '../../types';
 import './style.scss';

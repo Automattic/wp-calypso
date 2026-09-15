@@ -1,15 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	Site,
-	type SiteSelect,
-	defaultSuccessCallback,
-	useSortedLaunchpadTasks,
-} from '@automattic/data-stores';
+import { Site, type SiteSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { ShareSiteModal } from './action-components';
 import LaunchpadInternal from './launchpad-internal';
 import { setUpActionsForTasks } from './setup-actions';
+import { defaultSuccessCallback, useSortedLaunchpadTasks } from './use-launchpad';
 import type { EventHandlers, Task } from './types';
 
 export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );

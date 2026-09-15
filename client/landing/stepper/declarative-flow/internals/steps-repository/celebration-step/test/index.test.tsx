@@ -37,8 +37,8 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+jest.mock( '@automattic/launchpad', () => ( {
+	...jest.requireActual( '@automattic/launchpad' ),
 	useLaunchpad: () => ( {
 		data: { checklist_statuses: { first_post_published: true } },
 	} ),

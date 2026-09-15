@@ -8,6 +8,7 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
+import { setRequester as setLaunchpadRequester } from '@automattic/launchpad';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -161,6 +162,7 @@ async function main() {
 			} );
 		};
 		setDataStoresRequester( requester );
+		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
 	}
 
