@@ -17,10 +17,6 @@ import type { WooPaymentsData } from '@automattic/api-core';
 
 import './site-columns.scss';
 
-// Sites that still need setup link out to the classic A4A WooPayments site-setup flow, which has
-// not been ported to the dashboard.
-const A4A_WOOPAYMENTS_SITE_SETUP_LINK = '/woopayments/site-setup';
-
 const EmptyValueIndicator = () => <Text variant="muted">&mdash;</Text>;
 
 interface IneligibleReasonInfo {
@@ -100,17 +96,21 @@ export const WooPaymentsStatusColumn = ( {
 	state,
 	siteId,
 	recordTracksEvent,
+	onContinueSetup,
 }: {
 	state: string;
 	siteId: number;
 	recordTracksEvent: RecordTracksEvent;
+	onContinueSetup: ( siteId: number ) => void;
 } ) => {
 	if ( ! state ) {
 		return (
 			<Button
-				onClick={ () => recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' );
+					onContinueSetup( siteId );
+				} }
 				variant="tertiary"
-				href={ `${ A4A_WOOPAYMENTS_SITE_SETUP_LINK }/?site_id=${ siteId }` }
 			>
 				{ __( 'Continue setup' ) }
 			</Button>

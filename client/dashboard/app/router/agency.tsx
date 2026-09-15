@@ -19,6 +19,7 @@ import {
 	siteApmAggregateRollingQuery,
 	siteApmDetailQuery,
 	siteBackupsQuery,
+	siteByIdQuery,
 	siteBySlugQuery,
 	siteCrontabsQuery,
 	siteCurrentPlanQuery,
@@ -66,6 +67,7 @@ import {
 import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -73,6 +75,14 @@ import type { HostingSection } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
 import type { AgencyCapability, User } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
+
+/**
+ * Rejects `0`, which disables the setup screen's queries and leaves it on skeletons.
+ */
+function parseSiteIdParam( siteId: string ): number | null {
+	const parsed = Number( siteId );
+	return Number.isInteger( parsed ) && parsed > 0 ? parsed : null;
+}
 
 /**
  * Any-of (OR): true when `capabilities` contains at least one required capability.
@@ -626,6 +636,53 @@ export const earnWooPaymentsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/earn/woopayments' ).then( ( d ) =>
 		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
+	)
+);
+
+async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
+	const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+	if ( ! agency?.id ) {
+		return false;
+	}
+
+	const [ licenses, sitesWithPlugins ] = await Promise.all( [
+		queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
+		queryClient.ensureQueryData( agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] ) ),
+	] );
+	if (
+		licenses.some( ( license ) => license.blog_id === siteId ) ||
+		sitesWithPlugins.some( ( site ) => site.blog_id === siteId )
+	) {
+		return true;
+	}
+
+	const site = await queryClient.ensureQueryData( siteByIdQuery( siteId ) );
+	const agencySite = await queryClient.ensureQueryData(
+		agencySiteQuery( getSiteDisplayUrl( site ) )
+	);
+	return !! agencySite;
+}
+
+// `/earn/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
+export const earnWooPaymentsSetupRoute = createRoute( {
+	// TODO: replace with a dedicated WooPayments capability when one exists.
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
+	head: () => ( { meta: [ { title: __( 'Set up WooPayments' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/woopayments/setup/$siteId',
+	beforeLoad: ( { params: { siteId } } ) => {
+		if ( parseSiteIdParam( siteId ) === null ) {
+			throw dashboardRedirect( { to: '/earn/woopayments' } );
+		}
+	},
+	loader: async ( { params: { siteId } } ) => {
+		if ( ! ( await isAgencyWooPaymentsSite( Number( siteId ) ) ) ) {
+			throw dashboardRedirect( { to: '/earn/woopayments' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/earn/woopayments/setup' ).then( ( d ) =>
+		createLazyRoute( 'earn-woopayments-setup' )( { component: d.default } )
 	)
 );
 
@@ -1824,6 +1881,7 @@ export const createAgencyRoutes = () => [
 		earnOverviewRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
+		earnWooPaymentsSetupRoute,
 		earnMigrationsRoute,
 		earnPayoutSettingsRoute,
 		earnReferralRoute.addChildren( [
