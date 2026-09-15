@@ -14,6 +14,11 @@ export const requestSubscribers = ( siteId, offset ) => ( {
 	siteId,
 	type: MEMBERSHIPS_SUBSCRIBERS_LIST,
 	offset,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
