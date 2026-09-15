@@ -1842,7 +1842,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 							sitePerformanceBackendExternalRequestsRoute,
 							sitePerformanceBackendRequestDetailRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] ),
 		siteMonitoringRoute,

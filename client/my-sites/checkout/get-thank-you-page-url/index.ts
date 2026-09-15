@@ -464,7 +464,7 @@ export default function getThankYouPageUrl( {
 					siteSlug,
 					hideUpsell: Boolean( hideNudge ),
 					domains,
-			  } )
+				} )
 			: undefined;
 
 	if ( redirectUrlForPostCheckoutUpsell ) {

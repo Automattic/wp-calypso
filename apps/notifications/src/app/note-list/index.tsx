@@ -55,8 +55,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// This tab's cached id list, keyed by tab name, or undefined until its first
 	// fetch. A tab never reads the previous tab's list.
 	const cachedNoteIds = useSelector( ( state ) => getFilteredNoteIds( state, filterName ) ) as
-		| number[]
-		| undefined;
+		number[] | undefined;
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );

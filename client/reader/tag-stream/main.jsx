@@ -160,7 +160,7 @@ function withReaderTags( Inner ) {
 			? {
 					...currentTag,
 					isFollowing: followedTags?.some( ( t ) => t.slug === currentTag.slug ) ?? false,
-			  }
+				}
 			: null;
 
 		const tags = [ annotatedCurrent, ...( followedTags ?? [] ) ].filter( Boolean );

@@ -32,8 +32,7 @@ type EditorSelectStore =
 	| undefined;
 
 type CoreSelectStore =
-	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
-	| undefined;
+	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -94,8 +93,7 @@ function getBigSkyPageProps(): TracksProps {
 		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
-			| { page_on_front?: number }
-			| undefined;
+			{ page_on_front?: number } | undefined;
 
 		return {
 			...surfaceProps,

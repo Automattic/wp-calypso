@@ -130,7 +130,7 @@ function makePluginContext( { cachedProduct, isMarketplaceProduct = true } = {} 
 					product_type: 'marketplace_plugin',
 					billing_product_slug: PLUGIN_SLUG,
 				},
-		  }
+			}
 		: {};
 
 	return {

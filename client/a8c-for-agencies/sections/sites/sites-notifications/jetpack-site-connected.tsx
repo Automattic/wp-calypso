@@ -36,7 +36,7 @@ export default function JetpackSiteConnected() {
 							components: {
 								em: <em />,
 							},
-					  } )
+						} )
 					: translate( '{{em}}%(alreadyConnectedSite)s{{/em}} is already connected', {
 							args: {
 								alreadyConnectedSite,
@@ -45,7 +45,7 @@ export default function JetpackSiteConnected() {
 							components: {
 								em: <em />,
 							},
-					  } )
+						} )
 			);
 			setMostRecentConnectedSite( jetpackConnectedSite || alreadyConnectedSite );
 			setSiteAlreadyConnected( !! alreadyConnectedSite );
@@ -55,7 +55,7 @@ export default function JetpackSiteConnected() {
 					: removeQueryArgs(
 							window.location.pathname + window.location.search,
 							'site_already_connected'
-					  )
+						)
 			);
 		}
 	}, [

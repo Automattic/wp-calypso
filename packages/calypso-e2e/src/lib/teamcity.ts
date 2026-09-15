@@ -57,7 +57,7 @@ function unescapeProperty( value: string ): string {
 	return value.replace( /\\(u[0-9a-fA-F]{4}|[\s\S])/g, ( _full, escaped: string ) =>
 		escaped.startsWith( 'u' )
 			? String.fromCharCode( parseInt( escaped.slice( 1 ), 16 ) )
-			: escapes[ escaped ] ?? escaped
+			: ( escapes[ escaped ] ?? escaped )
 	);
 }
 

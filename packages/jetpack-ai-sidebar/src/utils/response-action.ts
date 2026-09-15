@@ -8,12 +8,7 @@ export interface ResponseAction {
 export type ResponseActionOutcome = 'success' | 'failed' | 'partial_failed';
 
 export type ResponseActionTarget =
-	| 'conflict'
-	| 'edit'
-	| 'guideline_violation'
-	| 'image'
-	| 'mixed'
-	| 'option';
+	'conflict' | 'edit' | 'guideline_violation' | 'image' | 'mixed' | 'option';
 
 export type OnResponseAction = ( action: ResponseAction ) => void;
 

@@ -491,7 +491,7 @@ export const cancelPurchaseRoute = createRoute( {
 						// rather than failing the whole route (SHILL-1442).
 						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
 						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
-				  ]
+					]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( plansQuery() ),
@@ -1458,7 +1458,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							monetizeSubscriptionsIndexRoute,
 							monetizeSubscriptionRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
@@ -1496,7 +1496,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							securityLegacyContactIndexRoute,
 							securityLegacyContactPrintRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] )
 	);

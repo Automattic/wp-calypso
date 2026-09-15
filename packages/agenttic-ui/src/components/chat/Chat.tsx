@@ -355,7 +355,7 @@ export function Chat( {
 											? STYLE_CONSTANTS.COLLAPSED_SIZE
 											: STYLE_CONSTANTS.COMPACT_WIDTH,
 									height: getHeightForState( chat.state ),
-							  } ),
+								} ),
 						x:
 							chat.state === 'collapsed' && currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE

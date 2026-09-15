@@ -51,11 +51,7 @@ export interface FieldProps {
 	disabled: boolean;
 	isError: boolean;
 	errorMessage:
-		| React.ReactElement
-		| string
-		| number
-		| DomainContactDetailsErrors[ 'extra' ]
-		| undefined;
+		React.ReactElement | string | number | DomainContactDetailsErrors[ 'extra' ] | undefined;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	onBlur: () => void;
 	value: string | DomainContactDetailsExtra | undefined;

@@ -80,12 +80,12 @@ export function formatScheduleDescription(
 					/* translators: %1$d is the interval in minutes for running cron job */
 					__( 'Every %1$d minutes' ),
 					60 / customNumber
-			  )
+				)
 			: sprintf(
 					/* translators: %1$s is the approximate interval in minutes for running cron job */
 					__( 'Approximately every %1$s minutes' ),
 					( 60 / customNumber ).toFixed( 1 )
-			  );
+				);
 	}
 	if ( customFrequency === 'd' ) {
 		return 24 % customNumber === 0
@@ -93,12 +93,12 @@ export function formatScheduleDescription(
 					/* translators: %1$d is the interval in hours for running cron job */
 					__( 'Every %1$d hours' ),
 					24 / customNumber
-			  )
+				)
 			: sprintf(
 					/* translators: %1$s is the approximate interval in hours for running cron job */
 					__( 'Approximately every %1$s hours' ),
 					( 24 / customNumber ).toFixed( 1 )
-			  );
+				);
 	}
 	if ( customFrequency === 'w' ) {
 		return sprintf(

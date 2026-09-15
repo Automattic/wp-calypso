@@ -113,7 +113,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 															numberFormatOptions: {
 																maximumFractionDigits: 2,
 															},
-													  } ) }%`
+														} ) }%`
 													: '—'
 											}
 											item={ item }
@@ -149,7 +149,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 												numberFormatOptions: {
 													maximumFractionDigits: 2,
 												},
-										  } ) }%`
+											} ) }%`
 										: '—'
 								}
 								item={ item }
@@ -190,7 +190,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							? {
 									url: summaryUrl,
 									label: translate( 'View more' ),
-							  }
+								}
 							: undefined
 					}
 				/>

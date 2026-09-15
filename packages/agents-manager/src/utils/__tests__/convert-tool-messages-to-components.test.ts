@@ -232,7 +232,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		// The switch is read once per page load, so load the converter under it.
 		jest.isolateModules( () => {
 			const { default: convertUnderSwitch } = jest.requireActual<
-				typeof import('../convert-tool-messages-to-components')
+				typeof import( '../convert-tool-messages-to-components' )
 			>( '../convert-tool-messages-to-components' );
 
 			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );

@@ -130,7 +130,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					comment:
 						'excl. taxes stands for excluding taxes; discountedPrice is a formatted price like $150; originalPrice is a formatted price like $200',
 				}
-		  )
+			)
 		: translate(
 				'per month, for your first %(introOfferIntervalUnit)s,{{br/}}' +
 					'then %(rawPrice)s billed annually, excl. taxes',
@@ -145,7 +145,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					components: { br: <br /> },
 					comment: 'excl. taxes is short for excluding taxes',
 				}
-		  );
+			);
 
 	if ( showVariants ) {
 		billingTimeFrame = translate(

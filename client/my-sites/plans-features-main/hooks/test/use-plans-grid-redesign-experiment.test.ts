@@ -52,7 +52,7 @@ function mockSite( {
 						site_creation_flow: siteCreationFlow,
 						...( createdAt && { created_at: createdAt } ),
 					},
-			  }
+				}
 			: null
 	);
 }

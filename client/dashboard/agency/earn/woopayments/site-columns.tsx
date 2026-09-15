@@ -177,13 +177,13 @@ export const CommissionEligibilityColumn = ( {
 				statusType: 'stable' as const,
 				showInfoIcon: false,
 				ineligibleReason: undefined,
-		  }
+			}
 		: {
 				statusText: __( 'Not eligible' ),
 				statusType: 'high' as const,
 				showInfoIcon: true,
 				ineligibleReason: ineligibleSite?.ineligible_reason,
-		  };
+			};
 
 	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '' );
 

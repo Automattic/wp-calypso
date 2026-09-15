@@ -105,7 +105,7 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 							? translate( 'Loading' )
 							: translate( 'Back to %s', {
 									args: siteName,
-							  } ) }
+								} ) }
 					</Button>
 				) }
 			</Card>

@@ -117,7 +117,7 @@ export const HeroImageAPIFamily: React.FC< HeroImageAPIFamilyProps > = ( { item 
 	const mediumScreenImage =
 		isDense && HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
 			? HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
-			: HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;
@@ -141,7 +141,7 @@ export const HeroImage: React.FC< HeroImageProps > = ( { item } ) => {
 	const mediumScreenImage =
 		isDense && HERO_IMAGES[ item.productSlug ]?.md2x
 			? HERO_IMAGES[ item.productSlug ]?.md2x
-			: HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;

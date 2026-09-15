@@ -625,7 +625,7 @@ async function* processAgentResponseStream(
 			? {
 					...update,
 					final: false,
-			  }
+				}
 			: update;
 
 		// Handle running state tool calls (async execution without blocking).
@@ -642,14 +642,14 @@ async function* processAgentResponseStream(
 		const { matched: runningToolCalls } =
 			update.status.state === 'running' && update.status.message && toolProvider
 				? // A provider can expose advertised tools, dispatchable tools and
-				  // abilities at once (the Agents Manager merges several providers
-				  // into one). Narrow to advertised tools only, so neither an
-				  // ability nor a backend-dispatched tool riding along in the same
-				  // message is executed from this branch.
-				  await getMatchingToolCalls( toolProvider, update.status.message, {
+					// abilities at once (the Agents Manager merges several providers
+					// into one). Narrow to advertised tools only, so neither an
+					// ability nor a backend-dispatched tool riding along in the same
+					// message is executed from this branch.
+					await getMatchingToolCalls( toolProvider, update.status.message, {
 						includeAbilities: false,
 						includeDispatchable: false,
-				  } )
+					} )
 				: NO_MATCHING_TOOL_CALLS;
 		if ( runningToolCalls.length > 0 ) {
 			// Execute tools async without blocking the stream
