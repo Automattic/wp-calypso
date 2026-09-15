@@ -860,6 +860,8 @@
 .wpcom-global-nav-footer :is(.lp-footer-social-media .lp-icon) {
 	pointer-events:none;
 }
+/* stylelint-enable */
+
 /* ---------------------------------------------------------------------------
  * 2026 footer preview — hand-written, not vendored.
  *
@@ -882,6 +884,7 @@
 	font-display: swap;
 	font-family: inter-variable-web;
 	font-style: normal;
+	/* stylelint-disable-next-line scales/font-weights -- variable font range */
 	font-weight: 100 900;
 	src: url( https://wordpress.com/i/fonts/inter-4.0/InterVariable.woff2 ) format( 'woff2' );
 }
