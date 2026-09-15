@@ -155,6 +155,8 @@ export interface DomainSearchConfig {
 	 * false, so bundles stay hidden unless a consumer opts in.
 	 */
 	showBundleSuggestions: boolean;
+	/** Set from the `domain-search/name-pulse` flag by the signup domain-only step. */
+	showNamePulseSearch: boolean;
 }
 
 export interface DomainSearchProps {

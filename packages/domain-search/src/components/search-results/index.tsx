@@ -6,6 +6,7 @@ import {
 	DomainSuggestionLoadMore,
 } from '../../ui';
 import { InlineBundleRow } from '../inline-bundle-row';
+import { NamePulseSearch } from '../name-pulse-search';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
@@ -41,6 +42,14 @@ const SearchResults = ( {
 		}
 
 		return null;
+	}
+
+	if ( config.showNamePulseSearch ) {
+		return (
+			<DomainSuggestionsList>
+				<NamePulseSearch />
+			</DomainSuggestionsList>
+		);
 	}
 
 	const shouldShowMoreResultsButton = numberOfVisibleSuggestions < suggestions.length;
