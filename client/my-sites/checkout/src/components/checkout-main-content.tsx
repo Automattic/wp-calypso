@@ -37,7 +37,8 @@ import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { pencil } from '@wordpress/icons';
+import { help, pencil } from '@wordpress/icons';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -662,7 +663,8 @@ export default function CheckoutMainContent( {
 	);
 	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
 
 	if ( ! checkoutActions ) {
 		return null;
@@ -1252,9 +1254,14 @@ export default function CheckoutMainContent( {
 												total={ stepCounter.total }
 											/>
 										) }
-										<span className="checkout-skip-button">
+										<span
+											className={ clsx( 'checkout-skip-button', {
+												'has-help-entry-label': showHelpIcon,
+											} ) }
+										>
 											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 												{ helpCenterButtonLink }
 											</Step.LinkButton>
 										</span>
@@ -1752,6 +1759,13 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
 				display: inline;
 			}
+		}
+
+		/* The labelled entry point puts an icon beside the text, as in the admin bar. */
+		&.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
 		}
 	}
 
