@@ -1,13 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, useMemo } from 'react';
-import type { Site } from '../site-type';
+import type { LaunchpadSiteDetails } from '../site-type';
 import type { Task } from '../types';
 
 interface Params {
 	tasks: Task[];
 	checklistSlug: string | null;
 	context: string;
-	site: Site | null | undefined;
+	site: LaunchpadSiteDetails | null | undefined;
 	flow?: string;
 }
 

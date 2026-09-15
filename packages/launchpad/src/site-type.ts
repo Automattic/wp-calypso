@@ -1,5 +1,5 @@
 /** A full `SiteDetails` satisfies this. */
-export interface Site {
+export interface LaunchpadSiteDetails {
 	slug?: string;
 	URL?: string;
 	options?: {
