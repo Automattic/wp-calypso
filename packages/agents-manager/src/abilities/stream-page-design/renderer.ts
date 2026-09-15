@@ -222,12 +222,16 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 				return;
 			}
 
-			// The first block replaces the page in one write, so the canvas never shows it empty.
-			state.topLevelBlocks = state.didReplaceInitialContent
+			// The first block replaces the page in one write, so the canvas never
+			// shows it empty. The state follows the write, so a write that throws
+			// leaves the block to the next flush rather than counting it placed.
+			const topLevelBlocks = state.didReplaceInitialContent
 				? [ ...state.topLevelBlocks, ...blocks ]
 				: blocks;
+
+			stage( rootClientId, topLevelBlocks );
+			state.topLevelBlocks = topLevelBlocks;
 			state.didReplaceInitialContent = true;
-			stage( rootClientId, state.topLevelBlocks );
 		},
 		[ stage ]
 	);
@@ -401,7 +405,7 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 				return;
 			}
 
-			state.topLevelBlocks =
+			const topLevelBlocks =
 				index === -1
 					? [ ...state.topLevelBlocks, ...finalBlocks ]
 					: [
@@ -409,7 +413,9 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 							...finalBlocks,
 							...state.topLevelBlocks.slice( index + 1 ),
 					  ];
-			stage( rootClientId, state.topLevelBlocks );
+
+			stage( rootClientId, topLevelBlocks );
+			state.topLevelBlocks = topLevelBlocks;
 		},
 		[ stage ]
 	);
@@ -519,6 +525,16 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 			}
 
 			if ( isFinal ) {
+				const state = getToolCallState( toolCallId );
+
+				// A stream that ended mid-block: the preview stands in for it, so
+				// it is closed with what arrived rather than committed as is.
+				if ( state.openBlock ) {
+					closeTopLevelBlock( state, rootClientId, state.openBlock, state.openBlock.markup );
+					state.openBlock = null;
+					state.pageBuffer = '';
+				}
+
 				hostRef.current.commitFinalDesign( toolCallId, rootClientId );
 				// The design is on the page; nothing of the stream is needed again.
 				stateByToolCall.current.delete( toolCallId );
@@ -528,7 +544,7 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 
 			return true;
 		},
-		[ getToolCallState, processPageBuffer ]
+		[ closeTopLevelBlock, getToolCallState, processPageBuffer ]
 	);
 
 	const clearRetry = useCallback( ( toolCallId: string ) => {
@@ -551,7 +567,15 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 		): void {
 			clearRetry( toolCallId );
 
-			if ( flush( toolCallId, isFinal ) || attemptsLeft === 0 ) {
+			// A frame that cannot be painted is logged and skipped: the next delta
+			// schedules another flush, and the tool round trip goes on.
+			try {
+				if ( flush( toolCallId, isFinal ) || attemptsLeft === 0 ) {
+					return;
+				}
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( '[AgentsManager] The page design could not be painted:', error );
 				return;
 			}
 
