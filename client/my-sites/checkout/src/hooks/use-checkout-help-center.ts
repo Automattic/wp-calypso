@@ -44,11 +44,7 @@ export const useCheckoutHelpCenter = (): {
 	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
-	// Products with their own support CTA keep it, and stay out of the experiment:
-	// assigning them would count an exposure for a label they never see.
-	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT, {
-		isEligible: ! hasPremiumSupport,
-	} );
+	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
 	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
