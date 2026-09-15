@@ -582,6 +582,33 @@ describe( 'agentManager', () => {
 		} );
 	} );
 
+	describe( 'getLiveSessionIds', () => {
+		it( 'is empty before any agent exists', () => {
+			expect( agentManager.getLiveSessionIds() ).toEqual( [] );
+		} );
+
+		it( 'omits an agent that has no session yet', async () => {
+			await agentManager.createAgent( 'test-key', testConfig );
+
+			expect( agentManager.getLiveSessionIds() ).toEqual( [] );
+		} );
+
+		it( 'reports the session an agent currently holds', async () => {
+			await agentManager.createAgent( 'test-key', testConfig );
+			agentManager.updateSessionId( 'test-key', 'local-1' );
+
+			expect( agentManager.getLiveSessionIds() ).toEqual( [ 'local-1' ] );
+		} );
+
+		it( 'drops the session once its agent is removed', async () => {
+			await agentManager.createAgent( 'test-key', testConfig );
+			agentManager.updateSessionId( 'test-key', 'local-1' );
+			agentManager.removeAgent( 'test-key' );
+
+			expect( agentManager.getLiveSessionIds() ).toEqual( [] );
+		} );
+	} );
+
 	describe( 'isTurnInFlight', () => {
 		beforeEach( async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
