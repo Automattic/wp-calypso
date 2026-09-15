@@ -171,8 +171,12 @@ function resolveSnapshotRoot( snapshot: BlocksSnapshot ): BlocksRoot {
 	const samePost = root?.post.id === snapshot.post.id && root?.post.type === snapshot.post.type;
 
 	if ( ! root || root.kind !== snapshot.rootKind || ! samePost ) {
+		const { title, type, id } = snapshot.post;
+
 		throw new Error(
-			'The page design checkpoint was taken on another page or view. Open it to restore.'
+			`The page design checkpoint belongs to ${
+				title ? `“${ title }”` : `${ type } ${ id }`
+			}, which is not open now. Open it to restore.`
 		);
 	}
 

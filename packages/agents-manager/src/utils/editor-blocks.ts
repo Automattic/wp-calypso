@@ -17,6 +17,7 @@ export interface EditorBlock {
 export interface CurrentPost {
 	id: number | string;
 	type: string;
+	title?: string;
 }
 
 export interface BlocksRoot {
@@ -57,12 +58,21 @@ const getBlocks = ( rootClientId?: string ): EditorBlock[] =>
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {
 	const editor = select( 'core/editor' ) as unknown as
-		| { getCurrentPostId?: () => number | string | undefined; getCurrentPostType?: () => string }
+		| {
+				getCurrentPostId?: () => number | string | undefined;
+				getCurrentPostType?: () => string;
+				getEditedPostAttribute?: ( attribute: string ) => unknown;
+		  }
 		| undefined;
 	const id = editor?.getCurrentPostId?.();
 	const type = editor?.getCurrentPostType?.();
+	const title = editor?.getEditedPostAttribute?.( 'title' );
 
-	return id && type ? { id, type } : undefined;
+	if ( ! id || ! type ) {
+		return undefined;
+	}
+
+	return { id, type, ...( typeof title === 'string' && title && { title } ) };
 }
 
 // Behind the private API: the container the site editor's own tools write into.
