@@ -13,6 +13,8 @@ describe( 'WPiFrameResize', () => {
 	let stopResize;
 	let topLocation;
 
+	const originalTopDescriptor = Object.getOwnPropertyDescriptor( window, 'top' );
+
 	const postMessageFromIframe = ( data, source = iframe.contentWindow ) => {
 		window.dispatchEvent( new MessageEvent( 'message', { data, source } ) );
 	};
@@ -37,9 +39,10 @@ describe( 'WPiFrameResize', () => {
 	} );
 
 	afterEach( () => {
-		stopResize();
+		stopResize?.();
+		stopResize = undefined;
 		wrapper.remove();
-		delete window.top;
+		Object.defineProperty( window, 'top', originalTopDescriptor );
 	} );
 
 	it( 'resizes the iframe on a height message', () => {
@@ -65,16 +68,17 @@ describe( 'WPiFrameResize', () => {
 	} );
 
 	it.each( [
-		[
-			'a javascript: target spoofing the iframe host',
-			"javascript://embeds.example.net/%0Avoid(document.documentElement.setAttribute('data-reader-xss','MARKER'))",
-		],
+		[ 'a javascript: target spoofing the iframe host', 'javascript://embeds.example.net/x' ],
 		[ 'a data: target spoofing the iframe host', 'data://embeds.example.net/x' ],
 		[ 'a vbscript: target spoofing the iframe host', 'vbscript://embeds.example.net/x' ],
-		[ 'credentials for the iframe host', 'https://user:password@embeds.example.net/some-post' ],
+		[ 'a username for the iframe host', 'https://user@embeds.example.net/some-post' ],
+		[ 'a password for the iframe host', 'https://:password@embeds.example.net/some-post' ],
 		[ 'a different host', 'https://attacker.example/some-post' ],
+		[ 'a different port', 'https://embeds.example.net:8443/some-post' ],
+		[ 'a blob: target', 'blob:https://embeds.example.net/uuid' ],
 		[ 'a relative URL', '/me/account' ],
 		[ 'an unparseable URL', 'https://' ],
+		[ 'a non-string value', { toString: () => 'https://embeds.example.net/some-post' } ],
 	] )( 'does not navigate the top window for a link message with %s', ( _label, value ) => {
 		postMessageFromIframe( { secret: SECRET, message: 'link', value } );
 
@@ -89,6 +93,18 @@ describe( 'WPiFrameResize', () => {
 		} );
 
 		expect( topLocation.href ).toBe( 'http://embeds.example.net/some-post' );
+	} );
+
+	it( 'does not navigate for a link message from an iframe without a src', () => {
+		iframe.removeAttribute( 'src' );
+
+		postMessageFromIframe( {
+			secret: SECRET,
+			message: 'link',
+			value: 'https://embeds.example.net/some-post',
+		} );
+
+		expect( topLocation.href ).toBe( TOP_URL );
 	} );
 
 	it( 'does not navigate for a link message from another window', () => {
@@ -120,5 +136,23 @@ describe( 'WPiFrameResize', () => {
 		} );
 
 		expect( topLocation.href ).toBe( TOP_URL );
+	} );
+
+	it( 'ignores a secret crafted to break out of the iframe selector', () => {
+		postMessageFromIframe( {
+			secret: '" ], iframe[ src *= "',
+			message: 'link',
+			value: 'https://embeds.example.net/some-post',
+		} );
+
+		expect( topLocation.href ).toBe( TOP_URL );
+	} );
+
+	it( 'stops handling messages once the teardown callback runs', () => {
+		stopResize();
+
+		postMessageFromIframe( { secret: SECRET, message: 'height', value: 300 } );
+
+		expect( iframe.height ).toBe( '' );
 	} );
 } );
