@@ -3,6 +3,7 @@ import {
 	finalizePendingStreams,
 	getMarkupFromArguments,
 	getPageSectionMarkup,
+	getStreamedMarkup,
 	handlePageDesignTaskUpdate,
 	PAGE_DESIGN_STREAM_STARTED_EVENT,
 	setStreamHandler,
@@ -108,14 +109,13 @@ describe( 'getPageSectionMarkup', () => {
 } );
 
 describe( 'handlePageDesignTaskUpdate', () => {
-	it( 'hands the renderer the markup streamed so far', async () => {
+	it( 'keeps the markup streamed so far and tells the renderer each time', async () => {
 		await streamed( 'call-1', '<p>a' );
 		await streamed( 'call-1', '<p>ab' );
 
-		expect( handler.mock.calls.map( ( [ call ] ) => call ) ).toEqual( [
-			{ toolCallId: 'call-1', markup: '<p>a' },
-			{ toolCallId: 'call-1', markup: '<p>ab' },
-		] );
+		expect( handler ).toHaveBeenCalledTimes( 2 );
+		expect( handler ).toHaveBeenLastCalledWith( { toolCallId: 'call-1' } );
+		expect( getStreamedMarkup( 'call-1' ) ).toBe( '<p>ab' );
 	} );
 
 	it( 'skips an update that adds nothing', async () => {
@@ -172,7 +172,7 @@ describe( 'handlePageDesignTaskUpdate', () => {
 		await Promise.resolve();
 
 		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-2', markup: '<p>b' } );
+		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-2' } );
 	} );
 
 	it( 'announces a tool call again once its session was forgotten', async () => {
@@ -189,7 +189,7 @@ describe( 'handlePageDesignTaskUpdate', () => {
 
 describe( 'setStreamHandler', () => {
 	// The canvas mounts after the chat, so the renderer can arrive mid-stream.
-	it( 'hands a renderer that registers late the latest markup', async () => {
+	it( 'tells a renderer that registers late about each stream', async () => {
 		setStreamHandler( undefined );
 		await streamed( 'call-1', '<p>a' );
 		await streamed( 'call-1', '<p>ab' );
@@ -198,7 +198,8 @@ describe( 'setStreamHandler', () => {
 		await Promise.resolve();
 
 		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1', markup: '<p>ab' } );
+		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
+		expect( getStreamedMarkup( 'call-1' ) ).toBe( '<p>ab' );
 	} );
 
 	it( 'finalizes, for a renderer that registers late, a stream already finalized', async () => {
@@ -210,11 +211,7 @@ describe( 'setStreamHandler', () => {
 		await Promise.resolve();
 
 		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler ).toHaveBeenCalledWith( {
-			toolCallId: 'call-1',
-			markup: '<p>a',
-			isFinal: true,
-		} );
+		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1', isFinal: true } );
 
 		await finalizePendingStreams();
 
@@ -230,6 +227,7 @@ describe( 'setStreamHandler', () => {
 		await Promise.resolve();
 
 		expect( handler ).not.toHaveBeenCalled();
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 	} );
 } );
 
@@ -243,8 +241,8 @@ describe( 'finalizePendingStreams', () => {
 		await finalizePendingStreams();
 
 		expect( handler.mock.calls.map( ( [ call ] ) => call ) ).toEqual( [
-			{ toolCallId: 'call-1', markup: '<p>a', isFinal: true },
-			{ toolCallId: 'call-2', markup: '<p>b', isFinal: true },
+			{ toolCallId: 'call-1', isFinal: true },
+			{ toolCallId: 'call-2', isFinal: true },
 		] );
 	} );
 
@@ -256,11 +254,7 @@ describe( 'finalizePendingStreams', () => {
 		await finalizePendingStreams( 'call-2' );
 
 		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler ).toHaveBeenCalledWith( {
-			toolCallId: 'call-2',
-			markup: '<p>b',
-			isFinal: true,
-		} );
+		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-2', isFinal: true } );
 	} );
 
 	// The design is on the canvas already; failing the round trip would hang the agent.
@@ -274,11 +268,7 @@ describe( 'finalizePendingStreams', () => {
 
 		await expect( finalizePendingStreams() ).resolves.toBeUndefined();
 
-		expect( handler ).toHaveBeenLastCalledWith( {
-			toolCallId: 'call-2',
-			markup: '<p>b',
-			isFinal: true,
-		} );
+		expect( handler ).toHaveBeenLastCalledWith( { toolCallId: 'call-2', isFinal: true } );
 		expect( consoleError ).toHaveBeenCalledWith(
 			'[AgentsManager] The page design could not be finalized:',
 			expect.any( Error )
@@ -297,7 +287,7 @@ describe( 'withPageDesignStream', () => {
 			update( [ text, streamPart( 'call-1', { markup: '<p>a' } ) ] )
 		);
 
-		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1', markup: '<p>a' } );
+		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
 		expect( next ).toHaveBeenCalledWith( update( [ text ] ) );
 	} );
 

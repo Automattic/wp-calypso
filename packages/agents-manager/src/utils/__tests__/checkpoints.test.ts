@@ -8,9 +8,12 @@ jest.mock( '@wordpress/data', () => ( {
 	resolveSelect: jest.fn(),
 } ) );
 jest.mock( '../editor-blocks', () => ( {
-	getCurrentPost: jest.fn( () => ( { id: 7, type: 'page' } ) ),
 	getRootBlocks: jest.fn( () => [] ),
-	resolveBlocksRoot: jest.fn( () => ( { kind: 'post-content', clientId: 'pc' } ) ),
+	resolveBlocksRoot: jest.fn( () => ( {
+		kind: 'post-content',
+		clientId: 'pc',
+		post: { id: 7, type: 'page' },
+	} ) ),
 	stageRootBlocks: jest.fn(),
 } ) );
 jest.mock( '../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
@@ -782,9 +785,14 @@ describe( 'blocks domain', () => {
 		Array.from( { length: count }, ( _, index ) => paragraph( `p${ index }` ) );
 	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
 
+	const post = { id: 7, type: 'page' };
+
 	beforeEach( () => {
-		editorBlocks().resolveBlocksRoot.mockReturnValue( { kind: 'post-content', clientId: 'pc' } );
-		editorBlocks().getCurrentPost.mockReturnValue( { id: 7, type: 'page' } );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post,
+		} );
 		editorBlocks().getRootBlocks.mockReturnValue( [] );
 	} );
 
@@ -821,6 +829,7 @@ describe( 'blocks domain', () => {
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
 			kind: 'post-content',
 			clientId: 'pc-remounted',
+			post,
 		} );
 		editorBlocks().getRootBlocks.mockReturnValue( page( 3 ) );
 
@@ -832,20 +841,14 @@ describe( 'blocks domain', () => {
 	it.each( [
 		{
 			case: 'another page',
-			root: { kind: 'post-content', clientId: 'pc' },
-			post: { id: 8, type: 'page' },
+			root: { kind: 'post-content', clientId: 'pc', post: { id: 8, type: 'page' } },
 		},
-		{
-			case: 'a view showing another root',
-			root: { kind: 'section', clientId: 's' },
-			post: { id: 7, type: 'page' },
-		},
-		{ case: 'a canvas with no root', root: null, post: { id: 7, type: 'page' } },
-	] )( 'refuses to restore into $case', async ( { root, post } ) => {
+		{ case: 'a view showing another root', root: { kind: 'section', clientId: 's', post } },
+		{ case: 'an editor still loading', root: null },
+	] )( 'refuses to restore into $case', async ( { root } ) => {
 		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().resolveBlocksRoot.mockReturnValue( root );
-		editorBlocks().getCurrentPost.mockReturnValue( post );
 
 		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'another page or view' );
 		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
@@ -929,7 +932,11 @@ describe( 'blocks domain', () => {
 
 	it( 'refuses a reciprocal from another page', async () => {
 		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
-		editorBlocks().getCurrentPost.mockReturnValue( { id: 8, type: 'page' } );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 8, type: 'page' },
+		} );
 
 		await expect(
 			setReciprocalCheckpoint(

@@ -112,9 +112,10 @@ function mergeAttributes(
 	return merged;
 }
 
+// A single-quoted value may hold `"`; it is written double-quoted.
 const serializeAttributes = ( attributes: Record< string, string > ): string =>
 	Object.entries( attributes )
-		.map( ( [ key, value ] ) => ` ${ key }="${ value }"` )
+		.map( ( [ key, value ] ) => ` ${ key }="${ value.replace( /"/g, '&quot;' ) }"` )
 		.join( '' );
 
 /** Collapses a paragraph the model nested inside another, which the paragraph block refuses. */

@@ -13,7 +13,12 @@ import {
 	repairBlocksFromMarkup,
 } from './block-markup';
 import { addPreviewClass, ensurePreviewStyles, scrollToBlockBottom } from './preview';
-import { getPageSectionMarkup, setStreamHandler, type StreamUpdate } from './stream';
+import {
+	getPageSectionMarkup,
+	getStreamedMarkup,
+	setStreamHandler,
+	type StreamUpdate,
+} from './stream';
 import type { EditorBlock } from '../../utils/editor-blocks';
 
 export interface EditorHost {
@@ -188,7 +193,6 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	const hostRef = useRef( host );
 	hostRef.current = host;
 
-	const markupByToolCall = useRef< Map< string, string > >( new Map() );
 	const stateByToolCall = useRef< Map< string, ToolCallState > >( new Map() );
 	const capturedToolCalls = useRef< Set< string > >( new Set() );
 	const flushTimer = useRef< ReturnType< typeof setTimeout > | null >( null );
@@ -464,6 +468,13 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	// Paints what has streamed so far; false while the canvas has no root.
 	const flush = useCallback(
 		( toolCallId: string, isFinal: boolean ): boolean => {
+			const markup = getStreamedMarkup( toolCallId );
+
+			// Forgotten by the transport since it was queued: a new session began.
+			if ( markup === undefined ) {
+				return true;
+			}
+
 			const rootClientId = hostRef.current.resolveRoot();
 
 			if ( ! rootClientId ) {
@@ -471,13 +482,21 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 			}
 
 			// The canvas is mounted and nothing has been staged yet: the last
-			// moment the page can be snapshotted as it was.
+			// moment the page can be snapshotted as it was. Nothing is staged
+			// without it; a capture that fails is tried again on the next flush.
 			if ( ! capturedToolCalls.current.has( toolCallId ) ) {
+				try {
+					hostRef.current.captureCheckpoint( toolCallId, rootClientId );
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.error( '[AgentsManager] The page could not be checkpointed:', error );
+					return false;
+				}
+
 				capturedToolCalls.current.add( toolCallId );
-				hostRef.current.captureCheckpoint( toolCallId, rootClientId );
 			}
 
-			const pageContent = getPageSectionMarkup( markupByToolCall.current.get( toolCallId ) ?? '' );
+			const pageContent = getPageSectionMarkup( markup );
 
 			if ( pageContent !== null ) {
 				const state = getToolCallState( toolCallId );
@@ -546,7 +565,6 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 
 	const handleUpdate = useCallback(
 		( update: StreamUpdate ): void => {
-			markupByToolCall.current.set( update.toolCallId, update.markup );
 			pendingToolCallId.current = update.toolCallId;
 
 			if ( update.isFinal ) {
