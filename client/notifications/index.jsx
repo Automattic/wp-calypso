@@ -217,8 +217,7 @@ export class Notifications extends Component {
 		OPEN_LINK: [
 			( store, { href, tracksEvent } ) => {
 				if ( tracksEvent ) {
-					// Decided by the notifications panel, outside this repo, and it sends
-					// hyphenated values that Tracks rejects.
+					// range_info.context from the notes API can be hyphenated, which Tracks rejects.
 					const suffix = tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
 					this.props.recordTracksEventAction( 'calypso_notifications_' + suffix, {
 						link: href,
