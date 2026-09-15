@@ -263,7 +263,7 @@ export const RevealOnHover: Story = {
 		docs: {
 			description: {
 				story:
-					'Feedback on an earlier turn keeps its space but only shows while the message is hovered or focused; the latest turn keeps it visible.',
+					'Feedback on an earlier turn floats in a panel below the reply while it is hovered or focused, and docks into a plain row once a thumb is pressed; the latest turn keeps its row visible.',
 			},
 		},
 	},

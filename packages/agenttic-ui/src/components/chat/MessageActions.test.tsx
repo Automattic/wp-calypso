@@ -99,7 +99,7 @@ describe( 'MessageActions', () => {
 		expect( onClick ).toHaveBeenCalledWith( message );
 	} );
 
-	it( 'marks reveal-on-hover actions so they stay hidden until the message is hovered', async () => {
+	it( 'floats reveal-on-hover actions in a panel below the inline ones', async () => {
 		const message: Message = {
 			id: 'agent-1',
 			role: 'agent',
@@ -123,14 +123,44 @@ describe( 'MessageActions', () => {
 			root.render( <MessageActions message={ message } /> );
 		} );
 
-		const hoverOnlyButton = container.querySelector( 'button[aria-label="Good response"]' );
-		const hoverOnlyComponent = container.querySelector( 'button[aria-label="Copy"]' );
-		const alwaysVisible = container.querySelector( 'button[aria-label="Share"]' );
+		const panel = container.querySelector( `.${ styles.floating }` );
+		const dock = container.querySelector( `.${ styles.dock }` );
 
-		expect( hoverOnlyButton?.classList.contains( styles.revealOnHover ) ).toBe( true );
-		expect( hoverOnlyComponent?.parentElement?.classList.contains( styles.revealOnHover ) ).toBe(
-			true
+		expect( panel?.querySelector( 'button[aria-label="Good response"]' ) ).not.toBeNull();
+		expect( panel?.querySelector( 'button[aria-label="Copy"]' )?.parentElement?.className ).toBe(
+			styles.componentWrapper
 		);
-		expect( alwaysVisible?.classList.contains( styles.revealOnHover ) ).toBe( false );
+		expect( panel?.querySelector( 'button[aria-label="Share"]' ) ).toBeNull();
+		expect( container.querySelector( 'button[aria-label="Share"]' ) ).not.toBeNull();
+		expect( dock?.classList.contains( styles.docked ) ).toBe( false );
+	} );
+
+	it( 'docks the panel once one of its actions is pressed', async () => {
+		const message: Message = {
+			id: 'agent-1',
+			role: 'agent',
+			content: [ { type: 'text', text: 'Answer' } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+			actions: [
+				{
+					id: 'feedback-up',
+					label: 'Good response',
+					onClick: vi.fn(),
+					pressed: true,
+					revealOnHover: true,
+				},
+				{ id: 'feedback-down', label: 'Bad response', onClick: vi.fn(), revealOnHover: true },
+			],
+		};
+
+		await act( async () => {
+			root.render( <MessageActions message={ message } /> );
+		} );
+
+		expect(
+			container.querySelector( `.${ styles.dock }` )?.classList.contains( styles.docked )
+		).toBe( true );
 	} );
 } );

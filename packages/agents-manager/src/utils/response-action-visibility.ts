@@ -15,8 +15,10 @@ interface ResponseActionVisibility {
  * Decides when a message's response actions are on screen; which actions a
  * message has is never changed here. The turn in progress holds them back
  * until its reply settles, so the row appears at once instead of button by
- * button. Earlier turns keep them but render them only while the message (or
- * its actions row) is hovered or focused. A pressed thumb always stays.
+ * button; a pressed thumb is never held back. Earlier turns keep them as
+ * hover-only, which the UI renders as a floating panel that docks into a
+ * plain row once a thumb is pressed, so a pressed thumb stays hover-only too
+ * and travels with its row.
  */
 export function applyResponseActionVisibility(
 	actions: MessageAction[],
@@ -27,12 +29,12 @@ export function applyResponseActionVisibility(
 	}
 
 	return actions.flatMap( ( action ) => {
-		if (
-			! RESPONSE_ACTION_IDS.has( action.id ) ||
-			( action.type !== 'component' && action.pressed )
-		) {
+		if ( ! RESPONSE_ACTION_IDS.has( action.id ) ) {
 			return [ action ];
 		}
-		return isLatestTurn ? [] : [ { ...action, revealOnHover: true } ];
+		if ( isLatestTurn ) {
+			return action.type !== 'component' && action.pressed ? [ action ] : [];
+		}
+		return [ { ...action, revealOnHover: true } ];
 	} );
 }

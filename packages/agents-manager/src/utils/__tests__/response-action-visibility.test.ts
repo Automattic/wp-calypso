@@ -67,6 +67,23 @@ describe( 'applyResponseActionVisibility', () => {
 		expect( summarize( result ) ).toEqual( [ [ 'feedback-up', undefined ] ] );
 	} );
 
+	it( 'marks a pressed thumb on an earlier turn hover-only like its row', () => {
+		const voted: MessageAction[] = [
+			{ id: 'feedback-up', label: 'Good response', onClick: noop, pressed: true },
+			{ id: 'feedback-down', label: 'Bad response', onClick: noop, disabled: true },
+		];
+
+		const result = applyResponseActionVisibility( voted, {
+			isLatestTurn: false,
+			isStreaming: false,
+		} );
+
+		expect( summarize( result ) ).toEqual( [
+			[ 'feedback-up', true ],
+			[ 'feedback-down', true ],
+		] );
+	} );
+
 	it( 'does not mutate the given actions', () => {
 		applyResponseActionVisibility( actions, { isLatestTurn: false, isStreaming: false } );
 

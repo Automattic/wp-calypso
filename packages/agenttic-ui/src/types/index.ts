@@ -102,7 +102,7 @@ export interface MessageActionButton {
 	pressed?: boolean;
 	showLabel?: boolean;
 	order?: number;
-	/** Keep the button's footprint but only show it while its message or the actions row is hovered or focused. */
+	/** Render in the panel that floats below the message on hover and docks into a row once pressed. */
 	revealOnHover?: boolean;
 }
 
@@ -113,7 +113,7 @@ export interface MessageActionComponent {
 	component: React.ComponentType< any >;
 	componentProps?: Record< string, unknown >;
 	order?: number;
-	/** Keep the component's footprint but only show it while its message or the actions row is hovered or focused. */
+	/** Render in the panel that floats below the message on hover and docks into a row once pressed. */
 	revealOnHover?: boolean;
 }
 
