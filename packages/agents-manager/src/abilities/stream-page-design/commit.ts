@@ -18,7 +18,8 @@ const serializeBlocks = ( blocks: EditorBlock[] ): string =>
 	withSuppressedValidationLogs( () => serialize( blocks as Block[] ) );
 
 /**
- * Folds the streamed design into one native undo level. Every frame was staged
+ * Folds the streamed design into one native undo level, and reports whether
+ * the page changed at all. Every frame was staged
  * untracked, so the entity still holds the pre-design content and no undo
  * level exists; re-writing the same final blocks records nothing, since the
  * editor skips a no-op write. So the pre-design blocks go back untracked, then
@@ -35,7 +36,7 @@ const serializeBlocks = ( blocks: EditorBlock[] ): string =>
 export function commitStreamedPageDesign(
 	adapters: CommitAdapters,
 	beforeBlocks: EditorBlock[]
-): void {
+): boolean {
 	const after = sanitizeBlockTree( deepClone( adapters.getLiveBlocks() ) );
 	const before = sanitizeBlockTree( beforeBlocks );
 	const beforeContent = serializeBlocks( before );
@@ -43,7 +44,7 @@ export function commitStreamedPageDesign(
 	// A repeated tool call re-emitting the same design changes nothing, and an
 	// empty undo level would be its only trace.
 	if ( beforeContent === serializeBlocks( after ) ) {
-		return;
+		return false;
 	}
 
 	// A fresh parse of the pre-design markup, which is what the entity's
@@ -55,4 +56,6 @@ export function commitStreamedPageDesign(
 	adapters.clearSelection();
 	adapters.stageBlocks( beforeParsed );
 	adapters.replaceBlocks( after );
+
+	return true;
 }

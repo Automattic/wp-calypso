@@ -12,7 +12,7 @@ jest.mock( '../editor-blocks', () => ( {
 	resolveBlocksRoot: jest.fn( () => ( {
 		kind: 'post-content',
 		clientId: 'pc',
-		post: { id: 7, type: 'page' },
+		post: { id: 7, type: 'page', title: 'About' },
 	} ) ),
 	stageRootBlocks: jest.fn(),
 } ) );
@@ -782,7 +782,7 @@ describe( 'blocks domain', () => {
 		Array.from( { length: count }, ( _, index ) => paragraph( `p${ index }` ) );
 	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
 
-	const post = { id: 7, type: 'page' };
+	const post = { id: 7, type: 'page', title: 'About' };
 
 	beforeEach( () => {
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
@@ -804,7 +804,7 @@ describe( 'blocks domain', () => {
 		expect( snapshot ).toEqual( {
 			rootKind: 'post-content',
 			blocks: live,
-			post: { id: 7, type: 'page' },
+			post: { id: 7, type: 'page', title: 'About' },
 		} );
 		expect( snapshot?.blocks ).not.toBe( live );
 	} );
@@ -847,7 +847,7 @@ describe( 'blocks domain', () => {
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().resolveBlocksRoot.mockReturnValue( root );
 
-		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'another page or view' );
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'belongs to “About”' );
 		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
 	} );
 
@@ -923,7 +923,7 @@ describe( 'blocks domain', () => {
 		expect( getCheckpoint( 'redo' )?.blocksBeforeUpdate ).toEqual( {
 			rootKind: 'post-content',
 			blocks: page( 2 ),
-			post: { id: 7, type: 'page' },
+			post: { id: 7, type: 'page', title: 'About' },
 		} );
 	} );
 
@@ -950,7 +950,7 @@ describe( 'blocks domain', () => {
 				} as never,
 				{}
 			)
-		).rejects.toThrow( 'another page or view' );
+		).rejects.toThrow( 'belongs to page 7' );
 		expect( getCheckpoint( 'redo' ) ).toBeUndefined();
 	} );
 
