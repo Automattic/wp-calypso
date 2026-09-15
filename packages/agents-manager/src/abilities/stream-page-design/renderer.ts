@@ -27,7 +27,7 @@ export interface EditorHost {
 	resolveRoot: () => string | null;
 	/** Replaces the blocks under `rootClientId`, outside the undo stack. */
 	stageBlocks: ( rootClientId: string, blocks: EditorBlock[] ) => void;
-	/** Snapshots the page once per stream, before its first frame. */
+	/** Snapshots the page once per tool call, before its first frame. */
 	captureCheckpoint: ( toolCallId: string, rootClientId: string ) => void;
 	/** Folds the finished design into one native undo level. */
 	commitFinalDesign: ( toolCallId: string, rootClientId: string ) => void;
@@ -38,7 +38,7 @@ export interface EditorHost {
 // Deltas arrive a few characters at a time; re-rendering the page on each would
 // starve the canvas of the main thread it needs to mount.
 const FLUSH_INTERVAL_MS = 150;
-// The canvas mounts after the chat, so an early flush may find nowhere to stage.
+// The canvas can still be mounting when the first frames arrive.
 const MAX_FLUSH_RETRIES = 20;
 // Following every nested container would scroll on almost every frame.
 const NESTED_CONTAINER_SCROLL_INTERVAL = 3;
