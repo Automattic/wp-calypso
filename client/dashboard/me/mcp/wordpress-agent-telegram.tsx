@@ -225,10 +225,15 @@ export default function WordPressAgentTelegram( {
 							) }
 						/>
 						<div className="wordpress-agent-connection__actions">
-							<Button variant="secondary" onClick={ () => setPairingDismissed( true ) }>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								onClick={ () => setPairingDismissed( true ) }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								onClick={ connectViaToken }
 								isBusy={ tokenMutation.isPending }
@@ -270,12 +275,13 @@ export default function WordPressAgentTelegram( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Telegram' ) }
-						description={ __( 'Chat with WordPress Agent on Telegram.' ) }
+						description={ __( 'Message your agent from Telegram for quick updates on the go.' ) }
 					/>
 					<div className="wordpress-agent-telegram__action">
 						{ ! isStatusReady && <Spinner /> }
 						{ isStatusReady && isConnected && (
 							<Button
+								__next40pxDefaultSize
 								variant="secondary"
 								isDestructive
 								onClick={ disconnect }
