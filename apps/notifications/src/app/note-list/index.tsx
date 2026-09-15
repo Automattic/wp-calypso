@@ -159,14 +159,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// so far. DataViews advances its infinite-scroll window only while
 	// `totalItems` stays ahead of the window, so reporting the loaded count
 	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. Report an
-	// optimistic total while the REST client still has notes left to fetch so
-	// DataViews keeps advancing the window and driving `loadMore()`.
+	// `onChangeView` fires, and `loadMore()` is never called again. Report one
+	// extra note while the REST client still has notes left to fetch: enough for
+	// DataViews to advance once the window is full, but never past the loaded
+	// notes, which would skip the ones in between.
 	// Pass the rendered tab: the client's own `filterName` lags a render behind
 	// a switch, which would answer for the previous tab and stall scroll.
 	const hasMoreNotes = client?.hasMoreNotes( filterName ) ?? false;
 	const effectivePaginationInfo = hasMoreNotes
-		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
+		? { ...paginationInfo, totalItems: paginationInfo.totalItems + 1 }
 		: paginationInfo;
 
 	const infiniteScrollHandler = useCallback( () => {
@@ -211,8 +212,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
 	// our own at the foot of the list, while a fetch is in flight. An empty list
-	// uses the `empty` slot above instead.
-	const showLoadMore = hasMoreNotes && data.length > 0 && tab.isLoading;
+	// uses the `empty` slot above instead. Check the loaded notes, not `data`: the
+	// window can move past them while DataViews still renders the earlier rows.
+	const showLoadMore = hasMoreNotes && visibleNotes.length > 0 && tab.isLoading;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
 	// is mounted and in-flight loading shows in the `empty` slot or the foot.
