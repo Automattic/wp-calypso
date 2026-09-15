@@ -13,7 +13,10 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { createContext, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
 import type { Note } from '../types';
@@ -67,21 +70,42 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
+export const SelectedNoteIdContext = createContext< string | undefined >( undefined );
+
+// Rows read live state rather than the item: DataViews keeps its own copy of
+// rendered rows and only refreshes those in the current window.
+const NoteBadge = ( { note }: { note: Note } ) => {
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+
+	return (
+		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
+		</span>
+	);
+};
+
+const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
+	const isActive = useContext( SelectedNoteIdContext ) === note.id.toString();
+
+	return (
+		<div
+			className={ clsx( 'wpnc__subject', {
+				// Marks the open note's row for the active highlight (see CSS).
+				'is-active': isActive,
+			} ) }
+			/* eslint-disable-next-line react/no-danger */
+			dangerouslySetInnerHTML={ { __html: subject } }
+		/>
+	);
+};
+
 export function getFields(): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon
-					icon={ item.icon }
-					size={ 32 }
-					badge={
-						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 14 } />
-						</span>
-					}
-				/>
+				<NoteIcon icon={ item.icon } size={ 32 } badge={ <NoteBadge note={ item } /> } />
 			),
 		},
 		{
@@ -92,14 +116,7 @@ export function getFields(): Field< Note >[] {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div
-					className={ clsx( 'wpnc__subject', {
-						// Marks the open note's row for the active highlight (see CSS).
-						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-					} ) }
-					/* eslint-disable-next-line react/no-danger */
-					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-				/>
+				<NoteSubject note={ item } subject={ field.getValue( { item } ) } />
 			),
 		},
 		{
