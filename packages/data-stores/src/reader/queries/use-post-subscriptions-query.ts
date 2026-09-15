@@ -69,10 +69,10 @@ const usePostSubscriptionsQuery = ( {
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = infiniteQuery;
 
 	useEffect( () => {
-		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
+		if ( enabled && hasNextPage && ! isFetchingNextPage && ! isFetching ) {
 			fetchNextPage();
 		}
-	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
+	}, [ enabled, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
 
 	const filterFunction = useCallback(
 		( item: PostSubscription ) => {
