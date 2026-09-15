@@ -34,6 +34,7 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
+jest.mock( '../../../analytics/record-page-view' );
 
 const regularStep: StepperStep = {
 	slug: 'some-step-slug',
