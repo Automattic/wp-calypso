@@ -1,4 +1,5 @@
 import {
+	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Guide,
@@ -103,9 +104,9 @@ export default function useReferralsGuide() {
 				image: <div className="dashboard-referrals-guide__preview">{ preview }</div>,
 				content: (
 					<VStack className="dashboard-referrals-guide__content" spacing={ 2 }>
-						<Text className="dashboard-referrals-guide__title" as="h2">
+						<Heading level={ 2 } weight={ 500 } size={ 20 }>
 							{ title }
-						</Text>
+						</Heading>
 						<Text variant="muted">{ description }</Text>
 					</VStack>
 				),

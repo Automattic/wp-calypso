@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 export type TermPricing = 'monthly' | 'yearly';
 
 // Shared with the classic A4A marketplace so the billing term carries over between dashboards.
-const TERM_PRICING_PREFERENCE = 'a4a-marketplace-term-pricing' as const;
+const TERM_PRICING_PREFERENCE = 'a4a-marketplace-term-pricing';
 
 export function useTermPricing() {
 	const { data: termPricing = 'yearly' } = useQuery(

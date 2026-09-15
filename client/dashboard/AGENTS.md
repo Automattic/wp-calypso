@@ -11,6 +11,7 @@ This is the new hosting dashboard for WordPress.com.
 
 - Use TanStack Query and TanStack Router.
 - Don't use Redux and `calypso/state`.
+- Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
 - **Never branch on `appConfig.name`** (e.g. `if (appConfig.name === 'dotcom')`). The dashboard has many variants; hardcoding behavior per variant doesn't scale. Some alternatives:
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.

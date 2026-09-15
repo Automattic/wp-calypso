@@ -15,7 +15,7 @@ import { useTermPricing } from './use-term-pricing';
 import type { MarketplaceType } from './use-marketplace-type';
 
 // Shared with the classic A4A marketplace so the guide only shows once across dashboards.
-const GUIDE_SEEN_PREFERENCE = 'a4a-marketplace-referral-guide-seen' as const;
+const GUIDE_SEEN_PREFERENCE = 'a4a-marketplace-referral-guide-seen';
 
 export default function ReferralToggle() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
