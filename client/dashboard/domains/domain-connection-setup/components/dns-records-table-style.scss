@@ -1,22 +1,21 @@
 /**
- * Each cell holds a single DNS token — an IP address or a hostname — that stops
- * making sense once it is broken across lines. Keep every value on one line and
- * let each column size to its content; DataViews scrolls the table when the sum
- * no longer fits, which reads better than breaking an address in half.
+ * DNS values are single tokens — an IP address or a hostname — that stop making
+ * sense when broken across lines, and hostnames offer the browser plenty of
+ * hyphens to break at. DataViews already keeps cell text on one line, but values
+ * rendered through Text set `text-wrap: pretty`, which resets the inherited
+ * `text-wrap-mode` and lets them wrap again — hence the child selector rather
+ * than a rule on the cell itself.
  *
- * The rule has to reach the cell's children as well: values rendered through the
- * Text component reset white-space, so setting it on the cell alone leaves them
- * wrapping. min-width holds off the 15ch column floor DataViews would otherwise
- * apply, which pads the one-character Type and Name columns out of proportion.
+ * `min-width: 0` releases the 15ch floor DataViews puts on every column, which
+ * is far wider than the short Type and Name values need. Columns then size to
+ * their content and the table scrolls when the sum overflows its card.
  */
-.dns-records-table {
-	th,
-	.dataviews-view-table__cell-content-wrapper,
-	.dataviews-view-table__cell-content-wrapper * {
-		white-space: nowrap;
-	}
-
-	.dataviews-view-table .dataviews-view-table__cell-content-wrapper {
+.dns-records-table .dataviews-view-table {
+	.dataviews-view-table__cell-content-wrapper {
 		min-width: 0;
+
+		> * {
+			white-space: nowrap;
+		}
 	}
 }
