@@ -154,9 +154,11 @@ export function useAiCredits( { mode }: { mode: ImageStudioMode } ): AiCreditsSt
 			isLimitReached: ! isLow,
 			isLoading,
 			notice: {
-				// Same copy as the backend's low-credits notice.
 				message: isLow
-					? __( 'Almost at your limit. Upgrade anytime to keep creating.', __i18n_text_domain__ )
+					? __(
+							'Approaching your AI requests limit. Upgrade to keep creating.',
+							__i18n_text_domain__
+					  )
 					: __(
 							"You've reached your AI requests limit. Upgrade to keep creating.",
 							__i18n_text_domain__

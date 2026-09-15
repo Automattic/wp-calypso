@@ -243,7 +243,7 @@ describe( 'useAiCredits', () => {
 		await waitFor( () =>
 			expect( result.current ).toEqual( {
 				notice: {
-					message: 'Almost at your limit. Upgrade anytime to keep creating.',
+					message: 'Approaching your AI requests limit. Upgrade to keep creating.',
 					status: 'warning',
 					dismissible: true,
 					onDismiss: expect.any( Function ),
