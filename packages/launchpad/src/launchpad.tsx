@@ -5,13 +5,10 @@ import LaunchpadInternal from './launchpad-internal';
 import { setUpActionsForTasks } from './setup-actions';
 import { defaultSuccessCallback, useSortedLaunchpadTasks } from './use-launchpad';
 import { useSite } from './use-site';
-import type { LaunchpadSiteDetails } from './site-type';
 import type { EventHandlers, Task } from './types';
 
 type LaunchpadProps = {
 	siteSlug: string | null;
-	/** Pass the site if the host already has it; Launchpad fetches it otherwise. */
-	site?: LaunchpadSiteDetails | null;
 	checklistSlug: string;
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
@@ -22,7 +19,6 @@ type LaunchpadProps = {
 
 const Launchpad = ( {
 	siteSlug,
-	site: siteProp,
 	checklistSlug,
 	launchpadContext,
 	onSiteLaunched,
@@ -38,8 +34,7 @@ const Launchpad = ( {
 
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
-	const fetchedSite = useSite( siteProp === undefined ? siteSlug : null );
-	const site = siteProp === undefined ? fetchedSite : siteProp;
+	const site = useSite( siteSlug );
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
 	const taskFilter = ( tasks: Task[] ) => {

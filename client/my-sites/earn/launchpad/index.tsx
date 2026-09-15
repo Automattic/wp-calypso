@@ -42,7 +42,6 @@ const EarnLaunchpad = ( { launchpad }: EarnLaunchpadProps ) => {
 			</div>
 			<Launchpad
 				siteSlug={ site?.slug ?? null }
-				site={ site }
 				checklistSlug={ checklistSlug }
 				onPostFilterTasks={ taskFilter }
 				launchpadContext="earn"
