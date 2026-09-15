@@ -1,5 +1,5 @@
 /** A full `SiteDetails` satisfies this. */
-export interface MinimumSite {
+export interface Site {
 	slug?: string;
 	URL?: string;
 	options?: {

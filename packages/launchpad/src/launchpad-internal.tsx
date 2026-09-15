@@ -3,11 +3,11 @@ import { type FC, useMemo } from 'react';
 import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import ChecklistItem from './checklist-item';
 import { useTracking } from './use-tracking';
-import type { MinimumSite } from './site-type';
+import type { Site } from './site-type';
 import type { Task } from './types';
 
 interface Props {
-	site?: MinimumSite | null;
+	site?: Site | null;
 	siteSlug: string | null;
 	checklistSlug: string | null;
 	makeLastTaskPrimaryAction?: boolean;

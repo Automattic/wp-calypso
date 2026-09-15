@@ -13,13 +13,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import { copy, share, check } from '@wordpress/icons';
 import { useState, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
-import type { MinimumSite } from '../../site-type';
+import type { Site } from '../../site-type';
 import type { Task } from '../../types';
 import './style.scss';
 
 interface ShareSiteModalProps {
 	setModalIsOpen: ( isOpen: boolean ) => void;
-	site: MinimumSite | null;
+	site: Site | null;
 	task: Task | null;
 }
 
@@ -106,7 +106,7 @@ const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 	];
 };
 
-const getSiteSlug = ( site: MinimumSite | null ) => {
+const getSiteSlug = ( site: Site | null ) => {
 	if ( ! site ) {
 		return '';
 	}
@@ -121,7 +121,7 @@ const getSiteSlug = ( site: MinimumSite | null ) => {
 	return '';
 };
 
-const getShareData = ( site: MinimumSite | null ) => {
+const getShareData = ( site: Site | null ) => {
 	const siteSlug = getSiteSlug( site );
 	return {
 		title: siteSlug,
