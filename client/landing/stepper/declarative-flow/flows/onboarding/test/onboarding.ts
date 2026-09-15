@@ -1,17 +1,27 @@
 /**
  * @jest-environment jsdom
  */
+import { setDomainCartItem, setDomainCartItems } from '@automattic/data-stores/src/onboard/actions';
+import onboardReducer from '@automattic/data-stores/src/onboard/reducer';
+import {
+	getDomainCartItem,
+	getDomainCartItems,
+} from '@automattic/data-stores/src/onboard/selectors';
 import { renderHook } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
+import { createStore } from 'redux';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import newsletter from '../../newsletter/newsletter';
 import onboarding from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
 } ) );
 
+const mockSetDomainCartItem = jest.fn();
+const mockSetDomainCartItems = jest.fn();
 const mockResetOnboardStore = jest.fn();
 const mockSetPlanCartItem = jest.fn();
 const mockSetProductCartItems = jest.fn();
@@ -23,12 +33,28 @@ jest.mock( '@automattic/components', () => ( {
 	ExternalLink: () => null,
 } ) );
 
+jest.mock( 'calypso/landing/stepper/hooks/use-exit-flow', () => ( { useExitFlow: () => ( {} ) } ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
+	useSiteSlug: () => undefined,
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-id-param', () => ( {
+	useSiteIdParam: () => undefined,
+} ) );
+jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
+	triggerGuidesForStep: jest.fn(),
+} ) );
+jest.mock(
+	'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider',
+	() => ( { useLaunchpadDecider: () => ( {} ) } )
+);
+
 jest.mock( '@wordpress/data', () => ( {
+	combineReducers: jest.requireActual( '@wordpress/data' ).combineReducers,
 	useDispatch: () => ( {
 		resetOnboardStore: mockResetOnboardStore,
 		setDomain: jest.fn(),
-		setDomainCartItem: jest.fn(),
-		setDomainCartItems: jest.fn(),
+		setDomainCartItem: mockSetDomainCartItem,
+		setDomainCartItems: mockSetDomainCartItems,
 		setHideFreePlan: jest.fn(),
 		setPlanCartItem: mockSetPlanCartItem,
 		setProductCartItems: mockSetProductCartItems,
@@ -354,5 +380,74 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
 			'calypso_plans_page_visual_separation_2025_09_v2'
 		);
+	} );
+} );
+
+describe( 'replacing searched domains with an existing domain', () => {
+	afterEach( () => {
+		mockSetDomainCartItem.mockReset();
+		mockSetDomainCartItems.mockReset();
+	} );
+	it.each( [ 'domain_map', 'domain_transfer' ] )(
+		'discards previous registrations when selecting %s',
+		async ( productSlug ) => {
+			const store = createStore( onboardReducer );
+			mockSetDomainCartItem.mockImplementation( ( item ) =>
+				store.dispatch( setDomainCartItem( item ) )
+			);
+			mockSetDomainCartItems.mockImplementation( ( items ) =>
+				store.dispatch( setDomainCartItems( items ) )
+			);
+			const navigate = jest.fn();
+			const { result } = renderHook( () =>
+				onboarding.useStepNavigation.call( onboarding, 'domains', navigate )
+			);
+			const registrations = [
+				{ product_slug: 'domain_reg', meta: 'old-selection.com' },
+				{ product_slug: 'domain_reg', meta: 'old-selection.blog' },
+			];
+
+			await result.current.submit?.( {
+				slug: 'domains',
+				providedDependencies: { domainItem: registrations[ 0 ], domainCart: registrations },
+			} );
+			expect( getDomainCartItems( store.getState() ) ).toEqual( registrations );
+
+			const existingDomain = { product_slug: productSlug, meta: 'already-owned.com' };
+			await result.current.submit?.( {
+				slug: 'use-my-domain',
+				providedDependencies: { domainCartItem: existingDomain },
+			} );
+
+			expect( getDomainCartItem( store.getState() ) ).toEqual( existingDomain );
+			expect( getDomainCartItems( store.getState() ) ).toEqual( [] );
+		}
+	);
+	it( 'discards previous registrations in the newsletter flow', async () => {
+		const store = createStore( onboardReducer );
+		mockSetDomainCartItem.mockImplementation( ( item ) =>
+			store.dispatch( setDomainCartItem( item ) )
+		);
+		mockSetDomainCartItems.mockImplementation( ( items ) =>
+			store.dispatch( setDomainCartItems( items ) )
+		);
+		const navigate = jest.fn();
+		const { result, rerender } = renderHook(
+			( { step }: { step: 'domains' | 'use-my-domain' } ) =>
+				newsletter.useStepNavigation.call( newsletter, step, navigate ),
+			{ initialProps: { step: 'domains' } }
+		);
+		const registration = { product_slug: 'domain_reg', meta: 'old-selection.com' };
+		await result.current.submit?.( {
+			domainItem: registration,
+			domainCart: [ registration ],
+			suggestion: { is_free: false },
+		} );
+		expect( getDomainCartItems( store.getState() ) ).toEqual( [ registration ] );
+		rerender( { step: 'use-my-domain' } );
+		const existingDomain = { product_slug: 'domain_map', meta: 'already-owned.com' };
+		await result.current.submit?.( { domainCartItem: existingDomain } );
+		expect( getDomainCartItem( store.getState() ) ).toEqual( existingDomain );
+		expect( getDomainCartItems( store.getState() ) ).toEqual( [] );
 	} );
 } );
