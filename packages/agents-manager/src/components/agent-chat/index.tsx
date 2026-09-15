@@ -126,6 +126,11 @@ const EditorHistoryBridge = lazyComponent(
 	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
 );
 
+// Carries the block-editor stack, so it loads only where a design can stream.
+const PageDesignRenderer = lazyComponent(
+	() => import( /* webpackChunkName: "am-page-design-renderer" */ '../page-design-renderer' )
+);
+
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/jpeg',
 	'image/png',
@@ -342,6 +347,7 @@ export default function AgentChat( {
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
+				{ ! isAmAbilitiesDisabled() && isEditorPage() && <PageDesignRenderer /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
