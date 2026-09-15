@@ -168,7 +168,10 @@ function captureBlocksSnapshot( root = resolveBlocksRoot() ): BlocksSnapshot | u
 // only on the page the snapshot was taken from.
 function resolveSnapshotRoot( snapshot: BlocksSnapshot ): BlocksRoot {
 	const root = resolveBlocksRoot();
-	const samePost = root?.post.id === snapshot.post.id && root?.post.type === snapshot.post.type;
+	// The editor hands out the id as a number or a string, depending on the surface.
+	const samePost =
+		String( root?.post.id ) === String( snapshot.post.id ) &&
+		root?.post.type === snapshot.post.type;
 
 	if ( ! root || root.kind !== snapshot.rootKind || ! samePost ) {
 		const { title, type, id } = snapshot.post;
