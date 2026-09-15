@@ -3,10 +3,9 @@ import wpcomRequest, { canAccessWpcomApis } from './wpcom-request';
 import type { LaunchpadSiteDetails } from './site-type';
 
 /**
- * Fetches the handful of site fields Launchpad reads, narrowed to those fields so nothing
- * else about the site is held anywhere. There is no REST fallback, so the request is
- * skipped where the proxy is unavailable and callers see no site, and the result never
- * goes stale — both matching what the site store did here before.
+ * Fetches the site fields Launchpad reads. The response is the full site; only these
+ * fields are cached. Skipped where the proxy is unavailable, since there is no REST
+ * fallback, and kept for the session — both matching the site store this replaces.
  */
 export const useSite = ( siteSlug: string | null ) => {
 	const { data } = useQuery< LaunchpadSiteDetails >( {
@@ -29,6 +28,7 @@ export const useSite = ( siteSlug: string | null ) => {
 		},
 		enabled: Boolean( siteSlug ) && canAccessWpcomApis(),
 		staleTime: Infinity,
+		gcTime: Infinity,
 		meta: { persist: false },
 	} );
 
