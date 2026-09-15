@@ -141,6 +141,228 @@ describe( 'Client', () => {
 			expect( result.text ).toBe( 'Done after tool call.' );
 		} );
 
+		it( 'preserves AI credits on a synthetic final agent message', async () => {
+			const aiCredits = {
+				policy_id: 'wpcom-site-monthly-v1',
+				blog_id: 123,
+				preview: true,
+				credits_limit: 10_000,
+				credits_used: 1_700,
+				credits_remaining: 8_300,
+				blocked: false,
+				exhausted: false,
+			};
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'apply-edit',
+							name: 'Apply edit',
+							description: 'Apply an editor change',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+				async executeTool() {
+					return {
+						result: { success: true },
+						returnToAgent: false,
+						agentMessage: 'The edit was applied.',
+					};
+				},
+			};
+
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const inputRequiredEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-apply-edit',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-apply-edit',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'resp-apply-edit',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-apply-edit',
+													toolId: 'apply-edit',
+													arguments: {},
+												},
+											},
+										],
+									},
+									final: true,
+								},
+								ai_credits: aiCredits,
+							},
+						} );
+
+						controller.enqueue( encoder.encode( `data: ${ inputRequiredEvent }\n\n` ) );
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Apply this edit' ),
+			} ) ) {
+				updates.push( update );
+			}
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( updates.at( -1 ) ).toMatchObject( {
+				final: true,
+				text: 'The edit was applied.',
+				aiCredits,
+			} );
+		} );
+
+		describe.each( [
+			{ continuation: 'first', additionalTool: false },
+			{ continuation: 'additional', additionalTool: true },
+		] )( '$continuation tool continuation', ( { additionalTool } ) => {
+			it.each( [
+				{ state: 'failed', protocolError: true },
+				{ state: 'canceled', protocolError: true },
+				{ state: 'failed', protocolError: false },
+				{ state: 'canceled', protocolError: false },
+			] )(
+				'preserves $state credits with protocol error $protocolError',
+				async ( { state, protocolError } ) => {
+					const aiCredits = {
+						policy_id: 'wpcom-site-monthly-v1',
+						blog_id: 123,
+						preview: true,
+						credits_limit: 15_000,
+						credits_used: 3_000,
+						credits_remaining: 12_000,
+						blocked: false,
+						exhausted: false,
+					};
+					const executeTool = vi.fn( async () => ( {
+						result: { success: true },
+						returnToAgent: true,
+					} ) );
+					const toolProvider: ToolProvider = {
+						async getAvailableTools() {
+							return [
+								{
+									id: 'test-tool',
+									name: 'Test Tool',
+									description: 'A test tool',
+									input_schema: { type: 'object', properties: {} },
+								},
+							];
+						},
+						executeTool,
+					};
+					const toolEvent = ( toolCallId: string, taskState: string ) => ( {
+						jsonrpc: '2.0',
+						result: {
+							type: 'TaskStatusUpdateEvent',
+							taskId: 'task-with-credits',
+							status: {
+								state: taskState,
+								final: true,
+								message: {
+									messageId: toolCallId,
+									role: 'agent',
+									kind: 'message',
+									parts: [
+										{
+											type: 'data',
+											data: { toolCallId, toolId: 'test-tool', arguments: {} },
+										},
+									],
+								},
+							},
+						},
+					} );
+					const events = [
+						toolEvent( 'first-call', 'input-required' ),
+						...( additionalTool ? [ toolEvent( 'additional-call', 'completed' ) ] : [] ),
+						{
+							jsonrpc: '2.0',
+							...( protocolError && { error: { code: -32000, message: 'Agent request failed' } } ),
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-with-credits',
+								status: {
+									state,
+									final: true,
+									message: {
+										messageId: 'terminal-response',
+										role: 'agent',
+										kind: 'message',
+										parts: [ { type: 'text', text: 'Agent request ended' } ],
+									},
+								},
+								ai_credits: aiCredits,
+							},
+						},
+					];
+					for ( const event of events ) {
+						mockFetch.mockResolvedValueOnce( {
+							ok: true,
+							status: 200,
+							headers: new Headers( { 'content-type': 'text/event-stream' } ),
+							body: new ReadableStream( {
+								start( controller ) {
+									controller.enqueue(
+										new TextEncoder().encode( `data: ${ JSON.stringify( event ) }\n\n` )
+									);
+									controller.close();
+								},
+							} ),
+						} );
+					}
+
+					const client = createClient( { agentId: 'test-agent', toolProvider } );
+					const updates = [];
+					let thrown: unknown;
+					try {
+						for await ( const update of client.sendMessageStream( {
+							message: createTextMessage( 'Use the test tool' ),
+						} ) ) {
+							updates.push( update );
+						}
+					} catch ( error ) {
+						thrown = error;
+					}
+
+					expect( mockFetch ).toHaveBeenCalledTimes( additionalTool ? 3 : 2 );
+					expect( executeTool ).toHaveBeenCalledTimes( additionalTool ? 2 : 1 );
+					expect( updates.filter( ( update ) => update.final ) ).toEqual( [
+						expect.objectContaining( { status: expect.objectContaining( { state } ), aiCredits } ),
+					] );
+					expect( thrown ).toEqual(
+						protocolError ? new Error( 'Streaming error: Agent request failed' ) : undefined
+					);
+				}
+			);
+		} );
+
 		it( 'preserves final input-required events when an advertised tool has no executable handler', async () => {
 			const mockToolProvider: ToolProvider = {
 				async getAvailableTools() {

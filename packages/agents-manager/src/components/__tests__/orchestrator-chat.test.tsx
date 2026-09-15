@@ -4,7 +4,7 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { TaskUpdate } from '@automattic/agenttic-client';
-import type { Suggestion } from '@automattic/agenttic-ui';
+import type { NoticeConfig, Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
@@ -35,6 +35,7 @@ let mockAgentConfig: { agentId: string; sessionId?: string } = {
 };
 let mockTabSessionId: string | undefined = 'session-id';
 let mockSiteKey = 'site-1';
+let mockSiteId: number | undefined = 123;
 let mockCurrentUserId: number | undefined = 1;
 const mockInvalidateCheckpointAction = jest.fn();
 const mockInvalidatedCheckpointIds = new Set< string >();
@@ -167,6 +168,8 @@ const mockAgentChat = jest.fn(
 		onSubmit: ( message: string ) => void;
 		onAbort?: () => void;
 		error?: string | null;
+		notice?: NoticeConfig;
+		isChatInputDisabled?: boolean;
 		inputValue?: string;
 		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
@@ -338,7 +341,10 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '@wordpress/i18n', () => ( {
+	...jest.requireActual( '@wordpress/i18n' ),
+	__: ( text: string ) => text,
+} ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
@@ -351,6 +357,7 @@ jest.mock( '../../contexts', () => {
 				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
 			},
 			getTabSessionId: () => mockTabSessionId ?? '',
+			site: mockSiteId === undefined ? undefined : { ID: mockSiteId },
 			siteKey: mockSiteKey,
 			currentUser: mockCurrentUserId === undefined ? undefined : { ID: mockCurrentUserId },
 		} ),
@@ -658,6 +665,31 @@ const countShowComponentMessages = () => {
 	} ).length;
 };
 
+const wpcomCreditSnapshot = {
+	schema_version: 1,
+	policy_id: 'wpcom-site-monthly-v1',
+	cost_version: 'provider-cost-v1',
+	accounting_mode: 'provider_cost',
+	reason: 'wpcom_site_plan',
+	blog_id: 123,
+	eligible: true,
+	preview: true,
+	blocked: false,
+	exhausted: false,
+	credits_limit: 15_000,
+	credits_used: 3_000,
+	credits_remaining: 12_000,
+	resets_at: '2026-10-01T00:00:00Z',
+};
+
+const createCreditUpdate = ( aiCredits: unknown = wpcomCreditSnapshot ): TaskUpdate => ( {
+	id: 'hosted-credits',
+	status: { state: 'completed' },
+	final: true,
+	text: '',
+	aiCredits,
+} );
+
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -671,6 +703,7 @@ describe( 'OrchestratorChat', () => {
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
 		mockTabSessionId = 'session-id';
 		mockSiteKey = 'site-1';
+		mockSiteId = 123;
 		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
@@ -686,6 +719,188 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	describe( 'hosted credit notice', () => {
+		const latestChatProps = () => mockAgentChat.mock.calls.at( -1 )![ 0 ];
+		const sendUpdate = async ( update: TaskUpdate = createCreditUpdate() ) => {
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( update );
+			} );
+		};
+
+		beforeEach( () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isWpcomPlatform: true,
+			};
+		} );
+
+		it.each( [
+			{ remaining: 7_699, message: '51% credits left', status: undefined },
+			{ remaining: 1, message: '<1% credits left', status: undefined },
+			{ remaining: 0, message: '0% credits left', status: 'warning' },
+		] )(
+			'shows $message after a terminal update and leaves the composer enabled',
+			async ( test ) => {
+				const onSubmit = jest.fn().mockResolvedValue( undefined );
+				mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+				render( chat() );
+				expect( latestChatProps().notice ).toBeUndefined();
+
+				await sendUpdate(
+					createCreditUpdate( {
+						...wpcomCreditSnapshot,
+						credits_used: wpcomCreditSnapshot.credits_limit - test.remaining,
+						credits_remaining: test.remaining,
+						exhausted: test.remaining === 0,
+					} )
+				);
+
+				expect( latestChatProps().notice ).toEqual( {
+					message: test.message,
+					dismissible: false,
+					...( test.status && { status: test.status } ),
+				} );
+				expect( latestChatProps().isChatInputDisabled ).toBeFalsy();
+				fireEvent.click( screen.getByText( 'Submit message' ) );
+				await waitFor( () => expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' ) );
+			}
+		);
+
+		it( 'keeps the last terminal snapshot while a new task is still working', async () => {
+			render( chat() );
+			await sendUpdate();
+			await sendUpdate( {
+				...createCreditUpdate(),
+				id: 'working-task',
+				status: { state: 'working' },
+				final: false,
+				aiCredits: undefined,
+			} );
+
+			expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+		} );
+
+		it.each( [ 'completed', 'failed', 'canceled' ] as const )(
+			'accepts a %s snapshot without the final flag',
+			async ( state ) => {
+				render( chat() );
+				await sendUpdate( { ...createCreditUpdate(), status: { state }, final: false } );
+
+				expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+			}
+		);
+
+		it.each( [
+			{ name: 'omitted', aiCredits: undefined },
+			{ name: 'null', aiCredits: null },
+			{ name: 'another site', aiCredits: { ...wpcomCreditSnapshot, blog_id: 456 } },
+			{ name: 'malformed balance', aiCredits: { ...wpcomCreditSnapshot, credits_remaining: '1' } },
+		] )( 'clears a previous notice for a $name terminal snapshot', async ( { aiCredits } ) => {
+			render( chat() );
+			await sendUpdate();
+			expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+
+			await sendUpdate( { ...createCreditUpdate(), aiCredits } );
+
+			expect( latestChatProps().notice ).toBeUndefined();
+		} );
+
+		it( 'clears on site switches and ignores old callbacks even after switching back', async () => {
+			const view = render( chat() );
+			await sendUpdate();
+			const previousSiteUpdate = mockAgentChatConfig?.onTaskUpdate;
+			mockSiteKey = 'site-2';
+			mockSiteId = 456;
+			view.rerender( chat() );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await act( async () => {
+				await previousSiteUpdate?.( createCreditUpdate() );
+			} );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await sendUpdate( createCreditUpdate( { ...wpcomCreditSnapshot, blog_id: 456 } ) );
+			expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+			mockSiteKey = 'site-1';
+			mockSiteId = 123;
+			view.rerender( chat() );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await act( async () => {
+				await previousSiteUpdate?.( createCreditUpdate() );
+			} );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await sendUpdate();
+			expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+		} );
+
+		it( 'clears on agent switches and ignores old callbacks even after switching back', async () => {
+			const view = render( chat() );
+			await sendUpdate();
+			const previousAgentUpdate = mockAgentChatConfig?.onTaskUpdate;
+			mockAgentConfig = { agentId: 'reader-chat' };
+			view.rerender( chat() );
+			expect( latestChatProps().notice ).toBeUndefined();
+			mockAgentConfig = { agentId: 'wp-orchestrator' };
+			view.rerender( chat() );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await act( async () => {
+				await previousAgentUpdate?.( createCreditUpdate() );
+			} );
+			expect( latestChatProps().notice ).toBeUndefined();
+
+			await sendUpdate();
+			expect( latestChatProps().notice?.message ).toBe( '80% credits left' );
+		} );
+
+		it( 'clears the notice when there is no current site', async () => {
+			const view = render( chat() );
+			await sendUpdate();
+			mockSiteId = undefined;
+			view.rerender( chat() );
+			await sendUpdate();
+
+			expect( latestChatProps().notice ).toBeUndefined();
+		} );
+
+		it.each( [
+			{ isWpcomPlatform: false, agentId: 'wp-orchestrator' },
+			{ isWpcomPlatform: undefined, agentId: 'wp-orchestrator' },
+			{ isWpcomPlatform: true, agentId: 'reader-chat' },
+			{ isWpcomPlatform: true, agentId: 'wp-logo-generator' },
+			{ isWpcomPlatform: true, agentId: 'wpcom-workflow-support_chat' },
+		] )( 'hides the notice on other hosts or agents: %p', async ( settings ) => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = settings;
+			mockAgentConfig = { agentId: settings.agentId };
+			render( chat() );
+			await sendUpdate();
+
+			expect( latestChatProps().notice ).toBeUndefined();
+		} );
+
+		it( 'keeps request errors visible alongside the exhausted credit notice', async () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'ai_credit_allowance_exhausted' } )
+			);
+			render( chat() );
+			await sendUpdate(
+				createCreditUpdate( {
+					...wpcomCreditSnapshot,
+					credits_used: 15_000,
+					credits_remaining: 0,
+					exhausted: true,
+				} )
+			);
+
+			expect( latestChatProps().notice?.message ).toBe( '0% credits left' );
+			expect( screen.getByTestId( 'chat-error' ) ).toHaveTextContent(
+				'ai_credit_allowance_exhausted'
+			);
+		} );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
