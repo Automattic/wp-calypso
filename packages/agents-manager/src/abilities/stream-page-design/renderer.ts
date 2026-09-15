@@ -223,8 +223,8 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 			}
 
 			// The first block replaces the page in one write, so the canvas never
-			// shows it empty. The state follows the write, so a write that throws
-			// leaves the block to the next flush rather than counting it placed.
+			// shows it empty. State follows the write: a write that throws leaves
+			// the block to the next flush.
 			const topLevelBlocks = state.didReplaceInitialContent
 				? [ ...state.topLevelBlocks, ...blocks ]
 				: blocks;
@@ -494,9 +494,8 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 				return false;
 			}
 
-			// The canvas is mounted and nothing has been staged yet: the last
-			// moment the page can be snapshotted as it was. Nothing is staged
-			// without it; a capture that fails is tried again on the next flush.
+			// Before anything is staged: the last moment the page is as it was.
+			// Nothing is staged without it; a failed capture is retried next flush.
 			if ( ! capturedToolCalls.current.has( toolCallId ) ) {
 				try {
 					hostRef.current.captureCheckpoint( toolCallId, rootClientId );
@@ -561,13 +560,9 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	}, [] );
 
 	// Markup that arrives before the canvas has mounted would otherwise flush
-	// once into nothing, with no later delta to try again. A flush that lands
-	// supersedes any retry still queued for the same tool call.
-	// Markup that arrives before the canvas has mounted would otherwise flush
-	// once into nothing, with no later delta to try again. A flush that lands
-	// supersedes any retry still queued for the same tool call. Settles with
-	// whether a flush landed within the retry budget; a frame that cannot be
-	// painted is logged and skipped, since the next delta schedules another.
+	// once into nothing. Resolves with whether a flush landed within the retry
+	// budget; a landed flush supersedes a retry still queued for the call, and
+	// a frame that cannot be painted is logged and left to the next delta.
 	const flushOrRetry = useCallback(
 		( toolCallId: string, isFinal: boolean ): Promise< boolean > =>
 			new Promise( ( resolve ) => {
@@ -609,9 +604,8 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 		}
 	}, [] );
 
-	// A final update settles once the design is committed, so the callback
-	// answers the agent with what happened; a design the canvas never took is
-	// dropped and reported.
+	// A final update resolves once the design is committed, so the callback can
+	// tell the agent; a design the canvas never took is dropped and reported.
 	const handleUpdate = useCallback(
 		async ( update: StreamUpdate ): Promise< void > => {
 			pendingToolCallId.current = update.toolCallId;
