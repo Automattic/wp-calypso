@@ -15,25 +15,25 @@ describe( 'splitSubject', () => {
 			splitSubject(
 				subjectWithPost( 'Ashar liked your comment on My Post Title', 'My Post Title' )
 			)
-		).toEqual( { title: 'My Post Title', action: 'Ashar liked your comment' } );
+		).toEqual( { title: 'My Post Title', action: { text: 'Ashar liked your comment' } } );
 	} );
 
 	it( 'keeps a trailing word that is not a connector', () => {
 		expect(
 			splitSubject( subjectWithPost( 'Ashar liked your post My Post Title', 'My Post Title' ) )
-		).toEqual( { title: 'My Post Title', action: 'Ashar liked your post' } );
+		).toEqual( { title: 'My Post Title', action: { text: 'Ashar liked your post' } } );
 	} );
 
 	it( 'strips punctuation joining the two halves', () => {
 		expect( splitSubject( subjectWithPost( 'New post: My Post Title', 'My Post Title' ) ) ).toEqual(
-			{ title: 'My Post Title', action: 'New post' }
+			{ title: 'My Post Title', action: { text: 'New post' } }
 		);
 	} );
 
 	it( 'allows punctuation after the post title', () => {
 		expect(
 			splitSubject( subjectWithPost( 'Ashar commented on My Post Title.', 'My Post Title' ) )
-		).toEqual( { title: 'My Post Title', action: 'Ashar commented' } );
+		).toEqual( { title: 'My Post Title', action: { text: 'Ashar commented' } } );
 	} );
 
 	it( 'returns null when there is no post range', () => {
@@ -75,7 +75,10 @@ describe( 'splitSubject', () => {
 				],
 			} as never )
 		).toEqual( {
-			action: 'Lucas Mendes replied to your comment',
+			action: {
+				text: 'Lucas Mendes replied to your comment',
+				ranges: [ { type: 'user', indices: [ 0, 12 ] } ],
+			},
 			title: 'Aligns with adams prototype:',
 		} );
 	} );
@@ -93,7 +96,10 @@ describe( 'splitSubject', () => {
 				],
 			} as never )
 		).toEqual( {
-			action: 'Lucas Mendes replied to your comment',
+			action: {
+				text: 'Lucas Mendes replied to your comment',
+				ranges: [ { type: 'user', indices: [ 0, 12 ] } ],
+			},
 			// The ellipsis is inside the range: the API truncated the comment, and saying so
 			// is worth keeping.
 			title: 'I understand the reflex to think with first principles and architect \u2026',
@@ -111,7 +117,13 @@ describe( 'splitSubject', () => {
 					{ type: 'post', indices: [ 28, 41 ] },
 				],
 			} as never )
-		).toEqual( { action: 'Ashar liked your comment', title: 'My Post Title' } );
+		).toEqual( {
+			action: {
+				text: 'Ashar liked your comment',
+				ranges: [ { type: 'comment', indices: [ 17, 24 ] } ],
+			},
+			title: 'My Post Title',
+		} );
 	} );
 
 	it( 'returns null without a subject', () => {

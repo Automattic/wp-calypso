@@ -95,29 +95,19 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) =>
-				simplify( item, layoutStyle )?.action ??
-				html( item.subject[ 0 ], {
+				html( simplify( item, layoutStyle )?.action ?? item.subject[ 0 ], {
 					links: false,
 				} ),
-			render: ( { field, item } ) => {
-				const className = clsx( 'wpnc__subject', {
-					// Marks the open note's row for the active highlight (see CSS).
-					'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-				} );
-				const simplified = simplify( item, layoutStyle );
-
-				if ( simplified ) {
-					return <div className={ className }>{ simplified.action }</div>;
-				}
-
-				return (
-					<div
-						className={ className }
-						/* eslint-disable-next-line react/no-danger */
-						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-					/>
-				);
-			},
+			render: ( { field, item } ) => (
+				<div
+					className={ clsx( 'wpnc__subject', {
+						// Marks the open note's row for the active highlight (see CSS).
+						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
+					} ) }
+					/* eslint-disable-next-line react/no-danger */
+					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+				/>
+			),
 		},
 		{
 			id: 'description',

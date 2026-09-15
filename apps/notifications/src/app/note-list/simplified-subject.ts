@@ -13,7 +13,24 @@ const ONLY_PUNCTUATION = /^[\s\p{P}]*$/u;
 
 export type SimplifiedSubject = {
 	title: string;
-	action: string;
+	action: Subject;
+};
+
+// Ranges index into the subject text, so the action clause keeps the ones starting
+// before the cut. Reply notes carry a zero-width `noticon` range that renders the
+// inline icon, so the test is on the start alone rather than on the span having width.
+const narrowRanges = < T extends { indices: [ number, number ] } >(
+	items: T[] | undefined,
+	length: number
+): T[] | undefined => {
+	const narrowed = items
+		?.filter( ( { indices } ) => indices[ 0 ] < length )
+		.map( ( item ) => ( {
+			...item,
+			indices: [ item.indices[ 0 ], Math.min( item.indices[ 1 ], length ) ] as [ number, number ],
+		} ) );
+
+	return narrowed?.length ? narrowed : undefined;
 };
 
 const trimAction = ( text: string ) => {
@@ -67,5 +84,12 @@ export const splitSubject = ( subject?: Subject ): SimplifiedSubject | null => {
 		return null;
 	}
 
-	return { title, action };
+	return {
+		title,
+		action: {
+			text: action,
+			ranges: narrowRanges( subject.ranges, action.length ),
+			media: narrowRanges( subject.media, action.length ),
+		},
+	};
 };

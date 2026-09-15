@@ -39,12 +39,44 @@ const noteAboutAPost = () => ( {
 	],
 } );
 
+const REPLY_TITLE = 'The tide tables are wrong';
+const REPLY_SENTENCE = `Ben Quah replied to your comment ${ REPLY_TITLE }`;
+
+// The API marks reply notes with a zero-width `noticon` range at the head of the
+// subject, which `html()` turns into the inline reply gridicon.
+const replyNote = () => ( {
+	id: 2,
+	type: 'comment',
+	read: 0,
+	noticon: '',
+	timestamp: '2026-06-01T00:00:00+00:00',
+	title: 'Reply title',
+	subject: [
+		{
+			text: REPLY_SENTENCE,
+			ranges: [
+				{ type: 'noticon', value: '\uf467', indices: [ 0, 0 ], id: 2, parent: null },
+				{
+					type: 'comment',
+					indices: [ REPLY_SENTENCE.indexOf( REPLY_TITLE ), REPLY_SENTENCE.length ],
+					id: 2,
+					parent: null,
+				},
+			],
+			media: [],
+		},
+	],
+} );
+
 const renderList = (
 	layoutStyle?: 'detailed' | 'simplified',
-	{ isViewSettingsEnabled = true }: { isViewSettingsEnabled?: boolean } = {}
+	{
+		isViewSettingsEnabled = true,
+		note = noteAboutAPost(),
+	}: { isViewSettingsEnabled?: boolean; note?: ReturnType< typeof noteAboutAPost > } = {}
 ) => {
 	const store = initStore();
-	store.dispatch( actions.notes.addNotes( [ noteAboutAPost() ] ) );
+	store.dispatch( actions.notes.addNotes( [ note ] ) );
 	store.dispatch( actions.ui.loadedNotes() );
 
 	if ( layoutStyle ) {
@@ -89,6 +121,17 @@ describe( 'NoteList simplified layout', () => {
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
 		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
+	} );
+
+	// The reply gridicon rides on a zero-width range, so slicing the sentence as plain
+	// text silently drops it. It has to survive the switch to the simplified layout.
+	it( 'keeps the reply icon when the action is simplified', () => {
+		const { container } = renderList( 'simplified', { note: replyNote() as never } );
+
+		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
+			'Ben Quah replied to your comment'
+		);
+		expect( container.querySelector( '.wpnc__subject .gridicons-reply' ) ).toBeInTheDocument();
 	} );
 
 	it( 'leads with the action, puts the post under it, and drops the excerpt', () => {
