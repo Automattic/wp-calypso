@@ -1,6 +1,7 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -9,7 +10,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
-import { getAgencyFields, getAgencyActions } from './dataviews';
+import { useAgencyFields, getAgencyActions } from './dataviews';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -21,8 +22,11 @@ const AGENCY_LAYOUTS: SupportedLayouts = {
 		descriptionField: 'URL',
 	},
 	grid: {
+		layout: {
+			previewSize: 290,
+		},
 		showMedia: true,
-		mediaField: 'site_icon',
+		mediaField: 'preview',
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -34,7 +38,7 @@ const DEFAULT_VIEW = {
 	mediaField: 'site_icon',
 	titleField: 'name',
 	descriptionField: 'URL',
-	fields: [ 'agency_boost', 'agency_backup' ],
+	fields: [ 'visibility', 'plan' ],
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
@@ -69,6 +73,14 @@ export default function AgencySites() {
 	const sites = data?.sites ?? [];
 	const totalItems = data?.total ?? 0;
 
+	const handleSiteClick = useCallback(
+		( site: AgencySite ) =>
+			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+		[ recordTracksEvent ]
+	);
+
+	const fields = useAgencyFields( { sites, viewType: view.type, onSiteClick: handleSiteClick } );
+
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
 		updateView( nextView );
@@ -86,9 +98,7 @@ export default function AgencySites() {
 				<DataViews< AgencySite >
 					getItemId={ ( item ) => item.blog_id.toString() }
 					data={ sites }
-					fields={ getAgencyFields( view.type, ( site ) =>
-						recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } )
-					) }
+					fields={ fields }
 					actions={ getAgencyActions( recordTracksEvent ) }
 					view={ view }
 					isLoading={ isLoading }
