@@ -760,6 +760,18 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'removes srcdoc, which would otherwise override an allowlisted src', () => {
+			const post = {
+				content:
+					'<iframe src="https://youtube.com" srcdoc="&lt;script&gt;alert(1)&lt;/script&gt;"></iframe>',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+
+			expect( normalized.content ).toBe(
+				'<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>'
+			);
+		} );
+
 		test( 'removes iframes with an empty src', () => {
 			const post = {
 				content: '<iframe src=""></iframe>',
