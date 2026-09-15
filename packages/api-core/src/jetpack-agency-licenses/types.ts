@@ -94,3 +94,12 @@ export interface IssueJetpackLicensesInput {
 export interface JetpackLicenseDownloadUrl {
 	download_url: string;
 }
+
+/**
+ * The free development licenses an agency may still spend, from
+ * `/jetpack-licensing/dev-licenses`.
+ */
+export interface JetpackAgencyDevLicenses {
+	licenses: JetpackLicense[];
+	available: number;
+}

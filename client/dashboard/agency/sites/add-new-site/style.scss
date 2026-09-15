@@ -1,0 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-agency-add-new-site__dev-site-card {
+	width: 100%;
+
+	@include break-medium {
+		width: 260px;
+	}
+}
