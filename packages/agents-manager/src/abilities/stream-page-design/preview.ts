@@ -78,12 +78,21 @@ function injectPreviewStyles( targetDocument: Document | null ): void {
 
 	style.id = PREVIEW_STYLES_ID;
 	style.textContent = PREVIEW_STYLES_CSS;
-	targetDocument.head.appendChild( style );
+	// A document still loading may have no head yet.
+	( targetDocument.head ?? targetDocument.documentElement )?.appendChild( style );
 }
 
-const getCanvasDocument = (): Document | null =>
-	document.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' )?.contentDocument ??
-	null;
+function getCanvasDocument(): Document | null {
+	try {
+		return (
+			document.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' )
+				?.contentDocument ?? null
+		);
+	} catch {
+		// A cross-origin frame under that name is not the canvas.
+		return null;
+	}
+}
 
 /** Injects the preview styles into the page and the editor canvas, once each. */
 export function ensurePreviewStyles(): void {

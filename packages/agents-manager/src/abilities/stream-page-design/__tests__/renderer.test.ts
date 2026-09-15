@@ -41,6 +41,7 @@ import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '..
 import { usePageDesignRenderer, type EditorHost } from '../renderer';
 import {
 	finalizePendingStreams,
+	getStreamedMarkup,
 	handlePageDesignTaskUpdate,
 	setStreamHandler,
 	STREAM_PAGE_DESIGN_TOOL_ID,
@@ -159,7 +160,7 @@ it( 'waits for a block to open before previewing wrapper HTML at the top level',
 	expect( host.stageBlocks ).not.toHaveBeenCalled();
 } );
 
-it( 'commits at once on the final flush', async () => {
+it( 'commits at once on the final flush, then forgets the stream', async () => {
 	renderHook( () => usePageDesignRenderer( host ) );
 
 	await streamed( `${ PAGE }${ PARAGRAPH }` );
@@ -167,6 +168,7 @@ it( 'commits at once on the final flush', async () => {
 
 	expect( host.stageBlocks ).toHaveBeenCalled();
 	expect( host.commitFinalDesign ).toHaveBeenCalledWith( 'call-1', 'root' );
+	expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 } );
 
 it( 'keeps the preview styles injected while a design streams', async () => {

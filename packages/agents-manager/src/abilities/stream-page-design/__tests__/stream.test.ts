@@ -1,6 +1,7 @@
 import {
 	extractPartialJsonStringProperty,
 	finalizePendingStreams,
+	forgetStream,
 	getMarkupFromArguments,
 	getPageSectionMarkup,
 	getStreamedMarkup,
@@ -125,6 +126,13 @@ describe( 'handlePageDesignTaskUpdate', () => {
 		expect( handler ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'ignores an update whose parts are not a list', async () => {
+		await handlePageDesignTaskUpdate( update( { type: 'text' } as unknown as Part[] ) );
+		await withPageDesignStream( undefined )( update( undefined as unknown as Part[] ) );
+
+		expect( handler ).not.toHaveBeenCalled();
+	} );
+
 	it( 'ignores parts of other kinds and tools, and one with no markup yet', async () => {
 		await handlePageDesignTaskUpdate(
 			update( [
@@ -244,6 +252,17 @@ describe( 'finalizePendingStreams', () => {
 			{ toolCallId: 'call-1', isFinal: true },
 			{ toolCallId: 'call-2', isFinal: true },
 		] );
+	} );
+
+	it( 'drops a stream the renderer has forgotten', async () => {
+		await streamed( 'call-1', '<p>a' );
+		handler.mockClear();
+
+		forgetStream( 'call-1' );
+		await finalizePendingStreams();
+
+		expect( handler ).not.toHaveBeenCalled();
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 	} );
 
 	it( 'finalizes only the tool call that completed when it is known', async () => {
