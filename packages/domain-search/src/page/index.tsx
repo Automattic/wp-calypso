@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { InitialState } from './initial-state';
+import { NamePulseResults } from './name-pulse-results';
 import { ResultsPage } from './results';
 import { type DomainSearchProps } from './types';
 
@@ -26,6 +27,10 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 	const getContent = () => {
 		if ( ! contextValue.query ) {
 			return <InitialState />;
+		}
+
+		if ( contextValue.config.namePulse?.enabled ) {
+			return <NamePulseResults />;
 		}
 
 		return <ResultsPage />;

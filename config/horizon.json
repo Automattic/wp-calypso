@@ -40,6 +40,7 @@
 		"dashboard/wp-beta-program": true,
 		"design-picker/use-assembler-styles": true,
 		"domain-bundling": true,
+		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"google-my-business": false,

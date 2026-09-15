@@ -1,0 +1,76 @@
+@import '@wordpress/base-styles/colors';
+
+.name-pulse-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 17rem, 1fr ) );
+	border: 1px solid var( --domain-search-border-color );
+	border-radius: 4px;
+	overflow: hidden;
+	gap: 1px;
+	background: var( --domain-search-border-color );
+
+	> [role='listitem'] {
+		background: var( --domain-search-background-color );
+		min-width: 0;
+	}
+}
+
+.name-pulse-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	min-height: 3.5rem;
+	padding: 0.5rem 1rem;
+	box-sizing: border-box;
+	flex-wrap: wrap;
+
+	&__name {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		flex: 1 1 auto;
+	}
+
+	&__status {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex: 0 0 auto;
+		min-height: 2rem;
+	}
+
+	&__skeleton {
+		display: inline-block;
+		width: 4rem;
+		height: 0.5rem;
+		border-radius: 4px;
+		background: var( --color-neutral-10 );
+		animation: name-pulse-skeleton 1.2s ease-in-out infinite;
+
+		&--name {
+			width: 8rem;
+		}
+	}
+
+	&__error {
+		flex-basis: 100%;
+		color: $alert-red;
+	}
+}
+
+.name-pulse-section__more {
+	display: flex;
+	justify-content: center;
+}
+
+@keyframes name-pulse-skeleton {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}

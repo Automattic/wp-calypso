@@ -4,13 +4,14 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useDebounce, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useTypedPlaceholder } from '../../hooks/use-typed-placeholder';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
+import { NAME_PULSE_DEBOUNCE_MS } from '../name-pulse/search-input';
 
 import './style.scss';
 
@@ -25,9 +26,13 @@ const PLACEHOLDER_PHRASES = [
 export const SearchForm = () => {
 	const {
 		setQuery,
+		config,
 		events: { onSubmitButtonClick },
 	} = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( '' );
+	// Name Pulse searches as you type; every other mode is submit-only.
+	const isInstantSearch = config.namePulse?.enabled ?? false;
+	const debouncedSetQuery = useDebounce( setQuery, NAME_PULSE_DEBOUNCE_MS );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -41,6 +46,7 @@ export const SearchForm = () => {
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		debouncedSetQuery.cancel();
 		setQuery( localQuery );
 
 		if ( localQuery === '' ) {
@@ -51,7 +57,20 @@ export const SearchForm = () => {
 	const inputProps = {
 		ref: inputRef,
 		value: localQuery,
-		onChange: ( value: string ) => setLocalQuery( value.trim() ),
+		onChange: ( value: string ) => {
+			if ( ! isInstantSearch ) {
+				setLocalQuery( value.trim() );
+				return;
+			}
+
+			// Keep the raw value so a trailing space can start the next word.
+			setLocalQuery( value );
+			if ( value.trim() ) {
+				debouncedSetQuery( value.trim() );
+			} else {
+				debouncedSetQuery.cancel();
+			}
+		},
 		onReset: () => setLocalQuery( '' ),
 		placeholder,
 	};
