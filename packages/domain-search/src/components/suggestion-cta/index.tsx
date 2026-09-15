@@ -1,9 +1,9 @@
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope, plus } from '@wordpress/icons';
+import { arrowRight, envelope, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
-import { useSuggestion } from '../../hooks/use-suggestion';
+import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSearchTrademarkClaimsModal,
@@ -91,7 +91,11 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
-	const selectLabel = config.showSelectCta ? __( 'Select' ) : undefined;
+	// Moving a domain the user already owns is a choice rather than a purchase.
+	const isDomainMove = suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE;
+
+	const selectIcon = config.showSelectCta ? plus : isDomainMove ? arrowRight : undefined;
+	const selectLabel = config.showSelectCta ? __( 'Select' ) : isDomainMove ? __( 'Move' ) : undefined;
 
 	const errorMessage = isCurrentMutation && error?.message;
 
@@ -114,7 +118,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-				icon={ config.showSelectCta ? plus : undefined }
+				icon={ selectIcon }
 				label={ selectLabel }
 			>
 				{ selectLabel }
