@@ -24,8 +24,6 @@ import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
-import './style.scss';
-
 type DomainConnectionStatus = 'connected' | 'verifying';
 
 interface DomainConnectionVerificationProps {
