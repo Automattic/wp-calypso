@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { NamePulseSearch } from '../../name-pulse';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSuggestionsList,
@@ -6,7 +7,6 @@ import {
 	DomainSuggestionLoadMore,
 } from '../../ui';
 import { InlineBundleRow } from '../inline-bundle-row';
-import { NamePulseSearch } from '../name-pulse-search';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
