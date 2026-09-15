@@ -62,10 +62,11 @@ export function formatExcerpt( content ) {
 		.filter( ( element ) => ( element.textContent ?? '' ).trim().length === 0 )
 		.forEach( removeElement );
 
-	// remove styles for all p's that remain
-	Array.from( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
-		element.removeAttribute( 'style' );
-		element.removeAttribute( 'align' );
+	// `striptags` keeps the whole opening tag of an allowed element, attributes included. None of
+	// them are worth carrying into an excerpt, so drop every attribute rather than naming the ones
+	// we would rather not render.
+	Array.from( dom.querySelectorAll( '*' ) ).forEach( ( element ) => {
+		element.getAttributeNames().forEach( ( name ) => element.removeAttribute( name ) );
 	} );
 
 	stripLeadingBreaklines( dom );

@@ -14,6 +14,7 @@ import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds
 import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
 import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
 import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
+import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
 import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
 import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
@@ -134,7 +135,6 @@ const fastPostNormalizationRules = flow( [
 		removeElementsBySelector,
 		makeImagesSafe(),
 		makeEmbedsSafe,
-		makeContentLinksSafe,
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
 		detectMedia,
@@ -142,6 +142,8 @@ const fastPostNormalizationRules = flow( [
 		detectSurveys,
 		linkJetpackCarousels,
 		addImageWrapperElement,
+		makeContentLinksSafe,
+		removeEventHandlers,
 	] ),
 	createBetterExcerpt,
 	addMinutesToRead,

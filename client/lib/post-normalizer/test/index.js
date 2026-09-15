@@ -12,6 +12,7 @@ import makeEmbedsSafe from '../rule-content-make-embeds-safe';
 import makeImagesSafe from '../rule-content-make-images-safe';
 import makeContentLinksSafe from '../rule-content-make-links-safe';
 import removeElementsBySelector from '../rule-content-remove-elements-by-selector';
+import removeEventHandlers from '../rule-content-remove-event-handlers';
 import removeStyles from '../rule-content-remove-styles';
 import createBetterExcerpt from '../rule-create-better-excerpt';
 import decodeEntities from '../rule-decode-entities';
@@ -24,6 +25,7 @@ import preventWidows from '../rule-prevent-widows';
 import safeImageProperties from '../rule-safe-image-properties';
 import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
+import { domForHtml } from '../utils';
 
 jest.mock( '@automattic/calypso-url', () => ( {
 	...jest.requireActual( '@automattic/calypso-url' ),
@@ -918,6 +920,65 @@ describe( 'index', () => {
 			}
 		);
 
+		test.each( [
+			[ 'a host outside Crowdsignal', 'example.com/s/', 'a-survey' ],
+			[ 'a Crowdsignal lookalike host', 'polldaddy.com.example.com/s/', 'a-survey' ],
+			[ 'a Crowdsignal host in the userinfo', 'polldaddy.com@example.com/s/', 'a-survey' ],
+			[ 'credentials on a Crowdsignal host', 'user:pass@example.survey.fm/', 'a-survey' ],
+			[ 'an unparseable URL', 'example.survey.fm:notaport/', 'a-survey' ],
+		] )( 'leaves Crowdsignal survey embeds alone when they name %s', ( _, domain, id ) => {
+			const content =
+				'<div class="pd-embed" data-settings="' +
+				`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;${ domain }&quot;,&quot;id&quot;:&quot;${ id }&quot;}` +
+				'"></div>';
+			const normalized = withContentDOM( [ detectSurveys ] )( { content } );
+
+			expect( normalized.content ).toBe( content );
+		} );
+
+		test( 'does not let Crowdsignal survey settings introduce markup', () => {
+			// JSON escapes stay inert through server-side sanitization and only become quotes and
+			// angle brackets once `JSON.parse` runs here.
+			const domain =
+				'safe.invalid/\\u0022\\u003e\\u003cp contenteditable autofocus ' +
+				'onfocus=\\u0022alert(1)\\u0022\\u003epwn\\u003c/p\\u003e\\u003ca href=\\u0022https://safe.invalid/';
+			const post = {
+				content:
+					'<div class="pd-embed" data-settings="' +
+					`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;${ domain }&quot;,&quot;id&quot;:&quot;tail&quot;}` +
+					'"></div>',
+			};
+
+			const normalized = createBetterExcerpt(
+				withContentDOM( [ detectSurveys, removeEventHandlers ] )( post )
+			);
+
+			// The payload survives as inert `data-settings` text, but never as markup of its own.
+			expect(
+				domForHtml( normalized.content ).querySelector( '[onfocus], [autofocus]' )
+			).toBeNull();
+			expect( domForHtml( normalized.content ).querySelector( 'p' ) ).toBeNull();
+			expect( normalized.better_excerpt ).toBe( '' );
+		} );
+
+		test( 'escapes Crowdsignal survey settings into the survey link', () => {
+			const id = 'a-survey\\u0022 onmouseover=\\u0022alert(1)';
+			const post = {
+				content:
+					'<div class="pd-embed" data-settings="' +
+					`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;example.survey.fm/&quot;,&quot;id&quot;:&quot;${ id }&quot;}` +
+					'"></div>',
+			};
+
+			const normalized = withContentDOM( [ detectSurveys ] )( post );
+
+			expect( normalized.content ).toEqual(
+				expect.stringContaining(
+					'href="https://example.survey.fm/a-survey%22%20onmouseover=%22alert(1)"'
+				)
+			);
+		} );
+
 		test( 'removes elements by selector', () => {
 			const post = {
 				content: `
@@ -1002,9 +1063,47 @@ describe( 'index', () => {
 			const normalized = createBetterExcerpt( post );
 			expect( normalized.content_no_html ).toBe( 'hi there' );
 		} );
+
+		test( 'strips attributes from the elements it keeps', () => {
+			expect(
+				createBetterExcerpt( {
+					content:
+						'<p contenteditable autofocus onfocus="alert(1)" class="intro" id="first">one</p>' +
+						'<p>two<br onload="alert(2)"><sup title="nope">3</sup><sub dir="rtl">4</sub></p>',
+				} ).better_excerpt
+			).toBe( '<p>one</p><p>two<br><sup>3</sup><sub>4</sub></p>' );
+		} );
+	} );
+
+	describe( 'removeEventHandlers', () => {
+		test( 'removes event handler attributes whatever their casing', () => {
+			const post = {
+				content:
+					'<p onclick="alert(1)" ONMOUSEOVER="alert(2)" class="keep">hi</p>' +
+					'<img src="https://example.com/a.jpg" onerror="alert(3)">',
+			};
+			const normalized = withContentDOM( [ removeEventHandlers ] )( post );
+
+			expect( normalized.content ).toBe(
+				'<p class="keep">hi</p><img src="https://example.com/a.jpg">'
+			);
+		} );
 	} );
 
 	describe( 'Jetpack Carousel Linker', () => {
+		test( 'drops permalinks that are not http(s) when links are made safe afterwards', () => {
+			const post = {
+				content:
+					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
+					'<div class="tiled-gallery-item"><a href="https://example.com/foo/bar/">' +
+					'<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />' +
+					'</a></div></div>',
+			};
+			const normalized = withContentDOM( [ linkJetpackCarousels, makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).not.toEqual( expect.stringContaining( 'href="javascript:' ) );
+		} );
+
 		test( 'should fix links to jetpack carousels', () => {
 			const source = `
 				<div class="tiled-gallery"
