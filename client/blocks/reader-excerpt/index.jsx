@@ -50,6 +50,21 @@ const normalizeWhitespace = ( str ) => {
 	return str.replace( /\s+/g, ' ' );
 };
 
+const HTML_ESCAPES = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;',
+};
+
+/**
+ * Escapes a plain text string so that it can be safely interpolated into an HTML string.
+ * @param {string} str the string to escape
+ * @returns an HTML-escaped string
+ */
+const escapeHtml = ( str ) => str.replace( /[&<>"']/g, ( char ) => HTML_ESCAPES[ char ] );
+
 /**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
  * @param {Object} post the post object
@@ -78,8 +93,11 @@ const chooseExcerpt = ( post ) => {
 					new RegExp( '^' + escapeRegExp( promptText ) ),
 					''
 				);
-				// And insert a blockquote with the prompt text
-				return `<blockquote class="wp-block-pullquote"> ${ promptText } </blockquote> ${ excerpt }`;
+				// And insert a blockquote with the prompt text. `promptText` comes out of the content
+				// DOM as text, so it has to be escaped again before it goes back into an HTML string.
+				return `<blockquote class="wp-block-pullquote"> ${ escapeHtml(
+					promptText
+				) } </blockquote> ${ excerpt }`;
 			}
 		}
 		if ( post.short_excerpt === undefined ) {
