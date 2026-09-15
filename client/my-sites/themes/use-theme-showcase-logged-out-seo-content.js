@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	getPlan,
 } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
@@ -15,8 +16,13 @@ function findParsedFilter( filter, content ) {
 	return parsedFilter;
 }
 
+function isHomepage( filter, tier ) {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+}
+
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 
 	/**
@@ -24,6 +30,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	 * - title: the page's <title> tag.
 	 * - header: the page's main heading.
 	 * - description: the page's sub-heading and <meta> description.
+	 * - metaDescription: optional <meta> description override, when it should differ from the sub-heading.
 	 */
 	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo(
 		() => ( {
@@ -909,6 +916,28 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 		[ isThemeShowcaseModern, translate ]
 	);
 
+	/**
+	 * The homepage content also serves as the fallback for filters without a
+	 * dedicated entry (e.g. /themes/filter/minimal), so the homepage-only copy
+	 * is applied here rather than in the map. Both strings fall back to the
+	 * existing copy until they are translated.
+	 */
+	const HOMEPAGE_SEO_CONTENT = useMemo(
+		() => ( {
+			...( hasEnTranslation( 'Free WordPress Themes — 1,000+ designs | WordPress.com' ) && {
+				title: translate( 'Free WordPress Themes — 1,000+ designs | WordPress.com' ),
+			} ),
+			...( hasEnTranslation(
+				'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+			) && {
+				metaDescription: translate(
+					'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+				),
+			} ),
+		} ),
+		[ hasEnTranslation, translate ]
+	);
+
 	const parsedFilter =
 		findParsedFilter( filter, THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT ) || 'recommended';
 	const parsedTier = tier || 'all';
@@ -917,6 +946,10 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 
 	if ( ! seoContent ) {
 		return THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT.recommended.all;
+	}
+
+	if ( isHomepage( filter, tier ) ) {
+		return { ...seoContent, ...HOMEPAGE_SEO_CONTENT };
 	}
 
 	return seoContent;

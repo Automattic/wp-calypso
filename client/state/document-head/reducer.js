@@ -9,7 +9,13 @@ import {
 	ROUTE_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
+import {
+	titleSchema,
+	skipTitleFormattingSchema,
+	unreadCountSchema,
+	linkSchema,
+	metaSchema,
+} from './schema';
 
 /**
  * Constants
@@ -24,6 +30,18 @@ export const title = withSchemaValidation( titleSchema, ( state = '', action ) =
 
 	return state;
 } );
+
+export const skipTitleFormatting = withSchemaValidation(
+	skipTitleFormattingSchema,
+	( state = false, action ) => {
+		switch ( action.type ) {
+			case DOCUMENT_HEAD_TITLE_SET:
+				return !! action.skipTitleFormatting;
+		}
+
+		return state;
+	}
+);
 
 export const unreadCount = withSchemaValidation( unreadCountSchema, ( state = 0, action ) => {
 	switch ( action.type ) {
@@ -69,6 +87,7 @@ const combinedReducer = combineReducers( {
 	link,
 	meta,
 	title,
+	skipTitleFormatting,
 	unreadCount,
 } );
 
