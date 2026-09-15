@@ -204,8 +204,12 @@ export const useWPCOMDomainSearchCart = ( {
 					},
 				} );
 
+				// The moved domain goes first so it becomes the new site's primary address.
 				if ( isDomainMoveInternal( product ) && typeof cartKey !== 'number' ) {
-					return onContinue( [ { ...product, meta: product.meta ?? domain_name } ] );
+					return onContinue( [
+						{ ...product, meta: product.meta ?? domain_name },
+						...domainItems,
+					] );
 				}
 
 				const cartItems = await replaceProductsInCart( [ product, ...responseCart.products ] );

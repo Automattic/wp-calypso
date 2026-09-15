@@ -896,6 +896,36 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'carries the domains already in the siteless cart along, after the moved domain', async () => {
+			const onContinue = jest.fn();
+			const existingDomain = buildProduct( {
+				product_slug: 'dotcom_domain',
+				meta: 'new-domain.com',
+				is_domain_registration: true,
+				uuid: 'existing',
+			} );
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( { responseCart: { products: [ existingDomain ] } } )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( ownedDomain );
+
+			expect( onContinue ).toHaveBeenCalledWith( [
+				expect.objectContaining( {
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+				} ),
+				expect.objectContaining( { uuid: 'existing', meta: 'new-domain.com' } ),
+			] );
+		} );
+
 		it( 'adds the domain to a site cart like any other domain', async () => {
 			const replaceProductsInCart = jest.fn().mockResolvedValue( {
 				products: [ { meta: 'owned-domain.com', product_slug: 'domain_move_internal' } ],
