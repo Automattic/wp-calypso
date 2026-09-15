@@ -109,6 +109,12 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 			},
 
 			{
+				id: 'reblog',
+				label: getFieldLabel( 'reblog' ),
+				value: settings?.reblog ?? false,
+			},
+
+			{
 				id: 'follow',
 				label: getFieldLabel( 'follow' ),
 				value: settings?.follow ?? false,

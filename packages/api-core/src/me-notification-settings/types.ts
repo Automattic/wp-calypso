@@ -29,6 +29,7 @@ export interface NotificationSettings {
 	new_comment: boolean;
 	comment_like: boolean;
 	post_like: boolean;
+	reblog: boolean;
 	follow: boolean;
 	achievement: boolean;
 	mentions: boolean;

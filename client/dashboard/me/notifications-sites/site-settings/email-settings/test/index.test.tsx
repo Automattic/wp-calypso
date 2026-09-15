@@ -68,6 +68,7 @@ const buildEmailNotificationSettings = (
 					comment_reply: true,
 					new_comment: false,
 					post_like: false,
+					reblog: false,
 					follow: false,
 					achievement: false,
 					mentions: false,
@@ -84,6 +85,7 @@ const buildEmailNotificationSettings = (
 					comment_reply: false,
 					new_comment: false,
 					post_like: false,
+					reblog: false,
 					follow: false,
 					achievement: false,
 					mentions: false,
@@ -126,6 +128,22 @@ describe( 'EmailSettings', () => {
 		expect(
 			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'new_comment' ) } )
 		).not.toBeChecked();
+	} );
+
+	it( 'renders the repost toggle', async () => {
+		mockGetSettingsApiAndReply(
+			buildEmailNotificationSettings( 1, {
+				reblog: true,
+			} )
+		);
+
+		render( <EmailSettings siteId={ 1 } />, {
+			wrapper: Wrapper,
+		} );
+
+		expect(
+			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'reblog' ) } )
+		).toBeChecked();
 	} );
 
 	it( 'updates the settings when the checkbox is changed', async () => {
