@@ -257,10 +257,25 @@ export function setStreamHandler( next: StreamHandler | undefined ): void {
 export const getStreamedMarkup = ( toolCallId: string ): string | undefined =>
 	lastMarkupByToolCall.get( toolCallId );
 
+/** Drops what a finished tool call streamed; the renderer calls it once the design is committed. */
+export function forgetStream( toolCallId: string ): void {
+	lastMarkupByToolCall.delete( toolCallId );
+	awaitingFinalFlush.delete( toolCallId );
+	finalizedUnrendered.delete( toolCallId );
+	announcedToolCalls.delete( toolCallId );
+}
+
 const isPageDesignPart = ( part: Part ): part is ToolCallDataPart => {
 	const data = part.type === 'data' ? ( part.data as Record< string, unknown > ) : null;
 
 	return data?.toolId === STREAM_PAGE_DESIGN_TOOL_ID && typeof data.toolCallId === 'string';
+};
+
+// Wire data: a provider may hand over an update whose parts are not a list.
+const getParts = ( update: TaskUpdate ): Part[] => {
+	const parts = update.status?.message?.parts;
+
+	return Array.isArray( parts ) ? parts : [];
 };
 
 /** Hands the markup each page-design part carries to the renderer. */
@@ -273,7 +288,7 @@ export async function handlePageDesignTaskUpdate( update: TaskUpdate ): Promise<
 		lastSessionId = update.sessionId;
 	}
 
-	for ( const part of update.status?.message?.parts ?? [] ) {
+	for ( const part of getParts( update ) ) {
 		if ( ! isPageDesignPart( part ) ) {
 			continue;
 		}
@@ -333,7 +348,7 @@ type OnTaskUpdate = ( update: unknown ) => void | Promise< void >;
 export function withPageDesignStream( next: OnTaskUpdate | undefined ): OnTaskUpdate {
 	return async ( update ) => {
 		const taskUpdate = update as TaskUpdate;
-		const parts = taskUpdate.status?.message?.parts;
+		const parts = getParts( taskUpdate );
 
 		await handlePageDesignTaskUpdate( taskUpdate );
 
@@ -341,9 +356,9 @@ export function withPageDesignStream( next: OnTaskUpdate | undefined ): OnTaskUp
 			return;
 		}
 
-		const rest = parts?.filter( ( part ) => ! isPageDesignPart( part ) );
+		const rest = parts.filter( ( part ) => ! isPageDesignPart( part ) );
 		const stripped =
-			parts && rest && rest.length !== parts.length
+			rest.length !== parts.length
 				? {
 						...taskUpdate,
 						status: {
