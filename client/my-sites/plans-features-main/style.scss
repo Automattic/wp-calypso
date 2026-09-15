@@ -221,15 +221,15 @@ body.is-section-plans .layout__content .main {
 body.is-section-plans .layout__content #plans .main {
 	@include plan-type-selector-custom-mobile-breakpoint {
 		.is-2023-pricing-grid .plans-wrapper {
-			padding: 17px;
+			padding: 17px 0;
 		}
 
-		.plans-features-main > * > .plans-features-main__plan-type-selector-layout {
-			padding-inline: 17px;
+		.calypso-notice.plan-features-main__notice {
+			margin: 0 0 24px;
 		}
 
-		.plans-features-main > .is-sticky-plan-type-selector > .plans-features-main__plan-type-selector-layout {
-			padding-inline: 0;
+		.is-plan-type-selector-visible .plans-features-main__features-grid {
+			margin-top: 16px;
 		}
 	}
 }

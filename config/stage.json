@@ -56,7 +56,6 @@
 		"emails/titan-tiers": false,
 		"google-my-business": true,
 		"help": true,
-		"help-center/logged-out": true,
 		"help-center/logged-out-fab": true,
 		"help/gpt-response": true,
 		"hosting-server-settings-enhancements": true,

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Own the Launchpad data-fetching hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, and their helpers), moved here from `@automattic/data-stores`.
+- Register a custom requester with `setRequester` to route these requests through a host-supplied client.
+
 ## 1.2.4
 
 - Drop the direct `@automattic/components` dependency, resolving a duplicate/mismatched version in the installed dependency tree ([#111979](https://github.com/Automattic/wp-calypso/pull/111979)).

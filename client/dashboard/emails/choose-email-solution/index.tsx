@@ -374,6 +374,8 @@ export default function ChooseEmailSolution() {
 					refundAmount={ pendingDowngrade ? getRefundAmount( pendingDowngrade.toProductId ) : 0 }
 					currencyCode={ titanPurchase?.currency_code ?? 'USD' }
 					renewDate={ titanPurchase?.renew_date }
+					purchaseId={ titanPurchase?.ID }
+					isRechargeable={ titanPurchase?.is_rechargeable ?? false }
 					isBusy={ isDowngrading }
 					onCancel={ () => setPendingDowngrade( null ) }
 					onConfirm={ confirmDowngrade }
