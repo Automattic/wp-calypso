@@ -24,6 +24,7 @@ import './style.scss';
 
 export const EditTeamMemberForm = ( {
 	siteId,
+	userId,
 	userLogin,
 	isJetpack,
 	isMultisite,
@@ -47,7 +48,13 @@ export const EditTeamMemberForm = ( {
 	};
 
 	const { markChanged, markSaved } = useProtectForm();
-	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
+	const {
+		data: user,
+		error,
+		isLoading,
+	} = useUserQuery( siteId, userId ?? userLogin, {
+		retry: false,
+	} );
 
 	useEffect( () => {
 		! isLoading && error && page.redirect( `/people/team/${ siteSlug }` );
