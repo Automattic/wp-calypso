@@ -85,11 +85,11 @@ const WPiFrameResize = ( contentWrapper ) => {
 				const sourceURL = parseNavigableURL( source.getAttribute( 'src' ) );
 				const targetURL = parseNavigableURL( data.value );
 
-				/* Only continue if the target is a web URL on the iframe's own origin. */
+				/* Only continue if the target is a web URL on the iframe's own host. */
 				if (
 					sourceURL &&
 					targetURL &&
-					targetURL.origin === sourceURL.origin &&
+					targetURL.host === sourceURL.host &&
 					document.activeElement === source
 				) {
 					window.top.location.href = targetURL.href;

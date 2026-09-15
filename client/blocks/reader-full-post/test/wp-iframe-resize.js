@@ -54,7 +54,7 @@ describe( 'WPiFrameResize', () => {
 		expect( iframe.height ).toBe( '1000' );
 	} );
 
-	it( 'navigates the top window to a same-origin link', () => {
+	it( 'navigates the top window to a same-host link', () => {
 		postMessageFromIframe( {
 			secret: SECRET,
 			message: 'link',
@@ -73,13 +73,22 @@ describe( 'WPiFrameResize', () => {
 		[ 'a vbscript: target spoofing the iframe host', 'vbscript://embeds.example.net/x' ],
 		[ 'credentials for the iframe host', 'https://user:password@embeds.example.net/some-post' ],
 		[ 'a different host', 'https://attacker.example/some-post' ],
-		[ 'a different scheme than the iframe', 'http://embeds.example.net/some-post' ],
 		[ 'a relative URL', '/me/account' ],
 		[ 'an unparseable URL', 'https://' ],
 	] )( 'does not navigate the top window for a link message with %s', ( _label, value ) => {
 		postMessageFromIframe( { secret: SECRET, message: 'link', value } );
 
 		expect( topLocation.href ).toBe( TOP_URL );
+	} );
+
+	it( 'navigates the top window to an http link on the iframe host', () => {
+		postMessageFromIframe( {
+			secret: SECRET,
+			message: 'link',
+			value: 'http://embeds.example.net/some-post',
+		} );
+
+		expect( topLocation.href ).toBe( 'http://embeds.example.net/some-post' );
 	} );
 
 	it( 'does not navigate for a link message from another window', () => {
