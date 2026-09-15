@@ -38,6 +38,13 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
+			/**
+			 * Keep the chat open-state on the CLIENT instead of the per-user server
+			 * store. For hosts whose users are anonymous/logged-out, where the
+			 * server open-state can't be restored (e.g. the WooCommerce storefront
+			 * shopper). Reader-chat gets this implicitly via its agent id.
+			 */
+			persistStateLocally?: boolean;
 	  }
 	| undefined;
 
