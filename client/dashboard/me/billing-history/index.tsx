@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -28,6 +29,7 @@ import type { Receipt } from '@automattic/api-core';
 const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
+	const { supports } = useAppContext();
 	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } = useQuery(
 		userReceiptsQuery()
 	);
@@ -97,6 +99,7 @@ export default function BillingHistory() {
 					title={ __( 'Billing history' ) }
 					description={ __( 'View receipts and billing history for your purchases.' ) }
 					actions={
+						Boolean( supports.me ) &&
 						activeSiteId !== undefined && (
 							<RouterLinkButton
 								variant="secondary"
