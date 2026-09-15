@@ -1,3 +1,4 @@
+import { NamePulseSearch } from '@automattic/domain-name-pulse';
 import { useCallback, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import {
@@ -6,7 +7,6 @@ import {
 	DomainSuggestionLoadMore,
 } from '../../ui';
 import { InlineBundleRow } from '../inline-bundle-row';
-import { NamePulseSearch } from '../name-pulse-search';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
