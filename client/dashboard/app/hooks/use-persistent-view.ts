@@ -88,23 +88,36 @@ export function useBasePersistentView( {
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
-	const transientFilterFields = queryParamFilterFields.filter(
-		( field ) => queryParams && queryParams[ field ] !== undefined
+	const filterFieldsKey = JSON.stringify( queryParamFilterFields );
+	const filterFields = useMemo(
+		() => queryParamFilterFields,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ filterFieldsKey ]
 	);
 
-	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
-		queryParamFilterFields
-			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
-			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+	const [ transientFilterState, setTransientFilterState ] = useState< TransientFilterState >( () =>
+		getTransientFilterState( filterFields, queryParams )
+	);
+	const { filters: transientFilters, seeds: transientFilterSeeds } = transientFilterState;
+	const transientFilterFields = useMemo(
+		() => transientFilters.map( ( { field } ) => field ),
+		[ transientFilters ]
 	);
 
+	// Re-seed whenever the query params themselves change, so that navigating from
+	// `?domainName=a.com` to `?domainName=b.com` without unmounting picks up the new value.
+	const seedKey = JSON.stringify(
+		filterFields.map( ( field ) => [ field, queryParams?.[ field ] ?? null ] )
+	);
 	useEffect( () => {
-		setTransientFilters(
-			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+		setTransientFilterState( ( current ) =>
+			filterFields.some( ( field ) => queryParams?.[ field ] !== current.seeds[ field ] )
+				? getTransientFilterState( filterFields, queryParams )
+				: current
 		);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( transientFilterFields ) ] );
+	}, [ seedKey ] );
 
 	useEffect( () => {
 		if ( ! matches || matches.length === 0 ) {
@@ -113,7 +126,9 @@ export function useBasePersistentView( {
 
 		let transientQueryParams: Record< string, unknown > = {};
 		transientFilters.forEach( ( { field } ) => {
-			transientQueryParams[ field ] = queryParams[ field ];
+			if ( queryParams?.[ field ] !== undefined ) {
+				transientQueryParams[ field ] = queryParams[ field ];
+			}
 		} );
 		transientQueryParams = mergeQueryParamsWithTransientProperties(
 			transientQueryParams,
@@ -149,14 +164,33 @@ export function useBasePersistentView( {
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const newTransientFilterFields = transientFilterFields.filter(
-				( field ) =>
-					newView.filters?.some(
+			const newTransientFilters = transientFilterFields
+				.map( ( field ) => newView.filters?.find( ( filter ) => filter.field === field ) )
+				.filter( ( filter ): filter is Filter => filter !== undefined );
+
+			// A query param only describes the view for as long as its filter is untouched.
+			// Once the value is edited or the filter is removed, the param is dropped, but the
+			// filter itself stays transient so that it is never written to the preference.
+			const staleQueryParamFields = filterFields.filter( ( field ) => {
+				const seed = transientFilterSeeds[ field ];
+				return (
+					seed !== undefined &&
+					! newTransientFilters.some(
 						( filter ) =>
-							filter.field === field &&
-							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
+							filter.field === field && fastDeepEqual( filter, getTransientFilter( field, seed ) )
 					)
-			);
+				);
+			} );
+
+			if (
+				staleQueryParamFields.length > 0 ||
+				! fastDeepEqual( newTransientFilters, transientFilters )
+			) {
+				setTransientFilterState( ( current ) => ( {
+					filters: newTransientFilters,
+					seeds: { ...current.seeds, ...clearSeeds( staleQueryParamFields ) },
+				} ) );
+			}
 
 			if ( queryParams ) {
 				const newTransientProperties = {
@@ -164,10 +198,12 @@ export function useBasePersistentView( {
 					search: newView.search,
 				};
 
-				if ( ! fastDeepEqual( newTransientFilterFields, transientFilterFields ) ) {
-					setTransientFilters( [] );
+				if ( staleQueryParamFields.length > 0 ) {
 					navigate( {
-						search: clearQueryParamsFromTransientFilters( queryParams, transientFilterFields ),
+						search: mergeQueryParamsWithTransientProperties(
+							clearQueryParamsFromTransientFilters( queryParams, staleQueryParamFields ),
+							newTransientProperties
+						),
 						replace: true,
 					} );
 				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
@@ -180,7 +216,7 @@ export function useBasePersistentView( {
 
 			let viewToPersist = newView;
 			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
-			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
+			viewToPersist = removeTransientFiltersFromView( viewToPersist, transientFilterFields );
 			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
 
 			// Persist view if different from baseView.
@@ -195,7 +231,10 @@ export function useBasePersistentView( {
 		[
 			queryParams,
 			transientProperties,
+			transientFilters,
 			transientFilterFields,
+			transientFilterSeeds,
+			filterFields,
 			navigate,
 			baseView,
 			defaultView,
@@ -203,17 +242,53 @@ export function useBasePersistentView( {
 		]
 	);
 
-	const isViewModified = !! persistedView;
+	const isViewModified = !! persistedView || transientFilters.length > 0;
 
 	const resetView = useCallback( () => {
 		persistView( undefined );
+		setTransientFilterState( ( current ) => ( {
+			filters: [],
+			seeds: clearSeeds( Object.keys( current.seeds ) ),
+		} ) );
 		navigate( {
-			search: mergeQueryParamsWithTransientProperties( queryParams, { page: 1, search: '' } ),
+			search: mergeQueryParamsWithTransientProperties(
+				clearQueryParamsFromTransientFilters( queryParams, filterFields ),
+				{ page: 1, search: '' }
+			),
 			replace: true,
 		} );
-	}, [ persistView, navigate, queryParams ] );
+	}, [ persistView, navigate, queryParams, filterFields ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
+}
+
+/**
+ * Filters seeded from the URL query params, alongside the raw param values they were
+ * seeded from. Comparing the seeds against the current params tells us whether the
+ * params changed underneath us, and keeps a filter transient once its param is dropped.
+ */
+interface TransientFilterState {
+	filters: Filter[];
+	seeds: Record< string, unknown >;
+}
+
+function getTransientFilterState( fields: string[], queryParams: any ): TransientFilterState {
+	const seeds: Record< string, unknown > = {};
+	const filters: Filter[] = [];
+
+	fields.forEach( ( field ) => {
+		const rawValue = queryParams?.[ field ];
+		seeds[ field ] = rawValue;
+		if ( rawValue !== undefined ) {
+			filters.push( getTransientFilter( field, rawValue ) );
+		}
+	} );
+
+	return { filters, seeds };
+}
+
+function clearSeeds( fields: string[] ): Record< string, unknown > {
+	return Object.fromEntries( fields.map( ( field ) => [ field, undefined ] ) );
 }
 
 function getTransientFilter( field: string, rawValue: unknown ): Filter {
