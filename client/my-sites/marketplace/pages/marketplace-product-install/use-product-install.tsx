@@ -201,7 +201,7 @@ export function useProductInstall( {
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
-	const uploadErrorPluginSlug = pluginUploadError?.plugin_slug;
+	const uploadErrorPluginSlug = pluginUploadError?.data?.plugin_slug;
 	const pluginUploadFile = useSelector( ( state ) => getPluginUploadFile( state, siteId ) );
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
@@ -394,7 +394,7 @@ export function useProductInstall( {
 				type: 'plugin-exists',
 				pluginSlug: uploadErrorPluginSlug,
 				installedVersion: existingPlugin?.version,
-				uploadedVersion: pluginUploadError?.plugin_version,
+				uploadedVersion: pluginUploadError?.data?.plugin_version,
 			};
 		}
 		if ( pluginExists ) {
