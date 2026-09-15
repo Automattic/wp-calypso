@@ -144,20 +144,6 @@ body.js.is-image-studio-open {
 		width: 100%;
 		display: flex;
 	}
-	// Force white text for assistant messages only (not user bubbles)
-	.Message-module_message:not(.Message-module_user) {
-		color: #fff !important;
-	}
-
-	.Message-module_message:not(.Message-module_user) * {
-		color: #fff !important;
-	}
-
-	.Message-module_content:not(.Message-module_user *),
-	.Message-module_content:not(.Message-module_user *) * {
-		color: #fff !important;
-	}
-
 	.components-modal__content {
 		padding: 0;
 		height: 100%;
@@ -270,7 +256,6 @@ body.js.is-image-studio-open {
 	}
 
 	.Message-module_message {
-		color: #fff;
 		padding-bottom: 0;
 
 		p {
@@ -295,13 +280,8 @@ body.js.is-image-studio-open {
 	.Message-module_user {
 		padding: 0;
 
-		.Message-module_bubble {
-			background: #484848;
-
-			p {
-				color: #f0f0f0;
-				margin: 0;
-			}
+		.Message-module_bubble p {
+			margin: 0;
 		}
 	}
 
@@ -323,18 +303,15 @@ body.js.is-image-studio-open {
 			svg {
 				width: 32px;
 				height: 32px;
-				color: #fff;
 			}
 		}
 
 		&_heading {
-			color: #fff;
 			padding: 0 12px;
 			margin-bottom: 48px !important;
 		}
 
 		&_help {
-			color: #fff;
 			padding: 0 12px;
 		}
 
@@ -352,20 +329,12 @@ body.js.is-image-studio-open {
 				height: unset;
 				justify-content: start;
 				border-radius: 0;
-				background-color: unset;
 				padding: 14px 16px;
-				color: #e0e0e0;
 				font-size: 13px;
 				line-height: 20px;
-				border: 1px solid #545454;
-
-				&:hover {
-					background-color: #2a2a2a;
-				}
 
 				&:focus-visible {
 					outline-offset: -3px;
-					outline-color: var(--wp-admin-theme-color);
 				}
 			}
 
@@ -388,11 +357,9 @@ body.js.is-image-studio-open {
 	}
 
 	.ChatFooter-module_container {
-		background-color: #2a2a2a;
 		padding: 4px 4px 4px 8px;
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
-		border-color: transparent;
 		z-index: 100;
 
 		&:has(.Suggestions-module_container) {
@@ -411,27 +378,8 @@ body.js.is-image-studio-open {
 		}
 	}
 
-	// Suggestions styling - works for both inside and outside Footer
-	.Suggestions-module_container .button-module_outline {
-		color: #f0f0f0;
-		background-color: #484848;
-	}
-
 	.Textarea-module_textarea {
-		color: #e0e0e0;
 		box-shadow: none;
-		background-color: transparent;
-
-		&::placeholder {
-			color: #a0a0a0;
-		}
-	}
-
-	.ChatInput-module_button {
-		&:disabled {
-			background-color: #404040;
-			color: #757575;
-		}
 	}
 
 	.image-studio-suggestions-loading {
@@ -445,26 +393,13 @@ body.js.is-image-studio-open {
   Toolbars (Style & Aspect Ratio)
   ==========================================================================*/
 .image-studio-input-toolbar-item {
-	// Dark theme color overrides for big-sky
-	> div > button {
-		background-color: #484848;
-		color: #f0f0f0;
-
-		&:hover:not(:disabled) {
-			background-color: #555;
-		}
-
-		&:disabled {
-			opacity: 0.5;
-			cursor: not-allowed;
-		}
+	> div > button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	// Dropdown customizations for image-studio
 	[role="dialog"] {
-		background-color: #3a3a3a;
-		border-color: transparent;
-		color: #e0e0e0;
 		bottom: auto;
 		width: 346px;
 		max-width: calc(100vw - #{$modal-padding});
