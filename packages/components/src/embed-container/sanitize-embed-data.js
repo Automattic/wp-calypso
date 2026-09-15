@@ -14,55 +14,78 @@ const debug = debugFactory( 'calypso:components:embed-container' );
  * both sinks before any provider script gets to see them.
  */
 
-// Characters that let a value escape its attribute, or open an element, on that second parse.
+// Characters that let a value escape its quoted attribute, or open an element, on that second
+// parse. Only the data- namespace is swept for these: attributes like title and alt legitimately
+// carry quotes in post content, so stripping them would cost more than it buys.
 const MARKUP_CHARACTERS = /["'<>]/;
 
-// Data attributes that legitimately carry a quoted payload and whose consumers we know reach
-// text-only sinks: the carousel metadata the post normalizer reads, and the caption/title markup
-// the gallery components strip before rendering.
-const ATTRIBUTES_ALLOWED_TO_CARRY_MARKUP = [
+// Never a legitimate embed value, and a runtime that puts one in an href would run it on click.
+const UNSAFE_URI_SCHEME = /^\s*(?:javascript|vbscript):/i;
+
+// Quoted payloads we consume ourselves, and only ever as text or as a URL assigned to a property,
+// never by interpolating them into markup: the carousel metadata the post normalizer reads, and
+// the caption and original-file URL the image carousel reads.
+const DATA_ATTRIBUTES_WE_CONSUME = [
 	'data-carousel-extra',
 	'data-image-caption',
-	'data-image-description',
-	'data-image-meta',
-	'data-image-title',
+	'data-orig-file',
 ];
 
-const INSTAGRAM_PERMALINK_HOSTS = [ 'instagram.com', 'instagr.am', 'cdninstagram.com' ];
+const INSTAGRAM_PERMALINK_HOSTS = [ 'instagram.com', 'instagr.am' ];
 
+// Reserved TLD, so it can never collide with a host an embed legitimately points at.
+const RELATIVE_URL_HOST = 'embed-container.invalid';
+
+/**
+ * Parse a value a provider would navigate to.
+ *
+ * The placeholder base lets protocol-relative values parse while still rejecting path-relative
+ * ones, which land back on the placeholder host and are never something a provider would frame.
+ * Resolving against a fixed base rather than `window.location` also keeps the result independent
+ * of the document URL, which matters because this component ships in the Help Center bundle on
+ * widgets.wp.com as well.
+ * @param {string} value - An attribute value.
+ * @returns {URL|null} The parsed URL, or null when it is not an absolute one.
+ */
 function parseUrl( value ) {
 	try {
-		return new URL( value, window.location.href );
+		const url = new URL( value, `https://${ RELATIVE_URL_HOST }` );
+		return url.hostname === RELATIVE_URL_HOST ? null : url;
 	} catch {
 		return null;
 	}
 }
 
-function isWebUrl( value ) {
+function isHttpProtocol( url ) {
+	return url.protocol === 'http:' || url.protocol === 'https:';
+}
+
+function isHttpUrl( value ) {
 	const url = parseUrl( value );
-	return !! url && ( url.protocol === 'http:' || url.protocol === 'https:' );
+	return !! url && isHttpProtocol( url );
 }
 
 function isInstagramPermalink( value ) {
 	const url = parseUrl( value );
 	return (
 		!! url &&
-		url.protocol === 'https:' &&
+		isHttpProtocol( url ) &&
 		INSTAGRAM_PERMALINK_HOSTS.some(
 			( host ) => url.hostname === host || url.hostname.endsWith( `.${ host }` )
 		)
 	);
 }
 
-// Attributes a provider turns into the URL of a frame it inserts into our document. The Instagram
-// permalink is held to its own hosts as well, so the runtime cannot be pointed at an arbitrary
-// origin either.
+// Attributes a provider navigates to, either as the `src` of a frame it inserts into our document
+// or as a `window.open` target from a document-level click handler. The Instagram permalink is
+// held to its own hosts as well, so the runtime cannot be pointed at an arbitrary origin either.
 const URL_ATTRIBUTES = {
-	cite: isWebUrl,
-	'data-embed-url': isWebUrl,
-	'data-href': isWebUrl,
+	cite: isHttpUrl,
+	'data-embed-url': isHttpUrl,
+	'data-href': isHttpUrl,
 	'data-instgrm-permalink': isInstagramPermalink,
-	'data-url': isWebUrl,
+	'data-pin-href': isHttpUrl,
+	'data-url': isHttpUrl,
 };
 
 /**
@@ -70,7 +93,12 @@ const URL_ATTRIBUTES = {
  * consuming script inserts it.
  *
  * Decoding happens in a DOMParser document, which has no browsing context, so markup in the value
- * cannot load resources or run handlers on the way through.
+ * cannot load resources or run handlers on the way through. Decoding before re-encoding is also
+ * what keeps this idempotent: the pass runs again every time a slideshow initializes, and an
+ * encoder that skipped the decode would turn `&amp;` into `&amp;amp;` a little more on each run.
+ *
+ * Letting the HTML parser decide what a tag is keeps text the author meant to show: a caption
+ * reading `Temperatures < 0` has no element in it, because `<` followed by a space cannot open one.
  * @param {*} value - A value that reaches a sink expecting text.
  * @returns {string} The value, as encoded text.
  */
@@ -84,6 +112,8 @@ function toInertText( value ) {
 }
 
 /**
+ * The shortcode script assigns each caption to innerHTML, which coerces a non-string: an array of
+ * markup joins straight back into markup, so nested fields are dropped rather than flattened.
  * @param {unknown} slide - One entry of a `data-gallery` payload.
  * @returns {Object} The slide reduced to primitive fields, with its caption flattened to text.
  */
@@ -92,49 +122,53 @@ function sanitizeSlide( slide ) {
 		return {};
 	}
 
-	return Object.fromEntries(
-		Object.entries( slide )
-			.filter( ( [ , field ] ) => typeof field !== 'object' )
-			.map( ( [ name, field ] ) => [ name, name === 'caption' ? toInertText( field ) : field ] )
+	const sanitized = Object.fromEntries(
+		Object.entries( slide ).filter( ( [ , field ] ) => typeof field !== 'object' )
 	);
+
+	// The script assigns this one unguarded, so a missing or dropped key renders as "undefined".
+	const { caption } = slide;
+	sanitized.caption = caption === null || typeof caption === 'object' ? '' : toInertText( caption );
+
+	return sanitized;
 }
 
 /**
- * Make a Jetpack slideshow payload safe to render.
+ * Reduce the captions in a slideshow container's gallery data to text.
  *
- * A slideshow is described by a JSON array, so `data-gallery` has to keep its quotes to stay
- * parseable and cannot go through the blanket check above. The shortcode script assigns each
- * slide's caption to innerHTML, so captions are the part of the payload that is parsed as markup.
+ * `data-gallery` only holds a JSON payload on a Jetpack slideshow; elsewhere it is a grouping key,
+ * which is the convention lightbox libraries use, so the class the slideshow runtime scans for
+ * gates this. The attribute keeps its quotes, since it has to stay parseable.
  *
- * Nested values are dropped along the way. innerHTML takes a string, so an array of markup would
- * be coerced straight back into the markup it holds.
- * @param {string} value - The raw `data-gallery` value.
- * @returns {string|null} An equivalent payload with inert captions, or null if it is not a gallery.
+ * Gallery data we cannot rewrite is discarded rather than left as it was, and every failure is
+ * handled here so that one bad container cannot stop the rest of the page being sanitized.
+ * @param {Element} node - A node that may be a slideshow container.
  */
-function sanitizeGallery( value ) {
-	let gallery;
-
-	try {
-		gallery = JSON.parse( value );
-	} catch {
-		return null;
-	}
-
-	return Array.isArray( gallery ) ? JSON.stringify( gallery.map( sanitizeSlide ) ) : null;
-}
-
 function sanitizeGalleryAttribute( node ) {
-	if ( ! node.hasAttribute( 'data-gallery' ) ) {
+	if ( ! node.hasAttribute( 'data-gallery' ) || ! node.matches( '.jetpack-slideshow' ) ) {
 		return;
 	}
 
-	const sanitized = sanitizeGallery( node.getAttribute( 'data-gallery' ) );
+	const value = node.getAttribute( 'data-gallery' );
 
-	if ( sanitized === null ) {
-		debug( 'removing unparseable data-gallery from', node );
+	try {
+		const gallery = JSON.parse( value );
+
+		if ( ! Array.isArray( gallery ) ) {
+			throw new Error( 'gallery data is not a list of slides' );
+		}
+
+		// JSON.parse() accepts nesting deep enough to overflow the stack in JSON.stringify().
+		const sanitized = JSON.stringify( gallery.map( sanitizeSlide ) );
+
+		if ( sanitized !== value ) {
+			node.setAttribute( 'data-gallery', sanitized );
+		}
+	} catch ( error ) {
+		debug( 'discarding unusable slideshow gallery data', error );
 		node.removeAttribute( 'data-gallery' );
-	} else {
-		node.setAttribute( 'data-gallery', sanitized );
+		// Left to JetpackSlideshow, an empty gallery becomes a spinner it never clears.
+		node.dataset.processed = 'true';
 	}
 }
 
@@ -147,13 +181,19 @@ function sanitizeAttribute( node, name, value ) {
 		return;
 	}
 
-	if ( ATTRIBUTES_ALLOWED_TO_CARRY_MARKUP.includes( name ) ) {
+	if ( UNSAFE_URI_SCHEME.test( value ) ) {
+		debug( 'removing script-scheme attribute %s from', name, node );
+		node.removeAttribute( name );
 		return;
 	}
 
-	// A well-formed URL has these percent-encoded, so the check applies to URL attributes too: a
-	// value can be a perfectly valid https URL and still carry the quote that ends the attribute a
-	// provider is building around it.
+	if ( DATA_ATTRIBUTES_WE_CONSUME.includes( name ) ) {
+		return;
+	}
+
+	// A well-formed URL has these percent-encoded, so the markup check applies to URL attributes
+	// too: a value can be a perfectly good https URL and still carry the quote that ends the
+	// attribute a provider is building around it.
 	if ( MARKUP_CHARACTERS.test( value ) || ( isAllowedUrl && ! isAllowedUrl( value ) ) ) {
 		debug( 'removing unsafe %s from', name, node );
 		node.removeAttribute( name );

@@ -1151,7 +1151,10 @@ describe( 'index', () => {
 	} );
 
 	describe( 'Jetpack Carousel Linker', () => {
-		test( 'drops permalinks that are not http(s) when links are made safe afterwards', () => {
+		test( 'never turns a permalink that is not http(s) into an href', () => {
+			// linkJetpackCarousels skips the gallery rather than rewriting it, so the per-image
+			// links keep working. makeContentLinksSafe runs after it in the real pipeline and is
+			// the backstop should a later rule ever build such an href anyway.
 			const post = {
 				content:
 					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
@@ -1160,10 +1163,12 @@ describe( 'index', () => {
 					'</a></div></div>',
 			};
 			const normalized = withContentDOM( [ linkJetpackCarousels, makeContentLinksSafe ] )( post );
-			const link = domForHtml( normalized.content ).querySelector( '.tiled-gallery-item a' );
+			const dom = domForHtml( normalized.content );
 
-			expect( link ).not.toBeNull();
-			expect( link.hasAttribute( 'href' ) ).toBe( false );
+			expect( dom.querySelector( '.tiled-gallery-item a' ).getAttribute( 'href' ) ).toBe(
+				'https://example.com/foo/bar/'
+			);
+			expect( dom.querySelector( '[href^="javascript:"]' ) ).toBeNull();
 		} );
 
 		test( 'should fix links to jetpack carousels', () => {

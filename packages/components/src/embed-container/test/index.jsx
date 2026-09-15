@@ -3,14 +3,11 @@
  */
 /* eslint-disable react/no-danger -- the point of these tests is to feed the component raw post markup. */
 import { render, waitFor } from '@testing-library/react';
-import EmbedContainer from '../';
 
 jest.mock( '@automattic/load-script', () => ( {
 	loadScript: jest.fn(),
 	loadjQueryDependentScript: jest.fn(),
 } ) );
-
-const { loadScript, loadjQueryDependentScript } = jest.requireMock( '@automattic/load-script' );
 
 const INSTAGRAM_SCRIPT = 'https://platform.instagram.com/en_US/embeds.js';
 const INSTAGRAM_PERMALINK = 'https://www.instagram.com/p/BnMO9vRleEx/';
@@ -20,6 +17,18 @@ const JAVASCRIPT_URL = 'javascript:fetch( "/me" ).then( ( r ) => r.text() )//';
 const QUOTED_URL = 'https://example.com/?a=1" onload="window.__xss = 1" x="';
 
 const ATTRIBUTE_BREAKOUT = 'safe&quot; onload=&quot;window.__xss = 1&quot; x=&quot;';
+
+let EmbedContainer;
+let loadScript;
+let loadjQueryDependentScript;
+
+beforeEach( () => {
+	// `loadAndRun` memoises provider scripts in a module-level cache, so without a fresh registry
+	// only the first test to render a given embed sees its script load.
+	jest.resetModules();
+	EmbedContainer = require( '../' ).default;
+	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
+} );
 
 function renderContent( ...contents ) {
 	const { container } = render(
@@ -77,13 +86,8 @@ function slideshowMarkup( gallery ) {
 	return `<div class="jetpack-slideshow" data-trans="fade" data-autostart="false" data-gallery="${ attribute }"></div>`;
 }
 
-beforeEach( () => {
-	loadScript.mockReset();
-	loadjQueryDependentScript.mockReset();
-} );
-
 describe( 'EmbedContainer', () => {
-	describe( 'attributes a provider turns into a frame URL', () => {
+	describe( 'attributes a provider navigates to', () => {
 		it( 'keeps a canonical Instagram permalink and hands the embed to the provider script', () => {
 			const container = renderContent(
 				`<blockquote class="instagram-media" data-instgrm-permalink="${ INSTAGRAM_PERMALINK }">post</blockquote>`
@@ -95,29 +99,42 @@ describe( 'EmbedContainer', () => {
 			expect( loadedScripts() ).toContain( INSTAGRAM_SCRIPT );
 		} );
 
-		it( 'drops a javascript: permalink', () => {
-			const container = renderContent(
+		it( 'sanitizes before the provider script is requested', () => {
+			let permalinkWhenScriptLoaded = 'not recorded';
+			loadScript.mockImplementation( () => {
+				permalinkWhenScriptLoaded = document
+					.querySelector( '.instagram-media' )
+					.getAttribute( 'data-instgrm-permalink' );
+			} );
+
+			renderContent(
 				`<blockquote class="instagram-media" data-instgrm-permalink="${ JAVASCRIPT_URL }">post</blockquote>`
 			);
 
-			expect(
-				container.querySelector( 'blockquote' ).hasAttribute( 'data-instgrm-permalink' )
-			).toBe( false );
+			expect( permalinkWhenScriptLoaded ).toBeNull();
 		} );
 
-		it( 'drops a javascript: permalink hidden behind leading whitespace', () => {
+		it( 'keeps a legacy http permalink on the short domain', () => {
 			const container = renderContent(
-				`<blockquote class="instagram-media" data-instgrm-permalink="  &#9;&#10;${ JAVASCRIPT_URL }">post</blockquote>`
+				'<blockquote class="instagram-media" data-instgrm-permalink="http://instagr.am/p/BnMO9vRleEx/">post</blockquote>'
 			);
 
 			expect(
-				container.querySelector( 'blockquote' ).hasAttribute( 'data-instgrm-permalink' )
-			).toBe( false );
+				container.querySelector( 'blockquote' ).getAttribute( 'data-instgrm-permalink' )
+			).toBe( 'http://instagr.am/p/BnMO9vRleEx/' );
 		} );
 
-		it( 'drops a permalink pointing away from Instagram', () => {
+		it.each( [
+			JAVASCRIPT_URL,
+			`  &#9;&#10;${ JAVASCRIPT_URL }`,
+			'https://example.com/p/1/',
+			'https://notinstagram.com/p/1/',
+			'https://instagram.com.example.com/p/1/',
+			'https://example.com/p/1/?utm=instagram.com',
+			'https://cdninstagram.com/p/1/',
+		] )( 'drops an Instagram permalink that is not one: %s', ( permalink ) => {
 			const container = renderContent(
-				'<blockquote class="instagram-media" data-instgrm-permalink="https://example.com/p/1/">post</blockquote>'
+				`<blockquote class="instagram-media" data-instgrm-permalink="${ permalink }">post</blockquote>`
 			);
 
 			expect(
@@ -161,12 +178,42 @@ describe( 'EmbedContainer', () => {
 				'<blockquote class="tiktok-embed embed-tiktok" cite="%s"></blockquote>',
 				'https://www.tiktok.com/@example/video/1',
 			],
+			[
+				// Pinterest's pinit_main.js reads this off a document-level click handler and hands
+				// it to window.open with no scheme check.
+				'data-pin-href',
+				'<a data-pin-do="embedPin" data-pin-href="%s"></a>',
+				'https://www.pinterest.com/pin/1/',
+			],
 		] )( 'drops a javascript: %s but keeps an https one', ( attribute, markup, safeUrl ) => {
 			const unsafe = renderContent( markup.replace( '%s', JAVASCRIPT_URL ) );
 			expect( unsafe.querySelector( `[${ attribute }]` ) ).toBeNull();
 
 			const safe = renderContent( markup.replace( '%s', safeUrl ) );
 			expect( safe.querySelector( `[${ attribute }]` ).getAttribute( attribute ) ).toBe( safeUrl );
+		} );
+
+		it.each( [ '', '   ', '/me/account', 'not-a-url', './relative', '#fragment' ] )(
+			'drops a data-url that is not an absolute web URL: %j',
+			( value ) => {
+				// Resolving against the document URL would make each of these a wordpress.com page,
+				// which a provider framing data-url would then load inside post content.
+				const container = renderContent(
+					`<div class="calendly-inline-widget" data-url="${ value }"></div>`
+				);
+
+				expect( container.querySelector( '[data-url]' ) ).toBeNull();
+			}
+		);
+
+		it( 'keeps a protocol-relative provider URL', () => {
+			const container = renderContent(
+				'<div class="fb-post" data-href="//www.facebook.com/p/1"></div>'
+			);
+
+			expect( container.querySelector( '[data-href]' ).getAttribute( 'data-href' ) ).toBe(
+				'//www.facebook.com/p/1'
+			);
 		} );
 
 		it.each( [
@@ -221,6 +268,20 @@ describe( 'EmbedContainer', () => {
 			);
 		} );
 
+		it.each( [ 'javascript:alert(1)', '  JavaScript:alert(1)', 'vbscript:msgbox(1)' ] )(
+			'drops a data attribute carrying a script scheme: %j',
+			( value ) => {
+				// Nothing here has a quote or an angle bracket, so only the scheme check catches it.
+				const container = renderContent(
+					`<div class="embed-reddit" data-embed-parent="${ value }"></div>`
+				);
+
+				expect(
+					container.querySelector( '.embed-reddit' ).hasAttribute( 'data-embed-parent' )
+				).toBe( false );
+			}
+		);
+
 		it( 'reaches data attributes on descendants of the embed', () => {
 			const container = renderContent(
 				`<div class="embed-reddit"><blockquote data-card-created="${ ATTRIBUTE_BREAKOUT }"></blockquote></div>`
@@ -273,14 +334,19 @@ describe( 'EmbedContainer', () => {
 			);
 		} );
 
-		it( 'keeps gallery caption markup', () => {
+		it.each( [
+			[
+				'data-image-caption',
+				'&lt;p&gt;She said &quot;hello&quot;&lt;/p&gt;',
+				'<p>She said "hello"</p>',
+			],
+			[ 'data-orig-file', 'https://example.com/a.jpg', 'https://example.com/a.jpg' ],
+		] )( 'keeps %s, which the image carousel reads', ( attribute, encoded, decoded ) => {
 			const container = renderContent(
-				'<div class="wp-block-gallery"><figure class="wp-block-image"><img src="https://example.com/a.jpg" data-image-caption="&lt;p&gt;She said &quot;hello&quot;&lt;/p&gt;" /></figure></div>'
+				`<div class="wp-block-gallery"><figure class="wp-block-image"><img src="https://example.com/a.jpg" ${ attribute }="${ encoded }" /></figure></div>`
 			);
 
-			expect( container.querySelector( 'img' ).getAttribute( 'data-image-caption' ) ).toBe(
-				'<p>She said "hello"</p>'
-			);
+			expect( container.querySelector( 'img' ).getAttribute( attribute ) ).toBe( decoded );
 		} );
 
 		it( 'leaves attributes outside the data- namespace alone', () => {
@@ -292,23 +358,41 @@ describe( 'EmbedContainer', () => {
 				'She said "hello"'
 			);
 		} );
+
+		it( 'leaves data-gallery alone when it is a lightbox grouping key', () => {
+			// Outside a Jetpack slideshow, data-gallery is the grouping convention lightbox
+			// libraries use, not a JSON payload.
+			const container = renderContent(
+				'<figure class="wp-block-image"><a data-gallery="group-1" href="https://example.com/a.jpg"><img src="https://example.com/a.jpg" /></a></figure>'
+			);
+
+			expect( container.querySelector( '[data-gallery]' ).getAttribute( 'data-gallery' ) ).toBe(
+				'group-1'
+			);
+		} );
 	} );
 
 	describe( 'Jetpack slideshows', () => {
 		// The gallery data of each slideshow as JetpackSlideshow sees it, read when the slideshow
 		// script is told to initialize. That is the last moment at which sanitizing still helps.
 		let galleriesAtInit;
+		let triggerCount;
+
+		const readGalleries = () =>
+			Array.from( document.querySelectorAll( '.jetpack-slideshow' ) ).map( ( node ) =>
+				node.getAttribute( 'data-gallery' )
+			);
 
 		beforeEach( () => {
 			galleriesAtInit = null;
+			triggerCount = 0;
 			loadScript.mockImplementation( ( url, callback ) => callback() );
 			loadjQueryDependentScript.mockImplementation( ( url, callback ) => callback() );
 
 			const jQuery = jest.fn( () => ( {
 				trigger: () => {
-					galleriesAtInit = Array.from( document.querySelectorAll( '.jetpack-slideshow' ) ).map(
-						( node ) => node.getAttribute( 'data-gallery' )
-					);
+					triggerCount += 1;
+					galleriesAtInit = readGalleries();
 				},
 			} ) );
 			jQuery.prototype.cycle = () => {};
@@ -317,7 +401,6 @@ describe( 'EmbedContainer', () => {
 
 		afterEach( () => {
 			delete window.jQuery;
-			delete window.__captionHandlerFired;
 		} );
 
 		const renderSlideshows = async ( ...galleries ) => {
@@ -343,36 +426,50 @@ describe( 'EmbedContainer', () => {
 			expect( renderCaptionAsHtml( slide.caption ).textContent ).toBe( 'The harbour’s best view' );
 		} );
 
+		it( 'keeps comparison text that is not markup', async () => {
+			// wp_strip_all_tags() leaves a `<` followed by whitespace in place, and so does the
+			// HTML parser: neither can open an element.
+			await renderSlideshows( [
+				{
+					src: 'https://example.com/1.jpg',
+					caption: 'Temperatures < 0 degrees, wind > 30kph',
+				},
+			] );
+
+			const [ slide ] = JSON.parse( galleriesAtInit[ 0 ] );
+			expect( renderCaptionAsHtml( slide.caption ).textContent ).toBe(
+				'Temperatures < 0 degrees, wind > 30kph'
+			);
+		} );
+
 		it( 'keeps the rest of the slide intact', async () => {
 			await renderSlideshows( [
 				{
 					src: 'https://example.com/1.jpg',
 					caption: '<img src=x onerror=alert(1)>Spring',
 					alt: 'Spring',
+					id: 42,
+					itemprop: 'image',
 				},
 			] );
 
 			const [ slide ] = JSON.parse( galleriesAtInit[ 0 ] );
-			expect( slide.src ).toBe( 'https://example.com/1.jpg' );
-			expect( slide.alt ).toBe( 'Spring' );
-			expect( renderCaptionAsHtml( slide.caption ).textContent ).toBe( 'Spring' );
+			expect( slide ).toEqual( {
+				src: 'https://example.com/1.jpg',
+				caption: 'Spring',
+				alt: 'Spring',
+				id: 42,
+				itemprop: 'image',
+			} );
 		} );
 
-		it( 'leaves no markup in a caption for the slideshow script to build elements from', async () => {
-			await renderSlideshows( [
-				{
-					src: 'https://example.com/1.jpg',
-					caption:
-						'The harbour <img src="/missing" onerror="window.__captionHandlerFired = true;"> at dawn',
-				},
-			] );
+		it( 'normalizes a caption-less slide to an empty caption', async () => {
+			// The shortcode script assigns the caption unguarded, so a missing key renders the
+			// literal string "undefined".
+			await renderSlideshows( [ { src: 'https://example.com/1.jpg' } ] );
 
 			const [ slide ] = JSON.parse( galleriesAtInit[ 0 ] );
-			const rendered = renderCaptionAsHtml( slide.caption );
-			expect( rendered.querySelector( 'img' ) ).toBeNull();
-			expect( rendered.innerHTML ).not.toContain( 'onerror' );
-			expect( rendered.textContent ).toBe( 'The harbour  at dawn' );
-			expect( window.__captionHandlerFired ).toBeUndefined();
+			expect( slide ).toEqual( { src: 'https://example.com/1.jpg', caption: '' } );
 		} );
 
 		// Breakouts aimed at the caption sink, including the mutation-XSS shapes that survive a naive
@@ -400,49 +497,87 @@ describe( 'EmbedContainer', () => {
 			[ 'an array', [ '<img src=x onerror=alert(1)>' ] ],
 			[ 'a nested object', { toString: '<img src=x onerror=alert(1)>' } ],
 			[ 'an array of arrays', [ [ '<img src=x onerror=alert(1)>' ] ] ],
+			[ 'null', null ],
 		] )( 'leaves no element behind when a caption is %s', async ( _label, caption ) => {
 			// innerHTML takes a string, so a non-string caption is coerced: an array of markup joins
 			// back into the markup it holds and is parsed as HTML.
 			await renderSlideshows( [ { src: 'https://example.com/1.jpg', caption } ] );
 
 			const [ slide ] = JSON.parse( galleriesAtInit[ 0 ] );
-			expect( renderCaptionAsHtml( slide.caption ).querySelectorAll( '*' ) ).toHaveLength( 0 );
+			expect( slide.caption ).toBe( '' );
 			expect( slide.src ).toBe( 'https://example.com/1.jpg' );
 		} );
 
-		it( 'sanitizes every slideshow on the page, not only the one being processed', async () => {
-			await renderSlideshows(
-				[ { src: 'https://example.com/1.jpg', caption: 'A view of the harbour' } ],
-				[
-					{
-						src: 'https://example.com/2.jpg',
-						caption: '<img src="/missing" onerror="window.__captionHandlerFired = true;">',
-					},
-				]
-			);
+		it( 'sanitizes slideshows outside any EmbedContainer, since the script initializes them too', async () => {
+			const loose = document.createElement( 'div' );
+			loose.innerHTML = slideshowMarkup( [
+				{ src: 'https://example.com/2.jpg', caption: '<img src=x onerror=alert(1)>' },
+			] );
+			document.body.appendChild( loose );
+
+			await renderSlideshows( [
+				{ src: 'https://example.com/1.jpg', caption: 'A view of the harbour' },
+			] );
 
 			expect( galleriesAtInit ).toHaveLength( 2 );
 			galleriesAtInit.forEach( ( gallery ) => {
 				JSON.parse( gallery ).forEach( ( slide ) => {
-					expect( renderCaptionAsHtml( slide.caption ).querySelector( 'img' ) ).toBeNull();
+					expect( renderCaptionAsHtml( slide.caption ).querySelectorAll( '*' ) ).toHaveLength( 0 );
 				} );
 			} );
+
+			loose.remove();
 		} );
 
-		it( 'drops gallery data that is not a list of slides', async () => {
-			renderContent( '<div class="jetpack-slideshow" data-gallery="not json"></div>' );
+		it( 'rewrites a caption to the same value on every later pass', async () => {
+			// The pass re-runs over every slideshow each time a slideshow initializes, so an encoder
+			// that skipped the decode would turn `&amp;` into `&amp;amp;` a little more each time.
+			await renderSlideshows( [
+				{ src: 'https://example.com/1.jpg', caption: 'Bread &amp; butter' },
+			] );
+
+			const afterFirstPass = galleriesAtInit[ 0 ];
+
+			renderContent( slideshowMarkup( [ { src: 'https://example.com/2.jpg', caption: 'x' } ] ) );
+			await waitFor( () => expect( triggerCount ).toBeGreaterThan( 1 ) );
+
+			expect( readGalleries()[ 0 ] ).toBe( afterFirstPass );
+			expect( renderCaptionAsHtml( JSON.parse( afterFirstPass )[ 0 ].caption ).textContent ).toBe(
+				'Bread & butter'
+			);
+		} );
+
+		it.each( [
+			[ 'is not JSON', 'not json' ],
+			[ 'is an attribute breakout', ATTRIBUTE_BREAKOUT ],
+			[ 'is not a list of slides', '{&quot;src&quot;:&quot;https://example.com/1.jpg&quot;}' ],
+		] )( 'drops gallery data that %s', async ( _label, gallery ) => {
+			renderContent( `<div class="jetpack-slideshow" data-gallery="${ gallery }"></div>` );
 			await waitFor( () => expect( galleriesAtInit ).not.toBeNull() );
 
 			expect( galleriesAtInit ).toEqual( [ null ] );
+			// An empty gallery is a spinner JetpackSlideshow never clears, so keep it out of the way.
+			expect( document.querySelector( '.jetpack-slideshow' ).dataset.processed ).toBe( 'true' );
 		} );
 
-		it( 'drops a gallery payload that is an attribute breakout rather than JSON', async () => {
+		it( 'neutralizes gallery data too deep for JSON.stringify to return', async () => {
+			// V8 parses JSON iteratively but serializes recursively, so a list nested a few thousand
+			// deep round-trips through the parser and would overflow the stack on the way out.
+			// Flattening each slide to primitives happens first, so the payload that reaches
+			// JSON.stringify is never more than a few levels deep. A RangeError escaping here would
+			// skip the trigger below and take every other slideshow in the stream down with it.
+			const depth = 20000;
+			const deep = '['.repeat( depth ) + ']'.repeat( depth );
+
 			renderContent(
-				`<div class="jetpack-slideshow" data-gallery="${ ATTRIBUTE_BREAKOUT }"></div>`
+				`<div class="jetpack-slideshow" data-gallery="${ deep }"></div>`,
+				slideshowMarkup( [ { src: 'https://example.com/1.jpg', caption: 'A harbour' } ] )
 			);
 			await waitFor( () => expect( galleriesAtInit ).not.toBeNull() );
 
-			expect( galleriesAtInit ).toEqual( [ null ] );
+			expect( JSON.parse( galleriesAtInit[ 0 ] ) ).toEqual( [ { caption: '' } ] );
+			// The slideshow after it still got sanitized, and the trigger still ran.
+			expect( JSON.parse( galleriesAtInit[ 1 ] )[ 0 ].caption ).toBe( 'A harbour' );
 		} );
 	} );
 } );
