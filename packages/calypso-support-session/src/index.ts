@@ -4,10 +4,11 @@ import bypassLocalStorage from './bypass-local-storage';
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
 
-// `isSupportSession` global is added in client/document/index.jsx
+// `isSupportSession` and `isSSP` globals are added in client/document/index.jsx
 declare global {
 	interface Window {
 		isSupportSession?: boolean;
+		isSSP?: boolean;
 	}
 }
 
@@ -43,8 +44,24 @@ export function isSupportNextSession() {
 	return !! ( typeof window !== 'undefined' && window.isSupportSession );
 }
 
+/**
+ * Whether the page is being viewed through the support session proxy — the
+ * `ssp` cookie, which the server turns into the `isSSP` global. It is tracked
+ * separately from `isSupportSession` server-side (client/server/pages/index.js),
+ * so neither flag implies the other.
+ */
+export function isSupportSessionProxy() {
+	return !! ( typeof window !== 'undefined' && window.isSSP );
+}
+
+/**
+ * Whether a Happiness Engineer is working inside the user's account, by any of
+ * the three mechanisms. Callers gating behavior that must not run on the
+ * account holder's behalf — writes attributed to them, data persisted to the
+ * HE's browser — want this rather than an individual check.
+ */
 export function isSupportSession() {
-	return isSupportUserSession() || isSupportNextSession();
+	return isSupportUserSession() || isSupportNextSession() || isSupportSessionProxy();
 }
 
 export function maybeInitializeSupportSession( wpcom: {
