@@ -242,6 +242,19 @@ export function checkDomainTransferPermissions( domain: Domain ): void {
 	}
 }
 
+/**
+ * Non-throwing counterpart of `checkDomainTransferPermissions`, for deciding
+ * whether to render a link to the transfer route.
+ */
+export function canTransferDomain( domain: Domain ): boolean {
+	try {
+		checkDomainTransferPermissions( domain );
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 export function checkDomainNameServersPermissions( domain: Domain ): void {
 	checkDomainPermissions( domain, PermissionCheck.NAME_SERVERS );
 }

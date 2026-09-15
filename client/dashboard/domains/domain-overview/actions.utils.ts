@@ -1,5 +1,6 @@
 import { Domain, DomainSubtype, DomainTransferStatus, Purchase } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { canTransferDomain } from '../../utils/domain-permissions';
 import { isExpiredOrRemoved, isIncludedWithPlan } from '../../utils/purchase';
 
 export const transferableTypes: DomainSubtype[] = [
@@ -44,24 +45,13 @@ export const canAutoRenewBeTurnedOff = ( purchase: Purchase ) => {
 };
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
-	if (
-		! domain.current_user_is_owner ||
-		domain.is_redeemable ||
-		domain.pending_registration ||
-		domain.pending_registration_at_registry ||
-		domain.move_to_new_site_pending ||
-		domain.aftermarket_auction ||
-		! transferableTypes.includes( domain.subtype.id )
-	) {
+	if ( domain.move_to_new_site_pending || ! transferableTypes.includes( domain.subtype.id ) ) {
 		return false;
 	}
 
-	// If the domain cannot be transferred to any user or another site, we shouldn't show the transfer action
-	if ( ! domain.can_transfer_to_any_user && ! domain.can_transfer_to_other_site ) {
-		return false;
-	}
-
-	return true;
+	// Anything the transfer route itself rejects must not be offered here, or
+	// the button only leads to a redirect back to this page.
+	return canTransferDomain( domain );
 };
 
 export const shouldShowDisconnectAction = ( domain: Domain ) => {

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { shouldShowTransferAction } from '../actions.utils';
 
@@ -43,5 +47,21 @@ describe( 'shouldShowTransferAction', () => {
 		} );
 
 		expect( shouldShowTransferAction( domain ) ).toBe( true );
+	} );
+
+	it( 'returns false for a 100-year domain', () => {
+		const domain = createDomain( { is_hundred_year_domain: true } );
+
+		expect( shouldShowTransferAction( domain ) ).toBe( false );
+	} );
+
+	it( 'returns false in a support session', () => {
+		window.isSupportSession = true;
+
+		try {
+			expect( shouldShowTransferAction( createDomain() ) ).toBe( false );
+		} finally {
+			delete window.isSupportSession;
+		}
 	} );
 } );
