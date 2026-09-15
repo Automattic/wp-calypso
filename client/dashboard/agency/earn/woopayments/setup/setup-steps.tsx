@@ -20,7 +20,7 @@ interface SetupStepsProps {
 }
 
 const installInstruction = __(
-	"Click the button and we'll automatically install and activate the plugin for you. Then we'll launch WP-Admin so you can configure the final steps."
+	'Click the button and we’ll automatically install and activate the plugin for you. Then we’ll launch WP-Admin so you can configure the final steps.'
 );
 
 export default function SetupSteps( {
@@ -39,7 +39,7 @@ export default function SetupSteps( {
 				<Notice variant="error">
 					<Text>
 						{ __(
-							"WooPayments couldn't be installed automatically. Install it from WP-Admin instead."
+							'WooPayments couldn’t be installed automatically. Install it from WP-Admin instead.'
 						) }
 					</Text>
 				</Notice>
