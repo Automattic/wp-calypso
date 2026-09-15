@@ -86,6 +86,11 @@ test.describe(
 				'Form submissions not supported on private sites'
 			);
 
+			// Forty-odd inbox round-trips, plus the un-spam detour when Akismet flags
+			// the submissions, do not fit the 120s default. A wedged run still fails at
+			// the cause: every wait in the page object carries its own cap.
+			test.setTimeout( 240 * 1000 );
+
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
 			let newPostDetails: PostResponse;
