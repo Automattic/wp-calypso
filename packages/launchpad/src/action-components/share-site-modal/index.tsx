@@ -14,12 +14,12 @@ import { copy, share, check } from '@wordpress/icons';
 import { useState, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
 import type { Task } from '../../types';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { LaunchpadSite } from '../../types-site';
 import './style.scss';
 
 interface ShareSiteModalProps {
 	setModalIsOpen: ( isOpen: boolean ) => void;
-	site: SiteDetails | null;
+	site: LaunchpadSite | null;
 	task: Task | null;
 }
 
@@ -106,7 +106,7 @@ const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 	];
 };
 
-const getSiteSlug = ( site: SiteDetails | null ) => {
+const getSiteSlug = ( site: LaunchpadSite | null ) => {
 	if ( ! site ) {
 		return '';
 	}
@@ -121,7 +121,7 @@ const getSiteSlug = ( site: SiteDetails | null ) => {
 	return '';
 };
 
-const getShareData = ( site: SiteDetails | null ) => {
+const getShareData = ( site: LaunchpadSite | null ) => {
 	const siteSlug = getSiteSlug( site );
 	return {
 		title: siteSlug,

@@ -4,10 +4,11 @@ import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import ChecklistItem from './checklist-item';
 import { useTracking } from './use-tracking';
 import type { Task } from './types';
-import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
+import type { LaunchpadSite } from './types-site';
+import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
 interface Props {
-	site?: SiteDetails | null;
+	site?: LaunchpadSite | null;
 	siteSlug: string | null;
 	checklistSlug: string | null;
 	makeLastTaskPrimaryAction?: boolean;
