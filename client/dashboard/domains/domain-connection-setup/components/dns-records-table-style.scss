@@ -1,16 +1,22 @@
-/* Prevent horizontal overflow and allow text wrapping */
+/**
+ * Each cell holds a single DNS token — an IP address or a hostname — that stops
+ * making sense once it is broken across lines. Keep every value on one line and
+ * let each column size to its content; DataViews scrolls the table when the sum
+ * no longer fits, which reads better than breaking an address in half.
+ *
+ * The rule has to reach the cell's children as well: values rendered through the
+ * Text component reset white-space, so setting it on the cell alone leaves them
+ * wrapping. min-width holds off the 15ch column floor DataViews would otherwise
+ * apply, which pads the one-character Type and Name columns out of proportion.
+ */
 .dns-records-table {
-		.dataviews-view-table__cell-content-wrapper {
-			min-width: initial;
-			white-space: normal;
-			word-break: break-word;
-			overflow-wrap: break-word;
-			max-width: 100%;
+	th,
+	.dataviews-view-table__cell-content-wrapper,
+	.dataviews-view-table__cell-content-wrapper * {
+		white-space: nowrap;
+	}
 
-			// Ensure Text components wrap properly
-			> * {
-				word-break: break-word;
-				overflow-wrap: break-word;
-			}
+	.dataviews-view-table .dataviews-view-table__cell-content-wrapper {
+		min-width: 0;
 	}
 }
