@@ -22,6 +22,7 @@ import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
+import VipSection from './vip-section';
 import type { HostingSection } from '../paths';
 
 import './style.scss';
@@ -53,11 +54,10 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the per-host sections land.
-const PLACEHOLDERS: Record< HostingSection, string > = {
+// Placeholder content until the WordPress.com and Pressable sections land.
+const PLACEHOLDERS: Record< Exclude< HostingSection, 'vip' >, string > = {
 	wpcom: 'WordPress.com hosting content will appear here.',
 	pressable: 'Pressable hosting content will appear here.',
-	vip: 'WordPress VIP hosting content will appear here.',
 };
 
 // TODO: Still missing from the classic Hosting page:
@@ -88,9 +88,12 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		navigate( { to: getMarketplaceHostingSectionRoute( tab as HostingSection ) } );
 	};
 
-	const renderSection = ( brand: HostingSection ) => (
-		<Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>
-	);
+	const renderSection = ( brand: HostingSection ) => {
+		if ( brand === 'vip' ) {
+			return <VipSection isReferralMode={ isReferralMode } />;
+		}
+		return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+	};
 
 	return (
 		<PageLayout
