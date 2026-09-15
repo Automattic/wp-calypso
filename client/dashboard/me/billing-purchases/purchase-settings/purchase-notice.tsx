@@ -42,6 +42,7 @@ import {
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 	isAkismetFreeProduct,
+	hasQueryableSite,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -148,6 +149,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	} );
 	const { data: sitePurchases } = useQuery( {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
+		enabled: hasQueryableSite( purchase ),
 	} );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
