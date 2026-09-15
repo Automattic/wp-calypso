@@ -6,6 +6,7 @@ import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';
@@ -141,7 +142,7 @@ function HelpCenterContent() {
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			onClick={ handleToggleHelpCenter }
 			icon={ <HelpIcon /> }
-			label={ entryLabel ?? 'Help' }
+			label={ entryLabel || __( 'Help' ) }
 			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
 			aria-expanded={ isShown ? true : false }
 			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }

@@ -10,6 +10,7 @@ import {
 import { render, renderHook } from '@testing-library/react';
 import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
+import { adminBarIcon } from '../admin-bar-icon';
 import { useHelpCenterPlugin } from '../plugin-help-center';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
@@ -32,6 +33,13 @@ jest.mock( '../../analytics', () => ( {
 } ) );
 jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
+} ) );
+jest.mock( '../admin-bar-icon', () => ( {
+	adminBarIcon: jest.fn( ( _name, className ) => (
+		<span className={ className }>
+			<svg />
+		</span>
+	) ),
 } ) );
 
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
@@ -264,12 +272,14 @@ describe( 'useHelpCenterPlugin', () => {
 
 	it( 'stays icon only when the Help Center node carries no menu title', () => {
 		const result = renderPlugin( [ HELP_CENTER_NODE ] );
+		render( result.icon as React.ReactElement );
 
 		expect( result.id ).toBe( 'help-center' );
 		expect( result.label ).toBe( 'Help' );
 		expect( result.title ).toBeUndefined();
 		expect( result.tooltip ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
+		expect( adminBarIcon ).toHaveBeenLastCalledWith( ICON, 'omnibar__help-icon' );
 
 		result.onClick?.( {} as React.MouseEvent );
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
