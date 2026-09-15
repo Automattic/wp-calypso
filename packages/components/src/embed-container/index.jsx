@@ -27,6 +27,51 @@ const embedsToLookFor = {
 	'a[href^="http://"], a[href^="https://"]': embedLink, // process plain links last
 };
 
+const INSTAGRAM_PERMALINK_HOSTS = [ 'instagram.com', 'instagr.am', 'cdninstagram.com' ];
+
+function parseUrl( value ) {
+	try {
+		return new URL( value, window.location.href );
+	} catch {
+		return null;
+	}
+}
+
+function isHttpUrl( value ) {
+	const url = parseUrl( value );
+	return !! url && ( url.protocol === 'http:' || url.protocol === 'https:' );
+}
+
+function isInstagramPermalink( value ) {
+	const url = parseUrl( value );
+	return (
+		!! url &&
+		url.protocol === 'https:' &&
+		INSTAGRAM_PERMALINK_HOSTS.some(
+			( host ) => url.hostname === host || url.hostname.endsWith( `.${ host }` )
+		)
+	);
+}
+
+/**
+ * Embed providers read these attributes back out of the markup and turn them into the `src`
+ * of a frame they insert into our document. The values reach us straight from post content,
+ * and a provider that skips its own scheme check will happily hand the browser a
+ * `javascript:` URL to run in the wordpress.com origin, so vet them before any provider
+ * script gets a chance to see the content.
+ */
+const embedUrlAttributes = {
+	cite: isHttpUrl,
+	'data-embed-url': isHttpUrl,
+	'data-href': isHttpUrl,
+	'data-instgrm-permalink': isInstagramPermalink,
+	'data-url': isHttpUrl,
+};
+
+const embedUrlAttributeSelector = Object.keys( embedUrlAttributes )
+	.map( ( attribute ) => `[${ attribute }]` )
+	.join( ',' );
+
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
 
 const SLIDESHOW_URLS = {
@@ -35,6 +80,28 @@ const SLIDESHOW_URLS = {
 	JS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
 	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
+
+/**
+ * Drop embed URL attributes whose value we would not be willing to navigate to.
+ *
+ * This sweeps the whole content tree rather than only the nodes matching `embedsToLookFor`,
+ * because provider scripts rescan the entire document with their own, broader selectors: a
+ * blockquote we skip because its class list does not *start* with `instagram-` is still
+ * picked up by Instagram's own `.instagram-media` scan.
+ * @param {Element} domNode - root of the content tree to clean up
+ */
+function sanitizeEmbedUrls( domNode ) {
+	const nodes = [ domNode, ...domNode.querySelectorAll( embedUrlAttributeSelector ) ];
+
+	nodes.forEach( ( node ) => {
+		Object.entries( embedUrlAttributes ).forEach( ( [ attribute, isAllowed ] ) => {
+			if ( node.hasAttribute( attribute ) && ! isAllowed( node.getAttribute( attribute ) ) ) {
+				debug( 'removing unsafe %s from', attribute, node );
+				node.removeAttribute( attribute );
+			}
+		} );
+	} );
+}
 
 function processEmbeds( domNode ) {
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
@@ -346,7 +413,12 @@ export default class EmbedContainer extends PureComponent {
 	};
 
 	processEmbeds = () => {
-		this.getContentNodes().forEach( processEmbeds );
+		const contentNodes = this.getContentNodes();
+
+		// Every root has to be clean before the first provider script runs, because those
+		// scripts rescan the whole document rather than the node we handed them.
+		contentNodes.forEach( sanitizeEmbedUrls );
+		contentNodes.forEach( processEmbeds );
 	};
 
 	componentDidMount() {
