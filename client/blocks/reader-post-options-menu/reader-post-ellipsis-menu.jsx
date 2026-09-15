@@ -8,7 +8,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -35,7 +35,7 @@ class ReaderPostEllipsisMenu extends Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		teams: PropTypes.array,
-		isSeenEnabled: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -218,7 +218,7 @@ class ReaderPostEllipsisMenu extends Component {
 	stopPropagation = ( event ) => event.stopPropagation();
 
 	render() {
-		const { post, site, teams, translate, isLoggedIn, followSource, isSeenEnabled } = this.props;
+		const { post, site, teams, translate, isLoggedIn, followSource, canMarkSeen } = this.props;
 
 		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
@@ -274,7 +274,7 @@ class ReaderPostEllipsisMenu extends Component {
 					/>
 				) }
 
-				{ isSeenEnabled && (
+				{ canMarkSeen && (
 					<PopoverMenuItem
 						onClick={ isSeen ? this.markAsUnSeen : this.markAsSeen }
 						icon={ isSeen ? unseen : seen }
@@ -352,7 +352,7 @@ const ConnectedPostEllipsisMenu = connect(
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
 	const blogId = isExternal ? null : siteId;
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
+	const canMarkSeen = useCanMarkSeen( { feedId, blogId, post: props.post } );
 
-	return <ConnectedPostEllipsisMenu { ...props } isSeenEnabled={ isSeenEnabled } />;
+	return <ConnectedPostEllipsisMenu { ...props } canMarkSeen={ canMarkSeen } />;
 }

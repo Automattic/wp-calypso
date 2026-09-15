@@ -1,28 +1,9 @@
-export type AgencyDirectoryApplicationStatus = 'pending' | 'in-progress' | 'completed';
-
 export type DirectoryApplicationType =
 	| 'wordpress'
 	| 'jetpack'
 	| 'woocommerce'
 	| 'pressable'
 	| 'vip';
-
-export interface AgencyDirectoryApplication {
-	products: string[];
-	services: string[];
-	directories: DirectoryApplication[];
-	feedbackUrl: string;
-	status?: AgencyDirectoryApplicationStatus;
-	isPublished?: boolean;
-}
-
-export interface DirectoryApplication {
-	directory: DirectoryApplicationType;
-	urls: string[];
-	note?: string;
-	isPublished?: boolean;
-	status?: 'pending' | 'approved' | 'rejected' | 'closed';
-}
 
 export interface AgencyDetails {
 	name: string;

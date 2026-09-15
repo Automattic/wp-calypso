@@ -229,13 +229,17 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-			getChatComponent,
-		} );
+		// The switch is read once per page load, so load the converter under it.
+		jest.isolateModules( () => {
+			const { default: convertUnderSwitch } = jest.requireActual<
+				typeof import('../convert-tool-messages-to-components')
+			>( '../convert-tool-messages-to-components' );
 
-		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );
+
+			expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
+			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		} );
 	} );
 
 	it( 'renders legacy Big Sky show-component messages during migration', () => {

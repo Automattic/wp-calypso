@@ -1,3 +1,4 @@
+import { getPurchasePayment } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { is100Year, isAkismetProduct } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
@@ -19,11 +20,11 @@ import Notice from 'calypso/components/notice';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getAllDomains } from 'calypso/state/sites/domains/selectors';
+import { creditCardHasAlreadyExpired } from '../../lib/raw-purchase-helpers';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -36,8 +37,8 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
+import type { Purchase } from '@automattic/api-core';
 import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -102,7 +103,9 @@ const getDomainDetailsFromPurchase = (
 	purchase: Purchase,
 	domainsDetails: Record< string, ResponseDomain[] >
 ): ResponseDomain | undefined => {
-	return domainsDetails?.[ purchase.siteId ]?.find( ( domain ) => domain.domain === purchase.meta );
+	return domainsDetails?.[ purchase.blog_id ]?.find(
+		( domain ) => domain.domain === purchase.meta
+	);
 };
 
 /**
@@ -124,7 +127,9 @@ export default function PaymentMethodSelector( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
-	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
+	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment(
+		purchase ? getPurchasePayment( purchase ) : undefined
+	);
 
 	const domainsDetails = useSelector( ( state ) => getAllDomains( state ) );
 
@@ -304,26 +309,25 @@ function CurrentPaymentMethodNotAvailableNotice( { purchase }: { purchase: Purch
 	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
 		showDismiss: false,
 	};
+	const payment = getPurchasePayment( purchase );
 
-	if ( purchase.payment.creditCard && creditCardHasAlreadyExpired( purchase ) ) {
+	if ( payment.creditCard && creditCardHasAlreadyExpired( purchase ) ) {
 		noticeProps.text = translate(
 			'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.',
 			{
 				args: {
-					cardType: purchase.payment.creditCard.type.toUpperCase(),
-					cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
-					cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format(
-						'MMMM YYYY'
-					),
+					cardType: payment.creditCard.type.toUpperCase(),
+					cardNumber: parseInt( payment.creditCard.number, 10 ),
+					cardExpiry: moment( payment.creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 				},
 			}
 		);
 		return <Notice { ...noticeProps } />;
 	}
 
-	if ( getPaymentMethodIdFromPayment( purchase.payment ) === 'paypal-existing' ) {
+	if ( getPaymentMethodIdFromPayment( payment ) === 'paypal-existing' ) {
 		const storedPaymentAgreement = storedPaymentAgreements.find(
-			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
+			( agreement ) => agreement.stored_details_id === payment.storedDetailsId
 		);
 		if ( storedPaymentAgreement?.email ) {
 			noticeProps.text = translate(

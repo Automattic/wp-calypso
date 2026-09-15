@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 
@@ -35,6 +35,16 @@ export const DEFAULT_NOTICES_VISIBILITY = {
 };
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
+
+const NOTICE_DISMISS_STATUSES = [ 'dismissed', 'postponed' ] as const;
+export type NoticeDismissStatus = ( typeof NOTICE_DISMISS_STATUSES )[ number ];
+export interface NoticeRecord {
+	show: boolean;
+	status: NoticeDismissStatus | null;
+	postponed_count: number;
+	next_show_at: number | null;
+}
+export type NoticeRecords = Record< NoticeIdType, NoticeRecord >;
 
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
@@ -98,30 +108,104 @@ export const normalizeNoticesVisibility = (
 	return notices;
 };
 
-const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
+const isNoticeRecord = ( value: unknown ): value is Partial< NoticeRecord > =>
+	typeof value === 'object' && value !== null;
+
+const isNoticeDismissStatus = ( value: unknown ): value is NoticeDismissStatus =>
+	NOTICE_DISMISS_STATUSES.includes( value as NoticeDismissStatus );
+
+/**
+ * Both the flat map an older server answers with and a detail record land in one shape, so the
+ * escalation fields read as "never postponed" wherever the server cannot say otherwise.
+ */
+const toNoticeRecord = ( value: unknown ): NoticeRecord => {
+	if ( ! isNoticeRecord( value ) ) {
+		return { show: !! value, status: null, postponed_count: 0, next_show_at: null };
+	}
+	return {
+		show: !! value.show,
+		status: isNoticeDismissStatus( value.status ) ? value.status : null,
+		postponed_count: Number( value.postponed_count ) || 0,
+		next_show_at: typeof value.next_show_at === 'number' ? value.next_show_at : null,
+	};
+};
+
+export const toNoticesVisibility = ( records: NoticeRecords ): Notices => {
+	const visibility = { ...DEFAULT_NOTICES_VISIBILITY };
+	for ( const noticeId of Object.keys( records ) as NoticeIdType[] ) {
+		visibility[ noticeId ] = records[ noticeId ].show;
+	}
+	return visibility;
+};
+
+export const normalizeNoticeRecords = (
+	payload: Record< string, unknown > | null | undefined
+): NoticeRecords => {
+	const records = {} as NoticeRecords;
+	for ( const [ noticeId, value ] of Object.entries( payload ?? {} ) ) {
+		records[ noticeId as NoticeIdType ] = toNoticeRecord( value );
+	}
+	const visibility = normalizeNoticesVisibility( toNoticesVisibility( records ) );
+	for ( const noticeId of Object.keys( visibility ) as NoticeIdType[] ) {
+		records[ noticeId ] = {
+			...( records[ noticeId ] ?? toNoticeRecord( false ) ),
+			show: visibility[ noticeId ],
+		};
+	}
+	return records;
+};
+
+const queryNotices = async function ( siteId: number | null ): Promise< NoticeRecords > {
 	let payload;
 
 	try {
-		payload = await wpcom.req.get( {
-			method: 'GET',
-			apiNamespace: 'wpcom/v2',
-			path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-		} );
+		payload = await wpcom.req.get(
+			{
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+			},
+			{ include_details: true }
+		);
 	} catch ( error ) {
-		return DEFAULT_NOTICES_VISIBILITY;
+		return normalizeNoticeRecords( DEFAULT_NOTICES_VISIBILITY );
 	}
 
-	return normalizeNoticesVisibility( payload );
+	return normalizeNoticeRecords( payload );
 };
+
+// Calypso persists this cache for a week with no buster, so the shape change from a boolean
+// map to records needs its own key or an older build's entry is read as records.
+export const noticesVisibilityQueryKey = ( siteId: number | null ) => [
+	'stats',
+	'notices-visibility',
+	'details',
+	siteId,
+];
+
+/**
+ * Mark a notice hidden in the cache, ahead of the refetch the write triggers.
+ * A cache that was never filled is left alone; only a fetch may seed it.
+ */
+export const setNoticeHidden = (
+	queryClient: QueryClient,
+	siteId: number | null,
+	noticeId: NoticeIdType
+) =>
+	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
+		records
+			? { ...records, [ noticeId ]: { ...toNoticeRecord( records[ noticeId ] ), show: false } }
+			: records
+	);
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: Notices ) => T,
+	select?: ( payload: NoticeRecords ) => T,
 	enabled?: boolean
 ) {
 	return useQuery( {
 		...getDefaultQueryParams(),
-		queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
+		queryKey: noticesVisibilityQueryKey( siteId ),
 		queryFn: () => queryNotices( siteId ),
 		select,
 		enabled: enabled !== false,
@@ -133,8 +217,8 @@ export function useNoticeVisibilityQuery(
 	noticeId: NoticeIdType,
 	enabled?: boolean
 ) {
-	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
-		payload = processConflictNotices( payload );
+	const selectVisibilityForSingleNotice = ( records: NoticeRecords ) => {
+		const payload = processConflictNotices( toNoticesVisibility( records ) );
 		return !! payload?.[ noticeId ];
 	};
 	return useNoticesVisibilityQueryRaw< boolean >(
@@ -145,5 +229,10 @@ export function useNoticeVisibilityQuery(
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {
-	return useNoticesVisibilityQueryRaw< Notices >( siteId );
+	return useNoticesVisibilityQueryRaw< Notices >( siteId, toNoticesVisibility );
+}
+
+export function useNoticeRecordQuery( siteId: number | null, noticeId: NoticeIdType ) {
+	const selectRecord = ( records: NoticeRecords ) => records[ noticeId ];
+	return useNoticesVisibilityQueryRaw< NoticeRecord >( siteId, selectRecord );
 }

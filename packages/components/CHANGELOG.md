@@ -1,3 +1,29 @@
+## 5.0.0
+
+### Breaking Changes
+
+- `SummaryButton`: badge intents now come from `Badge` in `@wordpress/ui` rather than `@automattic/ui`, so the accepted values change from `default | info | success | warning | error` to `draft | informational | stable | low | medium | high | none` ([#111378](https://github.com/Automattic/wp-calypso/pull/111378)). The old and new sets are disjoint, so every existing value needs updating; `default` maps to `draft`, `info` to `informational`, `success` to `stable`, `warning` to `medium`, and `error` to `high`. Badge styling, markup, and status icons also change: the previous implementation rendered an icon per intent, and the new one does not.
+- `Count`: no longer accepts a `forwardRef` prop, so consumers relying on it lose the DOM ref. The default export is also no longer wrapped in `localize`, which injected an unused `translate`/`locale` pair ([#112469](https://github.com/Automattic/wp-calypso/pull/112469), [#112921](https://github.com/Automattic/wp-calypso/pull/112921)).
+- `Tabs`: a controlled `selectedTabId` change now moves focus. Previously the focused tab was preserved when the active tab was recomputed ([#112947](https://github.com/Automattic/wp-calypso/pull/112947)).
+- `Tooltip`: `context` is now typed. It accepts an element, a ref to one, or either wrapped in an object exposing `getDOMNode()`, matching what `Popover` has resolved since 3.0.5.
+- Drop the `react-router-dom` dependency. Nothing in this package imported it, and it imposed a Node >= 20 engine requirement on every consumer.
+
+### Other changes
+
+- Stop importing Calypso's z-index map from published stylesheets, so the package SCSS resolves outside the monorepo ([#114281](https://github.com/Automattic/wp-calypso/pull/114281)).
+- Add `ResurrectedWelcomeModal` ([#113008](https://github.com/Automattic/wp-calypso/pull/113008)).
+- `SummaryButton`: add `target` and `rel` props ([#113215](https://github.com/Automattic/wp-calypso/pull/113215)).
+- `CircularProgressBar`: add `ariaLabelledBy` and `ariaValueText` props ([#113338](https://github.com/Automattic/wp-calypso/pull/113338)).
+- `Tooltip`: convert to TypeScript, typing the existing props ([#112921](https://github.com/Automattic/wp-calypso/pull/112921)).
+- `Count`: convert to TypeScript and merge an incoming `className`; `count` is now optional and defaults to 0 ([#112921](https://github.com/Automattic/wp-calypso/pull/112921)).
+- Drop the unused `@automattic/ui` dependency ([#114250](https://github.com/Automattic/wp-calypso/pull/114250)).
+- Remove CSS rules that matched no markup ([#114294](https://github.com/Automattic/wp-calypso/pull/114294)).
+- Update `@wordpress/components` to ^37.0.0, `@wordpress/ui` to ^0.18.0, and `@wordpress/private-apis` to ^1.51.0.
+
+## 4.1.0
+
+- Declare missing dependencies for published packages ([#112684](https://github.com/Automattic/wp-calypso/pull/112684)).
+
 ## 4.0.0
 
 ### Breaking Changes

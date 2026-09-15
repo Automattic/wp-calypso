@@ -151,6 +151,18 @@ export function canSetAsPrimary( {
 	);
 }
 
+export function canSetAsPrimaryIgnoringSsl( {
+	domain,
+	site,
+	user,
+}: {
+	domain: DomainSummary;
+	site: Site;
+	user: User;
+} ): boolean {
+	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
+}
+
 export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );

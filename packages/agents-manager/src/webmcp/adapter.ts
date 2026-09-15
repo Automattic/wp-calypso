@@ -1,5 +1,6 @@
 import { parse } from '@wordpress/blocks';
 import { normalizeAbilityName } from '../abilities/ability-name';
+import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
@@ -83,10 +84,6 @@ function createAbortError(): Error {
 type ExecutionContext = {
 	knownBlockClientIds: Set< string >;
 };
-
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
 
 function rememberBlockClientIds( result: unknown, context: ExecutionContext ): void {
 	if (

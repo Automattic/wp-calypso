@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getRenewalPrice, isExpiring, isExpiredOrRemoved } from 'calypso/lib/purchases';
+import { isExpiring, isExpiredOrRemoved } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
@@ -75,9 +75,9 @@ const RegisteredDomainDetails = ( {
 
 		if ( purchase && selectedSite.ID ) {
 			const renewalPrice =
-				getRenewalPrice( purchase ) +
+				( purchase.sale_amount || purchase.amount ) +
 				( domain.isRedeemable && redemptionProduct ? redemptionProduct.cost : 0 );
-			const currencyCode = purchase.currencyCode;
+			const currencyCode = purchase.currency_code;
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } ) ?? '';
 		}
 
@@ -100,7 +100,7 @@ const RegisteredDomainDetails = ( {
 				<AutoRenewToggle
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
-					purchase={ purchase.rawPurchase }
+					purchase={ purchase }
 					withTextStatus
 					toggleSource="registered-domain-status"
 				/>
@@ -131,9 +131,7 @@ const RegisteredDomainDetails = ( {
 
 		return (
 			<RenewButton
-				// Temporary bridge (SHILL-2256): this card still reads the camelCase
-				// Purchase from Redux. Remove once it reads the raw shape.
-				purchase={ purchase?.rawPurchase ?? null }
+				purchase={ purchase }
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
