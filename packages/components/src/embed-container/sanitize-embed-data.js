@@ -79,14 +79,16 @@ function isInstagramPermalink( value ) {
 // Attributes a provider navigates to, either as the `src` of a frame it inserts into our document
 // or as a `window.open` target from a document-level click handler. The Instagram permalink is
 // held to its own hosts as well, so the runtime cannot be pointed at an arbitrary origin either.
-const URL_ATTRIBUTES = {
+// Null-prototype, so an attribute named `constructor` or `toString` does not resolve to an
+// inherited member and take the URL path.
+const URL_ATTRIBUTES = Object.assign( Object.create( null ), {
 	cite: isHttpUrl,
 	'data-embed-url': isHttpUrl,
 	'data-href': isHttpUrl,
 	'data-instgrm-permalink': isInstagramPermalink,
 	'data-pin-href': isHttpUrl,
 	'data-url': isHttpUrl,
-};
+} );
 
 /**
  * Reduce a value to the plain text it is meant to be, re-encoded so that it stays text however the

@@ -349,6 +349,18 @@ describe( 'EmbedContainer', () => {
 			expect( container.querySelector( 'img' ).getAttribute( attribute ) ).toBe( decoded );
 		} );
 
+		it( 'does not treat an inherited member name as a URL attribute', () => {
+			// A null-prototype lookup table keeps `constructor` from resolving to Object and
+			// sending an ordinary attribute down the URL path.
+			const container = renderContent(
+				'<div class="embed-issuu issuuembed" constructor="She said &quot;hello&quot;"></div>'
+			);
+
+			expect( container.querySelector( '.issuuembed' ).getAttribute( 'constructor' ) ).toBe(
+				'She said "hello"'
+			);
+		} );
+
 		it( 'leaves attributes outside the data- namespace alone', () => {
 			const container = renderContent(
 				'<div class="embed-issuu issuuembed" title="She said &quot;hello&quot;"></div>'
