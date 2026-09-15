@@ -18,13 +18,10 @@ import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setLoadedProviderIds } from '../loaded-provider-ids';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
-	BIG_SKY_EVENT_PREFIX,
 	getBigSkyTracksData,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 } from '../tracks';
-
-const UNIFIED_EVENT_PREFIX = 'calypso_agents_manager_';
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
@@ -33,16 +30,14 @@ const mockGetActiveSessionId = getActiveSessionId as jest.MockedFunction<
 	typeof getActiveSessionId
 >;
 
-/** Props of the last recorded event whose name starts with `prefix`. */
-function lastEventProps( prefix = '' ): Record< string, unknown > {
-	const call = mockRecordTracksEvent.mock.calls
-		.filter( ( [ eventName ] ) => eventName.startsWith( prefix ) )
-		.at( -1 );
+function lastEventProps(): Record< string, unknown > {
+	const call = mockRecordTracksEvent.mock.calls.at( -1 );
 	return ( call?.[ 1 ] ?? {} ) as Record< string, unknown >;
 }
 
-function lastBigSkyProps(): Record< string, unknown > {
-	return lastEventProps( BIG_SKY_EVENT_PREFIX );
+/** The Big Sky event records first; a mirrored unified event follows it. */
+function bigSkyProps(): Record< string, unknown > {
+	return ( mockRecordTracksEvent.mock.calls[ 0 ]?.[ 1 ] ?? {} ) as Record< string, unknown >;
 }
 
 function recordedEventNames(): string[] {
@@ -74,7 +69,7 @@ describe( 'tracks wrappers', () => {
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
 			expect( eventName ).toBe( 'jetpack_big_sky_chat_input_send_message' );
 
-			const props = lastBigSkyProps();
+			const props = bigSkyProps();
 			expect( props ).toMatchObject( {
 				message_length: 5,
 				is_test: true,
@@ -97,7 +92,7 @@ describe( 'tracks wrappers', () => {
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps() ).toMatchObject( {
+			expect( bigSkyProps() ).toMatchObject( {
 				session_type: 'paid-user-session',
 				screen: 'dashboard',
 				big_sky_version: '7',
@@ -106,7 +101,7 @@ describe( 'tracks wrappers', () => {
 
 		it( 'lets caller props win on collision', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: 'override' } );
-			expect( lastBigSkyProps().sessionid ).toBe( 'override' );
+			expect( bigSkyProps().sessionid ).toBe( 'override' );
 		} );
 
 		it( 'no-ops when the resolved agent id is a reader-chat agent', () => {
@@ -135,13 +130,13 @@ describe( 'tracks wrappers', () => {
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps().blog_id ).toBe( 12345 );
+			expect( bigSkyProps().blog_id ).toBe( 12345 );
 		} );
 
 		it( 'duplicates the session ID into the standard ai_session_id', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps() ).toMatchObject( {
+			expect( bigSkyProps() ).toMatchObject( {
 				sessionid: 'session-xyz',
 				ai_session_id: 'session-xyz',
 			} );
@@ -152,7 +147,7 @@ describe( 'tracks wrappers', () => {
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			const props = lastBigSkyProps();
+			const props = bigSkyProps();
 			expect( props.sessionid ).toBe( '' );
 			expect( props ).not.toHaveProperty( 'ai_session_id' );
 		} );
@@ -160,7 +155,7 @@ describe( 'tracks wrappers', () => {
 		it( 'mirrors a caller-overridden sessionid into ai_session_id', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: 'override' } );
 
-			expect( lastBigSkyProps() ).toMatchObject( {
+			expect( bigSkyProps() ).toMatchObject( {
 				sessionid: 'override',
 				ai_session_id: 'override',
 			} );
@@ -169,13 +164,13 @@ describe( 'tracks wrappers', () => {
 		it( 'omits ai_session_id when a caller overrides sessionid to empty', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: '' } );
 
-			expect( lastBigSkyProps() ).not.toHaveProperty( 'ai_session_id' );
+			expect( bigSkyProps() ).not.toHaveProperty( 'ai_session_id' );
 		} );
 
 		it( 'lets a caller-supplied ai_session_id win over the mirror', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { ai_session_id: 'custom' } );
 
-			expect( lastBigSkyProps() ).toMatchObject( {
+			expect( bigSkyProps() ).toMatchObject( {
 				sessionid: 'session-xyz',
 				ai_session_id: 'custom',
 			} );
@@ -184,7 +179,7 @@ describe( 'tracks wrappers', () => {
 		it( 'labels editor-hosted parity events with the block_editor surface', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps().surface ).toBe( 'block_editor' );
+			expect( bigSkyProps().surface ).toBe( 'block_editor' );
 		} );
 
 		it( 'omits surface when the editor store is not registered', () => {
@@ -195,7 +190,7 @@ describe( 'tracks wrappers', () => {
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps() ).not.toHaveProperty( 'surface' );
+			expect( bigSkyProps() ).not.toHaveProperty( 'surface' );
 		} );
 
 		it( 'omits blog_id when the server payload has no valid site ID', () => {
@@ -206,28 +201,17 @@ describe( 'tracks wrappers', () => {
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
-			expect( lastBigSkyProps() ).not.toHaveProperty( 'blog_id' );
+			expect( bigSkyProps() ).not.toHaveProperty( 'blog_id' );
 		} );
 	} );
 
 	describe( 'unified mirror of Big Sky events', () => {
-		it( 'records the same suffix under the unified name, after the Big Sky event', () => {
-			recordBigSkyTracksEvent( 'jetpack_big_sky_response_action_thumbs_up', {
-				message_id: 'message-1',
-			} );
-
-			expect( recordedEventNames() ).toEqual( [
-				'jetpack_big_sky_response_action_thumbs_up',
-				'calypso_agents_manager_response_action_thumbs_up',
-			] );
-		} );
-
 		it( 'sends the caller props with the unified base props, not the Big Sky ones', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_response_action_thumbs_up', {
 				message_id: 'message-1',
 			} );
 
-			const props = lastEventProps( UNIFIED_EVENT_PREFIX );
+			const props = lastEventProps();
 			expect( props ).toMatchObject( {
 				message_id: 'message-1',
 				ai_session_id: 'session-xyz',
@@ -335,16 +319,8 @@ describe( 'tracks wrappers', () => {
 
 	describe( 'provider_ids', () => {
 		const recorders = [
-			[
-				'Big Sky',
-				() => recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' ),
-				BIG_SKY_EVENT_PREFIX,
-			],
-			[
-				'Agents Manager',
-				() => recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' ),
-				UNIFIED_EVENT_PREFIX,
-			],
+			[ 'Big Sky', () => recordBigSkyTracksEvent( 'jetpack_big_sky_x' ) ],
+			[ 'Agents Manager', () => recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' ) ],
 		] as const;
 
 		afterEach( () => {
@@ -353,32 +329,32 @@ describe( 'tracks wrappers', () => {
 
 		it.each( recorders )(
 			'%s recorder joins the loaded provider ids, sorted for stable grouping',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				setLoadedProviderIds( [ 'woocommerce-ai', 'jetpack-ai' ] );
 
 				recordEvent();
 
-				expect( lastEventProps( prefix ).provider_ids ).toBe( 'jetpack-ai,woocommerce-ai' );
+				expect( lastEventProps().provider_ids ).toBe( 'jetpack-ai,woocommerce-ai' );
 			}
 		);
 
 		it.each( recorders )(
 			'%s recorder sends none when the providers loaded with no external entries',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				setLoadedProviderIds( [] );
 
 				recordEvent();
 
-				expect( lastEventProps( prefix ).provider_ids ).toBe( 'none' );
+				expect( lastEventProps().provider_ids ).toBe( 'none' );
 			}
 		);
 
 		it.each( recorders )(
 			'%s recorder sends none until the providers load',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				recordEvent();
 
-				expect( lastEventProps( prefix ).provider_ids ).toBe( 'none' );
+				expect( lastEventProps().provider_ids ).toBe( 'none' );
 			}
 		);
 	} );
@@ -458,17 +434,13 @@ describe( 'tracks wrappers', () => {
 
 	describe( 'is_a11n', () => {
 		const recorders = [
-			[ 'Big Sky', () => recordBigSkyTracksEvent( 'jetpack_big_sky_x' ), BIG_SKY_EVENT_PREFIX ],
-			[
-				'Agents Manager',
-				() => recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' ),
-				UNIFIED_EVENT_PREFIX,
-			],
+			[ 'Big Sky', () => recordBigSkyTracksEvent( 'jetpack_big_sky_x' ) ],
+			[ 'Agents Manager', () => recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' ) ],
 		] as const;
 
 		it.each( recorders )(
 			'%s recorder injects true when the server identifies Automattician traffic',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 					isDevMode: true,
 					isA11n: true,
@@ -476,13 +448,13 @@ describe( 'tracks wrappers', () => {
 
 				recordEvent();
 
-				expect( lastEventProps( prefix ).is_a11n ).toBe( true );
+				expect( lastEventProps().is_a11n ).toBe( true );
 			}
 		);
 
 		it.each( recorders )(
 			'%s recorder injects false when the server identifies non-Automattician traffic',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 					isDevMode: false,
 					isA11n: false,
@@ -490,20 +462,20 @@ describe( 'tracks wrappers', () => {
 
 				recordEvent();
 
-				expect( lastEventProps( prefix ).is_a11n ).toBe( false );
+				expect( lastEventProps().is_a11n ).toBe( false );
 			}
 		);
 
 		it.each( recorders )(
 			'%s recorder omits the property when the server payload has no identity signal',
-			( _name, recordEvent, prefix ) => {
+			( _name, recordEvent ) => {
 				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 					isDevMode: false,
 				};
 
 				recordEvent();
 
-				expect( lastEventProps( prefix ) ).not.toHaveProperty( 'is_a11n' );
+				expect( lastEventProps() ).not.toHaveProperty( 'is_a11n' );
 			}
 		);
 	} );
@@ -539,8 +511,8 @@ describe( 'tracks wrappers', () => {
 				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' )
 			).not.toThrow();
 			expect( recordedEventNames() ).toContain( 'jetpack_big_sky_chat_input_send_message' );
-			expect( lastBigSkyProps() ).toMatchObject( { post_type: '', is_home_page: false } );
-			expect( lastBigSkyProps() ).not.toHaveProperty( 'surface' );
+			expect( bigSkyProps() ).toMatchObject( { post_type: '', is_home_page: false } );
+			expect( bigSkyProps() ).not.toHaveProperty( 'surface' );
 
 			mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		} );
@@ -556,7 +528,7 @@ describe( 'tracks wrappers', () => {
 			expect( () =>
 				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' )
 			).not.toThrow();
-			expect( lastBigSkyProps() ).toMatchObject( {
+			expect( bigSkyProps() ).toMatchObject( {
 				surface: 'block_editor',
 				post_type: '',
 				is_home_page: false,
