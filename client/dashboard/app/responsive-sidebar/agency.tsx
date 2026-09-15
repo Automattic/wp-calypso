@@ -1,7 +1,7 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
+import { home, globe, layout, pages, plugins, tag, currencyDollar, people } from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
@@ -14,12 +14,14 @@ import {
 	earnPayoutSettingsRoute,
 	earnReferralsRoute,
 	earnWooPaymentsRoute,
+	hasAnyCapability,
 	isMarketplaceSectionAvailable,
 	isRouteAllowedByCapabilities,
 	learnRoute,
 	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
+import { buildDashboardLink } from '../routing';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -63,6 +65,12 @@ export default function AgencySidebar() {
 			{ supports.agency.sites && canAccess( agencySitesRoute ) && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
+			{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
+			{ supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' ) && (
+				<SidebarMenuItem icon={ plugins } href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
+					{ __( 'Plugins' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
