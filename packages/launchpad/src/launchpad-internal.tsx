@@ -1,11 +1,10 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad, type UseLaunchpadOptions } from '@automattic/data-stores';
 import { type FC, useMemo } from 'react';
 import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import ChecklistItem from './checklist-item';
 import { useTracking } from './use-tracking';
 import type { Task } from './types';
 import type { LaunchpadSite } from './types-site';
-import type { UseLaunchpadOptions } from '@automattic/data-stores';
 
 interface Props {
 	site?: LaunchpadSite | null;

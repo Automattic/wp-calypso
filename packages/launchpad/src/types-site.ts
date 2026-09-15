@@ -1,8 +1,4 @@
-/**
- * The subset of a site that Launchpad reads. Kept local so the package does not
- * depend on `@automattic/data-stores` for a type: a full `SiteDetails` still
- * satisfies it structurally.
- */
+/** The subset of a site Launchpad reads. A full `SiteDetails` satisfies it. */
 export interface LaunchpadSite {
 	slug?: string;
 	URL?: string;
