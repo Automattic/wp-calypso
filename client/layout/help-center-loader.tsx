@@ -1,6 +1,13 @@
+import {
+	dashboardAdminBarQuery,
+	queryClient as apiQueryClient,
+	siteAdminBarQuery,
+} from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
+import { getHelpCenterExperimentVariations } from '@automattic/help-center/src/experiments';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -36,6 +43,20 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
+	// The omnibar fetches the admin bar for the entry point it draws, on its own query
+	// client. Read that cache without fetching: the arm costs no request and always
+	// matches the entry point the user saw.
+	const { data: siteAdminBar } = useQuery(
+		{ ...siteAdminBarQuery( site?.ID ?? 0 ), enabled: false },
+		apiQueryClient
+	);
+	const { data: dashboardAdminBar } = useQuery(
+		{ ...dashboardAdminBarQuery(), enabled: false },
+		apiQueryClient
+	);
+	const experimentVariations = getHelpCenterExperimentVariations(
+		siteAdminBar?.nodes ?? dashboardAdminBar?.nodes
+	);
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -69,6 +90,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			experimentVariations={ experimentVariations }
 			{ ...additionalHelpCenterProps }
 		/>
 	);
