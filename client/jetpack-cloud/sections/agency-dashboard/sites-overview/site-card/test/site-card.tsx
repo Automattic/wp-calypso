@@ -82,7 +82,7 @@ describe( '<SiteCard>', () => {
 			},
 			monitor: { error: false, type: 'monitor', status: 'inactive', value: '' },
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
-			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
+			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Updates' },
 		};
 		const initialState = {
 			partnerPortal: {

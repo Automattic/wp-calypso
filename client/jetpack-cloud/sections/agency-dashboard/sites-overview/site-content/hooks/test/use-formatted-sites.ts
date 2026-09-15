@@ -143,8 +143,23 @@ describe( 'useFormattedSites', () => {
 			status: 'warning',
 			type: 'plugin',
 			updates: 1,
-			value: '1 Available',
+			value: '1 Update',
 		} );
+	} );
+
+	it( 'should pluralize plugin updates for the given sites', () => {
+		const {
+			result: { current: formattedSites },
+		} = renderHook( () =>
+			useFormattedSites( [
+				{
+					...FAKE_SITE,
+					awaiting_plugin_updates: [ 'plugin1', 'plugin2' ],
+				},
+			] )
+		);
+
+		expect( formattedSites[ 0 ].plugin.value ).toEqual( '2 Updates' );
 	} );
 
 	it( 'should return correct "stats" data for the given sites', () => {
