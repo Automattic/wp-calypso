@@ -13,6 +13,7 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 	useQueryHandler: () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ),
 } ) );
 
+import config from '@automattic/calypso-config';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -135,5 +136,40 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 			} )
 		);
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'DomainSearchStep — Name Pulse search', () => {
+	let isEnabledSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		mockWPCOMDomainSearch.mockReturnValue( null );
+		isEnabledSpy = jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation( ( flag: string ) => flag === 'domain-search/name-pulse' );
+	} );
+
+	afterEach( () => {
+		isEnabledSpy.mockRestore();
+	} );
+
+	it( 'enables it for the domain-only flow when the flag is on', () => {
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( true );
+	} );
+
+	it( 'keeps it off for other flows', () => {
+		renderStep( { ...baseProps, flowName: 'onboarding' } );
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
+	} );
+
+	it( 'keeps it off when the flag is off', () => {
+		isEnabledSpy.mockImplementation( () => false );
+
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
 	} );
 } );

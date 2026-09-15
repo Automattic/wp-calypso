@@ -47,6 +47,7 @@ declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';
 	interface BlockEditorSelectors {
 		getSelectedBlock(): {
+			clientId: string;
 			name: string;
 			attributes?: {
 				content?: {

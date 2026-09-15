@@ -187,8 +187,12 @@ const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jes
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
-	const { pathname } = useLocation();
-	return <div data-testid="location">{ pathname }</div>;
+	const { pathname, state } = useLocation();
+	return (
+		<div data-testid="location" data-is-new-chat={ String( !! state?.isNewChat ) }>
+			{ pathname }
+		</div>
+	);
 }
 
 function renderAgentDock(
@@ -494,6 +498,17 @@ describe( 'AgentDock', () => {
 				type: 'reset_chat',
 			}
 		);
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'true' );
+	} );
+
+	it( 'does not treat the initial fallback as a new chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/' );
+
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'false' );
 	} );
 
 	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
@@ -674,4 +689,60 @@ describe( 'AgentDock', () => {
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
 		}
 	);
+
+	describe( 'chat opened tracking', () => {
+		const chatOpenedCalls = () =>
+			mockRecordAgentsManagerTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_opened'
+			);
+
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		it( 'records a restored open when the chat is already open on load', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+
+			render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true } ],
+			] );
+		} );
+
+		it( 'records an open each time the chat goes from closed to open', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
+			] );
+		} );
+
+		it( 'records nothing while the chat is minimized to the entry bar', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+			render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [] );
+		} );
+	} );
 } );
