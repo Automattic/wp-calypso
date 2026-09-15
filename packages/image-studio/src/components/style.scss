@@ -72,13 +72,14 @@ body.js.is-image-studio-open {
 		color: inherit;
 	}
 
-	// Restore agenttic-ui button backgrounds stripped by P2's
-	// `button:not(.toggle) { background-color: transparent }` reset.
-	// That selector (1 class + 1 element) beats agenttic-ui's single-class
+	// Restore agenttic-ui primary button colours. P2's
+	// `button:not(.toggle) { background-color: transparent }` reset and the
+	// `color: inherit` rule above both beat agenttic-ui's single-class
 	// selectors like `.button-module_primary`. This re-scopes the fix to
 	// only agenttic-ui buttons inside the modal.
 	.agenttic button[class*="button-module_primary"]:not(:disabled) {
 		background-color: var(--color-primary, #2d5af2) !important;
+		color: var(--color-primary-foreground, #fff);
 	}
 
 	// Override host theme SVG fill/stroke rules for icon rendering.
