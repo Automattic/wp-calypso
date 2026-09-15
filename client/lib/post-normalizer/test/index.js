@@ -25,7 +25,7 @@ import preventWidows from '../rule-prevent-widows';
 import safeImageProperties from '../rule-safe-image-properties';
 import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
-import { domForHtml } from '../utils';
+import { domForHtml, externalLinkParagraph } from '../utils';
 
 jest.mock( '@automattic/calypso-url', () => ( {
 	...jest.requireActual( '@automattic/calypso-url' ),
@@ -968,12 +968,19 @@ describe( 'index', () => {
 			expect( normalized.content ).toBe( content );
 		} );
 
+		test( 'leaves Crowdsignal survey embeds alone when they carry no settings', () => {
+			const content = '<div class="pd-embed"></div>';
+
+			expect( withContentDOM( [ detectSurveys ] )( { content } ).content ).toBe( content );
+		} );
+
 		test( 'does not let Crowdsignal survey settings introduce markup', () => {
 			// JSON escapes stay inert through server-side sanitization and only become quotes and
-			// angle brackets once `JSON.parse` runs here.
+			// angle brackets once `JSON.parse` runs here. The host stays allowlisted so that the
+			// survey link really does get built out of the payload.
 			const domain =
-				'safe.invalid/\\u0022\\u003e\\u003cp contenteditable autofocus ' +
-				'onfocus=\\u0022alert(1)\\u0022\\u003epwn\\u003c/p\\u003e\\u003ca href=\\u0022https://safe.invalid/';
+				'example.survey.fm/\\u0022\\u003e\\u003cp contenteditable autofocus ' +
+				'onfocus=\\u0022alert(1)\\u0022\\u003epwn\\u003c/p\\u003e\\u003ca href=\\u0022https://example.survey.fm/';
 			const post = {
 				content:
 					'<div class="pd-embed" data-settings="' +
@@ -981,19 +988,14 @@ describe( 'index', () => {
 					'"></div>',
 			};
 
-			const normalized = createBetterExcerpt(
-				withContentDOM( [ detectSurveys, removeEventHandlers ] )( post )
-			);
+			const content = domForHtml( withContentDOM( [ detectSurveys ] )( post ).content );
 
-			// The payload survives as inert `data-settings` text, but never as markup of its own.
-			expect(
-				domForHtml( normalized.content ).querySelector( '[onfocus], [autofocus]' )
-			).toBeNull();
-			expect( domForHtml( normalized.content ).querySelector( 'p' ) ).toBeNull();
-			expect( normalized.better_excerpt ).toBe( '' );
+			expect( content.querySelectorAll( 'a' ) ).toHaveLength( 1 );
+			expect( content.querySelector( '[onfocus], [autofocus], [contenteditable]' ) ).toBeNull();
+			expect( content.textContent ).toBe( 'Take our survey' );
 		} );
 
-		test( 'escapes Crowdsignal survey settings into the survey link', () => {
+		test( 'percent-encodes Crowdsignal survey settings into the survey URL', () => {
 			const id = 'a-survey\\u0022 onmouseover=\\u0022alert(1)';
 			const post = {
 				content:
@@ -1122,6 +1124,32 @@ describe( 'index', () => {
 		} );
 	} );
 
+	describe( 'externalLinkParagraph', () => {
+		test( 'keeps the label as text rather than markup', () => {
+			const paragraph = externalLinkParagraph(
+				'https://example.survey.fm/a-survey',
+				'<img src="x" onerror="alert(1)">'
+			);
+
+			expect( paragraph.children ).toHaveLength( 1 );
+			expect( paragraph.querySelector( 'img' ) ).toBeNull();
+			expect( paragraph.textContent ).toBe( '<img src="x" onerror="alert(1)">' );
+		} );
+
+		test( 'keeps the URL inside the href attribute', () => {
+			const paragraph = externalLinkParagraph(
+				'https://example.survey.fm/a-survey" onmouseover="alert(1)',
+				'Take our survey'
+			);
+
+			expect( paragraph.querySelectorAll( 'a' ) ).toHaveLength( 1 );
+			expect( paragraph.querySelector( '[onmouseover]' ) ).toBeNull();
+			expect( paragraph.firstChild.getAttribute( 'href' ) ).toBe(
+				'https://example.survey.fm/a-survey" onmouseover="alert(1)'
+			);
+		} );
+	} );
+
 	describe( 'Jetpack Carousel Linker', () => {
 		test( 'drops permalinks that are not http(s) when links are made safe afterwards', () => {
 			const post = {
@@ -1132,8 +1160,10 @@ describe( 'index', () => {
 					'</a></div></div>',
 			};
 			const normalized = withContentDOM( [ linkJetpackCarousels, makeContentLinksSafe ] )( post );
+			const link = domForHtml( normalized.content ).querySelector( '.tiled-gallery-item a' );
 
-			expect( normalized.content ).not.toEqual( expect.stringContaining( 'href="javascript:' ) );
+			expect( link ).not.toBeNull();
+			expect( link.hasAttribute( 'href' ) ).toBe( false );
 		} );
 
 		test( 'should fix links to jetpack carousels', () => {

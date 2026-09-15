@@ -30,7 +30,7 @@ function surveyUrl( domain, slug ) {
 		return null;
 	}
 
-	if ( url.protocol !== 'https:' || url.username || url.password ) {
+	if ( url.username || url.password ) {
 		return null;
 	}
 
@@ -71,6 +71,8 @@ export default function detectSurveys( post, dom ) {
 
 		const href = surveyUrl( surveyDomain, surveySlug );
 
+		// Leave the embed alone when the URL is not one we can vouch for. Its `div` form then
+		// renders as nothing, which beats linking somewhere arbitrary.
 		if ( ! href ) {
 			return;
 		}
