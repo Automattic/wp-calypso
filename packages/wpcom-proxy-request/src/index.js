@@ -76,7 +76,7 @@ let buffered;
 const requests = {};
 
 /**
- * Whether the iframe last reported a cookie-auth failure. Cleared when it reports success.
+ * A flag which stores whether the iframe has sent a cookie-auth-missing event.
  * @type boolean
  */
 let _isCookieAuthMissing = false;
@@ -400,8 +400,13 @@ function onmessage( e ) {
 
 	// Allows packages consumers to check whether the iframe had a cookie
 	// error. See the isCookieAuthMissing() function.
-	if ( data === 'cookie-auth-missing' || data === 'cookie-auth-ok' ) {
-		_isCookieAuthMissing = data === 'cookie-auth-missing';
+	if ( data === 'cookie-auth-missing' ) {
+		_isCookieAuthMissing = true;
+		return;
+	}
+
+	// Another string non-JSON message, client can ignore it.
+	if ( data === 'cookie-auth-ok' ) {
 		return;
 	}
 
@@ -580,8 +585,8 @@ function canAccessWpcomApis() {
 }
 
 /**
- * Returns whether the iframe last reported a cookie-auth failure, signalling that
- * something is wrong with the user's cookie. Reset once the iframe authenticates.
+ * Returns whether the iframe has ever sent the "cookie-auth-missing" event, signalling
+ * that something is wrong with the user's cookie.
  * @returns {boolean}
  */
 function isCookieAuthMissing() {
