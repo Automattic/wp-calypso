@@ -210,20 +210,18 @@ describe( 'setStreamHandler', () => {
 		expect( getStreamedMarkup( 'call-1' ) ).toBe( '<p>ab' );
 	} );
 
-	it( 'finalizes, for a renderer that registers late, a stream already finalized', async () => {
+	// The renderer mounts for the life of an editor page; its absence means its chunk never loaded.
+	it( 'reports a stream finalized with no renderer, and forgets it', async () => {
 		setStreamHandler( undefined );
 		await streamed( 'call-1', '<p>a' );
-		await finalizePendingStreams( 'call-1' );
+
+		await expect( finalizePendingStreams( 'call-1' ) ).resolves.toBe( false );
 
 		setStreamHandler( handler );
 		await Promise.resolve();
 
-		expect( handler ).toHaveBeenCalledTimes( 1 );
-		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1', isFinal: true } );
-
-		await finalizePendingStreams();
-
-		expect( handler ).toHaveBeenCalledTimes( 1 );
+		expect( handler ).not.toHaveBeenCalled();
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 	} );
 
 	it( 'forgets the stream when the renderer unregisters', async () => {
@@ -252,6 +250,11 @@ describe( 'finalizePendingStreams', () => {
 			{ toolCallId: 'call-1', isFinal: true },
 			{ toolCallId: 'call-2', isFinal: true },
 		] );
+	} );
+
+	it( 'reports that nothing was streamed', async () => {
+		await expect( finalizePendingStreams( 'call-1' ) ).resolves.toBe( false );
+		expect( handler ).not.toHaveBeenCalled();
 	} );
 
 	it( 'drops a stream the renderer has forgotten', async () => {
