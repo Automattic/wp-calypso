@@ -13,6 +13,7 @@ export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-w
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
 export const A4A_SITES_CONNECT_URL_LINK = '/sites/connect-url';
 export const A4A_PLUGINS_LINK = '/plugins';
+export const A4A_THEMES_LINK = '/themes';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
 export const A4A_MARKETPLACE_HOSTING_LINK = `${ A4A_MARKETPLACE_LINK }/hosting`;
