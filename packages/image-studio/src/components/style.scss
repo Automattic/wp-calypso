@@ -82,6 +82,16 @@ body.js.is-image-studio-open {
 		color: var(--color-primary-foreground, #fff);
 	}
 
+	// The same P2 reset also strips the outline suggestion chips and the
+	// input toolbar trigger, so re-assert their agenttic-ui tokens here.
+	.agenttic .button-module_outline {
+		background-color: var(--color-background);
+	}
+
+	.agenttic .AgentUIInputToolbar-module_button {
+		background-color: var(--color-muted);
+	}
+
 	// Override host theme SVG fill/stroke rules for icon rendering.
 	// P2 and other themes apply global CSS fill properties on SVG elements,
 	// which override the fill/stroke inheritance used by @wordpress/icons
