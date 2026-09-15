@@ -15,6 +15,9 @@ import type { AtomicTransfer, Purchase } from '@automattic/api-core';
  */
 export const REVERT_NOTICE_DAYS = 30;
 
+/** How long a fetched purchases list stays fresh for the notice; every site page mounts the arbiter, so the client's stale-at-once default would refetch on each navigation. */
+export const PURCHASES_STALE_TIME = 5 * 60 * 1000;
+
 /** A revert cannot un-happen within a day, and the negative answer -- no transfer yet -- is the common case for a Free site; caching it this long is what keeps the probe from costing every hover-preload and navigation. */
 export const TRANSFER_CACHE_TIME = 24 * 60 * 60 * 1000;
 
@@ -117,12 +120,10 @@ export function useSiteExpiryNotice(
 	{ isDashboardScreen, currentUserId, isAtomic, locale }: SiteExpiryNoticeOptions
 ): SiteExpiryNoticeState | null {
 	// Hosts may render before a site is selected; `0` must never hit the API.
-	// Fresh for a while: every site page mounts the arbiter, so the client's
-	// stale-at-once default would refetch purchases on each navigation.
 	const { data: purchases, isSuccess: hasPurchases } = useQuery( {
 		...sitePurchasesQuery( siteId ),
 		enabled: siteId > 0,
-		staleTime: 5 * 60 * 1000,
+		staleTime: PURCHASES_STALE_TIME,
 	} );
 	const purchase = purchases ? pickSitewideExpiryPurchase( purchases ) : null;
 

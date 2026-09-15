@@ -42,14 +42,21 @@ export function SitesNoticeArbiter( { children }: { children?: ReactNode } ) {
 	const sharedCandidate = useSharedCandidate();
 	const pageCandidates = Children.toArray( children );
 
-	// Latched: if the page had a candidate when it loaded, never promote a
-	// shared candidate into the slot mid-session (e.g. after a dismissal).
+	// Latched: whichever tier held the slot when the page loaded keeps it. A
+	// dismissal mid-session (a page notice self-nulling, or a shared candidate
+	// whose hook goes null once the dismissal is written back) empties the slot
+	// rather than promoting the next notice.
 	const [ hadPageCandidateOnMount ] = useState( pageCandidates.length > 0 );
+	const [ hadUrgentSharedCandidateOnMount ] = useState( !! sharedCandidate?.isUrgent );
 
 	// The red tier: a site a week or less from losing its plan, or that already
 	// has, hears about it before anything the page wants to say.
 	if ( sharedCandidate?.isUrgent ) {
 		return sharedCandidate.node;
+	}
+
+	if ( hadUrgentSharedCandidateOnMount ) {
+		return null;
 	}
 
 	if ( pageCandidates.length > 0 ) {

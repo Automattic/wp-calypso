@@ -120,6 +120,31 @@ describe( '<SitesNoticeArbiter>', () => {
 		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'leaves the slot empty when an urgent shared candidate goes null after mount', async () => {
+		// A dismissal written back to the cache makes the candidate hook return
+		// null on the next render; the page notice must not take its place.
+		function Page() {
+			const [ , rerender ] = useState( 0 );
+			return (
+				<>
+					<button onClick={ () => rerender( ( n ) => n + 1 ) }>Rerender</button>
+					<SitesNoticeArbiter>
+						<Notice>Page notice</Notice>
+					</SitesNoticeArbiter>
+				</>
+			);
+		}
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expired</Notice>, isUrgent: true } );
+		render( <Page /> );
+		expect( await screen.findByText( 'Plan expired' ) ).toBeVisible();
+
+		mockCandidate.mockReturnValue( null );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Rerender' } ) );
+
+		expect( screen.queryByText( 'Plan expired' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'a non-urgent shared candidate loses to page candidates', async () => {
 		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
 		render(

@@ -3,10 +3,11 @@
  */
 import { DotcomPlans } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render as testingLibraryRender, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { PlanExpiryNotice } from '..';
+import { render } from '../../../test-utils';
 import { NOW, expiryInDays, makePurchase } from './fixtures';
 import type { ComponentProps } from 'react';
 
@@ -29,11 +30,7 @@ function notice( recordTracksEvent: jest.Mock, extra: Props = {} ) {
 
 function renderNotice( extra: Props = {} ) {
 	const recordTracksEvent = jest.fn();
-	render(
-		<QueryClientProvider client={ newQueryClient() }>
-			{ notice( recordTracksEvent, extra ) }
-		</QueryClientProvider>
-	);
+	render( notice( recordTracksEvent, extra ) );
 	return { recordTracksEvent };
 }
 
@@ -59,6 +56,9 @@ test( 'sitewide impression carries the aligned properties', () => {
 } );
 
 test( 'a re-render with an equal but new eventProperties object does not re-fire the impression', () => {
+	// `render` from test-utils wraps every call in its own fresh provider tree,
+	// so its `rerender` unmounts and remounts rather than re-rendering the same
+	// instance; render directly here so the same instance survives the rerender.
 	const recordTracksEvent = jest.fn();
 	const queryClient = newQueryClient();
 	const purchase = makePurchase( { expiry_date: expiryInDays( 3 ) } );
@@ -68,7 +68,7 @@ test( 'a re-render with an equal but new eventProperties object does not re-fire
 		</QueryClientProvider>
 	);
 
-	const { rerender } = render( tree() );
+	const { rerender } = testingLibraryRender( tree() );
 	rerender( tree() );
 
 	expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );

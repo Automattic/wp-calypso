@@ -2,6 +2,7 @@ import { queryClient, siteCurrentUserQuery, sitePurchasesQuery } from '@automatt
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import { pickSitewideExpiryPurchase } from '../plan-expiry-notice';
 import {
+	PURCHASES_STALE_TIME,
 	REVERT_NOTICE_DAYS,
 	parseRevertedAt,
 	siteExpiryTransferQuery,
@@ -16,16 +17,22 @@ const ignore = () => undefined;
  * its revert, so its latest transfer is fetched, and inside the revert window
  * the dismissal stamp too, so a dismissal made in wp-admin is honoured. Nothing
  * here may block the page: failures are swallowed and retries are off, and
- * `useSiteExpiryNotice` renders nothing for an errored query. The transfer
- * probe is cached for a day (`TRANSFER_CACHE_TIME`), so a repeat call for the
- * same site within the day makes no request.
+ * `useSiteExpiryNotice` renders nothing for an errored query. Purchases are
+ * refetched only when the hook would find them stale too (`PURCHASES_STALE_TIME`),
+ * so a persisted copy from an earlier visit cannot settle the stage; the
+ * transfer probe is cached for a day (`TRANSFER_CACHE_TIME`), so a repeat call
+ * for the same site within the day makes no request.
  */
 export async function ensureSiteExpiryNoticeData(
 	site: Pick< Site, 'ID' | 'is_wpcom_atomic' >
 ): Promise< void > {
 	const siteId = site.ID;
 	const purchases = await queryClient
-		.ensureQueryData( { ...sitePurchasesQuery( siteId ), retry: false } )
+		.fetchQuery( {
+			...sitePurchasesQuery( siteId ),
+			staleTime: PURCHASES_STALE_TIME,
+			retry: false,
+		} )
 		.catch( ignore );
 	if ( ! purchases || pickSitewideExpiryPurchase( purchases ) || site.is_wpcom_atomic ) {
 		return;

@@ -9,6 +9,7 @@ import {
 	revertedTransfer,
 } from '../../plan-expiry-notice/test/fixtures';
 import { ensureSiteExpiryNoticeData } from '../ensure-site-expiry-notice-data';
+import { PURCHASES_STALE_TIME } from '../use-site-expiry-notice';
 
 const api = () => nock( 'https://public-api.wordpress.com' );
 const upgrades = ( purchases: unknown[] ) =>
@@ -36,6 +37,29 @@ test( 'with a plan it settles purchases only', async () => {
 
 	expect( queryClient.getQueryData( PURCHASES_KEY ) ).toHaveLength( 1 );
 	expect( transfer.isDone() ).toBe( false );
+} );
+
+test( 'refetches purchases the hook would consider stale', async () => {
+	// A persisted copy from an earlier visit may predate the plan's lapse; the
+	// loader must not settle the stage from it, or the notice pops in after paint.
+	queryClient.setQueryData( PURCHASES_KEY, [], {
+		updatedAt: Date.now() - PURCHASES_STALE_TIME - 1,
+	} );
+	const scope = upgrades( [ makePurchase( { expiry_date: expiryInDays( 3 ) } ) ] );
+
+	await ensureSiteExpiryNoticeData( site() );
+
+	expect( scope.isDone() ).toBe( true );
+	expect( queryClient.getQueryData( PURCHASES_KEY ) ).toHaveLength( 1 );
+} );
+
+test( 'keeps purchases the hook would consider fresh', async () => {
+	queryClient.setQueryData( PURCHASES_KEY, [], { updatedAt: Date.now() - 1000 } );
+	const scope = upgrades( [] );
+
+	await ensureSiteExpiryNoticeData( site( true ) );
+
+	expect( scope.isDone() ).toBe( false );
 } );
 
 test( 'with no plan on an Atomic site it settles purchases only', async () => {
