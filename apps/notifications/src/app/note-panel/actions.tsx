@@ -26,7 +26,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Menu } = unlock( privateApis );
 
 const LAYOUTS: { value: LayoutStyle; label: string }[] = [
-	{ value: 'classic', label: __( 'Classic' ) },
+	{ value: 'detailed', label: __( 'Detailed' ) },
 	{ value: 'simplified', label: __( 'Simplified' ) },
 ];
 

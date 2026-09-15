@@ -70,11 +70,11 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 
 // Temporary and English-only: the API sends the subject as one finished sentence, so
 // splitting it here relies on word order. Returns null when unsure and the row falls back
-// to the classic layout. The real fix is the server carrying the action as its own string.
+// to the detailed layout. The real fix is the server carrying the action as its own string.
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
-export function getFields( layoutStyle: LayoutStyle = 'classic' ): Field< Note >[] {
+export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',

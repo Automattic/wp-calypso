@@ -138,7 +138,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// without the flag has no way to change it back, and a preference saved from one that
 	// does would otherwise follow the account into it.
 	const storedLayoutStyle = useSelector( getLayoutStyle );
-	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'classic';
+	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'detailed';
 	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(

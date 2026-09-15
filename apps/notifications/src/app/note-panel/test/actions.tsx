@@ -82,7 +82,7 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
-		expect( await screen.findByRole( 'menuitemradio', { name: 'Classic' } ) ).toBeInTheDocument();
+		expect( await screen.findByRole( 'menuitemradio', { name: 'Detailed' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) ).toBeInTheDocument();
 	} );
 
@@ -112,7 +112,7 @@ describe( 'NotePanel settings menu', () => {
 			[
 				'recordEvent',
 				'calypso_notification_layout_style_change',
-				{ from: 'classic', to: 'simplified' },
+				{ from: 'detailed', to: 'simplified' },
 			],
 		] );
 	} );
@@ -122,7 +122,7 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitemradio', { name: 'Detailed' } ) ).toHaveAttribute(
 			'aria-checked',
 			'true'
 		);

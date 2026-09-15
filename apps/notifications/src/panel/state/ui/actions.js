@@ -50,7 +50,7 @@ export const setLayout = ( layout ) => ( {
 } );
 
 /**
- * @param {'classic' | 'simplified'} layoutStyle
+ * @param {'detailed' | 'simplified'} layoutStyle
  */
 export const setLayoutStyle = ( layoutStyle ) => ( {
 	type: SET_LAYOUT_STYLE,

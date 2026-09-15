@@ -34,7 +34,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-dashboard-pd-not-approved-popover': false,
 	'a4a-marketplace-referral-guide-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
-	'notifications-layout-style': 'classic',
+	'notifications-layout-style': 'detailed',
 	'notifications-view-settings-seen': false,
 };
 

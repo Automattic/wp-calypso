@@ -37,7 +37,9 @@ const applyPreferences = (
 	// Unset means never chosen: start those people on the simplified layout wherever the
 	// picker exists to change it back.
 	store.dispatch(
-		actions.ui.setLayoutStyle( layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'classic' ) )
+		actions.ui.setLayoutStyle(
+			layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'detailed' )
+		)
 	);
 
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );

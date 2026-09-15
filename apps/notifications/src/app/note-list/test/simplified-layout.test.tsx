@@ -40,7 +40,7 @@ const noteAboutAPost = () => ( {
 } );
 
 const renderList = (
-	layoutStyle?: 'classic' | 'simplified',
+	layoutStyle?: 'detailed' | 'simplified',
 	{ isViewSettingsEnabled = true }: { isViewSettingsEnabled?: boolean } = {}
 ) => {
 	const store = initStore();
@@ -73,7 +73,7 @@ describe( 'NoteList simplified layout', () => {
 		Element.prototype.scrollIntoView = noop;
 	} );
 
-	// The classic subject is rendered through `html()`, which splits the sentence across
+	// The detailed subject is rendered through `html()`, which splits the sentence across
 	// elements for its ranges, so assert on the row's text rather than a single node.
 	it( 'shows the whole sentence and the excerpt by default', () => {
 		const { container } = renderList();
@@ -83,7 +83,7 @@ describe( 'NoteList simplified layout', () => {
 	} );
 
 	// The setting is only offered where the flag is on. Somewhere it is off there is no
-	// way back to classic, so a preference saved elsewhere must not follow the account in.
+	// way back to detailed, so a preference saved elsewhere must not follow the account in.
 	it( 'ignores a saved simplified layout where the setting is not offered', () => {
 		const { container } = renderList( 'simplified', { isViewSettingsEnabled: false } );
 

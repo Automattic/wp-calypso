@@ -62,6 +62,6 @@ export interface UserPreferences {
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 	'a4a-marketplace-referral-guide-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
-	'notifications-layout-style'?: 'classic' | 'simplified';
+	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;
 }
