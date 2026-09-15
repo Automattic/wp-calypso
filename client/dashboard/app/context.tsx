@@ -51,6 +51,7 @@ export type SiteOverviewSupports = {
 
 export type AppConfig = {
 	name: string;
+	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
