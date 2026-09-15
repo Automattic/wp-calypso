@@ -1,4 +1,5 @@
 import { useEffect, useRef } from '@wordpress/element';
+import { isSiteEditorContext } from '../utils/site-editor-context';
 
 const URL_SESSION_PARAM = 'wp-agent-chat';
 
@@ -29,8 +30,11 @@ export function useUrlSessionId(): string {
 
 		url.searchParams.delete( URL_SESSION_PARAM );
 		window.history.replaceState( window.history.state, '', url );
-		// replaceState does not notify @wordpress/router, so emit popstate to synchronize its cached location.
-		window.dispatchEvent( new PopStateEvent( 'popstate', { state: window.history.state } ) );
+		// `@wordpress/router` only refreshes its cached location on `popstate`.
+		// Other hosts' routers would treat the event as a back/forward navigation.
+		if ( isSiteEditorContext() ) {
+			window.dispatchEvent( new PopStateEvent( 'popstate', { state: window.history.state } ) );
+		}
 	}, [] );
 
 	return urlSessionIdRef.current;

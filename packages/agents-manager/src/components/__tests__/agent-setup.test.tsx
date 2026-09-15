@@ -177,6 +177,7 @@ describe( 'AgentSetup', () => {
 
 	it( 'prefers the URL session over the stored session', async () => {
 		mockAgentDockCatchAll = true;
+		document.body.className = 'site-editor-php';
 		saveSessionId( 'stored-session', undefined, '111' );
 		const onPopState = jest.fn();
 		window.addEventListener( 'popstate', onPopState );
@@ -198,6 +199,18 @@ describe( 'AgentSetup', () => {
 		expect( window.location.search ).toBe( '?canvas=edit' );
 		expect( window.history.state ).toEqual( { canvas: 'edit' } );
 		expect( onPopState ).toHaveBeenCalledTimes( 1 );
+		window.removeEventListener( 'popstate', onPopState );
+	} );
+
+	it( 'does not emit popstate outside the Site Editor', async () => {
+		const onPopState = jest.fn();
+		window.addEventListener( 'popstate', onPopState );
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( onPopState ).not.toHaveBeenCalled();
 		window.removeEventListener( 'popstate', onPopState );
 	} );
 
