@@ -94,7 +94,19 @@ export function useShoppingCart() {
 		[ marketplaceType ]
 	);
 
+	// Puts `item` in the cart in place of any items with the given slugs, the
+	// way a hosting plan replaces the plan of the same family already in it.
+	const swapItems = useCallback(
+		( slugsToRemove: string[], item: ShoppingCartItem ) => {
+			const remaining = getSnapshot( marketplaceType ).filter(
+				( current ) => current.slug !== item.slug && ! slugsToRemove.includes( current.slug )
+			);
+			writeItems( marketplaceType, [ ...remaining, item ] );
+		},
+		[ marketplaceType ]
+	);
+
 	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
 
-	return { items, hasItem, addItem, removeItem, replaceItems, clearCart };
+	return { items, hasItem, addItem, removeItem, replaceItems, swapItems, clearCart };
 }
