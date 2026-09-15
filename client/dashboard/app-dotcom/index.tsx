@@ -48,6 +48,7 @@ boot( {
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
+		switch: true,
 	},
 	optIn: true,
 	components: {
