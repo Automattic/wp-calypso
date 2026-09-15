@@ -72,18 +72,15 @@ body.js.is-image-studio-open {
 		color: inherit;
 	}
 
-	// Restore agenttic-ui primary button colours. P2's
+	// agenttic-ui styles its buttons with single-class selectors, so P2's
 	// `button:not(.toggle) { background-color: transparent }` reset and the
-	// `color: inherit` rule above both beat agenttic-ui's single-class
-	// selectors like `.button-module_primary`. This re-scopes the fix to
-	// only agenttic-ui buttons inside the modal.
+	// `color: inherit` rule above both outweigh them. These rules restate the
+	// agenttic-ui tokens with more weight, scoped to its buttons in the modal.
 	.agenttic button[class*="button-module_primary"]:not(:disabled) {
-		background-color: var(--color-primary, #2d5af2) !important;
-		color: var(--color-primary-foreground, #fff);
+		background-color: var(--color-primary) !important;
+		color: var(--color-primary-foreground);
 	}
 
-	// The same P2 reset also strips the outline suggestion chips and the
-	// input toolbar trigger, so re-assert their agenttic-ui tokens here.
 	.agenttic .button-module_outline {
 		background-color: var(--color-background);
 	}
@@ -459,7 +456,7 @@ body.js.is-image-studio-open {
 	}
 
 	&:focus-visible {
-		outline: 2px solid var(--color-primary);
+		outline: 2px solid var(--color-ring);
 		outline-offset: 2px;
 	}
 
