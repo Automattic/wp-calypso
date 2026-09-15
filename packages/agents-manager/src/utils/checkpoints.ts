@@ -1,3 +1,13 @@
+import { serialize } from '@wordpress/blocks';
+import { deepClone } from './deep-clone';
+import {
+	getRootBlocks,
+	resolveBlocksRoot,
+	stageRootBlocks,
+	type BlocksRoot,
+	type CurrentPost,
+	type EditorBlock,
+} from './editor-blocks';
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
 import {
 	isSameMenuId,
@@ -11,15 +21,17 @@ import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
 import { getSiteMetadata, replaceSiteMetadata, type SiteMetadata } from './site-metadata';
 import { getSiteTitle, setSiteTitle } from './site-title';
 import { getToolCallIdFromConversationHistory } from './tool-call-history';
+import { recordBigSkyTracksEvent } from './tracks';
+import type { Block } from '@wordpress/blocks';
 
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
- * execute as plain callbacks. The global-styles, site-logo, site-title, page,
- * navigation and site-metadata domains restore today. The block domain lands
- * with `apply-block-edits`; until then its checkpoints live in Big Sky's store
- * and restore through the `provider-checkpoints` bridge.
+ * execute as plain callbacks. Every migrated domain restores here: global
+ * styles, the site logo, the site title, site metadata, pages, navigation and
+ * the page's blocks. Checkpoints Big Sky's remaining tools write live in its
+ * store and restore through the `provider-checkpoints` bridge.
  *
  * Big Sky also re-applies the checkpoint's variation titles after a restore, to
  * sync its variation-selection store. AM has no such store, and the entity
@@ -34,6 +46,7 @@ export const checkpointKeys = {
 	FONT: 'font',
 	BUTTON: 'button',
 	LOGO: 'logo',
+	BLOCKS: 'blocks',
 	PAGE: 'page',
 	NAVIGATION: 'navigation',
 	SITE_METADATA: 'site_metadata',
@@ -67,12 +80,24 @@ interface PageRename {
 	to: string;
 }
 
+/**
+ * The page's blocks under the root a design wrote into, and the post they
+ * belong to. The root is recorded by kind and resolved again on restore: its
+ * clientId does not survive the editor remounting.
+ */
+interface BlocksSnapshot {
+	rootKind: BlocksRoot[ 'kind' ];
+	blocks: EditorBlock[];
+	post: CurrentPost;
+}
+
 export interface CheckpointRecord extends CheckpointMetadata {
 	id: string;
 	checkpointKeys: string[];
 	createdAt: number;
 	themeBeforeUpdate?: Required< GlobalStylesRecord >;
 	logoBeforeUpdate?: SiteLogo;
+	blocksBeforeUpdate?: BlocksSnapshot;
 	siteTitleBeforeUpdate?: string;
 	siteMetadataBeforeUpdate?: SiteMetadata;
 	// A list, not a map: object keys are strings, and a menu id is a post id —
@@ -84,10 +109,6 @@ export interface CheckpointRecord extends CheckpointMetadata {
 }
 
 const records = new Map< string, CheckpointRecord >();
-
-// JSON round-trip like Big Sky: snapshots must not share references with the
-// live edited record, and non-serializable values must not survive into them.
-const deepClone = < T >( value: T ): T => JSON.parse( JSON.stringify( value ) );
 
 function captureThemeSnapshot(): Required< GlobalStylesRecord > | undefined {
 	const globalStyles = getEditedGlobalStyles();
@@ -129,6 +150,113 @@ function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
 	}
 
 	setSiteLogo( checkpoint.logoBeforeUpdate );
+}
+
+function captureBlocksSnapshot( root = resolveBlocksRoot() ): BlocksSnapshot | undefined {
+	if ( ! root ) {
+		return undefined;
+	}
+
+	return {
+		rootKind: root.kind,
+		blocks: deepClone( getRootBlocks( root.clientId ) ),
+		post: root.post,
+	};
+}
+
+// The root is resolved again, so a write lands where the page is now, and
+// only on the page the snapshot was taken from.
+function resolveSnapshotRoot( snapshot: BlocksSnapshot ): BlocksRoot {
+	const root = resolveBlocksRoot();
+	// The editor hands out the id as a number or a string, depending on the surface.
+	const samePost =
+		String( root?.post.id ) === String( snapshot.post.id ) &&
+		root?.post.type === snapshot.post.type;
+
+	if ( ! root || root.kind !== snapshot.rootKind || ! samePost ) {
+		const { title, type, id } = snapshot.post;
+
+		throw new Error(
+			`The page design checkpoint belongs to ${
+				title ? `“${ title }”` : `${ type } ${ id }`
+			}, which is not open now. Open it to restore.`
+		);
+	}
+
+	return root;
+}
+
+const countBlocks = ( blocks: EditorBlock[] ): number =>
+	blocks.reduce( ( count, block ) => count + 1 + countBlocks( block.innerBlocks ), 0 );
+
+// Big Sky's measure, with the JSON size standing in when a block cannot serialize.
+function markupLength( blocks: EditorBlock[] ): number {
+	try {
+		return serialize( blocks as Block[] ).length;
+	} catch {
+		return JSON.stringify( blocks ).length;
+	}
+}
+
+/**
+ * Big Sky's guard against a snapshot taken before the canvas had loaded:
+ * putting it back would wipe the page. Recorded under Big Sky's event name so
+ * its dashboard keeps counting.
+ */
+function throwIfRestoreCollapsesPage(
+	checkpoint: CheckpointRecord,
+	snapshot: BlocksSnapshot,
+	root: BlocksRoot
+): void {
+	const current = getRootBlocks( root.clientId );
+	const currentCount = countBlocks( current );
+	const restoreCount = countBlocks( snapshot.blocks );
+	const currentLength = markupLength( current );
+	const restoreLength = markupLength( snapshot.blocks );
+	const collapses =
+		( currentCount >= 5 && restoreCount <= 2 ) ||
+		( currentLength >= 1000 && restoreLength < currentLength * 0.2 );
+
+	if ( ! collapses ) {
+		return;
+	}
+
+	recordBigSkyTracksEvent( 'jetpack_big_sky_checkpoint_restore_blocked', {
+		reason: 'content_shrink',
+		checkpoint_id: checkpoint.id,
+		checkpoint_tool_id: checkpoint.toolId ?? '',
+		current_post_id: root.post.id,
+		current_post_type: root.post.type,
+		checkpoint_post_id: snapshot.post.id,
+		checkpoint_post_type: snapshot.post.type,
+		current_block_count: currentCount,
+		restore_block_count: restoreCount,
+		current_serialized_length: currentLength,
+		restore_serialized_length: restoreLength,
+	} );
+
+	throw new Error(
+		'Checkpoint restore was blocked because it would replace the current editor content with a much smaller block snapshot.'
+	);
+}
+
+// Written outside the undo stack, as every agent restore is: `restore-checkpoint`
+// records its own reciprocal, and that is the way back.
+function restoreBlocksSnapshot( checkpoint: CheckpointRecord ): void {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.BLOCKS ) ) {
+		return;
+	}
+
+	const snapshot = checkpoint.blocksBeforeUpdate;
+
+	if ( ! snapshot ) {
+		throw new Error( 'Checkpoint has no blocks snapshot to restore.' );
+	}
+
+	const root = resolveSnapshotRoot( snapshot );
+
+	throwIfRestoreCollapsesPage( checkpoint, snapshot, root );
+	stageRootBlocks( root.clientId, deepClone( snapshot.blocks ) );
 }
 
 async function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
@@ -232,6 +360,9 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 		? captureThemeSnapshot()
 		: undefined;
 	const logoBeforeUpdate = keys.includes( checkpointKeys.LOGO ) ? getSiteLogo() : undefined;
+	const blocksBeforeUpdate = keys.includes( checkpointKeys.BLOCKS )
+		? captureBlocksSnapshot()
+		: undefined;
 	const siteTitleBeforeUpdate = keys.includes( checkpointKeys.SITE_TITLE )
 		? getSiteTitle()
 		: undefined;
@@ -242,6 +373,7 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	return {
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
 		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
+		...( blocksBeforeUpdate && { blocksBeforeUpdate } ),
 		...( siteTitleBeforeUpdate !== undefined && { siteTitleBeforeUpdate } ),
 		...( siteMetadataBeforeUpdate && {
 			siteMetadataBeforeUpdate: deepClone( siteMetadataBeforeUpdate ),
@@ -256,6 +388,7 @@ const SNAPSHOT_FIELDS: Record< string, keyof CheckpointRecord > = {
 	[ checkpointKeys.SITE_TITLE ]: 'siteTitleBeforeUpdate',
 	[ checkpointKeys.SITE_METADATA ]: 'siteMetadataBeforeUpdate',
 	[ checkpointKeys.LOGO ]: 'logoBeforeUpdate',
+	[ checkpointKeys.BLOCKS ]: 'blocksBeforeUpdate',
 	...Object.fromEntries( THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, 'themeBeforeUpdate' ] ) ),
 };
 
@@ -295,6 +428,12 @@ export async function setReciprocalCheckpoint(
 		} )
 	);
 
+	// The blocks as they stand now, under the root the target wrote into. A page
+	// showing another root or post could not take the redo, so it gets none.
+	const blocksBeforeUpdate = target.blocksBeforeUpdate
+		? captureBlocksSnapshot( resolveSnapshotRoot( target.blocksBeforeUpdate ) )
+		: undefined;
+
 	// Each page's title as it stands now, not the one the target recorded: the
 	// page may have been renamed again since, and a redo has to return to what
 	// the undo is about to overwrite. One entry per page, so a page renamed
@@ -328,6 +467,7 @@ export async function setReciprocalCheckpoint(
 
 	records.set( id, {
 		...checkpoint,
+		...( blocksBeforeUpdate && { blocksBeforeUpdate } ),
 		...( menusBeforeUpdate.length && { menusBeforeUpdate } ),
 		...( pageRenames.length && { pageRenames } ),
 	} );
@@ -619,6 +759,7 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 
 	restoreThemeSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
+	restoreBlocksSnapshot( checkpoint );
 	await restoreSiteTitleSnapshot( checkpoint );
 	await restoreSiteMetadataSnapshot( checkpoint );
 
@@ -659,6 +800,7 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 				id,
 				themeBeforeUpdate: _theme,
 				logoBeforeUpdate: _logo,
+				blocksBeforeUpdate: _blocks,
 				siteTitleBeforeUpdate: _siteTitle,
 				siteMetadataBeforeUpdate: _siteMetadata,
 				menusBeforeUpdate: _menus,

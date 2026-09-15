@@ -4,27 +4,17 @@
  */
 
 import { useEffect } from '@wordpress/element';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { setEditorHistory, type EditorHistory } from '../../utils/editor-history';
-
-// WordPress has changed this wording; older versions expect the second.
-const CONSENT_STRINGS = [
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
-];
+import { unlock } from '../../utils/private-apis';
 
 function unlockRouterHistory(): ( () => EditorHistory ) | undefined {
-	for ( const consent of CONSENT_STRINGS ) {
-		try {
-			const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-				consent,
-				'@wordpress/edit-site'
-			) as { unlock: ( apis: unknown ) => { useHistory: () => EditorHistory } };
-			return unlock( routerPrivateApis ).useHistory;
-		} catch {
-			// Wrong wording for this WordPress; try the next.
+	try {
+		if ( unlock ) {
+			return unlock< { useHistory: () => EditorHistory } >( routerPrivateApis ).useHistory;
 		}
+	} catch {
+		// The router's private APIs are locked by another copy of `@wordpress/private-apis`.
 	}
 
 	// eslint-disable-next-line no-console

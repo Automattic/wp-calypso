@@ -109,3 +109,12 @@ export async function registerAmAbilities(): Promise< void > {
 export function getAmCheckpointContext(): CheckpointContextItem[] {
 	return loadedEditorAbilities?.getAvailableCheckpoints() ?? [];
 }
+
+/**
+ * The page body as block markup for the client context, which the backend's
+ * page-design agent reads. Empty until the editor abilities have loaded, and
+ * off editor pages.
+ */
+export function getAmPageContentMarkup(): string {
+	return loadedEditorAbilities?.getPageContentMarkup() ?? '';
+}
