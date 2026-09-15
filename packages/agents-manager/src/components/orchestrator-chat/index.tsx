@@ -719,14 +719,12 @@ export default function OrchestratorChat( {
 
 	// One event per error the chat shows. `error` returns to null between
 	// attempts, so the same failure repeating on a later send counts again.
-	const lastTrackedErrorRef = useRef< string | null >( null );
 	useEffect( () => {
-		if ( error && error !== lastTrackedErrorRef.current ) {
+		if ( error ) {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
 				error_type: getOrchestratorErrorType( error ),
 			} );
 		}
-		lastTrackedErrorRef.current = error;
 	}, [ error ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
@@ -1359,15 +1357,12 @@ export default function OrchestratorChat( {
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
-		if ( imageUpload?.abortUpload?.() ) {
-			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
-				stopped_during: 'upload',
-			} );
-			return;
+		const stoppedUpload = imageUpload?.abortUpload?.();
+		if ( ! stoppedUpload ) {
+			abortCurrentRequest();
 		}
-		abortCurrentRequest();
 		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
-			stopped_during: 'response',
+			stopped_during: stoppedUpload ? 'upload' : 'response',
 		} );
 	}, [ abortCurrentRequest, imageUpload ] );
 

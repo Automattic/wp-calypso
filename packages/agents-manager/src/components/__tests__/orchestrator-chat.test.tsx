@@ -1577,10 +1577,6 @@ describe( 'OrchestratorChat', () => {
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
 				);
 
-		beforeEach( () => {
-			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
-		} );
-
 		it( 'records one event per error shown, with its type', () => {
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
