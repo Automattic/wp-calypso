@@ -1549,6 +1549,10 @@ describe( 'OrchestratorChat', () => {
 
 		expect( abortUpload ).toHaveBeenCalled();
 		expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'upload' }
+		);
 	} );
 
 	it( 'stops the agent request when no upload is in flight', () => {
@@ -1559,6 +1563,54 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Stop' ) );
 
 		expect( abortCurrentRequest ).toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'response' }
+		);
+	} );
+
+	describe( 'chat error tracking', () => {
+		const chatErrorCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
+				);
+
+		it( 'records one event per error shown, with its type', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
+			);
+
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'usage_limit' } ],
+			] );
+		} );
+
+		it( 'records the same error again once the chat has recovered from it', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			const { rerender } = render( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
+		} );
+
+		it( 'records nothing while there is no error', () => {
+			render( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
 	} );
 
 	describe( 'response outcome tracking', () => {
