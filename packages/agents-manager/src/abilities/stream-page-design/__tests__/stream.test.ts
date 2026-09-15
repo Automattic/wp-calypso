@@ -201,6 +201,26 @@ describe( 'setStreamHandler', () => {
 		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1', markup: '<p>ab' } );
 	} );
 
+	it( 'finalizes, for a renderer that registers late, a stream already finalized', async () => {
+		setStreamHandler( undefined );
+		await streamed( 'call-1', '<p>a' );
+		await finalizePendingStreams( 'call-1' );
+
+		setStreamHandler( handler );
+		await Promise.resolve();
+
+		expect( handler ).toHaveBeenCalledTimes( 1 );
+		expect( handler ).toHaveBeenCalledWith( {
+			toolCallId: 'call-1',
+			markup: '<p>a',
+			isFinal: true,
+		} );
+
+		await finalizePendingStreams();
+
+		expect( handler ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'forgets the stream when the renderer unregisters', async () => {
 		await streamed( 'call-1', '<p>a' );
 		handler.mockClear();
