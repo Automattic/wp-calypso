@@ -1,6 +1,10 @@
 const mockBatch = jest.fn( ( run: () => void ) => run() );
 
 jest.mock( '@wordpress/data', () => ( { useRegistry: () => ( { batch: mockBatch } ) } ) );
+jest.mock( '../../../utils/canvas-binding', () => ( {
+	blockCurrentRequest: jest.fn(),
+	getBlockingMove: jest.fn( () => null ),
+} ) );
 const mockLiveBlocks = [
 	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
 ];
@@ -20,6 +24,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn() } ) );
 
 import { renderHook } from '@testing-library/react';
+import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
 import { hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import {
 	clearBlockSelection,
@@ -43,6 +48,15 @@ it( 'resolves the root the stream writes into', () => {
 	( resolveBlocksRoot as jest.Mock ).mockReturnValueOnce( null );
 
 	expect( host().resolveRoot() ).toBeNull();
+} );
+
+// The callback's canvas guard runs after the frames; the host refuses first.
+it( 'refuses a root once the canvas moved, and latches the block', () => {
+	( getBlockingMove as jest.Mock ).mockReturnValueOnce( { from: 'About', to: 'Contact' } );
+
+	expect( host().resolveRoot() ).toBeNull();
+	expect( blockCurrentRequest ).toHaveBeenCalled();
+	expect( resolveBlocksRoot ).not.toHaveBeenCalled();
 } );
 
 it( 'stages frames untracked, batched with the registry', () => {
