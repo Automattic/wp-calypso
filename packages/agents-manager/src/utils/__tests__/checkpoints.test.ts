@@ -821,7 +821,8 @@ describe( 'blocks domain', () => {
 		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toBeUndefined();
 	} );
 
-	// The root is resolved again: its clientId does not survive the editor remounting.
+	// The root is resolved again: its clientId does not survive the editor
+	// remounting, and the post id may come back as a string.
 	it( 'puts the blocks back under the root as it is now, outside the undo stack', async () => {
 		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
 		editorBlocks().getRootBlocks.mockReturnValueOnce( page( 2 ) );
@@ -829,7 +830,7 @@ describe( 'blocks domain', () => {
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
 			kind: 'post-content',
 			clientId: 'pc-remounted',
-			post,
+			post: { ...post, id: '7' },
 		} );
 		editorBlocks().getRootBlocks.mockReturnValue( page( 3 ) );
 
