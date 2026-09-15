@@ -211,9 +211,11 @@ function announceStreamStarted( toolCallId: string ): void {
 
 // A renderer failure is logged, not thrown: the update chain and the tool
 // round trip go on, and the design is already on the canvas where it failed.
-async function deliver( update: StreamUpdate ): Promise< void > {
+async function deliver( update: StreamUpdate ): Promise< boolean > {
 	try {
 		await handler?.( update );
+
+		return true;
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error(
@@ -222,6 +224,8 @@ async function deliver( update: StreamUpdate ): Promise< void > {
 				: '[AgentsManager] The page design could not be painted:',
 			error
 		);
+
+		return false;
 	}
 }
 
@@ -316,11 +320,13 @@ export async function handlePageDesignTaskUpdate( update: TaskUpdate ): Promise<
 
 /**
  * Asks the renderer to finalize the tool call that completed, or every call
- * still pending when the completed one is unknown or not among them.
+ * still pending when the completed one is unknown or not among them. False
+ * when a design did not make it onto the page.
  */
-export async function finalizePendingStreams( toolCallId?: string ): Promise< void > {
+export async function finalizePendingStreams( toolCallId?: string ): Promise< boolean > {
 	const toolCallIds =
 		toolCallId && awaitingFinalFlush.has( toolCallId ) ? [ toolCallId ] : [ ...awaitingFinalFlush ];
+	let finalized = true;
 
 	for ( const id of toolCallIds ) {
 		awaitingFinalFlush.delete( id );
@@ -330,11 +336,13 @@ export async function finalizePendingStreams( toolCallId?: string ): Promise< vo
 		}
 
 		if ( handler ) {
-			await deliver( { toolCallId: id, isFinal: true } );
+			finalized = ( await deliver( { toolCallId: id, isFinal: true } ) ) && finalized;
 		} else {
 			finalizedUnrendered.add( id );
 		}
 	}
+
+	return finalized;
 }
 
 type OnTaskUpdate = ( update: unknown ) => void | Promise< void >;

@@ -472,6 +472,12 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 		[ closeTopLevelBlock, openTopLevelBlock, placeTopLevelBlocks, updateOpenBlock ]
 	);
 
+	const forgetToolCall = useCallback( ( toolCallId: string ) => {
+		stateByToolCall.current.delete( toolCallId );
+		capturedToolCalls.current.delete( toolCallId );
+		forgetStream( toolCallId );
+	}, [] );
+
 	// Paints what has streamed so far; false while the canvas has no root.
 	const flush = useCallback(
 		( toolCallId: string, isFinal: boolean ): boolean => {
@@ -537,14 +543,12 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 
 				hostRef.current.commitFinalDesign( toolCallId, rootClientId );
 				// The design is on the page; nothing of the stream is needed again.
-				stateByToolCall.current.delete( toolCallId );
-				capturedToolCalls.current.delete( toolCallId );
-				forgetStream( toolCallId );
+				forgetToolCall( toolCallId );
 			}
 
 			return true;
 		},
-		[ closeTopLevelBlock, getToolCallState, processPageBuffer ]
+		[ closeTopLevelBlock, forgetToolCall, getToolCallState, processPageBuffer ]
 	);
 
 	const clearRetry = useCallback( ( toolCallId: string ) => {
@@ -559,34 +563,42 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	// Markup that arrives before the canvas has mounted would otherwise flush
 	// once into nothing, with no later delta to try again. A flush that lands
 	// supersedes any retry still queued for the same tool call.
+	// Markup that arrives before the canvas has mounted would otherwise flush
+	// once into nothing, with no later delta to try again. A flush that lands
+	// supersedes any retry still queued for the same tool call. Settles with
+	// whether a flush landed within the retry budget; a frame that cannot be
+	// painted is logged and skipped, since the next delta schedules another.
 	const flushOrRetry = useCallback(
-		function attempt(
-			toolCallId: string,
-			isFinal: boolean,
-			attemptsLeft = MAX_FLUSH_RETRIES
-		): void {
-			clearRetry( toolCallId );
+		( toolCallId: string, isFinal: boolean ): Promise< boolean > =>
+			new Promise( ( resolve ) => {
+				const attempt = ( attemptsLeft: number ): void => {
+					clearRetry( toolCallId );
 
-			// A frame that cannot be painted is logged and skipped: the next delta
-			// schedules another flush, and the tool round trip goes on.
-			try {
-				if ( flush( toolCallId, isFinal ) || attemptsLeft === 0 ) {
-					return;
-				}
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( '[AgentsManager] The page design could not be painted:', error );
-				return;
-			}
+					try {
+						if ( flush( toolCallId, isFinal ) ) {
+							return resolve( true );
+						}
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.error( '[AgentsManager] The page design could not be painted:', error );
+						return resolve( false );
+					}
 
-			retryTimers.current.set(
-				toolCallId,
-				setTimeout( () => {
-					retryTimers.current.delete( toolCallId );
-					attempt( toolCallId, isFinal, attemptsLeft - 1 );
-				}, FLUSH_INTERVAL_MS )
-			);
-		},
+					if ( attemptsLeft === 0 ) {
+						return resolve( false );
+					}
+
+					retryTimers.current.set(
+						toolCallId,
+						setTimeout( () => {
+							retryTimers.current.delete( toolCallId );
+							attempt( attemptsLeft - 1 );
+						}, FLUSH_INTERVAL_MS )
+					);
+				};
+
+				attempt( MAX_FLUSH_RETRIES );
+			} ),
 		[ clearRetry, flush ]
 	);
 
@@ -597,8 +609,11 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 		}
 	}, [] );
 
+	// A final update settles once the design is committed, so the callback
+	// answers the agent with what happened; a design the canvas never took is
+	// dropped and reported.
 	const handleUpdate = useCallback(
-		( update: StreamUpdate ): void => {
+		async ( update: StreamUpdate ): Promise< void > => {
 			pendingToolCallId.current = update.toolCallId;
 
 			if ( update.isFinal ) {
@@ -609,7 +624,11 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 					flushTimer.current = null;
 				}
 
-				flushOrRetry( update.toolCallId, true );
+				if ( ! ( await flushOrRetry( update.toolCallId, true ) ) ) {
+					forgetToolCall( update.toolCallId );
+					throw new Error( 'The editor canvas did not take the page design.' );
+				}
+
 				return;
 			}
 
@@ -624,12 +643,12 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 					flushTimer.current = null;
 
 					if ( pendingToolCallId.current ) {
-						flushOrRetry( pendingToolCallId.current, false );
+						void flushOrRetry( pendingToolCallId.current, false );
 					}
 				}, FLUSH_INTERVAL_MS );
 			}
 		},
-		[ flushOrRetry, stopPreviewStyles ]
+		[ flushOrRetry, forgetToolCall, stopPreviewStyles ]
 	);
 
 	useEffect( () => {

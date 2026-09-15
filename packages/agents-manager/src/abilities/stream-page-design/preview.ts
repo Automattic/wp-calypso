@@ -100,6 +100,9 @@ export function ensurePreviewStyles(): void {
 	injectPreviewStyles( getCanvasDocument() );
 }
 
+const getScrollBehavior = (): ScrollBehavior =>
+	window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches ? 'auto' : 'smooth';
+
 function getScrollParent( node: HTMLElement ): HTMLElement | null {
 	for ( let parent = node.parentElement; parent; parent = parent.parentElement ) {
 		const overflowY = parent.ownerDocument.defaultView?.getComputedStyle( parent ).overflowY ?? '';
@@ -123,7 +126,7 @@ function scrollBlockBottomIntoView( node: HTMLElement ): void {
 
 		scrollParent.scrollTo( {
 			top: Math.max( 0, scrollParent.scrollTop + nodeBottom - parentBottom + 24 ),
-			behavior: 'smooth',
+			behavior: getScrollBehavior(),
 		} );
 		return;
 	}
@@ -133,7 +136,7 @@ function scrollBlockBottomIntoView( node: HTMLElement ): void {
 
 	ownerWindow?.scrollTo( {
 		top: Math.max( 0, scrollingElement.scrollTop + nodeBottom - viewportHeight + 24 ),
-		behavior: 'smooth',
+		behavior: getScrollBehavior(),
 	} );
 }
 
