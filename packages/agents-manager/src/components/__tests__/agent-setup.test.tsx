@@ -49,6 +49,9 @@ jest.mock( '../../hooks/use-agent-config', () => ( {
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
+jest.mock( '../../hooks/use-small-viewport-default-closed', () => ( {
+	useSmallViewportDefaultClosed: () => true,
+} ) );
 jest.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],
