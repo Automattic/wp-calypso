@@ -266,91 +266,143 @@ export default function ActionRenderModal( {
 		closeModal?.();
 	};
 
-	const buildSuccessPrefix = ( action: string, selected: PluginListRow[] ) => {
+	const buildSuccessMessage = ( action: string, selected: PluginListRow[], siteCount: number ) => {
 		const pluginName = selected[ 0 ].name;
 		switch ( action ) {
 			case 'activate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Activated %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n( 'Activated %1$s on %2$d site', 'Activated %1$s on %2$d sites', siteCount ),
+					pluginName,
+					siteCount
 				);
 			case 'deactivate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Deactivated %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n( 'Deactivated %1$s on %2$d site', 'Deactivated %1$s on %2$d sites', siteCount ),
+					pluginName,
+					siteCount
 				);
 			case 'update':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Updated %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n( 'Updated %1$s on %2$d site', 'Updated %1$s on %2$d sites', siteCount ),
+					pluginName,
+					siteCount
 				);
 			case 'enable-autoupdate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Enabled auto‑updates for %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Enabled auto‑updates for %1$s on %2$d site',
+						'Enabled auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'disable-autoupdate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Disabled auto‑updates for %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Disabled auto‑updates for %1$s on %2$d site',
+						'Disabled auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'delete':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Deleted %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n( 'Deleted %1$s on %2$d site', 'Deleted %1$s on %2$d sites', siteCount ),
+					pluginName,
+					siteCount
 				);
 			default:
-				return __( 'Action completed' );
+				return sprintf(
+					// translators: %d is the number of sites.
+					_n( 'Action completed on %d site', 'Action completed on %d sites', siteCount ),
+					siteCount
+				);
 		}
 	};
 
-	const buildErrorPrefix = ( action: string, selected: PluginListRow[] ) => {
+	const buildErrorMessage = ( action: string, selected: PluginListRow[], siteCount: number ) => {
 		const pluginName = selected[ 0 ].name;
 		switch ( action ) {
 			case 'activate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to activate %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to activate %1$s on %2$d site',
+						'Failed to activate %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'deactivate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to deactivate %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to deactivate %1$s on %2$d site',
+						'Failed to deactivate %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'update':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to update %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to update %1$s on %2$d site',
+						'Failed to update %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'enable-autoupdate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to enable auto‑updates for %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to enable auto‑updates for %1$s on %2$d site',
+						'Failed to enable auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'disable-autoupdate':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to disable auto‑updates for %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to disable auto‑updates for %1$s on %2$d site',
+						'Failed to disable auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			case 'delete':
 				return sprintf(
-					// translators: %s is the plugin name.
-					__( 'Failed to delete %s' ),
-					pluginName
+					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					_n(
+						'Failed to delete %1$s on %2$d site',
+						'Failed to delete %1$s on %2$d sites',
+						siteCount
+					),
+					pluginName,
+					siteCount
 				);
 			default:
-				return __( 'Action failed' );
+				return sprintf(
+					// translators: %d is the number of sites.
+					_n( 'Action failed on %d site', 'Action failed on %d sites', siteCount ),
+					siteCount
+				);
 		}
 	};
 
@@ -362,32 +414,14 @@ export default function ActionRenderModal( {
 		try {
 			const { successCount, errorCount } = await onExecute( items );
 			if ( successCount > 0 ) {
-				const prefix = buildSuccessPrefix( actionId, items );
-				createSuccessNotice(
-					sprintf(
-						// translators: %1$s: the action performed, %2$d: the number of sites.
-						_n( '%1$s on %2$d site', '%1$s on %2$d sites', successCount, 'next-admin' ),
-						prefix,
-						successCount
-					),
-					{
-						type: 'snackbar',
-					}
-				);
+				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
+					type: 'snackbar',
+				} );
 			}
 			if ( errorCount > 0 ) {
-				const errorPrefix = buildErrorPrefix( actionId, items );
-				createErrorNotice(
-					sprintf(
-						// translators: %1$s: the action performed, %2$d: the number of sites.
-						_n( '%1$s on %2$d site', '%1$s on %2$d sites', errorCount, 'next-admin' ),
-						errorPrefix,
-						errorCount
-					),
-					{
-						type: 'snackbar',
-					}
-				);
+				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {
+					type: 'snackbar',
+				} );
 			}
 			onActionPerformed?.( items );
 		} finally {
