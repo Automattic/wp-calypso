@@ -11,11 +11,10 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../../co
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
-import { DEFAULT_CONFIG, recordViewChanges } from '../../../sites/dataviews/views';
+import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { OWNER_ROLE } from '../../team/constants';
 import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
-import type { View } from '@wordpress/dataviews';
 
 export default function MarketplacePurchases() {
 	const locale = useLocale();
@@ -40,16 +39,6 @@ export default function MarketplacePurchases() {
 		() => getLicenseFields( { locale, isAgencyOwner } ),
 		[ locale, isAgencyOwner ]
 	);
-	const handleViewChange = ( nextView: View ) => {
-		recordViewChanges(
-			view,
-			nextView,
-			recordTracksEvent,
-			'calypso_dashboard_marketplace_purchases'
-		);
-		updateView( nextView );
-	};
-
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
 		totalPages: data?.total_pages ?? 1,
@@ -85,7 +74,7 @@ export default function MarketplacePurchases() {
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
-					onChangeView={ handleViewChange }
+					onChangeView={ updateView }
 					onReset={ resetView }
 					getItemId={ getLicenseId }
 					paginationInfo={ paginationInfo }
