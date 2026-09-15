@@ -862,24 +862,11 @@
 }
 /* stylelint-enable */
 
-/* ---------------------------------------------------------------------------
- * 2026 footer preview — hand-written, not vendored.
- *
- * Everything below is scoped under .wpcom-global-nav-footer--2026 (the
- * wrapper div; the twin's <section class="lp-footer-section"> is its child,
- * so Landpack's `&.lp-footer-section` reads `> .lp-footer-section` here).
- * It mirrors the `.wpcom-global-nav-footer--2026` block of Landpack's
- * blocks/footer-section/style.scss in wpcom, rule for rule and in the same
- * order, so the two can be diffed by eye. Keep them in step by comparing
- * computed styles against the wpcom render. Breakpoint L is 1152px.
- *
- * The legacy sheet above doubles utility classes (`.lp-bold.lp-bold`) and
- * Landpack's own bundle triples them; the repeated classes below exist only
- * to out-specify those rules.
- * ------------------------------------------------------------------------- */
+/* 2026 footer preview: hand-written, scoped under .wpcom-global-nav-footer--2026
+   and mirroring Landpack's block of the same name in wpcom, rule for rule.
+   The vendored sheet above doubles utility classes; the repeats below out-specify it. */
 
-/* Landpack serves variable Inter where supported; the legacy sheet only
-   registers the static faces. Like those, this registration is global. */
+/* Variable Inter, as Landpack serves it; the vendored sheet only registers static faces. */
 @font-face {
 	font-display: swap;
 	font-family: inter-variable-web;
@@ -908,9 +895,8 @@
 		background: #fff;
 	}
 
-	/* Landpack's embed reset transitions every property on links and
-	   accordion headers (the legacy sheet eases opacity only), so the focus
-	   ring and colour changes fade in the way they do on wpcom. */
+	/* Landpack's reset transitions every property on links and headers (the
+	   vendored sheet eases opacity only), so focus and colour changes fade as on wpcom. */
 	> .lp-footer-section a,
 	> .lp-footer-section summary {
 		transition: 0.15s ease-out;
@@ -948,13 +934,12 @@
 		color: var( --lp-footer-secondary-color );
 	}
 
-	/* The 2026 design drops the arrow on external links. */
+	/* No arrow on external links. */
 	.lp-link-chevron-external.lp-link-chevron-external::after {
 		content: none;
 	}
 
-	/* Figma mobile frame: badges, social and bottom bar start-aligned, and
-	   accordion headers on a 46px pitch (26px line + 9px padding + 11px gap). */
+	/* Mobile: start-aligned rows and a 46px accordion pitch (26 line + 9 padding + 11 gap). */
 	@media ( max-width: 1151px ) {
 		.lp-flex--justify-center {
 			justify-content: flex-start;
@@ -969,19 +954,15 @@
 		}
 	}
 
-	/* The design shows the language control as bare text, so undo the boxed
-	   opener the shared picker module authors. `field-sizing` keeps the select
-	   as wide as its selected option instead of its longest one, so the focus
-	   ring hugs the label; browsers without it fall back to the old width. */
+	/* Bare-text language control; `field-sizing` sizes the select to its selected
+	   option so the focus ring hugs the label (older browsers keep the old width). */
 	.lp-language-picker__content {
 		border: none;
 		border-radius: 0;
 		padding: 0 calc( var( --lp-picker-icon-offset ) + var( --lp-picker-icon-size ) ) 0 0;
 		width: auto;
 		field-sizing: content;
-		/* Language control 14/26 on mobile, 12/26 from L. Landpack marks the
-		   weight !important for its external bundle; the legacy sheet's 500 is
-		   plain, so source order is enough here. */
+		/* 14/26 on mobile, 12/26 from L; source order beats the vendored 500 weight. */
 		font-size: 14px;
 		line-height: 26px;
 		font-weight: 400;
@@ -991,8 +972,7 @@
 		}
 	}
 
-	/* The chevron is positioned against the wrapper, so shrink it to the
-	   label too; the design keeps the control right-aligned on desktop. */
+	/* The chevron is positioned against the wrapper, so shrink that to the label too. */
 	.lp-language-picker {
 		width: fit-content;
 
@@ -1001,9 +981,7 @@
 		}
 	}
 
-	/* Type ramp from the Figma "Ready for dev" frames: accordion headers
-	   18/26 medium on mobile, headings 16/26 semibold from L; links 14/28;
-	   1% tracking. (The language control's ramp sits with its reset above.) */
+	/* Figma type ramp: headers 18/26 medium (16/26 semibold from L), links 14/28, 1% tracking. */
 	.lp-footer-stack__summary__content.lp-bold.lp-bold {
 		font-weight: 500;
 		font-size: 18px;
@@ -1027,8 +1005,7 @@
 		transform: scale( 0.65 );
 	}
 
-	/* `.has-tiny-font-size` sets its size with !important, so feed it the
-	   design values through its own custom properties instead. */
+	/* `.has-tiny-font-size` uses !important, so set its custom properties instead. */
 	footer.lp-section .lp-section__content {
 		--lp-font-size-tiny: 12px;
 		--lp-line-height-tiny: 26px;
@@ -1041,9 +1018,7 @@
 		}
 	}
 
-	/* The Figma mobile frame sits 60px from the top with 24px sides; desktop
-	   keeps the section defaults. The bottom bar is its own section, so it
-	   needs the same gutter. */
+	/* Mobile: 24px side gutter on both sections; desktop keeps the defaults. */
 	> .lp-footer-section,
 	footer.lp-section {
 		--lp-section-padding-x: 24px;
@@ -1061,8 +1036,8 @@
 		}
 	}
 
-	/* Figma stacks logo, columns and bottom bar with a 60px gap on mobile and
-	   64px on desktop; desktop subtracts the 6px summary padding above the heading. */
+	/* Logo, columns and bottom bar stack with 60px gaps on mobile and 64px on
+	   desktop (minus the 6px summary padding above the heading). */
 	.lp-padding-bottom-5.lp-padding-bottom-5 {
 		padding-bottom: 60px;
 
@@ -1079,8 +1054,7 @@
 		}
 	}
 
-	/* Mobile stacks badges and social above the language control, so move the
-	   picker column last at every width and space it from the icons. */
+	/* Badges and social sit above the language control on mobile: picker column last. */
 	.lp-grid__order-1\@L.lp-pb-36.lp-pb-36 {
 		order: 1;
 		padding: 36px 0 0;
