@@ -40,6 +40,7 @@ Object.assign( AssetsWriter.prototype, {
 				timings: false,
 				reasons: false,
 			} );
+			const assetsByName = new Map( stats.assets.map( ( asset ) => [ asset.name, asset ] ) );
 
 			function fixupPath( f ) {
 				return path.join( stats.publicPath, f );
@@ -54,7 +55,7 @@ Object.assign( AssetsWriter.prototype, {
 					return true;
 				}
 
-				const asset = stats.assets.find( ( a ) => a.name === name );
+				const asset = assetsByName.get( name );
 				if ( ! asset ) {
 					return false;
 				}
