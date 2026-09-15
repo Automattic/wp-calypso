@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Context } from '@automattic/calypso-router';
-import { getFooter2026Colorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -23,7 +23,7 @@ export function PerformanceProfilerWrapper( {
 }: {
 	children: React.ReactNode;
 	isLoggedIn: boolean;
-	footerColorway: ReturnType< typeof getFooter2026Colorway >;
+	footerColorway: ReturnType< typeof getFooterColorway >;
 } ): JSX.Element {
 	return (
 		<>
@@ -36,9 +36,9 @@ export function PerformanceProfilerWrapper( {
 
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		context.query?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 
 	if ( ! context.query?.url ) {
@@ -70,9 +70,9 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 
 export function WeeklyReportContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		context.query?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 
 	if ( ! isLoggedIn ) {
@@ -101,9 +101,9 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 
 export function WeeklyReportUnsubscribeContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		context.query?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 
 	const url = context.query?.url?.startsWith( 'http' )

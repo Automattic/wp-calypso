@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
-import { getFooter2026Colorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -39,9 +39,9 @@ export const redirectToBaseSiteProfilerRoute: Callback = ( context ) => {
 
 export const siteProfilerContext: Callback = ( context, next ) => {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		context.query?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 	const pathName = context.pathname || '';
 	const routerDomain = pathName.split( '/site-profiler/' )[ 1 ]?.trim() || '';
@@ -62,9 +62,9 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 
 export const siteProfilerReportContext: Callback = ( context, next ) => {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		context.query?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 	const pathName = context.pathname || '';
 	const routerParams = pathName.split( '/site-profiler/report/' )[ 1 ]?.trim() || '';

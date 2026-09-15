@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
-import { getFooter2026Colorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -125,7 +125,6 @@ const LayoutLoggedOut = ( {
 	colorScheme,
 	isJetpackCloud,
 	isJetpackConnectorLogin,
-	currentQuery,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -188,9 +187,9 @@ const LayoutLoggedOut = ( {
 		[ 'themes', 'theme' ].includes( sectionName ) &&
 		isEnabled( 'themes/showcase-modern' ) &&
 		! isLoggedIn;
-	const footerColorway = getFooter2026Colorway(
+	const footerColorway = getFooterColorway(
 		isEnabled( 'footer-redesign/2026' ),
-		currentQuery?.footer_2026
+		isEnabled( 'footer/dark' )
 	);
 
 	const classes = {
