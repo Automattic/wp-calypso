@@ -168,9 +168,44 @@ function getAgentManagerVersion(): string {
 	return 'none';
 }
 
+function hasEditorStore(): boolean {
+	try {
+		return !! select( 'core/editor' );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Where the chat runs. The block editor keeps the historical `editor` value.
+ * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
+ * absence means a Calypso-rendered page.
+ */
+function getUnifiedSurface(): string {
+	if ( isReaderChatHost() ) {
+		return 'reader-chat';
+	}
+	if ( hasEditorStore() ) {
+		return 'editor';
+	}
+	const inlineData = getAgentsManagerInlineData();
+	if ( ! inlineData ) {
+		return 'calypso';
+	}
+	return inlineData.sectionName?.startsWith( 'ciab' ) ? 'ciab' : 'wp-admin';
+}
+
+/** The wp-admin screen from WordPress's `pagenow`, e.g. `woocommerce_page_wc-admin`. */
+function getScreen(): string | undefined {
+	const pagenow =
+		typeof window !== 'undefined' ? ( window as { pagenow?: unknown } ).pagenow : undefined;
+	return typeof pagenow === 'string' && pagenow !== '' ? pagenow : undefined;
+}
+
 function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
+	const screen = getScreen();
 	return {
 		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
@@ -178,7 +213,8 @@ function getUnifiedBaseProps(): TracksProps {
 		// Sorted so the same provider set always yields the same value; 'none'
 		// until the providers load (events can fire before the chat mounts).
 		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
-		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
+		surface: getUnifiedSurface(),
+		...( screen !== undefined ? { screen } : {} ),
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),

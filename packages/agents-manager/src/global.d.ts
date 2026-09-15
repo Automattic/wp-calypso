@@ -34,6 +34,8 @@ declare const agentsManagerData:
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
+			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;

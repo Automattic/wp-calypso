@@ -233,6 +233,73 @@ describe( 'tracks wrappers', () => {
 			expect( lastEventProps().surface ).toBe( 'reader-chat' );
 		} );
 
+		describe( 'surface and screen off the editor', () => {
+			const withoutEditorStore = () =>
+				mockSelect.mockImplementation(
+					( store ) =>
+						( store === 'core/editor' ? undefined : {} ) as unknown as ReturnType< typeof select >
+				);
+
+			afterEach( () => {
+				delete ( window as { pagenow?: string } ).pagenow;
+			} );
+
+			it( 'reports wp-admin on an admin screen with an injected payload', () => {
+				withoutEditorStore();
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps().surface ).toBe( 'wp-admin' );
+			} );
+
+			it( 'reports ciab when the host section is Commerce in a Box', () => {
+				withoutEditorStore();
+				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+					sectionName: 'ciab',
+				};
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps().surface ).toBe( 'ciab' );
+			} );
+
+			it( 'reports calypso when no host payload was injected', () => {
+				withoutEditorStore();
+				delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps().surface ).toBe( 'calypso' );
+			} );
+
+			it( 'keeps reader-chat ahead of the other surfaces', () => {
+				withoutEditorStore();
+				mockIsReaderChatHost.mockReturnValue( true );
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps().surface ).toBe( 'reader-chat' );
+			} );
+
+			it( 'adds the wp-admin screen from pagenow', () => {
+				withoutEditorStore();
+				( window as { pagenow?: string } ).pagenow = 'woocommerce_page_wc-admin';
+
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps() ).toMatchObject( {
+					surface: 'wp-admin',
+					screen: 'woocommerce_page_wc-admin',
+				} );
+			} );
+
+			it( 'omits screen where WordPress sets no pagenow', () => {
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+				expect( lastEventProps() ).not.toHaveProperty( 'screen' );
+			} );
+		} );
+
 		it( 'adds the canonical server-provided blog ID when available', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 				isDevMode: false,
