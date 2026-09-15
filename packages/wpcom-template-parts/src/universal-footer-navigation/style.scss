@@ -953,21 +953,6 @@
 		content: none;
 	}
 
-	/* Links underline on hover/focus, not by default, and without the legacy
-	   opacity fade. */
-	@media ( hover: hover ) {
-		.lp-footer-stack__content__item:hover {
-			text-decoration: underline;
-		}
-
-		> .lp-footer-section a:hover,
-		> .lp-footer-section summary:hover,
-		.lp-language-picker__content:hover,
-		.lp-language-picker__content:hover ~ .lp-language-picker__chevron {
-			opacity: 1;
-		}
-	}
-
 	/* Figma mobile frame: badges, social and bottom bar start-aligned, and
 	   accordion headers on a 46px pitch (26px line + 9px padding + 11px gap). */
 	@media ( max-width: 1151px ) {
@@ -982,10 +967,6 @@
 		.lp-grid--type-footer.lp-grid--gutter-y-4 {
 			grid-row-gap: 11px;
 		}
-	}
-
-	.lp-footer-stack__content__item:focus-visible {
-		text-decoration: underline;
 	}
 
 	/* The design shows the language control as bare text, so undo the boxed
