@@ -50,20 +50,14 @@ const normalizeWhitespace = ( str ) => {
 	return str.replace( /\s+/g, ' ' );
 };
 
-const HTML_ESCAPES = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#39;',
-};
-
 /**
- * Escapes a plain text string so that it can be safely interpolated into an HTML string.
+ * Escapes plain text for interpolation into HTML text content, where only `&` and `<` can start
+ * markup. Quotes are deliberately left as-is: their entities add Latin letters to the string
+ * `AutoDirection` samples, which flips short RTL excerpts to LTR.
  * @param {string} str the string to escape
  * @returns an HTML-escaped string
  */
-const escapeHtml = ( str ) => str.replace( /[&<>"']/g, ( char ) => HTML_ESCAPES[ char ] );
+const escapeHtmlText = ( str ) => str.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' );
 
 /**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
@@ -93,11 +87,9 @@ const chooseExcerpt = ( post ) => {
 					new RegExp( '^' + escapeRegExp( promptText ) ),
 					''
 				);
-				// And insert a blockquote with the prompt text. `promptText` comes out of the content
-				// DOM as text, so it has to be escaped again before it goes back into an HTML string.
-				return `<blockquote class="wp-block-pullquote"> ${ escapeHtml(
-					promptText
-				) } </blockquote> ${ excerpt }`;
+				// `promptText` is decoded text, so escape it before it re-enters an HTML string.
+				const safePromptText = escapeHtmlText( promptText );
+				return `<blockquote class="wp-block-pullquote"> ${ safePromptText } </blockquote> ${ excerpt }`;
 			}
 		}
 		if ( post.short_excerpt === undefined ) {

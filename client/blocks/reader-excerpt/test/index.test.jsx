@@ -41,7 +41,7 @@ describe( 'ReaderExcerpt', () => {
 	it( 'keeps entity-encoded markup in the daily prompt inert', () => {
 		const post = dailyPromptPost( {
 			content:
-				'<figure class="wp-block-pullquote"><blockquote><p>Prompt &lt;img src=x-reader-proof onerror=&quot;document.documentElement.dataset.readerProof = `proof`&quot;&gt; suffix</p></blockquote></figure><p>Ordinary public post body.</p>',
+				'<figure class="wp-block-pullquote"><blockquote><p>Prompt &lt;img src=x onerror=&quot;window.readerProof = 1&quot;&gt; suffix</p></blockquote></figure><p>Ordinary public post body.</p>',
 			excerpt: 'Prompt suffix Ordinary public post body.',
 		} );
 
@@ -49,12 +49,38 @@ describe( 'ReaderExcerpt', () => {
 
 		expect( container.querySelector( 'img' ) ).toBeNull();
 		expect( container.querySelector( '[onerror]' ) ).toBeNull();
-		expect( document.documentElement.dataset.readerProof ).toBeUndefined();
 		// The prompt is text: it renders as text, and creates no child element of its own.
 		expect( container.querySelector( '.wp-block-pullquote' ).children ).toHaveLength( 0 );
 		expect( container.querySelector( '.wp-block-pullquote' ) ).toHaveTextContent(
-			'Prompt <img src=x-reader-proof onerror="document.documentElement.dataset.readerProof = `proof`"> suffix'
+			'Prompt <img src=x onerror="window.readerProof = 1"> suffix'
 		);
+	} );
+
+	it( 'renders punctuation and entity text in the daily prompt verbatim', () => {
+		const post = dailyPromptPost( {
+			content:
+				'<figure class="wp-block-pullquote"><blockquote><p>What&#39;s the &quot;right&quot; way to write &amp;amp; in HTML?</p></blockquote></figure><p>Carefully.</p>',
+			excerpt: 'What\'s the "right" way to write &amp; in HTML? Carefully.',
+		} );
+
+		const { container } = render( <ReaderExcerpt post={ post } /> );
+
+		// Quotes must not surface as entities, and `&amp;` must survive as literal text.
+		expect( container.querySelector( '.wp-block-pullquote' ).textContent.trim() ).toBe(
+			'What\'s the "right" way to write &amp; in HTML?'
+		);
+	} );
+
+	it( 'keeps a right-to-left daily prompt right-to-left', () => {
+		const prompt = 'מה עדיף: "בית" או "דירה"?';
+		const post = dailyPromptPost( {
+			content: `<figure class="wp-block-pullquote"><blockquote><p>${ prompt }</p></blockquote></figure><p>בית.</p>`,
+			excerpt: `${ prompt } בית.`,
+		} );
+
+		const { container } = render( <ReaderExcerpt post={ post } /> );
+
+		expect( container.firstChild ).toHaveStyle( { direction: 'rtl' } );
 	} );
 
 	it( 'falls back to the excerpt when the pullquote is not the first child', () => {
