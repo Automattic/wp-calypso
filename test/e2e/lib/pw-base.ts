@@ -56,7 +56,6 @@ import {
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
-	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
@@ -406,10 +405,6 @@ export const test = base.extend<
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
 		/**
-		 * Page object representing the Import Content WordPress Question page.
-		 */
-		pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
-		/**
 		 * Page object representing the Import Content from Another Platform or File page.
 		 */
 		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
@@ -716,10 +711,6 @@ export const test = base.extend<
 	pageImportPlans: async ( { page }, use ) => {
 		const importPlansPage = new ImportPlansPage( page );
 		await use( importPlansPage );
-	},
-	pageImportContentWordpressQuestion: async ( { page }, use ) => {
-		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
-		await use( importContentWordpressQuestionPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );

@@ -2,11 +2,15 @@ import { NextButton, Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import {
+	recordMigrationStartEvent,
+	recordMigrationStartFacebookEvent,
+} from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { ChecklistCard } from '../../components/checklist-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -25,6 +29,11 @@ const SiteMigrationHowToMigrate: StepType< {
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
+
+	useEffect( () => {
+		recordMigrationStartEvent( 'SiteMigrationHowToMigrate' );
+		recordMigrationStartFacebookEvent( 'SiteMigrationHowToMigrate' );
+	}, [] );
 
 	const checklistItems = useMemo(
 		() => [

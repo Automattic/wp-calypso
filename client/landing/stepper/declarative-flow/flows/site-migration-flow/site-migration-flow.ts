@@ -5,6 +5,7 @@ import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { matchPath } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -39,7 +40,6 @@ import type {
 
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
-	STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 	STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -59,6 +59,19 @@ const BASE_STEPS = [
 ];
 
 function initialize() {
+	const { pathname, search, hash } = window.location;
+	if ( matchPath( '/setup/:flow/site-migration-import-or-migrate/:lang?', pathname ) ) {
+		window.location.replace(
+			pathname.replace(
+				'/site-migration-import-or-migrate',
+				`/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`
+			) +
+				search +
+				hash
+		);
+		return false as const;
+	}
+
 	return stepsWithRequiredLogin( BASE_STEPS );
 }
 
@@ -206,7 +219,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+						return navigate( paths.howToMigratePath( { from, siteSlug, siteId } ) );
 					}
 
 					if ( userHasOtherWPComSites ) {
@@ -223,9 +236,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
 
 							Object.keys( newQueryParams ).forEach( ( key ) => {
-								newQueryParams[ key ]
-									? urlQueryParams.set( key, newQueryParams[ key ] )
-									: urlQueryParams.delete( key );
+								if ( newQueryParams[ key ] ) {
+									urlQueryParams.set( key, newQueryParams[ key ] );
+								} else {
+									urlQueryParams.delete( key );
+								}
 							} );
 
 							const queryParams = Object.fromEntries( urlQueryParams );
@@ -307,7 +322,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								);
 							}
 
-							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
+							return navigate( paths.howToMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site': {
 							const detectedHost = providedDependencies.host as string | undefined;
@@ -428,35 +443,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					return replace( paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
-				}
-
-				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
-					const { destination } = providedDependencies as {
-						destination: 'import' | 'migrate';
-					};
-					// Switch to the normal Import flow.
-					if ( destination === 'import' ) {
-						if ( entryPoint === 'calypso-importer' ) {
-							return exitFlow(
-								paths.calypsoImporterPath(
-									{ engine: 'wordpress', ref: 'site-migration' },
-									{ siteSlug }
-								)
-							);
-						}
-
-						return exitFlow(
-							paths.siteSetupImportWordpressPath( {
-								siteId,
-								siteSlug,
-								from: fromQueryParam ?? '',
-								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
-							} )
-						);
-					}
-
-					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
+					return replace( paths.howToMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
