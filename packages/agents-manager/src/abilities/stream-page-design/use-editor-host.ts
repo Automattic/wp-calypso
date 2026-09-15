@@ -1,5 +1,6 @@
 import { useRegistry } from '@wordpress/data';
 import { useMemo, useRef } from '@wordpress/element';
+import { blockCurrentRequest, getBlockingMove } from '../../utils/canvas-binding';
 import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
 import {
@@ -29,7 +30,18 @@ export function useEditorHost(): EditorHost {
 			stageRootBlocks( rootClientId, blocks, registry.batch );
 
 		return {
-			resolveRoot: () => resolveBlocksRoot()?.clientId ?? null,
+			// The stream paints before its guarded callback runs, so it holds to the
+			// canvas the request was bound to itself: once the user has moved on,
+			// nothing is staged, and the block is latched so the callback refuses
+			// the same way even if they come back.
+			resolveRoot: () => {
+				if ( getBlockingMove() ) {
+					blockCurrentRequest();
+					return null;
+				}
+
+				return resolveBlocksRoot()?.clientId ?? null;
+			},
 
 			stageBlocks: stage,
 
