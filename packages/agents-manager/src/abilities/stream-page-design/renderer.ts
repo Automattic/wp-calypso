@@ -14,6 +14,7 @@ import {
 } from './block-markup';
 import { addPreviewClass, ensurePreviewStyles, scrollToBlockBottom } from './preview';
 import {
+	forgetStream,
 	getPageSectionMarkup,
 	getStreamedMarkup,
 	setStreamHandler,
@@ -519,6 +520,10 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 
 			if ( isFinal ) {
 				hostRef.current.commitFinalDesign( toolCallId, rootClientId );
+				// The design is on the page; nothing of the stream is needed again.
+				stateByToolCall.current.delete( toolCallId );
+				capturedToolCalls.current.delete( toolCallId );
+				forgetStream( toolCallId );
 			}
 
 			return true;
