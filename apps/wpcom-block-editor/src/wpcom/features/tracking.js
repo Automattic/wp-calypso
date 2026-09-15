@@ -994,6 +994,9 @@ if (
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
 			const actions = registry.dispatch( namespaceName );
 			const trackers = REDUX_TRACKING[ namespaceName ];
+			if ( ! actions ) {
+				return actions;
+			}
 
 			// Initialize namespace level objects if not yet done.
 			if ( ! rewrittenActions[ namespaceName ] ) {
