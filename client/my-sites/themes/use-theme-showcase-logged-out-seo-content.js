@@ -16,6 +16,10 @@ function findParsedFilter( filter, content ) {
 	return parsedFilter;
 }
 
+function isHomepage( filter, tier ) {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+}
+
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -32,9 +36,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 		() => ( {
 			recommended: {
 				all: {
-					title: hasEnTranslation( 'Free WordPress Themes — 1,000+ designs | WordPress.com' )
-						? translate( 'Free WordPress Themes — 1,000+ designs | WordPress.com' )
-						: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
+					title: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
 					header: isThemeShowcaseModern
 						? translate( 'Beautiful themes for every idea' )
 						: translate( 'Find the perfect theme for your website' ),
@@ -45,13 +47,6 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 						: translate(
 								'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
 						  ),
-					metaDescription: hasEnTranslation(
-						'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
-					)
-						? translate(
-								'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
-						  )
-						: undefined,
 				},
 				free: {
 					title: translate( 'Free WordPress Themes' ),
@@ -918,7 +913,29 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				},
 			},
 		} ),
-		[ hasEnTranslation, isThemeShowcaseModern, translate ]
+		[ isThemeShowcaseModern, translate ]
+	);
+
+	/**
+	 * The homepage content also serves as the fallback for filters without a
+	 * dedicated entry (e.g. /themes/filter/minimal), so the homepage-only copy
+	 * is applied here rather than in the map. Both strings fall back to the
+	 * existing copy until they are translated.
+	 */
+	const HOMEPAGE_SEO_CONTENT = useMemo(
+		() => ( {
+			...( hasEnTranslation( 'Free WordPress Themes — 1,000+ designs | WordPress.com' ) && {
+				title: translate( 'Free WordPress Themes — 1,000+ designs | WordPress.com' ),
+			} ),
+			...( hasEnTranslation(
+				'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+			) && {
+				metaDescription: translate(
+					'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+				),
+			} ),
+		} ),
+		[ hasEnTranslation, translate ]
 	);
 
 	const parsedFilter =
@@ -929,6 +946,10 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 
 	if ( ! seoContent ) {
 		return THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT.recommended.all;
+	}
+
+	if ( isHomepage( filter, tier ) ) {
+		return { ...seoContent, ...HOMEPAGE_SEO_CONTENT };
 	}
 
 	return seoContent;
