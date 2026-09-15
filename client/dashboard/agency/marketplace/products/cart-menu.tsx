@@ -11,6 +11,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
+import { TextBlur } from '../../../components/text-blur';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
@@ -54,7 +55,7 @@ export default function CartMenu( {
 	const { recordTracksEvent } = useAnalytics();
 	// Owned WordPress.com sites raise the volume tier, so the total matches the
 	// Hosting page wherever the cart is shown.
-	const { ownedSites: ownedWpcomSites } = useOwnedWpcomSites();
+	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
 
 	const getLineTotal = ( product: AgencyProduct, quantity: number ) => {
 		if ( product.family_slug === WPCOM_HOSTING_FAMILY_SLUG ) {
@@ -73,6 +74,12 @@ export default function CartMenu( {
 			return { item, product, billingTerm, isFree, total: getLineTotal( product, item.quantity ) };
 		} )
 		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
+
+	// A WordPress.com line's price depends on the owned sites, so hold the
+	// amounts until they are known rather than showing a total that then drops.
+	const isTotalReady =
+		isOwnedSitesReady ||
+		! lines.some( ( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG );
 
 	const currency = lines[ 0 ]?.product.currency ?? 'USD';
 	const total = lines.reduce( ( sum, line ) => sum + line.total, 0 );
@@ -102,7 +109,7 @@ export default function CartMenu( {
 			variant="primary"
 			__next40pxDefaultSize
 			href={ checkoutUrl }
-			disabled={ lines.length === 0 || ! isAgencyApproved }
+			disabled={ lines.length === 0 || ! isAgencyApproved || ! isTotalReady }
 			onClick={ () => {
 				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
@@ -164,11 +171,15 @@ export default function CartMenu( {
 								</Text>
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
-									<span>
+									<TextBlur
+										isBlurred={
+											! isTotalReady && product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
+										}
+									>
 										{ isFree
 											? __( 'Free' )
 											: formatCurrency( lineTotal, currency ) + getTermSuffix( term ) }
-									</span>
+									</TextBlur>
 									{ ! isFree && billingTerm !== term && (
 										<span>
 											{ ' ' +
@@ -191,14 +202,18 @@ export default function CartMenu( {
 									{ isReferralMode ? __( 'Total your client will pay:' ) : __( 'Total:' ) }
 								</Text>
 								<Text weight={ 600 }>
-									{ formatCurrency( total, currency ) + getTermSuffix( term ) }
+									<TextBlur isBlurred={ ! isTotalReady }>
+										{ formatCurrency( total, currency ) + getTermSuffix( term ) }
+									</TextBlur>
 								</Text>
 							</HStack>
 							{ isReferralMode && commission > 0 && (
 								<HStack justify="space-between">
 									<Text variant="muted">{ __( 'Your estimated commission:' ) }</Text>
 									<Text variant="muted">
-										{ formatCurrency( commission, currency ) + getTermSuffix( term ) }
+										<TextBlur isBlurred={ ! isTotalReady }>
+											{ formatCurrency( commission, currency ) + getTermSuffix( term ) }
+										</TextBlur>
 									</Text>
 								</HStack>
 							) }
