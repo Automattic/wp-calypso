@@ -184,6 +184,8 @@ let handler: StreamHandler | undefined;
 // What each tool call streamed last, so a renderer mounting mid-stream catches up.
 const lastMarkupByToolCall = new Map< string, string >();
 const awaitingFinalFlush = new Set< string >();
+// Finalized before any renderer registered; the one that does finalizes them.
+const finalizedUnrendered = new Set< string >();
 const announcedToolCalls = new Set< string >();
 
 // Scoped to the agent session: a new session's first update drops what the
@@ -193,6 +195,7 @@ let lastSessionId: string | undefined;
 function forgetStreams(): void {
 	lastMarkupByToolCall.clear();
 	awaitingFinalFlush.clear();
+	finalizedUnrendered.clear();
 	announcedToolCalls.clear();
 }
 
@@ -240,7 +243,9 @@ export function setStreamHandler( next: StreamHandler | undefined ): void {
 
 	if ( wasMissing ) {
 		for ( const [ toolCallId, markup ] of lastMarkupByToolCall ) {
-			void deliver( { toolCallId, markup } );
+			const isFinal = finalizedUnrendered.delete( toolCallId );
+
+			void deliver( { toolCallId, markup, ...( isFinal && { isFinal } ) } );
 		}
 	}
 }
@@ -300,8 +305,14 @@ export async function finalizePendingStreams( toolCallId?: string ): Promise< vo
 
 		const markup = lastMarkupByToolCall.get( id );
 
-		if ( markup !== undefined ) {
+		if ( markup === undefined ) {
+			continue;
+		}
+
+		if ( handler ) {
 			await deliver( { toolCallId: id, markup, isFinal: true } );
+		} else {
+			finalizedUnrendered.add( id );
 		}
 	}
 }
