@@ -11,17 +11,24 @@ import {
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
+// Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
+const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
+
 export const useCheckoutHelpCenter = (): {
 	toggleHelpCenter: () => void;
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink: string;
+	showHelpIcon: boolean;
 } => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -36,6 +43,13 @@ export const useCheckoutHelpCenter = (): {
 		helpCenterButtonLink,
 	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
+
+	// Products with their own support CTA keep it, and stay out of the experiment:
+	// assigning them would count an exposure for a label they never see.
+	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT, {
+		isEligible: ! hasPremiumSupport,
+	} );
+	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -76,6 +90,9 @@ export const useCheckoutHelpCenter = (): {
 	return {
 		toggleHelpCenter,
 		helpCenterButtonCopy,
-		helpCenterButtonLink,
+		helpCenterButtonLink: isGetHelpTreatment
+			? String( translate( 'Get Help' ) )
+			: helpCenterButtonLink,
+		showHelpIcon: isGetHelpTreatment,
 	};
 };

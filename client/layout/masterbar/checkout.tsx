@@ -2,6 +2,7 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { Icon, help } from '@wordpress/icons';
 import clsx from 'clsx';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
@@ -30,7 +31,8 @@ const CheckoutMasterbar = ( {
 	isGravatarDomain,
 }: Props ) => {
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const getCheckoutType = () => {
@@ -111,9 +113,14 @@ const CheckoutMasterbar = ( {
 							<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
 						) }
 						{ loadHelpCenterIcon && (
-							<span className="checkout-skip-button">
+							<span
+								className={ clsx( 'checkout-skip-button', {
+									'has-help-entry-label': showHelpIcon,
+								} ) }
+							>
 								{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 									{ helpCenterButtonLink }
 								</Step.LinkButton>
 							</span>
