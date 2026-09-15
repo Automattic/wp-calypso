@@ -6,3 +6,4 @@ export { default as Launchpad } from './launchpad';
 export { setUpActionsForTasks } from './setup-actions';
 export * from './action-components';
 export * from './types';
+export { setRequester } from './wpcom-request';
