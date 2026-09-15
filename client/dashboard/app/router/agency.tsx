@@ -79,7 +79,7 @@ import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 /**
  * Rejects `0`, which disables the setup screen's queries and leaves it on skeletons.
  */
-export function parseSiteIdParam( siteId: string ): number | null {
+function parseSiteIdParam( siteId: string ): number | null {
 	const parsed = Number( siteId );
 	return Number.isInteger( parsed ) && parsed > 0 ? parsed : null;
 }
