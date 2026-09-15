@@ -27,8 +27,11 @@ import { LocalConversationListItem } from '../../types';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
+import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
+import lazyComponent from '../../utils/lazy-component';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -49,6 +52,13 @@ import type {
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
+
+// Carries the block-editor stack, so it loads only where a design can stream.
+// Mounted here rather than in the chat: closing the chat unmounts it, and a
+// design streaming meanwhile still has to be painted and committed.
+const PageDesignRenderer = lazyComponent(
+	() => import( /* webpackChunkName: "am-page-design-renderer" */ '../page-design-renderer' )
+);
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -514,6 +524,7 @@ export default function AgentDock( {
 	return (
 		<>
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
+			{ ! isAmAbilitiesDisabled() && isEditorPage() && <PageDesignRenderer /> }
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
