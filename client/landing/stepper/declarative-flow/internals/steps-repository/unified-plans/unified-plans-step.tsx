@@ -718,7 +718,14 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
+		// The rail used to take this slot, so the back button was suppressed
+		// while it showed. It sits on the right now, beside where the counter
+		// goes, so the left slot behaves as it does everywhere else.
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+
+		const topBarLeftElement = goBack ? (
+			<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+		) : undefined;
 
 		return (
 			<>
@@ -742,14 +749,19 @@ function UnifiedPlansStep( {
 						} ) }
 						topBar={
 							<Step.TopBar
-								leftElement={
-									goBack ? (
-										<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
-									) : undefined
-								}
+								leftElement={ topBarLeftElement }
 								rightElement={
 									isOnboardingFlow( flowName ) ? (
 										<>
+											{ /* The rail and the counter are the same indicator at
+											     two widths, so they share this slot and never
+											     overlap. */ }
+											{ showProgress && (
+												<OnboardingProgress
+													currentStep="plans"
+													onStepSelect={ () => wrapperProps.goBack?.() }
+												/>
+											) }
 											{ stepCounter && (
 												<Step.StepCounter
 													current={ stepCounter.current }
@@ -766,12 +778,6 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ showProgress && (
-									<OnboardingProgress
-										currentStep="plans"
-										onStepSelect={ () => wrapperProps.goBack?.() }
-									/>
-								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle
