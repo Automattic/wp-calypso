@@ -1,8 +1,12 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
 import { OnboardSelect } from '@automattic/data-stores';
-import { sortLaunchpadTasksByCompletionStatus, useLaunchpad } from '@automattic/launchpad';
-import { LaunchpadInternal, type Task } from '@automattic/launchpad';
+import {
+	LaunchpadInternal,
+	sortLaunchpadTasksByCompletionStatus,
+	useLaunchpad,
+	type Task,
+} from '@automattic/launchpad';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
