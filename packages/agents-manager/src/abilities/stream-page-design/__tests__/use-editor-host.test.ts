@@ -117,6 +117,17 @@ it( 'drops the checkpoint of a stream that left the page as it was', () => {
 	expect( clearCheckpoint ).toHaveBeenCalledWith( 'call-1' );
 } );
 
+it( 'commits nothing for a stream it was told to forget', () => {
+	const editorHost = host();
+
+	editorHost.captureCheckpoint( 'call-1', 'root' );
+	editorHost.forgetToolCall( 'call-1' );
+	editorHost.commitFinalDesign( 'call-1', 'root' );
+
+	expect( commitStreamedPageDesign ).not.toHaveBeenCalled();
+	expect( clearCheckpoint ).not.toHaveBeenCalled();
+} );
+
 it( 'commits nothing for a stream it never snapshotted', () => {
 	host().commitFinalDesign( 'call-9', 'root' );
 

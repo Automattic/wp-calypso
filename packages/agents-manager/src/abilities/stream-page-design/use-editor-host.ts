@@ -88,6 +88,10 @@ export function useEditorHost(): EditorHost {
 					clearCheckpoint( toolCallId );
 				}
 			},
+
+			forgetToolCall: ( toolCallId ) => {
+				blocksBefore.current.delete( toolCallId );
+			},
 		};
 	}, [ registry ] );
 }

@@ -183,8 +183,6 @@ let handler: StreamHandler | undefined;
 // What each tool call streamed last, so a renderer mounting mid-stream catches up.
 const lastMarkupByToolCall = new Map< string, string >();
 const awaitingFinalFlush = new Set< string >();
-// Finalized before any renderer registered; the one that does finalizes them.
-const finalizedUnrendered = new Set< string >();
 const announcedToolCalls = new Set< string >();
 
 // Scoped to the agent session: a new session's first update drops what the
@@ -194,7 +192,6 @@ let lastSessionId: string | undefined;
 function forgetStreams(): void {
 	lastMarkupByToolCall.clear();
 	awaitingFinalFlush.clear();
-	finalizedUnrendered.clear();
 	announcedToolCalls.clear();
 }
 
@@ -246,9 +243,7 @@ export function setStreamHandler( next: StreamHandler | undefined ): void {
 
 	if ( wasMissing ) {
 		for ( const toolCallId of lastMarkupByToolCall.keys() ) {
-			const isFinal = finalizedUnrendered.delete( toolCallId );
-
-			void deliver( { toolCallId, ...( isFinal && { isFinal } ) } );
+			void deliver( { toolCallId } );
 		}
 	}
 }
@@ -265,7 +260,6 @@ export const getStreamedMarkup = ( toolCallId: string ): string | undefined =>
 export function forgetStream( toolCallId: string ): void {
 	lastMarkupByToolCall.delete( toolCallId );
 	awaitingFinalFlush.delete( toolCallId );
-	finalizedUnrendered.delete( toolCallId );
 	announcedToolCalls.delete( toolCallId );
 }
 
@@ -321,24 +315,22 @@ export async function handlePageDesignTaskUpdate( update: TaskUpdate ): Promise<
 /**
  * Asks the renderer to finalize the tool call that completed, or every call
  * still pending when the completed one is unknown or not among them. False
- * when a design did not make it onto the page.
+ * when a design did not make it onto the page: nothing was streamed, the
+ * renderer is not there (it mounts for the life of an editor page, so its
+ * chunk failed to load), or the canvas never took it.
  */
 export async function finalizePendingStreams( toolCallId?: string ): Promise< boolean > {
 	const toolCallIds =
 		toolCallId && awaitingFinalFlush.has( toolCallId ) ? [ toolCallId ] : [ ...awaitingFinalFlush ];
-	let finalized = true;
+	let finalized = toolCallIds.length > 0;
 
 	for ( const id of toolCallIds ) {
-		awaitingFinalFlush.delete( id );
-
-		if ( ! lastMarkupByToolCall.has( id ) ) {
-			continue;
-		}
-
 		if ( handler ) {
+			awaitingFinalFlush.delete( id );
 			finalized = ( await deliver( { toolCallId: id, isFinal: true } ) ) && finalized;
 		} else {
-			finalizedUnrendered.add( id );
+			forgetStream( id );
+			finalized = false;
 		}
 	}
 
