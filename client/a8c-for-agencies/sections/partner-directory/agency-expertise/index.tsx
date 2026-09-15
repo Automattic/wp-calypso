@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
@@ -10,51 +9,30 @@ import PartnerDirectoryExpertiseContent, {
 	getApplicationSubmitFailedMessage,
 	getApplicationSubmittedMessage,
 } from 'calypso/dashboard/agency/partner-directory/expertise/expertise-content';
-import { useDispatch, useSelector } from 'calypso/state';
-import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { Agency } from 'calypso/state/a8c-for-agencies/types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
+import usePartnerDirectoryHost from '../hooks/use-partner-directory-host';
 import type { Agency as AgencyPayload } from '@automattic/api-core';
 
 const AgencyExpertise = () => {
 	const dispatch = useDispatch();
+	const { agency, recordTracks, mergeActiveAgency } = usePartnerDirectoryHost();
 
-	const agency = useSelector( getActiveAgency );
+	const onSubmitSuccess = ( response: AgencyPayload ) => {
+		mergeActiveAgency( response );
+		dispatch(
+			successNotice( getApplicationSubmittedMessage(), {
+				displayOnNextPage: true,
+				duration: 6000,
+			} )
+		);
+		page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+	};
 
-	const recordTracks = useCallback(
-		( eventName: string, properties?: Record< string, unknown > ) => {
-			dispatch( recordTracksEvent( eventName, properties ) );
-		},
-		[ dispatch ]
-	);
-
-	const onSubmitSuccess = useCallback(
-		( response: AgencyPayload ) => {
-			// The shared mutation only refreshes the dashboard's query cache,
-			// which this app doesn't read, so mirror the updated agency into
-			// Redux here. The cast bridges the api-core and Redux models of it.
-			dispatch( setActiveAgency( { ...agency, ...response } as Agency ) );
-			dispatch(
-				successNotice( getApplicationSubmittedMessage(), {
-					displayOnNextPage: true,
-					duration: 6000,
-				} )
-			);
-			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
-		},
-		[ agency, dispatch ]
-	);
-
-	const onSubmitError = useCallback( () => {
+	const onSubmitError = () => {
 		dispatch( errorNotice( getApplicationSubmitFailedMessage(), { duration: 6000 } ) );
-	}, [ dispatch ] );
-
-	useEffect( () => {
-		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
-	}, [] );
+	};
 
 	// The section controller waits for the agency before rendering sections,
 	// so this only satisfies the shared component's required prop.

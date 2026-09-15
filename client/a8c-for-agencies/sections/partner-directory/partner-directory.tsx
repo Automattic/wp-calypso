@@ -30,7 +30,6 @@ import {
 import Dashboard from './dashboard';
 import LeadMatchingForm from './lead-matching';
 import {
-	mapAgencyDetailsFormData,
 	mapLeadMatchingFormData,
 	mapLeadMatchingProfileToFormData,
 } from './utils/map-application-form-data';
@@ -58,7 +57,6 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG && hasAgency && ! isFetching;
 	const leadMatchingProfileQuery = useLeadMatchingProfile( shouldFetchLeadMatching );
 
-	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 	const leadMatchingProfile =
 		leadMatchingProfileQuery.data?.lead_matching_profile ?? agency?.lead_matching?.profile ?? null;
 	const leadMatchingData = useMemo(
@@ -89,7 +87,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] = {
-			content: <AgencyDetailsForm initialFormData={ agencyDetailsData } />,
+			content: <AgencyDetailsForm />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
@@ -126,13 +124,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [
-		translate,
-		agencyDetailsData,
-		isLeadMatchingLoading,
-		leadMatchingData,
-		leadMatchingProfile,
-	] );
+	}, [ translate, isLeadMatchingLoading, leadMatchingData, leadMatchingProfile ] );
 
 	// Wait until the agency is fetched
 	if ( ! hasAgency || isFetching ) {
