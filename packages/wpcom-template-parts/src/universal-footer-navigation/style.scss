@@ -860,3 +860,300 @@
 .wpcom-global-nav-footer :is(.lp-footer-social-media .lp-icon) {
 	pointer-events:none;
 }
+/* stylelint-enable */
+
+/* 2026 footer preview: hand-written, scoped under .wpcom-global-nav-footer--2026
+   and mirroring Landpack's block of the same name in wpcom, rule for rule.
+   The vendored sheet above doubles utility classes; the repeats below out-specify it. */
+
+/* Variable Inter, as Landpack serves it; the vendored sheet only registers static faces. */
+@font-face {
+	font-display: swap;
+	font-family: inter-variable-web;
+	font-style: normal;
+	/* stylelint-disable-next-line scales/font-weights -- variable font range */
+	font-weight: 100 900;
+	src: url( https://wordpress.com/i/fonts/inter-4.0/InterVariable.woff2 ) format( 'woff2' );
+}
+
+.wpcom-global-nav-footer--2026 {
+	/* Studio palette: gray-100 #101517, gray-50 #646970, gray-20 #a7aaad,
+	   blue-50 #3858e9, blue-70 #1d35b4. */
+	--lp-footer-primary-color-rgb: 16, 21, 23;
+	--lp-footer-secondary-color: #646970;
+	--lp-footer-secondary-color-rgb: 100, 105, 112;
+	--lp-footer-control-border-color: #a7aaad;
+	--lp-footer-focus-color: #3858e9;
+	--lp-footer-automattic-hover-color: #1d35b4;
+
+	@supports ( font-variation-settings: normal ) {
+		--lp-font-stack-default: inter-variable-web, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+			Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	}
+
+	> .lp-footer-section {
+		background: #fff;
+	}
+
+	/* Landpack's reset transitions every property on links and headers (the
+	   vendored sheet eases opacity only), so focus and colour changes fade as on wpcom. */
+	> .lp-footer-section a,
+	> .lp-footer-section summary {
+		transition: 0.15s ease-out;
+
+		@media ( hover: hover ) {
+			&:active {
+				transition: none;
+			}
+		}
+	}
+
+	/* From L the accordion headers are plain headings and do not transition. */
+	@media ( min-width: 1152px ) {
+		> .lp-footer-section .lp-footer-stack > summary {
+			transition: none;
+		}
+	}
+
+	/* The do-not-sell slot balances its lines once a link is dropped in. */
+	.x-nav-footer--ccpa-dnsd {
+		text-wrap: balance;
+	}
+
+	.lp-footer-logo {
+		fill: #3858e9;
+	}
+
+	.lp-footer-stack__content__item,
+	.lp-language-picker {
+		color: var( --lp-footer-secondary-color );
+	}
+
+	.lp-footer-stack__content .lp-footer-stack__content__item.lp-link-invisible {
+		--lp-color: var( --lp-footer-secondary-color-rgb );
+		color: var( --lp-footer-secondary-color );
+	}
+
+	/* No arrow on external links. */
+	.lp-link-chevron-external.lp-link-chevron-external::after {
+		content: none;
+	}
+
+	/* Mobile: start-aligned rows and a 46px accordion pitch (26 line + 9 padding + 11 gap). */
+	@media ( max-width: 1151px ) {
+		.lp-flex--justify-center {
+			justify-content: flex-start;
+		}
+
+		.has-text-align-center.has-text-align-center {
+			text-align: start !important;
+		}
+
+		.lp-grid--type-footer.lp-grid--gutter-y-4 {
+			grid-row-gap: 11px;
+		}
+	}
+
+	/* Bare-text language control; `field-sizing` sizes the select to its selected
+	   option so the focus ring hugs the label (older browsers keep the old width). */
+	.lp-language-picker__content {
+		border: none;
+		border-radius: 0;
+		padding: 0 calc( var( --lp-picker-icon-offset ) + var( --lp-picker-icon-size ) ) 0 0;
+		width: auto;
+		field-sizing: content;
+		/* 14/26 on mobile, 12/26 from L; source order beats the vendored 500 weight. */
+		font-size: 14px;
+		line-height: 26px;
+		font-weight: 400;
+
+		@media ( min-width: 1152px ) {
+			font-size: 12px;
+		}
+	}
+
+	/* The chevron is positioned against the wrapper, so shrink that to the label too. */
+	.lp-language-picker {
+		width: fit-content;
+
+		@media ( min-width: 1152px ) {
+			margin-inline-start: auto;
+		}
+	}
+
+	/* Figma type ramp: headers 18/26 medium (16/26 semibold from L), links 14/28, 1% tracking. */
+	.lp-footer-stack__summary__content.lp-bold.lp-bold {
+		font-weight: 500;
+		font-size: 18px;
+		line-height: 26px;
+		letter-spacing: 0.01em;
+
+		@media ( min-width: 1152px ) {
+			font-weight: 600;
+			font-size: 16px;
+		}
+	}
+
+	.lp-footer-stack__content__item {
+		padding: 0;
+		font-size: 14px;
+		line-height: 28px;
+		letter-spacing: 0.01em;
+	}
+
+	.lp-language-picker__chevron {
+		transform: scale( 0.65 );
+	}
+
+	/* `.has-tiny-font-size` uses !important, so set its custom properties instead. */
+	footer.lp-section .lp-section__content {
+		--lp-font-size-tiny: 12px;
+		--lp-line-height-tiny: 26px;
+		letter-spacing: 0.01em;
+
+		/* The "An Automattic …" tagline is set in uppercase with 4% tracking. */
+		.lp-flex--inline {
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+	}
+
+	/* Mobile: 24px side gutter on both sections; desktop keeps the defaults. */
+	> .lp-footer-section,
+	footer.lp-section {
+		--lp-section-padding-x: 24px;
+
+		@media ( min-width: 1152px ) {
+			--lp-section-padding-x: var( --lp-pad-4 );
+		}
+	}
+
+	> .lp-footer-section.lp-padding-top-7.lp-padding-top-7 {
+		padding-top: 60px;
+
+		@media ( min-width: 1152px ) {
+			padding-top: var( --lp-pad-7 );
+		}
+	}
+
+	/* Logo, columns and bottom bar stack with 60px gaps on mobile and 64px on
+	   desktop (minus the 6px summary padding above the heading). */
+	.lp-padding-bottom-5.lp-padding-bottom-5 {
+		padding-bottom: 60px;
+
+		@media ( min-width: 1152px ) {
+			padding-bottom: 58px;
+		}
+	}
+
+	.lp-grid.lp-padding-top-7.lp-padding-top-7 {
+		padding-top: 60px;
+
+		@media ( min-width: 1152px ) {
+			padding-top: 64px;
+		}
+	}
+
+	/* Badges and social sit above the language control on mobile: picker column last. */
+	.lp-grid__order-1\@L.lp-pb-36.lp-pb-36 {
+		order: 1;
+		padding: 36px 0 0;
+
+		@media ( min-width: 1152px ) {
+			padding-top: 0;
+		}
+	}
+
+	.lp-language-picker__icon {
+		display: none;
+	}
+
+	a:focus-visible,
+	summary:focus-visible,
+	select:focus-visible {
+		outline: 2px solid var( --lp-footer-focus-color );
+		outline-offset: 2px;
+	}
+
+	.lp-mobile-badge {
+		--lp-mobile-badge-color: #101517;
+		--lp-mobile-badge-background: #fff;
+		--lp-mobile-badge-background-clip: unset;
+		--lp-mobile-badge-border-color-rgb: 167, 170, 173;
+		--lp-mobile-badge-border-opacity: 1;
+	}
+
+	.lp-footer-social-media .lp-color {
+		--lp-color: var( --lp-footer-primary-color-rgb );
+		--lp-color-alpha: 1;
+	}
+
+	.lp-icon--custom-automattic-footer {
+		transition: color 0.15s ease-out;
+	}
+
+	.lp-link-invisible:has( > .lp-icon--custom-automattic-footer ) {
+		@media ( hover: hover ) {
+			&:hover {
+				opacity: 1;
+
+				.lp-icon--custom-automattic-footer {
+					color: var( --lp-footer-automattic-hover-color );
+				}
+			}
+		}
+
+		&:focus-visible .lp-icon--custom-automattic-footer {
+			color: var( --lp-footer-automattic-hover-color );
+		}
+	}
+
+	/* The bottom bar (legal links, ©, tagline) reads in the secondary colour. */
+	> .lp-footer-section > .lp-section__content > .lp-wrapper > .lp-section {
+		color: var( --lp-footer-secondary-color );
+
+		.color-blue-50,
+		.lp-grid--type-footer > :last-child {
+			color: var( --lp-footer-secondary-color ) !important;
+		}
+
+		.color-blue-50 .lp-link-invisible,
+		.lp-grid--type-footer > :last-child .lp-link-invisible {
+			--lp-color: var( --lp-footer-secondary-color-rgb );
+		}
+	}
+
+	.lp-language-picker__content option {
+		color: #101517;
+		background-color: #fff;
+	}
+
+	/* Dark colourway: white / gray-20 / gray-50 / blue-20 #adbaf3. */
+	&.wpcom-global-nav-footer--dark {
+		--lp-footer-primary-color-rgb: 255, 255, 255;
+		--lp-footer-secondary-color: #a7aaad;
+		--lp-footer-secondary-color-rgb: 167, 170, 173;
+		--lp-footer-control-border-color: #646970;
+		--lp-footer-focus-color: #adbaf3;
+		--lp-footer-automattic-hover-color: #adbaf3;
+
+		> .lp-footer-section {
+			background: #101517;
+		}
+
+		.lp-footer-logo {
+			fill: #fff;
+		}
+
+		.lp-mobile-badge {
+			--lp-mobile-badge-color: #fff;
+			--lp-mobile-badge-background: #101517;
+			--lp-mobile-badge-border-color-rgb: 100, 105, 112;
+		}
+
+		.lp-language-picker__content option {
+			color: #fff;
+			background-color: #101517;
+		}
+	}
+}

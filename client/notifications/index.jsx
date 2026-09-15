@@ -217,7 +217,9 @@ export class Notifications extends Component {
 		OPEN_LINK: [
 			( store, { href, tracksEvent } ) => {
 				if ( tracksEvent ) {
-					this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
+					// range_info.context from the notes API can be hyphenated, which Tracks rejects.
+					const suffix = tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
+					this.props.recordTracksEventAction( 'calypso_notifications_' + suffix, {
 						link: href,
 					} );
 				}

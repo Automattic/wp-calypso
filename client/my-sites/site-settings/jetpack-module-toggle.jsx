@@ -55,8 +55,9 @@ class JetpackModuleToggle extends Component {
 			toggled: status,
 		};
 
+		// Module slugs are hyphenated, and a hyphen in the name gets the event rejected.
 		this.props.recordTracksEvent(
-			`calypso_jetpack_module_toggle_${ moduleSlug }_${ status }`,
+			`calypso_jetpack_module_toggle_${ moduleSlug.replace( /-/g, '_' ) }_${ status }`,
 			tracksProps
 		);
 

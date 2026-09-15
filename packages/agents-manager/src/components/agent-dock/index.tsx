@@ -8,7 +8,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+	Navigate,
+	NavigationType,
+	Route,
+	Routes,
+	useLocation,
+	useNavigate,
+	useNavigationType,
+} from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -101,6 +109,7 @@ export default function AgentDock( {
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
+	const navigationType = useNavigationType();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
@@ -473,7 +482,13 @@ export default function AgentDock( {
 						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
 							path="*"
-							element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> }
+							element={
+								<Navigate
+									to="/chat"
+									state={ navigationType === NavigationType.Push ? { isNewChat: true } : undefined }
+									replace
+								/>
+							}
 						/>
 					</Routes>
 				) }
