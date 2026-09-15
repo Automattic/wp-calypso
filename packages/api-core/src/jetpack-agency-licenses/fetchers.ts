@@ -1,5 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
+	AgencyDevLicenses,
 	FetchJetpackLicensesOptions,
 	JetpackLicense,
 	JetpackLicenseCounts,
@@ -70,6 +71,16 @@ export async function fetchJetpackLicenseDownloadUrl(
 		{
 			apiNamespace: 'wpcom/v2',
 			path: `/jetpack-licensing/license/${ licenseKey }/download`,
+		},
+		{ agency_id: agencyId }
+	);
+}
+
+export async function fetchAgencyDevLicenses( agencyId: number ): Promise< AgencyDevLicenses > {
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-licensing/dev-licenses',
 		},
 		{ agency_id: agencyId }
 	);

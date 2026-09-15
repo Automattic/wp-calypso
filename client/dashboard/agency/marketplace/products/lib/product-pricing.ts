@@ -96,6 +96,46 @@ export function getProductPriceInfo(
 	return { price: regularPrice, discountPercentage: 0, intervalLabel, billingTerm, isFree };
 }
 
+export interface WpcomTieredPrice {
+	/** The regular per-site price for the term. */
+	basePricePerUnit: number;
+	/** The per-site price at the reached volume tier. */
+	pricePerUnit: number;
+	/** Regular price for the new sites only. */
+	actualCost: number;
+	/** Tiered price for the new sites only. */
+	discountedCost: number;
+	discountPercentage: number;
+}
+
+// Mirrors the classic dashboard: sites the agency already owns count towards
+// the volume tier, but only the new sites are charged.
+export function getWpcomTieredPrice(
+	product: AgencyProduct,
+	quantity: number,
+	term: TermPricing,
+	ownedSites = 0
+): WpcomTieredPrice {
+	const basePricePerUnit =
+		term === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+	const tierPrices = term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
+	const tierQuantity = quantity + ownedSites;
+	const tier =
+		tierPrices?.find( ( candidate ) => candidate.units === tierQuantity ) ??
+		tierPrices
+			?.filter( ( candidate ) => candidate.units <= tierQuantity )
+			.sort( ( a, b ) => b.units - a.units )[ 0 ];
+	const pricePerUnit = tier?.price ?? basePricePerUnit;
+
+	return {
+		basePricePerUnit,
+		pricePerUnit,
+		actualCost: basePricePerUnit * quantity,
+		discountedCost: pricePerUnit * quantity,
+		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
+	};
+}
+
 export const getTermSuffix = ( term: TermPricing, short = true ) => {
 	if ( term === 'yearly' ) {
 		return short ? __( '/yr' ) : __( '/year' );
