@@ -453,7 +453,7 @@ import {
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
@@ -1559,6 +1559,71 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Stop' ) );
 
 		expect( abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
+	describe( 'response outcome tracking', () => {
+		const outcomeCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_response_completed'
+				);
+
+		beforeEach( () => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		} );
+
+		it( 'records one completed outcome per task, with the reply message id', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_response_completed',
+					{ status: 'completed', message_id: 'agent-outcome' },
+				],
+			] );
+		} );
+
+		it.each( [ 'failed', 'canceled' ] as const )( 'records a %s outcome', async ( state ) => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: `task-${ state }`,
+					status: { state },
+					final: true,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_response_completed', { status: state } ],
+			] );
+		} );
+
+		it( 'records nothing while the task is still working', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: 'task-working',
+					status: { state: 'working' },
+					final: false,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [] );
+		} );
 	} );
 
 	it( 'drops a same-tick duplicate send before upload state propagates', async () => {
