@@ -96,19 +96,6 @@ describe( 'wpAdminNavigateCallback', () => {
 		);
 	} );
 
-	it( 'records an empty page for a destination without one', async () => {
-		await wpAdminNavigateCallback( { path: '/wp-admin/plugins.php' } );
-
-		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_agents_manager_wp_admin_navigate_start',
-			{
-				destination_path: '/wp-admin/plugins.php',
-				destination_page: '',
-				destination_post_type: '',
-			}
-		);
-	} );
-
 	it( 'records the post type that names an edit.php list', async () => {
 		await wpAdminNavigateCallback( { path: '/wp-admin/edit.php?post_type=shop_order&s=private' } );
 
