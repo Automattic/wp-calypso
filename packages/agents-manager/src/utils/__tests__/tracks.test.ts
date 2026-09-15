@@ -19,6 +19,7 @@ import { setLoadedProviderIds } from '../loaded-provider-ids';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
 	getBigSkyTracksData,
+	getWpAdminRouteTracksProps,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 } from '../tracks';
@@ -590,6 +591,32 @@ describe( 'getBigSkyTracksData', () => {
 			sessionType: 'free-trial-session',
 			screen: 'site-editor',
 			isDevMode: false,
+		} );
+	} );
+} );
+
+describe( 'getWpAdminRouteTracksProps', () => {
+	it( 'returns the pathname with the page and post_type query args', () => {
+		expect(
+			getWpAdminRouteTracksProps( '/wp-admin/edit.php?post_type=shop_order&page=wc-orders' )
+		).toEqual( { path: '/wp-admin/edit.php', page: 'wc-orders', postType: 'shop_order' } );
+	} );
+
+	it( 'resolves a relative href against the current origin', () => {
+		expect( getWpAdminRouteTracksProps( 'plugins.php' ).path ).toBe( '/plugins.php' );
+	} );
+
+	it( 'never returns other query values', () => {
+		const props = getWpAdminRouteTracksProps( '/wp-admin/edit.php?s=secret&post=42' );
+		expect( props ).toEqual( { path: '/wp-admin/edit.php', page: '', postType: '' } );
+		expect( JSON.stringify( props ) ).not.toContain( 'secret' );
+	} );
+
+	it( 'returns empty props for an unparsable href', () => {
+		expect( getWpAdminRouteTracksProps( 'http://[bad' ) ).toEqual( {
+			path: '',
+			page: '',
+			postType: '',
 		} );
 	} );
 } );
