@@ -1,0 +1,88 @@
+.backup-dataviews {
+	margin-block-start: 16px;
+}
+
+.backup-dataviews__controls {
+	display: flex;
+	justify-content: flex-end;
+	margin-block-end: 16px;
+}
+
+.backup-dataviews .dataviews-view-table-header,
+.backup-dataviews .dataviews-view-table-header-button {
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: var( --color-text-subtle );
+}
+
+.backup-dataviews .dataviews-view-table-header-button {
+	border: none;
+	box-shadow: none;
+}
+
+.backup-dataviews .dataviews__view-actions .components-button,
+.backup-dataviews .dataviews-pagination .components-button,
+.backup-dataviews .dataviews-item-actions .components-button {
+	border: none;
+	box-shadow: none;
+	color: var( --studio-gray-70 );
+}
+
+.backup-dataviews .dataviews-wrapper tr.dataviews-view-table__row td {
+	padding-block: 14px;
+	border-block-end: 1px solid var( --color-border-subtle );
+	vertical-align: top;
+}
+
+.backup-dataviews__date {
+	color: var( --color-text-subtle );
+	white-space: nowrap;
+}
+
+.backup-dataviews__icon-box {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 32px;
+	block-size: 32px;
+	background: var( --studio-gray-0 );
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.backup-dataviews__icon {
+	fill: var( --color-text );
+}
+
+.backup-dataviews__event-text strong {
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.backup-dataviews__event-description {
+	color: var( --color-text-subtle );
+}
+
+.backup-dataviews__event-description div {
+	display: inline;
+}
+
+.backup-dataviews__user {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var( --color-text-subtle );
+}
+
+.backup-dataviews__user-avatar {
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.backup-dataviews__user-logo {
+	flex-shrink: 0;
+	display: block;
+}
+
