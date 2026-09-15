@@ -868,14 +868,24 @@ async function* processAgentResponseStream(
 
 					// Get the final result from the stream
 					let continuedTaskUpdate: TaskUpdate | null = null;
-					for await ( const streamUpdate of continuedTaskStream ) {
-						// Yield intermediate updates
-						if ( ! streamUpdate.final ) {
-							yield streamUpdate;
-						} else {
-							// Store the final result
-							continuedTaskUpdate = streamUpdate;
+					try {
+						for await ( const streamUpdate of continuedTaskStream ) {
+							// Yield intermediate updates
+							if ( ! streamUpdate.final ) {
+								yield streamUpdate;
+							} else {
+								// Store the final result
+								continuedTaskUpdate = streamUpdate;
+							}
 						}
+					} catch ( error ) {
+						if (
+							continuedTaskUpdate &&
+							[ 'failed', 'canceled' ].includes( continuedTaskUpdate.status.state )
+						) {
+							yield continuedTaskUpdate;
+						}
+						throw error;
 					}
 
 					// If we didn't get a final result, throw an error
@@ -963,14 +973,24 @@ async function* processAgentResponseStream(
 
 								// Get the final result from the stream
 								let moreFinalTask: TaskUpdate | null = null;
-								for await ( const streamUpdate of moreTaskStream ) {
-									// Yield intermediate updates
-									if ( ! streamUpdate.final ) {
-										yield streamUpdate;
-									} else {
-										// Store the final result
-										moreFinalTask = streamUpdate;
+								try {
+									for await ( const streamUpdate of moreTaskStream ) {
+										// Yield intermediate updates
+										if ( ! streamUpdate.final ) {
+											yield streamUpdate;
+										} else {
+											// Store the final result
+											moreFinalTask = streamUpdate;
+										}
 									}
+								} catch ( error ) {
+									if (
+										moreFinalTask &&
+										[ 'failed', 'canceled' ].includes( moreFinalTask.status.state )
+									) {
+										yield moreFinalTask;
+									}
+									throw error;
 								}
 
 								// If we didn't get a final result, throw an error
@@ -1056,6 +1076,9 @@ async function* processAgentResponseStream(
 								state: 'completed',
 								message: finalAgentMessage,
 							},
+							...( enhancedUpdate.aiCredits !== undefined && {
+								aiCredits: enhancedUpdate.aiCredits,
+							} ),
 							final: true,
 							text: combinedAgentText,
 						};

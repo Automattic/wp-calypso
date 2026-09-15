@@ -19,7 +19,7 @@ import {
 	useRef,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
+import { LOCAL_TOOL_RUNNING_MESSAGE, ORCHESTRATOR_AGENT_ID } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
@@ -41,6 +41,7 @@ import { useNavigationContinuation } from '../../hooks/use-navigation-continuati
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
+import { useWpcomCreditPreviewNotice } from '../../hooks/use-wpcom-credit-preview-notice';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -61,6 +62,7 @@ import {
 } from '../../utils/external-context';
 import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import {
@@ -332,7 +334,8 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, site, siteKey, currentUser } = useAgentsManagerContext();
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -457,6 +460,15 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const { notice: creditNotice, onTerminalResult: updateCreditNotice } =
+		useWpcomCreditPreviewNotice( {
+			scopeKey: checkpointScopeIdentity,
+			siteId: typeof site?.ID === 'number' ? site.ID : undefined,
+			enabled:
+				! isReaderChat &&
+				agentConfig?.agentId === ORCHESTRATOR_AGENT_ID &&
+				getAgentsManagerInlineData()?.isWpcomPlatform === true,
+		} );
 	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -487,6 +499,7 @@ export default function OrchestratorChat( {
 					update.final === true ||
 					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
 				if ( isTerminal && isCurrentStreamGeneration ) {
+					updateCreditNotice( update.aiCredits );
 					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
 					const completedSuccessfully =
 						update.status.state === 'completed' ||
@@ -525,7 +538,7 @@ export default function OrchestratorChat( {
 				await onTaskUpdate?.( update );
 			},
 		};
-	}, [ agentConfig, checkpointStreamGeneration ] );
+	}, [ agentConfig, checkpointStreamGeneration, updateCreditNotice ] );
 
 	const {
 		addMessage,
@@ -723,7 +736,6 @@ export default function OrchestratorChat( {
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
@@ -1830,6 +1842,7 @@ export default function OrchestratorChat( {
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			isChatInputDisabled={ isChatInputDisabled }
+			notice={ creditNotice }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
