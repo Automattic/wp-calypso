@@ -1,3 +1,6 @@
+import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -31,6 +34,35 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
+	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+
+	// The bell mounts with the page, so by the time the panel opens these are almost
+	// always cached and the panel paints the right tabs on its first frame.
+	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
+	// Only asked where the layout can be changed back, so nobody is stranded in a
+	// layout whose control isn't rendered.
+	const { data: isAutomattician, isPending: isResolvingAutomattician } = useQuery( {
+		...isAutomatticianQuery(),
+		enabled: isViewSettingsEnabled,
+	} );
+
+	const notificationPreferences = useMemo( () => {
+		// Both answers have to be in before the panel seeds itself; it reads them once.
+		if ( ! userPreferences || ( isViewSettingsEnabled && isResolvingAutomattician ) ) {
+			return undefined;
+		}
+
+		return {
+			// Automatticians start on the new layout. An explicit choice always wins,
+			// including a deliberate switch back to Classic.
+			layoutStyle:
+				userPreferences[ 'notifications-layout-style' ] ??
+				( isAutomattician ? ( 'simplified' as const ) : undefined ),
+			views: userPreferences[ 'notifications-views' ],
+			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
+		};
+	}, [ userPreferences, isAutomattician, isResolvingAutomattician, isViewSettingsEnabled ] );
+
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
 	// anchored, falling back to the captured node while it is still connected.
@@ -51,6 +83,35 @@ export default function Notifications( {
 		}
 		setIsOpen( willOpen );
 	};
+
+	// The settings menu opens on mousedown and takes the matching mouseup with it,
+	// which leaves the popover's own blur check suppressed from then on: it can no
+	// longer close itself when focus leaves. Close on an outside press instead.
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handlePointerDown = ( event: PointerEvent ) => {
+			const target = event.target as HTMLElement | null;
+
+			if (
+				target?.closest( '.dashboard-notifications__popover' ) ||
+				// The settings menu renders outside the panel.
+				target?.closest( '[role="menu"]' ) ||
+				// Leave the bell to the omnibar's own toggle, or the two race and the
+				// panel closes and immediately reopens.
+				target?.closest( '#wpcom-omnibar' )
+			) {
+				return;
+			}
+
+			setIsOpen( false );
+		};
+
+		document.addEventListener( 'pointerdown', handlePointerDown );
+		return () => document.removeEventListener( 'pointerdown', handlePointerDown );
+	}, [ isOpen ] );
 
 	// Close notifications when help center opens.
 	useEffect( () => {
@@ -149,6 +210,7 @@ export default function Notifications( {
 	const dropdown = (
 		<Dropdown
 			popoverProps={ {
+				className: 'dashboard-notifications__popover',
 				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
@@ -200,6 +262,8 @@ export default function Notifications( {
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
+						preferences={ notificationPreferences }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
