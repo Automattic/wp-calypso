@@ -6,6 +6,7 @@ import { InsightScreenshotWithOverlay } from './performance-insight-screenshot';
 import type {
 	SitePerformanceReport,
 	PerformanceMetricAuditDetails,
+	PerformanceMetricAuditDetailsHeading,
 	PerformanceMetricAuditDetailsItem,
 } from '@automattic/api-core';
 
@@ -14,10 +15,6 @@ import type {
 const wrapLongValueStyle = { whiteSpace: 'normal', overflowWrap: 'anywhere' } as const;
 
 const FLEXIBLE_VALUE_TYPES = [ 'code', 'link', 'source-location', 'text', 'url' ];
-
-type PerformanceMetricAuditDetailsHeading = NonNullable<
-	PerformanceMetricAuditDetails[ 'headings' ]
->[ number ];
 
 type PerformanceInsightRow = PerformanceMetricAuditDetailsItem & {
 	id: string;
@@ -31,6 +28,14 @@ const getCellValue = (
 	heading.subItemsHeading && item.__isSubItem
 		? item[ heading.subItemsHeading.key ]
 		: item[ heading.key ];
+
+const getValueType = (
+	heading: PerformanceMetricAuditDetailsHeading,
+	item: PerformanceMetricAuditDetailsItem
+) =>
+	heading.subItemsHeading && item.__isSubItem
+		? heading.subItemsHeading.valueType ?? heading.valueType
+		: heading.valueType;
 
 const renderNode = (
 	data: { [ key: string ]: any },
@@ -72,11 +77,7 @@ const PerformanceInsightTable = ( {
 		enableHiding: false,
 		render: ( { item }: { item: PerformanceMetricAuditDetailsItem } ) => {
 			const value = getCellValue( heading, item );
-
-			const valueType =
-				heading.subItemsHeading && item.__isSubItem
-					? heading.subItemsHeading.valueType ?? heading.valueType
-					: heading.valueType;
+			const valueType = getValueType( heading, item );
 
 			if ( typeof value === 'object' ) {
 				switch ( value?.type ) {
@@ -143,13 +144,16 @@ const PerformanceInsightTable = ( {
 	// Without explicit widths DataViews shrinks every column to its content and hands all the
 	// slack to the last one, which collapses wrapped text columns into a narrow stack. Columns
 	// that render nothing are skipped so they can't claim a share of the width.
-	const flexibleHeadings = headings.filter(
-		( heading ) =>
-			FLEXIBLE_VALUE_TYPES.includes( heading.valueType ) &&
-			rows.some( ( row ) => {
-				const value = getCellValue( heading, row );
-				return value !== undefined && value !== null && value !== '';
-			} )
+	const flexibleHeadings = headings.filter( ( heading ) =>
+		rows.some( ( row ) => {
+			const value = getCellValue( heading, row );
+			return (
+				FLEXIBLE_VALUE_TYPES.includes( getValueType( heading, row ) ) &&
+				value !== undefined &&
+				value !== null &&
+				value !== ''
+			);
+		} )
 	);
 	const columnStyles = Object.fromEntries(
 		flexibleHeadings.map( ( heading ) => [
