@@ -47,8 +47,7 @@ const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
 	const queryClient = useQueryClient();
 	const marketplaceSearchPluginData = queryClient
 		.getQueriesData< MarketplaceSearch >( {
-			queryKey: [ 'marketplace-search' ],
-			predicate: ( query ) => query.queryKey.includes( pluginSlug ),
+			queryKey: [ 'marketplace-search', 'wporg' ],
 		} )
 		.flatMap( ( [ , data ] ) => data?.data.results || [] )
 		.find( ( result ) => result.fields.slug === pluginSlug );
@@ -57,7 +56,6 @@ const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
 };
 
 export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: boolean } = {} ) => {
-	const queryClient = useQueryClient();
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
@@ -68,34 +66,15 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
-		marketplacePluginsQuery()
-	);
-	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
-	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
-		...wpOrgPluginQuery( pluginSlug, locale ),
-		enabled: ! availableIcon && hasPluginSlug,
+	const { data: sites, isLoading: isLoadingSites } = useQuery( {
+		...queries.sitesQuery(),
+		enabled,
 	} );
-	// Query needed to get the action_links
-	const sitePluginQueryResults = useQueries( {
-		queries: hasPluginSlug
-			? Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
-					sitePluginQuery( Number( id ), pluginSlug )
-			  )
-			: [],
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery( {
+		...marketplacePluginsQuery(),
+		enabled,
 	} );
-	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
-
-	const actionLinksBySiteId = Object.keys( sitesPlugins?.sites || {} ).reduce( ( acc, siteId ) => {
-		const { queryKey } = sitePluginQuery( Number( siteId ), pluginSlug );
-		const data: SitePlugin | undefined = queryClient.getQueryData( queryKey );
-
-		acc.set( Number( siteId ), data?.action_links );
-
-		return acc;
-	}, new Map< number, SitePlugin[ 'action_links' ] >() );
-
+	const marketplacePlugin = marketplacePlugins?.results[ pluginSlug ];
 	const pluginBySiteId = useMemo(
 		() =>
 			Object.entries( sitesPlugins?.sites || {} ).reduce( ( acc, [ siteId, plugins ] ) => {
@@ -107,15 +86,33 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 			}, new Map< number, PluginItem >() ),
 		[ sitesPlugins, pluginSlug ]
 	);
+	const primaryPlugin = pluginBySiteId.values().next().value ?? marketplacePlugin;
+	const needsPluginMetadata =
+		! primaryPlugin && ! isLoadingSitesPlugins && ! isLoadingMarketplacePlugins;
+	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
+		...wpOrgPluginQuery( pluginSlug, locale ),
+		enabled: enabled && hasPluginSlug && ( ! availableIcon || needsPluginMetadata ),
+	} );
 
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
+	// Query needed to get the action_links
+	const sitePluginQueryResults = useQueries( {
+		queries:
+			enabled && hasPluginSlug
+				? siteIdsWithThisPlugin.map( ( id ) => sitePluginQuery( id, pluginSlug ) )
+				: [],
+	} );
+	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
+	const actionLinksBySiteId = new Map(
+		siteIdsWithThisPlugin.map( ( id, index ) => [
+			id,
+			sitePluginQueryResults[ index ]?.data?.action_links,
+		] )
+	);
 
 	// Normalize the author per source so consumers get one shape
 	const plugin = useMemo< NormalizedPlugin | undefined >( () => {
-		const raw =
-			pluginBySiteId.values().next().value ??
-			( isMarketplacePlugin ? marketplacePlugins?.results[ pluginSlug ] : undefined ) ??
-			wpOrgPlugin;
+		const raw = primaryPlugin ?? wpOrgPlugin;
 
 		if ( ! raw ) {
 			return undefined;
@@ -131,14 +128,14 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 					undefined
 			),
 		};
-	}, [ pluginBySiteId, isMarketplacePlugin, marketplacePlugins, pluginSlug, wpOrgPlugin ] );
+	}, [ primaryPlugin, wpOrgPlugin ] );
 
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [ SiteWithPluginData[], Site[] ] = sites
 		? sites
 				.filter( ( site ) => site.capabilities?.update_plugins )
 				.reduce(
 					( acc, site ) => {
-						if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
+						if ( pluginBySiteId.has( site.ID ) ) {
 							const plugin = pluginBySiteId.get( site.ID );
 
 							const hasPluginUpdate = !! plugin?.update;
@@ -170,8 +167,8 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	let icon;
 	if ( availableIcon ) {
 		icon = availableIcon;
-	} else if ( isMarketplacePlugin ) {
-		icon = marketplacePlugins?.results[ pluginSlug ]?.icons;
+	} else if ( marketplacePlugin ) {
+		icon = marketplacePlugin.icons;
 	} else if ( wpOrgPlugin?.icons ) {
 		if ( '1x' in wpOrgPlugin.icons ) {
 			icon = wpOrgPlugin.icons[ '1x' ];
