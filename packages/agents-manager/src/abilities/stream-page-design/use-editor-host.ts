@@ -35,10 +35,9 @@ export function useEditorHost(): EditorHost {
 			stageRootBlocks( rootClientId, blocks, registry.batch );
 
 		return {
-			// The stream paints before its guarded callback runs, so it holds to the
-			// canvas the request was bound to itself: once the user has moved on,
-			// nothing is staged, and the block is latched so the callback refuses
-			// the same way even if they come back.
+			// The stream paints before its guarded callback runs, so it keeps to the
+			// bound canvas itself: after a move nothing is staged, and the block is
+			// latched so the callback refuses the same way.
 			resolveRoot: () => {
 				if ( getBlockingMove() ) {
 					blockCurrentRequest();
