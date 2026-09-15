@@ -22,7 +22,6 @@ export const PAGE_DESIGN_STREAM_STARTED_EVENT = 'big-sky-page-design-stream-star
 
 export interface StreamUpdate {
 	toolCallId: string;
-	markup: string;
 	isFinal?: boolean;
 }
 
@@ -242,13 +241,21 @@ export function setStreamHandler( next: StreamHandler | undefined ): void {
 	}
 
 	if ( wasMissing ) {
-		for ( const [ toolCallId, markup ] of lastMarkupByToolCall ) {
+		for ( const toolCallId of lastMarkupByToolCall.keys() ) {
 			const isFinal = finalizedUnrendered.delete( toolCallId );
 
-			void deliver( { toolCallId, markup, ...( isFinal && { isFinal } ) } );
+			void deliver( { toolCallId, ...( isFinal && { isFinal } ) } );
 		}
 	}
 }
+
+/**
+ * The markup a tool call has streamed so far, read by the renderer when it
+ * paints. `undefined` once the stream is forgotten, so a flush queued before a
+ * session change paints nothing.
+ */
+export const getStreamedMarkup = ( toolCallId: string ): string | undefined =>
+	lastMarkupByToolCall.get( toolCallId );
 
 const isPageDesignPart = ( part: Part ): part is ToolCallDataPart => {
 	const data = part.type === 'data' ? ( part.data as Record< string, unknown > ) : null;
@@ -288,7 +295,7 @@ export async function handlePageDesignTaskUpdate( update: TaskUpdate ): Promise<
 		lastMarkupByToolCall.set( toolCallId, markup );
 		awaitingFinalFlush.add( toolCallId );
 
-		await deliver( { toolCallId, markup } );
+		await deliver( { toolCallId } );
 	}
 }
 
@@ -303,14 +310,12 @@ export async function finalizePendingStreams( toolCallId?: string ): Promise< vo
 	for ( const id of toolCallIds ) {
 		awaitingFinalFlush.delete( id );
 
-		const markup = lastMarkupByToolCall.get( id );
-
-		if ( markup === undefined ) {
+		if ( ! lastMarkupByToolCall.has( id ) ) {
 			continue;
 		}
 
 		if ( handler ) {
-			await deliver( { toolCallId: id, markup, isFinal: true } );
+			await deliver( { toolCallId: id, isFinal: true } );
 		} else {
 			finalizedUnrendered.add( id );
 		}

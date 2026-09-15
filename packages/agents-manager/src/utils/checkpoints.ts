@@ -1,7 +1,6 @@
 import { serialize } from '@wordpress/blocks';
 import { deepClone } from './deep-clone';
 import {
-	getCurrentPost,
 	getRootBlocks,
 	resolveBlocksRoot,
 	stageRootBlocks,
@@ -89,7 +88,7 @@ interface PageRename {
 interface BlocksSnapshot {
 	rootKind: BlocksRoot[ 'kind' ];
 	blocks: EditorBlock[];
-	post?: CurrentPost;
+	post: CurrentPost;
 }
 
 export interface CheckpointRecord extends CheckpointMetadata {
@@ -161,7 +160,7 @@ function captureBlocksSnapshot( root = resolveBlocksRoot() ): BlocksSnapshot | u
 	return {
 		rootKind: root.kind,
 		blocks: deepClone( getRootBlocks( root.clientId ) ),
-		post: getCurrentPost(),
+		post: root.post,
 	};
 }
 
@@ -169,8 +168,7 @@ function captureBlocksSnapshot( root = resolveBlocksRoot() ): BlocksSnapshot | u
 // only on the page the snapshot was taken from.
 function resolveSnapshotRoot( snapshot: BlocksSnapshot ): BlocksRoot {
 	const root = resolveBlocksRoot();
-	const post = getCurrentPost();
-	const samePost = post?.id === snapshot.post?.id && post?.type === snapshot.post?.type;
+	const samePost = root?.post.id === snapshot.post.id && root?.post.type === snapshot.post.type;
 
 	if ( ! root || root.kind !== snapshot.rootKind || ! samePost ) {
 		throw new Error(
@@ -201,8 +199,9 @@ function markupLength( blocks: EditorBlock[] ): number {
 function throwIfRestoreCollapsesPage(
 	checkpoint: CheckpointRecord,
 	snapshot: BlocksSnapshot,
-	current: EditorBlock[]
+	root: BlocksRoot
 ): void {
+	const current = getRootBlocks( root.clientId );
 	const currentCount = countBlocks( current );
 	const restoreCount = countBlocks( snapshot.blocks );
 	const currentLength = markupLength( current );
@@ -215,16 +214,14 @@ function throwIfRestoreCollapsesPage(
 		return;
 	}
 
-	const post = getCurrentPost();
-
 	recordBigSkyTracksEvent( 'jetpack_big_sky_checkpoint_restore_blocked', {
 		reason: 'content_shrink',
 		checkpoint_id: checkpoint.id,
 		checkpoint_tool_id: checkpoint.toolId ?? '',
-		current_post_id: post?.id ?? '',
-		current_post_type: post?.type ?? '',
-		checkpoint_post_id: snapshot.post?.id ?? '',
-		checkpoint_post_type: snapshot.post?.type ?? '',
+		current_post_id: root.post.id,
+		current_post_type: root.post.type,
+		checkpoint_post_id: snapshot.post.id,
+		checkpoint_post_type: snapshot.post.type,
 		current_block_count: currentCount,
 		restore_block_count: restoreCount,
 		current_serialized_length: currentLength,
@@ -251,7 +248,7 @@ function restoreBlocksSnapshot( checkpoint: CheckpointRecord ): void {
 
 	const root = resolveSnapshotRoot( snapshot );
 
-	throwIfRestoreCollapsesPage( checkpoint, snapshot, getRootBlocks( root.clientId ) );
+	throwIfRestoreCollapsesPage( checkpoint, snapshot, root );
 	stageRootBlocks( root.clientId, deepClone( snapshot.blocks ) );
 }
 

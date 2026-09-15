@@ -50,8 +50,9 @@ import type { TaskUpdate } from '@automattic/agenttic-client';
 const PAGE = '<!-- wpcom:page-design-section {"target":"page"} -->';
 const PARAGRAPH = '<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->';
 
-const streamed = ( markup: string, toolCallId = 'call-1' ) =>
+const streamed = ( markup: string, toolCallId = 'call-1', sessionId?: string ) =>
 	handlePageDesignTaskUpdate( {
+		sessionId,
 		status: {
 			message: {
 				parts: [
@@ -238,6 +239,41 @@ describe( 'without a root', () => {
 
 		expect( host.commitFinalDesign ).toHaveBeenCalledWith( 'call-1', 'root' );
 	} );
+} );
+
+// The transport forgets a session's streams; a flush already queued must not paint them.
+it( 'paints nothing for a stream the transport forgot before the flush', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1', 'session-1' );
+	await handlePageDesignTaskUpdate( {
+		sessionId: 'session-2',
+		status: { message: { parts: [ { type: 'text', text: 'hi' } ] } },
+	} as unknown as TaskUpdate );
+	flush();
+
+	expect( host.captureCheckpoint ).not.toHaveBeenCalled();
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+} );
+
+// Without the checkpoint the design would have no way back.
+it( 'stages nothing until the checkpoint is captured, retrying a failed capture', async () => {
+	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	host.captureCheckpoint.mockImplementationOnce( () => {
+		throw new Error( 'no root blocks' );
+	} );
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	flush();
+
+	expect( host.stageBlocks ).not.toHaveBeenCalled();
+
+	flush();
+
+	expect( host.captureCheckpoint ).toHaveBeenCalledTimes( 2 );
+	expect( host.stageBlocks ).toHaveBeenCalledTimes( 1 );
+	consoleError.mockRestore();
 } );
 
 it( 'stops listening and clears its timers when unmounted', async () => {

@@ -91,6 +91,11 @@ describe( 'fixNestedParagraphs', () => {
 			expected: '<p class="a" id="b">Hi</p>',
 		},
 		{
+			case: 'escaping a quote from a single-quoted value',
+			content: '<p title=\'say "hi"\'><p>Hi</p></p>',
+			expected: '<p title="say &quot;hi&quot;">Hi</p>',
+		},
+		{
 			case: 'down to the innermost paragraph',
 			content: '<p><p><p>Hi</p></p></p>',
 			expected: '<p>Hi</p>',
