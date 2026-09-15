@@ -3,12 +3,16 @@
  *
  * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
- *   live Looker dashboard keeps working. Removable once that parity is dropped.
+ *   live Looker dashboard keeps working, and mirrors the chat and feedback events
+ *   as `calypso_agents_manager_<same suffix>` with the unified props so analysis
+ *   can move off the Big Sky family before it is retired. Removable once that
+ *   parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
  *   AI products.
  *
  * Callers pass event names in full — the template-literal parameter types enforce
  * the namespace — so every event is findable by searching the code for its name.
+ * Mirrored names are derived, so search for their Big Sky suffix instead.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
@@ -23,6 +27,21 @@ type TracksProps = Record< string, unknown >;
 
 export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
 export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
+
+/**
+ * Big Sky events also recorded under the unified name. The rest stay Big
+ * Sky-only until the Tracks plan for the family (AM-47) decides whether each
+ * one moves or retires; each mirrored name needs registering.
+ */
+const MIRRORED_BIG_SKY_SUFFIXES = new Set< string >( [
+	'chat_input_send_message',
+	'chat_suggestions_rendered',
+	'chat_suggestion_click',
+	'chat_response_rendered',
+	'chat_response_action',
+	'response_action_thumbs_up',
+	'response_action_thumbs_down',
+] );
 
 type EditorSelectStore =
 	| {
@@ -47,6 +66,15 @@ function getBlogId(): number | undefined {
 	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
 		? blogId
 		: undefined;
+}
+
+/**
+ * The loaded external provider IDs, sorted so the same provider set always
+ * yields the same value; 'none' until the providers load (events can fire
+ * before the chat mounts) or when none are configured.
+ */
+function getProviderIds(): string {
+	return getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none';
 }
 
 type BigSkyTracksData = {
@@ -109,7 +137,8 @@ function getBigSkyPageProps(): TracksProps {
 
 /**
  * Records an event under Big Sky's exact name and props so the existing Big Sky
- * dashboards keep working.
+ * dashboards keep working, then mirrors chat and feedback events under the
+ * unified name.
  */
 export function recordBigSkyTracksEvent(
 	eventName: BigSkyEventName,
@@ -132,6 +161,7 @@ export function recordBigSkyTracksEvent(
 		phase: 'editor',
 		big_sky_version: bigSky.bigSkyVersion,
 		screen: bigSky.screen,
+		provider_ids: getProviderIds(),
 		...getBigSkyPageProps(),
 	};
 
@@ -147,6 +177,11 @@ export function recordBigSkyTracksEvent(
 	}
 
 	recordTracksEvent( eventName, mergedProps );
+
+	const suffix = eventName.slice( BIG_SKY_EVENT_PREFIX.length );
+	if ( MIRRORED_BIG_SKY_SUFFIXES.has( suffix ) ) {
+		recordAgentsManagerTracksEvent( `calypso_agents_manager_${ suffix }`, props );
+	}
 }
 
 /**
@@ -175,9 +210,7 @@ function getUnifiedBaseProps(): TracksProps {
 		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		agent_manager_version: getAgentManagerVersion(),
-		// Sorted so the same provider set always yields the same value; 'none'
-		// until the providers load (events can fire before the chat mounts).
-		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
+		provider_ids: getProviderIds(),
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
