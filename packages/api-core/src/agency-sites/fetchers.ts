@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencySiteWithPlugin } from './types';
+import type { AgencySiteWithPlugin, PendingAgencySite } from './types';
 
 export async function fetchAgencySitesWithPlugins(
 	agencyId: number,
@@ -16,4 +16,14 @@ export async function fetchAgencySitesWithPlugins(
 			},
 		}
 	);
+}
+
+/**
+ * Sites the agency has purchased but not yet provisioned.
+ */
+export async function fetchPendingAgencySites( agencyId: number ): Promise< PendingAgencySite[] > {
+	return wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites/pending`,
+	} );
 }

@@ -1,11 +1,13 @@
-import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
+import { agencyQuery, activeAgencyQuery, pendingAgencySitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
+import { hasWpcomLicenseWithoutSite } from '../../agency/sites/need-setup/lib';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
+	agencySitesNeedSetupRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -21,6 +23,38 @@ import {
 	mcpRoute,
 } from '../router/agency';
 import type { AnyRoute } from '@tanstack/react-router';
+
+function SitesLink() {
+	return (
+		<SidebarMenuItem icon={ layout } to="/sites">
+			{ __( 'Sites' ) }
+		</SidebarMenuItem>
+	);
+}
+
+/**
+ * Suspends so the item takes its final shape before the menu paints. Swapping
+ * the link for an expandable item once the request lands shifts the menu and
+ * risks the Google Translate crash described in client/dashboard/AGENTS.md.
+ */
+function SitesMenuItem( { agencyId }: { agencyId: number } ) {
+	const { data: pendingSites } = useSuspenseQuery( pendingAgencySitesQuery( agencyId ) );
+
+	// Mirrors the route guard: without a paid license awaiting a site there is
+	// nothing for the Needs setup screen to show.
+	if ( ! pendingSites.some( hasWpcomLicenseWithoutSite ) ) {
+		return <SitesLink />;
+	}
+
+	return (
+		<SidebarExpandableMenuItem label={ __( 'Sites' ) } icon={ layout } to="/sites">
+			<SidebarMenuItem to="/sites" activeOptions={ { exact: true } }>
+				{ __( 'All' ) }
+			</SidebarMenuItem>
+			<SidebarMenuItem to="/sites/need-setup">{ __( 'Needs setup' ) }</SidebarMenuItem>
+		</SidebarExpandableMenuItem>
+	);
+}
 
 export default function AgencySidebar() {
 	const { supports } = useAppContext();
@@ -60,11 +94,13 @@ export default function AgencySidebar() {
 			<SidebarMenuItem icon={ home } to="/overview">
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
-			{ supports.agency.sites && canAccess( agencySitesRoute ) && (
-				<SidebarMenuItem icon={ layout } to="/sites">
-					{ __( 'Sites' ) }
-				</SidebarMenuItem>
-			) }
+			{ supports.agency.sites &&
+				canAccess( agencySitesRoute ) &&
+				( activeAgency?.id && canAccess( agencySitesNeedSetupRoute ) ? (
+					<SitesMenuItem agencyId={ activeAgency.id } />
+				) : (
+					<SitesLink />
+				) ) }
 			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
 				<SidebarMenuItem icon={ people } to="/team">
 					{ __( 'Team' ) }
