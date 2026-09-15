@@ -32,7 +32,12 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 
 		// publish an event
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_${ tracksEvent }`, { blog_id: siteId } );
+		// statType is PascalCase and may carry a slash (StatsModuleLocations/city);
+		// Tracks accepts neither in an event name and drops the whole event.
+		const eventName = `${ event_from }_${ tracksEvent }`
+			.toLowerCase()
+			.replace( /[^a-z0-9_]+/g, '_' );
+		recordTracksEvent( eventName, { blog_id: siteId } );
 		// publish new unified upgrade event
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: statType,
