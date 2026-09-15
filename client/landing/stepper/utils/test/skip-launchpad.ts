@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { skipLaunchpad } from '../skip-launchpad';
 
 // Mock the data-stores module
-jest.mock( '@automattic/data-stores', () => ( {
+jest.mock( '@automattic/launchpad', () => ( {
 	updateLaunchpadSettings: jest.fn(),
 } ) );
 

@@ -1,7 +1,6 @@
 import { FEATURE_STYLE_CUSTOMIZATION, isFreePlanProduct } from '@automattic/calypso-products';
-import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Task } from '@automattic/launchpad';
+import { updateLaunchpadSettings, type Task } from '@automattic/launchpad';
 import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
