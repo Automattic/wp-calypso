@@ -1,7 +1,12 @@
 import { useRegistry } from '@wordpress/data';
 import { useMemo, useRef } from '@wordpress/element';
 import { blockCurrentRequest, getBlockingMove } from '../../utils/canvas-binding';
-import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../../utils/checkpoints';
+import {
+	checkpointKeys,
+	clearCheckpoint,
+	hasCheckpoint,
+	setCheckpoint,
+} from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
 import {
 	clearBlockSelection,
@@ -68,7 +73,8 @@ export function useEditorHost(): EditorHost {
 				}
 
 				blocksBefore.current.delete( toolCallId );
-				commitStreamedPageDesign(
+
+				const changed = commitStreamedPageDesign(
 					{
 						getLiveBlocks: () => getRootBlocks( rootClientId ),
 						stageBlocks: ( blocks ) => stage( rootClientId, blocks ),
@@ -77,6 +83,11 @@ export function useEditorHost(): EditorHost {
 					},
 					before
 				);
+
+				// A stream that left the page as it was has nothing to undo.
+				if ( ! changed ) {
+					clearCheckpoint( toolCallId );
+				}
 			},
 		};
 	}, [ registry ] );
