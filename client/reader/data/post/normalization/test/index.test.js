@@ -154,7 +154,10 @@ describe( 'normalization-rules', () => {
 			expect( embed.autoplayIframe ).not.toEqual( expect.stringContaining( 'onload' ) );
 		} );
 
-		test( 'makes links safe after earlier rules have written into them', () => {
+		test( 'never lets a rule write a permalink that is not http(s) into an href', () => {
+			// Two layers cover this, and the assertion holds if either one does: linkJetpackCarousels
+			// skips a gallery whose permalink is not a web address, and makeContentLinksSafe runs
+			// after every rule that builds a link.
 			const post = runFastRules( {
 				content:
 					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
@@ -162,10 +165,21 @@ describe( 'normalization-rules', () => {
 					'<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />' +
 					'</a></div></div>',
 			} );
-			const link = domForHtml( post.content ).querySelector( '.tiled-gallery-item a' );
+			const dom = domForHtml( post.content );
 
-			expect( link ).not.toBeNull();
-			expect( link.hasAttribute( 'href' ) ).toBe( false );
+			expect( dom.querySelector( '.tiled-gallery-item a' ) ).not.toBeNull();
+			expect( dom.querySelector( '[href^="javascript:"]' ) ).toBeNull();
+		} );
+
+		test( 'strips a link that is not a web address from the rendered content', () => {
+			// Pins makeContentLinksSafe into the pipeline. Its position at the end is defence in
+			// depth: every rule that builds a link now validates its own URL, so nothing currently
+			// depends on it running last.
+			const post = runFastRules( {
+				content: '<a href="javascript:alert(1)">click</a>',
+			} );
+
+			expect( domForHtml( post.content ).querySelector( '[href^="javascript:"]' ) ).toBeNull();
 		} );
 	} );
 } );
