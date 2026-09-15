@@ -159,15 +159,16 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// so far. DataViews advances its infinite-scroll window only while
 	// `totalItems` stays ahead of the window, so reporting the loaded count
 	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. Report one
-	// extra note while the REST client still has notes left to fetch: enough for
-	// DataViews to advance once the window is full, but never past the loaded
-	// notes, which would skip the ones in between.
+	// `onChangeView` fires, and `loadMore()` is never called again. While the REST
+	// client still has notes left to fetch, report two extra: DataViews then
+	// advances as soon as the window is full, landing on the first unloaded note.
+	// More would let it skip past unloaded notes; fewer can strand a reader at the
+	// bottom when the next page lands outside the window and adds no rows.
 	// Pass the rendered tab: the client's own `filterName` lags a render behind
 	// a switch, which would answer for the previous tab and stall scroll.
 	const hasMoreNotes = client?.hasMoreNotes( filterName ) ?? false;
 	const effectivePaginationInfo = hasMoreNotes
-		? { ...paginationInfo, totalItems: paginationInfo.totalItems + 1 }
+		? { ...paginationInfo, totalItems: paginationInfo.totalItems + 2 }
 		: paginationInfo;
 
 	const infiniteScrollHandler = useCallback( () => {
