@@ -19,6 +19,17 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: DOCUMENT_HEAD_TITLE_SET,
 				title: 'Home',
+				skipTitleFormatting: false,
+			} );
+		} );
+
+		test( 'should carry the skipTitleFormatting flag', () => {
+			const action = setDocumentHeadTitle( 'Home', true );
+
+			expect( action ).toEqual( {
+				type: DOCUMENT_HEAD_TITLE_SET,
+				title: 'Home',
+				skipTitleFormatting: true,
 			} );
 		} );
 	} );

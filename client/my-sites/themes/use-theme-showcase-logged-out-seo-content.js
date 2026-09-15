@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	getPlan,
 } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
@@ -17,6 +18,7 @@ function findParsedFilter( filter, content ) {
 
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 
 	/**
@@ -24,12 +26,15 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	 * - title: the page's <title> tag.
 	 * - header: the page's main heading.
 	 * - description: the page's sub-heading and <meta> description.
+	 * - metaDescription: optional <meta> description override, when it should differ from the sub-heading.
 	 */
 	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo(
 		() => ( {
 			recommended: {
 				all: {
-					title: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
+					title: hasEnTranslation( 'Free WordPress Themes — 1,000+ designs | WordPress.com' )
+						? translate( 'Free WordPress Themes — 1,000+ designs | WordPress.com' )
+						: translate( 'WordPress Themes | 1000s of Options for All WordPress Sites' ),
 					header: isThemeShowcaseModern
 						? translate( 'Beautiful themes for every idea' )
 						: translate( 'Find the perfect theme for your website' ),
@@ -40,6 +45,13 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 						: translate(
 								'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
 						  ),
+					metaDescription: hasEnTranslation(
+						'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+					)
+						? translate(
+								'Browse thousands of free and premium WordPress themes. Filter by niche, preview instantly, and launch your site today — no coding required.'
+						  )
+						: undefined,
 				},
 				free: {
 					title: translate( 'Free WordPress Themes' ),
@@ -906,7 +918,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				},
 			},
 		} ),
-		[ isThemeShowcaseModern, translate ]
+		[ hasEnTranslation, isThemeShowcaseModern, translate ]
 	);
 
 	const parsedFilter =

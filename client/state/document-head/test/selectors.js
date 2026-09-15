@@ -49,6 +49,23 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getDocumentHeadFormattedTitle()', () => {
+		test( 'should return the raw title when formatting is skipped', () => {
+			const formattedTitle = getDocumentHeadFormattedTitle( {
+				documentHead: {
+					title: 'Raw Title | WordPress.com',
+					skipTitleFormatting: true,
+					unreadCount: 3,
+				},
+				sites: { items: {} },
+				ui: {
+					selectedSiteId: null,
+					section: { name: 'themes', paths: [ '/themes' ], module: 'themes', group: 'sites' },
+				},
+			} );
+
+			expect( formattedTitle ).toEqual( 'Raw Title | WordPress.com' );
+		} );
+
 		describe( 'for site-agnostic section', () => {
 			test( 'should return only "WordPress.com" if no title is set', () => {
 				const formattedTitle = getDocumentHeadFormattedTitle( {

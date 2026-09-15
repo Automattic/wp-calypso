@@ -11,12 +11,17 @@ import 'calypso/state/ui/init';
 
 /**
  * Returns the formatted document title, based on the currently set title,
- * capped unreadCount, and selected site.
+ * capped unreadCount, and selected site. Returns the raw title when it was
+ * set with formatting skipped.
  * @param  {Object}  state  Global state tree
  * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	( state ) => {
+		if ( state.documentHead.skipTitleFormatting ) {
+			return getDocumentHeadTitle( state );
+		}
+
 		let title = '';
 
 		const unreadCount = getDocumentHeadCappedUnreadCount( state );

@@ -45,16 +45,20 @@ class DocumentHead extends Component {
 	}
 
 	syncState( prevProps = null ) {
-		const { title, unreadCount, link, meta } = this.props;
+		const { title, skipTitleFormatting, unreadCount, link, meta } = this.props;
 		// The `title` prop is commonly receiving its value as a result from a `translate` call
 		// and in some cases it returns a React component instead of string.
 		// A shallow comparison of two React components may result in unnecessary title updates.
 		// To avoid that, we compare the string representation of the passed `title` prop value.
 		if (
 			title !== undefined &&
-			! ( prevProps && prevProps.title?.toString?.() === title?.toString?.() )
+			! (
+				prevProps &&
+				prevProps.title?.toString?.() === title?.toString?.() &&
+				!! prevProps.skipTitleFormatting === !! skipTitleFormatting
+			)
 		) {
-			this.props.setTitle( title );
+			this.props.setTitle( title, !! skipTitleFormatting );
 		}
 
 		if ( unreadCount !== undefined && ! ( prevProps && prevProps.unreadCount === unreadCount ) ) {
