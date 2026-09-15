@@ -153,7 +153,8 @@ export function scrollToBlockBottom( clientId: string ): void {
 	const follow = ( framesLeft: number ): void => {
 		followFrame = null;
 
-		const node = getCanvasDocument()?.querySelector< HTMLElement >(
+		// An editor without an iframed canvas renders the blocks in the page itself.
+		const node = ( getCanvasDocument() ?? document ).querySelector< HTMLElement >(
 			`[data-block="${ clientId }"]`
 		);
 

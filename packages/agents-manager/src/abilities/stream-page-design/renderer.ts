@@ -31,6 +31,8 @@ export interface EditorHost {
 	captureCheckpoint: ( toolCallId: string, rootClientId: string ) => void;
 	/** Folds the finished design into one native undo level. */
 	commitFinalDesign: ( toolCallId: string, rootClientId: string ) => void;
+	/** Drops what was kept for a call that will not commit; its checkpoint stays. */
+	forgetToolCall: ( toolCallId: string ) => void;
 }
 
 // Deltas arrive a few characters at a time; re-rendering the page on each would
@@ -475,6 +477,7 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	const forgetToolCall = useCallback( ( toolCallId: string ) => {
 		stateByToolCall.current.delete( toolCallId );
 		capturedToolCalls.current.delete( toolCallId );
+		hostRef.current.forgetToolCall( toolCallId );
 		forgetStream( toolCallId );
 	}, [] );
 

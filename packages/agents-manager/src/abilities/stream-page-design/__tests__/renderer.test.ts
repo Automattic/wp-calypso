@@ -80,6 +80,7 @@ beforeEach( () => {
 		stageBlocks: jest.fn(),
 		captureCheckpoint: jest.fn(),
 		commitFinalDesign: jest.fn(),
+		forgetToolCall: jest.fn(),
 	};
 } );
 
@@ -260,6 +261,7 @@ describe( 'without a root', () => {
 
 		expect( await finalized ).toBe( false );
 		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
+		expect( host.forgetToolCall ).toHaveBeenCalledWith( 'call-1' );
 		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 		consoleError.mockRestore();
 	} );
