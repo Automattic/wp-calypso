@@ -32,11 +32,7 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import {
-	useCanMarkSeen,
-	useSeenPostsPreferenceConfirmed,
-	withSeenPostsMutations,
-} from 'calypso/reader/data/seen-posts';
+import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
@@ -79,7 +75,6 @@ export class FullPostView extends Component {
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		canMarkSeen: PropTypes.bool,
-		isSeenPreferenceConfirmed: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -176,10 +171,7 @@ export class FullPostView extends Component {
 
 		// Seen eligibility resolves after mount, so the mark on load is often
 		// skipped. Nothing else retries it once eligibility turns true.
-		if (
-			( this.props.canMarkSeen && ! prevProps.canMarkSeen ) ||
-			( this.props.isSeenPreferenceConfirmed && ! prevProps.isSeenPreferenceConfirmed )
-		) {
+		if ( this.props.canMarkSeen && ! prevProps.canMarkSeen ) {
 			this.maybeMarkAsSeenOnLoad();
 		}
 
@@ -619,15 +611,13 @@ export class FullPostView extends Component {
 		}, 100 );
 	};
 
-	// One irreversible write per post, so it waits on a preference value confirmed
-	// this session rather than a possibly-stale rehydrated one.
+	// Auto-marks the viewed post as seen at most once per post.
 	maybeMarkAsSeenOnLoad = () => {
-		const { post, canMarkSeen, isSeenPreferenceConfirmed } = this.props;
+		const { post, canMarkSeen } = this.props;
 
 		if (
 			this.hasAutoMarkedAsSeen ||
 			! canMarkSeen ||
-			! isSeenPreferenceConfirmed ||
 			! post ||
 			post._state === 'pending' ||
 			post.is_seen
@@ -1010,7 +1000,6 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
 		} );
-		const isSeenPreferenceConfirmed = useSeenPostsPreferenceConfirmed();
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1033,7 +1022,6 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				post={ post }
 				referralPost={ referralPost }
 				canMarkSeen={ canMarkSeen }
-				isSeenPreferenceConfirmed={ isSeenPreferenceConfirmed }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
