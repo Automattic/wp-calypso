@@ -1,46 +1,51 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "@automattic/components/src/styles/mixins";
-@import "../modernized-mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
+@import '@automattic/components/src/styles/mixins';
+@import '../modernized-mixins';
 
 $summary-small-padding: 0 16px;
 $summary-medium-padding: 0 32px;
-$summary-small-border: 1px solid var(--studio-gray-5);
+$summary-small-border: 1px solid var( --studio-gray-5 );
 $summary-nav-swap-width: 661px;
 
 .stats-summary-nav {
 	display: flex;
 	justify-content: space-between;
 
-	@include navigation-segment-control-buttons( "auto" );
+	@include navigation-segment-control-buttons( 'auto' );
 
-	@media (min-width: 1160px) {
+	@media ( min-width: 1160px ) {
 		flex-wrap: wrap;
 		flex-direction: row-reverse;
 	}
 
-	@media (max-width: 1160px) {
-		&:not(.stats-summary-nav--with-button) {
+	@media ( max-width: 1160px ) {
+		&:not( .stats-summary-nav--with-button ) {
 			display: block;
 		}
 	}
 
-	@media (min-width: $break-medium) and (max-width: 1160px) {
-		padding-bottom: 24px;
+	// The padding compensates for the date picker stacking above the heading
+	// at this width; a title-only nav (e.g. the Emails summary page) has
+	// nothing stacked, and the padding would render as a bare blank strip.
+	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
+		&:has( .stats-summary-nav__date-control ) {
+			padding-bottom: 24px;
+		}
 	}
 
-	@media (max-width: $summary-nav-swap-width) {
+	@media ( max-width: $summary-nav-swap-width ) {
 		padding: 0;
 		border-bottom: $summary-small-border;
 	}
 
 	.stats-section-title {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-left: 0;
 			margin-right: 0;
 		}
 
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			text-align: left;
 		}
 	}
@@ -49,11 +54,11 @@ $summary-nav-swap-width: 661px;
 		flex-direction: row;
 		border-bottom: 0;
 
-		@media (max-width: $break-medium) {
+		@media ( max-width: $break-medium ) {
 			padding: $summary-medium-padding;
 		}
 
-		@media (max-width: $break-small) {
+		@media ( max-width: $break-small ) {
 			padding: $summary-small-padding;
 			display: block;
 		}
@@ -63,11 +68,11 @@ $summary-nav-swap-width: 661px;
 .stats-summary-nav__header {
 	@include section-header-with-siblings;
 
-	@media (min-width: $summary-nav-swap-width) and  (max-width: $break-medium) {
+	@media ( min-width: $summary-nav-swap-width ) and ( max-width: $break-medium ) {
 		padding: 0;
 	}
 
-	@media (max-width: $break-small) {
+	@media ( max-width: $break-small ) {
 		padding: $summary-small-padding;
 	}
 
@@ -75,7 +80,7 @@ $summary-nav-swap-width: 661px;
 	// bottom padding provides the gap; drop the heading's own top margins
 	// so the spacing stays even. The h3 margin only exists in Odyssey,
 	// where wp-admin core styles aren't reset.
-	@media (max-width: 1160px) {
+	@media ( max-width: 1160px ) {
 		.stats-summary-nav__date-control + & {
 			margin-top: 0;
 
@@ -101,14 +106,14 @@ $summary-nav-swap-width: 661px;
 
 	// No top padding: .stats-summary__positioned already separates the
 	// content from the page header with a 32px margin from $break-small up.
-	@media (max-width: 1160px) {
+	@media ( max-width: 1160px ) {
 		padding: 0 0 16px;
 	}
 
 	// Below $break-small that page-level margin is gone, so the picker
 	// carries its own spacing. $summary-small-padding is horizontal-only
 	// and would zero the vertical padding here.
-	@media (max-width: $break-small) {
+	@media ( max-width: $break-small ) {
 		padding: 16px;
 	}
 }
@@ -135,7 +140,7 @@ $summary-nav-swap-width: 661px;
 		vertical-align: middle;
 	}
 
-	@media (max-width: $break-small) {
+	@media ( max-width: $break-small ) {
 		padding: $summary-small-padding;
 	}
 }
