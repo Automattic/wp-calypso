@@ -161,6 +161,9 @@ async function main() {
 				}
 			} );
 		};
+		// Each package holds its own requester. One left out here silently falls back to an
+		// unauthenticated proxy request instead of failing, so every package that talks to
+		// the API on Stepper's behalf needs a line below.
 		setDataStoresRequester( requester );
 		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
