@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { useSelector } from 'calypso/state';
@@ -42,7 +43,9 @@ export default function ThankYouPlanProduct( {
 
 	const expirationDate =
 		! isLoadingPurchases && productPurchase
-			? translate( 'Expires on %s', { args: moment( productPurchase.expiryDate ).format( 'LL' ) } )
+			? translate( 'Expires on %s', {
+					args: moment( toLocalCalendarDate( productPurchase.expiryDate ) ).format( 'LL' ),
+			  } )
 			: '';
 
 	const [ letsWorkButtonBusy, setLetsWorkButtonBusy ] = useState< boolean >( false );

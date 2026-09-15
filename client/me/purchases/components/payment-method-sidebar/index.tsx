@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
@@ -39,15 +40,15 @@ function MainCard( { purchase }: { purchase?: Purchase } ) {
 		let purchaseMessaging;
 		if ( purchase.renew_date ) {
 			purchaseMessaging = translate( 'Next payment on %s', {
-				args: moment( purchase.renew_date ).format( 'LL' ),
+				args: moment( toLocalCalendarDate( purchase.renew_date ) ).format( 'LL' ),
 			} );
 		} else if ( purchase.is_past_expiry_date ) {
 			purchaseMessaging = translate( 'Expired on %s', {
-				args: moment( purchase.expiry_date ).format( 'LL' ),
+				args: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 			} );
 		} else {
 			purchaseMessaging = translate( 'Expires on %s', {
-				args: moment( purchase.expiry_date ).format( 'LL' ),
+				args: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 			} );
 		}
 

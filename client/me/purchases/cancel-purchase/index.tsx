@@ -43,6 +43,7 @@ import {
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	getIncludedDomainPurchase,
 	getMutationFlowType,
@@ -544,7 +545,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			const success = await cancelPurchaseAsync( purchase.ID );
 			if ( success ) {
 				const purchaseName = getName( purchase );
-				const subscriptionEndDate = moment( purchase.expiry_date ).format( 'LL' );
+				const subscriptionEndDate = moment( toLocalCalendarDate( purchase.expiry_date ) ).format(
+					'LL'
+				);
 				return {
 					success: true,
 					message: translate(

@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { isExpiredAndInGracePeriod } from '../../../lib/raw-purchase-helpers';
@@ -95,7 +96,7 @@ class AutoRenewDisablingDialog extends Component<
 
 	getExpiringCopy( variation: string ) {
 		const { planName, siteDomain, purchase, translate, moment } = this.props;
-		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
+		const expiryDate = moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' );
 
 		switch ( variation ) {
 			case 'plan':

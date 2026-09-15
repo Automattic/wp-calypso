@@ -1,6 +1,7 @@
 import moment from 'moment';
 import Notice from 'calypso/components/notice';
 import { getTopNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 import type { CancelIntent, DisplayVariant } from 'calypso/dashboard/utils/purchase';
@@ -22,7 +23,7 @@ export default function TimeRemainingNotice( {
 	if ( isPartnerPurchase( purchase ) || ! purchase.expiry_date ) {
 		return null;
 	}
-	if ( moment( purchase.expiry_date ).isSameOrBefore( moment(), 'day' ) ) {
+	if ( moment( toLocalCalendarDate( purchase.expiry_date ) ).isSameOrBefore( moment(), 'day' ) ) {
 		return null;
 	}
 

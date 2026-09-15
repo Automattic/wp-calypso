@@ -27,6 +27,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	isExpiring,
 	isExpiredOrRemoved,
@@ -164,10 +165,14 @@ class PurchasesListing extends Component {
 			}
 		}
 
-		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
+		const expiryMoment = plan.expiryDate
+			? this.props.moment( toLocalCalendarDate( plan.expiryDate ) )
+			: null;
 
 		const renewMoment =
-			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
+			plan.autoRenew && plan.autoRenewDate
+				? this.props.moment( toLocalCalendarDate( plan.autoRenewDate ) )
+				: null;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
@@ -178,11 +183,13 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
+		const expiryMoment = purchase.expiryDate
+			? this.props.moment( toLocalCalendarDate( purchase.expiryDate ) )
+			: null;
 
 		const renewMoment =
 			! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && purchase.renewDate
-				? this.props.moment( purchase.renewDate )
+				? this.props.moment( toLocalCalendarDate( purchase.renewDate ) )
 				: null;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;

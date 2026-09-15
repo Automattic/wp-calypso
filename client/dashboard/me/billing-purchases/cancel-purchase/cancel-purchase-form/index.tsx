@@ -4,6 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
+import { toLocalCalendarDate } from '../../../../utils/datetime';
 import {
 	CANCEL_FLOW_TYPE,
 	isExpiredOrRemoved,
@@ -276,7 +277,7 @@ function SurveyContent( {
 								),
 								{
 									planName: productName,
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
+									purchaseRenewalDate: intlFormat( toLocalCalendarDate( purchase.expiry_date ), {
 										dateStyle: 'medium',
 									} ),
 								}

@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
+import { getRelativeDayString, isWithinNext, toLocalCalendarDate } from '../../../utils/datetime';
 import {
 	isExpiring,
 	isIncludedWithPlan,
@@ -228,7 +228,7 @@ export function OtherRenewablePurchasesNotice( {
 	// ("will expire %(expiry)s") sentences, so each is clamped to match the
 	// tense of the scenario it lands in.
 	const expiry = getRelativeDayString(
-		new Date( currentPurchase.expiry_date ),
+		toLocalCalendarDate( currentPurchase.expiry_date ),
 		isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
 	);
 	const includedPurchaseName = includedPurchase.is_domain
@@ -236,7 +236,7 @@ export function OtherRenewablePurchasesNotice( {
 		: includedPurchase.product_name;
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
 		? getRelativeDayString(
-				new Date( earliestOtherExpiringPurchase.expiry_date ),
+				toLocalCalendarDate( earliestOtherExpiringPurchase.expiry_date ),
 				isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
 		  )
 		: '';

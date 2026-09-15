@@ -10,7 +10,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
-import { formatDate } from '../../utils/datetime';
+import { formatDate, toLocalCalendarDate } from '../../utils/datetime';
 import { mightStillAutoRenew } from '../../utils/purchase';
 import { PaymentMethodDetails } from './payment-method-details';
 import type { Purchase, StoredPaymentMethod } from '@automattic/api-core';
@@ -91,7 +91,7 @@ export const PaymentMethodDeleteDialog = ( {
 													// translators: %(date)s: a formatted renewal date
 													__( 'Renews on %(date)s' ),
 													{
-														date: formatDate( new Date( purchase.renew_date ), locale, {
+														date: formatDate( toLocalCalendarDate( purchase.renew_date ), locale, {
 															dateStyle: 'long',
 														} ),
 													}

@@ -31,7 +31,11 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import {
+	getCalendarDaysUntil,
+	getRelativeDayString,
+	toLocalCalendarDate,
+} from 'calypso/dashboard/utils/datetime';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -369,7 +373,7 @@ function UrgentExpiryStatus( {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const currentUserId = useSelector( getCurrentUserId );
-	const expiry = moment( purchase.expiry_date );
+	const expiry = moment( toLocalCalendarDate( purchase.expiry_date ) );
 	const className =
 		copy.intent === 'error' ? 'purchase-item__is-error' : 'purchase-item__is-warning';
 	const expiryText = copy.text ?? untranslatedFallbackText;
@@ -458,7 +462,7 @@ export function PurchaseItemStatus( {
 	moment: ReturnType< typeof useLocalizedMoment >;
 	isDisconnectedSite?: boolean;
 } ) {
-	const expiry = moment( purchase.expiry_date );
+	const expiry = moment( toLocalCalendarDate( purchase.expiry_date ) );
 
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
@@ -605,7 +609,7 @@ export function PurchaseItemStatus( {
 	}
 
 	if ( isRenewingBeforeExpiration( purchase ) && purchase.renew_date ) {
-		const renewDate = moment( purchase.renew_date );
+		const renewDate = moment( toLocalCalendarDate( purchase.renew_date ) );
 
 		if ( creditCardHasAlreadyExpired( purchase ) ) {
 			return (

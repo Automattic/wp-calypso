@@ -1,7 +1,7 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { getPlanExpiryUrgency } from '../../components/plan-expiry-notice';
-import { formatDate, getCalendarDaysUntil } from '../../utils/datetime';
+import { formatDate, getCalendarDaysUntil, toLocalCalendarDate } from '../../utils/datetime';
 import { wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import {
@@ -48,7 +48,7 @@ export interface PlanExpiryStatus {
 }
 
 function formatExpiryDate( purchase: Purchase, locale: string ): string {
-	return formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } );
+	return formatDate( toLocalCalendarDate( purchase.expiry_date ), locale, { dateStyle: 'long' } );
 }
 
 /**
@@ -126,7 +126,7 @@ export function getPlanExpiryStatus(
 			title: renewal ? getExpiredTitle( purchase, locale ) : getNotTheSubscriberTitle(),
 			state: 'expired_grace',
 			daysRemaining: purchase
-				? getCalendarDaysUntil( new Date( purchase.expiry_date ) )
+				? getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) )
 				: undefined,
 		};
 	}
@@ -158,7 +158,7 @@ export function getPlanExpiryStatus(
 		return null;
 	}
 
-	const copy = getExpiringSoonCopy( new Date( purchase.expiry_date ) );
+	const copy = getExpiringSoonCopy( toLocalCalendarDate( purchase.expiry_date ) );
 
 	// Only reached in a locale that has yet to translate the day count. A color
 	// with no wording says nothing, and an English sentence in a translated
@@ -177,6 +177,6 @@ export function getPlanExpiryStatus(
 		cta: 'renew',
 		title: getExpiringSoonRenewalTitle( expiryDate ) ?? expiryDate,
 		state: 'approaching_expiry',
-		daysRemaining: getCalendarDaysUntil( new Date( purchase.expiry_date ) ),
+		daysRemaining: getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) ),
 	};
 }

@@ -4,7 +4,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { getRelativeDayString, toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	getName,
 	purchaseType,
@@ -41,7 +41,10 @@ function getExpiresText(
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 			args: {
-				renewDate: getRelativeDayString( new Date( purchase.renew_date ?? '' ), 'upcoming' ),
+				renewDate: getRelativeDayString(
+					toLocalCalendarDate( purchase.renew_date ?? '' ),
+					'upcoming'
+				),
 			},
 		} );
 	}
@@ -49,14 +52,14 @@ function getExpiresText(
 		return translate( 'expired %(expiry)s', {
 			comment:
 				'"expiry" is relative to the present time and it is already localized, eg. "a week ago", "today"',
-			args: { expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ) },
+			args: { expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'past' ) },
 		} );
 	}
 	return translate( 'expires %(expiry)s', {
 		comment:
 			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 		args: {
-			expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+			expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 		},
 	} );
 }

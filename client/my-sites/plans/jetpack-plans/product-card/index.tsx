@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import * as React from 'react';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -227,7 +228,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
 			buttonDisabled={ isDisabled || buttonDisabled || isLoadingUpsellPageExperiment }
-			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
+			expiryDate={
+				showExpiryNotice && purchase
+					? moment( toLocalCalendarDate( purchase.expiryDate ) )
+					: undefined
+			}
 			isFeatured={ isFeatured }
 			isOwned={ isOwned }
 			isIncludedInPlan={ isIncludedInPlan || isSuperseded }

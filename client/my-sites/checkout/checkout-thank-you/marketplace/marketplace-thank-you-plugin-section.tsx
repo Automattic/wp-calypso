@@ -6,6 +6,7 @@ import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { useSelector } from 'calypso/state';
 import {
@@ -48,7 +49,7 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 			if ( productPurchase ) {
 				setExpirationDate(
 					translate( 'Expires on %s', {
-						args: moment( productPurchase.expiryDate ).format( 'LL' ),
+						args: moment( toLocalCalendarDate( productPurchase.expiryDate ) ).format( 'LL' ),
 					} ).toString()
 				);
 			} else {

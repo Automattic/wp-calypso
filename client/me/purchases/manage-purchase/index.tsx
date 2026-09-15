@@ -87,6 +87,7 @@ import {
 	getRemoveButtonCopy,
 } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
 import { getPlanChangeAction } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-plan-change-action';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
@@ -1047,7 +1048,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const expiryDateDisplay = moment( purchase.expiry_date ).format( 'LL' );
+		const expiryDateDisplay = moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' );
 		// Use non-breaking spaces so the formatted date stays on one line in narrow
 		// viewports.
 		const cancelCopy = getCancelButtonCopy( {

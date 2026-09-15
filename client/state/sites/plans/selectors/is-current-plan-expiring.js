@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 export function isCurrentPlanExpiring( state, siteId ) {
@@ -8,6 +9,6 @@ export function isCurrentPlanExpiring( state, siteId ) {
 		return true;
 	}
 
-	const expiration = moment( currentPlan.expiryDate ).startOf( 'day' );
+	const expiration = moment( toLocalCalendarDate( currentPlan.expiryDate ) );
 	return expiration < moment().add( 30, 'days' );
 }

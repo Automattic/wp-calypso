@@ -68,6 +68,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -354,7 +355,7 @@ const PlansFeaturesMain = ( {
 	// auto-renewal attempt date, which for annual plans is up to 30 days before
 	// expiry; the downgrade happens on that renewal, so it's the accurate date.
 	const downgradeRenewalDate = currentPurchase?.renew_date
-		? moment( currentPurchase.renew_date ).format( 'LL' )
+		? moment( toLocalCalendarDate( currentPurchase.renew_date ) ).format( 'LL' )
 		: undefined;
 
 	// Ignore dismiss requests (X/Escape/overlay) while an instant downgrade is in
