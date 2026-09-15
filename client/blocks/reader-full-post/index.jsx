@@ -40,7 +40,7 @@ import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost, keyToString } from 'calypso/reader/post-key';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -146,12 +146,13 @@ export class FullPostView extends Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 
-			// Keyed on the canonical post key because `post.ID` is only unique within
-			// a site and `global_ID` is absent on cached posts, so either alone can
-			// read two distinct posts as one.
-			const hasViewedPostChanged =
-				keyToString( keyForPost( prevProps?.post ) ) !==
-				keyToString( keyForPost( this.props?.post ) );
+			// Keyed on the canonical post key: `post.ID` is only unique within a
+			// site and `feed_item_ID` is absent on non-feed posts, so either alone
+			// can read two distinct posts as one.
+			const hasViewedPostChanged = ! keysAreEqual(
+				keyForPost( prevProps?.post ),
+				keyForPost( this.props?.post )
+			);
 			if ( hasViewedPostChanged ) {
 				this.hasAutoMarkedAsSeen = false;
 			}
