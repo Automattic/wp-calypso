@@ -173,4 +173,24 @@ describe( '<UpcomingRenewalsDialog>', () => {
 
 		expect( screen.getByText( 'Renew now' ) ).toHaveProperty( 'disabled', true );
 	} );
+	test( 'preserves deselection across refreshed and changed purchases, then resets on reopening', async () => {
+		const user = userEvent.setup();
+		const purchases = mockPurchases();
+		const onConfirm = jest.fn();
+		const props = { isVisible: true, purchases, site, onConfirm, onClose: jest.fn() };
+		const { rerender } = render( <UpcomingRenewalsDialog { ...props } /> );
+		await user.click( document.body.querySelector( 'input[name=personal-bundle-1]' ) );
+		const refreshed = purchases.map( ( purchase ) => ( { ...purchase, amount: 300 } ) );
+		rerender( <UpcomingRenewalsDialog { ...props } purchases={ refreshed } /> );
+		expect( document.body.querySelector( 'input[name=personal-bundle-1]' ) ).not.toBeChecked();
+		const added = { ...refreshed[ 1 ], ID: 3 };
+		rerender( <UpcomingRenewalsDialog { ...props } purchases={ [ refreshed[ 0 ], added ] } /> );
+		expect( document.body.querySelector( 'input[name=personal-bundle-1]' ) ).not.toBeChecked();
+		expect( document.body.querySelector( 'input[name=dotlive_domain-3]' ) ).toBeChecked();
+		await user.click( screen.getByText( 'Renew now' ) );
+		expect( onConfirm ).toHaveBeenCalledWith( [ added ] );
+		rerender( <UpcomingRenewalsDialog { ...props } isVisible={ false } /> );
+		rerender( <UpcomingRenewalsDialog { ...props } /> );
+		expect( document.body.querySelector( 'input[name=personal-bundle-1]' ) ).toBeChecked();
+	} );
 } );

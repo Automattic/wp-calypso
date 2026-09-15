@@ -2,7 +2,7 @@ import { Button, Dialog, FormLabel } from '@automattic/components';
 import { capitalize } from '@automattic/js-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
+import { FunctionComponent, Fragment, useState, useEffect, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import {
@@ -72,7 +72,10 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
-	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
+	const [ excludedIds, setExcludedIds ] = useState< number[] >( [] );
+	const selectedPurchases = purchases.filter(
+		( purchase ) => ! excludedIds.includes( purchase.ID )
+	);
 
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
@@ -87,13 +90,13 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			setSelectedPurchases( purchases.map( ( purchase ) => purchase.ID ) );
+			setExcludedIds( [] );
 		}
-	}, [ isVisible, purchases ] );
+	}, [ isVisible ] );
 
-	const confirmSelectedPurchases = useCallback( () => {
-		onConfirm( purchases.filter( ( purchase ) => selectedPurchases.includes( purchase.ID ) ) );
-	}, [ purchases, selectedPurchases, onConfirm ] );
+	const confirmSelectedPurchases = () => {
+		onConfirm( selectedPurchases );
+	};
 
 	return (
 		<Dialog
@@ -111,11 +114,11 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 				const expiresText = getExpiresText( translate, purchase ) as string;
 				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
-					if ( selectedPurchases.includes( purchase.ID ) ) {
-						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.ID ) );
-					} else {
-						setSelectedPurchases( selectedPurchases.concat( [ purchase.ID ] ) );
-					}
+					setExcludedIds( ( ids ) =>
+						ids.includes( purchase.ID )
+							? ids.filter( ( id ) => id !== purchase.ID )
+							: [ ...ids, purchase.ID ]
+					);
 				};
 				return (
 					<Fragment key={ purchase.ID }>
@@ -129,7 +132,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 									<FormInputCheckbox
 										className="upcoming-renewals-dialog__checkbox-input"
 										name={ `${ purchase.product_slug }-${ purchase.ID }` }
-										checked={ selectedPurchases.includes( purchase.ID ) }
+										checked={ ! excludedIds.includes( purchase.ID ) }
 										onChange={ onChange }
 									/>
 								</div>

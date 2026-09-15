@@ -8,7 +8,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import { useLocale } from '../../../app/locale';
 import { CardDivider } from '../../../components/card';
 import { formatDate } from '../../../utils/datetime';
@@ -102,17 +102,10 @@ export function UpcomingRenewalsDialog( {
 		[ purchases ]
 	);
 
-	const [ selection, setSelection ] = useState< string[] >(
-		purchases.map( ( p ) => String( p.ID ) )
-	);
-
-	useEffect( () => {
-		setSelection( purchases.map( ( p ) => String( p.ID ) ) );
-	}, [ purchases ] );
+	const [ excludedIds, setExcludedIds ] = useState< number[] >( [] );
 
 	const handleConfirm = () => {
-		const selectedIds = new Set( selection );
-		const selectedPurchasesData = purchases.filter( ( p ) => selectedIds.has( String( p.ID ) ) );
+		const selectedPurchasesData = purchases.filter( ( p ) => ! excludedIds.includes( p.ID ) );
 		onConfirm( selectedPurchasesData );
 	};
 
@@ -136,7 +129,7 @@ export function UpcomingRenewalsDialog( {
 				</VStack>
 				<VStack spacing={ 4 }>
 					{ purchasesSortByRecentExpiryDate.map( ( item ) => {
-						const id = String( item.ID );
+						const id = item.ID;
 						return (
 							<Fragment key={ id }>
 								<CardDivider />
@@ -144,9 +137,9 @@ export function UpcomingRenewalsDialog( {
 									__nextHasNoMarginBottom
 									label={ item.is_domain ? item.meta ?? '' : item.product_name }
 									help={ getRenewalDescription( item, locale, hasEnTranslation ) }
-									checked={ selection.includes( id ) }
+									checked={ ! excludedIds.includes( id ) }
 									onChange={ () => {
-										setSelection( ( prev ) =>
+										setExcludedIds( ( prev ) =>
 											prev.includes( id ) ? prev.filter( ( s ) => s !== id ) : [ ...prev, id ]
 										);
 									} }
