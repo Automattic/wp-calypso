@@ -179,7 +179,67 @@ function embedTumblr( domNode ) {
 	}, 30 );
 }
 
+/**
+ * Reduce a slideshow caption to the plain text it is meant to be, then re-encode it so it stays
+ * text however the slideshow script inserts it.
+ *
+ * Decoding happens in a DOMParser document, which has no browsing context, so markup in the value
+ * cannot load resources or run handlers on the way through.
+ * @param {*} caption - Caption value from the gallery data.
+ * @returns {string} The caption, as encoded text.
+ */
+function encodeSlideshowCaption( caption ) {
+	const decoded = new DOMParser().parseFromString( String( caption ?? '' ), 'text/html' );
+	const encoder = document.createElement( 'div' );
+
+	encoder.textContent = decoded.body.textContent ?? '';
+
+	return encoder.innerHTML;
+}
+
+/**
+ * Make the gallery data on a slideshow container safe to render.
+ *
+ * The container comes from post content, so `data-gallery` is an arbitrary string an author chose,
+ * and the slideshow script builds slide captions out of it.
+ * @param {Element} domNode - A slideshow container.
+ */
+function sanitizeSlideshowGallery( domNode ) {
+	const rawGallery = domNode.getAttribute( 'data-gallery' );
+
+	if ( ! rawGallery ) {
+		return;
+	}
+
+	let slides;
+	try {
+		slides = JSON.parse( rawGallery );
+	} catch {
+		slides = null;
+	}
+
+	if ( ! Array.isArray( slides ) ) {
+		domNode.removeAttribute( 'data-gallery' );
+		return;
+	}
+
+	domNode.setAttribute(
+		'data-gallery',
+		JSON.stringify(
+			slides.map( ( slide ) =>
+				slide && typeof slide === 'object'
+					? { ...slide, caption: encodeSlideshowCaption( slide.caption ) }
+					: slide
+			)
+		)
+	);
+}
+
 function triggerJQueryLoadEvent() {
+	// JetpackSlideshow initializes every slideshow in the document, not just the one that asked for
+	// it, so sanitize them all before it runs.
+	document.querySelectorAll( '.jetpack-slideshow' ).forEach( sanitizeSlideshowGallery );
+
 	// force JetpackSlideshow to initialize, in case navigation hasn't caused ready event on document
 	window.jQuery( 'body' ).trigger( 'post-load' );
 }
