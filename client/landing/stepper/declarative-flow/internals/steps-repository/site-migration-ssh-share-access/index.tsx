@@ -180,7 +180,9 @@ const SiteMigrationSshShareAccess: StepType< {
 			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 
 			// Reset the site in the state to ensure the correct overview screen is shown.
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 
 			return navigation.submit?.( {
 				destination: 'do-it-for-me',
@@ -210,14 +212,16 @@ const SiteMigrationSshShareAccess: StepType< {
 	} );
 
 	// Poll SSH migration atomic transfer status
-	const { transferStatus, isTransferring } = usePollSSHMigrationAtomicTransfer(
-		siteId,
-		transferId,
-		{
-			enabled: !! transferId && siteId > 0,
-			refetchInterval: 2000, // Poll every 2 seconds
-		}
-	);
+	const {
+		isTransferReady,
+		isTransferFailed: hasTransferFailed,
+		isTransferring,
+	} = usePollSSHMigrationAtomicTransfer( siteId, transferId, {
+		enabled: !! transferId && siteId > 0 && ! migrationStarted,
+		refetchInterval: 2000, // Poll every 2 seconds
+	} );
+
+	const isTransferFailed = ! migrationStarted && hasTransferFailed;
 
 	const { mutate: startMigration, isPending: isStartingMigration } = useStartSSHMigration();
 
@@ -230,6 +234,8 @@ const SiteMigrationSshShareAccess: StepType< {
 		onAskForHelp: navigateToDoItForMe,
 		migrationStatus: migrationStatus?.status,
 		isTransferring,
+		isTransferReady,
+		isTransferFailed,
 		isInputDisabled:
 			isStartingMigration || migrationStarted || shouldStartMigration || isProcessingNoSSH,
 		isProcessingNoSSH,
@@ -307,9 +313,12 @@ const SiteMigrationSshShareAccess: StepType< {
 				isValidIPv4( formState.serverAddress ) || isValidIPv6( formState.serverAddress ),
 			host: host,
 		} );
+		if ( isTransferFailed ) {
+			return;
+		}
 		setMigrationError( null );
 
-		if ( isTransferring ) {
+		if ( ! isTransferReady ) {
 			setShouldStartMigration( true );
 			return;
 		}
@@ -317,13 +326,19 @@ const SiteMigrationSshShareAccess: StepType< {
 		triggerSSHMigration();
 	};
 
+	useEffect( () => {
+		if ( isTransferFailed ) {
+			setShouldStartMigration( false );
+		}
+	}, [ isTransferFailed ] );
+
 	// Auto-start migration when verification completes
 	useEffect( () => {
-		if ( transferStatus === 'completed' && shouldStartMigration ) {
+		if ( isTransferReady && shouldStartMigration ) {
 			setShouldStartMigration( false );
 			triggerSSHMigration();
 		}
-	}, [ transferStatus, shouldStartMigration, triggerSSHMigration ] );
+	}, [ isTransferReady, shouldStartMigration, triggerSSHMigration ] );
 
 	const displaySiteName = urlToDomain( fromUrl );
 	const hostDisplayName = getSSHHostDisplayName( host );
@@ -378,6 +393,7 @@ const SiteMigrationSshShareAccess: StepType< {
 							onClick={ handleContinue }
 							disabled={
 								! canStartMigration ||
+								isTransferFailed ||
 								isStartingMigration ||
 								migrationStarted ||
 								shouldStartMigration ||

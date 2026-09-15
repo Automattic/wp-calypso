@@ -97,7 +97,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 							onServerAddressChange( e.target.value )
 						}
 						placeholder="ssh.wp.example-host.net"
-						disabled={ isInputDisabled }
+						disabled={ isInputDisabled || isPending }
 					/>
 				</div>
 
@@ -114,7 +114,7 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 							const newPort = Number.isNaN( parsedPort ) ? 22 : parsedPort;
 							onPortChange( newPort );
 						} }
-						disabled={ isInputDisabled }
+						disabled={ isInputDisabled || isPending }
 					/>
 				</div>
 			</div>
