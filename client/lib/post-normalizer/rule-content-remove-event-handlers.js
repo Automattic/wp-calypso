@@ -3,8 +3,11 @@ const eventHandlerAttribute = /^on/i;
 /**
  * Strips event handler attributes from the content DOM.
  *
- * Meant to run last. The rules before it build elements out of author-controlled post data, so
- * the markup they produce has never been seen by the sanitizers that ran over the API response.
+ * Must run before `detectMedia`, which copies `iframe.outerHTML` into `post.content_embeds` and
+ * `post.canonical_media`; those strings are later rendered with `dangerouslySetInnerHTML`, so they
+ * have to be clean by the time they are taken. Everything that runs after it therefore has to keep
+ * building elements out of a fixed set of attribute names — a later rule that wrote an
+ * author-controlled attribute name would slip past this one.
  * @param {Object} post The post
  * @param {Object} dom The DOM for the post's content
  * @returns {Object} The post

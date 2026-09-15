@@ -1,7 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import { classifyPost } from '..';
+import { domForHtml, isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import { classifyPost, runFastRules } from '..';
 import DISPLAY_TYPES from '../../display-types';
 
 function verifyClassification( post, displayTypes ) {
@@ -133,6 +136,36 @@ describe( 'normalization-rules', () => {
 				],
 			};
 			expect( isFeaturedImageInContent( post ) ).toBeFalsy();
+		} );
+	} );
+
+	describe( 'runFastRules', () => {
+		test( 'strips event handlers before embeds are snapshotted', () => {
+			const post = runFastRules( {
+				content:
+					'<iframe src="https://www.youtube.com/embed/abc" width="640" height="360" ' +
+					'onload="alert(1)"></iframe>',
+			} );
+			const [ embed ] = post.content_embeds;
+
+			expect( embed.iframe ).toEqual( expect.stringContaining( 'youtube.com/embed/abc' ) );
+			expect( embed.iframe ).not.toEqual( expect.stringContaining( 'onload' ) );
+			expect( embed.autoplayIframe ).toEqual( expect.stringContaining( 'autoplay=1' ) );
+			expect( embed.autoplayIframe ).not.toEqual( expect.stringContaining( 'onload' ) );
+		} );
+
+		test( 'makes links safe after earlier rules have written into them', () => {
+			const post = runFastRules( {
+				content:
+					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
+					'<div class="tiled-gallery-item"><a href="https://example.com/foo/bar/">' +
+					'<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />' +
+					'</a></div></div>',
+			} );
+			const link = domForHtml( post.content ).querySelector( '.tiled-gallery-item a' );
+
+			expect( link ).not.toBeNull();
+			expect( link.hasAttribute( 'href' ) ).toBe( false );
 		} );
 	} );
 } );
