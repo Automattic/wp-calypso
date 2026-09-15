@@ -6,13 +6,14 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 export function recordUnifiedAdminPageView( {
 	path,
 	route,
+	source = 'calypso',
 	app: appOverride,
 }: {
 	path: string;
 	route?: string;
+	source?: string;
 	app?: string;
 } ) {
-	const source = 'calypso';
 	let app = 'calypso';
 	if ( isJetpackCloud() ) {
 		app = 'jetpack-cloud';
