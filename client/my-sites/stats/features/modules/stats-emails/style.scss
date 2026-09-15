@@ -7,7 +7,7 @@
 	overflow-wrap: break-word;
 }
 
-.stats-emails--four-columns {
+.stats-emails--fixed-columns {
 	$metric-column-width: 88px;
 
 	/* At narrow widths the table keeps a minimum width and scrolls inside the card. */
@@ -32,7 +32,7 @@
 
 	.stats-card-header,
 	.horizontal-bar-list-item {
-		min-width: 620px;
+		min-width: 524px;
 	}
 
 	.stats-card-header {
@@ -66,7 +66,7 @@
 		margin-inline-start: auto;
 	}
 
-	/* The shared bar assumes a single value column; with four it overflows in Firefox
+	/* The shared bar assumes a single value column; with three it overflows in Firefox
 	   unless it can shrink. */
 	.horizontal-bar-list-item-bar {
 		width: auto;
