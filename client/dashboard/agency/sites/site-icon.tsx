@@ -4,8 +4,6 @@ import type { AgencySite } from '@automattic/api-core';
 
 import '../../components/site-icon/style.scss';
 
-// Mirrors the dotcom SiteIcon: the real icon when the site has one, and the
-// first-initial letter tile otherwise.
 export default function AgencySiteIcon( { site, size }: { site: AgencySite; size: number } ) {
 	const ico = site.icon?.img || site.icon?.ico;
 	const className = clsx( { 'is-small': size <= 16 } );

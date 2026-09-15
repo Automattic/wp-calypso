@@ -1,7 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
+import SitePreview from '../../../sites/site-preview';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite } from '@automattic/api-core';
@@ -63,5 +65,33 @@ export function getSiteUrlField(): Field< AgencySite > {
 				{ getDisplayUrl( item ) }
 			</ExternalLink>
 		),
+	};
+}
+
+function Preview( { site }: { site: AgencySite } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
+	return (
+		<div
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
+		>
+			{ resizeListener }
+			{ width && <SitePreview url={ getSiteUrl( site ) } scale={ width / 1200 } height={ 1200 } /> }
+		</div>
+	);
+}
+
+export function getPreviewField(): Field< AgencySite > {
+	return {
+		id: 'preview',
+		label: __( 'Preview' ),
+		render: ( { item } ) => <Preview site={ item } />,
+		enableHiding: false,
+		enableSorting: false,
 	};
 }
