@@ -212,11 +212,12 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'never loads the editor abilities just to read the checkpoint context', async () => {
+	it( 'never loads the editor abilities just to read the checkpoint context or the page markup', async () => {
 		setEditorPage( true );
-		const { getAmCheckpointContext, registerAbility } = await load();
+		const { getAmCheckpointContext, getAmPageContentMarkup, registerAbility } = await load();
 
 		expect( getAmCheckpointContext() ).toEqual( [] );
+		expect( getAmPageContentMarkup() ).toBe( '' );
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( registerAbility ).not.toHaveBeenCalled();

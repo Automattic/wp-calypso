@@ -12,6 +12,9 @@ jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
+// Reached through the checkpoint engine, and it registers a store on import —
+// which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( { serialize: jest.fn( () => '' ) } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	MENU_FIELDS: [ 'blocks', 'content' ],
 	addNavigationItem: jest.fn( async () => [] ),
