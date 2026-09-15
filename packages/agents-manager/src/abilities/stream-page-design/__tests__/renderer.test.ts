@@ -171,6 +171,42 @@ it( 'commits at once on the final flush, then forgets the stream', async () => {
 	expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 } );
 
+it( 'closes a block left open by the final flush instead of committing its preview', async () => {
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }<!-- wp:group --><div>` );
+	flush();
+	await act( () => finalizePendingStreams() );
+
+	const [ , staged ] = lastStaged();
+	expect( staged ).toHaveLength( 1 );
+	expect( staged[ 0 ].attributes ).not.toHaveProperty( 'className' );
+	expect( host.commitFinalDesign ).toHaveBeenCalledTimes( 1 );
+} );
+
+it( 'logs a frame that cannot be painted and goes on', async () => {
+	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	host.stageBlocks.mockImplementationOnce( () => {
+		throw new Error( 'canvas gone' );
+	} );
+	renderHook( () => usePageDesignRenderer( host ) );
+
+	await streamed( `${ PAGE }${ PARAGRAPH }` );
+	flush();
+
+	expect( consoleError ).toHaveBeenCalledWith(
+		'[AgentsManager] The page design could not be painted:',
+		expect.any( Error )
+	);
+
+	await streamed( `${ PAGE }${ PARAGRAPH }${ PARAGRAPH }` );
+	flush();
+
+	// The frame that failed is staged again with the next, once each.
+	expect( lastStaged()[ 1 ] ).toHaveLength( 2 );
+	consoleError.mockRestore();
+} );
+
 it( 'keeps the preview styles injected while a design streams', async () => {
 	renderHook( () => usePageDesignRenderer( host ) );
 
