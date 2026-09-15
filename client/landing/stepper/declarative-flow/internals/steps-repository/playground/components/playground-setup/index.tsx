@@ -27,6 +27,7 @@ export const PlaygroundSetupStep: Step< {
 	const { submit } = props.navigation;
 	const { __ } = useI18n();
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
+	const blueprintImportStartedForSiteRef = useRef< number | null >( null );
 	const { siteId, siteSlug } = useSiteData();
 	const [ query ] = useSearchParams();
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
@@ -35,6 +36,16 @@ export const PlaygroundSetupStep: Step< {
 		// If blueprint exists, import it and then submit
 		const blueprint = query.get( 'blueprint' );
 		if ( blueprint && submit && siteId ) {
+			// Start the import at most once per site. This effect's deps (`query`,
+			// `submit`) get new identities across renders, and dev hot-reloads re-run
+			// it — a second POST while the first import is still in flight is rejected
+			// with a 409 "Simultaneous imports are not permitted", which left the flow
+			// stuck because the losing call never reaches submit().
+			if ( blueprintImportStartedForSiteRef.current === siteId ) {
+				return;
+			}
+			blueprintImportStartedForSiteRef.current = siteId;
+
 			const runBlueprintImport = async () => {
 				try {
 					await importBlueprint( { blueprint, siteId } );
