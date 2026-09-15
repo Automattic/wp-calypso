@@ -43,6 +43,17 @@ export function isBundleParent( license: JetpackLicense ): boolean {
 	return ( license.quantity ?? 0 ) > 1;
 }
 
+// Standard licenses are owned by a WordPress.com user rather than the agency, so
+// the agency cannot assign, download, or revoke them.
+export function isPartnerLicense( license: JetpackLicense ): boolean {
+	return license.owner_type !== 'user';
+}
+
+// WordPress.com hosting licenses create a new site rather than attaching to an existing one.
+export function isWpcomHostingLicense( license: JetpackLicense ): boolean {
+	return license.license_key.startsWith( 'wpcom-hosting' );
+}
+
 // Pressable licenses are managed in Pressable by the agency owner, not per site.
 export function isPressableLicense( license: JetpackLicense ): boolean {
 	return (
@@ -54,6 +65,29 @@ export function isPressableLicense( license: JetpackLicense ): boolean {
 // Add-ons attach to the Pressable plan, so they are never assigned to a site.
 export function isPressableAddonLicense( license: JetpackLicense ): boolean {
 	return license.license_key.startsWith( 'pressable-addon' );
+}
+
+// Jetpack CRM extensions are downloaded from a dedicated page rather than the license.
+export function isJetpackCrmLicense( license: JetpackLicense ): boolean {
+	const key = license.license_key;
+	return (
+		key.startsWith( 'jetpack-complete' ) ||
+		key.startsWith( 'jetpack_complete' ) ||
+		key.startsWith( 'jetpack-crm' ) ||
+		key.startsWith( 'jetpack_crm' )
+	);
+}
+
+// An active subscription with auto-renew turned off is already winding down, so
+// classic hides Upgrade and Revoke for it.
+export function isAutoRenewDisabled( license: JetpackLicense ): boolean {
+	const subscription = license.subscription;
+	return subscription?.status === 'active' && ! subscription.is_auto_renew_enabled;
+}
+
+// Child licenses of a bundle can only be revoked individually once assigned.
+export function isChildLicense( license: JetpackLicense ): boolean {
+	return license.parent_license_id !== null;
 }
 
 const TRANSFERRED_BADGE_DAYS = 60;
