@@ -1,6 +1,6 @@
 jest.mock( '../stream', () => ( {
 	...jest.requireActual( '../stream' ),
-	finalizePendingStreams: jest.fn( () => Promise.resolve() ),
+	finalizePendingStreams: jest.fn( () => Promise.resolve( true ) ),
 } ) );
 
 import { streamPageDesignCallback } from '../callback';
@@ -13,6 +13,8 @@ it( 'finalizes its own stream, then completes the round trip with the summary', 
 	( finalizePendingStreams as jest.Mock ).mockImplementation( async () => {
 		await Promise.resolve();
 		finalized = true;
+
+		return true;
 	} );
 
 	const result = await streamPageDesignCallback( {
@@ -30,6 +32,17 @@ it( 'finalizes its own stream, then completes the round trip with the summary', 
 			data: { summary: 'A fresh hero.', isCurrent: true },
 		} ),
 	} );
+} );
+
+it( 'reports a design the canvas never took, without a staged summary', async () => {
+	( finalizePendingStreams as jest.Mock ).mockResolvedValueOnce( false );
+
+	const result = await streamPageDesignCallback( { summary: 'A fresh hero.' } );
+
+	expect( result.result.success ).toBe( false );
+	expect( result.result.error ).toContain( 'did not take the page design' );
+	expect( result.returnToAgent ).toBe( true );
+	expect( result.agentMessage ).toBeUndefined();
 } );
 
 it.each( [ { summary: '' }, { summary: 7 }, {}, null ] )(

@@ -248,6 +248,22 @@ describe( 'without a root', () => {
 		expect( jest.getTimerCount() ).toBe( 1 );
 	} );
 
+	// The callback must not tell the agent the design was staged when it was not.
+	it( 'reports a final flush the canvas never took, and forgets the stream', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		host.resolveRoot.mockReturnValue( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }` );
+		const finalized = finalizePendingStreams();
+		await act( () => jest.advanceTimersByTimeAsync( 150 * 21 ) );
+
+		expect( await finalized ).toBe( false );
+		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
+		consoleError.mockRestore();
+	} );
+
 	// A retry queued before the canvas mounted must not fire after the final
 	// flush landed: it would snapshot the finished design as the checkpoint.
 	it( 'drops a queued retry once a flush lands', async () => {
@@ -270,27 +286,27 @@ describe( 'without a root', () => {
 
 		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1' );
 		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-2' );
-		await act( () => finalizePendingStreams() );
+		const finalized = finalizePendingStreams();
+		await act( () => jest.advanceTimersByTimeAsync( 0 ) );
 		host.resolveRoot.mockReturnValue( 'root' );
-		flush();
+		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
 
+		expect( await finalized ).toBe( true );
 		expect( host.commitFinalDesign.mock.calls.map( ( [ id ] ) => id ) ).toEqual( [
 			'call-1',
 			'call-2',
 		] );
 	} );
 
-	it( 'still commits a final flush that had to wait', async () => {
+	it( 'settles a final flush only once the canvas took it', async () => {
 		host.resolveRoot.mockReturnValueOnce( null );
 		renderHook( () => usePageDesignRenderer( host ) );
 
 		await streamed( `${ PAGE }${ PARAGRAPH }` );
-		await act( () => finalizePendingStreams() );
+		const finalized = finalizePendingStreams();
+		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
 
-		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
-
-		flush();
-
+		expect( await finalized ).toBe( true );
 		expect( host.commitFinalDesign ).toHaveBeenCalledWith( 'call-1', 'root' );
 	} );
 } );

@@ -245,7 +245,7 @@ describe( 'finalizePendingStreams', () => {
 		await streamed( 'call-2', '<p>b' );
 		handler.mockClear();
 
-		await finalizePendingStreams();
+		await expect( finalizePendingStreams() ).resolves.toBe( true );
 		await finalizePendingStreams();
 
 		expect( handler.mock.calls.map( ( [ call ] ) => call ) ).toEqual( [
@@ -285,7 +285,7 @@ describe( 'finalizePendingStreams', () => {
 			throw new Error( 'canvas gone' );
 		} );
 
-		await expect( finalizePendingStreams() ).resolves.toBeUndefined();
+		await expect( finalizePendingStreams() ).resolves.toBe( false );
 
 		expect( handler ).toHaveBeenLastCalledWith( { toolCallId: 'call-2', isFinal: true } );
 		expect( consoleError ).toHaveBeenCalledWith(
