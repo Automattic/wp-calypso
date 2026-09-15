@@ -71,6 +71,7 @@ export default function AgencyOverview() {
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_URL,
 					contactSupport: CONTACT_SUPPORT_URL,
+					aiMcp: '/resources/ai-mcp',
 					helpful: [
 						{
 							// TODO: wire up once the MSD dashboard has a contact-support entry

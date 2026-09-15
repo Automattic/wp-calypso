@@ -51,6 +51,7 @@
 		"dashboard/wp-beta-program": true,
 		"dolly/telegram": true,
 		"domain-bundling": true,
+		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"google-my-business": true,

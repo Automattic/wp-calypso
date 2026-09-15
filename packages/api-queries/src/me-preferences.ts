@@ -32,6 +32,8 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
 	'a4a-dashboard-pd-not-approved-popover': false,
+	'a4a-marketplace-referral-guide-seen': false,
+	'a4a-marketplace-term-pricing': 'yearly',
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -54,6 +56,8 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
+	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-marketplace-term-pricing': 'a4aterm',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

@@ -60,5 +60,18 @@ describe( 'reader-router', () => {
 			expect( registry.has( '/reader/strict' ) ).toBe( true );
 			expect( registry.has( '/reader/strict/' ) ).toBe( false );
 		} );
+
+		it( 'exposes the matched route pattern after navigation', () => {
+			const router = page.create();
+			const registry = createRouteRegistry( router );
+			const pattern = '/reader/feeds/:feed/posts/:post';
+
+			registry.page( pattern, () => {} );
+			router.start( { dispatch: false, click: false, popstate: false } );
+
+			router.show( '/reader/feeds/123/posts/456?ref=test' );
+
+			expect( router.currentRoutePattern ).toBe( pattern );
+		} );
 	} );
 } );

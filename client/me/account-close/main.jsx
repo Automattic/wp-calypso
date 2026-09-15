@@ -178,8 +178,8 @@ const AccountSettingsClose = ( {
 									<ul className="account-close__theme-list">
 										{ purchasedPremiumThemes.map( ( purchasedPremiumTheme ) => {
 											return (
-												<li key={ purchasedPremiumTheme.id }>
-													{ purchasedPremiumTheme.productName }
+												<li key={ purchasedPremiumTheme.ID }>
+													{ purchasedPremiumTheme.product_name }
 												</li>
 											);
 										} ) }

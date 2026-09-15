@@ -77,6 +77,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
+		showNamePulseSearch: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
