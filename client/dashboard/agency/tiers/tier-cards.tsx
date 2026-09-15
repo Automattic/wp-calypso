@@ -176,6 +176,7 @@ export default function TierCards( {
 							<Text color={ TEXT_COLOR }>{ tier.subheading }</Text>
 						</VStack>
 						<Button
+							size="compact"
 							onClick={ () => handleViewBenefits( tier.id as string ) }
 							variant={ isSecondary ? 'secondary' : 'primary' }
 							style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
