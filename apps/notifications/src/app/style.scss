@@ -188,9 +188,17 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-inline-start: $wpnc-pane-border;
 		border-start-start-radius: $wpnc-pane-radius;
 		border-end-start-radius: $wpnc-pane-radius;
+		// Once parked under the list, its square corners show past the list's
+		// rounded ones, so hide it after the slide-out finishes.
+		visibility: hidden;
+		transition:
+			transform 300ms $wpnc-slide-easing,
+			visibility 0s 300ms;
 
 		&.is-open {
 			pointer-events: auto;
+			visibility: visible;
+			transition-delay: 0s;
 		}
 	}
 
