@@ -97,6 +97,7 @@ export type PlansIntent =
 	| 'plans-woo-hosted'
 	| 'plans-woo-hosting-solutions'
 	| 'plans-migration'
+	| 'plans-themes'
 	| 'default';
 
 export interface PlanActionOverrides {
