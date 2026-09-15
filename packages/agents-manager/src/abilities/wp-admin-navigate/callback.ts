@@ -1,9 +1,8 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getActiveSessionId } from '../../utils/agent-session';
-import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { getWpAdminRouteTracksProps, recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import {
 	getPendingNavigation,
-	getRouteTracksProps,
 	isContinuationSent,
 	NAVIGATION_PENDING_EVENT,
 	savePendingNavigation,
@@ -65,7 +64,7 @@ export async function wpAdminNavigateCallback(
 		return errorResult( 'Failed to store the navigation resume state.' );
 	}
 
-	const destinationRoute = getRouteTracksProps( destination );
+	const destinationRoute = getWpAdminRouteTracksProps( destination );
 	recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_start', {
 		destination_path: destinationRoute.path,
 		destination_page: destinationRoute.page,

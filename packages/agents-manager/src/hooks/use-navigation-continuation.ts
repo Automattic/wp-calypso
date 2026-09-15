@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
-import { recordAgentsManagerTracksEvent } from '../utils/tracks';
+import { getWpAdminRouteTracksProps, recordAgentsManagerTracksEvent } from '../utils/tracks';
 import {
 	completePendingNavigation,
 	isContinuationSent,
@@ -8,7 +8,6 @@ import {
 	markContinuationSent,
 	NAVIGATION_PENDING_EVENT,
 	getPendingNavigation,
-	getRouteTracksProps,
 	unmarkContinuationSent,
 	wasContinuationSentThisLoad,
 	wasNavigationCreatedThisLoad,
@@ -251,8 +250,8 @@ export function useNavigationContinuation( {
 					// A server redirect lands elsewhere with `matched: false`, so the
 					// requested and landed routes are both recorded; the base `path`
 					// is the landed pathname.
-					const destinationRoute = getRouteTracksProps( pendingNavigation.destination );
-					const landedRoute = getRouteTracksProps( window.location.href );
+					const destinationRoute = getWpAdminRouteTracksProps( pendingNavigation.destination );
+					const landedRoute = getWpAdminRouteTracksProps( window.location.href );
 					recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_complete', {
 						navigated,
 						matched,

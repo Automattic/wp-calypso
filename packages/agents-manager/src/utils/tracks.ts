@@ -195,3 +195,22 @@ export function recordAgentsManagerTracksEvent(
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
 }
+
+/**
+ * The Tracks props for a wp-admin route: the pathname and the `page` and
+ * `post_type` query args that name the screen. Other query values can carry
+ * search terms and IDs, so they are never recorded. Never throws, so it is
+ * safe beside a send.
+ */
+export function getWpAdminRouteTracksProps( href: string ) {
+	try {
+		const url = new URL( href, window.location.origin );
+		return {
+			path: url.pathname,
+			page: url.searchParams.get( 'page' ) ?? '',
+			postType: url.searchParams.get( 'post_type' ) ?? '',
+		};
+	} catch {
+		return { path: '', page: '', postType: '' };
+	}
+}

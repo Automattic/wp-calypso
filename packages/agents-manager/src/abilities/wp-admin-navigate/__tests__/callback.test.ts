@@ -5,6 +5,7 @@ jest.mock( '../../../utils/agent-session', () => ( {
 	getActiveSessionId: jest.fn( () => 'tab-session' ),
 } ) );
 jest.mock( '../../../utils/tracks', () => ( {
+	...jest.requireActual( '../../../utils/tracks' ),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 

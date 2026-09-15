@@ -6,6 +6,7 @@ jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
+	...jest.requireActual( '../../utils/tracks' ),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 
