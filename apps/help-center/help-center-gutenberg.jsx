@@ -41,17 +41,22 @@ function HelpCenterContent() {
 		} );
 	}, [ isShown ] );
 
-	const handleToggleHelpCenter = useCallback( () => {
-		trackIconInteraction();
-		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			location: 'help-center',
-			section: helpCenterData.sectionName || 'gutenberg-editor',
-			editor_type: getEditorType(),
-			canvas_mode: canvasMode,
-		} );
+	const handleToggleHelpCenter = useCallback(
+		( event ) => {
+			// The entry point is a link, so the keyboard can reach it; the panel opens in place.
+			event?.preventDefault();
+			trackIconInteraction();
+			recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
+				location: 'help-center',
+				section: helpCenterData.sectionName || 'gutenberg-editor',
+				editor_type: getEditorType(),
+				canvas_mode: canvasMode,
+			} );
 
-		setShowHelpCenter( ! isShown );
-	}, [ setShowHelpCenter, isShown, canvasMode, trackIconInteraction ] );
+			setShowHelpCenter( ! isShown );
+		},
+		[ setShowHelpCenter, isShown, canvasMode, trackIconInteraction ]
+	);
 
 	useEffect( () => {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );

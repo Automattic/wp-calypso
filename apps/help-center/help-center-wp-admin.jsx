@@ -83,7 +83,9 @@ function AdminHelpCenterContent() {
 		} );
 	}, [ isShown ] );
 
-	const handleToggleHelpCenter = () => {
+	const handleToggleHelpCenter = ( event ) => {
+		// The entry point is a link, so the keyboard can reach it; the panel opens in place.
+		event?.preventDefault();
 		trackIconInteraction();
 		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			location: 'help-center',

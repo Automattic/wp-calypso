@@ -119,9 +119,17 @@
 			transition: 250ms ease;
 		}
 
-		.ab-item:hover {
+		.ab-item:hover,
+		.ab-item:focus {
 			color: #7b90ff;
 			cursor: pointer;
+		}
+
+		// Core recolours `.ab-icon::before`, which only reaches icon fonts. This icon
+		// is an SVG, so it has to follow the item's colour itself.
+		.ab-item:hover .ab-icon,
+		.ab-item:focus .ab-icon {
+			color: inherit;
 		}
 	}
 
