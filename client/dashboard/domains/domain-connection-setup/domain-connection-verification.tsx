@@ -24,6 +24,8 @@ import { isMappingVerificationSuccess } from './utils';
 import VerificationInProgressNextSteps from './verification-in-progress-next-steps';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
+import './style.scss';
+
 type DomainConnectionStatus = 'connected' | 'verifying';
 
 interface DomainConnectionVerificationProps {
@@ -177,7 +179,7 @@ export default function DomainConnectionVerification( {
 						<Text size="medium" weight={ 500 }>
 							{ __( 'Need help?' ) }
 						</Text>
-						<VStack spacing={ 2 }>
+						<VStack className="dashboard-domain-connection-verification__help-links" spacing={ 2 }>
 							<HStack>
 								<Button
 									variant="link"

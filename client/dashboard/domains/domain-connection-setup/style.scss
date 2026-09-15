@@ -12,6 +12,15 @@
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
+
+	// Support links that open in the help panel render as a bare `<a>`, which takes
+	// the browser's default underline position. Match the underline that the
+	// neighbouring link button already draws.
+	.dashboard-domain-connection-verification__help-links a {
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: from-font;
+	}
 }
 
 .verification-in-progress-next-steps {
