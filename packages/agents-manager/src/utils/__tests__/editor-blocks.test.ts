@@ -37,7 +37,12 @@ function withEditor( {
 						name === 'core/post-content' && postContent ? [ postContent ] : [],
 					getSectionRootClientId: () => sectionRoot,
 			  }
-			: { getCurrentPostId: () => postId, getCurrentPostType: () => 'page' }
+			: {
+					getCurrentPostId: () => postId,
+					getCurrentPostType: () => 'page',
+					getEditedPostAttribute: ( attribute: string ) =>
+						attribute === 'title' && postId === 7 ? 'About' : undefined,
+			  }
 	);
 	( dispatch as jest.Mock ).mockReturnValue( {
 		replaceInnerBlocks,
@@ -92,7 +97,7 @@ it( 'reads the document root as the top-level blocks', () => {
 it( 'reads the post the editor holds', () => {
 	withEditor( { postId: 7 } );
 
-	expect( getCurrentPost() ).toEqual( { id: 7, type: 'page' } );
+	expect( getCurrentPost() ).toEqual( { id: 7, type: 'page', title: 'About' } );
 } );
 
 describe( 'writes', () => {

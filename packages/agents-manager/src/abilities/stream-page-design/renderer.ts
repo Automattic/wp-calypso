@@ -197,7 +197,7 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	const stateByToolCall = useRef< Map< string, ToolCallState > >( new Map() );
 	const capturedToolCalls = useRef< Set< string > >( new Set() );
 	const flushTimer = useRef< ReturnType< typeof setTimeout > | null >( null );
-	const retryTimer = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const retryTimers = useRef< Map< string, ReturnType< typeof setTimeout > > >( new Map() );
 	const previewStylesInterval = useRef< ReturnType< typeof setInterval > | null >( null );
 	const pendingToolCallId = useRef< string | null >( null );
 
@@ -531,32 +531,37 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 		[ getToolCallState, processPageBuffer ]
 	);
 
-	const clearRetry = useCallback( () => {
-		if ( retryTimer.current ) {
-			clearTimeout( retryTimer.current );
-			retryTimer.current = null;
+	const clearRetry = useCallback( ( toolCallId: string ) => {
+		const timer = retryTimers.current.get( toolCallId );
+
+		if ( timer ) {
+			clearTimeout( timer );
+			retryTimers.current.delete( toolCallId );
 		}
 	}, [] );
 
 	// Markup that arrives before the canvas has mounted would otherwise flush
 	// once into nothing, with no later delta to try again. A flush that lands
-	// supersedes any retry still queued.
+	// supersedes any retry still queued for the same tool call.
 	const flushOrRetry = useCallback(
 		function attempt(
 			toolCallId: string,
 			isFinal: boolean,
 			attemptsLeft = MAX_FLUSH_RETRIES
 		): void {
-			clearRetry();
+			clearRetry( toolCallId );
 
 			if ( flush( toolCallId, isFinal ) || attemptsLeft === 0 ) {
 				return;
 			}
 
-			retryTimer.current = setTimeout( () => {
-				retryTimer.current = null;
-				attempt( toolCallId, isFinal, attemptsLeft - 1 );
-			}, FLUSH_INTERVAL_MS );
+			retryTimers.current.set(
+				toolCallId,
+				setTimeout( () => {
+					retryTimers.current.delete( toolCallId );
+					attempt( toolCallId, isFinal, attemptsLeft - 1 );
+				}, FLUSH_INTERVAL_MS )
+			);
 		},
 		[ clearRetry, flush ]
 	);
@@ -604,17 +609,20 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 	);
 
 	useEffect( () => {
+		const timers = retryTimers.current;
+
 		setStreamHandler( handleUpdate );
 
 		return () => {
 			setStreamHandler( undefined );
 			stopPreviewStyles();
-			clearRetry();
+			timers.forEach( clearTimeout );
+			timers.clear();
 
 			if ( flushTimer.current ) {
 				clearTimeout( flushTimer.current );
 				flushTimer.current = null;
 			}
 		};
-	}, [ clearRetry, handleUpdate, stopPreviewStyles ] );
+	}, [ handleUpdate, stopPreviewStyles ] );
 }

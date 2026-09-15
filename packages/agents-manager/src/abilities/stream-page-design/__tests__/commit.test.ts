@@ -47,7 +47,9 @@ it( 'writes nothing when the design equals what was there', () => {
 	const live = [ block( 'live-1', 'core/paragraph', { content: 'Hi' } ) ];
 	const host = adapters( live );
 
-	commitStreamedPageDesign( host, [ block( 'old-1', 'core/paragraph', { content: 'Hi' } ) ] );
+	expect(
+		commitStreamedPageDesign( host, [ block( 'old-1', 'core/paragraph', { content: 'Hi' } ) ] )
+	).toBe( false );
 
 	expect( host.clearSelection ).not.toHaveBeenCalled();
 	expect( host.stageBlocks ).not.toHaveBeenCalled();
@@ -64,7 +66,9 @@ it( 'puts the old blocks back untracked, then writes fresh copies that keep the 
 	host.stageBlocks.mockImplementation( () => order.push( 'stage' ) );
 	host.replaceBlocks.mockImplementation( () => order.push( 'replace' ) );
 
-	commitStreamedPageDesign( host, [ block( 'old-1', 'core/paragraph', { content: 'Old' } ) ] );
+	expect(
+		commitStreamedPageDesign( host, [ block( 'old-1', 'core/paragraph', { content: 'Old' } ) ] )
+	).toBe( true );
 
 	expect( order ).toEqual( [ 'clear', 'stage', 'replace' ] );
 	expect( host.stageBlocks ).toHaveBeenCalledWith( [

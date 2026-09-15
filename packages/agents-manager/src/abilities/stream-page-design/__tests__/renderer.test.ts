@@ -228,6 +228,22 @@ describe( 'without a root', () => {
 		expect( jest.getTimerCount() ).toBe( 0 );
 	} );
 
+	it( 'keeps one waiting final flush per tool call', async () => {
+		host.resolveRoot.mockReturnValue( null );
+		renderHook( () => usePageDesignRenderer( host ) );
+
+		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1' );
+		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-2' );
+		await act( () => finalizePendingStreams() );
+		host.resolveRoot.mockReturnValue( 'root' );
+		flush();
+
+		expect( host.commitFinalDesign.mock.calls.map( ( [ id ] ) => id ) ).toEqual( [
+			'call-1',
+			'call-2',
+		] );
+	} );
+
 	it( 'still commits a final flush that had to wait', async () => {
 		host.resolveRoot.mockReturnValueOnce( null );
 		renderHook( () => usePageDesignRenderer( host ) );

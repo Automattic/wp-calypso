@@ -11,6 +11,7 @@ const mockLiveBlocks = [
 
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks' },
+	clearCheckpoint: jest.fn(),
 	hasCheckpoint: jest.fn( () => false ),
 	setCheckpoint: jest.fn(),
 } ) );
@@ -25,11 +26,11 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	} ) ),
 	stageRootBlocks: jest.fn(),
 } ) );
-jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn() } ) );
+jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn( () => true ) } ) );
 
 import { renderHook } from '@testing-library/react';
 import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
-import { hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
+import { clearCheckpoint, hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import {
 	clearBlockSelection,
 	getRootBlocks,
@@ -98,9 +99,22 @@ it( 'checkpoints the page once per tool call, then commits the design against th
 	expect( replaceRootBlocks ).toHaveBeenCalledWith( 'root', blocks );
 	expect( clearBlockSelection ).toHaveBeenCalled();
 
+	expect( clearCheckpoint ).not.toHaveBeenCalled();
+
 	// The snapshot is spent: a repeated final flush commits nothing.
 	editorHost.commitFinalDesign( 'call-1', 'root' );
 	expect( commitStreamedPageDesign ).toHaveBeenCalledTimes( 1 );
+} );
+
+// An undo that does nothing is never offered.
+it( 'drops the checkpoint of a stream that left the page as it was', () => {
+	( commitStreamedPageDesign as jest.Mock ).mockReturnValueOnce( false );
+	const editorHost = host();
+
+	editorHost.captureCheckpoint( 'call-1', 'root' );
+	editorHost.commitFinalDesign( 'call-1', 'root' );
+
+	expect( clearCheckpoint ).toHaveBeenCalledWith( 'call-1' );
 } );
 
 it( 'commits nothing for a stream it never snapshotted', () => {
