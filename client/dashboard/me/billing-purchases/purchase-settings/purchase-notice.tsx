@@ -27,7 +27,7 @@ import {
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
 } from '../../../components/plan-expiry-notice';
-import { formatDate } from '../../../utils/datetime';
+import { formatDate, toLocalCalendarDate } from '../../../utils/datetime';
 import { getDowngradeTargetProductName } from '../../../utils/downgrade-target-name';
 import { wpcomLink } from '../../../utils/link';
 import {
@@ -227,7 +227,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		// plans is up to 30 days before expiry. The downgrade takes effect on
 		// that renewal, so it's the accurate date to show the customer.
 		const renewalDate = purchase.renew_date
-			? formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } )
+			? formatDate( toLocalCalendarDate( purchase.renew_date ), locale, { dateStyle: 'long' } )
 			: null;
 		const getDelayedDowngradeMessage = () => {
 			if ( targetPlanName && renewalDate ) {
@@ -616,7 +616,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 
 	const daysToExpiry = isExpiredOrRemoved( purchase )
 		? 0
-		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
+		: differenceInCalendarDays( toLocalCalendarDate( purchase.expiry_date ), new Date() );
 	const productType =
 		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY

@@ -2,7 +2,7 @@ import { Domain, Product } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { add } from 'date-fns';
-import { formatDate } from '../../utils/datetime';
+import { formatDate, toLocalCalendarDate } from '../../utils/datetime';
 import { MailboxProvider } from '../types';
 import { doesAdditionalPriceMatchStandardPrice } from './does-additional-price-match-standard-price';
 import { getEmailSubscription } from './get-email-subscription';
@@ -104,7 +104,7 @@ export const getMailboxCost = ( {
 			}
 
 			const nextExpiryDate = formatDate(
-				new Date( getExpiryDate( emailSubscription ) || '' ),
+				toLocalCalendarDate( getExpiryDate( emailSubscription ) || '' ),
 				locale,
 				{
 					dateStyle: 'long',

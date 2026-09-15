@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { mightStillAutoRenew } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import type { Purchase } from '@automattic/api-core';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
@@ -88,7 +89,7 @@ const PaymentMethodDeleteDialog = ( {
 										</td>
 										<td className="payment-method-delete-dialog__affected-subscription-details-renew-date fixed">
 											{ purchase.renew_date
-												? moment( purchase.renew_date ).format( 'll' )
+												? moment( toLocalCalendarDate( purchase.renew_date ) ).format( 'll' )
 												: translate( 'Pending renewal' ) }
 										</td>
 									</tr>

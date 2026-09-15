@@ -19,6 +19,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSolutionsForReason } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	isAgencyPartnerType,
 	isExpiredOrRemoved,
@@ -601,7 +602,9 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 												{
 													args: {
 														planName: productName,
-														purchaseRenewalDate: moment( purchase.expiry_date ).format( 'LL' ),
+														purchaseRenewalDate: moment(
+															toLocalCalendarDate( purchase.expiry_date )
+														).format( 'LL' ),
 													},
 													components: {
 														strong: <strong className="is-highlighted" />,

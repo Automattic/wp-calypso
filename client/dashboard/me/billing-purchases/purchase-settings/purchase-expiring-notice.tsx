@@ -6,7 +6,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { isEligibleForPlanExpiryNotice } from '../../../components/plan-expiry-notice';
-import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
+import {
+	getCalendarDaysUntil,
+	getRelativeDayString,
+	toLocalCalendarDate,
+} from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
 	isExpiring,
@@ -112,7 +116,10 @@ export function PurchaseExpiringNotice( {
 							includedPurchaseName: includedPurchase.is_domain
 								? includedPurchase.meta ?? ''
 								: includedPurchase.product_name,
-							expiry: getRelativeDayString( new Date( currentPurchase.expiry_date ), 'upcoming' ),
+							expiry: getRelativeDayString(
+								toLocalCalendarDate( currentPurchase.expiry_date ),
+								'upcoming'
+							),
 						}
 					),
 					{
@@ -164,7 +171,7 @@ function ExpiringText( {
 	}
 
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
-	const daysToExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+	const daysToExpiry = getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) );
 
 	// A monthly purchase expiring today (or already past its expiry date, while
 	// still reported as expiring) falls through to the relative wording below,
@@ -203,7 +210,7 @@ function ExpiringText( {
 		// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
 		return sprintf( __( '%(purchaseName)s will expire and be removed %(expiry)s.' ), {
 			purchaseName,
-			expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+			expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 		} );
 	}
 
@@ -214,7 +221,7 @@ function ExpiringText( {
 		  __( '%(purchaseName)s will expire and be removed from your site %(expiry)s.' );
 	return sprintf( message, {
 		purchaseName,
-		expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+		expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 	} );
 }
 
@@ -228,7 +235,7 @@ export function ExpiringLaterText( {
 	isDomainWithoutSite?: boolean;
 } ) {
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
-	const expiry = getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' );
+	const expiry = getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' );
 
 	if ( purchase.payment_type === 'credits' ) {
 		if ( autoRenewingUpgradesAction ) {

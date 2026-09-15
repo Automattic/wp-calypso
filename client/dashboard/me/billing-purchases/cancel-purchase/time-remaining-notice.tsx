@@ -1,5 +1,6 @@
 import { isToday, isBefore } from 'date-fns';
 import Notice from '../../../components/notice';
+import { toLocalCalendarDate } from '../../../utils/datetime';
 import { isPartnerPurchase, DisplayVariant, CancelIntent } from '../../../utils/purchase';
 import { getTopNoticeCopy } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
@@ -28,7 +29,7 @@ export default function TimeRemainingNotice( {
 	}
 
 	// Don't show for a purchase that's already expired or expires today.
-	const purchaseExpiryDate = new Date( purchase.expiry_date );
+	const purchaseExpiryDate = toLocalCalendarDate( purchase.expiry_date );
 	const now = new Date();
 	if ( isToday( purchaseExpiryDate ) || isBefore( purchaseExpiryDate, now ) ) {
 		return null;

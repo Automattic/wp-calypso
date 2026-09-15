@@ -7,6 +7,8 @@ import {
 	getCalendarDaysUntil,
 	getRelativeTimeString,
 	getRelativeDayString,
+	toLocalCalendarDate,
+	toLocalCalendarDateString,
 } from '../datetime';
 
 describe( 'datetime utils (site-time)', () => {
@@ -192,6 +194,60 @@ describe( 'datetime utils (site-time)', () => {
 			expect( getRelativeDayString( new Date( '2026-02-21T12:00:00Z' ), 'past' ) ).toBe(
 				'3 days ago'
 			);
+		} );
+	} );
+
+	describe( 'toLocalCalendarDate', () => {
+		const originalTz = process.env.TZ;
+
+		afterEach( () => {
+			process.env.TZ = originalTz;
+		} );
+
+		it( 'keeps the UTC calendar day when the viewer is west of UTC', () => {
+			process.env.TZ = 'America/Los_Angeles';
+			const d = toLocalCalendarDate( '2027-09-07T00:00:00+00:00' );
+			expect( d.getFullYear() ).toBe( 2027 );
+			expect( d.getMonth() ).toBe( 8 );
+			expect( d.getDate() ).toBe( 7 );
+		} );
+
+		it( 'keeps the UTC calendar day when the viewer is east of UTC', () => {
+			process.env.TZ = 'Pacific/Auckland';
+			const d = toLocalCalendarDate( '2027-09-07T23:00:00+00:00' );
+			expect( d.getFullYear() ).toBe( 2027 );
+			expect( d.getMonth() ).toBe( 8 );
+			expect( d.getDate() ).toBe( 7 );
+		} );
+
+		it( 'formats to the same day regardless of the viewer’s time zone', () => {
+			process.env.TZ = 'America/Los_Angeles';
+			expect(
+				new Intl.DateTimeFormat( 'en-US', { dateStyle: 'long' } ).format(
+					toLocalCalendarDate( '2027-09-07T00:00:00+00:00' )
+				)
+			).toBe( 'September 7, 2027' );
+		} );
+
+		it( 'returns an Invalid Date for an unparseable string', () => {
+			expect( toLocalCalendarDate( '' ).getTime() ).toBeNaN();
+		} );
+	} );
+
+	describe( 'toLocalCalendarDateString', () => {
+		const originalTz = process.env.TZ;
+
+		afterEach( () => {
+			process.env.TZ = originalTz;
+		} );
+
+		it( 'produces a local, offset-less string that reparses to the same calendar day', () => {
+			process.env.TZ = 'America/Los_Angeles';
+			const s = toLocalCalendarDateString( '2027-09-07T00:00:00+00:00' );
+			const reparsed = new Date( s );
+			expect( reparsed.getFullYear() ).toBe( 2027 );
+			expect( reparsed.getMonth() ).toBe( 8 );
+			expect( reparsed.getDate() ).toBe( 7 );
 		} );
 	} );
 } );

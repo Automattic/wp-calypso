@@ -7,6 +7,7 @@ import {
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { isExpiredAndInGracePeriod } from 'calypso/dashboard/utils/purchase';
 import type { CancellationFeature, Purchase } from '@automattic/api-core';
 import type { DisplayVariant } from 'calypso/dashboard/utils/purchase';
@@ -38,7 +39,7 @@ const CancelPurchaseFeatureList = ( {
 
 	// Use non-breaking spaces in the formatted date so it never wraps mid-date.
 	const fullExpiryDate = purchase.expiry_date
-		? moment( purchase.expiry_date ).format( 'LL' ).replace( / /g, '\u00a0' )
+		? moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ).replace( / /g, '\u00a0' )
 		: '';
 
 	if ( items.length === 1 ) {

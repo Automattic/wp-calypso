@@ -1,7 +1,12 @@
 import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
 import { translationExists } from '@automattic/i18n-utils';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import {
+	formatDate,
+	getCalendarDaysUntil,
+	getRelativeDayString,
+	toLocalCalendarDate,
+} from '../../utils/datetime';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -214,8 +219,8 @@ function resolveNotice(
 	const planName = getPlanName( purchase ) as string;
 	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
 	const canAutoRenew = mightStillAutoRenew( purchase );
-	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
-	const expiryDate = formatDate( new Date( purchase.expiry_date ), locale ?? 'en', {
+	const daysUntilExpiry = getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) );
+	const expiryDate = formatDate( toLocalCalendarDate( purchase.expiry_date ), locale ?? 'en', {
 		dateStyle: 'long',
 	} );
 	const isAnnualOrLonger = purchase.bill_period_days >= SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
@@ -369,7 +374,10 @@ function resolveNotice(
 			__( 'Your %(planName)s plan expires %(timeUntilExpiry)s' ),
 			{
 				planName,
-				timeUntilExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				timeUntilExpiry: getRelativeDayString(
+					toLocalCalendarDate( purchase.expiry_date ),
+					'upcoming'
+				),
 			}
 		),
 		bodySource:
@@ -578,7 +586,7 @@ function expiringFallbackNotice(
 			__( '%(purchaseName)s will expire and be removed from your site %(expiry)s.' ),
 			{
 				purchaseName: purchase.product_name,
-				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 			}
 		),
 		primaryAction,
@@ -604,7 +612,7 @@ function autoRenewOffFallbackNotice(
 			),
 			{
 				purchaseName: purchase.product_name,
-				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 			}
 		),
 		primaryAction,

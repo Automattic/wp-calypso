@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import Notice from '../../../components/notice';
+import { toLocalCalendarDate } from '../../../utils/datetime';
 import { classifyPurchaseForCopy, getProductNounForCategory } from './classify-purchase-for-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -25,7 +26,7 @@ export function PurchaseCancelledNotice( {
 		return null;
 	}
 	const expiryDate = intlFormat(
-		new Date( purchase.expiry_date ),
+		toLocalCalendarDate( purchase.expiry_date ),
 		{ dateStyle: 'long' },
 		{ locale: 'en-US' }
 	);

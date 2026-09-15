@@ -74,7 +74,11 @@ import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/p
 import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
-import { formatDate } from '../../../utils/datetime';
+import {
+	formatDate,
+	toLocalCalendarDate,
+	toLocalCalendarDateString,
+} from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -491,7 +495,7 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// Use non-breaking spaces in the date so it doesn't wrap mid-date
 	// (e.g. "April\n16, 2027") in narrow viewports.
 	const expiryDateFormatted = purchase.expiry_date
-		? formatDate( new Date( purchase.expiry_date ), locale, {
+		? formatDate( toLocalCalendarDate( purchase.expiry_date ), locale, {
 				dateStyle: 'long',
 		  } ).replace( / /g, '\u00A0' )
 		: '';
@@ -923,13 +927,13 @@ function getFields( {
 					) {
 						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+							date: formatDate( toLocalCalendarDate( purchase.renew_date ?? '' ), locale, {
 								dateStyle: 'long',
 							} ),
 						} );
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
-						const date = formatDate( new Date( purchase.expiry_date ), locale, {
+						const date = formatDate( toLocalCalendarDate( purchase.expiry_date ), locale, {
 							dateStyle: 'long',
 						} );
 						if ( isExpiredOrRemoved( purchase ) ) {
@@ -971,7 +975,7 @@ function getFields( {
 										{
 											expireDate: (
 												<span>
-													{ formatDate( new Date( purchase.expiry_date ), locale, {
+													{ formatDate( toLocalCalendarDate( purchase.expiry_date ), locale, {
 														dateStyle: 'long',
 													} ) }
 												</span>
@@ -1598,10 +1602,18 @@ export default function PurchaseSettings() {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: isIncluded,
 	} );
-	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
-	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const formattedParentExpiry = useFormattedTime( parentPurchase?.expiry_date ?? '' );
-	const formattedParentRenewal = useFormattedTime( parentPurchase?.renew_date ?? '' );
+	const formattedExpiry = useFormattedTime(
+		purchase.expiry_date ? toLocalCalendarDateString( purchase.expiry_date ) : ''
+	);
+	const formattedRenewal = useFormattedTime(
+		purchase.renew_date ? toLocalCalendarDateString( purchase.renew_date ) : ''
+	);
+	const formattedParentExpiry = useFormattedTime(
+		parentPurchase?.expiry_date ? toLocalCalendarDateString( parentPurchase.expiry_date ) : ''
+	);
+	const formattedParentRenewal = useFormattedTime(
+		parentPurchase?.renew_date ? toLocalCalendarDateString( parentPurchase.renew_date ) : ''
+	);
 	// During the expiration grace period, we don't want to display the
 	// purchase.renew_date from the server even if there is an upcoming
 	// auto-renewal attempt (since we want to communicate the urgency of the

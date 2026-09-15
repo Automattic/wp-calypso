@@ -8,7 +8,7 @@ import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } 
 import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import SectionHeader from 'calypso/components/section-header';
-import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { getRelativeDayString, toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -306,7 +306,7 @@ function getMessages( {
 			// This slot feeds both "expired %(expiry)s" and "is expiring %(expiry)s",
 			// so it is clamped to match the tense of the branch it lands in.
 			expiry: getRelativeDayString(
-				new Date( purchase.expiry_date ),
+				toLocalCalendarDate( purchase.expiry_date ),
 				isExpiredOrRemoved( purchase ) ? 'past' : 'upcoming'
 			),
 		},
@@ -336,7 +336,7 @@ function getMessages( {
 			args: {
 				purchaseName: getName( purchase ),
 				relativeRenewDate: getRelativeDayString(
-					new Date( purchase.renew_date ?? '' ),
+					toLocalCalendarDate( purchase.renew_date ?? '' ),
 					'upcoming'
 				),
 			},

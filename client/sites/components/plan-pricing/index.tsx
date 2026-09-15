@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -61,7 +62,7 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 		return site?.plan?.expired
 			? translate( 'Your plan has expired.' )
 			: translate( 'Expires on %s.', {
-					args: moment( planData?.expiryDate ).format( 'LL' ),
+					args: moment( toLocalCalendarDate( planData?.expiryDate ?? '' ) ).format( 'LL' ),
 			  } );
 	};
 

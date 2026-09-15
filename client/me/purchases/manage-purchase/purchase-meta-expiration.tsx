@@ -18,6 +18,7 @@ import {
 	isEligibleForPlanExpiryNotice,
 } from 'calypso/dashboard/components/plan-expiry-notice';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import {
 	isAkismetHoldingSitePurchase,
 	isA4AHoldingSitePurchase,
@@ -170,7 +171,9 @@ function PurchaseMetaExpiration( {
 		) {
 			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 				args: {
-					renewDate: purchase.renew_date ? moment( purchase.renew_date ).format( 'LL' ) : '',
+					renewDate: purchase.renew_date
+						? moment( toLocalCalendarDate( purchase.renew_date ) ).format( 'LL' )
+						: '',
 				},
 				components: {
 					dateSpan,
@@ -179,7 +182,7 @@ function PurchaseMetaExpiration( {
 		} else if ( isExpiredAndInGracePeriod( purchase ) ) {
 			subsBillingText = translate( 'Expired on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
-					expireDate: moment( purchase.expiry_date ).format( 'LL' ),
+					expireDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 				},
 				components: {
 					dateSpan,
@@ -189,7 +192,7 @@ function PurchaseMetaExpiration( {
 		} else {
 			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
-					expireDate: moment( purchase.expiry_date ).format( 'LL' ),
+					expireDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 				},
 				components: {
 					dateSpan,
@@ -198,7 +201,7 @@ function PurchaseMetaExpiration( {
 		}
 
 		if ( is100Year( purchase ) ) {
-			subsBillingText = moment( purchase.expiry_date ).format( 'LL' );
+			subsBillingText = moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' );
 		}
 		const shouldShowTooltip = () => {
 			if ( ! purchase.expiry_date || ! purchase.renew_date || is100Year( purchase ) ) {
@@ -251,7 +254,9 @@ function PurchaseMetaExpiration( {
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
 								{
 									args: {
-										expireDate: moment( purchase.expiry_date ).format( 'LL' ),
+										expireDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format(
+											'LL'
+										),
 									},
 									components: {
 										dateSpan,

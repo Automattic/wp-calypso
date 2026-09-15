@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { getRelativeDayString, toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -69,7 +69,7 @@ export class PlanBillingPeriod extends Component<
 		}
 
 		if ( isRenewingBeforeExpiration( purchase ) && purchase.renew_date ) {
-			const renewDate = moment( purchase.renew_date );
+			const renewDate = moment( toLocalCalendarDate( purchase.renew_date ) );
 			return translate( 'Billed yearly, renews on %s', {
 				args: renewDate.format( 'LL' ),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
@@ -78,7 +78,7 @@ export class PlanBillingPeriod extends Component<
 
 		if ( isExpiring( purchase ) && purchase.expiry_date ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: moment( purchase.expiry_date ).format( 'LL' ),
+				args: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
@@ -86,7 +86,10 @@ export class PlanBillingPeriod extends Component<
 		if ( isExpiredOrRemoved( purchase ) && purchase.expiry_date ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
+					timeSinceExpiry: getRelativeDayString(
+						toLocalCalendarDate( purchase.expiry_date ),
+						'past'
+					),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -121,7 +124,10 @@ export class PlanBillingPeriod extends Component<
 						text: 'Billed monthly, expired %(timeSinceExpiry)s',
 						newCopy: translate( 'Billed monthly, expired %(timeSinceExpiry)s', {
 							args: {
-								timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
+								timeSinceExpiry: getRelativeDayString(
+									toLocalCalendarDate( purchase.expiry_date ),
+									'past'
+								),
 							},
 							comment:
 								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',

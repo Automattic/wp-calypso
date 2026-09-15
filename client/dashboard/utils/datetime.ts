@@ -69,9 +69,38 @@ export function isWithinNext( date: Date, count: number, unit: 'hours' | 'days' 
  *
  * See also `getRelativeDayString` if you want to handle the relative date
  * strings ("in X days" in the above example) automatically.
+ *
+ * This assumes `date` itself is a precise instant, correct to show in the
+ * viewer's own time zone. Fields like `expiry_date` are not: they name a
+ * calendar day (the subscription lapses at the end of it) but are serialized
+ * at UTC midnight, so read literally they cross into the previous local day
+ * for any viewer west of UTC. Pass those through `toLocalCalendarDate` first.
  */
 export function getCalendarDaysUntil( date: Date ): number {
 	return differenceInCalendarDays( date, new Date() );
+}
+
+/**
+ * Parse a date string like `expiry_date` or `renew_date` that is serialized at
+ * UTC midnight but names a calendar day rather than a precise instant (the
+ * subscription is valid through the end of that day). Returns a Date at local
+ * midnight of that same calendar day, so passing the result to `formatDate`,
+ * `getCalendarDaysUntil`, or `getRelativeDayString` shows the intended day
+ * instead of the previous one for any viewer west of UTC.
+ */
+export function toLocalCalendarDate( dateString: string ): Date {
+	const utcDate = new Date( dateString );
+	return new Date( utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate() );
+}
+
+/**
+ * As `toLocalCalendarDate`, but returns a local, offset-less date-time string
+ * instead of a `Date`. For APIs that parse their own string input (like
+ * `useFormattedTime`) and would otherwise re-introduce the UTC-midnight bug by
+ * calling `new Date()` on the original `expiry_date`/`renew_date` string.
+ */
+export function toLocalCalendarDateString( dateString: string ): string {
+	return `${ formatSiteYmd( toLocalCalendarDate( dateString ) ) }T00:00:00`;
 }
 
 /**

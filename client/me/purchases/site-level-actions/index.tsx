@@ -10,6 +10,7 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { handleRenewMultiplePurchasesClick } from 'calypso/lib/purchases';
 import { cancelPurchase, managePurchase } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
@@ -196,14 +197,16 @@ export default function SiteActionInterstitial( {
 		if ( isRemove ) {
 			if ( p.is_past_expiry_date ) {
 				return translate( 'Expired on %(date)s', {
-					args: { date: moment( p.expiry_date ).format( 'LL' ) },
+					args: { date: moment( toLocalCalendarDate( p.expiry_date ) ).format( 'LL' ) },
 				} );
 			}
 			return translate( 'Expires on %(date)s', {
-				args: { date: moment( p.expiry_date ).format( 'LL' ) },
+				args: { date: moment( toLocalCalendarDate( p.expiry_date ) ).format( 'LL' ) },
 			} );
 		}
-		const expiryDate = p.expiry_date ? moment( p.expiry_date ).format( 'LL' ) : null;
+		const expiryDate = p.expiry_date
+			? moment( toLocalCalendarDate( p.expiry_date ) ).format( 'LL' )
+			: null;
 		// Once the expiry date has passed, lead with the expiry status rather
 		// than any scheduled auto-renewal date. During the grace period the UI
 		// should steer toward manual renewal — a remaining auto-renewal attempt
@@ -221,7 +224,7 @@ export default function SiteActionInterstitial( {
 			return translate( 'Renews at %(price)s on %(date)s', {
 				args: {
 					price: p.price_text,
-					date: moment( p.renew_date ).format( 'LL' ),
+					date: moment( toLocalCalendarDate( p.renew_date ) ).format( 'LL' ),
 				},
 			} );
 		}

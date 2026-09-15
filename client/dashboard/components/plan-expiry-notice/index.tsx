@@ -2,7 +2,7 @@ import { userPurchaseSetAutoRenewQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from 'react';
-import { getCalendarDaysUntil } from '../../utils/datetime';
+import { getCalendarDaysUntil, toLocalCalendarDate } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
 import Notice from '../notice';
 import { getExpiryStateName, getPlanExpiryNotice } from './get-plan-expiry-notice';
@@ -174,7 +174,7 @@ export function PlanExpiryNotice( {
 	const purchaseId = purchase.ID;
 	const productSlug = purchase.product_slug;
 	const status = isExpiredOrRemoved( purchase ) ? 'expired' : 'active';
-	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+	const daysUntilExpiry = getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) );
 	const canStillAutoRenew = mightStillAutoRenew( purchase );
 	const variant = notice?.variant;
 	const stage = notice?.stage;

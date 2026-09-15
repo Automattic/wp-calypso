@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
+import { toLocalCalendarDate } from '../../../utils/datetime';
 import { DisplayVariant, isExpiredAndInGracePeriod } from '../../../utils/purchase';
 import {
 	getCancelLossIntro,
@@ -58,10 +59,11 @@ const CancelPurchaseFeatureList = ( {
 	// Use non-breaking spaces in the formatted date so it never wraps mid-date
 	// (e.g. "April\n16, 2027").
 	const fullExpiryDate = purchase.expiry_date
-		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } ).replace(
-				/ /g,
-				'\u00a0'
-		  )
+		? intlFormat(
+				toLocalCalendarDate( purchase.expiry_date ),
+				{ dateStyle: 'long' },
+				{ locale: 'en-US' }
+		  ).replace( / /g, '\u00a0' )
 		: '';
 	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	const introCopy =

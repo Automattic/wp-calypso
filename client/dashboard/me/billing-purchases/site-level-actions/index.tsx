@@ -23,7 +23,7 @@ import { Card, CardBody, CardFooter, CardHeader } from '../../../components/card
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import { formatDate } from '../../../utils/datetime';
+import { formatDate, toLocalCalendarDate } from '../../../utils/datetime';
 import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getEligiblePurchases, SITE_ACTION_TITLES, type SiteAction } from './constants';
@@ -99,20 +99,20 @@ function getRenewalDescription( item: Purchase, action: SiteAction, locale: stri
 			return sprintf(
 				/* translators: %s: formatted date */
 				__( 'Expired on %s.' ),
-				formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+				formatDate( toLocalCalendarDate( item.expiry_date ), locale, { dateStyle: 'long' } )
 			);
 		}
 		return sprintf(
 			/* translators: %s: formatted date */
 			__( 'Expires on %s.' ),
-			formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+			formatDate( toLocalCalendarDate( item.expiry_date ), locale, { dateStyle: 'long' } )
 		);
 	}
 	const price = formatCurrency( item.price_integer, item.currency_code, {
 		isSmallestUnit: true,
 	} );
 	const expiryDate = item.expiry_date
-		? formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+		? formatDate( toLocalCalendarDate( item.expiry_date ), locale, { dateStyle: 'long' } )
 		: null;
 	// Once the expiry date has passed, lead with the expiry status rather than
 	// any scheduled auto-renewal date. During the grace period the UI should
@@ -134,7 +134,7 @@ function getRenewalDescription( item: Purchase, action: SiteAction, locale: stri
 			/* translators: %1$s: formatted price, %2$s: formatted date */
 			__( 'Renews at %1$s on %2$s.' ),
 			price,
-			formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } )
+			formatDate( toLocalCalendarDate( item.renew_date ), locale, { dateStyle: 'long' } )
 		);
 	}
 	// Not yet expired and not renewing: show the upcoming expiry date.

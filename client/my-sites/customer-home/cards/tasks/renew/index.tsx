@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
-import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { getRelativeDayString, toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { useSelector } from 'calypso/state';
@@ -27,7 +27,10 @@ const Renew = ( { card }: { card: string } ) => {
 
 	const planName = site?.plan?.product_name_short ?? '';
 	const expiryText = planPurchase?.expiry_date
-		? getRelativeDayString( new Date( planPurchase.expiry_date ), hasExpired ? 'past' : 'upcoming' )
+		? getRelativeDayString(
+				toLocalCalendarDate( planPurchase.expiry_date ),
+				hasExpired ? 'past' : 'upcoming'
+		  )
 		: '';
 	const isOwner = Boolean( site?.plan?.user_is_owner );
 

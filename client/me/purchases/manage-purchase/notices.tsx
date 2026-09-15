@@ -37,7 +37,11 @@ import {
 } from 'calypso/dashboard/components/plan-expiry-notice';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
-import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import {
+	getCalendarDaysUntil,
+	getRelativeDayString,
+	toLocalCalendarDate,
+} from 'calypso/dashboard/utils/datetime';
 import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { invalidatePurchaseQueries } from 'calypso/lib/purchases/actions';
@@ -216,7 +220,7 @@ class PurchaseNotice extends Component<
 		// plans is up to 30 days before expiry. The downgrade takes effect on
 		// that renewal, so it's the accurate date to show the customer.
 		const renewalDate = purchase.renew_date
-			? this.props.moment( purchase.renew_date ).format( 'LL' )
+			? this.props.moment( toLocalCalendarDate( purchase.renew_date ) ).format( 'LL' )
 			: null;
 
 		let noticeText;
@@ -281,7 +285,7 @@ class PurchaseNotice extends Component<
 		) {
 			return null;
 		}
-		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
+		const expiryDate = moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' );
 		if ( this.state.cancelledIntent === 'auto-renew' ) {
 			const noticeText = translate(
 				'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
@@ -373,7 +377,7 @@ class PurchaseNotice extends Component<
 		// `renewDate` is the next auto-renewal attempt date (up to 30 days before
 		// expiry for annual plans) — the date the scheduled downgrade takes effect.
 		const renewalDate = purchase.renew_date
-			? this.props.moment( purchase.renew_date ).format( 'LL' )
+			? this.props.moment( toLocalCalendarDate( purchase.renew_date ) ).format( 'LL' )
 			: null;
 
 		let text;
@@ -418,7 +422,7 @@ class PurchaseNotice extends Component<
 			return this.getExpiringLaterText( purchase );
 		}
 
-		const daysToExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+		const daysToExpiry = getCalendarDaysUntil( toLocalCalendarDate( purchase.expiry_date ) );
 
 		// A monthly purchase expiring today (or already past its expiry date, while
 		// still reported as expiring) falls through to the relative wording below,
@@ -448,7 +452,7 @@ class PurchaseNotice extends Component<
 			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
 				args: {
 					purchaseName: getName( purchase ),
-					expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+					expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 				},
 			} );
 		}
@@ -456,7 +460,7 @@ class PurchaseNotice extends Component<
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 			},
 		} );
 	}
@@ -473,7 +477,7 @@ class PurchaseNotice extends Component<
 		const translateOptions: TranslateOptions = {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
+				expiry: getRelativeDayString( toLocalCalendarDate( purchase.expiry_date ), 'upcoming' ),
 			},
 		};
 
@@ -699,7 +703,10 @@ class PurchaseNotice extends Component<
 					args: {
 						purchaseName: getName( currentPurchase ),
 						includedPurchaseName: getName( includedPurchase ),
-						expiry: getRelativeDayString( new Date( currentPurchase.expiry_date ), 'upcoming' ),
+						expiry: getRelativeDayString(
+							toLocalCalendarDate( currentPurchase.expiry_date ),
+							'upcoming'
+						),
 					},
 					components: {
 						managePurchase: (
@@ -809,12 +816,12 @@ class PurchaseNotice extends Component<
 				purchaseName: getName( currentPurchase ),
 				includedPurchaseName: getName( includedPurchase ),
 				expiry: getRelativeDayString(
-					new Date( currentPurchase.expiry_date ),
+					toLocalCalendarDate( currentPurchase.expiry_date ),
 					isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
 				),
 				earliestOtherExpiry: earliestOtherExpiringPurchase
 					? getRelativeDayString(
-							new Date( earliestOtherExpiringPurchase.expiry_date ),
+							toLocalCalendarDate( earliestOtherExpiringPurchase.expiry_date ),
 							isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
 					  )
 					: '',

@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import type { Purchase } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -53,7 +54,7 @@ const AtomicRevertChanges = ( {
 					'Any themes and plugins you have installed will be removed on %(expiryDate)s, along with their data.',
 					{
 						args: {
-							expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
+							expiryDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 						},
 					}
 				)

@@ -11,7 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { useLocale } from '../../../app/locale';
 import { CardDivider } from '../../../components/card';
-import { formatDate } from '../../../utils/datetime';
+import { formatDate, toLocalCalendarDate } from '../../../utils/datetime';
 import {
 	getSubtitleForDisplay,
 	isRenewingBeforeExpiration,
@@ -38,7 +38,9 @@ function getRenewalDescription(
 	} );
 
 	if ( isRenewingBeforeExpiration( item ) ) {
-		const date = formatDate( new Date( item.renew_date ?? '' ), locale, { dateStyle: 'long' } );
+		const date = formatDate( toLocalCalendarDate( item.renew_date ?? '' ), locale, {
+			dateStyle: 'long',
+		} );
 		if ( subtitleText && hasEnTranslation( '%1$s: Renews at %2$s on %3$s' ) ) {
 			return sprintf(
 				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted price, %3$s: formatted date
@@ -53,7 +55,7 @@ function getRenewalDescription(
 		return subtitleText ? `${ subtitleText }: ${ text }` : text;
 	}
 
-	const date = formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } );
+	const date = formatDate( toLocalCalendarDate( item.expiry_date ), locale, { dateStyle: 'long' } );
 
 	if ( isExpiredOrRemoved( item ) ) {
 		if ( subtitleText && hasEnTranslation( '%1$s: Expired on %2$s' ) ) {

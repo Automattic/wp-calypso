@@ -3,6 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import type { Purchase } from '@automattic/api-core';
@@ -50,12 +51,12 @@ export const EmailPlanSubscription = ( {
 				stripZeros: true,
 			}
 		);
-		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
+		const expiryDate = moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' );
 
 		if ( hasSubscriptionExpired ) {
 			return translate( 'Expired on %(expiryDate)s.', {
 				args: {
-					expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
+					expiryDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 				},
 				comment: 'Shows the expiry date of the email subscription',
 			} );
@@ -71,7 +72,7 @@ export const EmailPlanSubscription = ( {
 			  } )
 			: translate( 'Expires on %(expiryDate)s.', {
 					args: {
-						expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
+						expiryDate: moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ),
 					},
 					comment: 'Shows the expiry date of the email subscription',
 			  } );

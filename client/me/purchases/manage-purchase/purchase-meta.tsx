@@ -17,6 +17,7 @@ import { useState, useEffect, type JSX } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { toLocalCalendarDate } from 'calypso/dashboard/utils/datetime';
 import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
@@ -249,11 +250,11 @@ function renderRenewsOrExpiresOn( {
 	}
 
 	if ( isPurchaseExpiring( purchase ) || isExpiredOrRemoved( purchase ) ) {
-		return <>{ moment( purchase.expiry_date ).format( 'LL' ) }</>;
+		return <>{ moment( toLocalCalendarDate( purchase.expiry_date ) ).format( 'LL' ) }</>;
 	}
 
 	if ( isRenewingBeforeExpiration( purchase ) ) {
-		return <>{ moment( purchase.renew_date ?? '' ).format( 'LL' ) }</>;
+		return <>{ moment( toLocalCalendarDate( purchase.renew_date ?? '' ) ).format( 'LL' ) }</>;
 	}
 
 	if ( isPurchaseOneTimePurchase( purchase ) ) {
