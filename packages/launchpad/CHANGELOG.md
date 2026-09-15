@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Drop the `@automattic/data-stores` dependency, and with it 16 transitive packages including `@automattic/api-core`, `@automattic/calypso-products` and `@automattic/components`. `Launchpad` now takes an optional `site` prop and fetches the site itself when one is not supplied.
 - Own the Launchpad data-fetching hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, and their helpers), moved here from `@automattic/data-stores`.
 - Register a custom requester with `setRequester` to route these requests through a host-supplied client.
 

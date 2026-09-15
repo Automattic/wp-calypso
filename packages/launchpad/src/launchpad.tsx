@@ -1,17 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Site, type SiteSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { ShareSiteModal } from './action-components';
 import LaunchpadInternal from './launchpad-internal';
 import { setUpActionsForTasks } from './setup-actions';
 import { defaultSuccessCallback, useSortedLaunchpadTasks } from './use-launchpad';
+import { useSite } from './use-site';
+import type { LaunchpadSiteDetails } from './site-type';
 import type { EventHandlers, Task } from './types';
-
-export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 type LaunchpadProps = {
 	siteSlug: string | null;
+	/** Pass the site if the host already has it; Launchpad fetches it otherwise. */
+	site?: LaunchpadSiteDetails | null;
 	checklistSlug: string;
 	launchpadContext: string;
 	onSiteLaunched?: () => void;
@@ -22,6 +22,7 @@ type LaunchpadProps = {
 
 const Launchpad = ( {
 	siteSlug,
+	site: siteProp,
 	checklistSlug,
 	launchpadContext,
 	onSiteLaunched,
@@ -37,12 +38,8 @@ const Launchpad = ( {
 
 	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
 
-	const site = useSelect(
-		( select ) => {
-			return siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug ) : null;
-		},
-		[ siteSlug ]
-	);
+	const fetchedSite = useSite( siteProp === undefined ? siteSlug : null );
+	const site = siteProp === undefined ? fetchedSite : siteProp;
 	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
 
 	const taskFilter = ( tasks: Task[] ) => {
