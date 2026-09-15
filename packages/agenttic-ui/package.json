@@ -79,7 +79,7 @@
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"storybook": "^9.0.18",
-		"typescript": "^5.0.0",
+		"typescript": "^7.0.2",
 		"vite": "^5.0.0",
 		"vite-plugin-lib-inject-css": "^2.2.2",
 		"vitest": "^1.0.0"
