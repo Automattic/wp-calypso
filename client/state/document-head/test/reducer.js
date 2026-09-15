@@ -6,7 +6,14 @@ import {
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
 } from 'calypso/state/action-types';
-import { DEFAULT_META_STATE, link, meta, title, unreadCount } from '../reducer';
+import {
+	DEFAULT_META_STATE,
+	link,
+	meta,
+	title,
+	skipTitleFormatting,
+	unreadCount,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#title()', () => {
@@ -20,6 +27,33 @@ describe( 'reducer', () => {
 			const newState = title( undefined, { type: DOCUMENT_HEAD_TITLE_SET, title: 'new title' } );
 
 			expect( newState ).toBe( 'new title' );
+		} );
+	} );
+
+	describe( '#skipTitleFormatting()', () => {
+		test( 'should default to false', () => {
+			const state = skipTitleFormatting( undefined, {} );
+
+			expect( state ).toBe( false );
+		} );
+
+		test( 'should be set alongside the title', () => {
+			const newState = skipTitleFormatting( undefined, {
+				type: DOCUMENT_HEAD_TITLE_SET,
+				title: 'new title',
+				skipTitleFormatting: true,
+			} );
+
+			expect( newState ).toBe( true );
+		} );
+
+		test( 'should reset when a title is set without the flag', () => {
+			const newState = skipTitleFormatting( true, {
+				type: DOCUMENT_HEAD_TITLE_SET,
+				title: 'new title',
+			} );
+
+			expect( newState ).toBe( false );
 		} );
 	} );
 

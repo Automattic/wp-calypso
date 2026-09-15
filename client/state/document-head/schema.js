@@ -2,6 +2,10 @@ export const titleSchema = {
 	type: 'string',
 };
 
+export const skipTitleFormattingSchema = {
+	type: 'boolean',
+};
+
 export const unreadCountSchema = {
 	type: 'number',
 };
