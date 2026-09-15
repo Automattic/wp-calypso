@@ -16,9 +16,10 @@ function omit( object: object | null | undefined, ...keys: Many< PropertyKey >[]
 	if ( object == null ) {
 		return {};
 	}
-	// `Object.assign` shallow-copies own enumerable props (including symbols);
-	// `delete` then removes each key, coercing numeric keys to strings natively.
-	const result = Object.assign( {}, object ) as Record< PropertyKey, unknown >;
+	// Spread defines own data properties (including symbols), so an own `__proto__`
+	// key is copied as data rather than invoking the inherited setter. `delete`
+	// then removes each key, coercing numeric keys to strings natively.
+	const result = { ...object } as Record< PropertyKey, unknown >;
 	for ( const key of keys.flat() ) {
 		delete result[ key ];
 	}
