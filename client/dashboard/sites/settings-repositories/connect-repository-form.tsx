@@ -8,7 +8,7 @@ import {
 	codeDeploymentsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
 	Button,
 	ComboboxControl,
@@ -36,7 +36,6 @@ import {
 	useCallback,
 	useRef,
 } from 'react';
-import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
@@ -46,7 +45,6 @@ import type {
 	CreateAndUpdateCodeDeploymentVariables,
 	CreateAndUpdateCodeDeploymentResponse,
 } from '@automattic/api-core';
-import type { NavigateOptions } from '@tanstack/react-router';
 
 interface ConnectRepositoryFormProps {
 	formTitle: string;
@@ -62,7 +60,6 @@ interface ConnectRepositoryFormProps {
 	submitText: string;
 	successMessage: string;
 	errorMessage: ( reason: string ) => string;
-	navigateFrom: NavigateOptions[ 'from' ];
 }
 
 export interface ConnectRepositoryFormData {
@@ -235,11 +232,10 @@ export const ConnectRepositoryForm = ( {
 	submitText,
 	successMessage,
 	errorMessage,
-	navigateFrom,
 }: ConnectRepositoryFormProps ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const navigate = useNavigate( { from: navigateFrom } );
-	const { siteSlug } = siteRoute.useParams();
+	const navigate = useNavigate();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
 		data: installations = [],
@@ -426,7 +422,7 @@ export const ConnectRepositoryForm = ( {
 				createSuccessNotice( successMessage, {
 					type: 'snackbar',
 				} );
-				navigate( { to: '/sites/$siteSlug/settings/repositories' } );
+				navigate( { to: `/sites/${ siteSlug }/settings/repositories` } );
 			},
 			onError: ( error ) => {
 				createErrorNotice( errorMessage( error.message ), {

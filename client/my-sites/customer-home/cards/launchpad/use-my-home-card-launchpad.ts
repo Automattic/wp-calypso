@@ -1,9 +1,9 @@
 import {
-	TemporaryDismiss,
 	useLaunchpadDismisser,
 	useSortedLaunchpadTasks,
-} from '@automattic/data-stores';
-import { type Task } from '@automattic/launchpad';
+	type Task,
+	type TemporaryDismiss,
+} from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

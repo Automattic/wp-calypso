@@ -26,6 +26,7 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { describeStepMount } from '../../step-mount-registry';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
@@ -154,10 +155,12 @@ const ProcessingStep: StepType< {
 	// How the wait ended is known only inside the callback that ends it, and that callback submits —
 	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
 	// object the heartbeat is already holding is what gets it onto the closing event.
+	// Read once per mount, so a second mount of this step reports its own arrival, not the first's.
 	const waitProperties = useRef< Record< string, unknown > >( {
 		flow,
 		previous_step: props.data?.previousStep ?? null,
 		outcome: null,
+		...describeStepMount( props.stepName ),
 	} ).current;
 	waitProperties.flow = flow;
 	waitProperties.previous_step = props.data?.previousStep ?? null;

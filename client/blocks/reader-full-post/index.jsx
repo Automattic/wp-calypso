@@ -962,7 +962,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 		const { data: previousPost } = usePost( previousPostKey );
 		const { data: nextPost } = usePost( nextPostKey );
 		const canMarkSeen = useCanMarkSeen( {
-			feedId: props.feedId,
+			feedId: props.feedId ?? post?.feed_ID,
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
 		} );

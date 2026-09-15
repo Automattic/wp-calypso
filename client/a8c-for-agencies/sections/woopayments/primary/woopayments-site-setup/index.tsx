@@ -117,7 +117,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 									<>
 										<div>
 											{ translate(
-												"Click the button and we'll automatically install and activate the plugin for you. Then we'll launch WP-Admin so you can configure the final steps."
+												'Click the button and we’ll automatically install and activate the plugin for you. Then we’ll launch WP-Admin so you can configure the final steps.'
 											) }
 										</div>
 										{ error ? (

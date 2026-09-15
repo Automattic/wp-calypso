@@ -925,6 +925,31 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
+	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
+	// plans page hides the tiers below the current plan. Fall back to the default
+	// grid, the same way the "View all plans" escape hatch does.
+	useEffect( () => {
+		if (
+			! forceDefaultPlans &&
+			! isInSignup &&
+			! isDisplayingPlansNeededForFeature &&
+			intentFromSiteMeta.intent &&
+			! hideEscapeHatchForIntent( intentFromSiteMeta.intent ) &&
+			intent === intentFromSiteMeta.intent &&
+			gridPlansForFeaturesGridRaw &&
+			gridPlansForFeaturesGridRaw.length <= 1
+		) {
+			setForceDefaultPlans( true );
+		}
+	}, [
+		forceDefaultPlans,
+		isInSignup,
+		isDisplayingPlansNeededForFeature,
+		intent,
+		intentFromSiteMeta.intent,
+		gridPlansForFeaturesGridRaw,
+	] );
+
 	const isIndiaA4A = useIsIndiaA4A();
 
 	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
