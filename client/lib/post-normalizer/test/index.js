@@ -452,6 +452,26 @@ describe( 'index', () => {
 				expect( normalized.content ).toBe( '<a>hi there</a>' );
 			} );
 		} );
+
+		test( 'removes unsafe xlink:href from SVG anchors', () => {
+			const post = {
+				content: '<svg><a xlink:href="javascript:alert(1)"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<svg><a><text>hi there</text></a></svg>' );
+		} );
+
+		test( 'keeps safe and relative xlink:href on SVG anchors', () => {
+			const post = {
+				content:
+					'<svg><a xlink:href="https://example.com/"><text>a</text></a>' +
+					'<a xlink:href="#frag"><text>b</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( post.content );
+		} );
 	} );
 
 	describe( 'content.makeImagesSafe', () => {
