@@ -54,19 +54,27 @@ describe( 'resolveBlocksRoot', () => {
 		{
 			case: 'the section container first',
 			editor: { sectionRoot: 'section', postId: 1 },
-			expected: { kind: 'section', clientId: 'section' },
+			expected: { kind: 'section', clientId: 'section', post: { id: 1, type: 'page' } },
 		},
 		{
 			case: 'the post-content block',
 			editor: { postContent: 'pc', postId: 1 },
-			expected: { kind: 'post-content', clientId: 'pc' },
+			expected: { kind: 'post-content', clientId: 'pc', post: { id: 1, type: 'page' } },
 		},
 		{
-			case: 'the document root once a post is loaded',
+			case: 'the document root',
 			editor: { postId: 1 },
-			expected: { kind: 'document', clientId: DOCUMENT_ROOT_CLIENT_ID },
+			expected: {
+				kind: 'document',
+				clientId: DOCUMENT_ROOT_CLIENT_ID,
+				post: { id: 1, type: 'page' },
+			},
 		},
-		{ case: 'nothing while the editor holds no post', editor: {}, expected: null },
+		{
+			case: 'nothing while the editor holds no post, whatever the root',
+			editor: { sectionRoot: 'section' },
+			expected: null,
+		},
 	] )( 'picks $case', ( { editor, expected } ) => {
 		withEditor( editor );
 

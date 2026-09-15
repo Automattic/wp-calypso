@@ -11,7 +11,7 @@ import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
 import { streamPageDesignAbility } from '../../abilities/stream-page-design';
-import { setStreamHandler } from '../../abilities/stream-page-design/stream';
+import { getStreamedMarkup, setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
@@ -871,10 +871,8 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 			await providers.onTaskUpdate?.( update );
 
-			expect( renderer ).toHaveBeenCalledWith( {
-				toolCallId: 'call-1',
-				markup: '<!-- wp:paragraph /-->',
-			} );
+			expect( renderer ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
+			expect( getStreamedMarkup( 'call-1' ) ).toBe( '<!-- wp:paragraph /-->' );
 			expect( onTaskUpdate ).toHaveBeenCalledWith( { status: { message: { parts: [ text ] } } } );
 		} );
 

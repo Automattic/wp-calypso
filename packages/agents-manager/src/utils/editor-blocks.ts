@@ -22,6 +22,7 @@ export interface CurrentPost {
 export interface BlocksRoot {
 	kind: 'section' | 'post-content' | 'document';
 	clientId: string;
+	post: CurrentPost;
 }
 
 /** Stands in for the document root, which has no block of its own. */
@@ -84,24 +85,28 @@ export const findPostContentClientId = (): string | undefined =>
 	blockEditorSelect()?.getBlocksByName?.( 'core/post-content' )[ 0 ];
 
 /**
- * Where the page's blocks live, or `null` while the canvas is still mounting.
- * The document root counts only once the editor holds a post, so a stream that
- * arrives early waits instead of writing into nothing.
+ * Where the page's blocks live, or `null` while the editor is still loading.
+ * Nothing counts until the editor holds a post: a stream that arrives early
+ * waits instead of writing into nothing, and a snapshot always names its page.
  */
 export function resolveBlocksRoot(): BlocksRoot | null {
+	const post = getCurrentPost();
+
+	if ( ! post ) {
+		return null;
+	}
+
 	const section = getSectionRootClientId();
 
 	if ( section ) {
-		return { kind: 'section', clientId: section };
+		return { kind: 'section', clientId: section, post };
 	}
 
 	const postContent = findPostContentClientId();
 
-	if ( postContent ) {
-		return { kind: 'post-content', clientId: postContent };
-	}
-
-	return getCurrentPost() ? { kind: 'document', clientId: DOCUMENT_ROOT_CLIENT_ID } : null;
+	return postContent
+		? { kind: 'post-content', clientId: postContent, post }
+		: { kind: 'document', clientId: DOCUMENT_ROOT_CLIENT_ID, post };
 }
 
 export const getRootBlocks = ( clientId: string ): EditorBlock[] =>

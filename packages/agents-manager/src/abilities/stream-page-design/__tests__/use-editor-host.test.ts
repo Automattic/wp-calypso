@@ -18,7 +18,11 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	clearBlockSelection: jest.fn(),
 	getRootBlocks: jest.fn( () => mockLiveBlocks ),
 	replaceRootBlocks: jest.fn(),
-	resolveBlocksRoot: jest.fn( () => ( { kind: 'post-content', clientId: 'root' } ) ),
+	resolveBlocksRoot: jest.fn( () => ( {
+		kind: 'post-content',
+		clientId: 'root',
+		post: { id: 7, type: 'page' },
+	} ) ),
 	stageRootBlocks: jest.fn(),
 } ) );
 jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn() } ) );
