@@ -16,6 +16,7 @@
 		{ "path": "../wpcom-checkout" },
 		{ "path": "../zendesk-client" },
 		{ "path": "../agents-manager" },
-		{ "path": "../support-articles" }
+		{ "path": "../support-articles" },
+		{ "path": "../launchpad" }
 	]
 }

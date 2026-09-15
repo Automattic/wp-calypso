@@ -42,6 +42,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, etc.).
 - Avoid `__experimental*` components unless already used in the codebase.
 - Prefer `VStack`, `HStack` over `Flex` components.
+- Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
 - Minimize custom CSS; rely on the design system first.
 
 ### CSS/SCSS

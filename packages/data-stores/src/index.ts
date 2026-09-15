@@ -23,7 +23,6 @@ export * from './plans/types';
 export * from './theme';
 export * from './user/types';
 export * from './wpcom-plans-ui/types';
-export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';

@@ -88,6 +88,7 @@
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
 		"domain-bundling": true,
+		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"emails/titan-tiers": true,

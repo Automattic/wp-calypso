@@ -1,5 +1,6 @@
-import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { READYMADE_TEMPLATE_FLOW } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
