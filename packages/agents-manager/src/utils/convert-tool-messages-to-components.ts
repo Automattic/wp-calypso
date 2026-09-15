@@ -341,6 +341,10 @@ export default function convertToolMessagesToComponents( {
 			const Component = amComponent ?? getChatComponent?.( contentType );
 			// Provider components resolve by `contentType`; AM components are pre-resolved.
 			const ownerProps = amComponent ? {} : { contentType };
+			// The post the picker was shown on, so a review card can tell whether the
+			// editor still shows it. Under the props: a server-sent post id names the
+			// post it reviewed.
+			const shownOnProps = postId != null ? { postId } : {};
 
 			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
 
@@ -407,6 +411,7 @@ export default function convertToolMessagesToComponents( {
 						type: 'component' as const,
 						component: Component,
 						componentProps: {
+							...shownOnProps,
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,

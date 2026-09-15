@@ -1,3 +1,4 @@
+import { editCurrentPost, readEditedPost, type EditedPost, type PostField } from './current-post';
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
 import {
 	isSameMenuId,
@@ -17,9 +18,9 @@ import { getToolCallIdFromConversationHistory } from './tool-call-history';
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
  * execute as plain callbacks. The global-styles, site-logo, site-title, page,
- * navigation and site-metadata domains restore today. The block domain lands
- * with `apply-block-edits`; until then its checkpoints live in Big Sky's store
- * and restore through the `provider-checkpoints` bridge.
+ * navigation, site-metadata and post domains restore today. The block domain
+ * lands with `apply-block-edits`; until then its checkpoints live in Big Sky's
+ * store and restore through the `provider-checkpoints` bridge.
  *
  * Big Sky also re-applies the checkpoint's variation titles after a restore, to
  * sync its variation-selection store. AM has no such store, and the entity
@@ -38,7 +39,18 @@ export const checkpointKeys = {
 	NAVIGATION: 'navigation',
 	SITE_METADATA: 'site_metadata',
 	SITE_TITLE: 'site_title',
+	POST_TITLE: 'post_title',
+	POST_EXCERPT: 'post_excerpt',
 } as const;
+
+// The post fields the pickers write, keyed by the domain that scopes each.
+const POST_FIELDS_BY_KEY: Record< string, PostField > = {
+	[ checkpointKeys.POST_TITLE ]: 'title',
+	[ checkpointKeys.POST_EXCERPT ]: 'excerpt',
+};
+
+const postFieldsOf = ( keys: string[] ): PostField[] =>
+	keys.filter( ( key ) => key in POST_FIELDS_BY_KEY ).map( ( key ) => POST_FIELDS_BY_KEY[ key ] );
 
 export const THEME_CHECKPOINT_KEYS: string[] = [
 	checkpointKeys.COLOR,
@@ -75,6 +87,9 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	logoBeforeUpdate?: SiteLogo;
 	siteTitleBeforeUpdate?: string;
 	siteMetadataBeforeUpdate?: SiteMetadata;
+	// The fields a picker wrote, with the post they belong to, so a restore
+	// refuses another post instead of writing into it.
+	postBeforeUpdate?: EditedPost;
 	// A list, not a map: object keys are strings, and a menu id is a post id —
 	// restoring under the wrong type would address a different record.
 	menusBeforeUpdate?: { id: MenuId; items: NavigationBlock[] }[];
@@ -93,6 +108,12 @@ function captureThemeSnapshot(): Required< GlobalStylesRecord > | undefined {
 	const globalStyles = getEditedGlobalStyles();
 
 	return globalStyles && deepClone( globalStyles.record );
+}
+
+function capturePostSnapshot( keys: string[] ): EditedPost | undefined {
+	const fields = postFieldsOf( keys );
+
+	return fields.length ? readEditedPost( fields ) : undefined;
 }
 
 // Throws instead of no-opping when the snapshot or target is missing — a
@@ -129,6 +150,27 @@ function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
 	}
 
 	setSiteLogo( checkpoint.logoBeforeUpdate );
+}
+
+function restorePostSnapshot( checkpoint: CheckpointRecord ): void {
+	const fields = postFieldsOf( checkpoint.checkpointKeys );
+	if ( ! fields.length ) {
+		return;
+	}
+
+	const snapshot = checkpoint.postBeforeUpdate;
+	if ( ! snapshot ) {
+		throw new Error( 'Checkpoint has no post snapshot to restore.' );
+	}
+
+	const post = readEditedPost( [] );
+	if ( ! post || String( post.id ) !== String( snapshot.id ) || post.type !== snapshot.type ) {
+		throw new Error( 'The editor no longer shows the post this checkpoint belongs to.' );
+	}
+
+	editCurrentPost(
+		Object.fromEntries( fields.map( ( field ) => [ field, snapshot[ field ] ?? '' ] ) )
+	);
 }
 
 async function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
@@ -238,6 +280,7 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	const siteMetadataBeforeUpdate = keys.includes( checkpointKeys.SITE_METADATA )
 		? getSiteMetadata()
 		: undefined;
+	const postBeforeUpdate = capturePostSnapshot( keys );
 
 	return {
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
@@ -246,6 +289,7 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 		...( siteMetadataBeforeUpdate && {
 			siteMetadataBeforeUpdate: deepClone( siteMetadataBeforeUpdate ),
 		} ),
+		...( postBeforeUpdate && { postBeforeUpdate } ),
 	};
 }
 
@@ -256,6 +300,8 @@ const SNAPSHOT_FIELDS: Record< string, keyof CheckpointRecord > = {
 	[ checkpointKeys.SITE_TITLE ]: 'siteTitleBeforeUpdate',
 	[ checkpointKeys.SITE_METADATA ]: 'siteMetadataBeforeUpdate',
 	[ checkpointKeys.LOGO ]: 'logoBeforeUpdate',
+	[ checkpointKeys.POST_TITLE ]: 'postBeforeUpdate',
+	[ checkpointKeys.POST_EXCERPT ]: 'postBeforeUpdate',
 	...Object.fromEntries( THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, 'themeBeforeUpdate' ] ) ),
 };
 
@@ -619,6 +665,7 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 
 	restoreThemeSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
+	restorePostSnapshot( checkpoint );
 	await restoreSiteTitleSnapshot( checkpoint );
 	await restoreSiteMetadataSnapshot( checkpoint );
 
@@ -661,6 +708,7 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 				logoBeforeUpdate: _logo,
 				siteTitleBeforeUpdate: _siteTitle,
 				siteMetadataBeforeUpdate: _siteMetadata,
+				postBeforeUpdate: _post,
 				menusBeforeUpdate: _menus,
 				pageRenames: _renames,
 				writtenKeys: _written,

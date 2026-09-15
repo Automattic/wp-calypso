@@ -80,3 +80,11 @@ export const showComponentAbility: Ability = {
 	},
 	callback: showComponentCallback,
 };
+
+// TODO (ability-migration): Delete once wpcom emits `big_sky__show_component`
+// for the Jetpack AI pickers. Until then the server calls this name, and the
+// sidebar no longer answers it. Nothing downstream reads the alias.
+export const jetpackAiShowComponentAbility: Ability = {
+	...showComponentAbility,
+	name: 'jetpack-ai/show-component',
+};

@@ -220,6 +220,42 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'hands a provider component the post its picker was shown on', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { name: 'test' },
+			postId: 42,
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 42,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps ).toMatchObject( { name: 'test', postId: 42 } );
+	} );
+
+	it( 'lets a post id the server put in the props win over the one the picker was shown on', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { name: 'test', postId: 7 },
+			postId: 42,
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 42,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.postId ).toBe( 7 );
+	} );
+
 	it( 'renders the provider component for a migrated type with `?am_abilities=0`', () => {
 		window.history.replaceState( {}, '', '/?am_abilities=0' );
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
