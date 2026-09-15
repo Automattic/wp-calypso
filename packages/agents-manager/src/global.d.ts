@@ -167,6 +167,8 @@ interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;
+	/** WordPress's current admin screen id, e.g. `woocommerce_page_wc-admin`; set on wp-admin pages. */
+	pagenow?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;
