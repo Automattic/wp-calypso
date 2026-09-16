@@ -34,6 +34,10 @@ export default function makeEmbedsSafe( post, dom ) {
 			return;
 		}
 
+		// `srcdoc` wins over `src`, so an allowlisted host says nothing about what the frame
+		// runs — and allowlisted frames are handed `allow-same-origin` below.
+		iframe.removeAttribute( 'srcdoc' );
+
 		iframe.src = iframe.src.replace( /^http:/, 'https:' );
 
 		if ( doesNotNeedSandbox( iframe ) ) {

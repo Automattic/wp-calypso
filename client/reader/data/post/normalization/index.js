@@ -14,6 +14,7 @@ import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds
 import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
 import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
 import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
+import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
 import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
 import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
@@ -120,6 +121,26 @@ function identifyRedditPost( post ) {
 	return post;
 }
 
+// Order matters here: `removeEventHandlers` has to precede `detectMedia`, which snapshots markup
+// into post fields that are later rendered with `dangerouslySetInnerHTML`, and `makeContentLinksSafe`
+// runs last so that it also sees the links the rules before it build.
+export const contentDomRules = [
+	convertVideoPressBlocks,
+	removeStyles,
+	removeElementsBySelector,
+	removeEventHandlers,
+	makeImagesSafe(),
+	makeEmbedsSafe,
+	disableAutoPlayOnEmbeds,
+	disableAutoPlayOnMedia,
+	detectMedia,
+	detectPolls,
+	detectSurveys,
+	linkJetpackCarousels,
+	addImageWrapperElement,
+	makeContentLinksSafe,
+];
+
 const fastPostNormalizationRules = flow( [
 	decodeEntities,
 	stripHtml,
@@ -128,21 +149,7 @@ const fastPostNormalizationRules = flow( [
 	pickPrimaryTag,
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
-	withContentDom( [
-		convertVideoPressBlocks,
-		removeStyles,
-		removeElementsBySelector,
-		makeImagesSafe(),
-		makeEmbedsSafe,
-		makeContentLinksSafe,
-		disableAutoPlayOnEmbeds,
-		disableAutoPlayOnMedia,
-		detectMedia,
-		detectPolls,
-		detectSurveys,
-		linkJetpackCarousels,
-		addImageWrapperElement,
-	] ),
+	withContentDom( contentDomRules ),
 	createBetterExcerpt,
 	addMinutesToRead,
 	pickCanonicalImage,
