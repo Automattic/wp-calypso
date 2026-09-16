@@ -3118,11 +3118,11 @@ const WPCheckoutMainContent = styled.div< {
 			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
 				margin-top: 0;
 			}
-			/* "+ Add Address Line 2" / "+ Add organization name" toggles
-			   come from .form__hidden-input. Reset its 5px margin-top so
-			   the link sits at the parent's flex-gap rhythm, and match the
-			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
-			   so all destructive/secondary links read as one family. */
+			/* The "+ Add Address Line 2" toggle comes from .form__hidden-input.
+			   Reset its 5px margin-top so the link sits at the parent's flex-gap
+			   rhythm, and match the "Remove plan" link typography
+			   (13/20/regular/Gray 100/underline) so all destructive/secondary
+			   links read as one family. */
 			.form-fieldset.contact-details-form-fields .form__hidden-input a {
 				margin-top: 0;
 				font-size: 13px;
