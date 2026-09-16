@@ -39,10 +39,7 @@ export const editEntityRecordAbility: Ability = {
 	name: 'big-sky/edit-entity-record',
 	label: __( 'Manage Entity Records', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
-		'Create, edit, or delete WordPress data entity records using the data layer',
-		__i18n_text_domain__
-	),
+	description: 'Create, edit, or delete WordPress data entity records using the data layer',
 	meta: {
 		instructions: `
 			This tool edits global state of the site, affecting both content visible on the site and not.
