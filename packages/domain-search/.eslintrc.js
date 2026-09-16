@@ -16,22 +16,4 @@ module.exports = {
 			},
 		],
 	},
-	overrides: [
-		{
-			files: [ 'src/name-pulse/**/*' ],
-			rules: {
-				'no-restricted-imports': [
-					'error',
-					{
-						patterns: [
-							{
-								group: [ 'client/**/*', 'calypso/**/*' ],
-								message: 'Calypso imports are not allowed in this package',
-							},
-						],
-					},
-				],
-			},
-		},
-	],
 };
