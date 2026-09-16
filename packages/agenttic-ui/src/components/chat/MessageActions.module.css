@@ -49,6 +49,8 @@
 	border-radius: var( --radius-sm );
 	box-shadow: var( --shadow-outline ), var( --shadow-lg );
 	opacity: 0;
+	/* Hidden, the panel still overflows into the gap below; keep it out of hit-testing there. */
+	pointer-events: none;
 	transition:
 		opacity 0.2s ease,
 		padding 0.25s ease,
@@ -64,6 +66,7 @@
 .container:focus-within .floating,
 .docked .floating {
 	opacity: 1;
+	pointer-events: auto;
 }
 
 .docked .floating {
@@ -81,6 +84,7 @@
 	.floating {
 		padding: 0;
 		opacity: 1;
+		pointer-events: auto;
 		background: transparent;
 		box-shadow: none;
 	}

@@ -113,7 +113,10 @@ export interface MessageActionComponent {
 	component: React.ComponentType< any >;
 	componentProps?: Record< string, unknown >;
 	order?: number;
-	/** Render in the panel that floats below the message on hover and docks into a row once pressed. */
+	/**
+	 * Render in the panel that floats below the message on hover. Component actions carry no
+	 * pressed state; the panel docks into a row once a button action in it is pressed.
+	 */
 	revealOnHover?: boolean;
 }
 
