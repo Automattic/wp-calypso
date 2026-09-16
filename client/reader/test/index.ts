@@ -76,6 +76,9 @@ jest.mock( '../list/controller', () => ( {
 	listListing: jest.fn(),
 } ) );
 
+jest.mock( '../four-for-four/controller', () => ( {
+	fourForFour: jest.fn(),
+} ) );
 jest.mock( '../on-this-day/controller', () => ( {
 	onThisDay: jest.fn(),
 } ) );

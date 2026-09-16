@@ -3,15 +3,19 @@
 $four-for-four-collapse: 699px;
 
 .four-for-four {
-	display: flex;
-	flex-direction: column;
-	max-width: 1040px;
-	margin: 0 auto;
-	padding: 24px 24px 0;
-	min-height: calc( 100vh - var( --masterbar-height, 32px ) );
+	// The Reader layout sizes this block to the viewport and gives `&__content`
+	// the full height with its own scrollbar; see `.layout__primary > div > div`
+	// in client/reader/style.scss.
+	&__content {
+		display: flex;
+		flex-direction: column;
+		max-width: 1040px;
+		margin: 0 auto;
+		padding: 24px 24px 0;
 
-	@media ( max-width: $break-medium ) {
-		padding: 16px 16px 0;
+		@media ( max-width: $break-medium ) {
+			padding: 16px 16px 0;
+		}
 	}
 
 	&__intro {

@@ -58,6 +58,7 @@ export const recordReadFourForFourProgressMutation = ( queryClient: QueryClient 
 		ReadFourForFourProgressParams,
 		ProgressMutationContext
 	>( {
+		meta: { statId: 'read-four-for-four-progress' },
 		mutationFn: recordReadFourForFourProgress,
 		retry: 2,
 		onMutate: async ( { blog_ids } ) => {

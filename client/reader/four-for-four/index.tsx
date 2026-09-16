@@ -78,149 +78,158 @@ export function FourForFour() {
 
 	return (
 		<div className="four-for-four">
-			<VStack className="four-for-four__intro" spacing={ 2 } alignment="center" expanded={ false }>
-				<h1 className="four-for-four__title">{ translate( 'Subscribe to 4 new writers' ) }</h1>
-				<p className="four-for-four__description">
-					{ translate(
-						'Click a site to preview it, then subscribe to any 4 that interest you. Once you do, your site joins this list for other new writers to find.'
-					) }
-				</p>
-				<HStack
-					className="four-for-four__progress"
+			{ /* The Reader layout gives this inner block the page height and its own
+			     scrollbar, so everything lives inside one container. */ }
+			<div className="four-for-four__content">
+				<VStack
+					className="four-for-four__intro"
 					spacing={ 2 }
-					justify="center"
-					role="progressbar"
-					aria-valuemin={ 0 }
-					aria-valuemax={ FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS }
-					aria-valuenow={ progressCount }
-					aria-label={ progressLabel }
+					alignment="center"
+					expanded={ false }
 				>
-					<span className="four-for-four__progress-dots" aria-hidden="true">
-						{ Array.from( { length: FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS }, ( _, index ) => (
-							<span
-								key={ index }
-								className={ clsx( 'four-for-four__progress-dot', {
-									'is-filled': index < progressCount,
-								} ) }
-							/>
-						) ) }
-					</span>
-					<span className="four-for-four__progress-label">{ progressLabel }</span>
-				</HStack>
-			</VStack>
-
-			{ isComplete && (
-				<HStack className="four-for-four__complete" spacing={ 3 } role="status">
-					<Icon icon={ check } size={ 28 } className="four-for-four__complete-icon" />
-					<VStack spacing={ 1 } className="four-for-four__complete-text" expanded={ false }>
-						<strong>{ translate( "You're in!" ) }</strong>
-						<span>
-							{ translate(
-								'Your site is now on the list other new writers see. Every extra subscription moves you further up it.'
-							) }
-						</span>
-					</VStack>
-					<Button __next40pxDefaultSize variant="primary" onClick={ () => page( '/reader' ) }>
-						{ translate( 'Back to Reader' ) }
-					</Button>
-				</HStack>
-			) }
-
-			<div className="four-for-four__columns">
-				<div className="four-for-four__site-list-column">
-					{ isLoadingCandidates && (
-						<div className="four-for-four__loading">
-							<Spinner />
-						</div>
-					) }
-					{ isCandidatesError && (
-						<EmptyContent
-							isCompact
-							title={ translate( "We couldn't load sites right now." ) }
-							action={ translate( 'Try again' ) }
-							actionCallback={ () => refetchCandidates() }
-						/>
-					) }
-					{ ! isLoadingCandidates && ! isCandidatesError && candidates.length === 0 && (
-						<EmptyContent
-							isCompact
-							title={ translate( 'No new writers to show right now.' ) }
-							line={ translate( 'The list refreshes as new writers publish.' ) }
-							action={ translate( 'Check again' ) }
-							actionCallback={ () => refetchCandidates() }
-						/>
-					) }
-					{ candidates.length > 0 && (
-						<div className="four-for-four__recommended-sites">
-							{ candidates.map( ( candidate ) => (
-								<ConnectedReaderSubscriptionListItem
-									key={ candidate.blogId }
-									feedId={ candidate.feedId ?? undefined }
-									siteId={ candidate.blogId }
-									site={ candidate.site }
-									url={ candidate.feedUrl || candidate.url }
-									showLastUpdatedDate={ false }
-									showNotificationSettings={ false }
-									showFollowedOnDate={ false }
-									followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-									followSource={ READER_FOUR_FOR_FOUR }
-									replaceStreamClickWithItemClick
-									onItemClick={ () => setSelectedBlogId( candidate.blogId ) }
-									onFollowToggle={ ( isFollowing: boolean ) =>
-										handleFollowToggle( candidate.blogId, isFollowing )
-									}
-									isSelected={ selectedCandidate?.blogId === candidate.blogId }
+					<h1 className="four-for-four__title">{ translate( 'Subscribe to 4 new writers' ) }</h1>
+					<p className="four-for-four__description">
+						{ translate(
+							'Click a site to preview it, then subscribe to any 4 that interest you. Once you do, your site joins this list for other new writers to find.'
+						) }
+					</p>
+					<HStack
+						className="four-for-four__progress"
+						spacing={ 2 }
+						justify="center"
+						role="progressbar"
+						aria-valuemin={ 0 }
+						aria-valuemax={ FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS }
+						aria-valuenow={ progressCount }
+						aria-label={ progressLabel }
+					>
+						<span className="four-for-four__progress-dots" aria-hidden="true">
+							{ Array.from( { length: FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS }, ( _, index ) => (
+								<span
+									key={ index }
+									className={ clsx( 'four-for-four__progress-dot', {
+										'is-filled': index < progressCount,
+									} ) }
 								/>
 							) ) }
-						</div>
-					) }
-				</div>
-				<div className="four-for-four__preview-column">
-					{ selectedCandidate && (
-						<>
-							<HStack className="four-for-four__preview-header" justify="space-between">
-								<HStack spacing={ 2 } className="four-for-four__preview-site">
-									<SiteIcon size={ 36 } iconUrl={ selectedCandidate.icon ?? undefined } />
-									<span className="four-for-four__preview-site-title">
-										{ selectedCandidate.name }
-									</span>
-								</HStack>
-								<ReaderFollowButton
-									key={ selectedCandidate.blogId }
-									siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
-									feedId={ selectedCandidate.feedId ?? undefined }
-									siteId={ selectedCandidate.blogId }
-									followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-									followSource={ READER_FOUR_FOR_FOUR }
-									hasButtonStyle
-									onFollowToggle={ ( isFollowing: boolean ) =>
-										handleFollowToggle( selectedCandidate.blogId, isFollowing )
-									}
-									followIcon={ <></> }
-									followingIcon={
-										<Icon
-											key="following"
-											className="reader-following-feed"
-											icon={ check }
-											size={ 18 }
-										/>
-									}
-								/>
-							</HStack>
-							<div className="four-for-four__preview-stream-container" ref={ previewRef }>
-								<div className="four-for-four__preview-stream-inner" inert>
-									<TypedStream
-										streamKey={ selectedCandidate.streamKey }
-										className="is-site-stream four-for-four__preview-stream no-padding"
-										followSource={ READER_FOUR_FOR_FOUR }
-										useCompactCards
-										showBylineSecondarySiteLink={ false }
-										trackScrollPage={ trackScrollPage }
-									/>
-								</div>
+						</span>
+						<span className="four-for-four__progress-label">{ progressLabel }</span>
+					</HStack>
+				</VStack>
+
+				{ isComplete && (
+					<HStack className="four-for-four__complete" spacing={ 3 } role="status">
+						<Icon icon={ check } size={ 28 } className="four-for-four__complete-icon" />
+						<VStack spacing={ 1 } className="four-for-four__complete-text" expanded={ false }>
+							<strong>{ translate( "You're in!" ) }</strong>
+							<span>
+								{ translate(
+									'Your site is now on the list other new writers see. Every extra subscription moves you further up it.'
+								) }
+							</span>
+						</VStack>
+						<Button __next40pxDefaultSize variant="primary" onClick={ () => page( '/reader' ) }>
+							{ translate( 'Back to Reader' ) }
+						</Button>
+					</HStack>
+				) }
+
+				<div className="four-for-four__columns">
+					<div className="four-for-four__site-list-column">
+						{ isLoadingCandidates && (
+							<div className="four-for-four__loading">
+								<Spinner />
 							</div>
-						</>
-					) }
+						) }
+						{ isCandidatesError && (
+							<EmptyContent
+								isCompact
+								title={ translate( "We couldn't load sites right now." ) }
+								action={ translate( 'Try again' ) }
+								actionCallback={ () => refetchCandidates() }
+							/>
+						) }
+						{ ! isLoadingCandidates && ! isCandidatesError && candidates.length === 0 && (
+							<EmptyContent
+								isCompact
+								title={ translate( 'No new writers to show right now.' ) }
+								line={ translate( 'The list refreshes as new writers publish.' ) }
+								action={ translate( 'Check again' ) }
+								actionCallback={ () => refetchCandidates() }
+							/>
+						) }
+						{ candidates.length > 0 && (
+							<div className="four-for-four__recommended-sites">
+								{ candidates.map( ( candidate ) => (
+									<ConnectedReaderSubscriptionListItem
+										key={ candidate.blogId }
+										feedId={ candidate.feedId ?? undefined }
+										siteId={ candidate.blogId }
+										site={ candidate.site }
+										url={ candidate.feedUrl || candidate.url }
+										showLastUpdatedDate={ false }
+										showNotificationSettings={ false }
+										showFollowedOnDate={ false }
+										followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
+										followSource={ READER_FOUR_FOR_FOUR }
+										replaceStreamClickWithItemClick
+										onItemClick={ () => setSelectedBlogId( candidate.blogId ) }
+										onFollowToggle={ ( isFollowing: boolean ) =>
+											handleFollowToggle( candidate.blogId, isFollowing )
+										}
+										isSelected={ selectedCandidate?.blogId === candidate.blogId }
+									/>
+								) ) }
+							</div>
+						) }
+					</div>
+					<div className="four-for-four__preview-column">
+						{ selectedCandidate && (
+							<>
+								<HStack className="four-for-four__preview-header" justify="space-between">
+									<HStack spacing={ 2 } className="four-for-four__preview-site">
+										<SiteIcon size={ 36 } iconUrl={ selectedCandidate.icon ?? undefined } />
+										<span className="four-for-four__preview-site-title">
+											{ selectedCandidate.name }
+										</span>
+									</HStack>
+									<ReaderFollowButton
+										key={ selectedCandidate.blogId }
+										siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
+										feedId={ selectedCandidate.feedId ?? undefined }
+										siteId={ selectedCandidate.blogId }
+										followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
+										followSource={ READER_FOUR_FOR_FOUR }
+										hasButtonStyle
+										onFollowToggle={ ( isFollowing: boolean ) =>
+											handleFollowToggle( selectedCandidate.blogId, isFollowing )
+										}
+										followIcon={ <></> }
+										followingIcon={
+											<Icon
+												key="following"
+												className="reader-following-feed"
+												icon={ check }
+												size={ 18 }
+											/>
+										}
+									/>
+								</HStack>
+								<div className="four-for-four__preview-stream-container" ref={ previewRef }>
+									<div className="four-for-four__preview-stream-inner" inert>
+										<TypedStream
+											streamKey={ selectedCandidate.streamKey }
+											className="is-site-stream four-for-four__preview-stream no-padding"
+											followSource={ READER_FOUR_FOR_FOUR }
+											useCompactCards
+											showBylineSecondarySiteLink={ false }
+											trackScrollPage={ trackScrollPage }
+										/>
+									</div>
+								</div>
+							</>
+						) }
+					</div>
 				</div>
 			</div>
 		</div>
