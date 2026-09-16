@@ -21,10 +21,12 @@ import { sanitizeSectionContent } from './sanitize-section-content';
 import type { Purchase } from '@automattic/api-core';
 import type { PluginPeriodVariations } from 'calypso/data/marketplace/types';
 
-// Plugin payloads from the WordPress.org, WordPress.com and ES endpoints are not validated,
-// so the normalizers treat them as loose records.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PluginData = Record< string, any >;
+// Plugin payloads from the WordPress.org, WordPress.com and ES endpoints are not validated.
+type PluginData = Record< string, unknown >;
+
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
 
 type NoticeLog = {
 	siteId?: number | string;
@@ -230,7 +232,7 @@ export function mapStarRatingToPercent( starRating: number | null | undefined ):
 export function normalizePluginData( plugin: PluginData, pluginData?: PluginData ): PluginData {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
-	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
+	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin as PluginWithVariations );
 
 	return Object.entries( plugin ).reduce< PluginData >( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
@@ -238,21 +240,23 @@ export function normalizePluginData( plugin: PluginData, pluginData?: PluginData
 			case 'description':
 			case 'name':
 			case 'slug':
-				returnData[ key ] = decodeEntities( item );
+				returnData[ key ] = typeof item === 'string' ? decodeEntities( item ) : item;
 				break;
 			case 'author':
 				returnData.author = item;
-				returnData.author_name = extractAuthorName( item );
-				returnData.author_url = plugin.author_url || extractAuthorUrl( item );
+				returnData.author_name = typeof item === 'string' ? extractAuthorName( item ) : '';
+				returnData.author_url = plugin.author_url || extractAuthorUrl( String( item ) );
 				break;
 			case 'sections': {
+				const sections = isRecord( item ) ? item : {};
 				const cleanItem: Record< string, string > = {};
-				for ( const sectionKey of Object.keys( item ) ) {
-					if ( ! item[ sectionKey ] ) {
+				for ( const sectionKey of Object.keys( sections ) ) {
+					const section = sections[ sectionKey ];
+					if ( ! section ) {
 						// The current section hasn't value or is empty.
 						continue;
 					}
-					cleanItem[ sectionKey ] = sanitizeSectionContent( item[ sectionKey ] );
+					cleanItem[ sectionKey ] = sanitizeSectionContent( String( section ) );
 				}
 				returnData.sections = cleanItem;
 				returnData.screenshots = cleanItem.screenshots
@@ -262,16 +266,18 @@ export function normalizePluginData( plugin: PluginData, pluginData?: PluginData
 			}
 			case 'num_ratings':
 			case 'rating':
-				returnData[ key ] = parseInt( item, 10 );
+				returnData[ key ] = parseInt( String( item ), 10 );
 				break;
 			case 'ratings':
-				for ( const prop in item ) {
-					item[ prop ] = parseInt( item[ prop ], 10 );
+				if ( isRecord( item ) ) {
+					for ( const prop in item ) {
+						item[ prop ] = parseInt( String( item[ prop ] ), 10 );
+					}
 				}
 				returnData[ key ] = item;
 				break;
 			case 'icons':
-				if ( item ) {
+				if ( isRecord( item ) ) {
 					returnData.icon =
 						item[ '256x256' ] ||
 						item[ '128x128' ] ||
@@ -280,6 +286,8 @@ export function normalizePluginData( plugin: PluginData, pluginData?: PluginData
 						item.svg ||
 						item.default ||
 						item;
+				} else if ( item ) {
+					returnData.icon = item;
 				}
 				break;
 			case 'homepage':
@@ -287,7 +295,7 @@ export function normalizePluginData( plugin: PluginData, pluginData?: PluginData
 				returnData.plugin_url = item;
 				break;
 			case 'compatibility':
-				returnData[ key ] = normalizeCompatibilityList( item );
+				returnData[ key ] = isRecord( item ) ? normalizeCompatibilityList( item ) : [];
 				break;
 			case 'product_video':
 				returnData.banner_video_src = item;
@@ -357,7 +365,7 @@ export function getPluginAuthorProfileKeyword(
 		return null;
 	}
 
-	return ( plugin.author_profile as string ).replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
+	return plugin.author_profile.replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
 }
 
 /**
