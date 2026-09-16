@@ -15,10 +15,6 @@ import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
-const shouldSkipTitleFormatting = ( { filter, tier } ) => {
-	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
-};
-
 export default function ThemeShowcaseHeader( {
 	canonicalUrl,
 	filter,
@@ -38,7 +34,6 @@ export default function ThemeShowcaseHeader( {
 
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
-	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
@@ -89,13 +84,7 @@ export default function ThemeShowcaseHeader( {
 	}
 
 	if ( isCollectionView ) {
-		return (
-			<DocumentHead
-				title={ documentHeadTitle }
-				meta={ metas }
-				skipTitleFormatting={ skipTitleFormatting }
-			/>
-		);
+		return <DocumentHead title={ documentHeadTitle } meta={ metas } />;
 	}
 
 	const renderHeader = () => {
@@ -146,11 +135,7 @@ export default function ThemeShowcaseHeader( {
 
 	return (
 		<>
-			<DocumentHead
-				title={ documentHeadTitle }
-				meta={ metas }
-				skipTitleFormatting={ skipTitleFormatting }
-			/>
+			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ renderHeader() }
 		</>
 	);
