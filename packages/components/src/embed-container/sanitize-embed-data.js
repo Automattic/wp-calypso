@@ -145,10 +145,11 @@ function sanitizeSlide( slide ) {
  * Gallery data we cannot rewrite is discarded rather than left as it was, and every failure is
  * handled here so that one bad container cannot stop the rest of the page being sanitized.
  * @param {Element} node - A node that may be a slideshow container.
+ * @returns {boolean} Whether the node's `data-gallery` was treated as slideshow data.
  */
 function sanitizeGalleryAttribute( node ) {
 	if ( ! node.hasAttribute( 'data-gallery' ) || ! node.matches( '.jetpack-slideshow' ) ) {
-		return;
+		return false;
 	}
 
 	const value = node.getAttribute( 'data-gallery' );
@@ -174,6 +175,8 @@ function sanitizeGalleryAttribute( node ) {
 		// have -- a `<math class="jetpack-slideshow">` would throw here and abort the whole sweep.
 		node.setAttribute( 'data-processed', 'true' );
 	}
+
+	return true;
 }
 
 function sanitizeAttribute( node, name, value ) {
@@ -205,10 +208,12 @@ function sanitizeAttribute( node, name, value ) {
 }
 
 function sanitizeNode( node ) {
-	sanitizeGalleryAttribute( node );
+	// Slideshow gallery data keeps the quotes its JSON needs, so it is exempt from the attribute
+	// rules only when it was rewritten as JSON. Anywhere else `data-gallery` is an ordinary value.
+	const isGalleryData = sanitizeGalleryAttribute( node );
 
 	Array.from( node.attributes ).forEach( ( { name, value } ) => {
-		if ( name !== 'data-gallery' ) {
+		if ( ! isGalleryData || name !== 'data-gallery' ) {
 			sanitizeAttribute( node, name, value );
 		}
 	} );

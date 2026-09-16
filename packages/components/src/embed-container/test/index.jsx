@@ -382,6 +382,14 @@ describe( 'EmbedContainer', () => {
 				'group-1'
 			);
 		} );
+
+		it( 'holds a grouping-key data-gallery to the same rules as any other data attribute', () => {
+			const container = renderContent(
+				`<figure class="wp-block-image"><a data-gallery="${ ATTRIBUTE_BREAKOUT }" href="https://example.com/a.jpg"><img src="https://example.com/a.jpg" /></a></figure>`
+			);
+
+			expect( container.querySelector( 'a' ).hasAttribute( 'data-gallery' ) ).toBe( false );
+		} );
 	} );
 
 	describe( 'Jetpack slideshows', () => {
