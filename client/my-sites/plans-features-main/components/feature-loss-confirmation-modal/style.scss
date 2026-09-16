@@ -18,19 +18,17 @@
 	}
 
 	&__feature-item {
-		align-items: center;
-		display: flex;
-		gap: 8px;
 		margin-bottom: 4px;
 
-		.gridicon {
-			fill: var(--color-error);
-			flex-shrink: 0;
+		// A dash rather than a bullet, so the list reads as a plain enumeration.
+		&::before {
+			content: "–";
+			margin-right: 8px;
 		}
+	}
 
-		&.is-gained .gridicon {
-			fill: var(--color-success);
-		}
+	&__support-link {
+		margin-bottom: 0;
 	}
 
 	&__actions {

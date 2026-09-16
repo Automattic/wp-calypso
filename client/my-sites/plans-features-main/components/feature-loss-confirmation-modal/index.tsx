@@ -1,4 +1,5 @@
-import { Gridicon, Spinner } from '@automattic/components';
+import { Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
@@ -10,13 +11,12 @@ function useFeatureTitle(): ( slug: string ) => TranslateResult {
 	const translate = useTranslate();
 
 	const titles: Record< string, TranslateResult > = {
-		donations: translate( 'Donations' ),
-		'payment-buttons': translate( 'Payment buttons' ),
-		'paypal-payment-buttons': translate( 'PayPal payment buttons' ),
-		payments: translate( 'Payments' ),
-		'field-file': translate( 'File upload form field' ),
+		donations: translate( 'Donations block' ),
+		'payment-buttons': translate( 'Payment buttons' ), //?
+		'paypal-payment-buttons': translate( 'PayPal payment buttons' ), //?
+		'field-file': translate( 'File upload field' ),
 		'multistep-form': translate( 'Multi-step forms' ),
-		'form-integrations': translate( 'Form integrations' ),
+		'form-integrations': translate( 'Form integrations' ), //?
 	};
 
 	return ( slug: string ) => titles[ slug ] ?? slug;
@@ -25,28 +25,28 @@ function useFeatureTitle(): ( slug: string ) => TranslateResult {
 interface FeatureLossConfirmationModalProps {
 	isOpen: boolean;
 	isLoading?: boolean;
+	/** Name of the plan the site is on today, which carries the legacy feature set. */
+	currentPlanName: string;
 	targetPlanName: string;
 	/** Features the site would lose, as returned by the plan-change endpoint. */
 	lostFeatures: PlanChangeLostFeature[];
-	/** Feature slugs the target plan adds, so the change does not read as all downside. */
-	gainedFeatures?: string[];
 	onClose: () => void;
 	onConfirm: () => void;
 }
 
 /**
- * Warns before checkout that upgrading would remove a feature the site uses.
+ * Warns before checkout that moving plan would remove a feature the site uses.
  *
  * A site still on the pre-2026 feature gating holds the union of the old and new feature sets, and
- * graduates to the new set when it changes plan — so an upgrade can take a feature away. Sibling of
- * downgrade-confirmation-modal, which does the same job for the downgrade direction.
+ * graduates to the new set when it changes plan — so even an upgrade can take a feature away.
+ * Sibling of downgrade-confirmation-modal, which does the same job for the downgrade direction.
  */
 export default function FeatureLossConfirmationModal( {
 	isOpen,
 	isLoading,
+	currentPlanName,
 	targetPlanName,
 	lostFeatures,
-	gainedFeatures = [],
 	onClose,
 	onConfirm,
 }: FeatureLossConfirmationModalProps ) {
@@ -60,9 +60,9 @@ export default function FeatureLossConfirmationModal( {
 	return (
 		<Modal
 			title={
-				translate( 'Upgrading to %(targetPlan)s changes your features', {
+				translate( 'Moving to %(targetPlan)s updates your feature set', {
 					args: { targetPlan: targetPlanName },
-					comment: 'Title of the modal warning that an upgrade removes features the site uses',
+					comment: 'Title of the modal shown when a plan change removes features the site uses',
 				} ) as string
 			}
 			onRequestClose={ onClose }
@@ -76,41 +76,30 @@ export default function FeatureLossConfirmationModal( {
 				<>
 					<p className="feature-loss-confirmation-modal__description">
 						{ translate(
-							'Your site uses features that the %(targetPlan)s plan does not include. If you continue, you will lose:',
+							'Your site is on an older %(currentPlan)s plan, with a legacy feature set. The following features are currently not included in a %(targetPlan)s plan:',
 							{
-								args: { targetPlan: targetPlanName },
-								comment: 'Intro line before the list of features an upgrade would remove',
+								args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+								comment:
+									'Intro line before the list of features a plan change would remove; both arguments are plan names',
 							}
 						) }
 					</p>
 					<ul className="feature-loss-confirmation-modal__feature-list">
 						{ lostFeatures.map( ( { feature } ) => (
 							<li key={ feature } className="feature-loss-confirmation-modal__feature-item">
-								<Gridicon icon="cross-small" size={ 18 } />
-								<span>{ featureTitle( feature ) }</span>
+								{ featureTitle( feature ) }
 							</li>
 						) ) }
 					</ul>
-					{ gainedFeatures.length > 0 && (
-						<>
-							<p className="feature-loss-confirmation-modal__description">
-								{ translate( 'You will also gain:', {
-									comment: 'Intro line before the list of features an upgrade adds',
-								} ) }
-							</p>
-							<ul className="feature-loss-confirmation-modal__feature-list">
-								{ gainedFeatures.map( ( feature ) => (
-									<li
-										key={ feature }
-										className="feature-loss-confirmation-modal__feature-item is-gained"
-									>
-										<Gridicon icon="checkmark" size={ 18 } />
-										<span>{ featureTitle( feature ) }</span>
-									</li>
-								) ) }
-							</ul>
-						</>
-					) }
+					<p className="feature-loss-confirmation-modal__support-link">
+						<a
+							href={ localizeUrl( 'https://wordpress.com/support/plan-features/' ) }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ translate( 'See what’s included in each plan' ) }
+						</a>
+					</p>
 				</>
 			) }
 			<div className="feature-loss-confirmation-modal__actions">

@@ -7,12 +7,12 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 const defaultProps = {
 	isOpen: true,
+	currentPlanName: 'Free',
 	targetPlanName: 'Personal',
 	lostFeatures: [
 		{ feature: 'donations', in_use: true },
 		{ feature: 'payment-buttons', in_use: null },
 	],
-	gainedFeatures: [],
 	onClose: jest.fn(),
 	onConfirm: jest.fn(),
 };
@@ -42,23 +42,20 @@ describe( 'FeatureLossConfirmationModal', () => {
 		expect( screen.getByText( 'some-new-feature' ) ).toBeInTheDocument();
 	} );
 
-	/**
-	 * The change is partly additive, so a warning that only lists losses misrepresents it.
-	 */
-	test( 'lists what the upgrade adds when there is anything to add', () => {
-		// Modal renders through a portal, so assertions go through `screen`, not the render container.
-		renderWithProvider(
-			<FeatureLossConfirmationModal { ...defaultProps } gainedFeatures={ [ 'payments' ] } />
-		);
-
-		expect( screen.getByText( 'You will also gain:' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Payments' ) ).toBeInTheDocument();
-	} );
-
-	test( 'omits the gained section when the upgrade adds nothing', () => {
+	test( 'names both plans, so the legacy set and the target are clear', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );
 
-		expect( screen.queryByText( 'You will also gain:' ) ).not.toBeInTheDocument();
+		expect(
+			screen.getByText( /Your site is on an older Free plan, with a legacy feature set/ )
+		).toBeInTheDocument();
+		expect( screen.getByText( /not included in a Personal plan/ ) ).toBeInTheDocument();
+	} );
+
+	test( 'links to the plan comparison support document', () => {
+		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );
+
+		const link = screen.getByRole( 'link', { name: /See what’s included in each plan/ } );
+		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'support/plan-features' ) );
 	} );
 
 	/**

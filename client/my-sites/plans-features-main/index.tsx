@@ -12,6 +12,7 @@ import {
 	getPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isPremiumPlan,
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
@@ -285,7 +286,6 @@ const PlansFeaturesMain = ( {
 	const [ pendingFeatureLossUpgrade, setPendingFeatureLossUpgrade ] = useState< {
 		planSlug: PlanSlug;
 		lost: PlanChangeLostFeature[];
-		gained: string[];
 	} | null >( null );
 	const resolveFeatureLoss = useRef< ( ( abandoned: boolean ) => void ) | null >( null );
 	// TODO: Remove temporary eslint disable
@@ -737,6 +737,17 @@ const PlansFeaturesMain = ( {
 		setPendingDowngradePlanSlug( planSlug );
 	};
 
+	const canLoseFeaturesOnUpgradeTo = ( planSlug: PlanSlug ) => {
+		if ( ! sitePlanSlug ) {
+			return false;
+		}
+
+		return (
+			( isFreePlan( sitePlanSlug ) && isPersonalPlan( planSlug ) ) ||
+			( isPersonalPlan( sitePlanSlug ) && isPremiumPlan( planSlug ) )
+		);
+	};
+
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = async ( planSlug: PlanSlug ): Promise< boolean > => {
 		if (
@@ -806,18 +817,14 @@ const PlansFeaturesMain = ( {
 		 * Deliberately after resolveModal: that modal can move the user to a different plan, which
 		 * would make this warning about a plan they never buy.
 		 */
-		if ( siteId && ! isInSignup ) {
+		if ( siteId && ! isInSignup && canLoseFeaturesOnUpgradeTo( planSlug ) ) {
 			try {
 				const planChange = await queryClient.ensureQueryData(
 					sitePlanChangeFeaturesQuery( siteId, planSlug )
 				);
 
 				if ( planChange.needs_warning ) {
-					setPendingFeatureLossUpgrade( {
-						planSlug,
-						lost: planChange.lost,
-						gained: planChange.gained,
-					} );
+					setPendingFeatureLossUpgrade( { planSlug, lost: planChange.lost } );
 
 					// Park the click until the modal answers, then continue or abandon accordingly.
 					return await new Promise< boolean >( ( resolve ) => {
@@ -1469,13 +1476,13 @@ const PlansFeaturesMain = ( {
 				/>
 				<FeatureLossConfirmationModal
 					isOpen={ !! pendingFeatureLossUpgrade }
+					currentPlanName={ sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ?? '' }
 					targetPlanName={
 						( pendingFeatureLossUpgrade &&
 							getPlan( pendingFeatureLossUpgrade.planSlug )?.getTitle() ) ||
 						''
 					}
 					lostFeatures={ pendingFeatureLossUpgrade?.lost ?? [] }
-					gainedFeatures={ pendingFeatureLossUpgrade?.gained ?? [] }
 					onClose={ () => closeFeatureLossModal( true ) }
 					onConfirm={ () => closeFeatureLossModal( false ) }
 				/>
