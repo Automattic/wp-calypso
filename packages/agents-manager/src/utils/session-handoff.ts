@@ -1,0 +1,61 @@
+/**
+ * `sessionStorage` is per origin, so a same-tab navigation between Calypso and
+ * wp-admin would lose the tab's conversation. The leaving page adds the session
+ * and its site scope to the link's URL; the landing page stores them again.
+ */
+import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
+
+export const SESSION_HANDOFF_PARAM = 'wp-agent-chat';
+export const SITE_HANDOFF_PARAM = 'wp-agent-site';
+
+/** Hosts (and their subdomains) that run the Agents Manager bundle. */
+const HANDOFF_HOSTS = [ 'wordpress.com', 'wpcomstaging.com' ];
+
+export interface SessionHandoff {
+	sessionId: string;
+	/** The session's site scope; absent (e.g. the site-transfer redirect) means the landing page's. */
+	siteKey?: string;
+}
+
+/**
+ * Only the main chat hands its session across origins: the backend looks a
+ * chat up by agent, and surface-bound agents (reader chat, Plugin Compass,
+ * host overrides) have no counterpart on the other origin.
+ */
+export function isHandoffAgent( agentId?: string ): boolean {
+	return agentId === ORCHESTRATOR_AGENT_ID || agentId === UNIFIED_CHAT_AGENT_ID;
+}
+
+/** Whether a link leaves the current origin for another page that runs the Agents Manager. */
+export function isHandoffDestination(
+	link: Pick< URL, 'origin' | 'protocol' | 'hostname' >,
+	currentOrigin: string,
+	siteDomain?: string
+): boolean {
+	return (
+		link.origin !== currentOrigin &&
+		[ 'http:', 'https:' ].includes( link.protocol ) &&
+		( link.hostname === siteDomain ||
+			HANDOFF_HOSTS.some(
+				( host ) => link.hostname === host || link.hostname.endsWith( `.${ host }` )
+			) )
+	);
+}
+
+/** Replaces any handoff already in the URL. */
+export function addSessionHandoff( href: string, sessionId: string, siteKey: string ): string {
+	const url = new URL( href );
+	url.searchParams.set( SESSION_HANDOFF_PARAM, sessionId );
+	url.searchParams.set( SITE_HANDOFF_PARAM, siteKey );
+	return url.href;
+}
+
+export function readSessionHandoff( search: string ): SessionHandoff | null {
+	const params = new URLSearchParams( search );
+	const sessionId = params.get( SESSION_HANDOFF_PARAM );
+	if ( ! sessionId ) {
+		return null;
+	}
+
+	return { sessionId, siteKey: params.get( SITE_HANDOFF_PARAM ) || undefined };
+}
