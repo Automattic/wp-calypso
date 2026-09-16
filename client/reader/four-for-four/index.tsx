@@ -40,9 +40,7 @@ export function FourForFour() {
 		status,
 		followedCount,
 		recordFollow,
-	} = useFourForFour( {
-		onComplete: () => recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }completed` ),
-	} );
+	} = useFourForFour();
 
 	const [ selectedBlogId, setSelectedBlogId ] = useState< number | null >( null );
 	const selectedCandidate =
@@ -144,16 +142,20 @@ export function FourForFour() {
 						/>
 					) }
 					{ ! isLoadingCandidates && ! isCandidatesError && candidates.length === 0 && (
-						<p className="four-for-four__empty">
-							{ translate( 'No new writers to show right now. Check back tomorrow.' ) }
-						</p>
+						<EmptyContent
+							isCompact
+							title={ translate( 'No new writers to show right now.' ) }
+							line={ translate( 'The list refreshes as new writers publish.' ) }
+							action={ translate( 'Check again' ) }
+							actionCallback={ () => refetchCandidates() }
+						/>
 					) }
 					{ candidates.length > 0 && (
 						<div className="four-for-four__recommended-sites">
 							{ candidates.map( ( candidate ) => (
 								<ConnectedReaderSubscriptionListItem
 									key={ candidate.blogId }
-									feedId={ candidate.feedId || undefined }
+									feedId={ candidate.feedId ?? undefined }
 									siteId={ candidate.blogId }
 									site={ candidate.site }
 									url={ candidate.feedUrl || candidate.url }
@@ -186,7 +188,7 @@ export function FourForFour() {
 								<ReaderFollowButton
 									key={ selectedCandidate.blogId }
 									siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
-									feedId={ selectedCandidate.feedId || undefined }
+									feedId={ selectedCandidate.feedId ?? undefined }
 									siteId={ selectedCandidate.blogId }
 									followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
 									followSource={ READER_FOUR_FOR_FOUR }

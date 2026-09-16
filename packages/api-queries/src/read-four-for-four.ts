@@ -12,6 +12,7 @@ import type {
 } from '@automattic/api-core';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
+const EMPTY_POOL_RETRY_MS = 15 * 1000;
 
 export const getReadFourForFourStatusQueryKey = () =>
 	[ 'read', 'four-for-four', 'status' ] as const;
@@ -25,6 +26,10 @@ export const readFourForFourCandidatesQuery = () =>
 		queryFn: fetchReadFourForFourCandidates,
 		select: selectCandidates,
 		staleTime: FIVE_MINUTES_MS,
+		// An empty pool is usually transient: the server returns [] while it
+		// rebuilds its cache. Keep checking while the user is on the page.
+		refetchInterval: ( query ) =>
+			query.state.data?.candidates.length === 0 ? EMPTY_POOL_RETRY_MS : false,
 		meta: { persist: false },
 		refetchOnWindowFocus: false,
 	} );
