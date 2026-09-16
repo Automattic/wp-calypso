@@ -8,8 +8,11 @@ import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
 export const SESSION_HANDOFF_PARAM = 'wp-agent-chat';
 export const SITE_HANDOFF_PARAM = 'wp-agent-site';
 
-/** Hosts (and their subdomains) that run the Agents Manager bundle. */
-const HANDOFF_HOSTS = [ 'wordpress.com', 'wpcomstaging.com' ];
+/** Calypso and the Dashboard run the Agents Manager on every page. */
+const CALYPSO_HOSTS = [ 'wordpress.com', 'my.wordpress.com' ];
+
+/** WordPress.com-hosted sites run it only in wp-admin, like the current site's own domain. */
+const SITE_HOST_SUFFIXES = [ '.wordpress.com', '.wpcomstaging.com' ];
 
 export interface SessionHandoff {
 	sessionId: string;
@@ -26,20 +29,27 @@ export function isHandoffAgent( agentId?: string ): boolean {
 	return agentId === ORCHESTRATOR_AGENT_ID || agentId === UNIFIED_CHAT_AGENT_ID;
 }
 
-/** Whether a link leaves the current origin for another page that runs the Agents Manager. */
+/**
+ * Whether a link leaves the current origin for another page that runs the
+ * Agents Manager. A site's frontend never does, and its code can read the
+ * query string, so only its wp-admin qualifies.
+ */
 export function isHandoffDestination(
-	link: Pick< URL, 'origin' | 'protocol' | 'hostname' >,
+	link: Pick< URL, 'origin' | 'protocol' | 'hostname' | 'pathname' >,
 	currentOrigin: string,
 	siteDomain?: string
 ): boolean {
-	return (
-		link.origin !== currentOrigin &&
-		[ 'http:', 'https:' ].includes( link.protocol ) &&
-		( link.hostname === siteDomain ||
-			HANDOFF_HOSTS.some(
-				( host ) => link.hostname === host || link.hostname.endsWith( `.${ host }` )
-			) )
-	);
+	if ( link.origin === currentOrigin || link.protocol !== 'https:' ) {
+		return false;
+	}
+	if ( CALYPSO_HOSTS.includes( link.hostname ) ) {
+		return true;
+	}
+
+	const isSiteHost =
+		link.hostname === siteDomain ||
+		SITE_HOST_SUFFIXES.some( ( suffix ) => link.hostname.endsWith( suffix ) );
+	return isSiteHost && link.pathname.startsWith( '/wp-admin/' );
 }
 
 /** Replaces any handoff already in the URL. */

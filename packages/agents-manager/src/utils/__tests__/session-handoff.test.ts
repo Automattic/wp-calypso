@@ -22,22 +22,33 @@ describe( 'isHandoffAgent', () => {
 
 describe( 'isHandoffDestination', () => {
 	it.each( [
-		[ 'WordPress.com', 'https://wordpress.com/sites', true ],
-		[ 'a WordPress.com site', 'https://blog.wordpress.com/wp-admin/', true ],
-		[ 'a staging site', 'https://blog.wpcomstaging.com/wp-admin/', true ],
+		[ 'Calypso', 'https://wordpress.com/sites', true ],
+		[ 'the Dashboard', 'https://my.wordpress.com/sites/example.com', true ],
+		[ 'wp-admin of a WordPress.com site', 'https://blog.wordpress.com/wp-admin/', true ],
+		[ 'wp-admin of a staging site', 'https://blog.wpcomstaging.com/wp-admin/', true ],
+		[ 'the frontend of a WordPress.com site', 'https://blog.wordpress.com/2026/09/post/', false ],
+		[ 'a WordPress.com API host', 'https://public-api.wordpress.com/rest/v1.1/me', false ],
+		[ 'a clear-text HTTP link', 'http://blog.wordpress.com/wp-admin/', false ],
 		[ 'the current origin', 'https://example.com/wp-admin/', false ],
-		[ 'a host that only ends in the name', 'https://notwordpress.com/', false ],
-		[ 'a third-party host', 'https://example.org/', false ],
+		[ 'a host that only ends in the name', 'https://notwordpress.com/wp-admin/', false ],
+		[ 'a third-party host', 'https://example.org/wp-admin/', false ],
 		[ 'a mailto link', 'mailto:hello@wordpress.com', false ],
 	] )( 'handles %s', ( _label, href, expected ) => {
 		expect( isHandoffDestination( new URL( href ), ORIGIN ) ).toBe( expected );
 	} );
 
-	it( 'accepts the site domain from another origin', () => {
-		const link = new URL( 'https://example.org/wp-admin/' );
+	it( 'accepts wp-admin on the site domain from another origin', () => {
+		const domain = 'example.org';
 
-		expect( isHandoffDestination( link, ORIGIN, 'example.org' ) ).toBe( true );
-		expect( isHandoffDestination( link, ORIGIN, 'other.org' ) ).toBe( false );
+		expect(
+			isHandoffDestination( new URL( 'https://example.org/wp-admin/' ), ORIGIN, domain )
+		).toBe( true );
+		expect( isHandoffDestination( new URL( 'https://example.org/' ), ORIGIN, domain ) ).toBe(
+			false
+		);
+		expect( isHandoffDestination( new URL( 'https://other.org/wp-admin/' ), ORIGIN, domain ) ).toBe(
+			false
+		);
 	} );
 } );
 
