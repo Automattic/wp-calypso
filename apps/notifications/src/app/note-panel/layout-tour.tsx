@@ -51,7 +51,12 @@ export default function LayoutTour( { onDismiss }: { onDismiss: () => void } ) {
 			className="wpnc-app__layout-tour"
 		>
 			<div className="wpnc-app__layout-tour-body">
-				<h3 className="wpnc-app__layout-tour-title">{ __( 'Switch layouts' ) }</h3>
+				<h3 className="wpnc-app__layout-tour-title">
+					{
+						/* translators: (New) marks a setting that has only just become available. */
+						__( 'Switch layouts (New)' )
+					}
+				</h3>
 				<p className="wpnc-app__layout-tour-text">
 					{ __( 'Choose how much detail each row shows.' ) }
 				</p>

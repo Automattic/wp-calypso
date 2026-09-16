@@ -56,7 +56,7 @@ describe( 'NotePanel settings menu', () => {
 		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
 		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
 
-		expect( await screen.findByText( 'Switch layouts' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Switch layouts (New)' ) ).toBeInTheDocument();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
 
@@ -64,7 +64,7 @@ describe( 'NotePanel settings menu', () => {
 			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
 		} );
 
-		expect( screen.queryByText( 'Switch layouts' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Switch layouts (New)' ) ).not.toBeInTheDocument();
 
 		// The tour and the label inside the menu answer the same question, so dismissing
 		// the tour settles it for both.
