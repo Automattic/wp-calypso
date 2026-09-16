@@ -43,6 +43,13 @@ describe( 'ErrorStep', () => {
 		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_stepper_error_step', 'onboarding_non_en' );
 	} );
 
+	it( 'bumps the English bin when there is no account locale', () => {
+		render( undefined, { initialState: { currentUser: { user: null } } } );
+
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_stepper_error_step', 'onboarding_en' );
+	} );
+
 	it( 'bumps the English bin and indexes the flow, the locale and the error', () => {
 		render();
 

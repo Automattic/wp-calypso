@@ -19,7 +19,7 @@ const WarningsOrHoldsSection = styled.div`
 
 const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 	const { __ } = useI18n();
-	const locale = useSelector( getCurrentUserLocale );
+	const locale = useSelector( getCurrentUserLocale ) || 'en';
 	const siteDomains = useSiteDomains();
 	const { error, message } = useSiteSetupError();
 
