@@ -2,11 +2,18 @@
 
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import FeatureLossConfirmationModal from 'calypso/my-sites/plans-features-main/components/feature-loss-confirmation-modal';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 const defaultProps = {
 	isOpen: true,
+	currentPlanSlug: 'free_plan',
+	targetPlanSlug: 'personal-bundle',
 	currentPlanName: 'Free',
 	targetPlanName: 'Personal',
 	lostFeatures: [
@@ -51,11 +58,18 @@ describe( 'FeatureLossConfirmationModal', () => {
 		expect( screen.getByText( /not included in a Personal plan/ ) ).toBeInTheDocument();
 	} );
 
-	test( 'links to the plan comparison support document', () => {
+	test( 'links to the plan comparison support document, and records the click', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );
 
 		const link = screen.getByRole( 'link', { name: /See what’s included in each plan/ } );
 		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'support/plan-features' ) );
+
+		fireEvent.click( link );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_plans_legacy_feature_modal_support_link_click',
+			{ current_plan: 'free_plan', target_plan: 'personal-bundle' }
+		);
 	} );
 
 	/**

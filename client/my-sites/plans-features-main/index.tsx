@@ -818,10 +818,20 @@ const PlansFeaturesMain = ( {
 		 * would make this warning about a plan they never buy.
 		 */
 		if ( siteId && ! isInSignup && canLoseFeaturesOnUpgradeTo( planSlug ) ) {
+			const startedAt = Date.now();
 			try {
 				const planChange = await queryClient.ensureQueryData(
 					sitePlanChangeFeaturesQuery( siteId, planSlug )
 				);
+
+				recordTracksEvent( 'calypso_plans_legacy_feature_check', {
+					current_plan: sitePlanSlug,
+					target_plan: planSlug,
+					result: planChange.needs_warning ? 'warned' : 'no_warning',
+					is_legacy_gating_site: planChange.is_legacy_gating_site,
+					lost_features: planChange.lost.map( ( { feature } ) => feature ).join( ',' ),
+					duration_ms: Date.now() - startedAt,
+				} );
 
 				if ( planChange.needs_warning ) {
 					setPendingFeatureLossUpgrade( { planSlug, lost: planChange.lost } );
@@ -832,7 +842,14 @@ const PlansFeaturesMain = ( {
 					} );
 				}
 			} catch {
-				// Never block a purchase because the check failed.
+				// Never block a purchase because the check failed -- but do count it, since a check that
+				// silently fails looks exactly like a site with nothing to lose.
+				recordTracksEvent( 'calypso_plans_legacy_feature_check', {
+					current_plan: sitePlanSlug,
+					target_plan: planSlug,
+					result: 'error',
+					duration_ms: Date.now() - startedAt,
+				} );
 			}
 		}
 
@@ -840,6 +857,21 @@ const PlansFeaturesMain = ( {
 	};
 
 	const closeFeatureLossModal = ( abandoned: boolean ) => {
+		if ( pendingFeatureLossUpgrade ) {
+			recordTracksEvent(
+				abandoned
+					? 'calypso_plans_legacy_feature_modal_cancel'
+					: 'calypso_plans_legacy_feature_modal_continue',
+				{
+					current_plan: sitePlanSlug,
+					target_plan: pendingFeatureLossUpgrade.planSlug,
+					lost_features: pendingFeatureLossUpgrade.lost
+						.map( ( { feature } ) => feature )
+						.join( ',' ),
+				}
+			);
+		}
+
 		resolveFeatureLoss.current?.( abandoned );
 		resolveFeatureLoss.current = null;
 		setPendingFeatureLossUpgrade( null );
@@ -1476,6 +1508,8 @@ const PlansFeaturesMain = ( {
 				/>
 				<FeatureLossConfirmationModal
 					isOpen={ !! pendingFeatureLossUpgrade }
+					currentPlanSlug={ sitePlanSlug }
+					targetPlanSlug={ pendingFeatureLossUpgrade?.planSlug }
 					currentPlanName={ sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ?? '' }
 					targetPlanName={
 						( pendingFeatureLossUpgrade &&

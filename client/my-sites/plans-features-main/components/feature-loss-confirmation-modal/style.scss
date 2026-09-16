@@ -1,12 +1,6 @@
 .feature-loss-confirmation-modal {
 	max-width: 480px;
 
-	&__loading {
-		display: flex;
-		justify-content: center;
-		padding: 24px 0;
-	}
-
 	&__description {
 		color: var(--color-text-subtle);
 		margin-bottom: 8px;
