@@ -40,26 +40,49 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 };
 
 describe( 'NotePanel settings menu', () => {
-	it( 'marks the gear as new until the menu is opened', async () => {
+	it( 'shows the dot while the simplified layout is in use', async () => {
+		const { store } = renderPanel( { isViewSettingsEnabled: true } );
+
+		const gear = await screen.findByRole( 'button', { name: 'Settings' } );
+
+		store.dispatch( actions.ui.setLayoutStyle( 'simplified' ) );
+		await waitFor( () => expect( gear ).toHaveClass( 'is-simplified' ) );
+
+		store.dispatch( actions.ui.setLayoutStyle( 'detailed' ) );
+		await waitFor( () => expect( gear ).not.toHaveClass( 'is-simplified' ) );
+	} );
+
+	it( 'offers the layout tour until it is dismissed', async () => {
 		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
 		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
 
-		const gear = await screen.findByRole( 'button', { name: 'Settings (new)' } );
-		expect( gear ).toHaveClass( 'is-new' );
+		expect( await screen.findByText( 'Switch layouts' ) ).toBeInTheDocument();
 
-		await userEvent.click( gear );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
 
 		await waitFor( () => {
 			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
 		} );
 
-		// The dot clears on open, so the menu carries the label that says what is new.
+		expect( screen.queryByText( 'Switch layouts' ) ).not.toBeInTheDocument();
+
+		// The tour and the label inside the menu answer the same question, so dismissing
+		// the tour settles it for both.
+		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+		expect( screen.queryByText( 'New' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the New label the first time the menu is opened', async () => {
+		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
+		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
+
+		await waitFor( () => {
+			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
+		} );
+
 		expect( screen.getByText( 'New' ) ).toBeVisible();
-
-		// The open menu makes the rest of the tree inert, so close it before looking again.
-		await userEvent.keyboard( '{Escape}' );
-
-		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).not.toHaveClass( 'is-new' );
 	} );
 
 	it( 'asks the host for the settings page when view settings are off', async () => {

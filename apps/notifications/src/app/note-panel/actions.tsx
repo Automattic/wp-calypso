@@ -13,6 +13,7 @@ import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-seen';
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
+import LayoutTour from './layout-tour';
 import { useSavePreference } from './use-save-preference';
 import type { LayoutStyle } from '../types';
 
@@ -40,6 +41,9 @@ export default function NotePanelActions() {
 
 	// Nudge people towards settings they have never opened, once.
 	const isNew = isViewSettingsEnabled && viewSettingsSeen === false;
+	// The dot reports the current layout rather than anything unread, the way DataViews
+	// marks a view that no longer matches its default.
+	const isSimplified = isViewSettingsEnabled && layoutStyle === 'simplified';
 	// Opening the menu clears the dot, so the label inside it reads from a snapshot taken
 	// at that moment — otherwise it would vanish before anyone could read it.
 	const [ showsWhatIsNew, setShowsWhatIsNew ] = useState( false );
@@ -118,8 +122,10 @@ export default function NotePanelActions() {
 							<Button
 								size="small"
 								icon={ cog }
-								label={ isNew ? __( 'Settings (new)' ) : __( 'Settings' ) }
-								className={ clsx( 'wpnc-app__settings-toggle', { 'is-new': isNew } ) }
+								label={ __( 'Settings' ) }
+								className={ clsx( 'wpnc-app__settings-toggle', {
+									'is-simplified': isSimplified,
+								} ) }
 							/>
 						}
 					/>
@@ -160,6 +166,14 @@ export default function NotePanelActions() {
 						</Menu.Group>
 					</Menu.Popover>
 				</Menu>
+			) }
+			{ isNew && (
+				<LayoutTour
+					onDismiss={ () => {
+						recordTracksEvent( 'calypso_notification_layout_tour_dismiss' );
+						markSeen();
+					} }
+				/>
 			) }
 		</>
 	);

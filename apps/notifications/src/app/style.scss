@@ -217,12 +217,12 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	margin-inline-start: 6px;
 }
 
-// A one-time nudge towards the view settings, cleared the first time the menu opens.
-.wpnc-app__settings-toggle.is-new {
+// Marks the gear while the simplified layout is the one in use.
+.wpnc-app__settings-toggle.is-simplified {
 	position: relative;
 }
 
-.wpnc-app__settings-toggle.is-new::after {
+.wpnc-app__settings-toggle.is-simplified::after {
 	content: "";
 	position: absolute;
 	inset-block-start: -2px;
@@ -236,3 +236,28 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	box-shadow: 0 0 0 1px var(--color-surface);
 }
 
+
+.wpnc-app__layout-tour .components-popover__content {
+	width: 300px;
+	padding: 16px;
+	border-radius: 4px;
+}
+
+.wpnc-app__layout-tour-title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.wpnc-app__layout-tour-text {
+	margin: 0 0 16px;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--color-text-subtle, #50575e);
+}
+
+.wpnc-app__layout-tour-body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
