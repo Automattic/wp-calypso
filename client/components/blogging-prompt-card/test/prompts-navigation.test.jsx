@@ -49,9 +49,14 @@ const selfHostedSite = {
 
 const unhydratedSite = { ID: 4, name: 'Not loaded yet' };
 
-const renderCard = ( { site, siteId = site?.ID, canPublish = true } = {} ) =>
+const renderCard = ( { site, siteId = site?.ID, canPublish = true, viewContext = 'home' } = {} ) =>
 	renderWithProvider(
-		<PromptsNavigation siteId={ siteId } prompts={ [ PROMPT ] } tracksPrefix="calypso_test_" />,
+		<PromptsNavigation
+			siteId={ siteId }
+			prompts={ [ PROMPT ] }
+			tracksPrefix="calypso_test_"
+			viewContext={ viewContext }
+		/>,
 		{
 			initialState: {
 				sites: { items: site ? { [ site.ID ]: site } : {} },
@@ -74,7 +79,7 @@ describe( 'PromptsNavigation "Post Answer" destination', () => {
 
 		expect( postAnswerLink() ).toHaveAttribute(
 			'href',
-			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt'
+			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_home'
 		);
 	} );
 
@@ -83,7 +88,7 @@ describe( 'PromptsNavigation "Post Answer" destination', () => {
 
 		expect( postAnswerLink() ).toHaveAttribute(
 			'href',
-			'https://atomic.blog/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt'
+			'https://atomic.blog/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_home'
 		);
 	} );
 
@@ -93,6 +98,15 @@ describe( 'PromptsNavigation "Post Answer" destination', () => {
 		expect( postAnswerLink() ).toHaveAttribute(
 			'href',
 			'https://selfhosted.blog/wp-admin/post-new.php?post_type=post&answer_prompt=1'
+		);
+	} );
+
+	it( 'tags the Reader card so the editor can send the writer back there', () => {
+		renderCard( { site: simpleSite, viewContext: 'reader' } );
+
+		expect( postAnswerLink() ).toHaveAttribute(
+			'href',
+			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_reader'
 		);
 	} );
 
@@ -123,7 +137,7 @@ describe( 'PromptsNavigation "Post Answer" destination', () => {
 		await userEvent.click( screen.getByRole( 'link', { name: /Post Answer/ } ) );
 
 		expect( navigate ).toHaveBeenCalledWith(
-			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt'
+			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_home'
 		);
 	} );
 } );

@@ -18,7 +18,7 @@ import LightbulbIcon from './lightbulb-icon';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, viewContext, index, menu } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
@@ -59,12 +59,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 			return addQueryArgs( editorUrl, { answer_prompt: answerPrompt } );
 		}
 
-		// `source=writing_prompt` matches the token the wp-admin Daily Writing
-		// Prompt widget sends, so both surfaces bucket together in the Write funnel.
+		// Per-surface token, so the editor's back button returns to the screen the
+		// answer started from. The bare `writing_prompt` belongs to the wp-admin
+		// Daily Writing Prompt widget, which wants wp-admin back.
+		const source = viewContext === 'reader' ? 'writing_prompt_reader' : 'writing_prompt_home';
+
 		return addQueryArgs( `${ siteAdminUrl }admin.php`, {
 			page: 'write',
 			answer_prompt: answerPrompt,
-			source: 'writing_prompt',
+			source,
 		} );
 	};
 
