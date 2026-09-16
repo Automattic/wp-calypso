@@ -30,6 +30,7 @@ import {
 	loadNewSubscriptionPage,
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
+import { fourForFour } from './four-for-four/controller';
 import { readerNotFound } from './lib/reader-router';
 import {
 	createList,
@@ -75,6 +76,17 @@ export default async function (): Promise< void > {
 
 	// On This Day
 	page( '/reader/on-this-day', redirectLoggedOut, sidebar, onThisDay, makeLayout, clientRender );
+
+	if ( config.isEnabled( 'reader/four-for-four' ) ) {
+		page(
+			'/reader/four-for-four',
+			redirectLoggedOutToSignup,
+			sidebar,
+			fourForFour,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		[
