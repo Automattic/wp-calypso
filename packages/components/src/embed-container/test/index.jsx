@@ -278,19 +278,32 @@ describe( 'EmbedContainer', () => {
 			);
 		} );
 
-		it.each( [ 'javascript:alert(1)', '  JavaScript:alert(1)', 'vbscript:msgbox(1)' ] )(
-			'drops a data attribute carrying a script scheme: %j',
-			( value ) => {
-				// Nothing here has a quote or an angle bracket, so only the scheme check catches it.
-				const container = renderContent(
-					`<div class="embed-reddit" data-embed-parent="${ value }"></div>`
-				);
+		it.each( [
+			'javascript:alert(1)',
+			'  JavaScript:alert(1)',
+			'vbscript:msgbox(1)',
+			// Tab, newline and carriage return are dropped from anywhere in a URL before the
+			// scheme is read, so these all navigate as `javascript:`.
+			'java&#9;script:alert(1)',
+			'java&#10;script:alert(1)',
+			'javascript&#13;:alert(1)',
+			// Leading C0 controls are dropped too, and none of them is whitespace.
+			'&#1;javascript:alert(1)',
+			'&#14;javascript:alert(1)',
+			// Inert here, but a provider interpolating it into markup gives the parser a second
+			// pass at the entities, and `&colon;` becomes the `:` that makes it a scheme.
+			'javascript&colon;alert(1)',
+			'&#106;avascript&colon;alert(1)',
+		] )( 'drops a data attribute carrying a script scheme: %j', ( value ) => {
+			// Nothing here has a quote or an angle bracket, so only the scheme check catches it.
+			const container = renderContent(
+				`<div class="embed-reddit" data-embed-parent="${ value }"></div>`
+			);
 
-				expect(
-					container.querySelector( '.embed-reddit' ).hasAttribute( 'data-embed-parent' )
-				).toBe( false );
-			}
-		);
+			expect( container.querySelector( '.embed-reddit' ).hasAttribute( 'data-embed-parent' ) ).toBe(
+				false
+			);
+		} );
 
 		it( 'reaches data attributes on descendants of the embed', () => {
 			const container = renderContent(

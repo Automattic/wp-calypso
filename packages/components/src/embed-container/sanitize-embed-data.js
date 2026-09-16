@@ -3,15 +3,10 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 /**
- * EmbedContainer hands live post content to third-party embed runtimes. Those runtimes read their
- * configuration back out of the DOM with `getAttribute()`, which returns the entity-decoded value,
- * and feed it to sinks we do not control: some assign it to the `src` of a frame they insert into
- * our document, others interpolate it into an HTML string that the browser parses a second time.
- *
- * Post content is author controlled, so a value that is inert everywhere we inspect it -- in the
- * database, in the API response, in our own DOM -- can still turn into markup, or into a
- * `javascript:` navigation, inside a provider's own code. The rules below make the values safe for
- * both sinks before any provider script gets to see them.
+ * Third-party embed runtimes read their configuration back out of the DOM with `getAttribute()`,
+ * which decodes entities, and feed it to sinks we do not control: the `src` of a frame they insert
+ * into our document, or an HTML string the browser parses a second time. So a value that is inert
+ * in our own DOM can still become markup, or a `javascript:` navigation, inside a provider's code.
  */
 
 // Characters that let a value escape its quoted attribute, or open an element, on that second
@@ -20,7 +15,20 @@ const debug = debugFactory( 'calypso:components:embed-container' );
 const MARKUP_CHARACTERS = /["'<>]/;
 
 // Never a legitimate embed value, and a runtime that puts one in an href would run it on click.
-const UNSAFE_URI_SCHEME = /^\s*(?:javascript|vbscript):/i;
+const UNSAFE_URI_SCHEME = /^(?:javascript|vbscript):/i;
+
+/**
+ * Drop the characters that never reach the scheme a URL is read as: the parser strips tab, newline
+ * and carriage return from anywhere in a URL and trims leading controls and spaces, so both
+ * `java&#9;script:` and `&#1;javascript:` navigate as `javascript:`.
+ * @param {string} value - An attribute value.
+ * @returns {string} The value as the URL parser would read its scheme.
+ */
+function stripIgnoredCharacters( value ) {
+	return Array.from( value )
+		.filter( ( character ) => character.charCodeAt( 0 ) > 0x20 )
+		.join( '' );
+}
 
 // Quoted payloads we consume ourselves, and only ever as text or as a URL assigned to a property,
 // never by interpolating them into markup: the carousel metadata the post normalizer reads, and
@@ -96,14 +104,19 @@ const URL_ATTRIBUTES = Object.assign( Object.create( null ), {
 	'data-url': isHttpUrl,
 } );
 
+// A DOMParser document has no browsing context, so markup in the value cannot load resources or
+// run handlers on the way through.
+function decodeEntities( value ) {
+	return new DOMParser().parseFromString( value, 'text/html' ).body.textContent ?? '';
+}
+
 /**
  * Reduce a value to the plain text it is meant to be, re-encoded so that it stays text however the
  * consuming script inserts it.
  *
- * Decoding happens in a DOMParser document, which has no browsing context, so markup in the value
- * cannot load resources or run handlers on the way through. Decoding before re-encoding is also
- * what keeps this idempotent: the pass runs again every time a slideshow initializes, and an
- * encoder that skipped the decode would turn `&amp;` into `&amp;amp;` a little more on each run.
+ * Decoding before re-encoding is what keeps this idempotent: the pass runs again every time a
+ * slideshow initializes, and an encoder that skipped the decode would turn `&amp;` into `&amp;amp;`
+ * a little more on each run.
  *
  * Letting the HTML parser decide what a tag is keeps text the author meant to show: a caption
  * reading `Temperatures < 0` has no element in it, because `<` followed by a space cannot open one.
@@ -111,12 +124,31 @@ const URL_ATTRIBUTES = Object.assign( Object.create( null ), {
  * @returns {string} The value, as encoded text.
  */
 function toInertText( value ) {
-	const decoded = new DOMParser().parseFromString( String( value ?? '' ), 'text/html' );
 	const encoder = document.createElement( 'div' );
 
-	encoder.textContent = decoded.body.textContent ?? '';
+	encoder.textContent = decodeEntities( String( value ?? '' ) );
 
 	return encoder.innerHTML;
+}
+
+/**
+ * Whether a value names a scripting scheme, now or after the extra entity decode it gets when a
+ * provider interpolates it into an HTML string. `javascript&colon;` is inert in our DOM and a
+ * navigation once it has been through a second parse.
+ * @param {string} value - An attribute value.
+ * @returns {boolean} Whether the value would navigate to a script.
+ */
+function isScriptScheme( value ) {
+	if ( UNSAFE_URI_SCHEME.test( stripIgnoredCharacters( value ) ) ) {
+		return true;
+	}
+
+	// Decoding costs a parse, and this runs over every attribute of every node, so skip it for the
+	// values that cannot hold an entity in the first place.
+	return (
+		value.includes( '&' ) &&
+		UNSAFE_URI_SCHEME.test( stripIgnoredCharacters( decodeEntities( value ) ) )
+	);
 }
 
 /**
@@ -194,7 +226,7 @@ function sanitizeAttribute( node, name, value ) {
 		return;
 	}
 
-	if ( UNSAFE_URI_SCHEME.test( value ) ) {
+	if ( isScriptScheme( value ) ) {
 		debug( 'removing script-scheme attribute %s from', name, node );
 		node.removeAttribute( name );
 		return;
