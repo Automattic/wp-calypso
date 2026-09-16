@@ -30,11 +30,15 @@ export const PluginAnnualSaving = ( {
 
 	const variationYearly = plugin?.variations?.yearly;
 	const priceSlugYearly = getProductSlugByPeriodVariation( variationYearly, productList );
-	const productYearly = useSelector( ( state ) => getProductBySlug( state, priceSlugYearly ) );
+	const productYearly = useSelector( ( state ) =>
+		getProductBySlug( state, priceSlugYearly ?? '' )
+	);
 
 	const variationMonthly = plugin?.variations?.monthly;
 	const priceSlugMonthly = getProductSlugByPeriodVariation( variationMonthly, productList );
-	const productMonthly = useSelector( ( state ) => getProductBySlug( state, priceSlugMonthly ) );
+	const productMonthly = useSelector( ( state ) =>
+		getProductBySlug( state, priceSlugMonthly ?? '' )
+	);
 	const isFetching = useSelector( isProductsListFetching );
 
 	const getAnnualPriceSavingText = () => {
