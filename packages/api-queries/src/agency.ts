@@ -1,6 +1,7 @@
 import {
 	fetchAgency,
 	fetchAgencyResources,
+	fetchAgencyProgramStats,
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
@@ -106,6 +107,14 @@ export const agencyResourcesQuery = () =>
 		queryKey: [ 'agency', 'resources' ] as const,
 		queryFn: fetchAgencyResources,
 		staleTime: 5 * 60 * 1000,
+	} );
+
+export const agencyProgramStatsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'program-stats' ] as const,
+		queryFn: fetchAgencyProgramStats,
+		// Matches the server-side cache TTL.
+		staleTime: 60 * 60 * 1000,
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
