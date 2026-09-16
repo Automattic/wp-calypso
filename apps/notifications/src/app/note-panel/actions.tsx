@@ -4,6 +4,7 @@ import { cog, keyboard, settings } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
@@ -40,17 +41,31 @@ export default function NotePanelActions() {
 
 	// Nudge people towards settings they have never opened, once.
 	const isNew = isViewSettingsEnabled && viewSettingsSeen === false;
-	// The dot reports the current layout rather than anything unread, the way DataViews
-	// marks a view that no longer matches its default.
+	// The dot reports that the simplified layout is the one in use. Unlike the DataViews
+	// marker it resembles, it is not a "differs from default" signal: unset accounts start
+	// on simplified, so most people carry the dot until they pick the detailed rows.
 	const isSimplified = isViewSettingsEnabled && layoutStyle === 'simplified';
+	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 
-	const markSeen = () =>
-		savePreference( {
-			key: 'notifications-view-settings-seen',
-			value: true,
-			apply: () => actions.ui.setViewSettingsSeen( true ),
-			revert: () => actions.ui.setViewSettingsSeen( false ),
-		} );
+	const markSeen = useCallback(
+		() =>
+			savePreference( {
+				key: 'notifications-view-settings-seen',
+				value: true,
+				apply: () => actions.ui.setViewSettingsSeen( true ),
+				revert: () => actions.ui.setViewSettingsSeen( false ),
+			} ),
+		[ savePreference ]
+	);
+
+	// Finding the menu unaided answers the tour. The preference can arrive after the menu
+	// is already open, though, and until it does there is nothing to mark as seen — so
+	// settle it here rather than only on the click that opened it.
+	useEffect( () => {
+		if ( isMenuOpen && isNew ) {
+			markSeen();
+		}
+	}, [ isMenuOpen, isNew, markSeen ] );
 
 	const setLayoutStyle = ( value: LayoutStyle ) => {
 		recordTracksEvent( 'calypso_notification_layout_style_change', {
@@ -103,12 +118,9 @@ export default function NotePanelActions() {
 				<Menu
 					placement="bottom-end"
 					onOpenChange={ ( isOpen: boolean ) => {
-						if ( ! isOpen ) {
-							return;
-						}
-						recordTracksEvent( 'calypso_notification_settings_menu_open' );
-						if ( isNew ) {
-							markSeen();
+						setIsMenuOpen( isOpen );
+						if ( isOpen ) {
+							recordTracksEvent( 'calypso_notification_settings_menu_open' );
 						}
 					} }
 				>
@@ -160,7 +172,7 @@ export default function NotePanelActions() {
 					</Menu.Popover>
 				</Menu>
 			) }
-			{ isNew && (
+			{ isNew && ! isMenuOpen && (
 				<LayoutTour
 					onDismiss={ () => {
 						recordTracksEvent( 'calypso_notification_layout_tour_dismiss' );
