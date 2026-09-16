@@ -2,17 +2,23 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { takeActionOrigin } from '../../utils/action-origin';
+import { getExternalContextEntries } from '../../utils/external-context';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 jest.mock( '../../utils/tracks', () => ( {
 	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent: jest.fn(),
 	recordBigSkyTracksEvent: jest.fn(),
 } ) );
 
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
+>;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+	typeof recordAgentsManagerTracksEvent
 >;
 
 const mockSetIsOpen = jest.fn();
@@ -179,6 +185,50 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( true );
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'marks an open asked for through the bridge as host-triggered', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
+	} );
+
+	it( 'does not mark an open that changes nothing', () => {
+		mockSelectState = { ...mockSelectState, isOpen: true };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'user' );
+	} );
+
+	it( 'records a context hand-off from a host', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/intelligence',
+			type: 'intelligence-tool',
+			source: 'WooCommerce AI',
+			delivery: 'conversation',
+		} );
+
+		expect( getExternalContextEntries().map( ( entry ) => entry.id ) ).toEqual( [
+			'woocommerce-ai/intelligence',
+		] );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'intelligence_tool', delivery: 'conversation' }
+		);
+	} );
+
+	it( 'records nothing for a context entry without an id', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( { id: '' } );
+
+		expect( mockRecordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'expands a minimized chat with a single save: un-minimize, no redundant open', () => {

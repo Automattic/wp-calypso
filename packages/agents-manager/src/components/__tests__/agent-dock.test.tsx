@@ -180,6 +180,7 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { markActionOrigin } from '../../utils/action-origin';
 import { getSessionId } from '../../utils/agent-session';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
@@ -709,7 +710,22 @@ describe( 'AgentDock', () => {
 			render( dock() );
 
 			expect( chatOpenedCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_opened', { restored: true } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+			] );
+		} );
+
+		it( 'labels an open a host asked for through the actions bridge', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			const { rerender } = render( dock() );
+
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'host' } ],
 			] );
 		} );
 
@@ -730,8 +746,8 @@ describe( 'AgentDock', () => {
 			rerender( dock() );
 
 			expect( chatOpenedCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
-				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
 			] );
 		} );
 

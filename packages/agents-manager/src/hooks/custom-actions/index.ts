@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { markActionOrigin } from '../../utils/action-origin';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -13,6 +14,7 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
 import {
 	BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
@@ -32,6 +34,37 @@ function recordGuardedBigSkyTracksEvent(
 	}
 
 	recordBigSkyTracksEvent( eventName, props );
+}
+
+/** Tracks values are lowercase with underscores; hosts pass free text like "WooCommerce AI". */
+function toTracksValue( value: unknown ): string {
+	const normalized =
+		typeof value === 'string'
+			? value
+					.trim()
+					.toLowerCase()
+					.replace( /[^a-z0-9]+/g, '_' )
+					.replace( /^_|_$/g, '' )
+			: '';
+	return normalized || 'none';
+}
+
+/**
+ * Bridge-facing context publisher: records that a host handed the chat
+ * something to talk about, so the hand-off is a step in the journey.
+ */
+function publishExternalContextEntry(
+	entry: Parameters< typeof setExternalContextEntry >[ 0 ]
+): void {
+	setExternalContextEntry( entry );
+	if ( ! entry?.id ) {
+		return;
+	}
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_context_published', {
+		source: toTracksValue( entry.source ),
+		type: toTracksValue( entry.type ),
+		delivery: entry.delivery || 'next-message',
+	} );
 }
 
 /**
@@ -121,6 +154,10 @@ export function useSetupCustomActions( {
 			// Open state is unchanged; nothing more to persist.
 			if ( shouldOpen === isOpen ) {
 				return;
+			}
+
+			if ( shouldOpen ) {
+				markActionOrigin( 'open', 'host' );
 			}
 
 			if ( ! isDocked || ! canDock ) {
@@ -240,7 +277,7 @@ export function useSetupCustomActions( {
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
-		setContextEntry: setExternalContextEntry,
+		setContextEntry: publishExternalContextEntry,
 		removeContextEntry: removeExternalContextEntry,
 		setContextCard: setExternalContextCard,
 		removeContextCard: removeExternalContextCard,

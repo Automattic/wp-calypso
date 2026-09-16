@@ -356,8 +356,10 @@ jest.mock( '../../contexts', () => {
 		} ),
 	};
 } );
+const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
-	useRegisterCustomActions: () => {},
+	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
+		Object.assign( mockRegisteredActions, actions ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -1376,6 +1378,44 @@ describe( 'OrchestratorChat', () => {
 		await waitFor( () => {
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
 		} );
+	} );
+
+	it( 'labels a send from the composer', () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'labels a send whose text is a suggestion on screen', () => {
+		render( chat( { emptyViewSuggestions: [ { id: 's1', label: 'Describe these images' } ] } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'suggestion' } )
+		);
+	} );
+
+	it( 'labels a send a host submits through the actions bridge', async () => {
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'host' } )
+		);
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
