@@ -1,7 +1,6 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
-	GROUP_WPCOM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -10,7 +9,7 @@ import {
 	getYearlyPlanByMonthly,
 	isFreePlan,
 	isMonthly,
-	planMatches,
+	isWpComPlan,
 	plansLink,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -393,14 +392,14 @@ const Home = () => {
 
 		// `free_plan` is a member of WPCOM_MONTHLY_PLANS, so isMonthly() reports it
 		// as monthly and getYearlyPlanByMonthly() hands `free_plan` straight back.
-		const isOnFreePlan = isFreePlan( sitePlanSlug ?? '' );
-		const isWpcomPlan = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } );
-		const isMonthlyPlan = isWpcomPlan && ! isOnFreePlan && isMonthly( sitePlanSlug ?? '' );
+		const planSlug = sitePlanSlug ?? '';
+		const isOnFreePlan = isFreePlan( planSlug );
+		const isWpcomPlan = isWpComPlan( planSlug );
+		const isMonthlyPlan = isWpcomPlan && ! isOnFreePlan && isMonthly( planSlug );
 		const isEligible = isWpcomPlan && ! isOnFreePlan && ! isMonthlyPlan;
 
-		// A monthly plan has one annual counterpart to buy, so it goes straight to
-		// checkout. Everyone else picks a plan first.
-		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( sitePlanSlug ?? '' ) : '';
+		// Only a monthly plan has a single obvious plan to buy; everyone else chooses.
+		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : '';
 
 		const cta: CtaButton = isEligible
 			? {

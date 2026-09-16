@@ -92,4 +92,12 @@ describe( 'Earn home', () => {
 		expect( destination.pathname ).toBe( '/plans/yearly/example.wordpress.com' );
 		expect( destination.searchParams.get( 'redirect_to' ) ).toBe( '/earn/example.wordpress.com' );
 	} );
+
+	// Nothing else covers the eligible side of the plan check, so a mistake there
+	// would strand paid annual sites on an upgrade CTA.
+	it( 'offers the referral link on an annual paid plan', () => {
+		renderHome( 'personal-bundle' );
+
+		expect( screen.getByRole( 'button', { name: 'Earn free credits' } ) ).toBeEnabled();
+	} );
 } );
