@@ -22,6 +22,7 @@ import './plugin-help-center.scss';
 type RecordTracksEvent = AnalyticsClient[ 'recordTracksEvent' ];
 
 const AGENTS_MANAGER_NODE_ID = 'agents-manager';
+const HELP_CENTER_NODE_ID = 'help-center';
 const SECONDARY_GROUP_NODE_ID = 'agents-manager-menu-panel-links';
 
 function handleMenuClick(
@@ -177,10 +178,19 @@ export function useHelpCenterPlugin( {
 		};
 	}
 
+	// Older backends send no node; the client-side defaults cover them.
+	// `menu_title` arrives only when the entry point shows a label.
+	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
+	const menuTitle = helpCenterNode?.meta?.menu_title || undefined;
+
 	return {
-		id: 'help-center',
+		id: HELP_CENTER_NODE_ID,
 		label: __( 'Help' ),
-		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
+		title: menuTitle,
+		tooltip: menuTitle,
+		icon: (
+			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
+		),
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

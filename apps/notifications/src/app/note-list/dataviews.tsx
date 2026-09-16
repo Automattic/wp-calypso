@@ -16,7 +16,8 @@ import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
-import type { Note } from '../types';
+import { splitSubject } from './simplified-subject';
+import type { LayoutStyle, Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
@@ -67,7 +68,13 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-export function getFields(): Field< Note >[] {
+// Temporary and English-only: the API sends the subject as one finished sentence, so
+// splitting it here relies on word order. Returns null when unsure and the row falls back
+// to the detailed layout. The real fix is the server carrying the action as its own string.
+const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
+	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+
+export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
@@ -88,7 +95,7 @@ export function getFields(): Field< Note >[] {
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) =>
-				html( item.subject[ 0 ], {
+				html( simplify( item, layoutStyle )?.action ?? item.subject[ 0 ], {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
@@ -105,10 +112,17 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'description',
 			label: __( 'Description' ),
-			render: ( { item } ) =>
-				item.subject.length > 1 ? (
+			render: ( { item } ) => {
+				const simplified = simplify( item, layoutStyle );
+
+				if ( simplified ) {
+					return <div className="wpnc__excerpt">{ simplified.title }</div>;
+				}
+
+				return item.subject.length > 1 ? (
 					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-				) : null,
+				) : null;
+			},
 		},
 		{
 			// Group-only field for the time-section headers; never added to the

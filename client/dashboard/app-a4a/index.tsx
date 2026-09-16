@@ -17,6 +17,7 @@ import './style.scss';
 
 boot( {
 	name: 'A4A',
+	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,

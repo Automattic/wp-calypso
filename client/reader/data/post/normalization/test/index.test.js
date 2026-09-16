@@ -1,7 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import { classifyPost } from '..';
+import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
+import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
+import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
+import { domForHtml, isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import { classifyPost, contentDomRules, runFastRules } from '..';
 import DISPLAY_TYPES from '../../display-types';
 
 function verifyClassification( post, displayTypes ) {
@@ -133,6 +139,61 @@ describe( 'normalization-rules', () => {
 				],
 			};
 			expect( isFeaturedImageInContent( post ) ).toBeFalsy();
+		} );
+	} );
+
+	describe( 'runFastRules', () => {
+		test( 'strips event handlers before embeds are snapshotted', () => {
+			const post = runFastRules( {
+				content:
+					'<iframe src="https://www.youtube.com/embed/abc" width="640" height="360" ' +
+					'onload="alert(1)"></iframe>',
+			} );
+			const [ embed ] = post.content_embeds;
+
+			expect( embed.iframe ).toEqual( expect.stringContaining( 'youtube.com/embed/abc' ) );
+			expect( embed.iframe ).not.toEqual( expect.stringContaining( 'onload' ) );
+			expect( embed.autoplayIframe ).toEqual( expect.stringContaining( 'autoplay=1' ) );
+			expect( embed.autoplayIframe ).not.toEqual( expect.stringContaining( 'onload' ) );
+		} );
+
+		test( 'never lets a rule write a permalink that is not http(s) into an href', () => {
+			// Two layers cover this, and the assertion holds if either one does: linkJetpackCarousels
+			// skips a gallery whose permalink is not a web address, and makeContentLinksSafe runs
+			// after every rule that builds a link.
+			const post = runFastRules( {
+				content:
+					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
+					'<div class="tiled-gallery-item"><a href="https://example.com/foo/bar/">' +
+					'<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />' +
+					'</a></div></div>',
+			} );
+			const dom = domForHtml( post.content );
+
+			expect( dom.querySelector( '.tiled-gallery-item a' ) ).not.toBeNull();
+			expect( dom.querySelector( '[href^="javascript:"]' ) ).toBeNull();
+		} );
+
+		test( 'strips a link that is not a web address from the rendered content', () => {
+			const post = runFastRules( {
+				content: '<a href="javascript:alert(1)">click</a>',
+			} );
+
+			expect( domForHtml( post.content ).querySelector( '[href^="javascript:"]' ) ).toBeNull();
+		} );
+	} );
+
+	describe( 'content DOM rule order', () => {
+		// Both invariants are invisible in the output once every rule validates its own URLs, so
+		// assert the order itself rather than a behaviour that survives getting it wrong.
+		test( 'strips event handlers before any rule snapshots markup into a post field', () => {
+			expect( contentDomRules.indexOf( removeEventHandlers ) ).toBeLessThan(
+				contentDomRules.indexOf( detectMedia )
+			);
+		} );
+
+		test( 'checks links after every rule that builds one', () => {
+			expect( contentDomRules.at( -1 ) ).toBe( makeContentLinksSafe );
 		} );
 	} );
 } );

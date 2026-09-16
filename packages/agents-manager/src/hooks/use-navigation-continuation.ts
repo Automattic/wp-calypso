@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
+import { getWpAdminRouteTracksProps, recordAgentsManagerTracksEvent } from '../utils/tracks';
 import {
 	completePendingNavigation,
 	isContinuationSent,
@@ -246,6 +247,20 @@ export function useNavigationContinuation( {
 				try {
 					await sendToolResultRef.current( { toolCallId, toolId, message, sessionId } );
 					completePendingNavigation( pendingNavigation );
+					// A server redirect lands elsewhere with `matched: false`, so the
+					// requested and landed routes are both recorded; the base `path`
+					// is the landed pathname.
+					const destinationRoute = getWpAdminRouteTracksProps( pendingNavigation.destination );
+					const landedRoute = getWpAdminRouteTracksProps( window.location.href );
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_complete', {
+						navigated,
+						matched,
+						destination_path: destinationRoute.path,
+						destination_page: destinationRoute.page,
+						destination_post_type: destinationRoute.postType,
+						landed_page: landedRoute.page,
+						landed_post_type: landedRoute.postType,
+					} );
 				} catch ( error ) {
 					// Unmark, so a later mount retries; the 5-minute expiry bounds it.
 					unmarkContinuationSent( pendingNavigation );

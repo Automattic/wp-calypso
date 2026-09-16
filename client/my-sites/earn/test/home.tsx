@@ -3,7 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -26,7 +26,7 @@ const mockedPage = page as unknown as jest.Mock;
 
 // A monthly plan has none of the monetization features, so every card that can
 // upsell does.
-const renderHome = () =>
+const renderHome = ( productSlug = 'personal-bundle-monthly' ) =>
 	renderWithProvider( <Home />, {
 		initialState: {
 			currentUser: { capabilities: { 1: { manage_options: true } } },
@@ -34,7 +34,7 @@ const renderHome = () =>
 				items: { 1: { ID: 1, URL: 'https://example.wordpress.com', options: {} } },
 				features: { 1: { data: { active: [] } } },
 				plans: {
-					1: { data: [ { currentPlan: true, productSlug: 'personal-bundle-monthly' } ] },
+					1: { data: [ { currentPlan: true, productSlug } ] },
 				},
 			},
 			ui: { selectedSiteId: 1 },
@@ -44,6 +44,13 @@ const renderHome = () =>
 	} );
 
 const lastDestination = () => new URL( mockedPage.mock.lastCall[ 0 ], window.location.origin );
+
+const referAFriendUpgradeButton = () =>
+	within(
+		screen
+			.getByRole( 'heading', { name: 'Refer a friend' } )
+			.closest( '.promo-card' ) as HTMLElement
+	).getByRole( 'button', { name: 'Upgrade' } );
 
 describe( 'Earn home', () => {
 	beforeEach( () => {
@@ -74,10 +81,30 @@ describe( 'Earn home', () => {
 
 		// Refer a friend is the only card that skips the plans page, sending a
 		// monthly plan straight to checkout for its annual equivalent.
-		await userEvent.click( screen.getAllByRole( 'button', { name: 'Upgrade' } )[ 2 ] );
+		await userEvent.click( referAFriendUpgradeButton() );
 
 		const destination = lastDestination();
 		expect( destination.pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
 		expect( destination.searchParams.get( 'cancel_to' ) ).toBe( '/earn/example.wordpress.com' );
+	} );
+
+	// `free_plan` counts as monthly, so its "annual equivalent" is itself: without
+	// this, the CTA sends free sites to checkout for an unbuyable product.
+	it( 'sends a free site to the yearly plans page', async () => {
+		renderHome( 'free_plan' );
+
+		await userEvent.click( referAFriendUpgradeButton() );
+
+		const destination = lastDestination();
+		expect( destination.pathname ).toBe( '/plans/yearly/example.wordpress.com' );
+		expect( destination.searchParams.get( 'redirect_to' ) ).toBe( '/earn/example.wordpress.com' );
+	} );
+
+	// Nothing else covers the eligible side of the plan check, so a mistake there
+	// would strand paid annual sites on an upgrade CTA.
+	it( 'offers the referral link on an annual paid plan', () => {
+		renderHome( 'personal-bundle' );
+
+		expect( screen.getByRole( 'button', { name: 'Earn free credits' } ) ).toBeEnabled();
 	} );
 } );

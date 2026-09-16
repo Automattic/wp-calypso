@@ -42,6 +42,7 @@
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": false,
+		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
 		"plans/hosting-trial": true,
