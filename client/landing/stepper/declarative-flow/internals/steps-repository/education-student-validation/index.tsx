@@ -56,9 +56,6 @@ const EducationStudentValidation: StepType< {
 	};
 } > = function EducationStudentValidation( { navigation, flow } ) {
 	const { __ } = useI18n();
-	// Invitation emails can link straight here with `?code=…` so the student
-	// doesn't have to retype it. Prefill only: the user still presses the
-	// button, since each successful validation claims a seat on the code.
 	const codeFromUrl = useQuery().get( 'code' )?.trim() ?? '';
 	const [ code, setCode ] = useState( codeFromUrl );
 	const [ error, setError ] = useState< ValidationError | null >( null );
