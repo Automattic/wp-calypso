@@ -107,11 +107,19 @@ describe( 'NoteList simplified layout', () => {
 
 	// The detailed subject is rendered through `html()`, which splits the sentence across
 	// elements for its ranges, so assert on the row's text rather than a single node.
-	it( 'shows the whole sentence and the excerpt by default', () => {
-		const { container } = renderList();
+	it( 'shows the whole sentence and the excerpt on the detailed rows', () => {
+		const { container } = renderList( 'detailed' );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
 		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
+	} );
+
+	it( 'leads with the simplified rows when no layout has been chosen', () => {
+		const { container } = renderList();
+
+		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
+			'Ashar liked your comment'
+		);
 	} );
 
 	// The setting is only offered where the flag is on. Somewhere it is off there is no

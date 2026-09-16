@@ -47,7 +47,7 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 	return state;
 };
 
-export const layoutStyle = ( state = 'detailed', action ) =>
+export const layoutStyle = ( state = 'simplified', action ) =>
 	SET_LAYOUT_STYLE === action.type ? action.layoutStyle : state;
 
 export const viewSettingsSeen = ( state = null, action ) =>

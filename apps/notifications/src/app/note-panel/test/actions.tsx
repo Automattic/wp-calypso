@@ -135,14 +135,14 @@ describe( 'NotePanel settings menu', () => {
 		renderPanel( { isViewSettingsEnabled: true } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
-		await userEvent.click( await screen.findByRole( 'menuitemradio', { name: 'Simplified' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitemradio', { name: 'Detailed' } ) );
 
 		expect( tkq() ).toEqual( [
 			[ 'recordEvent', 'calypso_notification_settings_menu_open', undefined ],
 			[
 				'recordEvent',
 				'calypso_notification_layout_style_change',
-				{ from: 'detailed', to: 'simplified' },
+				{ from: 'simplified', to: 'detailed' },
 			],
 		] );
 	} );
@@ -152,18 +152,15 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: 'Detailed' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) ).toHaveAttribute(
 			'aria-checked',
 			'true'
 		);
 
-		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) );
+		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Detailed' } ) );
 
 		await waitFor( () => {
-			expect( onPreferenceChange ).toHaveBeenCalledWith(
-				'notifications-layout-style',
-				'simplified'
-			);
+			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-layout-style', 'detailed' );
 		} );
 	} );
 } );

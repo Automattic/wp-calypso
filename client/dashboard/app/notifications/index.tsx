@@ -1,4 +1,4 @@
-import { rawUserPreferencesQuery, userPreferencesMutation } from '@automattic/api-queries';
+import { userPreferenceQuery, userPreferencesMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
@@ -37,7 +37,16 @@ export default function Notifications( {
 
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 
-	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
+	// Both share one query key, so this is a single request — and it is skipped entirely
+	// without the picker, where nothing reads either value.
+	const { data: layoutStyle } = useQuery( {
+		...userPreferenceQuery( 'notifications-layout-style' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { data: viewSettingsSeen } = useQuery( {
+		...userPreferenceQuery( 'notifications-view-settings-seen' ),
+		enabled: isViewSettingsEnabled,
+	} );
 	const { mutateAsync: savePreferences } = useMutation( userPreferencesMutation() );
 
 	const handlePreferenceChange = useCallback(
@@ -46,16 +55,10 @@ export default function Notifications( {
 		[ savePreferences ]
 	);
 
-	const notificationPreferences = useMemo( () => {
-		if ( ! userPreferences ) {
-			return undefined;
-		}
-
-		return {
-			layoutStyle: userPreferences[ 'notifications-layout-style' ],
-			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
-		};
-	}, [ userPreferences ] );
+	const notificationPreferences = useMemo(
+		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
+		[ layoutStyle, viewSettingsSeen ]
+	);
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays

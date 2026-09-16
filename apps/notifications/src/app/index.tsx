@@ -30,17 +30,11 @@ export type NotificationPreferences = {
 
 let hasResolvedPreferences = false;
 
-const applyPreferences = (
-	{ layoutStyle, viewSettingsSeen }: NotificationPreferences,
-	isViewSettingsEnabled: boolean
-) => {
-	// Unset means never chosen: start those people on the simplified layout wherever the
-	// picker exists to change it back.
-	store.dispatch(
-		actions.ui.setLayoutStyle(
-			layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'detailed' )
-		)
-	);
+const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
+	// Unset means never chosen, and those people get the simplified rows. Where the picker
+	// is missing the note list renders the detailed ones whatever this says, so there is
+	// nothing here to ask about the flag.
+	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
 
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };
@@ -181,8 +175,8 @@ const NotificationApp = ( {
 		}
 
 		hasResolvedPreferences = true;
-		applyPreferences( preferences, isViewSettingsEnabled );
-	}, [ preferences, isViewSettingsEnabled ] );
+		applyPreferences( preferences );
+	}, [ preferences ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {
