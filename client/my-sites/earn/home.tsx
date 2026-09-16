@@ -1,15 +1,16 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
-	GROUP_WPCOM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
 	getYearlyPlanByMonthly,
+	isFreePlan,
 	isMonthly,
-	planMatches,
+	isWpComPlan,
+	plansLink,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
@@ -389,8 +390,15 @@ const Home = () => {
 			return;
 		}
 
-		const isMonthlyPlan = isMonthly( sitePlanSlug ?? '' );
-		const isEligible = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } ) && ! isMonthlyPlan;
+		// `free_plan` is a member of WPCOM_MONTHLY_PLANS, so isMonthly() reports it
+		// as monthly and getYearlyPlanByMonthly() hands `free_plan` straight back.
+		const planSlug = sitePlanSlug ?? '';
+		const isPaidWpcomPlan = isWpComPlan( planSlug ) && ! isFreePlan( planSlug );
+		const isMonthlyPlan = isPaidWpcomPlan && isMonthly( planSlug );
+		const isEligible = isPaidWpcomPlan && ! isMonthlyPlan;
+
+		// Only a monthly plan has a single obvious plan to buy; everyone else chooses.
+		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : '';
 
 		const cta: CtaButton = isEligible
 			? {
@@ -406,20 +414,26 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
-						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
-							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug || undefined;
-							if ( planPath ) {
-								page(
-									addQueryArgs(
-										`/checkout/${ site.slug }/${ planPath }`,
-										getUpsellCheckoutQueryArgs()
-									)
-								);
-								return;
-							}
+						if ( site?.slug && annualPlanSlug ) {
+							page(
+								addQueryArgs(
+									`/checkout/${ site.slug }/${ annualPlanSlug }`,
+									getUpsellCheckoutQueryArgs()
+								)
+							);
+							return;
 						}
-						page( addQueryArgs( `/plans/${ site?.slug }`, { redirect_to: getUpsellReturnUrl() } ) );
+						const url = addQueryArgs( plansLink( '/plans', site?.slug, 'yearly', true ), {
+							redirect_to: getUpsellReturnUrl(),
+						} );
+						/**
+						 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
+						 */
+						if ( isSimple && isJetpackCloud() ) {
+							page( getCalypsoUrl( url ) );
+							return;
+						}
+						page( url );
 					},
 			  };
 
@@ -430,12 +444,10 @@ const Home = () => {
 		const defaultBody = translate(
 			'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits.'
 		);
-		const notEligibleBody = isMonthlyPlan ? (
+		const notEligibleBody = (
 			<>
 				{ defaultBody } <em>{ translate( 'This feature requires an annual plan.' ) }</em>
 			</>
-		) : (
-			defaultBody
 		);
 		const eligibleBody = peerReferralLink
 			? translate(
