@@ -24,9 +24,9 @@ describe( 'useThemeShowcaseLoggedOutSeoContent()', () => {
 	const wrapper = ( { children } ) => (
 		<I18NContext.Provider value={ defaultCalypsoI18n }>{ children }</I18NContext.Provider>
 	);
-	const render = ( filter, tier ) =>
-		renderHook( () => useThemeShowcaseLoggedOutSeoContent( filter, tier ), { wrapper } ).result
-			.current;
+	const render = ( filter, tier, vertical ) =>
+		renderHook( () => useThemeShowcaseLoggedOutSeoContent( filter, tier, vertical ), { wrapper } )
+			.result.current;
 
 	beforeEach( () => {
 		mockHasEnTranslation.mockReturnValue( true );
@@ -55,6 +55,13 @@ describe( 'useThemeShowcaseLoggedOutSeoContent()', () => {
 
 	test( 'keeps the fallback content for filters without a dedicated entry', () => {
 		const content = render( 'minimal', '' );
+
+		expect( content.title ).toEqual( OLD_TITLE );
+		expect( content.metaDescription ).toBeUndefined();
+	} );
+
+	test( 'keeps the fallback content for vertical pages', () => {
+		const content = render( '', '', 'blog' );
 
 		expect( content.title ).toEqual( OLD_TITLE );
 		expect( content.metaDescription ).toBeUndefined();

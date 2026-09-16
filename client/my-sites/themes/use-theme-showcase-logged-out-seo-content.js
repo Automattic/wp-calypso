@@ -16,11 +16,11 @@ function findParsedFilter( filter, content ) {
 	return parsedFilter;
 }
 
-function isHomepage( filter, tier ) {
-	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+function isHomepage( filter, tier, vertical ) {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' ) && ! vertical;
 }
 
-export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
+export default function useThemeShowcaseLoggedOutSeoContent( filter, tier, vertical ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
@@ -948,7 +948,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 		return THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT.recommended.all;
 	}
 
-	if ( isHomepage( filter, tier ) ) {
+	if ( isHomepage( filter, tier, vertical ) ) {
 		return { ...seoContent, ...HOMEPAGE_SEO_CONTENT };
 	}
 

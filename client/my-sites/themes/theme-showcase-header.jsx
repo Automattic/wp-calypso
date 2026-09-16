@@ -15,8 +15,8 @@ import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
 
-const shouldSkipTitleFormatting = ( { filter, tier } ) => {
-	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' );
+const shouldSkipTitleFormatting = ( { filter, tier, vertical } ) => {
+	return ( ! filter || filter === 'recommended' ) && ( ! tier || tier === 'all' ) && ! vertical;
 };
 
 export default function ThemeShowcaseHeader( {
@@ -38,8 +38,8 @@ export default function ThemeShowcaseHeader( {
 
 	const description = useThemeShowcaseDescription( { filter, tier, vertical } );
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
-	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
-	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier, vertical } );
+	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier, vertical );
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInHeader =
