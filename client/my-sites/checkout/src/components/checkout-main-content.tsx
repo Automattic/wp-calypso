@@ -396,10 +396,12 @@ function PortaledCheckoutFormSubmit( {
 	validateForm,
 	submitButtonHeader,
 	disableSubmitButton,
+	disableContinueButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	disableSubmitButton?: boolean;
+	disableContinueButton?: boolean;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
 	if ( ! slotEl ) {
@@ -411,6 +413,7 @@ function PortaledCheckoutFormSubmit( {
 			continueToNextIncompleteStep
 			submitButtonHeader={ submitButtonHeader }
 			disableSubmitButton={ disableSubmitButton }
+			disableContinueButton={ disableContinueButton }
 		/>,
 		slotEl
 	);
@@ -576,6 +579,12 @@ export default function CheckoutMainContent( {
 		shouldShowContactDetailsValidationErrorsRef.current = value;
 		setShouldShowContactDetailsValidationErrorsState( value );
 	}, [] );
+
+	// While the contact form waits for cached contact details it is hidden, so the
+	// portaled Continue must not validate it: that would flag errors on fields the
+	// shopper has not seen. This is not form status, because `LOADING` replaces the
+	// whole step group (unmounting the contact form doing the prefill).
+	const [ isContactPrefillPending, setIsContactPrefillPending ] = useState( false );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -1067,6 +1076,7 @@ export default function CheckoutMainContent( {
 										setShouldShowContactDetailsValidationErrors={
 											setShouldShowContactDetailsValidationErrors
 										}
+										setIsPrefillPending={ setIsContactPrefillPending }
 									/>
 								</>
 							}
@@ -1167,6 +1177,7 @@ export default function CheckoutMainContent( {
 							validateForm={ validateForm }
 							submitButtonHeader={ portaledSubmitButtonHeader }
 							disableSubmitButton={ blackbox.isSubmitBlocked }
+							disableContinueButton={ isContactPrefillPending }
 						/>
 					) : (
 						<CheckoutFormSubmit
