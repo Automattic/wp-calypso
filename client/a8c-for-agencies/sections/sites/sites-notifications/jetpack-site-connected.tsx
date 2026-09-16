@@ -75,7 +75,7 @@ export default function JetpackSiteConnected() {
 			dispatch( successNotice( successNotification ) );
 			dispatch(
 				recordTracksEvent( eventName, {
-					siteUrl: mostRecentConnectedSite,
+					site_url: mostRecentConnectedSite,
 				} )
 			);
 		}

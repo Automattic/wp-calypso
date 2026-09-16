@@ -27,6 +27,7 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { hasTailoredFeatureList } from '../../constants';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
 import useGridSize from '../../hooks/use-grid-size';
@@ -934,16 +935,22 @@ const FeatureGroup = ( {
 	};
 	plansLength: number;
 } ) => {
-	const { allFeaturesList, isExperimentVariant } = usePlansGridContext();
+	const { allFeaturesList, intent, isExperimentVariant } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.getFeatures();
 
+	// Row titles follow the list: the experiment copy renames features the experiment override
+	// lists, so pairing it with a curated list mistitles the rows.
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
-		getPlanFeaturesObject( allFeaturesList, features, isExperimentVariant )
+		getPlanFeaturesObject(
+			allFeaturesList,
+			features,
+			isExperimentVariant && ! hasTailoredFeatureList( intent )
+		)
 	);
 
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );

@@ -121,8 +121,12 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	};
 
 	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
-		() => ( phoneCountryCode ? { ...formData, country: phoneCountryCode } : formData ),
-		[ formData, phoneCountryCode ]
+		() => ( {
+			...formData,
+			...( phoneCountryCode ? { country: phoneCountryCode } : {} ),
+			...( showInternalFlags ? { skip_hubspot: skipHubspot } : {} ),
+		} ),
+		[ formData, phoneCountryCode, showInternalFlags, skipHubspot ]
 	);
 
 	const handleInputChange =
@@ -154,7 +158,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			if ( isDeniedNonUniqueDomain( agencyUrl, nonUniqueDomains ) ) {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
-						agencyUrl,
+						agency_url: agencyUrl,
 					} )
 				);
 				setIsProceeding( false );
@@ -173,7 +177,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 						recordTracksEvent(
 							'calypso_a4a_agency_signup_form_duplicate_agency_warning_dialog_view',
 							{
-								agencyUrl,
+								agency_url: agencyUrl,
 							}
 						)
 					);
@@ -206,12 +210,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const handleBypass = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
 		setShowDuplicateModal( false );
-		onContinue( {
-			...dataToContinue,
-			bypass_duplicate_check: true,
-			skip_hubspot: skipHubspot,
-		} as Partial< AgencyDetailsSignupPayload > );
-	}, [ dispatch, dataToContinue, onContinue, skipHubspot ] );
+		onContinue( { ...dataToContinue, bypass_duplicate_check: true } );
+	}, [ dispatch, dataToContinue, onContinue ] );
 
 	const handleSkipHubspotToggle = useCallback(
 		( checked: boolean ) => {
@@ -250,6 +250,23 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			"You're seeing these options because you're logged into an A11n-owned WordPress.com account."
 		);
 	};
+
+	const internalFlagsFields = (
+		<>
+			<Text>
+				<strong>{ translate( 'Internal Flags' ) }</strong>
+			</Text>
+			<Text className="signup-contact-form__internal-flags-reason">
+				<em>{ getInternalFlagsReason() }</em>
+			</Text>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				label={ translate( "Don't send this signup to HubSpot" ) }
+				checked={ skipHubspot }
+				onChange={ handleSkipHubspotToggle }
+			/>
+		</>
+	);
 
 	return (
 		<Form
@@ -372,6 +389,10 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
 			/>
 
+			{ showInternalFlags && (
+				<div className="signup-contact-form__internal-flags">{ internalFlagsFields }</div>
+			) }
+
 			<div className="signup-contact-form__tos">
 				<p>
 					{ translate(
@@ -431,18 +452,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 						{ showInternalFlags && (
 							<div className="signup-contact-form__internal-flags">
-								<Text>
-									<strong>{ translate( 'Internal Flags' ) }</strong>
-								</Text>
-								<Text className="signup-contact-form__internal-flags-reason">
-									<em>{ getInternalFlagsReason() }</em>
-								</Text>
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									label={ translate( "Don't send this signup to HubSpot" ) }
-									checked={ skipHubspot }
-									onChange={ handleSkipHubspotToggle }
-								/>
+								{ internalFlagsFields }
 								<Button variant="secondary" onClick={ handleBypass }>
 									{ translate( 'Bypass and create new agency anyway' ) }
 								</Button>

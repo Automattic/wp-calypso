@@ -94,6 +94,8 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
+		freeSubdomainTitle?: string;
+		freeSubdomainButtonLabel?: string;
 		allowedTlds?: string[];
 		freeForFirstYearTlds?: string[];
 	};
@@ -106,6 +108,8 @@ const DomainSearchStep: StepType< {
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
+	freeSubdomainTitle,
+	freeSubdomainButtonLabel,
 	allowedTlds: allowedTldsProp,
 	freeForFirstYearTlds: freeForFirstYearTldsProp,
 } ) {
@@ -144,6 +148,7 @@ const DomainSearchStep: StepType< {
 	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
+	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
@@ -208,11 +213,14 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
-			// AI Website Builder onboarding requires a paid plan, so skipping the
-			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: isWowFunnel
-				? { title: __( 'Set up a domain later' ), buttonText: __( 'Set up a domain later' ) }
-				: getSkipSuggestionCopy( flow, __ ),
+			// Free-subdomain skip card copy, in order of precedence: per-flow
+			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
+			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
+			// then the flow default resolved by `getSkipSuggestionCopy`.
+			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
+				title: freeSubdomainTitle ?? wowSkipCopy,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
+			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
 			hideFreeSubdomainSuggestion: isWowFunnel,
@@ -236,10 +244,13 @@ const DomainSearchStep: StepType< {
 		isCiab,
 		isWooHostingSolutions,
 		isWowFunnel,
+		wowSkipCopy,
 		tldQuery,
 		query,
 		allowedTldsProp,
 		freeForFirstYearTldsProp,
+		freeSubdomainTitle,
+		freeSubdomainButtonLabel,
 	] );
 
 	const { submit } = navigation;

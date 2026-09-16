@@ -210,6 +210,10 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
+	// Both advances replace rather than push. A pushed gate stays in the history behind the step it
+	// advanced to, and it advances again the moment it renders against a verified account — so Back
+	// off the destination walks the customer forwards into site creation a second time, which
+	// /sites/new refuses as `blog_name_exists`.
 	it( 'advances the verification step to the target named in the next query param', async () => {
 		mockQueryParams = new URLSearchParams( 'next=post-checkout-onboarding' );
 		const navigate = jest.fn();
@@ -226,7 +230,7 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 			providedDependencies: {},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
-		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
+		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding', undefined, true );
 	} );
 
 	// Without a `next`, the verification step falls back to site creation rather than a blank target.
@@ -245,7 +249,7 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 			providedDependencies: {},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
-		expect( navigate ).toHaveBeenCalledWith( 'create-site' );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, true );
 	} );
 
 	it( 'points a paid order back at the verification step on return from checkout', async () => {

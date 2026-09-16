@@ -129,6 +129,13 @@ body.is-mobile-app-view {
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
 		}
+
+		// The labelled entry point puts an icon beside the text, as in the admin bar.
+		.checkout-skip-button.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+		}
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
@@ -647,11 +654,6 @@ body.is-mobile-app-view {
 				height: 32px;
 			}
 		}
-	}
-
-	&.masterbar__item-help {
-		cursor: pointer;
-		// todo may need flex: unset
 	}
 
 	// Outward border styles for active global items.
@@ -1263,24 +1265,6 @@ a.masterbar__quick-language-switcher {
 	--step-container-v2-top-bar-content-height: 24px;
 
 	padding: 0;
-}
-
-.masterbar__item-help {
-	@media only screen and (min-width: 782px) {
-		padding-left: 8px;
-		padding-right: 9px;
-	}
-
-	svg {
-		fill: var(--color-masterbar-icon);
-		width: 27px;
-		height: 27px;
-
-		@media only screen and (max-width: 781px) {
-			width: 37px;
-			height: 37px;
-		}
-	}
 }
 
 @keyframes fadeIn {

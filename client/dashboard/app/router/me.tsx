@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	isSeenPostsAvailable,
 	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
@@ -17,6 +18,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -135,7 +137,10 @@ export const preferencesRoute = createRoute( {
 export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
+		if ( context.config.supports.reader ) {
+			queryClient.prefetchQuery( readTeamsQuery() );
+		}
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
@@ -1063,6 +1068,39 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const preferencesReaderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Reader' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'reader',
+	beforeLoad: async () => {
+		// A failed teams request means "not available", not an error page.
+		let teams;
+		try {
+			( { teams } = await queryClient.ensureQueryData( readTeamsQuery() ) );
+		} catch {
+			teams = undefined;
+		}
+		if ( ! isSeenPostsAvailable( teams ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/reader' ).then( ( d ) =>
+		createLazyRoute( 'preferences-reader' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const hostingDashboardRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1415,6 +1453,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+		preferencesChildren.push( preferencesReaderRoute );
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );

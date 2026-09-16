@@ -65,6 +65,8 @@
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/media-utils": "^5.48.0",
 		"@wordpress/primitives": "^4.48.0",
+		"@wordpress/private-apis": "^1.51.0",
+		"@wordpress/router": "^1.51.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
 		"deepmerge": "^4.3.1",

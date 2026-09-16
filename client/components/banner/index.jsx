@@ -31,6 +31,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		children: PropTypes.node,
 		secondaryCallToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
@@ -261,6 +262,7 @@ export class Banner extends Component {
 			extraContent,
 			isBusy,
 			isCallToActionDisabled,
+			children,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -278,6 +280,7 @@ export class Banner extends Component {
 						} }
 					/>
 				) }
+				{ children }
 				<div className="banner__info">
 					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }

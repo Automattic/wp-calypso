@@ -1,4 +1,5 @@
 import {
+	focusManager,
 	QueryClient,
 	QueryClientProvider,
 	useInfiniteQuery,
@@ -10,7 +11,6 @@ import {
 	followSiteMutation,
 	siteSubscriptionsQuery,
 	getAliasedSiteSubscriptionFeedUrl,
-	getSiteSubscriptionByBlogIdFromData,
 	getSiteSubscriptionByFeedIdFromData,
 	getSubscribedSitesFromData,
 	getSiteSubscriptionsCountFromData,
@@ -181,6 +181,57 @@ describe( 'siteSubscriptionsQuery', () => {
 	} );
 } );
 
+describe( 'siteSubscriptionsQuery freshness', () => {
+	const page = { subscriptions: [], total_subscriptions: 0, page: 1, number: 100 };
+	const mockFollowing = () =>
+		nock( BASE ).get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, page );
+
+	afterEach( () => {
+		focusManager.setFocused( undefined );
+		nock.cleanAll();
+	} );
+
+	it( 'refetches on window focus when data is older than the seen-count max age', async () => {
+		const client = newClient();
+		seedStaleSubscriptionData( client, 31_000 );
+		const request = mockFollowing();
+
+		renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await focus();
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not refetch on window focus when data is fresh', async () => {
+		const client = newClient();
+		seedStaleSubscriptionData( client, 1_000 );
+		const request = mockFollowing();
+
+		renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await focus();
+
+		expect( client.isFetching() ).toBe( 0 );
+		expect( request.isDone() ).toBe( false );
+	} );
+
+	async function focus() {
+		await act( async () => {
+			focusManager.setFocused( false );
+			focusManager.setFocused( true );
+		} );
+	}
+
+	function seedStaleSubscriptionData( client: QueryClient, ageMs: number ) {
+		return client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [] ), {
+			updatedAt: Date.now() - ageMs,
+		} );
+	}
+} );
+
 describe( 'follow selectors and cache helpers', () => {
 	it( 'preserves requested URL aliases when the returned follow has a different feed URL', () => {
 		const client = newClient();
@@ -289,7 +340,6 @@ describe( 'follow selectors and cache helpers', () => {
 
 		expect( getSiteSubscriptionsFromData( data ) ).toEqual( [ alpha, beta ] );
 		expect( getSiteSubscriptionsCountFromData( data ) ).toBe( 2 );
-		expect( getSiteSubscriptionByBlogIdFromData( data, 22 ) ).toBe( beta );
 		expect( getSiteSubscriptionByFeedIdFromData( data, 101 ) ).toBe( alpha );
 		expect( getSiteSubscriptionFromData( data, { feedUrl: 'https://alpha.example/feed/' } ) ).toBe(
 			alpha

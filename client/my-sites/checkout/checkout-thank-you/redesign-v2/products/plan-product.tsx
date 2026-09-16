@@ -1,5 +1,5 @@
 import { isWpComEcommercePlan } from '@automattic/calypso-products';
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';

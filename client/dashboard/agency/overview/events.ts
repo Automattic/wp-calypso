@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import {
+	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	MARKETPLACE_HOSTING_PRESSABLE_PATH,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
@@ -31,6 +33,7 @@ export interface FeaturedEvent {
 	 */
 	logo?: string;
 	logoAlt?: string;
+	/** Uppercase eyebrow above the title: a date for events, a label for announcements. */
 	when: string;
 	title: string;
 	subtitle: string;
@@ -149,3 +152,42 @@ export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 };
+
+/**
+ * The MCP launch announcement, shown to every agency below the Pressable promos.
+ *
+ * Takes the AI & MCP href because the two shells mount that screen at different
+ * paths (/resources-and-tools/ai-mcp in classic A4A, /resources/ai-mcp in the
+ * dashboard), so it arrives through AgencyOverviewLinks rather than a constant.
+ */
+export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
+	id: 'a4a-ai-mcp-announcement',
+	logo: A4ALogo,
+	logoAlt: __( 'Automattic for Agencies' ),
+	when: __( 'New · AI and MCP' ),
+	title: __( 'Bring Automattic for Agencies into your AI tools' ),
+	subtitle: __( 'Automattic for Agencies MCP' ),
+	description: [
+		__(
+			'Get answers about your agency without hunting through the dashboard. Ask about your tier, commissions, billing, or site health from Claude, ChatGPT, Cursor, or whatever AI tool your team already uses, and the answer comes back from your live account in seconds.'
+		),
+		__(
+			'Schedule a weekly digest to Slack, or build a custom dashboard your whole team can use. Our MCP is free and connects in minutes.'
+		),
+	],
+	ctas: [
+		{
+			id: 'enable-mcp',
+			label: __( 'Enable MCP' ),
+			url: aiMcpHref,
+			variant: 'primary',
+		},
+		{
+			id: 'see-how-it-works',
+			label: __( 'See how it works' ),
+			url: AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
+			isExternal: true,
+		},
+	],
+	endsAt: '2026-10-08',
+} );

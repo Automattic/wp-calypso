@@ -37,7 +37,8 @@ import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { pencil } from '@wordpress/icons';
+import { help, pencil } from '@wordpress/icons';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -117,6 +118,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
+import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
@@ -432,6 +434,7 @@ export default function CheckoutMainContent( {
 	isRemovingProductFromCart,
 	areThereErrors,
 	isWrongAccountRenewal,
+	isNonRenewableDomain,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -456,6 +459,7 @@ export default function CheckoutMainContent( {
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
 	isWrongAccountRenewal: boolean;
+	isNonRenewableDomain: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -659,7 +663,8 @@ export default function CheckoutMainContent( {
 	);
 	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
 
 	if ( ! checkoutActions ) {
 		return null;
@@ -708,6 +713,25 @@ export default function CheckoutMainContent( {
 					</WPCheckoutTitle>
 					<WrongAccountRenewal />
 					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
+	// Same reasoning as above: the domain renewal was rejected, so the cart is
+	// empty, and "you have no items in your cart" explains none of it.
+	if ( isNonRenewableDomain ) {
+		debug( 'rendering non-renewable domain page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<NonRenewableDomain />
+					<CheckoutFormSubmit submitButton={ <SearchForNewDomainButton /> } />
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
@@ -1230,9 +1254,14 @@ export default function CheckoutMainContent( {
 												total={ stepCounter.total }
 											/>
 										) }
-										<span className="checkout-skip-button">
+										<span
+											className={ clsx( 'checkout-skip-button', {
+												'has-help-entry-label': showHelpIcon,
+											} ) }
+										>
 											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 												{ helpCenterButtonLink }
 											</Step.LinkButton>
 										</span>
@@ -1730,6 +1759,13 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
 				display: inline;
 			}
+		}
+
+		/* The labelled entry point puts an icon beside the text, as in the admin bar. */
+		&.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
 		}
 	}
 

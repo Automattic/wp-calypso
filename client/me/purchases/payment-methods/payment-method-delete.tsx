@@ -1,13 +1,13 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
 import { PaymentMethodSummary } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSitePurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
@@ -24,9 +24,10 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const reduxDispatch = useDispatch();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
-	const siteId = useSelector( getSelectedSiteId );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const userPurchases = useSelector( ( state ) => getUserPurchases( state ) );
+	// A stored payment method belongs to the account rather than to a site, so
+	// the dialog warns about every subscription paying with it, not just the
+	// ones on the currently selected site.
+	const { data: userPurchases } = useQuery( userPurchasesQuery() );
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
@@ -78,7 +79,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
 				card={ card }
-				purchases={ userPurchases || sitePurchases }
+				purchases={ userPurchases ?? [] }
 			/>
 			{ renderDeleteButton() }
 		</div>

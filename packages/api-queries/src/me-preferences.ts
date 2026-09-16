@@ -17,6 +17,7 @@ const defaultValues: Required< UserPreferences > = {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'reader-seen-posts': true,
 	'sites-landing-page': {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
@@ -32,6 +33,10 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
 	'a4a-dashboard-pd-not-approved-popover': false,
+	'a4a-marketplace-referral-guide-seen': false,
+	'a4a-marketplace-term-pricing': 'yearly',
+	'notifications-layout-style': 'simplified',
+	'notifications-view-settings-seen': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -45,6 +50,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
+	'reader-seen-posts': 'rdseen',
 	'sites-landing-page': 'stland',
 	'logged-in-homepage': 'lohp',
 	'achievements-visibility': 'achvis',
@@ -54,6 +60,8 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
+	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-marketplace-term-pricing': 'a4aterm',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

@@ -6,6 +6,10 @@
 .dashboard-snackbars {
 	@include snackbar-container();
 
+	// Modals portal into <body> after the app root, so at the shared 100000
+	// they paint over the snackbars. `.dataviews-action-modal` goes to 1000001.
+	z-index: 1000002;
+
 	@include ui-mixins.when-dark-theme {
 		.components-snackbar {
 			background: var( --dashboard-surface__background-color );

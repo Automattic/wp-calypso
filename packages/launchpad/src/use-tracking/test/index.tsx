@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook } from '@testing-library/react';
 import { useTracking } from '..';
 import { buildTask } from '../../test/lib/fixtures';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { LaunchpadSiteDetails } from '../../site-type';
 
 jest.mock( '@automattic/calypso-analytics' );
 
@@ -12,7 +12,7 @@ describe( 'useTracking', () => {
 	const buildDefaultProps = ( options = {} ) => ( {
 		checklistSlug: 'site-setup-checklist',
 		context: 'customer-home',
-		site: { options: { site_intent: 'build' } } as SiteDetails,
+		site: { options: { site_intent: 'build' } } as LaunchpadSiteDetails,
 		tasks: [
 			buildTask( { id: 'task-1', completed: true } ),
 			buildTask( { id: 'task-2', completed: false } ),
@@ -76,7 +76,7 @@ describe( 'useTracking', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 0 );
 
-		rerender( { options: { site_intent: 'some-site-intent' } } as SiteDetails );
+		rerender( { options: { site_intent: 'some-site-intent' } } as LaunchpadSiteDetails );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_launchpad_tasklist_viewed',
