@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FeedbackInput from '../feedback-input';
 
@@ -281,11 +281,28 @@ describe( 'FeedbackInput', () => {
 	} );
 
 	describe( 'dialog behavior', () => {
-		it( 'renders as a modal dialog', () => {
+		it( 'renders as a dialog that is not modal to the page', () => {
 			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
 
 			const dialog = screen.getByRole( 'dialog', { name: /send feedback/i } );
-			expect( dialog ).toHaveAttribute( 'aria-modal', 'true' );
+			expect( dialog ).not.toHaveAttribute( 'aria-modal' );
+		} );
+
+		it( 'makes the rest of the chat inert while open and restores it on close', () => {
+			const { unmount } = render(
+				<div>
+					<button>Chat control</button>
+					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			const chatControl = screen.getByRole( 'button', { name: /chat control/i, hidden: true } );
+			expect( chatControl ).toHaveAttribute( 'inert' );
+			expect( screen.getByRole( 'dialog' ) ).not.toHaveAttribute( 'inert' );
+
+			unmount();
+
+			expect( chatControl ).not.toHaveAttribute( 'inert' );
 		} );
 
 		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
@@ -311,18 +328,70 @@ describe( 'FeedbackInput', () => {
 			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'keeps Tab inside the dialog', async () => {
+		it( 'ignores Escape and backdrop clicks while a submission is in flight', async () => {
 			const user = userEvent.setup();
+			let resolveSubmit: () => void = () => {};
+			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
+			const { container } = render(
+				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			await user.keyboard( '{Escape}' );
+			await user.click( container.querySelector( '.agents-manager-feedback-overlay' )! );
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+
+			resolveSubmit();
+			await waitFor( () => {
+				expect( screen.getByRole( 'status' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'moves focus to the dialog while no control inside can take it', async () => {
+			const user = userEvent.setup();
+			mockOnSubmit.mockReturnValue( new Promise< void >( () => {} ) );
 			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
 
 			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
-			const submitButton = screen.getByRole( 'button', { name: /^submit$/i } );
-			submitButton.focus();
-			await user.tab();
-			expect( screen.getByRole( 'textbox' ) ).toHaveFocus();
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
 
-			await user.tab( { shift: true } );
-			expect( submitButton ).toHaveFocus();
+			expect( screen.getByRole( 'dialog' ) ).toHaveFocus();
+		} );
+
+		it( 'does not schedule a close after unmounting mid-submission', async () => {
+			const user = userEvent.setup();
+			let resolveSubmit: () => void = () => {};
+			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
+			const { unmount } = render(
+				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			unmount();
+			jest.useFakeTimers();
+			resolveSubmit();
+			await Promise.resolve();
+			jest.advanceTimersByTime( 3000 );
+			jest.useRealTimers();
+
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps pointer presses from bubbling to the draggable chat', () => {
+			const onPointerDown = jest.fn();
+			render(
+				<div onPointerDown={ onPointerDown }>
+					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			fireEvent.pointerDown( screen.getByRole( 'textbox' ) );
+
+			expect( onPointerDown ).not.toHaveBeenCalled();
 		} );
 
 		it( 'returns focus to the element that opened it when closed', () => {

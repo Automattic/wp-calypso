@@ -2,7 +2,9 @@
  * Feedback Input Component
  * Lets users submit text feedback after a thumbs down. Opens as a dialog over
  * the chat so it reads as a step of the rating just taken, wherever the rated
- * reply sits in the transcript.
+ * reply sits in the transcript. The dialog is modal to the chat card only: its
+ * siblings (header, transcript, footer) are made inert while it is open, the
+ * rest of the page stays interactive.
  */
 import { Button, Spinner, TextareaControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
@@ -14,34 +16,48 @@ interface Props {
 	onCancel: () => void;
 }
 
-const FOCUSABLE = 'textarea, button:not([disabled])';
-
 export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	const [ feedbackText, setFeedbackText ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ submitSuccess, setSubmitSuccess ] = useState( false );
 	const [ submitError, setSubmitError ] = useState< string | null >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const overlayRef = useRef< HTMLDivElement | null >( null );
 	const dialogRef = useRef< HTMLDivElement | null >( null );
-	// The element that opened the dialog (the thumbs-down button) gets focus back on close.
-	const openerRef = useRef< Element | null >( null );
+	const isMountedRef = useRef( true );
 
 	useEffect( () => {
-		openerRef.current = document.activeElement;
+		// Like `useFocusReturn`: whatever had focus when the dialog opened (the
+		// thumbs-down button for keyboard users) gets it back on close.
+		const opener = document.activeElement;
+		const overlay = overlayRef.current;
+		const siblings = Array.from( overlay?.parentElement?.children ?? [] ).filter(
+			( element ) => element !== overlay
+		);
+		siblings.forEach( ( element ) => element.setAttribute( 'inert', '' ) );
 		dialogRef.current?.querySelector( 'textarea' )?.focus();
 
 		return () => {
+			isMountedRef.current = false;
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
 			}
-
-			const opener = openerRef.current;
-
+			siblings.forEach( ( element ) => element.removeAttribute( 'inert' ) );
 			if ( opener instanceof HTMLElement && opener.isConnected ) {
 				opener.focus( { preventScroll: true } );
 			}
 		};
 	}, [] );
+
+	// While submitting, and once the form gives way to the status message, no
+	// control inside the dialog can hold focus; the dialog itself takes it so
+	// keyboard events keep reaching it.
+	const hasNoControls = isSubmitting || submitSuccess || Boolean( submitError );
+	useEffect( () => {
+		if ( hasNoControls ) {
+			dialogRef.current?.focus();
+		}
+	}, [ hasNoControls ] );
 
 	const handleSubmit = async () => {
 		if ( ! feedbackText.trim() ) {
@@ -52,6 +68,9 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 
 		try {
 			await onSubmit( feedbackText.trim() );
+			if ( ! isMountedRef.current ) {
+				return;
+			}
 			setFeedbackText( '' );
 			setSubmitSuccess( true );
 
@@ -61,13 +80,25 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( '[FeedbackInput] Error submitting feedback:', error );
+			if ( ! isMountedRef.current ) {
+				return;
+			}
 			setSubmitError( __( 'Failed to submit feedback. Please try again.', __i18n_text_domain__ ) );
 
 			timeoutRef.current = setTimeout( () => {
 				onCancel();
 			}, 2000 );
 		} finally {
-			setIsSubmitting( false );
+			if ( isMountedRef.current ) {
+				setIsSubmitting( false );
+			}
+		}
+	};
+
+	// Dismissal follows the disabled Cancel button: none while a submission is in flight.
+	const dismiss = () => {
+		if ( ! isSubmitting ) {
+			onCancel();
 		}
 	};
 
@@ -78,40 +109,23 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 		}
 	};
 
-	// Escape closes from anywhere in the dialog; Tab cycles inside it.
 	const handleDialogKeyDown = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Escape' ) {
 			event.preventDefault();
-			onCancel();
-			return;
-		}
-
-		if ( event.key !== 'Tab' || ! dialogRef.current ) {
-			return;
-		}
-
-		const focusable = Array.from( dialogRef.current.querySelectorAll< HTMLElement >( FOCUSABLE ) );
-
-		if ( focusable.length === 0 ) {
-			return;
-		}
-
-		const first = focusable[ 0 ];
-		const last = focusable[ focusable.length - 1 ];
-
-		if ( event.shiftKey && document.activeElement === first ) {
-			event.preventDefault();
-			last.focus();
-		} else if ( ! event.shiftKey && document.activeElement === last ) {
-			event.preventDefault();
-			first.focus();
+			dismiss();
 		}
 	};
 
 	const handleBackdropClick = ( event: React.MouseEvent ) => {
 		if ( event.target === event.currentTarget ) {
-			onCancel();
+			dismiss();
 		}
+	};
+
+	// The floating chat starts a drag on any pointerdown outside its
+	// non-draggable slots; the dialog is not one of them.
+	const handlePointerDown = ( event: React.PointerEvent ) => {
+		event.stopPropagation();
 	};
 
 	const renderContent = () => {
@@ -156,7 +170,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 					>
 						{ isSubmitting && <Spinner className="agents-manager-feedback-input__spinner" /> }
 						{ isSubmitting
-							? __( 'Submitting\u2026', __i18n_text_domain__ )
+							? __( 'Submitting…', __i18n_text_domain__ )
 							: __( 'Submit', __i18n_text_domain__ ) }
 					</Button>
 				</div>
@@ -167,15 +181,20 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	return (
 		// The backdrop is a click target for dismissal, not a control; the dialog inside is the focus surface.
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-		<div className="agents-manager-feedback-overlay" onClick={ handleBackdropClick }>
-			{ /* Escape and Tab are handled on the dialog itself, as the dialog pattern expects. */ }
-			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */ }
+		<div
+			ref={ overlayRef }
+			className="agents-manager-feedback-overlay"
+			onClick={ handleBackdropClick }
+			onPointerDown={ handlePointerDown }
+		>
+			{ /* Escape is handled on the dialog itself, as the dialog pattern expects. */ }
+			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */ }
 			<div
 				ref={ dialogRef }
 				className="agents-manager-feedback-input"
 				role="dialog"
-				aria-modal="true"
 				aria-label={ __( 'Send feedback', __i18n_text_domain__ ) }
+				tabIndex={ -1 }
 				onKeyDown={ handleDialogKeyDown }
 			>
 				<div className="agents-manager-feedback-input__inner">{ renderContent() }</div>
