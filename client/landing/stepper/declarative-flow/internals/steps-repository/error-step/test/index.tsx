@@ -67,12 +67,13 @@ describe( 'ErrorStep', () => {
 		} );
 	} );
 
-	it( 'does not bump or log when there is no site setup error', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( {} );
+	it( 'bumps the MC stat but does not log when there is no site setup error', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
 
 		render();
 
-		expect( bumpStat ).not.toHaveBeenCalled();
+		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
+		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_stepper_error_step', 'onboarding_en' );
 		expect( logToLogstash ).not.toHaveBeenCalled();
 	} );
 } );

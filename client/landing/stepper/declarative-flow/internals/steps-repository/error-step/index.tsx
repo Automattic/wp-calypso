@@ -30,12 +30,12 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 	}
 
 	useEffect( () => {
+		const localeBucket = 'en' === locale ? 'en' : 'non_en';
+		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
+
 		if ( ! error || ! message ) {
 			return;
 		}
-
-		const localeBucket = 'en' === locale ? 'en' : 'non_en';
-		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
 
 		logToLogstash( {
 			feature: 'calypso_client',
