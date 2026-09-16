@@ -5,8 +5,8 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	TERM_ANNUALLY,
 	getPlan,
 	getYearlyPlanByMonthly,
 	isFreePlan,
@@ -17,7 +17,6 @@ import {
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { usePlansFromTypes, usePlanTypesWithIntent } from '@automattic/plans-grid-next';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -78,13 +77,6 @@ const Home = () => {
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, site?.ID ) );
-	// The plans grid owns the tier order. Without a siteId it lists every tier and
-	// doesn't refetch the site plans this page already loads.
-	const upgradePlanTypes = usePlanTypesWithIntent( { intent: 'plans-upgrade' } );
-	const lowestPaidAnnualPlan = usePlansFromTypes( {
-		planTypes: upgradePlanTypes,
-		term: TERM_ANNUALLY,
-	} ).find( ( slug ) => ! isFreePlan( slug ) );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
@@ -407,7 +399,8 @@ const Home = () => {
 		const isMonthlyPlan = isPaidWpcomPlan && isMonthly( planSlug );
 		const isEligible = isPaidWpcomPlan && ! isMonthlyPlan;
 
-		const freePlanUpgradeSlug = planSlug === PLAN_FREE ? lowestPaidAnnualPlan : undefined;
+		// Personal is the cheapest annual plan that qualifies for referral credits.
+		const freePlanUpgradeSlug = planSlug === PLAN_FREE ? PLAN_PERSONAL : '';
 		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : freePlanUpgradeSlug;
 
 		const cta: CtaButton = isEligible

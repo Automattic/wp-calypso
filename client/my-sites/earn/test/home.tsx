@@ -95,7 +95,7 @@ describe( 'Earn home', () => {
 
 	// `free_plan` counts as monthly, so its "annual equivalent" is itself: without
 	// this, the CTA sends free sites to checkout for an unbuyable product.
-	it( 'sends a free site to checkout for the cheapest annual plan', async () => {
+	it( 'sends a free site to checkout for Personal', async () => {
 		renderHome( 'free_plan' );
 
 		await userEvent.click( referAFriendUpgradeButton() );
