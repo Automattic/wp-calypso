@@ -27,6 +27,7 @@ interface Props {
 	receiptId?: number;
 	source?: string;
 	jetpackTemporarySiteId?: number;
+	siteId?: number;
 	fromSiteSlug?: string;
 	redirectTo?: string;
 }
@@ -55,6 +56,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	receiptId = 0,
 	source = 'onboarding-calypso-ui',
 	jetpackTemporarySiteId = 0,
+	siteId,
 	fromSiteSlug,
 	redirectTo,
 } ) => {
@@ -71,15 +73,28 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
+	const siteMatchingSiteIdProp = useMemo(
+		() =>
+			siteId
+				? jetpackSites.find(
+						( site ) => site.is_wpcom_atomic === false && site.ID === Number( siteId )
+				  )
+				: undefined,
+		[ jetpackSites, siteId ]
+	);
+	// The `siteId` query arg usually holds the temporary siteless blog. When it matches one of the
+	// user's own Jetpack sites it is the destination instead, so it must not be sent as the source.
+	const temporarySiteId = siteMatchingSiteIdProp ? 0 : jetpackTemporarySiteId;
+
 	const supportTicketRequestStatus = useSelector( ( state ) =>
 		getSupportTicketRequestStatus( state, receiptId )
 	);
 
 	const destinationSiteId = useSelector( ( state ) =>
-		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
+		getJetpackCheckoutSupportTicketDestinationSiteId( state, temporarySiteId )
 	);
 	const incompatibleProductIds = useSelector( ( state ) =>
-		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
+		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, temporarySiteId )
 	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
@@ -87,13 +102,13 @@ const LicensingActivationThankYou: FC< Props > = ( {
 
 	const initialSelectedSite = useMemo( () => {
 		if ( ! fromSiteSlug ) {
-			return '';
+			return siteMatchingSiteIdProp?.URL || '';
 		}
 		const validSiteThatMatchesFromSiteSlugProp = ( site: JetpackSite ) =>
 			site.is_wpcom_atomic === false && site.slug === fromSiteSlug;
 
 		return jetpackSites.find( validSiteThatMatchesFromSiteSlugProp )?.URL || '';
-	}, [ jetpackSites, fromSiteSlug ] );
+	}, [ jetpackSites, fromSiteSlug, siteMatchingSiteIdProp ] );
 
 	useEffect( () => {
 		setSelectedSite( initialSelectedSite );
@@ -104,11 +119,11 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			{
 				receiptId,
 				source,
-				jetpackTemporarySiteId,
+				jetpackTemporarySiteId: temporarySiteId,
 			},
 			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
 		);
-	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
+	}, [ temporarySiteId, productSlug, source, receiptId ] );
 
 	const handleAutoActivate = useCallback(
 		( siteUrl: string ) => {
@@ -123,15 +138,10 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			// Update the support ticket with the submitted site URL(selectedSite) and attempt to
 			// transfer the temporary-site subscription to the user's selectedSite.
 			dispatch(
-				requestUpdateJetpackCheckoutSupportTicket(
-					siteUrl,
-					receiptId,
-					source,
-					jetpackTemporarySiteId
-				)
+				requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId, source, temporarySiteId )
 			);
 		},
-		[ dispatch, jetpackTemporarySiteId, productSlug, receiptId, source ]
+		[ dispatch, temporarySiteId, productSlug, receiptId, source ]
 	);
 
 	const onContinue = useCallback(
@@ -152,11 +162,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	// re-enter this effect and dispatch repeatedly.
 	const autoActivateAttemptedRef = useRef( false );
 	useEffect( () => {
-		if (
-			! autoActivateAttemptedRef.current &&
-			fromSiteSlug &&
-			initialSelectedSite.includes( fromSiteSlug )
-		) {
+		if ( ! autoActivateAttemptedRef.current && fromSiteSlug && initialSelectedSite ) {
 			autoActivateAttemptedRef.current = true;
 			handleAutoActivate( initialSelectedSite );
 		}

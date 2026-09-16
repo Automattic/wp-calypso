@@ -132,7 +132,7 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 	// Prevent auto-activation if it will fail at the initial attempt.
 	const [ attemptAutoActivate, setAttemptAutoActivate ] = useState( true );
 	useEffect( () => {
-		if ( attemptAutoActivate && fromSiteSlug && initialSelectedSite.includes( fromSiteSlug ) ) {
+		if ( attemptAutoActivate && fromSiteSlug && initialSelectedSite ) {
 			setAttemptAutoActivate( false );
 			handleAutoActivate( initialSelectedSite );
 		}
