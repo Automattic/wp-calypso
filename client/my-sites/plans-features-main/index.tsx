@@ -3,6 +3,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	setDelayedDowngradeMutation,
+	sitePlanChangeFeaturesQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -97,6 +98,7 @@ import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
+import FeatureLossConfirmationModal from './components/feature-loss-confirmation-modal';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
@@ -110,6 +112,7 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
 	PlansIntent,
 	DataResponse,
@@ -274,6 +277,17 @@ const PlansFeaturesMain = ( {
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
 		null
 	);
+	/*
+	 * An upgrade waiting for the user to acknowledge that it removes a feature their site uses. The
+	 * click that opened the modal is parked on `resolveFeatureLoss`: calling it with false lets the
+	 * purchase continue, true abandons it. See the feature-loss branch in showModalAndExit().
+	 */
+	const [ pendingFeatureLossUpgrade, setPendingFeatureLossUpgrade ] = useState< {
+		planSlug: PlanSlug;
+		lost: PlanChangeLostFeature[];
+		gained: string[];
+	} | null >( null );
+	const resolveFeatureLoss = useRef< ( ( abandoned: boolean ) => void ) | null >( null );
 	// TODO: Remove temporary eslint disable
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -783,7 +797,45 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
+		/*
+		 * A site still on the pre-2026 feature gating holds the union of the old and new feature sets
+		 * and graduates when it changes plan, so an upgrade can take a feature away. Warn first, and
+		 * only when the site actually uses one of them -- `needs_warning` is the server's verdict on
+		 * that, and is false for the overwhelming majority of upgrades.
+		 *
+		 * Deliberately after resolveModal: that modal can move the user to a different plan, which
+		 * would make this warning about a plan they never buy.
+		 */
+		if ( siteId && ! isInSignup ) {
+			try {
+				const planChange = await queryClient.ensureQueryData(
+					sitePlanChangeFeaturesQuery( siteId, planSlug )
+				);
+
+				if ( planChange.needs_warning ) {
+					setPendingFeatureLossUpgrade( {
+						planSlug,
+						lost: planChange.lost,
+						gained: planChange.gained,
+					} );
+
+					// Park the click until the modal answers, then continue or abandon accordingly.
+					return await new Promise< boolean >( ( resolve ) => {
+						resolveFeatureLoss.current = resolve;
+					} );
+				}
+			} catch {
+				// Never block a purchase because the check failed.
+			}
+		}
+
 		return false;
+	};
+
+	const closeFeatureLossModal = ( abandoned: boolean ) => {
+		resolveFeatureLoss.current?.( abandoned );
+		resolveFeatureLoss.current = null;
+		setPendingFeatureLossUpgrade( null );
 	};
 
 	const isUpgradeOrDowngradeFlow =
@@ -1414,6 +1466,18 @@ const PlansFeaturesMain = ( {
 						const cartItems = cartItemForPlan ? [ cartItemForPlan ] : null;
 						onUpgradeClick?.( cartItems );
 					} }
+				/>
+				<FeatureLossConfirmationModal
+					isOpen={ !! pendingFeatureLossUpgrade }
+					targetPlanName={
+						( pendingFeatureLossUpgrade &&
+							getPlan( pendingFeatureLossUpgrade.planSlug )?.getTitle() ) ||
+						''
+					}
+					lostFeatures={ pendingFeatureLossUpgrade?.lost ?? [] }
+					gainedFeatures={ pendingFeatureLossUpgrade?.gained ?? [] }
+					onClose={ () => closeFeatureLossModal( true ) }
+					onConfirm={ () => closeFeatureLossModal( false ) }
 				/>
 				<DowngradeConfirmationModal
 					isOpen={ !! pendingDowngradePlanSlug }

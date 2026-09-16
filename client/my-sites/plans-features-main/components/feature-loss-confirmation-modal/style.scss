@@ -1,0 +1,42 @@
+.feature-loss-confirmation-modal {
+	max-width: 480px;
+
+	&__loading {
+		display: flex;
+		justify-content: center;
+		padding: 24px 0;
+	}
+
+	&__description {
+		color: var(--color-text-subtle);
+		margin-bottom: 8px;
+	}
+
+	&__feature-list {
+		list-style: none;
+		margin: 0 0 16px;
+	}
+
+	&__feature-item {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+		margin-bottom: 4px;
+
+		.gridicon {
+			fill: var(--color-error);
+			flex-shrink: 0;
+		}
+
+		&.is-gained .gridicon {
+			fill: var(--color-success);
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+		margin-top: 24px;
+	}
+}
