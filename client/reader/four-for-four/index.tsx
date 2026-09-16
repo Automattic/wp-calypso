@@ -8,103 +8,70 @@ import {
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import EmptyContent from 'calypso/components/empty-content';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useFourForFour } from 'calypso/reader/data/four-for-four';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_FOUR_FOR_FOUR } from 'calypso/reader/follow-sources';
-import Stream from 'calypso/reader/stream';
+import { TypedStream } from 'calypso/reader/stream/typed';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import {
 	FOUR_FOR_FOUR_FOLLOW_API_SOURCE,
 	FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS,
 	FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX,
 } from './constants';
-import type { ReadFourForFourCandidateResponse } from '@automattic/api-core';
 
 import './style.scss';
-
-interface StreamProps {
-	streamKey: string;
-	className?: string;
-	followSource?: string;
-	useCompactCards?: boolean;
-	showBylineSecondarySiteLink?: boolean;
-	trackScrollPage?: typeof trackScrollPage;
-}
-
-const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
-
-// The list item and follow button read the Reader site shape; map the
-// candidate onto the fields they use so neither has to refetch the site.
-function toReaderSite( candidate: ReadFourForFourCandidateResponse ) {
-	return {
-		ID: candidate.blog_id,
-		feed_ID: candidate.feed_id,
-		title: candidate.name,
-		name: candidate.name,
-		URL: candidate.url,
-		feed_URL: candidate.feed_url,
-		description: candidate.description ?? '',
-		icon: candidate.icon ? { img: candidate.icon } : undefined,
-	};
-}
-
-function getStreamKey( candidate: ReadFourForFourCandidateResponse ) {
-	return candidate.feed_id ? `feed:${ candidate.feed_id }` : `site:${ candidate.blog_id }`;
-}
 
 export function FourForFour() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const recordTracksRef = useRef( recordReaderTracksEvent );
+	recordTracksRef.current = recordReaderTracksEvent;
+
 	const {
 		candidates,
 		isLoadingCandidates,
 		isCandidatesError,
 		refetchCandidates,
 		status,
-		progressCount,
-		isComplete,
-	} = useFourForFour();
+		followedCount,
+		recordFollow,
+	} = useFourForFour( {
+		onComplete: () => recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }completed` ),
+	} );
 
 	const [ selectedBlogId, setSelectedBlogId ] = useState< number | null >( null );
 	const selectedCandidate =
-		candidates.find( ( candidate ) => candidate.blog_id === selectedBlogId ) ?? candidates[ 0 ];
+		candidates.find( ( candidate ) => candidate.blogId === selectedBlogId ) ?? candidates[ 0 ];
 
+	// Reset the preview scroll and record the preview whenever the selection
+	// changes, including the initial default selection.
 	const previewRef = useRef< HTMLDivElement | null >( null );
-
-	const handleItemClick = useCallback(
-		( candidate: ReadFourForFourCandidateResponse ) => {
-			if ( candidate.blog_id !== selectedCandidate?.blog_id ) {
-				if ( previewRef.current ) {
-					previewRef.current.scrollTop = 0;
-				}
-				recordReaderTracksEvent( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }site_previewed`, {
-					blog_id: candidate.blog_id,
-					is_participant: candidate.is_participant ? 1 : 0,
-				} );
-			}
-			setSelectedBlogId( candidate.blog_id );
-		},
-		[ recordReaderTracksEvent, selectedCandidate?.blog_id ]
-	);
-
-	// Fire the completion event once, on the transition into `completed`
-	// during this visit; a user who arrives already complete gets no event.
-	const previousStatusRef = useRef( status );
 	useEffect( () => {
-		if (
-			status === 'completed' &&
-			previousStatusRef.current &&
-			previousStatusRef.current !== 'completed'
-		) {
-			recordReaderTracksEvent( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }completed` );
+		if ( ! selectedCandidate ) {
+			return;
 		}
-		previousStatusRef.current = status;
-	}, [ status, recordReaderTracksEvent ] );
+		if ( previewRef.current ) {
+			previewRef.current.scrollTop = 0;
+		}
+		recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }site_previewed`, {
+			blog_id: selectedCandidate.blogId,
+			is_participant: selectedCandidate.isParticipant ? 1 : 0,
+		} );
+	}, [ selectedCandidate?.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
 
+	const handleFollowToggle = ( blogId: number, isFollowing: boolean ) => {
+		if ( isFollowing ) {
+			recordFollow( blogId );
+		}
+	};
+
+	const isComplete = status === 'completed';
+	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
 	const progressLabel = String(
 		translate( '%(count)d of %(total)d subscribed', {
 			args: { count: progressCount, total: FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS },
@@ -169,12 +136,12 @@ export function FourForFour() {
 						</div>
 					) }
 					{ isCandidatesError && (
-						<VStack className="four-for-four__empty" spacing={ 3 } alignment="center">
-							<p>{ translate( "We couldn't load sites right now." ) }</p>
-							<Button variant="secondary" onClick={ () => refetchCandidates() }>
-								{ translate( 'Try again' ) }
-							</Button>
-						</VStack>
+						<EmptyContent
+							isCompact
+							title={ translate( "We couldn't load sites right now." ) }
+							action={ translate( 'Try again' ) }
+							actionCallback={ () => refetchCandidates() }
+						/>
 					) }
 					{ ! isLoadingCandidates && ! isCandidatesError && candidates.length === 0 && (
 						<p className="four-for-four__empty">
@@ -185,19 +152,22 @@ export function FourForFour() {
 						<div className="four-for-four__recommended-sites">
 							{ candidates.map( ( candidate ) => (
 								<ConnectedReaderSubscriptionListItem
-									key={ candidate.blog_id }
-									feedId={ candidate.feed_id || undefined }
-									siteId={ candidate.blog_id }
-									site={ toReaderSite( candidate ) }
-									url={ candidate.feed_url || candidate.url }
+									key={ candidate.blogId }
+									feedId={ candidate.feedId || undefined }
+									siteId={ candidate.blogId }
+									site={ candidate.site }
+									url={ candidate.feedUrl || candidate.url }
 									showLastUpdatedDate={ false }
 									showNotificationSettings={ false }
 									showFollowedOnDate={ false }
 									followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
 									followSource={ READER_FOUR_FOR_FOUR }
 									replaceStreamClickWithItemClick
-									onItemClick={ () => handleItemClick( candidate ) }
-									isSelected={ selectedCandidate?.blog_id === candidate.blog_id }
+									onItemClick={ () => setSelectedBlogId( candidate.blogId ) }
+									onFollowToggle={ ( isFollowing: boolean ) =>
+										handleFollowToggle( candidate.blogId, isFollowing )
+									}
+									isSelected={ selectedCandidate?.blogId === candidate.blogId }
 								/>
 							) ) }
 						</div>
@@ -214,13 +184,16 @@ export function FourForFour() {
 									</span>
 								</HStack>
 								<ReaderFollowButton
-									key={ selectedCandidate.blog_id }
-									siteUrl={ selectedCandidate.feed_url || selectedCandidate.url }
-									feedId={ selectedCandidate.feed_id || undefined }
-									siteId={ selectedCandidate.blog_id }
+									key={ selectedCandidate.blogId }
+									siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
+									feedId={ selectedCandidate.feedId || undefined }
+									siteId={ selectedCandidate.blogId }
 									followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
 									followSource={ READER_FOUR_FOR_FOUR }
 									hasButtonStyle
+									onFollowToggle={ ( isFollowing: boolean ) =>
+										handleFollowToggle( selectedCandidate.blogId, isFollowing )
+									}
 									followIcon={ <></> }
 									followingIcon={
 										<Icon
@@ -235,7 +208,7 @@ export function FourForFour() {
 							<div className="four-for-four__preview-stream-container" ref={ previewRef }>
 								<div className="four-for-four__preview-stream-inner" inert>
 									<TypedStream
-										streamKey={ getStreamKey( selectedCandidate ) }
+										streamKey={ selectedCandidate.streamKey }
 										className="is-site-stream four-for-four__preview-stream no-padding"
 										followSource={ READER_FOUR_FOR_FOUR }
 										useCompactCards

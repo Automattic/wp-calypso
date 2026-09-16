@@ -8,19 +8,39 @@ export interface ReadFourForFourCandidateResponse {
 	feed_url: string;
 	description?: string;
 	icon?: string | null;
-	subscribers_count: number;
-	program_follows_count: number;
 	is_participant: boolean;
-	first_post?: {
-		id: number;
-		title: string;
-		url: string;
-		date: string;
-	};
 }
 
 export interface ReadFourForFourCandidatesResponse {
 	candidates: ReadFourForFourCandidateResponse[];
+}
+
+/**
+ * The subset of the Reader site shape that `ReaderSubscriptionListItem` and
+ * the follow button read, filled from the candidate payload so the list can
+ * render without a per-site request.
+ */
+export interface ReadFourForFourCandidateSite {
+	ID: number;
+	feed_ID: number;
+	title: string;
+	name: string;
+	URL: string;
+	feed_URL: string;
+	description: string;
+	icon?: { img: string };
+}
+
+export interface ReadFourForFourCandidate {
+	blogId: number;
+	feedId: number;
+	name: string;
+	url: string;
+	feedUrl: string;
+	icon: string | null;
+	isParticipant: boolean;
+	streamKey: string;
+	site: ReadFourForFourCandidateSite;
 }
 
 export interface ReadFourForFourStatusResponse {

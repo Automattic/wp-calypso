@@ -13,27 +13,40 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
-jest.mock( 'calypso/reader/stream', () => ( {
-	__esModule: true,
-	default: ( { streamKey }: { streamKey: string } ) => (
+jest.mock( 'calypso/reader/stream/typed', () => ( {
+	TypedStream: ( { streamKey }: { streamKey: string } ) => (
 		<div data-testid="preview-stream">{ streamKey }</div>
 	),
 } ) );
 
+// Render the list item as two buttons: one that selects the site and one that
+// reports a follow, so tests can drive both callbacks without the real
+// Redux-connected item.
 jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
 	__esModule: true,
 	default: ( {
 		siteId,
 		site,
 		onItemClick,
+		onFollowToggle,
 	}: {
 		siteId: number;
 		site: { title: string };
 		onItemClick: () => void;
+		onFollowToggle: ( isFollowing: boolean ) => void;
 	} ) => (
-		<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
-			{ site.title }
-		</button>
+		<div>
+			<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
+				{ site.title }
+			</button>
+			<button
+				type="button"
+				data-testid={ `follow-${ siteId }` }
+				onClick={ () => onFollowToggle( true ) }
+			>
+				Subscribe
+			</button>
+		</div>
 	),
 } ) );
 
@@ -60,29 +73,8 @@ const candidate = ( blogId: number, name: string, isParticipant = false ) => ( {
 	feed_url: `https://site${ blogId }.wordpress.com/feed/`,
 	description: '',
 	icon: null,
-	subscribers_count: 1,
-	program_follows_count: isParticipant ? 4 : 0,
 	is_participant: isParticipant,
 } );
-
-function mockFollowing( blogIds: number[] ) {
-	nock( API )
-		.persist()
-		.get( '/rest/v1.2/read/following/mine' )
-		.query( true )
-		.reply( 200, {
-			number: blogIds.length,
-			page: 1,
-			total_subscriptions: blogIds.length,
-			subscriptions: blogIds.map( ( blogId ) => ( {
-				ID: blogId,
-				blog_ID: blogId,
-				feed_ID: blogId * 10,
-				URL: `https://site${ blogId }.wordpress.com`,
-				is_following: true,
-			} ) ),
-		} );
-}
 
 function mockCandidates( candidates: ReturnType< typeof candidate >[] ) {
 	nock( API ).get( '/wpcom/v2/read/four-for-four/candidates' ).reply( 200, { candidates } );
@@ -105,7 +97,6 @@ describe( 'FourForFour', () => {
 	} );
 
 	it( 'lists candidates and previews the first one', async () => {
-		mockFollowing( [] );
 		mockStatus( 'opted_in' );
 		mockCandidates( [ candidate( 2, 'Second Site', true ), candidate( 3, 'Third Site' ) ] );
 
@@ -115,11 +106,14 @@ describe( 'FourForFour', () => {
 		expect( screen.getByTestId( 'list-item-3' ) ).toHaveTextContent( 'Third Site' );
 		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:20' );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			{ blog_id: 2, is_participant: 1 }
+		);
 	} );
 
 	it( 'previews the clicked site and records the preview event', async () => {
 		const user = userEvent.setup();
-		mockFollowing( [] );
 		mockStatus( 'opted_in' );
 		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
 
@@ -134,39 +128,33 @@ describe( 'FourForFour', () => {
 		);
 	} );
 
-	it( 'counts followed candidates as progress and records them', async () => {
-		mockFollowing( [ 2, 3 ] );
-		mockStatus( 'opted_in', [ 4 ] );
-		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
-		const progress = nock( API )
-			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2, 3 ] } )
-			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 4, 2, 3 ] } );
+	it( 'shows server-recorded progress', async () => {
+		mockStatus( 'opted_in', [ 4, 5, 6 ] );
+		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
 		await waitFor( () =>
 			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '3' )
 		);
 		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the completed state and fires the completion event once', async () => {
-		mockFollowing( [ 2 ] );
+	it( 'records a follow, advances progress, and fires the completion event once', async () => {
+		const user = userEvent.setup();
 		mockStatus( 'opted_in', [ 3, 4, 5 ] );
 		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
-		nock( API )
+		const progress = nock( API )
 			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
 			.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
+		await user.click( await screen.findByTestId( 'follow-2' ) );
+
 		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
-		await waitFor( () =>
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_four_for_four_completed'
-			)
-		);
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
 		expect(
 			mockRecordReaderTracksEvent.mock.calls.filter(
 				( [ name ] ) => name === 'calypso_reader_four_for_four_completed'
@@ -175,7 +163,6 @@ describe( 'FourForFour', () => {
 	} );
 
 	it( 'does not fire the completion event for a user who arrives already complete', async () => {
-		mockFollowing( [] );
 		mockStatus( 'completed', [ 2, 3, 4, 5 ] );
 		mockCandidates( [] );
 
@@ -188,7 +175,6 @@ describe( 'FourForFour', () => {
 	} );
 
 	it( 'shows the empty state when there are no candidates', async () => {
-		mockFollowing( [] );
 		mockStatus( 'opted_in' );
 		mockCandidates( [] );
 

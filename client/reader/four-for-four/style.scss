@@ -177,5 +177,14 @@ $four-for-four-collapse: 699px;
 	// element hit-tests as `pointer-events: none`, which would stop scrolling.
 	&__preview-stream-inner {
 		pointer-events: none;
+
+		// The preview is read-only, so hide the per-card controls the stream
+		// would otherwise render.
+		.reader-post-actions,
+		.reader-post-options-menu__ellipsis-menu,
+		.reader-post-card__post-options,
+		.reader-update-notice {
+			display: none;
+		}
 	}
 }
