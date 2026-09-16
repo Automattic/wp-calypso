@@ -6,6 +6,8 @@ import {
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
@@ -17,6 +19,7 @@ import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
+	NamePulseSuggestionsQuery,
 } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -198,6 +201,12 @@ export interface DomainSearchContextType
 		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
 		bundleTriggers: ( query: string ) => ReturnType< typeof bundleTriggersQuery >;
 		bundleForDomain: ( fqdn: string ) => ReturnType< typeof bundleForDomainQuery >;
+		namePulseSuggestions: (
+			params: NamePulseSuggestionsQuery
+		) => ReturnType< typeof namePulseSuggestionsQuery >;
+		namePulseAvailability: (
+			domainNames: string[]
+		) => ReturnType< typeof namePulseAvailabilityQuery >;
 	};
 	config: DomainSearchConfig;
 }

@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useDebounce, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -22,12 +22,19 @@ const PLACEHOLDER_PHRASES = [
 	'discardedobject.art',
 ];
 
+const INSTANT_SEARCH_DEBOUNCE_MS = 300;
+
 export const SearchForm = () => {
 	const {
+		query,
 		setQuery,
+		config,
 		events: { onSubmitButtonClick },
 	} = useDomainSearch();
-	const [ localQuery, setLocalQuery ] = useState( '' );
+	const [ localQuery, setLocalQuery ] = useState( query );
+	// Name Pulse searches as you type; every other mode is submit-only.
+	const isInstantSearch = config.showNamePulseSearch;
+	const debouncedSetQuery = useDebounce( setQuery, INSTANT_SEARCH_DEBOUNCE_MS );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -36,11 +43,14 @@ export const SearchForm = () => {
 	// in an effect lands reliably after the commit phase.
 	const inputRef = useRef< HTMLInputElement >( null );
 	useEffect( () => {
-		inputRef.current?.focus();
+		const input = inputRef.current;
+		input?.focus();
+		input?.setSelectionRange( input.value.length, input.value.length );
 	}, [] );
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		debouncedSetQuery.cancel();
 		setQuery( localQuery );
 
 		if ( localQuery === '' ) {
@@ -51,7 +61,20 @@ export const SearchForm = () => {
 	const inputProps = {
 		ref: inputRef,
 		value: localQuery,
-		onChange: ( value: string ) => setLocalQuery( value.trim() ),
+		onChange: ( value: string ) => {
+			if ( ! isInstantSearch ) {
+				setLocalQuery( value.trim() );
+				return;
+			}
+
+			// Keep the raw value so a trailing space can start the next word.
+			setLocalQuery( value );
+			if ( value.trim() ) {
+				debouncedSetQuery( value.trim() );
+			} else {
+				debouncedSetQuery.cancel();
+			}
+		},
 		onReset: () => setLocalQuery( '' ),
 		placeholder,
 	};

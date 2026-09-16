@@ -6,6 +6,8 @@ import {
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
@@ -53,6 +55,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		bundleSuggestion: ( query: string ) => bundleSuggestionQuery( query ),
 		bundleTriggers: ( query: string ) => bundleTriggersQuery( query ),
 		bundleForDomain: ( fqdn: string ) => bundleForDomainQuery( fqdn ),
+		namePulseSuggestions: ( params ) => namePulseSuggestionsQuery( params ),
+		namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
 	},
 	cart: {
 		items: [],
@@ -204,6 +208,18 @@ export const useDomainSearchContextValue = ( {
 					} ),
 					enabled: false,
 					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseSuggestions: ( params ) => ( {
+					...namePulseSuggestionsQuery( params ),
+					enabled: false,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseAvailability: ( domainNames ) => ( {
+					...namePulseAvailabilityQuery( domainNames ),
+					enabled: false,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),

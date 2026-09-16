@@ -1,1 +1,1 @@
-export { NamePulseSearch } from './components/name-pulse-search';
+export { NamePulseResults } from './name-pulse-results';
