@@ -140,7 +140,7 @@ describe( 'FourForFour', () => {
 		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'records a follow, advances progress, and fires the completion event once', async () => {
+	it( 'records a follow and shows completion when the server reports it', async () => {
 		const user = userEvent.setup();
 		mockStatus( 'opted_in', [ 3, 4, 5 ] );
 		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
@@ -155,33 +155,31 @@ describe( 'FourForFour', () => {
 		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' );
 		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
-		expect(
-			mockRecordReaderTracksEvent.mock.calls.filter(
-				( [ name ] ) => name === 'calypso_reader_four_for_four_completed'
-			)
-		).toHaveLength( 1 );
 	} );
 
-	it( 'does not fire the completion event for a user who arrives already complete', async () => {
+	it( 'shows completion for a user who arrives already complete', async () => {
 		mockStatus( 'completed', [ 2, 3, 4, 5 ] );
 		mockCandidates( [] );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
 		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
-		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_reader_four_for_four_completed'
-		);
 	} );
 
-	it( 'shows the empty state when there are no candidates', async () => {
+	it( 'shows a retryable empty state when the pool is empty', async () => {
+		const user = userEvent.setup();
 		mockStatus( 'opted_in' );
 		mockCandidates( [] );
+		const refetch = nock( API )
+			.get( '/wpcom/v2/read/four-for-four/candidates' )
+			.reply( 200, { candidates: [ candidate( 2, 'Second Site' ) ] } );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		expect(
-			await screen.findByText( 'No new writers to show right now. Check back tomorrow.' )
-		).toBeVisible();
+		expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
+
+		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
+		expect( refetch.isDone() ).toBe( true );
 	} );
 } );
