@@ -169,8 +169,10 @@ function sanitizeGalleryAttribute( node ) {
 	} catch ( error ) {
 		debug( 'discarding unusable slideshow gallery data', error );
 		node.removeAttribute( 'data-gallery' );
-		// Left to JetpackSlideshow, an empty gallery becomes a spinner it never clears.
-		node.dataset.processed = 'true';
+		// Left to JetpackSlideshow, an empty gallery becomes a spinner it never clears. Set through
+		// the attribute rather than `dataset`, which only elements in the HTML and SVG namespaces
+		// have -- a `<math class="jetpack-slideshow">` would throw here and abort the whole sweep.
+		node.setAttribute( 'data-processed', 'true' );
 	}
 }
 

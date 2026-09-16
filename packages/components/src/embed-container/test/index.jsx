@@ -572,6 +572,25 @@ describe( 'EmbedContainer', () => {
 			expect( document.querySelector( '.jetpack-slideshow' ).dataset.processed ).toBe( 'true' );
 		} );
 
+		it( 'keeps sweeping when unusable gallery data sits on a foreign-namespace element', async () => {
+			// `dataset` only exists on HTML and SVG elements, so marking this one as processed
+			// through it would throw and leave everything after it unsanitized.
+			renderContent(
+				'<math class="jetpack-slideshow" data-gallery="{"></math>',
+				slideshowMarkup( [
+					{ src: 'https://example.com/1.jpg', caption: '<img src=x onerror=alert(1)>' },
+				] )
+			);
+			await waitFor( () => expect( galleriesAtInit ).not.toBeNull() );
+
+			expect( galleriesAtInit[ 0 ] ).toBeNull();
+			expect(
+				renderCaptionAsHtml( JSON.parse( galleriesAtInit[ 1 ] )[ 0 ].caption ).querySelector(
+					'img'
+				)
+			).toBeNull();
+		} );
+
 		it( 'neutralizes gallery data too deep for JSON.stringify to return', async () => {
 			// V8 parses JSON iteratively but serializes recursively, so a list nested a few thousand
 			// deep round-trips through the parser and would overflow the stack on the way out.
