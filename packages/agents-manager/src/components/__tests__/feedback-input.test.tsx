@@ -280,6 +280,68 @@ describe( 'FeedbackInput', () => {
 		} );
 	} );
 
+	describe( 'dialog behavior', () => {
+		it( 'renders as a modal dialog', () => {
+			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+
+			const dialog = screen.getByRole( 'dialog', { name: /send feedback/i } );
+			expect( dialog ).toHaveAttribute( 'aria-modal', 'true' );
+		} );
+
+		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
+			const user = userEvent.setup();
+			const { container } = render(
+				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.click( screen.getByRole( 'dialog' ) );
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+
+			await user.click( container.querySelector( '.agents-manager-feedback-overlay' )! );
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'calls onCancel when Escape is pressed outside the textarea', async () => {
+			const user = userEvent.setup();
+			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+
+			screen.getByRole( 'button', { name: /cancel/i } ).focus();
+			await user.keyboard( '{Escape}' );
+
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'keeps Tab inside the dialog', async () => {
+			const user = userEvent.setup();
+			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			const submitButton = screen.getByRole( 'button', { name: /^submit$/i } );
+			submitButton.focus();
+			await user.tab();
+			expect( screen.getByRole( 'textbox' ) ).toHaveFocus();
+
+			await user.tab( { shift: true } );
+			expect( submitButton ).toHaveFocus();
+		} );
+
+		it( 'returns focus to the element that opened it when closed', () => {
+			const opener = document.createElement( 'button' );
+			document.body.appendChild( opener );
+			opener.focus();
+
+			const { unmount } = render(
+				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+			expect( screen.getByRole( 'textbox' ) ).toHaveFocus();
+
+			unmount();
+
+			expect( opener ).toHaveFocus();
+			opener.remove();
+		} );
+	} );
+
 	describe( 'cleanup', () => {
 		it( 'clears timeout on unmount', () => {
 			jest.useFakeTimers();
