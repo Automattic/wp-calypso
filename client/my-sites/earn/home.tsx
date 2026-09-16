@@ -4,18 +4,19 @@ import {
 	GROUP_WPCOM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-	PLAN_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	TERM_ANNUALLY,
 	getPlan,
 	getYearlyPlanByMonthly,
+	isFreePlan,
 	isMonthly,
 	planMatches,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { usePlansFromTypes, usePlanTypesWithIntent } from '@automattic/plans-grid-next';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -76,6 +77,16 @@ const Home = () => {
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, site?.ID ) );
+	// The plans grid owns the tier order, so its first paid entry is the cheapest
+	// plan currently on offer.
+	const upgradePlanTypes = usePlanTypesWithIntent( {
+		intent: 'plans-upgrade',
+		siteId: site?.ID,
+	} );
+	const lowestPaidAnnualPlan = usePlansFromTypes( {
+		planTypes: upgradePlanTypes,
+		term: TERM_ANNUALLY,
+	} ).find( ( planSlug ) => ! isFreePlan( planSlug ) );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
@@ -393,15 +404,15 @@ const Home = () => {
 
 		// `free_plan` is a member of WPCOM_MONTHLY_PLANS, so isMonthly() reports it
 		// as monthly and getYearlyPlanByMonthly() hands `free_plan` straight back.
-		const isFreePlan = ! sitePlanSlug || sitePlanSlug === PLAN_FREE;
+		const isOnFreePlan = isFreePlan( sitePlanSlug ?? '' );
 		const isWpcomPlan = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } );
-		const isMonthlyPlan = isWpcomPlan && ! isFreePlan && isMonthly( sitePlanSlug ?? '' );
-		const isEligible = isWpcomPlan && ! isFreePlan && ! isMonthlyPlan;
+		const isMonthlyPlan = isWpcomPlan && ! isOnFreePlan && isMonthly( sitePlanSlug ?? '' );
+		const isEligible = isWpcomPlan && ! isOnFreePlan && ! isMonthlyPlan;
 
 		// A free site has no annual counterpart to upgrade to, so it starts at the
-		// cheapest paid plan that can qualify for referral credits.
+		// cheapest plan on offer instead.
 		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( sitePlanSlug ?? '' ) : '';
-		const upgradePlanSlug = isFreePlan ? PLAN_PERSONAL : annualPlanSlug;
+		const upgradePlanSlug = isOnFreePlan ? lowestPaidAnnualPlan : annualPlanSlug;
 
 		const cta: CtaButton = isEligible
 			? {
