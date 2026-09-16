@@ -53,9 +53,7 @@ export default function LayoutTour( { onDismiss }: { onDismiss: () => void } ) {
 			<div className="wpnc-app__layout-tour-body">
 				<h3 className="wpnc-app__layout-tour-title">{ __( 'Switch layouts' ) }</h3>
 				<p className="wpnc-app__layout-tour-text">
-					{ __(
-						'Choose between a detailed view of your notifications and a simplified one that leads with what happened.'
-					) }
+					{ __( 'Choose how much detail each row shows.' ) }
 				</p>
 				<Button variant="primary" size="compact" onClick={ onDismiss }>
 					{ __( 'Got it' ) }
