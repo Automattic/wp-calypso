@@ -4,7 +4,6 @@ import { cog, keyboard, settings } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
@@ -44,9 +43,6 @@ export default function NotePanelActions() {
 	// The dot reports the current layout rather than anything unread, the way DataViews
 	// marks a view that no longer matches its default.
 	const isSimplified = isViewSettingsEnabled && layoutStyle === 'simplified';
-	// Opening the menu clears the dot, so the label inside it reads from a snapshot taken
-	// at that moment — otherwise it would vanish before anyone could read it.
-	const [ showsWhatIsNew, setShowsWhatIsNew ] = useState( false );
 
 	const markSeen = () =>
 		savePreference( {
@@ -111,7 +107,6 @@ export default function NotePanelActions() {
 							return;
 						}
 						recordTracksEvent( 'calypso_notification_settings_menu_open' );
-						setShowsWhatIsNew( isNew );
 						if ( isNew ) {
 							markSeen();
 						}
@@ -133,11 +128,9 @@ export default function NotePanelActions() {
 						<Menu.Group>
 							<Menu.GroupLabel>
 								{ __( 'Layout' ) }
-								{ showsWhatIsNew && (
-									<Badge className="wpnc-app__new-badge" intent="informational">
-										{ __( 'New' ) }
-									</Badge>
-								) }
+								<Badge className="wpnc-app__new-badge" intent="informational">
+									{ __( 'New' ) }
+								</Badge>
 							</Menu.GroupLabel>
 							{ LAYOUTS.map( ( { value, label } ) => (
 								<Menu.RadioItem

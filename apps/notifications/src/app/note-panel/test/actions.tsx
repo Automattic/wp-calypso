@@ -65,22 +65,13 @@ describe( 'NotePanel settings menu', () => {
 		} );
 
 		expect( screen.queryByText( 'Switch layouts (New)' ) ).not.toBeInTheDocument();
-
-		// The tour and the label inside the menu answer the same question, so dismissing
-		// the tour settles it for both.
-		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
-		expect( screen.queryByText( 'New' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the New label the first time the menu is opened', async () => {
-		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
-		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
+	it( 'keeps the New label on the layout setting once the tour is gone', async () => {
+		const { store } = renderPanel( { isViewSettingsEnabled: true } );
+		store.dispatch( actions.ui.setViewSettingsSeen( true ) );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
-
-		await waitFor( () => {
-			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
-		} );
 
 		expect( screen.getByText( 'New' ) ).toBeVisible();
 	} );
