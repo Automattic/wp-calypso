@@ -7,7 +7,7 @@ import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getRawUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as isVipSite } from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -107,7 +107,7 @@ export function hasActivePluginSubscription(
 	state: IAppState,
 	variations?: PluginPeriodVariations
 ) {
-	const purchases = getUserPurchases( state );
+	const purchases = getRawUserPurchases( state );
 	const purchasedPlugin = getPluginPurchased( { variations }, purchases || [] );
 	const hasActiveSubscription = !! purchasedPlugin;
 
