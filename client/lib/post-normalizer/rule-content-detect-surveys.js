@@ -1,5 +1,8 @@
+import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { externalLinkParagraph } from './utils';
+
+const debug = debugFactory( 'calypso:post-normalizer:detect-surveys' );
 
 // Crowdsignal serves surveys from these hosts, and from per-account subdomains of them.
 const surveyHosts = [
@@ -26,7 +29,7 @@ function surveyUrl( domain, slug ) {
 	let url;
 	try {
 		url = new URL( 'https://' + domain + slug );
-	} catch ( e ) {
+	} catch {
 		return null;
 	}
 
@@ -59,7 +62,8 @@ export default function detectSurveys( post, dom ) {
 
 		try {
 			surveyDetails = JSON.parse( survey.getAttribute( 'data-settings' ) );
-		} catch ( e ) {
+		} catch ( error ) {
+			debug( 'unreadable survey settings; leaving the embed alone', error );
 			return;
 		}
 
@@ -74,6 +78,7 @@ export default function detectSurveys( post, dom ) {
 		// Leave the embed alone when the URL is not one we can vouch for. Its `div` form then
 		// renders as nothing, which beats linking somewhere arbitrary.
 		if ( ! href ) {
+			debug( 'not a Crowdsignal survey URL; leaving the embed alone', surveyDomain, surveySlug );
 			return;
 		}
 
