@@ -116,6 +116,7 @@
 		"reader/shelves": true,
 		"reader/discover-new-blogs": false,
 		"reader/full-errors": false,
+		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
 		"readymade-templates/showcase": false,

@@ -143,6 +143,7 @@
 		"reader/shelves": true,
 		"reader/discover-new-blogs": false,
 		"reader/full-errors": true,
+		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
 		"readymade-templates/showcase": true,
