@@ -1,3 +1,6 @@
+import { agencyProgramStatsQuery } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	CheckboxControl,
@@ -8,7 +11,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -16,6 +19,7 @@ import {
 	isDeniedNonUniqueDomain,
 	isAgencyUrlExists,
 } from 'calypso/a8c-for-agencies/components/form/utils';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import UserContactSupportModalForm from 'calypso/a8c-for-agencies/components/user-contact-support-modal-form';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -58,6 +62,15 @@ function useSignupContext(): SignupContext | null {
 	return context;
 }
 
+// Rounded down so the copy stays a stable "N,000+" instead of shifting on every refresh.
+function useAgencyCountLabel() {
+	const { data, isLoading } = useQuery( agencyProgramStatsQuery() );
+	const agencyCountLabel = data
+		? `${ formatNumber( Math.floor( data.active_agencies / 1000 ) * 1000 ) }+`
+		: null;
+	return { agencyCountLabel, isLoading };
+}
+
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
@@ -79,6 +92,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 	const user = useSelector( getCurrentUser );
 	const signupContext = useSignupContext();
+	const { agencyCountLabel, isLoading: isLoadingAgencyCount } = useAgencyCountLabel();
 	const showInternalFlags =
 		signupContext?.is_automattician === true || signupContext?.is_proxied === true;
 	const nonUniqueDomains = useMemo(
@@ -270,25 +284,37 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		</>
 	);
 
+	let description: ReactNode = null;
+	if ( agencyCountLabel ) {
+		description = preventWidows(
+			translate(
+				'Join %(agencyCount)s agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
+				{
+					args: {
+						agencyCount: agencyCountLabel,
+					},
+					components: {
+						span: <span className="signup-contact-form__a4a-span" />,
+					},
+				}
+			)
+		);
+	} else if ( isLoadingAgencyCount ) {
+		description = (
+			<>
+				<TextPlaceholder style={ { marginBlockEnd: '8px' } } />
+				<TextPlaceholder style={ { width: '60%' } } />
+			</>
+		);
+	}
+
 	return (
 		<Form
 			className="signup-contact-form"
 			title={ preventWidows(
 				translate( "Sign up and unlock the blueprint to grow your agency's business" )
 			) }
-			description={ preventWidows(
-				translate(
-					'Join %(agencyCount)s agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
-					{
-						args: {
-							agencyCount: '10,000+',
-						},
-						components: {
-							span: <span className="signup-contact-form__a4a-span" />,
-						},
-					}
-				)
-			) }
+			description={ description }
 		>
 			<div className="field-mandatory-message">
 				{ translate( 'Fields marked with * are required' ) }
