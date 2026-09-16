@@ -109,4 +109,84 @@ describe( 'LicensingThankYouAutoActivation', () => {
 			999
 		);
 	} );
+
+	describe( 'site search', () => {
+		beforeAll( () => {
+			// jsdom does not implement scrollIntoView, which ComboboxControl calls on its suggestions.
+			Element.prototype.scrollIntoView = jest.fn();
+		} );
+
+		beforeEach( () => {
+			( getJetpackSites as jest.Mock ).mockReturnValue( [
+				makeSite( 111, 'first.example' ),
+				makeSite( 222, 'second.example' ),
+				makeSite( 333, 'third.example::blog' ),
+				makeSite( 444, 'fourth.example' ),
+			] );
+		} );
+
+		it( 'does not offer search when the user has 3 or fewer sites', () => {
+			( getJetpackSites as jest.Mock ).mockReturnValue( [
+				makeSite( 111, 'first.example' ),
+				makeSite( 222, 'second.example' ),
+				makeSite( 333, 'third.example::blog' ),
+			] );
+
+			renderWithProvider(
+				<LicensingThankYouAutoActivation productSlug="jetpack_backup_t1_yearly" />,
+				{ reducers }
+			);
+
+			expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'lets the user search for and select a site when they have more than 3 sites', async () => {
+			renderWithProvider(
+				<LicensingThankYouAutoActivation productSlug="jetpack_backup_t1_yearly" receiptId={ 5 } />,
+				{ reducers }
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
+
+			await userEvent.type( screen.getByRole( 'combobox' ), 'fourth' );
+
+			expect(
+				screen.queryByRole( 'option', { name: 'https://first.example' } )
+			).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'option', { name: 'https://fourth.example' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( requestUpdateJetpackCheckoutSupportTicket ).toHaveBeenCalledWith(
+				'https://fourth.example',
+				5,
+				'onboarding-calypso-ui',
+				0
+			);
+		} );
+
+		it( 'shows the pre-selected site in the search field', () => {
+			renderWithProvider(
+				<LicensingThankYouAutoActivation productSlug="jetpack_backup_t1_yearly" siteId={ 222 } />,
+				{ reducers }
+			);
+
+			expect( screen.getByRole( 'combobox' ) ).toHaveValue( 'https://second.example' );
+		} );
+
+		it( 'keeps the manual activation option reachable', () => {
+			renderWithProvider(
+				<LicensingThankYouAutoActivation productSlug="jetpack_backup_t1_yearly" receiptId={ 5 } />,
+				{ reducers }
+			);
+
+			expect(
+				screen.getByRole( 'link', { name: "I don't see my site. Let me configure it manually" } )
+			).toHaveAttribute(
+				'href',
+				expect.stringContaining(
+					'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/jetpack_backup_t1_yearly'
+				)
+			);
+		} );
+	} );
 } );
