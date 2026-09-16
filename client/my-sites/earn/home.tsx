@@ -78,12 +78,9 @@ const Home = () => {
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, site?.ID ) );
-	// The plans grid owns the tier order, so its first paid entry is the cheapest
-	// plan currently on offer.
-	const upgradePlanTypes = usePlanTypesWithIntent( {
-		intent: 'plans-upgrade',
-		siteId: site?.ID,
-	} );
+	// The plans grid owns the tier order. Without a siteId it lists every tier and
+	// doesn't refetch the site plans this page already loads.
+	const upgradePlanTypes = usePlanTypesWithIntent( { intent: 'plans-upgrade' } );
 	const lowestPaidAnnualPlan = usePlansFromTypes( {
 		planTypes: upgradePlanTypes,
 		term: TERM_ANNUALLY,
