@@ -15,10 +15,8 @@ export const streamPageDesignAbility: Ability = {
 	name: 'big-sky/stream-page-design',
 	label: __( 'Stream Page Design', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Streams generated page-design block markup into the editor for review before saving.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		required: [ 'markup' ],
