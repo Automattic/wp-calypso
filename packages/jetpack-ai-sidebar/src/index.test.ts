@@ -3626,6 +3626,36 @@ describe( 'toolProvider', () => {
 			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
+		it( 'omits server-registered abilities from the registry', async () => {
+			const clientCallback = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'big-sky/capture-canvas', category: 'big-sky' },
+					{
+						name: 'big-sky/stream-page-design',
+						meta: { streaming: { enabled: true } },
+					},
+					{
+						name: 'plugin/client-with-rest-meta',
+						callback: clientCallback,
+						meta: { show_in_rest: true },
+					},
+					{ name: 'wpcom/get-posts', meta: { show_in_rest: true, public: false } },
+					{ name: 'core/get-site-info', meta: { show_in_rest: true, public: true } },
+				] ),
+				executeAbility: jest.fn(),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( 'big-sky/capture-canvas' );
+			expect( names ).toContain( 'big-sky/stream-page-design' );
+			expect( names ).toContain( 'plugin/client-with-rest-meta' );
+			expect( names ).not.toContain( 'wpcom/get-posts' );
+			expect( names ).not.toContain( 'core/get-site-info' );
+		} );
+
 		it( 'omits update-block-content when block transformations are disabled', async () => {
 			installAiEditorialReviewData( { blockTransformations: false } );
 
