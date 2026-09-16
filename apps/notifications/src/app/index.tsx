@@ -17,11 +17,33 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
-import type { FilterName } from './types';
+import type { FilterName, LayoutStyle } from './types';
 
 import './style.scss';
 
 repliesCache.cleanup();
+
+export type NotificationPreferences = {
+	layoutStyle?: LayoutStyle | null;
+	viewSettingsSeen?: boolean | null;
+};
+
+let hasResolvedPreferences = false;
+
+const applyPreferences = (
+	{ layoutStyle, viewSettingsSeen }: NotificationPreferences,
+	isViewSettingsEnabled: boolean
+) => {
+	// Unset means never chosen: start those people on the simplified layout wherever the
+	// picker exists to change it back.
+	store.dispatch(
+		actions.ui.setLayoutStyle(
+			layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : 'detailed' )
+		)
+	);
+
+	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
+};
 
 /**
  * Force a manual refresh of the notes data
@@ -119,12 +141,18 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
+	isViewSettingsEnabled = false,
+	preferences,
+	onPreferenceChange,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
+	isViewSettingsEnabled?: boolean;
+	preferences?: NotificationPreferences;
+	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -144,6 +172,17 @@ const NotificationApp = ( {
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
 	}, [ wpcom ] );
+
+	// Seeded once, whenever the host resolves them. A later value would overwrite
+	// whatever the picker has since saved.
+	useEffect( () => {
+		if ( ! preferences || hasResolvedPreferences ) {
+			return;
+		}
+
+		hasResolvedPreferences = true;
+		applyPreferences( preferences, isViewSettingsEnabled );
+	}, [ preferences, isViewSettingsEnabled ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {
@@ -223,7 +262,12 @@ const NotificationApp = ( {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				<AppProvider client={ getClient() } locale={ locale }>
+				<AppProvider
+					client={ getClient() }
+					locale={ locale }
+					isViewSettingsEnabled={ isViewSettingsEnabled }
+					onPreferenceChange={ onPreferenceChange }
+				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>
 			</Provider>
