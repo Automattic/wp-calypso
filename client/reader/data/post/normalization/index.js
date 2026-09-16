@@ -121,6 +121,26 @@ function identifyRedditPost( post ) {
 	return post;
 }
 
+// Order matters here: `removeEventHandlers` has to precede `detectMedia`, which snapshots markup
+// into post fields that are later rendered with `dangerouslySetInnerHTML`, and `makeContentLinksSafe`
+// runs last so that it also sees the links the rules before it build.
+export const contentDomRules = [
+	convertVideoPressBlocks,
+	removeStyles,
+	removeElementsBySelector,
+	removeEventHandlers,
+	makeImagesSafe(),
+	makeEmbedsSafe,
+	disableAutoPlayOnEmbeds,
+	disableAutoPlayOnMedia,
+	detectMedia,
+	detectPolls,
+	detectSurveys,
+	linkJetpackCarousels,
+	addImageWrapperElement,
+	makeContentLinksSafe,
+];
+
 const fastPostNormalizationRules = flow( [
 	decodeEntities,
 	stripHtml,
@@ -129,22 +149,7 @@ const fastPostNormalizationRules = flow( [
 	pickPrimaryTag,
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
-	withContentDom( [
-		convertVideoPressBlocks,
-		removeStyles,
-		removeElementsBySelector,
-		removeEventHandlers,
-		makeImagesSafe(),
-		makeEmbedsSafe,
-		disableAutoPlayOnEmbeds,
-		disableAutoPlayOnMedia,
-		detectMedia,
-		detectPolls,
-		detectSurveys,
-		linkJetpackCarousels,
-		addImageWrapperElement,
-		makeContentLinksSafe,
-	] ),
+	withContentDom( contentDomRules ),
 	createBetterExcerpt,
 	addMinutesToRead,
 	pickCanonicalImage,

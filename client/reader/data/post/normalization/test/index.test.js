@@ -3,8 +3,11 @@
  */
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
+import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
+import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
+import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
 import { domForHtml, isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import { classifyPost, runFastRules } from '..';
+import { classifyPost, contentDomRules, runFastRules } from '..';
 import DISPLAY_TYPES from '../../display-types';
 
 function verifyClassification( post, displayTypes ) {
@@ -172,14 +175,25 @@ describe( 'normalization-rules', () => {
 		} );
 
 		test( 'strips a link that is not a web address from the rendered content', () => {
-			// Pins makeContentLinksSafe into the pipeline. Its position at the end is defence in
-			// depth: every rule that builds a link now validates its own URL, so nothing currently
-			// depends on it running last.
 			const post = runFastRules( {
 				content: '<a href="javascript:alert(1)">click</a>',
 			} );
 
 			expect( domForHtml( post.content ).querySelector( '[href^="javascript:"]' ) ).toBeNull();
+		} );
+	} );
+
+	describe( 'content DOM rule order', () => {
+		// Both invariants are invisible in the output once every rule validates its own URLs, so
+		// assert the order itself rather than a behaviour that survives getting it wrong.
+		test( 'strips event handlers before any rule snapshots markup into a post field', () => {
+			expect( contentDomRules.indexOf( removeEventHandlers ) ).toBeLessThan(
+				contentDomRules.indexOf( detectMedia )
+			);
+		} );
+
+		test( 'checks links after every rule that builds one', () => {
+			expect( contentDomRules.at( -1 ) ).toBe( makeContentLinksSafe );
 		} );
 	} );
 } );
