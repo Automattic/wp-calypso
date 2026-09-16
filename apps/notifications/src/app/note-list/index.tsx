@@ -13,6 +13,7 @@ import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-id
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
+import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import getNotes from '../../panel/state/selectors/get-notes';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
@@ -60,7 +61,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
-	const { client } = useAppContext();
+	const { client, isViewSettingsEnabled } = useAppContext();
 
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
@@ -133,7 +134,12 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const startPosition = view.startPosition ?? 1;
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const fields = useMemo( () => getFields(), [] );
+	// The setting is only offered where the flag is on, so only honour it there. A host
+	// without the flag has no way to change it back, and a preference saved from one that
+	// does would otherwise follow the account into it.
+	const storedLayoutStyle = useSelector( getLayoutStyle );
+	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'detailed';
+	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		visibleNotes,
