@@ -1,3 +1,8 @@
+import {
+	isJetpackSearch,
+	isJetpackSearchFree,
+	planHasJetpackSearch,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -6,9 +11,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Notice from 'calypso/components/notice';
 import searchSites from 'calypso/components/search-sites';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { urlToSlug } from 'calypso/lib/url';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
@@ -113,6 +120,54 @@ export class SearchPurchase extends Component {
 
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
+	getExistingSearchSource( url ) {
+		const site = url && this.props.getJetpackSiteByUrl( url );
+		if ( ! site ) {
+			return null;
+		}
+
+		const hasSearchProduct = ( site.products ?? [] ).some(
+			( product ) =>
+				isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
+		);
+		if ( hasSearchProduct ) {
+			return 'product';
+		}
+
+		const planSlug = site.plan?.product_slug;
+		return planSlug && planHasJetpackSearch( planSlug ) ? 'plan' : null;
+	}
+
+	renderExistingSearchNotice() {
+		const { translate } = this.props;
+		const { currentUrl } = this.state;
+		const source = this.getExistingSearchSource( currentUrl );
+
+		if ( ! source ) {
+			return null;
+		}
+
+		const components = {
+			link: <a href={ getPurchaseListUrlFor( urlToSlug( currentUrl ) ) } />,
+		};
+		const text =
+			source === 'plan'
+				? translate(
+						"Jetpack Search is already included in this site's plan. {{link}}Manage subscriptions{{/link}}",
+						{ components }
+				  )
+				: translate(
+						'This site already has a Jetpack Search subscription. Continuing will renew it. {{link}}Manage subscriptions{{/link}}',
+						{ components }
+				  );
+
+		return (
+			<div className="jetpack-connect__notices-container">
+				<Notice status="is-info" icon="notice" showDismiss={ false } text={ text } />
+			</div>
+		);
+	}
+
 	renderFooter() {
 		const { translate } = this.props;
 		return (
@@ -153,6 +208,7 @@ export class SearchPurchase extends Component {
 		return (
 			<Card className="purchase-product__site-url-input-container">
 				{ this.props.renderNotices() }
+				{ this.renderExistingSearchNotice() }
 
 				<SiteUrlInput
 					url={ this.state.shownUrl }
