@@ -9,8 +9,8 @@ import type { Context } from '@automattic/calypso-router';
 
 const loadMain = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-reader-four-for-four-main" */ 'calypso/reader/four-for-four/main'
-	);
+		/* webpackChunkName: "async-load-calypso-reader-four-for-four" */ 'calypso/reader/four-for-four'
+	).then( ( module ) => ( { default: module.FourForFour } ) );
 
 export function fourForFour( context: Context, next: () => void ) {
 	const basePath = sectionify( context.path );

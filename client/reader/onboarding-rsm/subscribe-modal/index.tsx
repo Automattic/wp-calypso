@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { StepIndicator } from 'calypso/reader/components/step-indicator';
@@ -18,7 +18,7 @@ import {
 	READER_ONBOARDING_FOLLOW_SOURCE,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
-import Stream from 'calypso/reader/stream';
+import { TypedStream } from 'calypso/reader/stream/typed';
 import { useDispatch } from 'calypso/state';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
@@ -30,24 +30,6 @@ interface SubscribeModalProps {
 	promptVerification: boolean;
 	onFinish: () => void;
 }
-
-interface StreamProps {
-	streamKey: string;
-	className?: string;
-	followSource?: string;
-	useCompactCards?: boolean;
-	wideLayout?: boolean;
-	showBylineSecondarySiteLink?: boolean;
-	trackScrollPage?: (
-		path: string,
-		title: string,
-		category: string,
-		readerView: string,
-		pageNum: number
-	) => void;
-}
-
-const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SITES_PER_PAGE = 6;
 
