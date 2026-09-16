@@ -3225,15 +3225,6 @@ const WPCheckoutMainContent = styled.div< {
 			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
 				gap: 8px;
 			}
-			/* Same rhythm for the "Add organization name" row — it sits in
-			   its own __row but is conceptually a Field+Action paired with
-			   the Last name field above. Negative margin compensates the
-			   parent's 16px column gap down to 8px. Only fires while the
-			   HiddenInput link is showing; once toggled to an input the
-			   row drops back to full 16px spacing. */
-			.contact-details-form-fields__row:has( .form__hidden-input ) {
-				margin-top: -8px;
-			}
 		` }
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
