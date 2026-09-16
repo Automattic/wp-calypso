@@ -1,13 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FourForFour } from '../index';
 
 const mockRecordReaderTracksEvent = jest.fn();
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
@@ -19,40 +23,45 @@ jest.mock( 'calypso/reader/stream/typed', () => ( {
 	),
 } ) );
 
-// Render the list item as two buttons: one that selects the site and one that
-// reports a follow, so tests can drive both callbacks without the real
-// Redux-connected item.
 jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
 	__esModule: true,
 	default: ( {
 		siteId,
 		site,
 		onItemClick,
-		onFollowToggle,
 	}: {
 		siteId: number;
 		site: { title: string };
 		onItemClick: () => void;
-		onFollowToggle: ( isFollowing: boolean ) => void;
 	} ) => (
-		<div>
-			<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
-				{ site.title }
-			</button>
-			<button
-				type="button"
-				data-testid={ `follow-${ siteId }` }
-				onClick={ () => onFollowToggle( true ) }
-			>
-				Subscribe
-			</button>
-		</div>
+		<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
+			{ site.title }
+		</button>
 	),
 } ) );
 
+// A follow button that runs the real follow mutation, so the page's
+// "report progress once the follow succeeds" path is exercised end to end.
+function MockFollowButton( {
+	siteUrl,
+	followApiSource,
+}: {
+	siteUrl: string;
+	followApiSource: string;
+} ) {
+	const { mutate } = useFollowSite();
+	return (
+		<button type="button" onClick={ () => mutate( { feedUrl: siteUrl, source: followApiSource } ) }>
+			Subscribe
+		</button>
+	);
+}
+
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: () => <button type="button">Subscribe</button>,
+	default: ( props: { siteUrl: string; followApiSource: string } ) => (
+		<MockFollowButton { ...props } />
+	),
 } ) );
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
@@ -86,6 +95,20 @@ function mockStatus( status: string | null, followedBlogIds: number[] = [] ) {
 		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds } );
 }
 
+function mockFollow( blogId: number ) {
+	return nock( API )
+		.post( '/rest/v1.1/read/following/mine/new' )
+		.reply( 200, {
+			subscribed: true,
+			subscription: {
+				ID: 500 + blogId,
+				blog_ID: blogId,
+				feed_ID: blogId * 10,
+				URL: `https://site${ blogId }.wordpress.com/feed/`,
+			},
+		} );
+}
+
 const initialState = {
 	currentUser: { id: 1, user: { ID: 1, email_verified: true } },
 };
@@ -93,7 +116,14 @@ const initialState = {
 describe( 'FourForFour', () => {
 	beforeEach( () => {
 		nock.cleanAll();
+		nock( API ).persist().get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, {
+			number: 0,
+			page: 1,
+			total_subscriptions: 0,
+			subscriptions: [],
+		} );
 		mockRecordReaderTracksEvent.mockClear();
+		jest.mocked( page ).mockClear();
 	} );
 
 	it( 'lists candidates and previews the first one', async () => {
@@ -140,21 +170,24 @@ describe( 'FourForFour', () => {
 		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'records a follow and shows completion when the server reports it', async () => {
+	it( 'reports a follow only after it succeeds, then shows completion from the server', async () => {
 		const user = userEvent.setup();
 		mockStatus( 'opted_in', [ 3, 4, 5 ] );
 		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+		const follow = mockFollow( 2 );
 		const progress = nock( API )
 			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
 			.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		await user.click( await screen.findByTestId( 'follow-2' ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
 
+		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
 		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' );
-		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'button', { name: 'Back to Reader' } ) ).toBeVisible();
 	} );
 
 	it( 'shows completion for a user who arrives already complete', async () => {
@@ -181,5 +214,21 @@ describe( 'FourForFour', () => {
 
 		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
 		expect( refetch.isDone() ).toBe( true );
+	} );
+
+	it( 'returns to the Reader when closed', async () => {
+		const user = userEvent.setup();
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Do this later' } ) );
+
+		expect( page ).toHaveBeenCalledWith( '/reader' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_closed',
+			{ followed_count: 0, is_complete: 0 }
+		);
 	} );
 } );
