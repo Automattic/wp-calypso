@@ -77,6 +77,7 @@ export default function LicenseDetailsActions( {
 	const {
 		onCreateSite,
 		isProvisioning,
+		isProvisioningThisLicense,
 		isLoading: isLoadingPendingSites,
 		modal: siteConfigurationsModal,
 	} = useCreateSiteFromLicense( licenseKey, isClientLicense );
@@ -194,6 +195,7 @@ export default function LicenseDetailsActions( {
 						className="license-details__assign-button"
 						primary
 						isProvisioning={ isProvisioning }
+						isProvisioningThisLicense={ isProvisioningThisLicense }
 						isLoading={ isLoadingPendingSites }
 						onCreateSite={ onCreateSite }
 					/>

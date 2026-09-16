@@ -7,13 +7,18 @@ import {
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { findPendingSiteIdByLicenseKey, hasProvisioningSite } from '../lib/pending-sites';
+import {
+	findPendingSiteIdByLicenseKey,
+	hasProvisioningSite,
+	isLicenseProvisioning,
+} from '../lib/pending-sites';
 import LicenseSiteConfigurationsModal from '../license-site-configurations-modal';
 import usePaymentMethodGate from './use-payment-method-gate';
 
 type CreateSiteFromLicense = {
 	onCreateSite: () => void;
 	isProvisioning: boolean;
+	isProvisioningThisLicense: boolean;
 	isLoading: boolean;
 	modal: JSX.Element | null;
 };
@@ -62,6 +67,7 @@ export default function useCreateSiteFromLicense(
 	return {
 		onCreateSite,
 		isProvisioning: hasProvisioningSite( pendingSites ),
+		isProvisioningThisLicense: isLicenseProvisioning( pendingSites, licenseKey ),
 		isLoading,
 		modal:
 			isModalOpen && pendingSiteId ? (

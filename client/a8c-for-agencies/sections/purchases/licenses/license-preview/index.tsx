@@ -144,6 +144,7 @@ export default function LicensePreview( {
 	const {
 		onCreateSite,
 		isProvisioning,
+		isProvisioningThisLicense,
 		isLoading: isLoadingPendingSites,
 		modal: siteConfigurationsModal,
 	} = useCreateSiteFromLicense( licenseKey, !! referral );
@@ -313,6 +314,7 @@ export default function LicensePreview( {
 												className="license-preview__assign-button"
 												borderless
 												isProvisioning={ isProvisioning }
+												isProvisioningThisLicense={ isProvisioningThisLicense }
 												isLoading={ isLoadingPendingSites }
 												onCreateSite={ onCreateSite }
 											/>

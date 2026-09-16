@@ -6,6 +6,7 @@ import './style.scss';
 
 type Props = {
 	isProvisioning: boolean;
+	isProvisioningThisLicense: boolean;
 	isLoading: boolean;
 	onCreateSite: () => void;
 	className?: string;
@@ -15,6 +16,7 @@ type Props = {
 
 export default function CreateSiteButton( {
 	isProvisioning,
+	isProvisioningThisLicense,
 	isLoading,
 	onCreateSite,
 	className,
@@ -33,7 +35,7 @@ export default function CreateSiteButton( {
 			disabled={ isLoading || isProvisioning }
 			onClick={ onCreateSite }
 		>
-			{ isProvisioning ? (
+			{ isProvisioningThisLicense ? (
 				<span className="licenses-create-site-button-provisioning">
 					<Spinner />
 					{ translate( 'Creating site…' ) }

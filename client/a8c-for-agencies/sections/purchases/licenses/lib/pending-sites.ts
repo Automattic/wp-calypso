@@ -26,6 +26,17 @@ export function findPendingSiteIdByLicenseKey(
 	);
 }
 
+export function isLicenseProvisioning(
+	pendingSites: PendingSite[] | undefined,
+	licenseKey: string
+): boolean {
+	return !! pendingSites?.some(
+		( { features }: PendingSite ) =>
+			features?.wpcom_atomic?.state === 'provisioning' &&
+			features?.wpcom_atomic?.license_key === licenseKey
+	);
+}
+
 /**
  * Mirrors the Needs setup page: provisioning is treated as an account-wide
  * state, so no other site can be created while one is being built.
