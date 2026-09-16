@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
 import {
+	AppDownloadQrCodeSvg,
 	AppStoreIconSvg,
 	ChevronSvg,
 	FacebookIconSvg,
@@ -193,13 +194,7 @@ const Footer2026Bottom = ( {
 		</div>
 		<div className="lp-footer-bottom__downloads">
 			<a className="lp-footer-app-download" href={ APP_DOWNLOAD_URL }>
-				<img
-					src="https://s1.wp.com/wp-content/themes/a8c/apps-2021/i/qrcode-apps.svg"
-					width="34"
-					height="34"
-					alt=""
-					loading="lazy"
-				/>
+				<AppDownloadQrCodeSvg />
 				<span>{ __( 'Download our app', __i18n_text_domain__ ) }</span>
 			</a>
 			<ul className="lp-footer-apps" aria-label={ __( 'Mobile Apps', __i18n_text_domain__ ) }>

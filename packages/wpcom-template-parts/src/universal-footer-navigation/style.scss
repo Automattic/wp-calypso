@@ -1157,6 +1157,7 @@
 			--lp-mobile-badge-color: #fff;
 			--lp-mobile-badge-background: #101517;
 			--lp-mobile-badge-border-color-rgb: 100, 105, 112;
+			--lp-mobile-badge-border-opacity: 1;
 		}
 
 		.lp-language-picker__content option {
@@ -1192,13 +1193,13 @@
 	.lp-footer-app-download {
 		display: none;
 		align-items: center;
-		gap: 10px;
+		gap: 8px;
 		padding: 6px 14px 6px 6px;
 		min-height: 48px;
 		box-sizing: border-box;
-		border: 1px solid #c3c4c7;
+		border: 1px solid var(--lp-footer-control-border-color);
 		/* stylelint-disable-next-line scales/radii -- Matches the footer design. */
-		border-radius: 6px;
+		border-radius: 5px;
 		color: rgb(var(--lp-footer-primary-color-rgb));
 		font-size: 13px;
 		font-weight: 500;
@@ -1207,7 +1208,7 @@
 		text-decoration: none;
 	}
 
-	.lp-footer-app-download img {
+	.lp-footer-app-download svg {
 		width: 34px;
 		height: 34px;
 	}
@@ -1226,7 +1227,6 @@
 		display: block;
 		/* stylelint-disable-next-line scales/radii -- Matches the footer design. */
 		border-radius: 6px;
-		border-color: #c3c4c7;
 	}
 
 	.lp-footer-apps .lp-mobile-badge__content {
@@ -1310,6 +1310,7 @@
 	}
 
 	.lp-footer-bottom__branding .lp-flex--inline {
+		gap: 10px;
 		--lp-color: var(--lp-footer-secondary-color-rgb);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
