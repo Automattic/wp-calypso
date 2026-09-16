@@ -1,5 +1,11 @@
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
+import {
+	Button,
+	FormInputValidation,
+	Gridicon,
+	SearchableDropdown,
+	SelectDropdown,
+} from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from 'react';
@@ -21,6 +27,8 @@ import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/sele
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
+
+const MAX_SITES_WITHOUT_SEARCH = 3;
 
 interface Props {
 	productSlug: string | 'no_product';
@@ -285,6 +293,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		...[ lastSelectOption ],
 	];
 	const selectedItem = selectDropdownItems.find( ( item ) => item.props.selected );
+	const isSiteSearchEnabled = siteSelectOptions.length > MAX_SITES_WITHOUT_SEARCH;
 
 	return (
 		<>
@@ -333,39 +342,61 @@ const LicensingActivationThankYou: FC< Props > = ( {
 						} ) }
 					</p>
 				) }
-				<SelectDropdown
-					className="licensing-thank-you-auto-activation__select"
-					selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
-				>
-					{ selectDropdownItems.map( ( option ) => {
-						const { key: itemKey, ...props } = option.props;
-						return (
-							<SelectDropdown.Item key={ itemKey } { ...props }>
-								<div
-									className={ clsx(
-										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
-										{
-											'has-seperator': option.value === 'activate-license-manually',
-										}
-									) }
-								>
-									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-										{ option.value === 'activate-license-manually' ? (
-											<strong>{ option.label }</strong>
-										) : (
-											option.label
+				{ isSiteSearchEnabled ? (
+					<>
+						<SearchableDropdown
+							className="licensing-thank-you-auto-activation__search"
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ translate( 'Search for a site' ) }
+							hideLabelFromVision
+							placeholder={ translate( 'Search for a site…' ) }
+							options={ siteSelectOptions.map( ( { value, label } ) => ( { value, label } ) ) }
+							value={ selectedSite || null }
+							onChange={ ( value ) => setSelectedSite( value ?? '' ) }
+						/>
+						<a
+							className="licensing-thank-you-auto-activation__manual-link"
+							href={ manualActivationUrl }
+						>
+							{ lastSelectOption.label }
+						</a>
+					</>
+				) : (
+					<SelectDropdown
+						className="licensing-thank-you-auto-activation__select"
+						selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
+					>
+						{ selectDropdownItems.map( ( option ) => {
+							const { key: itemKey, ...props } = option.props;
+							return (
+								<SelectDropdown.Item key={ itemKey } { ...props }>
+									<div
+										className={ clsx(
+											'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+											{
+												'has-seperator': option.value === 'activate-license-manually',
+											}
 										) }
-									</span>
-									{ option.value !== 'activate-license-manually' && (
-										<span>
-											<Gridicon icon="link" size={ 18 } />
+									>
+										<span className="licensing-thank-you-auto-activation__dropdown-item-text">
+											{ option.value === 'activate-license-manually' ? (
+												<strong>{ option.label }</strong>
+											) : (
+												option.label
+											) }
 										</span>
-									) }
-								</div>
-							</SelectDropdown.Item>
-						);
-					} ) }
-				</SelectDropdown>
+										{ option.value !== 'activate-license-manually' && (
+											<span>
+												<Gridicon icon="link" size={ 18 } />
+											</span>
+										) }
+									</div>
+								</SelectDropdown.Item>
+							);
+						} ) }
+					</SelectDropdown>
+				) }
 				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
 				<Button
 					className="licensing-thank-you-auto-activation__button"
