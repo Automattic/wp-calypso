@@ -11,7 +11,7 @@ import 'calypso/state/document-head/init';
  * Returns an action object used in signalling that the document head title
  * should be assigned to the specified value.
  * @param  {string}  title                Document title
- * @param  {boolean} skipTitleFormatting  Whether to use the raw title, without the site name suffix
+ * @param  {boolean} skipTitleFormatting  Whether to use the raw title, without any extra formatting
  * @returns {Object}                       Action object
  */
 export function setDocumentHeadTitle( title, skipTitleFormatting = false ) {

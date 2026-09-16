@@ -11,8 +11,8 @@ import 'calypso/state/ui/init';
 
 /**
  * Returns the formatted document title, based on the currently set title,
- * capped unreadCount, and selected site. Returns the raw title when it was
- * set with formatting skipped.
+ * capped unreadCount, and selected site. Returns the raw title, without any extra
+ * formatting, when it was set with `skipTitleFormatting`.
  * @param  {Object}  state  Global state tree
  * @returns {string}         Formatted title
  */

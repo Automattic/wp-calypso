@@ -49,7 +49,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getDocumentHeadFormattedTitle()', () => {
-		test( 'should return the raw title when formatting is skipped', () => {
+		test( 'should return the raw title without the unread count or site name when formatting is skipped', () => {
 			const formattedTitle = getDocumentHeadFormattedTitle( {
 				documentHead: {
 					title: 'Raw Title | WordPress.com',
