@@ -55,6 +55,7 @@ export interface Domain extends DomainSummary {
 	current_user_can_manage: boolean;
 	contact_info_disclosure_available: boolean;
 	contact_info_disclosed: boolean;
+	contact_verification_deadline: string | null;
 	current_user_cannot_add_email_reason: {
 		errors: {
 			[ key: string ]: string[];
@@ -65,6 +66,7 @@ export interface Domain extends DomainSummary {
 		ds_data: string[];
 	};
 	domain_locking_available: boolean;
+	domain_registrant_email: string | null;
 	has_wpcom_nameservers: boolean;
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
@@ -78,6 +80,7 @@ export interface Domain extends DomainSummary {
 	is_root_domain_registered_with_automattic: boolean;
 	is_redeemable: boolean;
 	is_hundred_year_domain: boolean;
+	is_icann_verification_suspended: boolean;
 	is_subdomain: boolean;
 	is_pending_icann_verification: boolean;
 	is_wpcom_staging_domain?: boolean;
