@@ -447,7 +447,8 @@ const Home = () => {
 		);
 		const notEligibleBody = (
 			<>
-				{ defaultBody } <em>{ translate( 'This feature requires an annual plan.' ) }</em>
+				{ defaultBody }{ ' ' }
+				<em>{ translate( 'This feature requires a paid annual WordPress.com plan.' ) }</em>
 			</>
 		);
 		const eligibleBody = peerReferralLink

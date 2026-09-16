@@ -3,7 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -45,6 +45,11 @@ const renderHome = ( productSlug = 'personal-bundle-monthly' ) =>
 
 const lastDestination = () => new URL( mockedPage.mock.lastCall[ 0 ], window.location.origin );
 
+const upgradeFromCard = ( cardTitle: string ) =>
+	within(
+		screen.getByRole( 'heading', { name: cardTitle } ).closest( '.promo-card' ) as HTMLElement
+	).getByRole( 'button', { name: 'Upgrade' } );
+
 describe( 'Earn home', () => {
 	beforeEach( () => {
 		mockedPage.mockClear();
@@ -74,7 +79,7 @@ describe( 'Earn home', () => {
 
 		// Refer a friend is the only card that skips the plans page, sending a
 		// monthly plan straight to checkout for its annual equivalent.
-		await userEvent.click( screen.getAllByRole( 'button', { name: 'Upgrade' } )[ 2 ] );
+		await userEvent.click( upgradeFromCard( 'Refer a friend' ) );
 
 		const destination = lastDestination();
 		expect( destination.pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
@@ -86,7 +91,7 @@ describe( 'Earn home', () => {
 	it( 'sends a free site to the yearly plans page', async () => {
 		renderHome( 'free_plan' );
 
-		await userEvent.click( screen.getAllByRole( 'button', { name: 'Upgrade' } )[ 2 ] );
+		await userEvent.click( upgradeFromCard( 'Refer a friend' ) );
 
 		const destination = lastDestination();
 		expect( destination.pathname ).toBe( '/plans/yearly/example.wordpress.com' );
