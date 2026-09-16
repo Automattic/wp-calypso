@@ -78,7 +78,7 @@ export function FourForFour() {
 
 	return (
 		<div className="four-for-four">
-			<VStack className="four-for-four__intro" spacing={ 2 } alignment="center">
+			<VStack className="four-for-four__intro" spacing={ 2 } alignment="center" expanded={ false }>
 				<h1 className="four-for-four__title">{ translate( 'Subscribe to 4 new writers' ) }</h1>
 				<p className="four-for-four__description">
 					{ translate(
@@ -112,7 +112,7 @@ export function FourForFour() {
 			{ isComplete && (
 				<HStack className="four-for-four__complete" spacing={ 3 } role="status">
 					<Icon icon={ check } size={ 28 } className="four-for-four__complete-icon" />
-					<VStack spacing={ 1 } className="four-for-four__complete-text">
+					<VStack spacing={ 1 } className="four-for-four__complete-text" expanded={ false }>
 						<strong>{ translate( "You're in!" ) }</strong>
 						<span>
 							{ translate(
