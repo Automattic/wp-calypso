@@ -896,6 +896,27 @@ describe( 'blocks domain', () => {
 		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'much smaller block snapshot' );
 	} );
 
+	// Each design checkpoints the page it replaced, so undoing twice walks back.
+	it( 'undoes two designs in turn, back to the original page', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const original = page( 3 );
+		const first = page( 4 );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( original );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( first );
+		setCheckpoint( 'call-2', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValue( page( 5 ) );
+
+		await restoreCheckpoint( 'call-2' );
+
+		expect( editorBlocks().stageRootBlocks ).toHaveBeenLastCalledWith( 'pc', first );
+
+		editorBlocks().getRootBlocks.mockReturnValue( first );
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editorBlocks().stageRootBlocks ).toHaveBeenLastCalledWith( 'pc', original );
+	} );
+
 	it( 'rejects when the snapshot is missing', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint } = await loadCheckpoints();
 		setCheckpoint( 'call-1', [ 'blocks' ] );
