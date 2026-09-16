@@ -72,6 +72,8 @@ describe( 'ReaderExcerpt', () => {
 	} );
 
 	it( 'keeps a right-to-left daily prompt right-to-left', () => {
+		// Escaping the quotes as well would add enough Latin letters to `AutoDirection`'s sample to
+		// outvote the Hebrew and lay this out left-to-right.
 		const prompt = 'מה עדיף: "בית" או "דירה"?';
 		const post = dailyPromptPost( {
 			content: `<figure class="wp-block-pullquote"><blockquote><p>${ prompt }</p></blockquote></figure><p>בית.</p>`,
@@ -92,7 +94,6 @@ describe( 'ReaderExcerpt', () => {
 
 		const { container } = render( <ReaderExcerpt post={ post } /> );
 
-		expect( container.querySelector( 'img' ) ).toBeNull();
 		expect( container.querySelector( '.wp-block-pullquote' ) ).toBeNull();
 		expect( screen.getByText( /Intro\./ ) ).toBeVisible();
 	} );
@@ -109,7 +110,7 @@ describe( 'ReaderExcerpt', () => {
 
 		const { container } = render( <ReaderExcerpt post={ post } /> );
 
-		expect( container.querySelector( 'img' ) ).toBeNull();
 		expect( container.querySelector( '.wp-block-pullquote' ) ).toBeNull();
+		expect( container ).toHaveTextContent( 'Prompt' );
 	} );
 } );

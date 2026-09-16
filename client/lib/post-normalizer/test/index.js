@@ -792,6 +792,16 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'removes srcdoc from a frame that gets no sandbox at all', () => {
+			const post = {
+				content:
+					'<iframe src="https://spotify.com" srcdoc="&lt;script&gt;alert(1)&lt;/script&gt;"></iframe>',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<iframe src="https://spotify.com/"></iframe>' );
+		} );
+
 		test( 'removes iframes with an empty src', () => {
 			const post = {
 				content: '<iframe src=""></iframe>',
@@ -1140,7 +1150,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'removeEventHandlers', () => {
-		test( 'removes event handler attributes whatever their casing', () => {
+		test( 'removes event handler attributes', () => {
 			const post = {
 				content:
 					'<p onclick="alert(1)" ONMOUSEOVER="alert(2)" class="keep">hi</p>' +

@@ -364,12 +364,26 @@ describe( 'EmbedContainer', () => {
 				'<p>She said "hello"</p>',
 			],
 			[ 'data-orig-file', 'https://example.com/a.jpg', 'https://example.com/a.jpg' ],
-		] )( 'keeps %s, which the image carousel reads', ( attribute, encoded, decoded ) => {
+			[
+				'data-carousel-extra',
+				'{&quot;permalink&quot;:&quot;https://example.com/p/&quot;}',
+				'{"permalink":"https://example.com/p/"}',
+			],
+		] )( 'keeps %s, which we read ourselves', ( attribute, encoded, decoded ) => {
 			const container = renderContent(
 				`<div class="wp-block-gallery"><figure class="wp-block-image"><img src="https://example.com/a.jpg" ${ attribute }="${ encoded }" /></figure></div>`
 			);
 
 			expect( container.querySelector( 'img' ).getAttribute( attribute ) ).toBe( decoded );
+		} );
+
+		it( 'still drops a script scheme from an attribute we consume ourselves', () => {
+			// The exemption covers the markup check only; the scheme check runs before it.
+			const container = renderContent(
+				'<figure class="wp-block-image"><img src="https://example.com/a.jpg" data-orig-file="javascript:alert(1)" /></figure>'
+			);
+
+			expect( container.querySelector( 'img' ).hasAttribute( 'data-orig-file' ) ).toBe( false );
 		} );
 
 		it( 'does not treat an inherited member name as a URL attribute', () => {
@@ -533,6 +547,9 @@ describe( 'EmbedContainer', () => {
 			await renderSlideshows( [ { src: 'https://example.com/1.jpg', caption } ] );
 
 			const [ slide ] = JSON.parse( galleriesAtInit[ 0 ] );
+			// The parser drops an unterminated tag at the end of input, so also pin that the
+			// caption comes back encoded rather than merely element-free.
+			expect( slide.caption ).not.toContain( '<' );
 			expect( renderCaptionAsHtml( slide.caption ).querySelectorAll( '*' ) ).toHaveLength( 0 );
 		} );
 

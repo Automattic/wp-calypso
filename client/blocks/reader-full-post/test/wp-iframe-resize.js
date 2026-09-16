@@ -85,6 +85,16 @@ describe( 'WPiFrameResize', () => {
 		expect( topLocation.href ).toBe( TOP_URL );
 	} );
 
+	it( 'does not navigate the top window for a relative link from a same-origin iframe', () => {
+		// A relative target resolved against the top document lands on the Calypso host, which is
+		// also this frame's host, so a host comparison alone would wave it through.
+		iframe.setAttribute( 'src', 'https://example.com/frame.html#?secret=' + SECRET );
+
+		postMessageFromIframe( { secret: SECRET, message: 'link', value: '/me/account' } );
+
+		expect( topLocation.href ).toBe( TOP_URL );
+	} );
+
 	it( 'navigates the top window to an http link on the iframe host', () => {
 		postMessageFromIframe( {
 			secret: SECRET,

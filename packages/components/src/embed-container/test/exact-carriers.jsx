@@ -19,6 +19,10 @@ beforeEach( () => {
 	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
 } );
 
+afterEach( () => {
+	delete window.jQuery;
+} );
+
 const renderPost = ( html ) => {
 	const { container } = render(
 		<EmbedContainer>
@@ -96,6 +100,5 @@ describe( 'exact carriers from the HackerOne reports', () => {
 
 		expect( host.querySelectorAll( '*' ) ).toHaveLength( 0 );
 		expect( host.innerHTML ).not.toContain( 'onerror' );
-		delete window.jQuery;
 	} );
 } );
