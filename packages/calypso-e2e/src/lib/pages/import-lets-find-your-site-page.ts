@@ -23,12 +23,13 @@ export class ImportLetsFindYourSitePage {
 	 */
 	async visit(
 		siteSlug: string,
-		{ hideImporterLink = true }: { hideImporterLink?: boolean } = {}
+		{ hideImporterLink = true, siteId }: { hideImporterLink?: boolean; siteId?: number } = {}
 	): Promise< void > {
 		await this.page.goto(
 			DataHelper.getCalypsoURL( 'setup/site-migration/site-migration-identify', {
 				hide_importer_link: String( hideImporterLink ),
 				siteSlug,
+				...( siteId !== undefined && { siteId: String( siteId ) } ),
 				isUploadInProgress: 'false',
 			} )
 		);

@@ -58,7 +58,9 @@ test.describe(
 			const wordpressSiteURL = 'https://test.wordpress.com/';
 
 			await test.step( 'When I open the migration-identify entry used by the WordPress.com importer link', async function () {
-				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
+				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug, {
+					siteId: sitePublic.blog_details.blogid,
+				} );
 			} );
 
 			await test.step( "Then I see the Let's find your site page", async function () {
@@ -127,6 +129,7 @@ test.describe(
 			await test.step( 'When I open migration with the platform picker available', async function () {
 				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug, {
 					hideImporterLink: false,
+					siteId: sitePublic.blog_details.blogid,
 				} );
 			} );
 
