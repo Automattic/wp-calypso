@@ -1,35 +1,42 @@
 import { safeLinkRe } from './utils';
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
 const XLINK_NS = 'http://www.w3.org/1999/xlink';
 
-export default function makeContentLinksSafe( post, dom ) {
-	const links = Array.from( dom.querySelectorAll( 'a[href]' ) );
-	links.forEach( ( link ) => {
-		// only accept links that are to http or https sites
-		if ( ! safeLinkRe.test( link.href ) ) {
-			link.removeAttribute( 'href' );
-		}
-	} );
+// SVG 1.1 anchors carry their URL in the xlink namespace, SVG 2 ones in a plain `href`.
+const SVG_HREF_ATTRIBUTES = [
+	[ null, 'href' ],
+	[ XLINK_NS, 'href' ],
+];
 
-	// SVG anchors keep their URL in `xlink:href`, which `a[href]` does not match, and their `href`
-	// IDL property is an `SVGAnimatedString` rather than a resolved URL. Resolve the attribute by
-	// hand so relative URLs are treated the same way as they are on an HTML anchor.
-	const svgLinks = Array.from( dom.querySelectorAll( 'a[*|href]' ) );
-	svgLinks.forEach( ( link ) => {
-		const href = link.getAttributeNS( XLINK_NS, 'href' );
-		if ( href === null ) {
+function resolve( href ) {
+	try {
+		return new URL( href, document.baseURI ).href;
+	} catch {
+		return null;
+	}
+}
+
+export default function makeContentLinksSafe( post, dom ) {
+	const links = Array.from( dom.querySelectorAll( 'a' ) );
+	links.forEach( ( link ) => {
+		// An SVG anchor's `href` IDL property is an `SVGAnimatedString`, not a resolved URL, so it
+		// never matches and every link -- safe ones included -- would be stripped. Resolve the
+		// attributes by hand instead, so relative URLs are treated as they are on an HTML anchor.
+		if ( link.namespaceURI === SVG_NS ) {
+			SVG_HREF_ATTRIBUTES.forEach( ( [ namespace, name ] ) => {
+				const href = link.getAttributeNS( namespace, name );
+
+				if ( href !== null && ! safeLinkRe.test( resolve( href ) ?? '' ) ) {
+					link.removeAttributeNS( namespace, name );
+				}
+			} );
 			return;
 		}
 
-		let resolved;
-		try {
-			resolved = new URL( href, document.baseURI ).href;
-		} catch ( e ) {
-			resolved = href;
-		}
-
-		if ( ! safeLinkRe.test( resolved ) ) {
-			link.removeAttributeNS( XLINK_NS, 'href' );
+		// only accept links that are to http or https sites
+		if ( link.hasAttribute( 'href' ) && ! safeLinkRe.test( link.href ) ) {
+			link.removeAttribute( 'href' );
 		}
 	} );
 

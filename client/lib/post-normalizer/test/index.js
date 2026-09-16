@@ -472,6 +472,26 @@ describe( 'index', () => {
 
 			expect( normalized.content ).toBe( post.content );
 		} );
+
+		test( 'removes an unsafe plain href from an SVG anchor', () => {
+			const post = {
+				content: '<svg><a href="javascript:alert(1)"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<svg><a><text>hi there</text></a></svg>' );
+		} );
+
+		test( 'keeps a safe plain href on an SVG anchor', () => {
+			// SVG 2 anchors use `href` rather than `xlink:href`, and their `href` IDL property is an
+			// SVGAnimatedString, so testing it the way an HTML anchor is tested strips safe links.
+			const post = {
+				content: '<svg><a href="https://example.com/"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( post.content );
+		} );
 	} );
 
 	describe( 'content.makeImagesSafe', () => {
