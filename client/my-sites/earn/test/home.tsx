@@ -26,7 +26,7 @@ const mockedPage = page as unknown as jest.Mock;
 
 // A monthly plan has none of the monetization features, so every card that can
 // upsell does.
-const renderHome = () =>
+const renderHome = ( productSlug = 'personal-bundle-monthly' ) =>
 	renderWithProvider( <Home />, {
 		initialState: {
 			currentUser: { capabilities: { 1: { manage_options: true } } },
@@ -34,7 +34,7 @@ const renderHome = () =>
 				items: { 1: { ID: 1, URL: 'https://example.wordpress.com', options: {} } },
 				features: { 1: { data: { active: [] } } },
 				plans: {
-					1: { data: [ { currentPlan: true, productSlug: 'personal-bundle-monthly' } ] },
+					1: { data: [ { currentPlan: true, productSlug } ] },
 				},
 			},
 			ui: { selectedSiteId: 1 },
@@ -79,5 +79,15 @@ describe( 'Earn home', () => {
 		const destination = lastDestination();
 		expect( destination.pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
 		expect( destination.searchParams.get( 'cancel_to' ) ).toBe( '/earn/example.wordpress.com' );
+	} );
+
+	// `free_plan` counts as monthly, so its "annual equivalent" is itself: without
+	// this, the CTA sends free sites to checkout for an unbuyable product.
+	it( 'sends a free site to the cheapest paid annual plan', async () => {
+		renderHome( 'free_plan' );
+
+		await userEvent.click( screen.getAllByRole( 'button', { name: 'Upgrade' } )[ 2 ] );
+
+		expect( lastDestination().pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
 	} );
 } );

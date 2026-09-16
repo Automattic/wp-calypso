@@ -4,7 +4,9 @@ import {
 	GROUP_WPCOM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	getPlan,
 	getYearlyPlanByMonthly,
@@ -389,8 +391,17 @@ const Home = () => {
 			return;
 		}
 
-		const isMonthlyPlan = isMonthly( sitePlanSlug ?? '' );
-		const isEligible = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } ) && ! isMonthlyPlan;
+		// `free_plan` is a member of WPCOM_MONTHLY_PLANS, so isMonthly() reports it
+		// as monthly and getYearlyPlanByMonthly() hands `free_plan` straight back.
+		const isFreePlan = ! sitePlanSlug || sitePlanSlug === PLAN_FREE;
+		const isWpcomPlan = planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } );
+		const isMonthlyPlan = isWpcomPlan && ! isFreePlan && isMonthly( sitePlanSlug ?? '' );
+		const isEligible = isWpcomPlan && ! isFreePlan && ! isMonthlyPlan;
+
+		// A free site has no annual counterpart to upgrade to, so it starts at the
+		// cheapest paid plan that can qualify for referral credits.
+		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( sitePlanSlug ?? '' ) : '';
+		const upgradePlanSlug = isFreePlan ? PLAN_PERSONAL : annualPlanSlug;
 
 		const cta: CtaButton = isEligible
 			? {
@@ -406,18 +417,14 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
-						if ( isMonthlyPlan && site?.slug && sitePlanSlug ) {
-							const annualPlanSlug = getYearlyPlanByMonthly( sitePlanSlug );
-							const planPath = annualPlanSlug || undefined;
-							if ( planPath ) {
-								page(
-									addQueryArgs(
-										`/checkout/${ site.slug }/${ planPath }`,
-										getUpsellCheckoutQueryArgs()
-									)
-								);
-								return;
-							}
+						if ( site?.slug && upgradePlanSlug ) {
+							page(
+								addQueryArgs(
+									`/checkout/${ site.slug }/${ upgradePlanSlug }`,
+									getUpsellCheckoutQueryArgs()
+								)
+							);
+							return;
 						}
 						page( addQueryArgs( `/plans/${ site?.slug }`, { redirect_to: getUpsellReturnUrl() } ) );
 					},
@@ -430,12 +437,10 @@ const Home = () => {
 		const defaultBody = translate(
 			'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits.'
 		);
-		const notEligibleBody = isMonthlyPlan ? (
+		const notEligibleBody = (
 			<>
 				{ defaultBody } <em>{ translate( 'This feature requires an annual plan.' ) }</em>
 			</>
-		) : (
-			defaultBody
 		);
 		const eligibleBody = peerReferralLink
 			? translate(
