@@ -32,6 +32,11 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
+export interface NotificationView {
+	name: string;
+	hidden?: boolean;
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -63,5 +68,6 @@ export interface UserPreferences {
 	'a4a-marketplace-referral-guide-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	'notifications-layout-style'?: 'detailed' | 'simplified';
+	'notifications-views'?: NotificationView[];
 	'notifications-view-settings-seen'?: boolean;
 }

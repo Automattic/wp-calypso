@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { renderWithProvider } from '../../../testing-library';
-import NodePanel, { getNotificationTabs } from '../index';
+import NodePanel, { getNotificationViews } from '../index';
 import type { FilterName } from '../../types';
 
 const noop = () => {};
@@ -47,9 +47,9 @@ describe( 'NotePanel', () => {
 	it( 'should render correctly', async () => {
 		const { getByText } = renderWithProvider( <NodePanel { ...defaultProps } /> );
 
-		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationViews()[ 0 ].title );
 
-		getNotificationTabs().forEach( ( { title }: { title: string } ) => {
+		getNotificationViews().forEach( ( { title }: { title: string } ) => {
 			expect( getByText( title ) ).toBeInTheDocument();
 		} );
 	} );
@@ -68,9 +68,9 @@ describe( 'NotePanel', () => {
 		};
 		renderWithProvider( <ControlledPanel /> );
 
-		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationViews()[ 0 ].title );
 
-		const nextSelectedTab = getNotificationTabs()[ 1 ];
+		const nextSelectedTab = getNotificationViews()[ 1 ];
 		await userEvent.click( screen.getByRole( 'tab', { name: nextSelectedTab.title } ) );
 		await waitFor( () =>
 			expect(

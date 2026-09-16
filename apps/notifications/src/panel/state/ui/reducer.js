@@ -6,6 +6,7 @@ import {
 	SET_IS_SHOWING,
 	SET_FILTER,
 	SET_LAYOUT_STYLE,
+	SET_VIEWS,
 	SET_VIEW_SETTINGS_SEEN,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
@@ -49,6 +50,11 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 
 export const layoutStyle = ( state = 'simplified', action ) =>
 	SET_LAYOUT_STYLE === action.type ? action.layoutStyle : state;
+
+const NO_VIEWS = [];
+
+export const views = ( state = NO_VIEWS, action ) =>
+	SET_VIEWS === action.type ? action.views : state;
 
 export const viewSettingsSeen = ( state = null, action ) =>
 	SET_VIEW_SETTINGS_SEEN === action.type ? action.viewSettingsSeen : state;
@@ -113,5 +119,6 @@ export default combineReducers( {
 	filterName,
 	keyboardShortcutsAreEnabled,
 	shortcutsPopoverIsOpen,
+	views,
 	viewSettingsSeen,
 } );

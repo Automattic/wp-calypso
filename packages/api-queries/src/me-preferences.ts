@@ -35,6 +35,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-marketplace-referral-guide-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
 	'notifications-layout-style': 'simplified',
+	'notifications-views': [],
 	'notifications-view-settings-seen': false,
 };
 
