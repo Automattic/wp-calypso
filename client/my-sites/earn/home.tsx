@@ -393,10 +393,9 @@ const Home = () => {
 		// `free_plan` is a member of WPCOM_MONTHLY_PLANS, so isMonthly() reports it
 		// as monthly and getYearlyPlanByMonthly() hands `free_plan` straight back.
 		const planSlug = sitePlanSlug ?? '';
-		const isOnFreePlan = isFreePlan( planSlug );
-		const isWpcomPlan = isWpComPlan( planSlug );
-		const isMonthlyPlan = isWpcomPlan && ! isOnFreePlan && isMonthly( planSlug );
-		const isEligible = isWpcomPlan && ! isOnFreePlan && ! isMonthlyPlan;
+		const isPaidWpcomPlan = isWpComPlan( planSlug ) && ! isFreePlan( planSlug );
+		const isMonthlyPlan = isPaidWpcomPlan && isMonthly( planSlug );
+		const isEligible = isPaidWpcomPlan && ! isMonthlyPlan;
 
 		// Only a monthly plan has a single obvious plan to buy; everyone else chooses.
 		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : '';
