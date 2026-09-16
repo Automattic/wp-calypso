@@ -418,9 +418,9 @@ export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
 	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 
 /**
- * @typedef {import('calypso/lib/purchases/types').Purchase} Purchase
+ * @typedef {import('@automattic/api-core').Purchase} Purchase
  * @param  {Object} plugin The plugin object
- * @param  {Array} purchases An array of site purchases
+ * @param  {Purchase[]} purchases An array of site purchases
  * @returns {Purchase} The purchase object, if found.
  */
 export const getPluginPurchased = ( plugin, purchases ) => {
@@ -428,7 +428,7 @@ export const getPluginPurchased = ( plugin, purchases ) => {
 		plugin?.variations &&
 		purchases.find( ( purchase ) =>
 			Object.values( plugin.variations ).some(
-				( variation ) => variation.product_id === purchase.productId
+				( variation ) => variation.product_id === purchase.product_id
 			)
 		)
 	);

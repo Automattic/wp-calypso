@@ -1,3 +1,5 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -6,7 +8,6 @@ import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const ManagePluginMenu = ( { plugin } ) => {
@@ -19,17 +20,20 @@ export const ManagePluginMenu = ( { plugin } ) => {
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, softwareSlug ) );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const { data: purchases = [] } = useQuery( {
+		...sitePurchasesQuery( site?.ID ),
+		enabled: !! site?.ID,
+	} );
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
 
 	return (
 		<>
 			<EllipsisMenu position="bottom">
-				{ currentPurchase?.id && (
+				{ currentPurchase?.ID && (
 					<PopoverMenuItem
 						icon="credit-card"
-						href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
+						href={ `/me/purchases/${ site.domain }/${ currentPurchase.ID }` }
 					>
 						{ translate( 'Manage Subscription' ) }
 					</PopoverMenuItem>

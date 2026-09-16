@@ -1,10 +1,11 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { isJetpackSearchFree, isJetpackSearch } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -51,7 +52,10 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		return isPluginActive( state, selectedSiteId, pluginSlug );
 	} );
 
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const { data: sitePurchases = [] } = useQuery( {
+		...sitePurchasesQuery( selectedSiteId ),
+		enabled: !! selectedSiteId,
+	} );
 	const hasPurchasedFree = sitePurchases.some( isJetpackSearchFree );
 	const hasPurchasedPaid = sitePurchases.some( isJetpackSearch );
 

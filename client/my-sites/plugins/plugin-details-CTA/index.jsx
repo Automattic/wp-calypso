@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
@@ -8,10 +9,10 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -39,7 +40,6 @@ import {
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -70,7 +70,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const { data: purchases = [] } = useQuery( {
+		...sitePurchasesQuery( selectedSite?.ID ),
+		enabled: !! selectedSite?.ID,
+	} );
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
@@ -320,7 +323,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	return (
 		<Fragment>
-			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<div className="plugin-details-cta__container">
 				{ isPluginInstalledOnsite && sitePlugin && (
 					<div className="plugin-details-cta__manage-plugin-menu-new-purchase">
