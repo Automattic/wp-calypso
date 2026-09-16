@@ -18,10 +18,15 @@ export function MessageActions( { message, actions: actionsProp }: MessageAction
 	const renderAction = ( action: MessageAction ) => {
 		if ( action.type === 'component' ) {
 			const ActionComponent = action.component;
-			// Component actions render their own control; the wrapper keeps it aligned with the buttons.
+			const element = <ActionComponent key={ action.id } { ...( action.componentProps || {} ) } />;
+			// Inline components stay direct flex items (some span the row); in the
+			// panel the wrapper keeps a component's control aligned with the buttons.
+			if ( ! action.revealOnHover ) {
+				return element;
+			}
 			return (
 				<span key={ action.id } className={ styles.componentWrapper }>
-					<ActionComponent { ...( action.componentProps || {} ) } />
+					{ element }
 				</span>
 			);
 		}

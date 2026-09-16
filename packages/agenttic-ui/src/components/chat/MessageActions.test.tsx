@@ -135,6 +135,31 @@ describe( 'MessageActions', () => {
 		expect( dock?.classList.contains( styles.docked ) ).toBe( false );
 	} );
 
+	it( 'keeps inline component actions as direct items of the row', async () => {
+		const message: Message = {
+			id: 'agent-1',
+			role: 'agent',
+			content: [ { type: 'text', text: 'Answer' } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+			actions: [
+				{
+					type: 'component',
+					id: 'checkpoint',
+					component: () => <div data-testid="checkpoint" />,
+				},
+			],
+		};
+
+		await act( async () => {
+			root.render( <MessageActions message={ message } /> );
+		} );
+
+		const checkpoint = container.querySelector( '[data-testid="checkpoint"]' );
+		expect( checkpoint?.parentElement?.className ).toBe( styles.container );
+	} );
+
 	it( 'docks the panel once one of its actions is pressed', async () => {
 		const message: Message = {
 			id: 'agent-1',
