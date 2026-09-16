@@ -18,22 +18,42 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
+import type { Purchase } from '@automattic/api-core';
+import type { PluginPeriodVariations } from 'calypso/data/marketplace/types';
+
+// Plugin payloads from the WordPress.org, WordPress.com and ES endpoints are not validated.
+type PluginData = Record< string, unknown >;
+
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+type NoticeLog = {
+	siteId?: number | string;
+	pluginId?: string;
+};
+
+type PeriodVariation = { product_slug?: string; product_id?: number };
+
+type PluginSlugs = { slug: string; software_slug?: string; org_slug?: string };
+
+type PluginWithVariations = { slug?: string; variations?: PluginPeriodVariations };
 
 /**
- * @param  {number} siteId     Site Object
- * @param  {Object} log        Notice log Object
- * @returns {boolean} True if notice matches criteria
+ * @param  siteId Site ID
+ * @param  log    Notice log Object
+ * @returns True if notice matches criteria
  */
-function isSameSiteNotice( siteId, log ) {
-	return siteId && log.siteId && parseInt( log.siteId ) === siteId;
+function isSameSiteNotice( siteId: number | undefined, log: NoticeLog ): boolean {
+	return Boolean( siteId && log.siteId && parseInt( String( log.siteId ) ) === siteId );
 }
 
 /**
- * @param  {string} pluginId Plugin ID
- * @param  {Object} log      Notice log Object
- * @returns {boolean} True if notice matches criteria
+ * @param  pluginId Plugin ID
+ * @param  log      Notice log Object
+ * @returns True if notice matches criteria
  */
-function isSamePluginNotice( pluginId, log ) {
+function isSamePluginNotice( pluginId: string | undefined, log: NoticeLog ): boolean {
 	if ( ! pluginId || ! log.pluginId ) {
 		return false;
 	}
@@ -42,11 +62,14 @@ function isSamePluginNotice( pluginId, log ) {
 }
 
 /**
- * @param  {string} idOrSlug First plugin ID or slug for comparison
- * @param  {string} slugOrId Second plugin ID or slug for comparison
- * @returns {boolean} True if the plugin ID and slug match
+ * @param  idOrSlug First plugin ID or slug for comparison
+ * @param  slugOrId Second plugin ID or slug for comparison
+ * @returns True if the plugin ID and slug match
  */
-export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
+export function isSamePluginIdSlug(
+	idOrSlug: string | number,
+	slugOrId: string | number
+): boolean {
 	const firstIdOrSlug = idOrSlug.toString();
 	const secondIdOrSlug = slugOrId.toString();
 	return (
@@ -60,12 +83,16 @@ export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
 
 /**
  * Filter function that return notices that fit a certain criteria.
- * @param  {number} siteId   Site Object
- * @param  {string} pluginId Plugin Id
- * @param  {Object} log      Notice log Object
- * @returns {boolean} True if notice matches criteria
+ * @param  siteId   Site ID
+ * @param  pluginId Plugin Id
+ * @param  log      Notice log Object
+ * @returns True if notice matches criteria
  */
-function filterNoticesBy( siteId, pluginId, log ) {
+function filterNoticesBy(
+	siteId: number | undefined,
+	pluginId: string | undefined,
+	log: NoticeLog
+): boolean {
 	if ( ! siteId && ! pluginId ) {
 		return true;
 	}
@@ -79,7 +106,7 @@ function filterNoticesBy( siteId, pluginId, log ) {
 	return false;
 }
 
-export function getAllowedPluginData( plugin ) {
+export function getAllowedPluginData( plugin: PluginData ): PluginData {
 	return pick(
 		plugin,
 		'action_links',
@@ -129,30 +156,33 @@ export function getAllowedPluginData( plugin ) {
 	);
 }
 
-export function extractAuthorName( authorElementSource ) {
+export function extractAuthorName( authorElementSource: string | undefined ): string {
 	if ( ! authorElementSource ) {
 		return '';
 	}
 	return decodeEntities( authorElementSource.replace( /(<([^>]+)>)/gi, '' ) );
 }
 
-export function extractAuthorUrl( authorElementSource ) {
+export function extractAuthorUrl( authorElementSource: string ): string {
 	const match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
 	return match && match[ 1 ] ? match[ 1 ] : '';
 }
 
-export function extractScreenshots( screenshotsHtml ) {
+type Screenshot = { url: string; caption: string | null };
+
+export function extractScreenshots( screenshotsHtml: string ): Screenshot[] | null {
 	if ( 'undefined' === typeof window ) {
 		return null;
 	}
 
 	const screenshotsDom = parseHtml( screenshotsHtml );
 
-	const list = screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
+	const list: NodeListOf< HTMLLIElement > | undefined =
+		screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = Array.from( list ).map( function ( li ) {
+	const screenshots = Array.from( list ).map( function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -164,13 +194,17 @@ export function extractScreenshots( screenshotsHtml ) {
 		}
 	} );
 
-	screenshots = screenshots.filter( ( screenshot ) => screenshot );
+	const foundScreenshots = screenshots.filter(
+		( screenshot ): screenshot is Screenshot => !! screenshot
+	);
 
-	return screenshots.length ? screenshots : null;
+	return foundScreenshots.length ? foundScreenshots : null;
 }
 
-export function normalizeCompatibilityList( compatibilityList ) {
-	function splitInNumbers( version ) {
+export function normalizeCompatibilityList(
+	compatibilityList: Record< string, unknown >
+): string[] {
+	function splitInNumbers( version: string ): number[] {
 		const splittedVersion = version.split( '.' ).map( function ( versionComponent ) {
 			return Number.parseInt( versionComponent, 10 );
 		} );
@@ -191,36 +225,38 @@ export function normalizeCompatibilityList( compatibilityList ) {
 	} );
 }
 
-export function mapStarRatingToPercent( starRating ) {
+export function mapStarRatingToPercent( starRating: number | null | undefined ): number {
 	return ( ( starRating ?? 0 ) / 5 ) * 100;
 }
 
-export function normalizePluginData( plugin, pluginData ) {
+export function normalizePluginData( plugin: PluginData, pluginData?: PluginData ): PluginData {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
-	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
+	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin as PluginWithVariations );
 
-	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
+	return Object.entries( plugin ).reduce< PluginData >( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
 			case 'short_description':
 			case 'description':
 			case 'name':
 			case 'slug':
-				returnData[ key ] = decodeEntities( item );
+				returnData[ key ] = typeof item === 'string' ? decodeEntities( item ) : item;
 				break;
 			case 'author':
 				returnData.author = item;
-				returnData.author_name = extractAuthorName( item );
-				returnData.author_url = plugin.author_url || extractAuthorUrl( item );
+				returnData.author_name = typeof item === 'string' ? extractAuthorName( item ) : '';
+				returnData.author_url = plugin.author_url || extractAuthorUrl( String( item ) );
 				break;
 			case 'sections': {
-				const cleanItem = {};
-				for ( const sectionKey of Object.keys( item ) ) {
-					if ( ! item[ sectionKey ] ) {
+				const sections = isRecord( item ) ? item : {};
+				const cleanItem: Record< string, string > = {};
+				for ( const sectionKey of Object.keys( sections ) ) {
+					const section = sections[ sectionKey ];
+					if ( ! section ) {
 						// The current section hasn't value or is empty.
 						continue;
 					}
-					cleanItem[ sectionKey ] = sanitizeSectionContent( item[ sectionKey ] );
+					cleanItem[ sectionKey ] = sanitizeSectionContent( String( section ) );
 				}
 				returnData.sections = cleanItem;
 				returnData.screenshots = cleanItem.screenshots
@@ -230,16 +266,18 @@ export function normalizePluginData( plugin, pluginData ) {
 			}
 			case 'num_ratings':
 			case 'rating':
-				returnData[ key ] = parseInt( item, 10 );
+				returnData[ key ] = parseInt( String( item ), 10 );
 				break;
 			case 'ratings':
-				for ( const prop in item ) {
-					item[ prop ] = parseInt( item[ prop ], 10 );
+				if ( isRecord( item ) ) {
+					for ( const prop in item ) {
+						item[ prop ] = parseInt( String( item[ prop ] ), 10 );
+					}
 				}
 				returnData[ key ] = item;
 				break;
 			case 'icons':
-				if ( item ) {
+				if ( isRecord( item ) ) {
 					returnData.icon =
 						item[ '256x256' ] ||
 						item[ '128x128' ] ||
@@ -248,6 +286,8 @@ export function normalizePluginData( plugin, pluginData ) {
 						item.svg ||
 						item.default ||
 						item;
+				} else if ( item ) {
+					returnData.icon = item;
 				}
 				break;
 			case 'homepage':
@@ -255,7 +295,7 @@ export function normalizePluginData( plugin, pluginData ) {
 				returnData.plugin_url = item;
 				break;
 			case 'compatibility':
-				returnData[ key ] = normalizeCompatibilityList( item );
+				returnData[ key ] = isRecord( item ) ? normalizeCompatibilityList( item ) : [];
 				break;
 			case 'product_video':
 				returnData.banner_video_src = item;
@@ -268,7 +308,9 @@ export function normalizePluginData( plugin, pluginData ) {
 	}, {} );
 }
 
-export function normalizePluginsList( pluginsList ) {
+export function normalizePluginsList(
+	pluginsList: Record< string, PluginData > | PluginData[] | null | undefined
+): PluginData[] {
 	if ( ! pluginsList ) {
 		return [];
 	}
@@ -277,13 +319,17 @@ export function normalizePluginsList( pluginsList ) {
 
 /**
  * Return logs that match a certain critia.
- * @param  {Array} logs      List of all notices
- * @param  {number} siteId   Site Object
- * @param  {string} pluginId Plugin ID
- * @returns {Array} Array of filtered logs that match the criteria
+ * @param  logs     List of all notices
+ * @param  siteId   Site ID
+ * @param  pluginId Plugin ID
+ * @returns Array of filtered logs that match the criteria
  */
-export function filterNotices( logs, siteId, pluginId ) {
-	return ( logs ?? [] ).filter( filterNoticesBy.bind( this, siteId, pluginId ) );
+export function filterNotices< T extends NoticeLog >(
+	logs: T[] | null | undefined,
+	siteId?: number,
+	pluginId?: string
+): T[] {
+	return ( logs ?? [] ).filter( ( log ) => filterNoticesBy( siteId, pluginId, log ) );
 }
 
 /**
@@ -293,10 +339,12 @@ export const DEVELOPER_PATTERN = /developer:(?:\s)*"(.*)"/;
 
 /**
  * Extract author and search params from the plugin search query
- * @param {string} searchTerm The full plugin search query
- * @returns {Array<string | undefined>} The first item will be the search and the second will be the author if exists
+ * @param searchTerm The full plugin search query
+ * @returns The first item will be the search and the second will be the author if exists
  */
-export function extractSearchInformation( searchTerm = '' ) {
+export function extractSearchInformation(
+	searchTerm = ''
+): [ search: string, author: string | undefined ] {
 	const author = searchTerm.match( DEVELOPER_PATTERN )?.[ 1 ];
 	const search = searchTerm.replace( DEVELOPER_PATTERN, '' ).trim();
 
@@ -308,9 +356,11 @@ export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 /**
  * Get the author keyword from author_profile property
  * @param plugin
- * @returns {string|null} the author keyword
+ * @returns the author keyword
  */
-export function getPluginAuthorProfileKeyword( plugin ) {
+export function getPluginAuthorProfileKeyword(
+	plugin: { author_profile?: string } | null | undefined
+): string | null {
 	if ( ! plugin?.author_profile?.startsWith( WPORG_PROFILE_URL ) ) {
 		return null;
 	}
@@ -323,7 +373,10 @@ export function getPluginAuthorProfileKeyword( plugin ) {
  * @param pluginBillingPeriod
  * @returns the correct plan slug depending on current plan and pluginBillingPeriod
  */
-export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
+export function marketplacePlanToAdd(
+	currentPlan: Pick< PeriodVariation, 'product_slug' >,
+	pluginBillingPeriod: IntervalLength
+): string {
 	if ( isEnabled( 'marketplace-personal-premium' ) ) {
 		// Site is free - doesn't have a plan.
 		return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
@@ -348,10 +401,10 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 
 /**
  * Determines the URL to use for managing a connection.
- * @param {string} siteSlug The site slug to use in the URL.
+ * @param siteSlug The site slug to use in the URL.
  * @returns The URL to use for managing a connection.
  */
-export const getManageConnectionHref = ( siteSlug ) => {
+export const getManageConnectionHref = ( siteSlug: string | null | undefined ): string => {
 	return isJetpackCloud() || isA8CForAgencies()
 		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
 		: `/settings/manage-connection/${ siteSlug }`;
@@ -360,19 +413,19 @@ export const getManageConnectionHref = ( siteSlug ) => {
 /**
  * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
  * but require a paid upgrade to function.
- * @typedef {Object} PluginVariations
- * @property {Object} monthly The plugin's monthly variation
- * @property {string} monthly.product_slug The plugin's monthly variation's product slug
- * @property {Object} yearly The plugin's yearly variation
- * @property {string} yearly.product_slug The plugin's yearly variation's product slug
- * @param {Object} plugin
- * @returns {PluginVariations}
+ * @param plugin
+ * @returns The plugin's own variations, or the preinstalled premium plugin's product slugs.
  */
-export function getPreinstalledPremiumPluginsVariations( plugin ) {
-	if ( ! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] || !! plugin.variations ) {
+export function getPreinstalledPremiumPluginsVariations(
+	plugin: PluginWithVariations
+): PluginPeriodVariations | undefined {
+	const preinstalledPremiumPlugin = plugin.slug
+		? PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug as keyof typeof PREINSTALLED_PREMIUM_PLUGINS ]
+		: undefined;
+	if ( ! preinstalledPremiumPlugin || !! plugin.variations ) {
 		return plugin?.variations;
 	}
-	const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+	const { monthly, yearly } = preinstalledPremiumPlugin.products;
 	return {
 		monthly: { product_slug: monthly },
 		yearly: { product_slug: yearly },
@@ -381,8 +434,8 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 
 /**
  * Returns the product slug of periodVariation passed filtering the productsList passed only if required
- * @param {{ product_slug?: string; product_id?: number } | undefined} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
- * @param {Record<string, Object>} productsList The list of products
+ * @param periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param productsList The list of products
  * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
  * it will find the product slug in the productsList filtering by the variation.product_id.
  * It additionally returns:
@@ -390,7 +443,10 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
  * - null|undefined if variation.product_id is null|undefined
  * - undefined product is not found by productId in productsList
  */
-export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
+export function getProductSlugByPeriodVariation(
+	periodVariation: PeriodVariation | null | undefined,
+	productsList: Record< string, { product_id?: number; product_slug?: string } >
+): string | null | undefined {
 	if ( ! periodVariation ) {
 		return periodVariation;
 	}
@@ -410,38 +466,48 @@ export function getProductSlugByPeriodVariation( periodVariation, productsList )
 }
 
 /**
- * @param  {Object} plugin The plugin object
- * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
- * @returns {string} The software slug string
+ * @param  plugin The plugin object
+ * @param  isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns The software slug string
  */
-export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
+export const getSoftwareSlug = (
+	plugin: PluginSlugs,
+	isMarketplaceProduct: boolean
+): string | undefined =>
 	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 
 /**
- * @typedef {import('calypso/lib/purchases/types').Purchase} Purchase
- * @param  {Object} plugin The plugin object
- * @param  {Array} purchases An array of site purchases
- * @returns {Purchase} The purchase object, if found.
+ * @param  plugin The plugin object
+ * @param  purchases An array of site purchases
+ * @returns The purchase object, if found.
  */
-export const getPluginPurchased = ( plugin, purchases ) => {
-	return (
-		plugin?.variations &&
-		purchases.find( ( purchase ) =>
-			Object.values( plugin.variations ).some(
-				( variation ) => variation.product_id === purchase.productId
-			)
+export const getPluginPurchased = (
+	plugin: { variations?: PluginPeriodVariations } | null | undefined,
+	purchases: Purchase[]
+): Purchase | undefined => {
+	const variations = plugin?.variations;
+	if ( ! variations ) {
+		return undefined;
+	}
+	return purchases.find( ( purchase ) =>
+		Object.values( variations ).some(
+			( variation ) => variation.product_id === purchase.product_id
 		)
 	);
 };
 
 /**
  * Gets the SaaS redirect URL of a plugin if it exits and is valid
- * @param {plugin} plugin The plugin object  to read the SaaS redirect url from
- * @param {number} userId The user id
- * @param {number} siteId The site id
+ * @param plugin The plugin object  to read the SaaS redirect url from
+ * @param userId The user id
+ * @param siteId The site id
  * @returns The URL of the SaaS redirect page or null if it doesn't exist or is an invalid URL
  */
-export function getSaasRedirectUrl( plugin, userId, siteId ) {
+export function getSaasRedirectUrl(
+	plugin: { saas_landing_page?: string } | null | undefined,
+	userId: number | null | undefined,
+	siteId: number | null | undefined
+): string | null {
 	if ( ! plugin?.saas_landing_page ) {
 		return null;
 	}

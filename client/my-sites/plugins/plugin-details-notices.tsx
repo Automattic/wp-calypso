@@ -1,6 +1,6 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import {
@@ -8,22 +8,31 @@ import {
 	ECOMMERCE_BUNDLED_PLUGINS,
 	PREINSTALLED_PLUGINS,
 } from 'calypso/my-sites/plugins/constants';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
+import { useSelector } from 'calypso/state';
 import { isSiteOnEcommerce } from 'calypso/state/sites/plans/selectors';
+import type { PluginDetailsPlugin } from './plugin-details-CTA/types';
+import type { SiteDetails } from '@automattic/data-stores';
 
-const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
-	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
+interface PluginDetailsNoticesProps {
+	selectedSite?: SiteDetails | null;
+	plugin: PluginDetailsPlugin;
+}
+
+const PluginDetailsNotices = ( { selectedSite, plugin }: PluginDetailsNoticesProps ) => {
+	const translate = useTranslate();
+	const { data: purchases = [], isSuccess: hasLoadedSitePurchases } = useQuery( {
+		...sitePurchasesQuery( selectedSite?.ID ?? 0 ),
+		enabled: !! selectedSite?.ID,
+	} );
 	const isFullPluginAndPurchasesFetched = hasLoadedSitePurchases && plugin?.fetched;
 	const isWpcomPreinstalled =
 		PREINSTALLED_PLUGINS.includes( plugin.slug ) || AUTOMOMANAGED_PLUGINS.includes( plugin.slug );
-	const isEcommercePlan = useSelector( ( state ) => isSiteOnEcommerce( state, selectedSite?.ID ) );
+	const isEcommercePlan = useSelector( ( state ) =>
+		isSiteOnEcommerce( state, selectedSite?.ID ?? 0 )
+	);
 	const isBundledPlugin = isEcommercePlan
-		? ECOMMERCE_BUNDLED_PLUGINS.includes( plugin.software_slug )
+		? ECOMMERCE_BUNDLED_PLUGINS.includes( plugin.software_slug ?? '' )
 		: false;
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const marketplacePluginHasSubscription = !! (
 		plugin.isMarketplaceProduct && Boolean( getPluginPurchased( plugin, purchases ) )
 	);
@@ -54,9 +63,4 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 	);
 };
 
-PluginDetailsNotices.propTypes = {
-	selectedSite: PropTypes.object,
-	plugin: PropTypes.object.isRequired,
-};
-
-export default localize( PluginDetailsNotices );
+export default PluginDetailsNotices;

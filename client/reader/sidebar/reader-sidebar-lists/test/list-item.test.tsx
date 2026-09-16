@@ -14,22 +14,15 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
 } ) );
 
 const list: ReadList = {
@@ -48,6 +41,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSeenPostsUiEnabled = true;
 		// jsdom does not implement scrollIntoView.
 		scrollIntoView = jest.fn();
 		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -126,6 +120,23 @@ describe( 'ReaderSidebarListsListItem', () => {
 			);
 
 			expect( container.querySelector( '.a8c-count' ) ).toHaveTextContent( '5' );
+		} );
+
+		it( 'hides the unseen count when seen posts UI is disabled', () => {
+			mockSeenPostsUiEnabled = false;
+			const listWithUnseen: ReadList = {
+				...list,
+				feeds: [
+					{ feed_id: 1, unseen_count: 2 },
+					{ feed_id: 2, unseen_count: 3 },
+				],
+			};
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" />
+			);
+
+			expect( container.querySelector( '.a8c-count' ) ).toBeNull();
 		} );
 	} );
 

@@ -242,4 +242,53 @@ describe( 'useIsSeenEnabled', () => {
 			expect( result.current ).toBe( true );
 		} );
 	} );
+
+	describe( 'reader-seen-posts preference', () => {
+		const eligible = { subscriptions: [ subscription ] };
+		const eligibleArgs = { feedId: FEED_ID, organizationId: ORG_ID };
+
+		it( 'defaults to enabled when the preference is unset', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: null } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+
+		it( 'stays disabled while remote preferences have not loaded', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, remotePreferencesReceived: false } ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false when the preference is disabled for an Automattician', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: createSeenPostsWrapper( {
+					subscriptions: [ subscription ],
+					isAutomattician: true,
+					readerSeenPostsPreference: false,
+				} ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false when the preference is disabled', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: false } ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns true when the preference is explicitly enabled', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: true } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+	} );
 } );

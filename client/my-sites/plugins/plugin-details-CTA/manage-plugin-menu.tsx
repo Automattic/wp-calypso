@@ -1,15 +1,17 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import { useSelector } from 'calypso/state';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { PluginDetailsPlugin } from './types';
 
-export const ManagePluginMenu = ( { plugin } ) => {
+export const ManagePluginMenu = ( { plugin }: { plugin: PluginDetailsPlugin } ) => {
 	const translate = useTranslate();
 
 	const site = useSelector( getSelectedSite );
@@ -17,19 +19,26 @@ export const ManagePluginMenu = ( { plugin } ) => {
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
-	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, softwareSlug ) );
+	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site?.ID, softwareSlug ) );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const { data: purchases = [] } = useQuery( {
+		...sitePurchasesQuery( site?.ID ?? 0 ),
+		enabled: !! site?.ID,
+	} );
 	const currentPurchase = getPluginPurchased( plugin, purchases );
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
+
+	if ( ! site ) {
+		return null;
+	}
 
 	return (
 		<>
 			<EllipsisMenu position="bottom">
-				{ currentPurchase?.id && (
+				{ currentPurchase?.ID && (
 					<PopoverMenuItem
 						icon="credit-card"
-						href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
+						href={ `/me/purchases/${ site.domain }/${ currentPurchase.ID }` }
 					>
 						{ translate( 'Manage Subscription' ) }
 					</PopoverMenuItem>
