@@ -27,6 +27,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	const isMountedRef = useRef( true );
 
 	useEffect( () => {
+		isMountedRef.current = true;
 		// Like `useFocusReturn`: whatever had focus when the dialog opened (the
 		// thumbs-down button for keyboard users) gets it back on close.
 		const opener = document.activeElement;

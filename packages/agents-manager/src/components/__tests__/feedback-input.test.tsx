@@ -3,6 +3,7 @@
  */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StrictMode } from '@wordpress/element';
 import FeedbackInput from '../feedback-input';
 
 describe( 'FeedbackInput', () => {
@@ -344,6 +345,22 @@ describe( 'FeedbackInput', () => {
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 
 			resolveSubmit();
+			await waitFor( () => {
+				expect( screen.getByRole( 'status' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'still completes a submission after StrictMode replays its effects', async () => {
+			const user = userEvent.setup();
+			render(
+				<StrictMode>
+					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</StrictMode>
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
 			await waitFor( () => {
 				expect( screen.getByRole( 'status' ) ).toBeInTheDocument();
 			} );
