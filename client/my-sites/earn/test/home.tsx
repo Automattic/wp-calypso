@@ -83,11 +83,13 @@ describe( 'Earn home', () => {
 
 	// `free_plan` counts as monthly, so its "annual equivalent" is itself: without
 	// this, the CTA sends free sites to checkout for an unbuyable product.
-	it( 'sends a free site to the cheapest paid annual plan', async () => {
+	it( 'sends a free site to the yearly plans page', async () => {
 		renderHome( 'free_plan' );
 
 		await userEvent.click( screen.getAllByRole( 'button', { name: 'Upgrade' } )[ 2 ] );
 
-		expect( lastDestination().pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
+		const destination = lastDestination();
+		expect( destination.pathname ).toBe( '/plans/yearly/example.wordpress.com' );
+		expect( destination.searchParams.get( 'redirect_to' ) ).toBe( '/earn/example.wordpress.com' );
 	} );
 } );

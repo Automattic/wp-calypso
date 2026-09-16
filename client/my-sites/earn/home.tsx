@@ -6,17 +6,16 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
-	TERM_ANNUALLY,
 	getPlan,
 	getYearlyPlanByMonthly,
 	isFreePlan,
 	isMonthly,
 	planMatches,
+	plansLink,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { usePlansFromTypes, usePlanTypesWithIntent } from '@automattic/plans-grid-next';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -77,16 +76,6 @@ const Home = () => {
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, site?.ID ) );
-	// The plans grid owns the tier order, so its first paid entry is the cheapest
-	// plan currently on offer.
-	const upgradePlanTypes = usePlanTypesWithIntent( {
-		intent: 'plans-upgrade',
-		siteId: site?.ID,
-	} );
-	const lowestPaidAnnualPlan = usePlansFromTypes( {
-		planTypes: upgradePlanTypes,
-		term: TERM_ANNUALLY,
-	} ).find( ( planSlug ) => ! isFreePlan( planSlug ) );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
@@ -409,10 +398,9 @@ const Home = () => {
 		const isMonthlyPlan = isWpcomPlan && ! isOnFreePlan && isMonthly( sitePlanSlug ?? '' );
 		const isEligible = isWpcomPlan && ! isOnFreePlan && ! isMonthlyPlan;
 
-		// A free site has no annual counterpart to upgrade to, so it starts at the
-		// cheapest plan on offer instead.
+		// A monthly plan has one annual counterpart to buy, so it goes straight to
+		// checkout. Everyone else picks a plan first.
 		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( sitePlanSlug ?? '' ) : '';
-		const upgradePlanSlug = isOnFreePlan ? lowestPaidAnnualPlan : annualPlanSlug;
 
 		const cta: CtaButton = isEligible
 			? {
@@ -428,16 +416,26 @@ const Home = () => {
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
-						if ( site?.slug && upgradePlanSlug ) {
+						if ( site?.slug && annualPlanSlug ) {
 							page(
 								addQueryArgs(
-									`/checkout/${ site.slug }/${ upgradePlanSlug }`,
+									`/checkout/${ site.slug }/${ annualPlanSlug }`,
 									getUpsellCheckoutQueryArgs()
 								)
 							);
 							return;
 						}
-						page( addQueryArgs( `/plans/${ site?.slug }`, { redirect_to: getUpsellReturnUrl() } ) );
+						const url = addQueryArgs( plansLink( '/plans', site?.slug, 'yearly', true ), {
+							redirect_to: getUpsellReturnUrl(),
+						} );
+						/**
+						 * If the site is Simple, redirect to WP.com plans page even if it's a Jetpack Cloud site.
+						 */
+						if ( isSimple && isJetpackCloud() ) {
+							page( getCalypsoUrl( url ) );
+							return;
+						}
+						page( url );
 					},
 			  };
 
