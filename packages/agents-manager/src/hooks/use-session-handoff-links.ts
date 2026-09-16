@@ -5,10 +5,9 @@ import { addSessionHandoff, isHandoffAgent, isHandoffDestination } from '../util
 
 /**
  * Carries this tab's session across origins: a plain click on a link to
- * another Agents Manager origin navigates there with the session in the URL,
- * so the landing page resumes the conversation. It runs after the host's own
- * handlers, so a click they handled and gestures that open a new tab are left
- * alone, and a new tab still starts fresh.
+ * another Agents Manager origin navigates there with the session in the URL.
+ * Runs after the host's own handlers, so clicks they handled and new-tab
+ * gestures are left alone, and a new tab still starts fresh.
  */
 export function useSessionHandoffLinks( agentId?: string ): void {
 	const { site, siteKey, currentUser } = useAgentsManagerContext();
