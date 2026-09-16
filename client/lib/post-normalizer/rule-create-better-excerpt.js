@@ -1,6 +1,8 @@
 import striptags from 'striptags';
 import { domForHtml } from './utils';
 
+const EXCERPT_ATTRIBUTES = [ 'dir', 'lang' ];
+
 /**
  * Removes an HTML element from the DOM
  * @param {Node} element DOM element to remove
@@ -62,11 +64,13 @@ export function formatExcerpt( content ) {
 		.filter( ( element ) => ( element.textContent ?? '' ).trim().length === 0 )
 		.forEach( removeElement );
 
-	// `striptags` keeps the whole opening tag of an allowed element, attributes included. None of
-	// them are worth carrying into an excerpt, so drop every attribute rather than naming the ones
-	// we would rather not render.
+	// `striptags` keeps the whole opening tag of an allowed element, attributes included. `dir` and
+	// `lang` are the only ones that still do anything once the excerpt is rendered.
 	Array.from( dom.querySelectorAll( '*' ) ).forEach( ( element ) => {
-		element.getAttributeNames().forEach( ( name ) => element.removeAttribute( name ) );
+		element
+			.getAttributeNames()
+			.filter( ( name ) => ! EXCERPT_ATTRIBUTES.includes( name ) )
+			.forEach( ( name ) => element.removeAttribute( name ) );
 	} );
 
 	stripLeadingBreaklines( dom );

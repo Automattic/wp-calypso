@@ -1123,9 +1123,19 @@ describe( 'index', () => {
 				createBetterExcerpt( {
 					content:
 						'<p contenteditable autofocus onfocus="alert(1)" class="intro" id="first">one</p>' +
-						'<p>two<br onload="alert(2)"><sup title="nope">3</sup><sub dir="rtl">4</sub></p>',
+						'<p>two<br onload="alert(2)"><sup title="nope">3</sup></p>',
 				} ).better_excerpt
-			).toBe( '<p>one</p><p>two<br><sup>3</sup><sub>4</sub></p>' );
+			).toBe( '<p>one</p><p>two<br><sup>3</sup></p>' );
+		} );
+
+		test( 'keeps the attributes that still direct how the excerpt reads', () => {
+			// An excerpt is rendered as one block, so a paragraph that does not carry its own
+			// direction is laid out by the majority script of the whole thing.
+			expect(
+				createBetterExcerpt( {
+					content: '<p dir="rtl" lang="he" class="intro" onclick="alert(1)">one</p>',
+				} ).better_excerpt
+			).toBe( '<p dir="rtl" lang="he">one</p>' );
 		} );
 	} );
 
