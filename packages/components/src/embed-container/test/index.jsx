@@ -193,6 +193,16 @@ describe( 'EmbedContainer', () => {
 			expect( safe.querySelector( `[${ attribute }]` ).getAttribute( attribute ) ).toBe( safeUrl );
 		} );
 
+		it.each( [
+			'https://user:pass@evil.example/widget',
+			// The host a reader would read off this is not the one it reaches.
+			'https://www.facebook.com@evil.example/widget',
+		] )( 'drops a provider URL carrying credentials: %j', ( value ) => {
+			const container = renderContent( `<div class="fb-post" data-href="${ value }"></div>` );
+
+			expect( container.querySelector( '[data-href]' ) ).toBeNull();
+		} );
+
 		it.each( [ '', '   ', '/me/account', 'not-a-url', './relative', '#fragment' ] )(
 			'drops a data-url that is not an absolute web URL: %j',
 			( value ) => {

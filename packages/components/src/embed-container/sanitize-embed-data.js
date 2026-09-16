@@ -60,9 +60,14 @@ function isHttpProtocol( url ) {
 	return url.protocol === 'http:' || url.protocol === 'https:';
 }
 
+// Credentials in a URL let the host an embed appears to point at differ from the one it reaches.
+function hasCredentials( url ) {
+	return !! url.username || !! url.password;
+}
+
 function isHttpUrl( value ) {
 	const url = parseUrl( value );
-	return !! url && isHttpProtocol( url );
+	return !! url && isHttpProtocol( url ) && ! hasCredentials( url );
 }
 
 function isInstagramPermalink( value ) {
@@ -70,6 +75,7 @@ function isInstagramPermalink( value ) {
 	return (
 		!! url &&
 		isHttpProtocol( url ) &&
+		! hasCredentials( url ) &&
 		INSTAGRAM_PERMALINK_HOSTS.some(
 			( host ) => url.hostname === host || url.hostname.endsWith( `.${ host }` )
 		)
