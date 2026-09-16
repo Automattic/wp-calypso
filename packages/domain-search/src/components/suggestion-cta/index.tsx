@@ -1,9 +1,10 @@
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { arrowRight, envelope } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
-import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
+import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSearchTrademarkClaimsModal,
@@ -102,8 +103,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		);
 	}
 
-	// Moving a domain the user already owns is a choice rather than a purchase.
-	const isDomainMove = suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE;
+	const isDomainMove = isDomainMoveInternal( suggestion );
 
 	return (
 		<>
