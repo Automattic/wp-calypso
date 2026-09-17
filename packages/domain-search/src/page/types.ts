@@ -8,6 +8,7 @@ import {
 	domainAvailabilityQuery,
 	namePulseAvailabilityQuery,
 	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
@@ -207,6 +208,7 @@ export interface DomainSearchContextType
 		namePulseAvailability: (
 			domainNames: string[]
 		) => ReturnType< typeof namePulseAvailabilityQuery >;
+		namePulseTlds: () => ReturnType< typeof namePulseTldsQuery >;
 	};
 	config: DomainSearchConfig;
 }

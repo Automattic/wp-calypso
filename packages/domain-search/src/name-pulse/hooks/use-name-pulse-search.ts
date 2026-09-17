@@ -65,16 +65,18 @@ const toSuggestionResults = (
 
 /**
  * Expects an already-settled query (the search form debounces keystrokes). Rows
- * keep their previous status when a new search still lists them.
+ * keep their previous status when a new search still lists them. Until the TLD
+ * list arrives the input is treated as a plain name and no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
 	const trimmed = query.trim();
 	const hasMultipleWords = trimmed.includes( ' ' );
+	const { data: tlds, isPending: isPendingTlds } = useQuery( queries.namePulseTlds() );
 
 	const fqdnInfo = useMemo(
-		() => ( hasMultipleWords || ! trimmed ? null : detectFqdn( trimmed ) ),
-		[ hasMultipleWords, trimmed ]
+		() => ( hasMultipleWords || ! trimmed || ! tlds ? null : detectFqdn( trimmed, tlds ) ),
+		[ hasMultipleWords, trimmed, tlds ]
 	);
 	const keywordQuery = hasMultipleWords ? sanitizeKeywordInput( trimmed ) : '';
 	const baseName = fqdnInfo?.isFqdn
@@ -84,7 +86,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	const fqdnTld = fqdnInfo?.isFqdn ? fqdnInfo.tld : '';
 	const singleWordCount = baseName ? 1 : 0;
 	const wordCount = hasMultipleWords ? getWordCount( keywordQuery ) : singleWordCount;
-	const topTlds = useMemo( () => calculateTopTlds( baseName ), [ baseName ] );
+	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
+	const isLoadingTlds = isPendingTlds && baseName.length >= 2;
 
 	const [ exactResults, setExactResults ] = useState< Map< string, NamePulseDomainResult > >(
 		() => new Map()
@@ -114,12 +117,12 @@ export const useNamePulseSearch = ( query: string ) => {
 	const { checkDomains } = useNamePulseAvailability( updateResult );
 
 	useEffect( () => {
-		if ( baseName.length < 2 ) {
+		if ( baseName.length < 2 || ! tlds ) {
 			setExactResults( new Map() );
 			return;
 		}
 
-		const rows = generateExactMatches( baseName );
+		const rows = generateExactMatches( baseName, tlds );
 		const previous = exactResultsRef.current;
 
 		setExactResults( () => {
@@ -164,7 +167,7 @@ export const useNamePulseSearch = ( query: string ) => {
 				return ! known || needsAvailabilityCheck( known.status );
 			} )
 		);
-	}, [ baseName, fqdn, fqdnTld, hasMultipleWords, checkDomains ] );
+	}, [ baseName, fqdn, fqdnTld, hasMultipleWords, tlds, checkDomains ] );
 
 	const keywordEnabled = wordCount >= 2;
 	const keywordQueryResult = useQuery( {
@@ -247,6 +250,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		exactList,
 		keywordResults,
 		topResults,
+		isLoadingTlds,
 		isLoadingKeyword,
 		revealExact,
 		updateResult,

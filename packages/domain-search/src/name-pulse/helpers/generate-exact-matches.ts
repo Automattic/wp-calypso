@@ -1,4 +1,3 @@
-import { NAME_PULSE_TLDS } from './constants';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
@@ -7,7 +6,7 @@ import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
  */
 export function generateExactMatches(
 	baseName: string,
-	tlds: readonly string[] = NAME_PULSE_TLDS
+	tlds: readonly string[]
 ): NamePulseDomainResult[] {
 	const matchedTld = tlds.find(
 		( tld ) => baseName.endsWith( tld ) && baseName.length - tld.length >= 2

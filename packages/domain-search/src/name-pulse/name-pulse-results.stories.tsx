@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getTld } from '../helpers';
 import { DomainSearchContext, useDomainSearchContextValue } from '../page/context';
+import { NAME_PULSE_TLDS_FIXTURE } from '../test-helpers/factories/name-pulse-tlds';
 import { NamePulseResults } from '.';
 import type { DomainSearchCart, SelectedDomain } from '../page/types';
 import type {
@@ -172,6 +173,14 @@ const StoryDomainSearch = ( { query }: { query: string } ) => {
 								await new Promise( ( resolve ) => setTimeout( resolve, 1200 ) );
 
 								return { suggestions: SUGGESTIONS, errors: [] };
+							},
+						} ),
+						namePulseTlds: () => ( {
+							...contextValue.queries.namePulseTlds(),
+							queryFn: async () => {
+								await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+								return NAME_PULSE_TLDS_FIXTURE;
 							},
 						} ),
 						domainAvailability: ( domainName ) => ( {

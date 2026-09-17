@@ -8,6 +8,7 @@ import {
 	freeSuggestionQuery,
 	namePulseAvailabilityQuery,
 	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
@@ -57,6 +58,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		bundleForDomain: ( fqdn: string ) => bundleForDomainQuery( fqdn ),
 		namePulseSuggestions: ( params ) => namePulseSuggestionsQuery( params ),
 		namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
+		namePulseTlds: () => namePulseTldsQuery(),
 	},
 	cart: {
 		items: [],
@@ -220,6 +222,11 @@ export const useDomainSearchContextValue = ( {
 				namePulseAvailability: ( domainNames ) => ( {
 					...namePulseAvailabilityQuery( domainNames ),
 					enabled: false,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseTlds: () => ( {
+					...namePulseTldsQuery(),
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),

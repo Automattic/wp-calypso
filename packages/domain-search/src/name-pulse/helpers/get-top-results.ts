@@ -1,8 +1,4 @@
-import {
-	NAME_PULSE_TLDS,
-	NAME_PULSE_TOP_RESULTS_COUNT,
-	NAME_PULSE_TOP_RESULTS_TLDS,
-} from './constants';
+import { NAME_PULSE_TOP_RESULTS_COUNT, NAME_PULSE_TOP_RESULTS_TLDS } from './constants';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
@@ -11,8 +7,8 @@ import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
  */
 export function calculateTopTlds(
 	baseName: string,
-	defaultTopTlds: readonly string[] = NAME_PULSE_TOP_RESULTS_TLDS,
-	tlds: readonly string[] = NAME_PULSE_TLDS
+	tlds: readonly string[],
+	defaultTopTlds: readonly string[] = NAME_PULSE_TOP_RESULTS_TLDS
 ): string[] {
 	const topTlds = [ ...defaultTopTlds ];
 	const matchedTld = tlds.find( ( tld ) => baseName.endsWith( tld ) );

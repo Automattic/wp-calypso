@@ -1,6 +1,5 @@
 import { parseDomainAgainstTldList } from '../../helpers/parse-domain-against-tld-list';
 import wpcomMultiLevelTlds from '../../helpers/wpcom-multi-level-tlds.json';
-import { NAME_PULSE_TLDS } from './constants';
 import { sanitizeDomainInput } from './sanitize';
 
 export interface FqdnDetection {
@@ -26,10 +25,7 @@ const notFqdn = ( baseName: string ): FqdnDetection => ( {
  * raw input, before `sanitizeDomainInput` strips the dots.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
-export function detectFqdn(
-	input: string,
-	tlds: readonly string[] = NAME_PULSE_TLDS
-): FqdnDetection {
+export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetection {
 	const lowercased = input.toLowerCase().trim();
 
 	if ( ! lowercased.includes( '.' ) ) {

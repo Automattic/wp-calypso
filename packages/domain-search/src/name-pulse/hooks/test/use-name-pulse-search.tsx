@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { namePulseTldsQuery } from '@automattic/api-queries';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { NAME_PULSE_TLDS_FIXTURE } from '../../../test-helpers/factories/name-pulse-tlds';
 import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
 import {
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
@@ -27,6 +29,7 @@ describe( 'useNamePulseSearch availability failures', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
 		queryClient.clear();
+		queryClient.setQueryData( namePulseTldsQuery().queryKey, NAME_PULSE_TLDS_FIXTURE );
 	} );
 
 	afterEach( () => {

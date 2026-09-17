@@ -20,20 +20,28 @@ const toMap = ( rows: NamePulseDomainResult[] ) =>
 	new Map( rows.map( ( r ) => [ r.domain_name, r ] ) );
 
 describe( 'calculateTopTlds', () => {
+	const tlds = [ 'blog', 'com', 'org', 'net', 'app', 'dev' ];
+
 	it( 'returns the defaults when the label ends with no TLD', () => {
-		expect( calculateTopTlds( 'example' ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
+		expect( calculateTopTlds( 'example', tlds ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
 	} );
 
 	it( 'promotes a matched TLD to the second slot and keeps four entries', () => {
-		expect( calculateTopTlds( 'testorg' ) ).toEqual( [ 'blog', 'org', 'com', 'app' ] );
+		expect( calculateTopTlds( 'testorg', tlds ) ).toEqual( [ 'blog', 'org', 'com', 'app' ] );
 	} );
 
 	it( 'does not duplicate a matched TLD already in the defaults', () => {
-		expect( calculateTopTlds( 'testcom' ) ).toEqual( [ 'blog', 'com', 'app', 'dev' ] );
+		expect( calculateTopTlds( 'testcom', tlds ) ).toEqual( [ 'blog', 'com', 'app', 'dev' ] );
 	} );
 
 	it( 'leaves the defaults alone when the match is blog', () => {
-		expect( calculateTopTlds( 'exampleblog' ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
+		expect( calculateTopTlds( 'exampleblog', tlds ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
+	} );
+
+	it( 'ignores a suffix that is not in the TLD list', () => {
+		expect( calculateTopTlds( 'testnet', [ 'blog', 'com' ] ) ).toEqual( [
+			...NAME_PULSE_TOP_RESULTS_TLDS,
+		] );
 	} );
 } );
 

@@ -93,3 +93,11 @@ export type NamePulseAvailabilityResponse = Record< string, NamePulseAvailabilit
  * Hard limit enforced by the availability-check endpoint.
  */
 export const NAME_PULSE_AVAILABILITY_MAX_DOMAINS = 50;
+
+/**
+ * Response of `GET /wpcom/v2/domains/name-pulse/tlds`: the exact-match TLDs in
+ * display order.
+ */
+export interface NamePulseTldsResponse {
+	tlds: string[];
+}

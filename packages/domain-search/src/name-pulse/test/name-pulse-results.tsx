@@ -3,12 +3,13 @@
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NamePulseResults } from '..';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../page/context';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart } from '../../test-helpers/factories/cart';
+import { NAME_PULSE_TLDS_FIXTURE } from '../../test-helpers/factories/name-pulse-tlds';
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
 import type { DomainSearchCart } from '../../page/types';
@@ -28,7 +29,7 @@ const available = ( raw_price = 24 ): NamePulseAvailabilityEntry => ( {
 const AVAILABILITY: Record< string, NamePulseAvailabilityEntry > = {
 	'icecream.co': { ...available( 350 ), is_premium: true },
 	'icecream.online': { ...available( 48 ), sale_cost: 6 },
-	'icecream.io': { is_available: false },
+	'icecream.site': { is_available: false },
 };
 
 const SUGGESTIONS: NamePulseSuggestion[] = [
@@ -41,11 +42,13 @@ const NamePulseTestSearch = ( {
 	cart = buildCart(),
 	availabilityRequests = [],
 	suggestionsResponse = { suggestions: SUGGESTIONS, errors: [] },
+	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
 }: {
 	query: string;
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	suggestionsResponse?: NamePulseSuggestionsResponse;
+	tldsResponse?: () => Promise< string[] >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
@@ -74,6 +77,10 @@ const NamePulseTestSearch = ( {
 							...contextValue.queries.namePulseSuggestions( params ),
 							queryFn: async () => suggestionsResponse,
 						} ),
+						namePulseTlds: () => ( {
+							...contextValue.queries.namePulseTlds(),
+							queryFn: tldsResponse,
+						} ),
 						domainAvailability: ( domainName ) => ( {
 							...contextValue.queries.domainAvailability( domainName ),
 							queryFn: async () =>
@@ -101,6 +108,20 @@ const sectionRows = ( id: string ) =>
 const rowFor = ( domainName: string ) =>
 	document.querySelector( `[data-domain="${ domainName }"]` ) as HTMLElement;
 
+const findRow = async ( domainName: string ) => {
+	await waitFor( () => expect( rowFor( domainName ) ).not.toBeNull() );
+
+	return rowFor( domainName );
+};
+
+const skeletonsIn = ( id: string ) =>
+	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
+
+const domainsIn = ( id: string ) =>
+	sectionRows( id ).map(
+		( item ) => item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' )
+	);
+
 describe( 'NamePulseResults', () => {
 	beforeEach( () => {
 		queryClient.clear();
@@ -115,7 +136,9 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 
-		expect( await within( rowFor( 'icecream.net' ) ).findByText( '$24' ) ).toBeInTheDocument();
+		expect(
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
 		expect( within( rowFor( 'icecream.net' ) ).getByText( '/year' ) ).toBeInTheDocument();
 		expect(
 			within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
@@ -125,21 +148,61 @@ describe( 'NamePulseResults', () => {
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 	} );
 
+	it( 'shows skeletons and checks nothing until the TLD list arrives, then follows its order', async () => {
+		const availabilityRequests: string[][] = [];
+		let resolveTlds: ( tlds: string[] ) => void = () => {};
+		const tldsResponse = () =>
+			new Promise< string[] >( ( resolve ) => {
+				resolveTlds = resolve;
+			} );
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				availabilityRequests={ availabilityRequests }
+				tldsResponse={ tldsResponse }
+			/>
+		);
+
+		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
+		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
+		expect( rowFor( 'icecream.net' ) ).toBeNull();
+		expect( availabilityRequests ).toHaveLength( 0 );
+
+		await act( async () => {
+			resolveTlds( NAME_PULSE_TLDS_FIXTURE );
+		} );
+
+		expect(
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
+		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
+			'icecream.org',
+			'icecream.net',
+			'icecream.art',
+			'icecream.info',
+		] );
+	} );
+
 	it( 'renders premium, sale and unavailable rows', async () => {
 		render( <NamePulseTestSearch query="icecream" /> );
 
-		const premium = rowFor( 'icecream.co' );
+		const premium = await findRow( 'icecream.co' );
 		expect( await within( premium ).findByText( 'Premium' ) ).toBeInTheDocument();
 		expect( within( premium ).queryByText( '/year' ) ).not.toBeInTheDocument();
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
-		const sale = rowFor( 'icecream.online' );
+		const sale = await findRow( 'icecream.online' );
 		expect( await within( sale ).findByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$6' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$48/year renewal' ) ).toBeInTheDocument();
 
-		const unavailable = rowFor( 'icecream.io' );
+		const unavailable = await findRow( 'icecream.site' );
 		expect( await within( unavailable ).findByText( 'Unavailable' ) ).toBeInTheDocument();
 		expect( within( unavailable ).queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
@@ -152,7 +215,7 @@ describe( 'NamePulseResults', () => {
 			<NamePulseTestSearch query="icecream" availabilityRequests={ availabilityRequests } />
 		);
 
-		await within( rowFor( 'icecream.net' ) ).findByText( '$24' );
+		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
 		const checkedBefore = availabilityRequests.flat();
 		expect( checkedBefore ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
 
@@ -197,7 +260,7 @@ describe( 'NamePulseResults', () => {
 
 		render( <NamePulseTestSearch query="icecream" cart={ cart } /> );
 
-		await within( rowFor( 'icecream.net' ) ).findByText( '$24' );
+		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
 		await user.click(
 			within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
 		);
