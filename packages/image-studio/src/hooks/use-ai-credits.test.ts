@@ -144,10 +144,11 @@ describe( 'getAiCreditsNoticeLevel', () => {
 } );
 
 describe( 'useAiCredits', () => {
-	const renderCredits = ( mode = ImageStudioMode.Generate ) =>
-		renderHook( ( props: { mode: ImageStudioMode } ) => useAiCredits( props ), {
-			initialProps: { mode },
-		} );
+	const renderCredits = ( mode = ImageStudioMode.Generate, isProcessing = false ) =>
+		renderHook(
+			( props: { mode: ImageStudioMode; isProcessing: boolean } ) => useAiCredits( props ),
+			{ initialProps: { mode, isProcessing } }
+		);
 
 	/** Waits for the check to settle. */
 	async function waitForCheck( result: { current: { isLoading: boolean } } ) {
@@ -211,7 +212,7 @@ describe( 'useAiCredits', () => {
 		await waitFor( () =>
 			expect( result.current ).toEqual( {
 				notice: {
-					message: "You've reached your AI requests limit. Upgrade to keep creating.",
+					message: "You're out of free credits.",
 					status: 'warning',
 					dismissible: false,
 					action: upgradeAction,
@@ -235,7 +236,7 @@ describe( 'useAiCredits', () => {
 		openSpy.mockRestore();
 	} );
 
-	it( 'keeps the input open and shows a dismissible notice when credits are low', async () => {
+	it( 'keeps the input open and shows a persistent notice when credits are low', async () => {
 		apiFetchMock.mockResolvedValue( freeTierResponse( 17 ) );
 
 		const { result } = renderCredits();
@@ -243,22 +244,15 @@ describe( 'useAiCredits', () => {
 		await waitFor( () =>
 			expect( result.current ).toEqual( {
 				notice: {
-					message: 'Approaching your AI requests limit. Upgrade to keep creating.',
+					message: "You're almost out of free credits.",
 					status: 'warning',
-					dismissible: true,
-					onDismiss: expect.any( Function ),
+					dismissible: false,
 					action: upgradeAction,
 				},
 				isLimitReached: false,
 				isLoading: false,
 			} )
 		);
-
-		act( () => {
-			result.current.notice?.onDismiss?.();
-		} );
-
-		expect( result.current ).toEqual( NOTHING );
 	} );
 
 	it( 'returns nothing and logs when the request fails', async () => {
@@ -308,9 +302,56 @@ describe( 'useAiCredits', () => {
 		const { result, rerender } = renderCredits( ImageStudioMode.Generate );
 		await waitForCheck( result );
 		// The first generation moves the studio from generate to edit mode.
-		rerender( { mode: ImageStudioMode.Edit } );
+		rerender( { mode: ImageStudioMode.Edit, isProcessing: false } );
 		await act( async () => {} );
 
 		expect( apiFetchMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'checks again when a turn ends and applies the new balance', async () => {
+		apiFetchMock
+			.mockResolvedValueOnce( freeTierResponse( 5 ) )
+			.mockResolvedValueOnce( outOfCreditsResponse );
+
+		const { result, rerender } = renderCredits();
+		await waitForCheck( result );
+		expect( result.current ).toEqual( NOTHING );
+
+		rerender( { mode: ImageStudioMode.Generate, isProcessing: true } );
+		rerender( { mode: ImageStudioMode.Generate, isProcessing: false } );
+
+		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
+		expect( apiFetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'refresh',
+		} );
+	} );
+
+	it( 'does not check again while a turn is running', async () => {
+		apiFetchMock.mockResolvedValue( freeTierResponse( 5 ) );
+
+		const { result, rerender } = renderCredits();
+		await waitForCheck( result );
+		rerender( { mode: ImageStudioMode.Generate, isProcessing: true } );
+		await act( async () => {} );
+
+		expect( apiFetchMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps the last known balance when a later check fails', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		apiFetchMock
+			.mockResolvedValueOnce( freeTierResponse( 17 ) )
+			.mockRejectedValueOnce( new Error( 'down' ) );
+
+		const { result, rerender } = renderCredits();
+		await waitFor( () => expect( result.current.notice ).toBeDefined() );
+		rerender( { mode: ImageStudioMode.Generate, isProcessing: true } );
+		rerender( { mode: ImageStudioMode.Generate, isProcessing: false } );
+		await waitFor( () => expect( consoleError ).toHaveBeenCalled() );
+
+		expect( result.current.notice ).toBeDefined();
+		consoleError.mockRestore();
 	} );
 } );

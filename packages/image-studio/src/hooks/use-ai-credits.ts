@@ -1,9 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
+	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
@@ -107,13 +108,39 @@ export interface AiCreditsState {
 }
 
 /**
- * Checks the site's Jetpack AI credits once, when the modal opens.
- * @param options      - Hook options
- * @param options.mode - Image Studio mode ('edit' or 'generate') for tracking
+ * Checks the site's Jetpack AI credits when the modal opens, and again after
+ * each turn so a session that uses them up still sees the notice.
+ * @param options              - Hook options
+ * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
+ * @param options.isProcessing - True while a turn runs; each turn's end re-checks
  */
-export function useAiCredits( { mode }: { mode: ImageStudioMode } ): AiCreditsState {
+export function useAiCredits( {
+	mode,
+	isProcessing,
+}: {
+	mode: ImageStudioMode;
+	isProcessing: boolean;
+} ): AiCreditsState {
 	const [ credits, setCredits ] = useState< AiCredits | null >( null );
 	const [ isLoading, setIsLoading ] = useState( true );
+	const shown = useRef< { level: 'out' | 'low' | null; trigger: UpgradeNoticeTrigger } >( {
+		level: null,
+		trigger: 'open',
+	} );
+	const wasProcessing = useRef( isProcessing );
+
+	// A failed check keeps whatever was known, so a fluke never clears or shows a notice.
+	const applyResult = ( result: AiCredits | null, trigger: UpgradeNoticeTrigger ) => {
+		if ( ! result ) {
+			return;
+		}
+		const level = getAiCreditsNoticeLevel( result );
+		if ( level && level !== shown.current.level ) {
+			trackImageStudioUpgradeNoticeShown( { mode, trigger } );
+		}
+		shown.current = { level, trigger };
+		setCredits( level ? result : null );
+	};
 
 	useEffect( () => {
 		let isCancelled = false;
@@ -125,11 +152,7 @@ export function useAiCredits( { mode }: { mode: ImageStudioMode } ): AiCreditsSt
 			}
 			clearTimeout( timeout );
 			setIsLoading( false );
-			if ( ! result || ! getAiCreditsNoticeLevel( result ) ) {
-				return;
-			}
-			trackImageStudioUpgradeNoticeShown( { mode, trigger: 'open' } );
-			setCredits( result );
+			applyResult( result, 'open' );
 		} );
 
 		return () => {
@@ -139,6 +162,27 @@ export function useAiCredits( { mode }: { mode: ImageStudioMode } ): AiCreditsSt
 		// Once per open: the component remounts each open, and a mode change must not re-run it.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	useEffect( () => {
+		const turnEnded = wasProcessing.current && ! isProcessing;
+		wasProcessing.current = isProcessing;
+		if ( ! turnEnded ) {
+			return;
+		}
+
+		let isCancelled = false;
+		fetchAiCredits().then( ( result ) => {
+			if ( ! isCancelled ) {
+				applyResult( result, 'refresh' );
+			}
+		} );
+
+		return () => {
+			isCancelled = true;
+		};
+		// Only the end of a turn re-checks; a mode change must not.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isProcessing ] );
 
 	// Stable object for the memoised chat component.
 	return useMemo( () => {
@@ -155,22 +199,15 @@ export function useAiCredits( { mode }: { mode: ImageStudioMode } ): AiCreditsSt
 			isLoading,
 			notice: {
 				message: isLow
-					? __(
-							'Approaching your AI requests limit. Upgrade to keep creating.',
-							__i18n_text_domain__
-					  )
-					: __(
-							"You've reached your AI requests limit. Upgrade to keep creating.",
-							__i18n_text_domain__
-					  ),
+					? __( "You're almost out of free credits.", __i18n_text_domain__ )
+					: __( "You're out of free credits.", __i18n_text_domain__ ),
 				status: 'warning',
-				dismissible: isLow,
-				onDismiss: isLow ? () => setCredits( null ) : undefined,
+				dismissible: false,
 				action: upgradeUrl
 					? {
 							label: __( 'Upgrade plan', __i18n_text_domain__ ),
 							onClick: () => {
-								trackImageStudioUpgradeNoticeClick( { mode, trigger: 'open' } );
+								trackImageStudioUpgradeNoticeClick( { mode, trigger: shown.current.trigger } );
 								window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
 							},
 					  }

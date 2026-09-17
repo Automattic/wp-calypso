@@ -343,7 +343,9 @@ const ImageStudioContent = withInstanceId(
 			};
 		}, [] );
 
-		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
+		const { addNotice, setIsSidebarOpen, setIsAiCreditsNoticeShown } = useDispatch(
+			imageStudioStore
+		) as ImageStudioActions;
 
 		const {
 			handleAnnotationDone,
@@ -493,7 +495,12 @@ const ImageStudioContent = withInstanceId(
 			? ImageStudioMode.Edit
 			: ImageStudioMode.Generate;
 
-		const aiCredits = useAiCredits( { mode } );
+		const aiCredits = useAiCredits( { mode, isProcessing: isAiProcessing } );
+
+		// Lets the canvas ability skip the backend's own low-credits banner while the chat shows ours.
+		useEffect( () => {
+			setIsAiCreditsNoticeShown( Boolean( aiCredits.notice ) );
+		}, [ aiCredits.notice, setIsAiCreditsNoticeShown ] );
 
 		const modalClasses = cn(
 			'image-studio-modal',

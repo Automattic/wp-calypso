@@ -560,8 +560,8 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
-/** What showed the notice: the credits check on open, or a failed request. */
-export type UpgradeNoticeTrigger = 'open' | 'error';
+/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
 /**
  * Tracks when the limit-reached upgrade notice is shown
