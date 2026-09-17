@@ -25,7 +25,6 @@ export default function DashboardBackportSitePurchases( {
 } ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
-	const previousSectionRef = useRef< PurchasesSection | undefined >( undefined );
 	const user = useSelector( getCurrentUser );
 	const analyticsClient = useAnalyticsClient( router );
 
@@ -46,11 +45,8 @@ export default function DashboardBackportSitePurchases( {
 	}, [] );
 
 	useEffect( () => {
-		const previousSection = previousSectionRef.current;
-		previousSectionRef.current = section;
-
 		const { pathname, search } = window.location;
-		if ( shouldSeedSiteFilter( { section, previousSection, siteId, search } ) ) {
+		if ( shouldSeedSiteFilter( { section, siteId, search } ) ) {
 			page.replace( addQueryArgs( pathname + search, { site: siteId } ) );
 		}
 	}, [ section, siteId ] );

@@ -40,6 +40,9 @@ import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
 	const { supports } = useAppContext();
+	// Hosts without a `me` section embed these screens already scoped to a site,
+	// so the site filter is theirs to set rather than the visitor's.
+	const supportsMe = Boolean( supports.me );
 	const supportsMonetizeSubscriptions = Boolean(
 		supports.me && supports.me.billing && supports.me.billing.monetizeSubscriptions
 	);
@@ -94,6 +97,7 @@ export default function PurchasesList() {
 		defaultView,
 		queryParams: currentSearchParams,
 		queryParamFilterFields: [ 'site' ],
+		lockQueryParamFilters: ! supportsMe,
 	} );
 
 	const ref = useResizeObserver( ( entries ) => {
@@ -116,6 +120,7 @@ export default function PurchasesList() {
 		transferredPurchases,
 		siteFilter: currentSearchParams.site,
 		visibleFields: view.fields,
+		canFilterBySite: supportsMe,
 	} );
 
 	const allSubscriptions = useMemo( () => {
@@ -157,7 +162,7 @@ export default function PurchasesList() {
 							: __( 'View and manage your active plans and purchases.' )
 					}
 					actions={
-						Boolean( supports.me ) &&
+						supportsMe &&
 						activeSiteId !== undefined && (
 							<RouterLinkButton
 								variant="secondary"

@@ -4,35 +4,30 @@ export type PurchasesSection = 'activeUpgrades' | 'billingHistory' | 'paymentMet
 const SITE_FILTERED_SECTIONS: PurchasesSection[] = [ 'activeUpgrades', 'billingHistory' ];
 
 /**
- * Whether arriving on a screen should re-apply this site's filter.
+ * Whether this site's filter has to be applied to the current URL.
  *
- * The classic URLs carry the site in the path and the section tabs link to bare
- * paths, so without this the site scope is lost every time you move between
- * tabs. Seeding only on arrival — rather than whenever the filter is missing —
- * is what lets someone widen the filter in place without it snapping straight
- * back to this site.
- * @param options                 Named options.
- * @param options.section         The screen being shown, if it is one of the section tabs.
- * @param options.previousSection The screen shown before this one.
- * @param options.siteId          Blog ID of the site the classic URL is scoped to.
- * @param options.search          The current query string.
- * @returns Whether the `site` query argument should be added.
+ * The classic URLs carry the site in the path while the section tabs and the
+ * site switcher link to bare paths, so the scope is lost, or left pointing at
+ * the site just switched away from, unless it is re-applied on arrival. The
+ * Dashboard screens hide the filter control here, so nothing else sets it.
+ * @param options         Named options.
+ * @param options.section The screen being shown, if it is one of the section tabs.
+ * @param options.siteId  Blog ID of the site the classic URL is scoped to.
+ * @param options.search  The current query string.
+ * @returns Whether the `site` query argument should be set to this site.
  */
 export function shouldSeedSiteFilter( {
 	section,
-	previousSection,
 	siteId,
 	search,
 }: {
 	section?: PurchasesSection;
-	previousSection?: PurchasesSection;
 	siteId?: number | null;
 	search: string;
 } ): boolean {
-	const isArriving = section !== previousSection;
-	if ( ! isArriving || ! siteId || ! section || ! SITE_FILTERED_SECTIONS.includes( section ) ) {
+	if ( ! siteId || ! section || ! SITE_FILTERED_SECTIONS.includes( section ) ) {
 		return false;
 	}
 
-	return ! new URLSearchParams( search ).has( 'site' );
+	return new URLSearchParams( search ).get( 'site' ) !== String( siteId );
 }

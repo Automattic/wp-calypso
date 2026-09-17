@@ -3,68 +3,32 @@ import { shouldSeedSiteFilter } from '../site-filter';
 const siteId = 93798758;
 
 describe( 'shouldSeedSiteFilter', () => {
-	it( 'scopes a screen to the site on first arrival', () => {
+	it( 'scopes a screen that carries no site filter', () => {
 		expect(
 			shouldSeedSiteFilter( {
 				section: 'activeUpgrades',
-				previousSection: undefined,
 				siteId,
 				search: '',
 			} )
 		).toBe( true );
 	} );
 
-	it( 'rescopes when the section tabs move to another screen', () => {
+	it( 'rescopes a screen still filtered by the previously selected site', () => {
 		expect(
 			shouldSeedSiteFilter( {
 				section: 'billingHistory',
-				previousSection: 'activeUpgrades',
-				siteId,
-				search: '',
-			} )
-		).toBe( true );
-	} );
-
-	it( 'rescopes on return to a screen already visited in this session', () => {
-		expect(
-			shouldSeedSiteFilter( {
-				section: 'activeUpgrades',
-				previousSection: 'billingHistory',
-				siteId,
-				search: '',
-			} )
-		).toBe( true );
-	} );
-
-	it( 'rescopes on return from a purchase, which has no section of its own', () => {
-		expect(
-			shouldSeedSiteFilter( {
-				section: 'activeUpgrades',
-				previousSection: undefined,
-				siteId,
-				search: '',
-			} )
-		).toBe( true );
-	} );
-
-	it( 'leaves a filter widened in place alone', () => {
-		expect(
-			shouldSeedSiteFilter( {
-				section: 'activeUpgrades',
-				previousSection: 'activeUpgrades',
-				siteId,
-				search: '',
-			} )
-		).toBe( false );
-	} );
-
-	it( 'does not disturb a site filter already in the URL', () => {
-		expect(
-			shouldSeedSiteFilter( {
-				section: 'activeUpgrades',
-				previousSection: 'billingHistory',
 				siteId,
 				search: '?site=12345',
+			} )
+		).toBe( true );
+	} );
+
+	it( 'leaves a screen already scoped to this site alone', () => {
+		expect(
+			shouldSeedSiteFilter( {
+				section: 'activeUpgrades',
+				siteId,
+				search: `?site=${ siteId }`,
 			} )
 		).toBe( false );
 	} );
@@ -73,7 +37,16 @@ describe( 'shouldSeedSiteFilter', () => {
 		expect(
 			shouldSeedSiteFilter( {
 				section: 'paymentMethods',
-				previousSection: 'activeUpgrades',
+				siteId,
+				search: '',
+			} )
+		).toBe( false );
+	} );
+
+	it( 'leaves a purchase, which has no section of its own, unscoped', () => {
+		expect(
+			shouldSeedSiteFilter( {
+				section: undefined,
 				siteId,
 				search: '',
 			} )
@@ -84,7 +57,6 @@ describe( 'shouldSeedSiteFilter', () => {
 		expect(
 			shouldSeedSiteFilter( {
 				section: 'activeUpgrades',
-				previousSection: undefined,
 				siteId: null,
 				search: '',
 			} )
