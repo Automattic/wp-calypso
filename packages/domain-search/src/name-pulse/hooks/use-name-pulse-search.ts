@@ -15,11 +15,11 @@ import {
 	needsAvailabilityCheck,
 	pickPricing,
 	sanitizeKeywordInput,
+	toRealtimeUpdate,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
 	type NamePulseSource,
 } from '../helpers';
-import { toRealtimeUpdate } from './use-name-pulse-add-to-cart';
 import { useNamePulseAvailability } from './use-name-pulse-availability';
 import type { NamePulseSuggestion } from '@automattic/api-core';
 
@@ -109,13 +109,11 @@ export const useNamePulseSearch = ( query: string ) => {
 		...queries.domainAvailability( fqdn?.fullDomain ?? '' ),
 		enabled: !! fqdn,
 	} );
-	const fqdnResult = fqdn ? exactResults.get( fqdn.fullDomain ) : undefined;
-
-	useEffect( () => {
-		if ( fqdnAvailability && fqdnResult && ! fqdnResult.is_realtime ) {
-			updateResult( toRealtimeUpdate( fqdnResult.domain_name, fqdnAvailability ) );
-		}
-	}, [ fqdnAvailability, fqdnResult, updateResult ] );
+	const fqdnRow = fqdn ? exactResults.get( fqdn.fullDomain ) : undefined;
+	const fqdnResult =
+		fqdnRow && fqdnAvailability
+			? mergeResultUpdate( fqdnRow, toRealtimeUpdate( fqdnRow.domain_name, fqdnAvailability ) )
+			: fqdnRow;
 
 	useEffect( () => {
 		if ( ! showExactGrid || ! tlds ) {

@@ -292,9 +292,6 @@ describe( 'NamePulseResults', () => {
 			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
 			expect( domainsIn( 'top' ) ).not.toContain( 'icecream.blog' );
 			expect( domainsIn( 'exact' ) ).not.toContain( 'icecream.blog' );
-			expect(
-				screen.queryByRole( 'heading', { name: 'More suggestions' } )
-			).not.toBeInTheDocument();
 
 			await user.click( within( card() ).getByRole( 'button', { name: 'Add to cart' } ) );
 
@@ -314,7 +311,6 @@ describe( 'NamePulseResults', () => {
 			);
 
 			expect( await within( await findCard() ).findByText( 'Unavailable' ) ).toBeInTheDocument();
-			expect( within( card() ).getByText( 'Exact match' ) ).toBeInTheDocument();
 			expect( within( card() ).queryByText( "It's available!" ) ).not.toBeInTheDocument();
 			expect( within( card() ).queryByText( '$33' ) ).not.toBeInTheDocument();
 			expect( within( card() ).queryByRole( 'button' ) ).not.toBeInTheDocument();

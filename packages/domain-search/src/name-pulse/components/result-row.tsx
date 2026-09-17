@@ -19,14 +19,8 @@ interface NamePulseResultRowProps {
 	onUpdate?: ( update: NamePulseDomainUpdate ) => void;
 }
 
-const Price = ( { result }: { result: NamePulseDomainResult } ) => {
+const Price = ( { yearlyPrice, salePrice }: { yearlyPrice: string; salePrice?: string } ) => {
 	const { __ } = useI18n();
-	const { yearlyPrice, salePrice } = getDisplayPrices( result );
-
-	if ( ! yearlyPrice ) {
-		return null;
-	}
-
 	const isSale = !! salePrice;
 
 	return (
@@ -57,12 +51,6 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 
 export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { inCart, toggleCart, isPending, error, trademarkClaimsModal } = useNamePulseAddToCart(
-		result,
-		position,
-		onUpdate
-	);
-
 	const {
 		domain_name: domainName,
 		suffix,
@@ -70,6 +58,12 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		is_premium: isPremium,
 		is_realtime: isRealtime,
 	} = result;
+	const { inCart, toggleCart, isPending, error, trademarkClaimsModal } = useNamePulseAddToCart(
+		domainName,
+		position,
+		onUpdate
+	);
+	const { yearlyPrice, salePrice } = getDisplayPrices( result );
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
 
 	const isWaiting = status === NamePulseDomainStatus.WAITING;
@@ -79,7 +73,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 	// Bulk results carry no premium pricing; the badge stands in for the price
 	// until the real-time check on click fills it in.
 	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
-	const showSaleBadge = isAvailable && !! getDisplayPrices( result ).salePrice;
+	const showSaleBadge = isAvailable && !! salePrice;
 
 	return (
 		<div
@@ -111,7 +105,9 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
 				{ isAvailable && (
 					<>
-						{ ! showPremiumBadge && <Price result={ result } /> }
+						{ ! showPremiumBadge && yearlyPrice && (
+							<Price yearlyPrice={ yearlyPrice } salePrice={ salePrice } />
+						) }
 						<Button
 							className="name-pulse-row__cart"
 							icon={ cartIcon }

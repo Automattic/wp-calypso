@@ -1,4 +1,3 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
@@ -6,33 +5,8 @@ import { convertAvailabilityToSuggestion } from '../../helpers/convert-availabil
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
-import {
-	NamePulseDomainStatus,
-	pickPricing,
-	type NamePulseDomainResult,
-	type NamePulseDomainUpdate,
-} from '../helpers';
+import { isAvailableStatus, toRealtimeUpdate, type NamePulseDomainUpdate } from '../helpers';
 import type { DomainAvailability } from '@automattic/api-core';
-
-export const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
-	status === DomainAvailabilityStatus.AVAILABLE ||
-	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
-
-export const toRealtimeUpdate = (
-	domainName: string,
-	availability: DomainAvailability
-): NamePulseDomainUpdate => {
-	const available = isAvailableStatus( availability.status );
-
-	return {
-		domain_name: domainName,
-		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
-		...pickPricing( availability ),
-		cost: available ? availability.cost : undefined,
-		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		is_realtime: true,
-	};
-};
 
 /**
  * Adds the domain to the cart (or removes it when already there). Bulk results
@@ -40,7 +14,7 @@ export const toRealtimeUpdate = (
  * its verdict is reported through `onUpdate`.
  */
 export const useNamePulseAddToCart = (
-	result: NamePulseDomainResult,
+	domainName: string,
 	position: number,
 	onUpdate?: ( update: NamePulseDomainUpdate ) => void
 ) => {
@@ -50,7 +24,6 @@ export const useNamePulseAddToCart = (
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
 
-	const { domain_name: domainName } = result;
 	const inCart = cart.hasItem( domainName );
 
 	const { mutate, isPending, error } = useMutation( {
