@@ -11,9 +11,8 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
-import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
-import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
+import { getCheckoutUrl } from './lib/checkout-url';
 import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
@@ -49,38 +48,30 @@ export default function CartMenu( {
 	const lines = items
 		.map( ( item ) => {
 			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			return product ? { item, product, priceInfo: getProductPriceInfo( product, term ) } : null;
+			if ( ! product ) {
+				return null;
+			}
+			const priceInfo = getProductPriceInfo( product, term );
+			const subtotal = priceInfo.price * item.quantity;
+			return {
+				item,
+				product,
+				priceInfo,
+				subtotal,
+				commission: subtotal * getProductCommissionPercentage( product.slug, product.family_slug ),
+			};
 		} )
 		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
 
 	const currency = lines[ 0 ]?.product.currency ?? 'USD';
-	const total = lines.reduce(
-		( sum, { item, priceInfo } ) => sum + priceInfo.price * item.quantity,
-		0
+	const { total, commission } = lines.reduce(
+		( sums, line ) => ( {
+			total: sums.total + line.subtotal,
+			commission: sums.commission + line.commission,
+		} ),
+		{ total: 0, commission: 0 }
 	);
-	const commission = lines.reduce(
-		( sum, { item, product, priceInfo } ) =>
-			sum +
-			priceInfo.price *
-				item.quantity *
-				getProductCommissionPercentage( product.slug, product.family_slug ),
-		0
-	);
-
-	// The classic checkout reads the products from the URL, but only takes the
-	// purchase mode from its own session, so referral carts go through the
-	// classic products page in referral mode instead.
-	const checkoutUrl = isReferralMode
-		? a4aLink(
-				`${ MARKETPLACE_PRODUCTS_ROUTE }?products=${ items
-					.map( ( item ) => `${ item.slug }:${ item.quantity }` )
-					.join( ',' ) }&purchase_type=referral`
-		  )
-		: a4aLink(
-				`${ CLASSIC_MARKETPLACE_CHECKOUT_PATH }?product_slug=${ items
-					.map( ( item ) => item.slug )
-					.join( ',' ) }`
-		  );
+	const checkoutUrl = getCheckoutUrl( items, isReferralMode );
 
 	const checkoutButton = (
 		<Button
@@ -103,6 +94,7 @@ export default function CartMenu( {
 	return (
 		<Dropdown
 			popoverProps={ { placement: 'bottom-end' } }
+			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					icon={ cart }
@@ -132,7 +124,7 @@ export default function CartMenu( {
 						{ __( 'Your cart' ) }
 					</Heading>
 					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
-					{ lines.map( ( { item, product, priceInfo } ) => (
+					{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
 						<HStack key={ item.slug } justify="space-between" spacing={ 4 } alignment="flex-start">
 							<VStack spacing={ 0 }>
 								<Text>
@@ -150,9 +142,14 @@ export default function CartMenu( {
 									<span>
 										{ priceInfo.isFree
 											? __( 'Free' )
-											: formatCurrency( priceInfo.price * item.quantity, currency ) +
-											  getTermSuffix( term ) }
+											: formatCurrency( subtotal, currency ) + getTermSuffix( term ) }
 									</span>
+									{ priceInfo.regularPrice !== undefined && (
+										<span>
+											{ ' ' }
+											<s>{ formatCurrency( priceInfo.regularPrice * item.quantity, currency ) }</s>
+										</span>
+									) }
 									{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
 										<span>
 											{ ' ' +
@@ -163,7 +160,16 @@ export default function CartMenu( {
 									) }
 								</Text>
 							</VStack>
-							<Button variant="link" isDestructive onClick={ () => onRemove( item.slug ) }>
+							<Button
+								variant="link"
+								isDestructive
+								aria-label={ sprintf(
+									/* translators: %s is the product name. */
+									__( 'Remove %s from the cart' ),
+									getCartProductName( product )
+								) }
+								onClick={ () => onRemove( item.slug ) }
+							>
 								{ __( 'Remove' ) }
 							</Button>
 						</HStack>
