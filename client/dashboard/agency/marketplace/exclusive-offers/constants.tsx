@@ -219,23 +219,6 @@ export const partnerOffers: PartnerOffer[] = [
 		},
 	},
 	{
-		id: 'jetpack-products-resell',
-		offerType: 'resell',
-		product: 'jetpack',
-		logo: <img src={ JetpackLogo } alt="Jetpack" />,
-		title: __( 'Get up to 80% off' ),
-		description: __(
-			'Get up to 80% off Jetpack’s security, performance, and growth products when you buy in bulk and resell to your clients.'
-		),
-		cta: {
-			label: __( 'Save on Jetpack' ),
-			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
-				category: PRODUCT_BRAND_FILTER_JETPACK,
-			} ),
-			purchase_type: MARKETPLACE_TYPE_REGULAR,
-		},
-	},
-	{
 		id: 'woopayments-resell',
 		offerType: 'resell',
 		product: 'woocommerce',
