@@ -5,27 +5,28 @@ type TestBlock = {
 	innerBlocks: TestBlock[];
 };
 
-jest.mock( '@wordpress/blocks', () => ( {
-	serialize: jest.fn( ( blocks: TestBlock[] ): string =>
-		JSON.stringify(
-			blocks.map( ( block ) => [
-				block.name,
-				block.attributes,
-				JSON.parse( jest.requireMock( '@wordpress/blocks' ).serialize( block.innerBlocks ) ),
-			] )
-		)
-	),
-	parse: jest.fn( ( content: string ) =>
-		( JSON.parse( content ) as [ string, unknown, unknown[] ][] ).map(
-			( [ name, attributes ], index ) => ( {
-				clientId: `parsed-${ index }`,
-				name,
-				attributes,
-				innerBlocks: [],
-			} )
-		)
-	),
-} ) );
+jest.mock( '@wordpress/blocks', () => {
+	const toTuples = ( blocks: TestBlock[] ): unknown[] =>
+		blocks.map( ( { name, attributes, innerBlocks } ) => [
+			name,
+			attributes,
+			toTuples( innerBlocks ),
+		] );
+
+	return {
+		serialize: jest.fn( ( blocks: TestBlock[] ) => JSON.stringify( toTuples( blocks ) ) ),
+		parse: jest.fn( ( content: string ) =>
+			( JSON.parse( content ) as [ string, unknown, unknown[] ][] ).map(
+				( [ name, attributes ], index ) => ( {
+					clientId: `parsed-${ index }`,
+					name,
+					attributes,
+					innerBlocks: [],
+				} )
+			)
+		),
+	};
+} );
 
 import { commitStreamedPageDesign } from '../commit';
 
@@ -89,11 +90,11 @@ it( 'tells a changed child apart from an unchanged parent', () => {
 		block( 'live-1', 'core/group', {}, [ block( 'live-2', 'core/heading' ) ] ),
 	] );
 
-	commitStreamedPageDesign( host, [
-		block( 'old-1', 'core/group', {}, [ block( 'old-2', 'core/paragraph' ) ] ),
-	] );
-
-	expect( host.replaceBlocks ).toHaveBeenCalled();
+	expect(
+		commitStreamedPageDesign( host, [
+			block( 'old-1', 'core/group', {}, [ block( 'old-2', 'core/paragraph' ) ] ),
+		] )
+	).toBe( true );
 } );
 
 it( 'leaves malformed blocks out of both writes', () => {
@@ -104,6 +105,10 @@ it( 'leaves malformed blocks out of both writes', () => {
 		{ name: 'core/spacer' } as never,
 	] );
 
-	expect( host.stageBlocks.mock.calls[ 0 ][ 0 ] ).toHaveLength( 1 );
-	expect( host.replaceBlocks.mock.calls[ 0 ][ 0 ] ).toHaveLength( 1 );
+	expect( host.stageBlocks ).toHaveBeenCalledWith( [
+		expect.objectContaining( { name: 'core/paragraph' } ),
+	] );
+	expect( host.replaceBlocks ).toHaveBeenCalledWith( [
+		expect.objectContaining( { clientId: 'live-1' } ),
+	] );
 } );

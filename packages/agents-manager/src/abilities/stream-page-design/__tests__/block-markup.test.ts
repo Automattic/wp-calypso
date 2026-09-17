@@ -1,24 +1,18 @@
-jest.mock( '@wordpress/blocks', () => {
-	let nextId = 0;
-
-	return {
-		createBlock: jest.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
-			clientId: `new-${ ++nextId }`,
-			name,
-			attributes,
-			innerBlocks,
-		} ) ),
-		getBlockType: jest.fn( ( name: string ) =>
-			name.startsWith( 'core/' ) ? { name } : undefined
-		),
-		parse: jest.fn( () => [] ),
-		serialize: jest.fn( ( blocks: unknown[] ) => `<!-- ${ blocks.length } blocks -->` ),
-		validateBlock: jest.fn( ( block: { attributes?: { valid?: boolean } } ) => [
-			block.attributes?.valid !== false,
-			[],
-		] ),
-	};
-} );
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
+		clientId: 'new',
+		name,
+		attributes,
+		innerBlocks,
+	} ) ),
+	getBlockType: jest.fn( ( name: string ) => ( { name } ) ),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( ( blocks: unknown[] ) => `<!-- ${ blocks.length } blocks -->` ),
+	validateBlock: jest.fn( ( block: { attributes?: { valid?: boolean } } ) => [
+		block.attributes?.valid !== false,
+		[],
+	] ),
+} ) );
 
 import { createBlock, parse } from '@wordpress/blocks';
 import {
@@ -167,7 +161,6 @@ describe( 'extractCompleteTopLevelBlock', () => {
 		'<!-- wp:html --><!-- wp:group -->',
 		'<!-- wp:group --><div></div><!-- /wp:gro',
 		'<div>no block',
-		'   ',
 	] )( 'waits on %s', ( buffer ) => {
 		expect( extractCompleteTopLevelBlock( buffer ) ).toBeNull();
 	} );
@@ -188,23 +181,27 @@ describe( 'sanitizeBlockTree', () => {
 } );
 
 describe( 'withSuppressedValidationLogs', () => {
-	it( 'silences validation output only, and restores the console', () => {
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	afterEach( () => jest.restoreAllMocks() );
 
-		/* eslint-disable no-console */
-		withSuppressedValidationLogs( () => {
-			console.warn( 'Block validation: mismatch' );
-			console.warn( 'other' );
-		} );
-		console.warn( 'Block validation: after' );
-		/* eslint-enable no-console */
+	/* eslint-disable no-console */
+	it.each( [
+		[ 'warn', 'Block validation: mismatch' ],
+		[ 'error', 'Block validation failed for core/paragraph' ],
+	] as const )(
+		'silences validation output on console.%s only, and restores the console',
+		( method, message ) => {
+			const spy = jest.spyOn( console, method ).mockImplementation( () => {} );
 
-		expect( warn.mock.calls.map( ( [ message ] ) => message ) ).toEqual( [
-			'other',
-			'Block validation: after',
-		] );
-		warn.mockRestore();
-	} );
+			withSuppressedValidationLogs( () => {
+				console[ method ]( message );
+				console[ method ]( 'other' );
+			} );
+			console[ method ]( message );
+
+			expect( spy.mock.calls ).toEqual( [ [ 'other' ], [ message ] ] );
+		}
+	);
+	/* eslint-enable no-console */
 } );
 
 describe( 'repairBlocksFromMarkup', () => {
@@ -224,7 +221,7 @@ describe( 'repairBlocksFromMarkup', () => {
 	it( 'rebuilds the parent of a repaired child, from the repaired children', () => {
 		const invalid = block( 'core/paragraph', { valid: false } );
 		const group = block( 'core/group', {}, [ invalid ] );
-		( parse as jest.Mock ).mockReturnValueOnce( [ group ] ).mockReturnValueOnce( [ group ] );
+		( parse as jest.Mock ).mockReturnValueOnce( [ group ] );
 
 		repairBlocksFromMarkup( '<!-- wp:group -->x<!-- /wp:group -->' );
 

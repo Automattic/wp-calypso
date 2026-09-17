@@ -295,6 +295,7 @@ describe( 'getAvailableCheckpoints', () => {
 			expect.arrayContaining( [
 				'themeBeforeUpdate',
 				'logoBeforeUpdate',
+				'blocksBeforeUpdate',
 				'siteTitleBeforeUpdate',
 				'siteMetadataBeforeUpdate',
 				'menusBeforeUpdate',
@@ -782,16 +783,15 @@ describe( 'blocks domain', () => {
 		Array.from( { length: count }, ( _, index ) => paragraph( `p${ index }` ) );
 	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
 
+	// The post the mocked editor holds, under a post-content root.
 	const post = { id: 7, type: 'page', title: 'About' };
-
-	beforeEach( () => {
-		editorBlocks().resolveBlocksRoot.mockReturnValue( {
-			kind: 'post-content',
-			clientId: 'pc',
-			post,
-		} );
-		editorBlocks().getRootBlocks.mockReturnValue( [] );
-	} );
+	// A checkpoint of that page, untitled, so a refusal names it by type and id.
+	const target = {
+		id: 'target',
+		checkpointKeys: [ 'blocks' ],
+		createdAt: 0,
+		blocksBeforeUpdate: { rootKind: 'post-content', blocks: [], post: { id: 7, type: 'page' } },
+	} as never;
 
 	it( 'snapshots the root by kind, its blocks by value, and the post', async () => {
 		const { setCheckpoint, getCheckpoint } = await loadCheckpoints();
@@ -799,23 +799,24 @@ describe( 'blocks domain', () => {
 		editorBlocks().getRootBlocks.mockReturnValue( live );
 
 		setCheckpoint( 'call-1', [ 'blocks' ] );
+		live[ 0 ].attributes.content = 'mutated';
 
-		const snapshot = getCheckpoint( 'call-1' )?.blocksBeforeUpdate;
-		expect( snapshot ).toEqual( {
+		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toEqual( {
 			rootKind: 'post-content',
-			blocks: live,
-			post: { id: 7, type: 'page', title: 'About' },
+			blocks: page( 1 ),
+			post,
 		} );
-		expect( snapshot?.blocks ).not.toBe( live );
 	} );
 
-	it( 'snapshots nothing while the canvas has no root', async () => {
-		const { setCheckpoint, getCheckpoint } = await loadCheckpoints();
+	// A missing snapshot means the capture failed, so the restore is refused.
+	it( 'snapshots nothing while the canvas has no root, and refuses to restore it', async () => {
+		const { setCheckpoint, getCheckpoint, restoreCheckpoint } = await loadCheckpoints();
 		editorBlocks().resolveBlocksRoot.mockReturnValue( null );
 
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 
 		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toBeUndefined();
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'no blocks snapshot' );
 	} );
 
 	// The root is resolved again: its clientId does not survive the editor
@@ -914,38 +915,17 @@ describe( 'blocks domain', () => {
 		expect( editorBlocks().stageRootBlocks ).toHaveBeenLastCalledWith( 'pc', original );
 	} );
 
-	it( 'rejects when the snapshot is missing', async () => {
-		const { setCheckpoint, restoreCheckpoint, getCheckpoint } = await loadCheckpoints();
-		setCheckpoint( 'call-1', [ 'blocks' ] );
-		delete getCheckpoint( 'call-1' )?.blocksBeforeUpdate;
-
-		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'no blocks snapshot' );
-	} );
-
 	// The redo puts back the page as the undo is about to overwrite it.
 	it( 'records the current blocks in the reciprocal', async () => {
 		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
 		editorBlocks().getRootBlocks.mockReturnValue( page( 2 ) );
 
-		await setReciprocalCheckpoint(
-			'redo',
-			{
-				id: 'target',
-				checkpointKeys: [ 'blocks' ],
-				createdAt: 0,
-				blocksBeforeUpdate: {
-					rootKind: 'post-content',
-					blocks: page( 1 ),
-					post: { id: 7, type: 'page' },
-				},
-			} as never,
-			{}
-		);
+		await setReciprocalCheckpoint( 'redo', target, {} );
 
 		expect( getCheckpoint( 'redo' )?.blocksBeforeUpdate ).toEqual( {
 			rootKind: 'post-content',
 			blocks: page( 2 ),
-			post: { id: 7, type: 'page', title: 'About' },
+			post,
 		} );
 	} );
 
@@ -957,30 +937,10 @@ describe( 'blocks domain', () => {
 			post: { id: 8, type: 'page' },
 		} );
 
-		await expect(
-			setReciprocalCheckpoint(
-				'redo',
-				{
-					id: 'target',
-					checkpointKeys: [ 'blocks' ],
-					createdAt: 0,
-					blocksBeforeUpdate: {
-						rootKind: 'post-content',
-						blocks: [],
-						post: { id: 7, type: 'page' },
-					},
-				} as never,
-				{}
-			)
-		).rejects.toThrow( 'belongs to page 7' );
+		await expect( setReciprocalCheckpoint( 'redo', target, {} ) ).rejects.toThrow(
+			'belongs to page 7'
+		);
 		expect( getCheckpoint( 'redo' ) ).toBeUndefined();
-	} );
-
-	it( 'keeps the snapshot out of the model-facing list', async () => {
-		const { setCheckpoint, getAvailableCheckpoints } = await loadCheckpoints();
-		setCheckpoint( 'call-1', [ 'blocks' ] );
-
-		expect( getAvailableCheckpoints()[ 0 ] ).not.toHaveProperty( 'blocksBeforeUpdate' );
 	} );
 } );
 

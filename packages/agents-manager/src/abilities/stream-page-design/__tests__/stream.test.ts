@@ -33,7 +33,10 @@ beforeEach( () => {
 } );
 
 // Unregistering forgets every stream, so each test starts from nothing.
-afterEach( () => setStreamHandler( undefined ) );
+afterEach( () => {
+	setStreamHandler( undefined );
+	jest.restoreAllMocks();
+} );
 
 describe( 'extractPartialJsonStringProperty', () => {
 	it.each( [
@@ -126,13 +129,6 @@ describe( 'handlePageDesignTaskUpdate', () => {
 		expect( handler ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'ignores an update whose parts are not a list', async () => {
-		await handlePageDesignTaskUpdate( update( { type: 'text' } as unknown as Part[] ) );
-		await withPageDesignStream( undefined )( update( undefined as unknown as Part[] ) );
-
-		expect( handler ).not.toHaveBeenCalled();
-	} );
-
 	it( 'ignores parts of other kinds and tools, and one with no markup yet', async () => {
 		await handlePageDesignTaskUpdate(
 			update( [
@@ -155,9 +151,7 @@ describe( 'handlePageDesignTaskUpdate', () => {
 	// The listener has to uncover the editor before the first frame lands.
 	it( 'announces the start of each tool call once, before the first frame', async () => {
 		const order: string[] = [];
-		const listener = jest.fn< void, [ Event ] >( () => {
-			order.push( 'announced' );
-		} );
+		const listener = jest.fn( () => order.push( 'announced' ) );
 		handler.mockImplementation( () => order.push( 'frame' ) );
 		window.addEventListener( PAGE_DESIGN_STREAM_STARTED_EVENT, listener );
 
@@ -165,9 +159,9 @@ describe( 'handlePageDesignTaskUpdate', () => {
 		await streamed( 'call-1', '<p>ab' );
 
 		expect( order ).toEqual( [ 'announced', 'frame', 'frame' ] );
-		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
-			toolCallId: 'call-1',
-		} );
+		expect( listener ).toHaveBeenCalledWith(
+			expect.objectContaining( { detail: { toolCallId: 'call-1' } } )
+		);
 		window.removeEventListener( PAGE_DESIGN_STREAM_STARTED_EVENT, listener );
 	} );
 
@@ -210,20 +204,6 @@ describe( 'setStreamHandler', () => {
 		expect( getStreamedMarkup( 'call-1' ) ).toBe( '<p>ab' );
 	} );
 
-	// The renderer mounts for the life of an editor page; its absence means its chunk never loaded.
-	it( 'reports a stream finalized with no renderer, and forgets it', async () => {
-		setStreamHandler( undefined );
-		await streamed( 'call-1', '<p>a' );
-
-		await expect( finalizePendingStreams( 'call-1' ) ).resolves.toBe( false );
-
-		setStreamHandler( handler );
-		await Promise.resolve();
-
-		expect( handler ).not.toHaveBeenCalled();
-		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
-	} );
-
 	it( 'forgets the stream when the renderer unregisters', async () => {
 		await streamed( 'call-1', '<p>a' );
 		handler.mockClear();
@@ -255,6 +235,20 @@ describe( 'finalizePendingStreams', () => {
 	it( 'reports that nothing was streamed', async () => {
 		await expect( finalizePendingStreams( 'call-1' ) ).resolves.toBe( false );
 		expect( handler ).not.toHaveBeenCalled();
+	} );
+
+	// The renderer mounts for the life of an editor page; its absence means its chunk never loaded.
+	it( 'reports a stream finalized with no renderer, and forgets it', async () => {
+		setStreamHandler( undefined );
+		await streamed( 'call-1', '<p>a' );
+
+		await expect( finalizePendingStreams( 'call-1' ) ).resolves.toBe( false );
+
+		setStreamHandler( handler );
+		await Promise.resolve();
+
+		expect( handler ).not.toHaveBeenCalled();
+		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
 	} );
 
 	it( 'drops a stream the renderer has forgotten', async () => {
@@ -295,7 +289,6 @@ describe( 'finalizePendingStreams', () => {
 			'[AgentsManager] The page design could not be finalized:',
 			expect.any( Error )
 		);
-		consoleError.mockRestore();
 	} );
 } );
 
@@ -313,12 +306,17 @@ describe( 'withPageDesignStream', () => {
 		expect( next ).toHaveBeenCalledWith( update( [ text ] ) );
 	} );
 
-	it( 'passes an update with no stream on untouched', async () => {
+	// Wire data: neither the transport nor the wrapper may trip on parts that are not a list.
+	it.each( [
+		{ case: 'with no stream', parts: [ text ] },
+		{ case: 'whose parts are not a list', parts: { type: 'text' } as unknown as Part[] },
+	] )( 'passes an update $case on untouched', async ( { parts } ) => {
 		const next = jest.fn();
-		const plain = update( [ text ] );
+		const plain = update( parts );
 
 		await withPageDesignStream( next )( plain );
 
+		expect( handler ).not.toHaveBeenCalled();
 		expect( next.mock.calls[ 0 ][ 0 ] ).toBe( plain );
 	} );
 

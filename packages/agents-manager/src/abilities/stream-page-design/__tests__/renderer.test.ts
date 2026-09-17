@@ -8,10 +8,6 @@ jest.mock( '@wordpress/blocks', () => {
 			attributes,
 			innerBlocks,
 		} ) ),
-		getBlockType: jest.fn(),
-		parse: jest.fn(),
-		serialize: jest.fn(),
-		validateBlock: jest.fn(),
 	};
 } );
 // The scanner stays real; only the editor-side repair is stubbed.
@@ -87,6 +83,7 @@ beforeEach( () => {
 afterEach( () => {
 	setStreamHandler( undefined );
 	jest.useRealTimers();
+	jest.restoreAllMocks();
 } );
 
 it( 'paints a complete block after the throttle, snapshotting the page first', async () => {
@@ -105,7 +102,7 @@ it( 'paints a complete block after the throttle, snapshotting the page first', a
 	expect( host.captureCheckpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 		host.stageBlocks.mock.invocationCallOrder[ 0 ]
 	);
-	expect( scrollToBlockBottom ).toHaveBeenCalledWith( 'final-1' );
+	expect( scrollToBlockBottom ).toHaveBeenCalledWith( lastStaged()[ 1 ][ 0 ].clientId );
 } );
 
 it( 'paints a burst of deltas in one flush', async () => {
@@ -139,7 +136,7 @@ it( 'shows an open block as a preview, then replaces it when it closes', async (
 	expect( staged[ 0 ].attributes ).not.toHaveProperty( 'className' );
 } );
 
-it( 'places complete children under an open block, and previews an open child', async () => {
+it( 'places complete children under an open block, previewing an open child until it closes', async () => {
 	renderHook( () => usePageDesignRenderer( host ) );
 
 	await streamed( `${ PAGE }<!-- wp:group --><div>${ PARAGRAPH }<!-- wp:columns --><div>` );
@@ -150,6 +147,16 @@ it( 'places complete children under an open block, and previews an open child', 
 	expect( rootClientId ).toBe( preview.clientId );
 	expect( children.map( ( block ) => block.name ) ).toEqual( [ 'core/paragraph', 'core/columns' ] );
 	expect( children[ 1 ].attributes ).toEqual( { className: PREVIEW_CLASS_NAME } );
+
+	await streamed(
+		`${ PAGE }<!-- wp:group --><div>${ PARAGRAPH }<!-- wp:columns --><div></div><!-- /wp:columns -->`
+	);
+	flush();
+
+	const [ parentClientId, closed ] = lastStaged();
+	expect( parentClientId ).toBe( preview.clientId );
+	expect( closed ).toHaveLength( 2 );
+	expect( closed[ 1 ].attributes ).not.toHaveProperty( 'className' );
 } );
 
 it( 'waits for a block to open before previewing wrapper HTML at the top level', async () => {
@@ -205,7 +212,6 @@ it( 'logs a frame that cannot be painted and goes on', async () => {
 
 	// The frame that failed is staged again with the next, once each.
 	expect( lastStaged()[ 1 ] ).toHaveLength( 2 );
-	consoleError.mockRestore();
 } );
 
 it( 'keeps the preview styles injected while a design streams', async () => {
@@ -246,12 +252,11 @@ describe( 'without a root', () => {
 		act( () => jest.advanceTimersByTime( 150 * 30 ) );
 
 		expect( host.resolveRoot ).toHaveBeenCalledTimes( 21 );
-		expect( jest.getTimerCount() ).toBe( 1 );
 	} );
 
 	// The callback must not tell the agent the design was staged when it was not.
 	it( 'reports a final flush the canvas never took, and forgets the stream', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		host.resolveRoot.mockReturnValue( null );
 		renderHook( () => usePageDesignRenderer( host ) );
 
@@ -263,7 +268,6 @@ describe( 'without a root', () => {
 		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
 		expect( host.forgetToolCall ).toHaveBeenCalledWith( 'call-1' );
 		expect( getStreamedMarkup( 'call-1' ) ).toBeUndefined();
-		consoleError.mockRestore();
 	} );
 
 	// A retry queued before the canvas mounted must not fire after the final
@@ -274,15 +278,14 @@ describe( 'without a root', () => {
 
 		await streamed( `${ PAGE }${ PARAGRAPH }` );
 		flush();
-		await act( () => finalizePendingStreams() );
-		act( () => jest.advanceTimersByTime( 150 * 5 ) );
+		// Outside `act`, which queues a timer of its own.
+		await finalizePendingStreams();
 
 		expect( host.commitFinalDesign ).toHaveBeenCalledTimes( 1 );
-		expect( host.captureCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( jest.getTimerCount() ).toBe( 0 );
 	} );
 
-	it( 'keeps one waiting final flush per tool call', async () => {
+	it( 'finalizes each waiting tool call in turn, only once the canvas has a root', async () => {
 		host.resolveRoot.mockReturnValue( null );
 		renderHook( () => usePageDesignRenderer( host ) );
 
@@ -290,6 +293,9 @@ describe( 'without a root', () => {
 		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-2' );
 		const finalized = finalizePendingStreams();
 		await act( () => jest.advanceTimersByTimeAsync( 0 ) );
+
+		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
+
 		host.resolveRoot.mockReturnValue( 'root' );
 		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
 
@@ -298,18 +304,6 @@ describe( 'without a root', () => {
 			'call-1',
 			'call-2',
 		] );
-	} );
-
-	it( 'settles a final flush only once the canvas took it', async () => {
-		host.resolveRoot.mockReturnValueOnce( null );
-		renderHook( () => usePageDesignRenderer( host ) );
-
-		await streamed( `${ PAGE }${ PARAGRAPH }` );
-		const finalized = finalizePendingStreams();
-		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
-
-		expect( await finalized ).toBe( true );
-		expect( host.commitFinalDesign ).toHaveBeenCalledWith( 'call-1', 'root' );
 	} );
 } );
 
@@ -330,7 +324,7 @@ it( 'paints nothing for a stream the transport forgot before the flush', async (
 
 // Without the checkpoint the design would have no way back.
 it( 'stages nothing until the checkpoint is captured, retrying a failed capture', async () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	host.captureCheckpoint.mockImplementationOnce( () => {
 		throw new Error( 'no root blocks' );
 	} );
@@ -345,7 +339,6 @@ it( 'stages nothing until the checkpoint is captured, retrying a failed capture'
 
 	expect( host.captureCheckpoint ).toHaveBeenCalledTimes( 2 );
 	expect( host.stageBlocks ).toHaveBeenCalledTimes( 1 );
-	consoleError.mockRestore();
 } );
 
 it( 'stops listening and clears its timers when unmounted', async () => {

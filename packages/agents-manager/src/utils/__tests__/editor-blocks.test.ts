@@ -10,12 +10,14 @@ import {
 	replaceRootBlocks,
 	resolveBlocksRoot,
 	stageRootBlocks,
+	type EditorBlock,
 } from '../editor-blocks';
 
-const block = ( clientId: string, name: string, innerBlocks: unknown[] = [] ) => ( {
+const block = ( clientId: string, name: string ): EditorBlock => ( {
 	clientId,
 	name,
-	innerBlocks,
+	attributes: {},
+	innerBlocks: [],
 } );
 
 const replaceInnerBlocks = jest.fn();
@@ -24,15 +26,22 @@ const markNextChangeAsNotPersistent = jest.fn();
 const clearSelectedBlock = jest.fn();
 
 function withEditor( {
-	blocks = [] as unknown[],
+	blocks = [],
 	postContent,
 	sectionRoot,
 	postId,
-}: { blocks?: unknown[]; postContent?: string; sectionRoot?: string; postId?: number } = {} ) {
+	title,
+}: {
+	blocks?: EditorBlock[];
+	postContent?: string;
+	sectionRoot?: string;
+	postId?: number;
+	title?: string;
+} = {} ) {
 	( select as jest.Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
-					getBlocks: jest.fn( ( root?: string ) => ( root ? [] : blocks ) ),
+					getBlocks: ( root?: string ) => ( root ? [] : blocks ),
 					getBlocksByName: ( name: string ) =>
 						name === 'core/post-content' && postContent ? [ postContent ] : [],
 					getSectionRootClientId: () => sectionRoot,
@@ -41,7 +50,7 @@ function withEditor( {
 					getCurrentPostId: () => postId,
 					getCurrentPostType: () => 'page',
 					getEditedPostAttribute: ( attribute: string ) =>
-						attribute === 'title' && postId === 7 ? 'About' : undefined,
+						attribute === 'title' ? title : undefined,
 			  }
 	);
 	( dispatch as jest.Mock ).mockReturnValue( {
@@ -58,7 +67,7 @@ describe( 'resolveBlocksRoot', () => {
 	it.each( [
 		{
 			case: 'the section container first',
-			editor: { sectionRoot: 'section', postId: 1 },
+			editor: { sectionRoot: 'section', postContent: 'pc', postId: 1 },
 			expected: { kind: 'section', clientId: 'section', post: { id: 1, type: 'page' } },
 		},
 		{
@@ -95,7 +104,7 @@ it( 'reads the document root as the top-level blocks', () => {
 } );
 
 it( 'reads the post the editor holds', () => {
-	withEditor( { postId: 7 } );
+	withEditor( { postId: 7, title: 'About' } );
 
 	expect( getCurrentPost() ).toEqual( { id: 7, type: 'page', title: 'About' } );
 } );
@@ -106,8 +115,8 @@ describe( 'writes', () => {
 	it( 'resets the document root and replaces the inner blocks of any other root', () => {
 		withEditor();
 
-		replaceRootBlocks( DOCUMENT_ROOT_CLIENT_ID, blocks as never );
-		replaceRootBlocks( 'pc', blocks as never );
+		replaceRootBlocks( DOCUMENT_ROOT_CLIENT_ID, blocks );
+		replaceRootBlocks( 'pc', blocks );
 
 		expect( resetBlocks ).toHaveBeenCalledWith( blocks );
 		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'pc', blocks, false );
@@ -118,7 +127,7 @@ describe( 'writes', () => {
 		const queued: ( () => void )[] = [];
 		const batch = jest.fn( ( run: () => void ) => queued.push( run ) );
 
-		stageRootBlocks( 'pc', blocks as never, batch );
+		stageRootBlocks( 'pc', blocks, batch );
 
 		expect( batch ).toHaveBeenCalledTimes( 1 );
 		expect( replaceInnerBlocks ).not.toHaveBeenCalled();
@@ -134,15 +143,15 @@ describe( 'writes', () => {
 	it( 'stages at once without a batch', () => {
 		withEditor();
 
-		stageRootBlocks( 'pc', blocks as never );
+		stageRootBlocks( 'pc', blocks );
 
 		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'pc', blocks, false );
 	} );
 
-	it( 'refuses to write without the block editor', () => {
+	it( 'refuses to write, and clears no selection, without the block editor', () => {
 		( dispatch as jest.Mock ).mockReturnValue( undefined );
 
-		expect( () => replaceRootBlocks( 'pc', blocks as never ) ).toThrow( 'unavailable' );
+		expect( () => replaceRootBlocks( 'pc', blocks ) ).toThrow( 'unavailable' );
 		expect( () => clearBlockSelection() ).not.toThrow();
 	} );
 

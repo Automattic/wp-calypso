@@ -1,14 +1,13 @@
-const mockBatch = jest.fn( ( run: () => void ) => run() );
+const mockBatch = jest.fn();
+const mockLiveBlocks = [
+	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
+];
 
 jest.mock( '@wordpress/data', () => ( { useRegistry: () => ( { batch: mockBatch } ) } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( {
 	blockCurrentRequest: jest.fn(),
 	getBlockingMove: jest.fn( () => null ),
 } ) );
-const mockLiveBlocks = [
-	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
-];
-
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks' },
 	clearCheckpoint: jest.fn(),
@@ -19,11 +18,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	clearBlockSelection: jest.fn(),
 	getRootBlocks: jest.fn( () => mockLiveBlocks ),
 	replaceRootBlocks: jest.fn(),
-	resolveBlocksRoot: jest.fn( () => ( {
-		kind: 'post-content',
-		clientId: 'root',
-		post: { id: 7, type: 'page' },
-	} ) ),
+	resolveBlocksRoot: jest.fn( () => ( { clientId: 'root' } ) ),
 	stageRootBlocks: jest.fn(),
 } ) );
 jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn( () => true ) } ) );
@@ -70,7 +65,7 @@ it( 'stages frames untracked, batched with the registry', () => {
 	expect( stageRootBlocks ).toHaveBeenCalledWith( 'root', blocks, mockBatch );
 } );
 
-it( 'checkpoints the page once per tool call, then commits the design against that page', () => {
+it( 'checkpoints the page once per tool call', () => {
 	const editorHost = host();
 
 	editorHost.captureCheckpoint( 'call-1', 'root' );
@@ -84,26 +79,33 @@ it( 'checkpoints the page once per tool call, then commits the design against th
 	} );
 	expect( getRootBlocks ).toHaveBeenCalledTimes( 1 );
 	expect( getRootBlocks ).toHaveBeenCalledWith( 'root' );
+} );
 
+it( 'commits once against a copy of the page as it was, through adapters bound to the root', () => {
+	const editorHost = host();
+
+	editorHost.captureCheckpoint( 'call-1', 'root' );
+	editorHost.commitFinalDesign( 'call-1', 'root' );
+	// The snapshot is spent: a repeated final flush commits nothing.
 	editorHost.commitFinalDesign( 'call-1', 'root' );
 
+	expect( commitStreamedPageDesign ).toHaveBeenCalledTimes( 1 );
+	expect( clearCheckpoint ).not.toHaveBeenCalled();
+
 	const [ adapters, before ] = ( commitStreamedPageDesign as jest.Mock ).mock.calls[ 0 ];
+
 	expect( before ).toEqual( mockLiveBlocks );
 	expect( before ).not.toBe( mockLiveBlocks );
-	adapters.getLiveBlocks();
+
+	expect( adapters.getLiveBlocks() ).toBe( mockLiveBlocks );
 	adapters.stageBlocks( blocks );
 	adapters.replaceBlocks( blocks );
 	adapters.clearSelection();
-	expect( getRootBlocks ).toHaveBeenLastCalledWith( 'root' );
+
+	expect( getRootBlocks ).toHaveBeenNthCalledWith( 2, 'root' );
 	expect( stageRootBlocks ).toHaveBeenCalledWith( 'root', blocks, mockBatch );
 	expect( replaceRootBlocks ).toHaveBeenCalledWith( 'root', blocks );
 	expect( clearBlockSelection ).toHaveBeenCalled();
-
-	expect( clearCheckpoint ).not.toHaveBeenCalled();
-
-	// The snapshot is spent: a repeated final flush commits nothing.
-	editorHost.commitFinalDesign( 'call-1', 'root' );
-	expect( commitStreamedPageDesign ).toHaveBeenCalledTimes( 1 );
 } );
 
 // An undo that does nothing is never offered.
