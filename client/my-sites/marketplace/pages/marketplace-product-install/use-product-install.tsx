@@ -224,6 +224,12 @@ export function useProductInstall( {
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, installedPluginSlug )
 	);
+	// Only a wordpress.org plugin can be installed again from here should the transfer drop it; a
+	// marketplace-only product has no source to install from outside the transfer.
+	let reinstallSlug: string | null = null;
+	if ( ! isPluginUploadFlow ) {
+		reinstallSlug = marketplacePlugin ? marketplacePlugin.org_slug || null : pluginSlug;
+	}
 	const existingPlugin = useSelector( ( state ) =>
 		uploadErrorPluginSlug ? getPluginOnSite( state, siteId, uploadErrorPluginSlug ) : undefined
 	);
@@ -798,6 +804,7 @@ export function useProductInstall( {
 		automatedTransferStatus,
 		durableTransferCompleted,
 		isTransferredUpload,
+		reinstallSlug,
 		halted: !! error,
 	} );
 
