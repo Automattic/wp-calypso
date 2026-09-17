@@ -61,27 +61,21 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
 	const { client, isViewSettingsEnabled } = useAppContext();
 
-	const listedNoteIdsRef = useRef( new Set< number >() );
-
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
 	const tab = useMemo( () => {
 		const { filter: matches } = getFilters()[ filterName ];
 
 		// The All tab renders the whole store; a filtered tab renders the server's
-		// id list for its filter. `matches` still runs on top, but a note already
-		// listed during this visit stays even once it stops matching (e.g. read on
-		// Unread) until the tab remounts.
+		// id list for its filter. `matches` still runs on top so an in-app change
+		// (e.g. reading a note on Unread) drops it out before a refetch.
 		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
 		const source = isAllTab
 			? allNotes
 			: ( cachedNoteIds ?? [] )
 					.map( ( id ) => notesById.get( id ) )
 					.filter( ( note ): note is Note => !! note );
-		const notes = source.filter(
-			( note ) => matches( note ) || listedNoteIdsRef.current.has( note.id )
-		);
-		notes.forEach( ( note ) => listedNoteIdsRef.current.add( note.id ) );
+		const notes = source.filter( ( note ) => matches( note ) );
 
 		// Loading scoped to this tab, so another tab's fetch (or the background
 		// poll) can't show a loader over this one's cached notes. A filtered tab
