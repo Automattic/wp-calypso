@@ -216,7 +216,6 @@ describe( 'tracks wrappers', () => {
 			expect( props ).toMatchObject( {
 				message_id: 'message-1',
 				ai_session_id: 'session-xyz',
-				tab_id: 'fake-uuid',
 				agent_name: 'dolly',
 				provider_ids: 'none',
 				surface: 'editor',
