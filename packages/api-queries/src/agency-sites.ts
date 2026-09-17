@@ -39,6 +39,9 @@ export const provisionedAgencySitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites', 'provisioned' ] as const,
 		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId ),
+		// Not persisted: it is polled while a site is created, and the full site
+		// list is too large to rewrite to storage on every poll.
+		meta: { persist: false },
 	} );
 
 export const provisionAgencySiteMutation = ( agencyId: number ) =>
