@@ -32,7 +32,6 @@ export function formatAmexCreditCard( cardNumber ) {
 }
 
 const fieldMasks = {};
-const unmask = ( value ) => value;
 
 fieldMasks[ 'expiration-date' ] = {
 	mask: function ( previousValue, nextValue ) {
@@ -60,17 +59,11 @@ fieldMasks[ 'expiration-date' ] = {
 
 		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 	},
-
-	unmask,
 };
 
 fieldMasks.number = {
 	mask: function ( previousValue, nextValue ) {
 		return formatCreditCard( nextValue );
-	},
-
-	unmask: function ( value ) {
-		return value.replace( / /g, '' );
 	},
 };
 
@@ -78,8 +71,6 @@ fieldMasks.cvv = {
 	mask: function ( previousValue, nextValue ) {
 		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
 	},
-
-	unmask,
 };
 
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
@@ -116,8 +107,6 @@ fieldMasks.document = {
 
 		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
-
-	unmask,
 };
 
 /**

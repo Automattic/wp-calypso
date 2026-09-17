@@ -1,15 +1,10 @@
 import page from '@automattic/calypso-router';
 import { getQueryArgs as wpGetQueryArgs } from '@wordpress/url';
 
-function getRelativeUrlWithParameters(
-	queryArgs: object,
-	clearExistingParameters = false
-): string {
+function getRelativeUrlWithParameters( queryArgs: object ): string {
 	const url = new URL( window.location.href );
 
-	if ( clearExistingParameters ) {
-		url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
-	}
+	url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
 
 	for ( const [ key, value ] of Object.entries( queryArgs ) ) {
 		url.searchParams.set( key, value );
@@ -37,7 +32,7 @@ function getRelativeUrlWithParameters(
  * Every object key will be created in the URL
  */
 export function setQueryArgs( queryArgs: object, redirect = false ) {
-	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs, true );
+	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs );
 
 	if ( redirect ) {
 		page.redirect( searchWithoutBaseURL );
