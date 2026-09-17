@@ -87,15 +87,19 @@ export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
 				{ isMobileViewport ? (
 					<div className="domain-search__search-form-field">
 						<DomainSearchControls.Input { ...inputProps } />
-						<DomainSearchControls.Submit
-							iconOnly
-							onClick={ () => onSubmitButtonClick( localQuery ) }
-						/>
+						{ ! instantSearch && (
+							<DomainSearchControls.Submit
+								iconOnly
+								onClick={ () => onSubmitButtonClick( localQuery ) }
+							/>
+						) }
 					</div>
 				) : (
 					<HStack alignment="flex-start" spacing={ 4 }>
 						<DomainSearchControls.Input { ...inputProps } />
-						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
+						{ ! instantSearch && (
+							<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
+						) }
 					</HStack>
 				) }
 				{ showSearchHint && (

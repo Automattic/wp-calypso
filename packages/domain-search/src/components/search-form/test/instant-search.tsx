@@ -39,6 +39,18 @@ describe( 'SearchForm instant search', () => {
 		jest.useFakeTimers();
 	} );
 
+	it( 'hides the submit button', () => {
+		renderForm( { instantSearch: true } );
+
+		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the submit button without instant search', () => {
+		renderForm();
+
+		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
+	} );
+
 	afterEach( () => {
 		jest.useRealTimers();
 	} );
