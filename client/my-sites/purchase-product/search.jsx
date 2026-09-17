@@ -1,8 +1,3 @@
-import {
-	isJetpackSearch,
-	isJetpackSearchFree,
-	planHasJetpackSearch,
-} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -11,18 +6,17 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import Notice from 'calypso/components/notice';
 import searchSites from 'calypso/components/search-sites';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { urlToSlug } from 'calypso/lib/url';
-import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSiteByUrl, isRequestingSites } from 'calypso/state/sites/selectors';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 import { IS_DOT_COM_GET_SEARCH } from '../../jetpack-connect/constants';
+import ExistingSearchNotice from '../../jetpack-connect/existing-search-notice';
 import HelpButton from '../../jetpack-connect/help-button';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
 import MainHeader from '../../jetpack-connect/main-header';
@@ -120,67 +114,6 @@ export class SearchPurchase extends Component {
 
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
-	getExistingSearchSource( url ) {
-		const site = url && this.props.getJetpackSiteByUrl( url );
-		if ( ! site ) {
-			return null;
-		}
-
-		const searchProducts = ( site.products ?? [] ).filter(
-			( product ) =>
-				isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
-		);
-		const routeProduct = this.getProduct();
-		if (
-			searchProducts.some(
-				( product ) => product.user_is_owner && product.product_slug === routeProduct
-			)
-		) {
-			return 'renewal';
-		}
-		if ( searchProducts.length ) {
-			return 'product';
-		}
-
-		const planSlug = site.plan?.product_slug;
-		return planSlug && ! site.plan.expired && planHasJetpackSearch( planSlug ) ? 'plan' : null;
-	}
-
-	renderExistingSearchNotice() {
-		const { translate } = this.props;
-		const { currentUrl } = this.state;
-		const source = this.getExistingSearchSource( currentUrl );
-
-		if ( ! source ) {
-			return null;
-		}
-
-		const components = {
-			link: <a href={ getPurchaseListUrlFor( urlToSlug( currentUrl ) ) } />,
-		};
-		const texts = {
-			plan: translate(
-				"Jetpack Search is already included in this site's plan. {{link}}Manage subscriptions{{/link}}",
-				{ components }
-			),
-			renewal: translate(
-				'This site already has a Jetpack Search subscription. Continuing will renew it. {{link}}Manage subscriptions{{/link}}',
-				{ components }
-			),
-			product: translate(
-				'This site already has a Jetpack Search subscription. {{link}}Manage subscriptions{{/link}}',
-				{ components }
-			),
-		};
-		const text = texts[ source ];
-
-		return (
-			<div className="jetpack-connect__notices-container">
-				<Notice status="is-info" icon="notice" showDismiss={ false } text={ text } />
-			</div>
-		);
-	}
-
 	renderFooter() {
 		const { translate } = this.props;
 		return (
@@ -221,7 +154,11 @@ export class SearchPurchase extends Component {
 		return (
 			<Card className="purchase-product__site-url-input-container">
 				{ this.props.renderNotices() }
-				{ this.renderExistingSearchNotice() }
+				<ExistingSearchNotice
+					site={ this.props.getSiteByUrl( this.state.currentUrl ) }
+					siteUrl={ this.state.currentUrl }
+					product={ product }
+				/>
 
 				<SiteUrlInput
 					url={ this.state.shownUrl }
@@ -269,6 +206,8 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			getSiteByUrl: ( url ) => getSiteByUrl( state, url ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,
