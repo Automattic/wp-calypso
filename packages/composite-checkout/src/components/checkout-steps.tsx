@@ -831,6 +831,7 @@ export function CheckoutFormSubmit( {
 		stepSkipValidationOnSubmitMap,
 	} = state;
 	const { getStepCompleteCallback, setStepCompleteStatus, makeStepActive } = actions;
+	const { formStatus } = useFormStatus();
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -1017,10 +1018,16 @@ export function CheckoutFormSubmit( {
 					className="checkout-steps__continue-button"
 					// Distinguish this from the per-step inline "Continue" buttons for
 					// assistive technology, which would otherwise announce "Continue" twice.
-					aria-label={ __( 'Continue to the next step' ) }
+					aria-label={
+						formStatus === FormStatus.VALIDATING
+							? __( 'Please wait…' )
+							: __( 'Continue to the next step' )
+					}
 					onClick={ goToNextIncompleteStep }
+					disabled={ formStatus !== FormStatus.READY }
+					isBusy={ formStatus === FormStatus.VALIDATING }
 				>
-					{ __( 'Continue' ) }
+					{ formStatus === FormStatus.VALIDATING ? __( 'Please wait…' ) : __( 'Continue' ) }
 				</Button>
 			) : (
 				submitButton || (

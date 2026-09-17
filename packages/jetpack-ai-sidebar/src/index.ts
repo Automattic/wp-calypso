@@ -904,6 +904,20 @@ function normalizeAbilityName( name: string ): string {
  * @param {string} toolId    - Tool ID to remove.
  * @returns {any[]} Filtered list.
  */
+/**
+ * Whether an ability came from the site's Abilities REST API rather than
+ * being registered in the browser.
+ *
+ * The agent already gets server abilities from wpcom, with wpcom's own schemas
+ * and descriptions. Forwarding the registry copies makes them look like client
+ * declarations, which replace the server versions.
+ * @param {any} ability - Ability descriptor from the abilities registry.
+ * @returns {boolean} True when the ability is server-registered.
+ */
+function isServerAbility( ability: any ): boolean {
+	return ! ability?.callback && ability?.meta?.show_in_rest === true;
+}
+
 function filterAbility( abilities: any[], toolId: string ): any[] {
 	const normalized = normalizeAbilityName( toolId );
 	return abilities.filter(
@@ -1028,7 +1042,7 @@ export const toolProvider = {
 				const { getAbilities } = ( window as any ).wp.abilities;
 				const wpAbilities = await getAbilities();
 				if ( Array.isArray( wpAbilities ) ) {
-					abilities = wpAbilities;
+					abilities = wpAbilities.filter( ( ability: any ) => ! isServerAbility( ability ) );
 				}
 			} catch ( e ) {
 				// eslint-disable-next-line no-console
