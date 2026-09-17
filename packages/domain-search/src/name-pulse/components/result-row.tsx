@@ -46,24 +46,37 @@ const toRealtimeUpdate = (
 	};
 };
 
-const formatPrice = ( amount: number, currencyCode?: string ) =>
-	formatCurrency( amount, currencyCode ?? 'USD', { stripZeros: true } );
+const formatPrice = ( amount: number, currencyCode: string ) =>
+	formatCurrency( amount, currencyCode, { stripZeros: true } );
+
+/**
+ * Only `sale_cost` is a bare number, so a sale needs a known currency to render.
+ */
+const hasSalePrice = ( {
+	sale_cost: saleCost,
+	currency_code: currencyCode,
+}: NamePulseDomainResult ) => typeof saleCost === 'number' && !! currencyCode;
 
 const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 	const { __ } = useI18n();
 	const { cost, raw_price: rawPrice, sale_cost: saleCost, currency_code: currencyCode } = result;
-	const yearlyPrice = typeof rawPrice === 'number' ? formatPrice( rawPrice, currencyCode ) : cost;
+	const yearlyPrice =
+		typeof rawPrice === 'number' && currencyCode ? formatPrice( rawPrice, currencyCode ) : cost;
 
 	if ( ! yearlyPrice ) {
 		return null;
 	}
 
-	const isSale = typeof saleCost === 'number';
+	const salePrice =
+		typeof saleCost === 'number' && currencyCode
+			? formatPrice( saleCost, currencyCode )
+			: undefined;
+	const isSale = !! salePrice;
 
 	return (
 		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
 			<span className="name-pulse-row__price-line">
-				<Text weight={ 600 }>{ isSale ? formatPrice( saleCost, currencyCode ) : yearlyPrice }</Text>
+				<Text weight={ 600 }>{ salePrice ?? yearlyPrice }</Text>
 				<Text size={ 12 } variant="muted">
 					{ isSale ? __( '/first year' ) : __( '/year' ) }
 				</Text>
@@ -94,7 +107,6 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		status,
 		is_premium: isPremium,
 		is_realtime: isRealtime,
-		sale_cost: saleCost,
 	} = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
 
@@ -105,7 +117,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 	// Bulk results carry no premium pricing; the badge stands in for the price
 	// until the real-time check on click fills it in.
 	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
-	const showSaleBadge = isAvailable && typeof saleCost === 'number';
+	const showSaleBadge = isAvailable && hasSalePrice( result );
 	const inCart = cart.hasItem( domainName );
 
 	const {
@@ -187,7 +199,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 			</span>
 			<span className="name-pulse-row__status">
 				{ isWaiting && (
-					<span className="name-pulse-row__skeleton" aria-label={ __( 'Checking…' ) } />
+					<span className="name-pulse-row__skeleton" role="img" aria-label={ __( 'Checking…' ) } />
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }

@@ -54,14 +54,32 @@ describe( 'useNamePulseAvailability', () => {
 		] );
 	} );
 
+	it( 'reports a name the response leaves out as UNKNOWN', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( AVAILABILITY_PATH )
+			.reply( 200, { 'test.com': { is_available: false } } );
+
+		const { result, onUpdate } = renderAvailability();
+
+		act( () => {
+			result.current.checkDomains( [ 'test.com', 'test.net' ] );
+		} );
+
+		await waitFor( () => expect( onUpdate ).toHaveBeenCalledTimes( 2 ) );
+
+		expect( statusesReported( onUpdate ) ).toEqual( [
+			[ 'test.com', NamePulseDomainStatus.TAKEN ],
+			[ 'test.net', NamePulseDomainStatus.UNKNOWN ],
+		] );
+	} );
+
 	it( 'marks a batch UNKNOWN when no response arrives within the timeout', async () => {
 		jest.useFakeTimers();
 
-		// Never replied: the interceptor stays pending for the whole test.
+		// Never replied, without a delay timer that would outlive the test.
 		nock( 'https://public-api.wordpress.com' )
 			.post( AVAILABILITY_PATH )
-			.delay( NAME_PULSE_SKELETON_TIMEOUT_MS * 10 )
-			.reply( 200, {} );
+			.reply( 200, () => new Promise( () => {} ) );
 
 		const { result, onUpdate } = renderAvailability();
 

@@ -86,14 +86,26 @@ export const buildNamePulseAvailabilityResponse = (
 	);
 
 export const NAME_PULSE_SUGGESTIONS_FIXTURE: NamePulseSuggestion[] = [
-	{ domain_name: 'icecream.best', relevance: 0.95, raw_price: 48, sale_cost: 6 },
-	{ domain_name: 'creamyice.com', relevance: 0.9, raw_price: 24 },
-	{ domain_name: 'icecreamshop.com', relevance: 0.85, raw_price: 24 },
-	{ domain_name: 'icecreamparlor.co', relevance: 0.8, raw_price: 30 },
-	{ domain_name: 'scoops.blog', relevance: 0.75, raw_price: 22 },
-	{ domain_name: 'gelato.io', relevance: 0.7, raw_price: 350, is_premium: true },
-	{ domain_name: 'sundaes.net', relevance: 0.65, raw_price: 24 },
-	{ domain_name: 'frozentreats.com', relevance: 0.6, raw_price: 24 },
+	{
+		domain_name: 'icecream.best',
+		relevance: 0.95,
+		currency_code: 'USD',
+		raw_price: 48,
+		sale_cost: 6,
+	},
+	{ domain_name: 'creamyice.com', relevance: 0.9, currency_code: 'USD', raw_price: 24 },
+	{ domain_name: 'icecreamshop.com', relevance: 0.85, currency_code: 'USD', raw_price: 24 },
+	{ domain_name: 'icecreamparlor.co', relevance: 0.8, currency_code: 'USD', raw_price: 30 },
+	{ domain_name: 'scoops.blog', relevance: 0.75, currency_code: 'USD', raw_price: 22 },
+	{
+		domain_name: 'gelato.io',
+		relevance: 0.7,
+		currency_code: 'USD',
+		raw_price: 350,
+		is_premium: true,
+	},
+	{ domain_name: 'sundaes.net', relevance: 0.65, currency_code: 'USD', raw_price: 24 },
+	{ domain_name: 'frozentreats.com', relevance: 0.6, currency_code: 'USD', raw_price: 24 },
 ];
 
 export const withNamePulseQueries = (

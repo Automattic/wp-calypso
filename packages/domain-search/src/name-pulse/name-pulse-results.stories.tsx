@@ -23,8 +23,8 @@ const queryClient = new QueryClient( {
 } );
 
 /**
- * Rows omitted from the bulk response stay WAITING (skeleton); a single-name
- * batch is rejected so that row lands in the UNKNOWN ("Couldn’t check") state.
+ * Rows omitted from the bulk response and a rejected single-name batch both land
+ * in the UNKNOWN ("Couldn’t check") state.
  */
 const OMITTED = new Set( [ 'icecream.app', 'icecream.info' ] );
 const FAILING = 'icecream.app';

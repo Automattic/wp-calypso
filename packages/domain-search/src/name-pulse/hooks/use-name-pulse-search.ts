@@ -54,7 +54,12 @@ const toSuggestionResults = (
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
-	const { data: tlds, isPending: isPendingTlds } = useQuery( queries.namePulseTlds() );
+	const {
+		data: tlds,
+		isPending: isPendingTlds,
+		isError: isTldsError,
+		refetch: refetchTlds,
+	} = useQuery( queries.namePulseTlds() );
 	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
@@ -68,8 +73,14 @@ export const useNamePulseSearch = ( query: string ) => {
 	);
 	const exactResultsRef = useRef( exactResults );
 	exactResultsRef.current = exactResults;
+	// Keyword rows are never bulk-checked; the real-time verdict on click is the
+	// only update they receive, kept aside so a refetch does not erase it.
+	const [ keywordVerdicts, setKeywordVerdicts ] = useState< Map< string, NamePulseDomainUpdate > >(
+		() => new Map()
+	);
 
 	const updateResult = useCallback( ( update: NamePulseDomainUpdate ) => {
+		setKeywordVerdicts( ( prev ) => new Map( prev ).set( update.domain_name, update ) );
 		setExactResults( ( prev ) => {
 			const existing = prev.get( update.domain_name );
 
@@ -123,13 +134,16 @@ export const useNamePulseSearch = ( query: string ) => {
 		enabled: keywordEnabled,
 	} );
 
-	const rawKeywordResults = useMemo(
-		() =>
-			keywordEnabled
-				? toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' )
-				: EMPTY_RESULTS,
-		[ keywordEnabled, keywordQueryResult.data ]
-	);
+	const rawKeywordResults = useMemo( () => {
+		if ( ! keywordEnabled ) {
+			return EMPTY_RESULTS;
+		}
+
+		return toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' ).map( ( row ) => {
+			const verdict = keywordVerdicts.get( row.domain_name );
+			return verdict ? mergeResultUpdate( row, verdict ) : row;
+		} );
+	}, [ keywordEnabled, keywordQueryResult.data, keywordVerdicts ] );
 
 	const isLoadingKeyword = keywordEnabled && keywordQueryResult.isPending;
 
@@ -184,6 +198,8 @@ export const useNamePulseSearch = ( query: string ) => {
 		keywordResults,
 		topResults,
 		isLoadingTlds,
+		isTldsError,
+		refetchTlds,
 		isLoadingKeyword,
 		revealExact,
 		updateResult,

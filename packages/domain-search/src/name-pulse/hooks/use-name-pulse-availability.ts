@@ -35,8 +35,8 @@ const toAvailabilityUpdate = (
 /**
  * Batches go through react-query, so a repeated batch within the stale window is
  * served from cache. A batch that fails or outlives `NAME_PULSE_SKELETON_TIMEOUT_MS`
- * reports its rows as UNKNOWN; a late response still lands because
- * `mergeResultUpdate` lets a verdict replace UNKNOWN.
+ * reports its rows as UNKNOWN, and so is a name the response leaves out; a late
+ * response still lands because `mergeResultUpdate` lets a verdict replace UNKNOWN.
  */
 export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpdate ) => void ) => {
 	const queryClient = useQueryClient();
@@ -99,6 +99,7 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 							const entry = data[ domainName ];
 
 							if ( ! entry || typeof entry.is_available !== 'boolean' ) {
+								emitUpdate( { domain_name: domainName, status: NamePulseDomainStatus.UNKNOWN } );
 								continue;
 							}
 

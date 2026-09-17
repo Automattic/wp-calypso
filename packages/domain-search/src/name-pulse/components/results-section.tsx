@@ -14,7 +14,8 @@ import { NamePulseResultRow, NamePulseResultRowSkeleton } from './result-row';
 
 interface NamePulseResultsSectionProps {
 	id: string;
-	title: string;
+	/** Omitted while the heading text is not known yet (the skeletons still render). */
+	title?: string;
 	results: NamePulseDomainResult[];
 	isLoading?: boolean;
 	/** Hard cap; also disables "Show more". */
@@ -67,9 +68,11 @@ export const NamePulseResultsSection = ( {
 
 	return (
 		<VStack spacing={ 3 } className="name-pulse-section" data-section={ id }>
-			<Text as="h2" size={ 15 } weight={ 500 }>
-				{ title }
-			</Text>
+			{ title && (
+				<Text as="h2" size={ 15 } weight={ 500 }>
+					{ title }
+				</Text>
+			) }
 			<div className="name-pulse-grid" role="list">
 				{ visible.map( ( result, index ) => (
 					<div role="listitem" key={ result.domain_name }>

@@ -18,17 +18,26 @@ import {
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
 import type { DomainSearchCart } from '../../page/types';
+import type { DomainAvailability } from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
 	query,
 	cart = buildCart(),
 	availabilityRequests = [],
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
+	domainAvailability = async ( domainName ) =>
+		buildAvailability( {
+			domain_name: domainName,
+			status: DomainAvailabilityStatus.AVAILABLE,
+			cost: '$24.00',
+			raw_price: 24,
+		} ),
 }: {
 	query: string;
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	tldsResponse?: () => Promise< string[] >;
+	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
@@ -47,13 +56,7 @@ const NamePulseTestSearch = ( {
 					},
 					suggestions: async () => ( { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] } ),
 					tlds: tldsResponse,
-					domainAvailability: async ( domainName ) =>
-						buildAvailability( {
-							domain_name: domainName,
-							status: DomainAvailabilityStatus.AVAILABLE,
-							cost: '$24.00',
-							raw_price: 24,
-						} ),
+					domainAvailability,
 				} ) }
 			>
 				<NamePulseResults />
@@ -106,9 +109,7 @@ describe( 'NamePulseResults', () => {
 		);
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
-		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
-		).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
@@ -121,6 +122,9 @@ describe( 'NamePulseResults', () => {
 
 		expect(
 			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( within( rowFor( 'icecream.net' ) ).getByText( '/year' ) ).toBeInTheDocument();
 		expect(
@@ -136,6 +140,37 @@ describe( 'NamePulseResults', () => {
 			'icecream.art',
 			'icecream.info',
 		] );
+	} );
+
+	it( 'shows a notice with retry when the TLD list fails to load', async () => {
+		const user = userEvent.setup();
+		const availabilityRequests: string[][] = [];
+		const tldsResponse = jest
+			.fn()
+			.mockRejectedValueOnce( new Error( 'tlds failed' ) )
+			.mockResolvedValue( NAME_PULSE_TLDS_FIXTURE );
+
+		render(
+			<NamePulseTestSearch
+				query="ice cream"
+				availabilityRequests={ availabilityRequests }
+				tldsResponse={ tldsResponse }
+			/>
+		);
+
+		expect( await screen.findByText( 'Couldn’t load domain endings.' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Top results' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( availabilityRequests ).toHaveLength( 0 );
+
+		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect(
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect( screen.queryByText( 'Couldn’t load domain endings.' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
+		expect( tldsResponse ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'renders premium, sale and unavailable rows', async () => {
@@ -190,15 +225,45 @@ describe( 'NamePulseResults', () => {
 	it( 'renders More suggestions for a multi-word query', async () => {
 		render( <NamePulseTestSearch query="ice cream" /> );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
-		).toBeInTheDocument();
 		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Exact match for “icecream”' } )
+		).toBeInTheDocument();
 
 		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
 		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+	} );
+
+	it( 'marks a suggestion unavailable when the real-time check says so', async () => {
+		const user = userEvent.setup();
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="ice cream"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.NOT_AVAILABLE,
+					} )
+				}
+			/>
+		);
+
+		const row = await findRow( 'creamyice.com' );
+		expect( within( row ).getByText( '$24' ) ).toBeInTheDocument();
+
+		await user.click( within( row ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+		expect(
+			await within( rowFor( 'creamyice.com' ) ).findByText( 'Unavailable' )
+		).toBeInTheDocument();
+		expect( within( rowFor( 'creamyice.com' ) ).queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( within( rowFor( 'creamyice.com' ) ).queryByText( '$24' ) ).not.toBeInTheDocument();
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds a row to the cart after the real-time check', async () => {
