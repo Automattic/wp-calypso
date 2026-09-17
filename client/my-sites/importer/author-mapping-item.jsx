@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import AuthorSelector from 'calypso/blocks/author-selector';
@@ -63,7 +62,7 @@ class ImporterAuthorMapping extends PureComponent {
 			 * TODO: Refactor this to not automate the UI but use proper state
 			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
 			 */
-			defer( () => selectAuthor( users[ 0 ] ) );
+			setTimeout( () => selectAuthor( users[ 0 ] ), 0 );
 		}
 	};
 
@@ -110,8 +109,8 @@ class ImporterAuthorMapping extends PureComponent {
 	}
 }
 
-const withUsers = createHigherOrderComponent(
-	( Component ) => ( props ) => {
+const withUsers = createHigherOrderComponent( ( Component ) => {
+	const WithUsers = ( props ) => {
 		const { siteId } = props;
 		const { data } = useUsersQuery( siteId, {
 			authors_only: 1,
@@ -120,8 +119,8 @@ const withUsers = createHigherOrderComponent(
 		const users = data?.users ?? [];
 
 		return <Component users={ users } { ...props } />;
-	},
-	'withUsers'
-);
+	};
+	return WithUsers;
+}, 'withUsers' );
 
 export default localize( withUsers( ImporterAuthorMapping ) );

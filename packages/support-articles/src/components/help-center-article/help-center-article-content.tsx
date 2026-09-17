@@ -33,14 +33,18 @@ const ArticleContent = ( {
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }
 						/>
-						{ post.lesson_navigation && (
-							<ArticleLessonNavigation lessonNavigation={ post.lesson_navigation } />
-						) }
 						<HelpCenterFeedbackForm
+							// Remount when the article changes so the form re-seeds from that article's rating.
+							key={ `${ post.site_ID }-${ post.ID }` }
 							postId={ post.ID }
+							blogId={ post.site_ID }
+							userRating={ post.user_rating }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ forceEmailSupport }
 						/>
+						{ post.lesson_navigation && (
+							<ArticleLessonNavigation lessonNavigation={ post.lesson_navigation } />
+						) }
 					</EmbedContainer>
 				</>
 			) }

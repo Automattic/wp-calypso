@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
@@ -10,7 +9,7 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync status state sub-tree for a site
  * @returns {string | null } error of status
  */
-export const getStatusErrorData = ( state: AppState ): string | null => get( state, 'error', null );
+export const getStatusErrorData = ( state: AppState ): string | null => state?.error ?? null;
 
 /**
  * Returns status info for sync state

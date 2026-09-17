@@ -7,8 +7,8 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
+import { redirectLoggedOutToDiscoverTags, sidebar } from 'calypso/reader/controller';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
@@ -22,25 +22,13 @@ export default function () {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	page( '/tag/*', setBeforePrimary, redirectHashtaggedTags );
+	page( '/tag/*', redirectHashtaggedTags );
 
-	page( `/${ anyLangParam }/tag/:tag`, setBeforePrimary, redirectInvalidLanguage );
-
-	if ( isReaderTagEmbedPage( window.location ) ) {
-		page(
-			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-			setBeforePrimary,
-			setLocaleMiddleware(),
-			tagListing,
-			makeLayout,
-			clientRender
-		);
-		return;
-	}
+	page( `/${ anyLangParam }/tag/:tag`, redirectInvalidLanguage );
 
 	page(
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-		setBeforePrimary,
+		redirectLoggedOutToDiscoverTags,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		sidebar,
@@ -48,4 +36,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Catch-all for unrecognized /tag/* paths (after the specific /tag/:tag route).
+	page( '/tag/*', redirectLoggedOutToDiscoverTags, readerNotFound );
 }

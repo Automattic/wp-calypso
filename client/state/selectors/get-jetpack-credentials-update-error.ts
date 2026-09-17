@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { TransportError } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
 import 'calypso/state/jetpack/init';
 
@@ -20,9 +19,7 @@ const getJetpackCredentialsUpdateError = (
 	state: any,
 	siteId: number | null
 ): UpdateError | null => {
-	return null !== siteId
-		? get( state, [ 'jetpack', 'credentials', 'errors', siteId ], null )
-		: null;
+	return null !== siteId ? state?.jetpack?.credentials?.errors?.[ siteId ] ?? null : null;
 };
 
 export default getJetpackCredentialsUpdateError;

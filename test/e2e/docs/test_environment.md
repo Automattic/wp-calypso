@@ -1,4 +1,4 @@
-[← Setup](./setup.md) | [Top](./../README.md) | [Running tests on your machine →](./tests_local.md)
+[← Documentation index](./overview.md)
 
 # Test Environment
 
@@ -21,7 +21,7 @@ Most non-sensitive runtime configuration comes from environment variables. All o
 For example:
 
 ```
-VIEWPORT_NAME=mobile yarn jest specs/<etc>
+CALYPSO_BASE_URL=https://wordpress.com yarn playwright test specs/<etc>
 ```
 
 The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e/src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Environment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
@@ -64,7 +64,7 @@ yarn decrypt-secrets
 yarn workspace wp-e2e-tests decrypt-secrets
 ```
 
-The decrypted file (e.g., `src/secrets/secrets.decrypted.json`) must **NEVER be committed.** There are `.gitignore` rules (such as `src/secrets/secrets.decrypted.json`) to protect against this, but be vigilant nonetheless!
+The decrypted file (`src/secrets/decrypted-secrets.json`) must **NEVER be committed.** The `.gitignore` in `packages/calypso-e2e` denies everything under `src/secrets/` except an explicit allowlist, but be vigilant nonetheless — because the rule is a blanket deny, the decrypted file never shows up in `git status` to remind you to delete it.
 
 ### Using the Secrets
 
@@ -82,6 +82,6 @@ const credentials = SecretsManager.secrets.testAccounts.<test_account_name>; // 
 // Example:
 const credentials = SecretsManager.secrets.testAccounts.adminUser;
 
-// You can find valid account names in the decrypted secrets file at @automattic/calypso-e2e/src/secrets/secrets.json
+// You can find valid account names in the decrypted secrets file at @automattic/calypso-e2e/src/secrets/decrypted-secrets.json
 
 ```

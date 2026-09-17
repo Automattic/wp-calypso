@@ -7,7 +7,7 @@
  * @param {string} _.cacheIdentifier   Babel cache identifier
  * @param {boolean} _.cacheCompression Whether to apply gzip compression to the cached files (defauls to true)
  * @param {RegExp|Function} _.exclude  Directories to exclude when looking for files to transpile
- * @param {RegExp|Function} _.include  Directories to inclued when looking for files to transpile
+ * @param {RegExp|Function} _.include  Directories to include when looking for files to transpile
  * @param {string[]} _.presets         Babel presets
  * @param {string[]} _.plugins         Babel plugins (optional)
  * @returns {Object} Webpack loader object

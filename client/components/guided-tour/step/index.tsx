@@ -71,7 +71,10 @@ export function GuidedTourStep( {
 
 	const completeStep = useCallback(
 		( event: MouseEvent | React.MouseEvent< HTMLElement > ) => {
-			event.stopPropagation();
+			// Let native target clicks reach their React handlers so the target action still runs.
+			if ( 'nativeEvent' in event ) {
+				event.stopPropagation();
+			}
 			nextStep( currentStep );
 			if ( isLastStep ) {
 				endTour();

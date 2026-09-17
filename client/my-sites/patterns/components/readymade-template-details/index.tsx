@@ -68,7 +68,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { slug } )
 								<h4>{ translate( 'Customize it with AI' ) }</h4>
 								<p>
 									{ translate(
-										'Start with this layout and use our AI assistant to create the website of your dreams without breaking a sweat.'
+										'Start with this layout and use WordPress Agent to create the website of your dreams without breaking a sweat.'
 									) }
 								</p>
 								<p>

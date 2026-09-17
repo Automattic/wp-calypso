@@ -1,8 +1,9 @@
 import './style.scss';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
@@ -16,7 +17,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
-import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
@@ -36,6 +36,7 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -94,6 +95,31 @@ const useStreamRenderAnalytics = ( pages, streamKey ) => {
 			}
 		}
 	}, [ pages, streamKey, streamType, dispatch ] );
+};
+
+/**
+ * Report stream errors to Tracks and show a notice to the user.
+ */
+const useStreamErrorReporting = ( error, streamKey ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	React.useEffect( () => {
+		if ( ! error ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_reader_stream_error', {
+			stream_key: streamKey,
+			path: window.location.pathname,
+		} );
+
+		if ( error.message ) {
+			dispatch(
+				errorNotice( translate( 'Stream error: %s', { args: error.message } ), { duration: 3000 } )
+			);
+		}
+	}, [ error, streamKey, dispatch, translate ] );
 };
 
 class ReaderStream extends Component {
@@ -336,11 +362,7 @@ class ReaderStream extends Component {
 		}
 
 		const tagName = ( event.target || event.srcElement ).tagName;
-		if (
-			inputTags.includes( tagName ) ||
-			event.target.isContentEditable ||
-			isEditorIframeFocused() // Disable keyboard shortcuts when quick post editor is focused.
-		) {
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
 			return;
 		}
 
@@ -723,7 +745,8 @@ class ReaderStream extends Component {
 						key={ this.props.streamKey }
 						ref={ this.setListContext }
 						items={ items }
-						lastPage={ lastPage }
+						// Avoid re-requests if the last page was already reached or if there was an error.
+						lastPage={ lastPage || !! this.props.error }
 						fetchingNextPage={ isRequesting }
 						guessedItemHeight={ GUESSED_POST_HEIGHT }
 						fetchNextPage={ this.fetchNextPage }
@@ -804,15 +827,12 @@ class ReaderStream extends Component {
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
-		if ( this.props.error ) {
-			body = (
-				<StreamError
-					onTryAgain={ this.tryAgain }
-					streamKey={ streamKey }
-					error={ this.props.error }
-					context={ this.state.selectedTab }
-				/>
-			);
+		// Only take over the panel when there is nothing to preserve. A failed
+		// `fetchNextPage` still leaves every successfully loaded page in
+		// `items`, and replacing them with an empty state throws away what the
+		// user was reading.
+		if ( this.props.error && ! items.length ) {
+			body = <StreamError onTryAgain={ this.tryAgain } streamKey={ streamKey } />;
 		}
 
 		return (
@@ -869,6 +889,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
 		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+		useStreamErrorReporting( streamPostsQuery.error, props.streamKey );
 
 		const items = React.useMemo( () => {
 			const withRecommendations =
@@ -885,13 +906,14 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
-			! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes( streamType ) &&
-			! props.forcePlaceholders;
+			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'shelf_discover' ].includes(
+				streamType
+			) && ! props.forcePlaceholders;
 
 		const {
 			pendingCount,
 			hasPendingPosts,
-			reset: resetPending,
+			consume: consumePendingPosts,
 		} = useStreamPendingPosts( {
 			streamKey: props.streamKey,
 			feedId: props.selectedFeedId,
@@ -912,15 +934,13 @@ const withStreamPosts = ( WrappedComponent ) =>
 			}
 		}, [ hasPendingPosts, invalidate ] );
 
-		// Click handler for `<UpdateNotice>`: refetch all loaded pages now and
-		// drop the polled head from cache so the pill clears immediately
-		// (instead of flickering until the next poll tick recomputes against
-		// the freshly refetched items).
-		const { refetch } = streamPostsQuery;
+		// Click handler for `<UpdateNotice>`: prepend the already-polled head to
+		// the rendered infinite stream and clear the poll cache. This keeps the
+		// legacy "show updates" behavior without waiting on a second fetch.
 		const consumePending = React.useCallback( () => {
-			refetch();
-			resetPending();
-		}, [ refetch, resetPending ] );
+			consumePendingPosts();
+		}, [ consumePendingPosts ] );
+		const { refetch } = streamPostsQuery;
 
 		// Selection lives in the React Query cache (not Redux). The hook is
 		// keyed by `[streamKey, localeSlug]`, so switching streams (including

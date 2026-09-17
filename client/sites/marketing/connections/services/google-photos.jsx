@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import PropTypes from 'prop-types';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { SharingService, connectFor } from '../service';

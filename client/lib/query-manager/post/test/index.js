@@ -717,6 +717,20 @@ describe( 'PostQueryManager', () => {
 
 				expect( isMatch ).toBe( true );
 			} );
+
+			test( 'should preserve a null nested author.ID rather than falling back to the author object', () => {
+				const postWithNullAuthorId = Object.assign( {}, DEFAULT_POST, {
+					author: { ID: null },
+				} );
+				const isMatch = PostQueryManager.matches(
+					{
+						author: null,
+					},
+					postWithNullAuthorId
+				);
+
+				expect( isMatch ).toBe( true );
+			} );
 		} );
 
 		describe( 'query.status', () => {

@@ -1,5 +1,5 @@
-import { get } from 'lodash';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
+import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/automated-transfer/init';
@@ -29,7 +29,7 @@ export interface EligibilityWarning {
 
 export interface EligibilityData {
 	lastUpdate: number;
-	eligibilityHolds?: string[];
+	eligibilityHolds?: EligibilityHold[];
 	eligibilityWarnings?: EligibilityWarning[];
 }
 
@@ -39,7 +39,7 @@ export interface EligibilityData {
  * @returns eligibility information for site
  */
 export const getEligibilityData = ( state: AppState ): EligibilityData =>
-	get( state, 'eligibility', { lastUpdate: 0 } );
+	state?.eligibility ?? { lastUpdate: 0 };
 
 /**
  * Returns eligibility info for transfer
@@ -56,7 +56,7 @@ export const getEligibility = ( state: AppState, siteId: number | null ) =>
  * @returns {boolean} eligibility status for site
  */
 export const getEligibilityStatus = ( state: AppState ): boolean =>
-	!! get( state, 'lastUpdate', 0 ) && ! get( state, 'eligibilityHolds', [] ).length;
+	!! state?.lastUpdate && ! state?.eligibilityHolds?.length;
 
 /**
  * Returns eligibility status for transfer

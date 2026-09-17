@@ -18,6 +18,15 @@ describe( 'login', () => {
 		);
 	} );
 
+	test( 'should keep the two factor auth page when the redirect url is a Jetpack SSO login', () => {
+		const redirectTo =
+			'https://wordpress.com/wp-login.php?action=jetpack-sso&site_id=123&sso_nonce=abc';
+		const url = login( { twoFactorAuthType: 'push', redirectTo } );
+		expect( url ).toBe(
+			'/log-in/push?redirect_to=https%3A%2F%2Fwordpress.com%2Fwp-login.php%3Faction%3Djetpack-sso%26site_id%3D123%26sso_nonce%3Dabc'
+		);
+	} );
+
 	test( 'should return the login url with encoded email_address param', () => {
 		const url = login( { emailAddress: 'foo@bar.com' } );
 		expect( url ).toBe( '/log-in?email_address=foo%40bar.com' );

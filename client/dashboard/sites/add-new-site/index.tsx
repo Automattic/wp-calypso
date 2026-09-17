@@ -23,7 +23,7 @@ import './style.scss';
 
 function AddNewSite( {
 	context = 'unknown',
-	aiSiteBuilderPath = '/setup/ai-site-builder',
+	aiSiteBuilderPath = '/setup/ai-site-builder-onboarding',
 }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );

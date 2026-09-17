@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import apiResponseSchema from './schema';
 
@@ -9,7 +8,7 @@ import apiResponseSchema from './schema';
  */
 export function transformer( apiResponse ) {
 	const groups = [];
-	Object.entries( get( apiResponse, [ 'groups' ], {} ) ).forEach( ( [ slug, group ] ) => {
+	Object.entries( apiResponse?.groups ?? {} ).forEach( ( [ slug, group ] ) => {
 		groups.push( {
 			key: slug,
 			name: group.name,

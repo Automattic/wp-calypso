@@ -1,4 +1,3 @@
-import { filter, find } from 'lodash';
 import { deconstructStateKey, getErrorKey } from 'calypso/state/comments/utils';
 
 import 'calypso/state/comments/init';
@@ -9,8 +8,8 @@ export function getCommentById( { state, commentId, siteId } ) {
 		return state.comments.errors[ errorKey ];
 	}
 
-	const commentsForSite = filter( state.comments.items, ( comment, key ) => {
-		return deconstructStateKey( key ).siteId === siteId;
-	} ).flat();
-	return find( commentsForSite, ( comment ) => commentId === comment.ID );
+	const commentsForSite = Object.entries( state.comments.items ?? {} ).flatMap(
+		( [ key, comments ] ) => ( deconstructStateKey( key ).siteId === siteId ? comments : [] )
+	);
+	return commentsForSite.find( ( comment ) => commentId === comment.ID );
 }

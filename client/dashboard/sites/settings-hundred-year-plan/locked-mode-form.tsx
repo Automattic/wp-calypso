@@ -5,6 +5,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -31,15 +32,12 @@ export default function LockedModeForm( {
 	site: Site;
 	settings: SiteSettings;
 } ) {
-	const mutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Locked mode saved.' ),
-				error: __( 'Failed to save locked mode.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteSettingsMutation( site.ID ), {
+			success: __( 'Locked mode saved.' ),
+			error: __( 'Failed to save locked mode.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_locked_mode: !! settings?.wpcom_locked_mode,

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'calypso/lib/explat', () => ( { useExperiment: jest.fn() } ) );
 jest.mock(
 	'calypso/signup/step-wrapper',
 	() => ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null
@@ -14,13 +13,12 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 	useQueryHandler: () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ),
 } ) );
 
+import config from '@automattic/calypso-config';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
-import { useExperiment } from 'calypso/lib/explat';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
-const mockUseExperiment = useExperiment as jest.Mock;
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
@@ -37,24 +35,25 @@ const baseProps = {
 	previousStepName: null,
 };
 
-function renderStep( props = baseProps ) {
+function renderStep( props = baseProps, options = {} ) {
 	mockWPCOMDomainSearch.mockClear();
-	renderWithProvider( <DomainSearchStep { ...props } /> );
+	renderWithProvider( <DomainSearchStep { ...props } />, options );
 	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
 }
 
-describe( 'DomainSearchStep — calypso_signup_domain_only_checkout_simplification_v1 experiment', () => {
+const LOGGED_IN_STATE = { currentUser: { id: 12345 } };
+
+describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
-	it( 'auto-submits site-or-domain, site-picker, and plans-site-selected for treatment users in the domain flow', () => {
-		mockUseExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
-
+	it( 'auto-submits the skipped steps and routes logged-out users to the account step', () => {
 		const submitSignupStep = jest.fn();
+		const goToStep = jest.fn();
 		const goToNextStep = jest.fn();
-		const events = renderStep( { ...baseProps, submitSignupStep, goToNextStep } );
+		const events = renderStep( { ...baseProps, submitSignupStep, goToStep, goToNextStep } );
 
 		events.onContinue( [ domainItem ] );
 
@@ -88,37 +87,30 @@ describe( 'DomainSearchStep — calypso_signup_domain_only_checkout_simplificati
 			expect.objectContaining( { stepName: 'plans-site-selected', wasSkipped: true } ),
 			expect.objectContaining( { cartItems: null } )
 		);
-		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+		// Logged out: jump to the account step instead of the skipped site-or-domain step.
+		expect( goToStep ).toHaveBeenCalledTimes( 1 );
+		expect( goToStep ).toHaveBeenCalledWith( expect.stringMatching( /^user/ ) );
+		expect( goToNextStep ).not.toHaveBeenCalled();
 	} );
 
-	it( 'submits the domain step with correct payload and does not skip steps for control users in the domain flow', () => {
-		mockUseExperiment.mockReturnValue( [ false, { variationName: 'control' } ] );
-
+	it( 'skips straight to checkout for logged-in users in the domain flow', () => {
 		const submitSignupStep = jest.fn();
+		const goToStep = jest.fn();
 		const goToNextStep = jest.fn();
-		const events = renderStep( { ...baseProps, submitSignupStep, goToNextStep } );
+		const events = renderStep(
+			{ ...baseProps, submitSignupStep, goToStep, goToNextStep },
+			{ initialState: LOGGED_IN_STATE }
+		);
 
 		events.onContinue( [ domainItem ] );
 
-		expect( submitSignupStep ).toHaveBeenCalledTimes( 1 );
-		expect( submitSignupStep ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				stepName: 'domain-only',
-				domainItem,
-				isPurchasingItem: true,
-				siteUrl: 'example.com',
-			} ),
-			expect.objectContaining( {
-				domainItem,
-				siteUrl: 'example.com',
-			} )
-		);
+		// Same auto-submitted steps, but no account step remains, so proceed to checkout.
+		expect( submitSignupStep ).toHaveBeenCalledTimes( 4 );
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+		expect( goToStep ).not.toHaveBeenCalled();
 	} );
 
-	it( 'submits the domain step and does not skip steps for treatment users in a non-domain flow', () => {
-		mockUseExperiment.mockReturnValue( [ false, { variationName: 'treatment' } ] );
-
+	it( 'submits the domain step and does not skip steps in a non-domain flow', () => {
 		const submitSignupStep = jest.fn();
 		const goToNextStep = jest.fn();
 		const events = renderStep( {
@@ -144,5 +136,40 @@ describe( 'DomainSearchStep — calypso_signup_domain_only_checkout_simplificati
 			} )
 		);
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'DomainSearchStep — Name Pulse search', () => {
+	let isEnabledSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		mockWPCOMDomainSearch.mockReturnValue( null );
+		isEnabledSpy = jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation( ( flag: string ) => flag === 'domain-search/name-pulse' );
+	} );
+
+	afterEach( () => {
+		isEnabledSpy.mockRestore();
+	} );
+
+	it( 'enables it for the domain-only flow when the flag is on', () => {
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( true );
+	} );
+
+	it( 'keeps it off for other flows', () => {
+		renderStep( { ...baseProps, flowName: 'onboarding' } );
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
+	} );
+
+	it( 'keeps it off when the flag is off', () => {
+		isEnabledSpy.mockImplementation( () => false );
+
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
 	} );
 } );

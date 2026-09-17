@@ -389,6 +389,20 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
+				{ ! isOnlyTier && (
+					<FormFieldset className="memberships__dialog-sections-type">
+						<ToggleControl
+							onChange={ ( newValue ) => {
+								setEditedPostIsTier( newValue );
+								setEditedPostPaidNewsletter( newValue );
+							} }
+							checked={ editedPostIsTier }
+							disabled={ !! product.ID }
+							label={ translate( 'Paid newsletter tier' ) }
+						/>
+					</FormFieldset>
+				) }
+				{ isOnlyTier && <input type="hidden" name="type" value={ TYPE_TIER } /> }
 				{ editedPostIsTier && (
 					<FormFieldset>
 						<FormLabel htmlFor="tier-description">
@@ -408,7 +422,12 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								'Optional. Shown to readers when they choose a paid tier on your site. Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
+								'Optional. Shown to readers when they choose a paid tier on your site.'
+							) }
+						</FormSettingExplanation>
+						<FormSettingExplanation>
+							{ translate(
+								'Basic {{a}}Markdown{{/a}} — bold, italics, lists, and links — is supported.',
 								{
 									components: {
 										a: (
@@ -434,20 +453,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						) }
 					</FormFieldset>
 				) }
-				{ ! isOnlyTier && (
-					<FormFieldset className="memberships__dialog-sections-type">
-						<ToggleControl
-							onChange={ ( newValue ) => {
-								setEditedPostIsTier( newValue );
-								setEditedPostPaidNewsletter( newValue );
-							} }
-							checked={ editedPostIsTier }
-							disabled={ !! product.ID }
-							label={ translate( 'Paid newsletter tier' ) }
-						/>
-					</FormFieldset>
-				) }
-				{ isOnlyTier && <input type="hidden" name="type" value={ TYPE_TIER } /> }
 				{ editing && editedPrice && (
 					<Notice
 						text={ translate(

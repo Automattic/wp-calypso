@@ -6,7 +6,6 @@ import {
 } from '@automattic/design-picker';
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
-import { get, includes, reject } from 'lodash';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
@@ -25,6 +24,28 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
+	const queryArgs = getQueryArgs() ?? {};
+
+	// with-plugin: point "back" at the plans grid (params from the dependency store — the URL query
+	// is empty by now), not the post-purchase destination which can't render pre-purchase. The flow
+	// skips the domains step on this re-entry (see controller.js) so it reuses the created site.
+	let backDestination = destination;
+	if ( flowName === 'with-plugin' ) {
+		const { pluginParameter, pluginBillingPeriod } = dependencies;
+		backDestination = addQueryArgs(
+			{
+				...( pluginParameter && { plugin: pluginParameter } ),
+				// billing_period is a required query dependency of this flow, so always include it
+				// (empty for free plugins) — otherwise the flow controller rejects the URL.
+				billing_period: pluginBillingPeriod ?? '',
+				// Default the grid to the plugin's billing interval.
+				...( pluginBillingPeriod && {
+					intervalType: pluginBillingPeriod === 'MONTHLY' ? 'monthly' : 'yearly',
+				} ),
+			},
+			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
+		);
+	}
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -33,9 +54,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	//
 	// TODO:
 	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
-	const checkoutBackUrl = isURL( destination )
-		? destination
-		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
+	const checkoutBackUrl = isURL( backDestination )
+		? backDestination
+		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : backDestination );
 
 	// Add celebrateLaunch=true for launch-site flow so the celebration modal shows after checkout
 	const isLaunchSiteFlow = flowName === 'launch-site';
@@ -48,7 +69,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			ref: getQueryArgs()?.ref,
+			ref: queryArgs.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
@@ -103,23 +124,48 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
-function getLaunchDestination( dependencies ) {
+function getLaunchReturnTarget( dependencies ) {
 	// If a back_to parameter is provided, use it as the destination
 	if ( dependencies.back_to ) {
-		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
+		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
 
 	const ref = dependencies.refParameter?.trim() ?? '';
 	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
 
 	if ( isWpAdminPath ) {
-		return addQueryArgs(
-			{ 'celebrate-launch': 'true' },
-			`https://${ dependencies.siteSlug }/${ ref }`
-		);
+		return {
+			url: `https://${ dependencies.siteSlug }/${ ref }`,
+			celebrateArgs: { 'celebrate-launch': 'true' },
+		};
 	}
 
-	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
+	return {
+		url: `/home/${ dependencies.siteSlug }`,
+		celebrateArgs: { celebrateLaunch: 'true' },
+	};
+}
+
+/**
+ * Where the user came from before entering the launch flow, without the arguments that celebrate a
+ * successful launch. Use this when the launch did not happen.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string} the URL to send the user back to
+ */
+export function getLaunchReturnUrl( dependencies ) {
+	return getLaunchReturnTarget( dependencies ).url;
+}
+
+function getLaunchDestination( dependencies ) {
+	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
+	// so `back_to` is free to keep meaning "the page the Back button returns to".
+	if ( dependencies.redirect_to ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
+	}
+
+	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
+
+	return addQueryArgs( celebrateArgs, url );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
@@ -190,8 +236,10 @@ function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPer
 		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginParameter }`;
 	}
 
-	// otherwise send to installation page
-	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }`;
+	// Otherwise send to the installation page. Mark the redirect as trusted (directInstall) so the
+	// page initiates the transfer/install itself — the in-memory purchase-flow handoff it normally
+	// relies on doesn't survive this redirect out of signup.
+	return `/marketplace/plugin/${ pluginParameter }/install/${ siteSlug }?directInstall=1`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -299,7 +347,7 @@ const Flows = {
 		const flowSteps = flow.steps;
 		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
-		const nextStepName = get( flowSteps, nextIndex );
+		const nextStepName = flowSteps?.[ nextIndex ];
 
 		return nextStepName;
 	},
@@ -325,7 +373,7 @@ const Flows = {
 
 		return {
 			...flow,
-			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
+			steps: flow.steps.filter( ( stepName ) => ! Flows.excludedSteps.includes( stepName ) ),
 		};
 	},
 

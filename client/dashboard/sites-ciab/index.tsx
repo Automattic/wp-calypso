@@ -22,7 +22,7 @@ import {
 	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
-import { SitesNotices } from '../sites/notices';
+import { SitesNoticeArbiter } from '../sites/notice-arbiter';
 import { wpcomLink } from '../utils/link';
 import type { View } from '@wordpress/dataviews';
 
@@ -134,36 +134,34 @@ export default function CIABSites() {
 	);
 
 	return (
-		<>
-			<PageLayout
-				header={
-					<PageHeader
-						actions={
-							<Button
-								variant="primary"
-								href={ addNewStoreUrl }
-								onClick={ handleAddNewStore }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new store' ) }
-							</Button>
-						}
-					/>
-				}
-				notices={ <SitesNotices /> }
-			>
-				<SitesDataViews
-					view={ view }
-					sites={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
-					paginationInfo={ paginationInfo }
-					empty={ emptyState }
-					onChangeView={ handleViewChange }
-					onReset={ resetView }
+		<PageLayout
+			header={
+				<PageHeader
+					actions={
+						<Button
+							variant="primary"
+							href={ addNewStoreUrl }
+							onClick={ handleAddNewStore }
+							__next40pxDefaultSize
+						>
+							{ __( 'Add new store' ) }
+						</Button>
+					}
 				/>
-			</PageLayout>
-		</>
+			}
+			notices={ <SitesNoticeArbiter /> }
+		>
+			<SitesDataViews
+				view={ view }
+				sites={ filteredData }
+				fields={ fields }
+				actions={ actions }
+				isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
+				paginationInfo={ paginationInfo }
+				empty={ emptyState }
+				onChangeView={ handleViewChange }
+				onReset={ resetView }
+			/>
+		</PageLayout>
 	);
 }

@@ -12,48 +12,6 @@
 	text-overflow: ellipsis;
 }
 
-/* Badges */
-.site-logs-card,
-.site-logs-details-modal {
-	// Data tables always use the default intent, and override the colors.
-	.badge--POST,
-	.badge--deprecated {
-		--base-color: var(--color-deprecated-blue-50);
-		background-color: var(--color-deprecated-blue-5);
-		color: var(--color-deprecated-blue-80);
-	}
-
-	.badge--GET {
-		--base-color: var(--studio-green-50);
-		background-color: var(--studio-green-5);
-		color: var(--studio-green-80);
-	}
-
-	.badge--DELETE,
-	.badge--error,
-	.badge--fatal {
-		--base-color: var(--studio-red-50);
-		background-color: var(--studio-red-5);
-		color: var(--studio-red-80);
-	}
-
-	.badge--fatal {
-		white-space: nowrap;
-	}
-
-	.badge--warning {
-		--base-color: var(--studio-yellow-50);
-		background-color: var(--studio-yellow-5);
-		color: var(--studio-yellow-80);
-	}
-
-	.badge--user {
-		--base-color: var(--studio-gray-50);
-		background-color: var(--studio-gray-5);
-		color: var(--studio-gray-80);
-	}
-}
-
 /* Scroll to top button */
 .site-logs-card .site-logs-scroll-to-top {
 	position: absolute;
@@ -63,6 +21,17 @@
 	border-radius: 50%;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
 	cursor: pointer;
+}
+
+/* TEMPORARY: these two screens scroll instead of paginating, so the footer
+   holds nothing — but DataViews still mounts it partway through a fetch, which
+   resizes the scroll container under the reader. Scoped to php and server
+   because the activity log does paginate and needs its footer. Hide it until
+   the @wordpress/dataviews 17.2.0 bump lands, which stops tying the footer's
+   visibility to the loading state, then remove this rule. */
+.site-logs-card--php .dataviews-footer,
+.site-logs-card--server .dataviews-footer {
+	display: none;
 }
 
 /* Center the Auto-refresh toggle with the sibling view-config and download icon buttons. */

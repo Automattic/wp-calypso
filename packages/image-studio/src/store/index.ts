@@ -32,6 +32,7 @@ export interface NoticeAction {
 	label: string;
 	url: string;
 	openInNewTab?: boolean;
+	onClick?: () => void;
 }
 export interface Notice {
 	id: string;

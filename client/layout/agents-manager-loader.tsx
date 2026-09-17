@@ -2,9 +2,8 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite, isSiteSection } from 'calypso/state/ui/selectors';
+import { isSiteSection } from 'calypso/state/ui/selectors';
+import { useHelpCenterSite } from './use-help-center-site';
 
 const importAgentsManager = () =>
 	import(
@@ -20,10 +19,8 @@ export default function AgentsManagerLoader( {
 } ) {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
-	const selectedSite = useSelector( getSelectedSite );
 	const isSiteSpecific = useSelector( isSiteSection );
-	const primarySiteSlug = useSelector( getPrimarySiteSlug );
-	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const { selectedSite, site } = useHelpCenterSite();
 
 	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
 		return null;
@@ -35,7 +32,7 @@ export default function AgentsManagerLoader( {
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }
-			site={ selectedSite || primarySite }
+			site={ site }
 			currentSiteId={ isSiteSpecific ? selectedSite?.ID : undefined }
 		/>
 	);

@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -127,15 +128,12 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		},
 	} );
 
-	const mutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Site visibility settings saved.' ),
-				error: __( 'Failed to save site visibility settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteSettingsMutation( site.ID ), {
+			success: __( 'Site visibility settings saved.' ),
+			error: __( 'Failed to save site visibility settings.' ),
+		} )
+	);
 
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
 	const isPrimaryDomainStaging = Boolean(

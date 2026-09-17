@@ -134,6 +134,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalBySubscriptionId( {
 		originalPurchaseId,
+		sitelessCheckoutType,
 		dispatch,
 		addHandler,
 	} );
@@ -154,6 +155,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'a4a' ||
 			sitelessCheckoutType === 'unified' ||
+			sitelessCheckoutType === 'wpcom' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -225,18 +227,22 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet and some Marketplace products can be renewed in a "siteless" context
+	// Akismet and some Marketplace products can be renewed in a "siteless" context.
+	// Without a product slug in the URL there is nothing for `addRenewalItems` to
+	// build a cart product from, so fall back to the subscription ID and let the
+	// backend derive the product from the subscription record.
 	if (
 		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
 		originalPurchaseId
 	) {
-		return 'addRenewalItems';
+		return productAliasFromUrl ? 'addRenewalItems' : 'addRenewalBySubscriptionId';
 	}
 
 	if (
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'unified'
+		sitelessCheckoutType === 'unified' ||
+		sitelessCheckoutType === 'wpcom'
 	) {
 		return 'addProductFromSlug';
 	}
@@ -460,10 +466,12 @@ function useAddRenewalItems( {
  */
 function useAddRenewalBySubscriptionId( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	dispatch,
 	addHandler,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
@@ -505,12 +513,16 @@ function useAddRenewalBySubscriptionId( {
 				extra: {
 					purchaseId: subscriptionId,
 					purchaseType: 'renewal',
+					// The backend decides whether the cart is a siteless one from these
+					// flags alone, and rejects Akismet plans in a cart without them.
+					isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+					isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 				},
 			} )
 		);
 		debug( 'preparing renewals from subscription IDs', originalPurchaseId );
 		dispatch( { type: 'RENEWALS_ADD', products: cartItems } );
-	}, [ addHandler, dispatch, originalPurchaseId, translate ] );
+	}, [ addHandler, dispatch, originalPurchaseId, sitelessCheckoutType, translate ] );
 }
 
 function useAddProductFromSlug( {
@@ -756,6 +768,7 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
+			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,

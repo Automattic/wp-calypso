@@ -215,6 +215,17 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	return false;
 }
 
+// Tolerates whitespace and empty entries (e.g. 'blog, art' or a trailing comma). Returns []
+// for '' — callers must treat a falsy condition as "no restriction", not an empty allow-list.
+export function parseNextDomainCondition(
+	condition: ResponseCart[ 'next_domain_condition' ]
+): string[] {
+	return condition
+		.split( ',' )
+		.map( ( tld ) => tld.trim() )
+		.filter( Boolean );
+}
+
 export function convertRawResponseCartToResponseCart(
 	rawResponseCart: Partial< ResponseCart >
 ): ResponseCart {
@@ -350,14 +361,44 @@ export function doesResponseCartContainProductMatching(
 	} );
 }
 
+const timedOut = new Error( 'request timed out' );
+
 export async function findCartKeyFromSiteSlug(
 	slug: string,
 	getCart: GetCart
 ): Promise< CartKey > {
-	try {
-		const cart = await getCart( slug as CartKey );
-		return cart.cart_key;
-	} catch {
-		return 'no-site';
+	// The cart endpoint occasionally never responds when queried right after
+	// site creation, while re-issuing the identical request succeeds
+	// immediately. Try up to three sequential attempts, each capped at 1s.
+	// An abandoned attempt cannot be aborted (the transport exposes no abort
+	// API) and is left to idle out.
+	for ( let attempt = 1; attempt <= 3; attempt++ ) {
+		try {
+			const cart = await withTimeout( getCart( slug as CartKey ), 1000 );
+			return cart.cart_key;
+		} catch ( error ) {
+			if ( error !== timedOut ) {
+				// Same failure semantics as before the retry existed.
+				return 'no-site';
+			}
+			debug( `findCartKeyFromSiteSlug attempt ${ attempt } timed out` );
+		}
 	}
+	return 'no-site';
+}
+
+function withTimeout< T >( promise: Promise< T >, ms: number ): Promise< T > {
+	return new Promise< T >( ( resolve, reject ) => {
+		const timer = setTimeout( () => reject( timedOut ), ms );
+		promise.then(
+			( value ) => {
+				clearTimeout( timer );
+				resolve( value );
+			},
+			( error ) => {
+				clearTimeout( timer );
+				reject( error );
+			}
+		);
+	} );
 }

@@ -16,11 +16,19 @@ import {
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 jest.mock( '@automattic/calypso-analytics' );
+
+const mockQuerySites = jest.fn();
+
+jest.mock( 'calypso/components/data/query-sites', () => ( props: { siteId: number } ) => {
+	mockQuerySites( props );
+	return null;
+} );
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 	hasDashboardOptIn: jest.fn(),
@@ -28,6 +36,11 @@ jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 
 jest.mock( 'calypso/state/selectors/can-any-site-connect-domains', () => ( {
 	canAnySiteConnectDomains: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/sites/selectors/is-current-plan-paid', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 } ) );
 
 jest.mock(
@@ -83,6 +96,8 @@ describe( 'DomainOnly', () => {
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+		mockQuerySites.mockClear();
 	} );
 
 	afterEach( () => {
@@ -96,6 +111,35 @@ describe( 'DomainOnly', () => {
 			expect( screen.getByRole( 'link', { name: /Start a new site/ } ) ).toHaveAttribute(
 				'href',
 				createSiteFromDomainOnly( mockDomainPurchase.meta, mockDomainPurchase.blogId )
+			);
+		} );
+
+		it( 'is visible when the domain’s site does not have a paid plan', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+			renderComponent();
+
+			expect( screen.getByRole( 'link', { name: /Start a new site/ } ) ).toBeVisible();
+		} );
+
+		it( 'is not visible when the domain’s site already has a paid plan', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+			renderComponent();
+
+			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is not visible while the site plan status is loading', () => {
+			jest.mocked( isCurrentPlanPaid ).mockReturnValue( null );
+			renderComponent();
+
+			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'queries the sites so the plan status can be resolved', () => {
+			renderComponent();
+
+			expect( mockQuerySites ).toHaveBeenCalledWith(
+				expect.objectContaining( { siteId: mockDomainPurchase.blogId } )
 			);
 		} );
 

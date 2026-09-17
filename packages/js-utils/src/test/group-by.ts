@@ -15,7 +15,7 @@ describe( 'groupBy', () => {
 		expect( groupBy( [ a, b, c ], 'type' ) ).toStrictEqual( { x: [ a, c ], y: [ b ] } );
 	} );
 
-	it( 'rejects lodash-style deep paths rather than grouping under `undefined`', () => {
+	it( 'rejects deep property paths rather than grouping under `undefined`', () => {
 		expect( () => groupBy( [ { parent: { ID: 1 } } ], 'parent.ID' ) ).toThrow( /deep paths/ );
 	} );
 
@@ -42,13 +42,13 @@ describe( 'groupBy', () => {
 		expect( groupBy( undefined, ( v ) => v ) ).toStrictEqual( {} );
 	} );
 
-	it( 'reads existing properties of primitive values, like lodash', () => {
+	it( 'reads existing properties of primitive values', () => {
 		expect( groupBy( [ 'one', 'two', 'six' ], 'length' ) ).toStrictEqual( {
 			'3': [ 'one', 'two', 'six' ],
 		} );
 	} );
 
-	it( 'groups primitives under `undefined` for a missing property, like lodash', () => {
+	it( 'groups primitives under `undefined` for a missing property', () => {
 		expect( groupBy( [ 1, 2 ], 'type' ) ).toStrictEqual( { undefined: [ 1, 2 ] } );
 	} );
 

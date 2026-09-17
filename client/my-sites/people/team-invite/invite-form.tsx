@@ -188,7 +188,6 @@ function InviteForm( props: Props ) {
 				includeFollower={ includeFollowers }
 				includeSubscriber={ includeSubscribers }
 				explanation={ getRoleLearnMoreLink() }
-				formControlType="select"
 			/>
 
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (

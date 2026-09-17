@@ -97,8 +97,8 @@ export default function ( router ) {
 }
 ```
 
-Note that you can have multiple error-handling middlewares in your route defintion. When any of the regular middlewares throw an error (or call `next(err)`), only error-handling will be called from that point. This is how error middleware chains skip regular middlewares. The endering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status. It will also log an error in the server log, using
-severity `error` if status is >= 500, `info` otherwhise.
+Note that you can have multiple error-handling middlewares in your route definition. When any of the regular middlewares throw an error (or call `next(err)`), only error-handling will be called from that point. This is how error middleware chains skip regular middlewares. The rendering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status. It will also log an error in the server log, using
+severity `error` if status is >= 500, `info` otherwise.
 
 ```js
 function details( context, next ) {

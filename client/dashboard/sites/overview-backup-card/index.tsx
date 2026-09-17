@@ -27,7 +27,13 @@ const SUCCESSFUL_BACKUP_ACTIVITIES = [
 
 const FAILED_BACKUP_ACTIVITIES = [ 'rewind__backup_error', 'rewind__backup_only_error' ];
 
-function BackupCardFailed( { site, backup }: { site: Site; backup?: SiteActivityLog } ) {
+function BackupCardFailed( {
+	backupUrl,
+	backup,
+}: {
+	backupUrl: string;
+	backup?: SiteActivityLog;
+} ) {
 	const timeSinceLastSuccessful = useTimeSince( backup?.published ?? new Date( 0 ).toISOString() );
 
 	const description = backup
@@ -43,13 +49,19 @@ function BackupCardFailed( { site, backup }: { site: Site; backup?: SiteActivity
 			{ ...CARD_PROPS }
 			heading={ __( 'Backup failed' ) }
 			description={ description }
-			link={ getBackupUrl( site ) }
+			link={ backupUrl }
 			intent="error"
 		/>
 	);
 }
 
-function BackupCardSuccess( { site, lastBackup }: { site: Site; lastBackup: SiteActivityLog } ) {
+function BackupCardSuccess( {
+	backupUrl,
+	lastBackup,
+}: {
+	backupUrl: string;
+	lastBackup: SiteActivityLog;
+} ) {
 	const timeSinceLastBackup = useTimeSince( lastBackup.published );
 	const formattedLastBackupTime = useFormattedTime( lastBackup.published, { timeStyle: 'short' } );
 
@@ -58,15 +70,15 @@ function BackupCardSuccess( { site, lastBackup }: { site: Site; lastBackup: Site
 			{ ...CARD_PROPS }
 			heading={ timeSinceLastBackup }
 			description={ formattedLastBackupTime }
-			link={ getBackupUrl( site ) }
+			link={ backupUrl }
 			intent="success"
 		/>
 	);
 }
 
-function BackupCardContent( { site }: { site: Site } ) {
+export function BackupCardContent( { siteId, backupUrl }: { siteId: number; backupUrl: string } ) {
 	const { data: lastBackup, isLoading } = useQuery( {
-		...siteActivityLogQuery( site.ID, {
+		...siteActivityLogQuery( siteId, {
 			name: [ ...SUCCESSFUL_BACKUP_ACTIVITIES, ...FAILED_BACKUP_ACTIVITIES ],
 			number: 1,
 		} ),
@@ -74,7 +86,7 @@ function BackupCardContent( { site }: { site: Site } ) {
 	} );
 
 	const { data: lastSuccessfulBackup } = useQuery( {
-		...siteActivityLogQuery( site.ID, { name: SUCCESSFUL_BACKUP_ACTIVITIES, number: 1 } ),
+		...siteActivityLogQuery( siteId, { name: SUCCESSFUL_BACKUP_ACTIVITIES, number: 1 } ),
 		select: ( data ) => data.activityLogs[ 0 ],
 		// Only fetch successful backups if there are any failed backups
 		enabled: !! lastBackup && FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ),
@@ -90,16 +102,16 @@ function BackupCardContent( { site }: { site: Site } ) {
 				{ ...CARD_PROPS }
 				heading={ __( 'No backups yet' ) }
 				description={ __( 'Your first backup will be ready soon.' ) }
-				link={ getBackupUrl( site ) }
+				link={ backupUrl }
 			/>
 		);
 	}
 
 	if ( FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ) ) {
-		return <BackupCardFailed site={ site } backup={ lastSuccessfulBackup } />;
+		return <BackupCardFailed backupUrl={ backupUrl } backup={ lastSuccessfulBackup } />;
 	}
 
-	return <BackupCardSuccess site={ site } lastBackup={ lastBackup } />;
+	return <BackupCardSuccess backupUrl={ backupUrl } lastBackup={ lastBackup } />;
 }
 
 export default function BackupCard( { site }: { site: Site } ) {
@@ -128,7 +140,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 			upsellDescription={ __( 'Get back online quickly with one-click restores.' ) }
 			upsellLink={ getBackupUrl( site ) }
 		>
-			<BackupCardContent site={ site } />
+			<BackupCardContent siteId={ site.ID } backupUrl={ getBackupUrl( site ) } />
 		</HostingFeatureGatedWithOverviewCard>
 	);
 }

@@ -1,5 +1,6 @@
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -7,7 +8,6 @@ import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
 import SwitcherItem from '../../../components/switcher/switcher-item';
-import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
 import { PluginIcon } from './plugin-icon';
 import { PluginUpdatesFilter } from './plugin-updates-filter';
@@ -101,22 +101,10 @@ export const PluginSwitcher = ( {
 
 		return (
 			<SwitcherItem
-				alignment="start"
 				spacing={ 3 }
 				media={ <PluginIcon item={ item } /> }
-				title={
-					// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-					<Text
-						className="plugin-switcher-item-name"
-						dangerouslySetInnerHTML={ { __html: item.name } }
-						title={ item.name }
-					/>
-				}
-				description={
-					<Text className="plugin-switcher-item-site-count" variant="muted">
-						{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
-					</Text>
-				}
+				title={ decodeEntities( item.name ) }
+				description={ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
 			/>
 		);
 	}, [] );
@@ -147,6 +135,7 @@ export const PluginSwitcher = ( {
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
 					searchableFields={ searchableFields }
+					noResultsText={ __( 'No plugins found.' ) }
 					onClose={ () => {} }
 					width="auto"
 					filter={

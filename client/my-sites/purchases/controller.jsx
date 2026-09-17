@@ -8,7 +8,6 @@ import {
 	PurchaseCancel,
 	PurchaseCancelDomain,
 	PurchaseChangePaymentMethod,
-	PurchaseDowngrade,
 } from 'calypso/my-sites/purchases/main';
 import {
 	PaymentMethods,
@@ -46,16 +45,6 @@ export const purchaseCancel = ( context, next ) => {
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			intent={ getCancelIntentFromQuery( context.query ?? {} ) }
-		/>
-	);
-	next();
-};
-
-export const planDowngrade = ( context, next ) => {
-	context.primary = (
-		<PurchaseDowngrade
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
 	);
 	next();

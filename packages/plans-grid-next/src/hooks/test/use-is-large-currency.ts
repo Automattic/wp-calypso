@@ -52,17 +52,30 @@ describe( 'useIsLargeCurrency', () => {
 			} );
 		} );
 
-		describe( 'when a pair of original and discounted prices are above 9 digits', () => {
-			test( 'should consider it large', () => {
-				const largeCombinedPlanPrices = [ 20000, 3000 ];
+		/**
+		 * Prices arrive as [ original, discounted ] per plan. Only those two are ever
+		 * rendered next to each other, so only those two should be measured together.
+		 */
+		describe( 'when the combined length is only exceeded across two different plans', () => {
+			test( 'should not consider prices to be large', () => {
+				// $25 + $19.50 = 9, $99.50 + $49 = 9. Only $19.50 + $99.50 exceeds 9,
+				// and those belong to different plans.
+				const prices = [ 2500, 1950, 9950, 4900 ];
 
-				expect(
-					useIsLargeCurrency( {
-						prices: largeCombinedPlanPrices,
-						isAddOn: false,
-						currencyCode: 'USD',
-					} )
-				).toEqual( false );
+				expect( useIsLargeCurrency( { prices, isAddOn: false, currencyCode: 'USD' } ) ).toEqual(
+					false
+				);
+			} );
+		} );
+
+		describe( "when a plan's own original and discounted prices exceed the combined length", () => {
+			test( 'should consider prices to be large', () => {
+				// $99.50 + $19.50 = 12, on the same plan.
+				const prices = [ 9950, 1950 ];
+
+				expect( useIsLargeCurrency( { prices, isAddOn: false, currencyCode: 'USD' } ) ).toEqual(
+					true
+				);
 			} );
 		} );
 	} );

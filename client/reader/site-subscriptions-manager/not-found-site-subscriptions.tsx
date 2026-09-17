@@ -1,17 +1,36 @@
 import { readFeedSearchQuery } from '@automattic/api-queries';
-import { SubscriptionManager } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import type { JSX } from 'react';
+import { useMemo, type JSX } from 'react';
+
+const { useSiteSubscriptionsQuery, useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
 const NotFoundSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();
-	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
+	const { searchTerm } = useSiteSubscriptionsQueryProps();
+	const {
+		data: { subscriptions },
+	} = useSiteSubscriptionsQuery();
 	const { data } = useQuery(
 		readFeedSearchQuery( {
 			query: searchTerm,
 			excludeFollowed: true,
 		} )
+	);
+
+	const filteredUnsubscribedFeedItems = useMemo(
+		() =>
+			( data?.feeds ?? [] ).filter( ( feedItem: Reader.FeedItem ): boolean => {
+				const isDuplicate = subscriptions.find(
+					( subscription ): boolean =>
+						! subscription.isDeleted &&
+						( subscription.feed_ID === feedItem.feed_ID ||
+							subscription.URL === feedItem.subscribe_URL )
+				);
+				return ! isDuplicate;
+			} ),
+		[ data?.feeds, subscriptions ]
 	);
 
 	function getFeedSearchMessage( feedItemsCount: number ): string {
@@ -37,7 +56,7 @@ const NotFoundSiteSubscriptions = (): JSX.Element => {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
 				  } ) }{ ' ' }
-			{ getFeedSearchMessage( data?.feeds?.length ?? 0 ) }
+			{ getFeedSearchMessage( filteredUnsubscribedFeedItems.length ) }
 		</div>
 	);
 };

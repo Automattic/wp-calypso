@@ -4,7 +4,6 @@ import { loadjQueryDependentScript } from '@automattic/load-script';
 import { isMobile } from '@automattic/viewport';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugModule( 'calypso:community-translator' );
@@ -188,7 +187,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = _user.ID;
 
-		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
+		const currentLocale = languages.find( ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,

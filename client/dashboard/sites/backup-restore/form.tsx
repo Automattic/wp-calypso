@@ -7,9 +7,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -52,14 +52,15 @@ const fields: Field< RestoreConfig >[] = [
 
 function SiteBackupRestoreForm( {
 	siteId,
+	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
 	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupRestoreRoute.useParams();
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupRestoreInitiateMutation( siteId )
 	);
@@ -136,6 +137,12 @@ function SiteBackupRestoreForm( {
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
 				</Notice>
+
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ !! formData.sqls }
+				/>
 
 				<ButtonStack justify="flex-start">
 					<Button

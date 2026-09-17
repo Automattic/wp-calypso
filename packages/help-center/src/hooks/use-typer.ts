@@ -57,7 +57,7 @@ export default function useTyper(
 
 	const populatedOptions: Options = { ...DEFAULT_OPTIONS, ...options };
 	const delayBetweenCharacters = populatedOptions.randomDelayBetweenCharacters
-		? Math.random() * populatedOptions.delayBetweenCharacters
+		? Math.max( 1, Math.random() * populatedOptions.delayBetweenCharacters )
 		: populatedOptions.delayBetweenCharacters;
 
 	const delayInCharacters = populatedOptions.randomDelayBetweenCharacters

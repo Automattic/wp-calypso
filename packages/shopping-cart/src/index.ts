@@ -10,4 +10,5 @@ export * from './errors';
 export {
 	convertResponseCartToRequestCart,
 	convertTaxLocationToLocationUpdate,
+	parseNextDomainCondition,
 } from './cart-functions';

@@ -2,7 +2,6 @@ import { TextareaControl, TextControl, SelectControl } from '@wordpress/componen
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toSelectOption } from '../to-select-options';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
@@ -20,8 +19,11 @@ interface Props {
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
 	const { isPlan, isOnlyStep, intent, onValidationChange } = props;
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const isCancelPostMutation = isSplitEnabled && intent !== 'remove';
+	// Only the cancel intents fire their mutation before the survey renders, so
+	// only they can claim the cancellation already happened. Tested positively
+	// rather than as `!== 'remove'` so a no-intent deep link — which still
+	// submits at survey-end — falls through to the pre-cancellation copy.
+	const isCancelPostMutation = intent === 'cancel' || intent === 'auto-renew';
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
 	const [ nextAdventureDetails, setNextAdventureDetails ] = useState( '' );
@@ -89,7 +91,7 @@ export default function NextAdventureStep( props: Props ) {
 
 	let headerText;
 	let subHeaderText;
-	if ( ! isSplitEnabled ) {
+	if ( ! intent ) {
 		headerText = translate( 'Sorry to see you go' );
 		subHeaderText = translate( 'One last thing', {
 			context: 'This is the last step before cancelling the plan.',

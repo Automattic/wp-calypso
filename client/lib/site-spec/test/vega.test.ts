@@ -5,6 +5,7 @@
  * ship to the widget. Spec-confirm card copy (Goals / CTA / Mood) is
  * rendered by the widget itself and is not part of the Calypso-side payload.
  */
+import config from '@automattic/calypso-config';
 import { VEGA_AGENT_ID, getVegaSiteSpecConfig } from '../vega';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -18,7 +19,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'Vega site-spec', () => {
-	const mockConfig = require( '@automattic/calypso-config' );
+	const mockConfig = config as unknown as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Default config shape covers the branch of `getDefaultSiteSpecConfig()`

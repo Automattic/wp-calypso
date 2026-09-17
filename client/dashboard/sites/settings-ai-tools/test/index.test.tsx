@@ -4,6 +4,7 @@
 
 import {
 	bigSkyPluginQuery,
+	isAutomatticianQuery,
 	queryClient,
 	siteBySlugQuery,
 	sitePostByEmailSettingsQuery,
@@ -24,6 +25,7 @@ const site = {
 	name: 'Email Assistant',
 	title: 'Email Assistant',
 	is_wpcom_atomic: true,
+	jetpack: true,
 	options: {
 		admin_url: 'https://email-assistant.wordpress.com/wp-admin/',
 	},
@@ -37,6 +39,14 @@ const simpleSite = {
 	jetpack: false,
 } as Site;
 
+const jetpackSite = {
+	...site,
+	ID: 789,
+	slug: 'jetpack-email-assistant.example.com',
+	is_wpcom_atomic: false,
+	jetpack: true,
+} as Site;
+
 let clipboardWriteText: jest.Mock;
 
 beforeAll( () => {
@@ -47,17 +57,34 @@ afterAll( () => {
 	disable( 'dolly/telegram' );
 } );
 
-function seedQueries( postByEmailAddress = '', seedPostByEmailSettings = true, activeSite = site ) {
+function seedQueries(
+	postByEmailAddress = '',
+	seedPostByEmailSettings = true,
+	activeSite = site,
+	isAvailable = true,
+	isMcpEnabled = false
+) {
 	queryClient.setQueryData( siteBySlugQuery( activeSite.slug ).queryKey, activeSite );
 	queryClient.setQueryData( bigSkyPluginQuery( activeSite.ID ).queryKey, {
 		blog_id: activeSite.ID,
 		enabled: false,
-		available: true,
+		available: isAvailable,
 		on_free_trial: false,
 	} );
 	queryClient.setQueryData( userSettingsQuery().queryKey, {
-		mcp_abilities: {},
+		mcp_abilities: {
+			sites: isMcpEnabled
+				? [
+						{
+							blog_id: activeSite.ID,
+							site_level_enabled: true,
+							abilities: {},
+						},
+				  ]
+				: [],
+		},
 	} as UserSettings );
+	queryClient.setQueryData( isAutomatticianQuery().queryKey, { number: 0, teams: [] } );
 	if ( seedPostByEmailSettings ) {
 		queryClient.setQueryData( sitePostByEmailSettingsQuery( activeSite ).queryKey, {
 			post_by_email_address: postByEmailAddress,
@@ -109,17 +136,27 @@ function mockWpcomPostByEmailMutation(
 	return scope.delete( path ).reply( 200 );
 }
 
-function mockWpcomPostByEmailStatus( activeSite = simpleSite ) {
+function mockWpcomPostByEmailStatus( activeSite = simpleSite, postByEmailAddress?: string ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ activeSite.ID }/post-by-email` )
 		.reply( 200, {
-			is_enabled: false,
+			is_enabled: !! postByEmailAddress,
+			email: postByEmailAddress,
 		} );
 }
 
-function mockJetpackPostByEmailSettingsFailure() {
+function mockJetpackPostByEmailSettings( activeSite = site, postByEmailAddress?: string ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/jetpack-blogs/${ site.ID }/rest-api/` )
+		.get( `/rest/v1.1/jetpack-blogs/${ activeSite.ID }/rest-api/` )
+		.query( true )
+		.reply( 200, {
+			data: { post_by_email_address: postByEmailAddress ?? 'NULL' },
+		} );
+}
+
+function mockJetpackPostByEmailSettingsFailure( activeSite = jetpackSite ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/jetpack-blogs/${ activeSite.ID }/rest-api/` )
 		.query( true )
 		.reply( 404, {
 			message: 'No route was found matching the URL and request method.',
@@ -129,9 +166,11 @@ function mockJetpackPostByEmailSettingsFailure() {
 function renderAIToolsSettings(
 	postByEmailAddress = '',
 	seedPostByEmailSettings = true,
-	activeSite = site
+	activeSite = site,
+	isAvailable = true,
+	isMcpEnabled = false
 ) {
-	seedQueries( postByEmailAddress, seedPostByEmailSettings, activeSite );
+	seedQueries( postByEmailAddress, seedPostByEmailSettings, activeSite, isAvailable, isMcpEnabled );
 
 	return render( <AIToolsSettings siteSlug={ activeSite.slug } />, { queryClient } );
 }
@@ -202,16 +241,77 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'enables, copies, regenerates, and disables the AI agent email address', async () => {
+	test( 'shows the settings as disabled below the upgrade callout when unavailable', async () => {
+		const user = userEvent.setup();
+		const { container } = renderAIToolsSettings( '', false, site, false, true );
+
+		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
+		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 3 );
+
+		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
+		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
+		expect( agentToggle ).toBeDisabled();
+
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
+		const emailToggle = screen.getByRole( 'checkbox', {
+			name: 'Enable WordPress Agent email address',
+		} );
+		expect( emailToggle ).toBeDisabled();
+		expect(
+			queryClient.getQueryState( sitePostByEmailSettingsQuery( site ).queryKey )?.fetchStatus
+		).toBe( 'idle' );
+
+		expect(
+			screen.queryByText( 'Upgrade your plan to enable this setting.' )
+		).not.toBeInTheDocument();
+		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
+		expect( upgradeBadges ).toHaveLength( 3 );
+		await user.hover( upgradeBadges[ 0 ] );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			'Upgrade your plan to enable this setting.'
+		);
+
+		const telegramButton = screen.getByRole( 'button', {
+			name: /Connect WordPress Agent to Telegram/,
+		} );
+		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
+		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows MCP settings without upgrade badging when available', async () => {
+		renderAIToolsSettings( '', true, site, true, true );
+
+		expect( await screen.findByText( 'Learn more' ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
+		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();
 		mockClipboard();
 		renderAIToolsSettings();
 
-		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /Connect Telegram/ } ) ).toHaveAttribute(
-			'href',
-			'https://wordpress.com/me/developer'
-		);
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'link', { name: /Connect WordPress Agent to Telegram/ } )
+		).toHaveAttribute( 'href', '/me/agent' );
 		expect(
 			screen.getByText(
 				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
@@ -219,19 +319,20 @@ describe( '<AIToolsSettings>', () => {
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this AI agent address will stop working.'
+				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 			)
 		).toBeVisible();
 
 		const toggle = screen.getByRole( 'checkbox', {
-			name: 'Enable AI agent email address',
+			name: 'Enable WordPress Agent email address',
 		} );
 		expect( toggle ).not.toBeChecked();
-		expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 
 		const createScope = mockJetpackPostByEmailMutation(
 			'create',
-			'first-secret@post.wordpress.com'
+			'first-secret@post.wordpress.com',
+			site
 		);
 		await user.click( toggle );
 
@@ -239,7 +340,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( createScope.isDone() ).toBe( true );
 		} );
 
-		const addressInput = await screen.findByLabelText( 'AI agent email address' );
+		const addressInput = await screen.findByLabelText( 'WordPress Agent email address' );
 		expect( addressInput ).toHaveValue( 'agent+first-secret@post.wordpress.com' );
 		expect( toggle ).toBeChecked();
 
@@ -258,12 +359,15 @@ describe( '<AIToolsSettings>', () => {
 			)
 		).toContain( 'EMAIL;TYPE=INTERNET:agent+first-secret@post.wordpress.com' );
 
-		await user.click( screen.getByRole( 'button', { name: 'Copy AI agent email address' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: 'Copy WordPress Agent email address' } )
+		);
 		expect( clipboardWriteText ).toHaveBeenCalledWith( 'agent+first-secret@post.wordpress.com' );
 
 		const regenerateScope = mockJetpackPostByEmailMutation(
 			'regenerate',
-			'second-secret@post.wordpress.com'
+			'second-secret@post.wordpress.com',
+			site
 		);
 		await user.click( screen.getByRole( 'button', { name: 'Regenerate address' } ) );
 
@@ -271,12 +375,12 @@ describe( '<AIToolsSettings>', () => {
 			expect( regenerateScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
+			expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 				'agent+second-secret@post.wordpress.com'
 			);
 		} );
 
-		const deleteScope = mockJetpackPostByEmailMutation( 'delete' );
+		const deleteScope = mockJetpackPostByEmailMutation( 'delete', undefined, site );
 		await user.click( toggle );
 
 		await waitFor( () => {
@@ -284,8 +388,31 @@ describe( '<AIToolsSettings>', () => {
 		} );
 		await waitFor( () => {
 			expect( toggle ).not.toBeChecked();
-			expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	test( 'uses Jetpack settings for an external Jetpack site', async () => {
+		const user = userEvent.setup();
+		renderAIToolsSettings( '', true, jetpackSite );
+
+		const createScope = mockJetpackPostByEmailMutation(
+			'create',
+			'jetpack-secret@post.wordpress.com',
+			jetpackSite
+		);
+		await user.click(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
+			} )
+		);
+
+		await waitFor( () => {
+			expect( createScope.isDone() ).toBe( true );
+		} );
+		expect( await screen.findByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
+			'agent+jetpack-secret@post.wordpress.com'
+		);
 	} );
 
 	test( 'uses the WordPress.com Post by Email endpoint for simple sites', async () => {
@@ -293,7 +420,7 @@ describe( '<AIToolsSettings>', () => {
 		renderAIToolsSettings( '', true, simpleSite );
 
 		const toggle = screen.getByRole( 'checkbox', {
-			name: 'Enable AI agent email address',
+			name: 'Enable WordPress Agent email address',
 		} );
 
 		const createScope = mockWpcomPostByEmailMutation(
@@ -305,7 +432,7 @@ describe( '<AIToolsSettings>', () => {
 		await waitFor( () => {
 			expect( createScope.isDone() ).toBe( true );
 		} );
-		expect( await screen.findByLabelText( 'AI agent email address' ) ).toHaveValue(
+		expect( await screen.findByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 			'agent+simple-secret@post.wordpress.com'
 		);
 
@@ -319,7 +446,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( regenerateScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
+			expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 				'agent+new-simple-secret@post.wordpress.com'
 			);
 		} );
@@ -331,7 +458,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( deleteScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -345,23 +472,44 @@ describe( '<AIToolsSettings>', () => {
 		} );
 		expect(
 			screen.getByRole( 'checkbox', {
-				name: 'Enable AI agent email address',
+				name: 'Enable WordPress Agent email address',
 			} )
 		).not.toBeChecked();
 	} );
 
-	test( 'does not fail the page when Jetpack settings are unavailable', async () => {
-		const settingsScope = mockJetpackPostByEmailSettingsFailure();
+	test( 'loads Atomic site Post by Email status from Jetpack settings', async () => {
+		const settingsScope = mockJetpackPostByEmailSettings(
+			site,
+			'atomic-secret@post.wordpress.com'
+		);
 
-		renderAIToolsSettings( '', false );
+		renderAIToolsSettings( '', false, site );
 
-		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
 		await waitFor( () => {
 			expect( settingsScope.isDone() ).toBe( true );
 		} );
 		expect(
 			screen.getByRole( 'checkbox', {
-				name: 'Enable AI agent email address',
+				name: 'Enable WordPress Agent email address',
+			} )
+		).toBeChecked();
+		expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
+			'agent+atomic-secret@post.wordpress.com'
+		);
+	} );
+
+	test( 'does not fail the page when Jetpack settings are unavailable', async () => {
+		const settingsScope = mockJetpackPostByEmailSettingsFailure( jetpackSite );
+
+		renderAIToolsSettings( '', false, jetpackSite );
+
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
+		await waitFor( () => {
+			expect( settingsScope.isDone() ).toBe( true );
+		} );
+		expect(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
 			} )
 		).not.toBeChecked();
 	} );

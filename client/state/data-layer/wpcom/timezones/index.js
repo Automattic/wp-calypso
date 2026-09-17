@@ -1,5 +1,4 @@
 import { mapValues } from '@automattic/js-utils';
-import { map } from 'lodash';
 import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -18,7 +17,7 @@ const noop = () => {};
  * @returns {Object} object whose keys are timezone values, values are timezone labels
  */
 const timezonePairsToMap = ( pairs ) =>
-	Object.fromEntries( map( pairs, ( { label, value } ) => [ value, label ] ) );
+	Object.fromEntries( ( pairs ?? [] ).map( ( { label, value } ) => [ value, label ] ) );
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
@@ -28,7 +27,7 @@ export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent
 	rawOffsets: timezonePairsToMap( manual_utc_offsets ),
 	labels: timezonePairsToMap( timezones ),
 	byContinents: mapValues( timezones_by_continent, ( zones ) =>
-		map( zones, ( { value } ) => value )
+		( zones ?? [] ).map( ( { value } ) => value )
 	),
 } );
 

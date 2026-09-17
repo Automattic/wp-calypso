@@ -1,4 +1,6 @@
+import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQueryClient } from '@tanstack/react-query';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
@@ -12,6 +14,7 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
@@ -107,6 +110,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	);
 
 	const domains = useSiteDomains( siteId ?? undefined );
+	const queryClient = useQueryClient();
 
 	return useCallback(
 		async ( { transactionLastResponse }: PaymentEventCallbackArguments ) => {
@@ -178,6 +182,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
+			queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 			// Removes the destination cookie only if redirecting to the signup destination.
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -196,6 +201,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
+				recordDomainBundlePurchasedEvents( responseCart, reduxDispatch );
 			}
 
 			if ( siteId ) {
@@ -286,6 +292,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			isComingFromUpsell,
 			isInModal,
 			reduxDispatch,
+			queryClient,
 			siteId,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
@@ -339,6 +346,34 @@ async function recordPaymentCompleteAnalytics( {
 			recordCompositeCheckoutErrorDuringAnalytics( {
 				errorObject: err as Error,
 				failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
+			} )
+		);
+	}
+}
+
+/**
+ * Completes the domain bundle funnel (shown -> accepted -> purchased) by firing one
+ * `calypso_domain_bundle_purchased` Tracks event per distinct bundle in the purchased cart.
+ * Matches the shape of the `shown`/`accepted` events emitted during domain search.
+ */
+function recordDomainBundlePurchasedEvents(
+	responseCart: ResponseCart,
+	reduxDispatch: CalypsoDispatch
+) {
+	const domainCountByBundle = new Map< string, number >();
+	for ( const product of responseCart.products ) {
+		const groupId = product.extra?.domain_bundle_group_id;
+		if ( ! groupId ) {
+			continue;
+		}
+		domainCountByBundle.set( groupId, ( domainCountByBundle.get( groupId ) ?? 0 ) + 1 );
+	}
+
+	for ( const [ groupId, domainCount ] of domainCountByBundle ) {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_domain_bundle_purchased', {
+				domain_bundle_group_id: groupId,
+				domain_count: domainCount,
 			} )
 		);
 	}

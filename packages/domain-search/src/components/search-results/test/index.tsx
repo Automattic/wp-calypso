@@ -19,12 +19,36 @@ describe( 'SearchResults', () => {
 
 		render(
 			<TestDomainSearchWithSuggestions query="test">
-				<SearchResults suggestions={ [ 'test-regular.com', 'test-regular.net' ] } />
+				<SearchResults
+					suggestions={ [ 'test-regular.com', 'test-regular.net' ] }
+					getInlineBundle={ () => undefined }
+				/>
 			</TestDomainSearchWithSuggestions>
 		);
 
 		expect( await screen.findByTitle( 'test-regular.com' ) ).toBeInTheDocument();
 		expect( await screen.findByTitle( 'test-regular.net' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Name Pulse search' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders only the Name Pulse search row when enabled', async () => {
+		const suggestions = Array.from( { length: 11 }, ( _, i ) => `test-${ i }.com` );
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'test' },
+			suggestions: suggestions.map( ( domain_name ) => buildSuggestion( { domain_name } ) ),
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="test" config={ { showNamePulseSearch: true } }>
+				<SearchResults suggestions={ suggestions } getInlineBundle={ () => undefined } />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByText( 'Name Pulse search' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 1 );
+		expect( screen.queryByTitle( 'test-0.com' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Show more results' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders nothing if there are no suggestions and no active filters', async () => {
@@ -35,7 +59,7 @@ describe( 'SearchResults', () => {
 
 		const { container } = render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions">
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 
@@ -61,7 +85,7 @@ describe( 'SearchResults', () => {
 		render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 
@@ -102,7 +126,7 @@ describe( 'SearchResults', () => {
 		render(
 			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
 				<Filter />
-				<SearchResults suggestions={ [] } />
+				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
 		);
 

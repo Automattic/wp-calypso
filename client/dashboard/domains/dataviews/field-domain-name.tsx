@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
@@ -28,6 +28,7 @@ export const DomainNameField = ( {
 
 	const href =
 		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
+		domain.domain_status.id !== DomainStatus.TRANSFER_ERROR &&
 		config.isEnabled( 'domain-transfer-redesign' )
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;

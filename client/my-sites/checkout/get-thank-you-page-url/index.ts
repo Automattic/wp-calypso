@@ -371,6 +371,14 @@ export default function getThankYouPageUrl( {
 		return addQueryArgs( { checkout_type: 'unified' }, '/' );
 	}
 
+	// WordPress.com siteless checkout
+	if ( sitelessCheckoutType === 'wpcom' ) {
+		debug( 'redirecting to siteless WordPress.com thank you' );
+		return receiptIdOrPlaceholder
+			? `/checkout/thank-you/no-site/${ receiptIdOrPlaceholder }`
+			: '/checkout/thank-you/no-site';
+	}
+
 	// If there is no purchase, then send the user to a generic page (not
 	// post-purchase related).
 	if ( noPurchaseMade ) {

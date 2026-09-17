@@ -115,6 +115,27 @@ export default function HeaderStagingSiteButton( {
 		}
 	}, [ __, dispatch, queryClient, siteId, isStagingSiteReady, stagingSite ] );
 
+	const hasTransferTimedOut = transferStatus === transferStates.CLIENT_TIMEOUT;
+
+	// The staging site itself already exists by this point, so the status is left alone: clearing
+	// it would hide the entry point entirely, and the transfer may still finish on the server.
+	useEffect( () => {
+		if ( ! hasTransferTimedOut ) {
+			return;
+		}
+
+		dispatch(
+			errorNotice(
+				__(
+					'Adding the staging site is taking longer than expected. It may still finish — reload the page to check.'
+				),
+				{
+					id: stagingSiteAddFailureNoticeId,
+				}
+			)
+		);
+	}, [ __, dispatch, hasTransferTimedOut ] );
+
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
 		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
@@ -139,7 +160,7 @@ export default function HeaderStagingSiteButton( {
 				);
 				dispatch(
 					errorNotice(
-						// translators: "reason" is why adding the staging site failed.
+						// translators: %(reason)s is why adding the staging site failed.
 						sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
 						{
 							id: stagingSiteAddFailureNoticeId,
@@ -176,7 +197,8 @@ export default function HeaderStagingSiteButton( {
 
 	const hasCompletedLoading = ! isLoadingQuotaValidation;
 	const isAddingStagingSite =
-		isLoadingAddStagingSite || ( isCreatingStagingSite && ! isCreatedStagingSite );
+		isLoadingAddStagingSite ||
+		( isCreatingStagingSite && ! isCreatedStagingSite && ! hasTransferTimedOut );
 
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {
@@ -195,6 +217,8 @@ export default function HeaderStagingSiteButton( {
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );
+	} else if ( hasTransferTimedOut ) {
+		disabledReason = __( 'Adding the staging site is taking longer than expected.' );
 	}
 
 	return (

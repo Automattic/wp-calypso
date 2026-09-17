@@ -1,5 +1,10 @@
-import { fetchReadStream, getStreamType } from '@automattic/api-queries';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	fetchReadStream,
+	getStreamInfiniteQueryKey,
+	getStreamType,
+	type PageHandle,
+} from '@automattic/api-queries';
+import { useQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
@@ -34,9 +39,16 @@ export interface UseStreamPendingPostsResult {
 	/** Sugar for `pendingCount > 0`. */
 	hasPendingPosts: boolean;
 	/**
+	 * Insert the current polled head into the rendered stream and clear it from
+	 * the poll cache. Mirrors the legacy Reader `showUpdates` action, which
+	 * prepended `pendingItems` instead of waiting on a second stream request.
+	 */
+	consume: () => void;
+	/**
 	 * Drop the polled head from cache. Use after the consumer has acted on the
-	 * pending posts (e.g., refetched the infinite query) so the pill clears
-	 * immediately, instead of waiting for the next `refetchInterval` tick.
+	 * pending posts (e.g., consumed them into the infinite query) so the pill
+	 * clears immediately, instead of waiting for the next `refetchInterval`
+	 * tick.
 	 */
 	reset: () => void;
 }
@@ -62,18 +74,163 @@ const railcarId = ( railcar: unknown ): string | null => {
 	return typeof id === 'string' ? id : JSON.stringify( railcar );
 };
 
+type StreamInfiniteData = InfiniteData< ReadStreamResponse, PageHandle >;
+
+const countPendingItems = (
+	pollPage: ReadStreamResponse | null | undefined,
+	items: StreamItem[],
+	streamType: string
+): number => {
+	const streamItems = pollPage ? normalizeStreamPage( pollPage, streamType ).streamItems : [];
+	const seen = new Set( items.map( postKeyId ) );
+	// Stop at the first polled-head item the user has already seen. Items past
+	// that boundary are older posts the user hasn't scrolled to (the poll
+	// fetches `PER_POLL` items > `INITIAL_FETCH`), not new content. Mirrors the
+	// legacy reducer's `lastUpdated` date pre-filter.
+	const firstSeen = streamItems.findIndex( ( k ) => seen.has( postKeyId( k ) ) );
+	return firstSeen === -1 ? streamItems.length : firstSeen;
+};
+
+const countPendingItemsFromPages = (
+	pollPage: ReadStreamResponse | null | undefined,
+	pages: ReadStreamResponse[],
+	streamType: string
+): number => {
+	const streamItems = pollPage ? normalizeStreamPage( pollPage, streamType ).streamItems : [];
+	if ( streamItems.length === 0 ) {
+		return 0;
+	}
+
+	let firstSeen = -1;
+	for ( const page of pages ) {
+		const seen = new Set( normalizeStreamPage( page, streamType ).streamItems.map( postKeyId ) );
+		const pageFirstSeen = streamItems.findIndex( ( k ) => seen.has( postKeyId( k ) ) );
+		if ( pageFirstSeen === -1 ) {
+			continue;
+		}
+		firstSeen = firstSeen === -1 ? pageFirstSeen : Math.min( firstSeen, pageFirstSeen );
+		if ( firstSeen === 0 ) {
+			break;
+		}
+	}
+
+	return firstSeen === -1 ? streamItems.length : firstSeen;
+};
+
+const siteHasPost = ( site: unknown ): boolean => {
+	if ( ! site || typeof site !== 'object' ) {
+		return false;
+	}
+	const posts = ( site as { posts?: unknown } ).posts;
+	return Array.isArray( posts ) && posts.length > 0;
+};
+
+const takePendingFromPage = (
+	page: ReadStreamResponse,
+	pendingCount: number
+): ReadStreamResponse => {
+	if ( pendingCount <= 0 ) {
+		return page;
+	}
+
+	if ( Array.isArray( page.posts ) ) {
+		return { ...page, posts: page.posts.slice( 0, pendingCount ) };
+	}
+
+	if ( Array.isArray( page.cards ) ) {
+		let remaining = pendingCount;
+		const cards: NonNullable< ReadStreamResponse[ 'cards' ] > = [];
+		for ( const card of page.cards ) {
+			if ( remaining <= 0 ) {
+				break;
+			}
+			cards.push( card );
+			if ( card.type === 'post' ) {
+				remaining -= 1;
+			}
+		}
+		return { ...page, cards };
+	}
+
+	if ( Array.isArray( page.sites ) ) {
+		let remaining = pendingCount;
+		const sites: unknown[] = [];
+		for ( const site of page.sites ) {
+			if ( remaining <= 0 ) {
+				break;
+			}
+			sites.push( site );
+			if ( siteHasPost( site ) ) {
+				remaining -= 1;
+			}
+		}
+		return { ...page, sites };
+	}
+
+	return page;
+};
+
+const prependPendingPage = (
+	current: StreamInfiniteData | undefined,
+	pendingPage: ReadStreamResponse,
+	pendingCount: number,
+	initialPageParam: PageHandle
+): StreamInfiniteData => {
+	const pendingOnlyPage = takePendingFromPage( pendingPage, pendingCount );
+
+	if ( ! current?.pages.length ) {
+		return { pageParams: [ initialPageParam ], pages: [ pendingOnlyPage ] };
+	}
+
+	const [ firstPage, ...remainingPages ] = current.pages;
+	if ( Array.isArray( pendingOnlyPage.posts ) && Array.isArray( firstPage.posts ) ) {
+		return {
+			...current,
+			pages: [
+				{ ...firstPage, posts: [ ...pendingOnlyPage.posts, ...firstPage.posts ] },
+				...remainingPages,
+			],
+		};
+	}
+
+	if ( Array.isArray( pendingOnlyPage.cards ) && Array.isArray( firstPage.cards ) ) {
+		return {
+			...current,
+			pages: [
+				{ ...firstPage, cards: [ ...pendingOnlyPage.cards, ...firstPage.cards ] },
+				...remainingPages,
+			],
+		};
+	}
+
+	if ( Array.isArray( pendingOnlyPage.sites ) && Array.isArray( firstPage.sites ) ) {
+		return {
+			...current,
+			pages: [
+				{ ...firstPage, sites: [ ...pendingOnlyPage.sites, ...firstPage.sites ] },
+				...remainingPages,
+			],
+		};
+	}
+
+	return {
+		pageParams: [ initialPageParam, ...current.pageParams ],
+		pages: [ pendingOnlyPage, ...current.pages ],
+	};
+};
+
 /**
  * Drives the "X new posts" pill. A separate `useQuery` polls the head of the
  * stream every minute (`refetchInterval`); the diff between the polled head
  * and the currently visible items is exposed as `pendingCount`. The polled
  * payload carries full post bodies (see `getQueryStringForPoll`), and is
  * written into the canonical Reader post cache on every tick so
- * `<PostLifecycle>` resolves rich cards immediately when the consumer triggers
- * a refetch of the infinite query.
+ * `<PostLifecycle>` resolves rich cards immediately when the consumer prepends
+ * the polled head into the infinite query.
  *
- * The hook is purely informational. Reacting to a non-zero `hasPendingPosts`
- * (passive invalidate, imperative refetch on click) is the consumer's job —
- * see `withStreamPosts` in `client/reader/stream/index.jsx`.
+ * Reacting to a non-zero `hasPendingPosts` (passive invalidate, consume on
+ * click) is the consumer's job — see `withStreamPosts` in
+ * `client/reader/stream/index.jsx`.
  */
 export function useStreamPendingPosts( {
 	streamKey,
@@ -97,7 +254,7 @@ export function useStreamPendingPosts( {
 	// pending count is meaningless until we have a baseline of "what is shown".
 	const enabled = shouldPoll && items.length > 0;
 
-	const pollHead = useQuery< ReadStreamResponse >( {
+	const pollHead = useQuery< ReadStreamResponse | null >( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey: pollQueryKey,
 		queryFn: () => {
@@ -156,22 +313,55 @@ export function useStreamPendingPosts( {
 		}
 	}, [ pollHead.data, streamKey, streamType, queryClient, dispatch ] );
 
-	const pendingCount = useMemo( () => {
-		const streamItems = pollHead.data
-			? normalizeStreamPage( pollHead.data, streamType ).streamItems
-			: [];
-		const seen = new Set( items.map( postKeyId ) );
-		// Stop at the first polled-head item the user has already seen. Items
-		// past that boundary are older posts the user hasn't scrolled to (the
-		// poll fetches `PER_POLL` items > `INITIAL_FETCH`), not new content.
-		// Mirrors the legacy reducer's `lastUpdated` date pre-filter.
-		const firstSeen = streamItems.findIndex( ( k ) => seen.has( postKeyId( k ) ) );
-		return firstSeen === -1 ? streamItems.length : firstSeen;
-	}, [ pollHead.data, items, streamType ] );
+	const pendingCount = useMemo(
+		() => countPendingItems( pollHead.data, items, streamType ),
+		[ pollHead.data, items, streamType ]
+	);
 
 	const reset = useCallback( () => {
-		queryClient.resetQueries( { queryKey: pollQueryKey, exact: true } );
+		void queryClient.cancelQueries( { queryKey: pollQueryKey, exact: true }, { silent: true } );
+		queryClient.setQueryData< ReadStreamResponse | null >( pollQueryKey, null );
 	}, [ queryClient, pollQueryKey ] );
 
-	return { pendingCount, hasPendingPosts: pendingCount > 0, reset };
+	const consume = useCallback( () => {
+		if ( pollHead.data ) {
+			const streamQueryKey = getStreamInfiniteQueryKey( {
+				streamKey,
+				feedId,
+				localeSlug,
+				startDate,
+			} );
+			queryClient.setQueryData< StreamInfiniteData >( streamQueryKey, ( current ) => {
+				const currentPendingCount = current?.pages.length
+					? countPendingItemsFromPages( pollHead.data, current.pages, streamType )
+					: countPendingItems( pollHead.data, items, streamType );
+				return currentPendingCount > 0
+					? prependPendingPage(
+							current,
+							pollHead.data as ReadStreamResponse,
+							currentPendingCount,
+							startDate ? { before: startDate } : null
+					  )
+					: current;
+			} );
+			void queryClient.invalidateQueries( {
+				queryKey: streamQueryKey,
+				exact: true,
+				refetchType: 'none',
+			} );
+		}
+		reset();
+	}, [
+		feedId,
+		items,
+		localeSlug,
+		pollHead.data,
+		queryClient,
+		reset,
+		startDate,
+		streamKey,
+		streamType,
+	] );
+
+	return { pendingCount, hasPendingPosts: pendingCount > 0, consume, reset };
 }

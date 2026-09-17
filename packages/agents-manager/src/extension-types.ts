@@ -1,54 +1,36 @@
 /**
- * Types for plugin extensions to the AI Agents system
+ * Types for plugin extensions to the AI Agents system.
  *
  * These types allow external plugins (like Big Sky, CIAB Admin) to extend
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
+import type { Ability } from './abilities/types';
+
+/**
+ * Re-export `Ability` for use by external plugins.
+ */
+export type { Ability } from './abilities/types';
+
 /**
  * Tool Provider Interface
  *
  * Allows plugins to provide abilities that the agent can execute.
- * This integrates with the WordPress Abilities API (@wordpress/abilities).
+ * Integrates with the WordPress Abilities API (`@wordpress/abilities`).
  */
 export interface ToolProvider {
 	/**
-	 * Get all available abilities
+	 * Get all available abilities.
 	 * Plugins should filter to only return allowed abilities.
-	 * @returns {Promise<Ability[]>} Array of ability objects
 	 */
 	getAbilities: () => Promise< Ability[] >;
 
 	/**
-	 * Execute a specific ability by name
-	 * @param {string} name - The ability name (e.g., 'my-plugin/my-ability')
-	 * @param {any} args - Arguments to pass to the ability
-	 * @returns {Promise<any>} Result from the ability execution
+	 * Execute a specific ability by name.
+	 * @param name - The ability name (e.g., `my-plugin/my-ability`).
+	 * @param args - Arguments to pass to the ability.
 	 */
 	executeAbility: ( name: string, args: any ) => Promise< any >;
-}
-
-/**
- * Ability definition from WordPress Abilities API
- * Currently copied until the NPM package is available
- */
-export interface Ability {
-	name: string;
-	label: string;
-	description: string;
-	category: string;
-	input_schema?: Record< string, any >;
-	output_schema?: Record< string, any >;
-	callback?: ( input: any ) => any | Promise< any >;
-	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
-	meta?: {
-		annotations?: {
-			readonly?: boolean | null;
-			destructive?: boolean | null;
-			idempotent?: boolean | null;
-		};
-		[ key: string ]: any;
-	};
 }
 
 /**
@@ -59,8 +41,7 @@ export interface Ability {
  */
 export interface ContextProvider {
 	/**
-	 * Get the current client context
-	 * @returns {ClientContextType} Context object with environment info and optional entries
+	 * Get the current client context.
 	 */
 	getClientContext: () => ClientContextType;
 }
@@ -99,8 +80,8 @@ export interface ClientContextType {
 		| string;
 
 	/**
-	 * Optional context entries (sitemap, entities, etc.)
-	 * These use lazy evaluation via getData closures
+	 * Optional context entries (sitemap, entities, etc.).
+	 * These use lazy evaluation via `getData` closures.
 	 */
 	contextEntries?: ContextEntry[];
 
@@ -134,24 +115,22 @@ export interface BaseContextEntry {
 	getData?: () => any;
 
 	/**
-	 * Optional resolved data
-	 * Populated after getData() is called
+	 * Optional resolved data.
+	 * Populated after `getData()` is called.
 	 */
 	data?: any;
 }
 
 /**
- * Union type for context entries
+ * Union type for context entries.
  *
- * Plugins should define their own specific context entry types that extend BaseContextEntry
- * Example:
- * ```typescript
- * interface MySitemapEntry extends BaseContextEntry {
- *   id: 'sitemap';
- *   type: 'sitemap';
- *   data?: { menuItems: MenuItem[] };
- * }
- * ```
+ * Plugins should define their own types extending `BaseContextEntry`:
+ *
+ *     interface MySitemapEntry extends BaseContextEntry {
+ *       id: 'sitemap';
+ *       type: 'sitemap';
+ *       data?: { menuItems: MenuItem[] };
+ *     }
  */
 export type ContextEntry = BaseContextEntry;
 

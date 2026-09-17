@@ -99,8 +99,8 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 		generateLogo( { prompt, style } );
 	}, [ context, generateLogo, prompt, style ] );
 
-	const onPromptInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setPrompt( event.target.textContent || '' );
+	const onPromptInput = ( event: React.FormEvent< HTMLDivElement > ) => {
+		setPrompt( event.currentTarget.textContent || '' );
 	};
 
 	const onPromptPaste = ( event: React.ClipboardEvent< HTMLInputElement > ) => {

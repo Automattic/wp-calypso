@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { find, includes } from 'lodash';
 import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
@@ -15,16 +14,21 @@ import {
 } from 'calypso/state/plugins/upload/actions';
 
 export const uploadPlugin = ( action ) => {
-	const { siteId, file } = action;
+	const { siteId, file, replaceSlug } = action;
 
 	return [
-		recordTracksEvent( 'calypso_plugin_upload' ),
+		recordTracksEvent( 'calypso_plugin_upload', { is_replace: !! replaceSlug } ),
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/plugins/new`,
+				path: replaceSlug ? `/sites/${ siteId }/plugins/replace` : `/sites/${ siteId }/plugins/new`,
 				apiVersion: '1',
-				formData: [ [ 'zip[]', file ] ],
+				formData: replaceSlug
+					? [
+							[ 'zip[]', file ],
+							[ 'slug', replaceSlug ],
+					  ]
+					: [ [ 'zip[]', file ] ],
 			},
 			action
 		),
@@ -40,7 +44,9 @@ const showErrorNotice = ( error ) => {
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
 	const errorString = `${ error.error }${ error.message }`.toLowerCase();
-	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
+	const knownError = Object.entries( knownErrors ).find( ( [ key ] ) =>
+		errorString.includes( key )
+	)?.[ 1 ];
 
 	if ( knownError ) {
 		return errorNotice( knownError );

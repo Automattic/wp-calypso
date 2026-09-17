@@ -1,4 +1,4 @@
-import { merge, set } from 'lodash';
+import { merge, set } from '@automattic/js-utils';
 
 const analyticsMocks = [
 	'pageView.record',

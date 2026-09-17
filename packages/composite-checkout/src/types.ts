@@ -4,7 +4,7 @@ import type { Theme as ThemeType } from './lib/theme';
 import type { ReactElement } from 'react';
 
 declare module '@emotion/react' {
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 	export interface Theme extends ThemeType {}
 }
 
@@ -137,6 +137,7 @@ export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 	transactionError: string | null;
 } ) => void;
 export type CheckoutPageErrorCallback = (
@@ -153,6 +154,8 @@ export type StepChangedEventArguments = {
 
 export type PaymentEventCallbackArguments = {
 	transactionLastResponse: PaymentProcessorResponseData;
+	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 };
 
 export type PaymentProcessorResponseData = unknown;
@@ -294,6 +297,8 @@ export interface CheckoutStepGroupState {
 	stepIdMap: StepIdMap;
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
 	stepSkipValidationOnSubmitMap: Record< number, boolean >;
+	suppressNextForwardScroll: boolean;
+	hasUserInteractedWithSteps: boolean;
 }
 
 export interface CheckoutStepGroupActions {
@@ -311,6 +316,8 @@ export interface CheckoutStepGroupActions {
 	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
+	setSuppressNextForwardScroll: ( value: boolean ) => void;
+	setHasUserInteractedWithSteps: ( value: boolean ) => void;
 }
 
 export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

@@ -63,6 +63,13 @@ describe( 'SEO', () => {
 				expect( fromApi( {} ) ).toEqual( {} );
 			} );
 
+			test( 'should handle non-array formats', () => {
+				expect( fromApi( { front_page: null, posts: '' } ) ).toEqual( {
+					frontPage: [],
+					posts: [],
+				} );
+			} );
+
 			test( 'should remap keys and values', () => {
 				expect(
 					fromApi( {
@@ -86,6 +93,13 @@ describe( 'SEO', () => {
 		describe( '#toApi', () => {
 			test( 'should produce empty formats', () => {
 				expect( toApi( {} ) ).toEqual( {} );
+			} );
+
+			test( 'should handle non-array formats', () => {
+				expect( toApi( { frontPage: null, posts: '' } ) ).toEqual( {
+					front_page: [],
+					posts: [],
+				} );
 			} );
 
 			test( 'should remap keys and values', () => {

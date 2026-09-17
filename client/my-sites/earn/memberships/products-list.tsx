@@ -5,24 +5,36 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import SectionHeader from 'calypso/components/section-header';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
+import FreePlanModal from '../components/free-plan-modal';
 import { Product } from '../types';
+import { getUpsellReturnUrl } from '../upsell-return-url';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
 	ADD_TIER_PLAN_HASH,
@@ -40,6 +52,7 @@ function ProductsList() {
 	const dispatch = useDispatch();
 	const [ showAddEditDialog, setShowAddEditDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showFreePlanDialog, setShowFreePlanDialog ] = useState( false );
 	const [ product, setProduct ] = useState< Product | null >( null );
 	const [ annualProduct, setAnnualProduct ] = useState< Product | null >( null );
 	const site = useSelector( getSelectedSite );
@@ -47,6 +60,26 @@ function ProductsList() {
 	const hasLoadedFeatures = features?.active.length > 0;
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
 	const hasProducts = products.length > 0;
+
+	// The "Free" newsletter tier is not a product; it's the absence of a paid
+	// subscription. We only surface it (and its editable description / hide
+	// setting) when at least one paid newsletter tier exists, mirroring the
+	// subscriber-facing selector where Free only appears alongside paid tiers.
+	const hasNewsletterTier = products.some(
+		( currentProduct: Product ) => currentProduct.type === TYPE_TIER && ! currentProduct.tier
+	);
+	const siteSettings = useSelector( ( state ) => getSiteSettings( state, site?.ID ?? null ) );
+	const freeTierDescription: string =
+		siteSettings?.subscription_options?.free_tier_description ?? '';
+	// Server-rendered markdown for the Free tier, parsed by the same backend
+	// parser the subscribe modal uses, so the preview is 1:1 with what
+	// subscribers see (the raw value above is still used for editing). It's
+	// colocated with subscription_options on the site-settings endpoint, so it
+	// stays read-after-write consistent with the source after a save.
+	const freeTierDescriptionRendered = siteSettings?.free_tier_description_rendered ?? null;
+	const isFreeTierHidden = Boolean( siteSettings?.subscription_options?.hide_free_tier );
+
+	const supportsFreeTierSettings = Boolean( siteSettings?.supports_free_tier_customization );
 
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -60,14 +93,39 @@ function ProductsList() {
 
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
+	// Admins are already the only ones here; the section returns a notice for
+	// everyone else. A standalone Jetpack connection reads as a Jetpack site while
+	// its `jetpack` flag stays false, and none of these can buy a WordPress.com plan.
+	const canShowUpsell =
+		useSelector(
+			( state ) =>
+				! isVipSite( state, site?.ID ?? 0 ) &&
+				! isSiteWPForTeams( state, site?.ID ?? null ) &&
+				! ( Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack )
+		) &&
+		hasLoadedFeatures &&
+		! hasStripeFeature;
 
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
-	const trackUpgrade = () =>
+	const upgradeNudgeProperties = {
+		cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
+		cta_feature: FEATURE_RECURRING_PAYMENTS,
+		cta_size: 'regular',
+	};
+
+	const trackUpgrade = () => {
+		dispatch(
+			recordTracksEvent(
+				'calypso_earn_page_payment_plans_upgrade_button_click',
+				upgradeNudgeProperties
+			)
+		);
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
+	};
 
 	function renderEllipsisMenu( productId: number ) {
 		return (
@@ -115,9 +173,15 @@ function ProductsList() {
 		}
 	}
 
+	function openFreePlanDialog() {
+		dispatch( recordTracksEvent( 'calypso_earn_page_free_plan_edit_click' ) );
+		setShowFreePlanDialog( true );
+	}
+
 	function closeDialog() {
 		setShowAddEditDialog( false );
 		setShowDeleteDialog( false );
+		setShowFreePlanDialog( false );
 	}
 
 	function getPriceFromProduct( product: Product, price: string ) {
@@ -147,21 +211,45 @@ function ProductsList() {
 		<div className="memberships__products-list">
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
-			{ hasLoadedFeatures && ! hasStripeFeature && (
-				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
-				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
-				<UpsellNudge
-					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-					href={ '/plans/' + site?.slug }
-					showIcon
-					onClick={ () => trackUpgrade() }
-					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
-					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
-					feature={ FEATURE_RECURRING_PAYMENTS }
-					event="calypso_earn_page_payment_plans_upgrade_nudge"
-					tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
-					tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
-				/>
+			{ /* Site settings are only needed to render/edit the Free tier, which
+			     only appears when a newsletter tier exists — avoid the extra
+			     request on donation-only / non-newsletter sites. */ }
+			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
+			{ canShowUpsell && (
+				<>
+					<TrackComponentView
+						eventName="calypso_earn_page_payment_plans_upgrade_button_view"
+						eventProperties={ upgradeNudgeProperties }
+					/>
+					<PromoCard
+						variation={ PromoCardVariation.Compact }
+						icon="credit-card"
+						title={ preventWidows(
+							translate( 'Upgrade to modify payment plans or add new plans' )
+						) }
+					>
+						<p>
+							{ preventWidows(
+								translate(
+									'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+								)
+							) }
+						</p>
+						<PromoCardCta
+							cta={ {
+								text: translate( 'Upgrade' ),
+								isPrimary: true,
+								action: {
+									url: addQueryArgs( `/plans/${ site?.slug }`, {
+										redirect_to: getUpsellReturnUrl(),
+									} ),
+									onClick: trackUpgrade,
+									selfTarget: true,
+								},
+							} }
+						/>
+					</PromoCard>
+				</>
 			) }
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
@@ -251,6 +339,56 @@ function ProductsList() {
 							</CompactCard>
 						);
 					} ) }
+			{ hasLoadedFeatures && hasStripeFeature && hasNewsletterTier && supportsFreeTierSettings && (
+				<CompactCard className="memberships__products-product-card">
+					<div className="memberships__products-product-details">
+						<div className="memberships__products-product-title">{ translate( 'Free' ) }</div>
+						{ freeTierDescriptionRendered ? (
+							// Server-rendered (and kses-sanitized) markdown — the same HTML
+							// the subscribe modal shows, for a 1:1 preview. DOMPurify is
+							// defense-in-depth in case the API's sanitization guarantee ever
+							// changes. ADD_ATTR keeps the target="_blank" the server adds to
+							// links (DOMPurify strips `target` by default); `rel` is kept by
+							// default.
+							<div
+								className="memberships__products-product-description"
+								// eslint-disable-next-line react/no-danger
+								dangerouslySetInnerHTML={ {
+									__html: DOMPurify.sanitize( freeTierDescriptionRendered, {
+										ADD_ATTR: [ 'target' ],
+									} ),
+								} }
+							/>
+						) : (
+							freeTierDescription && (
+								<div className="memberships__products-product-description">
+									{ freeTierDescription }
+								</div>
+							)
+						) }
+						<sub className="memberships__products-product-price">{ translate( 'Free' ) }</sub>
+						<div className="memberships__products-product-badge">
+							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+								<Badge type="info">{ translate( 'Newsletter tier' ) }</Badge>
+								{ isFreeTierHidden && (
+									<Badge type="warning">{ translate( 'Hidden from subscribers' ) }</Badge>
+								) }
+							</HStack>
+						</div>
+					</div>
+					<EllipsisMenu position="bottom left">
+						{ hasStripeFeature && (
+							<PopoverMenuItem onClick={ openFreePlanDialog }>
+								<Gridicon size={ 18 } icon="pencil" />
+								{ translate( 'Edit' ) }
+							</PopoverMenuItem>
+						) }
+					</EllipsisMenu>
+				</CompactCard>
+			) }
+			{ hasLoadedFeatures && showFreePlanDialog && hasStripeFeature && supportsFreeTierSettings && (
+				<FreePlanModal closeDialog={ closeDialog } siteId={ site?.ID } />
+			) }
 			{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && (
 				<RecurringPaymentsPlanAddEditModal
 					closeDialog={ closeDialog }

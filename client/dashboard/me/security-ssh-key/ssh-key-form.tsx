@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -46,24 +47,18 @@ export default function SshKeyForm( {
 		key: '',
 	} );
 
-	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation( {
-		...createSshKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'SSH key saved.' ),
-				error: __( 'Failed to save SSH key.' ),
-			},
-		},
-	} );
-	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation( {
-		...updateSshKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'SSH key saved.' ),
-				error: __( 'Failed to save SSH key.' ),
-			},
-		},
-	} );
+	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation(
+		withSnackbar( createSshKeyMutation(), {
+			success: __( 'SSH key saved.' ),
+			error: __( 'Failed to save SSH key.' ),
+		} )
+	);
+	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation(
+		withSnackbar( updateSshKeyMutation(), {
+			success: __( 'SSH key saved.' ),
+			error: __( 'Failed to save SSH key.' ),
+		} )
+	);
 
 	const handleUpdateSshKey = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click' );
@@ -130,80 +125,78 @@ export default function SshKeyForm( {
 	);
 
 	return (
-		<>
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						{ ! isEditing && (
-							<SectionHeader
-								title={ __( 'Add SSH key' ) }
-								level={ 3 }
-								description={ createInterpolateElement(
-									__(
-										'Once added, attach the SSH key to a site with a Business or Commerce plan to enable SSH key authentication for that site. <learnMoreLink />'
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					{ ! isEditing && (
+						<SectionHeader
+							title={ __( 'Add SSH key' ) }
+							level={ 3 }
+							description={ createInterpolateElement(
+								__(
+									'Once added, attach the SSH key to a site with a Business or Commerce plan to enable SSH key authentication for that site. <learnMoreLink />'
+								),
+								{
+									learnMoreLink: (
+										<InlineSupportLink
+											supportPostId={ 100385 }
+											supportLink={ localizeUrl(
+												'https://developer.wordpress.com/docs/developer-tools/ssh/'
+											) }
+										/>
 									),
-									{
-										learnMoreLink: (
-											<InlineSupportLink
-												supportPostId={ 100385 }
-												supportLink={ localizeUrl(
-													'https://developer.wordpress.com/docs/developer-tools/ssh/'
-												) }
-											/>
-										),
-									}
-								) }
+								}
+							) }
+						/>
+					) }
+					{ isEditing && sshKey && (
+						<BaseControl __nextHasNoMarginBottom label={ __( 'Current public SSH key' ) }>
+							<Card isRounded={ false }>
+								<CardBody>
+									<VStack spacing={ 2 }>
+										<Text weight={ 500 } lineHeight="20px">
+											{ username }-{ sshKey.name }
+										</Text>
+										<Text variant="muted" lineHeight="20px" size="13px">
+											{ sshKey.sha256 }
+										</Text>
+									</VStack>
+								</CardBody>
+							</Card>
+						</BaseControl>
+					) }
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							<DataForm< SshKeyFormData >
+								data={ formData }
+								fields={ fields }
+								form={ {
+									layout: { type: 'regular' as const },
+									fields: fields.map( ( field ) => field.id ),
+								} }
+								onChange={ ( edits: Partial< SshKeyFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
 							/>
-						) }
-						{ isEditing && sshKey && (
-							<BaseControl __nextHasNoMarginBottom label={ __( 'Current public SSH key' ) }>
-								<Card isRounded={ false }>
-									<CardBody>
-										<VStack spacing={ 2 }>
-											<Text weight={ 500 } lineHeight="20px">
-												{ username }-{ sshKey.name }
-											</Text>
-											<Text variant="muted" lineHeight="20px" size="13px">
-												{ sshKey.sha256 }
-											</Text>
-										</VStack>
-									</CardBody>
-								</Card>
-							</BaseControl>
-						) }
-						<form onSubmit={ handleSubmit }>
-							<VStack spacing={ 4 }>
-								<DataForm< SshKeyFormData >
-									data={ formData }
-									fields={ fields }
-									form={ {
-										layout: { type: 'regular' as const },
-										fields: fields.map( ( field ) => field.id ),
-									} }
-									onChange={ ( edits: Partial< SshKeyFormData > ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-								<ButtonStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isCreatingSshKey || isUpdatingSshKey }
-										disabled={ isCreatingSshKey || isUpdatingSshKey || ! formData.key }
-									>
-										{ __( 'Save' ) }
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isCreatingSshKey || isUpdatingSshKey }
+									disabled={ isCreatingSshKey || isUpdatingSshKey || ! formData.key }
+								>
+									{ __( 'Save' ) }
+								</Button>
+								{ isEditing && (
+									<Button variant="tertiary" onClick={ () => setIsEditing?.( false ) }>
+										{ __( 'Cancel' ) }
 									</Button>
-									{ isEditing && (
-										<Button variant="tertiary" onClick={ () => setIsEditing?.( false ) }>
-											{ __( 'Cancel' ) }
-										</Button>
-									) }
-								</ButtonStack>
-							</VStack>
-						</form>
-					</VStack>
-				</CardBody>
-			</Card>
-		</>
+								) }
+							</ButtonStack>
+						</VStack>
+					</form>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }

@@ -182,6 +182,7 @@ export const siteCommentQuery = ( { siteId, commentId }: SiteCommentQueryParams 
  */
 export const createSitePostCommentMutation = () =>
 	mutationOptions< SiteComment, Error, CreateSitePostReplyParams >( {
+		meta: { statId: 'site-post-cmt-create' },
 		mutationFn: createSitePostReply,
 	} );
 
@@ -193,6 +194,7 @@ export const createSitePostCommentMutation = () =>
  */
 export const createSiteCommentReplyMutation = () =>
 	mutationOptions< SiteComment, Error, CreateSiteCommentReplyParams >( {
+		meta: { statId: 'site-cmt-reply-create' },
 		mutationFn: ( { siteId, parentCommentId, content } ) =>
 			createSiteCommentReply( { siteId, parentCommentId, content } ),
 	} );
@@ -204,6 +206,7 @@ export const createSiteCommentReplyMutation = () =>
  */
 export const likeSiteCommentMutation = () =>
 	mutationOptions< SiteCommentLikeMutationResponse, Error, SiteCommentLikeMutationParams >( {
+		meta: { statId: 'site-cmt-like' },
 		mutationFn: ( { siteId, commentId } ) => likeSiteComment( { siteId, commentId } ),
 	} );
 
@@ -214,5 +217,6 @@ export const likeSiteCommentMutation = () =>
  */
 export const unlikeSiteCommentMutation = () =>
 	mutationOptions< SiteCommentLikeMutationResponse, Error, SiteCommentLikeMutationParams >( {
+		meta: { statId: 'site-cmt-unlike' },
 		mutationFn: ( { siteId, commentId } ) => unlikeSiteComment( { siteId, commentId } ),
 	} );

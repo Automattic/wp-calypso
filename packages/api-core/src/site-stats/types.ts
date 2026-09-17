@@ -5,3 +5,10 @@ export interface SiteEngagementStatsResponse {
 	 */
 	data: Array< [ string, number, number, number, number ] >;
 }
+
+export interface SiteHourlyViewsResponse {
+	/**
+	 * Array of tuples in the format: [hour, views], e.g. `[ '2025-04-13 14:00:00', 3 ]`.
+	 */
+	data: Array< [ string, number ] >;
+}

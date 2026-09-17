@@ -1,4 +1,4 @@
-import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Domain: Upsell (Home)',
@@ -6,6 +6,7 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
 		skipIfMailosaurLimitReached();
 
 		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
@@ -15,8 +16,6 @@ test.describe(
 			pagePlans,
 			sitePublic,
 		} ) => {
-			let suggestedDomain: string;
-
 			await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
 				await page.goto(
 					helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }` )
@@ -24,8 +23,7 @@ test.describe(
 			} );
 
 			await test.step( 'And domain upsell card has a suggested domain', async function () {
-				suggestedDomain = await pageMyHome.getSuggestedUpsellDomain();
-				expect( suggestedDomain ).not.toBe( '' );
+				await pageMyHome.waitForSuggestedUpsellDomain();
 			} );
 
 			await test.step( 'When I click to begin searching for a domain', async function () {

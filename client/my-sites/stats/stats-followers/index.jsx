@@ -1,10 +1,18 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	getSiteSlug,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
@@ -14,6 +22,23 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
 
+/**
+ * Build the wp-admin URL that opens a single subscriber in the new Newsletter > Subscribers
+ * inspector. That page is a router mounted on `admin.php?page=jetpack-newsletter`, and it
+ * reads its route from the `p` query param, so the subscriber and user ids are nested inside
+ * an encoded `/?subscriber=…&u=…` search string. `userId` is omitted for email-only subscribers.
+ * @param {string} adminPhpUrl Absolute URL to the site's wp-admin `admin.php` (no query).
+ * @param {number} subscriptionId The subscriber's subscription id.
+ * @param {number} [userId] The subscriber's WordPress.com user id, when present.
+ * @returns {string} Absolute wp-admin URL opening the subscriber inspector.
+ */
+export const getNewsletterSubscriberDetailUrl = ( adminPhpUrl, subscriptionId, userId ) => {
+	const inspectorRoute = userId
+		? `/?subscriber=${ subscriptionId }&u=${ userId }`
+		: `/?subscriber=${ subscriptionId }`;
+	return `${ adminPhpUrl }?page=jetpack-newsletter&p=${ encodeURIComponent( inspectorRoute ) }`;
+};
+
 const StatModuleFollowers = ( { className } ) => {
 	const translate = useTranslate();
 
@@ -22,6 +47,17 @@ const StatModuleFollowers = ( { className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const adminPhpUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId, 'admin.php' ) );
+	// The Newsletter > Subscribers inspector shipped in Jetpack 16.1. Below that,
+	// `admin.php?page=jetpack-newsletter` still resolves but renders the legacy settings app and
+	// ignores `p`, so those sites keep the old subscriber link. Simple sites always have it.
+	const hasNewsletterSubscriberInspector = useSelector(
+		( state ) =>
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '16.1' )
+	);
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -59,21 +95,58 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
+	// `subscriberManagementUrl` is the subscribers list link used by "Manage subscribers"
+	// and as the Odyssey fallback when the site's admin URL isn't known or its Jetpack
+	// predates the Newsletter > Subscribers inspector.
+	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
 		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-subscribers-jetpack' : 'stats-subscribers';
 
 	return (
 		<StatsListCard
 			moduleType="followers"
-			data={ subTotals.subscribers.map( ( dataPoint ) => ( {
-				...dataPoint,
-				value: calculateOffset( dataPoint.value?.value ),
-			} ) ) }
+			data={ subTotals.subscribers.map( ( dataPoint ) => {
+				// Link the subscriber name to its individual details page. `link` is kept
+				// for the right-side icon that opens the subscriber's own site. In wp-admin
+				// (Odyssey) send them to the new Newsletter > Subscribers inspector when the
+				// site has it; in Calypso navigate in-app to the subscriber details page.
+				let detailPage;
+				if ( dataPoint.subscription_id ) {
+					if ( ! isOdysseyStats ) {
+						detailPage = `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
+					} else if ( adminPhpUrl && hasNewsletterSubscriberInspector ) {
+						detailPage = getNewsletterSubscriberDetailUrl(
+							adminPhpUrl,
+							dataPoint.subscription_id,
+							dataPoint.user_id
+						);
+					} else {
+						detailPage = `${ subscriberManagementUrl }/${ dataPoint.subscription_id }`;
+					}
+				}
+				return {
+					...dataPoint,
+					value: calculateOffset( dataPoint.value?.value ),
+					page: detailPage,
+				};
+			} ) }
 			usePlainCard
 			hasNoBackground
 			title={ translate( 'Subscribers' ) }
+			titleNodes={
+				<StatsInfoArea>
+					{ translate( '{{link}}Latest subscribers{{/link}} and when they subscribed.', {
+						comment: '{{link}} links to support documentation.',
+						components: {
+							link: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
+						},
+						context: 'Stats: Header popover information when the Subscribers module has data.',
+					} ) }
+				</StatsInfoArea>
+			}
 			emptyMessage={ translate(
 				'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
 				{

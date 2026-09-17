@@ -11,7 +11,6 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -575,7 +574,7 @@ export class JetpackAuthorize extends Component {
 					const { redirect_to: redirectTo } = await this.props.logoutUser( targetLoginURL );
 					disablePersistence();
 					await clearStore();
-					window.location.href = redirectTo || '/';
+					window.location.href = redirectTo || '/log-in';
 				} catch ( error ) {
 					// The logout endpoint might fail if the nonce has expired.
 					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
@@ -749,7 +748,7 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( includes( authorizeError?.message, 'already_connected' ) ) {
+		if ( authorizeError.message?.includes( 'already_connected' ) ) {
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED }

@@ -2,6 +2,7 @@ import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 type InviteType = {
@@ -167,6 +168,13 @@ export function acceptedNotice(
 	}
 }
 
+export function isSameEmail( a?: string | null, b?: string | null ): boolean {
+	const normalize = ( email?: string | null ) => email?.trim().toLowerCase() ?? '';
+	const normalizedA = normalize( a );
+
+	return normalizedA !== '' && normalizedA === normalize( b );
+}
+
 export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: boolean ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
@@ -211,6 +219,9 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 			return getDestinationUrl( readerPath );
 
 		default:
+			if ( hasDashboardOptIn ) {
+				bumpStat( 'dashboard-redirect', 'invite-accept' );
+			}
 			return getDestinationUrl( mySitesPath );
 	}
 }

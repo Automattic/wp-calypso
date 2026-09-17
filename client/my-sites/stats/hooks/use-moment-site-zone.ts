@@ -27,7 +27,10 @@ export const getMomentSiteZone = createSelector(
 		const localeSlug = i18n.getLocaleSlug() || 'en';
 		const timezoneString =
 			getSiteTimezoneValue( state, siteId as number ) ||
-			( getSiteOption( state, siteId, 'timezone_string' ) as string );
+			( getSiteOption( state, siteId, 'timezone_string' ) as string ) ||
+			// General site details (as opposed to the dedicated settings endpoint) report
+			// this same value under `timezone` instead of `timezone_string`.
+			( getSiteOption( state, siteId, 'timezone' ) as string );
 		const gmtOffset =
 			getSiteGmtOffset( state, siteId as number ) ||
 			( getSiteOption( state, siteId, 'gmt_offset' ) as number );
@@ -68,6 +71,7 @@ export const getMomentSiteZone = createSelector(
 		( state, siteId ) => getSiteTimezoneValue( state, siteId as number ),
 		( state, siteId ) => getSiteOption( state, siteId, 'gmt_offset' ),
 		( state, siteId ) => getSiteOption( state, siteId, 'timezone_string' ),
+		( state, siteId ) => getSiteOption( state, siteId, 'timezone' ),
 		() => i18n.getLocaleSlug(),
 	]
 );

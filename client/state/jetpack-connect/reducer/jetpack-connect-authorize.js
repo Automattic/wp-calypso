@@ -1,7 +1,7 @@
 /**
  * External dependencis
  */
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,

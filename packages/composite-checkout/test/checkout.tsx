@@ -22,6 +22,7 @@ import {
 	useTogglePaymentMethod,
 	makeErrorResponse,
 	useMakeStepActive,
+	useNextIncompleteStepId,
 } from '../src/public-api';
 import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -118,13 +119,16 @@ describe( 'Checkout', () => {
 				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeVisible();
 			} );
 
-			it( 'renders the second payment method label as selected if the first is disabled', async () => {
-				const { getByText, getAllByText, findByLabelText } = render( <MyCheckout /> );
+			it( 'renders the second payment method as the selected single method if the first is disabled', async () => {
+				const { getByText, getAllByText, queryByText, findByText } = render( <MyCheckout /> );
 				const user = userEvent.setup();
 				await user.click( getAllByText( 'Continue' )[ 0 ] );
 				await user.click( getByText( 'Disable Payment Method' ) );
-				const paymentMethod = await findByLabelText( mockMethod2.inactiveContent );
-				expect( paymentMethod ).toBeChecked();
+				// Only one payment method remains available, so it is rendered as a
+				// plain selected container (not a radio button): its label is visible
+				// while the disabled method is hidden.
+				expect( await findByText( mockMethod2.inactiveContent ) ).toBeVisible();
+				expect( queryByText( mockMethod.inactiveContent ) ).not.toBeVisible();
 			} );
 
 			it( 'renders the payment method activeContent', () => {
@@ -868,7 +872,10 @@ describe( 'Checkout', () => {
 							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
 							{ props.withProp ? (
-								<CheckoutFormSubmit continueToNextIncompleteStep />
+								<CheckoutFormSubmit
+									continueToNextIncompleteStep
+									disableSubmitButton={ props.disableSubmitButton }
+								/>
 							) : (
 								<CheckoutFormSubmit />
 							) }
@@ -880,6 +887,39 @@ describe( 'Checkout', () => {
 
 		const getSubmitArea = ( container ) =>
 			container.querySelector( '.checkout-steps__submit-button-wrapper' );
+
+		// jsdom has no layout, so every element reports a 0x0 rect, which counts as
+		// visible (there is nothing to scroll to). Tests that care about position say
+		// where the elements they are about live. `top` is viewport-relative, so a
+		// value >= window.innerHeight puts the element off-screen.
+		const byId = ( id ) => ( el ) => el.id === id;
+		const byTagName = ( tagName ) => ( el ) => el.tagName === tagName;
+		const positionElements = ( positions ) => {
+			const original = window.HTMLElement.prototype.getBoundingClientRect;
+			jest
+				.spyOn( window.HTMLElement.prototype, 'getBoundingClientRect' )
+				.mockImplementation( function () {
+					const position = positions.find( ( [ matches ] ) => matches( this ) );
+					if ( ! position ) {
+						return original.call( this );
+					}
+					const top = position[ 1 ];
+					return { top, bottom: top + 400, left: 0, right: 400, width: 400, height: 400 };
+				} );
+		};
+		const putStepAt = ( stepId, top ) => positionElements( [ [ byId( stepId ), top ] ] );
+
+		// jsdom has no layout, so it has no hit-testing either; the production code
+		// falls back to the rect alone without it. Tests that need to simulate the
+		// sticky summary covering an on-screen step provide it.
+		const putElementOverEverything = ( element ) => {
+			document.elementFromPoint = jest.fn( () => element );
+		};
+
+		afterEach( () => {
+			jest.restoreAllMocks();
+			delete ( document as unknown as { elementFromPoint?: unknown } ).elementFromPoint;
+		} );
 
 		it( 'renders an enabled Continue button instead of a disabled submit button when a later step exists', () => {
 			const { container } = render(
@@ -897,6 +937,40 @@ describe( 'Checkout', () => {
 			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
 		} );
 
+		it( 'still renders Continue when disableSubmitButton is set', () => {
+			const { container } = render(
+				<ContinueCheckout
+					withProp
+					disableSubmitButton
+					steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
+			expect( getByTextInNode( submitArea, 'Continue' ) ).not.toBeDisabled();
+			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'disables Continue while the step it validates is still resolving', async () => {
+			const isCompleteCallback = jest.fn( () => new Promise< boolean >( () => {} ) );
+			const pendingActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], pendingActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const continueButton = getByTextInNode( submitArea, 'Continue' );
+			const user = userEvent.setup();
+			await user.click( continueButton );
+
+			await waitFor( () => {
+				expect( continueButton ).toBeDisabled();
+			} );
+			expect( continueButton ).toHaveTextContent( 'Please wait…' );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			await user.click( continueButton );
+			expect( isCompleteCallback ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'smooth-scrolls to the next incomplete step when Continue is clicked', async () => {
 			const scrollIntoView = jest.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -910,10 +984,188 @@ describe( 'Checkout', () => {
 			await waitFor( () => {
 				expect( scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'start' } );
 			} );
-			// The active step (step 1) is the first incomplete step, so it is the scroll target.
+			// The active step (step 1) validates successfully, so it completes and we
+			// advance to step 2, the next incomplete step, which becomes the scroll target.
 			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
-				'custom-contact-step'
+				'custom-incomplete-step'
 			);
+		} );
+
+		it( 'tries to complete the active step and stays on it when it fails to validate', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			// The active (first numbered) step is invalid; a later step follows it so the
+			// summary shows "Continue" rather than the Pay button.
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			// The active step's own completion callback runs (the fix): previously
+			// makeStepActive would no-op on the active step and never validate it.
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+			// Validation failed, so we stay on the active step and scroll to it.
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+		} );
+
+		it( 'only scrolls the active step into view when it is entirely off-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			putStepAt( 'custom-incomplete-step', window.innerHeight + 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			// The shopper has not seen the step yet, so it must not be validated: that
+			// would show errors for fields they have had no chance to fill in.
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'only scrolls the active step into view when something is covering it', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			// On-screen by its rect, but taller than the viewport, which is the normal
+			// case for a checkout step on a phone.
+			putStepAt( 'custom-incomplete-step', 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			// Every hit-test lands on the sticky summary rather than the step.
+			putElementOverEverything( container );
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'only scrolls the active step into view when its first field is off-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			// The step itself is on-screen but its first field is not, which is what a
+			// step taller than the phone screen looks like: heading showing, form not.
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), 100 ],
+				[ byTagName( 'INPUT' ), window.innerHeight + 100 ],
+			] );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'validates the active step with an off-screen first field once the shopper has touched the steps', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			// A shopper working down a step taller than the screen: the first field has
+			// scrolled off the top, but they have plainly seen the form.
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), -300 ],
+				[ byTagName( 'INPUT' ), -500 ],
+			] );
+			const { container, getByLabelText } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByLabelText( 'Country' ) );
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+		} );
+
+		it( 'validates the active step when its first field is on-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), 100 ],
+				[ byTagName( 'INPUT' ), 200 ],
+			] );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+		} );
+
+		it( 'validates the active step when it is on-screen and nothing is covering it', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			putStepAt( 'custom-incomplete-step', 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			putElementOverEverything( document.getElementById( 'custom-incomplete-step' ) );
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
 		} );
 
 		it( 'renders the payment method submit button when the last step is active', () => {
@@ -988,6 +1240,57 @@ describe( 'Checkout', () => {
 				expect( getByTextInNode( submitArea, 'Pay Please' ) ).toBeInTheDocument();
 			} );
 			expect( queryByTextInNode( submitArea, 'Continue' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'useNextIncompleteStepId', function () {
+		const mockMethod = createMockMethod();
+		const steps = createMockStepObjects();
+
+		// steps[0] = 'custom-summary-step'   (no step number)
+		// steps[1] = 'custom-contact-step'   (numbered, isCompleteCallback () => true)
+		// steps[3] = 'custom-incomplete-step' (numbered, isCompleteCallback () => false)
+
+		// Renders the hook's value (or the string 'none' when undefined) so tests can
+		// assert on it. This is the generic primitive consumers use to tell whether the
+		// submit area is showing "Continue" (a step remains) versus the final Pay button.
+		function NextIncompleteStepIdProbe() {
+			const nextIncompleteStepId = useNextIncompleteStepId();
+			return <div data-testid="next-incomplete-step-id">{ nextIncompleteStepId ?? 'none' }</div>;
+		}
+
+		function ProbeCheckout( props ) {
+			const [ paymentData, setPaymentData ] = useState( {} );
+			const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+				createStepsFromStepObjects( props.steps || steps );
+			const createStepFromStepObject = createStepObjectConverter( paymentData );
+			return (
+				<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+					<CheckoutProvider
+						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
+						selectFirstAvailablePaymentMethod
+					>
+						<CheckoutStepGroup>
+							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+							<NextIncompleteStepIdProbe />
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</myContext.Provider>
+			);
+		}
+
+		it( 'returns undefined when the active step is the last numbered step (Pay button state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent( 'none' );
+		} );
+
+		it( 'returns the next incomplete step id when there is a later numbered step (Continue state)', () => {
+			render( <ProbeCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } /> );
+			expect( screen.getByTestId( 'next-incomplete-step-id' ) ).toHaveTextContent(
+				'custom-contact-step'
+			);
 		} );
 	} );
 

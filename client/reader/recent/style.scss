@@ -172,7 +172,11 @@ body.is-reader-full-post {
 					&__title-text {
 						font-weight: 700;
 						font-size: rem( 13px );
-						@extend %text-shared;
+						display: -webkit-box;
+						-webkit-line-clamp: 2;
+						-webkit-box-orient: vertical;
+						overflow: hidden;
+						white-space: normal;
 					}
 
 					&__site-name {

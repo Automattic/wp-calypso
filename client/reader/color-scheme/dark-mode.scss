@@ -6,6 +6,12 @@
 	--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
 	--color-sidebar-menu-hover-text: var( --color-text );
 	--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+	--color-sidebar-tooltip-background: color-mix(
+		in srgb,
+		var( --wp-admin-theme-color ) 24%,
+		var( --dashboard__background-color )
+	);
+	--color-sidebar-tooltip-text: var( --color-text );
 	--color-sidebar-text-alternative: var( --dashboard__text-muted-color );
 	--color-sidebar-gridicon-fill: var( --dashboard__text-muted-color );
 	--color-sidebar-gridicon-hover-fill: currentColor;
@@ -25,6 +31,7 @@
 		color: var( --dashboard__text-color );
 	}
 
+	.layout.is-global-sidebar-visible .layout__primary:not( :has( > * ) ),
 	.layout.is-global-sidebar-visible .layout__primary > div:not( :has( .recent-feed ) ) {
 		border-color: var( --color-border-subtle );
 	}
@@ -45,15 +52,28 @@
 
 	&.theme-default .is-global-sidebar-visible {
 		// The shared sidebar sets these variables at this scope, so keep Reader dark overrides here too.
+		--color-masterbar-submenu-group-background: var( --dashboard__background-color );
 		--color-sidebar-menu-selected-background: var( --dashboard-item-selected__background-color );
 		--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
 		--color-sidebar-menu-hover-text: var( --color-text );
 		--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+		--color-sidebar-tooltip-background: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 24%,
+			var( --dashboard__background-color )
+		);
+		--color-sidebar-tooltip-text: var( --color-text );
 		--color-sidebar-submenu-selected-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-submenu-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-gridicon-hover-fill: currentColor;
 		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
+
+		// The W-icon dropdown's second group hardcodes a light grey for the white
+		// menu; match the surrounding dark groups instead of that grey.
+		.masterbar__item-my-sites + .masterbar__item-subitems {
+			--color-masterbar-submenu-group-background: inherit;
+		}
 	}
 
 	.reader-onboarding-modal__footer {

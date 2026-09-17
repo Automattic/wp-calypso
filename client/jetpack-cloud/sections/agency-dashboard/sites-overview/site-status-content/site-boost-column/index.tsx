@@ -3,6 +3,7 @@ import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useState } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
@@ -116,6 +117,14 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				>
 					{ translate( 'Configure Boost' ) }
 				</Button>
+			</span>
+		);
+	}
+
+	if ( isA8CForAgencies() ) {
+		return (
+			<span className="sites-overview__row-status">
+				<Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />
 			</span>
 		);
 	}

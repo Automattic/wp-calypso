@@ -67,16 +67,20 @@ const planProduct: ResponseCartProduct = {
 	uuid: 'plan-001',
 };
 
-function createFakeCartBackend(
-	initialCarts: Partial< Record< CartKey, ResponseCartProduct[] > >
-) {
+type FakeCartSeed = ResponseCartProduct[] | Partial< ResponseCart >;
+
+function createFakeCartBackend( initialCarts: Partial< Record< CartKey, FakeCartSeed > > ) {
 	const carts = new Map< CartKey, ResponseCart >();
-	for ( const [ key, products ] of Object.entries( initialCarts ) ) {
+	for ( const [ key, seed ] of Object.entries( initialCarts ) ) {
 		const cartKey = ( isNaN( Number( key ) ) ? key : Number( key ) ) as CartKey;
+		const overrides: Partial< ResponseCart > = Array.isArray( seed )
+			? { products: seed }
+			: seed ?? {};
 		carts.set( cartKey, {
 			...getEmptyResponseCart(),
 			cart_key: cartKey,
-			products: products ?? [],
+			products: [],
+			...overrides,
 		} );
 	}
 
@@ -98,9 +102,12 @@ function createFakeCartBackend(
 
 	const setCart: SetCart = async ( cartKey, newCart: RequestCart ) => {
 		setCallsByKey.push( cartKey );
+		const existing = carts.get( cartKey );
 		const updated: ResponseCart = {
 			...getEmptyResponseCart(),
 			cart_key: cartKey,
+			gift_details: existing?.gift_details,
+			is_gift_purchase: existing?.is_gift_purchase,
 			products: newCart.products.map(
 				( requested ) =>
 					( {
@@ -221,6 +228,46 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		expect( carts.get( NEW_SITE_CART_KEY )?.products ).toHaveLength( 0 );
 	} );
 
+	it( 'redirects to the domains back URL when one is supplied', async () => {
+		// A flow that provides `checkoutBackUrlDomains` (e.g. AI Site Builder
+		// onboarding) wants emptying the cart to return the user to the domain
+		// step rather than the default plan-step back URL.
+		( useValidCheckoutBackUrl as jest.Mock ).mockImplementation(
+			( _siteSlug: string, _siteId: number | undefined, queryArgName = 'checkoutBackUrl' ) =>
+				queryArgName === 'checkoutBackUrlDomains'
+					? 'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/domains'
+					: 'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/plans'
+		);
+
+		const { getCart, setCart } = createFakeCartBackend( {
+			[ NEW_SITE_CART_KEY ]: [ domainProduct, planProduct ],
+		} );
+		const client = createShoppingCartManagerClient( { getCart, setCart } );
+		const Wrapper = buildWrapper( client );
+
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () =>
+			expect(
+				client.forCartKey( NEW_SITE_CART_KEY ).getState().responseCart.products
+			).toHaveLength( 2 )
+		);
+
+		await act( async () => {
+			await result.current.clearCartAndLeave();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				userHasClearedCart: true,
+				forceCheckoutBackUrl:
+					'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/domains',
+			} )
+		);
+	} );
+
 	it( 'skips the redundant siteless clears when checkout is already on a siteless cart', async () => {
 		// When the user is checking out directly against `'no-site'` (no
 		// "New site" branch involved), the hook must not re-clear the same
@@ -274,6 +321,9 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
 			wrapper: Wrapper,
 		} );
+		await waitFor( () =>
+			expect( client.forCartKey( NEW_SITE_CART_KEY ).getState().isLoading ).toBe( false )
+		);
 
 		await act( async () => {
 			result.current.clickStepBack( 'https://mynewsite.wordpress.com/setup/onboarding/domains' );
@@ -374,5 +424,415 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 				forceCheckoutBackUrl: 'https://mynewsite.wordpress.com/setup/onboarding/plans',
 			} )
 		);
+	} );
+} );
+
+describe( 'useCheckoutLeaveModal gift checkout', () => {
+	const GIFT_CART_KEY: CartKey = 'no-site';
+	const giftDetails = {
+		receiver_blog_id: 123,
+		receiver_blog_slug: 'giftedsite.wordpress.com',
+		receiver_blog_url: 'giftedsite.wordpress.com',
+	};
+
+	function setReferrer( value: string ) {
+		Object.defineProperty( document, 'referrer', { value, configurable: true } );
+	}
+
+	beforeEach( () => {
+		( useCartKey as jest.Mock ).mockReset();
+		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
+		( leaveCheckout as jest.Mock ).mockReset();
+		( useCartKey as jest.Mock ).mockReturnValue( GIFT_CART_KEY );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		// The hook reads the gift checkout route off the path, the way
+		// `getProductSlugFromContext` does.
+		window.history.replaceState( {}, '', '/checkout/personal-bundle/gift/123' );
+	} );
+
+	afterEach( () => {
+		// Remove the own property so the jsdom prototype getter is visible again.
+		delete ( document as { referrer?: string } ).referrer;
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	async function renderGiftHook( seed: Partial< ResponseCart > ) {
+		const { getCart, setCart } = createFakeCartBackend( { [ GIFT_CART_KEY ]: seed } );
+		const client = createShoppingCartManagerClient( { getCart, setCart } );
+		const Wrapper = buildWrapper( client );
+		const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: Wrapper,
+		} );
+		await waitFor( () =>
+			expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( false )
+		);
+		expect( client.forCartKey( GIFT_CART_KEY ).getState().responseCart.gift_details ).toEqual(
+			seed.gift_details
+		);
+		return rendered;
+	}
+
+	it( 'sends Back to the referring page on the gifted site', async () => {
+		setReferrer( 'https://giftedsite.wordpress.com/2026/08/27/hello-world/' );
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+		} );
+
+		await act( async () => {
+			result.current.clickClose();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/2026/08/27/hello-world/',
+			} )
+		);
+	} );
+
+	it( 'sends Back to the gifted site when the referrer is elsewhere', async () => {
+		setReferrer( '' );
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+		} );
+
+		await act( async () => {
+			result.current.clickClose();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+		);
+	} );
+
+	it( 'sends Back to the gifted site after emptying the cart', async () => {
+		setReferrer( '' );
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+			products: [ planProduct ],
+		} );
+
+		await act( async () => {
+			await result.current.clearCartAndLeave();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				userHasClearedCart: true,
+				forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/',
+			} )
+		);
+	} );
+
+	it( 'lets an explicit checkoutBackUrl win over the gifted site', async () => {
+		setReferrer( 'https://giftedsite.wordpress.com/' );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
+			'https://wordpress.com/plans/explicit'
+		);
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+		} );
+
+		await act( async () => {
+			result.current.clickClose();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( { forceCheckoutBackUrl: 'https://wordpress.com/plans/explicit' } )
+		);
+	} );
+
+	it( 'lets a step-back destination win over the gifted site', async () => {
+		setReferrer( 'https://giftedsite.wordpress.com/' );
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+		} );
+
+		await act( async () => {
+			result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
+			} )
+		);
+	} );
+
+	it( 'leaves non-gift carts alone', async () => {
+		setReferrer( 'https://giftedsite.wordpress.com/' );
+		const { result } = await renderGiftHook( {} );
+
+		await act( async () => {
+			result.current.clickClose();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( { forceCheckoutBackUrl: undefined } )
+		);
+	} );
+
+	describe( 'when the cart is still loading', () => {
+		/**
+		 * Render the hook against a cart whose fetch is held open, so the loading
+		 * window can be observed. `resolveCart` completes the fetch with the given
+		 * cart contents.
+		 */
+		function renderGiftHookWithPendingCart() {
+			let releaseCart: ( cart: ResponseCart ) => void = () => {};
+			const cartPromise = new Promise< ResponseCart >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: () => cartPromise,
+				setCart: async ( cartKey, newCart: RequestCart ) => ( {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: newCart.products as ResponseCartProduct[],
+				} ),
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( true );
+
+			const resolveCart = async ( seed: Partial< ResponseCart > ) => {
+				await act( async () => {
+					releaseCart( {
+						...getEmptyResponseCart(),
+						cart_key: GIFT_CART_KEY,
+						products: [],
+						...seed,
+					} );
+					await cartPromise;
+				} );
+			};
+			return { ...rendered, resolveCart };
+		}
+
+		it( 'keeps "Back" disabled while the cart is loading', () => {
+			setReferrer( '' );
+			const { result } = renderGiftHookWithPendingCart();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+		} );
+
+		it( 'enables "Back" once the cart arrives, and then uses the gifted site', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+
+			await act( async () => {
+				result.current.clickClose();
+			} );
+
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+			);
+		} );
+	} );
+
+	describe( 'when the gifted plan has not reached the server yet', () => {
+		/**
+		 * Reproduce the logged-out gift checkout: a 'no-user' cart never fetches,
+		 * so its initial cart resolves locally and empty, and the gifted plan only
+		 * exists on the cart once checkout has sent it to the server. `releaseCart`
+		 * completes that round-trip.
+		 */
+		async function renderGiftHookWithPendingProducts() {
+			let releaseCart: () => void = () => {};
+			let isCartSyncing = false;
+			const cartSync = new Promise< void >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: async () => ( {
+					...getEmptyResponseCart(),
+					cart_key: GIFT_CART_KEY,
+					products: [],
+				} ),
+				setCart: async ( cartKey ) => {
+					isCartSyncing = true;
+					await cartSync;
+					return {
+						...getEmptyResponseCart(),
+						cart_key: cartKey,
+						products: [ planProduct ],
+						gift_details: giftDetails,
+						is_gift_purchase: true,
+					};
+				},
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			await waitFor( () =>
+				expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( false )
+			);
+
+			// Checkout adds the products named by the URL; the hook lives in the
+			// masterbar, which shares the cart but never adds to it itself.
+			await act( async () => {
+				client
+					.forCartKey( GIFT_CART_KEY )
+					.actions.addProductsToCart( [
+						{ product_slug: planProduct.product_slug, product_id: planProduct.product_id },
+					] )
+					.catch( () => {} );
+			} );
+
+			await waitFor( () => expect( isCartSyncing ).toBe( true ) );
+
+			return {
+				...rendered,
+				releaseCart: async () => {
+					await act( async () => {
+						releaseCart();
+						await cartSync;
+					} );
+				},
+			};
+		}
+
+		it( 'keeps "Back" disabled until the cart comes back with the gift', async () => {
+			setReferrer( '' );
+			const { result, releaseCart } = await renderGiftHookWithPendingProducts();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+
+			await releaseCart();
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+
+			await act( async () => {
+				result.current.closeAndLeave();
+			} );
+
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+			);
+		} );
+	} );
+
+	it( 'keeps "Back" disabled when a settled cart holds a leftover item but no gift yet', async () => {
+		// A logged-in gifter's 'no-site' cart can still hold an item from an
+		// earlier signup. It settles non-empty and looks answerable, but the
+		// gifted site's URL has not arrived, so "Back" must keep waiting.
+		setReferrer( '' );
+		const { result } = await renderGiftHook( { products: [ domainProduct ] } );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+	} );
+
+	it( 'enables "Back" when the cart fails to load so checkout is never a dead end', async () => {
+		setReferrer( '' );
+		const client = createShoppingCartManagerClient( {
+			getCart: async () => {
+				throw new Error( 'network down' );
+			},
+			setCart: async () => {
+				throw new Error( 'network down' );
+			},
+		} );
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: buildWrapper( client ),
+		} );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+
+		await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+	} );
+} );
+
+describe( 'useCheckoutLeaveModal isLeaveDisabled outside a gift checkout', () => {
+	const CART_KEY: CartKey = 'no-site';
+
+	beforeEach( () => {
+		( useCartKey as jest.Mock ).mockReset();
+		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
+		( useCartKey as jest.Mock ).mockReturnValue( CART_KEY );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		window.history.replaceState( {}, '', '/checkout/mysite.wordpress.com' );
+	} );
+
+	afterEach( () => {
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	/**
+	 * Render the hook against a cart seeded with `initialProducts` whose next
+	 * update is held open, so the window while an update is in flight can be
+	 * observed. `releaseUpdate` completes that round-trip.
+	 */
+	async function renderHookWithPendingUpdate( initialProducts: ResponseCartProduct[] ) {
+		let releaseUpdate: () => void = () => {};
+		const cartSync = new Promise< void >( ( resolve ) => {
+			releaseUpdate = resolve;
+		} );
+		const client = createShoppingCartManagerClient( {
+			getCart: async () => ( {
+				...getEmptyResponseCart(),
+				cart_key: CART_KEY,
+				products: initialProducts,
+			} ),
+			setCart: async ( cartKey, newCart: RequestCart ) => {
+				await cartSync;
+				return {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: newCart.products as ResponseCartProduct[],
+				};
+			},
+		} );
+		const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: buildWrapper( client ),
+		} );
+		await waitFor( () =>
+			expect( client.forCartKey( CART_KEY ).getState().isLoading ).toBe( false )
+		);
+
+		await act( async () => {
+			client
+				.forCartKey( CART_KEY )
+				.actions.addProductsToCart( [
+					{ product_slug: planProduct.product_slug, product_id: planProduct.product_id },
+				] )
+				.catch( () => {} );
+		} );
+
+		return {
+			...rendered,
+			releaseUpdate: async () => {
+				await act( async () => {
+					releaseUpdate();
+					await cartSync;
+				} );
+			},
+		};
+	}
+
+	it( 'keeps "Back" disabled while an empty cart is still receiving the products from the URL', async () => {
+		const { result, releaseUpdate } = await renderHookWithPendingUpdate( [] );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+
+		await releaseUpdate();
+		await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+	} );
+
+	it( 'keeps "Back" enabled while a cart that already holds products is updating', async () => {
+		// Applying a coupon or recalculating tax leaves the cart pending, but it
+		// still answers the only question "Back" asks here: it holds something,
+		// so the save-cart prompt is correct either way.
+		const { result, releaseUpdate } = await renderHookWithPendingUpdate( [ planProduct ] );
+
+		expect( result.current.isLeaveDisabled ).toBe( false );
+
+		await releaseUpdate();
 	} );
 } );

@@ -1,7 +1,7 @@
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState, type JSX } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -11,7 +11,7 @@ import Sidebar, {
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -81,10 +81,6 @@ const JetpackCloudSidebar = ( {
 		history.pushState( null, '', window.location.pathname + window.location.search );
 		setShowUserFeedbackForm( false );
 	}, [] );
-
-	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
-	}, [ dispatch ] );
 
 	return (
 		<Sidebar className={ clsx( 'jetpack-cloud-sidebar', className ) }>

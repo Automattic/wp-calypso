@@ -1,14 +1,14 @@
-import { BadgeType, Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Tooltip } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ComponentProps } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { useSubscriptionDetails } from 'calypso/a8c-for-agencies/hooks/use-subscription-details';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
@@ -22,26 +22,28 @@ type Props = {
 	data?: APIProductFamilyProduct[];
 };
 
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
+
 function getPurchaseStatus(
 	purchase: ReferralPurchase,
 	translate: ReturnType< typeof useTranslate >
-): [ BadgeType, React.ReactNode ] {
+): [ BadgeIntent, string ] {
 	if ( purchase.status === 'active' ) {
 		if ( purchase.site_assigned ) {
-			return [ 'success', translate( 'Assigned' ) ];
+			return [ 'stable', translate( 'Assigned' ) ];
 		}
-		return [ 'warning', translate( 'Unassigned' ) ];
+		return [ 'medium', translate( 'Unassigned' ) ];
 	}
 
 	if ( purchase.status === 'canceled' ) {
-		return [ 'info', translate( 'Canceled' ) ];
+		return [ 'informational', translate( 'Canceled' ) ];
 	}
 
 	if ( purchase.status === 'error' ) {
-		return [ 'error', translate( 'Error' ) ];
+		return [ 'high', translate( 'Error' ) ];
 	}
 
-	return [ 'warning', translate( 'Awaiting payment' ) ];
+	return [ 'medium', translate( 'Awaiting payment' ) ];
 }
 
 const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props ) => {
@@ -73,12 +75,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	if ( purchase.site_assigned ) {
 		return isPressable ? (
-			<StatusBadge
-				statusProps={ {
-					children: translate( 'Pressable' ),
-					type: 'success',
-				} }
-			/>
+			<Badge intent="stable">{ translate( 'Pressable' ) }</Badge>
 		) : (
 			<Button
 				className="referrals-purchases__assign-button"
@@ -143,13 +140,13 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	return (
 		<div className="badge-assigned-to">
-			<StatusBadge
-				statusProps={ {
-					children: statusText,
-					type: statusType,
-					tooltip,
-				} }
-			/>
+			{ tooltip ? (
+				<Tooltip text={ tooltip }>
+					<Badge intent={ statusType }>{ statusText }</Badge>
+				</Tooltip>
+			) : (
+				<Badge intent={ statusType }>{ statusText }</Badge>
+			) }
 			{ cancellationInfo && (
 				<A4APopoverTrigger
 					className="status-card__info-icon"

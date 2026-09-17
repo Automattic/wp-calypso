@@ -1,5 +1,4 @@
-import { pick, shuffle } from '@automattic/js-utils';
-import { memoize } from 'lodash';
+import { memoize, pick, shuffle } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

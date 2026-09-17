@@ -1,8 +1,7 @@
 import { open } from 'fs/promises';
 import path from 'path';
-import { groupBy } from '@automattic/js-utils';
+import { defaults, groupBy } from '@automattic/js-utils';
 import asyncHandler from 'express-async-handler';
-import { defaults } from 'lodash';
 
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
 const ASSETS_FILE = path.join( ASSETS_PATH, `assets.json` );

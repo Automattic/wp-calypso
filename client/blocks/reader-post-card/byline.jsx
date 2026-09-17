@@ -1,6 +1,5 @@
 import { TimeSince } from '@automattic/components';
 import { debounce } from '@wordpress/compose';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -111,16 +110,16 @@ class PostByline extends Component {
 			openSuggestedFollows,
 			showBylineSecondarySiteLink,
 		} = this.props;
-		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
-		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-		const siteId = get( site, 'ID' );
-		const siteSlug = get( site, 'slug' );
-		const siteUrl = get( site, 'URL' );
+		const feedId = feed ? feed.feed_ID : post?.feed_ID;
+		const feedIcon = feed ? feed.site_icon ?? feed.image : null;
+		const siteId = site?.ID;
+		const siteSlug = site?.slug;
+		const siteUrl = site?.URL;
 		const siteName = getSiteName( { site, feed, post } );
-		const hasAuthorName = !! get( post, 'author.name', null );
+		const hasAuthorName = !! ( post?.author?.name ?? null );
 		const shouldDisplayAuthor = hasAuthorName && ! isAuthorNameBlocked( post.author.name );
 		const streamUrl = getStreamUrl( feedId, siteId );
-		const siteIcon = get( site, 'icon.img' );
+		const siteIcon = site?.icon?.img;
 
 		// Use the siteName if not showing it elsewhere, otherwise use the slug.
 		const bylineSiteName = ! showSiteName ? siteName : siteSlug;

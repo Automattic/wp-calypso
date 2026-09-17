@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/domains/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/domains/init';
  * @returns {Object}              Registrar object/record
  */
 export default function getGainingRegistrar( state, domain ) {
-	return get( state.domains.transfer, [ 'items', domain, 'selectedRegistrar' ], {} );
+	return state.domains.transfer?.items?.[ domain ]?.selectedRegistrar ?? {};
 }

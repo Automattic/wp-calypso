@@ -1,0 +1,17 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+.hosting-feature-activation-modal {
+	.hosting-feature-activation-modal__domains {
+		.hosting-feature-activation-modal__domain {
+			padding-block: 12px;
+			padding-inline: 16px;
+			background-color: var(--studio-gray-0);
+
+			// --studio-gray-0 is a fixed light gray, so swap it for the dashboard's
+			// dark surface token when the dark theme is active.
+			@include ui-mixins.when-dark-theme {
+				background-color: var(--wp-components-color-gray-100);
+			}
+		}
+	}
+}

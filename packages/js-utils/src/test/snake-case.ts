@@ -9,7 +9,7 @@ describe( 'snakeCase', () => {
 		expect( snakeCase( 'country-code' ) ).toBe( 'country_code' );
 	} );
 
-	it( 'splits acronym and numeric boundaries like lodash', () => {
+	it( 'splits acronym and numeric boundaries', () => {
 		expect( snakeCase( 'XMLHttpRequest' ) ).toBe( 'xml_http_request' );
 		expect( snakeCase( 'address1' ) ).toBe( 'address_1' );
 	} );
@@ -19,8 +19,8 @@ describe( 'snakeCase', () => {
 		expect( snakeCase( 'first_name' ) ).toBe( 'first_name' );
 	} );
 
-	it( 'is scoped to ASCII — accents are not deburred like lodash', () => {
-		// lodash snakeCase( 'déjà-vu' ) is 'deja_vu'; these helpers tokenize ASCII only.
+	it( 'is scoped to ASCII — accents are not deburred', () => {
+		// These helpers tokenize ASCII only, so accents are not deburred.
 		expect( snakeCase( 'déjà-vu' ) ).toBe( 'd_j_vu' );
 	} );
 

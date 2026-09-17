@@ -12,7 +12,6 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { intersection, map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -82,7 +81,7 @@ export class DomainWarnings extends PureComponent {
 
 	renewLink( domains, onClick ) {
 		const count = domains.length;
-		const { selectedSite, translate } = this.props;
+		const { translate } = this.props;
 		const fullMessage = translate( 'Renew it now.', 'Renew them now.', {
 			count,
 			context: 'Call to action link for renewing an expiring/expired domain',
@@ -90,13 +89,8 @@ export class DomainWarnings extends PureComponent {
 		const compactMessage = translate( 'Renew', {
 			context: 'Call to action link for renewing an expiring/expired domain',
 		} );
-		const domain = domains[ 0 ].name;
 		const subscriptionId = domains[ 0 ].subscriptionId;
-		const productSlug = domains[ 0 ].productSlug;
-		const link =
-			count === 1
-				? `/checkout/${ productSlug }:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
-				: purchasesRoot;
+		const link = count === 1 ? `/checkout/renew/${ subscriptionId }` : purchasesRoot;
 
 		return (
 			<NoticeAction href={ link } onClick={ onClick }>
@@ -133,7 +127,7 @@ export class DomainWarnings extends PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.allowedRules.map( ( ruleName ) => this[ ruleName ] );
-		return intersection( allRules, validRules );
+		return allRules.filter( ( rule ) => validRules.includes( rule ) );
 	}
 
 	getDomains() {
@@ -210,7 +204,7 @@ export class DomainWarnings extends PureComponent {
 					) ) }
 				</ul>
 			);
-			if ( map( wrongMappedDomains, 'name' ).every( isSubdomain ) ) {
+			if ( wrongMappedDomains.map( ( domain ) => domain?.name ).every( isSubdomain ) ) {
 				text = translate( "Some of your domains' DNS records need to be configured.", {
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				} );
@@ -894,7 +888,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	pendingTransfer = () => {
-		const domain = find( this.getDomains(), 'pendingTransfer' );
+		const domain = this.getDomains().find( ( domainItem ) => domainItem.pendingTransfer );
 		if ( ! domain ) {
 			return null;
 		}
@@ -928,8 +922,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	transferStatus = () => {
-		const domainInTransfer = find(
-			this.getDomains(),
+		const domainInTransfer = this.getDomains().find(
 			( domain ) => domain.type === domainTypes.TRANSFER
 		);
 

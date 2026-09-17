@@ -1,8 +1,8 @@
-import { Popover } from '@automattic/components';
+import { Button as AutomatticButton, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, mobile, desktop, share } from '@wordpress/icons';
+import { Icon, mobile, desktop, share, link, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -19,7 +19,7 @@ type HeaderProps = {
 	showNavigationTabs?: boolean;
 	timestamp?: string;
 	showWPcomBadge?: boolean;
-	shareLink: string;
+	shareLink?: string;
 };
 
 export const TabTypes = {
@@ -47,10 +47,29 @@ const SocialServices = [
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
 	const [ showPopoverMenu, setPopoverMenu ] = useState( false );
+	const [ linkCopied, setLinkCopied ] = useState( false );
 	const popoverButtonRef = useRef( null );
 	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge, shareLink } =
 		props;
 	const urlParts = new URL( url );
+
+	useEffect( () => {
+		if ( ! linkCopied ) {
+			return;
+		}
+
+		const timeoutId = setTimeout( () => setLinkCopied( false ), 2000 );
+		return () => clearTimeout( timeoutId );
+	}, [ linkCopied ] );
+
+	const onCopyLink = () => {
+		if ( ! shareLink ) {
+			return;
+		}
+
+		navigator.clipboard.writeText( shareLink );
+		setLinkCopied( true );
+	};
 
 	const renderTimestampAndBadge = () => (
 		<>
@@ -149,6 +168,15 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 												service={ item.service }
 											/>
 										) ) }
+										<AutomatticButton
+											className="copy-link-button"
+											onClick={ onCopyLink }
+											disabled={ ! shareLink }
+											title={ linkCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
+											borderless
+										>
+											<Icon icon={ linkCopied ? check : link } size={ 28 } />
+										</AutomatticButton>
 									</Popover>
 								</>
 							) }

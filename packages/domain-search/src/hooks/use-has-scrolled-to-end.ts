@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useState } from 'react';
 import { hasScrolledToEnd } from '../helpers/has-scrolled-to-end';
 
-export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
+export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement | null > ) => {
 	const [ hasScrolledToEndResult, setHasScrolledToEndResult ] = useState( false );
 
 	useEffect( () => {

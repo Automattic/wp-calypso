@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
 import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import {
@@ -22,6 +23,7 @@ import StatsHeatMapLegend from 'calypso/my-sites/stats/stats-heap-map/legend';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import Months from 'calypso/my-sites/stats/stats-views/months';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsViewSummary,
@@ -42,6 +44,10 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	const statType = 'statsVisits';
 	const [ chartOption, setChartOption ] = useState( 'total' );
 	const viewData = useSelector( ( state ) => getSiteStatsViewSummary( state, siteId ) );
+	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const supportContext = isSiteJetpackNotAtomic ? 'stats-total-views-jetpack' : 'stats-total-views';
 	const monthViewOptions = useMemo( () => {
 		return [
 			{ value: 'total', label: translate( 'Months and years' ) },
@@ -122,7 +128,20 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 									<span>{ translate( 'Total views' ) }</span>
 									<StatsInfoArea>
 										{ translate(
-											'Learn about views patterns by analysing total and average daily views to your site.'
+											'{{link}}Learn about view patterns{{/link}} by analyzing total and average daily views on your site.',
+											{
+												comment: '{{link}} links to support documentation.',
+												components: {
+													link: (
+														<InlineSupportLink
+															supportContext={ supportContext }
+															showIcon={ false }
+															noWrap={ false }
+														/>
+													),
+												},
+												context: 'Stats: Info box label for the Total views card',
+											}
 										) }
 									</StatsInfoArea>
 								</h4>

@@ -4,7 +4,6 @@ import {
 	marketplaceSearchQuery,
 	pluginsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
@@ -14,7 +13,6 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
@@ -45,8 +43,7 @@ const searchableFields = [
 
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
+	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
 	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
@@ -148,7 +145,6 @@ export default function PluginsList() {
 						prefix={ pluginSlug ? <Breadcrumbs length={ 2 } /> : null }
 					/>
 				}
-				notices={ <OptInWelcome tracksContext="plugins" /> }
 			>
 				{ pluginSlug ? (
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
@@ -175,7 +171,6 @@ export default function PluginsList() {
 					description={ __( 'Install, activate, and manage plugins across your sites.' ) }
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
 			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
 				<PluginSwitcher

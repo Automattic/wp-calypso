@@ -1,30 +1,33 @@
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
+
 export const getSubscriptionStatus = (
 	status: string,
 	translate: ( key: string ) => string
 ): {
 	children: string | undefined;
-	type: 'success' | 'warning' | 'info' | 'error' | undefined;
+	type: ComponentProps< typeof Badge >[ 'intent' ];
 } => {
 	switch ( status ) {
 		case 'pending':
 			return {
 				children: translate( 'Pending' ),
-				type: 'warning',
+				type: 'medium',
 			};
 		case 'active':
 			return {
 				children: translate( 'Active' ),
-				type: 'success',
+				type: 'stable',
 			};
 		case 'error':
 			return {
 				children: translate( 'Error' ),
-				type: 'error',
+				type: 'high',
 			};
 		case 'canceled':
 			return {
 				children: translate( 'Canceled' ),
-				type: 'info',
+				type: 'draft',
 			};
 		default:
 			return {

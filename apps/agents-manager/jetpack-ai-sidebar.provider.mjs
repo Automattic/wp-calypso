@@ -16,6 +16,7 @@ const lazy =
 		return typeof fn === 'function' ? fn( ...args ) : undefined;
 	};
 
+export const providerId = 'jetpack-ai-sidebar';
 export const getChatComponent = lazy( 'getChatComponent' );
 export const getEmptyViewSuggestions = lazy( 'getEmptyViewSuggestions' );
 export const useSuggestions = lazy( 'useSuggestions' );

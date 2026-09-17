@@ -1,7 +1,7 @@
 import config from './config';
 
 // Local, dependency-free kebab-case for selector identifiers (e.g. `getSitePlan`
-// → `get-site-plan`), matching lodash's tokenization for ASCII identifiers.
+// → `get-site-plan`). Tokenizes ASCII identifiers only.
 const WORD_PATTERN = /[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|[0-9]+/g;
 const kebabCase = ( input ) =>
 	( String( input ).match( WORD_PATTERN ) ?? [] ).map( ( word ) => word.toLowerCase() ).join( '-' );

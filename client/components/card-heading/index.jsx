@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 
@@ -8,9 +7,19 @@ import './style.scss';
 //Sizes 47, 21, and 11 are deprecated; use the nearest equivalent
 const validTypeSizes = [ 54, 48, 47, 36, 32, 24, 21, 20, 16, 14, 12, 11 ];
 
+/**
+ * @param {{
+ *   tagName?: string;
+ *   size?: number;
+ *   isBold?: boolean;
+ *   className?: string;
+ *   id?: string;
+ *   children?: import('react').ReactNode;
+ * }} props
+ */
 function CardHeading( { tagName = 'h1', size = 20, isBold = false, className, id, children } ) {
 	const classNameObject = {};
-	classNameObject[ 'card-heading-' + size ] = includes( validTypeSizes, size );
+	classNameObject[ 'card-heading-' + size ] = validTypeSizes.includes( size );
 	const classes = clsx(
 		'card-heading',
 		isBold && 'card-heading__bold',

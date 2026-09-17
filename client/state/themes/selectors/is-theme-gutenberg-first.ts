@@ -1,4 +1,3 @@
-import { intersection } from 'lodash';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 import type { AppState } from 'calypso/types';
@@ -20,5 +19,5 @@ export function isThemeGutenbergFirst( state: AppState, themeId: string ): boole
 	const themeFeatures = getThemeTaxonomySlugs( theme, 'theme_feature' );
 	const neededFeatures = [ 'global-styles', 'auto-loading-homepage' ];
 	// The theme should have a positive number of matching features to qualify.
-	return !! intersection( themeFeatures, neededFeatures ).length;
+	return themeFeatures.some( ( feature ) => neededFeatures.includes( feature ) );
 }

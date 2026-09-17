@@ -1,6 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 import { isMobile } from '@automattic/viewport';
-import { includes } from 'lodash';
 import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 	ALLOWED_SECTIONS,
@@ -64,7 +63,7 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 		return false;
 	}
 
-	if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
+	if ( ! ALLOWED_SECTIONS.includes( currentSection ) ) {
 		return false;
 	}
 

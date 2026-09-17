@@ -21,13 +21,34 @@ import {
 	isA4AOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isSharedMobileAppOAuth2Client,
+	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+
+// The WordPress and Jetpack mobile apps are branded with their store icons, hosted
+// on WordPress.com. `?w=128` requests the 2x asset for the 64px logo slot.
+const MOBILE_APP_LOGO_URLS = {
+	jetpackIos:
+		'https://i0.wp.com/developer.files.wordpress.com/2026/07/jetpack-composited.png?w=128',
+	jetpackAndroid: 'https://i0.wp.com/developer.files.wordpress.com/2026/07/app_icon.png?w=128',
+	wordpressIos:
+		'https://i0.wp.com/developer.files.wordpress.com/2026/07/wordpress-composited.png?w=128',
+	wordpressAndroid:
+		'https://i0.wp.com/developer.files.wordpress.com/2026/07/wordpress_app_icon.png?w=128',
+};
+
+// The push 2FA screen is approved from the Jetpack mobile app on another device,
+// so it is always branded as Jetpack, regardless of which client began the login.
+const JETPACK_PUSH_LOGO_URL =
+	'https://i0.wp.com/developer.files.wordpress.com/2026/07/appicon-ios-default-1024401x-1.png?w=128';
 
 interface Props {
 	isJetpack?: boolean;
@@ -40,7 +61,12 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
 	const isPassport = useSelector( getIsPassport );
+	const isJetpackApp = useSelector( getIsJetpackApp );
+	const currentRoute = useSelector( getCurrentRoute );
 	const { hasCustomBranding } = usePartnerBranding();
+
+	// The push 2FA screen (`/log-in/push`) is authorized from the Jetpack mobile app.
+	const isPushTwoFactor = currentRoute?.split( '/' ).includes( 'push' ) ?? false;
 
 	// If partner has custom top-left branding, don't show center logo
 	if ( hasCustomBranding ) {
@@ -48,7 +74,9 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 	}
 
 	let logo = null;
-	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
+	if ( isPushTwoFactor ) {
+		logo = <img src={ JETPACK_PUSH_LOGO_URL } alt="Jetpack" />;
+	} else if ( isStudioAppOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ studioAppLogo } alt="Studio App Logo" />;
 	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ crowdsignalLogo } alt="Crowdsignal Logo" />;
@@ -80,6 +108,29 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 				src={ connectorLogo }
 				alt="Jetpack Connection logo"
 				className="wp-login__connector-logo"
+			/>
+		);
+	} else if ( isJetpackApp ) {
+		logo = (
+			<img
+				src={
+					isIosOAuth2Client( oauth2Client )
+						? MOBILE_APP_LOGO_URLS.jetpackIos
+						: MOBILE_APP_LOGO_URLS.jetpackAndroid
+				}
+				alt="Jetpack"
+			/>
+		);
+	} else if ( isSharedMobileAppOAuth2Client( oauth2Client ) ) {
+		// WordPress mobile app — the Jetpack app already matched `isJetpackApp` above.
+		logo = (
+			<img
+				src={
+					isIosOAuth2Client( oauth2Client )
+						? MOBILE_APP_LOGO_URLS.wordpressIos
+						: MOBILE_APP_LOGO_URLS.wordpressAndroid
+				}
+				alt="WordPress"
 			/>
 		);
 	} else if ( isJetpack ) {

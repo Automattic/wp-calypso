@@ -34,10 +34,11 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
 import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
+import getAssignLicenseSuccessMessage from '../lib/get-assign-license-success-message';
 import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
 
@@ -193,6 +194,19 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		dispatch( resetSite() );
 		dispatch( setPurchasedLicense( assignLicensesResult ) );
 
+		const successMessage = getAssignLicenseSuccessMessage( translate, assignLicensesResult );
+
+		if ( successMessage ) {
+			// Persistent: must outlive the redirect and the optional feedback step in between.
+			dispatch(
+				successNotice( successMessage, {
+					id: 'assign_license_success',
+					isPersistent: true,
+					duration: 10000,
+				} )
+			);
+		}
+
 		const rejectedProduct = assignLicensesResult.selectedProducts.find(
 			( product ) => product.status === 'rejected'
 		);
@@ -232,7 +246,14 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 						A4A_FEEDBACK_LINK
 					)
 			  );
-	}, [ assignLicensesToSite, dispatch, isFeedbackShown, licenseKeysArray, selectedSite?.ID ] );
+	}, [
+		assignLicensesToSite,
+		dispatch,
+		isFeedbackShown,
+		licenseKeysArray,
+		selectedSite?.ID,
+		translate,
+	] );
 
 	return (
 		<Layout

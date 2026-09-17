@@ -25,6 +25,13 @@ function InlineNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: 
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
 					onClick: () => {
+						try {
+							action.onClick?.();
+						} catch ( err ) {
+							// The callback (e.g. tracking) must never block the action URL.
+							// eslint-disable-next-line no-console
+							console.warn( '[ImageStudioNotice] action onClick failed', err );
+						}
 						const newWindow = window.open( action.url, '_blank' );
 						if ( newWindow ) {
 							newWindow.opener = null;
@@ -76,6 +83,13 @@ export function ImageStudioNotice() {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
 								onClick: () => {
+									try {
+										action.onClick?.();
+									} catch ( err ) {
+										// The callback (e.g. tracking) must never block the action URL.
+										// eslint-disable-next-line no-console
+										console.warn( '[ImageStudioNotice] action onClick failed', err );
+									}
 									const newWindow = window.open( action.url, '_blank' );
 									if ( newWindow ) {
 										newWindow.opener = null;

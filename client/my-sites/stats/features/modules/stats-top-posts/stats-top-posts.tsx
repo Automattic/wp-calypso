@@ -77,6 +77,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const onStatTypeChange = ( option: StatTypeOptionType ) => {
 		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
 			stat_type: option.analyticsId,
+			blog_id: siteId,
 		} );
 
 		setLocalStatType( option.value );
@@ -194,12 +195,16 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 						<StatsInfoArea>
 							{ isArchiveBreakdownEnabled
 								? translate(
-										'Most viewed {{link}}posts, pages and archive{{/link}}. Learn about what content resonates the most.',
+										'Most viewed posts, pages, and archives. {{link}}Learn about what content resonates the most{{/link}}.',
 										{
 											comment: '{{link}} links to support documentation.',
 											components: {
 												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+													<InlineSupportLink
+														supportContext={ supportContext }
+														showIcon={ false }
+														noWrap={ false }
+													/>
 												),
 											},
 											context:
@@ -212,7 +217,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 											comment: '{{link}} links to support documentation.',
 											components: {
 												link: (
-													<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+													<InlineSupportLink
+														supportContext={ supportContext }
+														showIcon={ false }
+														noWrap={ false }
+													/>
 												),
 											},
 											context:
@@ -263,7 +272,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: (
-											<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+											<InlineSupportLink
+												supportContext={ supportContext }
+												showIcon={ false }
+												noWrap={ false }
+											/>
 										),
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',

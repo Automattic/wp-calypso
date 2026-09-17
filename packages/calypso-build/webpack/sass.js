@@ -36,7 +36,8 @@ module.exports.loader = ( { includePaths, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				api: 'modern',
+				api: 'modern-compiler',
+				implementation: require.resolve( 'sass-embedded' ),
 				sassOptions: ( loaderContext ) => ( {
 					loadPaths: includePaths,
 					quietDeps: true,

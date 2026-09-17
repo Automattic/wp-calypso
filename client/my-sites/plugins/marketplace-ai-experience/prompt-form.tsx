@@ -6,7 +6,7 @@ import '@automattic/agenttic-ui/index.css';
 import { AgentUIProvider, ChatInput, Suggestions, type Suggestion } from '@automattic/agenttic-ui';
 import { useMemo, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import type { JSX } from 'react';
+import type { JSX, RefObject } from 'react';
 
 import './prompt-form.scss';
 
@@ -101,7 +101,7 @@ export default function PromptForm( { onSubmit, mode = 'initial' }: PromptFormPr
 					onChange={ setValue }
 					onSubmit={ () => submit( value ) }
 					onKeyDown={ handleKeyDown }
-					textareaRef={ textareaRef }
+					textareaRef={ textareaRef as RefObject< HTMLTextAreaElement > }
 					isProcessing={ false }
 					// Cycle the suggestion prompts through the placeholder so
 					// the input keeps suggesting examples without the user

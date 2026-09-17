@@ -4,7 +4,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { LoadingPlaceholder } from '@automattic/components';
+import { Gridicon, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import { usePlansGridContext } from '../grid-context';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject, DataResponse } from '../types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -88,6 +89,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan?: boolean;
+	featureBadgesBySlug?: ReadonlyMap< string, TranslateResult >;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {
@@ -98,11 +100,13 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures,
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
+	featureBadgesBySlug,
 	activeTooltipId,
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, gridPlans, isExperimentVariant } = usePlansGridContext();
+	const { enableFeatureTooltips, gridPlans, isExperimentVariant, showFeatureCheckmarks } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -142,6 +146,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					! isFreePlan( planSlug );
 				const shouldHighlightDomainFeature =
 					isCustomDomainFeatureWithPaidDomain && isExperimentVariant;
+				const isFeatureAvailable =
+					isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan;
+				const placeholderBadgeText = featureBadgesBySlug?.get( featureSlug );
+				const badgeText = currentFeature.badgeText ?? placeholderBadgeText;
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
@@ -150,8 +158,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
-					'is-available':
-						isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan,
+					'is-available': isFeatureAvailable,
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
@@ -161,6 +168,17 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				return (
 					<div key={ key } className={ divClasses }>
 						<PlanFeaturesItem>
+							{ showFeatureCheckmarks && (
+								<Gridicon
+									className={ clsx( 'plan-features-2023-grid__item-checkmark', {
+										'is-placeholder': ! isFeatureAvailable,
+									} ) }
+									icon="checkmark"
+									size={ 16 }
+									aria-hidden="true"
+									focusable="false"
+								/>
+							) }
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
@@ -193,11 +211,20 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										>
 											<>
 												<span className="plan-features-2023-grid__item-text-content">
-													{ currentFeature.getTitle( {
-														domainName: paidDomainName,
-													} ) }
-													{ currentFeature.badgeText && (
-														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+													<span className="plan-features-2023-grid__item-title-label">
+														{ currentFeature.getTitle( {
+															domainName: paidDomainName,
+														} ) }
+													</span>
+													{ badgeText && (
+														<FeatureBadge
+															className={ clsx( 'plan-features-2023-grid__feature-badge', {
+																'is-placeholder': ! currentFeature.badgeText,
+															} ) }
+															aria-hidden={ currentFeature.badgeText ? undefined : true }
+														>
+															{ badgeText }
+														</FeatureBadge>
 													) }
 												</span>
 												{ shouldBreakAfterAiWebsiteBuilderTitle && (

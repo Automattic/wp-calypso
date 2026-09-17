@@ -11,7 +11,6 @@ const frozenDeprecatedV1Flows = [
 	'domain-and-plan',
 	'build',
 	'write',
-	'start-writing',
 	'connect-domain',
 	'transferring-hosted-site',
 	'domain-transfer',

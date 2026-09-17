@@ -9,6 +9,8 @@ declare global {
 			invokeEvent?: ( event: string ) => void;
 			closeSurvey?: () => void;
 			destroyVisitor?: () => void;
+			retarget?: () => void;
+			disableTargeting?: boolean;
 		};
 	}
 }
@@ -28,10 +30,7 @@ export function getAccountAgeInDays( registrationDate: string ): number {
  * Otherwise, waits for the `SurvicateReady` window event before setting traits.
  * @returns A cleanup function that removes the event listener.
  */
-export function setSurvicateVisitorTraits( traits: {
-	email: string;
-	account_age_in_days?: number;
-} ): () => void {
+export function setSurvicateVisitorTraits( traits: Record< string, string | number > ): () => void {
 	const setTraits = function () {
 		if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
 			window._sva.setVisitorTraits( traits );

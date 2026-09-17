@@ -4,7 +4,7 @@ import { chevronDownSmall } from '@wordpress/icons';
 import { useState, type ComponentProps } from 'react';
 import SwitcherContent from './switcher-content';
 import SwitcherItem from './switcher-item';
-import { RenderItem } from './types';
+import { RenderItem, SwitcherLoadingState } from './types';
 import type { Field, View } from '@wordpress/dataviews';
 
 interface RenderCallbackProps {
@@ -20,10 +20,18 @@ export type SwitcherProps< T > = {
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemUrl: ( item: T ) => string;
 	renderItem: RenderItem< T >;
+	loading?: SwitcherLoadingState;
 	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;
+	headerTitle?: string;
 } & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >;
+
+const DEFAULT_POPOVER_PROPS: ComponentProps< typeof Dropdown >[ 'popoverProps' ] = {
+	placement: 'bottom-start',
+	offset: 4,
+	shift: true,
+};
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -39,15 +47,20 @@ function Switcher< T >( {
 	children,
 	getItemUrl,
 	renderItem,
+	loading,
 	icon = chevronDownSmall,
 	onItemClick,
 	open,
 	onToggle,
 	defaultOpen,
 	renderToggle,
+	headerTitle,
 }: SwitcherProps< T > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isDesktop = useViewportMatch( 'medium' );
+	// Below the medium breakpoint the Popover renders as a full-screen sheet
+	// (expandOnMobile); the 100% content width relies on that, so both flip here.
+	const isMobile = ! isDesktop;
 	const renderDropdownToggle: RenderToggle = ( { isOpen, onToggle, ...props } ) => {
 		if ( renderToggle ) {
 			return renderToggle( { isOpen, onToggle, ...props } );
@@ -84,6 +97,8 @@ function Switcher< T >( {
 			open={ open }
 			onToggle={ onToggle }
 			defaultOpen={ defaultOpen }
+			expandOnMobile={ isMobile }
+			popoverProps={ { ...DEFAULT_POPOVER_PROPS, headerTitle } }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
 				<SwitcherContent
@@ -91,8 +106,10 @@ function Switcher< T >( {
 					searchableFields={ searchableFields }
 					getItemUrl={ getItemUrl }
 					renderItem={ renderItem }
+					loading={ loading }
 					view={ view }
 					onChangeView={ setView }
+					width={ isMobile ? '100%' : '280px' }
 					onClose={ onClose }
 					onItemClick={ onItemClick }
 				>

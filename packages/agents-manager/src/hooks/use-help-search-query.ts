@@ -52,7 +52,7 @@ const fetchArticlesAPI = async (
 	results.forEach( ( result, index ) => {
 		if ( result.railcar ) {
 			queueMicrotask( () => {
-				recordAgentsManagerTracksEvent( 'search_traintracks_render', {
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_search_traintracks_render', {
 					...result.railcar,
 					ui_algo: 'default',
 					ui_position: index,

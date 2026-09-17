@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
@@ -11,5 +10,5 @@ import 'calypso/state/jetpack-connect/init';
 export const isSiteBlockedError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return get( authorizeData, [ 'authorizeError', 'error' ] ) === 'connection_disabled';
+	return authorizeData?.authorizeError?.error === 'connection_disabled';
 };

@@ -22,7 +22,7 @@ export default function SecuritySocialLoginsSummary( { density }: { density?: De
 						socialLoginCount
 				  )
 				: __( 'No social logins added' ),
-			intent: socialLoginCount ? 'info' : 'default',
+			intent: socialLoginCount ? 'informational' : 'draft',
 		},
 	];
 

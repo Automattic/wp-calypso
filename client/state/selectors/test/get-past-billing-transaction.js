@@ -1,4 +1,3 @@
-import { clone } from 'lodash';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 
 describe( 'getPastBillingTransaction()', () => {
@@ -52,7 +51,7 @@ describe( 'getPastBillingTransaction()', () => {
 			date: '2017-01-01T11:22:33+0000',
 		};
 
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { data: individualTransaction },
 		};
@@ -68,7 +67,7 @@ describe( 'getPastBillingTransaction()', () => {
 			tax_state: 'OH',
 		};
 
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			12345678: { data: individualTransaction },
 		};
@@ -81,7 +80,7 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	test( 'should keep tax metadata from past transaction when individually fetched transaction omits it', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.items.past[ 0 ] = {
 			...testState.billingTransactions.items.past[ 0 ],
 			tax_is_for_business: true,
@@ -102,7 +101,7 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	test( 'should keep business tax flag from past transaction when individually fetched transaction defaults it to false', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.items.past[ 0 ] = {
 			...testState.billingTransactions.items.past[ 0 ],
 			tax_is_for_business: true,
@@ -124,7 +123,7 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	test( 'should return null for individual transaction that is being fetched', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { requesting: true },
 		};
@@ -134,7 +133,7 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	test( 'should return null for individual transaction that failed to fetch', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { error: true },
 		};

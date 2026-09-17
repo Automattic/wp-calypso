@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
@@ -7,6 +8,7 @@ import {
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { TELEGRAM_CONNECT_PATH, telegramConnect } from 'calypso/telegram-connect/controller';
+import { WORDPRESS_AGENT_PATH, wordpressAgent } from 'calypso/wordpress-agent/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -16,7 +18,7 @@ export default function () {
 		'/me',
 		controller.maybeRedirectToDashboard,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/profile' ),
+		maybeRedirectToMultiSiteDashboard( '/me' ),
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,
@@ -33,6 +35,16 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
+	if ( config.isEnabled( 'wordpress-agent-slack' ) ) {
+		page(
+			WORDPRESS_AGENT_PATH,
+			setupPreferences,
+			controller.sidebar,
+			wordpressAgent,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/me/get-apps',

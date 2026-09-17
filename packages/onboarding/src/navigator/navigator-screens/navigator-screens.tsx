@@ -4,7 +4,7 @@ import {
 	useNavigator,
 } from '@wordpress/components';
 import { Navigator } from '@wordpress/components/build-types/navigator/types';
-import { MutableRefObject } from 'react';
+import { type JSX, MutableRefObject } from 'react';
 import NavigatorListener from '../navigator-listener';
 import { useNavigatorScreens } from './hooks';
 import type { NavigatorScreenObject } from './types';

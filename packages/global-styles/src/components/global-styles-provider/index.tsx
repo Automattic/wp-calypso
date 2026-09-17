@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { type JSX, useState, useMemo, useCallback } from 'react';
 import { DEFAULT_GLOBAL_STYLES } from '../../constants';
 import { GlobalStylesContext, mergeBaseAndUserConfigs } from '../../gutenberg-bridge';
 import { useGetGlobalStylesBaseConfig, useRegisterCoreBlocks } from '../../hooks';

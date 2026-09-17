@@ -1,12 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
-import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import type { useViewportMatch } from '@wordpress/compose';
 
-const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
+type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 /**
- * The sidebar added by the omnibar takes up space, so layouts need wider
- * breakpoints to avoid feeling cramped. When the omnibar is enabled, shift
- * breakpoints up:
+ * The sidebar added by the omnibar takes up space, so layouts use wider
+ * breakpoints to avoid feeling cramped:
  *   - medium → xlarge
  *   - small  → large
  */
@@ -14,8 +12,8 @@ export const VIEWPORT_BREAKPOINTS: Record<
 	'desktop' | 'medium' | 'small' | 'mobile',
 	WPBreakpoint
 > = {
-	desktop: isOmnibarEnabled ? 'xlarge' : 'medium',
-	medium: isOmnibarEnabled ? 'xlarge' : 'medium',
-	small: isOmnibarEnabled ? 'large' : 'small',
+	desktop: 'xlarge',
+	medium: 'xlarge',
+	small: 'large',
 	mobile: 'mobile',
 };

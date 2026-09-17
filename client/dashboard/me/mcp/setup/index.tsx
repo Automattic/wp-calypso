@@ -13,6 +13,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody } from '../../../components/card';
@@ -26,8 +27,16 @@ import './style.scss';
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 
-	type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
+	type McpClient =
+		| 'claude'
+		| 'claude-code'
+		| 'chatgpt'
+		| 'cursor'
+		| 'vscode'
+		| 'continue'
+		| 'default';
 
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
@@ -35,13 +44,14 @@ function McpSetupComponent() {
 	const mcpClientOptions: Array< { label: string; value: McpClient } > = [
 		{ label: 'Claude', value: 'claude' },
 		{ label: 'Claude Code', value: 'claude-code' },
+		{ label: 'ChatGPT/Codex', value: 'chatgpt' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'VS Code', value: 'vscode' },
 		{ label: 'Continue', value: 'continue' },
 		{ label: __( 'Other MCP client' ), value: 'default' },
 	];
 
-	const clientDocumentation: Record< McpClient, string > = {
+	const clientDocumentation: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
 		'claude-code': 'https://code.claude.com/docs/en/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
@@ -50,7 +60,7 @@ function McpSetupComponent() {
 		default: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
 	};
 
-	const clientDocumentationLabels: Record< McpClient, string > = {
+	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: __( 'Claude documentation' ),
 		'claude-code': __( 'Claude Code documentation' ),
 		vscode: __( 'VS Code documentation' ),
@@ -107,7 +117,10 @@ function McpSetupComponent() {
 					/>
 				}
 			>
-				<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
+				<ComponentViewTracker
+					eventName="calypso_dashboard_mcp_setup_view"
+					properties={ tracksAudienceProps }
+				/>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -147,7 +160,10 @@ function McpSetupComponent() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_setup_view"
+				properties={ tracksAudienceProps }
+			/>
 			<>
 				<Card>
 					<CardBody>
@@ -167,6 +183,7 @@ function McpSetupComponent() {
 
 				{ ( selectedMcpClient === 'claude' ||
 					selectedMcpClient === 'claude-code' ||
+					selectedMcpClient === 'chatgpt' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
 						<CardBody>
@@ -192,7 +209,7 @@ function McpSetupComponent() {
 										</li>
 										<li>
 											<Text as="p" variant="muted">
-												{ __( 'Click "Browse connectors" and search for WordPress.com.' ) }
+												{ __( 'Click “Browse connectors” and search for WordPress.com.' ) }
 											</Text>
 										</li>
 										<li>
@@ -272,6 +289,37 @@ function McpSetupComponent() {
 									</VStack>
 								) }
 
+								{ /* Quick Setup for ChatGPT */ }
+								{ selectedMcpClient === 'chatgpt' && (
+									<ol className="mcp-setup__steps">
+										<li>
+											<Text as="p" variant="muted">
+												{ createInterpolateElement(
+													/* translators: <ChatGptSettings/> is a link to the ChatGPT plugins settings page */
+													__( 'Open <ChatGptSettings/>.' ),
+													{
+														ChatGptSettings: (
+															<ExternalLink href="https://chatgpt.com/plugins">
+																{ __( 'ChatGPT plugins settings' ) }
+															</ExternalLink>
+														),
+													}
+												) }
+											</Text>
+										</li>
+										<li>
+											<Text as="p" variant="muted">
+												{ __( 'Search for WordPress.com.' ) }
+											</Text>
+										</li>
+										<li>
+											<Text as="p" variant="muted">
+												{ __( 'Click “Install plugin”.' ) }
+											</Text>
+										</li>
+									</ol>
+								) }
+
 								{ /* Quick Setup for Cursor */ }
 								{ selectedMcpClient === 'cursor' && (
 									<VStack spacing={ 4 }>
@@ -295,37 +343,39 @@ function McpSetupComponent() {
 					</Card>
 				) }
 
-				<Card>
-					<CardBody>
-						<VStack spacing={ 2 }>
-							<HStack justify="space-between" alignment="center">
-								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
-								<Button
-									icon={ copyStatus === 'success' ? check : copy }
-									variant="tertiary"
-									iconSize={ 20 }
-									onClick={ copyToClipboard }
-									aria-label={ __( 'Copy configuration to clipboard' ) }
+				{ selectedMcpClient !== 'chatgpt' && (
+					<Card>
+						<CardBody>
+							<VStack spacing={ 2 }>
+								<HStack justify="space-between" alignment="center">
+									<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
+									<Button
+										icon={ copyStatus === 'success' ? check : copy }
+										variant="tertiary"
+										iconSize={ 20 }
+										onClick={ copyToClipboard }
+										aria-label={ __( 'Copy configuration to clipboard' ) }
+									/>
+								</HStack>
+								<Text as="p" variant="muted">
+									{ __( 'Copy this configuration into your client\u2019s MCP settings.' ) }
+								</Text>
+								<TextareaControl
+									className="mcp-setup__config-textarea"
+									__nextHasNoMarginBottom
+									value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+									onChange={ () => {} }
+									readOnly
 								/>
-							</HStack>
-							<Text as="p" variant="muted">
-								{ __( 'Copy this configuration into your client\u2019s MCP settings.' ) }
-							</Text>
-							<TextareaControl
-								className="mcp-setup__config-textarea"
-								__nextHasNoMarginBottom
-								value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-								onChange={ () => {} }
-								readOnly
-							/>
-							{ clientDocumentation[ selectedMcpClient ] && (
-								<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
-									{ clientDocumentationLabels[ selectedMcpClient ] }
-								</ExternalLink>
-							) }
-						</VStack>
-					</CardBody>
-				</Card>
+								{ clientDocumentation[ selectedMcpClient ] && (
+									<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
+										{ clientDocumentationLabels[ selectedMcpClient ] }
+									</ExternalLink>
+								) }
+							</VStack>
+						</CardBody>
+					</Card>
+				) }
 			</>
 		</PageLayout>
 	);

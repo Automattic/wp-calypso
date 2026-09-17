@@ -10,6 +10,19 @@ const sortByDateDesc = ( a: { date_subscribed: string }, b: { date_subscribed: s
 	return new Date( b.date_subscribed ).getTime() - new Date( a.date_subscribed ).getTime();
 };
 
+/**
+ * The `stats/followers` `ID` field is the WordPress.com user id for wpcom subscribers but the
+ * subscription id for email-only ones. Treat it as a user id only when it differs from the
+ * subscription id, so the Newsletter inspector gets `u` for wpcom rows and omits it for email rows.
+ * @param id             The row's `ID` field.
+ * @param subscriptionId The resolved subscription id for the same row.
+ * @returns The WordPress.com user id, or undefined for email-only rows.
+ */
+export const getSubscriberUserId = (
+	id: number | undefined,
+	subscriptionId: number | undefined
+): number | undefined => ( id && id !== subscriptionId ? id : undefined );
+
 const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
 	// Skip the query for en.blog.wordpress.com as it's blocked.
 	if ( siteId === 3584907 ) {
@@ -71,6 +84,10 @@ const selectSubscribers = ( payload: {
 		avatar: string;
 		url: string;
 		follow_data: { params: object }; //Empty object atm
+		email_subscription_id?: number;
+		subscription_id?: number;
+		wpcom_subscription_id?: number;
+		ID?: number;
 	}[];
 } ) => {
 	return {
@@ -78,7 +95,15 @@ const selectSubscribers = ( payload: {
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 		is_owner_subscribed: payload.is_owner_subscribed,
-		subscribers: payload.subscribers?.map( ( item ) => {
+		subscribers: ( payload.subscribers ?? [] ).map( ( item ) => {
+			// Truthy fallback (not `??`) so a `0` placeholder id falls through to the
+			// next field, the same approach getSubscriptionIdFromSubscriber takes. Do not
+			// fall back to `item.ID`: for wpcom subscribers that is the user id, not a
+			// subscription id, so linking by it would open the wrong subscriber. The
+			// `stats/followers` endpoint returns a real `subscription_id` (wpcom#224796);
+			// a row without one simply doesn't link rather than mis-linking.
+			const subscriptionId =
+				item.email_subscription_id || item.subscription_id || item.wpcom_subscription_id;
 			return {
 				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
@@ -95,6 +120,10 @@ const selectSubscribers = ( payload: {
 					},
 				],
 				date_subscribed: item.date_subscribed,
+				// Preserve the subscription id so the Subscribers module can link each
+				// name to its individual subscriber details page.
+				subscription_id: subscriptionId,
+				user_id: getSubscriberUserId( item.ID, subscriptionId ),
 			};
 		} ),
 	};

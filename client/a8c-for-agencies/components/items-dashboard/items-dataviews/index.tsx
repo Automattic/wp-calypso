@@ -23,6 +23,7 @@ export type ItemsDataViewsProps = {
 	isLoading?: boolean;
 	className?: string;
 	children?: ReactNode;
+	empty?: ReactNode;
 };
 
 const ItemsDataViews = ( {
@@ -30,6 +31,7 @@ const ItemsDataViews = ( {
 	isLoading = false,
 	className,
 	children,
+	empty,
 }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
 	const scrollContainerRef = useRef< HTMLElement >( undefined );
@@ -45,7 +47,8 @@ const ItemsDataViews = ( {
 
 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
 			window.setTimeout(
-				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				() =>
+					scrollContainerRef.current?.querySelector( '[role="row"].is-selected' )?.scrollIntoView(),
 				300
 			);
 			return;
@@ -69,9 +72,8 @@ const ItemsDataViews = ( {
 				getItemId={
 					data.getItemId ??
 					( ( item: any ) => {
-						// todo: this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
-						item.id = data.itemFieldId && getIdByPath( item, data.itemFieldId );
-						return item.id;
+						const id = data.itemFieldId && getIdByPath( item, data.itemFieldId );
+						return id === undefined ? '' : String( id );
 					} )
 				}
 				isLoading={ isLoading }
@@ -80,6 +82,7 @@ const ItemsDataViews = ( {
 				selection={ data.selection }
 				onChangeSelection={ data.onSelectionChange }
 				header={ data.header }
+				empty={ empty }
 			>
 				{ children }
 			</DataViews>

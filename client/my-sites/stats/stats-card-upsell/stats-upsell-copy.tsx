@@ -84,7 +84,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STATS_FEATURE_LOCATION_CITY_VIEWS:
 			// TODO: Add link to proper support page
 			return translate(
-				'Access to visitor stats at the {{link}}regional and city{{/link}} level for more accurate analysis.',
+				'Access to {{link}}region and city stats{{/link}} for more accurate analysis.',
 				{
 					components: {
 						link: jetpackTrafficSupportLinkWithAnchor( 'countries' ),

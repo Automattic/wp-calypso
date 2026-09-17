@@ -19,8 +19,8 @@ import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purc
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { UpsellType } from '../get-upsell-type';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -89,7 +89,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 function getLiveChatUrl( type: UpsellType, site: SiteDetails, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
-			return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
+			return `/purchases/subscriptions/${ site.slug }/${ purchase.ID }`;
 		case 'live-chat:plugins':
 			return `/plugins/${ site.slug }`;
 		case 'live-chat:themes':
@@ -351,7 +351,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'But we’d love to see you stick around to build on what you started. ' +
 							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
 						{
-							args: { planName: getPlan( purchase.productSlug )?.getTitle() ?? '' },
+							args: { planName: getPlan( purchase.product_slug )?.getTitle() ?? '' },
 						}
 					) }
 				</Upsell>

@@ -10,10 +10,8 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useHelpCenterSite } from './use-help-center-site';
 
 const importHelpCenter = () =>
 	import( /* webpackChunkName: "async-load-automattic-help-center" */ '@automattic/help-center' );
@@ -37,9 +35,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
-	const selectedSite = useSelector( getSelectedSite );
-	const primarySiteSlug = useSelector( getPrimarySiteSlug );
-	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const { site } = useHelpCenterSite();
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -66,7 +62,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			currentRoute={ currentRoute }
 			locale={ locale }
 			sectionName={ sectionName }
-			site={ selectedSite || primarySite }
+			site={ site }
 			currentUser={ user }
 			hasPurchases={ hasPurchases }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center

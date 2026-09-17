@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
@@ -45,7 +44,7 @@ class InviteAcceptLoggedOut extends Component {
 
 	clickSignInLink = () => {
 		const linkParams = { redirectTo: window.location.href };
-		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
+		if ( this.props.invite?.site?.is_wpforteams_site ?? false ) {
 			linkParams.from = 'p2';
 		}
 
@@ -67,10 +66,11 @@ class InviteAcceptLoggedOut extends Component {
 
 		const enhancedUserData = { ...userData };
 
-		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+		if ( invite?.site?.is_wpforteams_site ?? false ) {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
+		let submitError;
 		this.props
 			.createAccount( enhancedUserData, invite )
 			.then( ( response ) => {
@@ -79,11 +79,12 @@ class InviteAcceptLoggedOut extends Component {
 				this.setState( { bearerToken, userData } );
 			} )
 			.catch( ( error ) => {
+				submitError = error;
 				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
 			} )
-			.finally( afterSubmitCallback );
+			.finally( () => afterSubmitCallback( submitError ) );
 	};
 
 	handleSocialResponse = ( service, access_token, id_token = null, socialUserData = {} ) => {
@@ -100,7 +101,7 @@ class InviteAcceptLoggedOut extends Component {
 
 		const enhancedUserData = { ...socialUserData };
 
-		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+		if ( invite?.site?.is_wpforteams_site ?? false ) {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
@@ -229,7 +230,7 @@ class InviteAcceptLoggedOut extends Component {
 			);
 		}
 
-		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
+		if ( this.props.invite?.site?.is_wpforteams_site ?? false ) {
 			return P2InviteAcceptLoggedOut( {
 				...this.props,
 				onClickSignInLink: this.clickSignInLink,

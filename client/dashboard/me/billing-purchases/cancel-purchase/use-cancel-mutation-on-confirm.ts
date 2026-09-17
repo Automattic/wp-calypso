@@ -29,7 +29,7 @@ interface UseCancelMutationOnConfirmArgs {
 
 // Hook for the Cancel paths (CANCEL_AUTORENEW, CANCEL_WITH_REFUND) only —
 // REMOVE defers its mutation to survey-submit, so it doesn't need the
-// snapshot/cache-guard machinery here.
+// cache-guard machinery here.
 export function useCancelMutationOnConfirm( {
 	purchase,
 	cancelAndRefundMutation,
@@ -43,9 +43,17 @@ export function useCancelMutationOnConfirm( {
 		( effectiveFlowType: CancelFlowType, cancelBundledDomain?: boolean ): Promise< void > => {
 			setIsPending( true );
 
+			// Freeze the purchase before either mutation runs. Both invalidate
+			// `userPurchasesQuery`, whose ['upgrades'] key is a prefix of
+			// purchaseQuery's ['upgrades', id], so the live purchase refetches
+			// mid-survey. Without the snapshot, `is_auto_renew_enabled` flipping
+			// false re-derives the flow type under the survey and onSurveyComplete
+			// reports a refund that never happened.
+			setSnapshotPurchase( purchase );
+
 			// CANCEL_AUTORENEW just disables auto-renew — the purchase stays in
-			// the user's list. None of the deletion-flow cache machinery
-			// (strip-from-list, snapshot) applies.
+			// the user's list, so the deletion-flow cache machinery
+			// (strip-from-list) doesn't apply.
 			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
 				return setPurchaseAutoRenewMutation
 					.mutateAsync( { purchaseId: purchase.ID, autoRenew: false } )
@@ -54,11 +62,6 @@ export function useCancelMutationOnConfirm( {
 						setIsPending( false );
 					} );
 			}
-
-			// CANCEL_WITH_REFUND deletes the purchase. Capture a snapshot
-			// synchronously so survey rendering keeps working after the
-			// mutation's invalidation tears down the live purchase query.
-			setSnapshotPurchase( purchase );
 
 			return cancelAndRefundMutation
 				.mutateAsync( {

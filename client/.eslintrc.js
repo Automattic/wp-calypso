@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const { nodeConfig, lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 
 module.exports = {
 	// Allow fetch api function usage (and similar)
@@ -27,16 +27,6 @@ module.exports = {
 						message:
 							'@testing-library/jest-dom is already globally provided by our test setup framework.',
 					},
-					...lodashRestrictedImports.patterns,
-				],
-				paths: [
-					// Use Redux's `compose` instead of lodash's `flowRight`.
-					{
-						name: 'lodash',
-						importNames: [ 'flowRight' ],
-						message: "Please use `compose` from 'redux' instead.",
-					},
-					...lodashRestrictedImports.paths,
 				],
 			},
 		],

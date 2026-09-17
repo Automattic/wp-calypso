@@ -49,11 +49,11 @@ export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
  * call `getOpenLiveInteractions()` directly at the moment of action rather than capture
  * these values in a closure.
  */
-export function useOpenLiveInteractions(): {
+export function useOpenLiveInteractions( excludeInteractionId?: string | null ): {
 	mostRecentSupportInteractionId: string | null;
 	hasReachedLimit: boolean;
 	openCount: number;
 } {
 	const statusMap = useOpenInteractionStatusMap();
-	return getOpenLiveInteractions( statusMap );
+	return getOpenLiveInteractions( statusMap, excludeInteractionId );
 }

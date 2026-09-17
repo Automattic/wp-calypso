@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { UnconnectedPageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { getDSPOrigin, useDspOriginProps } from 'calypso/lib/promote-post';
@@ -41,7 +40,7 @@ const mapStateToProps = ( state: Record< string, unknown > ) => {
 	const currentSlug =
 		typeof window === 'undefined' || config.isEnabled( 'is_running_in_jetpack_site' )
 			? ''
-			: getSiteFragment( get( window, 'location.pathname', '' ) );
+			: getSiteFragment( window?.location?.pathname ?? '' );
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||

@@ -19,33 +19,47 @@ const ColorSchemeContext = createContext< ColorSchemeContextType | undefined >( 
 
 function useDocumentColorScheme(
 	colorScheme: ColorScheme,
-	isReady: boolean,
+	active: boolean,
 	restoreOnUnmount: boolean
 ) {
 	const hasAppliedTheme = useRef( false );
 	const previousTheme = useRef< string | undefined >( undefined );
+
+	const restorePreviousTheme = () => {
+		if ( ! hasAppliedTheme.current ) {
+			return;
+		}
+
+		if ( previousTheme.current === undefined ) {
+			delete document.documentElement.dataset.theme;
+		} else {
+			document.documentElement.dataset.theme = previousTheme.current;
+		}
+
+		hasAppliedTheme.current = false;
+	};
 
 	useEffect( () => {
 		if ( ! restoreOnUnmount || typeof document === 'undefined' ) {
 			return;
 		}
 
-		return () => {
-			if ( ! hasAppliedTheme.current ) {
-				return;
-			}
-
-			if ( previousTheme.current === undefined ) {
-				delete document.documentElement.dataset.theme;
-				return;
-			}
-
-			document.documentElement.dataset.theme = previousTheme.current;
-		};
+		return restorePreviousTheme;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ restoreOnUnmount ] );
 
 	useEffect( () => {
-		if ( ! isReady || typeof document === 'undefined' ) {
+		if ( typeof document === 'undefined' ) {
+			return;
+		}
+
+		// When the scheme is turned off without unmounting (e.g. navigating
+		// away from a route that opts into it), put the previous theme back so
+		// the rest of the app isn't left on the applied scheme.
+		if ( ! active ) {
+			if ( restoreOnUnmount ) {
+				restorePreviousTheme();
+			}
 			return;
 		}
 
@@ -55,12 +69,14 @@ function useDocumentColorScheme(
 		}
 
 		document.documentElement.dataset.theme = colorScheme;
-	}, [ colorScheme, isReady, restoreOnUnmount ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ colorScheme, active, restoreOnUnmount ] );
 }
 
 export function ColorSchemeContextProvider( {
 	children,
 	colorScheme,
+	enabled = true,
 	isReady,
 	restoreOnUnmount = false,
 	setColorScheme,
@@ -68,14 +84,18 @@ export function ColorSchemeContextProvider( {
 }: {
 	children: ReactNode;
 	colorScheme: ColorScheme;
+	enabled?: boolean;
 	isReady: boolean;
 	restoreOnUnmount?: boolean;
 	setColorScheme: ColorSchemeContextType[ 'setColorScheme' ];
 	waitForReady: boolean;
 } ) {
-	useDocumentColorScheme( colorScheme, isReady, restoreOnUnmount );
+	useDocumentColorScheme( colorScheme, enabled && isReady, restoreOnUnmount );
 
-	if ( waitForReady && ! isReady ) {
+	// Keep children mounted when the scheme is disabled so toggling `enabled`
+	// (e.g. once remote preferences load) doesn't unmount and remount the
+	// wrapped subtree. The document side effects above are gated on `enabled`.
+	if ( enabled && waitForReady && ! isReady ) {
 		return null;
 	}
 

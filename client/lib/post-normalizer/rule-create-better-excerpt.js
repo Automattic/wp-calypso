@@ -1,6 +1,7 @@
-import { forEach } from 'lodash';
 import striptags from 'striptags';
 import { domForHtml } from './utils';
+
+const EXCERPT_ATTRIBUTES = [ 'dir', 'lang' ];
 
 /**
  * Removes an HTML element from the DOM
@@ -46,7 +47,7 @@ function buildStrippedDom( content ) {
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors =
 		'.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
-	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	Array.from( dom.querySelectorAll( stripSelectors ) ).forEach( removeElement );
 	return dom.innerHTML;
 }
 
@@ -63,17 +64,19 @@ export function formatExcerpt( content ) {
 		.filter( ( element ) => ( element.textContent ?? '' ).trim().length === 0 )
 		.forEach( removeElement );
 
-	// remove styles for all p's that remain
-	Array.from( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
-		element.removeAttribute( 'style' );
-		element.removeAttribute( 'align' );
+	// `striptags` keeps the whole opening tag of an allowed element, attributes included. `dir` and
+	// `lang` are the only ones that still do anything once the excerpt is rendered.
+	Array.from( dom.querySelectorAll( '*' ) ).forEach( ( element ) => {
+		element
+			.getAttributeNames()
+			.filter( ( name ) => ! EXCERPT_ATTRIBUTES.includes( name ) )
+			.forEach( ( name ) => element.removeAttribute( name ) );
 	} );
 
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach(
-		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+	Array.from( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ) ).forEach(
 		function ( element, index ) {
 			if ( index >= 3 ) {
 				element.parentNode && element.parentNode.removeChild( element );

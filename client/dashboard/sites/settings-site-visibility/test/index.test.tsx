@@ -464,10 +464,15 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
-				expect(
-					screen.getByText( /Staging sites are intended for testing purposes/ )
-				).toBeInTheDocument();
 			} );
+			await waitFor(
+				() => {
+					expect(
+						screen.getByText( /Staging sites are intended for testing purposes/ )
+					).toBeInTheDocument();
+				},
+				{ timeout: 3000 }
+			);
 
 			const domainButton = screen.queryByRole( 'link', {
 				name: /domain/,

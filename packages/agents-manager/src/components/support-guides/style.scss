@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/variables';
-@import '../../styles/mixins';
 
 .agent-manager-support-guides-wrapper {
 	height: calc( 100% - 32px );
@@ -91,7 +90,7 @@
 }
 
 // Docked chat overrides
-@include docked-chat-without-modal {
+.agents-manager-chat--docked {
 	.agent-manager-support-guides-wrapper {
 		padding-left: 0;
 		padding-right: 0;

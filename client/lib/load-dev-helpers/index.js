@@ -77,4 +77,13 @@ export default function loadDevHelpers( reduxStore ) {
 			).then( ( helper ) => helper.default( el ) );
 		}
 	}
+
+	if ( config.isEnabled( 'dev/blackbox-helper' ) ) {
+		const el = document.querySelector( '.environment.is-blackbox' );
+		if ( el ) {
+			import(
+				/* webpackChunkName: "async-load-calypso-lib-blackbox-helper" */ 'calypso/lib/blackbox-helper'
+			).then( ( helper ) => helper.default( el ) );
+		}
+	}
 }

@@ -10,6 +10,7 @@ import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isLoadingTabs, getCountRecords } from 'calypso/state/stats/email-chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import { buildChartData, getQueryDate } from './utility';
 
@@ -97,7 +98,9 @@ class StatModuleChartTabs extends Component {
 					minBarWidth={ 35 }
 					sliceFromBeginning={ false }
 					onChangeMaxBars={ onChangeMaxBars }
-				/>
+				>
+					<StatsEmptyState />
+				</Chart>
 			</div>
 		);
 	}

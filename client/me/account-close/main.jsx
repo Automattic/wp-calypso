@@ -5,7 +5,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import { useState, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
@@ -177,10 +176,10 @@ const AccountSettingsClose = ( {
 										'You will also lose access to the following premium themes you have purchased:'
 									) }
 									<ul className="account-close__theme-list">
-										{ map( purchasedPremiumThemes, ( purchasedPremiumTheme ) => {
+										{ purchasedPremiumThemes.map( ( purchasedPremiumTheme ) => {
 											return (
-												<li key={ purchasedPremiumTheme.id }>
-													{ purchasedPremiumTheme.productName }
+												<li key={ purchasedPremiumTheme.ID }>
+													{ purchasedPremiumTheme.product_name }
 												</li>
 											);
 										} ) }

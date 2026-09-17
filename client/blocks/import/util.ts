@@ -1,4 +1,4 @@
-import { capitalize } from 'lodash';
+import { capitalize } from '@automattic/js-utils';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export const CAPTURE_URL_RGX =

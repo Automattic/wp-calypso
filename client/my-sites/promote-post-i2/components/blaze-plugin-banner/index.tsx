@@ -13,7 +13,9 @@ export default function BlazePluginBanner() {
 				<section className="posts-list-banner__text-section">
 					<div className="posts-list-banner__header">
 						<BlazeLogo size={ 16 } className="blaze" colorStart="#8052B2" colorEnd="#8052B2" />
-						{ translate( 'Powered by Blaze' ) }
+						{ translate( 'Powered by %(productName)s', {
+							args: { productName: 'Blaze Ads' },
+						} ) }
 					</div>
 					<div className="posts-list-banner__title wp-brand-font">
 						{ translate( 'Transform your content to an ad with a click.' ) }
@@ -24,7 +26,8 @@ export default function BlazePluginBanner() {
 									'Increase your sales by promoting your products and pages across millions of blogs and sites.'
 							  )
 							: translate(
-									'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+									'Use %(productName)s to grow your audience by promoting your content across Tumblr and WordPress.com.',
+									{ args: { productName: 'Blaze Ads' } }
 							  ) }
 					</div>
 				</section>

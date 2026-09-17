@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import AppsComponent from 'calypso/me/get-apps';
 import McpComponent from 'calypso/me/mcp/main';
 import McpAddSiteComponent from 'calypso/me/mcp/mcp-add-site';
@@ -193,7 +194,8 @@ export const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
-			window.location.replace( dashboardLink( '/me/profile' ) );
+			bumpStat( 'dashboard-redirect', 'me' );
+			window.location.replace( dashboardLink( '/me' ) );
 			return;
 		}
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );

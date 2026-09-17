@@ -52,35 +52,17 @@ export const PlaygroundSetupStep: Step< {
 		}
 	}, [ query, submit, siteSlug, siteId, importBlueprint ] );
 
-	useEffect( () => {
-		// Clean up any playground-related localStorage items on unmount
-		return () => {
-			const playgroundId = query.get( 'playground' );
-			const currentTimestamp = Math.floor( Date.now() / 1000 );
-
-			if ( playgroundId ) {
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId );
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId + '-ts' );
-			}
-
-			Object.keys( window.localStorage ).forEach( ( key ) => {
-				if ( key.startsWith( 'playground-plans-intent-' ) && key.endsWith( '-ts' ) ) {
-					const storedAt = parseInt( window.localStorage.getItem( key ) || '0' );
-					if ( currentTimestamp - storedAt > 7 * 24 * 60 * 60 ) {
-						window.localStorage.removeItem( key );
-						window.localStorage.removeItem( key.replace( '-ts', '' ) );
-					}
-				}
-			} );
-		};
-	}, [] );
-
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client ) {
 			return;
 		}
 
 		if ( ! submit ) {
+			return;
+		}
+
+		const playgroundSlug = query.get( 'playground' );
+		if ( ! playgroundSlug ) {
 			return;
 		}
 
@@ -94,7 +76,7 @@ export const PlaygroundSetupStep: Step< {
 			const importStartedAt = Date.now();
 			recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
 			try {
-				await importPlaygroundSite( client, siteId, { waitForCompletion: true } );
+				await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: true } );
 				recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
 					site_id: siteId,
 					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
@@ -108,7 +90,7 @@ export const PlaygroundSetupStep: Step< {
 				throw error;
 			}
 		} else {
-			await importPlaygroundSite( client, siteId, { waitForCompletion: false } );
+			await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: false } );
 		}
 
 		submit( {
@@ -126,7 +108,7 @@ export const PlaygroundSetupStep: Step< {
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"
-						playgroundClient={ playgroundClientRef.current }
+						hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 						setPlaygroundClient={ startImport }
 					/>
 				) }

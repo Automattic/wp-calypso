@@ -7,6 +7,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import UserProfilePrivateTabNotice from 'calypso/reader/user-profile/components/private-tab-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { ReaderUser } from '@automattic/api-core';
@@ -43,12 +44,23 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 		);
 	}
 
+	const PrivateTabNotice = isOwnProfile ? (
+		<UserProfilePrivateTabNotice
+			title={ translate( 'Your sites are private' ) }
+			tab="sites"
+			userPreferencesKey="reader-profile-sites-visibility"
+		/>
+	) : null;
+
 	if ( error ) {
 		return (
-			<EmptyContent
-				title={ translate( 'Sorry, something went wrong.' ) }
-				line={ translate( 'We couldn’t load the sites. Please try again.' ) }
-			/>
+			<>
+				{ PrivateTabNotice }
+				<EmptyContent
+					title={ translate( 'Sorry, something went wrong.' ) }
+					line={ translate( 'We couldn’t load the sites. Please try again.' ) }
+				/>
+			</>
 		);
 	}
 
@@ -62,13 +74,16 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 			</a>
 		);
 		return (
-			<EmptyContent
-				illustration={ null }
-				icon={ <Icon icon={ siteLogo } size={ 48 } /> }
-				title={ null }
-				line={ translate( 'No sites have been created yet.' ) }
-				action={ action }
-			/>
+			<>
+				{ PrivateTabNotice }
+				<EmptyContent
+					illustration={ null }
+					icon={ <Icon icon={ siteLogo } size={ 48 } /> }
+					title={ null }
+					line={ translate( 'No sites have been created yet.' ) }
+					action={ action }
+				/>
+			</>
 		);
 	}
 
@@ -83,11 +98,14 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	} );
 
 	return (
-		<ReaderSitesList
-			sites={ sitesList }
-			followSource="user-profile-page__sites-tab__list"
-			variant="card"
-		/>
+		<>
+			{ PrivateTabNotice }
+			<ReaderSitesList
+				sites={ sitesList }
+				followSource="user-profile-page__sites-tab__list"
+				variant="card"
+			/>
+		</>
 	);
 };
 

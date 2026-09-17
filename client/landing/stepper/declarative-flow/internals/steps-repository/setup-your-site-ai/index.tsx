@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import {
@@ -9,20 +10,68 @@ import {
 } from '@wordpress/components';
 import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
+import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
-	const { siteSlug, siteId } = useSiteData();
+	const { site, siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
 	const ref = useQuery().get( 'ref' );
+
+	// After checkout the `post-checkout-onboarding` step flags the site for a
+	// "plan is now active" toast; consume it here since this is where the user
+	// lands post-purchase.
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
+	// Prefer the cart item (what was just bought) over site.plan, which can be
+	// stale before the plan assignment syncs. The cart item persists across runs,
+	// so only trust it when the checkout it came from was for this site.
+	const planCartItem = usePlanCartItem();
+	const boughtPlanSlug =
+		getSignupCompleteSlug() === siteSlug ? planCartItem?.product_slug : undefined;
+	// The build-wow destination lives in the ai-site-builder-spec flow, which bounces
+	// to plain onboarding without the site-spec feature; the card falls back to the
+	// legacy builder there.
+	const offerBuildWow =
+		config.isEnabled( 'site-spec' ) &&
+		planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
+
+	// One choice per visit: submitting navigates away, so the controls disable and
+	// later clicks are ignored. The ref covers clicks landing before the re-render.
+	const isSubmittingRef = useRef( false );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+	// A submit leaves the page, so Back can restore it from bfcache with the
+	// controls still disabled; re-enable them on that restore.
+	useEffect( () => {
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				isSubmittingRef.current = false;
+				setIsSubmitting( false );
+			}
+		};
+		window.addEventListener( 'pageshow', onPageShow );
+		return () => window.removeEventListener( 'pageshow', onPageShow );
+	}, [] );
+
+	const claimSubmit = () => {
+		if ( isSubmittingRef.current ) {
+			return false;
+		}
+		isSubmittingRef.current = true;
+		setIsSubmitting( true );
+		return true;
+	};
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
@@ -38,16 +87,33 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleBuildWithAIClick = () => {
-		submitBuildWithAI();
+	const submitGenerateTheme = () => {
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'generate-theme',
+		} );
+
+		navigation.submit( {
+			setupChoice: 'generate-theme',
+			siteSlug,
+			siteId,
+		} );
 	};
 
+	// The Woo hosting-solutions prompt form always stays on the legacy builder:
+	// only that path runs the store spec interview (store type, address for tax
+	// and shipping) and a WooCommerce-aware build.
 	const handleBuildWithAISubmit = ( event: FormEvent ) => {
 		event.preventDefault();
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		submitBuildWithAI( prompt.trim() );
 	};
 
 	const handleBlankSite = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
 		} );
@@ -56,6 +122,19 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			setupChoice: 'blank-site',
 			siteSlug,
 		} );
+	};
+
+	const handleCustomDesignClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+
+		if ( offerBuildWow ) {
+			submitGenerateTheme();
+			return;
+		}
+
+		submitBuildWithAI();
 	};
 
 	const buildWithAIPromptCard = (
@@ -93,7 +172,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 						className="setup-your-site-ai-step__prompt-submit"
 						label={ translate( 'Build with AI' ) }
 						icon={ arrowUp }
-						disabled={ ! prompt.trim() }
+						disabled={ ! prompt.trim() || isSubmitting }
 						accessibleWhenDisabled
 					/>
 				</div>
@@ -103,32 +182,53 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 
 	const buildWithAISummary = (
 		<SummaryButton
-			title={ translate( 'Build with AI' ) }
+			title={ i18n.fixMe( {
+				text: 'Create a custom design',
+				newCopy: translate( 'Create a custom design' ),
+				oldCopy: translate( 'Build with AI' ),
+			} ) }
 			description={ i18n.fixMe( {
-				text: 'Describe your idea and let AI help you refine your site.',
-				newCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
-				oldCopy: translate( 'Prompt, edit, and launch a site in just a few clicks.' ),
+				text: 'Describe your idea and the WordPress Agent builds it.',
+				newCopy: translate( 'Describe your idea and the WordPress Agent builds it.' ),
+				oldCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
 			} ) }
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
-			onClick={ handleBuildWithAIClick }
+			onClick={ handleCustomDesignClick }
+			disabled={ isSubmitting }
+		/>
+	);
+
+	const startWithTemplateCard = (
+		<SummaryButton
+			title={ i18n.fixMe( {
+				text: 'Start with a template',
+				newCopy: translate( 'Start with a template' ),
+				oldCopy: translate( 'Manual setup' ),
+			} ) }
+			description={ i18n.fixMe( {
+				text: 'Get a simple, ready-to-go site to make your own.',
+				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
+				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+			} ) }
+			decoration={ <Icon icon={ layout } /> }
+			onClick={ handleBlankSite }
+			disabled={ isSubmitting }
 		/>
 	);
 
 	const stepContent = (
 		<VStack alignment="top" spacing={ 3 }>
-			{ showPromptInput ? buildWithAIPromptCard : buildWithAISummary }
-			<SummaryButton
-				title={ i18n.fixMe( {
-					text: 'Manual setup',
-					newCopy: translate( 'Manual setup' ),
-					oldCopy: translate( 'Start with a blank site' ),
-				} ) }
-				description={ translate(
-					'Get started instantly with a simple, ready-to-go WordPress site.'
-				) }
-				decoration={ <Icon icon={ layout } /> }
-				onClick={ handleBlankSite }
-			/>
+			{ showPromptInput ? (
+				<>
+					{ buildWithAIPromptCard }
+					{ startWithTemplateCard }
+				</>
+			) : (
+				<>
+					{ startWithTemplateCard }
+					{ buildWithAISummary }
+				</>
+			) }
 		</VStack>
 	);
 
@@ -140,13 +240,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			topBar={ <Step.TopBar /> }
 			heading={
 				<Step.Heading
-					text={ translate( 'Set up your site' ) }
+					text={ i18n.fixMe( {
+						text: 'Let’s design your site',
+						newCopy: translate( 'Let’s design your site' ),
+						oldCopy: translate( 'Set up your site' ),
+					} ) }
 					subText={ i18n.fixMe( {
-						text: "Whatever you're making, there's an easy way to get started.",
-						newCopy: translate( "Whatever you're making, there's an easy way to get started." ),
-						oldCopy: translate(
-							"No matter what you want to do, there's an easy way to get started."
-						),
+						text: 'Choose how to begin — you can change it anytime.',
+						newCopy: translate( 'Choose how to begin — you can change it anytime.' ),
+						oldCopy: translate( "Whatever you're making, there's an easy way to get started." ),
 					} ) }
 				/>
 			}

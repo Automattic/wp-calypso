@@ -12,9 +12,7 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLastPath, isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
-import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
-import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSection } from 'calypso/state/ui/selectors';
 import { setupRedirectRoutes } from 'calypso/utils';
@@ -31,10 +29,6 @@ const loadSidebar = () =>
 const loadNewSubscription = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
-	);
-const loadMobileHeader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-components-mobile-header" */ 'calypso/reader/components/mobile-header'
 	);
 const loadFeedStream = () =>
 	import(
@@ -93,18 +87,12 @@ export function following( context, next ) {
 	const teamsData = context.queryClient.getQueryData( readTeamsQuery().queryKey );
 	// only for a8c for now
 	if ( isAutomatticTeamMember( teamsData?.teams ?? [] ) ) {
-		// select last reader path if available, otherwise just open following
+		// select last reader path if available
 		const currentSection = getSection( state );
 		const lastPath = getLastPath( state );
 
 		if ( lastPath && lastPath !== '/reader' && currentSection.name !== 'reader' ) {
 			return page.redirect( lastPath );
-		}
-
-		// if we have no last path, default to Following/All and expand following
-		const isOpen = isFollowingOpen( state );
-		if ( ! isOpen ) {
-			context.store.dispatch( toggleReaderSidebarFollowing() );
 		}
 	}
 
@@ -139,7 +127,9 @@ export function following( context, next ) {
 
 export function loadNewSubscriptionPage( context, next ) {
 	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
-	context.primary = <AsyncLoad require={ loadNewSubscription } selectedTab={ selectedTab } />;
+	context.primary = (
+		<AsyncLoad require={ loadNewSubscription } selectedTab={ selectedTab } placeholder={ null } />
+	);
 
 	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
 	next();
@@ -191,13 +181,6 @@ export function feedLookup( context ) {
 			page.redirect( `/reader` );
 		} );
 }
-
-export const setBeforePrimary = ( context, next ) => {
-	const state = context.store.getState();
-	const isMSDEnabledForReader = isReaderMSDEnabled( state );
-	context.beforePrimary = isMSDEnabledForReader ? <AsyncLoad require={ loadMobileHeader } /> : null;
-	next();
-};
 
 export function feedListing( context, next ) {
 	const feedId = context.params.feed_id;
@@ -368,7 +351,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-sites';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 
@@ -395,6 +378,7 @@ export async function siteSubscription( context, next ) {
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
 			transition={ context.query.transition === 'true' }
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -406,7 +390,7 @@ export async function commentSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-comments';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadCommentSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadCommentSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 
@@ -416,7 +400,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-pending';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadPendingSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadPendingSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 
@@ -434,6 +418,25 @@ export function redirectLoggedOutToDiscover( context, next ) {
 		return;
 	}
 	return page.redirect( '/discover' );
+}
+
+/**
+ * Middleware to redirect logged out users to the Discover tags tab, selecting
+ * the requested tag when the route has one and preserving any locale prefix.
+ * Intended for the tag pages, which no longer support logged out users.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscoverTags( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+	const localePrefix = context.params.lang ? '/' + context.params.lang : '';
+	const tag = context.params.tag ? encodeURIComponent( context.params.tag ) : 'dailyprompt';
+	return page.redirect( `${ localePrefix }/discover/tags?selectedTag=${ tag }` );
 }
 
 /**
@@ -585,15 +588,15 @@ export function setupReadRoutes() {
 		},
 		{
 			path: '/read/search',
-			getRedirect: () => '/reader/search',
+			getRedirect: () => '/discover/search',
 		},
 		{
 			path: `/${ langParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: `/${ anyLangParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: '/read/site/subscription/:blog_id',

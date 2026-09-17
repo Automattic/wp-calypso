@@ -251,6 +251,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 			transferState !== transferStates.ERROR &&
 			transferState !== transferStates.COMPLETED &&
 			transferState !== transferStates.COMPLETE &&
+			transferState !== transferStates.CLIENT_TIMEOUT &&
 			transferState !== transferStates.REVERTED
 	);
 

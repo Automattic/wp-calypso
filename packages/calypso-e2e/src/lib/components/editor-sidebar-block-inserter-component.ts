@@ -71,8 +71,8 @@ export class EditorSidebarBlockInserterComponent {
 					noWaitAfter: true,
 				} );
 			} catch {
-				// The button may have detached between the isVisible-style check
-				// above and the click. That is the success case here.
+				// The button may have detached between the race above and the
+				// click. That is the success case here.
 			}
 
 			try {
@@ -152,8 +152,14 @@ export class EditorSidebarBlockInserterComponent {
 				.first();
 		}
 
-		await Promise.all( [ locator.hover(), locator.focus() ] );
-		await locator.click();
+		// Pattern insertion does not navigate but can emit events that Playwright
+		// treats as "scheduled navigation" on slow CI, hanging the click auto-wait.
+		// Keep it off the block path: noWaitAfter also drops the post-click check
+		// that the pointer landed here, so a click the re-rendering list eats is
+		// never retried. Patterns can afford that (they assert on a block-count
+		// delta); blocks assert on ".is-selected", which a block of the same type
+		// left selected by an earlier step can satisfy.
+		await locator.click( type === 'pattern' ? { noWaitAfter: true } : undefined );
 
 		return locator;
 	}

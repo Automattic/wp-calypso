@@ -1,4 +1,5 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	isDomainForGravatarFlow,
@@ -19,7 +20,6 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	domainMapping,
 	domainAddNew,
@@ -29,7 +29,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -61,6 +61,7 @@ const DomainSearchUI = (
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
 		locale,
 		queryObject,
 		baseSubmitStepProps,
@@ -72,12 +73,7 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
-	const [ , experimentAssignment ] = useExperiment(
-		'calypso_signup_domain_only_checkout_simplification_v1',
-		{ isEligible: isDomainOnlyFlow }
-	);
-	const isTreatment = experimentAssignment?.variationName === 'treatment';
-
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
 
 	const siteSlug = queryObject.siteSlug;
@@ -205,8 +201,8 @@ const DomainSearchUI = (
 						{ stepName: 'site-picker', wasSkipped: true },
 						{ themeSlugWithRepo: 'pub/twentysixteen' }
 					);
-				} else if ( isTreatment && isDomainOnlyFlow ) {
-					// Experiment: skip the 'Choose how to use your domain' step for domain-only purchases.
+				} else if ( isDomainOnlyFlow ) {
+					// Skip the 'Choose how to use your domain' step for domain-only purchases.
 					submitSignupStep(
 						{
 							stepName: 'site-or-domain',
@@ -227,6 +223,19 @@ const DomainSearchUI = (
 						{ stepName: 'plans-site-selected', wasSkipped: true },
 						{ cartItems: null }
 					);
+
+					// For logged-out users the account step is still pending, so the flow isn't
+					// "every step submitted" and the default goToNextStep() advances by array index
+					// from 'domain-only' back onto the just-skipped 'site-or-domain' step. Advance
+					// from the last auto-submitted step instead: logged-out users go to the account
+					// step, logged-in users fall through to checkout.
+					const nextStep = getNextStepName( flowName, 'plans-site-selected', isLoggedIn );
+					if ( nextStep ) {
+						goToStep( nextStep );
+					} else {
+						goToNextStep();
+					}
+					return;
 				}
 
 				goToNextStep();
@@ -264,9 +273,10 @@ const DomainSearchUI = (
 		clearQuery,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
+		isLoggedIn,
 		locale,
 		isDomainOnlyFlow,
-		isTreatment,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,
@@ -292,6 +302,7 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow,
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 

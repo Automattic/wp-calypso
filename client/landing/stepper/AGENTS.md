@@ -23,6 +23,10 @@ client/landing/stepper/
 └── README.md                     # Full human-readable docs
 ```
 
+> **Note**: The `ai-site-builder` flow (the free Big Sky entry at `/setup/ai-site-builder`)
+> is slated for removal. Don't add new features or flow-specific handling for it;
+> `ai-site-builder-onboarding` (the pay-upfront AI Site Builder variant) is the one that stays.
+
 ## Core concept
 
 A flow is a **finite-state machine**, not a linear list. The first step is fixed; all
@@ -48,7 +52,6 @@ import type { FlowV2, SubmitHandler } from '../../internals/types';
 // 1. Define steps BEFORE the flow object (required for TypeScript inference).
 function initialize() {
 	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
 		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
 		STEPS.PROCESSING,
@@ -73,9 +76,6 @@ const myFlow: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'goals':
-					set( 'goals', providedDependencies );
-					return navigate( 'domains' );
 				case 'domains':
 					set( 'domains', providedDependencies );
 					return navigate( 'plans' );
@@ -103,19 +103,14 @@ export default myFlow;
 
 ### Signup / onboarding steps
 
-| `STEPS.*` constant       | slug                   | Purpose                                                         |
-| ------------------------ | ---------------------- | --------------------------------------------------------------- |
-| `GOALS`                  | `goals`                | Ask user what they want to build (blog, store, portfolio, etc.) |
-| `INTENT_STEP`            | `intent`               | Alternative intent/goal selector                                |
-| `SEGMENTATION_SURVEY`    | `segmentation-survey`  | Survey to segment user by use case                              |
-| `DESIGN_CHOICES`         | `design-choices`       | Choose between design options                                   |
-| `DESIGN_SETUP`           | `design-setup`         | Select a theme / design                                         |
-| `SITE_OPTIONS`           | `options`              | Set site title, tagline, icon                                   |
-| `SETUP_BLOG`             | `setup-blog`           | Blog-specific setup step                                        |
-| `BLOGGER_STARTING_POINT` | `bloggerStartingPoint` | Starting point for bloggers                                     |
-| `BUSINESS_INFO`          | `businessInfo`         | Business details (name, category)                               |
-| `STORE_ADDRESS`          | `storeAddress`         | WooCommerce store address                                       |
-| `SITE_SPEC`              | `site-spec`            | AI-assisted site specification                                  |
+| `STEPS.*` constant    | slug                  | Purpose                            |
+| --------------------- | --------------------- | ---------------------------------- |
+| `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
+| `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
+| `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
+| `BUSINESS_INFO`       | `businessInfo`        | Business details (name, category)  |
+| `STORE_ADDRESS`       | `storeAddress`        | WooCommerce store address          |
+| `SITE_SPEC`           | `site-spec`           | AI-assisted site specification     |
 
 ### Domain steps
 
@@ -219,22 +214,76 @@ const myFlow: FlowV2< typeof initialize > = {
 
 ### Steps that accept customization props today
 
-Most steps expose **no** flow-level props. Only `STEPS.UNIFIED_PLANS` has an `accepts:`
-type defined. Every other step listed here has none — changes require Engineering.
+A growing set of Signup steps expose an `accepts:` type, so a flow can customize them from
+`useStepsProps()` with **no Engineering PR needed**. The canonical, always-current list (with
+exact per-prop semantics and render-branch notes) is the **"Adding `accepts:` props to an existing
+step" → Worked example** section of [`README.md`](README.md); the tables below mirror it. Steps
+**not** listed here have no `accepts:` surface yet — see "What requires an Engineering PR".
 
 #### `STEPS.UNIFIED_PLANS` (slug: `'plans'`)
 
-| Prop                    | Type                                            | What it does                                                         |
-| ----------------------- | ----------------------------------------------- | -------------------------------------------------------------------- |
-| `isInSignup`            | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing |
-| `isStepperUpgradeFlow`  | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain               |
-| `selectedFeature`       | `string`                                        | Highlights a plan that includes this feature slug                    |
-| `displayedIntervals`    | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                             |
-| `wrapperProps.hideBack` | `boolean`                                       | Hides the back button                                                |
-| `wrapperProps.goBack`   | `() => void`                                    | Custom back button handler                                           |
+| Prop                                                                                                                     | Type                                            | What it does                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `isInSignup`                                                                                                             | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing                       |
+| `isStepperUpgradeFlow`                                                                                                   | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain                                     |
+| `selectedFeature`                                                                                                        | `string`                                        | Highlights a plan that includes this feature slug                                          |
+| `displayedIntervals`                                                                                                     | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                                                   |
+| `headerText` / `subHeaderText`                                                                                           | `string`                                        | Override the per-intent header / sub-header copy                                           |
+| `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`, `hidePremiumPlan`, `hideEcommercePlan`, `hidePlanTypeSelector` | `boolean`                                       | Hide a specific plan / the plan-type selector (each OR-ed over the computed default)       |
+| `defaultInterval`                                                                                                        | `'monthly'\|'yearly'\|'2yearly'\|'3yearly'`     | Seeds the billing term (the URL still wins once the user switches)                         |
+| `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
+| `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
+| `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
+| `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 
-Note: `hideFreePlan` and `headerText` exist on the underlying component but are **not**
-exposed via `accepts` — they cannot be set from the flow without an Engineering PR.
+#### `STEPS.DOMAIN_SEARCH` (slug: `'domains'`)
+
+| Prop                                               | Type       | What it does                                                                                                                                                            |
+| -------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                                                                                                                                 |
+| `hideUseMyDomainLink`                              | `boolean`  | Suppress the "Use a domain I own" CTA (V2 top bar + V1 skip button)                                                                                                     |
+| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                                                                                                                                  |
+| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                                                                                                                          |
+| `freeSubdomainTitle` / `freeSubdomainButtonLabel`  | `string`   | Copy overrides for the free-subdomain "Start free" skip card and its button; `freeSubdomainTitle` may keep the `%(domain)s` placeholder, which the package interpolates |
+| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)                                                                                                                |
+| `freeForFirstYearTlds`                             | `string[]` | TLDs priced as free for the first year in suggestions and the cart                                                                                                      |
+
+#### `STEPS.PROCESSING` (slug: `'processing'`)
+
+| Prop                 | Type                         | What it does                                                                                                              |
+| -------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `title` / `subtitle` | `string`                     | Override the single visible frame; these win over the carousel                                                            |
+| `loadingMessages`    | `ProcessingLoadingMessage[]` | Replace the rotating loading-carousel copy. `duration` is optional per message — one without a usable duration is held 5s |
+
+Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` paths only. The
+tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year
+processing screens short-circuit earlier and keep their own dedicated copy.
+
+#### The register / user step (slug: `'user'`, auto-injected)
+
+Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `initialize()` array,
+so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
+widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
+
+| Prop                           | Type       | What it does                                                   |
+| ------------------------------ | ---------- | -------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
+| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
+| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
+
+```ts
+const myFlow: FlowV2< typeof initialize > = {
+	// ...
+	useStepsProps() {
+		return {
+			domains: { hideUseMyDomainLink: true },
+			plans: { hideFreePlan: true, defaultInterval: 'yearly' },
+			user: { hideLoginLink: true }, // reserved `user` key for the auto-injected step
+		};
+	},
+};
+```
 
 ### Store-based customizations (set in `initialize()`)
 
@@ -295,19 +344,14 @@ injects the user registration/login step automatically — you don't build it yo
 ```ts
 // Gate ALL steps (most signup flows)
 function initialize() {
-	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
-		STEPS.DOMAIN_SEARCH,
-		STEPS.UNIFIED_PLANS,
-		STEPS.PROCESSING,
-	] );
+	return stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
 }
 
 // Gate SOME steps (allow browsing before login)
 function initialize() {
 	return [
-		STEPS.GOALS,
-		...stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
+		STEPS.DOMAIN_SEARCH,
+		...stepsWithRequiredLogin( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
 	] as const;
 }
 ```
@@ -348,12 +392,11 @@ If `goToCheckout` is true, redirect to `/checkout/<siteSlug>?redirect_to=<destin
 
 ## Common flow patterns
 
-### Minimal signup (goals → domain → plans → processing → launchpad)
+### Minimal signup (domain → plans → processing → launchpad)
 
 ```ts
 function initialize() {
 	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
 		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
 		STEPS.PROCESSING,
@@ -458,7 +501,7 @@ The flow is accessible at `/setup/my-flow` after deployment.
 
 7. **Forgetting `as const`** — If `initialize` returns a plain array (not using
    `stepsWithRequiredLogin`), add `as const` at the end so TypeScript infers the
-   literal step slugs, like `return [ STEPS.GOALS, STEPS.PROCESSING ] as const;`.
+   literal step slugs, like `return [ STEPS.DOMAIN_SEARCH, STEPS.PROCESSING ] as const;`.
    `stepsWithRequiredLogin()` handles this for you.
 
 8. **Not registering in `registered-flows.ts`** — The flow won't exist. The URL

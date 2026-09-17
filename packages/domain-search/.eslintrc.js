@@ -1,17 +1,17 @@
-const { lodashRestrictedImports } = require( '@automattic/calypso-eslint-overrides' );
-
 module.exports = {
 	rules: {
 		'no-restricted-imports': [
 			'error',
 			{
-				paths: lodashRestrictedImports.paths,
 				patterns: [
 					{
 						group: [ 'client/**/*', 'calypso/**/*' ],
 						message: 'Calypso imports are not allowed in this package',
 					},
-					...lodashRestrictedImports.patterns,
+					{
+						group: [ '**/name-pulse/*', '**/name-pulse/**/*' ],
+						message: 'Import Name Pulse only through its index (…/name-pulse), not deep paths.',
+					},
 				],
 			},
 		],

@@ -1,25 +1,21 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, seen } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useState, type JSX } from 'react';
 import { shallowEqual } from 'react-redux';
 import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import {
-	useHasSiteSubscriptionOrganization,
-	useIsSubscribed,
-} from 'calypso/reader/data/site-subscriptions';
+import { useCanMarkSeen, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { getFeedUrl, getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getFeedUrl, getSiteUrl } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import type { AppState } from 'calypso/types';
 
 interface ReaderFeedHeaderFollowProps {
@@ -37,6 +33,7 @@ interface ReaderFeed {
 	subscription_id?: number;
 	blog_owner?: string;
 	name?: string;
+	organization_id?: number;
 }
 
 interface ReaderSite {
@@ -61,29 +58,26 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID;
 	const followFeedId = resolvedFeed?.feed_ID;
 	const reduxFollowing = useIsSubscribed( { feedUrl: followFeedUrl } );
-	const hasOrganization = useHasSiteSubscriptionOrganization( followFeedId, resolvedSiteId );
+	const canMarkSeen = useCanMarkSeen( {
+		feedId: followFeedId,
+		blogId: resolvedSiteId,
+		organizationId: resolvedFeed?.organization_id,
+	} );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,
 		toggleRecommended,
 	} = useFeedRecommendationsMutation( feedId as number );
 
-	const { isEmailBlocked, isWPForTeamsItem, subscriptionId, blogOwner } = useSelector(
-		( state: AppState ) => {
-			const _feed: ReaderFeed | undefined = resolvedFeed;
+	const { isEmailBlocked, subscriptionId, blogOwner } = useSelector( ( state: AppState ) => {
+		const _feed: ReaderFeed | undefined = resolvedFeed;
 
-			return {
-				isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
-				isWPForTeamsItem: Boolean(
-					( resolvedSiteId ? isSiteWPForTeams( state, resolvedSiteId ) : false ) ||
-						( _feed?.blog_ID ? isSiteWPForTeams( state, _feed.blog_ID ) : false )
-				),
-				subscriptionId: _feed?.subscription_id,
-				blogOwner: _feed?.blog_owner,
-			};
-		},
-		shallowEqual
-	);
+		return {
+			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
+			subscriptionId: _feed?.subscription_id,
+			blogOwner: _feed?.blog_owner,
+		};
+	}, shallowEqual );
 	const following = reduxFollowing || !! site?.is_following;
 
 	const openSuggestedFollowsModal = ( followClicked: boolean ) => {
@@ -105,17 +99,32 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		setIsSuggestedFollowsModalOpen( false );
 	};
 
+	const { mutate: markAllAsSeenMutate } = useMarkAllAsSeenMutation();
+
 	const markAllAsSeen = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 
-		dispatch(
-			requestMarkAllAsSeen( {
-				identifier: streamKey,
-				feedIds: [ resolvedFeed?.feed_ID ],
-				feedUrls: [ resolvedFeed?.feed_URL || resolvedFeed?.URL ],
-			} )
-		);
+		if ( ! resolvedFeed?.feed_ID ) {
+			return;
+		}
+
+		const feedIds = [ resolvedFeed.feed_ID ];
+		const feedUrl = resolvedFeed?.feed_URL || resolvedFeed?.URL;
+		const feedUrls = feedUrl ? [ feedUrl ] : [];
+
+		markAllAsSeenMutate( {
+			identifier: streamKey ?? '',
+			feedIds,
+			feedUrls,
+		} );
 	};
+
+	const allSeen = resolvedFeed?.unseen_count === 0;
+	const seenBtnMsg = fixMe( {
+		text: 'Mark all as read',
+		newCopy: translate( 'Mark all as read' ),
+		oldCopy: translate( 'Mark all as seen' ),
+	} ) as string;
 
 	return (
 		<div className="reader-feed-header__follow">
@@ -153,18 +162,15 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 					</div>
 				) }
 			</div>
-			{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && resolvedFeed && (
+			{ canMarkSeen && resolvedFeed && (
 				<button
 					onClick={ markAllAsSeen }
 					className="reader-feed-header__seen-button"
-					disabled={ resolvedFeed.unseen_count === 0 }
+					disabled={ allSeen }
 				>
-					<Gridicon icon="visible" size={ 24 } />
-					<span
-						className="reader-feed-header__visibility"
-						title={ translate( 'Mark all as seen' ) }
-					>
-						{ translate( 'Mark all as seen' ) }
+					<Icon icon={ seen } size={ 24 } />
+					<span className="reader-feed-header__visibility" title={ seenBtnMsg }>
+						{ seenBtnMsg }
 					</span>
 				</button>
 			) }

@@ -1,9 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { Button, CheckboxControl, Icon, Modal } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
 import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -69,7 +69,7 @@ export class SiteAddressChanger extends Component {
 	onConfirm = async () => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
-		const oldDomain = get( currentDomain, 'name', null );
+		const oldDomain = currentDomain?.name ?? null;
 		const type =
 			'.wordpress.com' === currentDomainSuffix
 				? freeSiteAddressType.BLOG
@@ -177,12 +177,12 @@ export class SiteAddressChanger extends Component {
 	}
 
 	onFieldChange = ( event ) => {
-		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
+		const domainFieldValue = ( event?.target?.value ?? '' ).toLowerCase();
 		this.handleDomainChange( domainFieldValue );
 	};
 
 	onDomainSuffixChange = ( event ) => {
-		const newDomainSuffix = get( event, 'target.value', '' );
+		const newDomainSuffix = event?.target?.value ?? '';
 		this.setState( { newDomainSuffix } );
 		this.handleDomainChange( this.state.domainFieldValue );
 	};
@@ -222,7 +222,7 @@ export class SiteAddressChanger extends Component {
 	shouldShowValidationMessage() {
 		const { isAvailable, validationError } = this.props;
 		const { showValidationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		return isAvailable || showValidationMessage || !! serverValidationMessage;
 	}
@@ -230,7 +230,7 @@ export class SiteAddressChanger extends Component {
 	getCurrentDomainPrefix() {
 		const { currentDomain, currentDomainSuffix } = this.props;
 
-		const currentDomainName = get( currentDomain, 'name', '' );
+		const currentDomainName = currentDomain?.name ?? '';
 		return currentDomainName.replace( currentDomainSuffix, '' );
 	}
 
@@ -248,7 +248,7 @@ export class SiteAddressChanger extends Component {
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
-		const serverValidationMessage = get( validationError, 'message' );
+		const serverValidationMessage = validationError?.message;
 
 		if ( this.isUnsyncedAtomicSite() ) {
 			return translate( "This site's address cannot be changed" );
@@ -409,7 +409,7 @@ export class SiteAddressChanger extends Component {
 		}
 
 		const { domainFieldValue, confirmEmailSent } = this.state;
-		const currentDomainName = get( currentDomain, 'name', '' );
+		const currentDomainName = currentDomain?.name ?? '';
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();

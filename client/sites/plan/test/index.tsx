@@ -18,14 +18,6 @@ jest.mock( 'calypso/components/data/query-sites', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-site-purchases', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
 jest.mock( '@automattic/data-stores/src/plans/hooks/use-current-plan', () => jest.fn() );
-jest.mock( 'calypso/my-sites/plans/hooks/use-de-emphasized-plan-card-experiment', () => ( {
-	useDeEmphasizedPlanCardExperiment: () => ( {
-		isLoading: false,
-		isControl: false,
-		isVariantA: true,
-		isVariantB: false,
-	} ),
-} ) );
 
 const mockPlan = {
 	planSlug: PLAN_FREE,

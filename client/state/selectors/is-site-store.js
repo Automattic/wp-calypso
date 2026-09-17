@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Returns true if site is Jetpack and has WooCommerce plugin set to active. Otherwise false
@@ -9,6 +8,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 export default function isSiteStore( state, siteId ) {
 	return (
 		isJetpackSite( state, siteId ) &&
-		get( state, [ 'sites', 'items', siteId, 'options', 'woocommerce_is_active' ], null )
+		( state?.sites?.items?.[ siteId ]?.options?.woocommerce_is_active ?? null )
 	);
 }

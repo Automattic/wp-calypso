@@ -11,7 +11,6 @@ import { Modal } from '@wordpress/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -179,6 +178,7 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
+		let submitError;
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
 				.createAccount( {
@@ -192,8 +192,11 @@ export class JetpackSignup extends Component {
 						plugins: this.props.authQuery.plugins,
 					},
 				} )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
-				.finally( afterSubmit )
+				.then( this.handleUserCreationSuccess, ( error ) => {
+					submitError = error;
+					this.handleUserCreationError( error );
+				} )
+				.finally( () => afterSubmit( submitError ) )
 		);
 	};
 
@@ -262,7 +265,7 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
-		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
+		if ( error?.error === 'password_invalid' ) {
 			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}

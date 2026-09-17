@@ -4,8 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { isRefundable } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -48,13 +47,13 @@ const AtomicRevertChanges = ( {
 		changes.push( translate( 'Set your site to private.' ) );
 
 		// Plugins and themes will be removed
-		if ( ! isRefundable( purchase ) ) {
+		if ( ! purchase.is_refundable ) {
 			changes.push(
 				translate(
 					'Any themes and plugins you have installed will be removed on %(expiryDate)s, along with their data.',
 					{
 						args: {
-							expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+							expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
 						},
 					}
 				)

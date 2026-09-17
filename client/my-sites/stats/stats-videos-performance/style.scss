@@ -1,0 +1,12 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-videos-performance {
+	margin-block-end: 32px;
+
+	// Below $break-small the summary page's own top margin
+	// (.stats-summary__positioned) is gone, so the cards would sit flush under
+	// the summary nav's mobile bottom border. Restore the separation here.
+	@media (max-width: $break-small) {
+		margin-block-start: 24px;
+	}
+}

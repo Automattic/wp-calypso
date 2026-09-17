@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
 
 /**
@@ -23,7 +22,7 @@ export function isExceedingSiteMaxUploadSize( item, site ) {
 
 	if (
 		site.jetpack &&
-		includes( site?.options?.active_modules, 'videopress' ) &&
+		site.options.active_modules?.includes( 'videopress' ) &&
 		( getMimeType( item ) ?? '' ).startsWith( 'video/' )
 	) {
 		return null;

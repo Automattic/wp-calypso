@@ -3,7 +3,6 @@ import { loadScript } from '@automattic/load-script';
 import { throttle } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -334,7 +333,7 @@ class StatsGeochart extends Component {
 		chartData.addColumn( 'string', 'Location' );
 		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 		chartData.addRows(
-			map( data, ( location ) => {
+			data.map( ( location ) => {
 				return [
 					{
 						v: location.countryCode,
@@ -407,7 +406,7 @@ class StatsGeochart extends Component {
 			options.height = customHeight;
 		}
 
-		const regions = [ ...new Set( map( data, 'region' ) ) ];
+		const regions = [ ...new Set( data.map( ( location ) => location?.region ) ) ];
 
 		if ( 1 === regions.length ) {
 			options.region = regions[ 0 ];

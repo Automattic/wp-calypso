@@ -402,6 +402,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 		FollowFediverseActorVars,
 		FollowFediverseMutationContext
 	>( {
+		meta: { statId: 'fediverse-actor-follow' },
 		mutationFn: ( vars ) =>
 			createFediverseFollow( { connectionId: vars.connectionId, actor: vars.actor } ),
 		onMutate: async ( vars ) => {
@@ -481,6 +482,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 		FollowFediverseActorVars,
 		FollowFediverseMutationContext
 	>( {
+		meta: { statId: 'fediverse-actor-unfollow' },
 		mutationFn: ( vars ) =>
 			deleteFediverseFollow( { connectionId: vars.connectionId, actor: vars.actor } ),
 		onMutate: async ( vars ) => {
@@ -568,6 +570,7 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
 		FediverseCreatePostParams,
 		CreateFediversePostContext
 	>( {
+		meta: { statId: 'fediverse-post-create' },
 		mutationFn: createFediversePost,
 		onMutate: async ( vars ) => {
 			const timelineKey = readerFediverseKeys.timeline( vars.connectionId );

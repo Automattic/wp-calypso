@@ -6,7 +6,7 @@ import {
 	isWpComEcommercePlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getRawByPurchaseId } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan, getSitePlan } from 'calypso/state/sites/plans/selectors';
@@ -32,7 +32,7 @@ export default function canUpgradeToPlan(
 			? PLAN_JETPACK_FREE
 			: PLAN_FREE;
 	const plan = getCurrentPlan( state, siteId ) as SitePlanData | null;
-	const purchase = plan?.id ? getByPurchaseId( state, plan.id ) : null;
+	const purchase = plan?.id ? getRawByPurchaseId( state, plan.id ) : null;
 
 	// An expired (but still active) plan is treated as the free plan for upgrade
 	// purposes. `expired` comes from the endpoint's `is_expired` field.
@@ -41,7 +41,7 @@ export default function canUpgradeToPlan(
 	// Exception for upgrading Atomic v1 sites to eCommerce
 	const isAtomicV1 =
 		isSiteAutomatedTransfer( state, siteId ) && ! isSiteWpcomAtomic( state, siteId );
-	if ( ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) || purchase?.isLocked ) {
+	if ( ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) || purchase?.is_locked ) {
 		return false;
 	}
 

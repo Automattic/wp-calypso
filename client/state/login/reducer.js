@@ -1,6 +1,6 @@
-import { pick } from '@automattic/js-utils';
+import { removeLocaleFromPath } from '@automattic/i18n-utils';
+import { pick, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { get, isEmpty } from 'lodash';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
@@ -95,7 +95,7 @@ export const redirectTo = combineReducers( {
 				return null;
 			case LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_LOGIN_REQUEST:
 				return null;
@@ -103,14 +103,14 @@ export const redirectTo = combineReducers( {
 				return null;
 			case SOCIAL_LOGIN_REQUEST_SUCCESS: {
 				const { data } = action;
-				return get( data, 'redirect_to', null );
+				return data?.redirect_to ?? null;
 			}
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE:
 				return null;
 			case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
-				return get( action, 'redirect_to', null );
+				return action?.redirect_to ?? null;
 		}
 
 		return state;
@@ -322,6 +322,22 @@ export const twoFactorAuth = ( state = null, action ) => {
 	return state;
 };
 
+export const consumedBlackboxSessionId = ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_REQUEST_SUCCESS:
+			return action.blackboxSessionId ?? null;
+		case LOGIN_REQUEST:
+		case LOGIN_REQUEST_FAILURE:
+		case SOCIAL_LOGIN_REQUEST:
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+		case SOCIAL_LOGIN_REQUEST_SUCCESS:
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
+			return null;
+	}
+
+	return state;
+};
+
 export const twoFactorAuthRequestError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
@@ -384,8 +400,21 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 	return state;
 };
 
+// Both end in a full page load, so a pending social link cannot survive them.
+const socialAccountLinkAbandonPaths = [
+	login( { twoFactorAuthType: 'link' } ),
+	login( { twoFactorAuthType: 'link', isJetpack: true } ),
+	login( { action: 'lostpassword' } ),
+	login( { action: 'jetpack/lostpassword' } ),
+];
+
+const isAbandoningSocialAccountLinkPath = ( path ) =>
+	socialAccountLinkAbandonPaths.includes( removeLocaleFromPath( path ) );
+
 export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
+		case ROUTE_SET:
+			return isAbandoningSocialAccountLinkPath( action.path ) ? { isLinking: false } : state;
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
 		case SOCIAL_HANDOFF_CONNECT_ACCOUNT:
@@ -439,6 +468,7 @@ export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 
 const combinedReducer = combineReducers( {
 	authAccountType,
+	consumedBlackboxSessionId,
 	isFormDisabled,
 	isRequesting,
 	lastCheckedUsernameOrEmail,

@@ -1,5 +1,4 @@
 import isShallowEqual from '@wordpress/is-shallow-equal';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import { DEFAULT_HEARTBEAT } from './constants';
 
 class QuerySiteStats extends Component {
 	componentDidMount() {
-		this.deferredTimer = defer( () => this.request() );
+		this.deferredTimer = setTimeout( () => this.request(), 0 );
 	}
 
 	componentDidUpdate( prevProps ) {

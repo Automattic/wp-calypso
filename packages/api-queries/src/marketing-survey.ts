@@ -5,12 +5,14 @@ import { queryClient } from './query-client';
 
 export const marketingSurveyMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'marketing-survey-submit' },
 		mutationFn: submitMarketingSurvey,
 	} );
 
 export const cancelPurchaseSurveyCompletedMutation = ( purchaseId: string | number ) => {
 	const preferenceName = `cancel-purchase-survey-completed-${ purchaseId }`;
 	return mutationOptions( {
+		meta: { statId: 'purch-cancel-survey-complete' },
 		mutationFn: () =>
 			updatePreferences( {
 				[ preferenceName ]: 'true',

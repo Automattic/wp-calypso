@@ -43,7 +43,7 @@ export default function usePurchasedStorageAddOn(): AddOns.AddOnMeta | null {
 
 		// storage add-on is a tiered product, so we can assume it contains only one product entry here.
 		const purchasedAddOnSlug = quantityToAddOnSlug(
-			Object.values( spaceUpgradesPurchased )[ 0 ].purchaseRenewalQuantity
+			Object.values( spaceUpgradesPurchased )[ 0 ].renewal_price_tier_usage_quantity
 		);
 		const purchasedAddOn = storageAddOns
 			.filter( ( addOn ): addOn is AddOns.AddOnMeta => addOn !== null ) // TODO: fix the related hooks so this won't be needed

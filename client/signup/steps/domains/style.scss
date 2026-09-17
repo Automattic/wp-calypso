@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .domain-search--step-wrapper {
@@ -31,5 +32,39 @@
 
 	.step-wrapper__navigation-link {
 		color: #1d2327;
+	}
+}
+
+// The shared @automattic/domain-search overlay is built for the Stepper's fixed
+// top bar; the signup StepWrapper has none, so its fixed positioning covered the
+// hero and left a gap. Make it sticky so it flows below the signup header/hero.
+@media ( max-width: #{ $break-small - 1px } ) {
+	.step-wrapper--domain-search {
+		.domain-search--results__sticky-overlay {
+			position: sticky;
+			// Break out of the StepWrapper's horizontal padding to reach the edges.
+			margin-inline: calc( 50% - 50vw );
+		}
+
+		.domain-search--results {
+			padding-block-start: 0;
+		}
+	}
+
+	// Drop the hero once results show (as the Stepper does); the logo and the
+	// "Use a domain I own" action are separate elements and stay, nudged up.
+	.step-wrapper--domain-search:has( .domain-search--results ) {
+		.step-wrapper__header {
+			display: none;
+		}
+
+		.step-wrapper__navigation.action-buttons.no-sticky {
+			inset-block-start: 6px;
+		}
+	}
+
+	// Logo lives in SignupHeader (outside the step), so scope it via the flow.
+	.signup:has( .step-wrapper--domain-search .domain-search--results ) .signup-header {
+		margin-block-start: -8px;
 	}
 }

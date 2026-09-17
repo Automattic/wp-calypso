@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation } from '@automattic/components';
@@ -11,13 +10,11 @@ import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/u
 import { getOdieIdFromInteraction } from '@automattic/odie-client/src/utils';
 import { Button, TextControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { getQueryArgs } from '@wordpress/url';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 /**
  * Internal Dependencies
@@ -28,9 +25,10 @@ import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
+import { useRedirectToArticle } from '../hooks/use-redirect-to-article';
 import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
-import { SearchResult } from '../types';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
@@ -89,16 +87,6 @@ export const HelpCenterContactForm = () => {
 		useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		const supportVariation = 'SUPPORT_TICKET';
-		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
-			support_variation: supportVariation,
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
-	}, [ sectionName ] );
-
-	useEffect( () => {
 		if ( userWithNoSites ) {
 			setIsSelfDeclaredSite( true );
 		}
@@ -145,6 +133,17 @@ export const HelpCenterContactForm = () => {
 	} else {
 		supportSite = site as HelpCenterSite;
 	}
+	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: supportSite?.ID } );
+
+	useEffect( () => {
+		const supportVariation = 'SUPPORT_TICKET';
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+	}, [ recordTracksEvent, sectionName ] );
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
@@ -158,40 +157,10 @@ export const HelpCenterContactForm = () => {
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const simplifiedForm = params.get( 'simplified-form' ) === 'true';
 
-	const redirectToArticle = useCallback(
-		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
-			event.preventDefault();
-
-			// if result.post_id isn't set then open in a new window
-			if ( ! result.post_id ) {
-				const tracksData = {
-					search_query: debouncedMessage,
-					force_site_id: true,
-					location: 'help-center',
-					result_url: result.link,
-					post_id: result.post_id,
-					blog_id: result.blog_id,
-				};
-				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
-				window.open( result.link, '_blank' );
-				return;
-			}
-
-			const params = new URLSearchParams( {
-				link: result.link,
-				postId: String( result.post_id ),
-				query: debouncedMessage || '',
-				title: preventWidows( decodeEntities( result.title ) ),
-			} );
-
-			if ( result.blog_id ) {
-				params.set( 'blogId', String( result.blog_id ) );
-			}
-
-			navigate( `/post/?${ params }` );
-		},
-		[ debouncedMessage, navigate ]
-	);
+	const redirectToArticle = useRedirectToArticle( {
+		searchQuery: debouncedMessage || '',
+		explicitSiteId: supportSite?.ID,
+	} );
 
 	// this indicates the user was happy with the GPT response
 	function handleGPTClose() {

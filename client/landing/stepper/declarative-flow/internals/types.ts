@@ -270,7 +270,8 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	 */
 	useStepsProps?(): MapStepsToTheirAcceptedProps<
 		ExtractSteps< ReturnType< FlowStepsInitialize > >
-	>;
+	> &
+		MapStepsToTheirAcceptedProps< [ typeof PRIVATE_STEPS.USER ] >;
 
 	name: string;
 	/**

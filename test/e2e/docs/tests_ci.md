@@ -1,11 +1,11 @@
-[<-- Running tests on your machine](./tests_local.md) | [Top](./../README.md) | [Writing Tests -->](./writing_tests.md)
+[← Documentation index](./overview.md)
 
 # Running tests on CI
 
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-  - [Feature/Test groups](#featuretest-groups)
+  - [Feature/Test tags](#featuretest-tags)
   - [Feature branch](#feature-branch)
   - [Trunk](#trunk)
   - [Scheduled build configurations](#scheduled-build-configurations)
@@ -16,25 +16,31 @@
 
 > :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR prior to merge.
 
-## Feature/Test groups
+## Feature/Test tags
 
-Each test file (referred to as `spec`) is assigned at least one group.
-This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
+Each test file (referred to as `spec`) is assigned at least one tag, declared on the
+`test.describe` block and taken from the `tags` object in [`lib/pw-base.ts`](../lib/pw-base.ts).
+Build configurations select the specs they run by passing that tag to Playwright's `--grep`.
+**Failure to add a tag will result in the spec not running as part of CI.**
 
-The following groups are available as of this time:
+The following tags are used by a build configuration as of this time:
 
-| Group                       | Remarks                                                                                                                           |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `calypso-pr`                | Run for every commit to any feature branch in this repository.                                                                    |
-| `calypso-release`           | Run for every PR merged into `trunk` in this repository.                                                                          |
-| `gutenberg`                 | Editor-focused specs run on regular cadence.                                                                                      |
-| `coblocks`                  | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/).                                          |
-| `i18n`                      | Specs verifying internationalized strings.                                                                                        |
-| `p2`                        | Specs for the internal P2 system.                                                                                                 |
-| `quarantined`               | Specs that need additional work.                                                                                                  |
-| `legal`                     | Specs for the marketing and legal team.                                                                                           |
-| `jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                                                                                  |
-| `jetpack-remote-site`       | Specs for testing a remote, connected site through Calypso. ENV var `JETPACK_TARGET` should be set to `remote-site` for this run. |
+| Tag                          | Remarks                                                             |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `@calypso-pr`                | Run for every commit to any feature branch in this repository.      |
+| `@calypso-release`           | Run for every PR merged into `trunk` in this repository.            |
+| `@dashboard-pr`              | Dashboard-focused specs run for every commit to any feature branch. |
+| `@a8c-for-agencies`          | Specs for the A8C for Agencies client.                              |
+| `@authentication`            | Login, 2FA and security key specs.                                  |
+| `@gutenberg`                 | Editor-focused specs run on regular cadence.                        |
+| `@i18n`                      | Specs verifying internationalized strings.                          |
+| `@p2`                        | Specs for the internal P2 system.                                   |
+| `@legal`                     | Specs for the marketing and legal team.                             |
+| `@jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                    |
+
+The remaining tags in `lib/pw-base.ts` group specs without selecting a build of their own.
+That includes `@jetpack-remote-site`: no build greps it, so a spec carrying only that
+tag never runs on CI.
 
 ## Feature branch
 
@@ -66,5 +72,4 @@ In addition to build configurations that are automatically triggered based on br
 | ----------------------------------- | ------------------ |
 | WPCOM/Gutenberg E2E Tests (mobile)  | once a day         |
 | WPCOM/Gutenberg E2E Tests (desktop) | once a day         |
-| Quarantined E2E                     | once a day         |
 | Authentication E2E                  | once every 6 hours |

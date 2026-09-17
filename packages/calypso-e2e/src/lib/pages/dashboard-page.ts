@@ -37,6 +37,18 @@ export class DashboardPage {
 	async visit(): Promise< void > {
 		await this.page.goto( getDashboardURL() );
 
+		await this.dismissWelcomeModal();
+
+		// Wait for the main content to be visible
+		await this.page.getByRole( 'main' ).waitFor();
+	}
+
+	/**
+	 * Dismisses the welcome modal if it appears, because it hides the "main" content.
+	 *
+	 * @returns Promise that resolves once the modal is gone or was never shown.
+	 */
+	async dismissWelcomeModal(): Promise< void > {
 		try {
 			await this.page
 				.getByRole( 'heading', {
@@ -51,9 +63,6 @@ export class DashboardPage {
 		} catch {
 			// Modal didn't appear, continue
 		}
-
-		// Wait for the main content to be visible
-		await this.page.getByRole( 'main' ).waitFor();
 	}
 
 	/**

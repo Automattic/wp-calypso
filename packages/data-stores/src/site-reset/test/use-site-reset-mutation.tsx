@@ -4,8 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/dom';
 import { renderHook } from '@testing-library/react';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import wpcomRequest from '../../wpcom-request';
 import { useSiteResetMutation } from '../use-site-reset-mutation';
 

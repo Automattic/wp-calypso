@@ -1,5 +1,4 @@
 import { omit } from '@automattic/js-utils';
-import { forEach } from 'lodash';
 import { PureComponent } from 'react';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
@@ -66,22 +65,24 @@ class SectionNavigation extends PureComponent {
 	render() {
 		const demoSections = {};
 
-		forEach( omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ), ( prop, key ) => {
-			demoSections[ key ] = [];
+		Object.entries( omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ) ).forEach(
+			( [ key, prop ] ) => {
+				demoSections[ key ] = [];
 
-			prop.forEach( ( item, index ) => {
-				demoSections[ key ].push(
-					<NavItem
-						key={ key + '-' + index }
-						count={ item.count }
-						selected={ this.state[ key + 'SelectedIndex' ] === index }
-						onClick={ this.handleNavItemClick( key, index ) }
-					>
-						{ 'object' === typeof item ? item.name : item }
-					</NavItem>
-				);
-			} );
-		} );
+				prop.forEach( ( item, index ) => {
+					demoSections[ key ].push(
+						<NavItem
+							key={ key + '-' + index }
+							count={ item.count }
+							selected={ this.state[ key + 'SelectedIndex' ] === index }
+							onClick={ this.handleNavItemClick( key, index ) }
+						>
+							{ 'object' === typeof item ? item.name : item }
+						</NavItem>
+					);
+				} );
+			}
+		);
 
 		return (
 			<div>

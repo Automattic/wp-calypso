@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import blazeFire from 'calypso/assets/images/blaze/blaze-fire.svg';
 import getStarted from 'calypso/assets/images/blaze/get-started.webp';
-import wooGraphic from 'calypso/assets/images/blaze/more-followers.jpg';
+import wooGraphic from 'calypso/assets/images/blaze/more-followers.webp';
 import ConnectIcon from './connect-icon';
 import FaqAccordion from './faq-accordion';
 
@@ -23,8 +23,12 @@ export default function DisconnectedSite() {
 					<div className="blaze-disconnected-site__hero-body">
 						<h1 className="blaze-disconnected-site__title">
 							{ isWooStore
-								? translate( 'Create ads from your products in a snap with Blaze' )
-								: translate( 'Create ads from your content in a snap with Blaze' ) }
+								? translate( 'Create ads from your products in a snap with %(productName)s', {
+										args: { productName: 'Blaze Ads' },
+								  } )
+								: translate( 'Create ads from your content in a snap with %(productName)s', {
+										args: { productName: 'Blaze Ads' },
+								  } ) }
 							<span className="blaze-title-logo" aria-hidden="true">
 								<img
 									className="blaze-title-logo__icon"
@@ -81,10 +85,12 @@ export default function DisconnectedSite() {
 					<p className="blaze-disconnected-site__features-description">
 						{ isWooStore
 							? translate(
-									'Blaze is built for merchants who have a business to run and no time for endless settings. You can start driving traffic in just a few minutes.'
+									'%(productName)s is built for merchants who have a business to run and no time for endless settings. You can start driving traffic in just a few minutes.',
+									{ args: { productName: 'Blaze Ads' } }
 							  )
 							: translate(
-									'Blaze is built for creators who have stories to tell but no time for complex ad platforms. You can launch a campaign in just a few minutes.'
+									'%(productName)s is built for creators who have stories to tell but no time for complex ad platforms. You can launch a campaign in just a few minutes.',
+									{ args: { productName: 'Blaze Ads' } }
 							  ) }
 					</p>
 					<p className="blaze-disconnected-site__features-description">
@@ -168,9 +174,14 @@ export default function DisconnectedSite() {
 					{ translate( 'Frequently asked questions' ) }
 				</h2>
 				<FaqAccordion
-					question={ translate( 'How does Blaze differ from organic traffic growth?' ) }
+					question={ translate( 'How does %(productName)s differ from organic traffic growth?', {
+						args: { productName: 'Blaze Ads' },
+					} ) }
 					answer={ translate(
-						'Organic growth is essential but often slow. Blaze amplifies your reach immediately. Instead of waiting for users to find you via search, it proactively places your content or products in the feeds of users who are already reading about related topics. It is designed to supplement your SEO efforts with immediate visibility.'
+						'Organic growth is essential but often slow. %(productName)s amplifies your reach immediately. Instead of waiting for users to find you via search, it proactively places your content or products in the feeds of users who are already reading about related topics. It is designed to supplement your SEO efforts with immediate visibility.',
+						{
+							args: { productName: 'Blaze Ads' },
+						}
 					) }
 				/>
 				<FaqAccordion
@@ -192,7 +203,10 @@ export default function DisconnectedSite() {
 					<FaqAccordion
 						question={ translate( 'How does this integrate with WooCommerce?' ) }
 						answer={ translate(
-							'Blaze is fully compatible with WooCommerce. You\'ll see all of your inventory, allowing you to select specific products to promote. You can target audiences based on interests (e.g., "Fashion," "Tech," "DIY"), sending high-intent traffic directly to your product.'
+							'%(productName)s is fully compatible with WooCommerce. You\'ll see all of your inventory, allowing you to select specific products to promote. You can target audiences based on interests (e.g., "Fashion," "Tech," "DIY"), sending high-intent traffic directly to your product.',
+							{
+								args: { productName: 'Blaze Ads' },
+							}
 						) }
 					/>
 				) }

@@ -9,12 +9,12 @@ export interface IconListItemProps {
 	/**
 	 * The main label that identifies the item.
 	 */
-	title: string;
+	title: React.ReactNode;
 	/**
 	 * Optional supporting text that provides additional context or
 	 * detail about the item.
 	 */
-	description?: string;
+	description?: React.ReactNode;
 	/**
 	 * An optional visual element such as an icon or small illustration
 	 * to enhance recognition or provide visual interest.
@@ -45,6 +45,12 @@ export interface IconListItemProps {
 	 * @default 'inline'
 	 */
 	layout?: ItemLayout;
+
+	/**
+	 * Vertical alignment of an inline suffix relative to the content.
+	 * @default 'center'
+	 */
+	suffixAlignment?: 'center' | 'top';
 }
 
 export interface IconListProps {

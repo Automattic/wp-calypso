@@ -323,7 +323,7 @@ function getValidationErrorsFromStripeError(
  *
  * Its parameter is the value returned by useStripeConfiguration
  * @param {Object} stripeConfiguration An object containing { public_key, js_url }
- * @param {Error|undefined} [stripeConfigurationError] Any error that occured trying to load the configuration
+ * @param {Error|undefined} [stripeConfigurationError] Any error that occurred trying to load the configuration
  * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {UseStripeJs} The Stripe data
  */
@@ -717,7 +717,7 @@ function useMemoCompare< A, B >(
 	compare: ( previous: A | B | undefined, next: B ) => boolean
 ): A | B | undefined {
 	// Ref for storing previous value
-	const previousRef = useRef< undefined | A | B >();
+	const previousRef = useRef< undefined | A | B >( undefined );
 	const previous = previousRef.current;
 
 	// Pass previous and next value to compare function

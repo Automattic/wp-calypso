@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
+import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import { UploadingPane as UploadingPaneBase } from 'calypso/my-sites/importer/uploading-pane';

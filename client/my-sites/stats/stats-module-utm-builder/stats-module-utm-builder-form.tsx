@@ -1,11 +1,11 @@
 import { FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import StatsButton from '../components/stats-button';
 
 import './style.scss';
 
@@ -226,14 +226,14 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 				<div className="stats-utm-builder__url">{ utmString }</div>
 			</div>
 			<div className="stats-utm-builder__copy-area">
-				<StatsButton
+				<Button
 					className="stats-utm-builder__copy-button"
-					primary
+					variant="primary"
 					onClick={ handleCopy }
 					disabled={ ! url }
 				>
 					{ translate( 'Copy to clipboard' ) }
-				</StatsButton>
+				</Button>
 				<CopyConfirmation show={ showConfirmation } fadeOut={ fadeOut } />
 			</div>
 		</>

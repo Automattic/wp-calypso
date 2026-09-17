@@ -1,5 +1,6 @@
 import {
 	getSiteSubscriptionsQueryKey,
+	readFeedQueryKey,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -157,27 +158,27 @@ const useSiteSubscribeMutation = () => {
 
 			params.onError?.( _error );
 		},
-		onSettled: ( _data, _error, params: SubscribeParams ) => {
+		onSettled: ( data, _error, params: SubscribeParams ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
 				queryClient.invalidateQueries( { queryKey: siteSubscriptionsCacheKey } );
 			}
 
-			if ( isValidId( params.blog_id ) ) {
+			const blogId = params.blog_id ?? data?.subscription?.blog_ID;
+			if ( isValidId( blogId ) ) {
 				const siteSubscriptionDetailsCacheKey = buildSubscriptionDetailsByBlogIdQueryKey(
-					String( params.blog_id ),
+					String( blogId ),
 					isLoggedIn,
 					userId
 				);
 				queryClient.invalidateQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 				queryClient.invalidateQueries( {
-					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
+					queryKey: [ 'read', 'sites', Number( blogId ) ],
 				} );
 			}
 
 			if ( isValidId( params.feed_id ) ) {
-				const feedCacheKey = [ 'read', 'feeds', Number( params.feed_id ) ];
 				queryClient.invalidateQueries( {
-					queryKey: feedCacheKey,
+					queryKey: readFeedQueryKey( params.feed_id ),
 				} );
 			}
 

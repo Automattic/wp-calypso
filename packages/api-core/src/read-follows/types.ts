@@ -130,3 +130,11 @@ export interface FollowDeliveryResponse {
 	subscribed?: boolean;
 	success?: boolean;
 }
+
+export interface FlushOnboardingWelcomeDigestResponse {
+	success: boolean;
+	sent: boolean;
+	blog_count: number;
+	/** True when another server-side flush is already sending the digest. */
+	in_progress?: boolean;
+}

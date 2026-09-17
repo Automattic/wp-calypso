@@ -1,6 +1,7 @@
 import nock from 'nock';
 import {
 	followSite,
+	flushOnboardingWelcomeDigest,
 	unfollowSite,
 	updateSiteCommentEmailSubscription,
 	updateSitePostEmailDeliveryFrequency,
@@ -343,6 +344,62 @@ describe( 'read follows mutators', () => {
 				'sendPosts must be a boolean'
 			);
 			expect( nock.pendingMocks() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'flushOnboardingWelcomeDigest', () => {
+		it( 'flushes the onboarding welcome digest with REST v1.2', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} )
+				.reply( 200, {
+					success: true,
+					sent: true,
+					blog_count: 3,
+					in_progress: false,
+				} );
+
+			const response = await flushOnboardingWelcomeDigest();
+
+			expect( scope.isDone() ).toBe( true );
+			expect( response ).toEqual( {
+				success: true,
+				sent: true,
+				blog_count: 3,
+				in_progress: false,
+			} );
+		} );
+
+		it( 'accepts a delegated flush when another request is already in progress', async () => {
+			const scope = nock( BASE )
+				.post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} )
+				.reply( 200, {
+					success: true,
+					sent: false,
+					blog_count: 0,
+					in_progress: true,
+				} );
+
+			const response = await flushOnboardingWelcomeDigest();
+
+			expect( scope.isDone() ).toBe( true );
+			expect( response ).toEqual( {
+				success: true,
+				sent: false,
+				blog_count: 0,
+				in_progress: true,
+			} );
+		} );
+
+		it( 'throws when the response does not confirm success', async () => {
+			nock( BASE ).post( '/rest/v1.2/read/onboarding/welcome-digest/flush', {} ).reply( 200, {
+				success: false,
+				sent: false,
+				blog_count: 0,
+			} );
+
+			await expect( flushOnboardingWelcomeDigest() ).rejects.toThrow(
+				'Onboarding welcome digest flush failed'
+			);
 		} );
 	} );
 } );

@@ -30,7 +30,10 @@
 	padding-block-start: $grid-unit-30;
 }
 
+// Aligns the first menu item with the content area below the page title:
+// 24px top + logo button + 24px flex gap + 2px menu focus-ring padding,
+// matching the content column's rhythm defined on .dashboard-page-layout
+// (block padding + page header row + header-to-content gap, 88px total).
 .dashboard-responsive-sidebar__logo {
-	padding: $grid-unit-20 $grid-unit-30;
-	border-block-end: 1px solid var( --dashboard-header__border-color );
+	padding: $grid-unit-30 $grid-unit-30 0;
 }

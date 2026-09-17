@@ -13,29 +13,13 @@
 // .has-header-section only applies for logged out views
 .layout.has-header-section {
 	.search-stream__fixed-area {
-		position: static;
+		position: relative;
 		padding-top: 0;
 		margin-top: 0;
 	}
 
-	.is-section-reader {
-		.search-stream__fixed-area .navigation-header h1 {
-			@extend .wp-brand-font;
-			font-weight: 600;
-			font-size: 2.25rem;
-			line-height: 48px;
-			margin-bottom: 4px;
-		}
-
-		.layout__content {
-			background: var(--studio-white);
-		}
-	}
-}
-
-.search-stream__intro {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-left: 16px;
+	.is-section-reader .layout__content {
+		background: var(--studio-white);
 	}
 }
 
@@ -96,16 +80,6 @@
 	}
 }
 
-.search-stream__fixed-area .section-nav-tabs.is-dropdown {
-	margin: 0;
-}
-
-.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
-	@media only screen and (max-width: 660px) {
-		display: none;
-	}
-}
-
 .search-stream .search-stream__input-card.card {
 	margin-inline: 16px;
 	border-radius: 4px;
@@ -122,10 +96,10 @@
 }
 
 .reader-blank-suggestions {
-	padding: 0 16px;
+	padding: 0 16px 36px;
 
 	@include break-small {
-		padding: 0;
+		padding: 0 0 36px;
 	}
 }
 
@@ -135,7 +109,6 @@
 	z-index: z-index("root", ".search-stream__input-card");
 }
 
-// Top margin for site results
 .main.search-stream {
 	@include breakpoint-deprecated( "<660px" ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
@@ -143,35 +116,20 @@
 	padding: 0;
 }
 
-// Post recommendations in Search
-.is-reader-page .search-stream .reader__content {
-	display: flex;
-	flex-flow: row wrap;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-flow: column wrap;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		flex-flow: row wrap;
-		padding-top: 30px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		flex-flow: column wrap;
-	}
+// The sticky fixed area sits flush against the first card and would otherwise
+// paint over the 1px box-shadow that draws the card's top border.
+.search-stream__post-results {
+	padding-top: 1px;
 }
 
-.is-reader-page
-	.search-stream.search-stream__with-sites
-	.search-stream__results.is-two-columns
-	.reader__content,
-.is-reader-page
-	.search-stream.search-stream__with-sites
-	.search-stream__single-column-results.is-post-results
-	.reader__content {
-	flex-flow: inherit;
-	flex-direction: column; // So post results are stacked
+// Post results and recommendations in Search
+.is-reader-page .search-stream .reader__content {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding-top: 30px;
+	}
 }
 
 .is-reader-page .search-stream__recommendation-list-item {
@@ -246,7 +204,7 @@
 	position: absolute;
 	z-index: z-index("root", ".search-stream__sort-picker");
 	right: 16px;
-	top: 100px;
+	top: 30px;
 	width: 170px;
 
 	@include break-small {
@@ -254,7 +212,6 @@
 	}
 
 	&.is-wide {
-		top: 30px;
 		right: 45px;
 	}
 
@@ -267,223 +224,15 @@
 
 div.is-section-reader:not(.is-logged-in) {
 	.search-stream__sort-picker {
-		top: 64px;
+		top: 6px;
 		right: 85px;
 
 		@include break-small {
-			top: 76px;
 			right: 70px;
 		}
 	}
 }
 
-// Posts and Sites results
-.search-stream .search-stream__results.is-two-columns {
-	display: flex;
-}
-
-// Post and Sites static headers
-.search-stream__headers {
-	color: var(--color-text-subtle);
-	display: flex;
-	font-size: $font-body-small;
-	font-weight: 600;
-	list-style-type: none;
-	margin: 17px 0 0;
-	text-transform: uppercase;
-}
-
-.search-stream__post-header,
-.search-stream__site-header {
-	border-bottom: 1px solid var(--color-neutral-10);
-	padding-bottom: 15px;
-}
-
-.search-stream__headers-logged-out .search-stream__post-header,
-.search-stream__headers-logged-out .search-stream__site-header {
-	border-bottom: none;
-}
-
-.search-stream .search-stream__post-header,
-.search-stream .search-stream__site-header {
-	flex: 1 1 auto;
-}
-
-.search-stream .search-stream__post-header {
-	margin-right: 40px;
-}
-
-.search-stream .search-stream__site-header {
-	max-width: 265px;
-}
-
-// Posts and Sites tabbed headers
-.search-stream__header .section-nav-tabs__dropdown,
-.search-stream__header .section-nav__mobile-header {
-	display: none;
-}
-
-.search-stream__header .section-nav {
-	background: inherit;
-	border-bottom: 1px solid var(--color-neutral-10);
-	box-shadow: none;
-	height: 53px;
-	margin-bottom: 0;
-	padding-bottom: 0;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		height: 58px;
-	}
-}
-
-.search-stream__header .section-nav-group {
-	display: flex;
-	flex: 1 0 0%;
-	margin-top: 5px;
-	width: 0;
-}
-
-.search-stream__header .section-nav-tabs__list {
-	display: flex;
-
-	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var(--color-neutral-70);
-	}
-
-	.is-selected .section-nav-tab__link {
-		color: var(--color-neutral-70);
-	}
-
-	.section-nav-tab__link {
-		background-color: transparent;
-		color: var(--color-link);
-		padding: 16px;
-
-		&:hover {
-			color: var(--color-link);
-		}
-	}
-
-	.section-nav-tab__text {
-		font-weight: 600;
-		font-size: $font-body-small;
-		text-transform: uppercase;
-		width: 100%;
-	}
-}
-
-// Site results
-.search-stream .search-stream__site-results {
-	max-width: 265px;
-	min-width: 265px;
-	margin-left: 42px;
-
-	.reader-infinite-stream__row-wrapper {
-		border: 0;
-	}
-}
-
-// Site results and Popular sites
-.search-stream .search-stream__site-results,
-.search-stream .is-two-columns .reader-tag-sidebar-recommended-sites {
-	.reader-subscription-list-item .follow-button__label {
-		display: none;
-	}
-
-	.reader-site-notification-settings__button-label {
-		display: none;
-	}
-}
-
-// For popular sites list on single column view.
-.search-stream .following:not(.is-two-columns) .reader-subscription-list-item {
-	border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.search-stream__results.is-two-columns .reader-subscription-list-item__byline,
-.search-stream .is-two-columns .reader-subscription-list-item__byline {
-	min-width: 185px;
-	max-width: 185px;
-}
-
-.search-stream__single-column-results .reader-infinite-stream__row-wrapper {
-	margin-top: 20px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 20px 16px 0;
-		width: calc(100% - 32px) !important;
-	}
-}
-
-.search-stream__single-column-results .reader-subscription-list-item__options {
-	align-items: flex-end;
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
-	max-width: 25px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		align-items: flex-start;
-		min-width: 90px;
-	}
-}
-
-// Custom styling for cards in post results
-.search-stream__results.is-two-columns {
-	display: flex;
-}
-
 .is-reader-page .search-stream .reader-post-card.card {
 	flex-basis: 100%; // Override the 50% flex-basis for post recommendations
-}
-
-.search-stream__results.is-two-columns .search-stream__post-results {
-	max-width: 685px;
-	width: calc(100% - 305px);
-
-	.reader-post-card__post {
-		@include breakpoint-deprecated( "<960px" ) {
-			flex-direction: column;
-		}
-	}
-
-	.reader-post-card.card.has-thumbnail .reader-featured-image {
-		@include breakpoint-deprecated( "<960px" ) {
-			height: 80px;
-			margin: 0 0 20px;
-			max-width: 100%;
-		}
-	}
-
-	.reader-post-card.is-photo .reader-post-card__title {
-		white-space: normal;
-	}
-
-	.reader-share__button-label,
-	.comment-button__label-status,
-	.like-button__label-status {
-		@include hide-content-accessibly();
-	}
-}
-
-.search-stream__results.is-two-columns .search-stream__site-results {
-	.gridicons-cog {
-		top: 8px;
-	}
-}
-
-.card.reader-search-card.is-photo {
-	@include breakpoint-deprecated( "<660px" ) {
-		z-index: z-index("root", ".reader-search-card");
-	}
-}
-
-.search-stream__site-results-none {
-	color: var(--color-neutral-50);
-	margin-top: 1em;
-	text-align: center;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-top: 2em;
-	}
 }

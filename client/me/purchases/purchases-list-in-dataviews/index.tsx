@@ -1,15 +1,15 @@
+import { userPurchasesQuery, userTransferredPurchasesQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -19,11 +19,7 @@ import Notice from 'calypso/components/notice';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import {
-	type GetManagePurchaseUrlFor,
-	MembershipSubscription,
-	Purchase,
-} from 'calypso/lib/purchases/types';
+import { type GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
@@ -31,13 +27,7 @@ import {
 	WithStoredPaymentMethodsProps,
 	withStoredPaymentMethods,
 } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
-import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-} from 'calypso/state/purchases/selectors';
 import getAvailableConciergeSessions from 'calypso/state/selectors/get-available-concierge-sessions';
 import getConciergeNextAppointment, {
 	NextAppointment,
@@ -49,6 +39,7 @@ import { AppState } from 'calypso/types';
 import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
+import type { Purchase } from '@automattic/api-core';
 import './style.scss';
 
 export interface PurchasesListProps {
@@ -57,16 +48,12 @@ export interface PurchasesListProps {
 }
 
 export interface PurchasesListConnectedProps {
-	hasLoadedUserPurchasesFromServer: boolean;
-	isFetchingUserPurchases: boolean;
-	purchases: Purchase[];
 	subscriptions: MembershipSubscription[];
 	sites: SiteDetails[];
 	nextAppointment: NextAppointment | null;
 	isUserBlocked: boolean;
 	availableSessions: number[];
 	siteId: number | null;
-	userId?: number | null;
 }
 
 function MembershipSubscriptions( {
@@ -84,16 +71,12 @@ function MembershipSubscriptions( {
 const PurchasesListDataView: React.FC<
 	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps
 > = ( {
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
 	getManagePurchaseUrlFor,
-	purchases,
 	subscriptions,
 	sites,
 	nextAppointment,
 	isUserBlocked,
 	availableSessions,
-	userId,
 } ) => {
 	const translate = useTranslate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -122,14 +105,19 @@ const PurchasesListDataView: React.FC<
 	} );
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
 
+	const {
+		data: purchases,
+		isLoading: isFetchingUserPurchases,
+		isSuccess: hasLoadedUserPurchasesFromServer,
+	} = useQuery( userPurchasesQuery() );
+
 	// Dismiss the success notice when the background mutation rolls back —
 	// detected by the captured purchase reappearing in the user's purchase list.
-	// `purchases` is camelCase via getUserPurchases → createPurchasesArray.
 	useEffect( () => {
 		if ( ! removedNoticeData?.purchaseId ) {
 			return;
 		}
-		if ( purchases?.some( ( p ) => String( p.id ) === String( removedNoticeData.purchaseId ) ) ) {
+		if ( purchases?.some( ( p ) => String( p.ID ) === String( removedNoticeData.purchaseId ) ) ) {
 			setShowRemovedNotice( false );
 		}
 	}, [ purchases, removedNoticeData ] );
@@ -138,7 +126,7 @@ const PurchasesListDataView: React.FC<
 		data: transferredOwnershipPurchases = [],
 		isLoading,
 		isSuccess: hasLoadedTransferredOwnershipPurchases,
-	} = useGetJetpackTransferredLicensePurchases( { userId: userId || undefined } );
+	} = useQuery( userTransferredPurchasesQuery() );
 
 	const isDataLoading = useCallback( () => {
 		if (
@@ -168,7 +156,6 @@ const PurchasesListDataView: React.FC<
 
 	return (
 		<Main wideLayout className="purchases-list">
-			<QueryUserPurchases />
 			<QueryMembershipsSubscriptions />
 			<PageViewTracker path="/me/purchases" title="Purchases" />
 
@@ -323,14 +310,10 @@ function PurchasesContent( {
 }
 
 export default connect( ( state: AppState ) => ( {
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-	isFetchingUserPurchases: isFetchingUserPurchases( state ),
-	purchases: getUserPurchases( state ) ?? [],
 	subscriptions: getAllSubscriptions( state ),
 	sites: getSites( state ).filter( isValueTruthy ),
 	nextAppointment: getConciergeNextAppointment( state ),
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state, null ),
-	userId: getCurrentUserId( state ),
 } ) )( withStoredPaymentMethods( PurchasesListDataView, { type: 'card', expired: true } ) );

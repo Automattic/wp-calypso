@@ -82,7 +82,7 @@ export default function ContextCards( { onAction, onDismiss }: Props ) {
 	return (
 		<div
 			className="agents-manager-context-cards"
-			aria-label={ __( 'Chat context', '__i18n_text_domain__' ) }
+			aria-label={ __( 'Chat context', __i18n_text_domain__ ) }
 		>
 			{ rendered.map( ( { card, leaving } ) => (
 				<div
@@ -99,10 +99,10 @@ export default function ContextCards( { onAction, onDismiss }: Props ) {
 								variant="tertiary"
 								size="small"
 								onClick={ () => onDismiss( card ) }
-								aria-label={ __( 'Dismiss context card', '__i18n_text_domain__' ) }
+								aria-label={ __( 'Dismiss context card', __i18n_text_domain__ ) }
 								disabled={ leaving }
 							>
-								{ __( 'Dismiss', '__i18n_text_domain__' ) }
+								{ __( 'Dismiss', __i18n_text_domain__ ) }
 							</Button>
 						) }
 						<div className="agents-manager-context-card__body">{ card.body }</div>

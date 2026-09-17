@@ -2,8 +2,8 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { KeyboardEvent, useState } from 'react';
 import AgencySiteTag from 'calypso/a8c-for-agencies/components/agency-site-tag';
-import useCanTagSitesForCommission from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-can-tag-sites-for-commission';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
 
 import './style.scss';
 

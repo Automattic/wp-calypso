@@ -1,12 +1,11 @@
-import { useEffect } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
 import {
 	getDisplayMessageFromToolData,
 	isDisplayableToolMessageTool,
 } from '../utils/tool-message-utils';
-import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
-
-type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
+import type { UIMessage } from '@automattic/agenttic-client';
+import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
 
 /**
  * Extracts copyable text from a message. For tool messages, only known tools with
@@ -53,33 +52,28 @@ function getCopyableText( message: UIMessage ): string {
 }
 
 /**
- * Registers a copy action on agent messages that copies the text content to the clipboard.
+ * Returns a copy action for agent messages that have copyable text content.
  */
-export default function useCopyAction( registerMessageActions: RegisterMessageActions ): void {
-	useEffect( () => {
-		registerMessageActions( {
-			id: 'agents-manager-copy',
-			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
-					return [];
-				}
+export default function useCopyAction(): ( message: UIMessage ) => MessageAction[] {
+	return useCallback( ( message: UIMessage ) => {
+		if ( message.role !== 'agent' ) {
+			return [];
+		}
 
-				const text = getCopyableText( message );
+		const text = getCopyableText( message );
 
-				if ( ! text ) {
-					return [];
-				}
+		if ( ! text ) {
+			return [];
+		}
 
-				return [
-					{
-						type: 'component',
-						id: 'copy',
-						component: CopyActionButton,
-						componentProps: { text },
-						order: 4,
-					},
-				];
+		return [
+			{
+				type: 'component',
+				id: 'copy',
+				component: CopyActionButton,
+				componentProps: { text },
+				order: 4,
 			},
-		} );
-	}, [ registerMessageActions ] );
+		];
+	}, [] );
 }

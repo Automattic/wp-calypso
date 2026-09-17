@@ -114,7 +114,7 @@
 	// Post was published within the selected period
 	// 1: Move so far out left that only half the icon is showing to reduce footprint
 	.module-content-list-item.published & {
-		box-shadow: inset 4px 0 0 var( --color-primary );
+		box-shadow: inset 4px 0 0 var( --color-accent );
 	}
 }
 
@@ -759,7 +759,7 @@ ul.module-content-list-legend {
 
 	// Change colors to highlight label when row is highlighted
 	.stats-list__module-content-list-item-label {
-		color: var( --color-primary );
+		color: var( --color-accent );
 	}
 
 	// Highlight main action (usually what's indicated in the label)

@@ -1,3 +1,4 @@
+import { getPurchaseIntroductoryOffer } from '@automattic/api-core';
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -6,8 +7,8 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { isWithinIntroductoryOfferPeriod } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import { isWithinIntroductoryOfferPeriod } from '../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 import type { ReactNode, JSX } from 'react';
 
 function PurchaseMetaIntroductoryOfferDetail( {
@@ -16,13 +17,14 @@ function PurchaseMetaIntroductoryOfferDetail( {
 	purchase: Purchase;
 } ): JSX.Element | null {
 	const translate = useTranslate();
+	const introductoryOffer = getPurchaseIntroductoryOffer( purchase );
 
 	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
 		return null;
 	}
 
 	const getPeriod = () => {
-		switch ( purchase.billPeriodDays ) {
+		switch ( purchase.bill_period_days ) {
 			case PLAN_TRIENNIAL_PERIOD:
 				return translate( 'three years' );
 			case PLAN_BIENNIAL_PERIOD:
@@ -35,20 +37,24 @@ function PurchaseMetaIntroductoryOfferDetail( {
 		return null;
 	};
 
-	if ( purchase?.introductoryOffer && purchase.introductoryOffer !== null ) {
+	if ( introductoryOffer ) {
 		const timePeriod = getPeriod();
 
-		if ( ! timePeriod && purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		if ( ! timePeriod && introductoryOffer.isNextRenewalUsingOffer ) {
 			return (
 				<RenewalSubtext
 					text={ translate(
 						'After the offer ends, the subscription price will be %(regularPrice)s',
 						{
 							args: {
-								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ),
+								regularPrice: formatCurrency(
+									purchase.regular_price_integer,
+									purchase.currency_code,
+									{
+										isSmallestUnit: true,
+										stripZeros: true,
+									}
+								),
 							},
 						}
 					) }
@@ -58,8 +64,8 @@ function PurchaseMetaIntroductoryOfferDetail( {
 
 		if (
 			! timePeriod &&
-			! purchase.introductoryOffer.isNextRenewalUsingOffer &&
-			purchase.introductoryOffer.isNextRenewalProrated
+			! introductoryOffer.isNextRenewalUsingOffer &&
+			introductoryOffer.isNextRenewalProrated
 		) {
 			return (
 				<RenewalSubtext
@@ -67,10 +73,14 @@ function PurchaseMetaIntroductoryOfferDetail( {
 						'After the first renewal, the subscription price will be %(regularPrice)s',
 						{
 							args: {
-								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ),
+								regularPrice: formatCurrency(
+									purchase.regular_price_integer,
+									purchase.currency_code,
+									{
+										isSmallestUnit: true,
+										stripZeros: true,
+									}
+								),
 							},
 						}
 					) }
@@ -78,17 +88,21 @@ function PurchaseMetaIntroductoryOfferDetail( {
 			);
 		}
 
-		if ( timePeriod && purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		if ( timePeriod && introductoryOffer.isNextRenewalUsingOffer ) {
 			return (
 				<RenewalSubtext
 					text={ translate(
 						'After the offer ends, the subscription price will be %(regularPrice)s / %(timePeriod)s',
 						{
 							args: {
-								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ),
+								regularPrice: formatCurrency(
+									purchase.regular_price_integer,
+									purchase.currency_code,
+									{
+										isSmallestUnit: true,
+										stripZeros: true,
+									}
+								),
 								timePeriod,
 							},
 						}
@@ -99,8 +113,8 @@ function PurchaseMetaIntroductoryOfferDetail( {
 
 		if (
 			timePeriod &&
-			! purchase.introductoryOffer.isNextRenewalUsingOffer &&
-			purchase.introductoryOffer.isNextRenewalProrated
+			! introductoryOffer.isNextRenewalUsingOffer &&
+			introductoryOffer.isNextRenewalProrated
 		) {
 			return (
 				<RenewalSubtext
@@ -108,10 +122,14 @@ function PurchaseMetaIntroductoryOfferDetail( {
 						'After the first renewal, the subscription price will be %(regularPrice)s / %(timePeriod)s',
 						{
 							args: {
-								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ),
+								regularPrice: formatCurrency(
+									purchase.regular_price_integer,
+									purchase.currency_code,
+									{
+										isSmallestUnit: true,
+										stripZeros: true,
+									}
+								),
 								timePeriod,
 							},
 						}

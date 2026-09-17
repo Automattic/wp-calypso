@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from '../../wpcom-request';
-import { createPurchaseObject } from '../lib/assembler';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
-import type { RawPurchase, Purchase } from '../types';
+import type { RawPurchase } from '../types';
 
 export interface PurchasesIndex {
-	[ purchaseId: number ]: Purchase;
+	[ purchaseId: number ]: RawPurchase;
 }
 
 interface Props {
@@ -25,10 +24,7 @@ export function getUseSitePurchasesOptions(
 			} );
 
 			return Object.fromEntries(
-				purchases.map( ( rawPurchase ) => {
-					const purchase = createPurchaseObject( rawPurchase );
-					return [ purchase.id, purchase ];
-				} )
+				purchases.map( ( rawPurchase ) => [ Number( rawPurchase.ID ), rawPurchase ] )
 			);
 		},
 		enabled: !! siteId,

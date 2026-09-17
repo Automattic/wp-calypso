@@ -76,6 +76,28 @@ const floatingPosition: Reducer< 'left' | 'right', AgentsManagerAction > = (
 	return state;
 };
 
+const freeDragPosition: Reducer< { x: number; y: number } | null, AgentsManagerAction > = (
+	state = null,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_FREE_DRAG_POSITION':
+			return action.freeDragPosition;
+	}
+	return state;
+};
+
+const floatingSize: Reducer< { width: number; height: number } | null, AgentsManagerAction > = (
+	state = null,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_FLOATING_SIZE':
+			return action.floatingSize;
+	}
+	return state;
+};
+
 export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_SPLIT_SCREEN':
@@ -98,6 +120,8 @@ const reducer = combineReducers( {
 	isLoading,
 	hasLoaded,
 	floatingPosition,
+	freeDragPosition,
+	floatingSize,
 	isSplitScreen,
 } );
 

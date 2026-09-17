@@ -306,7 +306,7 @@ describe( 'useMastodonNotificationsInfiniteQuery', () => {
 		await act( async () => {
 			await result.current.fetchNextPage();
 		} );
-		expect( result.current.data?.pages.length ).toBe( 2 );
+		await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
 		expect( result.current.hasNextPage ).toBe( false );
 	} );
 
@@ -538,11 +538,13 @@ describe( 'createMastodonPostMutation', () => {
 			await result.current.mutateAsync( { connectionId, status: 'hello world' } );
 		} );
 
-		expect( result.current.data ).toEqual( {
-			id: '999',
-			url: 'https://mastodon.social/@me/999',
-			in_reply_to_id: null,
-		} );
+		await waitFor( () =>
+			expect( result.current.data ).toEqual( {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} )
+		);
 	} );
 
 	it( 'POSTs status + in_reply_to_id when replying', async () => {
@@ -816,7 +818,7 @@ describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () =>
 				await result.current.mutateAsync( { statusId: TARGET_ID } );
 			} );
 
-			expect( result.current.isSuccess ).toBe( true );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 
 		it( 'optimistically flips viewer.favourited to true and bumps counts.favourites', async () => {
@@ -1006,7 +1008,7 @@ describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () =>
 				await result.current.mutateAsync( { statusId: TARGET_ID } );
 			} );
 
-			expect( result.current.isSuccess ).toBe( true );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 
 		it( 'optimistically flips viewer.favourited to false and decrements counts.favourites', async () => {
@@ -1177,7 +1179,7 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 				await result.current.mutateAsync( { statusId: TARGET_ID } );
 			} );
 
-			expect( result.current.isSuccess ).toBe( true );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 
 		it( 'optimistically flips viewer.reblogged to true and bumps counts.boosts', async () => {
@@ -1367,7 +1369,7 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 				await result.current.mutateAsync( { statusId: TARGET_ID } );
 			} );
 
-			expect( result.current.isSuccess ).toBe( true );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 
 		it( 'optimistically flips viewer.reblogged to false and decrements counts.boosts', async () => {

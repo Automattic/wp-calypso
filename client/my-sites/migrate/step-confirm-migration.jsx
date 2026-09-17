@@ -9,7 +9,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -36,10 +35,10 @@ class StepConfirmMigration extends Component {
 
 	handleClick = () => {
 		const { sourceSite, startMigration, targetSiteSlug, targetSite } = this.props;
-		const sourceSiteId = get( sourceSite, 'ID' );
-		const targetSiteId = get( targetSite, 'ID' );
-		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
-		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+		const sourceSiteId = sourceSite?.ID;
+		const targetSiteId = targetSite?.ID;
+		const sourceSiteSlug = sourceSite?.slug ?? sourceSiteId;
+		const sourceSiteUrl = sourceSite?.URL ?? sourceSiteId;
 
 		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
 
@@ -65,14 +64,14 @@ class StepConfirmMigration extends Component {
 
 	isTargetSitePlanCompatible() {
 		const { targetSite } = this.props;
-		const planSlug = get( targetSite, 'plan.product_slug' );
+		const planSlug = targetSite?.plan?.product_slug;
 
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
 	getFooterText() {
 		const { translate, targetSite } = this.props;
-		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const currentPlanSlug = targetSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const upsellPlanName = isEcommerceTrial
 			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
@@ -110,7 +109,7 @@ class StepConfirmMigration extends Component {
 
 	renderMigrationButton() {
 		const { targetSite, translate } = this.props;
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const targetSiteDomain = targetSite?.domain;
 
 		// TODO: is the following "import everything" behaviour up to date?
 		if ( this.isTargetSitePlanCompatible() ) {
@@ -131,8 +130,8 @@ class StepConfirmMigration extends Component {
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug, translate } = this.props;
 
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const sourceSiteDomain = sourceSite?.domain;
+		const targetSiteDomain = targetSite?.domain;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		return (

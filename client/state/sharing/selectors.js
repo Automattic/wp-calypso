@@ -1,4 +1,3 @@
-import { some } from 'lodash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getKeyringConnectionsByName } from './keyring/selectors';
@@ -23,7 +22,10 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 			serviceName
 		);
 
-		return some( siteUserConnectionsForService, { keyring_connection_ID, external_ID } );
+		return ( siteUserConnectionsForService ?? [] ).some(
+			( item ) =>
+				item.keyring_connection_ID === keyring_connection_ID && item.external_ID === external_ID
+		);
 	};
 
 	const service = getKeyringServiceByName( state, serviceName );

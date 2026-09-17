@@ -12,7 +12,7 @@ import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Flex,
-	TextControl,
+	TextareaControl,
 	__experimentalDivider as Divider,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -20,9 +20,12 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useIntlLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -40,7 +43,12 @@ import {
 	renderJetpackSearch10kTierBreakdown,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 } from './utils';
-import type { Receipt, ReceiptItem, ReceiptItemCostOverride } from '@automattic/api-core';
+import type {
+	Receipt,
+	ReceiptItem,
+	ReceiptItemCostOverride,
+	TaxCustomerInfo,
+} from '@automattic/api-core';
 import './styles.scss';
 
 export interface IntroductoryOfferTerms {
@@ -76,11 +84,13 @@ export default function Receipt() {
 		tax_state: receipt.tax_state || historyReceipt?.tax_state,
 	};
 
+	const locale = useIntlLocale();
+
 	const handlePrint = () => {
 		window.print();
 	};
 
-	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( undefined, {
+	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
@@ -146,10 +156,6 @@ export default function Receipt() {
 }
 
 function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
-	const [ billingDetailsText, setBillingDetailsText ] = useState(
-		receipt.cc_num !== 'XXXX' ? `${ receipt.cc_name }\n${ receipt.cc_email }` : ''
-	);
-
 	const paymentMethodText = getPaymentMethodText( receipt );
 
 	return (
@@ -179,24 +185,7 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 				</VStack>
 			) }
 
-			{ receipt.cc_num !== 'XXXX' && ( receipt.cc_name || receipt.cc_email ) && (
-				<VStack spacing={ 1 } alignment="flex-start" className="receipt-billing-details">
-					<Text upperCase variant="muted" size={ 11 }>
-						{ __( 'Billing details' ) }
-					</Text>
-					<TextControl
-						value={ billingDetailsText }
-						onChange={ setBillingDetailsText }
-						className="receipt-text-control"
-						__nextHasNoMarginBottom
-					/>
-					<Text variant="muted" size={ 11 }>
-						{ __(
-							'Use this field to add your billing information (eg. business address) before printing.'
-						) }
-					</Text>
-				</VStack>
-			) }
+			<BillingDetailsField receipt={ receipt } />
 
 			<ReceiptTaxDetails receipt={ receipt } />
 			<VatDetails receipt={ receipt } />
@@ -204,8 +193,44 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 	);
 }
 
-function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
-	const hasReceiptTaxDetails = Boolean( receipt.tax_state ) || receipt.tax_is_for_business === true;
+export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
+	const [ billingDetailsText, setBillingDetailsText ] = useState(
+		receipt.cc_num !== 'XXXX'
+			? [ receipt.cc_name, receipt.cc_email ].filter( Boolean ).join( '\n' )
+			: ''
+	);
+	const isEmpty = billingDetailsText.trim().length === 0;
+
+	return (
+		<VStack
+			spacing={ 1 }
+			alignment="flex-start"
+			className={ clsx( 'receipt-billing-details', { 'is-empty': isEmpty } ) }
+		>
+			<Text upperCase variant="muted" size={ 11 }>
+				{ __( 'Billing details' ) }
+			</Text>
+			<TextareaControl
+				label={ __( 'Billing details' ) }
+				hideLabelFromVision
+				value={ billingDetailsText }
+				onChange={ setBillingDetailsText }
+				className="receipt-billing-details-input"
+				__nextHasNoMarginBottom
+			/>
+			{ /* A printed textarea clips its overflow, so mirror the text into a print-only element. */ }
+			<div className="receipt-billing-details-printable">{ billingDetailsText }</div>
+			<Text variant="muted" size={ 11 } className="receipt-billing-details-description">
+				{ __(
+					'Use this field to add your billing information (eg. business address) before printing.'
+				) }
+			</Text>
+		</VStack>
+	);
+}
+
+export function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
+	const hasReceiptTaxDetails = Boolean( receipt.tax_state );
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryName =
 		countryList.find( ( country ) => country.code === receipt.tax_country_code )?.name ??
@@ -233,7 +258,7 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 		} );
 	}
 
-	if ( typeof receipt.tax_is_for_business === 'boolean' ) {
+	if ( isBusinessUseTaxRegion( receipt ) && typeof receipt.tax_is_for_business === 'boolean' ) {
 		taxDetails.push( {
 			key: 'business-use',
 			label: __( 'Business use' ),
@@ -263,19 +288,38 @@ type ReceiptTaxDetail = {
 	value: ReactNode;
 };
 
-function UserVatDetails( { receipt }: { receipt: Receipt } ) {
-	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
-	const sendEmailMutation = useMutation( {
-		...sendReceiptEmailMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
-				error: __(
-					'There was a problem sending your receipt. Please try again later or contact support.'
-				),
-			},
-		},
-	} );
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( receipt: Receipt ): TaxCustomerInfo {
+	const { data: userTaxDetails } = useSuspenseQuery( userTaxDetailsQuery() );
+
+	return (
+		receipt.tax_customer_info ?? {
+			country: userTaxDetails.country ?? '',
+			id: userTaxDetails.id ?? null,
+			name: userTaxDetails.name ?? null,
+			address: userTaxDetails.address ?? null,
+		}
+	);
+}
+
+export function UserVatDetails( { receipt }: { receipt: Receipt } ) {
+	const vatDetails = useReceiptVatDetails( receipt );
+	const sendEmailMutation = useMutation(
+		withSnackbar( sendReceiptEmailMutation(), {
+			success: __( 'Your receipt was sent by email successfully.' ),
+			error: __(
+				'There was a problem sending your receipt. Please try again later or contact support.'
+			),
+		} )
+	);
 
 	const handleEmailReceipt = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
@@ -394,13 +438,21 @@ function getPaymentMethodText( receipt: Receipt ): string | null {
 	return null;
 }
 
-function getBusinessTaxStateName( state: string ): string {
-	const businessUseTaxStates: Record< string, string > = {
-		CT: 'Connecticut',
-		OH: 'Ohio',
-	};
+const BUSINESS_USE_TAX_STATES: Record< string, string > = {
+	CT: 'Connecticut',
+	OH: 'Ohio',
+};
 
-	return businessUseTaxStates[ state.toUpperCase() ] ?? state;
+function getBusinessTaxStateName( state: string ): string {
+	return BUSINESS_USE_TAX_STATES[ state.toUpperCase() ] ?? state;
+}
+
+function isBusinessUseTaxRegion( receipt: Receipt ): receipt is Receipt & { tax_state: string } {
+	if ( receipt.tax_country_code?.toUpperCase() !== 'US' || ! receipt.tax_state ) {
+		return false;
+	}
+
+	return Boolean( BUSINESS_USE_TAX_STATES[ receipt.tax_state.toUpperCase() ] );
 }
 
 function mergeTaxIsForBusiness(
@@ -415,7 +467,7 @@ function mergeTaxIsForBusiness(
 }
 
 function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
-	if ( ! receipt.tax_is_for_business || ! receipt.tax_state ) {
+	if ( ! receipt.tax_is_for_business || ! isBusinessUseTaxRegion( receipt ) ) {
 		return '';
 	}
 
@@ -427,7 +479,7 @@ function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
 }
 
 function hasBusinessUseTaxDetails( receipt: Receipt ): boolean {
-	return receipt.tax_is_for_business === true && Boolean( receipt.tax_state );
+	return receipt.tax_is_for_business === true && isBusinessUseTaxRegion( receipt );
 }
 
 function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
@@ -460,18 +512,32 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 					</VStack>
 					{ ( transactionIncludesTax( receipt ) || hasBusinessUseTaxDetails( receipt ) ) && (
 						<VStack className="receipt-tax-row">
-							<HStack justify="space-between">
-								<Text>
-									{ taxLabel }
-									{ businessTaxSuffixLabel && (
-										<>
-											{ ' (' }
-											<em>{ businessTaxSuffixLabel }</em>)
-										</>
-									) }
-								</Text>
-								<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
-							</HStack>
+							{ receipt.tax_breakdown && receipt.tax_breakdown.length > 0 ? (
+								receipt.tax_breakdown.map( ( entry ) => (
+									<HStack key={ entry.label } justify="space-between">
+										<Text>{ `${ entry.label } ${ entry.rate_display }` }</Text>
+										<Text>
+											{ formatCurrency( entry.local_tax_collected_integer, receipt.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</Text>
+									</HStack>
+								) )
+							) : (
+								<HStack justify="space-between">
+									<Text>
+										{ taxLabel }
+										{ businessTaxSuffixLabel && (
+											<>
+												{ ' (' }
+												<em>{ businessTaxSuffixLabel }</em>)
+											</>
+										) }
+									</Text>
+									<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
+								</HStack>
+							) }
 						</VStack>
 					) }
 				</VStack>

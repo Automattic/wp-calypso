@@ -6,6 +6,10 @@
 	padding: 16px 0;
 }
 
+.downgrade-confirmation-modal__payment-notice {
+	margin-block-end: 16px;
+}
+
 .downgrade-confirmation-modal__description {
 	font-size: $font-body-small;
 	margin-block-end: 8px;
@@ -44,7 +48,18 @@
 
 .downgrade-confirmation-modal__buttons {
 	display: flex;
-	justify-content: flex-end;
-	gap: 8px;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 12px;
 	margin-block-start: 24px;
+}
+
+.downgrade-confirmation-modal__plan-transition {
+	font-size: $font-body-small;
+	color: var(--color-text-subtle);
+}
+
+.downgrade-confirmation-modal__button-row {
+	display: flex;
+	gap: 8px;
 }

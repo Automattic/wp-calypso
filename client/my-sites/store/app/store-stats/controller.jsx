@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { includes } from 'lodash';
 import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,7 +20,7 @@ function isValidParameters( context ) {
 		unit: [ 'day', 'week', 'month', 'year' ],
 	};
 	return Object.keys( validParameters ).every( ( param ) =>
-		includes( validParameters[ param ], context.params[ param ] )
+		validParameters[ param ].includes( context.params[ param ] )
 	);
 }
 

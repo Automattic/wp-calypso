@@ -1,4 +1,5 @@
-import { __experimentalHStack as HStack, __experimentalItem as Item } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import RouterLinkButton from '../../components/router-link-button';
@@ -9,8 +10,6 @@ import './sidebar-menu-item.scss';
 interface SidebarMenuItemProps {
 	to?: string;
 	href?: string;
-	target?: string;
-	rel?: string;
 	icon?: React.JSX.Element;
 	children: React.ReactNode;
 	activeOptions?: ActiveOptions;
@@ -19,8 +18,6 @@ interface SidebarMenuItemProps {
 export function SidebarMenuItem( {
 	to,
 	href,
-	target,
-	rel,
 	icon,
 	children,
 	activeOptions,
@@ -31,27 +28,37 @@ export function SidebarMenuItem( {
 		recordTracksEvent( 'calypso_dashboard_menu_item_click', { to: to ?? href ?? '' } );
 	};
 
+	const label = href ? (
+		<HStack justify="flex-start" spacing={ 1 }>
+			<span>{ children }</span>
+			<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+		</HStack>
+	) : (
+		<span>{ children }</span>
+	);
+
 	const content = icon ? (
 		<HStack justify="flex-start" spacing={ 2 }>
 			<Icon icon={ icon } size={ 20 } />
-			<span>{ children }</span>
+			{ label }
 		</HStack>
 	) : (
-		children
+		label
 	);
 
 	if ( href ) {
 		return (
-			<Item
-				as="a"
+			<Button
 				className="dashboard-sidebar__menu-item"
+				variant="tertiary"
 				href={ href }
-				target={ target }
-				rel={ rel }
+				target="_blank"
+				rel="noopener noreferrer"
+				__next40pxDefaultSize
 				onClick={ handleClick }
 			>
 				{ content }
-			</Item>
+			</Button>
 		);
 	}
 

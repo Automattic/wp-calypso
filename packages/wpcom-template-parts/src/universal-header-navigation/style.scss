@@ -168,6 +168,9 @@ $x-color-link-hover: var( --studio-wordpress-blue-60 );
 $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
+// "New" badge (2026 nav). Brand green background; no Studio token matches #48ff50.
+$x-nav-2026-badge-new-bg: #48ff50;
+$x-nav-2026-badge-new-color: var( --studio-gray-100 );
 $x-content-min-z-index: 801;
 // One above the nav, in its stacking band, so it never escapes above Calypso modals.
 $x-nav-2026-dropdown-z-index: $x-content-min-z-index + 1;
@@ -234,16 +237,6 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 .x-nav-item__wide {
 	display: none;
 	position: relative;
-
-	&:hover,
-	&:focus-within {
-		> .x-dropdown-content {
-			opacity: 1;
-			pointer-events: all;
-			transform: translateY(0) scale(1);
-			transition: all 450ms cubic-bezier(0.5, 1, 0.89, 1);
-		}
-	}
 }
 
 button.x-nav-link.x-link {
@@ -504,12 +497,6 @@ $x-dropdown-item-line-height: 19px;
 		width: 36px;
 		z-index: -1;
 	}
-}
-
-.x-dropdown-content-separator {
-	height: 1px;
-	background: $x-color-content-separator;
-	margin: 9px 0 12px;
 }
 
 .x-dropdown-link.x-dropdown-link {
@@ -966,7 +953,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	position: fixed;
 	top: var( --nav-2026-admin-offset, var( --masterbar-height, 0 ) );
 	inset-inline: 0;
-	z-index: $x-content-min-z-index;
+	// Sit just below the masterbar (z-index 180) so its account dropdown always
+	// shows on top — above the sidebar (176), below the masterbar. The whole nav
+	// band lives in this 177–179 window; the masterbar stays on top in every
+	// state, including the open dropdown and mobile menu.
+	z-index: var( --nav-2026-z-closed, 177 );
 	transition: z-index 0s 0.22s;
 
 	&::after {
@@ -1010,9 +1001,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		opacity: 0.97;
 	}
 
+	// Raise the container above the sticky filter/search sub-nav bars (z-index 178)
+	// while the desktop dropdown is open, so the dropdown covers them. Stays below
+	// the masterbar (180), which is always on top. The mobile menu lives OUTSIDE
+	// this container (page sibling) and carries its own z-index, so it doesn't
+	// need a container bump — that keeps the nav bar below the sub-nav while open.
 	&:has( .x-dropdown.x-dropdown--2026.is-dropdown-open ),
 	&:has( .x-dropdown.x-dropdown--2026[style*='height: 0px'] ) {
-		z-index: 100002;
+		z-index: var( --nav-2026-z-open, 179 );
 		transition: z-index 0s;
 	}
 }
@@ -1359,6 +1355,22 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 @media ( min-width: 1025px ) {
+	$x-dropdown-hover-area: 16px;
+
+	.x-dropdown.x-dropdown--2026.is-dropdown-open {
+		// Override the animation's inline overflow; clip only below the hover area.
+		overflow: visible !important;
+		clip-path: inset( -$x-dropdown-hover-area 0 0 );
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset-inline: 0;
+			top: -$x-dropdown-hover-area;
+			height: $x-dropdown-hover-area;
+		}
+	}
+
 	// Close: wipe the content at the rising edge so nothing trails below the roll.
 	.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
 		opacity: 0;
@@ -1393,8 +1405,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		opacity $x-nav-2026-transition,
 		visibility $x-nav-2026-transition;
 
-	// At >= 1025px, align the content under the first nav item via the JS-set var.
-	@media ( min-width: 1025px ) {
+	// Align the content under the first nav item via the JS-set var. Gated at
+	// the wide breakpoint, not 1025px: on tablet the offset eats column width
+	// and wraps the columns.
+	@media ( min-width: $x-nav-breakpoint-wide ) {
 		padding-inline-start: calc( var( --dropdown-trigger-inline-start, 188px ) + 7px );
 	}
 
@@ -1404,8 +1418,10 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategories {
 		display: flex;
-		flex-wrap: wrap;
-		gap: $x-dropdown-2026-column-gap;
+		flex-wrap: nowrap; // Columns compress (labels wrap) in verbose locales; never spill to a second row.
+		// Don't stretch short columns to the tallest column's height.
+		align-items: flex-start;
+		gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
@@ -1415,7 +1431,13 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		min-width: 0;
 		max-width: $x-dropdown-2026-column-max-width;
+		margin: 0;
+	}
+
+	.x-dropdown-subcategory {
+		min-width: 0;
 		margin: 0;
 
 		> ul {
@@ -1439,7 +1461,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		padding: 0;
+		// Separates the title from the first link below it.
+		padding-bottom: 12px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
@@ -1488,12 +1511,25 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		padding: 0 10px;
 		font-size: 10px;
 		line-height: 1;
-		color: #4f3500;
-		background: #f0c930;
+		color: $x-nav-2026-badge-new-color;
+		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 2px;
 	}
 
+}
+
+/* Leaves-WordPress.com marker; shared by the 2026 desktop dropdown and mobile menu. */
+.x-nav__external-link-icon {
+	white-space: nowrap;
+
+	.x-icon--external {
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		fill: currentColor;
+		vertical-align: baseline;
+	}
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */
@@ -1514,9 +1550,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	--x-menu-2026-title-pad-top: 16px; // drilled-in title's top padding
 	--x-menu-2026-navlink-pad-block: 4px; // each nav link's vertical padding
 
-	// Own stacking root, so the legacy billion z-indexes (overridden below) aren't load-bearing here.
+	// Page-level sibling of the nav container. Closed: sits just below the nav
+	// container (177) so it never intercepts anything; open: bumps to 179 (below) —
+	// see the .x-menu__open rule — to cover the sub-nav while staying under the
+	// masterbar (180), which is always on top.
 	position: relative;
-	z-index: $x-content-min-z-index;
+	z-index: 176;
 	// The z-index drop on close waits for the panel slide-out.
 	transition: z-index 0s var( --x-menu-2026-panel-duration, 0.34s );
 
@@ -1794,6 +1833,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			pointer-events: auto;
 			// Drill-in: fade the items in so they don't pop in over the fading-out nav list.
 			transition: opacity 0.27s var( --x-menu-2026-easing );
+
+			// Completes the 30px above a section title (8px here + 22px subtitle
+			// padding). On the list, not the items, so link pitch stays 36px.
+			&:not( .is-first-group ) {
+				margin-top: 8px;
+			}
 		}
 	}
 
@@ -1845,9 +1890,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		text-transform: uppercase;
 		color: $studio-gray-30;
 
-		&:first-child {
-			padding-top: 0;
-		}
+	}
+
+	// Each group is its own <ul>, so scope the flush-top exception to the
+	// category's first list — otherwise every subtitle is a :first-child.
+	.x-menu-mobile-dropdown-list.is-first-group .x-menu-mobile-dropdown-subtitle:first-child {
+		padding-top: 0;
 	}
 
 	.x-menu-mobile-dropdown-link.x-menu-mobile-dropdown-link {
@@ -1868,11 +1916,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		height: 20px;
 		margin-inline-start: 10px;
 		padding: 0 10px;
-		font-size: 12px;
+		font-size: 10px;
 		font-weight: $lp-font-weight-medium;
 		line-height: 1;
-		color: #4f3500;
-		background: #f0c930;
+		color: $x-nav-2026-badge-new-color;
+		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 1px;
 	}
@@ -2132,8 +2180,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	/* Open: logo / close / footer-contents reveal immediately except during initial open, where they wait for the panel slide. */
 	&.x-menu__open {
-		// Sit above secondary navs (z-index up to 100000) while open; raise instantly.
-		z-index: 100001;
+		// Cover the sticky sub-nav (178) while open; stay below the masterbar (180),
+		// which is always on top. Raise instantly.
+		z-index: var( --nav-2026-z-open, 179 );
 		transition-delay: 0s;
 
 		.x-menu-mobile-logo:not( .is-hidden ),

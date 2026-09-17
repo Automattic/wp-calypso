@@ -6,7 +6,6 @@ import {
 } from 'calypso/state/reader-ui/action-types';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
 import cardExpansions from './card-expansions/reducer';
-import hasUnseenPosts from './seen-posts/reducer';
 import sidebar from './sidebar/reducer';
 
 const PENDING_ACTION_STORAGE_KEY = 'wp-reader-pending-signup-action';
@@ -125,7 +124,6 @@ const combinedReducer = combineReducers( {
 	currentStream,
 	lastActionRequiresLogin,
 	persistedLastActionPriorToLogin,
-	hasUnseenPosts,
 } );
 
 export default withStorageKey( 'readerUi', combinedReducer );

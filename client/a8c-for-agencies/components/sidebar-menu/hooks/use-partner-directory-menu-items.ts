@@ -9,7 +9,6 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
-import { isLeadMatchingSectionVisible } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -24,8 +23,6 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
 		( { status } ) => status === 'approved'
 	);
-	const canAccessLeadMatching = isLeadMatchingSectionVisible();
-
 	const menuItems = useMemo( () => {
 		return [
 			createItem(
@@ -43,7 +40,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 				},
 				path
 			),
-			// Only show the Agency details menu item if the agency has at least one directory approved
+			// Only show Agency details and Lead matching if the agency has a directory approved
 			...( hasDirectoryApproval
 				? [
 						createItem(
@@ -62,10 +59,6 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 							},
 							path
 						),
-				  ]
-				: [] ),
-			...( canAccessLeadMatching
-				? [
 						createItem(
 							{
 								icon: people,
@@ -84,7 +77,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 				  ]
 				: [] ),
 		];
-	}, [ canAccessLeadMatching, hasDirectoryApproval, path, translate ] );
+	}, [ hasDirectoryApproval, path, translate ] );
 	return menuItems;
 };
 

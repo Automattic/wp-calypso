@@ -40,6 +40,23 @@ const valueToString = ( value: unknown ): string | null => {
 	return String( value );
 };
 
+// External and shadow-blog feed items often carry `ID: 0`. Treating that as a
+// real blog post id creates a shared `blog-0-{site_ID}` alias that collapses
+// every item on the feed into one cache entry.
+const isValidReaderPostId = ( value: unknown ): boolean => {
+	const stringValue = valueToString( value );
+	return Boolean( stringValue && stringValue !== '0' );
+};
+
+// Same rule as `isValidReaderPostId`, applied to a `feed_item_IDs`-shaped list:
+// drop entries that are `0`/missing so they can't form a false shared identity.
+const validReaderPostIds = ( values: unknown ): string[] =>
+	Array.isArray( values )
+		? values
+				.map( valueToString )
+				.filter( ( value ): value is string => isValidReaderPostId( value ) )
+		: [];
+
 const postKeyStringFromKey = ( postKey: PostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
@@ -54,11 +71,11 @@ const postKeyStringsFromPost = ( post: Post ): string[] => {
 	const postId = valueToString( post.ID );
 	const feedId = valueToString( post.feed_ID );
 	const feedItemId = valueToString( post.feed_item_ID );
-	const feedItemIds = Array.isArray( post.feed_item_IDs )
-		? post.feed_item_IDs.map( valueToString ).filter( Boolean )
-		: [];
+	// `feed_item_IDs` entries are treated the same as `feed_item_ID`: a `0` means
+	// "no id assigned", not a real id, so it must not form a shared alias either.
+	const feedItemIds = validReaderPostIds( post.feed_item_IDs );
 
-	if ( feedId && feedItemId ) {
+	if ( feedId && isValidReaderPostId( post.feed_item_ID ) ) {
 		keyStrings.add( `feed-${ feedItemId }-${ feedId }` );
 	}
 	if ( feedId ) {
@@ -67,14 +84,14 @@ const postKeyStringsFromPost = ( post: Post ): string[] => {
 		} );
 	}
 
-	if ( Boolean( post.is_external ) && postId ) {
+	if ( Boolean( post.is_external ) && isValidReaderPostId( post.ID ) ) {
 		const externalFeedId = feedId ?? siteId;
 		if ( externalFeedId ) {
 			keyStrings.add( `feed-${ postId }-${ externalFeedId }` );
 		}
 	}
 
-	if ( siteId && postId && ! post.is_external ) {
+	if ( siteId && isValidReaderPostId( post.ID ) && ! post.is_external ) {
 		keyStrings.add( `blog-${ postId }-${ siteId }` );
 	}
 
@@ -164,15 +181,23 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 
 const postMatchesKey = ( post: Post, key: PostCacheKey ): boolean => {
 	if ( key.blogId && key.postId ) {
-		return valuesMatch( post.site_ID, key.blogId ) && valuesMatch( post.ID, key.postId );
+		return (
+			isValidReaderPostId( key.postId ) &&
+			isValidReaderPostId( post.ID ) &&
+			valuesMatch( post.site_ID, key.blogId ) &&
+			valuesMatch( post.ID, key.postId )
+		);
 	}
 
 	if ( key.feedId && key.postId ) {
-		if ( ! valuesMatch( post.feed_ID, key.feedId ) ) {
+		if ( ! isValidReaderPostId( key.postId ) || ! valuesMatch( post.feed_ID, key.feedId ) ) {
 			return false;
 		}
 
-		if ( valuesMatch( post.feed_item_ID, key.postId ) ) {
+		if (
+			isValidReaderPostId( post.feed_item_ID ) &&
+			valuesMatch( post.feed_item_ID, key.postId )
+		) {
 			return true;
 		}
 
@@ -186,15 +211,31 @@ const postsShareIdentity = ( left: Post, right: Post ): boolean => {
 	if ( valuesMatch( left.global_ID, right.global_ID ) ) {
 		return true;
 	}
-	if ( valuesMatch( left.site_ID, right.site_ID ) && valuesMatch( left.ID, right.ID ) ) {
+	if (
+		isValidReaderPostId( left.ID ) &&
+		isValidReaderPostId( right.ID ) &&
+		valuesMatch( left.site_ID, right.site_ID ) &&
+		valuesMatch( left.ID, right.ID )
+	) {
 		return true;
 	}
+	// `feed_item_ID: 0` means "no id assigned" (common for older externally-crawled
+	// items), not a real, matching id — every such item on a feed shares that `0`,
+	// so it must never be treated as shared identity. Mirrors the `isValidReaderPostId`
+	// guard above for `ID`.
 	if (
 		valuesMatch( left.feed_ID, right.feed_ID ) &&
-		( valuesMatch( left.feed_item_ID, right.feed_item_ID ) ||
-			arrayIncludesMatchingValue( left.feed_item_IDs, right.feed_item_ID ) ||
-			arrayIncludesMatchingValue( right.feed_item_IDs, left.feed_item_ID ) ||
-			arraysShareMatchingValue( left.feed_item_IDs, right.feed_item_IDs ) )
+		( ( isValidReaderPostId( left.feed_item_ID ) &&
+			isValidReaderPostId( right.feed_item_ID ) &&
+			valuesMatch( left.feed_item_ID, right.feed_item_ID ) ) ||
+			( isValidReaderPostId( right.feed_item_ID ) &&
+				arrayIncludesMatchingValue( left.feed_item_IDs, right.feed_item_ID ) ) ||
+			( isValidReaderPostId( left.feed_item_ID ) &&
+				arrayIncludesMatchingValue( right.feed_item_IDs, left.feed_item_ID ) ) ||
+			arraysShareMatchingValue(
+				validReaderPostIds( left.feed_item_IDs ),
+				validReaderPostIds( right.feed_item_IDs )
+			) )
 	) {
 		return true;
 	}
@@ -550,12 +591,10 @@ export const useCachedPosts = ( targets: PostCacheTarget[] ): Array< Post | null
 		} ) ),
 	} );
 
-	return useMemo(
-		() =>
-			queries.map( ( query ) =>
-				mergePostCacheData( query.data as PostCacheData | null | undefined )
-			),
-		[ queries ]
+	// Derived inline: `useQueries` returns a fresh array each render, so memoizing
+	// on it trips @tanstack/query/no-unstable-deps without buying anything.
+	return queries.map( ( query ) =>
+		mergePostCacheData( query.data as PostCacheData | null | undefined )
 	);
 };
 

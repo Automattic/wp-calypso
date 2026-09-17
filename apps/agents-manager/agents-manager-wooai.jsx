@@ -9,15 +9,24 @@
  * without touching the admin bar or Site Hub.
  */
 
-import { useImageUpload } from '@automattic/agents-manager';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 
 const container = document.createElement( 'div' );
 container.id = 'agents-manager-root';
 
+// Hoisted to a stable reference so it doesn't change identity on every render.
+const ZENDESK_CONVERSATION_TAGS = [ 'woo_support_flow_ai_plugin' ];
+const ZENDESK_TICKET_PRODUCT_FIELD_VALUE = 'woocommerce_core_product';
+
 const renderAssistant = () => {
-	createRoot( container ).render( <AgentsManagerWithProvider useImageUpload={ useImageUpload } /> );
+	createRoot( container ).render(
+		<AgentsManagerWithProvider
+			zendeskConversationTags={ ZENDESK_CONVERSATION_TAGS }
+			zendeskSmoochIntegrationKey="woo"
+			zendeskTicketProductFieldValue={ ZENDESK_TICKET_PRODUCT_FIELD_VALUE }
+		/>
+	);
 };
 
 if ( document.body ) {

@@ -1,7 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -27,7 +26,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 		return <GoogleMyBusinessLocationPlaceholder isCompact={ isCompact } />;
 	}
 
-	const isLocationVerified = get( location, 'meta.state.isVerified', false );
+	const isLocationVerified = location?.meta?.state?.isVerified ?? false;
 
 	const classes = clsx( 'gmb-location', { 'is-compact': isCompact } );
 

@@ -17,6 +17,7 @@ import {
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
+import getNormalizedSliderSelection from '../lib/get-normalized-slider-selection';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
@@ -130,28 +131,26 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedOptionIndex = useMemo( () => {
-		let options = [];
+	const selectedOptions = useMemo( (): Option[] => {
 		switch ( selectedTab ) {
 			case PLAN_CATEGORY_STANDARD:
 			case PLAN_CATEGORY_SIGNATURE:
-				options = lowPlanOptions;
-				break;
+				return lowPlanOptions;
 			case PLAN_CATEGORY_ENTERPRISE:
 			case PLAN_CATEGORY_SIGNATURE_HIGH:
-				options = highPlanOptions;
-				break;
+				return highPlanOptions;
 			case PLAN_CATEGORY_PREMIUM:
-				options = premiumPlanOptions;
-				break;
+				return premiumPlanOptions;
 			default:
-				return 0;
+				return [];
 		}
+	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions ] );
 
-		return options.findIndex(
+	const selectedOptionIndex = useMemo( () => {
+		return selectedOptions.findIndex(
 			( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
 		);
-	}, [ selectedTab, lowPlanOptions, highPlanOptions, premiumPlanOptions, selectedPlan ] );
+	}, [ selectedOptions, selectedPlan ] );
 
 	const onSelectFilterType = useCallback(
 		( value: FilterType ) => {
@@ -228,6 +227,22 @@ export default function PlanSelectionFilter( {
 		},
 		[ pressablePlan ]
 	);
+
+	useEffect( () => {
+		const normalizedIndex = getNormalizedSliderSelection(
+			selectedOptionIndex,
+			getSliderMinimum( selectedTab, selectedOptions ),
+			selectedOptions.length
+		);
+
+		if ( normalizedIndex === selectedOptionIndex ) {
+			return;
+		}
+
+		const normalizedSlug = selectedOptions[ normalizedIndex ]?.value;
+		const normalizedPlan = plans.find( ( plan ) => plan.slug === normalizedSlug ) ?? null;
+		onSelectPlan( normalizedPlan );
+	}, [ getSliderMinimum, onSelectPlan, plans, selectedOptionIndex, selectedOptions, selectedTab ] );
 
 	useEffect( () => {
 		// Ensure standard tab is not disabled if no existing plan

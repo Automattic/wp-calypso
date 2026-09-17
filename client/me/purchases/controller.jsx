@@ -30,7 +30,6 @@ import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-u
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
-import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesListDataView from './purchases-list-in-dataviews';
@@ -162,24 +161,6 @@ export function siteActionInterstitial( context, next ) {
 	};
 
 	context.primary = <SiteActionInterstitialWrapper />;
-	next();
-}
-
-export function downgradePurchase( context, next ) {
-	const DowngradePurchaseWrapper = localize( () => {
-		return (
-			<PurchasesWrapper title={ titles.downgradeSubscription() }>
-				<Main wideLayout className="purchases__cancel">
-					<Downgrade
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <DowngradePurchaseWrapper />;
 	next();
 }
 

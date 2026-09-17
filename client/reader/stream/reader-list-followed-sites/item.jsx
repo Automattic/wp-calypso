@@ -1,8 +1,8 @@
 import '../style.scss';
-import { Count } from '@automattic/components';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -82,7 +82,7 @@ const ReaderListFollowingItem = ( props ) => {
 						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
 					) }
 				</span>
-				{ isUnseen && follow.unseen_count > 0 && <Count count={ follow.unseen_count } compact /> }
+				{ isUnseen && <ReaderUnreadCount count={ follow.unseen_count } /> }
 			</a>
 		</li>
 	);

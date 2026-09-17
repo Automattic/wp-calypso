@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import 'calypso/state/email-accounts/init';
 
 /**
@@ -8,5 +7,5 @@ import 'calypso/state/email-accounts/init';
  * @returns {?boolean} true if the list is being requested, false otherwise
  */
 export default function isRequestingEmailAccounts( state, siteId ) {
-	return get( state, [ 'emailAccounts', siteId, 'requesting' ], false );
+	return state?.emailAccounts?.[ siteId ]?.requesting ?? false;
 }

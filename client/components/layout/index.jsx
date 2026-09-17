@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
+/**
+ * @param {{ children?: import('react').ReactNode; className?: string; }} props
+ */
 export default function Layout( { children, className } ) {
 	const layoutClasses = clsx( 'layout-wrapper', className );
 

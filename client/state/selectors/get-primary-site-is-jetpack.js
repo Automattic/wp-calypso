@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
@@ -8,5 +7,5 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
  */
 export default function getPrimarySiteIsJetpack( state ) {
 	const currentUser = getCurrentUser( state );
-	return get( currentUser, 'primary_blog_is_jetpack', null );
+	return currentUser?.primary_blog_is_jetpack ?? null;
 }

@@ -16,6 +16,16 @@ const placeSitePropsOnSiteObject = ( pluginObject ) => {
 	};
 };
 
+/*
+ * Restate a v1.1 plugin fixture in the v1.2 response format: the plugin file moves from
+ * `id` to `name`, and the title from `name` to `display_name`.
+ */
+export const inApiV1_2Format = ( { id, name, ...rest } ) => ( {
+	...rest,
+	name: id,
+	display_name: name,
+} );
+
 export const akismet = {
 	id: 'akismet/akismet',
 	slug: 'akismet',

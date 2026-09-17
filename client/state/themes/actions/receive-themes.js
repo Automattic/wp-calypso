@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isDelisted, isThemeMatchingQuery } from 'calypso/state/themes/utils';
@@ -24,7 +23,7 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			 * We need to do client-side filtering for Jetpack sites
 			 * because Jetpack theme API does not support search queries
 			 */
-			filteredThemes = filter( themes, ( theme ) => isThemeMatchingQuery( query, theme ) );
+			filteredThemes = themes.filter( ( theme ) => isThemeMatchingQuery( query, theme ) );
 
 			// Jetpack API returns all themes in one response (no paging)
 			found = filteredThemes.length;
@@ -35,7 +34,7 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			 * We need to do client-side filtering for wporg results
 			 * because we fetch them directly from the wporg API.
 			 */
-			filteredThemes = filter( themes, ( theme ) => ! isDelisted( theme ) );
+			filteredThemes = themes.filter( ( theme ) => ! isDelisted( theme ) );
 			found = filteredThemes.length;
 		}
 

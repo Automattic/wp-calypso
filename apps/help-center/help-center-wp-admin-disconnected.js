@@ -1,6 +1,6 @@
 import './config';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './help-center.scss';
+import { recordDisconnectedHostTracksEvent } from './tracks';
 
 function initHelpCenterTracking() {
 	// Check for agents-manager-masterbar first, then fall back to help-center
@@ -10,8 +10,7 @@ function initHelpCenterTracking() {
 
 	if ( button && ! button.dataset.trackingInitialized ) {
 		button.addEventListener( 'click', () => {
-			recordTracksEvent( 'calypso_inlinehelp_show', {
-				force_site_id: true,
+			recordDisconnectedHostTracksEvent( 'calypso_inlinehelp_show', {
 				location: 'help-center',
 				section: 'wp-admin-disconnected',
 				jetpack_disconnected_site: true,

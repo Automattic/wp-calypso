@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 0.1.1
 
 - Remove console.log and bump dependency version

@@ -18,6 +18,7 @@ export function useProfileTabVisibility( profileUserLogin?: string ) {
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === profileUserLogin;
 
+	// For others profile.
 	const {
 		data: settingsData,
 		isLoading: settingsLoading,
@@ -27,6 +28,7 @@ export function useProfileTabVisibility( profileUserLogin?: string ) {
 		enabled: ! isOwnProfile && profileUserLogin != null,
 	} );
 
+	// For own profile.
 	const { data: ownPostsVisibility } = useQuery( {
 		...userPreferenceQuery( 'reader-profile-posts-visibility' ),
 		enabled: isOwnProfile,
@@ -51,8 +53,12 @@ export function useProfileTabVisibility( profileUserLogin?: string ) {
 
 	return {
 		isOwnProfile,
-		showPosts: resolveVisible( 'reader-profile-posts-visibility', ownPostsVisibility ),
-		showSites: resolveVisible( 'reader-profile-sites-visibility', ownSitesVisibility ),
+		showPosts:
+			resolveVisible( 'reader-profile-posts-visibility', ownPostsVisibility ) || isOwnProfile,
+		isPostsPublic: resolveVisible( 'reader-profile-posts-visibility', ownPostsVisibility ),
+		showSites:
+			resolveVisible( 'reader-profile-sites-visibility', ownSitesVisibility ) || isOwnProfile,
+		isSitesPublic: resolveVisible( 'reader-profile-sites-visibility', ownSitesVisibility ),
 		isLoading: ! isOwnProfile && settingsLoading,
 	};
 }

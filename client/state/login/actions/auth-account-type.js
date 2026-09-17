@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { defer } from 'lodash';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
@@ -38,12 +37,12 @@ export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
 			} )
 		);
 
-		defer( () => {
+		setTimeout( () => {
 			dispatch( {
 				type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 				error,
 			} );
-		} );
+		}, 0 );
 
 		return;
 	}

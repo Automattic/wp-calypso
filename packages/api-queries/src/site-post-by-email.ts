@@ -20,6 +20,7 @@ export const sitePostByEmailSettingsQuery = ( site: Site ) => {
 
 export const sitePostByEmailSettingsMutation = ( site: Site ) =>
 	mutationOptions( {
+		meta: { statId: 'site-post-by-email-update' },
 		mutationFn: ( settings: SitePostByEmailSettingsUpdate ) =>
 			updateSitePostByEmailSettings( site, settings.post_by_email_address ),
 		onSuccess: ( postByEmailSettings ) => {

@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -82,7 +81,7 @@ export function createStreamItemFromPost( post: RawPost, dateProperty: string ) 
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		// Include comments for conversations
-		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
+		...( post.comments && { comments: post.comments.map( ( comment ) => comment?.ID ).reverse() } ),
 		url: post.URL,
 		site_icon: post.site_icon?.ico,
 		site_description: post.description,
@@ -148,7 +147,7 @@ function createStreamItemFromSiteAndPost(
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		// Include comments for conversations.
-		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
+		...( post.comments && { comments: post.comments.map( ( comment ) => comment?.ID ).reverse() } ),
 		url: post.URL,
 		site_icon: site.icon?.ico,
 		site_description: site.description,

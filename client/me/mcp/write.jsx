@@ -11,7 +11,6 @@ export default function McpWriteToolsPage( props ) {
 			headerTitle={ translate( 'Write' ) }
 			filterTool={ isWriteTool }
 			toolCategory="write"
-			groupingMode="categories"
 		/>
 	);
 }

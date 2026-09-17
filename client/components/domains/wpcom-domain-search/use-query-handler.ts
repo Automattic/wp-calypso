@@ -14,7 +14,7 @@ const setSessionStorageQuery = ( query: string ) => {
 	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
 };
 
-const clearSessionStorageQuery = () => {
+export const clearSessionStorageQuery = () => {
 	sessionStorage.removeItem( SESSION_STORAGE_QUERY_KEY );
 };
 

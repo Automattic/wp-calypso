@@ -1,4 +1,4 @@
-import { SiteDetails, Purchases } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -8,15 +8,18 @@ import {
 	getPurchasesFieldDefinitions,
 	getMembershipsFieldDefinitions,
 } from '../purchases-data-field';
+import type { Purchase } from '@automattic/api-core';
 
 export function usePurchasesFieldDefinitions( {
 	sites,
 	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
+	visibleFields,
 }: {
 	sites: SiteDetails[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
+	transferredOwnershipPurchases?: Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	visibleFields?: string[];
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -30,6 +33,7 @@ export function usePurchasesFieldDefinitions( {
 			getManagePurchaseUrlFor,
 			sites,
 			transferredOwnershipPurchases,
+			visibleFields,
 		} );
 		return fieldDefinitions;
 	}, [
@@ -39,6 +43,7 @@ export function usePurchasesFieldDefinitions( {
 		sites,
 		transferredOwnershipPurchases,
 		getManagePurchaseUrlFor,
+		visibleFields,
 	] );
 }
 

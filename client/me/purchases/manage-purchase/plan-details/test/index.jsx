@@ -14,11 +14,12 @@ const props = {
 	isPlaceholder: false,
 	purchase: {
 		// Including only the properties that are used by this component
-		id: 123,
-		siteId: 123,
-		productName: 'Jetpack Personal',
-		productSlug: 'jetpack_premium_monthly',
-		expiryStatus: 'active',
+		ID: 123,
+		blog_id: 123,
+		product_name: 'Jetpack Personal',
+		product_slug: 'jetpack_premium_monthly',
+		expiry_status: 'active',
+		subscription_status: 'active',
 	},
 	hasLoadedSites: true,
 	hasLoadedPurchasesFromServer: true,
@@ -52,7 +53,7 @@ describe( 'PurchasePlanDetails', () => {
 			it( 'should not render the PlanBillingPeriod', () => {
 				const purchase = {
 					...props.purchase,
-					partnerName: 'partner',
+					partner_name: 'partner',
 				};
 				render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
 				expect( screen.queryByTestId( 'billing-period' ) ).not.toBeInTheDocument();
@@ -86,18 +87,31 @@ describe( 'PurchasePlanDetails', () => {
 		it( 'should return null', () => {
 			const purchase = {
 				...props.purchase,
-				productSlug: 'business-bundle',
+				product_slug: 'business-bundle',
 			};
 			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
 			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 
-	describe( 'expired plan', () => {
+	describe( 'expired plan in grace period', () => {
+		it( 'should render plan details (still manageable during the grace period)', () => {
+			const purchase = {
+				...props.purchase,
+				expiry_status: 'expired',
+				subscription_status: 'active',
+			};
+			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
+			expect( container ).not.toBeEmptyDOMElement();
+		} );
+	} );
+
+	describe( 'removed plan', () => {
 		it( 'should return null', () => {
 			const purchase = {
 				...props.purchase,
-				expiryStatus: 'expired',
+				expiry_status: 'expired',
+				subscription_status: 'inactive',
 			};
 			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
 			expect( container ).toBeEmptyDOMElement();

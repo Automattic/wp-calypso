@@ -31,3 +31,12 @@
 	border-block-start: 1px solid $gray-100;
 	margin: 0;
 }
+
+// Email plan overview cards use the primary text color for their icons to match
+// the design, rather than the default admin theme accent.
+.purchase-settings__email-overview-cards {
+	.dashboard-overview-card__icon {
+		color: var(--dashboard__text-color);
+		fill: var(--dashboard__text-color);
+	}
+}

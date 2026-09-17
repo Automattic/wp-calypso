@@ -11,7 +11,7 @@ interface HostingSectionProps {
 	url?: string;
 	urlData?: UrlData;
 	hostingProvider?: HostingProvider;
-	hostingRef: React.RefObject< HTMLObjectElement >;
+	hostingRef: React.RefObject< HTMLElement | null >;
 }
 
 export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {

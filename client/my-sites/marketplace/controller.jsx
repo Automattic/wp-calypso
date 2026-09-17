@@ -46,6 +46,10 @@ export function renderMarketplaceTestPage( context, next ) {
 	next();
 }
 
+export function redirectToPlugins() {
+	return page.redirect( '/plugins/browse/marketplace' );
+}
+
 export function redirectToHome( { path } ) {
 	const siteFragment = getSiteFragment( path );
 	if ( siteFragment ) {

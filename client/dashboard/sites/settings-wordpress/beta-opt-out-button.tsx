@@ -10,6 +10,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import type { Site } from '@automattic/api-core';
 
 interface BetaOptOutButtonProps {
@@ -23,13 +24,10 @@ export function BetaOptOutButton( { site, onSuccess }: BetaOptOutButtonProps ) {
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
 	const mutation = useMutation( {
-		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete: false } ),
-		meta: {
-			snackbar: {
-				success: __( 'You have opted out of the WordPress beta version.' ),
-				error: __( 'Failed to opt out of the WordPress beta version.' ),
-			},
-		},
+		...withSnackbar( siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete: false } ), {
+			success: __( 'You have opted out of the WordPress beta version.' ),
+			error: __( 'Failed to opt out of the WordPress beta version.' ),
+		} ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
 			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );

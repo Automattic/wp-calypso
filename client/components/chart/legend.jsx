@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ChartLegendItem from './legend-item';
@@ -27,13 +26,13 @@ class ChartLegend extends Component {
 	};
 
 	render() {
-		const legendColors = [ 'chart__legend-color is-dark-blue' ];
+		const legendColors = [ 'chart__legend-color is-secondary' ];
 		const activeTab = this.props.activeTab;
 
 		const legendItems = this.props.availableCharts.map( function ( legendItem, index ) {
 			const colorClass = legendColors[ index ];
 			const checked = -1 !== this.props.activeCharts.indexOf( legendItem );
-			const tab = find( this.props.tabs, { attr: legendItem } );
+			const tab = this.props.tabs?.find( ( item ) => item.attr === legendItem );
 
 			return (
 				<ChartLegendItem
@@ -52,7 +51,7 @@ class ChartLegend extends Component {
 				<ul className="chart__legend-options">
 					<li className="chart__legend-option" key="default-tab">
 						<span className="chart__legend-label">
-							<span className="chart__legend-color is-wordpress-blue" />
+							<span className="chart__legend-color" />
 							{ activeTab.label }
 						</span>
 					</li>

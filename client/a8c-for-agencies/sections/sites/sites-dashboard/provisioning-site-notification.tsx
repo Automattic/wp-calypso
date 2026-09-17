@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
@@ -20,9 +20,10 @@ type BannerProps = {
 	migration?: boolean;
 	development?: boolean;
 	onDismiss?: () => void;
+	onSuccess?: () => void;
 };
 
-function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
+function Banner( { siteId, migration, development, onDismiss, onSuccess }: BannerProps ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
@@ -32,13 +33,19 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
 	const wpMigrationUrl = addQueryArgs(
 		{
-			siteId: site?.features.wpcom_atomic.blog_id,
+			siteId: site?.features?.wpcom_atomic?.blog_id,
 			siteSlug,
 		},
 		'https://wordpress.com/setup/site-migration'
 	);
 
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
+
+	useEffect( () => {
+		if ( site ) {
+			onSuccess?.();
+		}
+	}, [ site, onSuccess ] );
 
 	const readySiteMessage = development
 		? translate(
@@ -132,7 +139,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	);
 }
 
-export default function ProvisioningSiteNotification() {
+export default function ProvisioningSiteNotification( { onSuccess }: { onSuccess?: () => void } ) {
 	const { provisioningSites, untrackSiteId } = useTrackProvisioningSites();
 
 	return provisioningSites.map( ( { id, migration, development } ) => {
@@ -143,6 +150,7 @@ export default function ProvisioningSiteNotification() {
 				migration={ migration }
 				development={ development }
 				onDismiss={ () => untrackSiteId( id ) }
+				onSuccess={ onSuccess }
 			/>
 		);
 	} );

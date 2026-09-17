@@ -6,9 +6,13 @@ import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { hasNoWPAdminAccess } from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
-import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	hasAgencyCapability,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -18,9 +22,11 @@ import { JETPACK_ACTIVITY_ID, JETPACK_BACKUP_ID } from '../features/features';
 import SitesDashboardContext from '../sites-dashboard-context';
 import createDeleteSiteActionModal from './delete-site-action-modal';
 import getActionEventName from './get-action-event-name';
+import createLaunchPermissionModal from './launch-permission-action-modal';
 import createRemoveSiteActionModal from './remove-site-action-modal';
 import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { SiteNode, AllowedActionTypes } from '../types';
+import type { AppState } from 'calypso/types';
 
 type Props = {
 	site: SiteNode;
@@ -230,6 +236,9 @@ export function useSiteActionsDataViews( {
 		hasAgencyCapability( state, 'a4a_remove_managed_sites' )
 	);
 
+	const agencyRole = useSelector( getActiveAgency )?.user?.role;
+	const capabilities = useSelector( ( state: AppState ) => state?.currentUser?.capabilities );
+
 	return useMemo( () => {
 		const isUrlOnly = ( item: SiteData ) =>
 			item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
@@ -267,12 +276,20 @@ export function useSiteActionsDataViews( {
 		const recordTracksEventDeleteSite = () =>
 			dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
 
+		// A4A team members who haven't been added to the site can't launch it.
+		const cannotLaunch = ( item: SiteData ) =>
+			hasNoWPAdminAccess( {
+				role: agencyRole,
+				capabilities: capabilities?.[ getBlogId( item ) ],
+			} );
+
 		return [
 			{
+				id: 'prepare_for_launch',
 				label: translate( 'Prepare for launch' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isDevSite( item );
+					return canHaveActions( item ) && isDevSite( item ) && ! cannotLaunch( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open(
@@ -282,6 +299,19 @@ export function useSiteActionsDataViews( {
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
 					);
 				},
+			},
+			{
+				// Same label as the action above. Shown instead of it when the current user is an
+				// A4A team member without admin access on the site, so clicking explains why
+				// launching is unavailable rather than opening a page where it would fail.
+				id: 'prepare_for_launch_no_permission',
+				label: translate( 'Prepare for launch' ),
+				icon: external,
+				modalHeader: translate( 'Launching requires site admin access' ),
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isDevSite( item ) && cannotLaunch( item );
+				},
+				RenderModal: createLaunchPermissionModal(),
 			},
 			{
 				id: 'set_up_site',
@@ -473,5 +503,7 @@ export function useSiteActionsDataViews( {
 		setDataViewsState,
 		setSelectedSiteFeature,
 		hasRemoveManagedSitesCapability,
+		agencyRole,
+		capabilities,
 	] );
 }

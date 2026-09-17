@@ -7,7 +7,6 @@ import {
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
-	isConciergeSession,
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
@@ -46,6 +45,7 @@ import {
 } from '@automattic/calypso-products';
 import { getTld } from '@automattic/domain-search';
 import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
+import { parseNextDomainCondition } from '@automattic/shopping-cart';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -169,12 +169,6 @@ export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
-	return getDomainRegistrations( cart ).some( ( registration ) =>
-		isDomainBeingUsedForPlan( cart, registration.meta )
-	);
-}
-
 export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
@@ -207,10 +201,6 @@ export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProd
  */
 export function hasOnlyRenewalItems( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
-}
-
-export function hasConciergeSession( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isConciergeSession );
 }
 
 /**
@@ -708,8 +698,9 @@ export function isNextDomainFree( cart?: ResponseCart, domain = '' ): boolean {
 		return false;
 	}
 
-	if ( cart.next_domain_condition === 'blog' ) {
-		if ( getTld( domain ) !== 'blog' ) {
+	if ( cart.next_domain_condition ) {
+		const eligibleTlds = parseNextDomainCondition( cart.next_domain_condition );
+		if ( ! eligibleTlds.includes( getTld( domain ) ) ) {
 			return false;
 		}
 	}
@@ -824,16 +815,7 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 }
 
 export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
-	return Boolean(
-		flowName &&
-			[
-				'free',
-				'personal-monthly',
-				'premium-monthly',
-				'business-monthly',
-				'ecommerce-monthly',
-			].includes( flowName )
-	);
+	return Boolean( flowName && [ 'free', 'ecommerce-monthly' ].includes( flowName ) );
 };
 
 export function getDomainPriceRule(

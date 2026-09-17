@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
-import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxApiKey, loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { setChallengeRunning } from 'calypso/blocks/login/utils/challenge-gate';
 
 // Give the SDK a short window to synchronously or near-synchronously start a challenge
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
@@ -17,10 +17,11 @@ let hasConfiguredOnce = false;
  * ref and challenge callbacks, and tracks whether a challenge is active.
  * @param {Object}  options
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
+ * @param {boolean} options.enabled Whether Blackbox is active for this surface.
  * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
-export function useBlackbox( { containerRef } ) {
-	const isEnabled = config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' );
+export function useBlackbox( { containerRef, enabled } ) {
+	const isEnabled = enabled;
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
 	const [ hasChallengeContent, setHasChallengeContent ] = useState( false );
@@ -28,17 +29,17 @@ export function useBlackbox( { containerRef } ) {
 	useEffect( () => {
 		const container = containerRef.current;
 
-		if ( ! isEnabled || ! container || typeof window.MutationObserver !== 'function' ) {
+		if ( ! isEnabled || ! container || typeof window.ResizeObserver !== 'function' ) {
 			return;
 		}
 
 		const updateHasChallengeContent = () => {
-			setHasChallengeContent( container.childElementCount > 0 );
+			setHasChallengeContent( container.offsetHeight > 0 );
 		};
-		const observer = new window.MutationObserver( updateHasChallengeContent );
+		const observer = new window.ResizeObserver( updateHasChallengeContent );
 
 		updateHasChallengeContent();
-		observer.observe( container, { childList: true } );
+		observer.observe( container );
 
 		return () => {
 			observer.disconnect();
@@ -46,9 +47,23 @@ export function useBlackbox( { containerRef } ) {
 	}, [ containerRef, isEnabled ] );
 
 	useEffect( () => {
+		const syncChallengeState = ( active ) => {
+			setChallengeRunning( active );
+			setIsChallengeActive( active );
+		};
+
 		if ( ! isEnabled ) {
+			// Covers the surface being suspended after a challenge appeared: drop
+			// all blocking state so the form isn't wedged when it re-enables.
+			setIsLoading( false );
+			syncChallengeState( false );
+			setHasChallengeContent( false );
 			return;
 		}
+
+		// The initial state only covers enabled-at-mount; this covers a surface
+		// that enables later (e.g. a hidden signup step becoming active).
+		setIsLoading( true );
 
 		let cancelled = false;
 		let hasStartedChallenge = false;
@@ -83,13 +98,27 @@ export function useBlackbox( { containerRef } ) {
 
 			try {
 				window.Blackbox.configure( {
-					apiKey: config( 'blackbox_api_key' ),
+					apiKey: getBlackboxApiKey(),
 					challengeContainer: containerRef.current,
+					// Fill the login form column so the challenge lines up with the
+					// input above and the full-width Continue button below.
+					challengeMaxWidth: '100%',
+					// The SDK reports a challenge it cannot present (bundle blocked
+					// or failed to load) through onError rather than
+					// onChallengeFailure, and only after onChallengeStart has already
+					// blocked the form. Without this the form stays blocked forever
+					// with no widget to solve.
+					onError: ( error ) => {
+						if ( ! cancelled && error?.method === 'challenge' ) {
+							stopLoading();
+							syncChallengeState( false );
+						}
+					},
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;
 							stopLoading();
-							setIsChallengeActive( true );
+							syncChallengeState( true );
 						}
 					},
 					onChallengeComplete: () => {
@@ -97,8 +126,7 @@ export function useBlackbox( { containerRef } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setHasChallengeContent( false );
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 					onChallengeFailure: () => {
@@ -106,8 +134,7 @@ export function useBlackbox( { containerRef } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setHasChallengeContent( false );
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 				} );
@@ -130,6 +157,7 @@ export function useBlackbox( { containerRef } ) {
 		return () => {
 			cancelled = true;
 			clearPendingTimeouts();
+			setChallengeRunning( false );
 		};
 	}, [ containerRef, isEnabled ] );
 

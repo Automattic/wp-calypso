@@ -3,10 +3,22 @@ const spawnSync = require( 'child_process' ).spawnSync;
 const existsSync = require( 'fs' ).existsSync;
 const path = require( 'path' );
 const chalk = require( 'chalk' );
-const _ = require( 'lodash' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
+// WPCS < 3.4.1 passes untrusted code through eval() in this sniff (GHSA-3pwp-g2mj-5p3v).
+// --no-cache is load-bearing: PHPCS discards all --exclude restrictions when caching is on.
+// Remove both once wp-coding-standards/wpcs >= 3.4.1 is installable.
+const phpcsExclusions = [ '--exclude=WordPress.WP.EnqueuedResourceParameters', '--no-cache' ];
+
+// Groups an array's items into an object keyed by the iteratee's return value.
+function groupBy( collection, iteratee ) {
+	return collection.reduce( ( groups, item ) => {
+		const key = iteratee( item );
+		( groups[ key ] = groups[ key ] || [] ).push( item );
+		return groups;
+	}, {} );
+}
 
 function quotedPath( pathToQuote ) {
 	if ( pathToQuote.includes( ' ' ) ) {
@@ -102,7 +114,7 @@ const {
 	toPrettify = [],
 	toStylelintfix = [],
 	toPHPCBF = [],
-} = _.groupBy( toFormat, ( file ) => {
+} = groupBy( toFormat, ( file ) => {
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
@@ -117,12 +129,13 @@ const {
 toPrettify.forEach( ( file ) => console.log( `Prettier formatting staged file: ${ file }` ) );
 if ( toPrettify.length ) {
 	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
-	_.forEach( _.chunk( toPrettify, 500 ), ( chunk ) => {
+	for ( let i = 0; i < toPrettify.length; i += 500 ) {
+		const batch = toPrettify.slice( i, i + 500 );
 		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ chunk.join( ' ' ) }`
+			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ batch.join( ' ' ) }`
 		);
-		execSync( `git add ${ chunk.join( ' ' ) }` );
-	} );
+		execSync( `git add ${ batch.join( ' ' ) }` );
+	}
 }
 
 // Format the sass files with stylelint and then re-stage them. Swallow the output.
@@ -137,7 +150,11 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync( `${ quotedPath( phpcbfPath ) } --standard=WordPress ${ toPHPCBF.join( ' ' ) }` );
+			execSync(
+				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions.join(
+					' '
+				) } ${ toPHPCBF.join( ' ' ) }`
+			);
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -156,7 +173,7 @@ const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
-} = _.groupBy(
+} = groupBy(
 	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
 	( file ) => {
 		switch ( true ) {
@@ -198,10 +215,14 @@ if ( toEslint.length ) {
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync( quotedPath( phpcsPath ), [ '--standard=WordPress', ...toPHPCS ], {
-			shell: true,
-			stdio: 'inherit',
-		} );
+		const lintResult = spawnSync(
+			quotedPath( phpcsPath ),
+			[ '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ],
+			{
+				shell: true,
+				stdio: 'inherit',
+			}
+		);
 
 		if ( lintResult.status ) {
 			linterFailure();

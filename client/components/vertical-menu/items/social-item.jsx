@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import SocialLogo from 'calypso/components/social-logo';
 
@@ -26,7 +25,7 @@ const noop = () => {};
 export const SocialItem = ( props ) => {
 	const { isSelected = false, onClick = noop, service, translate } = props;
 
-	const { icon, label } = get( services( translate ), service );
+	const { icon, label } = services( translate )?.[ service ] ?? {};
 	const classes = clsx( 'vertical-menu__social-item', 'vertical-menu__items', {
 		'is-selected': isSelected,
 	} );

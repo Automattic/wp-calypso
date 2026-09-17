@@ -1,0 +1,68 @@
+.jetpack-ai-image-alt-text-picker {
+	padding: 8px 0;
+
+	&__intro {
+		margin: 0 0 12px;
+		font-size: 14px;
+	}
+
+	// The agentic `.Message-module_message ol, ul` selector (0,1,1) outranks a
+	// single BEM class, so scope the list under the block (0,2,0) to keep our
+	// padding, and reset list-style on the <li> since the disc marker is inherited.
+	& &__list {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		margin: 0 0 12px;
+		padding: 0;
+		list-style: none;
+
+		> li {
+			list-style: none;
+		}
+	}
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 0;
+		padding: 0;
+		border: 1px solid rgba( 255, 255, 255, 0.12 );
+		border-radius: 8px;
+	}
+
+	&__thumb {
+		flex-shrink: 0;
+		width: 48px;
+		height: 48px;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+
+	&__alt {
+		min-width: 0;
+		font-size: 13px;
+		line-height: 18px;
+	}
+
+	&__apply-all {
+		padding: 6px 12px;
+		border: 1px solid var( --wp-admin-theme-color, #3858e9 );
+		border-radius: 4px;
+		background: transparent;
+		color: var( --wp-admin-theme-color, #3858e9 );
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 13px;
+
+		&:hover {
+			background: rgba( 56, 88, 233, 0.08 );
+		}
+	}
+
+	&__status {
+		margin: 0;
+		font-size: 14px;
+	}
+}

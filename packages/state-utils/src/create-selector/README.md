@@ -66,4 +66,4 @@ createSelector( ( state ) => foo( state ) && bar( state ), [ foo, bar, baz ] );
 
 ### How can I access the internal cache?
 
-While you should rarely need to do so, you can manage the internal Lodash `memoize.Cache` instance on the `memoizedSelector` property of the returned function.
+While you should rarely need to do so, you can manage the internal cache — a `Map` exposed as `.cache` — on the `memoizedSelector` property of the returned function.

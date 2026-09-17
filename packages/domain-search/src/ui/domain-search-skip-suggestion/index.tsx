@@ -16,6 +16,18 @@ interface Props {
 	freeSuggestion?: string;
 	unavailableDomain?: string;
 	existingSiteUrl?: string;
+	/**
+	 * Overrides the default "Start free with %(domain)s" title of the
+	 * free-subdomain card. May include the `%(domain)s` placeholder.
+	 */
+	title?: string;
+	/** Overrides the default "Start Free" CTA of the free-subdomain card. */
+	buttonText?: string;
+	/**
+	 * Render a plain "set up a domain later" control with no domain shown, for flows that never
+	 * keep a free subdomain. `title`/`buttonText` still override the defaults.
+	 */
+	chooseLaterOnly?: boolean;
 	onSkip: () => void;
 	onSuggestionClick?: () => void;
 	disabled?: boolean;
@@ -26,6 +38,9 @@ const DomainSearchSkipSuggestion = ( {
 	freeSuggestion,
 	unavailableDomain,
 	existingSiteUrl,
+	title: titleOverride,
+	buttonText: buttonTextOverride,
+	chooseLaterOnly,
 	onSkip,
 	onSuggestionClick,
 	disabled,
@@ -40,7 +55,11 @@ const DomainSearchSkipSuggestion = ( {
 	let showButton = true;
 	let chevronOnMobile = false;
 
-	if ( existingSiteUrl ) {
+	if ( chooseLaterOnly ) {
+		title = titleOverride ?? __( 'Set up a domain later' );
+		subtitle = __( 'You can add a custom domain after your site is set up.' );
+		buttonText = buttonTextOverride ?? __( 'Set up a domain later' );
+	} else if ( existingSiteUrl ) {
 		const [ domain, ...tld ] = existingSiteUrl.split( '.' );
 
 		title = __( 'Current address' );
@@ -76,13 +95,15 @@ const DomainSearchSkipSuggestion = ( {
 		);
 		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = sprintf(
-			// translators: %(domain)s is the free WordPress.com subdomain
-			__( 'Start free with %(domain)s' ),
-			{ domain: freeSuggestion }
-		);
+		title = titleOverride
+			? titleOverride.replace( '%(domain)s', freeSuggestion )
+			: sprintf(
+					// translators: %(domain)s is the free WordPress.com subdomain
+					__( 'Start free with %(domain)s' ),
+					{ domain: freeSuggestion }
+			  );
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
-		buttonText = __( 'Start Free' );
+		buttonText = buttonTextOverride ?? __( 'Start Free' );
 		chevronOnMobile = true;
 	}
 
@@ -92,11 +113,13 @@ const DomainSearchSkipSuggestion = ( {
 
 	const domain = existingSiteUrl ?? freeSuggestion;
 	const showChevron = chevronOnMobile && isSmall;
-	const skipLabel = sprintf(
-		// translators: %(domain)s is the domain name
-		__( 'Skip purchase and continue with %(domain)s' ),
-		{ domain: domain ?? '' }
-	);
+	const skipLabel = chooseLaterOnly
+		? buttonText
+		: sprintf(
+				// translators: %(domain)s is the domain name
+				__( 'Skip purchase and continue with %(domain)s' ),
+				{ domain: domain ?? '' }
+		  );
 
 	const renderRight = () => {
 		if ( ! showButton ) {

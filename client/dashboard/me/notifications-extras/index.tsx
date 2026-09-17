@@ -12,6 +12,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { AchievementsCard } from './achievements-card';
 import {
 	WPCOM_OPTION_KEYS,
 	WPCOM_TITLES,
@@ -22,6 +23,7 @@ import {
 	getSettingsTitle,
 } from './extras-config';
 import { ExtrasToggleCard } from './extras-toggle-card';
+import { OnThisDayCard } from './on-this-day-card';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 export default function NotificationsExtras() {
@@ -104,6 +106,10 @@ export default function NotificationsExtras() {
 			}
 		>
 			<VStack spacing={ 8 }>
+				<OnThisDayCard />
+
+				<AchievementsCard />
+
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }

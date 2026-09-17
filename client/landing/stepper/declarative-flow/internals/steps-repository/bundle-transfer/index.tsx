@@ -8,6 +8,11 @@ import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import {
+	createRevertedTransferWatcher,
+	getTransferFailureMessage,
+	transferStates,
+} from '../../../../utils/atomic-transfer-outcome';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
@@ -16,22 +21,6 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
-
-export const transferStates = {
-	PENDING: 'pending',
-	ACTIVE: 'active',
-	PROVISIONED: 'provisioned',
-	COMPLETED: 'completed',
-	ERROR: 'error',
-	REVERTED: 'reverted',
-	RELOCATING_REVERT: 'relocating_revert',
-	RELOCATING_SWITCHEROO: 'relocating_switcheroo',
-	REVERTING: 'reverting',
-	RENAMING: 'renaming',
-	EXPORTING: 'exporting',
-	IMPORTING: 'importing',
-	CLEANUP: 'cleanup',
-} as const;
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
@@ -126,6 +115,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
+			const isRevertOfThisTransfer = createRevertedTransferWatcher();
 
 			while ( ! stopPollingTransfer ) {
 				await wait( 3000 );
@@ -156,7 +146,16 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 						error: transferError?.message || '',
 						code: transferError?.code || '',
 					} );
-					throw new Error( 'transfer error' );
+					throw new Error( getTransferFailureMessage( 'error' ) );
+				}
+
+				if ( isRevertOfThisTransfer( transfer ) ) {
+					handleTransferFailure( {
+						type: 'transfer_reverted',
+						error: `transfer reverted (status: ${ transferStatus })`,
+						code: 'transfer_reverted',
+					} );
+					throw new Error( getTransferFailureMessage( 'reverted' ) );
 				}
 
 				if ( maxFinishTime < new Date().getTime() ) {
@@ -165,7 +164,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 						error: 'transfer took too long',
 						code: 'transfer_timeout',
 					} );
-					throw new Error( 'transfer timeout' );
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
 				}
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;

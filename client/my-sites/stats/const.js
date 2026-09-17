@@ -11,10 +11,6 @@ export const INSIGHTS_SUPPORT_URL =
 	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	'https://wordpress.com/support/stats/learn-insights-about-your-website/';
 
-export const JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL =
-	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-	'https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/';
-
 export const JETPACK_SUPPORT_AI_URL = 'https://jetpack.com/ai';
 export const JETPACK_SUPPORT_NEWSLETTER_URL = 'https://jetpack.com/support/newsletter';
 export const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';

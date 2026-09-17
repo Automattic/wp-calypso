@@ -42,8 +42,8 @@
 		position: absolute;
 		height: $height;
 		width: $width;
-		top: -$height / 2;
-		right: -$width / 2;
+		top: calc(-1 * $height / 2);
+		right: calc(-1 * $width / 2);
 		margin: 0;
 		padding: 0;
 

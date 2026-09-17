@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
 import LanguagePickerModal from './modal';
@@ -71,7 +70,7 @@ export class LanguagePicker extends PureComponent {
 	findLanguage( valueKey, value ) {
 		const { translate } = this.props;
 		//check if the language provided is supported by Calypso
-		const language = find( this.props.languages, ( lang ) => {
+		const language = this.props.languages?.find( ( lang ) => {
 			// The value passed is sometimes string instead of number - need to use ==
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );

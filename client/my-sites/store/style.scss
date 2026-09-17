@@ -4,6 +4,16 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
+@import "calypso/my-sites/stats/interactive-colors";
+@import "@automattic/calypso-color-schemes/src/__wp-base-styles/admin-theme-colors";
+
+// Store Stats reuses the Stats chart and controls, so it follows the same admin theme colour. It has its own roots rather than .stats-main, hence the separate include. `.woocommerce` is the one class all of them share — the main page mounts as `store-stats woocommerce`, the Products/Categories/Coupons views as `store-stats__list-view woocommerce` — so it is the root that both sets the token and reads it.
+// Both halves are qualified because `.woocommerce` is not ours alone: the landing page in client/my-sites/woocommerce mounts a bare `<div className="woocommerce">`, and index.js redirects /store/stats there for any site without WooCommerce — after this stylesheet has already loaded. Section CSS outlives the navigation that loaded it, so unqualified, one automatic redirect would leave that page wearing Stats' colours.
+@include wp-admin-theme-colors(".woocommerce", ".is-section-woocommerce");
+
+.is-section-woocommerce .woocommerce {
+	@include stats-interactive-colors;
+}
 
 .woocommerce {
 	@import "app/store-stats/store-stats-chart/style";

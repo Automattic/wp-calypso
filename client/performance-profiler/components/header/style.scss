@@ -262,10 +262,16 @@
 		padding: 3px 10px 0;
 		border-radius: 8px;
 		border-width: 0;
+		display: flex;
+		align-items: center;
 
 		button {
 			padding-right: 4px;
 			padding-left: 4px;
+		}
+
+		.copy-link-button svg {
+			fill: var( --color-text );
 		}
 	}
 	.popover__arrow {

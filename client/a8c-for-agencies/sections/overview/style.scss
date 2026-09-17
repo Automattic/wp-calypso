@@ -2,9 +2,27 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-overview-content {
 	padding-block-start: 1rem;
+}
+
+// The shared dashboard overview cards assume the dashboard app's styling
+// context, which the classic app does not provide. This maps only the pieces
+// the overview cards consume today — the 13px base font size (the dashboard
+// Text component inherits it whenever no explicit size is set) and the color
+// variables below — not the dashboard's full token set. Scoped to the revamp
+// so the legacy overview keeps the classic typography.
+.a4a-overview-content.is-revamp {
+	font-size: $font-size-medium;
+
+	--dashboard-header__divider-color: var(--color-border-subtle);
+	--dashboard__foreground-color-success: var(--color-success);
+	--dashboard__foreground-color-warning: var(--color-warning);
+	--dashboard__foreground-color-error: var(--color-error);
+	--dashboard__text-color: var(--color-text);
+	--dashboard__text-muted-color: var(--color-text-subtle);
 }
 
 .a4a-overview-header {

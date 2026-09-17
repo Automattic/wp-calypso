@@ -26,7 +26,10 @@ import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
-import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+} from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
@@ -101,6 +104,14 @@ const EmailProvidersStackedComparison = ( {
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 	const showEmailPurchaseDisabledMessage = ! currentUserCanAddEmail && ! isDomainInCart;
+	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
+
+	// This page only promotes forwarding to users it can't sell paid email to when the sole
+	// blocker is domain ownership. Other paid-email blockers stay hidden here even where they
+	// wouldn't rule out forwarding elsewhere, preserving what this page offered before.
+	const canShowEmailForwarding =
+		currentUserCanAddEmail ||
+		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -241,9 +252,6 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const renderEmailPurchaseDisabledMessage = () => {
-		const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-		const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
-
 		switch ( cannotAddEmailWarningCode ) {
 			case EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED:
 				return <EmailDomainStateRestrictedMessage domainName={ selectedDomainName } />;
@@ -322,7 +330,7 @@ const EmailProvidersStackedComparison = ( {
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
-			{ ! isDomainInCart && ! showEmailPurchaseDisabledMessage && (
+			{ ! isDomainInCart && canShowEmailForwarding && (
 				<EmailForwardingLink selectedDomainName={ selectedDomainName } />
 			) }
 

@@ -18,7 +18,6 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
@@ -144,7 +143,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 								/>
 							</>
 						) }
-						<ActionDropdown note={ note } goBack={ goBack } />
 						{ isDismissible && <CloseButton /> }
 					</HStack>
 				</HStack>

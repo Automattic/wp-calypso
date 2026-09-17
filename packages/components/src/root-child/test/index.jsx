@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import ReactDom from 'react-dom';
+import { cleanup, render, screen } from '@testing-library/react';
 import RootChild from '..';
 
 /**
@@ -30,7 +29,7 @@ describe( 'RootChild', () => {
 	} );
 
 	afterEach( () => {
-		ReactDom.unmountComponentAtNode( container );
+		cleanup();
 	} );
 
 	describe( 'rendering', () => {

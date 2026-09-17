@@ -129,7 +129,7 @@ describe( 'PeopleInviteDetails', () => {
 		expect( mockDeleteInvite ).toHaveBeenCalledWith( siteObject.ID, acceptedInviteObject.key );
 	} );
 
-	it( 'should navigate back (to the invite list) when an invite is deleted', () => {
+	it( 'should navigate back (to the users list) when an invite is deleted', () => {
 		const props = {
 			site: siteObject,
 			requesting: false,
@@ -148,7 +148,7 @@ describe( 'PeopleInviteDetails', () => {
 		// Verify that `page.back` is called when the invite deletion succeeds.
 		rerender( <PeopleInviteDetails { ...props } deleting={ false } deleteSuccess /> );
 		expect( mockGoBack ).toHaveBeenCalledTimes( 1 );
-		expect( mockGoBack ).toHaveBeenCalledWith( '/people/invites/' + siteObject.slug );
+		expect( mockGoBack ).toHaveBeenCalledWith( '/people/team/' + siteObject.slug );
 
 		// Change another prop and verify that `page.back` isn't called again.
 		rerender( <PeopleInviteDetails { ...props } invite={ { ...acceptedInviteObject } } /> );

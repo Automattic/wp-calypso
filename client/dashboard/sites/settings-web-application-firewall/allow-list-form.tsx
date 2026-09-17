@@ -10,6 +10,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -53,15 +54,12 @@ const form = {
 
 export default function AllowListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( {
-		...siteJetpackSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Allowed IP addresses saved.' ),
-				error: __( 'Failed to save allowed IP addresses.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteJetpackSettingsMutation( site.ID ), {
+			success: __( 'Allowed IP addresses saved.' ),
+			error: __( 'Failed to save allowed IP addresses.' ),
+		} )
+	);
 
 	const currentEnabled = jetpackSettings?.jetpack_waf_ip_allow_list_enabled ?? false;
 	const currentList = jetpackSettings?.jetpack_waf_ip_allow_list ?? '';

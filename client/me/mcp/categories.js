@@ -4,11 +4,17 @@
  */
 
 /**
- * Normalize API `annotations.readonly` (boolean or string) from MCP tool definitions.
+ * Normalize a tool's readonly state. Prefers the guaranteed top-level `readonly`
+ * boolean (always present as of AIINT-469), falling back to the legacy
+ * `annotations.readonly` (boolean or string) for older payload shapes.
  * @param {Record<string, unknown>} tool
  * @returns {boolean|undefined} true = read-only, false = can write, undefined = not specified
  */
 function getReadonlyAnnotation( tool ) {
+	if ( typeof tool?.readonly === 'boolean' ) {
+		return tool.readonly;
+	}
+
 	const raw = tool?.annotations?.readonly;
 	if ( raw === true || raw === 'true' ) {
 		return true;

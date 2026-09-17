@@ -57,10 +57,11 @@
 }
 
 // Baton-pass: filter sticks at the fixed nav's top and rides above it (z-index
-// beats the nav's 801), covering it as it pins.
+// beats the nav's closed 177), covering it as it pins. Stays below the nav's
+// open state (179) and the masterbar (180), which is always on top.
 .is-section-patterns:has(.x-nav--2026-redesign) .pattern-library__filters {
 	top: var(--nav-2026-admin-offset);
-	z-index: 1000;
+	z-index: var(--nav-2026-z-sub-nav, 178);
 
 	@media (max-width: $break-mobile) {
 		position: sticky;

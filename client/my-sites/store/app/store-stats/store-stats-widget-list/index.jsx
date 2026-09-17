@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -27,7 +26,7 @@ class StoreStatsWidgetList extends Component {
 	render() {
 		const { data, deltas, query, selectedDate, widgets, moment } = this.props;
 		const { unit } = query;
-		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
+		const selectedIndex = data.findIndex( ( d ) => d.period === selectedDate );
 		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter(
 			( key ) => key !== 'period'
 		)[ 0 ];

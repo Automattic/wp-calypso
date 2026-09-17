@@ -29,7 +29,7 @@ export default function AISiteToolsSettingsSummary( {
 			return [
 				{
 					text: __( 'Enabled' ),
-					intent: 'success' as const,
+					intent: 'stable' as const,
 				},
 			];
 		}
@@ -44,7 +44,7 @@ export default function AISiteToolsSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/ai-tools` }
-			title={ __( 'AI tools (early access)' ) }
+			title={ __( 'AI tools' ) }
 			density={ density }
 			decoration={ <BigSkyLogo.CentralLogo heartless size={ 24 } /> }
 			badges={ getBadge() }

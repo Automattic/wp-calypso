@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
 
 /**
@@ -9,11 +8,7 @@ import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-conn
  * @returns {?boolean}          Whether the site is in development mode.
  */
 export default function isJetpackSiteInDevelopmentMode( state, siteId ) {
-	const isDevMode = get(
-		getJetpackConnectionStatus( state, siteId ),
-		[ 'devMode', 'isActive' ],
-		null
-	);
+	const isDevMode = getJetpackConnectionStatus( state, siteId )?.devMode?.isActive ?? null;
 	if ( isDevMode === null ) {
 		return null;
 	}

@@ -5,6 +5,12 @@
 	inline-size: 1px;
 	block-size: 1.25rem;
 	background-color: var( --color-border-subtle );
+
+	// Drop the help button's leading padding so the gap from the divider to the
+	// help icon matches the gap from "Use a domain I own" to the divider.
+	+ .components-button.components-button {
+		padding-inline-start: 0;
+	}
 }
 
 .domain-search--step-container {

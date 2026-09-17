@@ -1,0 +1,62 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.discover-logged-out-hero {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 32px;
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 48px;
+	}
+}
+
+.discover-logged-out-hero__content {
+	flex: 1 1 50%;
+	max-width: 560px;
+
+	h1 {
+		margin-top: 0;
+	}
+}
+
+.discover-logged-out-hero__cta {
+	display: inline-block;
+	background: var( --color-text );
+	color: var( --color-text-inverted );
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 1;
+	padding: 16px 32px;
+	border-radius: 4px;
+	text-decoration: none;
+	margin-block-start: 16px;
+
+	&:hover,
+	&:focus {
+		background: var( --color-neutral-70 );
+		color: var( --color-text-inverted );
+	}
+}
+
+.discover-logged-out-hero__images {
+	height: 280px;
+
+	@include break-medium {
+		flex: 0 0 auto;
+		width: 288px;
+		height: 300px;
+	}
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 8px;
+		display: block;
+	}
+}

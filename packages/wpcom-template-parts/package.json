@@ -42,8 +42,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/url": "^4.48.0",
-		"i18n-calypso": "workspace:^",
-		"social-logos": "^3.1.18"
+		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -51,7 +50,7 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }

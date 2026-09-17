@@ -84,10 +84,25 @@ marketplace subscriptions on site.
 
 ## Common Pitfalls
 
-1. **`isPartnerPurchase` type guard narrows to wrong field** — Checks
-   `purchase?.partner_name` but narrows the type to `{ partnerType: string }` (camelCase).
-   The actual field on the `Purchase` interface is `partner_type` (snake_case). Downstream
-   code using the narrowed type will reference a field that doesn't exist.
+1. **Read `is_partner_managed` / `is_host_managed`; don't re-derive them** — A
+   partner-provisioned ("Jetpack Start") subscription is billed by the partner, so
+   WordPress.com self-serve management doesn't apply. The backend reports this directly:
+   `is_partner_managed` (a partner provisioned and bills it, excluding A4A store
+   purchases) and `is_host_managed` (that subset provisioned by a host rather than an
+   agency). Agencies buy through WordPress.com and *do* cancel here, so only
+   `is_host_managed` gates cancel/remove; the cancel flow separately skips their survey.
+
+   The flags replace a client-side derivation: a `partner_name` check paired with
+   `! isA4ABillingDragonPurchase()`, plus an `[ 'agency', 'a4a_agency' ]` list for the
+   host/agency split. Use the flags in new code. Several older call sites still derive it
+   by hand (`purchase-payment-method.tsx`, `components/purchase-expiry-status/`, and
+   classic's `manage-purchase/index.tsx`) and are yet to be swept.
+
+   `is_upgradable`, `is_cancelable`, `is_removable`, and `can_explicit_renew` are all
+   false server-side for the relevant cases, so the client only needs its own check where
+   visibility is driven by something else: `CancelOrRemoveActionButton` and classic's
+   `renderCancelPurchaseNavItem` key off auto-renew state rather than `is_cancelable`, and
+   the storage add-on has no server flag of its own.
 
 2. **Payment method list is empty while loading** — `allowedPaymentMethods === undefined`
    returns `[]` (no methods shown). Errors fail open (all methods shown). Don't add
@@ -97,17 +112,29 @@ marketplace subscriptions on site.
    returns `REMOVE` for expired purchases, which maps to a DELETE call, not a cancel.
    Don't assume all paths through "cancel purchase" call the same mutation.
 
-4. **CRITICAL: `flowType` gets silently overridden** — Inside `onSurveyComplete()`,
+4. **Bundled purchases are Remove-only** — A purchase with `expiry_status === 'included'`
+   renews with its parent plan, so `is_auto_renew_enabled` says nothing useful about it and
+   disabling auto-renew is a no-op. Never offer Cancel for one. Only domain connections
+   (`domain_map`) can be removed on their own; the rest of a plan's bundle goes with the plan.
+   See `CancelOrRemoveActionButton` in `purchase-settings/index.tsx`.
+
+5. **CRITICAL: `flowType` gets silently overridden** — Inside `onSurveyComplete()`,
    `state.cancelIntent === 'refund'` switches `CANCEL_AUTORENEW` → `CANCEL_WITH_REFUND`.
    The `shouldShowRefundEligibilityNotice` feature flag also changes the default path.
 
-5. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
+6. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
 
-6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.is_attached_to_holding_site`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
+7. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `hasQueryableSite( purchase )` (`utils/purchase.ts`), which wraps `purchase.is_attached_to_holding_site`. Never fire **any** site-scoped query for these — not just `siteBySlugQuery()`, but anything hitting `/sites/{blog_id}/…` (`siteFeaturesQuery`, `sitePurchasesQuery`, `siteByIdQuery`, `siteDomainsQuery`, `cancellationOffersQuery`, backup queries, …). Use `purchase.domain` or `purchase.blog_id` for display, and skip site-dependent UI entirely.
 
-7. **Transferred purchases** — Always check ownership before allowing purchase actions.
+   The user is not a member of the holding site, so those requests return `403 authorization_required`. `AuthProvider` (`app/auth/index.tsx`) subscribes to the whole query cache and once treated that as a signed-out session, redirecting to `/log-in` — which bounced straight back, looping forever (SHILL-2295). Its classifier now requires `statusCode === 401`, so a 403 no longer redirects, but keep these queries disabled anyway: the error still lands in the cache and every downstream consumer has to cope with it.
 
-8. **Route params are strings** — `purchaseId` from URL params must be `parseInt()`'d before passing to query functions.
+   **`hasQueryableSite()` is a holding-site check, not a reachability check.** A purchase can also point at a real site the owner has since been removed from — WPCOM removes users from the blog when Jetpack disconnects, and deleted sites behave the same way. `blog_id` is set and `is_attached_to_holding_site` is false, so `hasQueryableSite()` returns `true`, but `/upgrades?site={blog_id}` and friends return `403 unauthorized` / `User cannot access upgrades.`. No purchase field reports this today, so **route loaders must `.catch()` their site-scoped `ensureQueryData` calls** — an unhandled rejection fails the whole route into the generic `500 Error` page and the user cannot enter the flow at all (SHILL-1442). `cancelPurchaseRoute` and `purchaseSettingsIndexRoute` in `app/router/me.tsx` both do this.
 
-9. **`site.options.unmapped_url` lies for `.home.blog` sites** — Returns the `.wordpress.com` URL even when the site's free domain is `.home.blog` (or another `.blog` subdomain). Don't use it to render the user's free hostname. Read the actual WPCOM domain from `siteDomainsQuery( siteId )` — find the entry flagged `wpcom_domain` or `is_wpcom_staging_domain` and use its `domain` field. This is the same root issue as Classic's `site.wpcom_url`, which is just `withoutHttp( unmapped_url )` — see `client/me/purchases/AGENTS.md` pitfall #6.
+   When gating a query with `enabled`, read `isLoading` rather than `isPending` in loading conditions. A disabled query stays `isPending` forever, so an `isPending`-based gate leaves the screen stuck on its loading placeholder.
+
+8. **Transferred purchases** — Always check ownership before allowing purchase actions.
+
+9. **Route params are strings** — `purchaseId` from URL params must be `parseInt()`'d before passing to query functions.
+
+10. **`site.options.unmapped_url` lies for `.home.blog` sites** — Returns the `.wordpress.com` URL even when the site's free domain is `.home.blog` (or another `.blog` subdomain). Don't use it to render the user's free hostname. Read the actual WPCOM domain from `siteDomainsQuery( siteId )` — find the entry flagged `wpcom_domain` or `is_wpcom_staging_domain` and use its `domain` field. This is the same root issue as Classic's `site.wpcom_url`, which is just `withoutHttp( unmapped_url )` — see `client/me/purchases/AGENTS.md` pitfall #6.

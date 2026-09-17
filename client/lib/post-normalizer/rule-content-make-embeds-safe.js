@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { some, forEach } from 'lodash';
 import { iframeIsAllowed } from './utils';
 
 /**
@@ -19,7 +18,7 @@ function doesNotNeedSandbox( iframe ) {
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
+	return trustedHosts.some( ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {
@@ -29,11 +28,15 @@ export default function makeEmbedsSafe( post, dom ) {
 
 	const iframes = dom.querySelectorAll( 'iframe' );
 
-	forEach( iframes, function ( iframe ) {
+	Array.from( iframes ).forEach( function ( iframe ) {
 		if ( ! ( iframe.src ?? '' ).startsWith( 'http' ) ) {
 			iframe.parentNode.removeChild( iframe );
 			return;
 		}
+
+		// `srcdoc` wins over `src`, so an allowlisted host says nothing about what the frame
+		// runs — and allowlisted frames are handed `allow-same-origin` below.
+		iframe.removeAttribute( 'srcdoc' );
 
 		iframe.src = iframe.src.replace( /^http:/, 'https:' );
 
@@ -49,7 +52,7 @@ export default function makeEmbedsSafe( post, dom ) {
 	if ( post.is_external || post.is_jetpack ) {
 		const embeds = dom.querySelectorAll( 'embed,object' );
 
-		forEach( embeds, function ( embed ) {
+		Array.from( embeds ).forEach( function ( embed ) {
 			embed.parentNode.removeChild( embed );
 		} );
 	}

@@ -14,6 +14,11 @@ import type { APIFetchOptions } from '../shared-types';
  */
 let pending: Record< string, unknown > = {};
 let inFlight = false;
+let shouldPersistState = () => true;
+
+export function setShouldPersistState( predicate: () => boolean ): void {
+	shouldPersistState = predicate;
+}
 
 function send( state: Record< string, unknown > ): Promise< unknown > {
 	if ( canAccessWpcomApis() ) {
@@ -55,6 +60,10 @@ function flush(): void {
  * @param state - Object with the prefs to save (e.g. `{ agents_manager_minimized: false }`).
  */
 export function persistAgentsManagerState( state: Record< string, unknown > ): void {
+	if ( ! shouldPersistState() ) {
+		return;
+	}
+
 	Object.assign( pending, state );
 	flush();
 }

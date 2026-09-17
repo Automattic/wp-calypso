@@ -1,17 +1,11 @@
-import {
-	CellMeasurer,
-	CellMeasurerCache,
-	List,
-	WindowScroller,
-} from '@automattic/react-virtualized';
-import React, { useEffect, useCallback, useRef, type JSX } from 'react';
-import withDimensions from 'calypso/lib/with-dimensions';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useState, type JSX } from 'react';
 
 type VirtualizedListFunctionProps< T > = {
 	item: T;
 	key: string;
 	style: React.CSSProperties;
-	registerChild: React.Ref< HTMLDivElement >;
+	registerChild: ( node: Element | null ) => void;
 };
 
 type VirtualizedListProps< T > = {
@@ -21,23 +15,18 @@ type VirtualizedListProps< T > = {
 	width?: number;
 };
 
-const cellMeasureCache = new CellMeasurerCache( {
-	fixedWidth: true,
-	// Since all our rows are of equal height, we can use this performance optimization
-	keyMapper: () => 1,
-} );
+// All rows render at equal height, so a single estimate seeds the layout before
+// each row is measured from the DOM.
+const ESTIMATED_ROW_HEIGHT = 100;
 
-type RowRenderProps = {
-	index: number;
-	key: string;
-	style: React.CSSProperties;
-	parent: unknown;
-};
+// Rows rendered above and below the visible range, mirroring react-virtualized's
+// default overscan behaviour.
+const OVERSCAN_ROW_COUNT = 10;
 
-const getScrollContainer = ( node: HTMLElement | null ): HTMLElement | Window => {
-	// Default to window if the node is null or it's the root element.
+const getScrollContainer = ( node: HTMLElement | null ): HTMLElement | null => {
+	// Fall back to the window (null) if the node is missing or it's the root element.
 	if ( ! node || node.ownerDocument === node.parentNode ) {
-		return window;
+		return null;
 	}
 
 	// Return when overflow is defined to either auto or scroll.
@@ -52,86 +41,94 @@ const getScrollContainer = ( node: HTMLElement | null ): HTMLElement | Window =>
 		return getScrollContainer( parentNode );
 	}
 
-	// Default to window if no scroll container is found.
-	return window;
+	// Fall back to the window (null) if no scroll container is found.
+	return null;
 };
 
-const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps< T > ) => {
-	const contentRef = useRef< HTMLDivElement | null >( null );
-	const scrollContainerRef = useRef< HTMLElement | Window >( window );
+const VirtualizedList = < T, >( { items, children }: VirtualizedListProps< T > ) => {
+	// State (not a ref) so the scroll container and margin recompute once the
+	// list attaches to the DOM.
+	const [ listElement, setListElement ] = useState< HTMLDivElement | null >( null );
+	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
+	const [ scrollMargin, setScrollMargin ] = useState( 0 );
 
+	// Resolve the nearest scrollable ancestor; falls back to the window
+	// (`scrollElement === null`) when none is found.
 	useEffect( () => {
-		if ( contentRef.current ) {
-			scrollContainerRef.current = getScrollContainer( contentRef.current );
-		}
-	}, [] );
+		setScrollElement( getScrollContainer( listElement ) );
+	}, [ listElement ] );
 
-	// WindowScroller hands us a `registerChild` ref through its render prop. We merge it with
-	// our own `contentRef` via a stable callback ref: this keeps WindowScroller tracking its
-	// DOM node through `registerChild` (so its internal, React 19-removed `findDOMNode`
-	// fallback is never hit) while giving us the node to resolve the scroll container.
-	const registerChildRef = useRef< React.Ref< HTMLDivElement > >( null );
-	const setContentNode = useCallback( ( node: HTMLDivElement | null ) => {
-		contentRef.current = node;
-		const registerChild = registerChildRef.current;
-		if ( typeof registerChild === 'function' ) {
-			registerChild( node );
-		} else if ( registerChild ) {
-			( registerChild as React.MutableRefObject< HTMLDivElement | null > ).current = node;
+	// Offset (px) from the top of the scroll container to the top of the list, so
+	// the scroll position maps to the right items when content sits above the list.
+	useEffect( () => {
+		if ( ! listElement ) {
+			return;
 		}
-	}, [] );
+		const measure = () => {
+			const listTop = listElement.getBoundingClientRect().top;
+			const next = scrollElement
+				? listTop - scrollElement.getBoundingClientRect().top + scrollElement.scrollTop
+				: listTop + window.scrollY;
+			setScrollMargin( ( current ) => ( current === next ? current : next ) );
+		};
+		measure();
+		const observer = new ResizeObserver( measure );
+		observer.observe( listElement );
+		observer.observe( scrollElement ?? document.body );
+		return () => observer.disconnect();
+	}, [ listElement, scrollElement ] );
 
-	const rowRenderer = useCallback(
-		( { index, key, style, parent }: RowRenderProps ) => {
-			const item = items?.[ index ];
-			return item ? (
-				<CellMeasurer
-					cache={ cellMeasureCache }
-					columnIndex={ 0 }
-					key={ key }
-					rowIndex={ index }
-					parent={ parent }
-				>
-					{ ( { registerChild }: { registerChild: React.Ref< HTMLDivElement > } ) =>
-						children( { item, key, style, registerChild } )
-					}
-				</CellMeasurer>
-			) : null;
-		},
-		[ items, children ]
-	);
+	const virtualizer = useVirtualizer< Element, Element >( {
+		count: items?.length ?? 0,
+		// `getScrollElement` returns the resolved scrollable ancestor, or the
+		// document scrolling element when the list scrolls with the window.
+		getScrollElement: () => scrollElement ?? document.scrollingElement ?? document.documentElement,
+		estimateSize: () => ESTIMATED_ROW_HEIGHT,
+		overscan: OVERSCAN_ROW_COUNT,
+		scrollMargin,
+	} );
+
+	const virtualItems = virtualizer.getVirtualItems();
 
 	return (
-		<WindowScroller scrollElement={ scrollContainerRef.current }>
-			{ ( {
-				height,
-				scrollTop,
-				registerChild,
-			}: {
-				height: number;
-				scrollTop: number;
-				registerChild: React.Ref< HTMLDivElement >;
-			} ) => {
-				registerChildRef.current = registerChild;
-				return (
-					<div ref={ setContentNode }>
-						<List
-							autoHeight
-							rowCount={ items?.length }
-							deferredMeasurementCache={ cellMeasureCache }
-							rowHeight={ cellMeasureCache.rowHeight }
-							height={ height }
-							scrollTop={ scrollTop }
-							width={ width }
-							items={ items }
-							rowRenderer={ rowRenderer }
-						/>
-					</div>
-				);
-			} }
-		</WindowScroller>
+		<div ref={ setListElement }>
+			<div
+				style={ {
+					position: 'relative',
+					inlineSize: '100%',
+					blockSize: virtualizer.getTotalSize(),
+				} }
+			>
+				{ virtualItems.map( ( virtualRow ) => {
+					const item = items?.[ virtualRow.index ];
+					if ( ! item ) {
+						return null;
+					}
+					// `measureElement` reads `data-index` off the row node to know which
+					// row it is measuring, so set it on the consumer's row element before
+					// handing the node to the virtualizer.
+					const registerChild = ( node: Element | null ) => {
+						if ( node ) {
+							node.setAttribute( 'data-index', String( virtualRow.index ) );
+						}
+						virtualizer.measureElement( node );
+					};
+					return children( {
+						item,
+						key: virtualRow.key.toString(),
+						registerChild,
+						style: {
+							position: 'absolute',
+							insetBlockStart: 0,
+							insetInlineStart: 0,
+							inlineSize: '100%',
+							transform: `translateY(${ virtualRow.start - scrollMargin }px)`,
+						},
+					} );
+				} ) }
+			</div>
+		</div>
 	);
 };
 
-// cast as typeof VirtualizedList to avoid TS error
-export default withDimensions( VirtualizedList ) as typeof VirtualizedList;
+export default VirtualizedList;

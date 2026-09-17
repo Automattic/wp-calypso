@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/composite-checkout",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "A set of React components and helpers that can be used to create a checkout flow.",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
@@ -20,7 +20,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook:start": "storybook dev"
+		"storybook:start": "storybook dev -p 26835"
 	},
 	"files": [
 		"dist",
@@ -65,7 +65,7 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }

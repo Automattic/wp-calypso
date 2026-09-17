@@ -12,6 +12,13 @@ jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+	__esModule: true,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
+	),
+} ) );
+
 // Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
 jest.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
@@ -225,5 +232,25 @@ describe( 'UserSites', () => {
 
 		expect( await screen.findByText( 'Kept Site' ) ).toBeVisible();
 		expect( screen.queryByText( 'Owner Hidden Site' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the private-tab notice for the owner', async () => {
+		useSelector.mockReturnValue( { username: 'test_user' } );
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		expect( await screen.findByTestId( 'private-tab-notice' ) ).toHaveTextContent(
+			'Your sites are private'
+		);
+	} );
+
+	test( 'does not render the private-tab notice for a public viewer', async () => {
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
+
+		renderWithClient( <UserSites user={ defaultUser } /> );
+
+		await screen.findByText( 'No sites have been created yet.' );
+		expect( screen.queryByTestId( 'private-tab-notice' ) ).not.toBeInTheDocument();
 	} );
 } );

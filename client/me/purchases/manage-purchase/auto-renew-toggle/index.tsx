@@ -1,3 +1,4 @@
+import { isPurchaseOneTimePurchase } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -13,12 +14,17 @@ import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import {
+	getChangePaymentMethodPath,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRechargeable,
+	isRemoved,
+} from '../../lib/raw-purchase-helpers';
 import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
-import { getChangePaymentMethodPath } from '../../utils';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import type { GetChangePaymentMethodUrlFor, Purchase } from 'calypso/lib/purchases/types';
+import type { GetChangePaymentMethodUrlFor } from '../../lib/types';
+import type { Purchase } from '@automattic/api-core';
 import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/notices/types';
 
 export interface AutoRenewToggleProps {
@@ -129,7 +135,7 @@ class AutoRenewToggle extends Component<
 
 	toggleAutoRenew = () => {
 		const {
-			purchase: { id: purchaseId, productSlug },
+			purchase: { ID: purchaseId, product_slug: productSlug },
 			currentUserId,
 			isEnabled,
 			isAtomicSite,
@@ -200,7 +206,7 @@ class AutoRenewToggle extends Component<
 
 		if ( isEnabled ) {
 			if ( isSplitCancelRemoveEnabled ) {
-				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.id );
+				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.ID );
 				page( `${ url }?intent=auto-renew` );
 				return;
 			}
@@ -233,7 +239,11 @@ class AutoRenewToggle extends Component<
 	}
 
 	shouldRender( purchase: Purchase ) {
-		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+		return (
+			! isRemoved( purchase ) &&
+			! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
+			! isPurchaseOneTimePurchase( purchase )
+		);
 	}
 
 	render() {
@@ -294,10 +304,10 @@ class AutoRenewToggle extends Component<
 const ConnectedAutoRenewToggle = connect(
 	( state: IAppState, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
-		isEnabled: purchase.isAutoRenewEnabled,
+		isEnabled: purchase.is_auto_renew_enabled,
 		currentUserId: getCurrentUserId( state ),
 		// It's possible for this check to return null if this site is not connected (won't be in the sites array in state), but the prop types require a value
-		isAtomicSite: isSiteAtomic( state, purchase.siteId ) ?? false,
+		isAtomicSite: isSiteAtomic( state, purchase.blog_id ) ?? false,
 		siteSlug: siteSlug || getSelectedSiteSlug( state ),
 	} ),
 	{

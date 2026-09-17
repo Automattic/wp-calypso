@@ -75,6 +75,10 @@ const useSiteEmailMeNewPostsMutation = () => {
 											email: {
 												...siteSubscription.delivery_methods?.email,
 												send_posts: send_posts,
+												// Pausing deletes the subscription server-side, dropping the
+												// stored cadence. Mirror that so the cached frequency doesn't
+												// linger as stale data once email delivery is off.
+												...( ! send_posts && { post_delivery_frequency: undefined } ),
 											},
 										},
 									};
@@ -102,6 +106,7 @@ const useSiteEmailMeNewPostsMutation = () => {
 							email: {
 								...siteSubscriptionDetails.delivery_methods?.email,
 								send_posts: send_posts,
+								...( ! send_posts && { post_delivery_frequency: undefined } ),
 							},
 						},
 					} as SiteSubscriptionDetails;

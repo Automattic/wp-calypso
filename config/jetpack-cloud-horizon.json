@@ -28,8 +28,6 @@
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
-		"checkout/checkout-version": false,
-		"checkout/google-pay": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"importers/newsletter": true,
@@ -78,7 +76,6 @@
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,
-		"jetpack-cloud-manage-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-golden-token": false,
 		"jetpack-search": true,

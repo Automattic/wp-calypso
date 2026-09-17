@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { CompactCard, FormInputValidation, FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -115,7 +114,7 @@ class InfoStep extends Component {
 			translate,
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
-		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
+		const isEnglish = config( 'english_locales' ).includes( currentUserLocale );
 		const noticeText = translate( 'All sessions are in English (%(language)s is not available)', {
 			args: { language },
 		} );

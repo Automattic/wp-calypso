@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import {
@@ -64,6 +65,8 @@ export default function () {
 
 	page(
 		paths.getEmailManagementPath( ':site' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/emails' ),
 		...commonHandlers,
 		controller.emailManagement,
 		makeLayout,
@@ -77,7 +80,10 @@ export default function () {
 		],
 		handlers: [
 			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) => `/emails?domainName=${ params.domain }` ),
+			maybeRedirectToMultiSiteDashboard(
+				( params ) => `/emails?domainName=${ params.domain }`,
+				() => isEnabled( 'emails/titan-tiers' )
+			),
 			...commonHandlers,
 			controller.emailManagement,
 			makeLayout,
@@ -166,7 +172,8 @@ export default function () {
 		handlers: [
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard(
-				( params ) => `/emails/choose-email-solution/${ params.domain }`
+				( params ) => `/emails/choose-email-solution/${ params.domain }`,
+				() => isEnabled( 'emails/titan-tiers' )
 			),
 			...commonHandlers,
 			controller.emailManagementPurchaseNewEmailAccount,

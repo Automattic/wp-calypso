@@ -16,13 +16,12 @@ import { createItem } from '../lib/utils';
 const useLearnMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
-	const isAiMcpEnabled = isEnabled( 'a4a-ai-mcp' );
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
 	const menuItems = useMemo( () => {
-		const items = isAgentStudioEnabled
-			? [
-					createItem(
+		return [
+			...( isAgentStudioEnabled
+				? [
 						{
 							icon: brush,
 							path: A4A_AGENT_STUDIO_LINK,
@@ -32,77 +31,54 @@ const useLearnMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
 							},
 						},
-						path
-					),
-			  ]
-			: [];
-
-		if ( isBenchmarksEnabled ) {
-			items.push(
-				createItem(
-					{
-						icon: chartBar,
-						path: A4A_BENCHMARKS_LINK,
-						link: A4A_BENCHMARKS_LINK,
-						title: translate( 'Benchmarks' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Resources and tools / Benchmarks',
+				  ]
+				: [] ),
+			...( isBenchmarksEnabled
+				? [
+						{
+							icon: chartBar,
+							path: A4A_BENCHMARKS_LINK,
+							link: A4A_BENCHMARKS_LINK,
+							title: translate( 'Benchmarks' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / Benchmarks',
+							},
 						},
-					},
-					path
-				)
-			);
-		}
-
-		if ( isAiMcpEnabled ) {
-			items.push(
-				createItem(
-					{
-						icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
-						path: A4A_AI_MCP_LINK,
-						link: A4A_AI_MCP_LINK,
-						title: translate( 'AI and MCP' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
-						},
-					},
-					path
-				)
-			);
-		}
-
-		items.push(
-			createItem(
-				{
-					icon: tool,
-					path: A4A_DEV_TOOLS_LINK,
-					link: A4A_DEV_TOOLS_LINK,
-					title: translate( 'Developer tools' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
-					},
+				  ]
+				: [] ),
+			{
+				icon: (
+					<span className="sidebar__menu-icon">
+						<BigSkyLogo.CentralLogo heartless size={ 24 } fill="currentColor" />
+					</span>
+				),
+				path: A4A_AI_MCP_LINK,
+				link: A4A_AI_MCP_LINK,
+				title: translate( 'AI and MCP' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
 				},
-				path
-			)
-		);
-
-		items.push(
-			createItem(
-				{
-					icon: pages,
-					path: A4A_RESOURCES_LINK,
-					link: A4A_LEARN_LINK,
-					title: translate( 'Learn' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
-					},
+			},
+			{
+				icon: tool,
+				path: A4A_DEV_TOOLS_LINK,
+				link: A4A_DEV_TOOLS_LINK,
+				title: translate( 'Developer tools' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
 				},
-				path
-			)
-		);
-
-		return items;
-	}, [ path, translate, isAgentStudioEnabled, isAiMcpEnabled, isBenchmarksEnabled ] );
+			},
+			{
+				icon: pages,
+				path: A4A_RESOURCES_LINK,
+				link: A4A_LEARN_LINK,
+				title: translate( 'Learn' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Resources and tools / Learn',
+				},
+			},
+		].map( ( item ) => createItem( item, path ) );
+	}, [ path, translate, isAgentStudioEnabled, isBenchmarksEnabled ] );
 
 	return menuItems;
 };

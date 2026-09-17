@@ -148,6 +148,29 @@ describe( 'UserLists', () => {
 		expect( link?.getAttribute( 'href' ) ).toBe( '/reader/list/anotheruser/recommended-blogs' );
 	} );
 
+	test( 'should hide own recommended-blogs list and show empty content when there are no other lists', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Recommended Blogs',
+				description: '',
+				slug: 'recommended-blogs',
+				owner: 'test_user',
+				is_public: true,
+				is_owner: true,
+			},
+		];
+
+		const queryClient = createQueryClient();
+		queryClient.setQueryData( readUserListsQuery( 'test_user' ).queryKey, { lists: mockLists } );
+
+		renderWithQueryClient( <UserLists user={ defaultUser } />, { queryClient } );
+
+		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'empty-content-line' ) ).toHaveTextContent( 'No lists yet.' );
+		expect( screen.queryByText( 'Recommended Blogs' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'should display fallback description when list has no description', () => {
 		const mockLists: List[] = [
 			{

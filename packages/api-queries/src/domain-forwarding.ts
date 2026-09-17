@@ -15,6 +15,7 @@ export const domainForwardingQuery = ( domainName: string ) =>
 
 export const domainForwardingDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-forwarding-delete' },
 		mutationFn: ( forwardingId: number ) => deleteDomainForwarding( domainName, forwardingId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainForwardingQuery( domainName ) );
@@ -23,6 +24,7 @@ export const domainForwardingDeleteMutation = ( domainName: string ) =>
 
 export const domainForwardingSaveMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-forwarding-save' },
 		mutationFn: ( data: DomainForwardingSaveData ) => saveDomainForwarding( domainName, data ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainForwardingQuery( domainName ) );

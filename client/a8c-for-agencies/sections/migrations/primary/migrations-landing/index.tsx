@@ -6,16 +6,16 @@ import {
 	A4A_MIGRATIONS_COMMISSIONS_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
+import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 
 const MigrationsLanding = () => {
 	const translate = useTranslate();
 	const title = translate( 'Migrations' );
 
-	const { data: taggedSites, isFetched } = useFetchTaggedSitesForMigration();
+	const { data: taggedSites, isLoading } = useFetchTaggedSitesForMigration();
 
 	useEffect( () => {
-		if ( ! isFetched ) {
+		if ( isLoading ) {
 			return;
 		}
 		if ( taggedSites?.length ) {
@@ -23,7 +23,7 @@ const MigrationsLanding = () => {
 			return;
 		}
 		page.redirect( A4A_MIGRATIONS_OVERVIEW_LINK );
-	}, [ taggedSites, isFetched ] );
+	}, [ taggedSites, isLoading ] );
 
 	return <PagePlaceholder title={ title } />;
 };

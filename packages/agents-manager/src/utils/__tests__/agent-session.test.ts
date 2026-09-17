@@ -2,27 +2,19 @@
  * @jest-environment jsdom
  */
 import {
-	SESSION_STORAGE_KEY,
-	getSessionStorageKey,
+	getActiveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
 	getSessionId,
+	saveSessionId,
 	clearSessionId,
-	isFreshSession,
-	markSessionUsed,
 	getOrCreateSessionId,
 } from '../agent-session';
+import { setResolvedAgentId } from '../resolved-agent-id';
 
-// The ORCHESTRATOR_AGENT_ID constant ('wp-orchestrator') is used internally in
-// getSessionStorageKey to fall back to the base key. Reference it via the same
-// module so tests don't hard-code the string.
+// Sessions for the `ORCHESTRATOR_AGENT_ID` agent ('wp-orchestrator') use the
+// unsuffixed base key. Reference it here so tests don't hard-code the mapping silently.
 const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function makeStoredSession( sessionId: string, ageMs = 0 ) {
-	return JSON.stringify( { sessionId, timestamp: Date.now() - ageMs } );
-}
 
 // jsdom's `crypto` object does not expose `randomUUID`. Polyfill it so spyOn
 // can find the property, matching the behaviour of real browser environments.
@@ -33,239 +25,171 @@ function ensureCryptoRandomUUID() {
 	}
 }
 
-// ---------------------------------------------------------------------------
-
-describe( 'getSessionStorageKey', () => {
-	it( 'returns base key when agentId is undefined', () => {
-		expect( getSessionStorageKey( undefined ) ).toBe( SESSION_STORAGE_KEY );
-	} );
-
-	it( 'returns base key for the orchestrator agent', () => {
-		expect( getSessionStorageKey( ORCHESTRATOR_AGENT_ID ) ).toBe( SESSION_STORAGE_KEY );
-	} );
-
-	it( "returns suffixed key for 'reader-chat'", () => {
-		expect( getSessionStorageKey( 'reader-chat' ) ).toBe( `${ SESSION_STORAGE_KEY }-reader-chat` );
-	} );
-
-	it( "returns suffixed key for 'p2-reader-chat'", () => {
-		expect( getSessionStorageKey( 'p2-reader-chat' ) ).toBe(
-			`${ SESSION_STORAGE_KEY }-p2-reader-chat`
-		);
-	} );
+beforeEach( () => {
+	sessionStorage.clear();
+	setSessionSiteKey( 'no-site' );
+	setSessionUserId( undefined );
 } );
 
-// ---------------------------------------------------------------------------
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
 
-describe( 'getSessionId', () => {
-	let getItemSpy: jest.SpyInstance;
-	let removeItemSpy: jest.SpyInstance;
+describe( 'saveSessionId / getSessionId', () => {
+	it( 'round-trips a session ID', () => {
+		saveSessionId( 'session-abc' );
 
-	beforeEach( () => {
-		getItemSpy = jest.spyOn( Storage.prototype, 'getItem' ).mockReturnValue( null );
-		removeItemSpy = jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {} );
+		expect( getSessionId() ).toBe( 'session-abc' );
+		expect( sessionStorage.getItem( 'agents-manager-session-id-no-site-no-user' ) ).toBe(
+			'session-abc'
+		);
 	} );
 
-	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
-	it( 'returns empty string when nothing is in localStorage', () => {
+	it( 'returns empty string when nothing is stored', () => {
 		expect( getSessionId() ).toBe( '' );
 	} );
 
-	it( 'returns stored session ID when the session is within 24 h', () => {
-		getItemSpy.mockReturnValue( makeStoredSession( 'session-abc', 0 ) );
+	it( 'uses the base key for the orchestrator agent', () => {
+		saveSessionId( 'session-abc', ORCHESTRATOR_AGENT_ID );
+
 		expect( getSessionId() ).toBe( 'session-abc' );
 	} );
 
-	it( 'returns empty string and removes the key when the session is expired (> 24 h)', () => {
-		const TWENTY_FIVE_HOURS = 25 * 60 * 60 * 1000;
-		getItemSpy.mockReturnValue( makeStoredSession( 'old-session', TWENTY_FIVE_HOURS ) );
+	it( 'scopes sessions per agent', () => {
+		saveSessionId( 'orchestrator-session' );
+		saveSessionId( 'reader-session', 'reader-chat' );
 
-		expect( getSessionId() ).toBe( '' );
-		expect( removeItemSpy ).toHaveBeenCalledWith( SESSION_STORAGE_KEY );
+		expect( getSessionId() ).toBe( 'orchestrator-session' );
+		expect( getSessionId( 'reader-chat' ) ).toBe( 'reader-session' );
+		expect(
+			sessionStorage.getItem( 'agents-manager-session-id-reader-chat-no-site-no-user' )
+		).toBe( 'reader-session' );
 	} );
 
-	it( 'returns empty string gracefully when localStorage value is malformed JSON', () => {
-		getItemSpy.mockReturnValue( 'not-valid-json' );
-		// The implementation logs a console.error — suppress it to keep test output clean.
-		const consoleSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	it( 'degrades gracefully when sessionStorage is unavailable', () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const throwBlocked = () => {
+			throw new Error( 'blocked' );
+		};
+		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( throwBlocked );
+		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( throwBlocked );
+		jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( throwBlocked );
+
 		expect( getSessionId() ).toBe( '' );
-		consoleSpy.mockRestore();
+		expect( () => saveSessionId( 'session-abc' ) ).not.toThrow();
+		expect( () => clearSessionId() ).not.toThrow();
+		expect( consoleError ).toHaveBeenCalledTimes( 3 );
+
+		// A stable '' instead of a fresh UUID per call, so the agent is not
+		// re-initialized on every render.
+		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( '' );
+	} );
+
+	it( 'reads and writes under an explicit site scope when one is passed', () => {
+		saveSessionId( 'session-abc', undefined, '111' );
+
+		expect( getSessionId() ).toBe( '' );
+		expect( getSessionId( undefined, '111' ) ).toBe( 'session-abc' );
+
+		setSessionSiteKey( '111' );
+		expect( getSessionId() ).toBe( 'session-abc' );
+	} );
+
+	it( 'scopes sessions per site', () => {
+		setSessionSiteKey( '123' );
+		saveSessionId( 'site-123-session' );
+
+		setSessionSiteKey( '456' );
+		expect( getSessionId() ).toBe( '' );
+
+		setSessionSiteKey( '123' );
+		expect( getSessionId() ).toBe( 'site-123-session' );
+	} );
+
+	// `sessionStorage` outlives a logout and login in the same tab, so without
+	// the user in the key the next account resumes the previous one's chat.
+	it( 'scopes sessions per user', () => {
+		setSessionUserId( 101 );
+		saveSessionId( 'user-101-session' );
+
+		setSessionUserId( 202 );
+		expect( getSessionId() ).toBe( '' );
+
+		setSessionUserId( 101 );
+		expect( getSessionId() ).toBe( 'user-101-session' );
+	} );
+
+	it.each( [
+		[ 'another user', '123', 202 ],
+		[ 'another site', '456', 101 ],
+		[ 'a logged-out visitor', '123', undefined ],
+	] as const )( 'does not expose an explicitly scoped session to %s', ( _who, siteKey, userId ) => {
+		saveSessionId( 'user-101-session', undefined, '123', 101 );
+
+		expect( getSessionId( undefined, siteKey, userId ) ).toBe( '' );
+		expect( getSessionId( undefined, '123', 101 ) ).toBe( 'user-101-session' );
 	} );
 } );
 
-// ---------------------------------------------------------------------------
+describe( 'getActiveSessionId', () => {
+	afterEach( () => {
+		setResolvedAgentId( undefined );
+	} );
+
+	it( 'reads under the published agent scope, matching the mounted chat', () => {
+		setResolvedAgentId( 'dolly' );
+		saveSessionId( 'dolly-session', 'dolly' );
+		saveSessionId( 'orchestrator-session' );
+
+		expect( getActiveSessionId() ).toBe( 'dolly-session' );
+	} );
+
+	it( 'falls back to the orchestrator scope before an agent is resolved', () => {
+		saveSessionId( 'tab-session' );
+
+		expect( getActiveSessionId() ).toBe( 'tab-session' );
+	} );
+} );
 
 describe( 'clearSessionId', () => {
-	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
-	it( 'removes the session key from localStorage', () => {
-		const removeItemSpy = jest
-			.spyOn( Storage.prototype, 'removeItem' )
-			.mockImplementation( () => {} );
-
-		clearSessionId( 'reader-chat' );
-
-		expect( removeItemSpy ).toHaveBeenCalledWith( `${ SESSION_STORAGE_KEY }-reader-chat` );
-	} );
-
-	it( 'removes the base session key when no agentId is provided', () => {
-		const removeItemSpy = jest
-			.spyOn( Storage.prototype, 'removeItem' )
-			.mockImplementation( () => {} );
+	it( 'removes only the current scope’s session', () => {
+		saveSessionId( 'orchestrator-session' );
+		saveSessionId( 'reader-session', 'reader-chat' );
 
 		clearSessionId();
 
-		expect( removeItemSpy ).toHaveBeenCalledWith( SESSION_STORAGE_KEY );
+		expect( getSessionId() ).toBe( '' );
+		expect( getSessionId( 'reader-chat' ) ).toBe( 'reader-session' );
 	} );
 } );
-
-// ---------------------------------------------------------------------------
-
-describe( 'isFreshSession', () => {
-	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
-	it( 'returns `false` by default (no fresh flag stored)', () => {
-		jest.spyOn( Storage.prototype, 'getItem' ).mockReturnValue( null );
-		expect( isFreshSession() ).toBe( false );
-	} );
-
-	it( "returns `true` when the fresh flag is set for 'reader-chat'", () => {
-		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( ( key ) => {
-			if ( key === 'agents-manager-session-fresh-reader-chat' ) {
-				return '1';
-			}
-			return null;
-		} );
-		expect( isFreshSession( 'reader-chat' ) ).toBe( true );
-	} );
-
-	it( 'returns `false` when the fresh flag is not set for the given agentId', () => {
-		jest.spyOn( Storage.prototype, 'getItem' ).mockReturnValue( null );
-		expect( isFreshSession( 'reader-chat' ) ).toBe( false );
-	} );
-} );
-
-// ---------------------------------------------------------------------------
-
-describe( 'markSessionUsed', () => {
-	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
-	it( 'removes the fresh-session flag from localStorage', () => {
-		const removeItemSpy = jest
-			.spyOn( Storage.prototype, 'removeItem' )
-			.mockImplementation( () => {} );
-
-		markSessionUsed( 'reader-chat' );
-
-		expect( removeItemSpy ).toHaveBeenCalledWith( 'agents-manager-session-fresh-reader-chat' );
-	} );
-
-	it( 'clears the default flag when no agentId is provided', () => {
-		const removeItemSpy = jest
-			.spyOn( Storage.prototype, 'removeItem' )
-			.mockImplementation( () => {} );
-
-		markSessionUsed();
-
-		expect( removeItemSpy ).toHaveBeenCalledWith( 'agents-manager-session-fresh-default' );
-	} );
-} );
-
-// ---------------------------------------------------------------------------
 
 describe( 'getOrCreateSessionId', () => {
-	let getItemSpy: jest.SpyInstance;
-	let setItemSpy: jest.SpyInstance;
-	let removeItemSpy: jest.SpyInstance;
-
 	beforeEach( () => {
 		ensureCryptoRandomUUID();
-		getItemSpy = jest.spyOn( Storage.prototype, 'getItem' ).mockReturnValue( null );
-		setItemSpy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {} );
-		removeItemSpy = jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {} );
 	} );
 
-	afterEach( () => {
-		jest.restoreAllMocks();
+	it( 'returns an existing session without creating a new one', () => {
+		saveSessionId( 'existing-session-id', 'reader-chat' );
+
+		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( 'existing-session-id' );
 	} );
 
-	it( 'returns an existing valid session without creating a new one', () => {
-		getItemSpy.mockImplementation( ( key ) => {
-			if ( key === `${ SESSION_STORAGE_KEY }-reader-chat` ) {
-				return makeStoredSession( 'existing-session-id', 0 );
-			}
-			return null;
-		} );
-
-		const result = getOrCreateSessionId( false, 'reader-chat' );
-
-		expect( result ).toBe( 'existing-session-id' );
-		expect( setItemSpy ).not.toHaveBeenCalled();
-	} );
-
-	it( 'clears existing session and generates a new UUID when isNewChat is true', () => {
-		const mockUUID = 'new-uuid-1234';
-		const randomUUIDSpy = jest
-			.spyOn( globalThis.crypto, 'randomUUID' )
-			.mockReturnValue( mockUUID as ReturnType< Crypto[ 'randomUUID' ] > );
-
-		const result = getOrCreateSessionId( true, 'reader-chat' );
-
-		// Should have cleared the old key first.
-		expect( removeItemSpy ).toHaveBeenCalledWith( `${ SESSION_STORAGE_KEY }-reader-chat` );
-		expect( result ).toBe( mockUUID );
-		randomUUIDSpy.mockRestore();
-	} );
-
-	it( 'generates a new UUID with crypto.randomUUID when no stored session exists', () => {
+	it( 'creates and persists a new UUID when no session exists', () => {
 		const mockUUID = 'crypto-uuid-5678';
-		const randomUUIDSpy = jest
+		jest
 			.spyOn( globalThis.crypto, 'randomUUID' )
 			.mockReturnValue( mockUUID as ReturnType< Crypto[ 'randomUUID' ] > );
 
-		const result = getOrCreateSessionId( false, 'reader-chat' );
-
-		expect( result ).toBe( mockUUID );
-		// Should persist the new session and set the fresh flag.
-		expect( setItemSpy ).toHaveBeenCalledWith(
-			`${ SESSION_STORAGE_KEY }-reader-chat`,
-			expect.stringContaining( mockUUID )
-		);
-		expect( setItemSpy ).toHaveBeenCalledWith( 'agents-manager-session-fresh-reader-chat', '1' );
-		randomUUIDSpy.mockRestore();
+		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( mockUUID );
+		expect( getSessionId( 'reader-chat' ) ).toBe( mockUUID );
 	} );
 
-	it( 'sets fresh flag when generating a new session', () => {
-		const mockUUID = 'fresh-uuid-9999';
-		const randomUUIDSpy = jest
-			.spyOn( globalThis.crypto, 'randomUUID' )
-			.mockReturnValue( mockUUID as ReturnType< Crypto[ 'randomUUID' ] > );
-
-		getOrCreateSessionId( false );
-
-		expect( setItemSpy ).toHaveBeenCalledWith( 'agents-manager-session-fresh-default', '1' );
-		randomUUIDSpy.mockRestore();
-	} );
-
-	it( 'uses xxx-xxxx fallback pattern when crypto.randomUUID is unavailable', () => {
-		// Temporarily remove randomUUID to simulate older browsers.
+	it( 'uses the UUID fallback pattern when crypto.randomUUID is unavailable', () => {
 		const savedRandomUUID = globalThis.crypto.randomUUID;
 		// @ts-expect-error - Simulating missing randomUUID
 		delete globalThis.crypto.randomUUID;
 
-		const result = getOrCreateSessionId( false, 'reader-chat' );
-
-		// The fallback produces a string matching the xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx pattern.
-		expect( result ).toMatch(
+		expect( getOrCreateSessionId( 'reader-chat' ) ).toMatch(
 			/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 		);
 

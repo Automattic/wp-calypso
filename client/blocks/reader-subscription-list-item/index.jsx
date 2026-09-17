@@ -1,9 +1,9 @@
 import './style.scss';
 import { commonFeedExtensions } from '@automattic/api-core';
 import { ExternalLink } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -39,6 +39,7 @@ function ReaderSubscriptionListItem( {
 	hasFeedError,
 	className = '',
 	followSource,
+	followApiSource,
 	showNotificationSettings,
 	showLastUpdatedDate,
 	showFollowedOnDate,
@@ -54,12 +55,12 @@ function ReaderSubscriptionListItem( {
 	let siteTitle = getSiteName( { feed, site } );
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
-	const siteIcon = get( site, 'icon.img' );
-	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+	const siteIcon = site?.icon?.img;
+	const feedIcon = feed ? feed.site_icon ?? feed.image : null;
 	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
-	const isMultiAuthor = get( site, 'is_multi_author', false );
+	const isMultiAuthor = site?.is_multi_author ?? false;
 	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(
@@ -246,6 +247,7 @@ function ReaderSubscriptionListItem( {
 				<FollowButton
 					siteUrl={ feedUrl }
 					followSource={ followSource }
+					followApiSource={ followApiSource }
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }

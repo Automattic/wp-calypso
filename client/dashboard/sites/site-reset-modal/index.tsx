@@ -21,6 +21,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState, useCallback } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import ContentInfo from './content-info';
 import type { Site, SiteResetContentSummary, SiteResetStatus } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -99,7 +100,7 @@ function SiteResetContent( {
 						),
 						{
 							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href={ `/export/${ siteDomain }` } />,
+							link: <ExternalLink href={ wpcomLink( `/export/${ siteDomain }` ) } />,
 						}
 					) }
 				</Text>

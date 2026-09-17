@@ -9,6 +9,7 @@ import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -43,6 +44,15 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+// Spy on errorNotice so we can assert the message text; keep every other
+// notices action real so the rest of the suite behaves normally.
+jest.mock( 'calypso/state/notices/actions', () => {
+	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+	return {
+		...actual,
+		errorNotice: jest.fn( actual.errorNotice ),
+	};
+} );
 
 // These tests seem to be particularly slow (it might be because of using
 // it.each; it's not clear but the timeout might apply to the whole loop
@@ -768,5 +778,68 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
+	} );
+
+	it( 'tells the shopper they can finish without a VAT ID when validation is temporarily unavailable', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		// `invalid_vat` is the "could not validate right now" bucket (service down/busy).
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 400, {
+			error: 'invalid_vat',
+			message:
+				'VAT validation for this country is temporarily unavailable. Please try again later.',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		( errorNotice as jest.Mock ).mockClear();
+		await user.click( screen.getByText( 'Continue to payment' ) );
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				expect.stringContaining( 'finish your purchase now without a VAT ID' ),
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'does not suggest skipping VAT when the VAT number is actually invalid', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		// `validation_failed` means the number is genuinely wrong, so the shopper should fix it.
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 400, {
+			error: 'validation_failed',
+			message: 'Your VAT details are not valid. Please check each field and try again.',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		( errorNotice as jest.Mock ).mockClear();
+		await user.click( screen.getByText( 'Continue to payment' ) );
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				expect.stringContaining( 'not valid' ),
+				expect.anything()
+			)
+		);
+		expect( errorNotice ).not.toHaveBeenCalledWith(
+			expect.stringContaining( 'finish your purchase now without a VAT ID' ),
+			expect.anything()
+		);
 	} );
 } );

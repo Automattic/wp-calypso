@@ -2764,11 +2764,11 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_ASSISTANT,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'AI assistant and tools' )
-				: i18n.translate( 'AI Assistant' ),
+				? i18n.translate( 'WordPress Agent and tools' )
+				: i18n.translate( 'WordPress Agent' ),
 		getDescription: () =>
 			i18n.translate(
-				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+				'Use WordPress Agent to generate content, design, and manage your site — all without leaving WordPress.'
 			),
 	},
 	[ FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ]: {
@@ -2776,23 +2776,25 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => {
 			if (
 				i18n.getLocaleSlug()?.startsWith( 'en' ) ||
-				i18n.hasTranslation( 'AI assistant and tools' )
+				i18n.hasTranslation( 'WordPress Agent and tools' )
 			) {
-				return i18n.translate( 'AI assistant and tools' );
+				return i18n.translate( 'WordPress Agent and tools' );
 			}
+			// Falls back to the older, already-translated title until the new one is translated.
+			// Once it is, drop the check and return 'WordPress Agent and tools' unconditionally.
 			return i18n.translate( 'Enhanced AI assistant and tools' );
 		},
 		getDescription: () =>
 			i18n.translate(
-				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+				'Use WordPress Agent to generate content, design, and manage your site — all without leaving WordPress.'
 			),
 	},
 	[ FEATURE_BUILT_IN_SITE_ASSISTANT ]: {
 		getSlug: () => FEATURE_BUILT_IN_SITE_ASSISTANT,
-		getTitle: () => i18n.translate( 'Built-in site assistant' ),
+		getTitle: () => i18n.translate( 'Built-in WordPress Agent' ),
 		getDescription: () =>
 			i18n.translate(
-				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+				'Use WordPress Agent to generate content, design, and manage your site — all without leaving WordPress.'
 			),
 	},
 	/* END: 2023 Pricing Grid Features */
@@ -3287,7 +3289,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'AI assistant and design capabilities' )
+				? i18n.translate( 'WordPress Agent and design capabilities' )
 				: i18n.translate( 'AI Writer & Designer' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -3300,7 +3302,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER_LIMITED,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'AI assistant and tools (usage limits apply)' )
+				? i18n.translate( 'WordPress Agent and tools (usage limits apply)' )
 				: i18n.translate( 'AI Writer & Designer (limited)' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant

@@ -72,6 +72,15 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	return true;
 }
 
+export function getGroupDescriptors( userSettings ) {
+	const groups = userSettings?.mcp_abilities?.groups ?? [];
+	return [ ...groups ].sort( ( a, b ) => a.order - b.order );
+}
+
+export function getGroupIntents( userSettings ) {
+	return userSettings?.mcp_abilities?.group_intents ?? {};
+}
+
 /**
  * Get the set of tool IDs that are relevant in a site context.
  * Uses mcp_abilities.site as the authoritative list of site-applicable tools.

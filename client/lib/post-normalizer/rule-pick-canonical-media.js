@@ -1,5 +1,4 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { find } from 'lodash';
 import { isUrlLikelyAnImage } from './utils';
 
 /**
@@ -59,7 +58,7 @@ export default function pickCanonicalMedia( post ) {
 		return post;
 	}
 
-	const canonicalMedia = find( post.content_media, isCandidateForFeature );
+	const canonicalMedia = post.content_media?.find( isCandidateForFeature );
 
 	if ( canonicalMedia ) {
 		post.canonical_media = canonicalMedia;

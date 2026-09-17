@@ -21,7 +21,7 @@ export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	}, [ lang ] );
 
 	// This line is required to make `isRTL()` work as expected for chunked translations:
-	// The `./bin/build-languages.js` script scans our codebase for calls to __() and puts only the neccessary strings
+	// The `./bin/build-languages.js` script scans our codebase for calls to __() and puts only the necessary strings
 	// in `./public/calypso-strings.pot`. Internally, isRTL() uses the translation for `ltr` to determine the text direction.
 	// But because isRTL is defined in the `@wordpress/i18n` package, our `./bin/build-languages.js` script
 	// does not know to include `ltr` in `./public/calypso-strings.pot`.

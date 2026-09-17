@@ -8,6 +8,13 @@
 	}
 }
 
+.site-logs-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 240px;
+}
+
 .dataviews-wrapper .screen-reader-text {
 	clip: rect(1px, 1px, 1px, 1px);
 	position: absolute !important;

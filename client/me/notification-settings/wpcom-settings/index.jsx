@@ -1,7 +1,6 @@
 import { Card, LoadingPlaceholder } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -111,14 +110,14 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.marketing }
-					isEnabled={ get( settings, options.marketing ) }
+					isEnabled={ settings?.[ options.marketing ] }
 					title={ translate( 'Suggestions' ) }
 					description={ translate( 'Tips for getting the most out of WordPress.com.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.research }
-					isEnabled={ get( settings, options.research ) }
+					isEnabled={ settings?.[ options.research ] }
 					title={ translate( 'Research' ) }
 					description={ translate(
 						'Opportunities to participate in WordPress.com research and surveys.'
@@ -127,7 +126,7 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.community }
-					isEnabled={ get( settings, options.community ) }
+					isEnabled={ settings?.[ options.community ] }
 					title={ translate( 'Community' ) }
 					description={ translate(
 						'Information on WordPress.com courses and events (online and in-person).'
@@ -136,7 +135,7 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.promotion }
-					isEnabled={ get( settings, options.promotion ) }
+					isEnabled={ settings?.[ options.promotion ] }
 					title={ translate( 'Promotions' ) }
 					description={ translate(
 						'Sales and promotions for WordPress.com products and services.'
@@ -145,21 +144,21 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.news }
-					isEnabled={ get( settings, options.news ) }
+					isEnabled={ settings?.[ options.news ] }
 					title={ translate( 'Newsletter' ) }
 					description={ translate( 'WordPress.com news, announcements, and product spotlights.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.digest }
-					isEnabled={ get( settings, options.digest ) }
+					isEnabled={ settings?.[ options.digest ] }
 					title={ translate( 'Digests' ) }
 					description={ translate( 'Popular content from the blogs you follow.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.reports }
-					isEnabled={ get( settings, options.reports ) }
+					isEnabled={ settings?.[ options.reports ] }
 					title={ translate( 'Reports' ) }
 					description={ translate(
 						'Complimentary reports and updates regarding site performance and traffic.'
@@ -168,7 +167,7 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.news_developer }
-					isEnabled={ get( settings, options.news_developer ) }
+					isEnabled={ settings?.[ options.news_developer ] }
 					title={ translate( 'Developer Newsletter' ) }
 					description={ translate(
 						'A once-monthly roundup of notable news for WordPress developers.'
@@ -177,7 +176,7 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.ai_tips }
-					isEnabled={ get( settings, options.ai_tips ) }
+					isEnabled={ settings?.[ options.ai_tips ] }
 					title={ translate( 'AI Tips' ) }
 					description={ translate(
 						'AI insights, breakthroughs, tips, and new feature highlights.'
@@ -186,7 +185,7 @@ class WPCOMNotifications extends Component {
 
 				<EmailCategory
 					name={ options.scheduled_updates }
-					isEnabled={ get( settings, options.scheduled_updates ) }
+					isEnabled={ settings?.[ options.scheduled_updates ] }
 					title={ translate( 'Scheduled updates' ) }
 					description={ translate( 'Complimentary reports regarding scheduled plugin updates.' ) }
 				/>
@@ -218,14 +217,14 @@ class WPCOMNotifications extends Component {
 
 						<EmailCategory
 							name={ jetpackOptions.jetpack_marketing }
-							isEnabled={ get( settings, jetpackOptions.jetpack_marketing ) }
+							isEnabled={ settings?.[ jetpackOptions.jetpack_marketing ] }
 							title={ translate( 'Suggestions' ) }
 							description={ translate( 'Tips for getting the most out of Jetpack.' ) }
 						/>
 
 						<EmailCategory
 							name={ jetpackOptions.jetpack_research }
-							isEnabled={ get( settings, jetpackOptions.jetpack_research ) }
+							isEnabled={ settings?.[ jetpackOptions.jetpack_research ] }
 							title={ translate( 'Research' ) }
 							description={ translate(
 								'Opportunities to participate in Jetpack research and surveys.'
@@ -234,21 +233,21 @@ class WPCOMNotifications extends Component {
 
 						<EmailCategory
 							name={ jetpackOptions.jetpack_promotion }
-							isEnabled={ get( settings, jetpackOptions.jetpack_promotion ) }
+							isEnabled={ settings?.[ jetpackOptions.jetpack_promotion ] }
 							title={ translate( 'Promotions' ) }
 							description={ translate( 'Sales and promotions for Jetpack products and services.' ) }
 						/>
 
 						<EmailCategory
 							name={ jetpackOptions.jetpack_news }
-							isEnabled={ get( settings, jetpackOptions.jetpack_news ) }
+							isEnabled={ settings?.[ jetpackOptions.jetpack_news ] }
 							title={ translate( 'Newsletter' ) }
 							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
 						/>
 
 						<EmailCategory
 							name={ jetpackOptions.jetpack_reports }
-							isEnabled={ get( settings, jetpackOptions.jetpack_reports ) }
+							isEnabled={ settings?.[ jetpackOptions.jetpack_reports ] }
 							title={ translate( 'Reports' ) }
 							description={ translate( 'Jetpack security and performance reports.' ) }
 						/>

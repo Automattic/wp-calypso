@@ -30,6 +30,7 @@ type Props = {
 		path: string;
 		link: string;
 		title: string;
+		badge?: string;
 		onClickMenuItem?: ( path: string ) => void;
 		withChevron?: boolean;
 		isExternalLink?: boolean;

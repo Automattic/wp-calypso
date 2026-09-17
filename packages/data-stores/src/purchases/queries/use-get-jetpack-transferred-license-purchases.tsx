@@ -16,8 +16,9 @@ export function getUseTransferredPurchasesOptions(
 		queryKey,
 		queryFn: async (): Promise< Purchase[] > => {
 			const purchases: RawPurchase[] = await wpcomRequest( {
-				path: '/me/purchases/transferred',
-				apiVersion: '1.1',
+				path: '/upgrades',
+				apiVersion: '1.2',
+				query: 'type=transferred',
 			} );
 
 			return purchases.map( ( rawPurchase ) => createPurchaseObject( rawPurchase ) );

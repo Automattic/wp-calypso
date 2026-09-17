@@ -1425,6 +1425,7 @@ export const basicExpectedDomainDetails = {
 	extra: {
 		ca: null,
 		fr: null,
+		in: null,
 		uk: null,
 	},
 	fax: undefined,

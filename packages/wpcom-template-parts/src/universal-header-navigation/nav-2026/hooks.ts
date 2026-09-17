@@ -55,7 +55,7 @@ export function useScrollState( nav2026: boolean ): boolean {
 }
 
 // Align the dropdown's first column under the first nav item.
-export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): void {
+export function useDropdownOffset( nav2026: boolean ): void {
 	useEffect( () => {
 		if ( ! nav2026 ) {
 			return;
@@ -96,7 +96,7 @@ export function useDropdownOffset( nav2026: boolean, nav2026Variant: 1 | 2 ): vo
 				window.cancelAnimationFrame( frame );
 			}
 		};
-	}, [ nav2026, nav2026Variant ] );
+	}, [ nav2026 ] );
 }
 
 interface UseFooterHeightArgs {
@@ -104,7 +104,7 @@ interface UseFooterHeightArgs {
 	isMobileMenuOpen: boolean;
 	isLoggedIn: boolean;
 	mobilePlatform: 'ios' | 'android' | null;
-	footerRef: React.RefObject< HTMLDivElement >;
+	footerRef: React.RefObject< HTMLDivElement | null >;
 }
 
 // Publish the overlaid footer's height so the scroller can clear it.
@@ -147,7 +147,7 @@ interface UseDropdownFlipArgs {
 export function useDropdownFlip( {
 	nav2026,
 	activeDropdown,
-}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
+}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement | null > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
 	const prevDropdownRef = useRef< string | null >( null );
 	// React has already rendered the next panel, so cache previous panel heights.

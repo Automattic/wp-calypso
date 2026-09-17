@@ -8,7 +8,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React, { act } from 'react';
-import { SiteSubscriptionsSortBy } from '../../constants';
+import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../../constants';
 import {
 	SiteSubscriptionsQueryPropsProvider,
 	useSiteSubscriptionsQueryProps,
@@ -282,5 +282,95 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		result.current.data.subscriptions.forEach( ( subscription, index ) => {
 			expect( subscription.ID ).toEqual( expectedResult[ index ].ID );
 		} );
+	} );
+
+	it( 'returns hasSearchMatchesWithAllFilter false when search matches no subscriptions', async () => {
+		seedSiteSubscriptions( [
+			[
+				makeFollow( { ID: '1', name: 'Site 1', URL: 'https://site1.example.com' } ),
+				makeFollow( { ID: '2', name: 'Site 2', URL: 'https://site2.example.com' } ),
+			],
+		] );
+
+		const { result } = renderHook(
+			() => {
+				const { setSearchTerm } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { setSearchTerm, data, isLoading };
+			},
+			{ wrapper }
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => result.current.setSearchTerm( 'nonexistent' ) );
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 0 ) );
+		expect( result.current.data.hasSearchMatchesWithAllFilter ).toBe( false );
+	} );
+
+	it( 'returns hasSearchMatchesWithAllFilter true when narrowed filter hides search matches', async () => {
+		seedSiteSubscriptions( [
+			[
+				makeFollow( {
+					ID: '1',
+					name: 'Free Site',
+					URL: 'https://freesite.example.com',
+					is_paid_subscription: false,
+				} ),
+				makeFollow( {
+					ID: '2',
+					name: 'Paid Site',
+					URL: 'https://paidsite.example.com',
+					is_paid_subscription: true,
+				} ),
+			],
+		] );
+
+		const { result } = renderHook(
+			() => {
+				const { setSearchTerm, setFilterOption } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { setSearchTerm, setFilterOption, data, isLoading };
+			},
+			{ wrapper }
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => {
+			result.current.setSearchTerm( 'Free' );
+			result.current.setFilterOption( SiteSubscriptionsFilterBy.Paid );
+		} );
+
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 0 ) );
+		expect( result.current.data.hasSearchMatchesWithAllFilter ).toBe( true );
+	} );
+
+	it( 'returns hasSearchMatchesWithAllFilter false when only deleted subscriptions match search', async () => {
+		seedSiteSubscriptions( [
+			[
+				makeFollow( {
+					ID: '1',
+					name: 'Deleted Site',
+					URL: 'https://deleted.example.com',
+					isDeleted: true,
+				} ),
+			],
+		] );
+
+		const { result } = renderHook(
+			() => {
+				const { setSearchTerm } = useSiteSubscriptionsQueryProps();
+				const { data, isLoading } = useSiteSubscriptionsQuery();
+				return { setSearchTerm, data, isLoading };
+			},
+			{ wrapper }
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => result.current.setSearchTerm( 'Deleted' ) );
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 0 ) );
+		expect( result.current.data.hasSearchMatchesWithAllFilter ).toBe( false );
 	} );
 } );

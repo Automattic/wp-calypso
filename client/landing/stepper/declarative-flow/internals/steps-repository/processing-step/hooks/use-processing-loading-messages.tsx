@@ -1,8 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import {
-	isNewHostedSiteCreationFlow,
-	isTransferringHostedSiteCreationFlow,
-} from '@automattic/onboarding';
+import { isAIBuilderOnboardingFlow, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
@@ -24,14 +21,13 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 		return [ { title: __( 'Creating your site' ), duration: Infinity } ];
 	}
 
-	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
+	// The AI build happens after the user reaches the AI Website Builder, so
+	// avoid the default messages that imply the site is being designed here.
+	if ( flow && isAIBuilderOnboardingFlow( flow ) ) {
 		return [
-			{ title: __( 'Laying the foundations' ), duration: 5000 },
-			{ title: __( 'Warming up CPUs' ), duration: 3000 },
-			{ title: __( 'Installing WordPress' ), duration: 3000 },
-			{ title: __( 'Securing your data' ), duration: 5000 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 5000 },
-			{ title: __( 'Closing the loop' ), duration: Infinity },
+			{ title: __( 'Getting things ready' ), duration: 4000 },
+			{ title: __( 'Waking up the website builder' ), duration: 5000 },
+			{ title: __( 'Heading to checkout' ), duration: Infinity },
 		];
 	}
 
@@ -41,6 +37,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Securing your data' ), duration: 4500 },
 			{ title: __( 'Enabling encryption' ), duration: 5000 },
 			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+			{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 		];
 	}
 
@@ -51,6 +48,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Enabling encryption' ), duration: 3000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 4000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 		case SiteIntent.Sell:
@@ -60,6 +58,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Enabling encryption' ), duration: 3000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 5000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 		default:
@@ -74,6 +73,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 				{ title: __( 'Optimizing your content' ), duration: 6000 },
 				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 				{ title: __( 'Closing the loop' ), duration: 5000 },
+				{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 			];
 			break;
 	}

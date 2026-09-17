@@ -1,9 +1,8 @@
 import { getLocaleSlug } from 'i18n-calypso';
-import { get } from 'lodash';
 import moment from 'moment';
 
 export function getMaintenanceMessageFromError( error, translate ) {
-	const maintenanceEndTime = get( error, [ 'data', 'maintenance_end_time' ], null );
+	const maintenanceEndTime = error?.data?.maintenance_end_time ?? null;
 	const localeSlug = getLocaleSlug();
 
 	if ( maintenanceEndTime ) {

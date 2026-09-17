@@ -57,6 +57,14 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
+
 export interface TaxVendorInfo {
 	/**
 	 * The country code for this info.
@@ -260,6 +268,7 @@ type DomainContactDetailsErrorsExtra = {
 	ca?: CaDomainContactExtraDetailsErrors | null;
 	uk?: UkDomainContactExtraDetailsErrors | null;
 	fr?: FrDomainContactExtraDetailsErrors | null;
+	in?: InDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
@@ -279,6 +288,11 @@ export type FrDomainContactExtraDetailsErrors = {
 	registrantVatId?: string[] | TranslateResult[];
 	trademarkNumber?: string[] | TranslateResult[];
 	sirenSiret?: string[] | TranslateResult[];
+};
+
+export type InDomainContactExtraDetailsErrors = {
+	nexusDeclaration?: string | TranslateResult;
+	nexusConnectionType?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -406,6 +420,10 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
+	};
+	in?: {
+		nexusDeclaration?: T;
+		nexusConnectionType?: T;
 	};
 };
 
@@ -575,6 +593,10 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -593,6 +615,10 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_type?: string[];
 		trademark_number?: string[];
 		siren_siret?: string[];
+	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
 	};
 	is_for_business?: boolean;
 };

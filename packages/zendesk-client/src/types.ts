@@ -73,6 +73,7 @@ export type MessageAction = {
 	tooltip?: string;
 	icon?: React.ReactNode;
 	pressed?: boolean;
+	uri?: string;
 };
 
 export type ZendeskContentType =
@@ -93,6 +94,7 @@ export type ZendeskMessage = {
 	text: string;
 	altText?: string;
 	avatarUrl?: string;
+	displayName?: string;
 	sendStatus?: 'sending';
 	id: string;
 	actions?: MessageAction[];

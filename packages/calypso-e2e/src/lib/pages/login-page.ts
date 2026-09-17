@@ -5,6 +5,7 @@ const selectors = {
 	continue: 'button:text("Continue"),a:text("Continue")',
 	loginWithAnotherAccount: ':text("another account")',
 	useUsernamePasswordInstead: 'button:text("Use username and password instead")',
+	cookieBannerAccept: '.a8c-cookie-banner__ok-button, .a8c-cookie-banner__accept-all-button',
 };
 
 /**
@@ -62,23 +63,53 @@ export class LoginPage {
 	}
 
 	/**
-	 * Fills the username input.
+	 * Dismisses the cookie consent banner if it is present.
+	 *
+	 * The banner is shown on logged-out WordPress.com pages and, on mobile
+	 * viewports, can overlay the login form's submit button, blocking the click.
+	 * Its appearance is not deterministic, so a missing banner is not an error.
 	 */
-	async fillUsername( value: string ): Promise< Locator > {
-		const locator = await this.page.locator( 'input[name="usernameOrEmail"]' );
+	async dismissCookieBanner(): Promise< void > {
+		const locator = this.page.locator( selectors.cookieBannerAccept ).first();
+		try {
+			await locator.waitFor( { timeout: 5 * 1000 } );
+		} catch {
+			// Banner did not appear; nothing to dismiss.
+			return;
+		}
+		await locator.click();
+	}
+
+	/**
+	 * Fills an input on the login form, waiting out the disabled state first.
+	 *
+	 * The form renders its inputs disabled until Calypso mounts, and disables
+	 * them again while it checks the submitted username. Both windows are
+	 * normally a few milliseconds, but a cold app can hold one open for longer
+	 * than the default action timeout, and `fill` would spend that budget
+	 * retrying instead of waiting.
+	 */
+	private async fillInput( selector: string, value: string ): Promise< Locator > {
+		await this.page.waitForSelector( `${ selector }:not([disabled])`, { timeout: 30 * 1000 } );
+
+		const locator = this.page.locator( selector );
 		await locator.fill( value );
 
 		return locator;
 	}
 
 	/**
+	 * Fills the username input.
+	 */
+	async fillUsername( value: string ): Promise< Locator > {
+		return this.fillInput( 'input[name="usernameOrEmail"]', value );
+	}
+
+	/**
 	 * Fills the password input.
 	 */
 	async fillPassword( value: string ): Promise< Locator > {
-		const locator = await this.page.locator( 'input#password' );
-		await locator.fill( value );
-
-		return locator;
+		return this.fillInput( 'input#password', value );
 	}
 
 	/**

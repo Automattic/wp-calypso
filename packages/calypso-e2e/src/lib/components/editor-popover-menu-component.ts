@@ -20,12 +20,17 @@ export class EditorPopoverMenuComponent {
 	}
 
 	/**
-	 * Click menu button by name.
+	 * Click menu button by name. Matches plain menu items as well as toggleable
+	 * variants (menuitemcheckbox / menuitemradio) used by current Gutenberg for
+	 * panel toggles like "Styles".
 	 */
 	async clickMenuButton( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const locator = editorParent.getByRole( 'menuitem', { name: name } );
+		const item = editorParent.getByRole( 'menuitem', { name } );
+		const checkboxItem = editorParent.getByRole( 'menuitemcheckbox', { name } );
+		const radioItem = editorParent.getByRole( 'menuitemradio', { name } );
+		const locator = item.or( checkboxItem ).or( radioItem ).first();
 		await locator.waitFor();
 		await locator.click();
 	}

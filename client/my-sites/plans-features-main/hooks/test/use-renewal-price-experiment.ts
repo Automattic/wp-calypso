@@ -135,7 +135,7 @@ describe( 'useRenewalPricingExperiment', () => {
 			renderHook( () => useRenewalPricingExperiment() );
 			expect( useExperiment ).toHaveBeenNthCalledWith(
 				1,
-				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v2',
 				expect.objectContaining( { isEligible: false } )
 			);
 		} );
@@ -201,7 +201,7 @@ describe( 'useRenewalPricingExperiment', () => {
 			renderHook( () => useRenewalPricingExperiment() );
 			expect( useExperiment ).toHaveBeenNthCalledWith(
 				1,
-				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v2',
 				expect.objectContaining( { isEligible: false } )
 			);
 		} );
@@ -212,7 +212,7 @@ describe( 'useRenewalPricingExperiment', () => {
 			renderHook( () => useRenewalPricingExperiment() );
 			expect( useExperiment ).toHaveBeenNthCalledWith(
 				1,
-				'wpcom_renewal_pricing_increase_v2_usd_202604_v1',
+				'wpcom_renewal_pricing_increase_v2_usd_202604_v2',
 				expect.objectContaining( { isEligible: false } )
 			);
 			expect( useExperiment ).toHaveBeenNthCalledWith(

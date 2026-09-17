@@ -1,5 +1,6 @@
 const DOMAIN_PURCHASE = {
 	expiryStatus: 'active',
+	subscriptionStatus: 'active',
 	id: 10001,
 	isDomainRegistration: true,
 	meta: 'foo.com',
@@ -12,6 +13,7 @@ const DOMAIN_PURCHASE = {
 
 const DOMAIN_PURCHASE_PENDING_TRANSFER = {
 	expiryStatus: 'active',
+	subscriptionStatus: 'active',
 	id: 10001,
 	isDomainRegistration: true,
 	meta: 'foo.com',
@@ -22,6 +24,7 @@ const DOMAIN_PURCHASE_PENDING_TRANSFER = {
 
 const DOMAIN_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_PURCHASE, {
 	expiryStatus: 'expired',
+	subscriptionStatus: 'active',
 	id: 10002,
 	isCancelable: false,
 	isRefundable: false,
@@ -34,6 +37,7 @@ const DOMAIN_PURCHASE_INCLUDED_IN_PLAN = Object.assign( {}, DOMAIN_PURCHASE, {
 
 const DOMAIN_MAPPING_PURCHASE = {
 	expiryStatus: 'active',
+	subscriptionStatus: 'active',
 	id: 20001,
 	isDomainRegistration: false,
 	meta: 'boo.com',
@@ -44,12 +48,14 @@ const DOMAIN_MAPPING_PURCHASE = {
 
 const DOMAIN_MAPPING_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_MAPPING_PURCHASE, {
 	expiryStatus: 'expired',
+	subscriptionStatus: 'active',
 	id: 20002,
 	isCancelable: false,
 } );
 
 const SITE_REDIRECT_PURCHASE = {
 	expiryStatus: 'active',
+	subscriptionStatus: 'active',
 	id: 30001,
 	isDomainRegistration: false,
 	meta: '',
@@ -60,12 +66,14 @@ const SITE_REDIRECT_PURCHASE = {
 
 const SITE_REDIRECT_PURCHASE_EXPIRED = Object.assign( {}, SITE_REDIRECT_PURCHASE, {
 	expiryStatus: 'expired',
+	subscriptionStatus: 'active',
 	id: 30002,
 } );
 
 const PLAN_PURCHASE = {
 	canDisableAutoRenew: true,
 	expiryStatus: 'active',
+	subscriptionStatus: 'active',
 	id: 40001,
 	meta: '',
 	productName: 'WordPress.com Premium',

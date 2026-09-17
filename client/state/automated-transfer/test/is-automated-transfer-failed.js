@@ -11,6 +11,7 @@ describe( 'Automated Transfer', () => {
 		test( 'should return `true` for failed transfer states', () => {
 			expect( isFailed( transferStates.CONFLICTS ) ).toBe( true );
 			expect( isFailed( transferStates.FAILURE ) ).toBe( true );
+			expect( isFailed( transferStates.CLIENT_TIMEOUT ) ).toBe( true );
 		} );
 
 		test( 'should return `false` for non-failed transfer states', () => {

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { compose } from 'redux';
 import { getSiteSync } from 'calypso/state/sync/selectors/get-site-sync';
 import type { AppState } from 'calypso/types';
@@ -10,7 +9,7 @@ import 'calypso/state/sync/init';
  * @param {Object} state sync status state sub-tree for a site
  * @returns {number} progress of transfer
  */
-export const getProgressData = ( state: AppState ): number => get( state, 'progress', 0 );
+export const getProgressData = ( state: AppState ): number => state?.progress ?? 0;
 
 /**
  * Returns status info for sync progress

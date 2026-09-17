@@ -121,13 +121,16 @@ const useSiteSubscriptionsQuery = () => {
 			);
 		};
 		const sort = getSortFunction( sortTerm );
+		const isVisibleSubscription = ( item: SiteSubscriptionItem ) => ! item.isDeleted;
+		const searchMatchesWithAllFilter =
+			flattenedData?.filter(
+				( item ) => item !== null && isVisibleSubscription( item ) && searchFilter( item )
+			) ?? [];
 
 		return {
-			subscriptions:
-				flattenedData
-					?.filter( ( item ) => item !== null && filterFunction( item ) && searchFilter( item ) )
-					.sort( sort ) ?? [],
+			subscriptions: searchMatchesWithAllFilter.filter( filterFunction ).sort( sort ),
 			totalCount: data?.pages?.[ 0 ]?.totalCount ?? 0,
+			hasSearchMatchesWithAllFilter: searchMatchesWithAllFilter.length > 0,
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data?.pages, filterOption, searchTerm, sortTerm ] );

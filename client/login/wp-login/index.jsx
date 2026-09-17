@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
+import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -23,7 +25,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -39,6 +41,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -109,6 +112,7 @@ export class Login extends Component {
 			'oauth2Client',
 			'isWooJPC',
 			'isJetpack',
+			'isJetpackApp',
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
@@ -167,6 +171,28 @@ export class Login extends Component {
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
+		}
+
+		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+		// passwordless magic-link branch and the client context, and wp-login.php has neither.
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( ! keepCalypsoForm ) {
+			return (
+				<a
+					className="one-login__footer-link"
+					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+					// the recovery-email and SMS steps hang off checkemail=confirm.
+					href={ lostPassword( { locale: this.props.locale } ) }
+					rel="external"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
+					}
+				>
+					{ this.props.translate( 'Lost your password?' ) }
+				</a>
+			);
 		}
 
 		return (
@@ -332,6 +358,14 @@ export class Login extends Component {
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
 
+		// Each returns null when it has nothing to say.
+		const notices = (
+			<>
+				<PasswordResetSuccessNotice />
+				<SignupExistingAccountNotice />
+			</>
+		);
+
 		const mainContent = (
 			<Main
 				className={ clsx( 'wp-login__main', {
@@ -378,6 +412,7 @@ export class Login extends Component {
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
+						notice={ notices }
 					>
 						{ mainContent }
 					</OneLoginLayout>
@@ -398,6 +433,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -423,6 +459,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -512,6 +549,7 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			isJetpackApp: getIsJetpackApp( state ),
 			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
 			isGenericOauth:
 				oauth2Client &&

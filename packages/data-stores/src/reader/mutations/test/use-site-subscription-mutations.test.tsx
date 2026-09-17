@@ -3,6 +3,7 @@
  */
 import {
 	getSiteSubscriptionsQueryKey,
+	readFeedQueryKey,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -100,6 +101,61 @@ describe( 'site subscription mutations', () => {
 		} );
 	} );
 
+	it( 'invalidates the feed query so the subscribe button reflects the new subscription', async () => {
+		const queryClient = makeQueryClient();
+		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as jest.Mock ).mockResolvedValue( { subscribed: true } );
+
+		const { result } = renderHook( () => useSiteSubscribeMutation(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( {
+				feed_id: 456,
+				url: 'https://example.com/feed',
+				doNotInvalidateSiteSubscriptions: true,
+			} );
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		const invalidatedKeys = invalidateQueries.mock.calls.map(
+			( [ filters ] ) => filters?.queryKey
+		);
+		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 456 ] );
+	} );
+
+	it( 'invalidates blog caches using the subscribe response blog_ID when params omit it', async () => {
+		const queryClient = makeQueryClient();
+		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as jest.Mock ).mockResolvedValue( {
+			subscribed: true,
+			subscription: { ID: '1', blog_ID: '99' },
+		} );
+
+		const { result } = renderHook( () => useSiteSubscribeMutation(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( {
+				url: 'https://example.com/feed',
+				doNotInvalidateSiteSubscriptions: true,
+			} );
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		const invalidatedKeys = invalidateQueries.mock.calls.map(
+			( [ filters ] ) => filters?.queryKey
+		);
+		expect( invalidatedKeys ).toContainEqual( [ 'read', 'sites', 99 ] );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
+	} );
+
 	it( 'rolls back site subscription restore when subscribe fails', async () => {
 		const queryClient = makeQueryClient();
 		const previousData = makeSiteSubscriptionsData(
@@ -182,6 +238,32 @@ describe( 'site subscription mutations', () => {
 			is_following: true,
 			isDeleted: false,
 		} );
+	} );
+
+	it( 'invalidates the feed query so the subscribe button reflects the removed subscription', async () => {
+		const queryClient = makeQueryClient();
+		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as jest.Mock ).mockResolvedValue( { subscribed: false } );
+
+		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		act( () => {
+			result.current.mutate( {
+				subscriptionId: 123,
+				feed_id: 456,
+				doNotInvalidateSiteSubscriptions: true,
+			} );
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		const invalidatedKeys = invalidateQueries.mock.calls.map(
+			( [ filters ] ) => filters?.queryKey
+		);
+		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
+		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
 	} );
 
 	it( 'rolls back site subscription delete when unsubscribe fails', async () => {

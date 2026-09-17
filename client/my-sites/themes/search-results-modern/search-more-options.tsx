@@ -57,7 +57,7 @@ const SearchMoreOptions = ( { title, subtitle, searchTerm }: SearchMoreOptionsPr
 					<Button
 						className="search-more-options__button"
 						variant="secondary"
-						href="/setup/ai-site-builder"
+						href="/setup/ai-site-builder-onboarding"
 						onClick={ trackAIClick }
 					>
 						{ translate( 'Build with AI' ) }

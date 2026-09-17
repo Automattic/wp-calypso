@@ -18,6 +18,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
+	unifiedAdminPageViewApp: 'msd',
 	basePath: '/',
 	mainRoute: '/sites',
 	Logo,
@@ -27,10 +28,10 @@ boot( {
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: true,
 		reader: true,
 		help: true,
 		notifications: true,
+		resurrectedWelcomeModal: true,
 		me: {
 			billing: {
 				monetizeSubscriptions: true,
@@ -41,10 +42,10 @@ boot( {
 			apps: true,
 		},
 		plugins: true,
-		commandPalette: false,
+		commandPalette: true,
 		domainOnlySites: true,
 		siteOverview: {
-			preview: ! isEnabled( 'dashboard/omnibar' ),
+			preview: false,
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),

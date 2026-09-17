@@ -1,5 +1,6 @@
-import { type SiteDetails, type ChecklistStatuses } from '@automattic/data-stores';
-import { isStartWritingFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { type SiteDetails } from '@automattic/data-stores';
+import { type ChecklistStatuses } from '@automattic/launchpad';
+import { isReadymadeFlow } from '@automattic/onboarding';
 import { LaunchpadChecklist } from './types';
 
 export function isDomainUpsellCompleted(
@@ -14,9 +15,7 @@ export const getSiteIdOrSlug = (
 	site: SiteDetails | null,
 	siteSlug?: string | null
 ) => {
-	return isStartWritingFlow( flow ) || isReadymadeFlow( flow )
-		? { siteId: site?.ID }
-		: { siteSlug };
+	return isReadymadeFlow( flow ) ? { siteId: site?.ID } : { siteSlug };
 };
 
 /*

@@ -8,11 +8,15 @@
  * - Error handling for missing configurations
  *
  */
+import config from '@automattic/calypso-config';
 import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
+	getEarlyProvisionSiteSpecConfig,
+	getBlueprintSiteSpecConfig,
+	getBuildWowSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -26,7 +30,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'SiteSpec Utils', () => {
-	const mockConfig = require( '@automattic/calypso-config' );
+	const mockConfig = config as unknown as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Reset all mocks
@@ -183,6 +187,90 @@ describe( 'SiteSpec Utils', () => {
 			expect( overrides ).toEqual( {
 				client: 'calypso',
 			} );
+		} );
+	} );
+
+	describe( 'getEarlyProvisionSiteSpecConfig', () => {
+		it( 'should route confirmed specs back through the WPCOM Atomic Site Spec flow', () => {
+			const result = getEarlyProvisionSiteSpecConfig();
+
+			expect( result ).toMatchObject( {
+				agentUrl: 'https://api.example.com/agent',
+				agentId: 'test-agent',
+				buildSiteUrl:
+					'/setup/ai-site-builder-spec/site-spec?provision_target=wpcom-atomic&spec_id=',
+			} );
+		} );
+	} );
+
+	describe( 'getBuildWowSiteSpecConfig', () => {
+		it( 'should route confirmed specs through the build-wow Site Spec flow', () => {
+			const result = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+				ref: 'referrer',
+				source: 'vega',
+			} );
+			const buildSiteUrl = new URL( result.buildSiteUrl ?? '', 'https://wordpress.com' );
+
+			expect( buildSiteUrl.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+			expect( buildSiteUrl.searchParams.get( 'build_wow' ) ).toBe( '1' );
+			expect( buildSiteUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+			expect( buildSiteUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			expect( buildSiteUrl.searchParams.get( 'ref' ) ).toBe( 'referrer' );
+			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
+			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
+		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.links ).toBe( 'social' );
+		} );
+
+		it( 'should leave the other flows on the default spec preview', () => {
+			// The widget gates the brief on a truthy features.siteBrief, so any
+			// flow that grows one starts rendering the brief. Pin that only this
+			// flow and the blueprint flow ask for it.
+			expect( getDefaultSiteSpecConfig().features ).toBeUndefined();
+			expect( getEarlyProvisionSiteSpecConfig().features ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'getBlueprintSiteSpecConfig', () => {
+		it( 'should forward the blueprint identifier to the widget', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.blueprintId ).toBe( 'coachava' );
+			expect( result.agentUrl ).toBe( 'https://api.example.com/agent' );
+		} );
+
+		it( 'should omit the blueprint identifier when none is given', () => {
+			const result = getBlueprintSiteSpecConfig( {} );
+
+			expect( result ).not.toHaveProperty( 'blueprintId' );
+		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.links ).toBe( 'social' );
 		} );
 	} );
 } );

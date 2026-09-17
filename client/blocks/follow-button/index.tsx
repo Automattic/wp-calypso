@@ -28,6 +28,7 @@ interface FollowButtonContainerProps {
 	followingIcon?: JSX.Element;
 	hasButtonStyle?: boolean;
 	isButtonOnly?: boolean;
+	followApiSource?: string;
 	onFollowToggle: ( following: boolean ) => void;
 }
 
@@ -45,6 +46,7 @@ function FollowButtonContainer( {
 	followingIcon,
 	hasButtonStyle,
 	isButtonOnly,
+	followApiSource,
 	onFollowToggle,
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -60,6 +62,8 @@ function FollowButtonContainer( {
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
 	const translate = useTranslate();
+
+	const followSource = followApiSource ?? getFollowingSource();
 
 	const handleFollowToggle = ( followingSite: boolean ) => {
 		const followData = omitBy(
@@ -93,9 +97,9 @@ function FollowButtonContainer( {
 		}
 
 		if ( followingSite ) {
-			followSite( { feedUrl: siteUrl, source: getFollowingSource() } );
+			followSite( { feedUrl: siteUrl, source: followSource } );
 		} else {
-			unfollowSite( { feedUrl: siteUrl, source: getFollowingSource() } );
+			unfollowSite( { feedUrl: siteUrl, source: followSource } );
 		}
 
 		onFollowToggle( followingSite );

@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -13,10 +13,13 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
-import type { Note } from '../types';
+import { splitSubject } from './simplified-subject';
+import type { LayoutStyle, Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
@@ -47,7 +50,8 @@ const groupTitles = [
 	__( 'Older than a month' ),
 ];
 
-const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
+// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a month).
+const getTimeGroupKey = ( timestamp: string ): number => {
 	const now = new Date().setHours( 0, 0, 0, 0 );
 	const timeBoundaries = [
 		Infinity,
@@ -63,60 +67,76 @@ const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
 		.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
 
 	const time = new Date( timestamp );
-	const groupKey = timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
-
-	return <span>{ groupTitles[ groupKey ] }</span>;
+	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-export function getFields(): Field< Note >[] {
+// Temporary and English-only: the API sends the subject as one finished sentence, so
+// splitting it here relies on word order. Returns null when unsure and the row falls back
+// to the detailed layout. The real fix is the server carrying the action as its own string.
+const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
+	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+
+const NoteBadge = ( { note }: { note: Note } ) => {
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+
+	return (
+		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
+		</span>
+	);
+};
+
+export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon
-					icon={ item.icon }
-					size={ 32 }
-					badge={
-						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
-						</span>
-					}
-				/>
+				<NoteIcon icon={ item.icon } size={ 32 } badge={ <NoteBadge note={ item } /> } />
 			),
 		},
 		{
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) =>
-				html( item.subject[ 0 ], {
+				html( simplify( item, layoutStyle )?.action ?? item.subject[ 0 ], {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div className={ clsx( 'wpnc__note-list-item', { 'is-unread': ! item.read } ) }>
-					<div
-						className="wpnc__subject"
-						/* eslint-disable-next-line react/no-danger */
-						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-					/>
-					{ item.subject.length > 1 && (
-						<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-					) }
-				</div>
+				<div
+					className={ clsx( 'wpnc__subject', {
+						// Marks the open note's row for the active highlight (see CSS).
+						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
+					} ) }
+					/* eslint-disable-next-line react/no-danger */
+					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+				/>
 			),
 		},
 		{
-			id: 'info',
-			label: __( 'Info' ),
+			id: 'description',
+			label: __( 'Description' ),
 			render: ( { item } ) => {
-				return (
-					<HStack spacing={ 1 }>
-						<RelativeDate timestamp={ item.timestamp } />
-						<span>•</span>
-						<span>{ item.title }</span>
-					</HStack>
-				);
+				const simplified = simplify( item, layoutStyle );
+
+				if ( simplified ) {
+					return <div className="wpnc__excerpt">{ simplified.title }</div>;
+				}
+
+				return item.subject.length > 1 ? (
+					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
+				) : null;
 			},
+		},
+		{
+			// Group-only field for the time-section headers; never added to the
+			// view's `fields`, so it only renders as a header. `enableSorting: false`
+			// keeps notes in their newest-first arrival order rather than sorting by
+			// this label, which would order the groups alphabetically.
+			id: 'timeGroup',
+			label: __( 'Date' ),
+			enableSorting: false,
+			getValue: ( { item } ) => groupTitles[ getTimeGroupKey( item.timestamp ) ],
 		},
 	];
 }

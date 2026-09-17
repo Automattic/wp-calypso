@@ -171,12 +171,14 @@
 			border-bottom: 1px solid var(--studio-gray-5);
 			background-color: var(--studio-white);
 
-			// Baton-pass: anchor at the fixed nav's top and ride above it, covering
-			// it as it pins. `margin-top: 0` cancels the legacy masterbar pull-up.
+			// Baton-pass: anchor at the fixed nav's top and ride above it (beats the
+			// nav's closed 177), covering it as it pins. `margin-top: 0` cancels the
+			// legacy masterbar pull-up. Stays below the nav's open state (179) and
+			// the masterbar (180), which is always on top.
 			.is-section-plugins:has(.x-nav--2026-redesign) & {
 				top: var(--nav-2026-admin-offset);
 				margin-top: 0;
-				z-index: 1000;
+				z-index: var(--nav-2026-z-sub-nav, 178);
 			}
 
 			.layout__secondary ~ .layout__primary & {

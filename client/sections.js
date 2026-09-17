@@ -1,5 +1,3 @@
-const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
-
 const sections = [
 	{
 		name: 'root',
@@ -178,7 +176,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},
@@ -413,6 +411,7 @@ const sections = [
 			// Legacy paths that we need to support for backwards compatibility.
 			'/read(/?.*)',
 			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read', // For locale-specific reader.
+			'/recommendations',
 		],
 		module: 'calypso/reader',
 		group: 'reader',
@@ -464,14 +463,15 @@ const sections = [
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'reader',
 		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
@@ -487,18 +487,6 @@ const sections = [
 		paths: [ '/read/saved' ],
 		module: 'calypso/reader/saved-stream',
 		group: 'reader',
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
-		paths: [
-			'/reader/search',
-			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',
-			'/recommendations',
-		],
-		module: 'calypso/reader/search',
-		group: 'reader',
-		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -525,8 +513,8 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/spaces', '/reader/spaces/:id' ],
-		module: 'calypso/reader/spaces',
+		paths: [ '/reader/shelves', '/reader/shelves/:id' ],
+		module: 'calypso/reader/shelves',
 		group: 'reader',
 		enableLoggedOut: false,
 		trackLoadPerformance: true,
@@ -578,17 +566,6 @@ const sections = [
 		module: 'calypso/reader/fediverse',
 		group: 'reader',
 		enableLoggedOut: false,
-	},
-	{
-		name: 'reader',
-		paths: [
-			'/reader/subscriptions',
-			'/reader/subscriptions/comments',
-			'/reader/subscriptions/pending',
-			'^/reader/subscriptions/(\\d+)(/)?$',
-		],
-		module: 'calypso/reader/site-subscriptions-manager',
-		group: 'reader',
 	},
 	{
 		name: 'auth',
@@ -715,14 +692,6 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
-	},
-	{
-		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
-		module: 'calypso/jetpack-cloud/sections/manage/pricing',
-		group: 'jetpack-cloud',
-		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
@@ -868,7 +837,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/need-setup' ],
+		paths: [ '/sites' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
@@ -1004,6 +973,12 @@ const sections = [
 		name: 'a8c-for-agencies-exclusive-offers',
 		paths: [ '/exclusive-offers' ],
 		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-amplify',
+		paths: [ '/amplify' ],
+		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},
 ];

@@ -25,6 +25,7 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isWpComPlan,
 	planHasFeature,
 	getPlanClass,
 } from '@automattic/calypso-products';
@@ -176,6 +177,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
+		case 'plans-ai-assembler-paid-only':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-new-hosted-site-business-only':
@@ -260,6 +262,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-business-trial':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-student':
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
@@ -270,7 +275,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-playground':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-playground-premium':
 			// This plan intent is currently not utilized but will be soon
@@ -323,9 +328,12 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
 	const translate = useTranslate();
@@ -379,6 +387,7 @@ const useGridPlans: UseGridPlansType = ( {
 	const titleBadges = useTitleBadges( {
 		intent,
 		planSlugs: planSlugsForIntent,
+		titleBadgeOverrides,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
@@ -410,11 +419,15 @@ const useGridPlans: UseGridPlansType = ( {
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
+		let hasIntentSpecificTagline = false;
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
 		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			hasIntentSpecificTagline = true;
 			if ( isPersonalPlan( planSlug ) ) {
 				tagline = translate(
 					'Try out a store idea with low commitment. Custom domain and basic tools.'
@@ -433,12 +446,19 @@ const useGridPlans: UseGridPlansType = ( {
 				);
 			} else {
 				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				hasIntentSpecificTagline = false;
 			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
 
-		if ( useFocusedNewCopyTaglines ) {
+		/*
+		 * The focused copy is written for the standard WordPress.com plans, so it only replaces a
+		 * tagline that is not already specific to this surface: an intent that supplies its own
+		 * (newsletter, blog onboarding, Woo hosting solutions), or a plan outside the wpcom group
+		 * that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but GROUP_P2, is the live case.
+		 */
+		if ( useFocusedNewCopyTaglines && ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
 			const existingTagline = tagline;
 			if ( isFreePlan( planSlug ) ) {
 				tagline =
@@ -477,6 +497,56 @@ const useGridPlans: UseGridPlansType = ( {
 						? translate( 'Publish securely at enterprise scale.' )
 						: existingTagline;
 			}
+		}
+
+		if ( usePlansGridRedesignNewDescription ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For exploring WordPress.' )
+						? translate( 'For exploring WordPress.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For making a personal site or blog truly yours.' )
+						? translate( 'For making a personal site or blog truly yours.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For creators and professionals building a credible presence.' )
+						? translate( 'For creators and professionals building a credible presence.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation(
+						'For businesses and developers who need powerful tools and priority support.'
+					)
+						? translate(
+								'For businesses and developers who need powerful tools and priority support.'
+						  )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'For merchants growing an online store.' )
+						? translate( 'For merchants growing an online store.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
+		}
+
+		// Per-flow tagline override wins over the computed/experiment copy above.
+		if ( taglineOverrides?.[ planSlug ] ) {
+			tagline = taglineOverrides[ planSlug ];
 		}
 
 		// The enterprise plan isn't returned by the plans endpoint, so it has no

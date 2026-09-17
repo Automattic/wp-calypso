@@ -12,6 +12,7 @@ const InlineSupportLink = ( {
 	supportContext,
 	children = __( 'Learn more' ),
 	onClick,
+	forceOpenInHelpCenter = false,
 }: {
 	className?: string;
 	title?: string;
@@ -20,6 +21,7 @@ const InlineSupportLink = ( {
 	supportContext?: string;
 	children?: React.ReactNode;
 	onClick?: ( supportData: SupportDocData | null ) => void;
+	forceOpenInHelpCenter?: boolean;
 } ) => {
 	const { supportDocData, openSupportDoc } = useSupportDocData( {
 		supportPostId,
@@ -27,8 +29,10 @@ const InlineSupportLink = ( {
 		supportContext,
 	} );
 
+	const opensInPanel = !! supportDocData?.postId || forceOpenInHelpCenter;
+
 	const handleClick = ( event: React.SyntheticEvent< HTMLAnchorElement > ) => {
-		if ( supportDocData?.postId ) {
+		if ( opensInPanel ) {
 			event.preventDefault();
 			openSupportDoc();
 		}
@@ -53,6 +57,10 @@ const InlineSupportLink = ( {
 				{ children }
 			</a>
 		);
+	}
+
+	if ( forceOpenInHelpCenter ) {
+		return <a { ...linkProps }>{ children }</a>;
 	}
 
 	return <ExternalLink { ...linkProps }>{ children }</ExternalLink>;

@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { memoize } from '@automattic/js-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
@@ -17,11 +17,16 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
-import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import {
+	getCountRecords,
+	getLoadingTabs,
+	getFailedTabs,
+} from 'calypso/state/stats/chart-tabs/selectors';
 import { chartLabelformats } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
+import StatsError from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
@@ -90,6 +95,7 @@ class StatModuleChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
+		hasActiveTabError: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
 		chartContainerRef: PropTypes.object,
 		primaryColor: PropTypes.string,
@@ -161,7 +167,9 @@ class StatModuleChartTabs extends Component {
 		}
 
 		// Record the chart type change event
-		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
+		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ], {
+			blog_id: siteId,
+		} );
 	};
 
 	formatLineChartTimeTick = ( date ) => {
@@ -179,6 +187,7 @@ class StatModuleChartTabs extends Component {
 			queryParams,
 			selectedPeriod,
 			isActiveTabLoading,
+			hasActiveTabError,
 			className,
 			countsComp,
 			primaryColor,
@@ -238,28 +247,30 @@ class StatModuleChartTabs extends Component {
 					onChartTypeChange={ this.handleChartTypeChange }
 				/>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				{ chartType === 'bar' || lineChartData.length === 0 ? (
-					! isActiveTabLoading && (
-						<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
-							{ emptyState }
-						</Chart>
-					)
-				) : (
-					<AsyncLoad
-						require={ loadLineChart }
-						className="stats-chart-tabs__line-chart"
-						chartData={ lineChartData }
-						curveType="monotone" // can use smooth, linear, monotone
-						height={ 224 }
-						moment={ moment }
-						onClick={ this.props.barClick }
-						formatTimeTick={ this.formatLineChartTimeTick }
-						placeholder={
-							<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-						}
-						emptyState={ emptyState }
-					/>
-				) }
+				{ hasActiveTabError && <StatsError /> }
+				{ ! hasActiveTabError &&
+					( chartType === 'bar' || lineChartData.length === 0 ? (
+						! isActiveTabLoading && (
+							<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
+								{ emptyState }
+							</Chart>
+						)
+					) : (
+						<AsyncLoad
+							require={ loadLineChart }
+							className="stats-chart-tabs__line-chart"
+							chartData={ lineChartData }
+							curveType="monotone" // can use smooth, linear, monotone
+							height={ 224 }
+							moment={ moment }
+							onClick={ this.props.barClick }
+							formatTimeTick={ this.formatLineChartTimeTick }
+							placeholder={
+								<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+							}
+							emptyState={ emptyState }
+						/>
+					) ) }
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ countsComp }
@@ -388,13 +399,17 @@ const connectComponent = connect(
 			customRange
 		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
+		const failedTabs = getFailedTabs( state, siteId, query.date, query.period, query.quantity );
+		const hasActiveTabError = failedTabs.includes( chartTab );
+		const isActiveTabLoading =
+			! hasActiveTabError && ( loadingTabs.includes( chartTab ) || chartData.length < quantity );
 
 		return {
 			chartData,
 			counts,
 			countsComp,
 			isActiveTabLoading,
+			hasActiveTabError,
 			query,
 			queryComp,
 			queryKey,
@@ -415,8 +430,8 @@ const withCssColors = ( WrappedComponent ) => {
 	const WithCssColorsComponent = ( props ) => {
 		const chartContainerRef = useRef( null );
 
-		const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
-		const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
+		const primaryColor = useCssVariable( '--chart-series-views', chartContainerRef.current );
+		const secondaryColor = useCssVariable( '--chart-series-visitors', chartContainerRef.current );
 
 		return (
 			<WrappedComponent

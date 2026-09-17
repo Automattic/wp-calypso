@@ -8,8 +8,8 @@ import {
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { Button as WPButton } from '@wordpress/components';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -431,6 +431,7 @@ export class Theme extends Component {
 				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
+				isThemeRetired={ theme.retired }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
 				onClick={ this.setBookmark }

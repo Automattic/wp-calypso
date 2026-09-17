@@ -2,6 +2,7 @@ import { Page } from 'playwright';
 
 const selectors = {
 	newPostButton: 'button:has-text("New Post")',
+	editorInserterToggle: 'button[aria-label="Toggle block inserter"]',
 	publishedPost: ( postContent: string ) => `.entry-content:has-text("${ postContent }")`,
 };
 
@@ -24,7 +25,22 @@ export class P2Page {
 	 * Click 'New post' to show the editor.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this.page.click( selectors.newPostButton );
+		// The button is server-rendered before its click handler hydrates; a
+		// too-early click is silently lost, so retry until the editor opens.
+		const inserterToggle = this.page.locator( selectors.editorInserterToggle );
+		for ( let attempt = 0; attempt < 3; attempt++ ) {
+			if ( await inserterToggle.isVisible() ) {
+				return;
+			}
+			await this.page.click( selectors.newPostButton );
+			try {
+				await inserterToggle.waitFor( { state: 'visible', timeout: 5000 } );
+				return;
+			} catch {
+				// Handler was not attached yet; click again.
+			}
+		}
+		throw new Error( 'Editor did not open after clicking "New Post".' );
 	}
 
 	/**

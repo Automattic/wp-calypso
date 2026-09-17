@@ -28,6 +28,6 @@ export function onThisDay( context, next ) {
 
 	setPageTitle( context, i18n.translate( 'On This Day' ) );
 
-	context.primary = <AsyncLoad require={ loadMain } />;
+	context.primary = <AsyncLoad require={ loadMain } placeholder={ null } />;
 	next();
 }

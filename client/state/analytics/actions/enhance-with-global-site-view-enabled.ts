@@ -1,4 +1,4 @@
-import { set } from 'lodash';
+import { set } from '@automattic/js-utils';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

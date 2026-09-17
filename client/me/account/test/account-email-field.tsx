@@ -2,12 +2,28 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useSelector } from 'calypso/state';
+import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AccountEmailField from '../account-email-field';
 
-const buildInitialState = () => ( {
+jest.mock( 'calypso/components/data/query-account-recovery-settings', () => () => null );
+
+type RecoveryState = {
+	isReady?: boolean;
+	recoveryEmail?: string;
+	recoveryPhone?: object | null;
+};
+
+const buildInitialState = ( {
+	isReady = true,
+	recoveryEmail = '',
+	recoveryPhone = null,
+}: RecoveryState = {} ) => ( {
 	currentUser: {
 		id: 1,
 		user: { ID: 1, email: 'user@gmail.com', email_verified: true },
@@ -18,17 +34,33 @@ const buildInitialState = () => ( {
 		updating: {},
 		failed: {},
 	},
+	accountRecovery: {
+		isFetchingSettings: false,
+		settings: {
+			data: {
+				email: recoveryEmail,
+				emailValidated: false,
+				phone: recoveryPhone,
+				phoneValidated: false,
+			},
+			isReady,
+			isUpdating: {},
+			isDeleting: {},
+			isValidatingPhone: false,
+			hasSentValidation: {},
+		},
+	},
 } );
 
-const renderFieldWithEmail = ( email: string ) =>
+const renderFieldWithEmail = ( email: string, recoveryState: RecoveryState = {} ) =>
 	renderWithProvider(
 		<AccountEmailField
 			userSettings={ { user_email: 'user@gmail.com' } }
 			unsavedUserSettings={ { user_email: email } }
 		/>,
 		{
-			initialState: buildInitialState(),
-			reducers: { userSettings: userSettingsReducer },
+			initialState: buildInitialState( recoveryState ),
+			reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
 		}
 	);
 
@@ -59,7 +91,7 @@ describe( 'AccountEmailField — custom domain warning', () => {
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
 	} );
 
-	it( 'shows the warning for a custom domain', () => {
+	it( 'shows the warning for a custom domain when no recovery method is set', () => {
 		renderFieldWithEmail( 'me@my-custom-domain.com' );
 		expect( screen.getByText( WARNING_MATCHER ) ).toBeVisible();
 	} );
@@ -67,6 +99,30 @@ describe( 'AccountEmailField — custom domain warning', () => {
 	it( 'shows the warning for a custom domain case-insensitively', () => {
 		renderFieldWithEmail( 'me@MY-CUSTOM-DOMAIN.COM' );
 		expect( screen.getByText( WARNING_MATCHER ) ).toBeVisible();
+	} );
+
+	it( 'links to the account recovery settings page', () => {
+		renderFieldWithEmail( 'me@my-custom-domain.com' );
+		expect(
+			screen.getByRole( 'link', { name: /set up a recovery email or phone number/i } )
+		).toHaveAttribute( 'href', '/me/security/account-recovery' );
+	} );
+
+	it( 'does not show the warning when a recovery email is already set', () => {
+		renderFieldWithEmail( 'me@my-custom-domain.com', { recoveryEmail: 'backup@gmail.com' } );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+
+	it( 'does not show the warning when a recovery phone is already set', () => {
+		renderFieldWithEmail( 'me@my-custom-domain.com', {
+			recoveryPhone: { countryCode: 'US', number: '5551234' },
+		} );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+
+	it( 'does not show the warning before account recovery settings are ready', () => {
+		renderFieldWithEmail( 'me@my-custom-domain.com', { isReady: false } );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
 	} );
 
 	it( 'does not show the warning for an empty email', () => {
@@ -82,5 +138,53 @@ describe( 'AccountEmailField — custom domain warning', () => {
 	it( 'does not show the warning for an email ending with @', () => {
 		renderFieldWithEmail( 'user@' );
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+} );
+
+describe( 'AccountEmailField TLD validation', () => {
+	// Mirrors the parent screen, which hands the store's unsaved settings back down as props.
+	function EditableAccountEmailField( {
+		emailValidationHandler,
+	}: {
+		emailValidationHandler: ( isEmailValid: boolean ) => void;
+	} ) {
+		const unsavedUserSettings = useSelector( getUnsavedUserSettings ) ?? undefined;
+		return (
+			<AccountEmailField
+				userSettings={ { user_email: 'user@gmail.com' } }
+				unsavedUserSettings={ unsavedUserSettings }
+				emailValidationHandler={ emailValidationHandler }
+			/>
+		);
+	}
+
+	const renderAndType = async ( email: string ) => {
+		const emailValidationHandler = jest.fn();
+		renderWithProvider(
+			<EditableAccountEmailField emailValidationHandler={ emailValidationHandler } />,
+			{
+				initialState: buildInitialState(),
+				reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
+			}
+		);
+		const input = screen.getByRole( 'textbox', { name: /email/i } );
+		await userEvent.clear( input );
+		await userEvent.type( input, email );
+		return emailValidationHandler;
+	};
+
+	it( 'reports the field invalid and names the domain when the TLD is not real', async () => {
+		const emailValidationHandler = await renderAndType( 'user@gmail.commmm' );
+
+		expect( screen.getByText( /gmail\.commmm/ ) ).toBeVisible();
+		expect( screen.getByText( /real domain/i ) ).toBeVisible();
+		expect( emailValidationHandler ).toHaveBeenLastCalledWith( false );
+	} );
+
+	it( 'reports the field valid for a known TLD', async () => {
+		const emailValidationHandler = await renderAndType( 'user@example.zip' );
+
+		expect( screen.queryByText( /real domain/i ) ).toBeNull();
+		expect( emailValidationHandler ).toHaveBeenLastCalledWith( true );
 	} );
 } );

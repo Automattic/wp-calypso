@@ -1,9 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "./mixins";
 @import "./media-queries";
-
-$table-cell-max-width: 344px;
-$mobile-card-max-width: 440px;
+@import "./variables";
 
 /*********************************
  * Storage Add-On Dropdown parts *

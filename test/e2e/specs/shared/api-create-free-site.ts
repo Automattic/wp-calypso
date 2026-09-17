@@ -1,4 +1,4 @@
-import { RestAPIClient } from '@automattic/calypso-e2e';
+import { assertSuccessfulNewUserResponse, RestAPIClient } from '@automattic/calypso-e2e';
 import { apiWaitForBearerTokenAcceptance } from './api-wait-for-account-propagation';
 import type {
 	NewSiteParams,
@@ -18,6 +18,8 @@ export async function apiCreateFreeSiteForUser(
 	siteName: string,
 	siteParams: FreeSiteParams = {}
 ): Promise< NewSiteResponse > {
+	assertSuccessfulNewUserResponse( newUserDetails );
+
 	const restAPIClient = new RestAPIClient(
 		{
 			username: testUser.username,

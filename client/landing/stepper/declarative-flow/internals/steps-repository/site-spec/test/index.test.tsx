@@ -1,0 +1,398 @@
+/**
+ * @jest-environment jsdom
+ */
+import { act, render } from '@testing-library/react';
+import {
+	applyBlueprintSpec,
+	getSiteAdminUrl,
+	startBlueprintArchiveImport,
+	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
+} from 'calypso/landing/stepper/utils/blueprint-archive-import';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { useSiteSpec } from 'calypso/lib/site-spec';
+import wpcom from 'calypso/lib/wp';
+import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../early-provisioning';
+import SiteSpec from '../index';
+
+let mockQueryParams = new URLSearchParams();
+
+jest.mock( '@automattic/calypso-config', () => {
+	return {
+		__esModule: true,
+		default: jest.fn( ( key: string ) => {
+			const values: Record< string, string > = {
+				wpcom_signup_id: 'signup-id',
+				wpcom_signup_key: 'signup-key',
+			};
+
+			return values[ key ];
+		} ),
+	};
+} );
+
+jest.mock( '@automattic/onboarding', () => ( {
+	Step: { Loading: () => null },
+} ) );
+
+jest.mock( '@automattic/posthog', () => ( {
+	getSessionId: jest.fn( () => 'ph-session' ),
+} ) );
+
+jest.mock( 'i18n-calypso', () => ( {
+	useTranslate: () => ( text: string ) => text,
+} ) );
+
+jest.mock( 'calypso/components/data/document-head', () => () => null );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: () => mockQueryParams,
+} ) );
+
+jest.mock( 'calypso/lib/site-spec', () => ( {
+	useSiteSpec: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
+
+jest.mock( 'calypso/lib/site-spec/utils', () => ( {
+	getBlueprintSiteSpecConfig: jest.fn( () => ( { agentId: 'blueprint-site-spec' } ) ),
+	getBuildWowSiteSpecConfig: jest.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
+	getCiabSiteSpecConfig: jest.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
+	getEarlyProvisionSiteSpecConfig: jest.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
+} ) );
+
+const mockSetPendingAction = jest.fn();
+const mockSetSiteSetupError = jest.fn();
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		setPendingAction: mockSetPendingAction,
+		setSiteSetupError: mockSetSiteSetupError,
+	} ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/stores', () => ( {
+	ONBOARD_STORE: 'automattic/onboard',
+	SITE_STORE: 'automattic/site',
+} ) );
+
+// The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
+// requests they make are stubbed.
+jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
+	getBlueprintArchiveSiteIdentifier: jest.fn(
+		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
+			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
+	),
+	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
+	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
+	logBlueprintArchiveEvent: jest.fn(),
+	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
+	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
+	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
+} ) );
+
+jest.mock( 'calypso/lib/wp', () => ( {
+	__esModule: true,
+	default: {
+		req: {
+			get: jest.fn(),
+			post: jest.fn(),
+		},
+	},
+} ) );
+
+describe( 'SiteSpec early provisioning step', () => {
+	const originalLocation = window.location;
+	const mockUseSiteSpec = useSiteSpec as jest.Mock;
+	const wpcomPostMock = wpcom.req.post as jest.Mock;
+	const logToLogstashMock = logToLogstash as jest.Mock;
+	const navigation = {
+		submit: jest.fn(),
+	};
+
+	const renderSiteSpec = () =>
+		render(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		window.sessionStorage.clear();
+		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
+		Object.defineProperty( window, 'location', {
+			value: { href: '' },
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	it( 'redirects to WPCOM Atomic provisioning after the spec is confirmed', async () => {
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toEqual( {
+			agentId: 'early-provision-site-spec',
+		} );
+		expect( siteSpecOptions.onMessage ).toBeUndefined();
+
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-123' } );
+		} );
+
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder/' );
+		expect( redirect.searchParams.get( 'trigger_backend_build' ) ).toBe( '0' );
+		expect( redirect.searchParams.get( 'spec_id' ) ).toBe( 'spec-123' );
+		expect( redirect.searchParams.get( 'provision_target' ) ).toBe(
+			EARLY_PROVISION_TARGET_WPCOM_ATOMIC
+		);
+		expect( redirect.searchParams.has( 'early_created_site' ) ).toBe( false );
+		expect( redirect.searchParams.get( '_ph' ) ).toBe( 'ph-session' );
+		expect( redirect.searchParams.get( 'source' ) ).toBe( 'vega' );
+		expect( redirect.searchParams.has( 'create_garden_site' ) ).toBe( false );
+	} );
+
+	it( 'attaches a confirmed spec and redirects immediately to site generation', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&ref=site-card&source=site-overview'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+			atomic: {
+				is_atomic: true,
+				ready_for_editor: true,
+			},
+			remote_option_ready: true,
+		} );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toEqual( {
+			agentId: 'build-wow-site-spec',
+		} );
+
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456' } );
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			{
+				path: '/sites/example.wordpress.com/big-sky/build-wow',
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: 'spec-456',
+			}
+		);
+
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'siteId' ) ).toBe( '123' );
+		expect( redirect.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
+		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
+		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
+		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
+		);
+
+		expect( logToLogstashMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				blog_id: 123,
+				properties: expect.objectContaining( {
+					type: 'build_wow_spec_confirm_response',
+					spec_id: 'spec-456',
+					site_identifier: 'example.wordpress.com',
+					atomic_ready_for_editor: true,
+					remote_option_ready: true,
+					is_atomic: true,
+				} ),
+			} )
+		);
+	} );
+
+	it( 'leaves build-wow routing alone when build_wow is not requested', () => {
+		mockQueryParams = new URLSearchParams( 'siteSlug=example.wordpress.com' );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
+		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'confirms a spec carried from entry without loading the interview widget', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-entry'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-entry' }
+		);
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-entry' );
+	} );
+
+	it( 'sends a failed build request to the error step', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockRejectedValue( new Error( 'Forbidden' ) );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456' } );
+		} );
+
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith( 'build_wow_request_failed', 'Forbidden' );
+		expect( navigation.submit ).toHaveBeenCalledWith( {
+			buildWowError: 'build_wow_request_failed',
+		} );
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'goes straight to the error step when build_wow has no target site', () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1' );
+
+		renderSiteSpec();
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith(
+			'build_wow_missing_site',
+			expect.any( String )
+		);
+		expect( navigation.submit ).toHaveBeenCalledWith( { buildWowError: 'build_wow_missing_site' } );
+	} );
+} );
+
+describe( 'SiteSpec blueprint archive import', () => {
+	const mockUseSiteSpec = useSiteSpec as jest.Mock;
+	const navigation = { submit: jest.fn() };
+
+	const renderSiteSpec = () =>
+		render(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+
+	const confirmSpec = async () => {
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
+		} );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockQueryParams = new URLSearchParams(
+			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
+		);
+	} );
+
+	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {
+		await confirmSpec();
+
+		expect( navigation.submit ).toHaveBeenCalled();
+		expect( mockSetPendingAction ).toHaveBeenCalledTimes( 1 );
+		// The poll belongs to the processing step now, so nothing has been asked for yet.
+		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
+		expect( waitForBlueprintImportComplete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the admin URL from the apply response, so confirm does not fetch it', async () => {
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( {
+			applied: true,
+			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		// The response already knew the admin base, so the extra /sites/<id> round trip is skipped
+		// — that request is the one this change exists to remove from the hand-off.
+		expect( getSiteAdminUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'falls back to fetching the admin URL when the response has none', async () => {
+		// A wpcom that predates the field. The hand-off must still work, just a round trip slower.
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( { applied: true, adminUrl: null } );
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'polls the import from the waiting screen and hands back the site editor URL', async () => {
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		expect( waitForAtomicTransferComplete ).toHaveBeenCalledWith( 'example.wordpress.com', {
+			initialDelayMs: 0,
+		} );
+		expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com', {
+			initialDelayMs: 0,
+		} );
+		// Applied only after the restore, which replaces the site's options wholesale.
+		expect( applyBlueprintSpec ).toHaveBeenCalledWith( 'example.wordpress.com', 'spec-789', '961' );
+	} );
+
+	it( 'reports a failed import to the waiting screen rather than swallowing it', async () => {
+		( waitForBlueprintImportComplete as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Import failed' )
+		);
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+
+		await expect( pendingAction() ).rejects.toThrow();
+	} );
+
+	it( 'never starts a second import for a funnel run', async () => {
+		await confirmSpec();
+
+		expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+	} );
+} );

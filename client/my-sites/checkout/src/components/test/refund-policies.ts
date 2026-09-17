@@ -449,6 +449,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 4,
 			usePlanProductName: false,
+			hasMultipleWindows: false,
 		} );
 	} );
 
@@ -470,6 +471,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 14,
 			usePlanProductName: true,
+			hasMultipleWindows: false,
 		} );
 	} );
 
@@ -479,6 +481,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 14,
 			usePlanProductName: true,
+			hasMultipleWindows: false,
 		} );
 	} );
 
@@ -494,6 +497,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 14,
 			usePlanProductName: false,
+			hasMultipleWindows: false,
 		} );
 	} );
 
@@ -509,6 +513,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 7,
 			usePlanProductName: false,
+			hasMultipleWindows: false,
 		} );
 	} );
 
@@ -532,6 +537,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 7,
 			usePlanProductName: true,
+			hasMultipleWindows: true,
 		} );
 	} );
 
@@ -555,6 +561,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 14,
 			usePlanProductName: true,
+			hasMultipleWindows: true,
 		} );
 	} );
 
@@ -571,6 +578,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toEqual( {
 			days: 4,
 			usePlanProductName: false,
+			hasMultipleWindows: true,
 		} );
 	} );
 } );

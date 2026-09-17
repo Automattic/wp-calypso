@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
 import {
 	bell,
 	buttons,
+	comment,
 	commentAuthorAvatar,
 	lock,
-	notAllowed,
 	payment,
 	settings,
 } from '@wordpress/icons';
@@ -76,11 +76,9 @@ function MeMenuSidebar() {
 					{ __( 'Notifications' ) }
 				</SidebarMenuItem>
 			) }
-			{ supports.reader && (
-				<SidebarMenuItem icon={ notAllowed } to="/me/blocked-sites">
-					{ __( 'Blocked sites' ) }
-				</SidebarMenuItem>
-			) }
+			<SidebarMenuItem icon={ comment } to="/me/agent">
+				{ __( 'WordPress Agent' ) }
+			</SidebarMenuItem>
 			{ hasAppSupport( supports, 'apps' ) && (
 				<SidebarMenuItem icon={ buttons } to="/me/apps">
 					{ __( 'Apps' ) }

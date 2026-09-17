@@ -1,4 +1,4 @@
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 
 export type Density = 'low' | 'medium-low' | 'medium';
 
@@ -14,7 +14,7 @@ export type SummaryButtonBadgeProps = {
 	text: string;
 	/**
 	 * Optional property to specify the intent of the badge.
-	 * @default 'default'
+	 * @default 'draft'
 	 */
 	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };
@@ -29,6 +29,15 @@ export interface SummaryButtonProps {
 	 * instead of a `<button />` element.
 	 */
 	href?: string;
+	/**
+	 * The anchor `target` attribute, forwarded to the underlying element when
+	 * an `href` is given.
+	 */
+	target?: string;
+	/**
+	 * The anchor `rel` attribute, forwarded alongside `target`.
+	 */
+	rel?: string;
 	/**
 	 * A callback to handle clicking an item.
 	 */

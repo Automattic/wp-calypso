@@ -6,11 +6,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, TermPricingContext } from '../context';
 import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from '../lib/pressable-memory-addon';
+import { getSelectedItemsStorageKey } from '../lib/shopping-cart-storage';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import { type ShoppingCartItem } from '../types';
-
-const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
-const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
 function serializeCartItem( item: ShoppingCartItem ) {
 	const siteUrls = encodeURIComponent( item.siteUrls?.join( ',' ) ?? '' );
@@ -36,11 +34,10 @@ export default function useShoppingCart() {
 
 	const [ showCart, setShowCart ] = useState( window.location.hash === CART_URL_HASH_FRAGMENT );
 
-	const storageKey = useMemo( () => {
-		return marketplaceType === 'regular'
-			? SELECTED_ITEMS_SESSION_STORAGE_KEY
-			: SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL;
-	}, [ marketplaceType ] );
+	const storageKey = useMemo(
+		() => getSelectedItemsStorageKey( marketplaceType ),
+		[ marketplaceType ]
+	);
 
 	const toggleCart = () => {
 		dispatch(

@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import { UserCard, type UserCardUser } from 'calypso/components/connect-screen/u
 import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	detectPartnerConfig,
@@ -18,7 +18,7 @@ import {
 	type PartnerConfig,
 } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
@@ -165,7 +165,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Check if the invite requires a specific email that doesn't match the current user
 	const forceMatchingEmail =
-		invite?.invite?.meta?.force_matching_email && user?.email !== inviteSentTo;
+		invite?.invite?.meta?.force_matching_email && ! isSameEmail( user?.email, inviteSentTo );
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );
@@ -218,7 +218,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 	const handleDecline = useCallback( () => {
 		recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click', trackingProps );
 		dispatch( infoNotice( translate( 'You declined to join.' ), { displayOnNextPage: true } ) );
-		page( '/' );
+		dispatch( navigateToLandingPage() );
 	}, [ dispatch, trackingProps, translate ] );
 
 	const getLoginUrl = useCallback( () => {

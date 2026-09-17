@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { includes, some } from 'lodash';
 import { createElement } from 'react';
 import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
 import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
@@ -62,7 +61,7 @@ function renderPluginList( context, basePath ) {
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
 // the `:plugin` param is actually the side ID or category.
 export function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( ALLOWED_CATEGORIES, context.params.plugin ) ) {
+	if ( context.params.plugin && ALLOWED_CATEGORIES.includes( context.params.plugin ) ) {
 		return context.params.plugin;
 	}
 
@@ -270,7 +269,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function ( site ) {
+		redirectToPlugins = ! selectedSites.some( function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

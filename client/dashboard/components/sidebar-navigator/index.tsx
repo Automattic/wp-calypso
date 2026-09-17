@@ -18,7 +18,10 @@ import './style.scss';
  * Example: given routeId `/sites/$siteSlug` and screen paths `['/', '/sites/$siteSlug', '/me']`,
  * it tries `/sites` (no match), then `/` (match) → returns `/`.
  */
-function findParentPath( routeId: string, screenPaths: string[] ): string | undefined {
+function findParentPath( routeId: string | undefined, screenPaths: string[] ): string | undefined {
+	if ( ! routeId ) {
+		return undefined;
+	}
 	const parts = routeId.split( '/' );
 	while ( parts.length > 1 ) {
 		parts.pop();
@@ -54,7 +57,11 @@ function UnforwardedSidebarNavigator(
 	{ children }: SidebarNavigatorProps,
 	ref: ForwardedRef< HTMLDivElement >
 ) {
-	const matches = useRouterState( { select: ( s ) => s.matches } );
+	const allMatches = useRouterState( { select: ( s ) => s.matches } );
+
+	// Ignore unresolved matches so a not-found route falls back to the primary
+	// menu instead of that route's dataless sidebar screen.
+	const matches = allMatches.filter( ( m ) => m.status !== 'notFound' && m.status !== 'error' );
 
 	const screens = Children.toArray( children ).filter(
 		( child ): child is ReactElement< ScreenProps > =>
@@ -63,17 +70,16 @@ function UnforwardedSidebarNavigator(
 
 	const screenPaths = screens.map( ( s ) => s.props.path );
 
-	// Find the active path: first try exact match, then walk up to find parent.
+	// Find the active path: exact match, then nearest parent, then the root screen.
 	const routeId = matches[ matches.length - 1 ]?.routeId;
 	const activePath =
 		screenPaths.find( ( sp ) => matches.some( ( m ) => m.routeId === sp ) ) ??
-		findParentPath( routeId, screenPaths );
+		findParentPath( routeId, screenPaths ) ??
+		screenPaths[ 0 ];
 
 	const previousPath = usePrevious( activePath );
 	const isBack =
-		previousPath !== undefined &&
-		activePath !== previousPath &&
-		activePath === findParentPath( previousPath, screenPaths );
+		activePath !== previousPath && activePath === findParentPath( previousPath, screenPaths );
 
 	const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
 
