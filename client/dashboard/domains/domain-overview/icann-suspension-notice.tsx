@@ -7,7 +7,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { domainContactInfoRoute } from '../../app/router/domains';
@@ -29,12 +29,9 @@ function getPendingSentences( domain: Domain, formattedDeadline: string ) {
 	if ( domain.domain_registrant_email ) {
 		sentences.push(
 			createInterpolateElement(
-				sprintf(
-					/* translators: %s: the email address the ICANN verification email was sent to */
-					__( 'We sent a verification email to <strong>%s</strong>.' ),
-					domain.domain_registrant_email
-				),
-				{ strong: <strong /> }
+				/* translators: <registrantEmail /> is the email address the ICANN verification email was sent to */
+				__( 'We sent a verification email to <registrantEmail />.' ),
+				{ registrantEmail: <strong>{ domain.domain_registrant_email }</strong> }
 			)
 		);
 	} else {
@@ -48,14 +45,11 @@ function getPendingSentences( domain: Domain, formattedDeadline: string ) {
 	if ( formattedDeadline ) {
 		sentences.push(
 			createInterpolateElement(
-				sprintf(
-					/* translators: %s: the date by which the domain must be verified */
-					__(
-						'Follow the instructions in that email by <strong>%s</strong> or your domain will be suspended.'
-					),
-					formattedDeadline
+				/* translators: <deadline /> is the date by which the domain must be verified */
+				__(
+					'Follow the instructions in that email by <deadline /> or your domain will be suspended.'
 				),
-				{ strong: <strong /> }
+				{ deadline: <strong>{ formattedDeadline }</strong> }
 			)
 		);
 	} else {
@@ -74,28 +68,20 @@ function getPendingSentences( domain: Domain, formattedDeadline: string ) {
 function getSuspendedSentences( domain: Domain ) {
 	const sentences: ReactNode[] = [
 		createInterpolateElement(
-			sprintf(
-				/* translators: %s: the domain name */
-				__(
-					'<strong>%s</strong> was suspended because its contact email address was not verified.'
-				),
-				domain.domain
-			),
-			{ strong: <strong /> }
+			/* translators: <domainName /> is the domain name */
+			__( '<domainName /> was suspended because its contact email address was not verified.' ),
+			{ domainName: <strong>{ domain.domain }</strong> }
 		),
 	];
 
 	if ( domain.domain_registrant_email ) {
 		sentences.push(
 			createInterpolateElement(
-				sprintf(
-					/* translators: %s: the email address the ICANN verification email was sent to */
-					__(
-						'To reactivate it, follow the instructions in the verification email we sent to <strong>%s</strong>.'
-					),
-					domain.domain_registrant_email
+				/* translators: <registrantEmail /> is the email address the ICANN verification email was sent to */
+				__(
+					'To reactivate it, follow the instructions in the verification email we sent to <registrantEmail />.'
 				),
-				{ strong: <strong /> }
+				{ registrantEmail: <strong>{ domain.domain_registrant_email }</strong> }
 			),
 			getContactAddressHint()
 		);
