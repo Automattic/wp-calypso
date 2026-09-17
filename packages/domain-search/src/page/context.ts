@@ -10,7 +10,7 @@ import {
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
-import { type DomainSearchProps, type DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType, type SearchTrigger } from './types';
 
 const noop = () => {};
 
@@ -26,6 +26,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 		onSubmitButtonClick: noop,
 		onQueryChange: noop,
+		onSearch: noop,
 		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
@@ -66,6 +67,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	openFullCart: () => {},
 	query: '',
 	setQuery: () => {},
+	searchId: '',
+	searchTrigger: 'prefilled',
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
@@ -78,6 +81,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
 		showNamePulseSearch: false,
+		searchUiVersion: 'legacy_v1',
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -118,6 +122,16 @@ export const useDomainSearchContextValue = ( {
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
+	// One id per logical search. The initial one covers a prefilled query; every
+	// setQuery / filter change mints a new one so each search is its own request.
+	const [ search, setSearch ] = useState< { id: string; trigger: SearchTrigger } >( () => ( {
+		id: crypto.randomUUID(),
+		trigger: 'prefilled',
+	} ) );
+
+	const startSearch = useCallback( ( trigger: SearchTrigger ) => {
+		setSearch( { id: crypto.randomUUID(), trigger } );
+	}, [] );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -146,6 +160,12 @@ export const useDomainSearchContextValue = ( {
 			? normalizedConfig.allowedTlds
 			: undefined;
 
+		const requestContext = {
+			flow_name: normalizedConfig.flowName,
+			section: normalizedConfig.analyticsSection,
+			search_id: search.id,
+		};
+
 		return {
 			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
@@ -159,6 +179,7 @@ export const useDomainSearchContextValue = ( {
 						exact_sld_matches_only: filter.exactSldMatchesOnly,
 						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
 						site_slug: currentSiteUrl,
+						...requestContext,
 					} ),
 					enabled: false,
 					staleTime: Infinity,
@@ -176,21 +197,21 @@ export const useDomainSearchContextValue = ( {
 					refetchOnWindowFocus: false,
 				} ),
 				bundleSuggestion: ( query ) => ( {
-					...bundleSuggestionQuery( query ),
+					...bundleSuggestionQuery( query, requestContext ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
 				bundleTriggers: ( query ) => ( {
-					...bundleTriggersQuery( query ),
+					...bundleTriggersQuery( query, requestContext ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
 				bundleForDomain: ( fqdn ) => ( {
-					...bundleForDomainQuery( fqdn ),
+					...bundleForDomainQuery( fqdn, requestContext ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -227,7 +248,7 @@ export const useDomainSearchContextValue = ( {
 			closeFullCart,
 			openFullCart,
 			query: externalQuery ?? '',
-			setQuery: ( query ) => {
+			setQuery: ( query, trigger ) => {
 				const normalizedQuery = query
 					.trim()
 					.toLowerCase()
@@ -235,17 +256,22 @@ export const useDomainSearchContextValue = ( {
 					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
 
 				if ( normalizedQuery ) {
+					startSearch( trigger );
 					normalizedEvents.onQueryChange( normalizedQuery );
 				}
 			},
+			searchId: search.id,
+			searchTrigger: search.trigger,
 			slots,
 			currentSiteUrl,
 			filter,
 			setFilter: ( filter ) => {
+				startSearch( 'filter_apply' );
 				setFilter( filter );
 				normalizedEvents.onFilterApplied( filter );
 			},
 			resetFilter: () => {
+				startSearch( 'filter_reset' );
 				setFilter( DEFAULT_FILTER );
 				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
 			},
@@ -263,5 +289,7 @@ export const useDomainSearchContextValue = ( {
 		normalizedConfig,
 		filter,
 		setFilter,
+		search,
+		startSearch,
 	] );
 };

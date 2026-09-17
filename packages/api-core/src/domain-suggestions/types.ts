@@ -84,7 +84,23 @@ export interface DomainSuggestionQuery {
 	 * The site slug
 	 */
 	site_slug?: string;
+
+	/**
+	 * Analytics context recorded by the server on the suggestions event. Set by
+	 * the domain-search UI; absent for other callers.
+	 */
+	flow_name?: string;
+	section?: string;
+	search_id?: string;
 }
+
+/**
+ * The analytics request params shared by the suggestions and bundle endpoints.
+ */
+export type DomainSuggestionRequestContext = Pick<
+	DomainSuggestionQuery,
+	'flow_name' | 'section' | 'search_id'
+>;
 
 export interface DomainSuggestion {
 	/**
@@ -199,6 +215,12 @@ export interface DomainSuggestion {
 	 * Policy notices associated with the domain
 	 */
 	policy_notices?: PolicyNotice[];
+
+	/**
+	 * Server-minted id of the response this suggestion came back in. Absent until
+	 * the server stamps it.
+	 */
+	result_set_id?: string;
 }
 
 export interface PolicyNotice {
@@ -334,4 +356,8 @@ export interface BundleSuggestion {
 export interface BundleMetadata {
 	bundle_suggestion: BundleSuggestion | null;
 	bundle_triggers: string[];
+	/**
+	 * Server-minted id of the response; null until the server stamps it.
+	 */
+	result_set_id: string | null;
 }

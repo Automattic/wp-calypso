@@ -289,6 +289,7 @@ const DomainSearchUI = (
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
 			: allowedTldParam?.split( ',' ) ?? [];
+		const showNamePulseSearch = isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow;
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -302,7 +303,8 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
-			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow,
+			showNamePulseSearch,
+			searchUiVersion: showNamePulseSearch ? ( 'i4_v1' as const ) : ( 'legacy_v1' as const ),
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 

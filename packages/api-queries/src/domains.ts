@@ -15,6 +15,7 @@ import {
 	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
+	type DomainSuggestionRequestContext,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -51,10 +52,10 @@ export const freeSuggestionQuery = (
 // React Query dedupes them to a single network request even when both consumers
 // are enabled on the same query. The two exports below spread this query and add
 // a `select` picking their half of the response.
-export const bundleMetadataQuery = ( query: string ) =>
+export const bundleMetadataQuery = ( query: string, context?: DomainSuggestionRequestContext ) =>
 	queryOptions( {
-		queryKey: [ 'domain-bundle-metadata', query ],
-		queryFn: () => fetchBundleMetadata( query ),
+		queryKey: [ 'domain-bundle-metadata', query, context ],
+		queryFn: () => fetchBundleMetadata( query, context ),
 		meta: { persist: false },
 	} );
 
@@ -63,20 +64,29 @@ export const bundleMetadataQuery = ( query: string ) =>
 const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
 const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
 
-export const bundleSuggestionQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
+export const bundleSuggestionQuery = (
+	query: string,
+	context?: DomainSuggestionRequestContext
+) => ( {
+	...bundleMetadataQuery( query, context ),
 	select: selectBundleSuggestion,
 } );
 
-export const bundleTriggersQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
+export const bundleTriggersQuery = (
+	query: string,
+	context?: DomainSuggestionRequestContext
+) => ( {
+	...bundleMetadataQuery( query, context ),
 	select: selectBundleTriggers,
 } );
 
-export const bundleForDomainQuery = ( fqdn: string ) =>
+// The context is deliberately left out of the key: a trigger FQDN is fetched
+// once per cart-add and reused across searches (see useInlineBundles).
+export const bundleForDomainQuery = ( fqdn: string, context?: DomainSuggestionRequestContext ) =>
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
 	queryOptions( {
 		queryKey: [ 'bundle-for-domain', fqdn ],
-		queryFn: () => fetchBundleForDomain( fqdn ),
+		queryFn: () => fetchBundleForDomain( fqdn, context ),
 		meta: { persist: false },
 	} );
 

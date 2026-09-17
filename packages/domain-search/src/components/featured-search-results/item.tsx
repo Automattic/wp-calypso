@@ -87,7 +87,7 @@ export const FeaturedSearchResultsItem = ( {
 	const { events } = useDomainSearch();
 
 	const triggerSuggestionRenderEvent = useEvent( () => {
-		events.onSuggestionRender( suggestion, reason );
+		events.onSuggestionRender( suggestion, 'featured', reason );
 	} );
 
 	useEffect( () => {

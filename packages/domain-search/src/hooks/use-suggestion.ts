@@ -1,8 +1,11 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useQuery } from '@tanstack/react-query';
 import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
+import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../page/context';
-import type { DomainSuggestion } from '@automattic/api-core';
+import type { AvailabilityAtRender } from '../page/types';
+import type { DomainAvailability, DomainSuggestion } from '@automattic/api-core';
 
 export enum DomainPriceRule {
 	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
@@ -71,8 +74,19 @@ const getPriceRuleForSuggestion = ( {
 	return DomainPriceRule.PRICE;
 };
 
+const getAvailabilityAtRender = ( availability?: DomainAvailability ): AvailabilityAtRender => {
+	if ( ! availability ) {
+		return 'unknown';
+	}
+
+	return availability.status === DomainAvailabilityStatus.AVAILABLE ||
+		isSupportedPremiumDomain( availability )
+		? 'available'
+		: 'unavailable';
+};
+
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries, config, events } = useDomainSearch();
+	const { query, queries, config, events, searchId } = useDomainSearch();
 
 	const { data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( domainName ),
@@ -102,6 +116,12 @@ export const useSuggestion = ( domainName: string ) => {
 			...suggestion,
 			position: suggestionPosition,
 			price_rule: getPriceRuleForSuggestion( { suggestion, priceRules: config.priceRules } ),
+			// Derived from the response id and position so the same card always
+			// carries the same railcar on render and on interact.
+			railcar: `domain-suggestion-${
+				suggestion.result_set_id ?? searchId
+			}-${ suggestionPosition }`,
+			availability_at_render: getAvailabilityAtRender( fqdnAvailability ),
 		};
 	}
 
