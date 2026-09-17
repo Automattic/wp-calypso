@@ -48,6 +48,10 @@ function searchPage( {
 	};
 	listitem.first.mockReturnValue( listitem );
 
+	// Waiting is what a search spends, so the waits a test does not really make
+	// still move a clock it can read back through `Date.now`.
+	const clock = { elapsed: 0 };
+
 	const page = {
 		getByRole: jest.fn( ( role: string ) => {
 			if ( role === 'listitem' ) {
@@ -57,19 +61,24 @@ function searchPage( {
 			return role === 'searchbox' ? searchbox : {};
 		} ),
 		reload: jest.fn( async () => null ),
-		waitForTimeout: jest.fn( async () => undefined ),
-		waitForResponse: jest.fn( async ( predicate: ( response: Response ) => boolean ) => {
-			const match = responses.find( predicate );
-
-			if ( ! match ) {
-				throw new Error( 'Timeout 30000ms exceeded.' );
-			}
-
-			return match;
+		waitForTimeout: jest.fn( async ( timeout: number ) => {
+			clock.elapsed += timeout;
 		} ),
+		waitForResponse: jest.fn(
+			async ( predicate: ( response: Response ) => boolean, options?: { timeout?: number } ) => {
+				const match = responses.find( predicate );
+
+				if ( ! match ) {
+					clock.elapsed += options?.timeout ?? 0;
+					throw new Error( `Timeout ${ options?.timeout ?? 0 }ms exceeded.` );
+				}
+
+				return match;
+			}
+		),
 	};
 
-	return { page: page as unknown as Page, searchbox, listitem, reload: page.reload };
+	return { page: page as unknown as Page, searchbox, listitem, clock, reload: page.reload };
 }
 
 beforeEach( () => {
@@ -148,6 +157,21 @@ describe( 'DomainSearchComponent.search', () => {
 		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
 			`Domain suggestions did not update for "${ KEYWORD }": first suggestion is "${ SITE_SLUG }.blog".`
 		);
+	} );
+
+	test( 'gives up while the test still has time to report the failure', async () => {
+		// Every wait inside the closure is bounded on its own, and `reloadAndRetry`
+		// runs the closure three times: unbounded as a whole, a bad search outlives
+		// the 120s test timeout and reports that instead of its own error - or the
+		// throttle the error stands for.
+		const { page, clock, reload } = searchPage( { responses: [] } );
+		const start = Date.now();
+		jest.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
+
+		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
+			`Search for "${ KEYWORD }" exceeded its 60s budget`
+		);
+		expect( reload ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	test( 'reads a suggestion title through the punctuation a keyword loses', async () => {
