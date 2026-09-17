@@ -14,8 +14,6 @@ import type { PendingAgencySite, ReferralApiResponse } from '@automattic/api-cor
 import type { Field, ViewTable } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
-import './style.scss';
-
 type SetupRow = {
 	id: string;
 	description: ReactNode;
@@ -25,8 +23,11 @@ type SetupRow = {
 // search, filter, sort, paginate or reconfigure.
 const VIEW: ViewTable = {
 	type: 'table',
-	fields: [ 'site' ],
-	layout: { enableMoving: false },
+	fields: [ 'site', 'action' ],
+	layout: {
+		enableMoving: false,
+		styles: { action: { align: 'end', width: '1%' } },
+	},
 };
 
 const fields: Field< SetupRow >[] = [
@@ -42,13 +43,20 @@ const fields: Field< SetupRow >[] = [
 				title={ __( 'WordPress.com' ) }
 				description={ item.description }
 				decoration={ <Icon icon={ wordpress } size={ 24 } /> }
-				suffix={
-					/* TODO: open the site configuration modal, then provision the site. */
-					<Button variant="secondary" size="compact" disabled __next40pxDefaultSize>
-						{ __( 'Create new site' ) }
-					</Button>
-				}
 			/>
+		),
+	},
+	{
+		id: 'action',
+		label: __( 'Actions' ),
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+		render: () => (
+			/* TODO: open the site configuration modal, then provision the site. */
+			<Button variant="secondary" size="compact" disabled __next40pxDefaultSize>
+				{ __( 'Create new site' ) }
+			</Button>
 		),
 	},
 ];
@@ -115,7 +123,7 @@ function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	}
 
 	return (
-		<DataViewsCard className="agency-need-setup-table">
+		<DataViewsCard>
 			<DataViews< SetupRow >
 				data={ rows }
 				fields={ fields }
