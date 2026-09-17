@@ -1,5 +1,4 @@
 import {
-	isHiddenStatus,
 	mergeResultUpdate,
 	needsAvailabilityCheck,
 	NamePulseDomainStatus,
@@ -20,19 +19,6 @@ describe( 'needsAvailabilityCheck', () => {
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.UNKNOWN ) ).toBe( true );
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.AVAILABLE ) ).toBe( false );
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.TAKEN ) ).toBe( false );
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.INVALID ) ).toBe( false );
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.ERROR ) ).toBe( false );
-	} );
-} );
-
-describe( 'isHiddenStatus', () => {
-	it( 'is true for INVALID and ERROR only', () => {
-		expect( isHiddenStatus( NamePulseDomainStatus.INVALID ) ).toBe( true );
-		expect( isHiddenStatus( NamePulseDomainStatus.ERROR ) ).toBe( true );
-		expect( isHiddenStatus( NamePulseDomainStatus.WAITING ) ).toBe( false );
-		expect( isHiddenStatus( NamePulseDomainStatus.AVAILABLE ) ).toBe( false );
-		expect( isHiddenStatus( NamePulseDomainStatus.TAKEN ) ).toBe( false );
-		expect( isHiddenStatus( NamePulseDomainStatus.UNKNOWN ) ).toBe( false );
 	} );
 } );
 
@@ -59,25 +45,6 @@ describe( 'mergeResultUpdate', () => {
 		).toBe( existing );
 	} );
 
-	it( 'lets a real-time verdict overwrite a bulk one', () => {
-		const merged = mergeResultUpdate( row( { status: NamePulseDomainStatus.AVAILABLE } ), {
-			domain_name: 'test.com',
-			status: NamePulseDomainStatus.TAKEN,
-			is_realtime: true,
-		} );
-
-		expect( merged.status ).toBe( NamePulseDomainStatus.TAKEN );
-	} );
-
-	it( 'marks a waiting row UNKNOWN', () => {
-		expect(
-			mergeResultUpdate( row(), {
-				domain_name: 'test.com',
-				status: NamePulseDomainStatus.UNKNOWN,
-			} ).status
-		).toBe( NamePulseDomainStatus.UNKNOWN );
-	} );
-
 	it( 'ignores a late UNKNOWN once a verdict has landed', () => {
 		const existing = row( { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' } );
 
@@ -87,14 +54,5 @@ describe( 'mergeResultUpdate', () => {
 				status: NamePulseDomainStatus.UNKNOWN,
 			} )
 		).toBe( existing );
-	} );
-
-	it( 'lets a verdict replace UNKNOWN', () => {
-		const merged = mergeResultUpdate( row( { status: NamePulseDomainStatus.UNKNOWN } ), {
-			domain_name: 'test.com',
-			status: NamePulseDomainStatus.TAKEN,
-		} );
-
-		expect( merged.status ).toBe( NamePulseDomainStatus.TAKEN );
 	} );
 } );

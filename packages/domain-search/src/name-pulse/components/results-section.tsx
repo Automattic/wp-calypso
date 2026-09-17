@@ -16,8 +16,6 @@ interface NamePulseResultsSectionProps {
 	id: string;
 	title: string;
 	results: NamePulseDomainResult[];
-	/** The visible count resets when this changes (a new search), not when a row's status updates. */
-	searchKey: string;
 	isLoading?: boolean;
 	/** Hard cap; also disables "Show more". */
 	maxVisible?: number;
@@ -32,7 +30,6 @@ export const NamePulseResultsSection = ( {
 	id,
 	title,
 	results,
-	searchKey,
 	isLoading = false,
 	maxVisible,
 	skeletonCount = NAME_PULSE_PAGE_SIZE,
@@ -43,12 +40,8 @@ export const NamePulseResultsSection = ( {
 	const [ visibleCount, setVisibleCount ] = useState( NAME_PULSE_PAGE_SIZE );
 	const [ skeletonsTimedOut, setSkeletonsTimedOut ] = useState( false );
 
-	useEffect( () => {
-		setVisibleCount( NAME_PULSE_PAGE_SIZE );
-	}, [ searchKey ] );
-
 	// Skeleton slots give up after a while: a response that never comes must
-	// not leave a section pulsing forever. A new search resets the timer.
+	// not leave a section pulsing forever.
 	useEffect( () => {
 		setSkeletonsTimedOut( false );
 
@@ -59,7 +52,7 @@ export const NamePulseResultsSection = ( {
 		const timer = setTimeout( () => setSkeletonsTimedOut( true ), NAME_PULSE_SKELETON_TIMEOUT_MS );
 
 		return () => clearTimeout( timer );
-	}, [ isLoading, searchKey ] );
+	}, [ isLoading ] );
 
 	const limit = maxVisible ? Math.min( visibleCount, maxVisible ) : visibleCount;
 	const visible = results.slice( 0, limit );

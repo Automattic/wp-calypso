@@ -6,19 +6,6 @@ export interface NamePulseSuggestionsQuery {
 
 	/** AI-generated ("creative") suggestions. */
 	use_ai?: boolean;
-
-	/** Only `verisign` and `domainsbot` are honoured; `donuts` is filtered out server-side. */
-	providers?: string[];
-
-	/** Backend timeout in milliseconds. */
-	timeout?: number;
-
-	tlds?: string[];
-
-	quantity?: number;
-
-	/** Defaults to true. */
-	allow_premium?: boolean;
 }
 
 export interface NamePulseSuggestion {
@@ -26,11 +13,6 @@ export interface NamePulseSuggestion {
 
 	/** Between 0 and 1. */
 	relevance: number;
-
-	/** Providers that returned the name, comma-separated ("verisign,domainsbot"). */
-	vendor: string;
-
-	match_reasons?: string[];
 
 	/** Formatted, e.g. "€13.00". */
 	cost?: string;
@@ -42,14 +24,7 @@ export interface NamePulseSuggestion {
 	sale_cost?: number;
 
 	currency_code?: string;
-	renew_cost?: string;
-	renew_raw_price?: number;
 	is_premium?: boolean;
-	supports_privacy?: boolean;
-	product_id?: number;
-	product_slug?: string;
-	max_reg_years?: number;
-	multi_year_reg_allowed?: boolean;
 }
 
 export interface NamePulseProviderError {
@@ -68,7 +43,6 @@ export interface NamePulseSuggestionsResponse {
  * Unavailable domains only carry `{ is_available: false }`.
  */
 export interface NamePulseAvailabilityEntry {
-	domain_name?: string;
 	is_available: boolean;
 	is_premium?: boolean;
 
@@ -77,27 +51,9 @@ export interface NamePulseAvailabilityEntry {
 	raw_price?: number;
 	sale_cost?: number;
 	currency_code?: string;
-	renew_cost?: string;
-	renew_raw_price?: number;
-	product_id?: number;
-	product_slug?: string;
-	supports_privacy?: boolean;
 }
 
 /**
  * Response keyed by domain name.
  */
 export type NamePulseAvailabilityResponse = Record< string, NamePulseAvailabilityEntry >;
-
-/**
- * Hard limit enforced by the availability-check endpoint.
- */
-export const NAME_PULSE_AVAILABILITY_MAX_DOMAINS = 50;
-
-/**
- * Response of `GET /wpcom/v2/domains/name-pulse/tlds`: the exact-match TLDs in
- * display order.
- */
-export interface NamePulseTldsResponse {
-	tlds: string[];
-}

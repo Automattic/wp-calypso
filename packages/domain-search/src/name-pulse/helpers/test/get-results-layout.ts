@@ -27,9 +27,11 @@ const KEYWORD: NamePulseResultsLayout = {
 };
 
 describe( 'getResultsLayout', () => {
-	it( 'shows nothing for an empty query', () => {
+	it( 'shows nothing for an empty or punctuation-only query', () => {
 		expect( getResultsLayout( '', TLDS ) ).toEqual( EMPTY );
 		expect( getResultsLayout( '   ', TLDS ) ).toEqual( EMPTY );
+		expect( getResultsLayout( '!!!', TLDS ) ).toEqual( EMPTY );
+		expect( getResultsLayout( '!!! ???', TLDS ) ).toEqual( EMPTY );
 	} );
 
 	it( 'shows the exact grid for an FQDN', () => {
@@ -43,8 +45,9 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
-	it( 'shows the exact grid for one word', () => {
+	it( 'shows the exact grid for one word, even when followed by punctuation', () => {
 		expect( getResultsLayout( ' Coffee! ', TLDS ) ).toEqual( SINGLE );
+		expect( getResultsLayout( 'coffee !!!', TLDS ) ).toEqual( SINGLE );
 	} );
 
 	it( 'shows the exact grid and suggestions for two or three words', () => {
@@ -66,24 +69,8 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
-	it( 'treats punctuation-only input as empty', () => {
-		expect( getResultsLayout( '!!!', TLDS ) ).toEqual( EMPTY );
-		expect( getResultsLayout( '!!! ???', TLDS ) ).toEqual( EMPTY );
-	} );
-
 	it( 'treats a base name shorter than two characters as empty', () => {
 		expect( getResultsLayout( 'a', TLDS ) ).toEqual( { ...EMPTY, baseName: 'a', wordCount: 1 } );
 		expect( getResultsLayout( '!a!', TLDS ) ).toEqual( { ...EMPTY, baseName: 'a', wordCount: 1 } );
-	} );
-
-	it( 'differs between coffee.com and coffee only in mode and fqdn', () => {
-		const { fqdn, ...fqdnLayout } = getResultsLayout( 'coffee.com', TLDS );
-
-		expect( fqdn ).toEqual( { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' } );
-		expect( fqdnLayout ).toEqual( { ...getResultsLayout( 'coffee', TLDS ), mode: 'fqdn' } );
-	} );
-
-	it( 'keeps a single word followed by punctuation in single mode', () => {
-		expect( getResultsLayout( 'coffee !!!', TLDS ) ).toEqual( SINGLE );
 	} );
 } );

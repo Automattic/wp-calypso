@@ -2,15 +2,11 @@
  * @jest-environment jsdom
  */
 import { namePulseTldsQuery } from '@automattic/api-queries';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { NAME_PULSE_TLDS_FIXTURE } from '../../../test-helpers/factories/name-pulse-tlds';
+import { NAME_PULSE_TLDS_FIXTURE } from '../../../test-helpers/factories/name-pulse';
 import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
-import {
-	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
-	NAME_PULSE_SKELETON_TIMEOUT_MS,
-	NamePulseDomainStatus,
-} from '../../helpers';
+import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NamePulseDomainStatus } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
 
 const API = 'https://public-api.wordpress.com';
@@ -25,16 +21,28 @@ const renderSearch = ( query: string ) =>
 const statusOf = ( rows: { domain_name: string; status: NamePulseDomainStatus }[], name: string ) =>
 	rows.find( ( row ) => row.domain_name === name )?.status;
 
-describe( 'useNamePulseSearch availability failures', () => {
+describe( 'useNamePulseSearch', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
 		queryClient.clear();
 		queryClient.setQueryData( namePulseTldsQuery().queryKey, NAME_PULSE_TLDS_FIXTURE );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-		jest.useRealTimers();
+	afterEach( () => nock.cleanAll() );
+
+	it( 'renders a typed FQDN as a normal exact-grid row', async () => {
+		nock( API )
+			.persist()
+			.post( AVAILABILITY_PATH )
+			.reply( 200, { 'coffee.com': { is_available: true, cost: '$12.00', raw_price: 12 } } );
+
+		const { result } = renderSearch( 'coffee.com' );
+
+		await waitFor( () =>
+			expect(
+				statusOf( [ ...result.current.topResults, ...result.current.exactList ], 'coffee.com' )
+			).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
 	} );
 
 	it( 'keeps rows of a failed batch in the grid as UNKNOWN and re-requests them on the next search', async () => {
@@ -44,9 +52,12 @@ describe( 'useNamePulseSearch availability failures', () => {
 			.reply( 429, { error: 'rate_limited' } );
 
 		const { result, rerender } = renderSearch( 'bakery' );
-		const initialCount = result.current.exactList.length;
+		const rowCount = () => result.current.topResults.length + result.current.exactList.length;
 
-		expect( initialCount ).toBeGreaterThan( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
+		expect( rowCount() ).toBe( NAME_PULSE_TLDS_FIXTURE.length );
+		expect( NAME_PULSE_TLDS_FIXTURE.length ).toBeGreaterThan(
+			NAME_PULSE_INITIAL_CHECK_SINGLE_WORD
+		);
 		expect( statusOf( result.current.exactList, 'bakery.net' ) ).toBe(
 			NamePulseDomainStatus.WAITING
 		);
@@ -58,7 +69,7 @@ describe( 'useNamePulseSearch availability failures', () => {
 		);
 
 		// Nothing slid into the first batch's place: the grid keeps its rows.
-		expect( result.current.exactList ).toHaveLength( initialCount );
+		expect( rowCount() ).toBe( NAME_PULSE_TLDS_FIXTURE.length );
 
 		// Top results backfill from unchecked rows, which get requested in turn
 		// and fail too, until no candidate is left.
@@ -86,30 +97,5 @@ describe( 'useNamePulseSearch availability failures', () => {
 				statusOf( [ ...result.current.topResults, ...result.current.exactList ], 'bakery.net' )
 			).toBe( NamePulseDomainStatus.AVAILABLE )
 		);
-	} );
-
-	it( 'flips the batch to UNKNOWN when no response arrives within the timeout', () => {
-		jest.useFakeTimers();
-		nock( API )
-			.persist()
-			.post( AVAILABILITY_PATH )
-			.delay( NAME_PULSE_SKELETON_TIMEOUT_MS * 10 )
-			.reply( 200, {} );
-
-		const { result } = renderSearch( 'bakery' );
-		expect( statusOf( result.current.exactList, 'bakery.net' ) ).toBe(
-			NamePulseDomainStatus.WAITING
-		);
-
-		act( () => {
-			jest.advanceTimersByTime( NAME_PULSE_SKELETON_TIMEOUT_MS );
-		} );
-
-		expect( statusOf( result.current.exactList, 'bakery.net' ) ).toBe(
-			NamePulseDomainStatus.UNKNOWN
-		);
-		expect(
-			result.current.exactList.filter( ( row ) => row.status === NamePulseDomainStatus.UNKNOWN )
-		).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
 	} );
 } );

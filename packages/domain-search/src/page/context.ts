@@ -215,16 +215,10 @@ export const useDomainSearchContextValue = ( {
 				} ),
 				namePulseSuggestions: ( params ) => ( {
 					...namePulseSuggestionsQuery( params ),
-					enabled: false,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
-				namePulseAvailability: ( domainNames ) => ( {
-					...namePulseAvailabilityQuery( domainNames ),
-					enabled: false,
-					refetchOnMount: false,
-					refetchOnWindowFocus: false,
-				} ),
+				namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
 				namePulseTlds: () => ( {
 					...namePulseTldsQuery(),
 					refetchOnMount: false,

@@ -8,7 +8,6 @@ import {
 	generateExactMatches,
 	getResultsLayout,
 	getTopResults,
-	isHiddenStatus,
 	mergeResultUpdate,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
@@ -16,7 +15,6 @@ import {
 	needsAvailabilityCheck,
 	pickPricing,
 	sanitizeKeywordInput,
-	toDomainNameSet,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
 	type NamePulseSource,
@@ -45,8 +43,6 @@ const toSuggestionResults = (
 			suffix: getTld( suggestion.domain_name ),
 			status: NamePulseDomainStatus.AVAILABLE,
 			...pickPricing( suggestion ),
-			relevance: suggestion.relevance,
-			vendor: suggestion.vendor,
 			source,
 		} ) );
 };
@@ -62,8 +58,6 @@ export const useNamePulseSearch = ( query: string ) => {
 	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
-	const fqdn = layout.fqdn?.fullDomain;
-	const fqdnTld = layout.fqdn?.tld ?? '';
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
 	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
@@ -105,46 +99,20 @@ export const useNamePulseSearch = ( query: string ) => {
 		const rows = generateExactMatches( baseName, tlds );
 		const previous = exactResultsRef.current;
 
-		setExactResults( () => {
-			const next = new Map< string, NamePulseDomainResult >();
-
-			if ( fqdn ) {
-				next.set(
-					fqdn,
-					previous.get( fqdn ) ?? {
-						domain_name: fqdn,
-						suffix: fqdnTld,
-						status: NamePulseDomainStatus.WAITING,
-						source: 'fqdn',
-					}
-				);
-			}
-
-			for ( const row of rows ) {
-				if ( ! next.has( row.domain_name ) ) {
-					next.set( row.domain_name, previous.get( row.domain_name ) ?? row );
-				}
-			}
-
-			return next;
-		} );
-
-		const toCheck = rows
-			.slice( 0, initialCheckCount )
-			.map( ( row ) => row.domain_name )
-			.filter( ( name ) => name !== fqdn );
-
-		if ( fqdn ) {
-			toCheck.unshift( fqdn );
-		}
+		setExactResults(
+			new Map( rows.map( ( row ) => [ row.domain_name, previous.get( row.domain_name ) ?? row ] ) )
+		);
 
 		checkDomains(
-			toCheck.filter( ( name ) => {
-				const known = previous.get( name );
-				return ! known || needsAvailabilityCheck( known.status );
-			} )
+			rows
+				.slice( 0, initialCheckCount )
+				.map( ( row ) => row.domain_name )
+				.filter( ( name ) => {
+					const known = previous.get( name );
+					return ! known || needsAvailabilityCheck( known.status );
+				} )
 		);
-	}, [ showExactGrid, baseName, fqdn, fqdnTld, initialCheckCount, tlds, checkDomains ] );
+	}, [ showExactGrid, baseName, initialCheckCount, tlds, checkDomains ] );
 
 	const keywordEnabled = layout.suggestions.show;
 	const keywordQueryResult = useQuery( {
@@ -166,14 +134,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	const isLoadingKeyword = keywordEnabled && keywordQueryResult.isPending;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
-	// behind them do not slide into view unchecked; only INVALID/ERROR are hidden.
-	const rawExactList = useMemo(
-		() =>
-			Array.from( exactResults.values() ).filter(
-				( result ) => result.source !== 'fqdn' && ! isHiddenStatus( result.status )
-			),
-		[ exactResults ]
-	);
+	// behind them do not slide into view unchecked.
+	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
 
 	const topResults = useMemo(
 		() => getTopResults( rawExactList, topTlds ),
@@ -197,11 +159,11 @@ export const useNamePulseSearch = ( query: string ) => {
 	// not only the visible rows, so expanding a section never makes rows vanish
 	// from the one below.
 	const exactList = useMemo(
-		() => excludeDomains( rawExactList, toDomainNameSet( topResults ) ),
+		() => excludeDomains( rawExactList, topResults ),
 		[ rawExactList, topResults ]
 	);
 	const keywordResults = useMemo(
-		() => excludeDomains( rawKeywordResults, toDomainNameSet( topResults, exactList ) ),
+		() => excludeDomains( rawKeywordResults, topResults, exactList ),
 		[ rawKeywordResults, topResults, exactList ]
 	);
 

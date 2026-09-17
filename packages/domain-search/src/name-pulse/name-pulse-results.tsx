@@ -24,19 +24,16 @@ export const NamePulseResults = () => {
 		updateResult,
 	} = useNamePulseSearch( query );
 
-	const searchKey = `${ layout.baseName }|${ layout.fqdn?.fullDomain ?? '' }|${ layout.wordCount }`;
-
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<SearchForm instantSearch />
-			<VStack spacing={ 6 }>
+			<VStack spacing={ 6 } key={ query }>
 				{ layout.exactGrid.show && (
 					<>
 						<NamePulseResultsSection
 							id="top"
 							title={ __( 'Top results' ) }
 							results={ topResults }
-							searchKey={ searchKey }
 							isLoading={ isLoadingTlds }
 							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
 							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
@@ -50,7 +47,6 @@ export const NamePulseResults = () => {
 								{ name: layout.baseName }
 							) }
 							results={ exactList }
-							searchKey={ searchKey }
 							isLoading={ isLoadingTlds }
 							showMoreLabel={ __( 'Show more exact matches' ) }
 							onReveal={ revealExact }
@@ -63,7 +59,6 @@ export const NamePulseResults = () => {
 						id="suggestions"
 						title={ __( 'More suggestions' ) }
 						results={ keywordResults }
-						searchKey={ searchKey }
 						isLoading={ isLoadingKeyword }
 						showMoreLabel={ __( 'Show more suggestions' ) }
 					/>

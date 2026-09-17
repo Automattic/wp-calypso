@@ -42,7 +42,6 @@ const toRealtimeUpdate = (
 		...pickPricing( availability ),
 		cost: available ? availability.cost : undefined,
 		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		vendor: availability.root_domain_provider,
 		is_realtime: true,
 	};
 };

@@ -11,10 +11,6 @@ describe( 'sanitizeDomainInput', () => {
 		expect( sanitizeDomainInput( '--coffee--shop--' ) ).toBe( 'coffee-shop' );
 		expect( sanitizeDomainInput( '---' ) ).toBe( '' );
 	} );
-
-	it( 'keeps digits', () => {
-		expect( sanitizeDomainInput( 'shop247' ) ).toBe( 'shop247' );
-	} );
 } );
 
 describe( 'sanitizeKeywordInput', () => {

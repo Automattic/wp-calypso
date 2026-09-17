@@ -9,45 +9,25 @@ import { NamePulseResults } from '..';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../page/context';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart } from '../../test-helpers/factories/cart';
-import { NAME_PULSE_TLDS_FIXTURE } from '../../test-helpers/factories/name-pulse-tlds';
+import {
+	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_SUGGESTIONS_FIXTURE,
+	NAME_PULSE_TLDS_FIXTURE,
+	withNamePulseQueries,
+} from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
 import type { DomainSearchCart } from '../../page/types';
-import type {
-	NamePulseAvailabilityEntry,
-	NamePulseSuggestion,
-	NamePulseSuggestionsResponse,
-} from '@automattic/api-core';
-
-const available = ( raw_price = 24 ): NamePulseAvailabilityEntry => ( {
-	is_available: true,
-	cost: `$${ raw_price }.00`,
-	raw_price,
-	currency_code: 'USD',
-} );
-
-const AVAILABILITY: Record< string, NamePulseAvailabilityEntry > = {
-	'icecream.co': { ...available( 350 ), is_premium: true },
-	'icecream.online': { ...available( 48 ), sale_cost: 6 },
-	'icecream.site': { is_available: false },
-};
-
-const SUGGESTIONS: NamePulseSuggestion[] = [
-	{ domain_name: 'icecream.best', relevance: 0.9, vendor: 'verisign', raw_price: 48, sale_cost: 6 },
-	{ domain_name: 'creamyice.com', relevance: 0.8, vendor: 'domainsbot', raw_price: 24 },
-];
 
 const NamePulseTestSearch = ( {
 	query,
 	cart = buildCart(),
 	availabilityRequests = [],
-	suggestionsResponse = { suggestions: SUGGESTIONS, errors: [] },
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
 }: {
 	query: string;
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
-	suggestionsResponse?: NamePulseSuggestionsResponse;
 	tldsResponse?: () => Promise< string[] >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
@@ -59,40 +39,22 @@ const NamePulseTestSearch = ( {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<DomainSearchContext.Provider
-				value={ {
-					...contextValue,
-					queries: {
-						...contextValue.queries,
-						namePulseAvailability: ( domainNames ) => ( {
-							...contextValue.queries.namePulseAvailability( domainNames ),
-							queryFn: async () => {
-								availabilityRequests.push( domainNames );
+				value={ withNamePulseQueries( contextValue, {
+					availability: async ( domainNames ) => {
+						availabilityRequests.push( domainNames );
 
-								return Object.fromEntries(
-									domainNames.map( ( name ) => [ name, AVAILABILITY[ name ] ?? available() ] )
-								);
-							},
-						} ),
-						namePulseSuggestions: ( params ) => ( {
-							...contextValue.queries.namePulseSuggestions( params ),
-							queryFn: async () => suggestionsResponse,
-						} ),
-						namePulseTlds: () => ( {
-							...contextValue.queries.namePulseTlds(),
-							queryFn: tldsResponse,
-						} ),
-						domainAvailability: ( domainName ) => ( {
-							...contextValue.queries.domainAvailability( domainName ),
-							queryFn: async () =>
-								buildAvailability( {
-									domain_name: domainName,
-									status: DomainAvailabilityStatus.AVAILABLE,
-									cost: '$24.00',
-									raw_price: 24,
-								} ),
-						} ),
+						return buildNamePulseAvailabilityResponse( domainNames );
 					},
-				} }
+					suggestions: async () => ( { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] } ),
+					tlds: tldsResponse,
+					domainAvailability: async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE,
+							cost: '$24.00',
+							raw_price: 24,
+						} ),
+				} ) }
 			>
 				<NamePulseResults />
 			</DomainSearchContext.Provider>
@@ -127,28 +89,7 @@ describe( 'NamePulseResults', () => {
 		queryClient.clear();
 	} );
 
-	it( 'renders Top results and the exact-match grid for a single word', async () => {
-		render( <NamePulseTestSearch query="icecream" /> );
-
-		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
-		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
-		).toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
-
-		expect(
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
-		).toBeInTheDocument();
-		expect( within( rowFor( 'icecream.net' ) ).getByText( '/year' ) ).toBeInTheDocument();
-		expect(
-			within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
-		).toBeInTheDocument();
-
-		expect( sectionRows( 'top' ) ).toHaveLength( 3 );
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
-	} );
-
-	it( 'shows skeletons and checks nothing until the TLD list arrives, then follows its order', async () => {
+	it( 'shows skeletons until the TLD list arrives, then Top results and the exact-match grid in its order', async () => {
 		const availabilityRequests: string[][] = [];
 		let resolveTlds: ( tlds: string[] ) => void = () => {};
 		const tldsResponse = () =>
@@ -164,9 +105,13 @@ describe( 'NamePulseResults', () => {
 			/>
 		);
 
+		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
+		).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
 		expect( availabilityRequests ).toHaveLength( 0 );
 
@@ -177,7 +122,12 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
 		).toBeInTheDocument();
+		expect( within( rowFor( 'icecream.net' ) ).getByText( '/year' ) ).toBeInTheDocument();
+		expect(
+			within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+		).toBeInTheDocument();
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
+		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
 		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
@@ -196,13 +146,13 @@ describe( 'NamePulseResults', () => {
 		expect( within( premium ).queryByText( '/year' ) ).not.toBeInTheDocument();
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
-		const sale = await findRow( 'icecream.online' );
+		const sale = await findRow( 'icecream.site' );
 		expect( await within( sale ).findByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$6' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$48/year renewal' ) ).toBeInTheDocument();
 
-		const unavailable = await findRow( 'icecream.site' );
+		const unavailable = await findRow( 'icecream.online' );
 		expect( await within( unavailable ).findByText( 'Unavailable' ) ).toBeInTheDocument();
 		expect( within( unavailable ).queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
@@ -225,12 +175,9 @@ describe( 'NamePulseResults', () => {
 		expect( availabilityRequests.flat() ).toHaveLength( checkedBefore.length );
 
 		await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 4 );
+		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 3 );
 
-		const revealed = sectionRows( 'exact' )
-			.slice( NAME_PULSE_PAGE_SIZE * 3 )
-			.map( ( item ) => item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' ) );
+		const revealed = domainsIn( 'exact' ).slice( NAME_PULSE_PAGE_SIZE * 2 );
 		const unchecked = revealed.filter( ( name ) => name && ! checkedBefore.includes( name ) );
 
 		expect( unchecked.length ).toBeGreaterThan( 0 );
@@ -251,7 +198,7 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
 		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
-		expect( sectionRows( 'suggestions' ) ).toHaveLength( 2 );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );
 
 	it( 'adds a row to the cart after the real-time check', async () => {

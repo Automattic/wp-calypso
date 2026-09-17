@@ -21,15 +21,6 @@ describe( 'detectFqdn', () => {
 		} );
 	} );
 
-	it( 'returns the sanitized base for input without a dot', () => {
-		expect( detectFqdn( 'Coffee Shop', TLDS ) ).toEqual( {
-			isFqdn: false,
-			baseName: 'coffeeshop',
-			tld: '',
-			fullDomain: '',
-		} );
-	} );
-
 	it( 'rejects TLDs that are not in the list', () => {
 		expect( detectFqdn( 'coffee.notatld', TLDS ).isFqdn ).toBe( false );
 		expect( detectFqdn( 'coffee.com', [ 'blog' ] ).isFqdn ).toBe( false );

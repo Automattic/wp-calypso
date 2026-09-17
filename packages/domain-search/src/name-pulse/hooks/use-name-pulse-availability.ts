@@ -72,14 +72,10 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 
 				const release = () => batch.forEach( ( name ) => pending.delete( name ) );
 
-				const markUnknown = () => {
-					for ( const domainName of batch ) {
-						emitUpdate( {
-							domain_name: domainName,
-							status: NamePulseDomainStatus.UNKNOWN,
-						} );
-					}
-				};
+				const markUnknown = () =>
+					batch.forEach( ( domain_name ) =>
+						emitUpdate( { domain_name, status: NamePulseDomainStatus.UNKNOWN } )
+					);
 
 				const timer = setTimeout( () => {
 					timersRef.current.delete( timer );

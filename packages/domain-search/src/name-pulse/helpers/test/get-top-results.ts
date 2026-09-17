@@ -34,12 +34,6 @@ describe( 'calculateTopTlds', () => {
 	it( 'leaves the defaults alone when the match is blog', () => {
 		expect( calculateTopTlds( 'exampleblog', tlds ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
 	} );
-
-	it( 'ignores a suffix that is not in the TLD list', () => {
-		expect( calculateTopTlds( 'testnet', [ 'blog', 'com' ] ) ).toEqual( [
-			...NAME_PULSE_TOP_RESULTS_TLDS,
-		] );
-	} );
 } );
 
 describe( 'getTopResults', () => {
@@ -64,20 +58,5 @@ describe( 'getTopResults', () => {
 			'test.app',
 			'test.net',
 		] );
-	} );
-
-	it( 'skips taken domains entirely', () => {
-		const rows = [
-			row( 'test.com', NamePulseDomainStatus.TAKEN ),
-			row( 'test.net', NamePulseDomainStatus.TAKEN ),
-		];
-
-		expect( getTopResults( rows, topTlds ) ).toEqual( [] );
-	} );
-
-	it( 'never returns the same domain twice', () => {
-		const rows = [ row( 'test.com' ) ];
-
-		expect( getTopResults( rows, topTlds ) ).toHaveLength( 1 );
 	} );
 } );

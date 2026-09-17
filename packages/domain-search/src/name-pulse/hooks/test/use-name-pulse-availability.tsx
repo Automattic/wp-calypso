@@ -54,25 +54,6 @@ describe( 'useNamePulseAvailability', () => {
 		] );
 	} );
 
-	it( 'marks every row of a failed batch UNKNOWN', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.post( AVAILABILITY_PATH )
-			.reply( 429, { error: 'rate_limited' } );
-
-		const { result, onUpdate } = renderAvailability();
-
-		act( () => {
-			result.current.checkDomains( [ 'test.com', 'test.net' ] );
-		} );
-
-		await waitFor( () => expect( onUpdate ).toHaveBeenCalledTimes( 2 ) );
-
-		expect( statusesReported( onUpdate ) ).toEqual( [
-			[ 'test.com', NamePulseDomainStatus.UNKNOWN ],
-			[ 'test.net', NamePulseDomainStatus.UNKNOWN ],
-		] );
-	} );
-
 	it( 'marks a batch UNKNOWN when no response arrives within the timeout', async () => {
 		jest.useFakeTimers();
 

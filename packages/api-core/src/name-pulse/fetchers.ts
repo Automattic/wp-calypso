@@ -1,13 +1,14 @@
 import { wpcom } from '../wpcom-fetcher';
-import {
-	NAME_PULSE_AVAILABILITY_MAX_DOMAINS,
-	type NamePulseAvailabilityResponse,
-	type NamePulseSuggestionsQuery,
-	type NamePulseSuggestionsResponse,
-	type NamePulseTldsResponse,
+import type {
+	NamePulseAvailabilityResponse,
+	NamePulseSuggestionsQuery,
+	NamePulseSuggestionsResponse,
 } from './types';
 
-const DEFAULT_PROVIDERS = [ 'verisign', 'domainsbot' ];
+/**
+ * Only `verisign` and `domainsbot` are honoured; `donuts` is filtered out server-side.
+ */
+const PROVIDERS = 'verisign,domainsbot';
 
 /**
  * Provider errors ride along in `errors[]`; only when every provider fails does
@@ -16,11 +17,6 @@ const DEFAULT_PROVIDERS = [ 'verisign', 'domainsbot' ];
 export async function fetchNamePulseSuggestions( {
 	query,
 	use_ai = false,
-	providers = DEFAULT_PROVIDERS,
-	timeout,
-	tlds,
-	quantity,
-	allow_premium = true,
 }: NamePulseSuggestionsQuery ): Promise< NamePulseSuggestionsResponse > {
 	const response: Partial< NamePulseSuggestionsResponse > = await wpcom.req.get(
 		{
@@ -28,13 +24,10 @@ export async function fetchNamePulseSuggestions( {
 			apiNamespace: 'wpcom/v2',
 		},
 		{
-			query: query.trim().toLocaleLowerCase(),
+			query,
 			use_ai: use_ai ? 1 : 0,
-			allow_premium: allow_premium ? 'true' : 'false',
-			providers: providers.join( ',' ),
-			...( timeout !== undefined && { timeout } ),
-			...( tlds && tlds.length > 0 && { tlds: tlds.join( ',' ) } ),
-			...( quantity !== undefined && { quantity } ),
+			allow_premium: 'true',
+			providers: PROVIDERS,
 		}
 	);
 
@@ -50,16 +43,6 @@ export async function fetchNamePulseSuggestions( {
 export async function fetchNamePulseAvailability(
 	domainNames: string[]
 ): Promise< NamePulseAvailabilityResponse > {
-	if ( domainNames.length === 0 ) {
-		return {};
-	}
-
-	if ( domainNames.length > NAME_PULSE_AVAILABILITY_MAX_DOMAINS ) {
-		throw new Error(
-			`fetchNamePulseAvailability accepts at most ${ NAME_PULSE_AVAILABILITY_MAX_DOMAINS } domains per call`
-		);
-	}
-
 	const response: NamePulseAvailabilityResponse | null = await wpcom.req.post( {
 		path: '/domains/name-pulse/availability-check',
 		apiNamespace: 'wpcom/v2',
@@ -70,7 +53,7 @@ export async function fetchNamePulseAvailability(
 }
 
 export async function fetchNamePulseTlds(): Promise< string[] > {
-	const response: Partial< NamePulseTldsResponse > | null = await wpcom.req.get( {
+	const response: { tlds?: string[] } | null = await wpcom.req.get( {
 		path: '/domains/name-pulse/tlds',
 		apiNamespace: 'wpcom/v2',
 	} );

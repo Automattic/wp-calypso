@@ -11,9 +11,6 @@ import {
 export const needsAvailabilityCheck = ( status: NamePulseDomainStatus ) =>
 	status === NamePulseDomainStatus.WAITING || status === NamePulseDomainStatus.UNKNOWN;
 
-export const isHiddenStatus = ( status: NamePulseDomainStatus ) =>
-	status === NamePulseDomainStatus.INVALID || status === NamePulseDomainStatus.ERROR;
-
 /**
  * A real-time verdict is never overwritten by a bulk zone-file one, and UNKNOWN
  * only lands on rows still WAITING, so a late timer never erases a verdict.
