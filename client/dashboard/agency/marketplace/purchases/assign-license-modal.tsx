@@ -54,10 +54,17 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 	const agencyId = agency?.id;
 	const [ view, setView ] = useState< View >( DEFAULT_SITES_VIEW );
 	const [ selectedSite, setSelectedSite ] = useState< AgencySite | null >( null );
+	// Jetpack Backup and Scan can't be assigned to a multisite.
+	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( license.license_key );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedAgencySitesQuery(
-			{ search: view.search, page: view.page, per_page: view.perPage },
+			{
+				search: view.search,
+				page: view.page,
+				per_page: view.perPage,
+				...( isMultisiteAssignable ? {} : { not_multisite: true } ),
+			},
 			agencyId
 		),
 		enabled: !! agencyId,
@@ -121,6 +128,8 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 							),
 							{
 								type: 'snackbar',
+								// Keep it up until dismissed so the link stays reachable.
+								explicitDismiss: true,
 								actions: [ { label: __( 'How to connect' ), url: CONNECT_USER_HELP_URL } ],
 							}
 						);
@@ -158,7 +167,7 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 					isPlaceholderData={ isPlaceholderData }
 					paginationInfo={ {
 						totalItems,
-						totalPages: Math.ceil( totalItems / SITES_PER_PAGE ),
+						totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
 					} }
 					defaultLayouts={ { table: {} } }
 				/>

@@ -1,14 +1,7 @@
-import {
-	activeAgencyQuery,
-	jetpackAgencyLicenseDownloadUrlMutation,
-	paginatedJetpackAgencyLicensesQuery,
-} from '@automattic/api-queries';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
+import { activeAgencyQuery, paginatedJetpackAgencyLicensesQuery } from '@automattic/api-queries';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
@@ -20,22 +13,13 @@ import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { OWNER_ROLE } from '../../team/constants';
-import { getMarketplaceHostingSectionRoute } from '../paths';
-import {
-	DEFAULT_VIEW,
-	getLicenseActions,
-	getLicenseFields,
-	getLicenseId,
-	toFetchOptions,
-} from './dataviews';
-import { isPressableLicense } from './license-status';
+import { useLicenseActions } from './actions';
+import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
 
 export default function MarketplacePurchases() {
 	const locale = useLocale();
-	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
@@ -53,72 +37,11 @@ export default function MarketplacePurchases() {
 		enabled: agencyId > 0,
 		placeholderData: keepPreviousData,
 	} );
-	const { mutate: fetchDownloadUrl } = useMutation(
-		jetpackAgencyLicenseDownloadUrlMutation( agencyId )
-	);
-
-	const onCopyKey = useCallback(
-		( license: JetpackLicense ) => {
-			recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' );
-			navigator.clipboard.writeText( license.license_key ).then(
-				() => createSuccessNotice( __( 'License key copied to clipboard.' ), { type: 'snackbar' } ),
-				() => createErrorNotice( __( 'Failed to copy the license key.' ), { type: 'snackbar' } )
-			);
-		},
-		[ recordTracksEvent, createSuccessNotice, createErrorNotice ]
-	);
-
-	const onDownload = useCallback(
-		( license: JetpackLicense ) => {
-			recordTracksEvent( 'calypso_a4a_license_details_download' );
-			fetchDownloadUrl( license.license_key, {
-				onSuccess: ( { download_url } ) => window.location.assign( download_url ),
-				onError: () =>
-					createErrorNotice( __( 'Failed to download the product. Please try again.' ), {
-						type: 'snackbar',
-					} ),
-			} );
-		},
-		[ recordTracksEvent, fetchDownloadUrl, createErrorNotice ]
-	);
-
-	const onOpenSites = useCallback( () => navigate( { to: '/sites' } ), [ navigate ] );
-	// Classic sends each hosting license to its own host's page.
-	const onOpenHosting = useCallback(
-		( license: JetpackLicense ) =>
-			navigate( {
-				to: getMarketplaceHostingSectionRoute(
-					isPressableLicense( license ) ? 'pressable' : 'wpcom'
-				),
-			} ),
-		[ navigate ]
-	);
-
 	const fields = useMemo(
 		() => getLicenseFields( { locale, isAgencyOwner } ),
 		[ locale, isAgencyOwner ]
 	);
-	const actions = useMemo(
-		() =>
-			getLicenseActions( {
-				canRevoke,
-				isAgencyOwner,
-				onCopyKey,
-				onDownload,
-				onOpenSites,
-				onOpenHosting,
-				recordTracksEvent,
-			} ),
-		[
-			canRevoke,
-			isAgencyOwner,
-			onCopyKey,
-			onDownload,
-			onOpenSites,
-			onOpenHosting,
-			recordTracksEvent,
-		]
-	);
+	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner } );
 
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
