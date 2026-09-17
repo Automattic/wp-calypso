@@ -1512,9 +1512,12 @@ const PlansFeaturesMain = ( {
 					targetPlanSlug={ pendingFeatureLossUpgrade?.planSlug }
 					currentPlanName={ sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ?? '' }
 					targetPlanName={
-						( pendingFeatureLossUpgrade &&
-							getPlan( pendingFeatureLossUpgrade.planSlug )?.getTitle() ) ||
-						''
+						// getTitle() is a TranslateResult, which is a ReactNode as far as the built package
+						// types are concerned; plan titles are plain strings at runtime, so coerce rather
+						// than widen the prop, which is interpolated into translate() args.
+						pendingFeatureLossUpgrade
+							? String( getPlan( pendingFeatureLossUpgrade.planSlug )?.getTitle() ?? '' )
+							: ''
 					}
 					lostFeatures={ pendingFeatureLossUpgrade?.lost ?? [] }
 					onClose={ () => closeFeatureLossModal( true ) }
