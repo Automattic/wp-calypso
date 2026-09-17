@@ -939,6 +939,9 @@ $x-nav-2026-scrolled-blur: 8px;
 $x-nav-2026-content-max-width: 1200px;
 // Dropdown metrics from the live reference's computed styles.
 $x-nav-2026-item-padding-x: 8px;
+// 23px + the 1px border = the WPCOM twin's 24px text inset, whose border sits on
+// the ::before pill rather than the padded element.
+$x-nav-2026-cta-padding-x: 23px;
 $x-dropdown-2026-link-font-size: 18px;
 $x-dropdown-2026-link-line-height: 38px;
 $x-dropdown-2026-column-max-width: 220px;
@@ -1120,11 +1123,14 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
+		// border-box so the 1px border sits inside the 40px pill and the 24px
+		// padding is a true text inset, matching the WPCOM twin's ::before pill.
+		box-sizing: border-box;
 		height: 40px;
 		margin-block: 0;
 		margin-inline-start: 12px;
 		margin-inline-end: 15px;
-		padding: 0 20px !important;
+		padding: 0 $x-nav-2026-cta-padding-x !important;
 		background-color: var(
 			--x-nav-2026-cta-fill,
 			#{$studio-wordpress-blue-50}
