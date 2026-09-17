@@ -99,10 +99,12 @@ export function getFields(
 	visibleFields: string[] = WIDE_FIELDS,
 	locale: string,
 	sites: Site[] = [],
-	siteFilter?: number
+	siteFilter?: number,
+	canFilterBySite: boolean = true
 ): Fields< Receipt > {
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 
 	return [
 		{

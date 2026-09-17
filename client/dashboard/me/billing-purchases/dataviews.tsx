@@ -239,19 +239,22 @@ export function getFields( {
 	transferredPurchases,
 	siteFilter,
 	visibleFields,
+	canFilterBySite = true,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
 	visibleFields?: string[];
+	canFilterBySite?: boolean;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 	return [
 		{
 			id: 'site',
