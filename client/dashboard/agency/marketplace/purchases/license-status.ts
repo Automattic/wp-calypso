@@ -1,5 +1,6 @@
 import { JetpackLicenseFilter } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { parseDateAsUTC } from '../../../utils/datetime';
 import type { JetpackLicense } from '@automattic/api-core';
 
 export type LicenseStatus = 'assigned' | 'unassigned' | 'revoked';
@@ -23,24 +24,28 @@ export const LICENSE_STATUS_FILTERS: Record< LicenseStatus, JetpackLicenseFilter
 	revoked: JetpackLicenseFilter.Revoked,
 };
 
-export type LicenseDisplayStatus = LicenseStatus | 'active';
-
-// Pressable add-ons attach to the plan rather than a site, so the classic list
-// never calls them unassigned. The table needs a label there, so it uses Active.
-export function getLicenseDisplayStatus( license: JetpackLicense ): LicenseDisplayStatus {
-	const status = getLicenseStatus( license );
-	return status !== 'revoked' && isPressableAddonLicense( license ) ? 'active' : status;
+// The status filter value comes from saved view preferences, so it can be anything.
+export function isLicenseStatus( value: unknown ): value is LicenseStatus {
+	return typeof value === 'string' && Object.hasOwn( LICENSE_STATUS_FILTERS, value );
 }
 
-export const getLicenseDisplayStatusLabels = (): Record< LicenseDisplayStatus, string > => ( {
-	...getLicenseStatusLabels(),
-	active: __( 'Active' ),
-} );
+// Bundle parents and Pressable add-ons are never assigned to a site themselves,
+// so the classic list shows no assignment status for them.
+export function getLicenseDisplayStatus( license: JetpackLicense ): LicenseStatus | null {
+	const status = getLicenseStatus( license );
+	if (
+		status !== 'revoked' &&
+		( isBundleParent( license ) || isPressableAddonLicense( license ) )
+	) {
+		return null;
+	}
+	return status;
+}
 
 // A bundle's parent license holds the quantity; its child licenses are the
-// ones that get assigned to sites.
+// ones that get assigned to sites. Like classic, any quantity means a bundle.
 export function isBundleParent( license: JetpackLicense ): boolean {
-	return ( license.quantity ?? 0 ) > 1;
+	return !! license.quantity;
 }
 
 // Pressable licenses are managed in Pressable by the agency owner, not per site.
@@ -69,17 +74,18 @@ export function getLicenseTags( license: JetpackLicense ): string[] {
 		tags.push( __( 'Development' ) );
 	}
 
-	// The transferred badge only shows for a while after the old subscription ended.
-	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
-	if ( transferredUntil ) {
-		const hideAfter = new Date( transferredUntil );
-		hideAfter.setDate( hideAfter.getDate() + TRANSFERRED_BADGE_DAYS );
-		if ( new Date() < hideAfter ) {
-			tags.push( __( 'Transferred' ) );
-		}
-	}
-
 	return tags;
+}
+
+// The transferred badge only shows for a while after the old subscription ended.
+export function isRecentlyTransferred( license: JetpackLicense ): boolean {
+	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
+	if ( ! transferredUntil ) {
+		return false;
+	}
+	const hideAfter = parseDateAsUTC( transferredUntil );
+	hideAfter.setDate( hideAfter.getDate() + TRANSFERRED_BADGE_DAYS );
+	return new Date() < hideAfter;
 }
 
 // Classic lists every WordPress.com hosting product under one name.

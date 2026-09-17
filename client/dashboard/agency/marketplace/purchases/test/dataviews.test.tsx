@@ -34,6 +34,16 @@ describe( 'toFetchOptions', () => {
 		} );
 	} );
 
+	it( 'ignores a status filter value it does not know', () => {
+		for ( const value of [ 'constructor', 'active', [ 'revoked' ] ] ) {
+			const view: View = {
+				...DEFAULT_VIEW,
+				filters: [ { field: 'status', operator: 'is', value } ],
+			};
+			expect( toFetchOptions( view ).filter ).toBe( JetpackLicenseFilter.NotRevoked );
+		}
+	} );
+
 	it( 'falls back to sorting by issue date for fields the endpoint cannot sort', () => {
 		const view: View = { ...DEFAULT_VIEW, sort: { field: 'product', direction: 'asc' } };
 		expect( toFetchOptions( view ).sortField ).toBe( JetpackLicenseSortField.IssuedAt );

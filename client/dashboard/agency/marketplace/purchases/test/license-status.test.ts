@@ -4,8 +4,10 @@ import {
 	getLicenseStatus,
 	getLicenseTags,
 	isBundleParent,
+	isLicenseStatus,
 	isPressableAddonLicense,
 	isPressableLicense,
+	isRecentlyTransferred,
 } from '../license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -55,12 +57,19 @@ describe( 'getLicenseStatus', () => {
 } );
 
 describe( 'getLicenseDisplayStatus', () => {
-	it( 'shows Pressable add-ons as active instead of unassigned', () => {
+	it( 'shows no assignment status for Pressable add-ons and bundle parents', () => {
 		const addon = license( { license_key: 'pressable-addon-storage_x' } );
-		expect( getLicenseDisplayStatus( addon ) ).toBe( 'active' );
-		expect( getLicenseDisplayStatus( { ...addon, revoked_at: '2026-01-03 00:00:00' } ) ).toBe(
-			'revoked'
-		);
+		const bundle = license( { quantity: 5 } );
+		expect( getLicenseDisplayStatus( addon ) ).toBeNull();
+		expect( getLicenseDisplayStatus( bundle ) ).toBeNull();
+	} );
+
+	it( 'still shows revoked for them', () => {
+		const revoked = { revoked_at: '2026-01-03 00:00:00' };
+		expect(
+			getLicenseDisplayStatus( license( { license_key: 'pressable-addon-storage_x', ...revoked } ) )
+		).toBe( 'revoked' );
+		expect( getLicenseDisplayStatus( license( { quantity: 5, ...revoked } ) ) ).toBe( 'revoked' );
 	} );
 
 	it( 'matches the real status for every other license', () => {
@@ -74,10 +83,21 @@ describe( 'getLicenseDisplayStatus', () => {
 	} );
 } );
 
+describe( 'isLicenseStatus', () => {
+	it( 'accepts only the known statuses', () => {
+		expect( isLicenseStatus( 'revoked' ) ).toBe( true );
+		expect( isLicenseStatus( 'constructor' ) ).toBe( false );
+		expect( isLicenseStatus( 'active' ) ).toBe( false );
+		expect( isLicenseStatus( undefined ) ).toBe( false );
+		expect( isLicenseStatus( [ 'revoked' ] ) ).toBe( false );
+	} );
+} );
+
 describe( 'license key helpers', () => {
 	it( 'detects bundle parents by quantity', () => {
 		expect( isBundleParent( license( { quantity: 5 } ) ) ).toBe( true );
-		expect( isBundleParent( license( { quantity: 1 } ) ) ).toBe( false );
+		expect( isBundleParent( license( { quantity: 1 } ) ) ).toBe( true );
+		expect( isBundleParent( license( { quantity: 0 } ) ) ).toBe( false );
 		expect( isBundleParent( license() ) ).toBe( false );
 	} );
 
@@ -127,22 +147,29 @@ describe( 'getLicenseTags', () => {
 			getLicenseTags( license( { referral: { id: 1 }, meta: { a4a_is_dev_site: '1' } } ) )
 		).toEqual( [ 'Referral', 'Development' ] );
 	} );
+} );
 
-	it( 'only shows the transferred tag for a while after the old subscription ended', () => {
-		const recent = new Date();
-		recent.setDate( recent.getDate() - 10 );
-		const old = new Date();
-		old.setDate( old.getDate() - 100 );
+describe( 'isRecentlyTransferred', () => {
+	const daysAgo = ( days: number ) => {
+		const date = new Date();
+		date.setDate( date.getDate() - days );
+		return date.toISOString();
+	};
 
+	it( 'is true for a while after the old subscription ended', () => {
 		expect(
-			getLicenseTags(
-				license( { meta: { a4a_transferred_subscription_expiration: recent.toISOString() } } )
+			isRecentlyTransferred(
+				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 10 ) } } )
 			)
-		).toEqual( [ 'Transferred' ] );
+		).toBe( true );
+	} );
+
+	it( 'is false once that window has passed, or when nothing was transferred', () => {
 		expect(
-			getLicenseTags(
-				license( { meta: { a4a_transferred_subscription_expiration: old.toISOString() } } )
+			isRecentlyTransferred(
+				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 100 ) } } )
 			)
-		).toEqual( [] );
+		).toBe( false );
+		expect( isRecentlyTransferred( license() ) ).toBe( false );
 	} );
 } );

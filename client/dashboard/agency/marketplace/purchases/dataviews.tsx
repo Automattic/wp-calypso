@@ -12,7 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
-import { formatDate } from '../../../utils/datetime';
+import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
@@ -22,9 +22,12 @@ import {
 	getLicenseTags,
 	getSiteHostname,
 	isBundleParent,
+	isLicenseStatus,
 	isPressableLicense,
+	isRecentlyTransferred,
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
+import TransferredBadge from './transferred-badge';
 import type { LicenseStatus } from './license-status';
 import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
@@ -46,13 +49,13 @@ const SORTABLE_FIELDS = [
 ];
 
 export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
-	const status = view.filters?.find( ( filter ) => filter.field === 'status' )?.value as
-		| LicenseStatus
-		| undefined;
+	const status = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
 	const sortField = SORTABLE_FIELDS.find( ( field ) => field === view.sort?.field );
 
 	return {
-		filter: ( status && LICENSE_STATUS_FILTERS[ status ] ) || JetpackLicenseFilter.NotRevoked,
+		filter: isLicenseStatus( status )
+			? LICENSE_STATUS_FILTERS[ status ]
+			: JetpackLicenseFilter.NotRevoked,
 		search: view.search || undefined,
 		sortField: sortField ?? SORTABLE_FIELDS[ 0 ],
 		sortDirection:
@@ -81,6 +84,9 @@ function SiteCell( {
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
+	}
+	if ( isBundleParent( license ) ) {
+		return <Text variant="muted">—</Text>;
 	}
 	if ( ! license.siteurl ) {
 		return <Text variant="muted">{ __( 'Not assigned' ) }</Text>;
@@ -111,7 +117,8 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 
 // TODO: classic shows the referring client's email under the product name. Port
 // it once the `referral` field on JetpackLicense is typed.
-function ProductCell( { license }: { license: JetpackLicense } ) {
+function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
 	return (
 		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 			<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
@@ -119,6 +126,9 @@ function ProductCell( { license }: { license: JetpackLicense } ) {
 			{ getLicenseTags( license ).map( ( tag ) => (
 				<Badge key={ tag }>{ tag }</Badge>
 			) ) }
+			{ transferredUntil && isRecentlyTransferred( license ) && (
+				<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+			) }
 		</HStack>
 	);
 }
@@ -132,7 +142,7 @@ export function getLicenseFields( {
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
-		<Text>{ value ? formatDate( new Date( value ), locale ) : '—' }</Text>
+		<Text>{ value ? formatDate( parseDateAsUTC( value ), locale ) : '—' }</Text>
 	);
 
 	return [
@@ -145,7 +155,7 @@ export function getLicenseFields( {
 			enableSorting: false,
 			enableHiding: false,
 			getValue: ( { item } ) => getLicenseProductName( item ),
-			render: ( { item } ) => <ProductCell license={ item } />,
+			render: ( { item } ) => <ProductCell license={ item } locale={ locale } />,
 		},
 		{
 			id: 'status',
@@ -159,7 +169,10 @@ export function getLicenseFields( {
 			} ) ),
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => getLicenseStatus( item ),
-			render: ( { item } ) => <LicenseStatusBadge status={ getLicenseDisplayStatus( item ) } />,
+			render: ( { item } ) => {
+				const status = getLicenseDisplayStatus( item );
+				return status ? <LicenseStatusBadge status={ status } /> : <Text variant="muted">—</Text>;
+			},
 		},
 		{
 			id: 'site',
