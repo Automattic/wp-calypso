@@ -251,17 +251,70 @@ describe( 'NamePulseResults', () => {
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );
 
-	it( 'renders a typed FQDN as a row of the exact-match grid', async () => {
-		render( <NamePulseTestSearch query="icecream.net" /> );
+	describe( 'typed FQDN', () => {
+		const card = () =>
+			document.querySelector( '.name-pulse-fqdn-card[data-domain]' ) as HTMLElement;
+		const findCard = async () => {
+			await waitFor( () => expect( card() ).not.toBeNull() );
 
-		expect(
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
-		).toBeInTheDocument();
-		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
+			return card();
+		};
+		const fqdnAvailability = ( status: DomainAvailabilityStatus ) => async ( domainName: string ) =>
+			buildAvailability( {
+				domain_name: domainName,
+				status,
+				cost: '$33.00',
+				raw_price: 33,
+				sale_cost: 6,
+			} );
+
+		it( 'features the typed domain on an exact-match card and drops it from the sections', async () => {
+			const user = userEvent.setup();
+			const cart = buildCart();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream.blog"
+					cart={ cart }
+					domainAvailability={ fqdnAvailability( DomainAvailabilityStatus.AVAILABLE ) }
+				/>
+			);
+
+			expect( await within( await findCard() ).findByText( 'Exact match' ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( "It's available!" ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( 'icecream' ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( '.blog' ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( '$33' ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( '$6' ) ).toBeInTheDocument();
+			expect( within( card() ).getByText( '$33/year renewal.' ) ).toBeInTheDocument();
+			expect( within( card() ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			expect( domainsIn( 'top' ) ).not.toContain( 'icecream.blog' );
+			expect( domainsIn( 'exact' ) ).not.toContain( 'icecream.blog' );
+
+			await user.click( within( card() ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () =>
+				expect( cart.onAddItem ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.blog', cost: '$33.00' } )
+				)
+			);
+		} );
+
+		it( 'shows the taken state without a cart button when the real-time check says so', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream.blog"
+					domainAvailability={ fqdnAvailability( DomainAvailabilityStatus.NOT_AVAILABLE ) }
+				/>
+			);
+
+			expect( await within( await findCard() ).findByText( 'Unavailable' ) ).toBeInTheDocument();
+			expect( within( card() ).queryByText( "It's available!" ) ).not.toBeInTheDocument();
+			expect( within( card() ).queryByText( '$33' ) ).not.toBeInTheDocument();
+			expect( within( card() ).queryByRole( 'button' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'runs the real-time check on add to cart: a taken verdict flips the row, an available one adds it', async () => {

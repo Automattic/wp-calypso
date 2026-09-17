@@ -8,6 +8,7 @@ export interface NamePulseResultsLayout {
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
+	showFqdnCard: boolean;
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
 }
@@ -16,8 +17,8 @@ type NamePulseSections = Pick< NamePulseResultsLayout, 'exactGrid' | 'suggestion
 
 const AI_MODE_MIN_WORDS = 4;
 
-// The fqdn and ai rows are placeholders that keep the exact-match behaviour
-// until those modes are built.
+// The ai row is a placeholder that keeps the exact-match behaviour until that
+// mode is built.
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
 	empty: { exactGrid: { show: false }, suggestions: { show: false } },
 	fqdn: { exactGrid: { show: true }, suggestions: { show: false } },
@@ -65,6 +66,7 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 		baseName,
 		wordCount,
 		...( fqdn ? { fqdn } : {} ),
+		showFqdnCard: mode === 'fqdn',
 		...SECTIONS_BY_MODE[ mode ],
 	};
 }

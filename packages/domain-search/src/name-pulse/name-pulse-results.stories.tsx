@@ -145,3 +145,5 @@ export default meta;
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
+
+export const Fqdn = () => <StoryDomainSearch query="icecream.blog" />;

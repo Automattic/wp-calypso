@@ -6,6 +6,7 @@ const EMPTY: NamePulseResultsLayout = {
 	mode: 'empty',
 	baseName: '',
 	wordCount: 0,
+	showFqdnCard: false,
 	exactGrid: { show: false },
 	suggestions: { show: false },
 };
@@ -14,6 +15,7 @@ const SINGLE: NamePulseResultsLayout = {
 	mode: 'single',
 	baseName: 'coffee',
 	wordCount: 1,
+	showFqdnCard: false,
 	exactGrid: { show: true },
 	suggestions: { show: false },
 };
@@ -22,6 +24,7 @@ const KEYWORD: NamePulseResultsLayout = {
 	mode: 'keyword',
 	baseName: 'coffeeshop',
 	wordCount: 2,
+	showFqdnCard: false,
 	exactGrid: { show: true },
 	suggestions: { show: true },
 };
@@ -34,12 +37,13 @@ describe( 'getResultsLayout', () => {
 		expect( getResultsLayout( '!!! ???', TLDS ) ).toEqual( EMPTY );
 	} );
 
-	it( 'shows the exact grid for an FQDN', () => {
+	it( 'shows the FQDN card and the exact grid for an FQDN', () => {
 		expect( getResultsLayout( 'Coffee.COM', TLDS ) ).toEqual( {
 			mode: 'fqdn',
 			baseName: 'coffee',
 			wordCount: 1,
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
+			showFqdnCard: true,
 			exactGrid: { show: true },
 			suggestions: { show: false },
 		} );
@@ -64,6 +68,7 @@ describe( 'getResultsLayout', () => {
 			mode: 'ai',
 			baseName: 'ablogaboutcoffee',
 			wordCount: 4,
+			showFqdnCard: false,
 			exactGrid: { show: true },
 			suggestions: { show: true },
 		} );

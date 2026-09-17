@@ -1,8 +1,11 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { pickPricing } from './pricing';
 import {
 	NamePulseDomainStatus,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
 } from './types';
+import type { DomainAvailability } from '@automattic/api-core';
 
 /**
  * UNKNOWN is what a failed or timed-out batch leaves behind, so it is retried
@@ -31,4 +34,24 @@ export const mergeResultUpdate = (
 	}
 
 	return { ...existing, ...update };
+};
+
+export const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
+	status === DomainAvailabilityStatus.AVAILABLE ||
+	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
+
+export const toRealtimeUpdate = (
+	domainName: string,
+	availability: DomainAvailability
+): NamePulseDomainUpdate => {
+	const available = isAvailableStatus( availability.status );
+
+	return {
+		domain_name: domainName,
+		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
+		...pickPricing( availability ),
+		cost: available ? availability.cost : undefined,
+		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+		is_realtime: true,
+	};
 };

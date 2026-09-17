@@ -15,6 +15,7 @@ import {
 	needsAvailabilityCheck,
 	pickPricing,
 	sanitizeKeywordInput,
+	toRealtimeUpdate,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
 	type NamePulseSource,
@@ -63,6 +64,7 @@ export const useNamePulseSearch = ( query: string ) => {
 	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
+	const fqdn = layout.showFqdnCard ? layout.fqdn : undefined;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
 	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
@@ -100,6 +102,18 @@ export const useNamePulseSearch = ( query: string ) => {
 	}, [] );
 
 	const { checkDomains } = useNamePulseAvailability( updateResult );
+
+	// The typed domain is featured on its own card, so its authoritative verdict
+	// and price come from the real-time check up front rather than on click.
+	const { data: fqdnAvailability } = useQuery( {
+		...queries.domainAvailability( fqdn?.fullDomain ?? '' ),
+		enabled: !! fqdn,
+	} );
+	const fqdnRow = fqdn ? exactResults.get( fqdn.fullDomain ) : undefined;
+	const fqdnResult =
+		fqdnRow && fqdnAvailability
+			? mergeResultUpdate( fqdnRow, toRealtimeUpdate( fqdnRow.domain_name, fqdnAvailability ) )
+			: fqdnRow;
 
 	useEffect( () => {
 		if ( ! showExactGrid || ! tlds ) {
@@ -148,8 +162,13 @@ export const useNamePulseSearch = ( query: string ) => {
 	const isLoadingKeyword = keywordEnabled && keywordQueryResult.isPending;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
-	// behind them do not slide into view unchecked.
-	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
+	// behind them do not slide into view unchecked. The card's domain leaves
+	// the grid so it is never listed twice.
+	const rawExactList = useMemo( () => {
+		const rows = Array.from( exactResults.values() );
+
+		return fqdn ? rows.filter( ( row ) => row.domain_name !== fqdn.fullDomain ) : rows;
+	}, [ exactResults, fqdn ] );
 
 	const topResults = useMemo(
 		() => getTopResults( rawExactList, topTlds ),
@@ -194,6 +213,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		fqdnResult,
 		exactList,
 		keywordResults,
 		topResults,
