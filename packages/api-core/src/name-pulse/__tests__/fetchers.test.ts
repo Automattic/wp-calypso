@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { fetchNamePulseAvailability, fetchNamePulseSuggestions } from '..';
+import { fetchNamePulseAvailability, fetchNamePulseSuggestions, fetchNamePulseTlds } from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -90,5 +90,26 @@ describe( 'fetchNamePulseAvailability', () => {
 		const domains = Array.from( { length: 51 }, ( _, i ) => `domain${ i }.com` );
 
 		await expect( fetchNamePulseAvailability( domains ) ).rejects.toThrow( /at most 50/ );
+	} );
+} );
+
+describe( 'fetchNamePulseTlds', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'returns the TLD list in the order the endpoint sends it', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/name-pulse/tlds' )
+			.reply( 200, { tlds: [ 'blog', 'com', 'org' ] } );
+
+		const tlds = await fetchNamePulseTlds();
+
+		expect( scope.isDone() ).toBe( true );
+		expect( tlds ).toEqual( [ 'blog', 'com', 'org' ] );
+	} );
+
+	it( 'normalises a response without tlds to an empty list', async () => {
+		nock( BASE ).get( '/wpcom/v2/domains/name-pulse/tlds' ).reply( 200, {} );
+
+		expect( await fetchNamePulseTlds() ).toEqual( [] );
 	} );
 } );

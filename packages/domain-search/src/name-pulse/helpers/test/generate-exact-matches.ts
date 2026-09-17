@@ -1,4 +1,4 @@
-import { generateExactMatches, NAME_PULSE_TLDS, NamePulseDomainStatus } from '..';
+import { generateExactMatches, NamePulseDomainStatus } from '..';
 
 describe( 'generateExactMatches', () => {
 	it( 'generates one WAITING row per TLD in list order', () => {
@@ -15,10 +15,6 @@ describe( 'generateExactMatches', () => {
 			status: NamePulseDomainStatus.WAITING,
 			source: 'exact',
 		} );
-	} );
-
-	it( 'defaults to the full TLD constant', () => {
-		expect( generateExactMatches( 'coffee' ) ).toHaveLength( NAME_PULSE_TLDS.length );
 	} );
 
 	it( 'strips a matching TLD suffix from the label for that TLD only', () => {

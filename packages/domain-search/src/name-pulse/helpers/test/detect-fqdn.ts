@@ -1,8 +1,10 @@
 import { detectFqdn } from '..';
 
+const TLDS = [ 'blog', 'com', 'net', 'org' ];
+
 describe( 'detectFqdn', () => {
 	it( 'detects a single-level TLD, case-insensitively', () => {
-		expect( detectFqdn( 'Coffee.COM' ) ).toEqual( {
+		expect( detectFqdn( 'Coffee.COM', TLDS ) ).toEqual( {
 			isFqdn: true,
 			baseName: 'coffee',
 			tld: 'com',
@@ -11,7 +13,7 @@ describe( 'detectFqdn', () => {
 	} );
 
 	it( 'detects a multi-level TLD before the single-level fallback', () => {
-		expect( detectFqdn( 'coffee.co.uk' ) ).toMatchObject( {
+		expect( detectFqdn( 'coffee.co.uk', TLDS ) ).toMatchObject( {
 			isFqdn: true,
 			baseName: 'coffee',
 			tld: 'co.uk',
@@ -20,7 +22,7 @@ describe( 'detectFqdn', () => {
 	} );
 
 	it( 'returns the sanitized base for input without a dot', () => {
-		expect( detectFqdn( 'Coffee Shop' ) ).toEqual( {
+		expect( detectFqdn( 'Coffee Shop', TLDS ) ).toEqual( {
 			isFqdn: false,
 			baseName: 'coffeeshop',
 			tld: '',
@@ -28,26 +30,27 @@ describe( 'detectFqdn', () => {
 		} );
 	} );
 
-	it( 'rejects unknown TLDs', () => {
-		expect( detectFqdn( 'coffee.notatld' ).isFqdn ).toBe( false );
+	it( 'rejects TLDs that are not in the list', () => {
+		expect( detectFqdn( 'coffee.notatld', TLDS ).isFqdn ).toBe( false );
+		expect( detectFqdn( 'coffee.com', [ 'blog' ] ).isFqdn ).toBe( false );
 	} );
 
 	it( 'rejects a base name shorter than two characters after sanitisation', () => {
-		expect( detectFqdn( '---.com' ) ).toEqual( {
+		expect( detectFqdn( '---.com', TLDS ) ).toEqual( {
 			isFqdn: false,
 			baseName: '',
 			tld: '',
 			fullDomain: '',
 		} );
-		expect( detectFqdn( 'a.com' ).isFqdn ).toBe( false );
+		expect( detectFqdn( 'a.com', TLDS ).isFqdn ).toBe( false );
 	} );
 
 	it( 'rejects a bare TLD', () => {
-		expect( detectFqdn( 'co.uk' ).isFqdn ).toBe( false );
+		expect( detectFqdn( 'co.uk', TLDS ).isFqdn ).toBe( false );
 	} );
 
 	it( 'sanitises the base label of an FQDN', () => {
-		expect( detectFqdn( 'Coffee Shop.com' ).fullDomain ).toBe( 'coffeeshop.com' );
-		expect( detectFqdn( 'my.coffee.com' ).fullDomain ).toBe( 'mycoffee.com' );
+		expect( detectFqdn( 'Coffee Shop.com', TLDS ).fullDomain ).toBe( 'coffeeshop.com' );
+		expect( detectFqdn( 'my.coffee.com', TLDS ).fullDomain ).toBe( 'mycoffee.com' );
 	} );
 } );

@@ -18,6 +18,7 @@ export const NamePulseResults = () => {
 		exactList,
 		keywordResults,
 		topResults,
+		isLoadingTlds,
 		isLoadingKeyword,
 		revealExact,
 		updateResult,
@@ -36,7 +37,9 @@ export const NamePulseResults = () => {
 							title={ __( 'Top results' ) }
 							results={ topResults }
 							searchKey={ searchKey }
+							isLoading={ isLoadingTlds }
 							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
+							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
 							onUpdate={ updateResult }
 						/>
 						<NamePulseResultsSection
@@ -48,6 +51,7 @@ export const NamePulseResults = () => {
 							) }
 							results={ exactList }
 							searchKey={ searchKey }
+							isLoading={ isLoadingTlds }
 							showMoreLabel={ __( 'Show more exact matches' ) }
 							onReveal={ revealExact }
 							onUpdate={ updateResult }

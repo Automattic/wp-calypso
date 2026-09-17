@@ -53,18 +53,21 @@ const toSuggestionResults = (
 
 /**
  * Expects an already-settled query (the search form debounces keystrokes). Rows
- * keep their previous status when a new search still lists them.
+ * keep their previous status when a new search still lists them. Until the TLD
+ * list arrives the input is treated as a plain name and no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
-	const layout = useMemo( () => getResultsLayout( query ), [ query ] );
+	const { data: tlds, isPending: isPendingTlds } = useQuery( queries.namePulseTlds() );
+	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
 	const fqdn = layout.fqdn?.fullDomain;
 	const fqdnTld = layout.fqdn?.tld ?? '';
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
-	const topTlds = useMemo( () => calculateTopTlds( baseName ), [ baseName ] );
+	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
+	const isLoadingTlds = isPendingTlds && showExactGrid;
 
 	const [ exactResults, setExactResults ] = useState< Map< string, NamePulseDomainResult > >(
 		() => new Map()
@@ -94,12 +97,12 @@ export const useNamePulseSearch = ( query: string ) => {
 	const { checkDomains } = useNamePulseAvailability( updateResult );
 
 	useEffect( () => {
-		if ( ! showExactGrid ) {
+		if ( ! showExactGrid || ! tlds ) {
 			setExactResults( new Map() );
 			return;
 		}
 
-		const rows = generateExactMatches( baseName );
+		const rows = generateExactMatches( baseName, tlds );
 		const previous = exactResultsRef.current;
 
 		setExactResults( () => {
@@ -141,7 +144,7 @@ export const useNamePulseSearch = ( query: string ) => {
 				return ! known || needsAvailabilityCheck( known.status );
 			} )
 		);
-	}, [ showExactGrid, baseName, fqdn, fqdnTld, initialCheckCount, checkDomains ] );
+	}, [ showExactGrid, baseName, fqdn, fqdnTld, initialCheckCount, tlds, checkDomains ] );
 
 	const keywordEnabled = layout.suggestions.show;
 	const keywordQueryResult = useQuery( {
@@ -218,6 +221,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		exactList,
 		keywordResults,
 		topResults,
+		isLoadingTlds,
 		isLoadingKeyword,
 		revealExact,
 		updateResult,

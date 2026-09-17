@@ -4,6 +4,7 @@ import {
 	type NamePulseAvailabilityResponse,
 	type NamePulseSuggestionsQuery,
 	type NamePulseSuggestionsResponse,
+	type NamePulseTldsResponse,
 } from './types';
 
 const DEFAULT_PROVIDERS = [ 'verisign', 'domainsbot' ];
@@ -66,4 +67,13 @@ export async function fetchNamePulseAvailability(
 	} );
 
 	return response ?? {};
+}
+
+export async function fetchNamePulseTlds(): Promise< string[] > {
+	const response: Partial< NamePulseTldsResponse > | null = await wpcom.req.get( {
+		path: '/domains/name-pulse/tlds',
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return response?.tlds ?? [];
 }

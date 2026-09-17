@@ -1,17 +1,13 @@
-import {
-	NAME_PULSE_TLDS,
-	NAME_PULSE_TOP_RESULTS_COUNT,
-	NAME_PULSE_TOP_RESULTS_TLDS,
-} from './constants';
+import { NAME_PULSE_TOP_RESULTS_COUNT, NAME_PULSE_TOP_RESULTS_TLDS } from './constants';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
  * When the label ends with a TLD ("myapp" → "app") that TLD is promoted to the
  * second slot, right after `blog`.
  */
-export function calculateTopTlds( baseName: string ): string[] {
+export function calculateTopTlds( baseName: string, tlds: readonly string[] ): string[] {
 	const topTlds = [ ...NAME_PULSE_TOP_RESULTS_TLDS ];
-	const matchedTld = NAME_PULSE_TLDS.find( ( tld ) => baseName.endsWith( tld ) );
+	const matchedTld = tlds.find( ( tld ) => baseName.endsWith( tld ) );
 
 	if ( ! matchedTld || matchedTld === 'blog' ) {
 		return topTlds;

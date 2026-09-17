@@ -1,6 +1,5 @@
 import { getTld } from '../../helpers/get-tld';
 import wpcomMultiLevelTlds from '../../helpers/wpcom-multi-level-tlds.json';
-import { NAME_PULSE_TLDS } from './constants';
 import { sanitizeDomainInput } from './sanitize';
 
 export interface FqdnDetection {
@@ -22,11 +21,11 @@ const notFqdn = ( baseName: string ): FqdnDetection => ( {
 
 /**
  * Multi-level TLDs are matched against the wpcom list first (so `coffee.co.uk`
- * is `co.uk`, not `uk`), then single-level ones against `NAME_PULSE_TLDS`. Must
- * run on the raw input, before `sanitizeDomainInput` strips the dots.
+ * is `co.uk`, not `uk`), then single-level ones against `tlds`. Must run on
+ * the raw input, before `sanitizeDomainInput` strips the dots.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
-export function detectFqdn( input: string ): FqdnDetection {
+export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetection {
 	const lowercased = input.toLowerCase().trim();
 
 	if ( ! lowercased.includes( '.' ) ) {
@@ -35,7 +34,7 @@ export function detectFqdn( input: string ): FqdnDetection {
 
 	const tld = getTld( lowercased );
 
-	if ( ! NAME_PULSE_TLDS.includes( tld ) && ! wpcomMultiLevelTlds.includes( tld ) ) {
+	if ( ! tlds.includes( tld ) && ! wpcomMultiLevelTlds.includes( tld ) ) {
 		return notFqdn( sanitizeDomainInput( lowercased ) );
 	}
 

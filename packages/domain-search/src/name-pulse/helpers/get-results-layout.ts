@@ -47,10 +47,10 @@ function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePu
  * Pure function of the query: which mode it is in and which sections render.
  * Whitespace splits words; a single token may be an FQDN (`coffee.com`).
  */
-export function getResultsLayout( query: string ): NamePulseResultsLayout {
+export function getResultsLayout( query: string, tlds: readonly string[] ): NamePulseResultsLayout {
 	const trimmed = query.trim();
 	const isMultiWord = /\s/.test( trimmed );
-	const detection = isMultiWord ? null : detectFqdn( trimmed );
+	const detection = isMultiWord ? null : detectFqdn( trimmed, tlds );
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;

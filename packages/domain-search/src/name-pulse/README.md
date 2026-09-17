@@ -6,7 +6,7 @@ The Name Pulse results mode for the WordPress.com domain search. `DomainSearch` 
 
 1. **Search input** — the shared `SearchForm` in instant mode: keystrokes propagate after a 300 ms debounce, submit cancels the debounce.
 2. **Top results** — three featured rows picked from the exact-match grid (`helpers/get-top-results.ts`).
-3. **Exact match for “name”** — one row per TLD in `NAME_PULSE_TLDS`, availability checked in bulk batches; "Show more exact matches" reveals 12 more rows and checks them.
+3. **Exact match for “name”** — one row per TLD returned by the tlds endpoint, in its order, availability checked in bulk batches; "Show more exact matches" reveals 12 more rows and checks them.
 4. **More suggestions** — for queries of two or more words, keyword suggestions from the Name Pulse suggestions endpoint, with "Show more suggestions".
 
 `helpers/get-results-layout.ts` turns the query into a mode (`empty`, `fqdn`, `single`, `keyword`, `ai`) and the section flags the hook and page read; the `fqdn` and `ai` rows are placeholders that keep the exact-match behaviour until those modes are built.
@@ -17,7 +17,7 @@ The bulk check is zone-file based, so the real-time availability check still run
 
 ## Data
 
-`hooks/use-name-pulse-search.ts` orchestrates one settled query; `hooks/use-name-pulse-availability.ts` batches the availability requests. Both read their query options from the `queries` on the DomainSearch context (`namePulseSuggestions`, `namePulseAvailability`), so tests and Storybook can replace them without network mocks.
+`hooks/use-name-pulse-search.ts` orchestrates one settled query; `hooks/use-name-pulse-availability.ts` batches the availability requests. Both read their query options from the `queries` on the DomainSearch context (`namePulseSuggestions`, `namePulseAvailability`, `namePulseTlds`), so tests and Storybook can replace them without network mocks.
 
 ## Not yet built
 
