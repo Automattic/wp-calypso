@@ -175,6 +175,14 @@ const MultiStepForm = ( {
 		[ sourceName, formData, signupWithMagicLinkFlow, submitSurvey ]
 	);
 
+	const updateDataAndGoBack = useCallback(
+		( data: Partial< AgencyDetailsSignupPayload >, prevStep: number ) => {
+			setFormData( ( prev ) => ( { ...prev, ...data } ) );
+			setCurrentStep( prevStep );
+		},
+		[]
+	);
+
 	const closeSurvey = () => {
 		setFormData( {} );
 		page( 'https://automattic.com/for-agencies/' );
@@ -213,7 +221,7 @@ const MultiStepForm = ( {
 						onSubmit={ ( data ) => onCreateAgency( data ) }
 						isFinalStep={ ! signupWithMagicLinkFlow }
 						initialFormData={ formData }
-						goBack={ () => setCurrentStep( 1 ) }
+						goBack={ ( data ) => updateDataAndGoBack( data, 1 ) }
 						withPersonalizedBlueprint={ withPersonalizedBlueprint }
 					/>
 				);
@@ -230,7 +238,7 @@ const MultiStepForm = ( {
 					<BlueprintForm
 						onContinue={ ( data ) => updateDataAndContinue( data, 5 ) }
 						initialFormData={ formData }
-						goBack={ () => setCurrentStep( 3 ) }
+						goBack={ ( data ) => updateDataAndGoBack( data, 3 ) }
 					/>
 				);
 			case 5:
@@ -240,7 +248,7 @@ const MultiStepForm = ( {
 							updateDataAndContinue( data, 6, true );
 						} }
 						initialFormData={ formData }
-						goBack={ () => setCurrentStep( 4 ) }
+						goBack={ ( data ) => updateDataAndGoBack( data, 4 ) }
 					/>
 				);
 			case 6:
@@ -258,6 +266,7 @@ const MultiStepForm = ( {
 		signupWithMagicLinkFlow,
 		trackView,
 		updateDataAndContinue,
+		updateDataAndGoBack,
 		withPersonalizedBlueprint,
 	] );
 

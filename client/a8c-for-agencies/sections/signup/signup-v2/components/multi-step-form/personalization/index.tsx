@@ -21,7 +21,7 @@ import './style.scss';
 interface Props {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	onSubmit?: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
-	goBack: () => void;
+	goBack: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
 	isFinalStep?: boolean;
 	withPersonalizedBlueprint?: boolean;
@@ -407,7 +407,7 @@ export default function PersonalizationForm( {
 							<Button
 								className="signup-multi-step-form__back-button"
 								variant="tertiary"
-								onClick={ goBack }
+								onClick={ () => goBack( formData ) }
 								icon={ arrowLeft }
 								iconSize={ 18 }
 							>
