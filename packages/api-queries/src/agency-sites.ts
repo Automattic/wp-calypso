@@ -23,6 +23,9 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites', 'pending' ] as const,
 		queryFn: () => fetchPendingAgencySites( agencyId ),
+		// Not persisted: checkout and provisioning change this server-side, and
+		// the route guard reads it without refetching.
+		meta: { persist: false },
 	} );
 
 // A4A runs on Calypso's QueryClient rather than the `api-queries` singleton, so
