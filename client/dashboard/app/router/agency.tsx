@@ -228,9 +228,11 @@ export const marketplaceHostingRoute = createRoute( {
 		if ( agency?.id ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
-				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
 				mayBeEligibleForPressableExpansionOffer( agency ) &&
-					queryClient.ensureQueryData( pressableOfferLicensesQuery( agency.id ) ),
+					queryClient
+						.ensureQueryData( pressableOfferLicensesQuery( agency.id ) )
+						.catch( () => undefined ),
 			] );
 		}
 	},
