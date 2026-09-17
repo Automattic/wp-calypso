@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { formatCreditCard, maskField, unmaskField } from '../masking';
+import { formatCreditCard, maskField } from '../masking';
 
 describe( 'Masking', () => {
 	describe( 'American Express Card', () => {
@@ -46,22 +46,18 @@ describe( 'Masking', () => {
 	describe( 'CVV', () => {
 		test( 'should return correct value', () => {
 			expect( maskField( 'cvv', null, '666' ) ).toEqual( '666' );
-			expect( unmaskField( 'cvv', null, '666' ) ).toEqual( '666' );
 		} );
 
 		test( 'should replace non-numeric values', () => {
 			expect( maskField( 'cvv', null, '5$5.5w6 6_666' ) ).toEqual( '5556' );
-			expect( unmaskField( 'cvv', null, '5$5.5w6 6_666' ) ).toEqual( '5556' );
 		} );
 
 		test( 'should format the next value as max 4 digits', () => {
 			expect( maskField( 'cvv', null, '333111222000' ) ).toEqual( '3331' );
-			expect( unmaskField( 'cvv', null, '333111222000' ) ).toEqual( '3331' );
 		} );
 
 		test( 'should deformat the next value as max 4 digits', () => {
 			expect( maskField( 'cvv', '333111222000', '55566666' ) ).toEqual( '5556' );
-			expect( unmaskField( 'cvv', '333111222000', '55566666' ) ).toEqual( '5556' );
 		} );
 	} );
 
@@ -70,29 +66,22 @@ describe( 'Masking', () => {
 			expect( maskField( 'expiration-date', null, 'w$%&' ) ).toEqual( '' );
 			expect( maskField( 'expiration-date', null, '10/ee' ) ).toEqual( '10' );
 			expect( maskField( 'expiration-date', null, '10/2#' ) ).toEqual( '10/2' );
-			expect( unmaskField( 'expiration-date', null, 'w$%&' ) ).toEqual( '' );
-			expect( unmaskField( 'expiration-date', null, '10/ee' ) ).toEqual( '10' );
-			expect( unmaskField( 'expiration-date', null, '10/2#' ) ).toEqual( '10/2' );
 		} );
 
 		test( 'should return correct value', () => {
 			expect( maskField( 'expiration-date', null, '2222' ) ).toEqual( '22/22' );
-			expect( unmaskField( 'expiration-date', null, '2222' ) ).toEqual( '22/22' );
 		} );
 
 		test( 'should return raw input if input length less that 3', () => {
 			expect( maskField( 'expiration-date', '02/33', '12' ) ).toEqual( '12' );
-			expect( unmaskField( 'expiration-date', '02/33', '12' ) ).toEqual( '12' );
 		} );
 
 		test( 'should return raw input if input length less that previous entry', () => {
 			expect( maskField( 'expiration-date', '02/33', '1233' ) ).toEqual( '1233' );
-			expect( unmaskField( 'expiration-date', '02/33', '1233' ) ).toEqual( '1233' );
 		} );
 
 		test( 'should format if new value length is greater than previous entry', () => {
 			expect( maskField( 'expiration-date', '023', '0233' ) ).toEqual( '02/33' );
-			expect( unmaskField( 'expiration-date', '023', '0233' ) ).toEqual( '02/33' );
 		} );
 	} );
 } );

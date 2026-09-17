@@ -3,7 +3,9 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	getPlan,
 	getYearlyPlanByMonthly,
@@ -397,8 +399,9 @@ const Home = () => {
 		const isMonthlyPlan = isPaidWpcomPlan && isMonthly( planSlug );
 		const isEligible = isPaidWpcomPlan && ! isMonthlyPlan;
 
-		// Only a monthly plan has a single obvious plan to buy; everyone else chooses.
-		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : '';
+		// Personal is the cheapest annual plan that qualifies for referral credits.
+		const freePlanUpgradeSlug = planSlug === PLAN_FREE ? PLAN_PERSONAL : '';
+		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : freePlanUpgradeSlug;
 
 		const cta: CtaButton = isEligible
 			? {
@@ -415,12 +418,12 @@ const Home = () => {
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( site?.slug && annualPlanSlug ) {
-							page(
-								addQueryArgs(
-									`/checkout/${ site.slug }/${ annualPlanSlug }`,
-									getUpsellCheckoutQueryArgs()
-								)
+							const url = addQueryArgs(
+								`/checkout/${ site.slug }/${ annualPlanSlug }`,
+								getUpsellCheckoutQueryArgs()
 							);
+							// Jetpack Cloud has no checkout of its own, whatever the site type.
+							page( isJetpackCloud() ? getCalypsoUrl( url ) : url );
 							return;
 						}
 						const url = addQueryArgs( plansLink( '/plans', site?.slug, 'yearly', true ), {

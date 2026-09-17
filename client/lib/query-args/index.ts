@@ -1,15 +1,10 @@
 import page from '@automattic/calypso-router';
 import { getQueryArgs as wpGetQueryArgs } from '@wordpress/url';
 
-function getRelativeUrlWithParameters(
-	queryArgs: object,
-	clearExistingParameters = false
-): string {
+function getRelativeUrlWithParameters( queryArgs: object ): string {
 	const url = new URL( window.location.href );
 
-	if ( clearExistingParameters ) {
-		url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
-	}
+	url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
 
 	for ( const [ key, value ] of Object.entries( queryArgs ) ) {
 		url.searchParams.set( key, value );
@@ -37,32 +32,13 @@ function getRelativeUrlWithParameters(
  * Every object key will be created in the URL
  */
 export function setQueryArgs( queryArgs: object, redirect = false ) {
-	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs, true );
+	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs );
 
 	if ( redirect ) {
 		page.redirect( searchWithoutBaseURL );
 	} else {
 		page( searchWithoutBaseURL );
 	}
-}
-
-/**
- * Adds or Updates URL parameters, maitaining the existing ones
- * 1. {
- *     uri: 'https://wordpress.com/reader/search',
- *     queryArgs: '{ q: "reader is super awesome" }'
- *    } --> '/reader/search?q=reader+is+super+awesome'
- * 2. {
- *     uri: 'https://wordpress.com/reader/search',
- *     queryArgs: '{ s: seo, c: "category" }'
- *    } --> '/reader/search?s=seo&c=category'
- * @param queryArgs search object
- * Every object key found in the URL will be replaced
- */
-export function updateQueryArgs( queryArgs: object ) {
-	const searchWithoutBaseURL = getRelativeUrlWithParameters( queryArgs );
-
-	page( searchWithoutBaseURL );
 }
 
 /**

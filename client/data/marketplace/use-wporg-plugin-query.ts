@@ -78,7 +78,7 @@ export const useWPORGPlugins = (
 };
 
 const extractPages = ( pages: Array< { plugins: Plugin[]; info: object } > = [] ) =>
-	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
+	pages.flatMap( ( page ) => page.plugins ).map( ( plugin ) => normalizePluginData( plugin ) );
 
 const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
 	pages[ pages.length - 1 ].info;

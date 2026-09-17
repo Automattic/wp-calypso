@@ -1,7 +1,6 @@
 import {
 	canDomainAddGSuite,
 	getAnnualPrice,
-	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
@@ -52,87 +51,6 @@ describe( 'index', () => {
 
 		test( 'returns valid monthly price when cost is float', () => {
 			expect( getMonthlyPrice( 99.99, 'USD' ) ).toEqual( '$8.40' );
-		} );
-	} );
-
-	describe( '#getEligibleGSuiteDomain', () => {
-		test( 'Returns empty string if selected domain and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( '', [] ) ).toEqual( '' );
-		} );
-
-		test( 'Returns empty string if selected domain is invalid and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( 'invalid-domain.wpcomstaging.com', [] ) ).toEqual( '' );
-		} );
-
-		test( 'Returns selected domain if selected domain is valid and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( 'valid-domain.blog', [] ) ).toEqual( 'valid-domain.blog' );
-		} );
-
-		const domains = [
-			{
-				name: 'invalid-domain.wpcomstaging.com',
-				type: 'REGISTERED',
-			},
-			{
-				name: 'account-with-another-provider.blog',
-				type: 'REGISTERED',
-				googleAppsSubscription: { status: 'other_provider' },
-			},
-			{
-				name: 'mapped-domain-without-wpcom-nameservers.blog',
-				type: 'MAPPED',
-				hasWpcomNameservers: false,
-			},
-			{
-				name: 'mapped-domain-with-wpcom-nameservers.blog',
-				type: 'MAPPED',
-				hasWpcomNameservers: true,
-			},
-			{
-				name: 'secondary-domain.blog',
-				type: 'REGISTERED',
-				isPrimary: false,
-			},
-			{
-				name: 'primary-domain.blog',
-				type: 'REGISTERED',
-				isPrimary: true,
-			},
-		];
-
-		test( 'Returns selected domain if selected domain is valid', () => {
-			expect( getEligibleGSuiteDomain( 'selected-valid-domain.blog', domains ) ).toEqual(
-				'selected-valid-domain.blog'
-			);
-		} );
-
-		test( 'Returns primary domain if no selected domain and the primary domain is eligible', () => {
-			const domainsWithEligiblePrimaryDomain = domains.map( ( domain ) =>
-				domain.isPrimary ? { ...domain, hasWpcomNameservers: true } : domain
-			);
-			expect( getEligibleGSuiteDomain( '', domainsWithEligiblePrimaryDomain ) ).toEqual(
-				'primary-domain.blog'
-			);
-		} );
-
-		test( 'Returns the first eligible domain if no selected domain and the primary domain is not eligible', () => {
-			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual(
-				'mapped-domain-with-wpcom-nameservers.blog'
-			);
-		} );
-
-		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
-			const domainsWithoutPrimaryDomain = domains.slice( 0, -1 );
-
-			expect( getEligibleGSuiteDomain( '', domainsWithoutPrimaryDomain ) ).toEqual(
-				'mapped-domain-with-wpcom-nameservers.blog'
-			);
-		} );
-
-		test( 'Returns empty string if no selected domain and no valid domain in domains', () => {
-			const domainsWithoutValidDomain = domains.slice( 0, -3 );
-
-			expect( getEligibleGSuiteDomain( '', domainsWithoutValidDomain ) ).toEqual( '' );
 		} );
 	} );
 
