@@ -34,6 +34,8 @@ declare const agentsManagerData:
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
+			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
@@ -166,6 +168,8 @@ interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;
+	/** WordPress's current admin screen id, e.g. `woocommerce_page_wc-admin`; set on wp-admin pages. */
+	pagenow?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;

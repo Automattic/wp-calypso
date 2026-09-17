@@ -203,6 +203,33 @@ function getAgentManagerVersion(): string {
 	return 'none';
 }
 
+function hasEditorStore(): boolean {
+	try {
+		return !! select( 'core/editor' );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Where the chat runs. The block editor keeps the historical `editor` value.
+ * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
+ * absence means a Calypso-rendered page.
+ */
+function getUnifiedSurface(): string {
+	if ( isReaderChatHost() ) {
+		return 'reader-chat';
+	}
+	if ( hasEditorStore() ) {
+		return 'editor';
+	}
+	const inlineData = getAgentsManagerInlineData();
+	if ( ! inlineData ) {
+		return 'calypso';
+	}
+	return inlineData.sectionName?.startsWith( 'ciab' ) ? 'ciab' : 'wp-admin';
+}
+
 function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
@@ -211,7 +238,8 @@ function getUnifiedBaseProps(): TracksProps {
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		agent_manager_version: getAgentManagerVersion(),
 		provider_ids: getProviderIds(),
-		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
+		surface: getUnifiedSurface(),
+		...( typeof window !== 'undefined' && window.pagenow ? { screen: window.pagenow } : {} ),
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),

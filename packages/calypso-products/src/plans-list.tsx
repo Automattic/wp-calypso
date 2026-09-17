@@ -1025,6 +1025,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1844,6 +1845,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [

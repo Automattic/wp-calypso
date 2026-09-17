@@ -8,13 +8,13 @@ import nock from 'nock';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import EducationStudentValidation from '..';
 import { StepProps } from '../../../types';
-import { mockStepProps, renderStep } from '../../test/helpers';
+import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const render = ( props?: Partial< StepProps > ) => {
+const render = ( props?: Partial< StepProps >, options?: RenderStepOptions ) => {
 	const queryClient = new QueryClient( {
 		defaultOptions: {
 			queries: {
@@ -34,7 +34,8 @@ const render = ( props?: Partial< StepProps > ) => {
 	return renderStep(
 		<QueryClientProvider client={ queryClient }>
 			<EducationStudentValidation { ...combinedProps } />
-		</QueryClientProvider>
+		</QueryClientProvider>,
+		options
 	);
 };
 
@@ -61,6 +62,33 @@ describe( 'EducationStudentValidation', () => {
 		expect(
 			screen.getByRole( 'link', { name: 'Learn more about the program at wp.com/edu' } )
 		).toHaveAttribute( 'href', 'https://wp.com/edu' );
+	} );
+
+	it( 'prefills the invite code from the `code` query parameter without submitting it', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } }, { initialEntry: '/setup/education?code=EDU-123' } );
+
+		expect( screen.getByLabelText( 'Invitation code' ) ).toHaveValue( 'EDU-123' );
+		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeEnabled();
+		expect( submit ).not.toHaveBeenCalled();
+
+		const validationRequest = mockApi()
+			.post( '/wpcom/v2/me/education-student-validation', { code: 'EDU-123' } )
+			.reply( 200, { success: true } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Validate invite code' } ) );
+
+		await waitFor( () => {
+			expect( submit ).toHaveBeenCalledWith( { inviteCodeValidated: true } );
+		} );
+		expect( validationRequest.isDone() ).toBe( true );
+	} );
+
+	it( 'leaves the invite code empty when the `code` query parameter is blank', () => {
+		render( undefined, { initialEntry: '/setup/education?code=%20%20' } );
+
+		expect( screen.getByLabelText( 'Invitation code' ) ).toHaveValue( '' );
+		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeDisabled();
 	} );
 
 	it( 'validates the code and submits only the validation marker', async () => {
