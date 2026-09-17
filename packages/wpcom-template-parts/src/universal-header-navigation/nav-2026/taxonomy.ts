@@ -101,7 +101,7 @@ export function getNav2026Menus( {
 					],
 				},
 				{
-					title: __( 'Enterprise CMS', __i18n_text_domain__ ),
+					title: __( 'Enterprise hosting', __i18n_text_domain__ ),
 					columnGroup: 'hosting',
 					columnIndex: 1,
 					items: [
