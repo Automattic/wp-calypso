@@ -13,7 +13,9 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
 import { splitSubject } from './simplified-subject';
@@ -74,21 +76,23 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
+const NoteBadge = ( { note }: { note: Note } ) => {
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+
+	return (
+		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
+		</span>
+	);
+};
+
 export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon
-					icon={ item.icon }
-					size={ 32 }
-					badge={
-						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 14 } />
-						</span>
-					}
-				/>
+				<NoteIcon icon={ item.icon } size={ 32 } badge={ <NoteBadge note={ item } /> } />
 			),
 		},
 		{
