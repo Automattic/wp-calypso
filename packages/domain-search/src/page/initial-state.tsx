@@ -10,7 +10,7 @@ export const InitialState = () => {
 
 	return (
 		<div className="domain-search--initial-state">
-			<SearchForm />
+			<SearchForm instantSearch={ config.showNamePulseSearch } />
 			{ config.allowsUsingOwnDomain && onExternalDomainClick && (
 				<div className="domain-search--initial-state__already-own-domain-cta">
 					<DomainSearchAlreadyOwnDomainCTA onClick={ () => onExternalDomainClick() } />
