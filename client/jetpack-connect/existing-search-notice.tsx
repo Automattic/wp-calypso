@@ -18,7 +18,10 @@ import type { RawSiteProduct } from 'calypso/state/sites/selectors/get-site-prod
 
 interface Site {
 	ID?: number;
-	jetpack?: boolean;
+	jetpack_connection?: boolean;
+	is_wpcom_atomic?: boolean;
+	is_wpcom_flex?: boolean;
+	is_garden?: boolean;
 	options?: { is_wpcom_atomic?: boolean };
 	products?: RawSiteProduct[];
 	plan?: { product_slug?: string; expired?: boolean };
@@ -36,8 +39,17 @@ interface SearchSubscription {
 }
 
 // `/me/sites` never lists `wpcom_search*` products, so sites hosted on WordPress.com also need their purchases.
+// `jetpack` is false for sites connected only through a standalone Jetpack plugin, so use `jetpack_connection`,
+// with the same WordPress.com-hosted exceptions as `isSelfHostedJetpackConnected` in `client/dashboard/utils/site-types.ts`.
 function isHostedOnWpcom( site: Site | null ) {
-	return !! site && ( ! site.jetpack || !! site.options?.is_wpcom_atomic );
+	return (
+		!! site &&
+		( site.jetpack_connection === false ||
+			!! site.is_wpcom_atomic ||
+			!! site.options?.is_wpcom_atomic ||
+			!! site.is_wpcom_flex ||
+			!! site.is_garden )
+	);
 }
 
 function getExistingSearchSource(

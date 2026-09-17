@@ -16,6 +16,7 @@ const simpleSite = ( ID ) => ( {
 	ID,
 	URL: `https://site-${ ID }.example`,
 	jetpack: false,
+	jetpack_connection: false,
 	plan: { product_slug: 'personal-bundle', expired: false },
 	products: [],
 } );
@@ -97,20 +98,33 @@ describe( 'ExistingSearchNotice with site purchases', () => {
 		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'requests purchases for Atomic sites', async () => {
+	test( 'requests purchases for Atomic, Flex and Garden sites', async () => {
 		nock( API )
 			.get( '/rest/v1.2/sites/16/purchases' )
 			.reply( 200, [ purchase( 16 ) ] );
-		render( { ...simpleSite( 16 ), jetpack: true, options: { is_wpcom_atomic: true } } );
+		render( {
+			...simpleSite( 16 ),
+			jetpack: true,
+			jetpack_connection: true,
+			is_wpcom_atomic: true,
+		} );
 
 		expect( await screen.findByText( NOTICE_RENEWAL ) ).toBeVisible();
+
+		const flex = nock( API ).get( '/rest/v1.2/sites/23/purchases' ).reply( 200, [] );
+		render( { ...simpleSite( 23 ), jetpack_connection: true, is_wpcom_flex: true } );
+		const garden = nock( API ).get( '/rest/v1.2/sites/24/purchases' ).reply( 200, [] );
+		render( { ...simpleSite( 24 ), jetpack_connection: true, is_garden: true } );
+		await waitFor( () => expect( flex.isDone() && garden.isDone() ).toBe( true ) );
 	} );
 
-	test( 'does not request purchases for self-hosted Jetpack sites or before an address is entered', async () => {
+	test( 'does not request purchases for self-hosted sites or before an address is entered', async () => {
 		const scope = nock( API )
 			.get( /\/purchases/ )
 			.reply( 200, [] );
-		render( { ...simpleSite( 19 ), jetpack: true } );
+		render( { ...simpleSite( 19 ), jetpack: true, jetpack_connection: true } );
+		render( { ...simpleSite( 21 ), jetpack_connection: true } );
+		render( { ...simpleSite( 22 ), jetpack_connection: undefined } );
 		render( simpleSite( 20 ), 'wpcom_search', '' );
 		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
 
