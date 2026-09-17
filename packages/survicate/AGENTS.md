@@ -3,12 +3,14 @@
 Thin integration layer around [Survicate](https://survicate.com/), the third-party
 survey SDK used to run in-product surveys on WordPress.com surfaces. This package
 loads the SDK, sets visitor traits, fires events, and — importantly — keeps surveys
-from interrupting users who are in the Help Center.
+from interrupting users who are in the Help Center or being helped by a Happiness
+Engineer.
 
 ## What this package does (and doesn't)
 
 - **Does**: decide whether to load Survicate, inject the SDK script, set visitor
-  traits, invoke named events, and suppress/close surveys when the Help Center is open.
+  traits, invoke named events, and suppress/close surveys during a support session
+  or when the Help Center is open.
 - **Doesn't**: define survey content, targeting, or campaign rules. Those live in the
   Survicate dashboard (workspace `e4794374cce15378101b63de24117572`). We only control
   the SDK lifecycle on our side.
@@ -90,12 +92,41 @@ because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
 than replacing the whole set — so the visit-count push does not clobber the
 email/account-age traits, and vice versa.
 
+## Support sessions
+
+Surveys must never appear while a Happiness Engineer is working inside the user's
+account: they interrupt the session, and any answer is recorded against the account
+holder who never gave it.
+
+Detection is `isSupportSession()` from `@automattic/calypso-support-session` — the same
+helper the rest of the codebase uses (see `client/dashboard/utils/domain-permissions.ts`).
+It covers all three mechanisms — support-user impersonation, the `isSupportSession`
+global, and the support session proxy's `isSSP` global — so prefer it over reading any of
+them directly. The server tracks `isSupportSession` and `isSSP` as independent flags
+(`client/server/pages/index.js`), so checking only the former misses proxied views
+entirely. Guarded at two layers:
+
+1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
+   injected. This is the real fix: no script, no auto-campaigns, no events. Both
+   consumers (`useSurvicate`, `addSurvicate`) already funnel through it.
+2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, covering
+   the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
+
+A support session neither begins nor ends within a page lifetime, so there is no
+transition to handle and nothing to resume. `load-script.ts` therefore needs no
+support-session handling of its own: it only ever runs once the load gate has passed,
+which means there is no support session. Its tests mock `isSupportSession()` to a
+constant `false` to keep that invariant explicit — don't add support-session cases there.
+
+**The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
+Jetpack monorepo) and is not covered here — it needs its own guard.
+
 ## Modal & Help Center coordination (defense-in-depth)
 
 Surveys must not cover the Help Center while a user is actively seeking support, nor
 draw over any other open modal dialog (onboarding modals, WP `Modal`, native
 `<dialog>`). The umbrella check is `shouldSuppressSurvey()` (`invoke-event.ts`):
-`isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
+`isSupportSession() || isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
 
 1. **Open HC while a survey is showing** → `packages/data-stores/src/help-center/actions.ts`
    (`setShowHelpCenter`) calls `window._sva?.closeSurvey?.()` on open. (Note: that file
@@ -192,9 +223,10 @@ Every suppression records a `calypso_survicate_survey_suppressed` Tracks event
 and in particular how many the modal rule catches versus the older Help Center
 rule. Properties:
 
-- `reason` — `modal` or `help_center`. `getSuppressionReason()` checks the Help
-  Center first, so `reason: 'modal'` fires only when a modal is the **sole**
-  reason; filtering on it measures the incremental effect of the modal rule.
+- `reason` — `support_session`, `help_center` or `modal`. `getSuppressionReason()`
+  checks them in that order — most- to least-specific — so `reason: 'modal'` fires
+  only when a modal is the **sole** reason; filtering on it measures the
+  incremental effect of the modal rule.
 - `trigger` — `survey_displayed` (a survey rendered and was closed — the
   auto-campaign case), `modal_opened` / `help_center_opened` (a modal or the
   Help Center opened over a survey already on screen; gated on
