@@ -1,7 +1,7 @@
 import { getDataCenterOptions } from '@automattic/api-core';
-import { pendingAgencySitesQuery, provisionAgencySiteMutation } from '@automattic/api-queries';
+import { provisionAgencySiteMutation } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
@@ -132,7 +132,6 @@ export default function SiteConfigurationModal( {
 	onRequestClose: () => void;
 } ) {
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const siteAddress = useSiteAddress( agencyId );
 	const { phpVersions, recommendedValue } = getPHPVersions();
@@ -207,9 +206,6 @@ export default function SiteConfigurationModal( {
 			{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
 			{
 				onSuccess: () => {
-					queryClient.invalidateQueries( {
-						queryKey: pendingAgencySitesQuery( agencyId ).queryKey,
-					} );
 					// The sites page reports on it from here; the site itself takes
 					// a few minutes to answer.
 					trackProvisioningSite( pendingSiteId );
