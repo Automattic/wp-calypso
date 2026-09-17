@@ -12,6 +12,9 @@ export interface Nav2026Group {
 	items: Nav2026Item[];
 	// Groups sharing a key stack vertically in one desktop column; unset = own column.
 	columnGroup?: string;
+	// Desktop column position. Needed because the array order drives the mobile
+	// list, which differs from the desktop column order.
+	columnIndex?: number;
 }
 
 export type Nav2026Menu =

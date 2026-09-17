@@ -1114,9 +1114,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// "Get started" CTA — outlined pill (no fill). Hover flips it to a filled
-	// pill: ink fill, inverted label. Sections that recolour the nav ink over
-	// dark heroes can override the flip pair via the two custom properties.
+	// "Get started" CTA — filled pill by default, outlined on hover. The fill/ink
+	// pair defaults to the white-nav matrix (blue fill, white label); sections that
+	// rest the bar transparent over a dark hero swap it to white fill, blue label.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1125,9 +1125,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		margin-inline-start: 12px;
 		margin-inline-end: 15px;
 		padding: 0 20px !important;
-		background-color: transparent !important;
-		color: inherit !important;
-		border: 1px solid currentcolor;
+		background-color: var(
+			--x-nav-2026-cta-fill,
+			#{$studio-wordpress-blue-50}
+		) !important;
+		color: var( --x-nav-2026-cta-ink, #{$studio-white} ) !important;
+		border: 1px solid var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} );
 		border-radius: 3px;
 		transition:
 			background-color $x-nav-2026-transition,
@@ -1138,11 +1141,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			display: none;
 		}
 
+		// Hover empties the pill: the fill colour moves to the border and the label.
 		&:hover,
 		&:focus {
-			background-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
-			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
-			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
+			background-color: transparent !important;
+			color: var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} ) !important;
+			border-color: var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} );
 		}
 	}
 
@@ -1416,28 +1420,33 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: none;
 	}
 
+	// Row grid, not per-column stacks: every row-2 heading lines up with its
+	// siblings instead of floating under a shorter row-1 group.
 	.x-dropdown-subcategories {
-		display: flex;
-		flex-wrap: nowrap; // Columns compress (labels wrap) in verbose locales; never spill to a second row.
-		// Don't stretch short columns to the tallest column's height.
-		align-items: flex-start;
-		gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
+		display: grid;
+		// Content-sized, capped so long labels wrap instead of widening the panel.
+		grid-auto-columns: minmax( 0, max-content );
+		// Rows size to their own tallest group, so short rows don't gain height.
+		grid-auto-rows: min-content;
+		align-items: start;
+		justify-content: start;
+		column-gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
+		row-gap: 12px;
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
 	}
 
+	// The wrapper only groups a column's rows in markup; the grid places its children.
 	.x-dropdown-column-group {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		min-width: 0;
-		max-width: $x-dropdown-2026-column-max-width;
-		margin: 0;
+		display: contents;
 	}
 
 	.x-dropdown-subcategory {
+		grid-column: var( --column-index );
+		grid-row: var( --row-index );
 		min-width: 0;
+		max-width: $x-dropdown-2026-column-max-width;
 		margin: 0;
 
 		> ul {

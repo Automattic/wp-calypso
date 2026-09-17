@@ -5,6 +5,8 @@ import { Nav2026ItemContent } from './item-content';
 import type { Nav2026Group, Nav2026Menu } from './types';
 
 // Groups sharing a `columnGroup` key stack in one column; the rest get their own.
+// `columnIndex` reorders the columns for desktop, because the taxonomy array order
+// drives the mobile list and the two orders differ.
 function toColumns( groups: Nav2026Group[] ): Nav2026Group[][] {
 	const columns: Nav2026Group[][] = [];
 	const byKey = new Map< string, Nav2026Group[] >();
@@ -22,7 +24,15 @@ function toColumns( groups: Nav2026Group[] ): Nav2026Group[][] {
 		}
 	}
 
-	return columns;
+	// Explicit index wins; columns without one keep their array order.
+	return columns.sort( ( a, b ) => {
+		const aIndex = a[ 0 ].columnIndex;
+		const bIndex = b[ 0 ].columnIndex;
+		if ( aIndex === undefined || bIndex === undefined ) {
+			return 0;
+		}
+		return aIndex - bIndex;
+	} );
 }
 
 interface Nav2026DesktopDropdownProps {
@@ -67,10 +77,19 @@ export function Nav2026DesktopDropdown( {
 						key={ menu.name }
 					>
 						<div className="x-dropdown-subcategories">
-							{ toColumns( menu.groups ).map( ( column ) => (
+							{ toColumns( menu.groups ).map( ( column, columnIndex ) => (
 								<div className="x-dropdown-column-group" key={ column[ 0 ].title }>
-									{ column.map( ( group ) => (
-										<div className="x-dropdown-subcategory" key={ group.title }>
+									{ column.map( ( group, rowIndex ) => (
+										<div
+											className="x-dropdown-subcategory"
+											key={ group.title }
+											style={
+												{
+													'--column-index': columnIndex + 1,
+													'--row-index': rowIndex + 1,
+												} as React.CSSProperties
+											}
+										>
 											<h4
 												className="x-dropdown-subcategory-title"
 												role="presentation"
