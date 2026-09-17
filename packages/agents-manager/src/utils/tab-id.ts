@@ -12,6 +12,10 @@ let memoryTabId = '';
  * events before it (chat open, suggestions, the first send) have none. They
  * carry the tab id instead, which the conversation's later events repeat, so
  * the two halves can be joined.
+ *
+ * A duplicated tab copies `sessionStorage`, so it shares the id. It also
+ * copies the chat's session (see `agent-session.ts`) and resumes the same
+ * conversation, so the two ids stay in step.
  */
 export function getTabId(): string {
 	try {

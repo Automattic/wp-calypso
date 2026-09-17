@@ -17,6 +17,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
+| `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.  |
 | `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.      |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
