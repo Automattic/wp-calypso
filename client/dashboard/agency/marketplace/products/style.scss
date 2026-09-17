@@ -8,7 +8,7 @@
 }
 
 .dashboard-marketplace-products__cart {
-	min-inline-size: 360px;
+	min-inline-size: min( 360px, 100vw - 48px );
 	padding: 8px;
 }
 

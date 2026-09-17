@@ -59,7 +59,7 @@ import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
-import { useShoppingCart } from './use-shopping-cart';
+import { parseCartEntries, useShoppingCart } from './use-shopping-cart';
 import type { CategoryTileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem } from './lib/product-groups';
@@ -83,6 +83,7 @@ interface ProductsSearchParams {
 	category?: string;
 	product_slug?: string;
 	products?: string;
+	purchase_type?: string;
 }
 
 // Classic category keys that differ from the tile values.
@@ -103,7 +104,7 @@ const isPressablePlanLicense = ( licenseKey: string ) =>
 // - Pressable PHP memory add-ons targeting a specific site
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();
-	const { marketplaceType } = useMarketplaceType();
+	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
 	const { termPricing } = useTermPricing();
 	const isReferralMode = marketplaceType === 'referral';
 
@@ -168,21 +169,36 @@ export default function MarketplaceProducts() {
 		const productSlug =
 			searchParams.product_slug != null ? String( searchParams.product_slug ) : '';
 		const productsParam = searchParams.products != null ? String( searchParams.products ) : '';
-		const entries = productSlug
-			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
-			: productsParam.split( ',' ).map( ( entry ) => {
-					const [ slug, quantity ] = entry.split( ':' );
-					return { slug, quantity: parseInt( quantity, 10 ) || 1 };
-			  } );
-		const known = entries.filter( ( { slug } ) =>
-			allProducts.some( ( product ) => product.slug === slug )
-		);
 		if ( ! productSlug && ! productsParam ) {
 			return;
 		}
+		// Classic referral links carry the mode. The cart is stored per mode, so
+		// switch first and fill the cart on the next pass.
+		if ( searchParams.purchase_type === 'referral' && marketplaceType !== 'referral' ) {
+			updateMarketplaceType( 'referral' );
+			return;
+		}
+		const entries = productSlug
+			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
+			: parseCartEntries( productsParam ).map( ( { slug, quantity } ) => ( { slug, quantity } ) );
+		// Like classic, only WordPress.com hosting takes a quantity; bundles are not
+		// sold under Billing Dragon.
+		const known = entries.filter(
+			( { slug, quantity } ) =>
+				allProducts.some( ( product ) => product.slug === slug ) &&
+				( quantity === 1 || slug.startsWith( 'wpcom-hosting' ) )
+		);
 		hasPreselected.current = true;
 		replaceItems( known );
-	}, [ allProducts, searchParams.product_slug, searchParams.products, replaceItems ] );
+	}, [
+		allProducts,
+		searchParams.product_slug,
+		searchParams.products,
+		searchParams.purchase_type,
+		marketplaceType,
+		updateMarketplaceType,
+		replaceItems,
+	] );
 	const [ detailsProduct, setDetailsProduct ] = useState< AgencyProduct | null >( null );
 
 	const fields = useMemo< Field< AgencyProduct >[] >( () => {

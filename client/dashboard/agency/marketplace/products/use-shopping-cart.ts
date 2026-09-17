@@ -19,18 +19,22 @@ const STORAGE_KEYS: Record< MarketplaceType, string > = {
 const listeners = new Set< () => void >();
 const snapshots = new Map< MarketplaceType, ShoppingCartItem[] >();
 
-function readItems( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
-	const raw = sessionStorage.getItem( STORAGE_KEYS[ marketplaceType ] );
-	if ( ! raw ) {
+// Parses classic's `slug:quantity,slug:quantity` list, from storage or a deep link.
+export function parseCartEntries( entries: string ): ShoppingCartItem[] {
+	if ( ! entries ) {
 		return [];
 	}
-	return raw
+	return entries
 		.split( ',' )
 		.map( ( entry ) => {
 			const [ slug, quantity ] = entry.split( ':' );
 			return { slug, quantity: parseInt( quantity, 10 ) || 1, raw: entry };
 		} )
 		.filter( ( item ) => item.slug );
+}
+
+function readItems( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
+	return parseCartEntries( sessionStorage.getItem( STORAGE_KEYS[ marketplaceType ] ) ?? '' );
 }
 
 function getSnapshot( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
