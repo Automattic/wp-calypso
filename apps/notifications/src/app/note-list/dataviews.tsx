@@ -14,6 +14,7 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
+import { createContext, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
@@ -78,6 +79,10 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
+export const SelectedNoteIdContext = createContext< string | undefined >( undefined );
+
+// Row state is read here rather than from the item: DataViews keeps its own copy of
+// rendered rows and only refreshes those in the current window.
 const useIsUnapproved = ( note: Note ) =>
 	useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
 
@@ -98,6 +103,7 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 };
 
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
+	const isActive = useContext( SelectedNoteIdContext ) === note.id.toString();
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
@@ -105,7 +111,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 			<div
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
-					'is-active': ( note as Note & { isActive?: boolean } ).isActive,
+					'is-active': isActive,
 				} ) }
 				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={ { __html: subject } }
