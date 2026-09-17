@@ -12,7 +12,7 @@ import {
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
-	isServerGeneratedBlogNameFlow,
+	canSendEmptyBlogName,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
@@ -91,7 +91,7 @@ const getBlogNameGenerationParams = ( {
 		};
 	}
 
-	if ( isAnyHostingFlow( flowToCheck ) || isServerGeneratedBlogNameFlow( flowToCheck ) ) {
+	if ( isAnyHostingFlow( flowToCheck ) || canSendEmptyBlogName( flowToCheck ) ) {
 		return {
 			blog_name: '',
 			find_available_url: true,
