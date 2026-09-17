@@ -325,6 +325,42 @@ describe( 'FeedbackInput', () => {
 			expect( chatControl ).not.toHaveAttribute( 'inert' );
 		} );
 
+		it( 'makes siblings mounted while it is open inert too', async () => {
+			const { container } = render(
+				<div>
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			const lateCard = document.createElement( 'div' );
+			lateCard.innerHTML = '<button>Late card</button>';
+			container.firstElementChild!.appendChild( lateCard );
+
+			await waitFor( () => {
+				expect( lateCard ).toHaveAttribute( 'inert' );
+			} );
+		} );
+
+		it( 'takes Escape before the chat does, even with focus outside the dialog', async () => {
+			const user = userEvent.setup();
+			const outside = document.createElement( 'button' );
+			document.body.appendChild( outside );
+			const chatListener = jest.fn( ( event: KeyboardEvent ) => event.defaultPrevented );
+			document.addEventListener( 'keydown', chatListener );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			outside.focus();
+			await user.keyboard( '{Escape}' );
+
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+			expect( chatListener ).toHaveReturnedWith( true );
+
+			document.removeEventListener( 'keydown', chatListener );
+			outside.remove();
+		} );
+
 		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
 			const user = userEvent.setup();
 			const { container } = render(

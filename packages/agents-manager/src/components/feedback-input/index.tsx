@@ -30,16 +30,44 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 	const isMountedRef = useRef( true );
 	const isDialog = variant === 'dialog';
 
+	// Siblings mounted while the dialog is open (context cards arrive on their
+	// own schedule) get the same treatment as the ones present at open time.
+	useEffect( () => {
+		const overlay = overlayRef.current;
+		const parent = overlay?.parentElement;
+
+		if ( ! isDialog || ! overlay || ! parent ) {
+			return;
+		}
+
+		const inerted = new Set< Element >();
+		const inertSiblings = () => {
+			Array.from( parent.children ).forEach( ( element ) => {
+				if ( element !== overlay && ! inerted.has( element ) ) {
+					element.setAttribute( 'inert', '' );
+					inerted.add( element );
+				}
+			} );
+		};
+
+		inertSiblings();
+
+		const observer = new MutationObserver( inertSiblings );
+		observer.observe( parent, { childList: true } );
+
+		return () => {
+			observer.disconnect();
+			inerted.forEach( ( element ) => element.removeAttribute( 'inert' ) );
+		};
+	}, [ isDialog ] );
+
 	useEffect( () => {
 		isMountedRef.current = true;
 		// Like `useFocusReturn`: whatever had focus when the dialog opened (the
-		// thumbs-down button for keyboard users) gets it back on close.
+		// thumbs-down button for keyboard users) gets it back on close. This
+		// effect is declared after the inert one so its cleanup runs once the
+		// opener is interactive again.
 		const opener = isDialog ? document.activeElement : null;
-		const overlay = overlayRef.current;
-		const siblings = Array.from( overlay?.parentElement?.children ?? [] ).filter(
-			( element ) => element !== overlay
-		);
-		siblings.forEach( ( element ) => element.setAttribute( 'inert', '' ) );
 		rootRef.current?.querySelector( 'textarea' )?.focus();
 
 		return () => {
@@ -47,12 +75,37 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
 			}
-			siblings.forEach( ( element ) => element.removeAttribute( 'inert' ) );
 			if ( opener instanceof HTMLElement && opener.isConnected ) {
 				opener.focus( { preventScroll: true } );
 			}
 		};
 	}, [ isDialog ] );
+
+	// The conversation view closes the whole chat on any Escape that reaches
+	// the document unhandled, wherever focus is. While the dialog is open,
+	// Escape belongs to it: capture the press first and cancel the feedback
+	// instead (or swallow it while a submission is in flight).
+	useEffect( () => {
+		if ( ! isDialog ) {
+			return;
+		}
+
+		const handleDocumentKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.key !== 'Escape' ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			if ( ! isSubmitting ) {
+				onCancel();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleDocumentKeyDown, true );
+
+		return () => document.removeEventListener( 'keydown', handleDocumentKeyDown, true );
+	}, [ isDialog, isSubmitting, onCancel ] );
 
 	// While submitting, and once the form gives way to the status message, no
 	// control inside the dialog can hold focus; the dialog itself takes it so
@@ -112,13 +165,6 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 			event.preventDefault();
 			handleSubmit();
 		} else if ( ! isDialog && event.key === 'Escape' ) {
-			event.preventDefault();
-			dismiss();
-		}
-	};
-
-	const handleDialogKeyDown = ( event: React.KeyboardEvent ) => {
-		if ( event.key === 'Escape' ) {
 			event.preventDefault();
 			dismiss();
 		}
@@ -203,15 +249,13 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 			onClick={ handleBackdropClick }
 			onPointerDown={ handlePointerDown }
 		>
-			{ /* Escape is handled on the dialog itself, as the dialog pattern expects. */ }
-			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */ }
+			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */ }
 			<div
 				ref={ rootRef }
 				className="agents-manager-feedback-input"
 				role="dialog"
 				aria-label={ __( 'Send feedback', __i18n_text_domain__ ) }
 				tabIndex={ -1 }
-				onKeyDown={ handleDialogKeyDown }
 			>
 				<div className="agents-manager-feedback-input__inner">{ renderContent() }</div>
 			</div>
