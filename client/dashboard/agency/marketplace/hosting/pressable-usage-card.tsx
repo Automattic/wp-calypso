@@ -14,7 +14,7 @@ import { SectionHeader } from '../../../components/section-header';
 import { Stat } from '../../../components/stat';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
-import { getPressablePlan } from './lib/pressable-plans';
+import { getPressablePlanInfo } from './lib/pressable-plans';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const TITAN_INBOX_MONTHLY_PRICE = 3.5;
@@ -31,8 +31,8 @@ const formatTrialEndDate = ( date: string, locale: string ) =>
 export default function PressableUsageCard( { existingPlan }: { existingPlan: AgencyProduct } ) {
 	const locale = useIntlLocale();
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const { licenses } = useAgencyPressablePlan();
-	const planInfo = getPressablePlan( existingPlan.slug );
+	const { licenses, products } = useAgencyPressablePlan();
+	const planInfo = getPressablePlanInfo( existingPlan );
 	if ( ! planInfo ) {
 		return null;
 	}
@@ -40,7 +40,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 	// The usage is only there once the Pressable account is linked.
 	const pressable = agency?.third_party?.pressable;
 	const usage = pressable?.usage ?? undefined;
-	const capacity = calculateEffectiveCapacity( planInfo, licenses );
+	const capacity = calculateEffectiveCapacity( planInfo, licenses, products );
 	const activeTitanOrders = ( pressable?.titan_usage?.orders ?? [] ).filter(
 		( order ) => order.status === 'active'
 	);

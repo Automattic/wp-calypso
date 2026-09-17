@@ -1,13 +1,16 @@
-import { getPressablePlan, isPressableAddonProduct } from './pressable-plans';
+import { getPressablePlanInfo, isPressableAddonProduct } from './pressable-plans';
 import type { PressablePlan } from './pressable-plans';
-import type { JetpackLicense } from '@automattic/api-core';
+import type { AgencyProduct, JetpackLicense } from '@automattic/api-core';
 
 export type PressableCapacity = Pick< PressablePlan, 'install' | 'storage' | 'visits' >;
 
 // Add-on license keys carry a unique suffix after an underscore.
 const normalizeAddonKey = ( licenseKey: string ) => licenseKey.split( '_' )[ 0 ];
 
-function getAddonCapacity( licenses: JetpackLicense[] ): PressableCapacity {
+function getAddonCapacity(
+	licenses: JetpackLicense[],
+	products: AgencyProduct[]
+): PressableCapacity {
 	return licenses.reduce< PressableCapacity >(
 		( total, license ) => {
 			if (
@@ -17,7 +20,9 @@ function getAddonCapacity( licenses: JetpackLicense[] ): PressableCapacity {
 			) {
 				return total;
 			}
-			const addon = getPressablePlan( normalizeAddonKey( license.license_key ) );
+			const addonSlug = normalizeAddonKey( license.license_key );
+			const addonProduct = products.find( ( product ) => product.slug === addonSlug );
+			const addon = addonProduct && getPressablePlanInfo( addonProduct );
 			if ( ! addon ) {
 				return total;
 			}
@@ -35,9 +40,10 @@ function getAddonCapacity( licenses: JetpackLicense[] ): PressableCapacity {
 /** The plan limits plus whatever the agency's add-ons contribute. */
 export function calculateEffectiveCapacity(
 	basePlan: PressableCapacity,
-	licenses: JetpackLicense[] = []
+	licenses: JetpackLicense[] = [],
+	products: AgencyProduct[] = []
 ): PressableCapacity {
-	const addons = getAddonCapacity( licenses );
+	const addons = getAddonCapacity( licenses, products );
 	return {
 		install: basePlan.install + addons.install,
 		storage: basePlan.storage + addons.storage,
