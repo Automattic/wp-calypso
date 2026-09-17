@@ -18,8 +18,6 @@ export const WELCOME_BACK_VARIATIONS = {
 	design: 'treatment_design',
 	control: 'control',
 };
-export type WelcomeBackVariation =
-	( typeof WELCOME_BACK_VARIATIONS )[ keyof typeof WELCOME_BACK_VARIATIONS ];
 
 /** Feature flag to force the welcome-back modal for local/testing. */
 export const WELCOME_BACK_MODAL_FORCE_FLAG = 'welcome-back-modal-manual';

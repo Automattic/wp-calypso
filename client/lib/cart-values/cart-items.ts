@@ -7,7 +7,6 @@ import {
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
-	isConciergeSession,
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
@@ -170,12 +169,6 @@ export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
-	return getDomainRegistrations( cart ).some( ( registration ) =>
-		isDomainBeingUsedForPlan( cart, registration.meta )
-	);
-}
-
 export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
@@ -208,10 +201,6 @@ export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProd
  */
 export function hasOnlyRenewalItems( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
-}
-
-export function hasConciergeSession( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isConciergeSession );
 }
 
 /**

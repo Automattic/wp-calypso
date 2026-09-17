@@ -135,19 +135,3 @@ export function maskField( fieldName, previousValue, nextValue ) {
 
 	return fieldMask.mask( previousValue, nextValue );
 }
-
-/**
- * Reverses masking formats of a field value
- * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
- * @param {string} previousValue the current value of the field before change
- * @param {string} nextValue the new, incoming value of the field on change
- * @returns {string} deformatted value
- */
-export function unmaskField( fieldName, previousValue, nextValue ) {
-	const fieldMask = fieldMasks[ fieldName ];
-	if ( ! fieldMask ) {
-		return nextValue;
-	}
-
-	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
-}
