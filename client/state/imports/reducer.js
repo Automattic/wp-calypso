@@ -98,7 +98,7 @@ function importerStatus( state = {}, action ) {
 						return true;
 					}
 					if (
-						importer.importerId.startsWith( ID_GENERATOR_PREFIX ) &&
+						importer.importerId?.startsWith( ID_GENERATOR_PREFIX ) &&
 						discardedStates.includes( newImporterStatus.importerState )
 					) {
 						return false;
