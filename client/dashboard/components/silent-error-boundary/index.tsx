@@ -9,12 +9,16 @@ interface SilentErrorBoundaryProps {
 	 * `{ feature: 'guided-tour' }`.
 	 */
 	sentryTags?: Record< string, string >;
+	/**
+	 * Rendered in place of the subtree after it throws. Defaults to nothing.
+	 */
+	fallback?: ReactNode;
 }
 
 /**
  * Wrap a non-critical piece of UI so that an error thrown while it renders
- * cannot take down the surrounding page: the subtree renders nothing while the
- * error is still forwarded to Sentry.
+ * cannot take down the surrounding page: the subtree renders `fallback` (nothing
+ * by default) while the error is still forwarded to Sentry.
  *
  * Only wrap UI that is safe to lose. Primary content should at least surface
  * its error to the router's error page, unless it can be caught somewhere more
@@ -38,6 +42,6 @@ export class SilentErrorBoundary extends Component<
 	}
 
 	render() {
-		return this.state.hasError ? null : this.props.children;
+		return this.state.hasError ? this.props.fallback ?? null : this.props.children;
 	}
 }

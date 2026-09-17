@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
 import { hasWpcomLicenseWithoutSite } from '../../agency/sites/need-setup/lib';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
+import { SilentErrorBoundary } from '../../components/silent-error-boundary';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
@@ -97,7 +98,14 @@ export default function AgencySidebar() {
 			{ supports.agency.sites &&
 				canAccess( agencySitesRoute ) &&
 				( activeAgency?.id && canAccess( agencySitesNeedSetupRoute ) ? (
-					<SitesMenuItem agencyId={ activeAgency.id } />
+					// The pending count only decides the menu shape, so a failed request
+					// falls back to the plain link rather than the dashboard error page.
+					<SilentErrorBoundary
+						sentryTags={ { feature: 'agency-sites-need-setup' } }
+						fallback={ <SitesLink /> }
+					>
+						<SitesMenuItem agencyId={ activeAgency.id } />
+					</SilentErrorBoundary>
 				) : (
 					<SitesLink />
 				) ) }
