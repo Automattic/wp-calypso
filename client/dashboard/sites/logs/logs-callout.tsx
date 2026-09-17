@@ -13,6 +13,7 @@ export function getLogsCalloutProps() {
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Access detailed logs' ),
 		upsellImage: illustrationUrl,
+		upsellPlanRequirement: 'any' as const,
 		upsellDescription: __(
 			'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
 		),
