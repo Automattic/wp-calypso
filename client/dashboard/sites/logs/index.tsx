@@ -223,11 +223,7 @@ function SiteLogsContent( {
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
 				<CardBody>
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
-						<HostingFeatureGatedWithCallout
-							site={ site }
-							{ ...getLogsCalloutProps() }
-							upsellPlanRequirement="any"
-						>
+						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
 							<SiteLogsDataViews
 								logType={ logType }
 								dateRange={ dateRange }
