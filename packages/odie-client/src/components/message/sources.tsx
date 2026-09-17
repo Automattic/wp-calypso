@@ -111,7 +111,7 @@ export const Sources = ( {
 									action: 'click',
 									href: source.url,
 								} );
-								navigate( `/post?link=${ source.url }` );
+								navigate( `/post?link=${ encodeURIComponent( source.url ) }` );
 							} }
 							title={ source.title }
 						/>
