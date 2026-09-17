@@ -4,6 +4,7 @@ import {
 	provisionAgencySite,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 import type { ProvisionAgencySiteParams } from '@automattic/api-core';
 
 // Backs the agency-scoped `/agency/{id}/sites` endpoint, narrowed to sites with
@@ -28,10 +29,10 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 		meta: { persist: false },
 	} );
 
-// A4A runs on Calypso's QueryClient rather than the `api-queries` singleton, so
-// callers invalidate `pendingAgencySitesQuery` themselves via `useQueryClient()`.
 export const provisionAgencySiteMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-site-provision' },
 		mutationFn: ( params: ProvisionAgencySiteParams ) => provisionAgencySite( agencyId, params ),
+		onSuccess: () =>
+			queryClient.invalidateQueries( { queryKey: pendingAgencySitesQuery( agencyId ).queryKey } ),
 	} );
