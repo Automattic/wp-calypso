@@ -1128,7 +1128,9 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		box-sizing: border-box;
 		height: 40px;
 		margin-block: 0;
-		margin-inline-start: 12px;
+		// Owns the gap to the preceding "Log in" link (8px of its padding + this
+		// = the design's 29px), so the shared nav-item padding stays untouched.
+		margin-inline-start: 21px;
 		margin-inline-end: 15px;
 		padding: 0 $x-nav-2026-cta-padding-x !important;
 		background-color: var(
