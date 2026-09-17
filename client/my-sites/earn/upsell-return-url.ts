@@ -20,12 +20,12 @@ export function getUpsellReturnUrl(): string {
  * carry both a post-purchase and a cancel destination.
  *
  * `cancel_to` is only honoured when it is relative (see `leaveCheckout`), so
- * Jetpack Cloud gets none and keeps relying on `checkoutBackUrl`.
+ * Jetpack Cloud's absolute return URL goes in `checkoutBackUrl` instead.
  */
 export function getUpsellCheckoutQueryArgs(): Record< string, string > {
 	const returnUrl = getUpsellReturnUrl();
 
 	return isJetpackCloud()
-		? { redirect_to: returnUrl }
+		? { redirect_to: returnUrl, checkoutBackUrl: returnUrl }
 		: { redirect_to: returnUrl, cancel_to: returnUrl };
 }
