@@ -188,9 +188,9 @@ describe( 'NoteList loading state', () => {
 	} );
 
 	// Past the first page, DataViews moves its window down but keeps earlier rows
-	// on screen. Reading one of those rows, then loading more, must not leave it
-	// styled unread.
-	it( 'drops the unread styling from an earlier row after scrolling past the first page', () => {
+	// on screen without refreshing them. Those rows must still reflect reads and
+	// the open note.
+	it( 'keeps an earlier row’s read and open state current after scrolling past the first page', () => {
 		const store = initStore();
 		const notes = Array.from( { length: 40 }, ( _, index ) => ( {
 			...makeNote( 1000 + index, `Unread ${ index + 1 }` ),
@@ -205,7 +205,18 @@ describe( 'NoteList loading state', () => {
 		);
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const { container } = renderUnread( store );
+		const renderList = ( selectedNoteId?: string ) => (
+			<Provider store={ store }>
+				<AppProvider client={ client as never } locale="en">
+					<NoteList
+						filterName={ 'unread' as FilterName }
+						selectedNoteId={ selectedNoteId }
+						setSelectedNoteId={ noop }
+					/>
+				</AppProvider>
+			</Provider>
+		);
+		const { container, rerender } = render( renderList() );
 		const scroller = container.querySelector( '.dataviews-layout__container' ) as HTMLElement;
 		Object.defineProperties( scroller, {
 			scrollHeight: { configurable: true, value: 4000 },
@@ -225,8 +236,10 @@ describe( 'NoteList loading state', () => {
 			store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
 			store.dispatch( actions.ui.loadedNotes( { filter: 'unread' } ) );
 		} );
+		rerender( renderList( '1000' ) );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+		expect( getRow()?.querySelector( '.is-active' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {
