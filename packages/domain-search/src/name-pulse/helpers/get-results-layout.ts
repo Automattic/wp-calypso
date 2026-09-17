@@ -1,4 +1,3 @@
-import { NAME_PULSE_AI_MODE_MIN_WORDS, NAME_PULSE_TLDS } from './constants';
 import { detectFqdn } from './detect-fqdn';
 import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from './sanitize';
 
@@ -9,72 +8,22 @@ export interface NamePulseResultsLayout {
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
-	showFilter: boolean;
-	showBanner: boolean;
-	showFqdnCard: boolean;
-	topResults: { show: boolean; style: 'compact' | 'card'; instant: boolean };
-	exactGrid: { show: boolean; instant: boolean };
-	suggestions: {
-		show: boolean;
-		title: 'more' | 'related';
-		source: 'lds' | 'keyword';
-		instant: boolean;
-	};
-	creative: { show: boolean };
+	exactGrid: { show: boolean };
+	suggestions: { show: boolean };
 }
 
-type NamePulseSections = Omit< NamePulseResultsLayout, 'mode' | 'baseName' | 'wordCount' | 'fqdn' >;
+type NamePulseSections = Pick< NamePulseResultsLayout, 'exactGrid' | 'suggestions' >;
 
-/**
- * The results table from the spec, one column per mode. `instant` sections
- * render from data the client already has; the others wait for a request.
- */
+const AI_MODE_MIN_WORDS = 4;
+
+// The fqdn and ai rows are placeholders that keep the exact-match behaviour
+// until those modes are built.
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
-	empty: {
-		showFilter: false,
-		showBanner: false,
-		showFqdnCard: false,
-		topResults: { show: false, style: 'card', instant: false },
-		exactGrid: { show: false, instant: false },
-		suggestions: { show: false, title: 'more', source: 'lds', instant: false },
-		creative: { show: false },
-	},
-	fqdn: {
-		showFilter: true,
-		showBanner: true,
-		showFqdnCard: true,
-		topResults: { show: true, style: 'compact', instant: true },
-		exactGrid: { show: true, instant: true },
-		suggestions: { show: true, title: 'more', source: 'lds', instant: false },
-		creative: { show: false },
-	},
-	single: {
-		showFilter: true,
-		showBanner: true,
-		showFqdnCard: false,
-		topResults: { show: true, style: 'card', instant: true },
-		exactGrid: { show: true, instant: true },
-		suggestions: { show: true, title: 'more', source: 'lds', instant: false },
-		creative: { show: false },
-	},
-	keyword: {
-		showFilter: true,
-		showBanner: true,
-		showFqdnCard: false,
-		topResults: { show: true, style: 'card', instant: true },
-		exactGrid: { show: true, instant: true },
-		suggestions: { show: true, title: 'related', source: 'keyword', instant: false },
-		creative: { show: false },
-	},
-	ai: {
-		showFilter: true,
-		showBanner: true,
-		showFqdnCard: false,
-		topResults: { show: true, style: 'card', instant: false },
-		exactGrid: { show: false, instant: false },
-		suggestions: { show: true, title: 'related', source: 'keyword', instant: false },
-		creative: { show: true },
-	},
+	empty: { exactGrid: { show: false }, suggestions: { show: false } },
+	fqdn: { exactGrid: { show: true }, suggestions: { show: false } },
+	single: { exactGrid: { show: true }, suggestions: { show: false } },
+	keyword: { exactGrid: { show: true }, suggestions: { show: true } },
+	ai: { exactGrid: { show: true }, suggestions: { show: true } },
 };
 
 function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePulseMode {
@@ -87,7 +36,7 @@ function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePu
 		return 'fqdn';
 	}
 
-	if ( wordCount >= NAME_PULSE_AI_MODE_MIN_WORDS ) {
+	if ( wordCount >= AI_MODE_MIN_WORDS ) {
 		return 'ai';
 	}
 
@@ -98,13 +47,10 @@ function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePu
  * Pure function of the query: which mode it is in and which sections render.
  * Whitespace splits words; a single token may be an FQDN (`coffee.com`).
  */
-export function getResultsLayout(
-	query: string,
-	tlds: readonly string[] = NAME_PULSE_TLDS
-): NamePulseResultsLayout {
+export function getResultsLayout( query: string ): NamePulseResultsLayout {
 	const trimmed = query.trim();
 	const isMultiWord = /\s/.test( trimmed );
-	const detection = isMultiWord ? null : detectFqdn( trimmed, tlds );
+	const detection = isMultiWord ? null : detectFqdn( trimmed );
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;

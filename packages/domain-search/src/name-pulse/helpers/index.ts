@@ -4,6 +4,7 @@ export * from './exclude-domains';
 export * from './generate-exact-matches';
 export * from './get-results-layout';
 export * from './get-top-results';
+export * from './pricing';
 export * from './result-status';
 export * from './sanitize';
 export * from './types';

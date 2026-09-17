@@ -23,52 +23,44 @@ export const NamePulseResults = () => {
 		updateResult,
 	} = useNamePulseSearch( query );
 
-	const searchKey = [
-		layout.mode,
-		layout.baseName,
-		layout.wordCount,
-		layout.fqdn?.fullDomain ?? '',
-	].join( '|' );
-	const suggestionsTitle =
-		layout.suggestions.title === 'related' ? __( 'Related matches' ) : __( 'More suggestions' );
+	const searchKey = `${ layout.baseName }|${ layout.fqdn?.fullDomain ?? '' }|${ layout.wordCount }`;
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
-			<SearchForm />
+			<SearchForm instantSearch />
 			<VStack spacing={ 6 }>
-				{ layout.topResults.show && (
-					<NamePulseResultsSection
-						id="top"
-						title={ __( 'Top results' ) }
-						results={ topResults }
-						searchKey={ searchKey }
-						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-						onUpdate={ updateResult }
-					/>
-				) }
 				{ layout.exactGrid.show && (
-					<NamePulseResultsSection
-						id="exact"
-						title={ sprintf(
-							// translators: %(name)s is the domain name the user searched for, without the TLD.
-							__( 'Exact match for “%(name)s”' ),
-							{ name: layout.baseName }
-						) }
-						results={ exactList }
-						searchKey={ searchKey }
-						showMoreLabel={ __( 'Show more exact matches' ) }
-						onReveal={ revealExact }
-						onUpdate={ updateResult }
-					/>
+					<>
+						<NamePulseResultsSection
+							id="top"
+							title={ __( 'Top results' ) }
+							results={ topResults }
+							searchKey={ searchKey }
+							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
+							onUpdate={ updateResult }
+						/>
+						<NamePulseResultsSection
+							id="exact"
+							title={ sprintf(
+								// translators: %(name)s is the domain name the user searched for, without the TLD.
+								__( 'Exact match for “%(name)s”' ),
+								{ name: layout.baseName }
+							) }
+							results={ exactList }
+							searchKey={ searchKey }
+							showMoreLabel={ __( 'Show more exact matches' ) }
+							onReveal={ revealExact }
+							onUpdate={ updateResult }
+						/>
+					</>
 				) }
 				{ layout.suggestions.show && (
 					<NamePulseResultsSection
 						id="suggestions"
-						title={ suggestionsTitle }
+						title={ __( 'More suggestions' ) }
 						results={ keywordResults }
 						searchKey={ searchKey }
-						isLoading={ ! layout.suggestions.instant && isLoadingKeyword }
+						isLoading={ isLoadingKeyword }
 						showMoreLabel={ __( 'Show more suggestions' ) }
 					/>
 				) }

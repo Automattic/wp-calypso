@@ -1,4 +1,4 @@
-import { parseDomainAgainstTldList } from '../../helpers/parse-domain-against-tld-list';
+import { getTld } from '../../helpers/get-tld';
 import wpcomMultiLevelTlds from '../../helpers/wpcom-multi-level-tlds.json';
 import { NAME_PULSE_TLDS } from './constants';
 import { sanitizeDomainInput } from './sanitize';
@@ -22,32 +22,25 @@ const notFqdn = ( baseName: string ): FqdnDetection => ( {
 
 /**
  * Multi-level TLDs are matched against the wpcom list first (so `coffee.co.uk`
- * is `co.uk`, not `uk`), then single-level ones against `tlds`. Must run on the
- * raw input, before `sanitizeDomainInput` strips the dots.
+ * is `co.uk`, not `uk`), then single-level ones against `NAME_PULSE_TLDS`. Must
+ * run on the raw input, before `sanitizeDomainInput` strips the dots.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
-export function detectFqdn(
-	input: string,
-	tlds: readonly string[] = NAME_PULSE_TLDS
-): FqdnDetection {
+export function detectFqdn( input: string ): FqdnDetection {
 	const lowercased = input.toLowerCase().trim();
 
 	if ( ! lowercased.includes( '.' ) ) {
 		return notFqdn( sanitizeDomainInput( lowercased ) );
 	}
 
-	let tld = parseDomainAgainstTldList( lowercased, wpcomMultiLevelTlds );
+	const tld = getTld( lowercased );
 
-	if ( ! tld ) {
-		tld = lowercased.slice( lowercased.lastIndexOf( '.' ) + 1 );
-
-		if ( ! tlds.includes( tld ) ) {
-			return notFqdn( sanitizeDomainInput( lowercased ) );
-		}
+	if ( ! NAME_PULSE_TLDS.includes( tld ) && ! wpcomMultiLevelTlds.includes( tld ) ) {
+		return notFqdn( sanitizeDomainInput( lowercased ) );
 	}
 
-	// `parseDomainAgainstTldList` matches the whole input when it *is* a TLD
-	// ("co.uk"), which leaves no label to register.
+	// `getTld` matches the whole input when it *is* a TLD ("co.uk"), which
+	// leaves no label to register.
 	if ( tld === lowercased ) {
 		return notFqdn( '' );
 	}

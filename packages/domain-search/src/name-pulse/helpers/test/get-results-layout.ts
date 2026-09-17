@@ -4,72 +4,49 @@ const EMPTY: NamePulseResultsLayout = {
 	mode: 'empty',
 	baseName: '',
 	wordCount: 0,
-	showFilter: false,
-	showBanner: false,
-	showFqdnCard: false,
-	topResults: { show: false, style: 'card', instant: false },
-	exactGrid: { show: false, instant: false },
-	suggestions: { show: false, title: 'more', source: 'lds', instant: false },
-	creative: { show: false },
+	exactGrid: { show: false },
+	suggestions: { show: false },
 };
 
 const SINGLE: NamePulseResultsLayout = {
 	mode: 'single',
 	baseName: 'coffee',
 	wordCount: 1,
-	showFilter: true,
-	showBanner: true,
-	showFqdnCard: false,
-	topResults: { show: true, style: 'card', instant: true },
-	exactGrid: { show: true, instant: true },
-	suggestions: { show: true, title: 'more', source: 'lds', instant: false },
-	creative: { show: false },
+	exactGrid: { show: true },
+	suggestions: { show: false },
 };
 
 const KEYWORD: NamePulseResultsLayout = {
 	mode: 'keyword',
 	baseName: 'coffeeshop',
 	wordCount: 2,
-	showFilter: true,
-	showBanner: true,
-	showFqdnCard: false,
-	topResults: { show: true, style: 'card', instant: true },
-	exactGrid: { show: true, instant: true },
-	suggestions: { show: true, title: 'related', source: 'keyword', instant: false },
-	creative: { show: false },
+	exactGrid: { show: true },
+	suggestions: { show: true },
 };
 
 describe( 'getResultsLayout', () => {
-	it( 'renders nothing for an empty query', () => {
+	it( 'shows nothing for an empty query', () => {
 		expect( getResultsLayout( '' ) ).toEqual( EMPTY );
 		expect( getResultsLayout( '   ' ) ).toEqual( EMPTY );
 	} );
 
-	it( 'renders the FQDN card, compact top results, the grid and "More suggestions" for coffee.com', () => {
+	it( 'shows the exact grid for an FQDN', () => {
 		expect( getResultsLayout( 'Coffee.COM' ) ).toEqual( {
 			mode: 'fqdn',
 			baseName: 'coffee',
 			wordCount: 1,
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
-			showFilter: true,
-			showBanner: true,
-			showFqdnCard: true,
-			topResults: { show: true, style: 'compact', instant: true },
-			exactGrid: { show: true, instant: true },
-			suggestions: { show: true, title: 'more', source: 'lds', instant: false },
-			creative: { show: false },
+			exactGrid: { show: true },
+			suggestions: { show: false },
 		} );
 	} );
 
-	it( 'renders top cards, the grid and "More suggestions" for one word', () => {
+	it( 'shows the exact grid for one word', () => {
 		expect( getResultsLayout( ' Coffee! ' ) ).toEqual( SINGLE );
 	} );
 
-	it( 'renders top cards, the grid and keyword "Related matches" for two words', () => {
+	it( 'shows the exact grid and suggestions for two or three words', () => {
 		expect( getResultsLayout( 'Coffee Shop' ) ).toEqual( KEYWORD );
-	} );
-
-	it( 'renders top cards, the grid and keyword "Related matches" for three words', () => {
 		expect( getResultsLayout( 'Coffee  Shop  NYC!' ) ).toEqual( {
 			...KEYWORD,
 			baseName: 'coffeeshopnyc',
@@ -77,18 +54,13 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
-	it( 'hides the grid and adds delayed AI top results and creative matches for four words', () => {
+	it( 'keeps the exact grid and suggestions for four or more words', () => {
 		expect( getResultsLayout( 'a blog about coffee' ) ).toEqual( {
 			mode: 'ai',
 			baseName: 'ablogaboutcoffee',
 			wordCount: 4,
-			showFilter: true,
-			showBanner: true,
-			showFqdnCard: false,
-			topResults: { show: true, style: 'card', instant: false },
-			exactGrid: { show: false, instant: false },
-			suggestions: { show: true, title: 'related', source: 'keyword', instant: false },
-			creative: { show: true },
+			exactGrid: { show: true },
+			suggestions: { show: true },
 		} );
 	} );
 
@@ -102,27 +74,14 @@ describe( 'getResultsLayout', () => {
 		expect( getResultsLayout( '!a!' ) ).toEqual( { ...EMPTY, baseName: 'a', wordCount: 1 } );
 	} );
 
-	it( 'differs between coffee.com and coffee only in mode, fqdn and top results style', () => {
+	it( 'differs between coffee.com and coffee only in mode and fqdn', () => {
 		const { fqdn, ...fqdnLayout } = getResultsLayout( 'coffee.com' );
 
 		expect( fqdn ).toEqual( { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' } );
-		expect( fqdnLayout ).toEqual( {
-			...getResultsLayout( 'coffee' ),
-			mode: 'fqdn',
-			showFqdnCard: true,
-			topResults: { show: true, style: 'compact', instant: true },
-		} );
+		expect( fqdnLayout ).toEqual( { ...getResultsLayout( 'coffee' ), mode: 'fqdn' } );
 	} );
 
-	it( 'keeps a single word whose sanitized keyword count is one in single mode', () => {
+	it( 'keeps a single word followed by punctuation in single mode', () => {
 		expect( getResultsLayout( 'coffee !!!' ) ).toEqual( SINGLE );
-	} );
-
-	it( 'only detects FQDNs against the given TLD list', () => {
-		expect( getResultsLayout( 'coffee.zzz', [ 'zzz' ] ).mode ).toBe( 'fqdn' );
-		expect( getResultsLayout( 'coffee.zzz', [ 'com' ] ) ).toEqual( {
-			...SINGLE,
-			baseName: 'coffeezzz',
-		} );
 	} );
 } );
