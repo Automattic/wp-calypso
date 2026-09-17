@@ -3,18 +3,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import {
 	calculateTopTlds,
-	detectFqdn,
 	excludeDomains,
 	generateExactMatches,
+	getResultsLayout,
 	getTopResults,
-	getWordCount,
 	mergeResultUpdate,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NAME_PULSE_TOP_RESULTS_COUNT,
 	NamePulseDomainStatus,
 	needsAvailabilityCheck,
-	sanitizeDomainInput,
 	sanitizeKeywordInput,
 	toDomainNameSet,
 	type NamePulseDomainResult,
@@ -69,21 +67,13 @@ const toSuggestionResults = (
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
-	const trimmed = query.trim();
-	const hasMultipleWords = trimmed.includes( ' ' );
-
-	const fqdnInfo = useMemo(
-		() => ( hasMultipleWords || ! trimmed ? null : detectFqdn( trimmed ) ),
-		[ hasMultipleWords, trimmed ]
-	);
-	const keywordQuery = hasMultipleWords ? sanitizeKeywordInput( trimmed ) : '';
-	const baseName = fqdnInfo?.isFqdn
-		? fqdnInfo.baseName
-		: sanitizeDomainInput( hasMultipleWords ? keywordQuery : trimmed );
-	const fqdn = fqdnInfo?.isFqdn ? fqdnInfo.fullDomain : undefined;
-	const fqdnTld = fqdnInfo?.isFqdn ? fqdnInfo.tld : '';
-	const singleWordCount = baseName ? 1 : 0;
-	const wordCount = hasMultipleWords ? getWordCount( keywordQuery ) : singleWordCount;
+	const layout = useMemo( () => getResultsLayout( query ), [ query ] );
+	const { baseName, wordCount } = layout;
+	const showExactGrid = layout.exactGrid.show;
+	const fqdn = layout.fqdn?.fullDomain;
+	const fqdnTld = layout.fqdn?.tld ?? '';
+	const initialCheckCount =
+		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
 	const topTlds = useMemo( () => calculateTopTlds( baseName ), [ baseName ] );
 
 	const [ exactResults, setExactResults ] = useState< Map< string, NamePulseDomainResult > >(
@@ -114,7 +104,7 @@ export const useNamePulseSearch = ( query: string ) => {
 	const { checkDomains } = useNamePulseAvailability( updateResult );
 
 	useEffect( () => {
-		if ( baseName.length < 2 ) {
+		if ( ! showExactGrid ) {
 			setExactResults( new Map() );
 			return;
 		}
@@ -146,11 +136,8 @@ export const useNamePulseSearch = ( query: string ) => {
 			return next;
 		} );
 
-		const initialCount = hasMultipleWords
-			? NAME_PULSE_INITIAL_CHECK_MULTI_WORD
-			: NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
 		const toCheck = rows
-			.slice( 0, initialCount )
+			.slice( 0, initialCheckCount )
 			.map( ( row ) => row.domain_name )
 			.filter( ( name ) => name !== fqdn );
 
@@ -164,11 +151,14 @@ export const useNamePulseSearch = ( query: string ) => {
 				return ! known || needsAvailabilityCheck( known.status );
 			} )
 		);
-	}, [ baseName, fqdn, fqdnTld, hasMultipleWords, checkDomains ] );
+	}, [ showExactGrid, baseName, fqdn, fqdnTld, initialCheckCount, checkDomains ] );
 
-	const keywordEnabled = wordCount >= 2;
+	const keywordEnabled = layout.suggestions.show && layout.suggestions.source === 'keyword';
 	const keywordQueryResult = useQuery( {
-		...queries.namePulseSuggestions( { query: keywordQuery, use_ai: false } ),
+		...queries.namePulseSuggestions( {
+			query: keywordEnabled ? sanitizeKeywordInput( query ) : '',
+			use_ai: false,
+		} ),
 		enabled: keywordEnabled,
 	} );
 
@@ -241,9 +231,7 @@ export const useNamePulseSearch = ( query: string ) => {
 	);
 
 	return {
-		baseName,
-		fqdn,
-		wordCount,
+		layout,
 		exactList,
 		keywordResults,
 		topResults,

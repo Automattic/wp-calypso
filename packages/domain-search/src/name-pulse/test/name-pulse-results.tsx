@@ -177,18 +177,27 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'renders More suggestions for a multi-word query', async () => {
+	it( 'renders Related matches for a multi-word query', async () => {
 		render( <NamePulseTestSearch query="ice cream" /> );
 
 		expect(
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 
 		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
 		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( 2 );
+	} );
+
+	it( 'hides Top results and the exact-match grid for four or more words', async () => {
+		render( <NamePulseTestSearch query="a blog about ice cream" /> );
+
+		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Top results' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'adds a row to the cart after the real-time check', async () => {

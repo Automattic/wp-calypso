@@ -23,3 +23,13 @@ export function sanitizeKeywordInput( input: string ): string {
 		.replace( /\s+/g, ' ' )
 		.trim();
 }
+
+/**
+ * Words after keyword sanitisation, so punctuation-only tokens don't count.
+ * @example getWordCount( 'coffee !!! shop' ) // 2
+ */
+export function getWordCount( input: string ): number {
+	const sanitized = sanitizeKeywordInput( input );
+
+	return sanitized ? sanitized.split( ' ' ).length : 0;
+}

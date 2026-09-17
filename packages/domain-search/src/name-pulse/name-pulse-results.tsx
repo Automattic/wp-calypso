@@ -14,9 +14,7 @@ export const NamePulseResults = () => {
 	const { __ } = useI18n();
 	const { query } = useDomainSearch();
 	const {
-		baseName,
-		fqdn,
-		wordCount,
+		layout,
 		exactList,
 		keywordResults,
 		topResults,
@@ -25,41 +23,52 @@ export const NamePulseResults = () => {
 		updateResult,
 	} = useNamePulseSearch( query );
 
-	const searchKey = `${ baseName }|${ fqdn ?? '' }|${ wordCount }`;
+	const searchKey = [
+		layout.mode,
+		layout.baseName,
+		layout.wordCount,
+		layout.fqdn?.fullDomain ?? '',
+	].join( '|' );
+	const suggestionsTitle =
+		layout.suggestions.title === 'related' ? __( 'Related matches' ) : __( 'More suggestions' );
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<SearchForm />
 			<VStack spacing={ 6 }>
-				<NamePulseResultsSection
-					id="top"
-					title={ __( 'Top results' ) }
-					results={ topResults }
-					searchKey={ searchKey }
-					maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-					skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-					onUpdate={ updateResult }
-				/>
-				<NamePulseResultsSection
-					id="exact"
-					title={ sprintf(
-						// translators: %(name)s is the domain name the user searched for, without the TLD.
-						__( 'Exact match for “%(name)s”' ),
-						{ name: baseName }
-					) }
-					results={ exactList }
-					searchKey={ searchKey }
-					showMoreLabel={ __( 'Show more exact matches' ) }
-					onReveal={ revealExact }
-					onUpdate={ updateResult }
-				/>
-				{ wordCount >= 2 && (
+				{ layout.topResults.show && (
+					<NamePulseResultsSection
+						id="top"
+						title={ __( 'Top results' ) }
+						results={ topResults }
+						searchKey={ searchKey }
+						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
+						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
+						onUpdate={ updateResult }
+					/>
+				) }
+				{ layout.exactGrid.show && (
+					<NamePulseResultsSection
+						id="exact"
+						title={ sprintf(
+							// translators: %(name)s is the domain name the user searched for, without the TLD.
+							__( 'Exact match for “%(name)s”' ),
+							{ name: layout.baseName }
+						) }
+						results={ exactList }
+						searchKey={ searchKey }
+						showMoreLabel={ __( 'Show more exact matches' ) }
+						onReveal={ revealExact }
+						onUpdate={ updateResult }
+					/>
+				) }
+				{ layout.suggestions.show && (
 					<NamePulseResultsSection
 						id="suggestions"
-						title={ __( 'More suggestions' ) }
+						title={ suggestionsTitle }
 						results={ keywordResults }
 						searchKey={ searchKey }
-						isLoading={ isLoadingKeyword }
+						isLoading={ ! layout.suggestions.instant && isLoadingKeyword }
 						showMoreLabel={ __( 'Show more suggestions' ) }
 					/>
 				) }

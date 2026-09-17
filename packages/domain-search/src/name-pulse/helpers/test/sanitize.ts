@@ -1,4 +1,4 @@
-import { sanitizeDomainInput, sanitizeKeywordInput } from '..';
+import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from '..';
 
 describe( 'sanitizeDomainInput', () => {
 	it( 'lowercases and strips invalid characters', () => {
@@ -25,5 +25,19 @@ describe( 'sanitizeKeywordInput', () => {
 
 	it( 'returns an empty string for punctuation-only input', () => {
 		expect( sanitizeKeywordInput( '!!! ???' ) ).toBe( '' );
+	} );
+} );
+
+describe( 'getWordCount', () => {
+	it( 'counts sanitized words', () => {
+		expect( getWordCount( 'coffee' ) ).toBe( 1 );
+		expect( getWordCount( 'coffee shop' ) ).toBe( 2 );
+		expect( getWordCount( ' a blog about  specialty coffee ' ) ).toBe( 5 );
+	} );
+
+	it( 'ignores punctuation-only tokens and empty input', () => {
+		expect( getWordCount( '' ) ).toBe( 0 );
+		expect( getWordCount( '!!!' ) ).toBe( 0 );
+		expect( getWordCount( 'coffee !!! shop' ) ).toBe( 2 );
 	} );
 } );

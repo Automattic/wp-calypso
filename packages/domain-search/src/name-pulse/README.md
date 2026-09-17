@@ -7,7 +7,9 @@ The Name Pulse results mode for the WordPress.com domain search. `DomainSearch` 
 1. **Search input** — the shared `SearchForm` in instant mode: keystrokes propagate after a 300 ms debounce, submit cancels the debounce.
 2. **Top results** — three featured rows picked from the exact-match grid (`helpers/get-top-results.ts`).
 3. **Exact match for “name”** — one row per TLD in `NAME_PULSE_TLDS`, availability checked in bulk batches; "Show more exact matches" reveals 12 more rows and checks them.
-4. **More suggestions** — for queries of two or more words, keyword suggestions from the Name Pulse suggestions endpoint, with "Show more suggestions".
+4. **Related matches** — for queries of two or more words, keyword suggestions from the Name Pulse suggestions endpoint, with "Show more suggestions".
+
+Which sections render is decided once, by `helpers/get-results-layout.ts`: it is the results table from the spec (empty / FQDN / one word / two–three words / four or more words) as a pure function of the query, tested row by row. The page only maps its flags to sections. Flags not wired yet: `showFilter`, `showBanner`, `showFqdnCard`, `topResults.style`, `topResults.instant`, `creative` and the `lds` suggestion source (FQDN and one-word queries have no suggestions until it exists); in AI mode (four or more words) only the keyword "Related matches" render because the AI request is not fired.
 
 Each row shows the base name muted and the TLD bold, then the yearly price (or the sale price with the renewal price underneath), a Premium or Sale badge and an icon-only cart button. Unavailable rows show "Unavailable"; rows whose check failed show "Couldn’t check" and are retried on the next search.
 
