@@ -120,21 +120,41 @@ test.describe(
 		} );
 
 		test( 'Four: As a free plan user, I can select WordPress from the migration platform picker and reach the upgrade step', async ( {
+			page,
 			pageImportLetsFindYourSite,
 			pageImportLetUsMigrateYourSite,
 			pageImportContentFromAnotherPlatformOrFile,
+			pageImportContentFromWordPress,
 			pageImportPlans,
 			sitePublicShared: sitePublic,
 		} ) => {
-			await test.step( 'When I open migration with the platform picker available', async function () {
-				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug, {
+			await test.step( 'When I open migration without a source or destination', async function () {
+				await pageImportLetsFindYourSite.visit( undefined, {
 					hideImporterLink: false,
-					siteId: sitePublic.blog_details.blogid,
 				} );
 			} );
 
 			await test.step( 'When I use the "pick your current platform from a list" button', async function () {
 				await pageImportLetsFindYourSite.clickPickFromListButton();
+			} );
+
+			await test.step( 'Then I select my destination site', async function () {
+				await expect(
+					page.getByRole( 'heading', { name: 'Pick your destination' } )
+				).toBeVisible();
+				await page
+					.getByRole( 'searchbox', { name: 'Search', exact: true } )
+					.fill( sitePublic.blog_details.site_slug );
+				const selectSite = page.getByRole( 'button', { name: 'Select this site', exact: true } );
+				await expect( selectSite ).toHaveCount( 1 );
+				await selectSite.click();
+				await page
+					.getByRole( 'dialog', { name: 'Confirm your choice' } )
+					.getByRole( 'button', {
+						name: 'Continue',
+						exact: true,
+					} )
+					.click();
 			} );
 
 			await test.step( 'Then I see the "Import content from another platform or file" page', async function () {
@@ -147,6 +167,31 @@ test.describe(
 
 			await test.step( 'Then I see the "Let us migrate your site" page', async function () {
 				await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
+			} );
+
+			await test.step( 'When I choose to import a WordPress export file', async function () {
+				await pageImportLetUsMigrateYourSite.importExportFileButton.click();
+			} );
+
+			await test.step( 'Then I can upload a file to the selected destination without upgrading', async function () {
+				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
+				const query = new URL( page.url() ).searchParams;
+				expect( query.get( 'siteId' ) ).toBe( String( sitePublic.blog_details.blogid ) );
+				expect( query.get( 'siteSlug' ) ).toBe( sitePublic.blog_details.site_slug );
+				await pageImportContentFromWordPress.importFileContentPage.uploadExportFile(
+					TEST_WORDPRESS_EXPORT_FILE_PATH
+				);
+				await expect(
+					pageImportContentFromWordPress.importFileContentPage.yourFileIsReadyText
+				).toBeVisible( { timeout: 30000 } );
+			} );
+
+			await test.step( 'When I go back, I return to the migration offer', async function () {
+				await page.getByRole( 'button', { name: 'Back', exact: true } ).click();
+				await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
+				expect( new URL( page.url() ).searchParams.get( 'siteId' ) ).toBe(
+					String( sitePublic.blog_details.blogid )
+				);
 			} );
 
 			await test.step( 'When I click the "Get Started" button', async function () {

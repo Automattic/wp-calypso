@@ -317,7 +317,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId,
 										backToFlow: `/${ flowPath }/${ STEPS.PICK_SITE.slug }`,
-										origin: '',
+										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 									} )
 								);
 							}
@@ -447,6 +447,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					if ( providedDependencies?.destination === 'import' ) {
+						return exitFlow(
+							paths.siteSetupImportWordpressPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
+							} )
+						);
+					}
+
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
 						return replace(

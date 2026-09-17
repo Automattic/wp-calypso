@@ -22,13 +22,13 @@ export class ImportLetsFindYourSitePage {
 	 * @param siteSlug Site slug.
 	 */
 	async visit(
-		siteSlug: string,
+		siteSlug: string | undefined,
 		{ hideImporterLink = true, siteId }: { hideImporterLink?: boolean; siteId?: number } = {}
 	): Promise< void > {
 		await this.page.goto(
 			DataHelper.getCalypsoURL( 'setup/site-migration/site-migration-identify', {
 				hide_importer_link: String( hideImporterLink ),
-				siteSlug,
+				...( siteSlug && { siteSlug } ),
 				...( siteId !== undefined && { siteId: String( siteId ) } ),
 				isUploadInProgress: 'false',
 			} )

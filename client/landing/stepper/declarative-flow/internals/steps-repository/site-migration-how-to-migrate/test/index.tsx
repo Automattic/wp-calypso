@@ -15,6 +15,8 @@ import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
 const navigation = { submit: jest.fn() };
+const mockCancelMigration = jest.fn();
+const mockDeleteMigrationSticker = jest.fn();
 
 type Props = ComponentProps< typeof SiteMigrationHowToMigrate >;
 
@@ -33,6 +35,14 @@ jest.mock( 'calypso/lib/presales-chat', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/analytics/ad-tracking/record-migration-events' );
+
+jest.mock( 'calypso/data/site-migration/landing/use-migration-cancellation', () => ( {
+	useMigrationCancellation: () => ( { mutate: mockCancelMigration } ),
+} ) );
+
+jest.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
+	useMigrationStickerMutation: () => ( { deleteMigrationSticker: mockDeleteMigrationSticker } ),
+} ) );
 
 describe( 'SiteMigrationHowToMigrate', () => {
 	afterEach( () => {
@@ -70,6 +80,29 @@ describe( 'SiteMigrationHowToMigrate', () => {
 			expect( navigation.submit ).toHaveBeenCalledWith( { how, destination } );
 			expect( recordMigrationStartEvent ).toHaveBeenCalledTimes( 1 );
 			expect( recordMigrationStartFacebookEvent ).toHaveBeenCalledTimes( 1 );
+		}
+	);
+
+	it.each( [ false, true ] )(
+		'offers file import without a plan gate when plugin eligibility is %s',
+		async ( canInstallPlugins ) => {
+			jest.mocked( useSite ).mockReturnValue( {
+				...defaultSiteDetails,
+				ID: 123,
+				plan: {
+					...defaultSiteDetails.plan,
+					features: { active: canInstallPlugins ? [ 'install-plugins' ] : [] },
+				},
+			} );
+			render( { navigation } );
+
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Import a WordPress export file' } )
+			);
+
+			expect( navigation.submit ).toHaveBeenCalledWith( { destination: 'import' } );
+			expect( mockDeleteMigrationSticker ).toHaveBeenCalledWith( 123 );
+			expect( mockCancelMigration ).toHaveBeenCalledTimes( 1 );
 		}
 	);
 

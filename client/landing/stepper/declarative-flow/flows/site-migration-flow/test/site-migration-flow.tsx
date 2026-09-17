@@ -533,7 +533,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to IMPORT_LIST when a site is selected and the platform is not identified', () => {
+			it( 'preserves migration origin when a site is selected without identifying a platform', () => {
 				runNavigation( {
 					from: STEPS.PICK_SITE,
 					dependencies: {
@@ -549,6 +549,7 @@ describe( 'Site Migration Flow', () => {
 					path: '/setup/site-setup/importList',
 					query: {
 						backToFlow: '/site-migration/sitePicker',
+						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 						sessionId: 123,
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
@@ -619,6 +620,34 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_HOW_TO_MIGRATE', () => {
+			it.each( [ undefined, 'https://source.example.com' ] )(
+				'opens the WordPress file importer with source %s and a return path to the offer',
+				( from ) => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+						dependencies: { destination: 'import' },
+						query: {
+							siteId: 123,
+							siteSlug: 'example.wordpress.com',
+							...( from && { from } ),
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/setup/site-setup/importerWordpress',
+						query: {
+							siteId: 123,
+							siteSlug: 'example.wordpress.com',
+							backToFlow: '/site-migration/site-migration-how-to-migrate',
+							ref: 'site-migration',
+							sessionId: '123',
+							...( from && { from } ),
+						},
+					} );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+				}
+			);
+
 			it( 'redirects to SITE_MIGRATION_UPGRADE_PLAN step when an upgrade is required', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,

@@ -236,6 +236,15 @@ export const siteSetupImportListPath = buildPathHelper< {
 	};
 } >( `/setup/site-setup/${ STEPS.IMPORT_LIST.slug }` );
 
+export const siteSetupImportWordpressPath = buildPathHelper< {
+	queryParams: {
+		siteId?: number | string;
+		siteSlug: string;
+		from?: string | null;
+		backToFlow: string;
+	};
+} >( `/setup/site-setup/${ STEPS.IMPORTER_WORDPRESS.slug }` );
+
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
 	params: { siteSlug: string };

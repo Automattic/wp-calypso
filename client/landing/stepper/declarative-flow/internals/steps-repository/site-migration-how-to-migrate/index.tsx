@@ -1,10 +1,12 @@
 import { NextButton, Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
+import { Button } from '@wordpress/components';
 import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
@@ -21,7 +23,7 @@ const SiteMigrationHowToMigrate: StepType< {
 		subHeaderText?: string;
 	};
 	submits: {
-		how: string;
+		how?: string;
 		destination: string;
 	};
 } > = ( props ) => {
@@ -29,6 +31,7 @@ const SiteMigrationHowToMigrate: StepType< {
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
 	useEffect( () => {
 		recordMigrationStartEvent( 'SiteMigrationHowToMigrate' );
@@ -66,6 +69,14 @@ const SiteMigrationHowToMigrate: StepType< {
 		navigation?.goBack?.();
 	}, [ cancelMigration, navigation ] );
 
+	const handleImport = () => {
+		if ( site?.ID ) {
+			deleteMigrationSticker( site.ID );
+			cancelMigration();
+		}
+		return navigation.submit?.( { destination: 'import' } );
+	};
+
 	const renderSubHeaderText = () => {
 		const siteCanInstallPlugins = canInstallPlugins( site );
 
@@ -85,6 +96,9 @@ const SiteMigrationHowToMigrate: StepType< {
 					{ translate( 'Get started' ) }
 				</NextButton>
 				<ChecklistCard title={ translate( 'How it works' ) } items={ checklistItems } />
+				<Button variant="link" onClick={ handleImport }>
+					{ translate( 'Import a WordPress export file' ) }
+				</Button>
 			</div>
 		);
 	};
