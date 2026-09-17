@@ -10,8 +10,9 @@ import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
+import appDownloadQrDark from './assets/app-download-qr-dark.svg';
+import appDownloadQrLight from './assets/app-download-qr-light.svg';
 import {
-	AppDownloadQrCodeSvg,
 	AppStoreIconSvg,
 	ChevronSvg,
 	FacebookIconSvg,
@@ -134,6 +135,7 @@ const FooterStack = ( {
 );
 
 const Footer2026Bottom = ( {
+	colorway,
 	isLoggedIn,
 	locale,
 	currentRoute,
@@ -194,7 +196,13 @@ const Footer2026Bottom = ( {
 		</div>
 		<div className="lp-footer-bottom__downloads">
 			<a className="lp-footer-app-download" href={ APP_DOWNLOAD_URL }>
-				<AppDownloadQrCodeSvg />
+				<img
+					src={ colorway === 'dark' ? appDownloadQrDark : appDownloadQrLight }
+					width="34"
+					height="34"
+					alt=""
+					loading="lazy"
+				/>
 				<span>{ __( 'Download our app', __i18n_text_domain__ ) }</span>
 			</a>
 			<ul className="lp-footer-apps" aria-label={ __( 'Mobile Apps', __i18n_text_domain__ ) }>
@@ -396,6 +404,7 @@ export const PureUniversalNavbarFooter = ( {
 						</div>
 						{ colorway ? (
 							<Footer2026Bottom
+								colorway={ colorway }
 								isLoggedIn={ isLoggedIn }
 								locale={ locale }
 								currentRoute={ currentRoute }
