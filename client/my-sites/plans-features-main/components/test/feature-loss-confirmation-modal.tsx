@@ -30,8 +30,8 @@ describe( 'FeatureLossConfirmationModal', () => {
 	test( 'names every feature the upgrade would remove', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );
 
-		expect( screen.getByText( 'Donations' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Payment buttons' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Donations/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Payment buttons/ ) ).toBeInTheDocument();
 	} );
 
 	/**
@@ -89,6 +89,6 @@ describe( 'FeatureLossConfirmationModal', () => {
 	test( 'renders nothing when closed', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } isOpen={ false } /> );
 
-		expect( screen.queryByText( 'Donations' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Donations/ ) ).not.toBeInTheDocument();
 	} );
 } );
