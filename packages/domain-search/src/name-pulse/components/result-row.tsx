@@ -76,7 +76,12 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 	return (
 		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
 			<span className="name-pulse-row__price-line">
-				<Text weight={ 600 }>{ salePrice ?? yearlyPrice }</Text>
+				<Text
+					weight={ 600 }
+					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
+				>
+					{ salePrice ?? yearlyPrice }
+				</Text>
 				<Text size={ 12 } variant="muted">
 					{ isSale ? __( '/first year' ) : __( '/year' ) }
 				</Text>
