@@ -273,7 +273,7 @@ const siteSetupFlow: Flow = {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from, ref: entryPoint },
-								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								'/setup/site-migration/' + STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 							)
 						);
 					}
