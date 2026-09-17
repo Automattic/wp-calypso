@@ -62,9 +62,7 @@ export default function OptionCards( {
 							<VStack spacing={ 2 }>
 								<HStack justify="space-between" alignment="center">
 									<Text weight={ 600 }>{ option.label }</Text>
-									{ isSelected && (
-										<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
-									) }
+									<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
 							</VStack>

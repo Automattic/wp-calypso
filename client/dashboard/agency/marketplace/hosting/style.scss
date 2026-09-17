@@ -145,6 +145,12 @@
 	}
 }
 
+// Always rendered so that selecting a card doesn't change its height.
 .dashboard-marketplace-hosting__option-check {
 	fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	visibility: hidden;
+
+	.dashboard-marketplace-hosting__option-card.is-selected & {
+		visibility: visible;
+	}
 }
