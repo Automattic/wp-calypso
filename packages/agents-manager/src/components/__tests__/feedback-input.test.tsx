@@ -281,9 +281,28 @@ describe( 'FeedbackInput', () => {
 		} );
 	} );
 
+	describe( 'inline variant', () => {
+		it( 'renders the plain form without an overlay or dialog by default', () => {
+			const { container } = render(
+				<div>
+					<button>Popover control</button>
+					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			expect( container.querySelector( '.agents-manager-feedback-overlay' ) ).toBeNull();
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /popover control/i } ) ).not.toHaveAttribute(
+				'inert'
+			);
+		} );
+	} );
+
 	describe( 'dialog behavior', () => {
 		it( 'renders as a dialog that is not modal to the page', () => {
-			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
 
 			const dialog = screen.getByRole( 'dialog', { name: /send feedback/i } );
 			expect( dialog ).not.toHaveAttribute( 'aria-modal' );
@@ -293,7 +312,7 @@ describe( 'FeedbackInput', () => {
 			const { unmount } = render(
 				<div>
 					<button>Chat control</button>
-					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 				</div>
 			);
 
@@ -309,7 +328,7 @@ describe( 'FeedbackInput', () => {
 		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
 			const user = userEvent.setup();
 			const { container } = render(
-				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
 
 			await user.click( screen.getByRole( 'dialog' ) );
@@ -321,7 +340,9 @@ describe( 'FeedbackInput', () => {
 
 		it( 'calls onCancel when Escape is pressed outside the textarea', async () => {
 			const user = userEvent.setup();
-			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
 
 			screen.getByRole( 'button', { name: /cancel/i } ).focus();
 			await user.keyboard( '{Escape}' );
@@ -334,7 +355,7 @@ describe( 'FeedbackInput', () => {
 			let resolveSubmit: () => void = () => {};
 			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
 			const { container } = render(
-				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
 
 			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
@@ -354,7 +375,7 @@ describe( 'FeedbackInput', () => {
 			const user = userEvent.setup();
 			render(
 				<StrictMode>
-					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 				</StrictMode>
 			);
 
@@ -369,7 +390,9 @@ describe( 'FeedbackInput', () => {
 		it( 'moves focus to the dialog while no control inside can take it', async () => {
 			const user = userEvent.setup();
 			mockOnSubmit.mockReturnValue( new Promise< void >( () => {} ) );
-			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
 
 			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
 			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
@@ -382,7 +405,7 @@ describe( 'FeedbackInput', () => {
 			let resolveSubmit: () => void = () => {};
 			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
 			const { unmount } = render(
-				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
 
 			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
@@ -402,7 +425,7 @@ describe( 'FeedbackInput', () => {
 			const onPointerDown = jest.fn();
 			render(
 				<div onPointerDown={ onPointerDown }>
-					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 				</div>
 			);
 
@@ -417,7 +440,7 @@ describe( 'FeedbackInput', () => {
 			opener.focus();
 
 			const { unmount } = render(
-				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
 			expect( screen.getByRole( 'textbox' ) ).toHaveFocus();
 

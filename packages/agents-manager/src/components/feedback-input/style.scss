@@ -34,18 +34,31 @@
 	}
 }
 
-.agents-manager-feedback-input {
+.agents-manager-feedback-overlay .agents-manager-feedback-input {
 	width: 100%;
 	max-width: 480px;
+	margin: 0;
 
-	&__inner {
-		padding: 12px;
-		background: var( --color-background );
-		border: 1px solid var( --color-muted );
+	.agents-manager-feedback-input__inner {
+		margin-top: 0;
 		border-radius: 8px;
 		box-shadow:
 			0 0 0 1px rgba( 0, 0, 0, 0.075 ),
 			0 2px 24px rgba( 0, 0, 0, 0.075 );
+	}
+}
+
+.agents-manager-feedback-input {
+	margin-left: 12px;
+	margin-right: 12px;
+	margin-bottom: 24px;
+
+	&__inner {
+		margin-top: 12px;
+		padding: 12px;
+		background: var( --color-background );
+		border: 1px solid var( --color-muted );
+		border-radius: 4px;
 
 		.components-textarea-control {
 			margin-bottom: 12px;
