@@ -95,9 +95,10 @@ function mockStatus( status: string | null, followedBlogIds: number[] = [] ) {
 		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds } );
 }
 
-function mockFollow( blogId: number ) {
+function mockFollow( blogId: number, delayMs = 0 ) {
 	return nock( API )
 		.post( '/rest/v1.1/read/following/mine/new' )
+		.delay( delayMs )
 		.reply( 200, {
 			subscribed: true,
 			subscription: {
@@ -174,7 +175,7 @@ describe( 'FourForFour', () => {
 		const user = userEvent.setup();
 		mockStatus( 'opted_in', [ 3, 4, 5 ] );
 		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
-		const follow = mockFollow( 2 );
+		const follow = mockFollow( 2, 300 );
 		const progress = nock( API )
 			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
 			.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
@@ -182,6 +183,12 @@ describe( 'FourForFour', () => {
 		renderWithProvider( <FourForFour />, { initialState } );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+		// The meter moves on the click, before the follow request has returned.
+		await waitFor( () =>
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' )
+		);
+		expect( progress.isDone() ).toBe( false );
 
 		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
 		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
