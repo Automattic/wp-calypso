@@ -2,7 +2,6 @@ export { deduceImageWidthAndHeight } from 'calypso/lib/post-normalizer/utils/ded
 export { domForHtml } from 'calypso/lib/post-normalizer/utils/dom-for-html';
 export { externalLinkParagraph } from 'calypso/lib/post-normalizer/utils/external-link-paragraph';
 export { iframeIsAllowed } from 'calypso/lib/post-normalizer/utils/iframe-is-allowed';
-export { imageSizeFromAttachments } from 'calypso/lib/post-normalizer/utils/image-size-from-attachments';
 export { isCandidateForCanonicalImage } from 'calypso/lib/post-normalizer/utils/is-candidate-for-canonical-image';
 export { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils/is-featured-image-in-content';
 export { isPhotonHost } from 'calypso/lib/post-normalizer/utils/is-photon-host';

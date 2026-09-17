@@ -2,7 +2,7 @@ import { DomainSubtype, type DomainSummary, type Site } from '@automattic/api-co
 import { siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { siteDomainsRoute } from '../../app/router/sites';
@@ -10,7 +10,12 @@ import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { Card, CardHeader, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import {
+	filterSortAndPaginateDomains,
+	useFields,
+	DEFAULT_VIEW,
+	DEFAULT_LAYOUTS,
+} from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -34,7 +39,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 	const fields = useFields( { site, inOverview: true } );
 
 	// Disable the column controls for the DataView display without affecting
-	// sorting/filtering in `filterSortAndPaginate`, which reads the raw fields.
+	// sorting/filtering in `filterSortAndPaginateDomains`, which reads the raw fields.
 	const displayFields = fields.map( ( field ) => ( {
 		...field,
 		enableHiding: false,
@@ -42,7 +47,11 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 		filterBy: false as const,
 	} ) );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
+		domains,
+		view,
+		fields
+	);
 
 	return (
 		<Card>
