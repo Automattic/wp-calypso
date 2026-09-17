@@ -5,9 +5,14 @@
 
 .dashboard-backport-site-purchases {
 	.dashboard-page-layout {
-		align-self: center;
 		margin: 0;
 		padding: 0;
+
+		// The narrow screens have no section tabs to line up with, so they sit
+		// centered in the classic wide layout rather than against its left edge.
+		&.is-small {
+			margin-inline: auto;
+		}
 	}
 
 	.dataviews-wrapper .dataviews-no-results {
