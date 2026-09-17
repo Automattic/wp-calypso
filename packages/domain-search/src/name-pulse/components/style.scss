@@ -117,9 +117,13 @@
 	}
 }
 
-.name-pulse-section__more .components-button.is-link {
-	text-decoration: none;
-	font-weight: 500;
+.name-pulse-section__more {
+	text-align: center;
+
+	.components-button.is-link {
+		text-decoration: none;
+		font-weight: 500;
+	}
 }
 
 @keyframes name-pulse-skeleton {
