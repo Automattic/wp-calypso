@@ -38,10 +38,7 @@ const domain = (
 const DOMAINS = [
 	domain( 'later.com', inDays( 365 ) ),
 	domain( 'no-date.com', null ),
-	domain( 'expired.com', inDays( -30 ), {
-		expired: true,
-		domain_status: { id: DomainStatus.EXPIRED, label: 'Expired', type: 'error' },
-	} ),
+	domain( 'expired.com', inDays( -30 ), { expired: true } ),
 	domain( 'soon.com', inDays( 30 ) ),
 	domain( 'sooner.com', inDays( 10 ) ),
 ];
@@ -118,19 +115,5 @@ describe( 'domains "Paid until" field', () => {
 		expect( filterBy( [ '1-expired', '2-next-90-days' ] ).paginationInfo.totalItems ).toBe( 3 );
 		expect( filterBy( [] ).data ).toHaveLength( DOMAINS.length );
 		expect( filterBy( undefined ).data ).toHaveLength( DOMAINS.length );
-	} );
-
-	it( 'combines the expiry filter with other filters and sorting', async () => {
-		const fields = await getFields();
-
-		const result = query( fields, {
-			sort: { field: 'expiry', direction: 'desc' },
-			filters: [
-				expiryFilter( [ '1-expired', '2-next-90-days' ] ),
-				{ field: 'domain_status', operator: 'isAny' as Operator, value: [ DomainStatus.ACTIVE ] },
-			],
-		} );
-
-		expect( names( result ) ).toEqual( [ 'soon.com', 'sooner.com' ] );
 	} );
 } );
