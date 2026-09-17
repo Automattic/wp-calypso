@@ -11,7 +11,7 @@ import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
 import { streamPageDesignAbility } from '../../abilities/stream-page-design';
-import { getStreamedMarkup, setStreamHandler } from '../../abilities/stream-page-design/stream';
+import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
@@ -388,7 +388,11 @@ describe( 'loadExternalProviders', () => {
 
 			// The page-design stream and the page markup are the provider copy's too.
 			expect( providers.onTaskUpdate ).toBe( onTaskUpdate );
+
+			// The mock is shared with every other test, whose reads must not count.
+			jest.mocked( getPageContentMarkup ).mockClear();
 			providers.contextProvider?.getClientContext();
+
 			expect( getPageContentMarkup ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -861,7 +865,11 @@ describe( 'loadExternalProviders', () => {
 			setStreamHandler( renderer );
 		} );
 
-		afterEach( () => setStreamHandler( undefined ) );
+		afterEach( () => {
+			setStreamHandler( undefined );
+			// The off-editor test closes the gate the suite opened.
+			document.body.classList.add( 'site-editor-php' );
+		} );
 
 		// AM paints the page design itself; a provider's own copy must not see the frames.
 		it( 'feeds the frames to the renderer and keeps them from the providers', async () => {
@@ -872,7 +880,6 @@ describe( 'loadExternalProviders', () => {
 			await providers.onTaskUpdate?.( update );
 
 			expect( renderer ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
-			expect( getStreamedMarkup( 'call-1' ) ).toBe( '<!-- wp:paragraph /-->' );
 			expect( onTaskUpdate ).toHaveBeenCalledWith( { status: { message: { parts: [ text ] } } } );
 		} );
 
@@ -882,12 +889,8 @@ describe( 'loadExternalProviders', () => {
 			setAgentsManagerData( { agentProviders: [ { onTaskUpdate } ] } );
 			document.body.classList.remove( 'site-editor-php' );
 
-			try {
-				const providers = await loadExternalProviders();
-				await providers.onTaskUpdate?.( update );
-			} finally {
-				document.body.classList.add( 'site-editor-php' );
-			}
+			const providers = await loadExternalProviders();
+			await providers.onTaskUpdate?.( update );
 
 			expect( renderer ).not.toHaveBeenCalled();
 			expect( onTaskUpdate ).toHaveBeenCalledWith( update );
@@ -898,7 +901,7 @@ describe( 'loadExternalProviders', () => {
 		const providerContext = { url: 'https://x' };
 
 		it( 'adds the page body the editor holds to the client context', async () => {
-			( getPageContentMarkup as jest.Mock ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
+			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 			} );

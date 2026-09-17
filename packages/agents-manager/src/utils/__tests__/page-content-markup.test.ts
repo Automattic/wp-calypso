@@ -25,11 +25,12 @@ it( 'serializes the body of the post-content block', () => {
 } );
 
 it.each( [
-	{ case: 'no post-content block', postContent: undefined },
-	{ case: 'an empty body', postContent: 'pc' },
-] )( 'is empty with $case', ( { postContent } ) => {
+	// The document root has blocks, which are not the body of a post-content block.
+	{ case: 'no post-content block', postContent: undefined, body: [ { name: 'core/paragraph' } ] },
+	{ case: 'an empty body', postContent: 'pc', body: [] },
+] )( 'is empty with $case', ( { postContent, body } ) => {
 	( findPostContentClientId as jest.Mock ).mockReturnValue( postContent );
-	( getRootBlocks as jest.Mock ).mockReturnValue( [] );
+	( getRootBlocks as jest.Mock ).mockReturnValue( body );
 
 	expect( getPageContentMarkup() ).toBe( '' );
 } );
