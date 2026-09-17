@@ -17,6 +17,7 @@ const defaultValues: Required< UserPreferences > = {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'reader-seen-posts': true,
 	'sites-landing-page': {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
@@ -34,6 +35,8 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-dashboard-pd-not-approved-popover': false,
 	'a4a-marketplace-referral-guide-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
+	'notifications-layout-style': 'simplified',
+	'notifications-view-settings-seen': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -47,6 +50,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
+	'reader-seen-posts': 'rdseen',
 	'sites-landing-page': 'stland',
 	'logged-in-homepage': 'lohp',
 	'achievements-visibility': 'achvis',

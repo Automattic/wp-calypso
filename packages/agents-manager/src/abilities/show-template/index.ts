@@ -20,10 +20,8 @@ export const showTemplateAbility: Ability = {
 	name: 'big-sky/show-template',
 	label: __( 'Show the page template', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Turn on "Show template" in the editor, so the page renders inside its template and the site header and footer become part of the content you can read and edit. Use this when a header or footer change is asked for but `templateParts` reports no template part in view — call it, then read the page structure again before deciding you cannot make the change. Do NOT use it to recover a block edit that failed on a part already in view: that part is locked by the editing mode, not hidden, and this will not unlock it.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		properties: {},

@@ -397,6 +397,20 @@ export default function AgentDock( {
 	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
+	// Recorded here rather than from the entry buttons: the dock only renders once
+	// the providers have loaded, so `provider_ids` is always set. `restored` marks
+	// a chat that was already open when the page loaded.
+	const wasChatOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasChatOpen = wasChatOpenRef.current;
+		wasChatOpenRef.current = chatIsOpen;
+		if ( chatIsOpen && wasChatOpen !== true ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
+				restored: wasChatOpen === null,
+			} );
+		}
+	}, [ chatIsOpen ] );
+
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }

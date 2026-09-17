@@ -1,11 +1,9 @@
 import './style.scss';
 
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal, trash } from '@wordpress/icons';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import { useIsSeenPostsUiEnabled, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
@@ -33,7 +31,7 @@ export default function MoreMenuActions( {
 	onUnsubscribed,
 }: MoreMenuActionsProps ) {
 	const translate = useTranslate();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenPostsUiEnabled = useIsSeenPostsUiEnabled();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
 	const unsubscribeWithUndo = useUnsubscribeWithUndo();
@@ -86,8 +84,7 @@ export default function MoreMenuActions( {
 
 	const controls = [];
 
-	// Remove when SeenPost feature is available for all users.
-	if ( isAutomattician ) {
+	if ( isSeenPostsUiEnabled ) {
 		const markAsSeenControl = {
 			title,
 			icon: check,
@@ -108,6 +105,11 @@ export default function MoreMenuActions( {
 		};
 
 		controls.push( [ unsubscribeControl ] );
+	}
+
+	// Section headers can end up with no applicable actions at all.
+	if ( controls.length === 0 ) {
+		return null;
 	}
 
 	return (

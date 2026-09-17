@@ -29,7 +29,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog } = useAppContext();
+	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -62,9 +62,17 @@ function AnalyticsProviderWithClient( {
 				recordTracksPageViewWithPageParams( url, {
 					device_type: resolveDeviceTypeByViewPort(),
 				} );
+				if ( app ) {
+					recordTracksEvent( 'wpcom_unified_admin_page_view', {
+						source: 'msd',
+						app,
+						path: router.state.location.pathname,
+						route: url,
+					} );
+				}
 			},
 		} ),
-		[ router ]
+		[ router, app ]
 	);
 
 	useSurvicate();

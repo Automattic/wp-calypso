@@ -37,7 +37,8 @@ import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { pencil } from '@wordpress/icons';
+import { help, pencil } from '@wordpress/icons';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -662,7 +663,8 @@ export default function CheckoutMainContent( {
 	);
 	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
 
 	if ( ! checkoutActions ) {
 		return null;
@@ -1252,9 +1254,14 @@ export default function CheckoutMainContent( {
 												total={ stepCounter.total }
 											/>
 										) }
-										<span className="checkout-skip-button">
+										<span
+											className={ clsx( 'checkout-skip-button', {
+												'has-help-entry-label': showHelpIcon,
+											} ) }
+										>
 											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 												{ helpCenterButtonLink }
 											</Step.LinkButton>
 										</span>
@@ -1752,6 +1759,13 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
 				display: inline;
 			}
+		}
+
+		/* The labelled entry point puts an icon beside the text, as in the admin bar. */
+		&.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
 		}
 	}
 
@@ -3104,11 +3118,11 @@ const WPCheckoutMainContent = styled.div< {
 			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
 				margin-top: 0;
 			}
-			/* "+ Add Address Line 2" / "+ Add organization name" toggles
-			   come from .form__hidden-input. Reset its 5px margin-top so
-			   the link sits at the parent's flex-gap rhythm, and match the
-			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
-			   so all destructive/secondary links read as one family. */
+			/* The "+ Add Address Line 2" toggle comes from .form__hidden-input.
+			   Reset its 5px margin-top so the link sits at the parent's flex-gap
+			   rhythm, and match the "Remove plan" link typography
+			   (13/20/regular/Gray 100/underline) so all destructive/secondary
+			   links read as one family. */
 			.form-fieldset.contact-details-form-fields .form__hidden-input a {
 				margin-top: 0;
 				font-size: 13px;
@@ -3210,15 +3224,6 @@ const WPCheckoutMainContent = styled.div< {
 			   Figma 2392:15432 puts those 8px apart, not 16. */
 			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
 				gap: 8px;
-			}
-			/* Same rhythm for the "Add organization name" row — it sits in
-			   its own __row but is conceptually a Field+Action paired with
-			   the Last name field above. Negative margin compensates the
-			   parent's 16px column gap down to 8px. Only fires while the
-			   HiddenInput link is showing; once toggled to an input the
-			   row drops back to full 16px spacing. */
-			.contact-details-form-fields__row:has( .form__hidden-input ) {
-				margin-top: -8px;
 			}
 		` }
 		.checkout-terms-and-checkboxes a {

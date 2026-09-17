@@ -13,10 +13,13 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
-import type { Note } from '../types';
+import { splitSubject } from './simplified-subject';
+import type { LayoutStyle, Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
@@ -67,28 +70,36 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-export function getFields(): Field< Note >[] {
+// Temporary and English-only: the API sends the subject as one finished sentence, so
+// splitting it here relies on word order. Returns null when unsure and the row falls back
+// to the detailed layout. The real fix is the server carrying the action as its own string.
+const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
+	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+
+const NoteBadge = ( { note }: { note: Note } ) => {
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+
+	return (
+		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
+		</span>
+	);
+};
+
+export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon
-					icon={ item.icon }
-					size={ 32 }
-					badge={
-						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 14 } />
-						</span>
-					}
-				/>
+				<NoteIcon icon={ item.icon } size={ 32 } badge={ <NoteBadge note={ item } /> } />
 			),
 		},
 		{
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) =>
-				html( item.subject[ 0 ], {
+				html( simplify( item, layoutStyle )?.action ?? item.subject[ 0 ], {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
@@ -105,10 +116,17 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'description',
 			label: __( 'Description' ),
-			render: ( { item } ) =>
-				item.subject.length > 1 ? (
+			render: ( { item } ) => {
+				const simplified = simplify( item, layoutStyle );
+
+				if ( simplified ) {
+					return <div className="wpnc__excerpt">{ simplified.title }</div>;
+				}
+
+				return item.subject.length > 1 ? (
 					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-				) : null,
+				) : null;
+			},
 		},
 		{
 			// Group-only field for the time-section headers; never added to the

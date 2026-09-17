@@ -63,7 +63,10 @@ import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
+import {
+	getOrchestratorErrorMessage,
+	getOrchestratorErrorType,
+} from '../../utils/orchestrator-error-message';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -454,6 +457,7 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -504,6 +508,18 @@ export default function OrchestratorChat( {
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
 					streamedMessages.regeneratingMessageId = undefined;
+				}
+
+				// One outcome per agent turn; a stream can repeat its terminal update.
+				if ( isTerminal && ! reportedResponseTaskIdsRef.current.has( update.id ) ) {
+					reportedResponseTaskIdsRef.current.add( update.id );
+					const messageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_completed', {
+						status: [ 'canceled', 'failed' ].includes( update.status.state )
+							? update.status.state
+							: 'completed',
+						...( messageId ? { message_id: messageId } : {} ),
+					} );
 				}
 
 				await onTaskUpdate?.( update );
@@ -713,6 +729,16 @@ export default function OrchestratorChat( {
 	const chatError = isReaderChat
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
+
+	// One event per error the chat shows. `error` returns to null between
+	// attempts, so the same failure repeating on a later send counts again.
+	useEffect( () => {
+		if ( error ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+				error_type: getOrchestratorErrorType( error ),
+			} );
+		}
+	}, [ error ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
@@ -1344,10 +1370,13 @@ export default function OrchestratorChat( {
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
-		if ( imageUpload?.abortUpload?.() ) {
-			return;
+		const stoppedUpload = imageUpload?.abortUpload?.();
+		if ( ! stoppedUpload ) {
+			abortCurrentRequest();
 		}
-		abortCurrentRequest();
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
+			stopped_during: stoppedUpload ? 'upload' : 'response',
+		} );
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(

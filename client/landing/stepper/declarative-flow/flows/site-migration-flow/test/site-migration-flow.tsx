@@ -1097,6 +1097,175 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 			} );
+
+			// Security regression tests for DOTOBRD-680 (query-controlled authorizationUrl XSS).
+			// Do not weaken these to make a change pass: authorizationUrl must only ever reach
+			// window.location.assign() when it is an http(s) URL on the source (from) site.
+			describe( 'authorization action', () => {
+				const assignCalledWithScheme = ( scheme: string ) =>
+					( window.location.assign as jest.Mock ).mock.calls.some( ( [ url ] ) =>
+						String( url ).trim().toLowerCase().startsWith( scheme )
+					);
+
+				it( 'navigates to a valid same-source https authorization URL', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl:
+								'https://site-to-be-migrated.com/wp-admin/authorize-application.php?app_name=WordPress.com',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: 'https://site-to-be-migrated.com/wp-admin/authorize-application.php',
+						query: {
+							app_name: 'WordPress.com',
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate to a javascript: authorization URL (XSS)', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl: 'javascript:alert(document.domain)//',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( assignCalledWithScheme( 'javascript:' ) ).toBe( false );
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate to a data: authorization URL', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl: 'data:text/html,<script>alert(document.domain)</script>//',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( assignCalledWithScheme( 'data:' ) ).toBe( false );
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate to an off-source https authorization URL', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl: 'https://evil.example/wp-admin/authorize-application.php',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate to a scheme-relative authorization URL', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl: '//evil.example/wp-admin/authorize-application.php',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate to a file: authorization URL', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl: 'file:///etc/passwd//',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( assignCalledWithScheme( 'file:' ) ).toBe( false );
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+
+				it( 'does not navigate when the source (from) is missing', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+						dependencies: {
+							action: 'authorization',
+							authorizationUrl:
+								'https://site-to-be-migrated.com/wp-admin/authorize-application.php?app_name=WordPress.com',
+						},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/overview/example.wordpress.com',
+						query: {
+							ref: 'site-migration',
+						},
+					} );
+				} );
+			} );
 		} );
 
 		describe( 'SITE_MIGRATION_ALREADY_WPCOM', () => {

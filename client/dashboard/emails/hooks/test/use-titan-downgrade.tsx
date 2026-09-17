@@ -92,6 +92,49 @@ describe( 'useTitanDowngrade', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
+	test( 'downgrades immediately during a free trial', async () => {
+		mockSitePurchases(
+			titanPurchase( {
+				introductory_offer: { is_within_period: true, cost_per_interval: 0 },
+			} as Partial< Purchase > )
+		);
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( `/wpcom/v2/upgrades/${ PURCHASE_ID }/cancel`, {
+				type: 'downgrade',
+				to_product_id: PRO_MONTHLY_PRODUCT_ID,
+			} )
+			.reply( 200, { status: 'completed', message: 'ok' } );
+
+		render( <Harness /> );
+		await screen.findByText( 'mode:instant' );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'downgrade' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'schedules the downgrade for a paid introductory offer', async () => {
+		mockSitePurchases(
+			titanPurchase( {
+				introductory_offer: { is_within_period: true, cost_per_interval: 5 },
+			} as Partial< Purchase > )
+		);
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/upgrades/${ PURCHASE_ID }/delayed-downgrade`, {
+				enabled: true,
+				to_product_id: PRO_MONTHLY_PRODUCT_ID,
+			} )
+			.reply( 200, { success: true, delayed_downgrade: { is_pending: true } } );
+
+		render( <Harness /> );
+		await screen.findByText( 'canDowngrade:true' );
+		expect( screen.getByText( 'mode:delayed' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'downgrade' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
 	test( 'cancels a scheduled downgrade without a target product', async () => {
 		mockSitePurchases(
 			titanPurchase( { is_delayed_downgrade_pending: true } as Partial< Purchase > )

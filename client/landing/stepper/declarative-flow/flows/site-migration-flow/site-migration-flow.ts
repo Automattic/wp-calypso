@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -77,6 +78,24 @@ function initialize() {
 
 const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
+};
+
+// The authorization URL is fully query-controlled. Only allow navigating to an
+// http(s) URL on the source site the user is migrating from — this rejects
+// `javascript:`, `data:`, scheme-relative, and off-source destinations.
+const isAuthorizationUrlAllowed = ( authorizationUrl?: string, from?: string | null ) => {
+	if ( ! authorizationUrl || ! from ) {
+		return false;
+	}
+
+	let sourceHostname;
+	try {
+		sourceHostname = new URL( from ).hostname;
+	} catch {
+		return false;
+	}
+
+	return isAllowedRedirectUrl( authorizationUrl, [ sourceHostname ] );
 };
 
 const siteMigration: FlowV2< typeof initialize > = {
@@ -658,9 +677,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const { action, authorizationUrl } = providedDependencies;
 
 					if ( action === 'authorization' ) {
-						const currentUrl = window.location.href;
-						const successUrl = encodeURIComponent( currentUrl );
-						return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
+						if ( isAuthorizationUrlAllowed( authorizationUrl, fromQueryParam ) ) {
+							const currentUrl = window.location.href;
+							const successUrl = encodeURIComponent( currentUrl );
+							return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
+						}
+
+						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 					}
 
 					if ( action === 'fallback-credentials' ) {
