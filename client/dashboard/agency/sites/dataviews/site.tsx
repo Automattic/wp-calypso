@@ -4,9 +4,10 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import SitePreview from '../../../sites/site-preview';
+import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
-import type { AgencySite } from '@automattic/api-core';
+import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export function getSiteIconField( viewType?: string ): Field< AgencySite > {
@@ -81,7 +82,13 @@ function Preview( { site }: { site: AgencySite } ) {
 			} }
 		>
 			{ resizeListener }
-			{ width && <SitePreview url={ getSiteUrl( site ) } scale={ width / 1200 } height={ 1200 } /> }
+			{ width && (
+				<SitePreview
+					url={ getSiteUrl( site ).replace( /\/$/, '' ) }
+					scale={ width / 1200 }
+					height={ 1200 }
+				/>
+			) }
 		</div>
 	);
 }
@@ -93,5 +100,14 @@ export function getPreviewField(): Field< AgencySite > {
 		render: ( { item } ) => <Preview site={ item } />,
 		enableHiding: false,
 		enableSorting: false,
+	};
+}
+
+// The WordPress.com "Finish setup" nag also shows for public and Pressable
+// agency sites, so agency rows only show the label.
+export function withoutLaunchNag( field: Field< Site > ): Field< Site > {
+	return {
+		...field,
+		render: ( { item } ) => <>{ getVisibilityLabels()[ getSiteVisibility( item ) ] }</>,
 	};
 }

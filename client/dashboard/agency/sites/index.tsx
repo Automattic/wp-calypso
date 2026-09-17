@@ -42,6 +42,11 @@ const DEFAULT_VIEW = {
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
+const LEGACY_FIELDS = [ 'agency_boost', 'agency_backup' ];
+
+const removeLegacyFields = ( fields: View[ 'fields' ] ) =>
+	fields?.filter( ( field ) => ! LEGACY_FIELDS.includes( field ) );
+
 // The agency endpoint only supports sorting by URL.
 const SORT_FIELD_MAP: Record< string, 'url' > = { URL: 'url' };
 
@@ -63,6 +68,7 @@ export default function AgencySites() {
 		slug: 'agency-sites',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
+		sanitizeFields: removeLegacyFields,
 	} );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
@@ -79,7 +85,7 @@ export default function AgencySites() {
 		[ recordTracksEvent ]
 	);
 
-	const fields = useAgencyFields( { sites, viewType: view.type, onSiteClick: handleSiteClick } );
+	const fields = useAgencyFields( { viewType: view.type, onSiteClick: handleSiteClick } );
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );

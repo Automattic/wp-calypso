@@ -1,30 +1,8 @@
 import { siteByIdQuery } from '@automattic/api-queries';
-import { useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { TextBlur } from '../../../components/text-blur';
 import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
-
-export interface HydratedSite {
-	site?: Site;
-	isPending: boolean;
-}
-
-export type HydratedSites = Map< number, HydratedSite >;
-
-export function useHydratedSites( sites: AgencySite[] ): HydratedSites {
-	const blogIds = sites.map( ( site ) => site.blog_id );
-
-	return useQueries( {
-		queries: blogIds.map( ( blogId ) => siteByIdQuery( blogId ) ),
-		combine: ( results ) => {
-			const hydrated: HydratedSites = new Map();
-			results.forEach( ( result, index ) => {
-				hydrated.set( blogIds[ index ], { site: result.data, isPending: result.isPending } );
-			} );
-			return hydrated;
-		},
-	} );
-}
 
 function PlaceholderCell( { isPending }: { isPending: boolean } ) {
 	return (
@@ -34,20 +12,36 @@ function PlaceholderCell( { isPending }: { isPending: boolean } ) {
 	);
 }
 
-export function toAgencyField(
-	field: Field< Site >,
-	getHydrated: ( item: AgencySite ) => HydratedSite | undefined
-): Field< AgencySite > {
+export function toAgencyField( field: Field< Site > ): Field< AgencySite > {
 	const getValue =
 		field.getValue ?? ( ( { item }: { item: Site } ): unknown => Reflect.get( item, field.id ) );
 
 	// Only DataViews can build a real NormalizedField. Every column delegated
-	// here reads `getValue` and nothing else off it, so a column that started
-	// reading another member would throw rather than render something wrong.
+	// here reads `getValue` and nothing else off it: reading another member
+	// gives `undefined`, and calling one (e.g. `field.render`) throws.
 	const delegateField = { ...field, getValue } as unknown as NormalizedField< Site >;
 	const SiteFieldRender =
 		field.render ??
 		( ( { item }: { item: Site } ) => <>{ String( getValue( { item } ) ?? '' ) }</> );
+
+	// Fetching per cell keeps the field list stable across renders. DataViews
+	// renders `field.render` as a component, so a new field would remount
+	// every cell.
+	function HydratedCell( { item }: { item: AgencySite } ) {
+		const { data: site, isPending } = useQuery( siteByIdQuery( item.blog_id ) );
+		// The wrapper stays mounted across the swap below: page translators
+		// reparent inline nodes and React crashes removing them
+		// (react/react#11538).
+		return (
+			<span>
+				{ site ? (
+					<SiteFieldRender item={ site } field={ delegateField } />
+				) : (
+					<PlaceholderCell isPending={ isPending } />
+				) }
+			</span>
+		);
+	}
 
 	return {
 		id: field.id,
@@ -57,24 +51,6 @@ export function toAgencyField(
 		enableSorting: false,
 		enableGlobalSearch: false,
 		filterBy: false,
-		getValue: ( { item } ) => {
-			const site = getHydrated( item )?.site;
-			return site ? getValue( { item: site } ) : '';
-		},
-		render: ( { item } ) => {
-			const hydrated = getHydrated( item );
-			// The wrapper stays mounted across the swap below: page translators
-			// reparent inline nodes and React crashes removing them
-			// (react/react#11538).
-			return (
-				<span>
-					{ hydrated?.site ? (
-						<SiteFieldRender item={ hydrated.site } field={ delegateField } />
-					) : (
-						<PlaceholderCell isPending={ !! hydrated?.isPending } />
-					) }
-				</span>
-			);
-		},
+		render: HydratedCell,
 	};
 }

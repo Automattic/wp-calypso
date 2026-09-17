@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { render } from '../../../../test-utils';
 import { toAgencyField } from '../hydrate';
-import type { HydratedSite } from '../hydrate';
 import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
 
@@ -19,8 +20,8 @@ const hostField: Field< Site > = {
 	render: ( { field, item } ) => <span>{ field.getValue( { item } ) }</span>,
 };
 
-function renderCell( hydrated?: HydratedSite ) {
-	const field = toAgencyField( hostField, () => hydrated );
+function renderCell() {
+	const field = toAgencyField( hostField );
 	const Cell = field.render;
 	if ( ! Cell ) {
 		throw new Error( 'toAgencyField returned a field without a render' );
@@ -29,28 +30,44 @@ function renderCell( hydrated?: HydratedSite ) {
 }
 
 describe( 'toAgencyField', () => {
-	test( 'renders the WordPress.com column when the row has a site', () => {
-		const { container } = renderCell( { site, isPending: false } );
-		expect( container ).toHaveTextContent( 'automattic' );
+	test( 'renders the WordPress.com column once the site loads', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1' )
+			.query( true )
+			.reply( 200, site );
+
+		const { container } = renderCell();
+
+		await waitFor( () => expect( container ).toHaveTextContent( 'automattic' ) );
 	} );
 
-	test( 'renders a placeholder while the site is still loading', () => {
-		const { container } = renderCell( { isPending: true } );
-		expect( container ).not.toHaveTextContent( 'automattic' );
-		expect( container.querySelector( '[aria-hidden="true"]' ) ).toBeVisible();
-	} );
+	test( 'renders a placeholder while the site is still loading', async () => {
+		let respond: ( value: [ number, Site ] ) => void = () => {};
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1' )
+			.query( true )
+			.reply( () => new Promise( ( resolve ) => ( respond = resolve ) ) );
 
-	test( 'renders as unavailable once the site is known to be unreachable', () => {
-		const { container } = renderCell( { isPending: false } );
-		expect( container ).toHaveTextContent( '-' );
-		expect( container.querySelector( '[aria-hidden="true"]' ) ).toBeNull();
-	} );
+		const { container } = renderCell();
 
-	test( 'exposes the value for the row via getValue', () => {
-		const hydrated = { site, isPending: false };
-		expect( toAgencyField( hostField, () => hydrated ).getValue?.( { item: row } ) ).toBe(
-			'automattic'
+		await waitFor( () =>
+			expect( container.querySelector( '[aria-hidden="true"]' ) ).toBeVisible()
 		);
-		expect( toAgencyField( hostField, () => undefined ).getValue?.( { item: row } ) ).toBe( '' );
+		expect( container ).not.toHaveTextContent( 'automattic' );
+
+		respond( [ 200, site ] );
+		await waitFor( () => expect( container ).toHaveTextContent( 'automattic' ) );
+	} );
+
+	test( 'renders as unavailable once the site is known to be unreachable', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1' )
+			.query( true )
+			.reply( 404, { error: 'unknown_blog', message: 'Unknown blog' } );
+
+		const { container } = renderCell();
+
+		await waitFor( () => expect( container ).toHaveTextContent( '-' ) );
+		expect( container.querySelector( '[aria-hidden="true"]' ) ).toBeNull();
 	} );
 } );

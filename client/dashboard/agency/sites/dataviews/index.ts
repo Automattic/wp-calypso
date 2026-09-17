@@ -1,31 +1,33 @@
 import { useMemo } from 'react';
 import { useFields } from '../../../sites/dataviews';
 import { getHostField, getPhpVersionField, getWpVersionField } from './endpoint-fields';
-import { toAgencyField, useHydratedSites } from './hydrate';
-import { getPreviewField, getSiteIconField, getSiteNameField, getSiteUrlField } from './site';
-import type { AgencySite } from '@automattic/api-core';
+import { toAgencyField } from './hydrate';
+import {
+	getPreviewField,
+	getSiteIconField,
+	getSiteNameField,
+	getSiteUrlField,
+	withoutLaunchNag,
+} from './site';
+import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export { getAgencyActions } from './actions';
 
 export function useAgencyFields( {
-	sites,
 	viewType,
 	onSiteClick,
 }: {
-	sites: AgencySite[];
 	viewType?: string;
 	onSiteClick?: ( site: AgencySite ) => void;
 } ): Field< AgencySite >[] {
-	const hydratedSites = useHydratedSites( sites );
 	const siteFields = useFields( { viewType } );
 
 	return useMemo( () => {
 		const siteFieldsById = new Map( siteFields.map( ( field ) => [ field.id, field ] ) );
-		const getHydrated = ( item: AgencySite ) => hydratedSites.get( item.blog_id );
-		const shared = ( id: string ) => {
+		const shared = ( id: string, adapt = ( field: Field< Site > ) => field ) => {
 			const field = siteFieldsById.get( id );
-			return field ? toAgencyField( field, getHydrated ) : null;
+			return field ? toAgencyField( adapt( field ) ) : null;
 		};
 
 		return [
@@ -35,7 +37,7 @@ export function useAgencyFields( {
 			shared( 'subscribers_count' ),
 			shared( 'backup' ),
 			shared( 'plan' ),
-			shared( 'visibility' ),
+			shared( 'visibility', withoutLaunchNag ),
 			getWpVersionField(),
 			getPreviewField(),
 			shared( 'last_published' ),
@@ -47,5 +49,5 @@ export function useAgencyFields( {
 			shared( 'storage' ),
 			getHostField(),
 		].filter( ( field ): field is Field< AgencySite > => field !== null );
-	}, [ siteFields, hydratedSites, viewType, onSiteClick ] );
+	}, [ siteFields, viewType, onSiteClick ] );
 }
