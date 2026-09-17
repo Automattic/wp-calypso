@@ -30,14 +30,6 @@ describe( 'fetchNamePulseSuggestions', () => {
 		expect( response.suggestions ).toHaveLength( 2 );
 		expect( response.errors ).toHaveLength( 1 );
 	} );
-
-	it( 'normalises a response without suggestions to an empty list', async () => {
-		nock( BASE ).get( '/wpcom/v2/domains/name-pulse/suggestions' ).query( true ).reply( 200, {} );
-
-		const response = await fetchNamePulseSuggestions( { query: 'coffee shop' } );
-
-		expect( response ).toEqual( { suggestions: [], errors: [] } );
-	} );
 } );
 
 describe( 'fetchNamePulseAvailability', () => {

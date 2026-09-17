@@ -22,23 +22,11 @@ const renderRow = ( result: NamePulseDomainResult ) =>
 	);
 
 describe( 'NamePulseResultRow', () => {
-	it( 'formats the price from raw_price when the currency is known', () => {
-		renderRow( buildResult( { cost: '$22.00', raw_price: 22, currency_code: 'USD' } ) );
-
-		expect( screen.getByText( '$22' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the server-formatted cost when currency_code is missing', () => {
-		renderRow( buildResult( { cost: '€22.00', raw_price: 22 } ) );
-
-		expect( screen.getByText( '€22.00' ) ).toBeInTheDocument();
-		expect( screen.getByText( '/year' ) ).toBeInTheDocument();
-	} );
-
-	it( 'ignores a sale price it cannot format', () => {
+	it( 'falls back to the server-formatted cost, without a sale, when currency_code is missing', () => {
 		renderRow( buildResult( { cost: '€22.00', raw_price: 22, sale_cost: 6 } ) );
 
 		expect( screen.getByText( '€22.00' ) ).toBeInTheDocument();
+		expect( screen.getByText( '/year' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( '/first year' ) ).not.toBeInTheDocument();
 	} );

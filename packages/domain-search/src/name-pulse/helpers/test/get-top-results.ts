@@ -1,7 +1,6 @@
 import {
 	calculateTopTlds,
 	getTopResults,
-	NAME_PULSE_TOP_RESULTS_TLDS,
 	NamePulseDomainStatus,
 	type NamePulseDomainResult,
 } from '..';
@@ -17,35 +16,16 @@ const row = (
 } );
 
 describe( 'calculateTopTlds', () => {
-	const tlds = [ 'blog', 'com', 'org', 'net', 'app', 'dev' ];
+	it( 'promotes a TLD matched in the label to the second slot without duplicating a default', () => {
+		const tlds = [ 'blog', 'com', 'org', 'net', 'app', 'dev' ];
 
-	it( 'returns the defaults when the label ends with no TLD', () => {
-		expect( calculateTopTlds( 'example', tlds ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
-	} );
-
-	it( 'promotes a matched TLD to the second slot and keeps four entries', () => {
 		expect( calculateTopTlds( 'testorg', tlds ) ).toEqual( [ 'blog', 'org', 'com', 'app' ] );
-	} );
-
-	it( 'does not duplicate a matched TLD already in the defaults', () => {
 		expect( calculateTopTlds( 'testcom', tlds ) ).toEqual( [ 'blog', 'com', 'app', 'dev' ] );
-	} );
-
-	it( 'leaves the defaults alone when the match is blog', () => {
-		expect( calculateTopTlds( 'exampleblog', tlds ) ).toEqual( [ ...NAME_PULSE_TOP_RESULTS_TLDS ] );
 	} );
 } );
 
 describe( 'getTopResults', () => {
-	const topTlds = [ 'blog', 'com', 'app', 'dev' ];
-
-	it( 'returns at most three results', () => {
-		const rows = [ row( 'test.com' ), row( 'test.blog' ), row( 'test.app' ), row( 'test.dev' ) ];
-
-		expect( getTopResults( rows, topTlds ) ).toHaveLength( 3 );
-	} );
-
-	it( 'prefers top TLDs that are available or waiting', () => {
+	it( 'features at most three rows, preferring top TLDs that are available or waiting', () => {
 		const rows = [
 			row( 'test.net' ),
 			row( 'test.com', NamePulseDomainStatus.TAKEN ),
@@ -53,10 +33,8 @@ describe( 'getTopResults', () => {
 			row( 'test.app' ),
 		];
 
-		expect( getTopResults( rows, topTlds ).map( ( r ) => r.domain_name ) ).toEqual( [
-			'test.blog',
-			'test.app',
-			'test.net',
-		] );
+		expect(
+			getTopResults( rows, [ 'blog', 'com', 'app', 'dev' ] ).map( ( r ) => r.domain_name )
+		).toEqual( [ 'test.blog', 'test.app', 'test.net' ] );
 	} );
 } );

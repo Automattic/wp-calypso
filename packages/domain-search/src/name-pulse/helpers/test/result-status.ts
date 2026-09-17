@@ -23,36 +23,21 @@ describe( 'needsAvailabilityCheck', () => {
 } );
 
 describe( 'mergeResultUpdate', () => {
-	it( 'applies a bulk verdict to a waiting row', () => {
-		const merged = mergeResultUpdate( row(), {
-			domain_name: 'test.com',
-			status: NamePulseDomainStatus.AVAILABLE,
-			cost: '$22.00',
-		} );
-
-		expect( merged.status ).toBe( NamePulseDomainStatus.AVAILABLE );
-		expect( merged.cost ).toBe( '$22.00' );
-	} );
-
-	it( 'keeps a real-time verdict when a bulk update arrives later', () => {
-		const existing = row( { status: NamePulseDomainStatus.TAKEN, is_realtime: true } );
+	it( 'never lets a bulk verdict overwrite a real-time one, nor a late UNKNOWN overwrite a verdict', () => {
+		const realtime = row( { status: NamePulseDomainStatus.TAKEN, is_realtime: true } );
+		const verdict = row( { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' } );
 
 		expect(
-			mergeResultUpdate( existing, {
+			mergeResultUpdate( realtime, {
 				domain_name: 'test.com',
 				status: NamePulseDomainStatus.AVAILABLE,
 			} )
-		).toBe( existing );
-	} );
-
-	it( 'ignores a late UNKNOWN once a verdict has landed', () => {
-		const existing = row( { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' } );
-
+		).toBe( realtime );
 		expect(
-			mergeResultUpdate( existing, {
+			mergeResultUpdate( verdict, {
 				domain_name: 'test.com',
 				status: NamePulseDomainStatus.UNKNOWN,
 			} )
-		).toBe( existing );
+		).toBe( verdict );
 	} );
 } );

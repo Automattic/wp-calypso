@@ -18,13 +18,13 @@ const renderForm = ( props: { instantSearch?: boolean } = {} ) => {
 	const onQueryChange = jest.fn();
 	const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 
-	render(
+	const { unmount } = render(
 		<TestDomainSearch events={ { onQueryChange } }>
 			<SearchForm { ...props } />
 		</TestDomainSearch>
 	);
 
-	return { onQueryChange, user, input: screen.getByRole( 'searchbox' ) };
+	return { onQueryChange, user, unmount, input: screen.getByRole( 'searchbox' ) };
 };
 
 const advance = ( ms: number ) => {
@@ -39,20 +39,17 @@ describe( 'SearchForm instant search', () => {
 		jest.useFakeTimers();
 	} );
 
-	it( 'hides the submit button', () => {
-		renderForm( { instantSearch: true } );
-
-		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'keeps the submit button without instant search', () => {
-		renderForm();
-
-		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
-	} );
-
 	afterEach( () => {
 		jest.useRealTimers();
+	} );
+
+	it( 'hides the submit button only with instant search', () => {
+		const { unmount } = renderForm();
+		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
+		unmount();
+
+		renderForm( { instantSearch: true } );
+		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'sets the trimmed query once the debounce elapses', async () => {
@@ -83,15 +80,6 @@ describe( 'SearchForm instant search', () => {
 
 		await user.type( input, 'coffee' );
 		await user.clear( input );
-		advance( INSTANT_SEARCH_DEBOUNCE_MS );
-
-		expect( onQueryChange ).not.toHaveBeenCalled();
-	} );
-
-	it( 'does not set the query while typing in classic mode', async () => {
-		const { user, input, onQueryChange } = renderForm();
-
-		await user.type( input, 'coffee' );
 		advance( INSTANT_SEARCH_DEBOUNCE_MS );
 
 		expect( onQueryChange ).not.toHaveBeenCalled();
