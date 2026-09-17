@@ -19,6 +19,7 @@ import {
 	type NamePulseDomainUpdate,
 	type NamePulseSource,
 } from '../helpers';
+import { toRealtimeUpdate } from './use-name-pulse-add-to-cart';
 import { useNamePulseAvailability } from './use-name-pulse-availability';
 import type { NamePulseSuggestion } from '@automattic/api-core';
 
@@ -63,6 +64,7 @@ export const useNamePulseSearch = ( query: string ) => {
 	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
+	const fqdn = layout.showFqdnCard ? layout.fqdn : undefined;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
 	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
@@ -100,6 +102,20 @@ export const useNamePulseSearch = ( query: string ) => {
 	}, [] );
 
 	const { checkDomains } = useNamePulseAvailability( updateResult );
+
+	// The typed domain is featured on its own card, so its authoritative verdict
+	// and price come from the real-time check up front rather than on click.
+	const { data: fqdnAvailability } = useQuery( {
+		...queries.domainAvailability( fqdn?.fullDomain ?? '' ),
+		enabled: !! fqdn,
+	} );
+	const fqdnResult = fqdn ? exactResults.get( fqdn.fullDomain ) : undefined;
+
+	useEffect( () => {
+		if ( fqdnAvailability && fqdnResult && ! fqdnResult.is_realtime ) {
+			updateResult( toRealtimeUpdate( fqdnResult.domain_name, fqdnAvailability ) );
+		}
+	}, [ fqdnAvailability, fqdnResult, updateResult ] );
 
 	useEffect( () => {
 		if ( ! showExactGrid || ! tlds ) {
@@ -148,8 +164,13 @@ export const useNamePulseSearch = ( query: string ) => {
 	const isLoadingKeyword = keywordEnabled && keywordQueryResult.isPending;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
-	// behind them do not slide into view unchecked.
-	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
+	// behind them do not slide into view unchecked. The card's domain leaves
+	// the grid so it is never listed twice.
+	const rawExactList = useMemo( () => {
+		const rows = Array.from( exactResults.values() );
+
+		return fqdn ? rows.filter( ( row ) => row.domain_name !== fqdn.fullDomain ) : rows;
+	}, [ exactResults, fqdn ] );
 
 	const topResults = useMemo(
 		() => getTopResults( rawExactList, topTlds ),
@@ -194,6 +215,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		fqdnResult,
 		exactList,
 		keywordResults,
 		topResults,

@@ -61,7 +61,7 @@ export const buildNamePulseAvailabilityEntry = ( raw_price = 24 ): NamePulseAvai
 } );
 
 export const NAME_PULSE_AVAILABILITY_FIXTURE: NamePulseAvailabilityResponse = {
-	'icecream.blog': buildNamePulseAvailabilityEntry( 22 ),
+	'icecream.blog': { ...buildNamePulseAvailabilityEntry( 33 ), sale_cost: 6 },
 	'icecream.com': buildNamePulseAvailabilityEntry( 12 ),
 	'icecream.net': buildNamePulseAvailabilityEntry( 24 ),
 	'icecream.org': buildNamePulseAvailabilityEntry( 18 ),

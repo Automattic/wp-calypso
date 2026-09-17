@@ -5,6 +5,7 @@ import { Cart } from '../components/cart';
 import { SearchForm } from '../components/search-form';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
+import { NamePulseFqdnCard } from './components/fqdn-card';
 import { NamePulseResultsSection } from './components/results-section';
 import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
@@ -16,6 +17,7 @@ export const NamePulseResults = () => {
 	const { query } = useDomainSearch();
 	const {
 		layout,
+		fqdnResult,
 		exactList,
 		keywordResults,
 		topResults,
@@ -31,6 +33,9 @@ export const NamePulseResults = () => {
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<SearchForm instantSearch />
 			<VStack spacing={ 6 } key={ query }>
+				{ layout.showFqdnCard && (
+					<NamePulseFqdnCard result={ fqdnResult } onUpdate={ updateResult } />
+				) }
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }
