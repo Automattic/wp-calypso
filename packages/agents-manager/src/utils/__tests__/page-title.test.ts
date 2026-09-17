@@ -16,15 +16,13 @@ const withPage = ( page: unknown ) => {
 beforeEach( () => jest.clearAllMocks() );
 
 describe( 'getPageTitle', () => {
-	// Titles arrive flat, raw or rendered depending on how the record was read.
+	// `flattenTitle()` owns the title shapes; here, only that it is applied.
 	it.each( [
-		{ case: 'a flat string', title: 'About', expected: 'About' },
 		{
 			case: 'a raw value',
 			title: { raw: 'About', rendered: 'About &amp; more' },
 			expected: 'About',
 		},
-		{ case: 'only a rendered value', title: { rendered: 'About' }, expected: 'About' },
 		{ case: 'no title', title: undefined, expected: '' },
 	] )( 'reads $case', async ( { title, expected } ) => {
 		withPage( { title } );

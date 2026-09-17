@@ -116,7 +116,6 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	( select as jest.Mock ).mockReturnValue( undefined );
-	( isEditorPage as jest.Mock ).mockReturnValue( true );
 	( dispatch as jest.Mock ).mockReturnValue( {
 		saveEntityRecord,
 		editEntityRecord,
@@ -133,119 +132,63 @@ describe( 'getCheckpointKeys', () => {
 	it.each( [
 		{
 			case: 'a page rename, which moves the menu with it',
-			input: { editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ] },
+			edits: [ { ...page( 7 ), record: { title: 'About us' } } ],
 			expected: [ checkpointKeys.PAGE, checkpointKeys.NAVIGATION ],
 		},
 		{
 			// A post title is not checkpointed, as in Big Sky.
 			case: 'a post rename',
-			input: { editEntities: [ { ...post( 7 ), record: { title: 'Hello' } } ] },
+			edits: [ { ...post( 7 ), record: { title: 'Hello' } } ],
 			expected: [],
 		},
 		{
 			// Only the title is restorable on a page, so an edit that leaves it
 			// alone has no domain to put back.
 			case: 'a page edit that changes only content',
-			input: { editEntities: [ { ...page( 7 ), record: { content: 'Hello' } } ] },
+			edits: [ { ...page( 7 ), record: { content: 'Hello' } } ],
 			expected: [],
 		},
 		{
 			case: 'a menu write',
-			input: {
-				editEntities: [
-					{
-						entityType: 'postType',
-						entityName: 'wp_navigation',
-						recordId: 9,
-						record: { navigationItems: [] },
-					},
-				],
-			},
+			edits: [ { ...menu( 9 ), record: { navigationItems: [] } } ],
 			expected: [ checkpointKeys.NAVIGATION ],
 		},
 		{
 			// The snapshot covers the menu items, so a title-only edit has nothing
 			// it could put back and keeps the editor's undo instead.
 			case: 'a menu record that changes only its own title',
-			input: {
-				editEntities: [
-					{
-						entityType: 'postType',
-						entityName: 'wp_navigation',
-						recordId: 9,
-						record: { title: 'Header' },
-					},
-				],
-			},
+			edits: [ { ...menu( 9 ), record: { title: 'Header' } } ],
 			expected: [],
 		},
 		{
 			case: 'site metadata',
-			input: {
-				editEntities: [
-					{
-						entityType: 'root',
-						entityName: 'site',
-						recordId: 'big_sky_site_metadata',
-						record: { personality: 'playful' },
-					},
-				],
-			},
+			edits: [ { ...site, recordId: 'big_sky_site_metadata', record: { personality: 'playful' } } ],
 			expected: [ checkpointKeys.SITE_METADATA ],
 		},
 		{
-			case: 'the site title, which is mirrored into the metadata',
-			input: {
-				editEntities: [
-					{
-						entityType: 'root',
-						entityName: 'site',
-						recordId: 'site_title',
-						record: { title: 'Blue Harbor' },
-					},
-				],
-			},
+			// Mirrored into the metadata. The agent does not reliably send the
+			// `site_title` sentinel, so the record it carries is what decides.
+			case: 'the site title, sent without the sentinel recordId',
+			edits: [ { ...site, recordId: 1, record: { title: 'Blue Harbor' } } ],
 			expected: [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ],
 		},
-		{
-			// The agent does not reliably send the sentinel, so the record it
-			// carries is what decides.
-			case: 'a site title sent without the sentinel recordId',
-			input: {
-				editEntities: [
-					{ entityType: 'root', entityName: 'site', recordId: 1, record: { title: 'Blue Harbor' } },
-				],
-			},
-			expected: [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ],
-		},
-		{ case: 'nothing at all', input: {}, expected: [] },
-		// A restore rewrites records that already existed. It cannot remove a
-		// created page or bring back a deleted one, so neither claims a domain
-		// — a checkpoint for either would be an undo that does nothing.
-		{
-			case: 'a creation, which no restore can remove',
-			input: { addEntities: [ { entityType: 'postType', entityName: 'page' } ] },
-			expected: [],
-		},
-		{
-			case: 'a deletion, which no restore can bring back',
-			input: { deleteEntities: [ page( 7 ) ] },
-			expected: [],
-		},
-	] )( 'claims the domains for $case', ( { input, expected } ) => {
-		expect( getCheckpointKeys( ( input.editEntities ?? [] ) as never ).sort() ).toEqual(
-			expected.sort()
-		);
+		// Creates and deletes never reach it: no restore can remove a created
+		// record or bring back a deleted one.
+		{ case: 'no edits, as in a batch that only creates or deletes', edits: [], expected: [] },
+	] )( 'claims the domains for $case', ( { edits, expected } ) => {
+		expect( getCheckpointKeys( edits as never ).sort() ).toEqual( expected.sort() );
 	} );
 } );
 
 describe( 'editEntityRecordCallback', () => {
 	it( 'refuses when the editor is not open', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as jest.Mock ).mockReturnValueOnce( false );
 
-		const result = await editEntityRecordCallback( { editEntities: [ page( 7 ) ] } );
+		const result = await editEntityRecordCallback( {
+			editEntities: [ { ...page( 7 ), record: { content: 'Hello' } } ],
+		} );
 
-		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'The editor is not open' );
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
@@ -303,10 +246,12 @@ describe( 'editEntityRecordCallback', () => {
 			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
 		} );
 
-		// Asked for the menus holding the page, and before the relabel: what the
-		// recorder then stores is covered in the checkpoint suite.
 		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, [ 'About' ], '/about/' );
-		expect( ( getMenuIdsToRelabel as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		expect( getCheckpoint( 'call-rename' )?.menusBeforeUpdate ).toEqual( [
+			{ id: 10, items: [] },
+		] );
+		// Read before the relabel, or the snapshot would hold the new label.
+		expect( ( readMenuItems as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
 		);
 	} );
@@ -352,7 +297,7 @@ describe( 'editEntityRecordCallback', () => {
 	// A menu label follows the saved title until the page's own edit is saved,
 	// so both titles travel with the rename.
 	it( 'relabels by the saved title too when the one on screen is an unsaved edit', async () => {
-		( getPageTitle as jest.Mock ).mockResolvedValue( 'About (draft)' );
+		( getPageTitle as jest.Mock ).mockResolvedValueOnce( 'About (draft)' );
 
 		await editEntityRecordCallback( {
 			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
@@ -413,6 +358,9 @@ describe( 'editEntityRecordCallback', () => {
 				getCurrentPostId: () => id,
 			} );
 
+		// The rollback `bindToEditorPath()` handed back for the navigation.
+		const rollbackBinding = () => ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value;
+
 		beforeEach( () => open( 'page', 7 ) );
 
 		// Deleting it under the canvas would leave the editor on a page that no
@@ -428,10 +376,10 @@ describe( 'editEntityRecordCallback', () => {
 
 		it.each( [
 			// `page_on_front` lingers after a site switches to showing posts.
-			{ case: 'the posts index', site: { show_on_front: 'posts', page_on_front: 3 } },
-			{ case: 'the page being deleted', site: { show_on_front: 'page', page_on_front: 7 } },
-		] )( 'leaves for the pages list when the front page is $case', async ( { site } ) => {
-			( getSiteRecord as jest.Mock ).mockReturnValueOnce( site );
+			{ case: 'the posts index', siteRecord: { show_on_front: 'posts', page_on_front: 3 } },
+			{ case: 'the page being deleted', siteRecord: { show_on_front: 'page', page_on_front: 7 } },
+		] )( 'leaves for the pages list when the front page is $case', async ( { siteRecord } ) => {
+			( getSiteRecord as jest.Mock ).mockReturnValueOnce( siteRecord );
 
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
@@ -453,7 +401,7 @@ describe( 'editEntityRecordCallback', () => {
 			expect( ( bindToEditorPath as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 				( navigateEditorWithoutSaving as jest.Mock ).mock.invocationCallOrder[ 0 ]
 			);
-			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
+			expect( rollbackBinding() ).not.toHaveBeenCalled();
 		} );
 
 		// Without the site editor's router the only way out is a full page load,
@@ -492,7 +440,7 @@ describe( 'editEntityRecordCallback', () => {
 			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
 
 			const result = await editEntityRecordCallback( {
-				deleteEntities: [ { entityType: 'postType', entityName: 'post', recordId: 7 } ],
+				deleteEntities: [ post( 7 ) ],
 			} );
 
 			expect( result.result.error ).toContain( 'Cannot delete post 7' );
@@ -509,7 +457,7 @@ describe( 'editEntityRecordCallback', () => {
 
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
+			expect( rollbackBinding() ).not.toHaveBeenCalled();
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
@@ -522,7 +470,7 @@ describe( 'editEntityRecordCallback', () => {
 
 			expect( result.result.error ).toContain( 'the editor is busy' );
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
-			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).toHaveBeenCalled();
+			expect( rollbackBinding() ).toHaveBeenCalled();
 		} );
 
 		it( 'stays put when deleting a different page', async () => {
@@ -546,12 +494,7 @@ describe( 'editEntityRecordCallback', () => {
 	it( 'writes site metadata and logs it', async () => {
 		await editEntityRecordCallback( {
 			editEntities: [
-				{
-					entityType: 'root',
-					entityName: 'site',
-					recordId: 'big_sky_site_metadata',
-					record: { personality: 'bold' },
-				},
+				{ ...site, recordId: 'big_sky_site_metadata', record: { personality: 'bold' } },
 			],
 		} );
 
@@ -565,37 +508,14 @@ describe( 'editEntityRecordCallback', () => {
 	it( 'writes the site title to both the record and the metadata', async () => {
 		await editEntityRecordCallback( {
 			editEntities: [
-				{
-					entityType: 'root',
-					entityName: 'site',
-					recordId: 'site_title',
-					record: { title: 'My Site' },
-				},
+				{ ...site, recordId: 'site_title', record: { title: 'My Site', personality: 'bold' } },
 			],
 		} );
 
 		expect( setSiteTitle ).toHaveBeenCalledWith( 'My Site' );
-		expect( setSiteMetadata ).toHaveBeenCalledWith( { siteTitle: 'My Site' } );
+		// One call can carry both: the rest of the record travels with the title.
+		expect( setSiteMetadata ).toHaveBeenCalledWith( { personality: 'bold', siteTitle: 'My Site' } );
 		expect( logSiteSession ).toHaveBeenCalledWith( 'My Site' );
-	} );
-
-	it( 'refuses a batch with nothing in it', async () => {
-		const result = await editEntityRecordCallback( {} );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'Nothing to do' );
-	} );
-
-	// `root/page` passes the schema, whose two enums are independent.
-	it( 'refuses an entity kind and name that do not go together', async () => {
-		const result = await editEntityRecordCallback( {
-			editEntities: [
-				{ entityType: 'root', entityName: 'page', recordId: 7, record: { title: 'About' } },
-			],
-		} );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'Unsupported entity: root/page' );
 	} );
 
 	// `editEntityRecord()` reads the persisted record to tell a real change from
@@ -614,114 +534,6 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
-	// Creating and deleting take posts and pages only, and nothing validates the
-	// raw arguments: `root/site` would rewrite the real settings, and a menu
-	// delete would take every item with it.
-	it.each( [
-		{
-			case: 'a site record created',
-			input: { addEntities: [ { ...site, record: { title: 'My Site' } } ] },
-			error: 'Cannot create root/site',
-		},
-		{
-			case: 'a site record deleted',
-			input: { deleteEntities: [ { ...site, recordId: 1 } ] },
-			error: 'Cannot delete root/site',
-		},
-		{
-			case: 'a menu created',
-			input: { addEntities: [ { ...menu( 9 ), record: { title: 'Main' } } ] },
-			error: 'Cannot create postType/wp_navigation',
-		},
-		{
-			case: 'a menu deleted',
-			input: { deleteEntities: [ menu( 9 ) ] },
-			error: 'Cannot delete postType/wp_navigation',
-		},
-	] )( 'refuses $case', async ( { input, error } ) => {
-		const result = await editEntityRecordCallback( input );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( error );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
-		expect( deleteEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	// The callback runs on raw arguments, so an entry skipped for missing fields
-	// would write nothing and still be reported as applied.
-	it.each( [
-		{ case: 'create', input: { addEntities: [ {} ] }, error: 'Cannot create:' },
-		{ case: 'edit', input: { editEntities: [ page( 7 ) ] }, error: 'Cannot edit:' },
-		{ case: 'delete', input: { deleteEntities: [ page() ] }, error: 'Cannot delete:' },
-	] )( 'refuses a $case entry missing required fields', async ( { input, error } ) => {
-		const result = await editEntityRecordCallback( input );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( error );
-	} );
-
-	// Field types too: an array record would spread into numeric metadata keys,
-	// and a string one would throw inside the checkpoint-key lookup.
-	it.each( [
-		{ case: 'a string record', input: { editEntities: [ { ...page( 7 ), record: 'x' } ] } },
-		{
-			case: 'an array record',
-			input: { editEntities: [ { ...site, recordId: 1, record: [ 'x' ] } ] },
-		},
-		{ case: 'an object recordId', input: { deleteEntities: [ { ...page(), recordId: {} } ] } },
-		{ case: 'string options', input: { deleteEntities: [ { ...page( 7 ), options: 'x' } ] } },
-		{ case: 'a non-object entry', input: { addEntities: [ 'page' ] } },
-		{
-			case: 'a title that is not text',
-			input: { editEntities: [ { ...page( 7 ), record: { title: {} } } ] },
-		},
-		{
-			case: 'content that is not text',
-			input: { editEntities: [ { ...page( 7 ), record: { content: 123 } } ] },
-		},
-		{
-			case: 'a site location with a null name',
-			input: {
-				editEntities: [
-					{ ...site, recordId: 'big_sky_site_metadata', record: { siteLocation: { name: null } } },
-				],
-			},
-		},
-		{
-			case: 'a personality that is not text',
-			input: {
-				editEntities: [
-					{ ...site, recordId: 'big_sky_site_metadata', record: { personality: {} } },
-				],
-			},
-		},
-	] )( 'refuses $case', async ( { input } ) => {
-		const result = await editEntityRecordCallback( input as never );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toMatch( /^Cannot (create|edit|delete):/ );
-		expect( editEntityRecord ).not.toHaveBeenCalled();
-		expect( deleteEntityRecord ).not.toHaveBeenCalled();
-		expect( setSiteMetadata ).not.toHaveBeenCalled();
-	} );
-
-	it( 'refuses a payload that is not an object', async () => {
-		const result = await editEntityRecordCallback( null as never );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'Invalid arguments' );
-	} );
-
-	it( 'refuses a confirmationMessage that is not a string', async () => {
-		const result = await editEntityRecordCallback( {
-			deleteEntities: [ page( 7 ) ],
-			confirmationMessage: true as never,
-		} );
-
-		expect( result.result.error ).toContain( 'confirmationMessage' );
-		expect( deleteEntityRecord ).not.toHaveBeenCalled();
-	} );
-
 	// A content-only edit records no checkpoint, so the editor's undo is its
 	// only undo — not the request's to switch off.
 	it( "keeps the agent's options out of an edit", async () => {
@@ -732,17 +544,6 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
-	} );
-
-	// Refused with the batch, before a create in the same batch could land.
-	it( 'refuses an empty edit before anything is written', async () => {
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [ { ...page( 8 ), record: {} } ],
-		} );
-
-		expect( result.result.error ).toContain( 'the record is empty' );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'writes a post title as a plain edit, with no menu to follow it', async () => {
@@ -797,16 +598,6 @@ describe( 'editEntityRecordCallback', () => {
 		expect( setPageTitle ).toHaveBeenCalledWith( 7, '' );
 	} );
 
-	it( 'refuses the whole batch before writing when any entry is malformed', async () => {
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [ { ...page( 8 ), record: 'x' as never } ],
-		} );
-
-		expect( result.result.error ).toContain( 'Cannot edit:' );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
-	} );
-
 	// The saved title and the permalink serve the menu relabel, so a read that
 	// rejects must not block an edit that renames nothing.
 	it( 'reads no menu context for an edit that renames nothing', async () => {
@@ -819,207 +610,344 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
 	} );
 
-	// A misspelt field would otherwise be dropped and the rest reported as done.
-	it( 'refuses a batch carrying a field the schema does not name', async () => {
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			deleteEntites: [ page( 7 ) ],
-		} as never );
+	describe( 'checking the batch before any write', () => {
+		it( 'refuses a batch with nothing in it', async () => {
+			const result = await editEntityRecordCallback( {} );
 
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'Unknown field: deleteEntites' );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	it( 'accepts every field the schema declares, and the ones agenttic-client adds', async () => {
-		const result = await editEntityRecordCallback( {
-			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
-			confirmationMessage: '',
-			summary: 'Updated the page.',
-			followUpTasks: [],
-			messageId: 'm1',
-			toolCallId: 'call-envelope',
-			toolId: 'big_sky__edit_entity_record',
-		} as never );
-
-		expect( result.result.success ).toBe( true );
-		expect( result.result.message ).toBe( 'Updated the page.' );
-	} );
-
-	// The create schema is closed: a misspelt title would create an untitled page.
-	it( 'refuses a create whose record carries a field the schema does not name', async () => {
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { titel: 'About' } } ],
-		} as never );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'unknown field titel' );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	// Checked with the rest of the batch: found only when its turn came, a
-	// malformed menu edit would fail after the creates before it had landed.
-	it( 'refuses a malformed menu edit before anything is written', async () => {
-		( checkMenuRecord as jest.Mock ).mockImplementationOnce( () => {
-			throw new Error( 'Invalid navigation items at the top level' );
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( 'Nothing to do' );
 		} );
 
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [
-				{
-					entityType: 'postType',
-					entityName: 'wp_navigation',
-					recordId: 9,
-					record: { navigationItems: [ null ] },
+		// `root/page` passes the schema, whose two enums are independent.
+		it( 'refuses an entity kind and name that do not go together', async () => {
+			const result = await editEntityRecordCallback( {
+				editEntities: [
+					{ entityType: 'root', entityName: 'page', recordId: 7, record: { title: 'About' } },
+				],
+			} );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( 'Unsupported entity: root/page' );
+		} );
+
+		// Creating and deleting take posts and pages only, and nothing validates the
+		// raw arguments: `root/site` would rewrite the real settings, and a menu
+		// delete would take every item with it.
+		it.each( [
+			{
+				case: 'a site record created',
+				input: { addEntities: [ { ...site, record: { title: 'My Site' } } ] },
+				error: 'Cannot create root/site',
+			},
+			{
+				case: 'a site record deleted',
+				input: { deleteEntities: [ { ...site, recordId: 1 } ] },
+				error: 'Cannot delete root/site',
+			},
+			{
+				case: 'a menu created',
+				input: { addEntities: [ { ...menu( 9 ), record: { title: 'Main' } } ] },
+				error: 'Cannot create postType/wp_navigation',
+			},
+			{
+				case: 'a menu deleted',
+				input: { deleteEntities: [ menu( 9 ) ] },
+				error: 'Cannot delete postType/wp_navigation',
+			},
+		] )( 'refuses $case', async ( { input, error } ) => {
+			const result = await editEntityRecordCallback( input );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( error );
+			expect( saveEntityRecord ).not.toHaveBeenCalled();
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		// The callback runs on raw arguments, so an entry skipped for missing fields
+		// would write nothing and still be reported as applied.
+		it.each( [
+			{ case: 'create', input: { addEntities: [ {} ] }, error: 'Cannot create:' },
+			{ case: 'edit', input: { editEntities: [ page( 7 ) ] }, error: 'Cannot edit:' },
+			{ case: 'delete', input: { deleteEntities: [ page() ] }, error: 'Cannot delete:' },
+		] )( 'refuses a $case entry missing required fields', async ( { input, error } ) => {
+			const result = await editEntityRecordCallback( input );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( error );
+		} );
+
+		// Field types too: an array record would spread into numeric metadata keys,
+		// and a string one would throw inside the checkpoint-key lookup.
+		it.each( [
+			{ case: 'a string record', input: { editEntities: [ { ...page( 7 ), record: 'x' } ] } },
+			{
+				case: 'an array record',
+				input: { editEntities: [ { ...site, recordId: 1, record: [ 'x' ] } ] },
+			},
+			{ case: 'an object recordId', input: { deleteEntities: [ { ...page(), recordId: {} } ] } },
+			{ case: 'string options', input: { deleteEntities: [ { ...page( 7 ), options: 'x' } ] } },
+			{ case: 'a non-object entry', input: { addEntities: [ 'page' ] } },
+			{
+				case: 'a title that is not text',
+				input: { editEntities: [ { ...page( 7 ), record: { title: {} } } ] },
+			},
+			{
+				case: 'content that is not text',
+				input: { editEntities: [ { ...page( 7 ), record: { content: 123 } } ] },
+			},
+			{
+				case: 'a site location with a null name',
+				input: {
+					editEntities: [
+						{
+							...site,
+							recordId: 'big_sky_site_metadata',
+							record: { siteLocation: { name: null } },
+						},
+					],
 				},
-			],
-		} as never );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'Invalid navigation items' );
-		expect( saveEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	it( 'refuses an entry carrying a field the schema does not name', async () => {
-		const result = await editEntityRecordCallback( {
-			editEntities: [ { ...page( 8 ), record: { content: 'Hello' }, option: { force: true } } ],
-		} as never );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'unknown field option' );
-		expect( editEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	// A batch that creates a page then fails must not have the agent create it
-	// again, so the failure carries what already landed.
-	it( 'reports what applied when a later change fails', async () => {
-		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
-
-		const result = await editEntityRecordCallback( {
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
-		} );
-
-		expect( result.result.success ).toBe( false );
-		expect( result.result.error ).toContain( 'menu is locked' );
-		expect( result.result.details ).toMatchObject( { created: [ { recordId: 7 } ] } );
-		expect( result.result.error ).toContain( 'do not repeat them' );
-	} );
-
-	// The undo has to reach back to before the call, not vanish with the error
-	// — the writes that already landed are exactly what the user needs undone.
-	it( 'keeps the checkpoint when restorable work landed before the failure', async () => {
-		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
-
-		await editEntityRecordCallback( {
-			toolCallId: 'call-partial',
-			editEntities: [
-				{ entityType: 'root', entityName: 'site', recordId: 1, record: { title: 'My Site' } },
-				{ ...page( 8 ), record: { title: 'Contact' } },
-			],
-		} );
-
-		expect( hasCheckpoint( 'call-partial' ) ).toBe( true );
-	} );
-
-	// The title persisted before the content write failed, so it needs the
-	// checkpoint that undoes it — reporting nothing would take that down too.
-	it( 'reports a rename that landed before a later write in the same record failed', async () => {
-		editEntityRecord.mockRejectedValueOnce( new Error( 'content is locked' ) );
-
-		const result = await editEntityRecordCallback( {
-			toolCallId: 'call-rename-partial',
-			editEntities: [ { ...page( 8 ), record: { title: 'Contact', content: 'Hello' } } ],
-		} );
-
-		expect( setPageTitle ).toHaveBeenCalledWith( 8, 'Contact' );
-		// The fields say what landed: told only that the page was updated, a
-		// retry would drop the content that was not.
-		expect( result.result.details ).toMatchObject( {
-			updated: [ { recordId: 8, fields: [ 'title' ] } ],
-		} );
-		expect( hasCheckpoint( 'call-rename-partial' ) ).toBe( true );
-	} );
-
-	// The menu write landed outside the editor's undo stack, so the checkpoint
-	// is its only way back — a later failure must not take it down.
-	it( 'reports a menu write that landed before a later write in the same record failed', async () => {
-		( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [], title: 'Header' } );
-		editEntityRecord.mockResolvedValueOnce( undefined );
-		editEntityRecord.mockRejectedValueOnce( new Error( 'title is locked' ) );
-
-		const result = await editEntityRecordCallback( {
-			toolCallId: 'call-menu-partial',
-			editEntities: [
-				{
-					entityType: 'postType',
-					entityName: 'wp_navigation',
-					recordId: 9,
-					record: { navigationItems: [], title: 'Header' },
+			},
+			{
+				case: 'a personality that is not text',
+				input: {
+					editEntities: [
+						{ ...site, recordId: 'big_sky_site_metadata', record: { personality: {} } },
+					],
 				},
-			],
+			},
+		] )( 'refuses $case', async ( { input } ) => {
+			const result = await editEntityRecordCallback( input as never );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toMatch( /^Cannot (create|edit|delete):/ );
+			expect( editEntityRecord ).not.toHaveBeenCalled();
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+			expect( setSiteMetadata ).not.toHaveBeenCalled();
 		} );
 
-		expect( editEntityRecord ).toHaveBeenNthCalledWith(
-			1,
-			'postType',
-			'wp_navigation',
-			9,
-			{ blocks: [] },
-			{ undoIgnore: true }
+		it( 'refuses a payload that is not an object', async () => {
+			const result = await editEntityRecordCallback( null as never );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( 'Invalid arguments' );
+		} );
+
+		it( 'refuses a confirmationMessage that is not a string', async () => {
+			const result = await editEntityRecordCallback( {
+				deleteEntities: [ page( 7 ) ],
+				confirmationMessage: true as never,
+			} );
+
+			expect( result.result.error ).toContain( 'confirmationMessage' );
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		// A misspelt field would otherwise be dropped and the rest reported as done.
+		it.each( [
+			{
+				level: 'batch',
+				input: {
+					addEntities: [ { ...page(), record: { title: 'About' } } ],
+					deleteEntites: [ page( 7 ) ],
+				},
+				error: 'Unknown field: deleteEntites',
+			},
+			{
+				level: 'entry',
+				input: {
+					editEntities: [ { ...page( 8 ), record: { content: 'Hello' }, option: { force: true } } ],
+				},
+				error: 'unknown field option',
+			},
+			{
+				// The create schema is closed: a misspelt title would create an untitled page.
+				level: 'created record',
+				input: { addEntities: [ { ...page(), record: { titel: 'About' } } ] },
+				error: 'unknown field titel',
+			},
+		] )(
+			'refuses a $level carrying a field the schema does not name',
+			async ( { input, error } ) => {
+				const result = await editEntityRecordCallback( input as never );
+
+				expect( result.result.success ).toBe( false );
+				expect( result.result.error ).toContain( error );
+				expect( saveEntityRecord ).not.toHaveBeenCalled();
+				expect( editEntityRecord ).not.toHaveBeenCalled();
+			}
 		);
-		expect( result.result.details ).toMatchObject( {
-			updated: [ { recordId: 9, fields: [ 'navigationItems' ] } ],
+
+		it( 'accepts every field the schema declares, and the ones agenttic-client adds', async () => {
+			const result = await editEntityRecordCallback( {
+				editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
+				confirmationMessage: '',
+				summary: 'Updated the page.',
+				followUpTasks: [],
+				messageId: 'm1',
+				toolCallId: 'call-envelope',
+				toolId: 'big_sky__edit_entity_record',
+			} as never );
+
+			expect( result.result.success ).toBe( true );
+			expect( result.result.message ).toBe( 'Updated the page.' );
 		} );
-		expect( hasCheckpoint( 'call-menu-partial' ) ).toBe( true );
+
+		// Refused with the batch, before a create in the same batch could land.
+		it( 'refuses an empty edit before anything is written', async () => {
+			const result = await editEntityRecordCallback( {
+				addEntities: [ { ...page(), record: { title: 'About' } } ],
+				editEntities: [ { ...page( 8 ), record: {} } ],
+			} );
+
+			expect( result.result.error ).toContain( 'the record is empty' );
+			expect( saveEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		// Checked with the rest of the batch: found only when its turn came, a
+		// malformed menu edit would fail after the creates before it had landed.
+		it( 'refuses a malformed menu edit before anything is written', async () => {
+			( checkMenuRecord as jest.Mock ).mockImplementationOnce( () => {
+				throw new Error( 'Invalid navigation items at the top level' );
+			} );
+
+			const result = await editEntityRecordCallback( {
+				addEntities: [ { ...page(), record: { title: 'About' } } ],
+				editEntities: [ { ...menu( 9 ), record: { navigationItems: [ null ] } } ],
+			} as never );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( 'Invalid navigation items' );
+			expect( saveEntityRecord ).not.toHaveBeenCalled();
+		} );
 	} );
 
-	// A raw menu edit reports the fields it sent, not the one it did not.
-	it( 'reports the raw menu fields a partial edit wrote', async () => {
-		( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [], title: 'Header' } );
-		editEntityRecord.mockResolvedValueOnce( undefined );
-		editEntityRecord.mockRejectedValueOnce( new Error( 'title is locked' ) );
+	describe( 'a batch that partly applies', () => {
+		// A batch that creates a page then fails must not have the agent create it
+		// again, so the failure carries what already landed.
+		it( 'reports what applied when a later change fails', async () => {
+			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
-		const result = await editEntityRecordCallback( {
-			toolCallId: 'call-raw-menu-partial',
-			editEntities: [
-				{
-					entityType: 'postType',
-					entityName: 'wp_navigation',
-					recordId: 9,
-					record: { blocks: [], title: 'Header' },
-				},
-			],
+			const result = await editEntityRecordCallback( {
+				addEntities: [ { ...page(), record: { title: 'About' } } ],
+				editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+			} );
+
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toContain( 'menu is locked' );
+			expect( result.result.details ).toMatchObject( { created: [ { recordId: 7 } ] } );
+			expect( result.result.error ).toContain( 'do not repeat them' );
 		} );
 
-		expect( result.result.details ).toMatchObject( {
-			updated: [ { recordId: 9, fields: [ 'blocks' ] } ],
-		} );
-	} );
+		// The undo has to reach back to before the call, not vanish with the error
+		// — the writes that already landed are exactly what the user needs undone.
+		it( 'keeps the checkpoint when restorable work landed before the failure', async () => {
+			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
 
-	// The creation landed, but nothing can un-create a page, so the checkpoint
-	// holds nothing to restore and is dropped rather than offering an empty undo.
-	it( 'drops the checkpoint when only unrestorable work landed', async () => {
-		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
+			await editEntityRecordCallback( {
+				toolCallId: 'call-partial',
+				editEntities: [
+					{ ...site, recordId: 1, record: { title: 'My Site' } },
+					{ ...page( 8 ), record: { title: 'Contact' } },
+				],
+			} );
 
-		await editEntityRecordCallback( {
-			toolCallId: 'call-created-only',
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
-		} );
-
-		expect( hasCheckpoint( 'call-created-only' ) ).toBe( false );
-	} );
-
-	it( 'drops the checkpoint when the batch changed nothing', async () => {
-		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
-
-		await editEntityRecordCallback( {
-			toolCallId: 'call-nothing',
-			editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+			expect( hasCheckpoint( 'call-partial' ) ).toBe( true );
 		} );
 
-		expect( hasCheckpoint( 'call-nothing' ) ).toBe( false );
+		// The title persisted before the content write failed, so it needs the
+		// checkpoint that undoes it — reporting nothing would take that down too.
+		it( 'reports a rename that landed before a later write in the same record failed', async () => {
+			editEntityRecord.mockRejectedValueOnce( new Error( 'content is locked' ) );
+
+			const result = await editEntityRecordCallback( {
+				toolCallId: 'call-rename-partial',
+				editEntities: [ { ...page( 8 ), record: { title: 'Contact', content: 'Hello' } } ],
+			} );
+
+			expect( setPageTitle ).toHaveBeenCalledWith( 8, 'Contact' );
+			// The fields say what landed: told only that the page was updated, a
+			// retry would drop the content that was not.
+			expect( result.result.details ).toMatchObject( {
+				updated: [ { recordId: 8, fields: [ 'title' ] } ],
+			} );
+			expect( hasCheckpoint( 'call-rename-partial' ) ).toBe( true );
+		} );
+
+		// The menu write landed outside the editor's undo stack, so the checkpoint
+		// is its only way back — a later failure must not take it down. The fields
+		// reported are the ones sent, not the rebuilt record's.
+		it.each( [ 'navigationItems', 'blocks' ] )(
+			'reports the %s a menu edit wrote before its title write failed',
+			async ( sent ) => {
+				const toolCallId = `call-menu-partial-${ sent }`;
+				( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( {
+					blocks: [],
+					title: 'Header',
+				} );
+				editEntityRecord
+					.mockResolvedValueOnce( undefined )
+					.mockRejectedValueOnce( new Error( 'title is locked' ) );
+
+				const result = await editEntityRecordCallback( {
+					toolCallId,
+					editEntities: [ { ...menu( 9 ), record: { [ sent ]: [], title: 'Header' } } ],
+				} );
+
+				expect( editEntityRecord ).toHaveBeenNthCalledWith(
+					1,
+					'postType',
+					'wp_navigation',
+					9,
+					{ blocks: [] },
+					{ undoIgnore: true }
+				);
+				expect( result.result.details ).toMatchObject( {
+					updated: [ { recordId: 9, fields: [ sent ] } ],
+				} );
+				expect( hasCheckpoint( toolCallId ) ).toBe( true );
+			}
+		);
+
+		// The site title keeps the checkpoint alive, and a snapshot of a menu the
+		// failed write never changed would let an undo overwrite the user's edits.
+		it( 'discards the snapshot of a menu whose write failed', async () => {
+			( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [] } );
+			editEntityRecord.mockRejectedValueOnce( new Error( 'menu is locked' ) );
+
+			await editEntityRecordCallback( {
+				toolCallId: 'call-menu-failed',
+				editEntities: [
+					{ ...site, recordId: 1, record: { title: 'My Site' } },
+					{ ...menu( 9 ), record: { navigationItems: [] } },
+				],
+			} );
+
+			expect( getCheckpoint( 'call-menu-failed' )?.menusBeforeUpdate ).toEqual( [] );
+		} );
+
+		// The creation landed, but nothing can un-create a page, so the checkpoint
+		// holds nothing to restore and is dropped rather than offering an empty undo.
+		it( 'drops the checkpoint when only unrestorable work landed', async () => {
+			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
+
+			await editEntityRecordCallback( {
+				toolCallId: 'call-created-only',
+				addEntities: [ { ...page(), record: { title: 'About' } } ],
+				editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+			} );
+
+			expect( hasCheckpoint( 'call-created-only' ) ).toBe( false );
+		} );
+
+		it( 'drops the checkpoint when the batch changed nothing', async () => {
+			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
+
+			await editEntityRecordCallback( {
+				toolCallId: 'call-nothing',
+				editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+			} );
+
+			expect( hasCheckpoint( 'call-nothing' ) ).toBe( false );
+		} );
 	} );
 } );
