@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __, _n } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import EmptyState from '../../../components/empty-state';
 import { IconListItem } from '../../../components/icon-list/icon-list-item';
@@ -127,8 +128,16 @@ function NothingToSetUp() {
 
 function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	const { data: pendingSites } = useSuspenseQuery( pendingAgencySitesQuery( agencyId ) );
+	const { recordTracksEvent } = useAnalytics();
 	const [ configuringSiteId, setConfiguringSiteId ] = useState< number | null >( null );
-	const fields = useMemo( () => getFields( setConfiguringSiteId ), [] );
+	const fields = useMemo(
+		() =>
+			getFields( ( siteId ) => {
+				recordTracksEvent( 'calypso_a4a_create_site_config' );
+				setConfiguringSiteId( siteId );
+			} ),
+		[ recordTracksEvent ]
+	);
 	const rows = getSetupRows( pendingSites );
 
 	// The route guard redirects when nothing is pending, so this is reached only

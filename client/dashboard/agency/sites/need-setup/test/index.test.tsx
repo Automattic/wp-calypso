@@ -86,12 +86,13 @@ describe( '<AgencySitesNeedSetup>', () => {
 			.query( true )
 			.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
 
-		render( <AgencySitesNeedSetup /> );
+		const { recordTracksEvent } = render( <AgencySitesNeedSetup /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Create new site' } ) );
 
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Configure your new site' } )
 		).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_create_site_config' );
 	} );
 } );
