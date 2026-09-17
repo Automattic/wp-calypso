@@ -256,9 +256,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const getHeading = () => {
 			if ( showPlansGrid ) {
 				return {
-					text: __( 'Pick a plan to start your migration' ),
+					text: __( 'Pick a plan to continue your import' ),
 					subText: __(
-						'Migrations are available on all paid plans. Choose the plan that best fits your needs.'
+						'Importing a backup file requires a paid plan. Choose the plan that best fits your needs.'
 					),
 				};
 			}
@@ -298,7 +298,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 				{ showPlansGrid ? (
-					<Step.WideLayout { ...layoutProps } headingColumnWidth={ 6 } />
+					<Step.WideLayout { ...layoutProps } />
 				) : (
 					<Step.CenteredColumnLayout { ...layoutProps } columnWidth={ 6 } />
 				) }
