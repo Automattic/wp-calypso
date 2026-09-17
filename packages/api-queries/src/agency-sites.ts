@@ -1,7 +1,7 @@
 import {
+	fetchAgencyMigrationCommissionSites,
 	fetchAgencySitesWithPlugins,
 	fetchPendingAgencySites,
-	fetchProvisionedAgencySites,
 	provisionAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
@@ -38,7 +38,7 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 export const provisionedAgencySitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites', 'provisioned' ] as const,
-		queryFn: () => fetchProvisionedAgencySites( agencyId ),
+		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId ),
 	} );
 
 export const provisionAgencySiteMutation = ( agencyId: number ) =>

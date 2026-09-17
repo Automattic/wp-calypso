@@ -5,7 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import { untrackProvisioningSite, useProvisioningSiteIds } from './provisioning-sites';
-import type { ProvisionedAgencySite } from '@automattic/api-core';
+import type { MigrationCommissionSite } from '@automattic/api-core';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -13,11 +13,11 @@ const POLL_INTERVAL_MS = 5000;
  * This notice renders on every `/sites` load and polls, so a response that is
  * not the expected list must not take the route down with it.
  */
-function toSiteList( data: unknown ): ProvisionedAgencySite[] {
+function toSiteList( data: unknown ): MigrationCommissionSite[] {
 	return Array.isArray( data ) ? data : [];
 }
 
-function isReady( site: ProvisionedAgencySite ): boolean {
+function isReady( site: MigrationCommissionSite ): boolean {
 	return site.features?.wpcom_atomic?.state === 'active';
 }
 
