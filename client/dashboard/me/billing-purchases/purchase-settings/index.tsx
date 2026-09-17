@@ -52,6 +52,7 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { useAppContext } from '../../../app/context';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
@@ -1502,6 +1503,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 export default function PurchaseSettings() {
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
@@ -1608,7 +1610,7 @@ export default function PurchaseSettings() {
 				title={ __( 'Site' ) }
 				heading={ site.name }
 				description={ purchase.site_slug }
-				link={ `/sites/${ purchase.site_slug }` }
+				link={ supports.sites ? `/sites/${ purchase.site_slug }` : undefined }
 			/>
 		) );
 	const ownerOrMailboxCard = isEmailPlan ? (
