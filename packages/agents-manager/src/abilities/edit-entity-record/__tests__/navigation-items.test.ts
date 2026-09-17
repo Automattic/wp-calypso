@@ -156,6 +156,19 @@ describe( 'clientId', () => {
 		expect( labelsOf( result ) ).toEqual( [ 'Services' ] );
 	} );
 
+	// The structure held for the turn is what named the ids, so a re-read returns
+	// them again: the refusal sends the retry to the menu's labels instead.
+	it( 'steers a short id that names nothing to the labels, not to a re-read', async () => {
+		withPageStructure( { clientIdMap: { bMnU: 'gone' } } );
+
+		await expect(
+			buildNavigationItems( 10, { navigationItems: [ { clientId: 'bMnU' } ] } )
+		).rejects.toThrow(
+			'Navigation items not found: bMnU. Do not re-read the page structure; its ids are stale. ' +
+				'Send each existing item by its label instead — this menu holds "About", "Services".'
+		);
+	} );
+
 	it( 'still finds an item the request relabels and re-links', async () => {
 		withPageStructure( {
 			clientIdMap: { bMnU: 'gone' },
