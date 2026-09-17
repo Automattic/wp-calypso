@@ -30,6 +30,11 @@ declare const agentsManagerData:
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
+			/**
+			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
+			 * store's). `false` stops every Tracks event; absent means allowed.
+			 */
+			isTrackingAllowed?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
