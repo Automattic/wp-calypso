@@ -12,9 +12,7 @@ import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
-import getNotes from '../../panel/state/selectors/get-notes';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -147,19 +145,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		fields
 	);
 
-	// DataViews shows the unread dot from `note.read`, which an in-app read leaves
-	// stale. Swap in the effective read state, and tag the open note so its row
-	// can render the active highlight. Reuse the note object when neither changed
-	// so only the affected rows re-render.
-	const notesState = useSelector( getNotes );
-	const data = filteredData.map( ( note ) => {
-		const isRead = getIsNoteRead( notesState, note );
-		const isActive = note.id.toString() === selectedNoteId;
-		if ( !! note.read === isRead && ! isActive ) {
-			return note;
-		}
-		return { ...note, read: isRead ? 1 : 0, isActive };
-	} );
+	// Tag the open note so its row can render the active highlight. Reuse the note
+	// object otherwise so only the affected rows re-render.
+	const data = filteredData.map( ( note ) =>
+		note.id.toString() === selectedNoteId ? { ...note, isActive: true } : note
+	);
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
