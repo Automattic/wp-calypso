@@ -4,12 +4,22 @@ import {
 	planHasJetpackSearch,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import Notice from 'calypso/components/notice';
+import { isExpiredOrRemoved } from 'calypso/lib/purchases';
 import { urlToSlug } from 'calypso/lib/url';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getPurchases } from 'calypso/state/purchases/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import type { RawSiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 
 interface Site {
+	ID?: number;
+	jetpack?: boolean;
+	options?: { is_wpcom_atomic?: boolean };
 	products?: RawSiteProduct[];
 	plan?: { product_slug?: string; expired?: boolean };
 }
@@ -20,19 +30,45 @@ interface Props {
 	product: string;
 }
 
-function getExistingSearchSource( site: Site, routeProduct: string ) {
-	const searchProducts = ( site.products ?? [] ).filter(
-		( product ) =>
-			isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
-	);
-	if (
-		searchProducts.some(
-			( product ) => product.user_is_owner && product.product_slug === routeProduct
-		)
-	) {
+interface SearchSubscription {
+	slug: string;
+	owned: boolean;
+}
+
+// `/me/sites` never lists `wpcom_search*` products, so sites hosted on WordPress.com also need their purchases.
+function isHostedOnWpcom( site: Site | null ) {
+	return !! site && ( ! site.jetpack || !! site.options?.is_wpcom_atomic );
+}
+
+function getExistingSearchSource(
+	site: Site,
+	purchases: Purchase[],
+	userId: number | null,
+	routeProduct: string
+) {
+	const subscriptions: SearchSubscription[] = [
+		...( site.products ?? [] )
+			.filter(
+				( product ) =>
+					isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
+			)
+			.map( ( product ) => ( { slug: product.product_slug, owned: !! product.user_is_owner } ) ),
+		...purchases
+			.filter(
+				( purchase ) =>
+					isJetpackSearch( purchase ) &&
+					! isJetpackSearchFree( purchase ) &&
+					! isExpiredOrRemoved( purchase )
+			)
+			.map( ( purchase ) => ( {
+				slug: purchase.productSlug,
+				owned: !! userId && purchase.userId === userId,
+			} ) ),
+	];
+	if ( subscriptions.some( ( { slug, owned } ) => owned && slug === routeProduct ) ) {
 		return 'renewal';
 	}
-	if ( searchProducts.length ) {
+	if ( subscriptions.length ) {
 		return 'product';
 	}
 
@@ -42,7 +78,18 @@ function getExistingSearchSource( site: Site, routeProduct: string ) {
 
 export default function ExistingSearchNotice( { site, siteUrl, product }: Props ) {
 	const translate = useTranslate();
-	const source = siteUrl && site && getExistingSearchSource( site, product );
+	const purchasesSiteId = siteUrl && isHostedOnWpcom( site ) ? site?.ID : null;
+	useQuerySitePurchases( purchasesSiteId );
+	const allPurchases: Purchase[] = useSelector( getPurchases );
+	const purchases = useMemo(
+		() =>
+			purchasesSiteId
+				? allPurchases.filter( ( purchase ) => purchase.siteId === purchasesSiteId )
+				: [],
+		[ allPurchases, purchasesSiteId ]
+	);
+	const userId = useSelector( getCurrentUserId );
+	const source = siteUrl && site && getExistingSearchSource( site, purchases, userId, product );
 
 	if ( ! source ) {
 		return null;

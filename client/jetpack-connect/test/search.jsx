@@ -3,6 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import purchases from 'calypso/state/purchases/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SearchPurchase } from '../search';
 
@@ -40,7 +41,8 @@ describe( 'SearchPurchase', () => {
 				searchSites={ () => [] }
 				checkUrl={ () => {} }
 				recordTracksEvent={ () => {} }
-			/>
+			/>,
+			{ reducers: { purchases } }
 		);
 
 		expect(
