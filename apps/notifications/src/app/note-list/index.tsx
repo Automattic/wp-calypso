@@ -30,8 +30,6 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-const NO_SELECTION: string[] = [];
-
 // DataViews 14 only loads more in response to scroll events, so the rendered
 // window (`perPage` rows) must be tall enough to overflow the panel and produce
 // a scrollbar. The REST client may fetch smaller network pages
@@ -106,15 +104,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		client?.setFilter( filterName );
 	}, [ client, filterName ] );
 
-	// DataViews compares against the rows it keeps, so the open note's row is
-	// marked even when it sits outside the current window.
-	const selection = useMemo(
-		() => ( selectedNoteId ? [ selectedNoteId ] : NO_SELECTION ),
-		[ selectedNoteId ]
-	);
-
-	const onChangeSelection = ( newSelection: string[] ) => {
-		const noteId = newSelection[ 0 ];
+	const onChangeSelection = ( selection: string[] ) => {
+		const noteId = selection[ 0 ];
 		// Toggle off when selecting the same note.
 		setSelectedNoteId( noteId !== selectedNoteId ? noteId : undefined );
 	};
@@ -248,7 +239,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					)
 				}
 				getItemId={ ( item ) => item.id.toString() }
-				selection={ selection }
+				selection={ selectedNoteId ? [ selectedNoteId ] : [] }
 				onChangeView={ handleChangeView }
 				onChangeSelection={ onChangeSelection }
 			>
