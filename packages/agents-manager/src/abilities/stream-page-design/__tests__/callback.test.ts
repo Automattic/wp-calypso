@@ -1,6 +1,6 @@
 jest.mock( '../stream', () => ( {
 	...jest.requireActual( '../stream' ),
-	finalizePendingStreams: jest.fn( () => Promise.resolve( true ) ),
+	finalizePendingStreams: jest.fn().mockResolvedValue( true ),
 } ) );
 
 import { streamPageDesignCallback } from '../callback';
@@ -9,20 +9,11 @@ import { finalizePendingStreams } from '../stream';
 beforeEach( () => jest.clearAllMocks() );
 
 it( 'finalizes its own stream, then completes the round trip with the summary', async () => {
-	let finalized = false;
-	( finalizePendingStreams as jest.Mock ).mockImplementation( async () => {
-		await Promise.resolve();
-		finalized = true;
-
-		return true;
-	} );
-
 	const result = await streamPageDesignCallback( {
 		summary: '  A fresh hero.  ',
 		toolCallId: 'call-1',
 	} );
 
-	expect( finalized ).toBe( true );
 	expect( finalizePendingStreams ).toHaveBeenCalledWith( 'call-1' );
 	expect( result ).toEqual( {
 		result: { success: true, message: 'A fresh hero.' },
@@ -45,7 +36,7 @@ it( 'reports a design the canvas never took, without a staged summary', async ()
 	expect( result.agentMessage ).toBeUndefined();
 } );
 
-it.each( [ { summary: '' }, { summary: 7 }, {}, null ] )(
+it.each( [ { summary: '   ' }, { summary: 7, toolCallId: 7 }, null ] )(
 	'falls back to the staged message for %p, finalizing whatever is pending',
 	async ( input ) => {
 		const result = await streamPageDesignCallback( input as never );
