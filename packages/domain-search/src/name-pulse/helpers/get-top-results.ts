@@ -5,12 +5,8 @@ import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
  * When the label ends with a TLD ("myapp" → "app") that TLD is promoted to the
  * second slot, right after `blog`.
  */
-export function calculateTopTlds(
-	baseName: string,
-	tlds: readonly string[],
-	defaultTopTlds: readonly string[] = NAME_PULSE_TOP_RESULTS_TLDS
-): string[] {
-	const topTlds = [ ...defaultTopTlds ];
+export function calculateTopTlds( baseName: string, tlds: readonly string[] ): string[] {
+	const topTlds = [ ...NAME_PULSE_TOP_RESULTS_TLDS ];
 	const matchedTld = tlds.find( ( tld ) => baseName.endsWith( tld ) );
 
 	if ( ! matchedTld || matchedTld === 'blog' ) {
@@ -24,7 +20,7 @@ export function calculateTopTlds(
 
 	topTlds.splice( 1, 0, matchedTld );
 
-	return topTlds.slice( 0, defaultTopTlds.length );
+	return topTlds.slice( 0, NAME_PULSE_TOP_RESULTS_TLDS.length );
 }
 
 const isCandidate = ( result: NamePulseDomainResult ) =>
@@ -32,27 +28,21 @@ const isCandidate = ( result: NamePulseDomainResult ) =>
 	result.status === NamePulseDomainStatus.WAITING;
 
 /**
- * Preferred TLDs first, then backfill in map insertion order; only available or
+ * Preferred TLDs first, then backfill in list order; only available or
  * still-checking rows qualify.
  */
 export function getTopResults(
-	results: Map< string, NamePulseDomainResult >,
-	topTlds: readonly string[],
-	count: number = NAME_PULSE_TOP_RESULTS_COUNT
+	results: NamePulseDomainResult[],
+	topTlds: readonly string[]
 ): NamePulseDomainResult[] {
-	const all = Array.from( results.values() );
-	const picked: NamePulseDomainResult[] = [];
-	const used = new Set< string >();
+	const preferred: NamePulseDomainResult[] = [];
+	const backfill: NamePulseDomainResult[] = [];
 
-	const pushIfCandidate = ( result: NamePulseDomainResult ) => {
-		if ( picked.length < count && ! used.has( result.domain_name ) && isCandidate( result ) ) {
-			picked.push( result );
-			used.add( result.domain_name );
+	for ( const result of results ) {
+		if ( isCandidate( result ) ) {
+			( topTlds.includes( result.suffix ) ? preferred : backfill ).push( result );
 		}
-	};
+	}
 
-	all.filter( ( result ) => topTlds.includes( result.suffix ) ).forEach( pushIfCandidate );
-	all.forEach( pushIfCandidate );
-
-	return picked;
+	return [ ...preferred, ...backfill ].slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
 }

@@ -1,10 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useEvent } from '@wordpress/compose';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDomainSearch } from '../../page/context';
 import {
 	NAME_PULSE_AVAILABILITY_BATCH_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
 	NamePulseDomainStatus,
+	pickPricing,
 	type NamePulseDomainUpdate,
 } from '../helpers';
 import type { NamePulseAvailabilityEntry } from '@automattic/api-core';
@@ -12,7 +14,7 @@ import type { NamePulseAvailabilityEntry } from '@automattic/api-core';
 /**
  * Unavailable entries carry no pricing, so only `status` changes for them.
  */
-export const toAvailabilityUpdate = (
+const toAvailabilityUpdate = (
 	domainName: string,
 	entry: NamePulseAvailabilityEntry
 ): NamePulseDomainUpdate => {
@@ -26,14 +28,7 @@ export const toAvailabilityUpdate = (
 	return {
 		domain_name: domainName,
 		status: NamePulseDomainStatus.AVAILABLE,
-		cost: entry.cost,
-		raw_price: entry.raw_price,
-		sale_cost: entry.sale_cost,
-		currency_code: entry.currency_code,
-		is_premium: !! entry.is_premium,
-		product_id: entry.product_id,
-		product_slug: entry.product_slug,
-		supports_privacy: entry.supports_privacy,
+		...pickPricing( entry ),
 	};
 };
 
@@ -46,17 +41,14 @@ export const toAvailabilityUpdate = (
 export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpdate ) => void ) => {
 	const queryClient = useQueryClient();
 	const { queries } = useDomainSearch();
-	const onUpdateRef = useRef( onUpdate );
-	const queriesRef = useRef( queries );
+	const emitUpdate = useEvent( onUpdate );
+	const availabilityQuery = useEvent( ( batch: string[] ) =>
+		queries.namePulseAvailability( batch )
+	);
 	const timersRef = useRef( new Set< ReturnType< typeof setTimeout > >() );
 	// Names with a request in flight; asking again for rows still WAITING must
 	// not fan out into extra requests.
 	const pendingRef = useRef( new Set< string >() );
-
-	useEffect( () => {
-		onUpdateRef.current = onUpdate;
-		queriesRef.current = queries;
-	}, [ onUpdate, queries ] );
 
 	useEffect( () => {
 		const timers = timersRef.current;
@@ -82,7 +74,7 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 
 				const markUnknown = () => {
 					for ( const domainName of batch ) {
-						onUpdateRef.current( {
+						emitUpdate( {
 							domain_name: domainName,
 							status: NamePulseDomainStatus.UNKNOWN,
 						} );
@@ -103,7 +95,7 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 				};
 
 				queryClient
-					.fetchQuery( queriesRef.current.namePulseAvailability( batch ) )
+					.fetchQuery( availabilityQuery( batch ) )
 					.then( ( data ) => {
 						settle();
 
@@ -114,7 +106,7 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 								continue;
 							}
 
-							onUpdateRef.current( toAvailabilityUpdate( domainName, entry ) );
+							emitUpdate( toAvailabilityUpdate( domainName, entry ) );
 						}
 					} )
 					.catch( () => {
@@ -123,7 +115,7 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 					} );
 			}
 		},
-		[ queryClient ]
+		[ queryClient, emitUpdate, availabilityQuery ]
 	);
 
 	return { checkDomains };

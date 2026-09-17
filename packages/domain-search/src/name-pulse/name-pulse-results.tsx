@@ -17,6 +17,7 @@ export const NamePulseResults = () => {
 		baseName,
 		fqdn,
 		wordCount,
+		keywordEnabled,
 		exactList,
 		keywordResults,
 		topResults,
@@ -30,7 +31,7 @@ export const NamePulseResults = () => {
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
-			<SearchForm />
+			<SearchForm instantSearch />
 			<VStack spacing={ 6 }>
 				<NamePulseResultsSection
 					id="top"
@@ -56,7 +57,7 @@ export const NamePulseResults = () => {
 					onReveal={ revealExact }
 					onUpdate={ updateResult }
 				/>
-				{ wordCount >= 2 && (
+				{ keywordEnabled && (
 					<NamePulseResultsSection
 						id="suggestions"
 						title={ __( 'More suggestions' ) }

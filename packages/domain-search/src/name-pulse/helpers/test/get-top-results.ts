@@ -16,9 +16,6 @@ const row = (
 	source: 'exact',
 } );
 
-const toMap = ( rows: NamePulseDomainResult[] ) =>
-	new Map( rows.map( ( r ) => [ r.domain_name, r ] ) );
-
 describe( 'calculateTopTlds', () => {
 	const tlds = [ 'blog', 'com', 'org', 'net', 'app', 'dev' ];
 
@@ -48,27 +45,21 @@ describe( 'calculateTopTlds', () => {
 describe( 'getTopResults', () => {
 	const topTlds = [ 'blog', 'com', 'app', 'dev' ];
 
-	it( 'returns at most `count` results', () => {
-		const map = toMap( [
-			row( 'test.com' ),
-			row( 'test.blog' ),
-			row( 'test.app' ),
-			row( 'test.dev' ),
-		] );
+	it( 'returns at most three results', () => {
+		const rows = [ row( 'test.com' ), row( 'test.blog' ), row( 'test.app' ), row( 'test.dev' ) ];
 
-		expect( getTopResults( map, topTlds ) ).toHaveLength( 3 );
-		expect( getTopResults( map, topTlds, 2 ) ).toHaveLength( 2 );
+		expect( getTopResults( rows, topTlds ) ).toHaveLength( 3 );
 	} );
 
 	it( 'prefers top TLDs that are available or waiting', () => {
-		const map = toMap( [
+		const rows = [
 			row( 'test.net' ),
 			row( 'test.com', NamePulseDomainStatus.TAKEN ),
 			row( 'test.blog', NamePulseDomainStatus.WAITING ),
 			row( 'test.app' ),
-		] );
+		];
 
-		expect( getTopResults( map, topTlds ).map( ( r ) => r.domain_name ) ).toEqual( [
+		expect( getTopResults( rows, topTlds ).map( ( r ) => r.domain_name ) ).toEqual( [
 			'test.blog',
 			'test.app',
 			'test.net',
@@ -76,17 +67,17 @@ describe( 'getTopResults', () => {
 	} );
 
 	it( 'skips taken domains entirely', () => {
-		const map = toMap( [
+		const rows = [
 			row( 'test.com', NamePulseDomainStatus.TAKEN ),
 			row( 'test.net', NamePulseDomainStatus.TAKEN ),
-		] );
+		];
 
-		expect( getTopResults( map, topTlds ) ).toEqual( [] );
+		expect( getTopResults( rows, topTlds ) ).toEqual( [] );
 	} );
 
 	it( 'never returns the same domain twice', () => {
-		const map = toMap( [ row( 'test.com' ) ] );
+		const rows = [ row( 'test.com' ) ];
 
-		expect( getTopResults( map, topTlds ) ).toHaveLength( 1 );
+		expect( getTopResults( rows, topTlds ) ).toHaveLength( 1 );
 	} );
 } );

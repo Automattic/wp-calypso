@@ -23,12 +23,6 @@ export const NAME_PULSE_INITIAL_CHECK_SINGLE_WORD = 36;
 export const NAME_PULSE_INITIAL_CHECK_MULTI_WORD = 24;
 
 /**
- * Word count at which the search switches to AI mode (creative suggestions,
- * exact grid hidden).
- */
-export const NAME_PULSE_AI_MODE_MIN_WORDS = 4;
-
-/**
  * How long skeleton slots and "checking" rows wait for a response before giving up.
  */
 export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;

@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useDebounce, useViewportMatch } from '@wordpress/compose';
+import { useDebounce, useEvent, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -24,17 +24,19 @@ const PLACEHOLDER_PHRASES = [
 
 const INSTANT_SEARCH_DEBOUNCE_MS = 300;
 
-export const SearchForm = () => {
+interface SearchFormProps {
+	instantSearch?: boolean;
+}
+
+export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
 	const {
 		query,
 		setQuery,
-		config,
 		events: { onSubmitButtonClick },
 	} = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
-	// Name Pulse searches as you type; every other mode is submit-only.
-	const isInstantSearch = config.showNamePulseSearch;
-	const debouncedSetQuery = useDebounce( setQuery, INSTANT_SEARCH_DEBOUNCE_MS );
+	const stableSetQuery = useEvent( setQuery );
+	const debouncedSetQuery = useDebounce( stableSetQuery, INSTANT_SEARCH_DEBOUNCE_MS );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -62,7 +64,7 @@ export const SearchForm = () => {
 		ref: inputRef,
 		value: localQuery,
 		onChange: ( value: string ) => {
-			if ( ! isInstantSearch ) {
+			if ( ! instantSearch ) {
 				setLocalQuery( value.trim() );
 				return;
 			}

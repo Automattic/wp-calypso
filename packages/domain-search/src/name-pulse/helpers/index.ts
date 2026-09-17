@@ -3,7 +3,7 @@ export * from './detect-fqdn';
 export * from './exclude-domains';
 export * from './generate-exact-matches';
 export * from './get-top-results';
+export * from './pricing';
 export * from './result-status';
 export * from './sanitize';
-export * from './search-mode';
 export * from './types';

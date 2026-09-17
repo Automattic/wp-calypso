@@ -5,6 +5,7 @@ import { Button, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
@@ -12,12 +13,13 @@ import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal, DomainSuggestionBadge } from '../../ui';
 import {
 	NamePulseDomainStatus,
+	pickPricing,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
 } from '../helpers';
 import type { DomainAvailability } from '@automattic/api-core';
 
-export interface NamePulseResultRowProps {
+interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
 	/** Receives the real-time verdict so every copy of the row reflects it. */
@@ -28,7 +30,7 @@ const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
 	status === DomainAvailabilityStatus.AVAILABLE ||
 	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
 
-export const toRealtimeUpdate = (
+const toRealtimeUpdate = (
 	domainName: string,
 	availability: DomainAvailability
 ): NamePulseDomainUpdate => {
@@ -37,14 +39,9 @@ export const toRealtimeUpdate = (
 	return {
 		domain_name: domainName,
 		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
+		...pickPricing( availability ),
 		cost: available ? availability.cost : undefined,
-		raw_price: availability.raw_price,
-		sale_cost: availability.sale_cost,
-		currency_code: availability.currency_code,
 		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		product_id: availability.product_id,
-		product_slug: availability.product_slug,
-		supports_privacy: availability.supports_privacy,
 		vendor: availability.root_domain_provider,
 		is_realtime: true,
 	};
@@ -62,15 +59,17 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 		return null;
 	}
 
-	if ( typeof saleCost === 'number' ) {
-		return (
-			<span className="name-pulse-row__price name-pulse-row__price--sale">
-				<span className="name-pulse-row__price-line">
-					<Text weight={ 600 }>{ formatPrice( saleCost, currencyCode ) }</Text>
-					<Text size={ 12 } variant="muted">
-						{ __( '/first year' ) }
-					</Text>
-				</span>
+	const isSale = typeof saleCost === 'number';
+
+	return (
+		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
+			<span className="name-pulse-row__price-line">
+				<Text weight={ 600 }>{ isSale ? formatPrice( saleCost, currencyCode ) : yearlyPrice }</Text>
+				<Text size={ 12 } variant="muted">
+					{ isSale ? __( '/first year' ) : __( '/year' ) }
+				</Text>
+			</span>
+			{ isSale && (
 				<Text size={ 12 } variant="muted">
 					{ sprintf(
 						// translators: %(price)s is the domain renewal price.
@@ -78,18 +77,7 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 						{ price: yearlyPrice }
 					) }
 				</Text>
-			</span>
-		);
-	}
-
-	return (
-		<span className="name-pulse-row__price">
-			<span className="name-pulse-row__price-line">
-				<Text weight={ 600 }>{ yearlyPrice }</Text>
-				<Text size={ 12 } variant="muted">
-					{ __( '/year' ) }
-				</Text>
-			</span>
+			) }
 		</span>
 	);
 };
@@ -98,7 +86,8 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
-	const [ trademarkClaimModalOpen, setTrademarkClaimModalOpen ] = useState( false );
+	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
+		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
 
 	const {
 		domain_name: domainName,
@@ -154,7 +143,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 					position,
 					price_rule: DomainPriceRule.PRICE,
 				} );
-				setTrademarkClaimModalOpen( true );
+				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
 				return { addedToCart: false };
 			}
 
@@ -174,10 +163,6 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		networkMode: 'always',
 		retry: false,
 	} );
-
-	const trademarkClaimsNoticeInfo = queryClient.getQueryData< DomainAvailability >(
-		queries.domainAvailability( domainName ).queryKey
-	)?.trademark_claims_notice_info;
 
 	return (
 		<div
@@ -229,15 +214,15 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 					{ error.message }
 				</Text>
 			) }
-			{ trademarkClaimsNoticeInfo && trademarkClaimModalOpen && (
+			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
 					trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
 					onAccept={ () => {
-						setTrademarkClaimModalOpen( false );
+						setTrademarkClaimsNoticeInfo( undefined );
 						toggleCart( { acceptedTrademarkClaim: true } );
 					} }
-					onClose={ () => setTrademarkClaimModalOpen( false ) }
+					onClose={ () => setTrademarkClaimsNoticeInfo( undefined ) }
 				/>
 			) }
 		</div>

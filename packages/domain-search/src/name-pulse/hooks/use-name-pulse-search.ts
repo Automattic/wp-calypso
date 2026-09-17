@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
 import {
 	calculateTopTlds,
@@ -7,13 +8,13 @@ import {
 	excludeDomains,
 	generateExactMatches,
 	getTopResults,
-	getWordCount,
+	isHiddenStatus,
 	mergeResultUpdate,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
-	NAME_PULSE_TOP_RESULTS_COUNT,
 	NamePulseDomainStatus,
 	needsAvailabilityCheck,
+	pickPricing,
 	sanitizeDomainInput,
 	sanitizeKeywordInput,
 	toDomainNameSet,
@@ -25,11 +26,6 @@ import { useNamePulseAvailability } from './use-name-pulse-availability';
 import type { NamePulseSuggestion } from '@automattic/api-core';
 
 const EMPTY_RESULTS: NamePulseDomainResult[] = [];
-
-const getSuffix = ( domainName: string ) => {
-	const dot = domainName.indexOf( '.' );
-	return dot === -1 ? '' : domainName.slice( dot + 1 );
-};
 
 /**
  * Suggestions come back pre-filtered for availability by the providers, so they
@@ -47,16 +43,9 @@ const toSuggestionResults = (
 		.sort( ( a, b ) => b.relevance - a.relevance )
 		.map( ( suggestion ) => ( {
 			domain_name: suggestion.domain_name,
-			suffix: getSuffix( suggestion.domain_name ),
+			suffix: getTld( suggestion.domain_name ),
 			status: NamePulseDomainStatus.AVAILABLE,
-			cost: suggestion.cost,
-			raw_price: suggestion.raw_price,
-			sale_cost: suggestion.sale_cost,
-			currency_code: suggestion.currency_code,
-			is_premium: !! suggestion.is_premium,
-			product_id: suggestion.product_id,
-			product_slug: suggestion.product_slug,
-			supports_privacy: suggestion.supports_privacy,
+			...pickPricing( suggestion ),
 			relevance: suggestion.relevance,
 			vendor: suggestion.vendor,
 			source,
@@ -84,8 +73,8 @@ export const useNamePulseSearch = ( query: string ) => {
 		: sanitizeDomainInput( hasMultipleWords ? keywordQuery : trimmed );
 	const fqdn = fqdnInfo?.isFqdn ? fqdnInfo.fullDomain : undefined;
 	const fqdnTld = fqdnInfo?.isFqdn ? fqdnInfo.tld : '';
-	const singleWordCount = baseName ? 1 : 0;
-	const wordCount = hasMultipleWords ? getWordCount( keywordQuery ) : singleWordCount;
+	const words = hasMultipleWords ? keywordQuery : baseName;
+	const wordCount = words ? words.split( ' ' ).length : 0;
 	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
 	const isLoadingTlds = isPendingTlds && baseName.length >= 2;
 
@@ -190,22 +179,15 @@ export const useNamePulseSearch = ( query: string ) => {
 	const rawExactList = useMemo(
 		() =>
 			Array.from( exactResults.values() ).filter(
-				( result ) =>
-					result.source !== 'fqdn' &&
-					( result.status < NamePulseDomainStatus.INVALID ||
-						result.status === NamePulseDomainStatus.UNKNOWN )
+				( result ) => result.source !== 'fqdn' && ! isHiddenStatus( result.status )
 			),
 		[ exactResults ]
 	);
 
-	const topResults = useMemo( () => {
-		const withoutFqdn = new Map( exactResults );
-		if ( fqdn ) {
-			withoutFqdn.delete( fqdn );
-		}
-
-		return getTopResults( withoutFqdn, topTlds, NAME_PULSE_TOP_RESULTS_COUNT );
-	}, [ exactResults, fqdn, topTlds ] );
+	const topResults = useMemo(
+		() => getTopResults( rawExactList, topTlds ),
+		[ rawExactList, topTlds ]
+	);
 
 	// Top results backfill from rows that were not in the initial batch (for
 	// example after that batch failed); make sure whatever is featured gets
@@ -247,6 +229,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		baseName,
 		fqdn,
 		wordCount,
+		keywordEnabled,
 		exactList,
 		keywordResults,
 		topResults,
