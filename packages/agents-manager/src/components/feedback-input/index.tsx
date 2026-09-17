@@ -9,7 +9,8 @@
  * the page stays interactive.
  */
 import { Button, Spinner, TextareaControl } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
+import { useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './style.scss';
 
@@ -27,19 +28,39 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const overlayRef = useRef< HTMLDivElement | null >( null );
 	const rootRef = useRef< HTMLDivElement | null >( null );
+	const backdropPressRef = useRef( false );
 	const isMountedRef = useRef( true );
 	const isDialog = variant === 'dialog';
+	// Captures the opener when the ref attaches, before any effect runs, and
+	// only hands focus back if it is still inside the dialog on close.
+	const dialogRef = useMergeRefs( [ rootRef, useFocusReturn() ] );
+
+	useEffect( () => {
+		isMountedRef.current = true;
+
+		return () => {
+			isMountedRef.current = false;
+
+			if ( timeoutRef.current ) {
+				clearTimeout( timeoutRef.current );
+			}
+		};
+	}, [] );
+
+	useEffect( () => {
+		rootRef.current?.querySelector( 'textarea' )?.focus();
+	}, [] );
 
 	// Siblings mounted while the dialog is open (context cards arrive on their
 	// own schedule) get the same treatment as the ones present at open time.
-	useEffect( () => {
+	// A layout effect, so the cleanup lifts `inert` before the ref callbacks
+	// detach and focus goes back to the opener.
+	useLayoutEffect( () => {
 		const overlay = overlayRef.current;
 		const parent = overlay?.parentElement;
-
 		if ( ! isDialog || ! overlay || ! parent ) {
 			return;
 		}
-
 		const inerted = new Set< Element >();
 		const inertSiblings = () => {
 			Array.from( parent.children ).forEach( ( element ) => {
@@ -49,9 +70,7 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 				}
 			} );
 		};
-
 		inertSiblings();
-
 		const observer = new MutationObserver( inertSiblings );
 		observer.observe( parent, { childList: true } );
 
@@ -60,52 +79,6 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 			inerted.forEach( ( element ) => element.removeAttribute( 'inert' ) );
 		};
 	}, [ isDialog ] );
-
-	useEffect( () => {
-		isMountedRef.current = true;
-		// Like `useFocusReturn`: whatever had focus when the dialog opened (the
-		// thumbs-down button for keyboard users) gets it back on close. This
-		// effect is declared after the inert one so its cleanup runs once the
-		// opener is interactive again.
-		const opener = isDialog ? document.activeElement : null;
-		rootRef.current?.querySelector( 'textarea' )?.focus();
-
-		return () => {
-			isMountedRef.current = false;
-			if ( timeoutRef.current ) {
-				clearTimeout( timeoutRef.current );
-			}
-			if ( opener instanceof HTMLElement && opener.isConnected ) {
-				opener.focus( { preventScroll: true } );
-			}
-		};
-	}, [ isDialog ] );
-
-	// The conversation view closes the whole chat on any Escape that reaches
-	// the document unhandled, wherever focus is. While the dialog is open,
-	// Escape belongs to it: capture the press first and cancel the feedback
-	// instead (or swallow it while a submission is in flight).
-	useEffect( () => {
-		if ( ! isDialog ) {
-			return;
-		}
-
-		const handleDocumentKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.key !== 'Escape' ) {
-				return;
-			}
-
-			event.preventDefault();
-
-			if ( ! isSubmitting ) {
-				onCancel();
-			}
-		};
-
-		document.addEventListener( 'keydown', handleDocumentKeyDown, true );
-
-		return () => document.removeEventListener( 'keydown', handleDocumentKeyDown, true );
-	}, [ isDialog, isSubmitting, onCancel ] );
 
 	// While submitting, and once the form gives way to the status message, no
 	// control inside the dialog can hold focus; the dialog itself takes it so
@@ -170,16 +143,27 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 		}
 	};
 
-	const handleBackdropClick = ( event: React.MouseEvent ) => {
-		if ( event.target === event.currentTarget ) {
+	// `preventDefault` tells the conversation view's document-level Escape
+	// listener that this press was handled, so it does not close the chat.
+	const handleDialogKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Escape' ) {
+			event.preventDefault();
 			dismiss();
 		}
 	};
 
-	// The floating chat starts a drag on any pointerdown outside its
-	// non-draggable slots; the dialog is not one of them.
-	const handlePointerDown = ( event: React.PointerEvent ) => {
-		event.stopPropagation();
+	// A click lands on the backdrop after any press released over it, including
+	// a text selection dragged out of the textarea; only a press that also
+	// started on the backdrop dismisses.
+	const handleBackdropPointerDown = ( event: React.PointerEvent ) => {
+		backdropPressRef.current = event.target === event.currentTarget;
+	};
+
+	const handleBackdropClick = ( event: React.MouseEvent ) => {
+		if ( backdropPressRef.current && event.target === event.currentTarget ) {
+			dismiss();
+		}
+		backdropPressRef.current = false;
 	};
 
 	const renderContent = () => {
@@ -242,20 +226,23 @@ export default function FeedbackInput( { onSubmit, onCancel, variant = 'inline' 
 
 	return (
 		// The backdrop is a click target for dismissal, not a control; the dialog inside is the focus surface.
+		// `data-slot="chat-dialog"` keeps the floating chat from starting a drag here.
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
 			ref={ overlayRef }
 			className="agents-manager-feedback-overlay"
+			data-slot="chat-dialog"
+			onPointerDown={ handleBackdropPointerDown }
 			onClick={ handleBackdropClick }
-			onPointerDown={ handlePointerDown }
 		>
-			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */ }
+			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */ }
 			<div
-				ref={ rootRef }
+				ref={ dialogRef }
 				className="agents-manager-feedback-input"
 				role="dialog"
 				aria-label={ __( 'Send feedback', __i18n_text_domain__ ) }
 				tabIndex={ -1 }
+				onKeyDown={ handleDialogKeyDown }
 			>
 				<div className="agents-manager-feedback-input__inner">{ renderContent() }</div>
 			</div>

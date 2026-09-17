@@ -341,24 +341,19 @@ describe( 'FeedbackInput', () => {
 			} );
 		} );
 
-		it( 'takes Escape before the chat does, even with focus outside the dialog', async () => {
+		it( 'marks Escape as handled so the chat does not close on it', async () => {
 			const user = userEvent.setup();
-			const outside = document.createElement( 'button' );
-			document.body.appendChild( outside );
 			const chatListener = jest.fn( ( event: KeyboardEvent ) => event.defaultPrevented );
 			document.addEventListener( 'keydown', chatListener );
 			render(
 				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
 
-			outside.focus();
 			await user.keyboard( '{Escape}' );
 
 			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
 			expect( chatListener ).toHaveReturnedWith( true );
-
 			document.removeEventListener( 'keydown', chatListener );
-			outside.remove();
 		} );
 
 		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
@@ -457,17 +452,27 @@ describe( 'FeedbackInput', () => {
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 		} );
 
-		it( 'keeps pointer presses from bubbling to the draggable chat', () => {
-			const onPointerDown = jest.fn();
-			render(
-				<div onPointerDown={ onPointerDown }>
-					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
-				</div>
+		it( 'does not dismiss when a press started in the dialog is released over the backdrop', () => {
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
+			const overlay = container.querySelector( '.agents-manager-feedback-overlay' )!;
 
 			fireEvent.pointerDown( screen.getByRole( 'textbox' ) );
+			fireEvent.click( overlay );
 
-			expect( onPointerDown ).not.toHaveBeenCalled();
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+		} );
+
+		it( 'marks the overlay as a slot the floating chat does not drag from', () => {
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			expect( container.querySelector( '.agents-manager-feedback-overlay' ) ).toHaveAttribute(
+				'data-slot',
+				'chat-dialog'
+			);
 		} );
 
 		it( 'returns focus to the element that opened it when closed', () => {
@@ -484,6 +489,24 @@ describe( 'FeedbackInput', () => {
 
 			expect( opener ).toHaveFocus();
 			opener.remove();
+		} );
+
+		it( 'leaves focus alone when the user has already moved on before it closes', () => {
+			const opener = document.createElement( 'button' );
+			const elsewhere = document.createElement( 'button' );
+			document.body.append( opener, elsewhere );
+			opener.focus();
+
+			const { unmount } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+			elsewhere.focus();
+
+			unmount();
+
+			expect( elsewhere ).toHaveFocus();
+			opener.remove();
+			elsewhere.remove();
 		} );
 	} );
 

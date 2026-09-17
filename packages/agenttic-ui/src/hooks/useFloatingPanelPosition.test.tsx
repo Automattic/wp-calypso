@@ -195,6 +195,27 @@ describe( 'useFloatingPanelPosition', () => {
 		expect( startSpy ).not.toHaveBeenCalled();
 	} );
 
+	it( 'does not start a move-drag from inside a chat dialog', async () => {
+		harness = renderHook( {} );
+		await harness.render();
+		const result = harness.captured.current!;
+		const startSpy = vi.spyOn( result.dragControls, 'start' );
+
+		const dialog = document.createElement( 'div' );
+		dialog.setAttribute( 'data-slot', 'chat-dialog' );
+		const textarea = document.createElement( 'textarea' );
+		dialog.appendChild( textarea );
+		document.body.appendChild( dialog );
+		result.handlePointerDown( {
+			target: textarea,
+			nativeEvent: {},
+			preventDefault: () => {},
+		} as unknown as React.PointerEvent< HTMLDivElement > );
+
+		expect( startSpy ).not.toHaveBeenCalled();
+		dialog.remove();
+	} );
+
 	it( 'does not start a move-drag when the target is from an iframe', async () => {
 		harness = renderHook( {} );
 		await harness.render();
