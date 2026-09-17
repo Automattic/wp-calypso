@@ -76,8 +76,6 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
-// Reads live read state rather than the item: DataViews keeps its own copy of
-// rendered rows and only refreshes those in the current window.
 const NoteBadge = ( { note }: { note: Note } ) => {
 	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
 
