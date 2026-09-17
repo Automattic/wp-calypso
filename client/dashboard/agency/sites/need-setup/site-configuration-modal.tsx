@@ -44,14 +44,17 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 
 	const { alternative } = siteAddress;
 	let help: ReactNode = __( 'You can connect a custom domain once the site is created.' );
+	let invalidMessage: string | undefined;
 
 	if ( siteAddress.formatError ) {
-		help = siteAddress.formatError;
+		invalidMessage = siteAddress.formatError;
 	} else if ( siteAddress.isChecking ) {
 		help = __( 'Checking availability…' );
 	} else if ( siteAddress.isTaken ) {
+		invalidMessage = __( 'Sorry, that address is taken.' );
+		// The validity message is plain text, so the clickable suggestion stays in the help.
 		help = alternative
-			? createInterpolateElement( __( 'Sorry, that address is taken. How about <suggestion />?' ), {
+			? createInterpolateElement( __( 'How about <suggestion />?' ), {
 					suggestion: (
 						<Button
 							variant="link"
@@ -64,7 +67,7 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 						</Button>
 					),
 			  } )
-			: __( 'Sorry, that address is taken.' );
+			: '';
 	}
 
 	return (
@@ -77,6 +80,7 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 			// a bare string for an element here crashes React under Google
 			// Translate (react/react#11538).
 			help={ <span>{ help }</span> }
+			customValidity={ invalidMessage ? { type: 'invalid', message: invalidMessage } : undefined }
 			disabled={ siteAddress.isSuggesting }
 			spellCheck="false"
 			onChange={ ( value?: string ) => siteAddress.setAddress( ( value ?? '' ).toLowerCase() ) }

@@ -113,6 +113,7 @@ describe( '<SiteConfigurationModal>', () => {
 		expect(
 			await screen.findByRole( 'button', { name: 'ramblingthoughts' }, { timeout: 3000 } )
 		).toBeVisible();
+		await waitFor( () => expect( input ).toBeInvalid() );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
 	} );
 
@@ -162,10 +163,13 @@ describe( '<SiteConfigurationModal>', () => {
 
 		await user.clear( input );
 		await user.type( input, 'not valid' );
+		// Validity messages show once the field has been left.
+		await user.tab();
 
 		expect(
 			await screen.findByText( 'Your site address can only contain letters and numbers.' )
 		).toBeVisible();
+		await waitFor( () => expect( input ).toBeInvalid() );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
 	} );
 } );
