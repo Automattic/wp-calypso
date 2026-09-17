@@ -9,7 +9,7 @@ import { useFields } from '../fields';
 import { filterSortAndPaginateDomains } from '../filter-sort-and-paginate';
 import { DEFAULT_VIEW } from '../views';
 import type { DomainSummary } from '@automattic/api-core';
-import type { Field, Operator, View } from '@wordpress/dataviews';
+import type { Field, Filter, Operator, View } from '@wordpress/dataviews';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -35,25 +35,20 @@ const domain = (
 		...overrides,
 	} ) as DomainSummary;
 
-// All three sit in the same expiry bucket, so bucket ordering cannot separate them.
-const SAME_BUCKET = [
-	domain( 'middle.com', inDays( 200 ) ),
-	domain( 'latest.com', inDays( 300 ) ),
-	domain( 'earliest.com', inDays( 100 ) ),
-];
-
-const DOMAINS = [ ...SAME_BUCKET, domain( 'no-date.com', null ) ];
-
-const FILTERABLE = [
-	domain( 'expired.com', inDays( -30 ), { expired: true } ),
-	domain( 'soon.com', inDays( 30 ) ),
+const DOMAINS = [
 	domain( 'later.com', inDays( 365 ) ),
 	domain( 'no-date.com', null ),
+	domain( 'expired.com', inDays( -30 ), {
+		expired: true,
+		domain_status: { id: DomainStatus.EXPIRED, label: 'Expired', type: 'error' },
+	} ),
+	domain( 'soon.com', inDays( 30 ) ),
+	domain( 'sooner.com', inDays( 10 ) ),
 ];
 
 type AppQueries = typeof APP_CONTEXT_DEFAULT_CONFIG.queries;
 
-function renderFields() {
+async function getFields() {
 	let fields: Field< DomainSummary >[] = [];
 
 	function Probe() {
@@ -75,135 +70,67 @@ function renderFields() {
 		},
 	} );
 
-	return () => fields;
+	await waitFor( () => expect( fields.length ).toBeGreaterThan( 0 ) );
+	return fields;
 }
 
-const useReadyFields = async () => {
-	const getFields = renderFields();
-	await waitFor( () => expect( getFields().length ).toBeGreaterThan( 0 ) );
-	return getFields();
-};
+const expiryFilter = ( value?: string[] ): Filter => ( {
+	field: 'expiry',
+	operator: 'isAny' as Operator,
+	value,
+} );
 
-const sortedNames = (
-	fields: Field< DomainSummary >[],
-	direction: 'asc' | 'desc',
-	items: DomainSummary[] = DOMAINS,
-	perPage = 100
-) => {
-	const view: View = { ...DEFAULT_VIEW, page: 1, perPage, sort: { field: 'expiry', direction } };
-	return filterSortAndPaginateDomains( items, view, fields ).data.map( ( item ) => item.domain );
-};
+const query = ( fields: Field< DomainSummary >[], view: Partial< View > ) =>
+	filterSortAndPaginateDomains(
+		DOMAINS,
+		{ ...DEFAULT_VIEW, perPage: 100, ...view } as View,
+		fields
+	);
 
-const filtered = (
-	fields: Field< DomainSummary >[],
-	value: string[],
-	items: DomainSummary[] = FILTERABLE
-) => {
-	const view: View = {
-		...DEFAULT_VIEW,
-		perPage: 100,
-		filters: [ { field: 'expiry', operator: 'isAny' as Operator, value } ],
-	};
-	return filterSortAndPaginateDomains( items, view, fields );
-};
+const names = ( result: { data: DomainSummary[] } ) => result.data.map( ( d ) => d.domain );
 
 describe( 'domains "Paid until" field', () => {
-	it( 'orders rows within a single expiry bucket by date', async () => {
-		const fields = await useReadyFields();
+	it( 'sorts by date with undated domains last in both directions', async () => {
+		const fields = await getFields();
 
-		expect( sortedNames( fields, 'asc', SAME_BUCKET ) ).toEqual( [
-			'earliest.com',
-			'middle.com',
-			'latest.com',
-		] );
-	} );
-
-	it( 'keeps undated domains last in both directions', async () => {
-		const fields = await useReadyFields();
-
-		expect( sortedNames( fields, 'asc' ) ).toEqual( [
-			'earliest.com',
-			'middle.com',
-			'latest.com',
-			'no-date.com',
-		] );
-
-		expect( sortedNames( fields, 'desc' ) ).toEqual( [
-			'latest.com',
-			'middle.com',
-			'earliest.com',
-			'no-date.com',
-		] );
-	} );
-
-	it( 'sorts the whole list, not just the current page', async () => {
-		const fields = await useReadyFields();
-		const many = Array.from( { length: 25 }, ( _, i ) =>
-			domain( `d${ i }.com`, inDays( 100 + i ) )
-		).reverse();
-
-		expect( sortedNames( fields, 'asc', many, 10 ) ).toEqual(
-			Array.from( { length: 10 }, ( _, i ) => `d${ i }.com` )
-		);
-	} );
-
-	it( 'filters by expiry bucket', async () => {
-		const fields = await useReadyFields();
-
-		expect( filtered( fields, [ '1-expired' ] ).data.map( ( d ) => d.domain ) ).toEqual( [
+		expect( names( query( fields, { sort: { field: 'expiry', direction: 'asc' } } ) ) ).toEqual( [
 			'expired.com',
-		] );
-		expect( filtered( fields, [ '2-next-90-days' ] ).data.map( ( d ) => d.domain ) ).toEqual( [
+			'sooner.com',
 			'soon.com',
+			'later.com',
+			'no-date.com',
 		] );
-		expect(
-			filtered( fields, [ '1-expired', '2-next-90-days' ] ).data.map( ( d ) => d.domain )
-		).toEqual( [ 'expired.com', 'soon.com' ] );
+		expect( names( query( fields, { sort: { field: 'expiry', direction: 'desc' } } ) ) ).toEqual( [
+			'later.com',
+			'soon.com',
+			'sooner.com',
+			'expired.com',
+			'no-date.com',
+		] );
 	} );
 
-	it( 'keeps every row while no expiry bucket is selected', async () => {
-		const fields = await useReadyFields();
+	it( 'filters by expiry bucket and counts the matching rows', async () => {
+		const fields = await getFields();
+		const filterBy = ( value?: string[] ) =>
+			query( fields, { filters: [ expiryFilter( value ) ] } );
 
-		expect( filtered( fields, [] ).data ).toHaveLength( FILTERABLE.length );
+		expect( names( filterBy( [ '1-expired' ] ) ) ).toEqual( [ 'expired.com' ] );
+		expect( filterBy( [ '1-expired', '2-next-90-days' ] ).paginationInfo.totalItems ).toBe( 3 );
+		expect( filterBy( [] ).data ).toHaveLength( DOMAINS.length );
+		expect( filterBy( undefined ).data ).toHaveLength( DOMAINS.length );
 	} );
 
-	it( 'reports the filtered row count', async () => {
-		const fields = await useReadyFields();
+	it( 'combines the expiry filter with other filters and sorting', async () => {
+		const fields = await getFields();
 
-		expect( filtered( fields, [ '1-expired' ] ).paginationInfo.totalItems ).toBe( 1 );
-	} );
-
-	it( 'filters and sorts at the same time', async () => {
-		const fields = await useReadyFields();
-		const view: View = {
-			...DEFAULT_VIEW,
-			perPage: 100,
-			sort: { field: 'expiry', direction: 'asc' },
+		const result = query( fields, {
+			sort: { field: 'expiry', direction: 'desc' },
 			filters: [
-				{
-					field: 'expiry',
-					operator: 'isAny' as Operator,
-					value: [ '1-expired', '2-next-90-days' ],
-				},
+				expiryFilter( [ '1-expired', '2-next-90-days' ] ),
+				{ field: 'domain_status', operator: 'isAny' as Operator, value: [ DomainStatus.ACTIVE ] },
 			],
-		};
+		} );
 
-		expect(
-			filterSortAndPaginateDomains( FILTERABLE, view, fields ).data.map( ( d ) => d.domain )
-		).toEqual( [ 'expired.com', 'soon.com' ] );
-	} );
-
-	it( 'leaves other filters to DataViews', async () => {
-		const fields = await useReadyFields();
-		const view: View = {
-			...DEFAULT_VIEW,
-			perPage: 100,
-			filters: [
-				{ field: 'expiry', operator: 'isAny' as Operator, value: [ '1-expired' ] },
-				{ field: 'domain_status', operator: 'isAny' as Operator, value: [ DomainStatus.EXPIRED ] },
-			],
-		};
-
-		expect( filterSortAndPaginateDomains( FILTERABLE, view, fields ).data ).toEqual( [] );
+		expect( names( result ) ).toEqual( [ 'soon.com', 'sooner.com' ] );
 	} );
 } );

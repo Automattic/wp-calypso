@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
 import { Text } from '../../components/text';
-import { sortNullableDates } from './expiry';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainStatusField } from './field-domain-status';
@@ -13,7 +12,23 @@ import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, SortDirection } from '@wordpress/dataviews';
+
+// DataViews passes `getValue()` output here, not items.
+function sortNullableDates( a: unknown, b: unknown, direction: SortDirection ) {
+	if ( ! a && ! b ) {
+		return 0;
+	}
+	if ( ! a ) {
+		return 1;
+	}
+	if ( ! b ) {
+		return -1;
+	}
+
+	const factor = direction === 'asc' ? 1 : -1;
+	return ( new Date( a as string ).getTime() - new Date( b as string ).getTime() ) * factor;
+}
 
 export const useFields = ( {
 	site,
