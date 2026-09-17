@@ -28,6 +28,7 @@ export function useThankYouRedirect( {
 	automatedTransferStatus,
 	durableTransferCompleted,
 	isTransferredUpload,
+	reinstallSlug = null,
 	halted = false,
 }: {
 	siteId: number;
@@ -44,6 +45,8 @@ export function useThankYouRedirect( {
 	automatedTransferStatus: string | null;
 	durableTransferCompleted: boolean;
 	isTransferredUpload: boolean;
+	/** The wordpress.org slug to install if the transfer dropped the plugin; null when there is none. */
+	reinstallSlug?: string | null;
 	/** The wait has been called off — an error screen is up, so nothing here should keep polling. */
 	halted?: boolean;
 } ) {
@@ -108,6 +111,8 @@ export function useThankYouRedirect( {
 			( ! atomicFlow && currentStep === 0 ) ||
 			( atomicFlow && currentStep === 2 ),
 		installedPlugin,
+		// A zip upload has no slug to reinstall from; its recovery is activation only.
+		reinstallSlug: isRecoveryFlow ? reinstallSlug : null,
 	} );
 	// Every plugin flow lands here the same way: the plugin reads active. For the ones a transfer
 	// drives, that is only true once the transfer is far enough along and the site is reachable, which

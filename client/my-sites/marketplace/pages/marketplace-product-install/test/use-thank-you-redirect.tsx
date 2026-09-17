@@ -8,7 +8,12 @@ import { useThankYouRedirect } from '../use-thank-you-redirect';
 
 // Capture what the recovery hook is wired with.
 let mockRecoveryProps:
-	| { enabled: boolean; canActivate: boolean; ownsActivation: boolean }
+	| {
+			enabled: boolean;
+			canActivate: boolean;
+			ownsActivation: boolean;
+			reinstallSlug: string | null;
+	  }
 	| undefined;
 jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
@@ -206,5 +211,16 @@ describe( 'useThankYouRedirect', () => {
 		mockFreshSite = ATOMIC_READY;
 		render( { atomicFlow: true, pluginActive: true } );
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
+	} );
+
+	it( 'hands the recovery a slug to reinstall only for a plugin the transfer was asked for', async () => {
+		mockFreshSite = ATOMIC_READY;
+		render( { atomicFlow: true, pluginActive: false, reinstallSlug: 'give' } );
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		expect( mockRecoveryProps?.reinstallSlug ).toBe( 'give' );
+
+		render( { ...UPLOAD_PROPS, automatedTransferStatus: transferStates.COMPLETE } );
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		expect( mockRecoveryProps?.reinstallSlug ).toBeNull();
 	} );
 } );

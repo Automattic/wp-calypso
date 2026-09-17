@@ -15,6 +15,14 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 		siteId,
 		plugin,
 	} ) ),
+	installPlugin: jest.fn( ( siteId: number, plugin: unknown ) => ( {
+		type: 'INSTALL_PLUGIN',
+		siteId,
+		plugin,
+	} ) ),
+} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 // Capture what useInterval was scheduled with, and let the test drive the tick.
@@ -27,9 +35,10 @@ jest.mock( 'calypso/lib/interval', () => ( {
 	},
 } ) );
 
-const { fetchSitePlugins, activatePlugin } = jest.requireMock(
+const { fetchSitePlugins, activatePlugin, installPlugin } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
 );
+const { recordTracksEvent } = jest.requireMock( 'calypso/lib/analytics/tracks' );
 
 const INSTALLED = { slug: 'sensei-pro', id: 'sensei-pro/sensei-pro' };
 
@@ -40,6 +49,7 @@ const defaults: Props = {
 	canActivate: true,
 	ownsActivation: true,
 	installedPlugin: INSTALLED,
+	reinstallSlug: 'sensei-pro',
 };
 const render = ( props?: Partial< Props > ) =>
 	renderHook( ( p: Props ) => usePostTransferPluginRecovery( p ), {
@@ -160,5 +170,73 @@ describe( 'usePostTransferPluginRecovery', () => {
 
 		rerender( defaults );
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	// A transfer can report complete without ever installing the plugin it was asked for. Give its
+	// install job a while to land, then do it from here rather than leaving the wait to time out.
+	describe( 'when the transfer dropped the plugin', () => {
+		const pollUntil = ( ms: number ) => {
+			for ( let elapsed = 0; elapsed < ms; elapsed += 3000 ) {
+				elapse( 3000 );
+				tick();
+			}
+		};
+
+		it( 'installs the plugin once it has stayed absent from a usable site for 30s', async () => {
+			render( { installedPlugin: null } );
+			pollUntil( 27000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+
+			pollUntil( 3000 );
+			expect( installPlugin ).toHaveBeenCalledTimes( 1 );
+			expect( installPlugin ).toHaveBeenCalledWith( 1, { slug: 'sensei-pro' } );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_marketplace_install_plugin_reinstall',
+				{ site_id: 1, plugin_slug: 'sensei-pro' }
+			);
+			expect( activatePlugin ).not.toHaveBeenCalled();
+
+			await settle();
+			expect( fetchSitePlugins ).toHaveBeenLastCalledWith( 1 );
+		} );
+
+		it( 'installs at most once', () => {
+			render( { installedPlugin: null } );
+			pollUntil( 120000 );
+			expect( installPlugin ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'counts the absence only while the site is usable', () => {
+			const { rerender } = render( { installedPlugin: null, canActivate: false } );
+			pollUntil( 60000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+
+			rerender( { ...defaults, installedPlugin: null } );
+			pollUntil( 27000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+			pollUntil( 3000 );
+			expect( installPlugin ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'stands down when the plugin shows up on its own', () => {
+			const { rerender } = render( { installedPlugin: null } );
+			pollUntil( 15000 );
+			rerender( defaults );
+			pollUntil( 60000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+			expect( activatePlugin ).toHaveBeenCalled();
+		} );
+
+		it( 'does nothing without a slug to install from (a zip upload)', () => {
+			render( { installedPlugin: null, reinstallSlug: null } );
+			pollUntil( 60000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not install when it does not own the plugin', () => {
+			render( { installedPlugin: null, ownsActivation: false } );
+			pollUntil( 60000 );
+			expect( installPlugin ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
