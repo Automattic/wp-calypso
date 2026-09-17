@@ -8,7 +8,7 @@ import { getMarketplaceHostingSectionRoute } from '../paths';
 import type { Agency } from '@automattic/api-core';
 
 // Shared with the classic dashboard so a dismissal carries over.
-const DISMISS_PREFERENCE = 'pressable-limit-notification-dismissed' as const;
+const DISMISS_PREFERENCE = 'pressable-limit-notification-dismissed';
 
 // The references the API sends, misspelling included.
 const LIMIT_EXCEEDED_REFERENCE = 'pressable_plan_usage_limit_exeeded';
