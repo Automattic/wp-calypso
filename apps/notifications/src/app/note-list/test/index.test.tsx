@@ -22,23 +22,24 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	subject: [ { text: label, ranges: [], media: [] } ],
 } );
 
-const renderTab = (
+const noteListTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
 	clientOverride: Partial< typeof client > = {},
 	selectedNoteId: string | undefined = undefined
-) =>
-	render(
-		<Provider store={ store }>
-			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
-				<NoteList
-					filterName={ filterName }
-					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ noop }
-				/>
-			</AppProvider>
-		</Provider>
-	);
+) => (
+	<Provider store={ store }>
+		<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
+			<NoteList
+				filterName={ filterName }
+				selectedNoteId={ selectedNoteId }
+				setSelectedNoteId={ noop }
+			/>
+		</AppProvider>
+	</Provider>
+);
+
+const renderTab = ( ...args: Parameters< typeof noteListTab > ) => render( noteListTab( ...args ) );
 
 const renderUnread = ( store: ReturnType< typeof initStore > ) =>
 	renderTab( store, 'unread' as FilterName );
@@ -205,18 +206,7 @@ describe( 'NoteList loading state', () => {
 		);
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const renderList = ( selectedNoteId?: string ) => (
-			<Provider store={ store }>
-				<AppProvider client={ client as never } locale="en">
-					<NoteList
-						filterName={ 'unread' as FilterName }
-						selectedNoteId={ selectedNoteId }
-						setSelectedNoteId={ noop }
-					/>
-				</AppProvider>
-			</Provider>
-		);
-		const { container, rerender } = render( renderList() );
+		const { container, rerender } = renderUnread( store );
 		const scroller = container.querySelector( '.dataviews-layout__container' ) as HTMLElement;
 		Object.defineProperties( scroller, {
 			scrollHeight: { configurable: true, value: 4000 },
@@ -232,11 +222,7 @@ describe( 'NoteList loading state', () => {
 		act( () => {
 			store.dispatch( actions.notes.readNote( 1000 ) );
 		} );
-		act( () => {
-			store.dispatch( actions.ui.loadNotes( { filter: 'unread' } ) );
-			store.dispatch( actions.ui.loadedNotes( { filter: 'unread' } ) );
-		} );
-		rerender( renderList( '1000' ) );
+		rerender( noteListTab( store, 'unread' as FilterName, {}, '1000' ) );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 		expect( getRow()?.querySelector( '.is-active' ) ).toBeInTheDocument();
