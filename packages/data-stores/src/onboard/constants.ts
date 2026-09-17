@@ -11,6 +11,7 @@ export enum SiteGoal {
 	Engagement = 'engagement',
 	Porfolio = 'portfolio',
 	Newsletter = 'newsletter',
+	VideoPressChannel = 'videopress-channel',
 	SellPhysical = 'sell-physical',
 	Courses = 'courses',
 	Videos = 'videos',

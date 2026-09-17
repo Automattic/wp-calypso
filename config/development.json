@@ -227,6 +227,7 @@
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
+		"videopress/channel-flow": true,
 		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
 		"wordpress-labs": false,

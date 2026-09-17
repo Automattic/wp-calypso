@@ -124,10 +124,15 @@ export const useCreateSite = () => {
 		mutationFn: async ( {
 			theme,
 			siteIntent,
+			siteTitle: siteTitleOverride,
 		}: {
 			theme: string;
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
+			/**
+			 * Flows whose title step is not `newsletterSetup` pass the title explicitly.
+			 */
+			siteTitle?: string;
 		} ) => {
 			if ( createdSite ) {
 				if ( theme ) {
@@ -150,7 +155,7 @@ export const useCreateSite = () => {
 				flowName,
 				themeSlugWithRepo: theme,
 				siteVisibility: 1,
-				siteTitle,
+				siteTitle: siteTitleOverride ?? siteTitle,
 				// We removed the color option during newsletter onboarding.
 				// But backend still expects/needs a value, so supplying the default.
 				// Ideally should remove this and update code downstream to handle this.
