@@ -8,7 +8,6 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
-	isSeenPostsAvailable,
 	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
@@ -1078,18 +1077,6 @@ export const preferencesReaderRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
-	beforeLoad: async () => {
-		// A failed teams request means "not available", not an error page.
-		let teams;
-		try {
-			( { teams } = await queryClient.ensureQueryData( readTeamsQuery() ) );
-		} catch {
-			teams = undefined;
-		}
-		if ( ! isSeenPostsAvailable( teams ) ) {
-			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
-		}
-	},
 	loader: async () => {
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},

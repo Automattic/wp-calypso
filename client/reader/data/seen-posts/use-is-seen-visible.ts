@@ -8,13 +8,9 @@ import { SeenArgs, useIsSeenEnabled, isPostAnAFKPost } from './use-is-seen-enabl
 export function useIsSeenVisible( { feedId, blogId, post }: SeenArgs ): boolean {
 	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post } );
 
-	if ( ! isSeenEnabled ) {
-		return false;
-	}
-
 	if ( isPostAnAFKPost( post ) ) {
 		return true;
 	}
 
-	return Boolean( post?.is_seen );
+	return isSeenEnabled && Boolean( post?.is_seen );
 }
