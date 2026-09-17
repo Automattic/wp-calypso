@@ -1,4 +1,5 @@
 import {
+	isHiddenStatus,
 	mergeResultUpdate,
 	needsAvailabilityCheck,
 	NamePulseDomainStatus,
@@ -21,6 +22,17 @@ describe( 'needsAvailabilityCheck', () => {
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.TAKEN ) ).toBe( false );
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.INVALID ) ).toBe( false );
 		expect( needsAvailabilityCheck( NamePulseDomainStatus.ERROR ) ).toBe( false );
+	} );
+} );
+
+describe( 'isHiddenStatus', () => {
+	it( 'is true for INVALID and ERROR only', () => {
+		expect( isHiddenStatus( NamePulseDomainStatus.INVALID ) ).toBe( true );
+		expect( isHiddenStatus( NamePulseDomainStatus.ERROR ) ).toBe( true );
+		expect( isHiddenStatus( NamePulseDomainStatus.WAITING ) ).toBe( false );
+		expect( isHiddenStatus( NamePulseDomainStatus.AVAILABLE ) ).toBe( false );
+		expect( isHiddenStatus( NamePulseDomainStatus.TAKEN ) ).toBe( false );
+		expect( isHiddenStatus( NamePulseDomainStatus.UNKNOWN ) ).toBe( false );
 	} );
 } );
 

@@ -12,7 +12,7 @@ export enum NamePulseDomainStatus {
 	UNKNOWN = 5,
 }
 
-export type NamePulseSource = 'exact' | 'fqdn' | 'keyword' | 'ai';
+export type NamePulseSource = 'exact' | 'fqdn' | 'keyword';
 
 export interface NamePulseDomainResult {
 	domain_name: string;
