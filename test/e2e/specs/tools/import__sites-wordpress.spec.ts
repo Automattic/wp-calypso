@@ -148,7 +148,14 @@ test.describe(
 					await page
 						.getByRole( 'searchbox', { name: 'Search', exact: true } )
 						.fill( sitePublic.blog_details.site_slug );
-					const selectSite = page.getByRole( 'button', { name: 'Select this site', exact: true } );
+					const destinationSite = page
+						.getByRole( 'link', { name: sitePublic.blog_details.site_slug } )
+						.locator( '..' )
+						.locator( '..' );
+					const selectSite = destinationSite.getByRole( 'button', {
+						name: 'Select this site',
+						exact: true,
+					} );
 					await expect( selectSite ).toHaveCount( 1 );
 					await selectSite.click();
 					await page
