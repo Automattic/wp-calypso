@@ -57,7 +57,9 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
 
 	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );
-	redirectTo && newurl.searchParams.set( 'redirect_to', redirectTo );
+	if ( redirectTo ) {
+		newurl.searchParams.set( 'redirect_to', redirectTo );
+	}
 
 	return newurl.toString();
 }

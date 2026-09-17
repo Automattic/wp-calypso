@@ -360,23 +360,24 @@ const getContributorType = ( externalContributors, userId ) => {
 };
 
 const withExternalContributor = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const { siteId, user } = props;
-		const { data: externalContributors } = useExternalContributorsQuery( siteId );
-		const { removeExternalContributor } = useRemoveExternalContributorMutation();
-		const contributorType = getContributorType(
-			externalContributors,
-			user?.linked_user_ID ?? user?.ID
-		);
+	( Wrapped ) =>
+		function WithExternalContributor( props ) {
+			const { siteId, user } = props;
+			const { data: externalContributors } = useExternalContributorsQuery( siteId );
+			const { removeExternalContributor } = useRemoveExternalContributorMutation();
+			const contributorType = getContributorType(
+				externalContributors,
+				user?.linked_user_ID ?? user?.ID
+			);
 
-		return (
-			<Wrapped
-				{ ...props }
-				contributorType={ contributorType }
-				removeExternalContributor={ removeExternalContributor }
-			/>
-		);
-	},
+			return (
+				<Wrapped
+					{ ...props }
+					contributorType={ contributorType }
+					removeExternalContributor={ removeExternalContributor }
+				/>
+			);
+		},
 	'WithExternalContributor'
 );
 

@@ -86,7 +86,7 @@ const FoldableFAQ: FC< FAQProps > = ( {
 			isExpanded,
 			height: targetHeight,
 		};
-		onToggle && onToggle( callbackArgs );
+		onToggle?.( callbackArgs );
 	}, [ id, buttonId, isExpanded, onToggle, checkHash ] );
 
 	return (

@@ -195,7 +195,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 						onClick={ handleShowPopover }
 						onKeyUp={ ( event ) => {
 							if ( event.key === 'Enter' || event.key === ' ' ) {
-								handleShowPopover;
+								handleShowPopover();
 							}
 						} }
 					>

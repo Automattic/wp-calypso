@@ -74,8 +74,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 						plans_intent: intent,
 						is_in_signup: isInSignup,
 					} );
-					onPlanIntervalUpdate &&
-						onPlanIntervalUpdate( intervalType as SupportedUrlFriendlyTermType );
+					onPlanIntervalUpdate?.( intervalType as SupportedUrlFriendlyTermType );
 				} }
 			/>
 		</div>

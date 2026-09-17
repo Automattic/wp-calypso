@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports -- TODO: convert the hero images below to WebP, then drop this. */
 import {
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_COMPLETE,

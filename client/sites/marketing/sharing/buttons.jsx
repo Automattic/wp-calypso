@@ -219,28 +219,29 @@ class SharingButtons extends Component {
 }
 
 const withSharingButtons = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const siteId = useSelector( getSelectedSiteId );
-		const { data: buttons } = useSharingButtonsQuery( siteId );
-		const {
-			saveSharingButtons,
-			isLoading: isSavingButtons,
-			isSuccess: isSaveButtonsSuccessful,
-		} = useSaveSharingButtonsMutation( siteId );
-		const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
-		const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	( Wrapped ) =>
+		function WithSharingButtons( props ) {
+			const siteId = useSelector( getSelectedSiteId );
+			const { data: buttons } = useSharingButtonsQuery( siteId );
+			const {
+				saveSharingButtons,
+				isLoading: isSavingButtons,
+				isSuccess: isSaveButtonsSuccessful,
+			} = useSaveSharingButtonsMutation( siteId );
+			const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+			const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
-		return (
-			<Wrapped
-				{ ...props }
-				buttons={ buttons }
-				saveSharingButtons={ saveSharingButtons }
-				isSavingButtons={ isSavingButtons }
-				isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
-				isBlockTheme={ isBlockTheme }
-			/>
-		);
-	},
+			return (
+				<Wrapped
+					{ ...props }
+					buttons={ buttons }
+					saveSharingButtons={ saveSharingButtons }
+					isSavingButtons={ isSavingButtons }
+					isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
+					isBlockTheme={ isBlockTheme }
+				/>
+			);
+		},
 	'WithSharingButtons'
 );
 

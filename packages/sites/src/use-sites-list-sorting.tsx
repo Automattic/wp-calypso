@@ -364,7 +364,7 @@ type SitesSortingProps = {
 
 export const withSitesListSorting = createHigherOrderComponent(
 	< OuterProps extends SitesSortingProps >( Component: React.ComponentType< OuterProps > ) => {
-		return ( props: OuterProps ) => {
+		return function WithSitesListSorting( props: OuterProps ) {
 			const sites = useSitesListSorting( props.sites, props.sitesSorting );
 
 			return <Component { ...props } sites={ sites } />;

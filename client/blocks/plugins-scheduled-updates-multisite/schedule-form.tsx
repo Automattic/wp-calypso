@@ -236,7 +236,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 			);
 		}
 
-		onNavBack && onNavBack();
+		onNavBack?.();
 		// Trigger an extra refetch 5 seconds later
 		setTimeout( () => {
 			queryClient.invalidateQueries( {

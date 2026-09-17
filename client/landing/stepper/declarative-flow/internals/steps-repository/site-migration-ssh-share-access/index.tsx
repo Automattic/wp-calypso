@@ -180,7 +180,9 @@ const SiteMigrationSshShareAccess: StepType< {
 			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 
 			// Reset the site in the state to ensure the correct overview screen is shown.
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 
 			return navigation.submit?.( {
 				destination: 'do-it-for-me',

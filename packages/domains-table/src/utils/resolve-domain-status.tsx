@@ -114,7 +114,7 @@ export function resolveDomainStatus(
 		showBusyButton,
 		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) => {
 			e.stopPropagation();
-			onPointToWpcomClick && onPointToWpcomClick();
+			onPointToWpcomClick?.();
 		},
 	};
 

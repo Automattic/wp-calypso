@@ -93,14 +93,18 @@ export default function Content( {
 	const dispatch = useDispatch();
 
 	function fetchImporters() {
-		siteId && dispatch( fetchImporterState( siteId ) );
+		if ( siteId ) {
+			dispatch( fetchImporterState( siteId ) );
+		}
 	}
 
 	useEffect( fetchImporters, [ siteId, dispatch ] );
 	useEffect( startImporting, [ siteId, dispatch, siteImports ] );
 
 	function startImporting() {
-		siteId && siteImports.length === 0 && dispatch( startImport( siteId ) );
+		if ( siteId && siteImports.length === 0 ) {
+			dispatch( startImport( siteId ) );
+		}
 	}
 
 	const importerStatus = siteImports[ 0 ];

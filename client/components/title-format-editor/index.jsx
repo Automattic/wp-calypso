@@ -19,7 +19,10 @@ import 'draft-js/dist/Draft.css';
 import './style.scss';
 
 const noop = () => {};
-const Chip = ( onClick ) => ( props ) => <Token { ...props } onClick={ onClick } />;
+const Chip = ( onClick ) =>
+	function ChipToken( props ) {
+		return <Token { ...props } onClick={ onClick } />;
+	};
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {

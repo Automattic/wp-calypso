@@ -12,7 +12,7 @@ import InvoicesListRow from '../invoices-list-row';
 
 import './style.scss';
 
-const InvoicePlaceholderCard = memo( () => {
+const InvoicePlaceholderCard = memo( function InvoicePlaceholderCard() {
 	return (
 		<InvoicesListRow>
 			<div>
