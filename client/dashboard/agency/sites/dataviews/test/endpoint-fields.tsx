@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
+import { render } from '../../../../test-utils';
 import { getHostField, getPhpVersionField } from '../endpoint-fields';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
@@ -17,32 +18,32 @@ function renderField( field: Field< AgencySite >, item: AgencySite ) {
 const jetpackSite = { blog_id: 1, url: 'example.com' } as AgencySite;
 
 describe( 'getHostField', () => {
-	test( 'names the provider when the endpoint guessed one', () => {
+	test( 'names the provider when the endpoint guessed one', async () => {
 		const { container } = renderField( getHostField(), {
 			...jetpackSite,
 			hosting_provider_guess: 'pressable',
 		} );
-		expect( container ).toHaveTextContent( 'Pressable' );
+		await waitFor( () => expect( container ).toHaveTextContent( 'Pressable' ) );
 	} );
 
-	test( 'falls back to WordPress.com only for Atomic and Simple sites', () => {
+	test( 'falls back to WordPress.com only for Atomic and Simple sites', async () => {
 		const { container } = renderField( getHostField(), { ...jetpackSite, is_atomic: true } );
-		expect( container ).toHaveTextContent( 'WordPress.com' );
+		await waitFor( () => expect( container ).toHaveTextContent( 'WordPress.com' ) );
 	} );
 
-	test( 'does not claim a self-hosted site is on WordPress.com', () => {
+	test( 'does not claim a self-hosted site is on WordPress.com', async () => {
 		const { container } = renderField( getHostField(), jetpackSite );
+		await waitFor( () => expect( container ).toHaveTextContent( '-' ) );
 		expect( container ).not.toHaveTextContent( 'WordPress.com' );
-		expect( container ).toHaveTextContent( '-' );
 	} );
 } );
 
 describe( 'getPhpVersionField', () => {
-	test( 'shows the version the endpoint reported, with no plan gate', () => {
+	test( 'shows the version the endpoint reported, with no plan gate', async () => {
 		const { container } = renderField( getPhpVersionField(), {
 			...jetpackSite,
 			php_version: '8.3',
 		} );
-		expect( container ).toHaveTextContent( '8.3' );
+		await waitFor( () => expect( container ).toHaveTextContent( '8.3' ) );
 	} );
 } );
