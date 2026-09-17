@@ -139,6 +139,8 @@ function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	);
 }
 
+// TODO: port classic's `?wpcom_creator_purchased=` purchase banner and list the
+// row matching `?license_key=` first, alongside the create-site flow.
 export default function AgencySitesNeedSetup() {
 	const { data: agency } = useSuspenseQuery( activeAgencyQuery() );
 
