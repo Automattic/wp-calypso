@@ -27,14 +27,12 @@ import {
 	PLAN_CATEGORY_STANDARD,
 	areSignaturePlansFor,
 	getDefaultPlanCategoryTab,
-	getDefaultPlanSlug,
 	getMinimumSelectableIndex,
 	getPlanCategoryTabs,
-	getPressablePlan,
+	getPressablePlanInfo,
 	getPressablePlanName,
 	isLowTabDisabled,
-	isPremiumPlanSlug,
-	isSignaturePlanSlug,
+	isSignatureCatalogPlan,
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import OptionCards from './option-cards';
@@ -118,7 +116,10 @@ export default function PressableSection( {
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const existingPlanInfo = existingPlan ? getPressablePlan( existingPlan.slug ) : undefined;
+	const existingPlanInfo = useMemo(
+		() => ( existingPlan ? getPressablePlanInfo( existingPlan ) : undefined ),
+		[ existingPlan ]
+	);
 	const areSignaturePlans = areSignaturePlansFor( existingPlanInfo, isReferralMode );
 	// Referrals start from a clean slate: the agency's own plan sets no floor.
 	const existingPressablePlan = isReferralMode ? undefined : existingPlanInfo;
@@ -126,24 +127,20 @@ export default function PressableSection( {
 	// Agencies on a legacy plan keep the legacy catalog, without the Premium plans.
 	const catalog = useMemo(
 		() =>
-			products.filter( ( product ) =>
-				areSignaturePlans
-					? isSignaturePlanSlug( product.slug )
-					: ! isSignaturePlanSlug( product.slug )
-			),
+			products.filter( ( product ) => {
+				const plan = getPressablePlanInfo( product );
+				return !! plan && isSignatureCatalogPlan( plan ) === areSignaturePlans;
+			} ),
 		[ products, areSignaturePlans ]
 	);
 	const catalogPlans = useMemo(
-		() =>
-			catalog
-				.map( ( product ) => getPressablePlan( product.slug ) )
-				.filter( ( plan ): plan is PressablePlan => !! plan ),
+		() => catalog.map( getPressablePlanInfo ).filter( ( plan ): plan is PressablePlan => !! plan ),
 		[ catalog ]
 	);
 
 	// Premium plans are only sold through referrals for now.
 	const hasNewPremiumPlans =
-		isReferralMode && catalog.some( ( product ) => isPremiumPlanSlug( product.slug ) );
+		isReferralMode && catalogPlans.some( ( plan ) => plan.category === PLAN_CATEGORY_PREMIUM );
 
 	const defaultTab = getDefaultPlanCategoryTab( existingPressablePlan, areSignaturePlans );
 	const [ storedTab, setSelectedTab ] = useSessionState( 'pressable-tab', defaultTab );
@@ -182,17 +179,13 @@ export default function PressableSection( {
 		}
 		if ( ! isReferralMode && existingPlan && ! hasUsedExistingPlan.current ) {
 			hasUsedExistingPlan.current = true;
-			if ( getPressablePlan( existingPlan.slug )?.category === selectedTab ) {
+			if ( existingPlanInfo?.category === selectedTab ) {
 				setSelectedSlug( existingPlan.slug );
 				persistSlug( selectedTab, existingPlan.slug );
 				return;
 			}
 		}
-		const defaultSlug = getDefaultPlanSlug( selectedTab, areSignaturePlans );
-		const defaultProduct = catalog.find( ( product ) => product.slug === defaultSlug );
-		setSelectedSlug(
-			defaultProduct?.slug ?? ( isReferralMode ? null : tabOptions[ 0 ]?.slug ?? null )
-		);
+		setSelectedSlug( tabOptions[ 0 ]?.slug ?? null );
 	}, [
 		catalog,
 		tabOptions,
@@ -201,7 +194,7 @@ export default function PressableSection( {
 		persistSlug,
 		isReferralMode,
 		existingPlan,
-		areSignaturePlans,
+		existingPlanInfo,
 	] );
 
 	// Plans below the agency's current plan can't be picked: bump the selection up to the first one that can.
@@ -229,7 +222,7 @@ export default function PressableSection( {
 	const selectedProduct = selectedSlug
 		? catalog.find( ( product ) => product.slug === selectedSlug )
 		: undefined;
-	const selectedPlanInfo = selectedProduct ? getPressablePlan( selectedProduct.slug ) : undefined;
+	const selectedPlanInfo = selectedProduct ? getPressablePlanInfo( selectedProduct ) : undefined;
 	const isCustomPlan = selectedSlug === null;
 	const showPremiumSection = selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans;
 
@@ -296,7 +289,7 @@ export default function PressableSection( {
 						sprintf(
 							/* translators: %d is the number of PHP workers. */
 							__( '%d base PHP workers' ),
-							selectedPlanInfo.worker ?? 5
+							selectedPlanInfo.worker
 						),
 						__( 'Unmetered bandwidth' ),
 					] }
