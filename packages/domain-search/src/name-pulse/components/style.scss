@@ -117,6 +117,25 @@
 	}
 }
 
+.name-pulse-top-cards {
+	.domain-suggestion-featured__domain-name {
+		color: $gray-700;
+	}
+
+	.domain-suggestion-featured__tld {
+		color: $gray-900;
+		font-weight: 600;
+	}
+}
+
+.name-pulse-card__cta {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+	margin-top: auto;
+}
+
 .name-pulse-section__more {
 	text-align: center;
 

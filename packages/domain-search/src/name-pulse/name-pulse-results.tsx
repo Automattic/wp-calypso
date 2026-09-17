@@ -6,6 +6,7 @@ import { SearchForm } from '../components/search-form';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
 import { NamePulseResultsSection } from './components/results-section';
+import { NamePulseTopCards } from './components/top-cards';
 import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 
@@ -41,15 +42,23 @@ export const NamePulseResults = () => {
 				) }
 				{ layout.exactGrid.show && ! isTldsError && (
 					<>
-						<NamePulseResultsSection
-							id="top"
-							title={ __( 'Top results' ) }
-							results={ topResults }
-							isLoading={ isLoadingTlds }
-							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-							onUpdate={ updateResult }
-						/>
+						{ layout.topResults.style === 'card' ? (
+							<NamePulseTopCards
+								results={ topResults }
+								isLoading={ isLoadingTlds }
+								onUpdate={ updateResult }
+							/>
+						) : (
+							<NamePulseResultsSection
+								id="top"
+								title={ __( 'Top results' ) }
+								results={ topResults }
+								isLoading={ isLoadingTlds }
+								maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
+								skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
+								onUpdate={ updateResult }
+							/>
+						) }
 						<NamePulseResultsSection
 							id="exact"
 							title={

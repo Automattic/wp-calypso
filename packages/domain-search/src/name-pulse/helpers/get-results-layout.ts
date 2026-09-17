@@ -8,22 +8,26 @@ export interface NamePulseResultsLayout {
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
+	topResults: { style: 'compact' | 'card' };
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
 }
 
-type NamePulseSections = Pick< NamePulseResultsLayout, 'exactGrid' | 'suggestions' >;
+type NamePulseSections = Pick< NamePulseResultsLayout, 'topResults' | 'exactGrid' | 'suggestions' >;
 
 const AI_MODE_MIN_WORDS = 4;
 
 // The fqdn and ai rows are placeholders that keep the exact-match behaviour
 // until those modes are built.
+const COMPACT = { style: 'compact' } as const;
+const CARD = { style: 'card' } as const;
+
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
-	empty: { exactGrid: { show: false }, suggestions: { show: false } },
-	fqdn: { exactGrid: { show: true }, suggestions: { show: false } },
-	single: { exactGrid: { show: true }, suggestions: { show: false } },
-	keyword: { exactGrid: { show: true }, suggestions: { show: true } },
-	ai: { exactGrid: { show: true }, suggestions: { show: true } },
+	empty: { topResults: COMPACT, exactGrid: { show: false }, suggestions: { show: false } },
+	fqdn: { topResults: COMPACT, exactGrid: { show: true }, suggestions: { show: false } },
+	single: { topResults: CARD, exactGrid: { show: true }, suggestions: { show: false } },
+	keyword: { topResults: CARD, exactGrid: { show: true }, suggestions: { show: true } },
+	ai: { topResults: COMPACT, exactGrid: { show: true }, suggestions: { show: true } },
 };
 
 function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePulseMode {
