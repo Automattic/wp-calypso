@@ -306,6 +306,12 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
 	} );
+
+	it( 'exposes the tab id the chat events carry via `getTabId`', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getTabId?.() ).toBe( 'fake-uuid' );
+	} );
 } );
 
 describe( 'useRegisterCustomActions', () => {
