@@ -104,10 +104,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 				} ),
 			render: ( { field, item } ) => (
 				<div
-					className={ clsx( 'wpnc__subject', {
-						// Marks the open note's row for the active highlight (see CSS).
-						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-					} ) }
+					className="wpnc__subject"
 					/* eslint-disable-next-line react/no-danger */
 					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
 				/>

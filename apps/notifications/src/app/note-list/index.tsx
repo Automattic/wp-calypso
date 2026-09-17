@@ -30,8 +30,6 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-// Stable empty selection: DataViews' selection styling is left unused (the open
-// note is highlighted via our own `is-active` marker), so this never changes.
 const NO_SELECTION: string[] = [];
 
 // DataViews 14 only loads more in response to scroll events, so the rendered
@@ -108,8 +106,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		client?.setFilter( filterName );
 	}, [ client, filterName ] );
 
-	const onChangeSelection = ( selection: string[] ) => {
-		const noteId = selection[ 0 ];
+	// DataViews compares against the rows it keeps, so the open note's row is
+	// marked even when it sits outside the current window.
+	const selection = useMemo(
+		() => ( selectedNoteId ? [ selectedNoteId ] : NO_SELECTION ),
+		[ selectedNoteId ]
+	);
+
+	const onChangeSelection = ( newSelection: string[] ) => {
+		const noteId = newSelection[ 0 ];
 		// Toggle off when selecting the same note.
 		setSelectedNoteId( noteId !== selectedNoteId ? noteId : undefined );
 	};
@@ -139,17 +144,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'detailed';
 	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		visibleNotes,
-		view,
-		fields
-	);
-
-	// Tag the open note so its row can render the active highlight. Reuse the note
-	// object otherwise so only the affected rows re-render.
-	const data = filteredData.map( ( note ) =>
-		note.id.toString() === selectedNoteId ? { ...note, isActive: true } : note
-	);
+	const { data, paginationInfo } = filterSortAndPaginate( visibleNotes, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
@@ -253,11 +248,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 					)
 				}
 				getItemId={ ( item ) => item.id.toString() }
-				// Keep selection empty so DataViews applies none of its own selected-row
-				// styling; the open note is highlighted via our `is-active` marker
-				// instead. `onChangeSelection` is still the list layout's only row-click
-				// hook, so it stays — it's what opens the note.
-				selection={ NO_SELECTION }
+				selection={ selection }
 				onChangeView={ handleChangeView }
 				onChangeSelection={ onChangeSelection }
 			>

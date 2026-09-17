@@ -95,6 +95,11 @@
 		}
 	}
 
+	div[role="article"].is-selected.is-selected,
+	div[role="article"].is-selected.is-selected + div[role="article"] {
+		border-top-color: var(--wpds-color-stroke-surface-neutral-weak);
+	}
+
 	div[role="article"]:has(.is-unread) + div[role="article"]:has(.is-unread) {
 		border-top: 1px solid var(--wpds-color-stroke-surface-neutral, #dbdbdb);
 	}
@@ -107,12 +112,29 @@
 		}
 	}
 
-	// Open note: a left accent bar marks the row whose detail is showing. Driven
-	// by our own `is-active` marker (see getFields), not DataViews selection, so
-	// the unread tint still shows through on a selected unread row.
-	div[role="article"]:has(.wpnc__subject.is-active) {
+	// Open note: only a left accent bar. DataViews' own selected tint, text colors
+	// and brand borders are reset so an open unread row keeps its unread tint.
+	div[role="article"].is-selected,
+	div[role="article"].is-selected:focus-within {
 		.dataviews-view-list__item-wrapper {
+			background-color: transparent;
+			color: inherit;
 			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+
+			.dataviews-title-field {
+				color: var(--wpds-color-foreground-content-neutral);
+			}
+
+			.dataviews-view-list__field {
+				color: var(--wpds-color-foreground-interactive-neutral-weak);
+			}
+		}
+	}
+
+	div[role="article"].is-selected:has(.is-unread),
+	div[role="article"].is-selected:has(.is-unread):focus-within {
+		.dataviews-view-list__item-wrapper {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
 		}
 	}
 

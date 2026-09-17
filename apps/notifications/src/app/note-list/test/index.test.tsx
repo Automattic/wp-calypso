@@ -22,23 +22,24 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	subject: [ { text: label, ranges: [], media: [] } ],
 } );
 
-const renderTab = (
+const noteListTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
 	clientOverride: Partial< typeof client > = {},
 	selectedNoteId: string | undefined = undefined
-) =>
-	render(
-		<Provider store={ store }>
-			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
-				<NoteList
-					filterName={ filterName }
-					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ noop }
-				/>
-			</AppProvider>
-		</Provider>
-	);
+) => (
+	<Provider store={ store }>
+		<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
+			<NoteList
+				filterName={ filterName }
+				selectedNoteId={ selectedNoteId }
+				setSelectedNoteId={ noop }
+			/>
+		</AppProvider>
+	</Provider>
+);
+
+const renderTab = ( ...args: Parameters< typeof noteListTab > ) => render( noteListTab( ...args ) );
 
 const renderUnread = ( store: ReturnType< typeof initStore > ) =>
 	renderTab( store, 'unread' as FilterName );
@@ -188,8 +189,9 @@ describe( 'NoteList loading state', () => {
 	} );
 
 	// Past the first page, DataViews moves its window down but keeps earlier rows
-	// on screen. Reading one of those rows must still drop its unread styling.
-	it( 'drops the unread styling from an earlier row after scrolling past the first page', () => {
+	// on screen without refreshing them. Those rows must still reflect reads and
+	// the open note.
+	it( 'keeps an earlier row’s read and open state current after scrolling past the first page', () => {
 		const store = initStore();
 		const notes = Array.from( { length: 40 }, ( _, index ) => ( {
 			...makeNote( 1000 + index, `Unread ${ index + 1 }` ),
@@ -204,7 +206,7 @@ describe( 'NoteList loading state', () => {
 		);
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const { container } = renderUnread( store );
+		const { container, rerender } = renderUnread( store );
 		const scroller = container.querySelector( '.dataviews-layout__container' ) as HTMLElement;
 		Object.defineProperties( scroller, {
 			scrollHeight: { configurable: true, value: 4000 },
@@ -220,8 +222,10 @@ describe( 'NoteList loading state', () => {
 		act( () => {
 			store.dispatch( actions.notes.readNote( 1000 ) );
 		} );
+		rerender( noteListTab( store, 'unread' as FilterName, {}, '1000' ) );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { pressed: true } ) ).toHaveAccessibleName( 'Unread 1' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {
@@ -403,10 +407,10 @@ describe( 'NoteList loading state', () => {
 		);
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const { container } = renderTab( store, 'all' as FilterName, {}, '300' );
+		renderTab( store, 'all' as FilterName, {}, '300' );
 
-		const active = container.querySelectorAll( '.wpnc__subject.is-active' );
-		expect( active ).toHaveLength( 1 );
-		expect( active[ 0 ].textContent ).toContain( 'Open me' );
+		const open = screen.getAllByRole( 'button', { pressed: true } );
+		expect( open ).toHaveLength( 1 );
+		expect( open[ 0 ] ).toHaveAccessibleName( 'Open me' );
 	} );
 } );
