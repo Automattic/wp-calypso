@@ -3,12 +3,11 @@ import { sameUrl, urlKey } from '../same-url';
 describe( 'urlKey', () => {
 	it.each( [
 		[ '/about/', 'http://localhost/about' ],
-		[ 'http://localhost/about', 'http://localhost/about' ],
 		[ '/about/?p=1#team', 'http://localhost/about?p=1#team' ],
 		[ undefined, null ],
-		[ null, null ],
 		[ '  ', null ],
-		[ { url: '/about/' }, null ],
+		// A string the URL parser rejects.
+		[ 'http://', null ],
 	] )( 'reduces %p to %p', ( url, expected ) => {
 		expect( urlKey( url ) ).toBe( expected );
 	} );

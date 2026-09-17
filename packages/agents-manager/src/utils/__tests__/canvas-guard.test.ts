@@ -507,14 +507,14 @@ describe( 'bindToEditorPath', () => {
 	} );
 
 	it.each( [
-		{ path: '/page/34', to: 'a page' },
-		{ path: 'all-pages', to: 'the pages list' },
-	] )( 'lets a navigation to $to run without reading as a move', ( { path } ) => {
+		{ path: '/page/34', to: 'a page', lands: CONTACT_PAGE },
+		{ path: 'all-pages', to: 'the pages list', lands: null },
+	] )( 'lets a navigation to $to run without reading as a move', ( { path, lands } ) => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
 		bindToEditorPath( path );
-		setOpenPost( path === 'all-pages' ? null : CONTACT_PAGE );
+		setOpenPost( lands );
 
 		expect( getCanvasMove() ).toBeNull();
 	} );
@@ -526,7 +526,7 @@ describe( 'bindToEditorPath', () => {
 		bindToEditorPath( '/page/34' )();
 		setOpenPost( CONTACT_PAGE );
 
-		expect( getCanvasMove() ).toMatchObject( { from: 'About', to: 'Contact' } );
+		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
 	} );
 } );
 

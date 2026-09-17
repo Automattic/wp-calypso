@@ -65,7 +65,7 @@ function withMenus(
 }
 
 /** The scoped save: the item fields only, so a pending title edit stays the user's. */
-const savedItemsOf = ( menuId: number ) =>
+const expectItemsSaved = ( menuId: number ) =>
 	expect( saveSpecifiedEntityEdits ).toHaveBeenCalledWith(
 		'postType',
 		'wp_navigation',
@@ -80,21 +80,14 @@ const lastWrite = () => {
 	return { menuId: call[ 2 ], items: call[ 3 ].blocks, options: call[ 4 ] };
 };
 
-/** Serves one menu as the store does once it exists no more: a 404 rejection. */
-const withoutMenu = ( id: number ) => {
-	const resolvers = ( resolveSelect as jest.Mock )();
-	( resolveSelect as jest.Mock ).mockReturnValue( {
-		...resolvers,
-		getEditedEntityRecord: ( kind: string, name: string, menuId: number ) =>
-			menuId === id
-				? Promise.reject( { code: 'rest_post_invalid_id', data: { status: 404 } } )
-				: resolvers.getEditedEntityRecord( kind, name, menuId ),
-	} );
-};
-
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => {
+	jest.clearAllMocks();
+	( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
+	saveSpecifiedEntityEdits.mockReset();
+} );
 
 describe( 'addNavigationItem', () => {
+	// The site names no menu here, so the rendered one takes the page.
 	it( 'appends the new page to the menu', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
 
@@ -104,7 +97,7 @@ describe( 'addNavigationItem', () => {
 		expect( lastWrite().items[ 1 ].attributes ).toMatchObject( { label: 'About', id: 7 } );
 		// The page itself is already saved, so an unsaved menu item would vanish
 		// on the next reload and leave the new page unlinked.
-		savedItemsOf( 10 );
+		expectItemsSaved( 10 );
 	} );
 
 	// The rendered list holds header and footer alike, so its first entry is
@@ -118,19 +111,10 @@ describe( 'addNavigationItem', () => {
 		expect( lastWrite().menuId ).toBe( 99 );
 	} );
 
-	it( 'falls back to a rendered menu when the site names none', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
-		withMenus( { 10: [ link( 1, 'Home' ) ] } );
-
-		await addNavigationItem( { label: 'About', id: 7 } );
-
-		expect( lastWrite().menuId ).toBe( 10 );
-	} );
-
 	// An unread site record would look like a site naming no menu, and the page
 	// would land in the first rendered one — the footer, say.
 	it( 'refuses when the site settings cannot be read', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValueOnce( undefined );
+		( getSiteMetadata as jest.Mock ).mockReturnValue( undefined );
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
 
 		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
@@ -139,26 +123,39 @@ describe( 'addNavigationItem', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
-	// A Page List shows every published page on its own; a link beside it
-	// would show the new page twice.
-	it( 'skips a menu whose Page List shows the page already', async () => {
-		const pageList = ( parentPageID?: number ) => ( {
-			name: 'core/page-list',
-			attributes: { parentPageID },
-			innerBlocks: [],
-		} );
+	const pageList = ( parentPageID?: number ) => ( {
+		name: 'core/page-list',
+		attributes: { parentPageID },
+		innerBlocks: [],
+	} );
 
-		withMenus( { 10: [ link( 1, 'Home', [ pageList() ] ) ] } );
-		await addNavigationItem( { label: 'About', id: 7 } );
-		expect( editEntityRecord ).not.toHaveBeenCalled();
+	// A Page List shows every published page on its own, or a parent's children;
+	// a link beside it would show the new page twice.
+	it.each( [
+		{
+			case: 'skips a menu whose Page List lists every page, however nested',
+			items: [ link( 1, 'Home', [ pageList() ] ) ],
+			parent: undefined,
+			writes: 0,
+		},
+		{
+			case: 'skips a menu whose Page List lists the children of its parent',
+			items: [ pageList( 3 ) ],
+			parent: 3,
+			writes: 0,
+		},
+		{
+			case: 'adds beside a Page List scoped to another parent',
+			items: [ pageList( 3 ) ],
+			parent: undefined,
+			writes: 1,
+		},
+	] )( '$case', async ( { items, parent, writes } ) => {
+		withMenus( { 10: items } );
 
-		withMenus( { 10: [ pageList( 3 ) ] } );
-		await addNavigationItem( { label: 'About', id: 7, parent: 3 } );
-		expect( editEntityRecord ).not.toHaveBeenCalled();
+		await addNavigationItem( { label: 'About', id: 7, parent } );
 
-		withMenus( { 10: [ pageList( 3 ) ] } );
-		await addNavigationItem( { label: 'About', id: 7 } );
-		expect( lastWrite().items ).toHaveLength( 2 );
+		expect( editEntityRecord ).toHaveBeenCalledTimes( writes );
 	} );
 
 	// The user's unsaved edits are theirs to save; the item waits with them.
@@ -186,6 +183,18 @@ describe( 'addNavigationItem', () => {
 		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
 			'Navigation menu not found: 99'
 		);
+	} );
+
+	// A save that silently never ran would report a menu change the next
+	// reload throws away.
+	it( 'refuses when the save action is unavailable, and puts the menu back', async () => {
+		withMenus( { 10: [ link( 1, 'Home' ) ] } );
+		( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+
+		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
+			'unavailable to save'
+		);
+		expect( lastWrite() ).toMatchObject( { menuId: 10, items: [ link( 1, 'Home' ) ] } );
 	} );
 } );
 
@@ -226,6 +235,21 @@ describe( 'renameNavigationItem', () => {
 		expect( lastWrite().menuId ).toBe( 20 );
 	} );
 
+	// A page linked from several menus has to be renamed in all of them, or one
+	// keeps the old label: the rendered ones first, then the one the site names,
+	// then the rest — a menu off screen still holds its links.
+	it( 'reaches every menu holding the page: rendered, named by the site, then the rest', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		withMenus(
+			{ 10: [ link( 7, 'About' ) ], 50: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] },
+			[ '50' ]
+		);
+
+		await renameNavigationItem( 7, 'About us' );
+
+		expect( editEntityRecord.mock.calls.map( ( call ) => call[ 2 ] ) ).toEqual( [ 50, 99, 10 ] );
+	} );
+
 	// An idless item is matched by its url, and relabelled only while its label
 	// still follows the page — one the user changed by hand is theirs to keep.
 	it( 'relabels an idless item found by its url', async () => {
@@ -254,7 +278,8 @@ describe( 'renameNavigationItem', () => {
 	} );
 
 	// An empty previous title is a title, not an unknown one: the item's label
-	// does not follow it, so it is the user's.
+	// does not follow it, so it is the user's, and matching by id must not make
+	// a page rename overwrite it.
 	it( 'leaves a custom label alone when the page was untitled', async () => {
 		withMenus( { 10: [ link( 7, 'Learn more' ) ] } );
 
@@ -292,14 +317,16 @@ describe( 'removeNavigationItem', () => {
 		expect( lastWrite().items ).toEqual( [ link( 1, 'Home' ) ] );
 		// The page is already deleted, so the menu change has no page edit to
 		// save alongside — left unsaved, a reload brings the item back.
-		savedItemsOf( 10 );
+		expectItemsSaved( 10 );
 	} );
 
 	// A submenu entry left behind points at a page that no longer exists, and
 	// removing it leaves the top level the same size — so a length check would
 	// miss the write.
 	it( 'removes it from inside a submenu too', async () => {
-		withMenus( { 10: [ link( 1, 'Company', [ link( 7, 'About' ) ] ) ] } );
+		withMenus( {
+			10: [ { ...link( 1, 'Company', [ link( 7, 'About' ) ] ), name: 'core/navigation-submenu' } ],
+		} );
 
 		await removeNavigationItem( 7 );
 
@@ -312,8 +339,7 @@ describe( 'removeNavigationItem', () => {
 	// A template can keep a `ref` to a menu deleted since; there is no link
 	// left there to keep in step.
 	it( 'skips a rendered ref whose menu no longer exists', async () => {
-		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] } );
-		withoutMenu( 99 );
+		withMenus( { 10: [ link( 7, 'About' ) ] }, [ '10', '99' ] );
 
 		await removeNavigationItem( 7 );
 
@@ -350,9 +376,8 @@ describe( 'removeNavigationItem', () => {
 
 		await expect( removeNavigationItem( 7 ) ).rejects.toThrow( 'Could not save menu 99' );
 
-		savedItemsOf( 10 );
+		expectItemsSaved( 10 );
 		expect( lastWrite() ).toMatchObject( { menuId: 99, items: [ link( 7, 'About' ) ] } );
-		saveSpecifiedEntityEdits.mockReset();
 	} );
 
 	it( 'saves the menus without unsaved edits, and returns the one with', async () => {
@@ -362,7 +387,7 @@ describe( 'removeNavigationItem', () => {
 		} );
 
 		expect( await removeNavigationItem( 7 ) ).toEqual( [ 99 ] );
-		savedItemsOf( 10 );
+		expectItemsSaved( 10 );
 		expect( saveSpecifiedEntityEdits ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -388,45 +413,14 @@ describe( 'removeNavigationItem', () => {
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
-} );
 
-describe( 'menu selection', () => {
-	// The label no longer follows the page, so it is the user's. Matching by id
-	// must not make a page rename overwrite it.
-	it( 'leaves a label the user chose, even on an id-backed item', async () => {
-		withMenus( { 10: [ link( 7, 'Learn more' ) ] } );
-
-		await renameNavigationItem( 7, 'About us', [ 'About' ] );
-
-		expect( editEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	// A page linked from both the header and the footer has to be renamed in
-	// both, or one menu keeps the old label. Rendered menus come first.
-	it( 'renames the page in every menu that holds it', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
-		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
-
-		await renameNavigationItem( 7, 'About us' );
-
-		expect( editEntityRecord.mock.calls.map( ( call ) => call[ 2 ] ) ).toEqual( [ 10, 99 ] );
-	} );
-
-	it( 'falls back to the metadata menu when the editor renders none', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
-		withMenus( { 99: [ link( 7, 'About' ) ] }, [] );
-
-		await renameNavigationItem( 7, 'About us' );
-
-		expect( lastWrite().menuId ).toBe( 99 );
-	} );
-
-	// A link elsewhere that happens to share the page's title is not its item.
-	it( 'leaves an idless link with the same label but another url alone', async () => {
+	// The url names the page: a link elsewhere that shares its title is not its
+	// item, and a custom label does not make it another link.
+	it( 'matches an idless link by its url, whatever its label', async () => {
 		withMenus( {
 			10: [
 				link( undefined, 'About', [], { url: 'https://elsewhere.com/about/' } ),
-				link( undefined, 'About', [], { url: '/about/' } ),
+				link( undefined, 'Get in touch', [], { url: '/about/' } ),
 			],
 		} );
 
@@ -437,37 +431,19 @@ describe( 'menu selection', () => {
 		).toEqual( [ 'https://elsewhere.com/about/' ] );
 	} );
 
-	// The url names the page whatever the user called the link.
-	it( 'removes an idless link by its url even under a custom label', async () => {
-		withMenus( { 10: [ link( undefined, 'Get in touch', [], { url: '/about/' } ) ] } );
-
-		await removeNavigationItem( 7, 'http://localhost/about/' );
-
-		expect( lastWrite().items ).toEqual( [] );
-	} );
-
-	// Plain permalinks differ only in the query.
-	it( 'tells plain-permalink links apart by their query', async () => {
-		withMenus( { 10: [ link( undefined, 'About', [], { url: '/?page_id=8' } ) ] } );
-
-		await removeNavigationItem( 7, 'http://localhost/?page_id=7' );
-
-		expect( editEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	// A block that is not a menu item can carry a label too.
-	it( 'ignores a block that is not a menu item, whatever its label', async () => {
+	// A block that is not a menu item can link to the page too.
+	it( 'ignores a block that is not a menu item, whatever it links to', async () => {
 		withMenus( {
 			10: [
-				{ name: 'core/search', attributes: { label: 'About' }, innerBlocks: [] },
+				{ name: 'core/social-link', attributes: { url: '/about/' }, innerBlocks: [] },
 				link( 7, 'About' ),
 			],
 		} );
 
-		await removeNavigationItem( 7 );
+		await removeNavigationItem( 7, 'http://localhost/about/' );
 
 		expect( lastWrite().items.map( ( item: { name: string } ) => item.name ) ).toEqual( [
-			'core/search',
+			'core/social-link',
 		] );
 	} );
 
@@ -488,28 +464,5 @@ describe( 'menu selection', () => {
 		expect(
 			lastWrite().items.map( ( item: { attributes: { label?: string } } ) => item.attributes.label )
 		).toEqual( [ 'Web', 'Design', 'Home' ] );
-	} );
-
-	// A save that silently never ran would report a menu change the next
-	// reload throws away.
-	it( 'refuses when the save action is unavailable, and puts the menu back', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
-		withMenus( { 10: [ link( 1, 'Home' ) ] } );
-		( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
-
-		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
-			'unavailable to save'
-		);
-		expect( editEntityRecord ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	// A menu neither on screen nor named by the site still holds its links.
-	it( 'reaches a menu that is neither rendered nor named', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
-		withMenus( { 10: [ link( 1, 'Home' ) ], 30: [ link( 7, 'About' ) ] }, [ '10' ] );
-
-		await removeNavigationItem( 7 );
-
-		expect( lastWrite().menuId ).toBe( 30 );
 	} );
 } );

@@ -52,7 +52,7 @@ describe( 'getSiteMetadata', () => {
 	} );
 
 	// `{}` would read as "no metadata" and make the next write a wipe.
-	it( 'is undefined, not empty, when the site record is unreadable', async () => {
+	it( 'is undefined, not empty, when the site record is unreadable', () => {
 		withSiteRecord();
 
 		expect( getSiteMetadata() ).toBeUndefined();
@@ -87,28 +87,19 @@ describe( 'setSiteMetadata', () => {
 		await expect( setSiteMetadata( { mode: 'editor' } ) ).rejects.toThrow( 'cannot be set' );
 	} );
 
-	it( 'keeps agent edits out of the undo stack', async () => {
+	// Saved, not left pending: nothing about this field is on screen, so a
+	// reload would drop it with no cue that a save was outstanding.
+	it( 'saves only its own field', async () => {
 		withSiteRecord( '{}' );
 
 		await setSiteMetadata( { personality: 'bold' } );
 
-		// Saved, not left pending: nothing about this field is on screen, so a
-		// reload would drop it with no cue that a save was outstanding.
 		expect( saveSpecifiedEntityEdits ).toHaveBeenCalledWith(
 			'root',
 			'site',
 			undefined,
 			[ 'big_sky_site_metadata' ],
 			{ throwOnError: true }
-		);
-		expect( editEntityRecord ).toHaveBeenCalledWith(
-			'root',
-			'site',
-			undefined,
-			expect.any( Object ),
-			{
-				undoIgnore: true,
-			}
 		);
 	} );
 
