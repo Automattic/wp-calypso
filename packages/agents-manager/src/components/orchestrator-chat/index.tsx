@@ -1399,9 +1399,6 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			// Only hosts reach this: the composer and suggestion chips submit
-			// through Agenttic, not through the bridge.
-			markActionOrigin( 'send', 'host' );
 			await onSubmitWithImages( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
@@ -1414,7 +1411,23 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useRegisterCustomActions( { setChatInput, submitChatMessage } );
+	const submitChatMessageFromHost = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			// Only the bridge wrapper marks: the composer, suggestion chips, and
+			// context-card submit buttons go through `submitChatMessage` unmarked.
+			markActionOrigin( 'send', 'host' );
+			await submitChatMessage( submittedMessage );
+		},
+		[ inputValue, submitChatMessage ]
+	);
+
+	useRegisterCustomActions( { setChatInput, submitChatMessage: submitChatMessageFromHost } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -1750,7 +1763,7 @@ export default function OrchestratorChat( {
 		displayedEmptyViewSuggestions = suggestions;
 	}
 	suggestionPromptsRef.current = new Set(
-		[ ...displayedEmptyViewSuggestions, ...suggestions ].map( ( s ) => s.prompt ?? s.label )
+		displayedEmptyViewSuggestions.map( ( s ) => s.prompt ?? s.label )
 	);
 
 	const { onSuggestionsRendered: handleSuggestionsRendered, renderedSuggestionsRef } =

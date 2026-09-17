@@ -408,9 +408,12 @@ export default function AgentDock( {
 		wasChatOpenRef.current = chatIsOpen;
 		if ( chatIsOpen && wasChatOpen !== true ) {
 			const restored = wasChatOpen === null;
+			// Always take, even on restore: a leftover host mark must not
+			// label the next merchant open.
+			const origin = takeActionOrigin( 'open' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
 				restored,
-				trigger: restored ? 'restored' : takeActionOrigin( 'open' ),
+				trigger: restored ? 'restored' : origin,
 			} );
 		}
 	}, [ chatIsOpen ] );

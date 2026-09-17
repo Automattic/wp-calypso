@@ -82,6 +82,8 @@ describe( 'useSetupCustomActions', () => {
 		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockContext = {
 			getTabSessionId: jest.fn( () => 'session-123' ),
 			resumeChat: jest.fn(),
@@ -223,6 +225,21 @@ describe( 'useSetupCustomActions', () => {
 		);
 	} );
 
+	it( 'normalises a missing delivery to Tracks form', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/page',
+			source: 'WooCommerce AI',
+			type: 'external-context',
+		} );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'external_context', delivery: 'next_message' }
+		);
+	} );
+
 	it( 'records nothing for a context entry without an id', () => {
 		renderHook( () => useSetupCustomActions( baseProps ) );
 
@@ -246,6 +263,7 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
 		// Open is unchanged, so no second (racing) save.
 		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
 	} );
 
 	it( 'opens a closed chat without a redundant minimized save', () => {

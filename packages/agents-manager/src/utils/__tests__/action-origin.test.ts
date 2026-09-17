@@ -1,6 +1,11 @@
 import { markActionOrigin, takeActionOrigin } from '../action-origin';
 
 describe( 'action origin', () => {
+	beforeEach( () => {
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
+	} );
+
 	it( 'defaults to the chat UI', () => {
 		expect( takeActionOrigin( 'open' ) ).toBe( 'user' );
 		expect( takeActionOrigin( 'send' ) ).toBe( 'composer' );

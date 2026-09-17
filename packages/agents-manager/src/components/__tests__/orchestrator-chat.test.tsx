@@ -158,6 +158,7 @@ const mockAgentChat = jest.fn(
 		inputValue,
 		onInputChange,
 		emptyViewSuggestions = [],
+		onContextCardAction,
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: (
@@ -172,6 +173,10 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		isLoadingConversation?: boolean;
+		onContextCardAction?: (
+			card: { id: string },
+			action: { label: string; prompt: string; type: 'submit' }
+		) => void;
 	} ) => (
 		<>
 			<button
@@ -272,6 +277,16 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button
+				onClick={ () =>
+					onContextCardAction?.(
+						{ id: 'card-1' },
+						{ label: 'Ask', prompt: 'From the context card', type: 'submit' }
+					)
+				}
+			>
+				Submit context card
+			</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
@@ -447,6 +462,7 @@ jest.mock( '../agent-chat', () => {
 } );
 
 import { getSessionId } from '../../utils/agent-session';
+import { takeActionOrigin } from '../../utils/action-origin';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -663,6 +679,8 @@ const countShowComponentMessages = () => {
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
@@ -1415,6 +1433,38 @@ describe( 'OrchestratorChat', () => {
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_input_send_message',
 			expect.objectContaining( { source: 'host' } )
+		);
+	} );
+
+	it( 'does not label a context-card submit as host', async () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await waitFor( () => {
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_chat_input_send_message',
+				expect.objectContaining( { source: 'composer' } )
+			);
+		} );
+	} );
+
+	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				suggestions: [
+					{ id: 's1', label: 'Describe these images', prompt: 'Describe these images' },
+				],
+			} )
+		);
+
+		render( chat( { suggestionsVisible: false } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
 		);
 	} );
 

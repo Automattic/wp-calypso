@@ -63,7 +63,7 @@ function publishExternalContextEntry(
 	recordAgentsManagerTracksEvent( 'calypso_agents_manager_context_published', {
 		source: toTracksValue( entry.source ),
 		type: toTracksValue( entry.type ),
-		delivery: entry.delivery || 'next-message',
+		delivery: toTracksValue( entry.delivery || 'next-message' ),
 	} );
 }
 
@@ -151,13 +151,17 @@ export function useSetupCustomActions( {
 				setIsMinimized( false );
 			}
 
+			// Mark any host call that will make the chat visible, including an
+			// un-minimize: `isOpen` stays true there, but the dock still records
+			// `chat_opened` because `chatIsOpen` flips, and that event must not
+			// fall through to `trigger=user`.
+			if ( shouldOpen && ( ! isOpen || isMinimized ) ) {
+				markActionOrigin( 'open', 'host' );
+			}
+
 			// Open state is unchanged; nothing more to persist.
 			if ( shouldOpen === isOpen ) {
 				return;
-			}
-
-			if ( shouldOpen ) {
-				markActionOrigin( 'open', 'host' );
 			}
 
 			if ( ! isDocked || ! canDock ) {
