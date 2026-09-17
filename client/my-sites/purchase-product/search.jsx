@@ -126,16 +126,24 @@ export class SearchPurchase extends Component {
 			return null;
 		}
 
-		const hasSearchProduct = ( site.products ?? [] ).some(
+		const searchProducts = ( site.products ?? [] ).filter(
 			( product ) =>
 				isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
 		);
-		if ( hasSearchProduct ) {
+		const routeProduct = this.getProduct();
+		if (
+			searchProducts.some(
+				( product ) => product.user_is_owner && product.product_slug === routeProduct
+			)
+		) {
+			return 'renewal';
+		}
+		if ( searchProducts.length ) {
 			return 'product';
 		}
 
 		const planSlug = site.plan?.product_slug;
-		return planSlug && planHasJetpackSearch( planSlug ) ? 'plan' : null;
+		return planSlug && ! site.plan.expired && planHasJetpackSearch( planSlug ) ? 'plan' : null;
 	}
 
 	renderExistingSearchNotice() {
@@ -150,16 +158,21 @@ export class SearchPurchase extends Component {
 		const components = {
 			link: <a href={ getPurchaseListUrlFor( urlToSlug( currentUrl ) ) } />,
 		};
-		const text =
-			source === 'plan'
-				? translate(
-						"Jetpack Search is already included in this site's plan. {{link}}Manage subscriptions{{/link}}",
-						{ components }
-				  )
-				: translate(
-						'This site already has a Jetpack Search subscription. Continuing will renew it. {{link}}Manage subscriptions{{/link}}',
-						{ components }
-				  );
+		const texts = {
+			plan: translate(
+				"Jetpack Search is already included in this site's plan. {{link}}Manage subscriptions{{/link}}",
+				{ components }
+			),
+			renewal: translate(
+				'This site already has a Jetpack Search subscription. Continuing will renew it. {{link}}Manage subscriptions{{/link}}',
+				{ components }
+			),
+			product: translate(
+				'This site already has a Jetpack Search subscription. {{link}}Manage subscriptions{{/link}}',
+				{ components }
+			),
+		};
+		const text = texts[ source ];
 
 		return (
 			<div className="jetpack-connect__notices-container">

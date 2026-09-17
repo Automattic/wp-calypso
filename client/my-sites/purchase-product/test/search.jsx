@@ -15,8 +15,8 @@ jest.mock(
 jest.mock( 'calypso/jetpack-connect/main-header', () => () => null );
 
 const SITE_URL = 'https://example.com';
-const NOTICE_PRODUCT =
-	/This site already has a Jetpack Search subscription\. Continuing will renew it\./;
+const NOTICE_PRODUCT = /This site already has a Jetpack Search subscription\./;
+const NOTICE_RENEWAL = /Continuing will renew it\./;
 const NOTICE_PLAN = /Jetpack Search is already included in this site's plan\./;
 
 const render = ( site ) =>
@@ -36,6 +36,10 @@ const render = ( site ) =>
 	);
 
 describe( 'SearchPurchase', () => {
+	afterEach( () => {
+		window.history.replaceState( null, '', '/' );
+	} );
+
 	test( 'does not warn when the URL is not one of the user’s sites', () => {
 		render( null );
 
@@ -66,18 +70,43 @@ describe( 'SearchPurchase', () => {
 		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'warns about renewing when the site already has a paid Search product', () => {
+	test( 'warns about renewing when the user owns the Search product being purchased', () => {
+		window.history.replaceState( null, '', '/purchase-product/jetpack_search' );
 		render( {
 			URL: SITE_URL,
 			plan: { product_slug: 'jetpack_free' },
-			products: [ { product_slug: 'jetpack_search_monthly', expired: false } ],
+			products: [ { product_slug: 'jetpack_search', expired: false, user_is_owner: true } ],
 		} );
 
-		expect( screen.getByText( NOTICE_PRODUCT ) ).toBeVisible();
+		expect( screen.getByText( NOTICE_RENEWAL ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Manage subscriptions' } ) ).toHaveAttribute(
 			'href',
 			'/purchases/subscriptions/example.com'
 		);
+	} );
+
+	test( 'does not promise a renewal when the owned Search term differs from the route', () => {
+		window.history.replaceState( null, '', '/purchase-product/jetpack_search' );
+		render( {
+			URL: SITE_URL,
+			plan: { product_slug: 'jetpack_free' },
+			products: [ { product_slug: 'jetpack_search_monthly', expired: false, user_is_owner: true } ],
+		} );
+
+		expect( screen.getByText( NOTICE_PRODUCT ) ).toBeVisible();
+		expect( screen.queryByText( NOTICE_RENEWAL ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not promise a renewal when the user does not own the Search subscription', () => {
+		window.history.replaceState( null, '', '/purchase-product/jetpack_search' );
+		render( {
+			URL: SITE_URL,
+			plan: { product_slug: 'jetpack_free' },
+			products: [ { product_slug: 'jetpack_search', expired: false, user_is_owner: false } ],
+		} );
+
+		expect( screen.getByText( NOTICE_PRODUCT ) ).toBeVisible();
+		expect( screen.queryByText( NOTICE_RENEWAL ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'warns when the site’s plan already includes Search', () => {
@@ -88,5 +117,15 @@ describe( 'SearchPurchase', () => {
 		} );
 
 		expect( screen.getByText( NOTICE_PLAN ) ).toBeVisible();
+	} );
+
+	test( 'does not warn when the site’s plan includes Search but has expired', () => {
+		render( {
+			URL: SITE_URL,
+			plan: { product_slug: 'jetpack_complete', expired: true },
+			products: [],
+		} );
+
+		expect( screen.queryByText( NOTICE_PLAN ) ).not.toBeInTheDocument();
 	} );
 } );
