@@ -7,6 +7,7 @@ import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import BillingHistory from '../index';
+import type { AppConfig } from '../../../app/context';
 import type { Receipt, Site, User } from '@automattic/api-core';
 
 const SITE_A_ID = 1;
@@ -88,7 +89,7 @@ const receipts = [
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
 // Hosts that scope these screens to a site have no `me` section of their own.
-const configWithMeSection = {
+const configWithMeSection: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
 	supports: {
 		...APP_CONTEXT_DEFAULT_CONFIG.supports,
