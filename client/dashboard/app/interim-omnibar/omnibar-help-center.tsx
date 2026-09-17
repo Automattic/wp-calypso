@@ -1,5 +1,11 @@
-import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	dashboardAdminBarQuery,
+	omnibarSiteIdQuery,
+	siteAdminBarQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { getHelpCenterExperimentVariations } from '@automattic/help-center/src/experiments';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
@@ -61,6 +67,18 @@ export default function OmnibarHelpCenter() {
 		enabled: !! omnibarSiteId,
 	} );
 
+	// The omnibar fetches the admin bar for the entry point it draws. Read that cache
+	// without fetching: the arm costs no request and always matches the entry point
+	// the user saw.
+	const { data: siteAdminBar } = useQuery( {
+		...siteAdminBarQuery( omnibarSiteId ?? 0 ),
+		enabled: false,
+	} );
+	const { data: dashboardAdminBar } = useQuery( { ...dashboardAdminBarQuery(), enabled: false } );
+	const experimentVariations = getHelpCenterExperimentVariations(
+		siteAdminBar?.nodes ?? dashboardAdminBar?.nodes
+	);
+
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
@@ -85,6 +103,7 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
+				experimentVariations={ experimentVariations }
 			/>
 		</Suspense>
 	);

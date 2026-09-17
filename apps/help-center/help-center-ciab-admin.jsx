@@ -58,6 +58,7 @@ function HelpCenterWithRouteTracking( { HelpCenter } ) {
 			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 			currentRoute={ currentRoute }
 			newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+			experimentVariations={ helpCenterData.experimentVariations }
 			newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 		/>
 	);

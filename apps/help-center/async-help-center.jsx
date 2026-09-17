@@ -31,6 +31,11 @@ export default function loadHelpCenter() {
 		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
 	}
 
+	// Host-resolved ExPlat variations, keyed by experiment name.
+	if ( helpCenterData?.experimentVariations ) {
+		customProps.experimentVariations = helpCenterData.experimentVariations;
+	}
+
 	if ( helpCenterData?.launcherContext ) {
 		customProps.launcherContext = helpCenterData.launcherContext;
 	}
