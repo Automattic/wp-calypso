@@ -117,6 +117,23 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: 'Needs setup' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'falls back to a flat Sites link when the pending sites request fails', async () => {
+		mockAgency( [ 'a4a_read_managed_sites' ] );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/wpcom/v2/agency/1/sites/pending' )
+			.reply( 500, { error: 'server_error', message: 'Something went wrong.' } );
+		render(
+			<AppProvider config={ config }>
+				<AgencySidebar />
+			</AppProvider>
+		);
+
+		expect( await screen.findByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Needs setup' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'leaves only Home when the user holds no capabilities', async () => {
 		await renderSidebar( [] );
 
