@@ -20,10 +20,7 @@ import type { DomainAvailability } from '@automattic/api-core';
 export interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
-	/**
-	 * Receives the v1.3 real-time verdict so the row (and any duplicate of it
-	 * in another section) reflects what the registry actually said.
-	 */
+	/** Receives the real-time verdict so every copy of the row reflects it. */
 	onUpdate?: ( update: NamePulseDomainUpdate ) => void;
 }
 
@@ -137,8 +134,8 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 				return { addedToCart: false };
 			}
 
-			// Bulk results are zone-file based (~25% mismatch); the real EPP check
-			// runs on click, exactly like the classic suggestion CTA.
+			// Bulk results are zone-file based and approximate; the real-time check runs
+			// before anything reaches the cart.
 			const availability = await queryClient.ensureQueryData(
 				queries.domainAvailability( domainName )
 			);

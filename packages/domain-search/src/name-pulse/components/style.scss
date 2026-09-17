@@ -1,8 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
 
-// The classic results page reserves space for its fixed mobile overlay; this
-// page renders the search form in flow instead.
+// `.domain-search--results` reserves space for a fixed mobile search form;
+// here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;

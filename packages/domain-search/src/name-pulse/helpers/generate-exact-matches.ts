@@ -2,9 +2,8 @@ import { NAME_PULSE_TLDS } from './constants';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
- * Build one WAITING row per TLD for a sanitized base label, in list order. When
- * the label ends with a TLD string ("myapp") that TLD gets the shorter label
- * ("my.app") as long as at least two characters remain.
+ * When the label ends with a TLD ("myapp") that TLD gets the shorter label
+ * ("my.app"), as long as at least two characters remain.
  */
 export function generateExactMatches(
 	baseName: string,

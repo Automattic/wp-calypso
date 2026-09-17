@@ -6,8 +6,8 @@ import {
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
- * TLDs to feature for this base label. When the label ends with a TLD string
- * ("myapp" → "app") that TLD is promoted to the second slot, right after `blog`.
+ * When the label ends with a TLD ("myapp" → "app") that TLD is promoted to the
+ * second slot, right after `blog`.
  */
 export function calculateTopTlds(
 	baseName: string,
@@ -36,8 +36,8 @@ const isCandidate = ( result: NamePulseDomainResult ) =>
 	result.status === NamePulseDomainStatus.WAITING;
 
 /**
- * Pick the featured rows: preferred TLDs that are available or still being
- * checked, then backfill from the rest of the map in insertion order.
+ * Preferred TLDs first, then backfill in map insertion order; only available or
+ * still-checking rows qualify.
  */
 export function getTopResults(
 	results: Map< string, NamePulseDomainResult >,

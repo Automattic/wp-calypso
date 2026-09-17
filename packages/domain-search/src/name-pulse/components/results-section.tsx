@@ -16,26 +16,15 @@ export interface NamePulseResultsSectionProps {
 	id: string;
 	title: string;
 	results: NamePulseDomainResult[];
-	/**
-	 * Section-level key; the visible count resets when it changes (a new search),
-	 * not when a row's status updates.
-	 */
+	/** The visible count resets when this changes (a new search), not when a row's status updates. */
 	searchKey: string;
 	isLoading?: boolean;
-	/**
-	 * Rows shown before the first "Show more" click. Defaults to the page size.
-	 */
 	initialVisible?: number;
-	/**
-	 * Hard cap on rows (Top results: 3). Disables "Show more".
-	 */
+	/** Hard cap; also disables "Show more". */
 	maxVisible?: number;
 	skeletonCount?: number;
 	showMoreLabel?: string;
-	/**
-	 * Called with the newly revealed rows on "Show more" so the exact grid can
-	 * request availability for them.
-	 */
+	/** Rows revealed by "Show more", so the caller can check their availability. */
 	onReveal?: ( rows: NamePulseDomainResult[] ) => void;
 	onUpdate?: ( update: NamePulseDomainUpdate ) => void;
 }

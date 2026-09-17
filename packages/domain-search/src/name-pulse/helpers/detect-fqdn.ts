@@ -21,10 +21,9 @@ const notFqdn = ( baseName: string ): FqdnDetection => ( {
 } );
 
 /**
- * Detect whether the raw input is `<label>.<known tld>`. Multi-level TLDs are
- * matched against the wpcom list first (so `coffee.co.uk` is `co.uk`, not `uk`),
- * then single-level TLDs against the exact-match list. Must run on the raw
- * input, before `sanitizeDomainInput` strips the dots.
+ * Multi-level TLDs are matched against the wpcom list first (so `coffee.co.uk`
+ * is `co.uk`, not `uk`), then single-level ones against `tlds`. Must run on the
+ * raw input, before `sanitizeDomainInput` strips the dots.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
 export function detectFqdn(

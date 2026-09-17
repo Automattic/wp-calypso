@@ -1,7 +1,5 @@
 /**
- * Temporary fixed exact-match order for the PoC: the first 60 entries of the
- * 278-TLD list shipped in the standalone app. Replaced by the backend-owned
- * `GET /wpcom/v2/domains/name-pulse/tlds` API in milestone M4 (issue 4.5).
+ * Exact-match TLDs, in display order.
  */
 export const NAME_PULSE_TLDS: readonly string[] = [
 	'blog',
@@ -97,8 +95,6 @@ export const NAME_PULSE_INITIAL_CHECK_MULTI_WORD = 24;
 export const NAME_PULSE_AI_MODE_MIN_WORDS = 4;
 
 /**
- * How long a section keeps showing skeleton slots, and a row keeps its
- * "checking" state, before giving up on a response that never came. Same value
- * as `SKELETON_TIMEOUT_MS` in the standalone app.
+ * How long skeleton slots and "checking" rows wait for a response before giving up.
  */
 export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;

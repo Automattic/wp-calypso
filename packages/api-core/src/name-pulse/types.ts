@@ -2,77 +2,43 @@
  * Parameters for `GET /wpcom/v2/domains/name-pulse/suggestions`.
  */
 export interface NamePulseSuggestionsQuery {
-	/**
-	 * Free-text search term (one or more words).
-	 */
 	query: string;
 
-	/**
-	 * Ask providers for AI-generated ("creative") suggestions. Sent as `use_ai=1|0`.
-	 */
+	/** AI-generated ("creative") suggestions. */
 	use_ai?: boolean;
 
-	/**
-	 * Provider list, sent comma-joined. The endpoint currently only honours
-	 * `verisign` and `domainsbot` (`donuts` is filtered out server-side).
-	 */
+	/** Only `verisign` and `domainsbot` are honoured; `donuts` is filtered out server-side. */
 	providers?: string[];
 
-	/**
-	 * Backend timeout in milliseconds. Only sent when set; the UI passes it in AI mode.
-	 */
+	/** Backend timeout in milliseconds. */
 	timeout?: number;
 
-	/**
-	 * Restrict suggestions to these TLDs (comma-joined).
-	 */
 	tlds?: string[];
 
-	/**
-	 * Desired number of suggestions.
-	 */
 	quantity?: number;
 
-	/**
-	 * Include premium domains. Defaults to true.
-	 */
+	/** Defaults to true. */
 	allow_premium?: boolean;
 }
 
 export interface NamePulseSuggestion {
-	/**
-	 * @example "coffeegoodies.com"
-	 */
 	domain_name: string;
 
-	/**
-	 * Relevance as a percent: 0 <= relevance <= 1
-	 */
+	/** Between 0 and 1. */
 	relevance: number;
 
-	/**
-	 * Comma-separated list of providers that returned the name.
-	 * @example "verisign,domainsbot"
-	 */
+	/** Providers that returned the name, comma-separated ("verisign,domainsbot"). */
 	vendor: string;
 
 	match_reasons?: string[];
 
-	/**
-	 * Rendered formatted cost
-	 * @example "€13.00"
-	 */
+	/** Formatted, e.g. "€13.00". */
 	cost?: string;
 
-	/**
-	 * Raw price in the currency's main unit
-	 * @example 13
-	 */
+	/** In the currency's main unit. */
 	raw_price?: number;
 
-	/**
-	 * Sale price in the currency's main unit
-	 */
+	/** In the currency's main unit. */
 	sale_cost?: number;
 
 	currency_code?: string;
@@ -94,14 +60,11 @@ export interface NamePulseProviderError {
 
 export interface NamePulseSuggestionsResponse {
 	suggestions: NamePulseSuggestion[];
-	/**
-	 * Per-provider failures. Partial results are still usable when this is non-empty.
-	 */
+	/** Partial results are still usable when this is non-empty. */
 	errors: NamePulseProviderError[];
 }
 
 /**
- * One entry of the `POST /wpcom/v2/domains/name-pulse/availability-check` response.
  * Unavailable domains only carry `{ is_available: false }`.
  */
 export interface NamePulseAvailabilityEntry {
@@ -109,10 +72,7 @@ export interface NamePulseAvailabilityEntry {
 	is_available: boolean;
 	is_premium?: boolean;
 
-	/**
-	 * Rendered formatted cost
-	 * @example "$10.00"
-	 */
+	/** Formatted, e.g. "$10.00". */
 	cost?: string;
 	raw_price?: number;
 	sale_cost?: number;

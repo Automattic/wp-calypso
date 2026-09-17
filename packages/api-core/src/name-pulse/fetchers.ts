@@ -9,9 +9,8 @@ import {
 const DEFAULT_PROVIDERS = [ 'verisign', 'domainsbot' ];
 
 /**
- * Fetch keyword (`use_ai=0`) or creative (`use_ai=1`) domain suggestions from the
- * Name Pulse engine. Provider errors ride along in `errors[]`; only when every
- * provider fails does the endpoint reply with a 400.
+ * Provider errors ride along in `errors[]`; only when every provider fails does
+ * the endpoint reply with a 400.
  */
 export async function fetchNamePulseSuggestions( {
 	query,
@@ -45,8 +44,7 @@ export async function fetchNamePulseSuggestions( {
 }
 
 /**
- * Bulk zone-file availability check (max 50 domains per call). The response is
- * keyed by domain; unavailable names come back as `{ is_available: false }`.
+ * Zone-file based, so results are approximate.
  */
 export async function fetchNamePulseAvailability(
 	domainNames: string[]

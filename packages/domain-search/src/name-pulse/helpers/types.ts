@@ -21,9 +21,7 @@ export interface NamePulseDomainResult {
 	 */
 	suffix: string;
 	status: NamePulseDomainStatus;
-	/**
-	 * Formatted price when the domain is available, e.g. "$22.00".
-	 */
+	/** Formatted, e.g. "$22.00". */
 	cost?: string;
 	raw_price?: number;
 	sale_cost?: number;
@@ -32,10 +30,7 @@ export interface NamePulseDomainResult {
 	product_id?: number;
 	product_slug?: string;
 	supports_privacy?: boolean;
-	/**
-	 * Set once a v1.3 real-time check has run for this row. Bulk zone-file
-	 * results never overwrite a real-time result.
-	 */
+	/** Set once a real-time check has run; bulk zone-file results never overwrite it. */
 	is_realtime?: boolean;
 	source: NamePulseSource;
 	relevance?: number;

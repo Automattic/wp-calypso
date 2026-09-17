@@ -33,7 +33,7 @@ const getSuffix = ( domainName: string ) => {
 
 /**
  * Suggestions come back pre-filtered for availability by the providers, so they
- * render as AVAILABLE straight away; the v1.3 check on add-to-cart is the guard.
+ * render as AVAILABLE straight away; the real-time check on add-to-cart is the guard.
  */
 const toSuggestionResults = (
 	suggestions: NamePulseSuggestion[] | undefined,
@@ -64,14 +64,8 @@ const toSuggestionResults = (
 };
 
 /**
- * Orchestrates one Name Pulse search for an already-settled query (the search
- * form debounces keystrokes before the query reaches the context):
- *
- * - derives base label, FQDN and word count;
- * - materialises the exact-match grid immediately (all rows WAITING, previous
- *   statuses for unchanged names carried over) and checks the first rows;
- * - fetches keyword suggestions from 2 words;
- * - picks the three featured rows.
+ * Expects an already-settled query (the search form debounces keystrokes). Rows
+ * keep their previous status when a new search still lists them.
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
@@ -223,10 +217,9 @@ export const useNamePulseSearch = ( query: string ) => {
 		}
 	}, [ topResults, checkDomains ] );
 
-	// Cross-section deduplication: Top results → Exact match → More suggestions,
-	// each section drops any domain already listed by the ones above it. Full
-	// lists are compared, not only the visible rows, so expanding a section
-	// never makes rows vanish from the one below.
+	// Each section drops domains already listed above it. Full lists are compared,
+	// not only the visible rows, so expanding a section never makes rows vanish
+	// from the one below.
 	const exactList = useMemo(
 		() => excludeDomains( rawExactList, toDomainNameSet( topResults ) ),
 		[ rawExactList, topResults ]

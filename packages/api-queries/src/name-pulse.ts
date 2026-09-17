@@ -6,9 +6,7 @@ import {
 import { queryOptions } from '@tanstack/react-query';
 
 /**
- * Name Pulse results are cached for five minutes, matching the TTL of the
- * localStorage cache in the standalone leandomainsearch.com app that this
- * replaces. Nothing is persisted across sessions.
+ * Name Pulse results are cached for five minutes.
  */
 const NAME_PULSE_STALE_TIME = 5 * 60 * 1000;
 

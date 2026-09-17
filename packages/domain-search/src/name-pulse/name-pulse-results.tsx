@@ -10,15 +10,6 @@ import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 
 import './components/style.scss';
 
-/**
- * Name Pulse results mode. Rendered by `DomainSearch` instead of `ResultsPage`
- * when `config.showNamePulseSearch` is on. Sections by word count:
- *
- * | words | Top results | Exact match | More suggestions |
- * |-------|-------------|-------------|------------------|
- * | 1     | yes         | yes         | —                |
- * | 2+    | yes         | yes         | yes              |
- */
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
 	const { query } = useDomainSearch();

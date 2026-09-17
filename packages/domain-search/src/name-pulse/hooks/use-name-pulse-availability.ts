@@ -10,8 +10,7 @@ import {
 import type { NamePulseAvailabilityEntry } from '@automattic/api-core';
 
 /**
- * Map one bulk availability entry onto a row update. Unavailable entries carry
- * no pricing, so only `status` changes for them.
+ * Unavailable entries carry no pricing, so only `status` changes for them.
  */
 export const toAvailabilityUpdate = (
 	domainName: string,
@@ -39,16 +38,10 @@ export const toAvailabilityUpdate = (
 };
 
 /**
- * Progressive bulk availability: splits the requested names into batches of 36,
- * fires them in parallel through react-query (so a repeated batch within the
- * stale window is served from cache) and reports each resolved domain through
- * `onUpdate`.
- *
- * A batch that fails (network error, 429, timeout) or takes longer than
- * `NAME_PULSE_SKELETON_TIMEOUT_MS` reports its rows as UNKNOWN so they stop
- * showing a skeleton. UNKNOWN rows stay in the grid ("Couldn't check") and are
- * re-requested on the next search or "Show more"; a late response still lands
- * because `mergeResultUpdate` lets a verdict replace UNKNOWN.
+ * Batches go through react-query, so a repeated batch within the stale window is
+ * served from cache. A batch that fails or outlives `NAME_PULSE_SKELETON_TIMEOUT_MS`
+ * reports its rows as UNKNOWN; a late response still lands because
+ * `mergeResultUpdate` lets a verdict replace UNKNOWN.
  */
 export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpdate ) => void ) => {
 	const queryClient = useQueryClient();
@@ -56,9 +49,8 @@ export const useNamePulseAvailability = ( onUpdate: ( update: NamePulseDomainUpd
 	const onUpdateRef = useRef( onUpdate );
 	const queriesRef = useRef( queries );
 	const timersRef = useRef( new Set< ReturnType< typeof setTimeout > >() );
-	// Names with a request in flight. Callers may ask for the same rows again
-	// while they are still WAITING (Top results backfilling, a re-render of the
-	// grid); those must not fan out into extra requests.
+	// Names with a request in flight; asking again for rows still WAITING must
+	// not fan out into extra requests.
 	const pendingRef = useRef( new Set< string >() );
 
 	useEffect( () => {
