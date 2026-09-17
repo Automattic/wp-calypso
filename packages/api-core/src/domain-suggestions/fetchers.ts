@@ -4,6 +4,7 @@ import type {
 	BundleSuggestion,
 	DomainSuggestion,
 	DomainSuggestionQuery,
+	DomainSuggestionRequestContext,
 	FreeDomainSuggestion,
 } from './types';
 
@@ -91,18 +92,25 @@ export async function fetchAvailableTlds( search?: string, vendor?: string ): Pr
  * frontend `domain-bundling` flag additionally gates whether the query runs at
  * all (see the `bundleMetadataQuery` consumers).
  * @param search The domain search query (an SLD or FQDN).
- * @returns The bundle suggestion (or null) and the trigger TLDs (or []).
+ * @param context Analytics context (`flow_name`, `section`, `search_id`) recorded by the server.
+ * @returns The bundle suggestion (or null), the trigger TLDs (or []) and the result set id (or null).
  */
-export async function fetchBundleMetadata( search: string ): Promise< BundleMetadata > {
+export async function fetchBundleMetadata(
+	search: string,
+	context: DomainSuggestionRequestContext = {}
+): Promise< BundleMetadata > {
 	const response: {
+		domain_suggestions?: DomainSuggestion[];
 		bundle_suggestion?: BundleSuggestion | null;
 		bundle_triggers?: string[];
+		result_set_id?: string;
 	} = await wpcom.req.get(
 		{
 			apiVersion: '1.1',
 			path: '/domains/suggestions',
 		},
 		{
+			...context,
 			query: search.trim().toLocaleLowerCase(),
 			vendor: 'variation2_front',
 			with_bundles: 1,
@@ -112,6 +120,8 @@ export async function fetchBundleMetadata( search: string ): Promise< BundleMeta
 	return {
 		bundle_suggestion: response.bundle_suggestion ?? null,
 		bundle_triggers: response.bundle_triggers ?? [],
+		result_set_id:
+			response.result_set_id ?? response.domain_suggestions?.[ 0 ]?.result_set_id ?? null,
 	};
 }
 
@@ -126,15 +136,20 @@ export async function fetchBundleMetadata( search: string ): Promise< BundleMeta
  * `{ bundle_suggestion: BundleSuggestion | null }`, where the added
  * domain is the `primary` member and the rest are `companion`s.
  * @param fqdn The fully-qualified trigger domain (e.g. "flowers.com").
+ * @param context Analytics context (`flow_name`, `section`, `search_id`) recorded by the server.
  * @returns A bundle suggestion, or null when no bundle applies.
  */
-export async function fetchBundleForDomain( fqdn: string ): Promise< BundleSuggestion | null > {
+export async function fetchBundleForDomain(
+	fqdn: string,
+	context: DomainSuggestionRequestContext = {}
+): Promise< BundleSuggestion | null > {
 	const response: { bundle_suggestion?: BundleSuggestion | null } = await wpcom.req.get(
 		{
 			path: '/domains/bundle',
 			apiNamespace: 'wpcom/v2',
 		},
 		{
+			...context,
 			query: fqdn.trim().toLocaleLowerCase(),
 		}
 	);

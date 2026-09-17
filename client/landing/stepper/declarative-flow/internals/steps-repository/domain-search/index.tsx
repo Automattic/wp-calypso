@@ -237,6 +237,7 @@ const DomainSearchStep: StepType< {
 				! isNewHostedSiteCreationFlow( flow ) &&
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
+			searchUiVersion: 'legacy_v1' as const,
 		};
 	}, [
 		__,

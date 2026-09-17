@@ -7,12 +7,42 @@ import type {
 	FreeDomainSuggestion,
 } from '@automattic/api-core';
 
+// The domain-search context stamps `search_id` (a fresh uuid per search) plus
+// `flow_name` / `section` on every suggestions and bundle request. Match the
+// remaining params exactly, ignoring those three, so tests stay deterministic.
+const matchesQueryIgnoringContext =
+	( params: Record< string, unknown > ) =>
+	( actual: Record< string, string | string[] | undefined > ) => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { search_id, flow_name, section, ...rest } = actual;
+
+		// nock hands us a flat `querystring`-style object (`tlds[]` keys); rebuild the
+		// query string so both sides go through the same `qs` parser.
+		const actualSearchParams = new URLSearchParams();
+		Object.entries( rest ).forEach( ( [ key, value ] ) => {
+			( Array.isArray( value ) ? value : [ value ?? '' ] ).forEach( ( item ) =>
+				actualSearchParams.append( key, item )
+			);
+		} );
+
+		const normalize = ( value: Record< string, unknown > ) =>
+			JSON.stringify( value, Object.keys( value ).sort() );
+
+		return (
+			normalize( qs.parse( actualSearchParams.toString() ) ) ===
+			normalize( qs.parse( qs.stringify( params, { arrayFormat: 'brackets' } ) ) )
+		);
+	};
+
 export const mockGetSuggestionsQuery = ( {
 	params: rawParams,
 	suggestions,
+	delay,
 }: {
 	params: Partial< DomainSuggestionQuery >;
 	suggestions: DomainSuggestion[] | Error;
+	/** Response delay in ms, to make one request settle after another. */
+	delay?: number;
 } ) => {
 	const params = {
 		include_wordpressdotcom: false,
@@ -27,7 +57,11 @@ export const mockGetSuggestionsQuery = ( {
 
 	const request = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
-		.query( qs.stringify( params, { arrayFormat: 'brackets' } ) );
+		.query( matchesQueryIgnoringContext( params ) );
+
+	if ( delay ) {
+		request.delay( delay );
+	}
 
 	if ( suggestions instanceof Error ) {
 		return request.replyWithError( suggestions );
@@ -53,11 +87,13 @@ export const mockGetBundleMetadataQuery = ( {
 } ) => {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
-		.query( {
-			vendor: 'variation2_front',
-			with_bundles: 1,
-			...params,
-		} )
+		.query(
+			matchesQueryIgnoringContext( {
+				vendor: 'variation2_front',
+				with_bundles: 1,
+				...params,
+			} )
+		)
 		.reply( 200, { bundle_suggestion: bundleSuggestion, bundle_triggers: bundleTriggers } );
 };
 
@@ -90,7 +126,7 @@ export const mockGetBundleForDomainQuery = ( {
 } ) => {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/wpcom/v2/domains/bundle' )
-		.query( { query: fqdn } )
+		.query( matchesQueryIgnoringContext( { query: fqdn } ) )
 		.reply( 200, { bundle_suggestion: bundleSuggestion } );
 };
 

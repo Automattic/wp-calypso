@@ -1604,7 +1604,14 @@ describe( 'ResultsPage', () => {
 				expect( onSuggestionsReceive ).toHaveBeenCalledWith(
 					'test-receive',
 					[ 'test.com', 'test.net', 'test.org' ],
-					expect.any( Number )
+					expect.any( Number ),
+					{
+						searchId: expect.any( String ),
+						resultSetId: null,
+						// Same partition as the UI: two featured cards (recommended, best alternative), one list row.
+						resultCountFeatured: 2,
+						resultCountList: 1,
+					}
 				);
 			} );
 		} );

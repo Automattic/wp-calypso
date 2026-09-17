@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useRef } from 'react';
+import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useRequestTracking = () => {
-	const { query, events, queries } = useDomainSearch();
+	const { query, searchId, searchTrigger, events, queries, config } = useDomainSearch();
 	const lastQueryChangeTime = useRef( 0 );
 
 	const {
 		data: suggestions = [],
 		isLoading: isLoadingSuggestions,
 		isPending: isPendingSuggestions,
+		isSuccess: isSuccessSuggestions,
 	} = useQuery( queries.domainSuggestions( query ) );
 
 	const { data: availabilityData, isLoading: isLoadingQueryAvailability } = useQuery(
@@ -23,11 +25,19 @@ export const useRequestTracking = () => {
 
 	const triggerSuggestionsReceiveEvent = useEvent( () => {
 		const suggestionsReceiveResponseTime = Date.now() - lastQueryChangeTime.current;
-		events.onSuggestionsReceive(
+		const suggestionNames = suggestions.map( ( suggestion ) => suggestion.domain_name );
+		const { featuredSuggestions, regularSuggestions } = partitionSuggestions( {
+			suggestions: suggestionNames,
 			query,
-			suggestions.map( ( suggestion ) => suggestion.domain_name ),
-			suggestionsReceiveResponseTime
-		);
+			deemphasizedTlds: config.deemphasizedTlds,
+		} );
+
+		events.onSuggestionsReceive( query, suggestionNames, suggestionsReceiveResponseTime, {
+			searchId,
+			resultSetId: suggestions[ 0 ]?.result_set_id ?? null,
+			resultCountFeatured: featuredSuggestions.length,
+			resultCountList: regularSuggestions.length,
+		} );
 	} );
 
 	useEffect( () => {
@@ -35,6 +45,18 @@ export const useRequestTracking = () => {
 			triggerSuggestionsReceiveEvent();
 		}
 	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions, isPendingSuggestions ] );
+
+	const triggerSearchEvent = useEvent( () => {
+		events.onSearch( query, searchId, searchTrigger );
+	} );
+
+	// One search event per accepted response: a superseded request never
+	// reaches success for its search id, and errors are not searches.
+	useEffect( () => {
+		if ( isSuccessSuggestions ) {
+			triggerSearchEvent();
+		}
+	}, [ triggerSearchEvent, isSuccessSuggestions, searchId ] );
 
 	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
 		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;
