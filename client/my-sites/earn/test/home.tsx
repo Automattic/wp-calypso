@@ -5,6 +5,7 @@
 import page from '@automattic/calypso-router';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -22,7 +23,10 @@ jest.mock( 'calypso/lib/wp', () => {
 	return { __esModule: true, default: { req: { get: pending, post: pending } } };
 } );
 
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
+
 const mockedPage = page as unknown as jest.Mock;
+const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
 
 // A monthly plan has none of the monetization features, so every card that can
 // upsell does.
@@ -55,6 +59,7 @@ const referAFriendUpgradeButton = () =>
 describe( 'Earn home', () => {
 	beforeEach( () => {
 		mockedPage.mockClear();
+		mockedIsJetpackCloud.mockReturnValue( false );
 		window.history.pushState( {}, '', '/earn/example.wordpress.com' );
 	} );
 
@@ -90,14 +95,24 @@ describe( 'Earn home', () => {
 
 	// `free_plan` counts as monthly, so its "annual equivalent" is itself: without
 	// this, the CTA sends free sites to checkout for an unbuyable product.
-	it( 'sends a free site to the yearly plans page', async () => {
+	it( 'sends a free site to checkout for Personal', async () => {
 		renderHome( 'free_plan' );
 
 		await userEvent.click( referAFriendUpgradeButton() );
 
+		expect( lastDestination().pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
+	} );
+
+	// Jetpack Cloud serves no `/checkout`, so a relative checkout link there leads nowhere.
+	it( 'hands checkout off to WordPress.com from Jetpack Cloud', async () => {
+		mockedIsJetpackCloud.mockReturnValue( true );
+		renderHome();
+
+		await userEvent.click( referAFriendUpgradeButton() );
+
 		const destination = lastDestination();
-		expect( destination.pathname ).toBe( '/plans/yearly/example.wordpress.com' );
-		expect( destination.searchParams.get( 'redirect_to' ) ).toBe( '/earn/example.wordpress.com' );
+		expect( destination.origin ).toBe( 'https://wordpress.com' );
+		expect( destination.pathname ).toBe( '/checkout/example.wordpress.com/personal-bundle' );
 	} );
 
 	// Nothing else covers the eligible side of the plan check, so a mistake there
