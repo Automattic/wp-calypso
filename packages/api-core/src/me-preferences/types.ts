@@ -49,6 +49,7 @@ export interface UserPreferences {
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
 	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;
+	'reader-seen-posts'?: boolean;
 	'sites-landing-page'?: SitesLandingPage;
 	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
