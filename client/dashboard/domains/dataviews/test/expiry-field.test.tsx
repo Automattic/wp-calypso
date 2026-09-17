@@ -161,6 +161,12 @@ describe( 'domains "Paid until" field', () => {
 		).toEqual( [ 'expired.com', 'soon.com' ] );
 	} );
 
+	it( 'keeps every row while no expiry bucket is selected', async () => {
+		const fields = await useReadyFields();
+
+		expect( filtered( fields, [] ).data ).toHaveLength( FILTERABLE.length );
+	} );
+
 	it( 'reports the filtered row count', async () => {
 		const fields = await useReadyFields();
 
