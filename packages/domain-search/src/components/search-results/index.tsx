@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { NamePulseSearch } from '../../name-pulse';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSuggestionsList,
@@ -42,14 +41,6 @@ const SearchResults = ( {
 		}
 
 		return null;
-	}
-
-	if ( config.showNamePulseSearch ) {
-		return (
-			<DomainSuggestionsList>
-				<NamePulseSearch />
-			</DomainSuggestionsList>
-		);
 	}
 
 	const shouldShowMoreResultsButton = numberOfVisibleSuggestions < suggestions.length;
