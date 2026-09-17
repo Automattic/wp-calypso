@@ -42,7 +42,7 @@ function getExistingSearchSource( site: Site, routeProduct: string ) {
 
 export default function ExistingSearchNotice( { site, siteUrl, product }: Props ) {
 	const translate = useTranslate();
-	const source = site && getExistingSearchSource( site, product );
+	const source = siteUrl && site && getExistingSearchSource( site, product );
 
 	if ( ! source ) {
 		return null;
@@ -67,7 +67,7 @@ export default function ExistingSearchNotice( { site, siteUrl, product }: Props 
 	};
 
 	return (
-		<div className="jetpack-connect__notices-container">
+		<div className="jetpack-connect__notices-container jetpack-connect__existing-search-notice">
 			<Notice status="is-info" icon="notice" showDismiss={ false } text={ texts[ source ] } />
 		</div>
 	);

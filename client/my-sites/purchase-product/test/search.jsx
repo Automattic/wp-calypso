@@ -19,11 +19,11 @@ const NOTICE_PRODUCT = /This site already has a Jetpack Search subscription\./;
 const NOTICE_RENEWAL = /Continuing will renew it\./;
 const NOTICE_PLAN = /Jetpack Search is already included in this site's plan\./;
 
-const render = ( site, jetpackSite = site ) =>
+const render = ( site, jetpackSite = site, url = SITE_URL ) =>
 	renderWithProvider(
 		<SearchPurchase
 			translate={ translate }
-			url={ SITE_URL }
+			url={ url }
 			status=""
 			getJetpackSiteByUrl={ () => jetpackSite }
 			getSiteByUrl={ () => site }
@@ -86,19 +86,34 @@ describe( 'SearchPurchase', () => {
 		);
 	} );
 
-	test( 'warns about renewing on a Simple site that owns the WordPress.com Search product', () => {
+	test( 'does not warn before a site address is entered', () => {
+		window.history.replaceState( null, '', '/purchase-product/jetpack_search' );
+		render(
+			{
+				URL: SITE_URL,
+				plan: { product_slug: 'jetpack_free' },
+				products: [ { product_slug: 'jetpack_search', expired: false, user_is_owner: true } ],
+			},
+			null,
+			''
+		);
+
+		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'warns on a Simple site whose P2+ plan includes Search', () => {
 		window.history.replaceState( null, '', '/purchase-product/wpcom_search' );
 		render(
 			{
 				URL: SITE_URL,
 				jetpack: false,
-				plan: { product_slug: 'personal-bundle' },
-				products: [ { product_slug: 'wpcom_search', expired: false, user_is_owner: true } ],
+				plan: { product_slug: 'wp_p2_plus_monthly' },
+				products: [],
 			},
 			null
 		);
 
-		expect( screen.getByText( NOTICE_RENEWAL ) ).toBeVisible();
+		expect( screen.getByText( NOTICE_PLAN ) ).toBeVisible();
 	} );
 
 	test( 'does not promise a renewal when the owned Search term differs from the route', () => {
