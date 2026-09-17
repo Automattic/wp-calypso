@@ -52,7 +52,7 @@ async function loadCheckpoints() {
 	};
 }
 
-/** What `resolveSelect` serves for every record read during a restore. */
+/** What `resolveSelect` serves for every record read. */
 const withRecord = ( record: unknown ) =>
 	jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
 		getEditedEntityRecord: jest.fn().mockResolvedValue( record ),
@@ -263,22 +263,38 @@ describe( 'getAvailableCheckpoints', () => {
 	// The list is re-sent to the agent every turn; snapshots carry whole
 	// global-styles records, menu block trees and site metadata.
 	it( 'sends no snapshot fields to the model', async () => {
-		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getAvailableCheckpoints, checkpointKeys } =
+			await loadCheckpoints();
+		const write = { toolId: 'tool', keys: Object.values( checkpointKeys ), summary: 'x' };
+		withRecord( { blocks: [] } );
 
-		setCheckpoint( 'call-1', [ checkpointKeys.COLOR, checkpointKeys.LOGO ] );
+		await withCheckpoint( write, async ( recorder ) => {
+			await recorder.captureMenu( 19 );
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } );
+			recorder.markWritten( 'site_title' );
+		} );
 
-		const [ item ] = getAvailableCheckpoints();
-
-		expect( Object.keys( item ) ).toEqual(
-			expect.not.arrayContaining( [
+		// Every snapshot field is on the record, so a leak of any one would show.
+		expect( Object.keys( getCheckpoint( 'call-1' ) ?? {} ) ).toEqual(
+			expect.arrayContaining( [
 				'themeBeforeUpdate',
 				'logoBeforeUpdate',
 				'siteTitleBeforeUpdate',
 				'siteMetadataBeforeUpdate',
 				'menusBeforeUpdate',
 				'pageRenames',
+				'writtenKeys',
 			] )
 		);
+		expect( Object.keys( getAvailableCheckpoints()[ 0 ] ).sort() ).toEqual( [
+			'checkpointId',
+			'checkpointIndex',
+			'checkpointKeys',
+			'createdAt',
+			'isLatestForTool',
+			'summary',
+			'toolId',
+		] );
 	} );
 
 	it( 'returns an empty list without checkpoints', async () => {
@@ -506,12 +522,13 @@ describe( 'withCheckpoint', () => {
 	it( 'still records what a repeat of the same call touches', async () => {
 		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
 		const write = { toolId: 'tool', toolCallId: 'call-1', keys: [ 'page' ], summary: 'x' };
-		const rename = { pageId: 7, from: 'Old', to: 'New' };
+		const first = { pageId: 7, from: 'Old', to: 'New' };
+		const second = { pageId: 8, from: 'Then', to: 'Now' };
 
-		await withCheckpoint( write, () => {} );
-		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( first ) );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( second ) );
 
-		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ first, second ] );
 	} );
 
 	// A partial first run drops the domains it never reached; a repeat must be
@@ -685,18 +702,21 @@ describe( 'restore by domain', () => {
 
 		await restoreCheckpoint( 'call-1' );
 
-		expect( editEntityRecord.mock.calls.map( ( call ) => call[ 3 ] ) ).toEqual( [
+		expect( editEntityRecord ).toHaveBeenNthCalledWith(
+			1,
+			'postType',
+			'page',
+			7,
 			{ title: 'B' },
-			{ title: 'A' },
-		] );
-		expect( editEntityRecord ).toHaveBeenCalledWith(
+			{ undoIgnore: true }
+		);
+		expect( editEntityRecord ).toHaveBeenNthCalledWith(
+			2,
 			'postType',
 			'page',
 			7,
 			{ title: 'A' },
-			{
-				undoIgnore: true,
-			}
+			{ undoIgnore: true }
 		);
 	} );
 
@@ -704,14 +724,19 @@ describe( 'restore by domain', () => {
 		const {
 			setCheckpoint,
 			restoreCheckpoint,
-			getCheckpoint,
+			getEditedEntityRecord,
 			editEntityRecord,
 			saveSpecifiedEntityEdits,
 		} = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( {
+			title: 'Old',
+			big_sky_site_metadata: '{"personality":"calm"}',
+		} );
 		setCheckpoint( 'call-1', [ 'site_title', 'site_metadata' ] );
-		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
-			siteTitleBeforeUpdate: 'Old',
-			siteMetadataBeforeUpdate: { personality: 'calm' },
+		// A key introduced since: the metadata is replaced, not merged onto.
+		getEditedEntityRecord.mockReturnValue( {
+			title: 'New',
+			big_sky_site_metadata: '{"personality":"bold","siteLocation":{"name":"Lisbon"}}',
 		} );
 
 		await restoreCheckpoint( 'call-1' );
@@ -745,9 +770,7 @@ describe( 'restore order', () => {
 	it( 'restores page titles before menus, so a missing page fails first', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
 			await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
-		} );
+		withRecord( null );
 
 		setCheckpoint( 'call-1', [ 'page', 'navigation' ] );
 		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
@@ -773,9 +796,7 @@ describe( 'setReciprocalCheckpoint', () => {
 	// The redo returns to the title the undo is about to overwrite.
 	it( 'records each renamed page once, at its current title', async () => {
 		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( { title: 'Renamed since' } ),
-		} );
+		withRecord( { title: 'Renamed since' } );
 
 		await setReciprocalCheckpoint(
 			'redo',
@@ -804,13 +825,23 @@ describe( 'setReciprocalCheckpoint', () => {
 
 	it( 'records nothing when a menu it must snapshot cannot be read', async () => {
 		const { setReciprocalCheckpoint, hasCheckpoint } = await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
-		} );
+		withRecord( null );
 
 		await expect(
 			setReciprocalCheckpoint( 'redo', target( [], [ { id: 19, items: [] } ] ), {} )
 		).rejects.toThrow( 'Navigation menu not found: 19' );
+		expect( hasCheckpoint( 'redo' ) ).toBe( false );
+	} );
+
+	it( 'records nothing when a claimed domain cannot be snapshotted', async () => {
+		const { setReciprocalCheckpoint, hasCheckpoint, getEditedEntityRecord } =
+			await loadCheckpoints();
+		const siteTitleTarget = { id: 'target', checkpointKeys: [ 'site_title' ], createdAt: 0 };
+		getEditedEntityRecord.mockReturnValue( undefined );
+
+		await expect( setReciprocalCheckpoint( 'redo', siteTitleTarget, {} ) ).rejects.toThrow(
+			'Could not snapshot site_title for a redo.'
+		);
 		expect( hasCheckpoint( 'redo' ) ).toBe( false );
 	} );
 } );
@@ -832,21 +863,9 @@ describe( 'checkpoint recorder', () => {
 		expect( getCheckpoint( 'call-1' )?.pageRenames ).toBeUndefined();
 	} );
 
-	it( 'records a rename from a write that claimed the page domain', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
-
-		await withCheckpoint( write( [ 'page' ] ), ( recorder ) =>
-			recorder.capturePageRename( RENAME )
-		);
-
-		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ RENAME ] );
-	} );
-
 	it( 'refuses the write when the menu it must snapshot cannot be read', async () => {
 		const { withCheckpoint } = await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
-		} );
+		withRecord( null );
 
 		await expect(
 			withCheckpoint( write( [ 'navigation' ] ), ( recorder ) => recorder.captureMenu( 19 ) )
@@ -857,9 +876,7 @@ describe( 'checkpoint recorder', () => {
 	// write to the same menu must not take the first one's snapshot with it.
 	it( 'reports only the call that added the menu snapshot', async () => {
 		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( { blocks: [] } ),
-		} );
+		withRecord( { blocks: [] } );
 		const captured: boolean[] = [];
 
 		await withCheckpoint( write( [ 'navigation' ] ), async ( recorder ) => {
