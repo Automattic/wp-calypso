@@ -44,6 +44,7 @@ export const NamePulseResults = () => {
 						<NamePulseResultsSection
 							id="top"
 							title={ __( 'Top results' ) }
+							variant={ layout.topResults.style }
 							results={ topResults }
 							isLoading={ isLoadingTlds }
 							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }

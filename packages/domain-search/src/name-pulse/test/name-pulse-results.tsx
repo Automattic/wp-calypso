@@ -84,17 +84,29 @@ const findRow = async ( domainName: string ) => {
 const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
 
+const cardSkeletonsIn = ( id: string ) =>
+	within( document.querySelector( `[data-section="${ id }"]` ) as HTMLElement ).queryAllByRole(
+		'status'
+	).length;
+
 const domainsIn = ( id: string ) =>
 	sectionRows( id ).map(
-		( item ) => item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' )
+		( item ) =>
+			item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' ) ??
+			item.getAttribute( 'title' )
 	);
+
+const cardFor = ( domainName: string ) =>
+	within( document.querySelector( '[data-section="top"]' ) as HTMLElement ).getByRole( 'listitem', {
+		name: domainName,
+	} );
 
 describe( 'NamePulseResults', () => {
 	beforeEach( () => {
 		queryClient.clear();
 	} );
 
-	it( 'shows skeletons until the TLD list arrives, then Top results and the exact-match grid in its order', async () => {
+	it( 'shows skeletons until the TLD list arrives, then Top result cards and the exact-match grid in its order', async () => {
 		const availabilityRequests: string[][] = [];
 		let resolveTlds: ( tlds: string[] ) => void = () => {};
 		const tldsResponse = () =>
@@ -113,7 +125,7 @@ describe( 'NamePulseResults', () => {
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
-		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+		expect( cardSkeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
 		expect( availabilityRequests ).toHaveLength( 0 );
@@ -135,7 +147,15 @@ describe( 'NamePulseResults', () => {
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
+		expect( cardSkeletonsIn( 'top' ) ).toBe( 0 );
 		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( rowFor( 'icecream.blog' ) ).toBeNull();
+		const saleCard = cardFor( 'icecream.blog' );
+		expect( within( saleCard ).getByText( 'Sale' ) ).toBeInTheDocument();
+		expect( within( saleCard ).getByLabelText( 'Sale price: $4' ) ).toBeInTheDocument();
+		expect( within( saleCard ).getByText( /\$22\/year renewal/ ) ).toBeInTheDocument();
+		expect( within( saleCard ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
+		expect( within( cardFor( 'icecream.com' ) ).getByText( '$12' ) ).toBeInTheDocument();
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
 			'icecream.org',
 			'icecream.net',
@@ -261,6 +281,7 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
+		expect( rowFor( 'icecream.blog' ) ).not.toBeNull();
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 	} );
 

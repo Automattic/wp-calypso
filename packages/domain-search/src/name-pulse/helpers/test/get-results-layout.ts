@@ -6,6 +6,7 @@ const EMPTY: NamePulseResultsLayout = {
 	mode: 'empty',
 	baseName: '',
 	wordCount: 0,
+	topResults: { style: 'compact' },
 	exactGrid: { show: false },
 	suggestions: { show: false },
 };
@@ -14,6 +15,7 @@ const SINGLE: NamePulseResultsLayout = {
 	mode: 'single',
 	baseName: 'coffee',
 	wordCount: 1,
+	topResults: { style: 'card' },
 	exactGrid: { show: true },
 	suggestions: { show: false },
 };
@@ -22,6 +24,7 @@ const KEYWORD: NamePulseResultsLayout = {
 	mode: 'keyword',
 	baseName: 'coffeeshop',
 	wordCount: 2,
+	topResults: { style: 'card' },
 	exactGrid: { show: true },
 	suggestions: { show: true },
 };
@@ -34,23 +37,24 @@ describe( 'getResultsLayout', () => {
 		expect( getResultsLayout( '!!! ???', TLDS ) ).toEqual( EMPTY );
 	} );
 
-	it( 'shows the exact grid for an FQDN', () => {
+	it( 'shows compact top results and the exact grid for an FQDN', () => {
 		expect( getResultsLayout( 'Coffee.COM', TLDS ) ).toEqual( {
 			mode: 'fqdn',
 			baseName: 'coffee',
 			wordCount: 1,
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
+			topResults: { style: 'compact' },
 			exactGrid: { show: true },
 			suggestions: { show: false },
 		} );
 	} );
 
-	it( 'shows the exact grid for one word, even when followed by punctuation', () => {
+	it( 'shows top result cards and the exact grid for one word, even when followed by punctuation', () => {
 		expect( getResultsLayout( ' Coffee! ', TLDS ) ).toEqual( SINGLE );
 		expect( getResultsLayout( 'coffee !!!', TLDS ) ).toEqual( SINGLE );
 	} );
 
-	it( 'shows the exact grid and suggestions for two or three words', () => {
+	it( 'shows top result cards, the exact grid and suggestions for two or three words', () => {
 		expect( getResultsLayout( 'Coffee Shop', TLDS ) ).toEqual( KEYWORD );
 		expect( getResultsLayout( 'Coffee  Shop  NYC!', TLDS ) ).toEqual( {
 			...KEYWORD,
@@ -64,6 +68,7 @@ describe( 'getResultsLayout', () => {
 			mode: 'ai',
 			baseName: 'ablogaboutcoffee',
 			wordCount: 4,
+			topResults: { style: 'compact' },
 			exactGrid: { show: true },
 			suggestions: { show: true },
 		} );

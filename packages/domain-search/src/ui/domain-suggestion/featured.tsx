@@ -71,7 +71,11 @@ const Featured = ( {
 	);
 
 	const domainName = (
-		<Text size={ activeQuery === 'large' ? 32 : 24 } style={ { wordBreak: 'break-all' } }>
+		<Text
+			size={ activeQuery === 'large' ? 32 : 24 }
+			style={ { wordBreak: 'break-all' } }
+			className="domain-suggestion-featured__domain-name"
+		>
 			{ domain }
 			<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
 		</Text>
