@@ -7,8 +7,7 @@
 	}
 }
 
-.domain-search--initial-state,
-.domain-search--name-pulse {
+.domain-search--initial-state {
 	@media ( max-width: #{ $break-small - 1px } ) {
 		--domain-search-input-size: 48px;
 		--domain-search-input-border-radius: 2px;

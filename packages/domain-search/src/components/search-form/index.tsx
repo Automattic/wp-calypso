@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { useDebounce, useEvent, useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -22,21 +22,12 @@ const PLACEHOLDER_PHRASES = [
 	'discardedobject.art',
 ];
 
-const INSTANT_SEARCH_DEBOUNCE_MS = 300;
-
-interface SearchFormProps {
-	instantSearch?: boolean;
-}
-
-export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
+export const SearchForm = () => {
 	const {
-		query,
 		setQuery,
 		events: { onSubmitButtonClick },
 	} = useDomainSearch();
-	const [ localQuery, setLocalQuery ] = useState( query );
-	const stableSetQuery = useEvent( setQuery );
-	const debouncedSetQuery = useDebounce( stableSetQuery, INSTANT_SEARCH_DEBOUNCE_MS );
+	const [ localQuery, setLocalQuery ] = useState( '' );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -45,14 +36,11 @@ export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
 	// in an effect lands reliably after the commit phase.
 	const inputRef = useRef< HTMLInputElement >( null );
 	useEffect( () => {
-		const input = inputRef.current;
-		input?.focus();
-		input?.setSelectionRange( input.value.length, input.value.length );
+		inputRef.current?.focus();
 	}, [] );
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		debouncedSetQuery.cancel();
 		setQuery( localQuery );
 
 		if ( localQuery === '' ) {
@@ -63,20 +51,7 @@ export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
 	const inputProps = {
 		ref: inputRef,
 		value: localQuery,
-		onChange: ( value: string ) => {
-			if ( ! instantSearch ) {
-				setLocalQuery( value.trim() );
-				return;
-			}
-
-			// Keep the raw value so a trailing space can start the next word.
-			setLocalQuery( value );
-			if ( value.trim() ) {
-				debouncedSetQuery( value.trim() );
-			} else {
-				debouncedSetQuery.cancel();
-			}
-		},
+		onChange: ( value: string ) => setLocalQuery( value.trim() ),
 		onReset: () => setLocalQuery( '' ),
 		placeholder,
 	};
@@ -87,19 +62,15 @@ export const SearchForm = ( { instantSearch = false }: SearchFormProps ) => {
 				{ isMobileViewport ? (
 					<div className="domain-search__search-form-field">
 						<DomainSearchControls.Input { ...inputProps } />
-						{ ! instantSearch && (
-							<DomainSearchControls.Submit
-								iconOnly
-								onClick={ () => onSubmitButtonClick( localQuery ) }
-							/>
-						) }
+						<DomainSearchControls.Submit
+							iconOnly
+							onClick={ () => onSubmitButtonClick( localQuery ) }
+						/>
 					</div>
 				) : (
 					<HStack alignment="flex-start" spacing={ 4 }>
 						<DomainSearchControls.Input { ...inputProps } />
-						{ ! instantSearch && (
-							<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
-						) }
+						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
 					</HStack>
 				) }
 				{ showSearchHint && (
