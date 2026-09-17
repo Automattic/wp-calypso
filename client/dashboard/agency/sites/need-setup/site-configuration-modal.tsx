@@ -6,6 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	CheckboxControl,
+	ExternalLink,
 	Modal,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -156,6 +157,14 @@ export default function SiteConfigurationModal( {
 		{
 			id: 'php_version',
 			label: __( 'PHP version' ),
+			description: createInterpolateElement(
+				__(
+					'The PHP version can be changed after your site is created via <link>Web Server Settings</link>.'
+				),
+				{
+					link: <ExternalLink href={ HOSTING_FEATURES_URL } children={ null } />,
+				}
+			),
 			Edit: 'select',
 			elements: phpVersions.filter( ( version ) => ! version.disabled ),
 		},
