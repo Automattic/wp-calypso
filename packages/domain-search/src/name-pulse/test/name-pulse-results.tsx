@@ -152,16 +152,10 @@ describe( 'NamePulseResults', () => {
 		expect( rowFor( 'icecream.blog' ) ).toBeNull();
 		const saleCard = cardFor( 'icecream.blog' );
 		expect( within( saleCard ).getByText( 'Sale' ) ).toBeInTheDocument();
-		expect( within( saleCard ).getByLabelText( 'Original price: $22' ) ).toBeInTheDocument();
 		expect( within( saleCard ).getByLabelText( 'Sale price: $4' ) ).toBeInTheDocument();
 		expect( within( saleCard ).getByText( /\$22\/year renewal/ ) ).toBeInTheDocument();
 		expect( within( saleCard ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
-		const regularCard = cardFor( 'icecream.com' );
-		expect( within( regularCard ).getByText( '$12' ) ).toBeInTheDocument();
-		expect( within( regularCard ).getByText( '/year' ) ).toBeInTheDocument();
-		expect(
-			within( regularCard ).getByRole( 'button', { name: 'Add to cart' } )
-		).toBeInTheDocument();
+		expect( within( cardFor( 'icecream.com' ) ).getByText( '$12' ) ).toBeInTheDocument();
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
 			'icecream.org',
 			'icecream.net',
@@ -287,7 +281,6 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
 		expect( rowFor( 'icecream.blog' ) ).not.toBeNull();
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 	} );

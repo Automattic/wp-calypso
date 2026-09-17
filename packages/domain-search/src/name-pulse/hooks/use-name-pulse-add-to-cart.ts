@@ -5,12 +5,7 @@ import { useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
-import {
-	NamePulseDomainStatus,
-	pickPricing,
-	type NamePulseDomainResult,
-	type NamePulseDomainUpdate,
-} from '../helpers';
+import { NamePulseDomainStatus, pickPricing, type NamePulseDomainUpdate } from '../helpers';
 import type { DomainAvailability } from '@automattic/api-core';
 
 const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
@@ -39,7 +34,7 @@ const toRealtimeUpdate = (
  * its verdict is reported through `onUpdate`.
  */
 export const useNamePulseAddToCart = (
-	{ domain_name: domainName }: NamePulseDomainResult,
+	domainName: string,
 	position: number,
 	onUpdate?: ( update: NamePulseDomainUpdate ) => void
 ) => {

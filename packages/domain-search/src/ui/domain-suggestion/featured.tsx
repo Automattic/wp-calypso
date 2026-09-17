@@ -77,9 +77,7 @@ const Featured = ( {
 			className="domain-suggestion-featured__domain-name"
 		>
 			{ domain }
-			<span style={ { whiteSpace: 'nowrap' } } className="domain-suggestion-featured__tld">
-				.{ tld }
-			</span>
+			<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
 		</Text>
 	);
 

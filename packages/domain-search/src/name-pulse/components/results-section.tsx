@@ -4,18 +4,22 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useEffect, useState } from 'react';
+import { DomainSuggestion, FeaturedDomainSuggestionsList } from '../../ui';
 import {
 	NAME_PULSE_PAGE_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
 	type NamePulseDomainResult,
 	type NamePulseDomainUpdate,
+	type NamePulseResultsLayout,
 } from '../helpers';
+import { NamePulseResultCard } from './result-card';
 import { NamePulseResultRow, NamePulseResultRowSkeleton } from './result-row';
 
 interface NamePulseResultsSectionProps {
 	id: string;
 	/** Omitted while the heading text is not known yet (the skeletons still render). */
 	title?: string;
+	variant?: NamePulseResultsLayout[ 'topResults' ][ 'style' ];
 	results: NamePulseDomainResult[];
 	isLoading?: boolean;
 	/** Hard cap; also disables "Show more". */
@@ -30,6 +34,7 @@ interface NamePulseResultsSectionProps {
 export const NamePulseResultsSection = ( {
 	id,
 	title,
+	variant = 'compact',
 	results,
 	isLoading = false,
 	maxVisible,
@@ -73,18 +78,34 @@ export const NamePulseResultsSection = ( {
 					{ title }
 				</Text>
 			) }
-			<div className="name-pulse-grid" role="list">
-				{ visible.map( ( result, index ) => (
-					<div role="listitem" key={ result.domain_name }>
-						<NamePulseResultRow result={ result } position={ index } onUpdate={ onUpdate } />
-					</div>
-				) ) }
-				{ Array.from( { length: skeletons }, ( _, index ) => (
-					<div role="listitem" key={ `skeleton-${ index }` }>
-						<NamePulseResultRowSkeleton />
-					</div>
-				) ) }
-			</div>
+			{ variant === 'card' ? (
+				<FeaturedDomainSuggestionsList>
+					{ visible.map( ( result, index ) => (
+						<NamePulseResultCard
+							key={ result.domain_name }
+							result={ result }
+							position={ index }
+							onUpdate={ onUpdate }
+						/>
+					) ) }
+					{ Array.from( { length: skeletons }, ( _, index ) => (
+						<DomainSuggestion.Featured.Placeholder key={ `skeleton-${ index }` } />
+					) ) }
+				</FeaturedDomainSuggestionsList>
+			) : (
+				<div className="name-pulse-grid" role="list">
+					{ visible.map( ( result, index ) => (
+						<div role="listitem" key={ result.domain_name }>
+							<NamePulseResultRow result={ result } position={ index } onUpdate={ onUpdate } />
+						</div>
+					) ) }
+					{ Array.from( { length: skeletons }, ( _, index ) => (
+						<div role="listitem" key={ `skeleton-${ index }` }>
+							<NamePulseResultRowSkeleton />
+						</div>
+					) ) }
+				</div>
+			) }
 			{ hasMore && (
 				<div className="name-pulse-section__more">
 					<Button

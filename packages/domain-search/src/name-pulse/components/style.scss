@@ -117,12 +117,10 @@
 	}
 }
 
-.name-pulse-top-cards {
-	.domain-suggestion-featured__domain-name {
-		color: $gray-700;
-	}
+.domain-search--name-pulse .domain-suggestion-featured__domain-name {
+	color: $gray-700;
 
-	.domain-suggestion-featured__tld {
+	> span {
 		color: $gray-900;
 		font-weight: 600;
 	}
