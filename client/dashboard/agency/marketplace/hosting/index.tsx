@@ -24,7 +24,9 @@ import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
+import PressableUsageLimitNotice from './pressable-usage-limit-notice';
 import type { HostingSection } from '../paths';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -165,6 +167,8 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				/>
 			}
 		>
+			<PressableUsageLimitNotice agency={ agency } />
+			<PressableOffers agency={ agency } />
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
 					<HStack justify="space-between" wrap>

@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	ExternalLink,
 	Icon,
@@ -5,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, code, lockOutline, plus, trendingUp } from '@wordpress/icons';
 import enterpriseTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.webp';
@@ -13,8 +15,10 @@ import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/
 import premierTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
 import standardTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.webp';
 import standardTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.webp';
+import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import jetpackDescriptor from '../exclusive-offers/images/jetpack-descriptor.svg';
 import type { ReactNode } from 'react';
 
 export type HostingBrand = 'wpcom' | 'pressable' | 'vip';
@@ -256,6 +260,56 @@ export function Testimonials( { brand }: { brand: HostingBrand } ) {
 						</VStack>
 					) ) }
 				</div>
+			</CardBody>
+		</Card>
+	);
+}
+
+export function JetpackComplete() {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<Card>
+			<CardHeader>
+				<SectionHeader
+					className="dashboard-marketplace-hosting__card-header"
+					level={ 3 }
+					title={ __( 'Jetpack Complete included' ) }
+					description={ sprintf(
+						/* translators: %s is the yearly price of Jetpack Complete. */
+						__(
+							'Every Pressable site comes with a free Jetpack Complete license, a %s/year/site value.'
+						),
+						formatCurrency( 899, 'USD', { stripZeros: true } )
+					) }
+					decoration={ <BrandMark src={ jetpackDescriptor } /> }
+				/>
+			</CardHeader>
+			<CardBody>
+				<CheckGrid
+					items={ [
+						__( 'VaultPress Backup w/ 1TB storage' ),
+						__( 'Scan w/ WAF' ),
+						__( 'Akismet Anti-spam w/ 60k API calls/mo' ),
+						__( 'Stats (Paid) w/ 100k views/mo' ),
+						__( 'VideoPress w/ 1TB storage' ),
+						__( 'Boost w/ Auto CSS Generation' ),
+						__( 'Social Advanced w/ unlimited shares' ),
+						__( 'Site Search up to 100k records and 100k requests/mo' ),
+						__( 'CRM Entrepreneur' ),
+						createInterpolateElement( __( '<a>All Jetpack Complete features</a>' ), {
+							a: (
+								<ExternalLink
+									href="https://jetpack.com/complete/"
+									onClick={ () =>
+										recordTracksEvent( 'a4a_hosting_premier_jetpack_complete_more_link_click' )
+									}
+									children={ null }
+								/>
+							),
+						} ),
+					] }
+				/>
 			</CardBody>
 		</Card>
 	);
