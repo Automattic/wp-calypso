@@ -1,9 +1,10 @@
 import { activeAgencyQuery, provisionedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 import { untrackProvisioningSite, useProvisioningSiteIds } from './provisioning-sites';
 import type { MigrationCommissionSite } from '@automattic/api-core';
 
@@ -21,8 +22,10 @@ function isReady( site: MigrationCommissionSite ): boolean {
 	return site.features?.wpcom_atomic?.state === 'active';
 }
 
-function siteUrlWithScheme( url: string ): string {
-	return url.startsWith( 'http' ) ? url : `https://${ url }`;
+// The list reports `http://{name}.wordpress.com/`; routes and overview URLs take
+// the bare host.
+function getSiteSlug( url: string ): string {
+	return url.replace( /^\w+:\/\//, '' ).replace( /\/$/, '' );
 }
 
 /**
@@ -78,14 +81,13 @@ export default function ProvisioningSiteNotices() {
 						onClose={ () => untrackProvisioningSite( id ) }
 						actions={
 							site && (
-								<Button
+								<RouterLinkButton
 									variant="primary"
-									href={ siteUrlWithScheme( site.url ) }
-									target="_blank"
-									rel="noreferrer"
+									to="/sites/$siteSlug"
+									params={ { siteSlug: getSiteSlug( site.url ) } }
 								>
 									{ __( 'Set up your site' ) }
-								</Button>
+								</RouterLinkButton>
 							)
 						}
 					>
@@ -97,8 +99,12 @@ export default function ProvisioningSiteNotices() {
 										),
 										{
 											address: (
-												<ExternalLink href={ siteUrlWithScheme( site.url ) }>
-													{ site.url }
+												// The agency site route may not resolve the site for a few
+												// minutes yet, so this one opens it on WordPress.com.
+												<ExternalLink
+													href={ `https://wordpress.com/overview/${ getSiteSlug( site.url ) }` }
+												>
+													{ getSiteSlug( site.url ) }
 												</ExternalLink>
 											),
 										}
