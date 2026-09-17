@@ -1,0 +1,31 @@
+.stats-list__video-thumbnail {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 32px;
+	height: 18px;
+	border-radius: 2px;
+	overflow: hidden;
+	background-color: var(--color-neutral-5);
+
+	.stats-list__video-thumbnail-image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	svg {
+		fill: var(--color-neutral-40);
+	}
+}
+
+// horizontal-bar-list paints every svg in a hovered row white, which vanishes against the thumbnail's own light background.
+.horizontal-bar-list .horizontal-bar-list-item:hover,
+.horizontal-bar-list .horizontal-bar-list-item:focus {
+	.stats-list__video-thumbnail svg {
+		fill: var(--color-neutral-40);
+	}
+}
