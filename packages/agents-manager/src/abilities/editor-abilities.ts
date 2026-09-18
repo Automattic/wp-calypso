@@ -21,6 +21,7 @@ import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
+import { streamPageDesignAbility } from './stream-page-design';
 import type { Ability } from './types';
 
 // TODO (ability-migration): Fold both lists into one with the switch (see
@@ -38,6 +39,7 @@ const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	restoreCheckpointAbility,
 	setSiteLogoAbility,
 	showComponentAbility,
+	streamPageDesignAbility,
 ];
 
 // Editor abilities with no copy anywhere else.
@@ -112,5 +114,7 @@ export async function registerEditorAbilities(): Promise< void > {
 	}
 }
 
-// Re-exported for the facade's sync checkpoint view (`getAmCheckpointContext`).
+// Re-exported for the facade's sync context views (`getAmCheckpointContext`,
+// `getAmPageContentMarkup`).
 export { getAvailableCheckpoints } from '../utils/checkpoints';
+export { getPageContentMarkup } from '../utils/page-content-markup';

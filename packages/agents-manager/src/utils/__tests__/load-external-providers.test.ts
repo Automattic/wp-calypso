@@ -10,6 +10,8 @@ import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
+import { streamPageDesignAbility } from '../../abilities/stream-page-design';
+import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
@@ -19,6 +21,7 @@ import {
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
+import { getPageContentMarkup } from '../page-content-markup';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -43,6 +46,7 @@ jest.mock( '../provider-checkpoints', () => ( {
 	...jest.requireActual( '../provider-checkpoints' ),
 	getProviderCheckpointRecords: jest.fn( () => [] ),
 } ) );
+jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
 jest.mock( '../checkpoints', () => ( {
 	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
@@ -252,6 +256,7 @@ describe( 'loadExternalProviders', () => {
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				streamPageDesignAbility,
 				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -291,6 +296,7 @@ describe( 'loadExternalProviders', () => {
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				streamPageDesignAbility,
 				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
@@ -346,7 +352,16 @@ describe( 'loadExternalProviders', () => {
 			),
 			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
 		};
-		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
+		const onTaskUpdate = jest.fn();
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					toolProvider: bigSkyProvider,
+					contextProvider: { getClientContext: () => ( {} ) },
+					onTaskUpdate,
+				},
+			],
+		} );
 
 		// The switch is read once per page load, so load the providers under it.
 		await jest.isolateModulesAsync( async () => {
@@ -370,6 +385,15 @@ describe( 'loadExternalProviders', () => {
 				providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
 			).resolves.toEqual( { handledBy: 'big-sky' } );
 			expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
+
+			// The page-design stream and the page markup are the provider copy's too.
+			expect( providers.onTaskUpdate ).toBe( onTaskUpdate );
+
+			// The mock is shared with every other test, whose reads must not count.
+			jest.mocked( getPageContentMarkup ).mockClear();
+			providers.contextProvider?.getClientContext();
+
+			expect( getPageContentMarkup ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -398,6 +422,7 @@ describe( 'loadExternalProviders', () => {
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				streamPageDesignAbility,
 				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -807,15 +832,97 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.transformMessages ).toBeUndefined();
 	} );
 
-	it( 'uses the first provider for onTaskUpdate', async () => {
-		const firstOnTaskUpdate = jest.fn();
+	it( 'forwards task updates to the first provider only', async () => {
+		const first = jest.fn();
+		const second = jest.fn();
 		setAgentsManagerData( {
-			agentProviders: [ { onTaskUpdate: firstOnTaskUpdate }, { onTaskUpdate: jest.fn() } ],
+			agentProviders: [ { onTaskUpdate: first }, { onTaskUpdate: second } ],
 		} );
+		const update = { status: { message: { parts: [ { type: 'text' } ] } } };
 
 		const providers = await loadExternalProviders();
+		await providers.onTaskUpdate?.( update );
 
-		expect( providers.onTaskUpdate ).toBe( firstOnTaskUpdate );
+		expect( first ).toHaveBeenCalledWith( update );
+		expect( second ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'page-design stream', () => {
+		const text = { type: 'text', text: 'Designing…' };
+		const stream = {
+			type: 'data',
+			data: {
+				toolId: 'big_sky__stream_page_design',
+				toolCallId: 'call-1',
+				arguments: { markup: '<!-- wp:paragraph /-->' },
+			},
+		};
+		const update = { status: { message: { parts: [ text, stream ] } } };
+		let renderer: jest.Mock;
+
+		beforeEach( () => {
+			renderer = jest.fn();
+			setStreamHandler( renderer );
+		} );
+
+		afterEach( () => {
+			setStreamHandler( undefined );
+			// The off-editor test closes the gate the suite opened.
+			document.body.classList.add( 'site-editor-php' );
+		} );
+
+		// AM paints the page design itself; a provider's own copy must not see the frames.
+		it( 'feeds the frames to the renderer and keeps them from the providers', async () => {
+			const onTaskUpdate = jest.fn();
+			setAgentsManagerData( { agentProviders: [ { onTaskUpdate } ] } );
+
+			const providers = await loadExternalProviders();
+			await providers.onTaskUpdate?.( update );
+
+			expect( renderer ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
+			expect( onTaskUpdate ).toHaveBeenCalledWith( { status: { message: { parts: [ text ] } } } );
+		} );
+
+		// Off the editor pages nothing of AM's paints, so the provider copy keeps its frames.
+		it( 'leaves the frames to the providers off the editor pages', async () => {
+			const onTaskUpdate = jest.fn();
+			setAgentsManagerData( { agentProviders: [ { onTaskUpdate } ] } );
+			document.body.classList.remove( 'site-editor-php' );
+
+			const providers = await loadExternalProviders();
+			await providers.onTaskUpdate?.( update );
+
+			expect( renderer ).not.toHaveBeenCalled();
+			expect( onTaskUpdate ).toHaveBeenCalledWith( update );
+		} );
+	} );
+
+	describe( 'page content markup', () => {
+		const providerContext = { url: 'https://x' };
+
+		it( 'adds the page body the editor holds to the client context', async () => {
+			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...providerContext,
+				currentPageContentMarkup: '<!-- wp:paragraph /-->',
+			} );
+		} );
+
+		it( 'adds nothing where the view has no page body', async () => {
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( providerContext );
+		} );
 	} );
 
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {
@@ -878,6 +985,7 @@ describe( 'loadExternalProviders', () => {
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				streamPageDesignAbility,
 				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),

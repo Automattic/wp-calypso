@@ -7,6 +7,16 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 	resolveSelect: jest.fn(),
 } ) );
+jest.mock( '../editor-blocks', () => ( {
+	getRootBlocks: jest.fn( () => [] ),
+	resolveBlocksRoot: jest.fn( () => ( {
+		kind: 'post-content',
+		clientId: 'pc',
+		post: { id: 7, type: 'page', title: 'About' },
+	} ) ),
+	stageRootBlocks: jest.fn(),
+} ) );
+jest.mock( '../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 // Reached through the navigation domain, and it registers a store on import —
 // which the mocked `@wordpress/data` above cannot serve.
 jest.mock( '@wordpress/blocks', () => ( {
@@ -279,6 +289,7 @@ describe( 'getAvailableCheckpoints', () => {
 			expect.arrayContaining( [
 				'themeBeforeUpdate',
 				'logoBeforeUpdate',
+				'blocksBeforeUpdate',
 				'siteTitleBeforeUpdate',
 				'siteMetadataBeforeUpdate',
 				'menusBeforeUpdate',
@@ -377,7 +388,7 @@ describe( 'restoreCheckpoint', () => {
 
 	it( 'skips the global-styles restore when the keys scope another domain', async () => {
 		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = await loadCheckpoints();
-		setCheckpoint( 'toolu_1', [ 'blocks' ] );
+		setCheckpoint( 'toolu_1', [ 'another' ] );
 
 		await restoreCheckpoint( 'toolu_1' );
 
@@ -761,6 +772,178 @@ describe( 'restore by domain', () => {
 			[ 'title' ],
 			[ 'big_sky_site_metadata' ],
 		] );
+	} );
+} );
+
+describe( 'blocks domain', () => {
+	const paragraph = ( clientId: string ) => ( {
+		clientId,
+		name: 'core/paragraph',
+		attributes: { content: 'x'.repeat( 300 ) },
+		innerBlocks: [],
+	} );
+	const page = ( count: number ) =>
+		Array.from( { length: count }, ( _, index ) => paragraph( `p${ index }` ) );
+	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+
+	// The post the mocked editor holds, under a post-content root.
+	const post = { id: 7, type: 'page', title: 'About' };
+	// A checkpoint of that page, untitled, so a refusal names it by type and id.
+	const target = {
+		id: 'target',
+		checkpointKeys: [ 'blocks' ],
+		createdAt: 0,
+		blocksBeforeUpdate: { rootKind: 'post-content', blocks: [], post: { id: 7, type: 'page' } },
+	} as never;
+
+	it( 'snapshots the root by kind, its blocks by value, and the post', async () => {
+		const { setCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const live = page( 1 );
+		editorBlocks().getRootBlocks.mockReturnValue( live );
+
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		live[ 0 ].attributes.content = 'mutated';
+
+		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toEqual( {
+			rootKind: 'post-content',
+			blocks: page( 1 ),
+			post,
+		} );
+	} );
+
+	// A missing snapshot means the capture failed, so the restore is refused.
+	it( 'snapshots nothing while the canvas has no root, and refuses to restore it', async () => {
+		const { setCheckpoint, getCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		editorBlocks().resolveBlocksRoot.mockReturnValue( null );
+
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+
+		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toBeUndefined();
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'no blocks snapshot' );
+	} );
+
+	// The root is resolved again: its clientId does not survive the editor
+	// remounting, and the post id may come back as a string.
+	it( 'puts the blocks back under the root as it is now, outside the undo stack', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		editorBlocks().getRootBlocks.mockReturnValueOnce( page( 2 ) );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc-remounted',
+			post: { ...post, id: '7' },
+		} );
+		editorBlocks().getRootBlocks.mockReturnValue( page( 3 ) );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editorBlocks().stageRootBlocks ).toHaveBeenCalledWith( 'pc-remounted', page( 2 ) );
+	} );
+
+	it.each( [
+		{
+			case: 'another page',
+			root: { kind: 'post-content', clientId: 'pc', post: { id: 8, type: 'page' } },
+		},
+		{ case: 'a view showing another root', root: { kind: 'section', clientId: 's', post } },
+		{ case: 'an editor still loading', root: null },
+	] )( 'refuses to restore into $case', async ( { root } ) => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( root );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'belongs to “About”' );
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+	} );
+
+	// A snapshot taken before the canvas had loaded would wipe the page.
+	it( 'refuses a restore that would collapse the page, and records it', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( page( 1 ) );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValue( page( 6 ) );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'much smaller block snapshot' );
+
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_checkpoint_restore_blocked',
+			expect.objectContaining( {
+				reason: 'content_shrink',
+				checkpoint_id: 'call-1',
+				current_block_count: 6,
+				restore_block_count: 1,
+			} )
+		);
+	} );
+
+	// Measured on the block markup, as Big Sky measures it.
+	it( 'refuses a restore that would shrink the page to under a fifth of its markup', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		jest
+			.requireMock( '@wordpress/blocks' )
+			.serialize.mockImplementation( ( blocks: { attributes: { content: string } }[] ) =>
+				blocks.map( ( block ) => block.attributes.content ).join( '' )
+			);
+		const shortPage = Array.from( { length: 3 }, ( _, index ) => ( {
+			...paragraph( `s${ index }` ),
+			attributes: { content: 'x' },
+		} ) );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( shortPage );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValue( page( 4 ) );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'much smaller block snapshot' );
+	} );
+
+	// Each design checkpoints the page it replaced, so undoing twice walks back.
+	it( 'undoes two designs in turn, back to the original page', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const original = page( 3 );
+		const first = page( 4 );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( original );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValueOnce( first );
+		setCheckpoint( 'call-2', [ 'blocks' ] );
+		editorBlocks().getRootBlocks.mockReturnValue( page( 5 ) );
+
+		await restoreCheckpoint( 'call-2' );
+
+		expect( editorBlocks().stageRootBlocks ).toHaveBeenLastCalledWith( 'pc', first );
+
+		editorBlocks().getRootBlocks.mockReturnValue( first );
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editorBlocks().stageRootBlocks ).toHaveBeenLastCalledWith( 'pc', original );
+	} );
+
+	// The redo puts back the page as the undo is about to overwrite it.
+	it( 'records the current blocks in the reciprocal', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		editorBlocks().getRootBlocks.mockReturnValue( page( 2 ) );
+
+		await setReciprocalCheckpoint( 'redo', target, {} );
+
+		expect( getCheckpoint( 'redo' )?.blocksBeforeUpdate ).toEqual( {
+			rootKind: 'post-content',
+			blocks: page( 2 ),
+			post,
+		} );
+	} );
+
+	it( 'refuses a reciprocal from another page', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 8, type: 'page' },
+		} );
+
+		await expect( setReciprocalCheckpoint( 'redo', target, {} ) ).rejects.toThrow(
+			'belongs to page 7'
+		);
+		expect( getCheckpoint( 'redo' ) ).toBeUndefined();
 	} );
 } );
 
