@@ -1,5 +1,6 @@
 import { STATIC_SITE_IMPORT_TERMINAL_STATES } from '@automattic/api-core';
 import {
+	isPermanentStaticSiteImportError,
 	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
 } from '@automattic/api-queries';
@@ -27,8 +28,8 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 		const { platformName } = useStaticSiteImportSource();
 		const email = useSelector( getCurrentUserEmail );
 
-		// A failed request keeps polling; only the session itself can fail the move.
-		const { data: session } = useQuery( {
+		// A transient request failure keeps polling; a 4xx means the session is gone.
+		const { data: session, error } = useQuery( {
 			...staticSiteImportSessionQuery( sessionId ),
 			enabled: Boolean( sessionId ),
 			refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
@@ -39,14 +40,18 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 			if ( hasSubmitted.current ) {
 				return;
 			}
-			if ( ! sessionId || session?.state === 'failed' ) {
+			if (
+				! sessionId ||
+				session?.state === 'failed' ||
+				isPermanentStaticSiteImportError( error )
+			) {
 				hasSubmitted.current = true;
 				navigation.submit?.( { state: 'failed' } );
 			} else if ( session?.state === 'finished' ) {
 				hasSubmitted.current = true;
 				navigation.submit?.( { state: 'finished' } );
 			}
-		}, [ navigation, session?.state, sessionId ] );
+		}, [ error, navigation, session?.state, sessionId ] );
 
 		return (
 			<>
