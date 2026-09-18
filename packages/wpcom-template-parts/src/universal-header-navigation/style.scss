@@ -1204,7 +1204,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 
 	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing
-	// colour. The "Get started" CTA is excluded: it flips to a filled pill above.
+	// colour. The "Get started" CTA is excluded: it empties to an outlined pill above.
 	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ):not( .x-nav-link__primary ) {
 		opacity: 0.8;
 	}
