@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
-import type { Note, Subject } from '../types';
+import type { Subject } from '../types';
 import type { CSSProperties } from 'react';
 
 // Resolve the link used to wrap the header avatar / subject text. A user range
@@ -73,22 +73,8 @@ const NoteSummaryTitle = ( { block, link }: { block: Subject; link?: string } ) 
 
 // Detail-view header: built from `note.header` so the first row anchors the
 // panel with the post owner / author + post title (matching the legacy
-// `SummaryInSingle`). Falls back to rendering `note.subject` when a note has
-// no `header` block (some system notes).
-const NoteSummary = ( { note }: { note: Note } ) => {
-	const header = note.header;
-
-	if ( ! header || header.length === 0 ) {
-		return (
-			<HStack justify="flex-start" spacing={ 4 } alignment="center">
-				<NoteSummaryIcon iconUrl={ note.icon } />
-				<VStack className="wpnc__text-summary" spacing={ 0 }>
-					<ExternalLink href={ note.url }>{ note.subject[ 0 ].text }</ExternalLink>
-				</VStack>
-			</HStack>
-		);
-	}
-
+// `SummaryInSingle`).
+const NoteSummary = ( { header, url }: { header: Subject[]; url: string } ) => {
 	const subject = header[ 0 ];
 	const snippet = header[ 1 ];
 	const subjectLink = getHeaderLink( subject );
@@ -107,7 +93,7 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 			<NoteSummaryIcon iconUrl={ avatarUrl } link={ subjectLink } />
 			<VStack className="wpnc__text-summary" spacing={ 0 }>
 				<NoteSummaryTitle block={ subject } link={ subjectLink } />
-				{ hasSnippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
+				{ hasSnippet && <ExternalLink href={ url }>{ snippet.text }</ExternalLink> }
 			</VStack>
 		</HStack>
 	);
