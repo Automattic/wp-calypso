@@ -318,7 +318,7 @@ export const STEPS = {
 		slug: 'static-site-import-reading',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-reading' */ './steps-repository/static-site-import-reading'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-reading'
 			),
 	},
 
@@ -326,7 +326,7 @@ export const STEPS = {
 		slug: 'static-site-import-results',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-results' */ './steps-repository/static-site-import-results'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-results'
 			),
 	},
 
@@ -334,7 +334,7 @@ export const STEPS = {
 		slug: 'static-site-import-how-it-works',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-how-it-works' */ './steps-repository/static-site-import-how-it-works'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-how-it-works'
 			),
 	},
 
@@ -342,7 +342,7 @@ export const STEPS = {
 		slug: 'static-site-import-address',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-address' */ './steps-repository/static-site-import-address'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-address'
 			),
 	},
 
@@ -350,7 +350,7 @@ export const STEPS = {
 		slug: 'static-site-import-ready',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-ready' */ './steps-repository/static-site-import-ready'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-ready'
 			),
 	},
 
@@ -358,7 +358,7 @@ export const STEPS = {
 		slug: 'static-site-import-building',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-building' */ './steps-repository/static-site-import-building'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-building'
 			),
 	},
 
@@ -366,7 +366,7 @@ export const STEPS = {
 		slug: 'static-site-import-done',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-done' */ './steps-repository/static-site-import-done'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-done'
 			),
 	},
 
@@ -374,7 +374,7 @@ export const STEPS = {
 		slug: 'static-site-import-expert',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-expert' */ './steps-repository/static-site-import-expert'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-expert'
 			),
 	},
 
@@ -382,7 +382,7 @@ export const STEPS = {
 		slug: 'static-site-import-failed',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-static-site-import-failed' */ './steps-repository/static-site-import-failed'
+				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-failed'
 			),
 	},
 
