@@ -141,6 +141,7 @@ const NotificationApp = ( {
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
+	wpcomUrl,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
@@ -150,6 +151,9 @@ const NotificationApp = ( {
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
+	// Builds a URL to a Calypso path. Hosts served from another origin (the
+	// Dashboard) pass their own; the rest fall back to this origin.
+	wpcomUrl?: ( path: string ) => string;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
@@ -261,6 +265,7 @@ const NotificationApp = ( {
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
 					onPreferenceChange={ onPreferenceChange }
+					wpcomUrl={ wpcomUrl }
 				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>

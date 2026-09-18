@@ -1,18 +1,16 @@
 import { Icon, pending } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
-import type { Note } from '../app/types';
 
 import './pending-approval-badge.scss';
 
 interface PendingApprovalBadgeProps {
-	note: Note;
+	// Built by the caller: only the host knows where Calypso is served from.
+	commentsUrl?: string | null;
 }
 
-const PendingApprovalBadge = ( { note }: PendingApprovalBadgeProps ): JSX.Element => {
+const PendingApprovalBadge = ( { commentsUrl }: PendingApprovalBadgeProps ): JSX.Element => {
 	const translate = useTranslate();
-	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
 
 	return (
 		<div className="wpnc-pending-approval-badge">
