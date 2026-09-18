@@ -72,8 +72,6 @@ function mockEndpoints( pendingSites: unknown[] = [] ) {
 const addNewSiteButton = () => screen.findByRole( 'button', { name: 'Add new site' } );
 
 describe( '<AgencySites>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'offers a way to add a new site', async () => {
 		mockEndpoints();
 
