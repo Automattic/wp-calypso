@@ -150,6 +150,35 @@ function isDashboardUrl( url: string ): boolean {
 	}
 }
 
+/**
+ * Tags a successful redirect so the destination can show a success toast on
+ * arrival. The Dashboard (a separate SPA) can't rely on the classic notice
+ * mechanisms, so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`.
+ * Classic My Home reads `notice`. Both name a newly bought plan.
+ */
+function addSuccessNoticeParams(
+	url: string,
+	{ purchasedPlanSlug, isRenewal }: { purchasedPlanSlug?: string; isRenewal: boolean }
+): string {
+	const planArgs = purchasedPlanSlug ? { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } : {};
+
+	if ( isDashboardUrl( url ) ) {
+		// Drop a plan slug left over from an earlier checkout started on the same page.
+		const cleanUrl = removeQueryArgs( url, CHECKOUT_SUCCESS_PLAN_PARAM );
+		return addQueryArgs( cleanUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID, ...planArgs } );
+	}
+
+	if ( url.startsWith( '/home/' ) ) {
+		// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
+		// the generic one a saved signup destination carries.
+		return isRenewal
+			? removeQueryArgs( url, PURCHASE_NOTICE_QUERY_KEY )
+			: addQueryArgs( url, planArgs );
+	}
+
+	return url;
+}
+
 function performRedirect( url: string ): void {
 	if ( url.startsWith( '/' ) ) {
 		page( url );
@@ -382,24 +411,8 @@ function useRedirectOnTransactionSuccess( {
 			? appendNoticeQueryParam( redirectInstructions.url, PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE )
 			: redirectInstructions.url;
 
-		// The Dashboard (a separate SPA) can't rely on the classic notice mechanisms,
-		// so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`. It and
-		// classic My Home both name a newly bought plan in their toast.
-		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
-		const isDashboardRedirect = isDashboardUrl( finalUrl );
-		if ( isSuccessRedirect && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
-			const url = removeQueryArgs(
-				finalUrl,
-				// A plan slug left over from an earlier checkout started on the same page.
-				CHECKOUT_SUCCESS_PLAN_PARAM,
-				// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
-				// the generic one a saved signup destination carries to My Home.
-				...( isRenewal ? [ PURCHASE_NOTICE_QUERY_KEY ] : [] )
-			);
-			finalUrl = addQueryArgs( url, {
-				...( isDashboardRedirect && { flash: CHECKOUT_SUCCESS_FLASH_ID } ),
-				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
-			} );
+		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			finalUrl = addSuccessNoticeParams( finalUrl, { purchasedPlanSlug, isRenewal } );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
