@@ -24,7 +24,7 @@ export function getCheckoutSuccessMessage( planSlug: string | null ): string {
 	}
 	return sprintf(
 		/* translators: %(planName)s is the name of the plan, e.g. "Business" */
-		__( "You're in! The %(planName)s Plan is now active." ),
+		__( 'You’re in! The %(planName)s Plan is now active.' ),
 		{ planName: planNames[ planSlug ] }
 	);
 }
