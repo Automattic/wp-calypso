@@ -4,6 +4,9 @@
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
+	// Figma spec is 1248px, wider than the classic results page's content width.
+	max-width: 78rem;
+
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;
 	}
@@ -53,6 +56,10 @@
 
 		.domain-suggestion-badge {
 			flex-shrink: 0;
+			height: 20px;
+			padding-inline: 6px;
+			border-radius: 4px;
+			font-size: 11px;
 		}
 	}
 
