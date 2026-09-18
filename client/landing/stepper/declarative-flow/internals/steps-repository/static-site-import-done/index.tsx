@@ -20,6 +20,7 @@ import Notice from 'calypso/dashboard/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	ImportCard,
+	getSourceHost,
 	useStaticSiteImportSource,
 	useStaticSiteImportTicket,
 } from '../components/static-site-import';
@@ -33,20 +34,13 @@ export type StaticSiteImportDoneSubmits = {
 	action: 'reported' | 'connect-domain' | 'go-to-site';
 };
 
-const getHostname = ( url?: string ) => {
-	try {
-		return url ? new URL( url ).hostname : '';
-	} catch {
-		return '';
-	}
-};
-
 const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } > =
 	function StaticSiteImportDone( { navigation } ) {
 		const { __ } = useI18n();
 		const [ searchParams ] = useSearchParams();
 		const sessionId = searchParams.get( 'importSessionId' ) ?? '';
 		const keepsDomain = searchParams.get( 'domainChoice' ) === 'keep';
+		const platform = searchParams.get( 'platform' ) ?? 'unknown';
 		const { host } = useStaticSiteImportSource();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { sendTicket, isPending, isError } = useStaticSiteImportTicket();
@@ -61,7 +55,7 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 
 		const onFeedback = ( value: 'right' | 'off' ) => {
 			setFeedback( value );
-			recordTracksEvent( 'calypso_static_site_import_feedback', { feedback: value } );
+			recordTracksEvent( 'calypso_static_site_import_feedback', { feedback: value, platform } );
 		};
 
 		const onGetHelp = async () => {
@@ -126,7 +120,7 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 							<div className="static-site-import-done__frame-bar">
 								<Icon icon={ lock } size={ 18 } />
 								<span className="static-site-import-done__frame-url">
-									{ getHostname( siteUrl ) }
+									{ getSourceHost( siteUrl ) }
 								</span>
 								<span>{ __( 'Private' ) }</span>
 							</div>
