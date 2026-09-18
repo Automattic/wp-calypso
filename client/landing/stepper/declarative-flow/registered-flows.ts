@@ -167,7 +167,7 @@ const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< an
 					import(
 						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
 					),
-		  }
+			}
 		: {};
 
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
