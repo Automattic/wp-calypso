@@ -49,7 +49,7 @@ export default function WordPressAgentSlack( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to this Slack workspace?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to this Slack workspace?' );
 	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
@@ -125,7 +125,7 @@ export default function WordPressAgentSlack( {
 								? createInterpolateElement(
 										__( 'Your account is <connected>connected</connected>.' ),
 										{ connected: <strong /> }
-								  )
+									)
 								: __( 'The app is no longer installed in this workspace.' )
 						}
 					/>
@@ -206,7 +206,7 @@ export default function WordPressAgentSlack( {
 						disabled={ isActionPending }
 					>
 						<img src={ SlackMark } alt="" width={ 20 } height={ 20 } />
-						{ /* The span dodges a Google Translate DOM crash (react/react#11538). */ }
+						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
 						<span>{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }</span>
 					</Button>
 				</CardBody>

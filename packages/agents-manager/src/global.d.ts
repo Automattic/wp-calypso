@@ -22,7 +22,7 @@ declare const __i18n_text_domain__: string;
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
+			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
@@ -34,6 +34,8 @@ declare const agentsManagerData:
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
+			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
@@ -45,6 +47,7 @@ declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';
 	interface BlockEditorSelectors {
 		getSelectedBlock(): {
+			clientId: string;
 			name: string;
 			attributes?: {
 				content?: {
@@ -103,7 +106,7 @@ interface AgentsManagerExternalContextCard {
 	 * Publisher-owned card body. AM renders this inside the card frame
 	 * and only adds the dismiss button and actions row.
 	 */
-	body: import('react').ReactNode;
+	body: import( 'react' ).ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
 }
@@ -119,7 +122,7 @@ interface AgentsManagerActions {
 	 * props. `eventName` includes the family prefix.
 	 */
 	recordBigSkyTracksEvent?: (
-		eventName: import('./utils/tracks').BigSkyEventName,
+		eventName: import( './utils/tracks' ).BigSkyEventName,
 		props?: Record< string, unknown >
 	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
@@ -134,7 +137,7 @@ interface AgentsManagerActions {
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
-	chatNavigate: import('react-router-dom').NavigateFunction;
+	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
 	getCurrentRoute: () => string;
@@ -165,6 +168,8 @@ interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;
+	/** WordPress's current admin screen id, e.g. `woocommerce_page_wc-admin`; set on wp-admin pages. */
+	pagenow?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;

@@ -46,7 +46,7 @@ export function UnifiedInviteAccept( {
 		blogDetails?.is_garden_site && blogDetails.garden
 			? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 					persistToSession: true,
-			  } )
+				} )
 			: null;
 	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
 	const topBarLogo = topBarLogoConfig?.src ? (

@@ -219,14 +219,14 @@ class WordAdsEarnings extends Component {
 							earnings.sponsored,
 							translate( 'Sponsored Content History' ),
 							'sponsored'
-					  )
+						)
 					: null }
 				{ earnings && this.checkSize( earnings.adjustment )
 					? this.earningsTable(
 							earnings.adjustment,
 							translate( 'Adjustments History' ),
 							'adjustment'
-					  )
+						)
 					: null }
 			</>
 		);

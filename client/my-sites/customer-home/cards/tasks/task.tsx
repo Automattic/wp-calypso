@@ -83,7 +83,7 @@ const Task = ( {
 	  }
 	| {
 			hasAction: true;
-			actionTarget: string;
+			actionTarget?: string;
 			actionText: ReactNode;
 			actionUrl: string;
 			actionButton?: ReactNode;

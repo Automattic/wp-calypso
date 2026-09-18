@@ -7,7 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -75,7 +75,7 @@ function SiteLogsContent( {
 	gmtOffset: number;
 	timezoneString: string | undefined;
 } ) {
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const settingsUrl = site.options?.admin_url
 		? `${ site.options.admin_url }options-general.php`
@@ -164,6 +164,11 @@ function SiteLogsContent( {
 	const shouldShowDateRangePicker =
 		hasHostingFeature( site, HostingFeatures.LOGS ) ||
 		( hasActivityLogAccess && logType === LogType.ACTIVITY ); // simple sites might have access to activity logs only
+	// The upsell callout renders inside this page rather than replacing it, so
+	// the notice slot has to stand down on its own for a site without logs.
+	const isUpsell =
+		( logType === LogType.PHP || logType === LogType.SERVER ) &&
+		! hasHostingFeature( site, HostingFeatures.LOGS );
 	return (
 		<PageLayout
 			header={
@@ -189,28 +194,30 @@ function SiteLogsContent( {
 				/>
 			}
 			notices={
-				<>
-					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
-					{ autoRefreshDisabledReason && (
-						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
-					) }
-					<SitesNoticeArbiter>
-						{ site.__inaccessible_jetpack_error && (
-							<Notice variant="warning">
-								{ __(
-									'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
-								) }
-							</Notice>
+				! isUpsell && (
+					<>
+						{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
+						{ autoRefreshDisabledReason && (
+							<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 						) }
-						{ showTimeMismatchNotice && (
-							<TimeMismatchNotice
-								settingsUrl={ settingsUrl }
-								siteTime={ gmtOffset }
-								siteId={ siteId }
-							/>
-						) }
-					</SitesNoticeArbiter>
-				</>
+						<SitesNoticeArbiter>
+							{ site.__inaccessible_jetpack_error && (
+								<Notice variant="warning">
+									{ __(
+										'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
+									) }
+								</Notice>
+							) }
+							{ showTimeMismatchNotice && (
+								<TimeMismatchNotice
+									settingsUrl={ settingsUrl }
+									siteTime={ gmtOffset }
+									siteId={ siteId }
+								/>
+							) }
+						</SitesNoticeArbiter>
+					</>
+				)
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>

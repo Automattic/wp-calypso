@@ -68,7 +68,6 @@ import Item from './item';
 import Masterbar from './masterbar';
 import MasterbarAiChatButton from './masterbar-agents-manager/ai-chat-button';
 import HelpIcon from './masterbar-agents-manager/help-icon';
-import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 import MasterbarStatsSparkline from './masterbar-stats-sparkline';
@@ -86,10 +85,6 @@ const loadMasterbarCartWrapper = () =>
 const loadMasterbarAgentsManager = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
-	);
-const loadMasterbarHelpCenter = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
 	);
 
 class MasterbarLoggedIn extends Component {
@@ -333,8 +328,8 @@ class MasterbarLoggedIn extends Component {
 											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
-						  ] ),
-			  ];
+							] ),
+				];
 
 		return (
 			<Item
@@ -523,7 +518,7 @@ class MasterbarLoggedIn extends Component {
 					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
 					</span>
-			  ) )
+				) )
 			: null;
 	}
 
@@ -948,37 +943,20 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	// The legacy Help Center entry point lives in the omnibar now; only the
+	// unified-agent variant is still drawn by this masterbar.
 	renderHelpCenter() {
 		const { siteId, translate, useUnifiedAgent } = this.props;
 
-		if ( useUnifiedAgent ) {
-			const placeholder = (
-				<Item
-					className="masterbar__item-agents-manager"
-					tooltip={ translate( 'Help' ) }
-					icon={ <HelpIcon /> }
-				/>
-			);
-
-			if ( ! this.state.mounted ) {
-				return placeholder;
-			}
-
-			return (
-				<AsyncLoad
-					require={ loadMasterbarAgentsManager }
-					siteId={ siteId }
-					tooltip={ translate( 'Help' ) }
-					placeholder={ placeholder }
-				/>
-			);
+		if ( ! useUnifiedAgent ) {
+			return null;
 		}
 
 		const placeholder = (
 			<Item
-				className="masterbar__item-help"
+				className="masterbar__item-agents-manager"
 				tooltip={ translate( 'Help' ) }
-				icon={ <HelpCenterIcon hasUnread={ false } /> }
+				icon={ <HelpIcon /> }
 			/>
 		);
 
@@ -988,7 +966,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require={ loadMasterbarHelpCenter }
+				require={ loadMasterbarAgentsManager }
 				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ placeholder }

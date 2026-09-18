@@ -2,7 +2,7 @@
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
-FROM node:24.15.0-bullseye-slim AS cache
+FROM node:24.15.0-trixie-slim AS cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=16384
@@ -45,7 +45,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to test and build calypso.
-FROM node:24.15.0-bullseye-slim AS base
+FROM node:24.15.0-trixie-slim AS base
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=16384
@@ -60,18 +60,6 @@ ENV SKIP_TSC=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
-
-# Debian 11 (bullseye) reached end-of-LTS on 2026-08-31: its Release files have
-# expired and the pool on deb.debian.org is already returning 404s. Repoint at the
-# pinned snapshot mirror the base image ships (commented out) so package versions
-# still match the image. Remove this whole block once we move to bookworm.
-RUN set -eux; \
-	sed -i \
-		-e 's|^deb http|# deb http|' \
-		-e 's|^# deb http://snapshot.debian.org|deb http://snapshot.debian.org|' \
-		/etc/apt/sources.list; \
-	grep -q '^deb http://snapshot.debian.org' /etc/apt/sources.list; \
-	echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/80-no-valid-until
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apt-get update \
@@ -142,13 +130,9 @@ COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 RUN apt-get update && \
 	apt-get install -y apt-transport-https wget
 
-# libffi6 is no longer available from apt as of bullseye.
 RUN wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
-		http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
-	dpkg -i libffi6_3.2.1-8_amd64.deb && \
-	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
 		https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
-	echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php-sury.list && \
+	echo "deb https://packages.sury.org/php/ trixie main" > /etc/apt/sources.list.d/php-sury.list && \
 	apt-get update && \
  	apt-get upgrade -y && \
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \

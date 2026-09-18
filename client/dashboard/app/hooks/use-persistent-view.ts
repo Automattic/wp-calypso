@@ -32,6 +32,13 @@ export interface UseViewOptions {
 	queryParamFilterFields?: string[];
 
 	/**
+	 * Marks the transient filters as locked, so that the DataViews reset control
+	 * leaves them in place. Use it where the filter is imposed by the surrounding
+	 * page rather than chosen by the user.
+	 */
+	lockQueryParamFilters?: boolean;
+
+	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
 	 */
 	sanitizeFields?: ( fields: View[ 'fields' ] ) => View[ 'fields' ];
@@ -58,6 +65,7 @@ export function useBasePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	lockQueryParamFilters = false,
 	matches,
 	sanitizeFields,
 	navigate,
@@ -95,16 +103,18 @@ export function useBasePersistentView( {
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
 		queryParamFilterFields
 			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
-			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+			.map( ( field ) => getTransientFilter( field, queryParams[ field ], lockQueryParamFilters ) )
 	);
 
 	useEffect( () => {
 		setTransientFilters(
-			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+			transientFilterFields.map( ( field ) =>
+				getTransientFilter( field, queryParams[ field ], lockQueryParamFilters )
+			)
 		);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( transientFilterFields ) ] );
+	}, [ JSON.stringify( transientFilterFields ), lockQueryParamFilters ] );
 
 	useEffect( () => {
 		if ( ! matches || matches.length === 0 ) {
@@ -149,13 +159,15 @@ export function useBasePersistentView( {
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const newTransientFilterFields = transientFilterFields.filter(
-				( field ) =>
-					newView.filters?.some(
-						( filter ) =>
-							filter.field === field &&
-							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
-					)
+			const newTransientFilterFields = transientFilterFields.filter( ( field ) =>
+				newView.filters?.some(
+					( filter ) =>
+						filter.field === field &&
+						fastDeepEqual(
+							filter.value,
+							getTransientFilter( field, queryParams[ field ], lockQueryParamFilters ).value
+						)
+				)
 			);
 
 			if ( queryParams ) {
@@ -196,6 +208,7 @@ export function useBasePersistentView( {
 			queryParams,
 			transientProperties,
 			transientFilterFields,
+			lockQueryParamFilters,
 			navigate,
 			baseView,
 			defaultView,
@@ -216,12 +229,13 @@ export function useBasePersistentView( {
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
 
-function getTransientFilter( field: string, rawValue: unknown ): Filter {
+function getTransientFilter( field: string, rawValue: unknown, isLocked = false ): Filter {
 	const stringValue = String( rawValue );
+	const lock = isLocked ? { isLocked: true } : {};
 	if ( stringValue === 'true' || stringValue === 'false' ) {
-		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
+		return { field, operator: 'is', value: stringValue === 'true', ...lock } as Filter;
 	}
-	return { field, operator: 'isAny', value: [ stringValue ] } as Filter;
+	return { field, operator: 'isAny', value: [ stringValue ], ...lock } as Filter;
 }
 
 function removeTransientPropertiesFromView( view: View ): View {

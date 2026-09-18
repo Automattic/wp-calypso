@@ -1,6 +1,6 @@
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getRawUserPurchases } from 'calypso/state/purchases/selectors';
 
 /**
  * Checks if the user has a subscription to the theme on any site.
@@ -13,13 +13,13 @@ export function isMarketplaceThemeSubscribedByUser( state = {}, themeId: string 
 		state,
 		getProductBillingSlugByThemeId( state, themeId )
 	);
-	const userPurchases = getUserPurchases( state );
+	const userPurchases = getRawUserPurchases( state );
 
 	return !! (
 		userPurchases &&
 		userPurchases.find( ( purchase ) => {
 			return (
-				products && products.find( ( product ) => purchase.productSlug === product.product_slug )
+				products && products.find( ( product ) => purchase.product_slug === product.product_slug )
 			);
 		} )
 	);

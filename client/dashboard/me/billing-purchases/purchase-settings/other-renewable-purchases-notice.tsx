@@ -222,7 +222,7 @@ export function OtherRenewablePurchasesNotice( {
 		expiringPurchases.length > 0 ? expiringPurchases[ 0 ] : undefined;
 
 	const purchaseName = currentPurchase.is_domain
-		? currentPurchase.meta ?? ''
+		? ( currentPurchase.meta ?? '' )
 		: currentPurchase.product_name;
 	// These slots feed both past-tense ("expired %(expiry)s") and future-tense
 	// ("will expire %(expiry)s") sentences, so each is clamped to match the
@@ -232,13 +232,13 @@ export function OtherRenewablePurchasesNotice( {
 		isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
 	);
 	const includedPurchaseName = includedPurchase.is_domain
-		? includedPurchase.meta ?? ''
+		? ( includedPurchase.meta ?? '' )
 		: includedPurchase.product_name;
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
 		? getRelativeDayString(
 				new Date( earliestOtherExpiringPurchase.expiry_date ),
 				isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
-		  )
+			)
 		: '';
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
@@ -692,14 +692,14 @@ export function OtherRenewablePurchasesNotice( {
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  )
+					)
 				: sprintf(
 						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 						__(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  );
+					);
 
 			return (
 				<NoticeContent
@@ -741,7 +741,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  )
+				)
 			: createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -751,7 +751,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  );
+				);
 
 		return (
 			<NoticeContent
@@ -871,7 +871,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  )
+				)
 			: createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -881,7 +881,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  );
+				);
 
 		return (
 			<NoticeContent
@@ -936,14 +936,14 @@ export function OtherRenewablePurchasesNotice( {
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  )
+					)
 				: sprintf(
 						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 						__(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  );
+					);
 
 			return (
 				<NoticeContent

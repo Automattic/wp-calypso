@@ -41,11 +41,7 @@ export type AgencyCapability =
 	| 'a4a_remove_managed_sites';
 
 export type AgencyPartnerDirectorySlug =
-	| 'wordpress'
-	| 'jetpack'
-	| 'woocommerce'
-	| 'pressable'
-	| 'vip';
+	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
 
 export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
 
@@ -158,6 +154,7 @@ export interface Agency {
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
 		capabilities: string[];
+		role?: 'a4a_administrator' | 'a4a_manager';
 	};
 	third_party?: null | {
 		pressable?: null | {

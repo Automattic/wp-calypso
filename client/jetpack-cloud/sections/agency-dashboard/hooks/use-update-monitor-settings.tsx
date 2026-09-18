@@ -46,7 +46,7 @@ export default function useUpdateMonitorSettings(
 				dataViewsState.sort,
 				dataViewsState.perPage,
 				...( agencyId ? [ agencyId ] : [] ),
-		  ]
+			]
 		: [
 				'jetpack-agency-dashboard-sites',
 				search,
@@ -54,7 +54,7 @@ export default function useUpdateMonitorSettings(
 				filter,
 				sort,
 				...( agencyId ? [ agencyId ] : [] ),
-		  ];
+			];
 
 	const [ status, setStatus ] = useState( 'idle' );
 

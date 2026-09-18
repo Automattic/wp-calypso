@@ -4,6 +4,7 @@ import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from '@automattic/urls';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import { NON_RENEWABLE_DOMAIN_ERROR_CODE } from 'calypso/my-sites/checkout/src/hooks/use-has-non-renewable-domain-error';
 import { WRONG_ACCOUNT_RENEWAL_ERROR_CODE } from 'calypso/my-sites/checkout/src/hooks/use-has-wrong-account-renewal-error';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -70,7 +71,10 @@ export default function CartMessages( {
  * and a way out. A notice for those would only repeat, in one line and with no
  * action attached, what the screen already says better.
  */
-const CART_ERROR_CODES_WITH_THEIR_OWN_SCREEN = [ WRONG_ACCOUNT_RENEWAL_ERROR_CODE ];
+const CART_ERROR_CODES_WITH_THEIR_OWN_SCREEN = [
+	WRONG_ACCOUNT_RENEWAL_ERROR_CODE,
+	NON_RENEWABLE_DOMAIN_ERROR_CODE,
+];
 
 function hasNoScreenOfItsOwn( message: ResponseCartMessage ): boolean {
 	return ! CART_ERROR_CODES_WITH_THEIR_OWN_SCREEN.includes( message.code );

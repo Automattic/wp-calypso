@@ -13,10 +13,8 @@ export const wpAdminNavigateAbility: Ability = {
 	name: 'wp-admin/navigate',
 	label: __( 'Navigate to wp-admin page', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Navigate the browser to a different wp-admin page. Use this whenever the user asks to go to, open, or be taken to an admin screen (e.g., "go to plugins", "take me to the settings page") — prefer it over replying with a link. The page will reload, but the conversation will automatically continue after navigation completes.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		properties: {

@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -71,7 +70,6 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
-	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	if ( isSiteMigrationInProgress( site ) && ! isSupportSession() ) {
 		return null;
@@ -146,26 +144,11 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					{ __( 'Backups' ) }
 				</SidebarMenuItem>
 			) }
-			{ isAvailable( sitePerformanceRoute ) &&
-				siteTypeSupports.performance &&
-				( isApmEnabled ? (
-					<SidebarExpandableMenuItem
-						label={ __( 'Performance' ) }
-						icon={ chartBar }
-						to={ `/sites/${ siteSlug }/performance` }
-					>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
-							{ __( 'Frontend' ) }
-						</SidebarMenuItem>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
-							{ __( 'Backend' ) }
-						</SidebarMenuItem>
-					</SidebarExpandableMenuItem>
-				) : (
-					<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
-						{ __( 'Performance' ) }
-					</SidebarMenuItem>
-				) ) }
+			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
+				<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+					{ __( 'Performance' ) }
+				</SidebarMenuItem>
+			) }
 			{ isAvailable( siteMonitoringRoute ) && siteTypeSupports.monitoring && (
 				<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }

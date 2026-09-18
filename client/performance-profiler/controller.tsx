@@ -1,5 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Context } from '@automattic/calypso-router';
-import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -18,21 +19,27 @@ import './style.scss';
 export function PerformanceProfilerWrapper( {
 	children,
 	isLoggedIn,
+	footerColorway,
 }: {
 	children: React.ReactNode;
 	isLoggedIn: boolean;
+	footerColorway: ReturnType< typeof getFooterColorway >;
 } ): JSX.Element {
 	return (
 		<>
 			{ isLoggedIn && <Nav2026UniversalHeader isLoggedIn /> }
 			<Main fullWidthLayout>{ children }</Main>
-			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
 		</>
 	);
 }
 
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	if ( ! context.query?.url ) {
 		window.location.href = '/speed-test/';
@@ -44,7 +51,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 		: `https://${ context.query.url }`;
 
 	context.primary = (
-		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
+		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
 			<PerformanceProfilerDashboardWrapper
 				url={ url }
 				tab={
@@ -63,6 +70,10 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 
 export function WeeklyReportContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	if ( ! isLoggedIn ) {
 		const logInUrl = getLoginUrl( {
@@ -80,7 +91,7 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 		: `https://${ context.query?.url ?? '' }`;
 
 	context.primary = (
-		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
+		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
 			<WeeklyReport url={ url } hash={ context.query?.hash ?? '' } />
 		</PerformanceProfilerWrapper>
 	);
@@ -90,13 +101,17 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 
 export function WeeklyReportUnsubscribeContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	const url = context.query?.url?.startsWith( 'http' )
 		? context.query.url
 		: `https://${ context.query?.url ?? '' }`;
 
 	context.primary = (
-		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
+		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
 			<WeeklyReportUnsubscribe url={ url } hash={ context.query?.hash ?? '' } />
 		</PerformanceProfilerWrapper>
 	);

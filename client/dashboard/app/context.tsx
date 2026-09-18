@@ -23,6 +23,7 @@ export type AgencySupports = {
 	learn: boolean;
 	mcp: boolean;
 	sites: boolean;
+	plugins: boolean;
 	team: boolean;
 	earn: boolean;
 };
@@ -51,6 +52,7 @@ export type SiteOverviewSupports = {
 
 export type AppConfig = {
 	name: string;
+	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;

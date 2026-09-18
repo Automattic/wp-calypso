@@ -302,7 +302,7 @@ export default function PartnerDirectoryDashboardContent( {
 								? directoryStatusBadges
 								: __(
 										'Pick your agency’s specialties and choose your directories. We’ll review your application.'
-								  )
+									)
 						}
 						actions={
 							<LinkButton

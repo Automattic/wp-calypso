@@ -1,11 +1,12 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
-import { Onboard, updateLaunchpadSettings, useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
 	useDesignPickerFilters,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { StepContainer, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';

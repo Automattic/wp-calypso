@@ -146,7 +146,7 @@ const DeliveryWindowInput = ( {
 						? translate( "We couldn't detect your time zone, so these times are shown in UTC." )
 						: translate( 'Times are shown in your local time zone (%(timezone)s).', {
 								args: { timezone },
-						  } ) }
+							} ) }
 				</span>
 			</div>
 		</FormFieldset>

@@ -168,6 +168,13 @@ export function acceptedNotice(
 	}
 }
 
+export function isSameEmail( a?: string | null, b?: string | null ): boolean {
+	const normalize = ( email?: string | null ) => email?.trim().toLowerCase() ?? '';
+	const normalizedA = normalize( a );
+
+	return normalizedA !== '' && normalizedA === normalize( b );
+}
+
 export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: boolean ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
@@ -182,7 +189,7 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 					'invite-role': invite.role,
 					'invite-site-title': invite.site.title || invite.site.URL,
 				} )
-		  )
+			)
 		: '/sites';
 	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;

@@ -3,7 +3,8 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
-import { Site, useLaunchpad } from '@automattic/data-stores';
+import { Site } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
@@ -40,10 +41,10 @@ jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+jest.mock( '@automattic/launchpad', () => ( {
+	...jest.requireActual( '@automattic/launchpad' ),
 	useLaunchpad: jest.fn( () => {
-		return jest.requireActual( '@automattic/data-stores' ).useLaunchpad();
+		return jest.requireActual( '@automattic/launchpad' ).useLaunchpad();
 	} ),
 } ) );
 

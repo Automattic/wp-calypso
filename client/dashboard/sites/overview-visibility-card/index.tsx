@@ -73,12 +73,12 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 						heading: __( 'Launch site' ),
 						description: __( 'Ready to go public?' ),
 						link: getSiteVisibilityURL( site ),
-				  }
+					}
 				: {
 						heading: __( 'Coming soon' ),
 						description: __( 'Finish setting up your site.' ),
 						externalLink: setupLink,
-				  } ) }
+					} ) }
 			progress={ {
 				value: completedTasks,
 				max: numberOfTasks,

@@ -92,7 +92,7 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 						{ refundPlanProduct
 							? translate( 'Full refund for %(product)s, no questions asked.', {
 									args: { product: refundPlanProduct.product_name },
-							  } )
+								} )
 							: translate( 'Full refund, no questions asked.' ) }
 					</TrustCardBody>
 					{ refundSummary.hasMultipleWindows && (

@@ -62,7 +62,7 @@ export const Header = ( {
 		( select ) => {
 			const selectors = select(
 				imageStudioStore
-			) as unknown as import('../../types/wordpress').CurriedImageStudioSelectors;
+			) as unknown as import( '../../types/wordpress' ).CurriedImageStudioSelectors;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
@@ -210,7 +210,7 @@ export const Header = ( {
 								>
 									{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
 								</h2>
-						  ) }
+							) }
 				</div>
 
 				{ showNavigationPill && (

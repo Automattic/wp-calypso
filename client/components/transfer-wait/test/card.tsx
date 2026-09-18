@@ -18,9 +18,7 @@ describe( 'TransferWaitCard', () => {
 
 	it( 'narrates the preparing stage', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
-		expect( screen.getByRole( 'status' ).textContent ).toContain(
-			'preparing a dedicated server for your site'
-		);
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'preparing a dedicated server' );
 	} );
 	it( 'narrates the moving stage', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.RELOCATING } fallbackStep={ 1 } /> );
@@ -55,7 +53,7 @@ describe( 'TransferWaitCard', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
 			'aria-label',
-			'Preparing a dedicated server for your site'
+			'Preparing a dedicated server'
 		);
 	} );
 

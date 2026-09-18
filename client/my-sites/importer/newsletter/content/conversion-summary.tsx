@@ -54,14 +54,14 @@ const UnsupportedFilesMessage = ( {
 						'You had an image file type that we do not support. You will need to convert any <strong>%s</strong> files to a different format and upload them.'
 					),
 					fileEntries[ 0 ][ 0 ]
-			  )
+				)
 			: sprintf(
 					/* translators: %s is a comma separated list of file types */
 					__(
 						'You had some image file types that we do not support. You will need to convert any %s files to a different format and upload them.'
 					),
 					fileEntries.map( ( [ ext ] ) => '<strong>' + ext + '</strong>' ).join( ', ' )
-			  ) ) + ' ';
+				) ) + ' ';
 
 	return (
 		<div className="conversion-summary__unsupported-files">
@@ -247,10 +247,10 @@ const ConversionSummary = ( {
 					{ ( hasIssues
 						? __(
 								'We have converted your content to WordPress. Most of your content was processed successfully, with some items noted below.'
-						  )
+							)
 						: __(
 								'We have successfully converted your content to WordPress. Next we will begin uploading it to your site.'
-						  ) ) + ' ' }
+							) ) + ' ' }
 					{ __( "Here's an overview of what will be added to your site." ) }
 				</p>
 				<div className="success-stats summary__content-stats">

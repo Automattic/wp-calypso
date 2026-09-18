@@ -33,10 +33,7 @@ export type SiteHostingMetricsDimension =
 	| 'visitor_is_crawler';
 
 export type SiteHostingMetricType =
-	| 'requests_persec'
-	| 'response_bytes_persec'
-	| 'response_bytes_average'
-	| 'response_time_average';
+	'requests_persec' | 'response_bytes_persec' | 'response_bytes_average' | 'response_time_average';
 
 export interface SiteHostingMetricsParams {
 	start: number;

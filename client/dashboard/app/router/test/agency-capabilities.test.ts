@@ -2,7 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { createAgencyRoutes, hasAnyCapability, isAllowedByCapabilities } from '../agency';
+import {
+	createAgencyRoutes,
+	earnMigrationsRoute,
+	earnReferralsRoute,
+	earnSectionRoutes,
+	hasAnyCapability,
+	isAllowedByCapabilities,
+	isRouteAllowedByCapabilities,
+} from '../agency';
 import type { StaticDataRouteOption } from '@tanstack/react-router';
 
 type RouteNode = {
@@ -113,5 +121,18 @@ describe( 'createAgencyRoutes capability coverage', () => {
 		);
 
 		expect( unguarded ).toEqual( [] );
+	} );
+} );
+
+describe( 'earnSectionRoutes', () => {
+	const firstAllowed = ( capabilities: string[] ) =>
+		earnSectionRoutes.find( ( route ) => isRouteAllowedByCapabilities( route, capabilities ) );
+
+	test( 'sends referral users to Referrals', () => {
+		expect( firstAllowed( [ 'a4a_read_referrals' ] ) ).toBe( earnReferralsRoute );
+	} );
+
+	test( 'sends migrations-only users to Migrations', () => {
+		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnMigrationsRoute );
 	} );
 } );

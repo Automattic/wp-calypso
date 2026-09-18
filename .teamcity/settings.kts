@@ -363,7 +363,7 @@ object BuildToolchainPreviewImages : BuildType({
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e:%build.number% -lc '
 					xvfb-run --help >/dev/null &&
 					aws --version &&
-					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
+					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0t64 libgbm1 libnss3 >/dev/null
 				'
 			""".trimIndent()
 		}

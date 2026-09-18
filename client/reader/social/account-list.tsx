@@ -80,13 +80,13 @@ export function SocialAccountListHeader( {
 							count,
 							args: { count: formatted },
 						} )
-				  )
+					)
 				: String(
 						translate( '%(count)s following', '%(count)s following', {
 							count,
 							args: { count: formatted },
 						} )
-				  );
+					);
 	}
 
 	return (

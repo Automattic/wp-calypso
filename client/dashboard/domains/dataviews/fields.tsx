@@ -147,23 +147,7 @@ export const useFields = ( {
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					if ( ! item.expiry ) {
-						return null;
-					}
-
-					const expiryDate = new Date( item.expiry );
-					const now = new Date();
-					const diffInMs = expiryDate.getTime() - now.getTime();
-					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
-
-					if ( item.expired ) {
-						return '1-expired';
-					} else if ( diffInDays <= 90 ) {
-						return '2-next-90-days';
-					}
-					return '3-more-than-90-days';
-				},
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
 				render: ( { item } ) => {
 					return (
 						<DomainExpiryField

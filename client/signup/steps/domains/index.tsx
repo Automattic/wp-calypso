@@ -1,4 +1,5 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	isDomainForGravatarFlow,
@@ -287,7 +288,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -301,6 +302,7 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow,
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 

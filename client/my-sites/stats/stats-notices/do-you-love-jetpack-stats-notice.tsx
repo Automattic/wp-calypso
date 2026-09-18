@@ -108,10 +108,10 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string )
+			} ) as string )
 		: ( translate( 'Do you love %(product)s?', {
 				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string );
+			} ) as string );
 	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
 		args: { product: STATS_PRODUCT_NAME },
 	} ) as string;
@@ -128,19 +128,19 @@ const DoYouLoveJetpackStatsNotice = ( {
 				{
 					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
-		  )
+			)
 		: translate(
 				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
 				{
 					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
-		  );
+			);
 
 	const description = isWPCOMPaidStatsFlow
 		? paidStatsRemoveHardcoding
 		: translate(
 				'Upgrade to unlock UTM tracking, device stats, and region and city stats, and get priority support.'
-		  );
+			);
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
