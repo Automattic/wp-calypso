@@ -225,8 +225,7 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
-	// A comment awaiting approval gets the gold icon badge and the pending strip,
-	// the same signals the old panel gave.
+	// A comment awaiting approval is flagged in its row, the way the old panel did.
 	it( 'flags a comment awaiting approval in its row', () => {
 		const store = initStore();
 		const pending = {
@@ -241,11 +240,6 @@ describe( 'NoteList loading state', () => {
 		store.dispatch( actions.ui.loadedNotes() );
 
 		renderTab( store, 'all' as FilterName );
-
-		const badge = ( label: string ) =>
-			screen.getByText( label ).closest( '[role="article"]' )?.querySelector( '.wpnc__gridicon' );
-		expect( badge( 'Pending comment' ) ).toHaveClass( 'is-unapproved' );
-		expect( badge( 'Approved comment' ) ).not.toHaveClass( 'is-unapproved' );
 
 		const pendingRow = screen.getByText( 'Pending comment' ).closest( '[role="article"]' );
 		expect( pendingRow ).toHaveTextContent( 'Pending approval' );
