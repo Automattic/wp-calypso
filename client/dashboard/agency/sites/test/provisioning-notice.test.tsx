@@ -96,6 +96,23 @@ describe( '<ProvisioningSiteNotices>', () => {
 		jest.useRealTimers();
 	} );
 
+	test( 'keeps reporting a site that reported ready before the TTL passed', async () => {
+		jest.useFakeTimers();
+		mockAgencySites( [ provisionedSite( 7, 'active' ) ] );
+		trackProvisioningSite( 7 );
+
+		render( <ProvisioningSiteNotices /> );
+
+		expect( await screen.findByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
+
+		await act( async () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 );
+		} );
+
+		expect( screen.getByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
+		jest.useRealTimers();
+	} );
+
 	// The banner renders on every /sites load, so it must not take the route down
 	// when the endpoint answers with something other than the expected list.
 	test( 'survives a response that is not a list of sites', async () => {
