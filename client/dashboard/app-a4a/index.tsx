@@ -31,6 +31,7 @@ boot( {
 			learn: true,
 			mcp: true,
 			sites: true,
+			plugins: true,
 			team: true,
 			earn: true,
 		},
