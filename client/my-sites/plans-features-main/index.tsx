@@ -96,7 +96,7 @@ import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-sit
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
 import FeatureLossConfirmationModal from './components/feature-loss-confirmation-modal';
@@ -306,6 +306,11 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	// Undefined until the Jetpack release carrying this option is live, and for a site the store has
+	// not loaded yet. Only an explicit false proves the site has nothing to lose.
+	const isLegacyGatingSite = useSelector( ( state: IAppState ) =>
+		siteId ? getSiteOption( state, siteId, 'is_legacy_gating_site' ) : undefined
+	);
 	const sitePlanSlug = currentPlan?.productSlug;
 	const sitePlansData = useSelector( ( state: IAppState ) =>
 		siteId ? getPlansBySiteId( state, siteId )?.data : null
@@ -738,7 +743,7 @@ const PlansFeaturesMain = ( {
 	};
 
 	const canLoseFeaturesOnUpgradeTo = ( planSlug: PlanSlug ) => {
-		if ( ! sitePlanSlug ) {
+		if ( ! sitePlanSlug || false === isLegacyGatingSite ) {
 			return false;
 		}
 
