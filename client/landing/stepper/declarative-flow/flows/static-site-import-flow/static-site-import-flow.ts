@@ -16,7 +16,6 @@ import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -257,14 +256,13 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.DOMAIN_SEARCH.slug: {
-					if ( providedDependencies && ! providedDependencies.navigateToUseMyDomain ) {
+					// The use-my-domain link is hidden, so this is always a picked domain.
+					if ( ! providedDependencies.navigateToUseMyDomain ) {
 						setSiteUrl( providedDependencies.siteUrl as string );
 						setDomain( providedDependencies.suggestion as DomainSuggestion );
 						setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 						setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-						setSignupDomainOrigin(
-							( providedDependencies.signupDomainOrigin as string ) ?? SIGNUP_DOMAIN_ORIGIN.CUSTOM
-						);
+						setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 					}
 
 					return navigate( STEPS.UNIFIED_PLANS.slug );
