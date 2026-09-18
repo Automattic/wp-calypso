@@ -69,8 +69,8 @@
 
 		&.is-unapproved {
 			color: $white;
-			background: var(--color-warning, #9d6e00);
-			border-color: var(--color-warning-0, #f5f1e1);
+			background: var(--wpds-color-stroke-surface-warning-strong, #926300);
+			border-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
 		}
 	}
 }

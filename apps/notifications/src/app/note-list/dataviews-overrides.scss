@@ -120,18 +120,12 @@
 	// icon badge and strip rather than switching to the theme accent.
 	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc-pending-approval-badge) {
 		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--color-warning, #9d6e00);
+			box-shadow: inset 3px 0 0 var(--color-warning);
 		}
 	}
 
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
-
-		div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc-pending-approval-badge) {
-			.dataviews-view-list__item-wrapper {
-				box-shadow: inset 3px 0 0 var(--dashboard__foreground-color-warning, #f5c15c);
-			}
-		}
 
 		// The note title reads --wpds-color-foreground-content-neutral, whose light-mode
 		// default (#1e1e1e) is near-black and unreadable on the dark surface. Point
