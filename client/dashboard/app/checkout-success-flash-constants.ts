@@ -6,7 +6,7 @@
 export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
 
 /**
- * Set alongside the flash id when the order included a new plan, so the toast
- * can name the plan that is now active.
+ * Product slug of the plan bought in that order, if any, so the toast can name
+ * the plan that is now active.
  */
-export const CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM = 'plan_site_id';
+export const CHECKOUT_SUCCESS_PLAN_PARAM = 'purchased_plan';

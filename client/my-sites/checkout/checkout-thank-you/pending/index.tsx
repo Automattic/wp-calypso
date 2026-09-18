@@ -14,7 +14,7 @@ import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
-	CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM,
+	CHECKOUT_SUCCESS_PLAN_PARAM,
 } from 'calypso/dashboard/app/checkout-success-flash-constants';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -234,9 +234,9 @@ function useRedirectOnTransactionSuccess( {
 		( receipt?.items.some( ( item ) => item.is_plan ) &&
 			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
 		false;
-	const purchasedPlanSiteId = receipt?.items.find(
+	const purchasedPlanSlug = receipt?.items.find(
 		( item ) => item.is_plan && item.type === 'new purchase'
-	)?.site_id;
+	)?.wpcom_product_slug;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -390,9 +390,7 @@ function useRedirectOnTransactionSuccess( {
 		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
 			finalUrl = addQueryArgs( finalUrl, {
 				flash: CHECKOUT_SUCCESS_FLASH_ID,
-				...( purchasedPlanSiteId && {
-					[ CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM ]: purchasedPlanSiteId,
-				} ),
+				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
 			} );
 		}
 
@@ -411,7 +409,7 @@ function useRedirectOnTransactionSuccess( {
 		isReceiptLoaded,
 		isRenewal,
 		isPlanAndDomainPurchase,
-		purchasedPlanSiteId,
+		purchasedPlanSlug,
 		blogId,
 		orderId,
 		productName,
