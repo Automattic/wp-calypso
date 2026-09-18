@@ -10,9 +10,9 @@ import {
 	agencyTeamRoute,
 	agencyTiersRoute,
 	earnMigrationsRoute,
-	earnOverviewRoute,
 	earnPayoutSettingsRoute,
 	earnReferralsRoute,
+	earnSectionRoutes,
 	earnWooPaymentsRoute,
 	hasAnyCapability,
 	isMarketplaceSectionAvailable,
@@ -47,15 +47,7 @@ export default function AgencySidebar() {
 	);
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessMcp = !! supports.agency.mcp && canAccess( mcpRoute );
-	const canAccessEarn =
-		!! supports.agency.earn &&
-		[
-			earnOverviewRoute,
-			earnReferralsRoute,
-			earnWooPaymentsRoute,
-			earnMigrationsRoute,
-			earnPayoutSettingsRoute,
-		].some( canAccess );
+	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
 
 	return (
 		<>
@@ -115,11 +107,6 @@ export default function AgencySidebar() {
 			) }
 			{ canAccessEarn && (
 				<SidebarExpandableMenuItem label={ __( 'Earn' ) } icon={ currencyDollar } to="/earn">
-					{ canAccess( earnOverviewRoute ) && (
-						<SidebarMenuItem to="/earn" activeOptions={ { exact: true } }>
-							{ __( 'Overview' ) }
-						</SidebarMenuItem>
-					) }
 					{ canAccess( earnReferralsRoute ) && (
 						<SidebarMenuItem to="/earn/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
 					) }

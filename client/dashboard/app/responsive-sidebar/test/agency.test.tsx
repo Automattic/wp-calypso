@@ -102,7 +102,6 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_migrations' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Overview' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Migrations' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
