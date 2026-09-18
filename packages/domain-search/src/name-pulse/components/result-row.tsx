@@ -123,6 +123,9 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 	// until the real-time check on click fills it in.
 	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
 	const showSaleBadge = isAvailable && hasSalePrice( result );
+	// A badge eats into the name column's width, so it gets a tighter label
+	// truncation budget than a row with the space to spare.
+	const labelTruncateLimit = showSaleBadge || showPremiumBadge ? 12 : 20;
 	const inCart = cart.hasItem( domainName );
 
 	const {
@@ -188,7 +191,13 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		>
 			<span className="name-pulse-row__name">
 				<span className="name-pulse-row__domain">
-					<Text as="span" variant="muted" truncate ellipsizeMode="middle" limit={ 12 }>
+					<Text
+						as="span"
+						variant="muted"
+						truncate
+						ellipsizeMode="middle"
+						limit={ labelTruncateLimit }
+					>
 						{ label }
 					</Text>
 					<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
