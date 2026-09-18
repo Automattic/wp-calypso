@@ -58,8 +58,8 @@ describe( '<CheckoutSuccessFlashMessage>', () => {
 		expect( window.location.search ).toBe( '?keep=1' );
 	} );
 
-	test( 'falls back to the generic message when the site cannot be loaded', async () => {
-		mockSite( [ 404, { error: 'unknown_blog', message: 'Unknown blog' } ] );
+	test( 'falls back to the generic message without retrying when the site fails to load', async () => {
+		mockSite( [ 500, { error: 'internal_error', message: 'Internal error' } ] );
 
 		render( <CheckoutSuccessFlashMessage /> );
 

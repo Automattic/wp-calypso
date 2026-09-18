@@ -5,25 +5,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { getSitePlanDisplayName } from '../utils/site-plan';
+import {
+	CHECKOUT_SUCCESS_FLASH_ID,
+	CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM,
+} from './checkout-success-flash-constants';
 
 /**
- * Flash id used to show a post-checkout success snackbar when the checkout
- * pending page redirects the user back into the Dashboard. The checkout side
- * imports this constant and tags the redirect URL with `?flash=<id>` (see
- * `client/my-sites/checkout/checkout-thank-you/pending/index.tsx`).
- *
  * Rendered in the app shell (`app/root`) so the toast appears regardless of
- * which Dashboard page checkout redirects to (site overview, sites list,
- * billing purchases, etc.).
+ * which Dashboard page checkout redirects to.
  */
-export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
-
-/**
- * Set alongside the flash id when the order included a new plan, so the toast
- * can name the plan that is now active.
- */
-export const CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM = 'plan_site_id';
-
 export function CheckoutSuccessFlashMessage() {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const queryClient = useQueryClient();
@@ -45,10 +35,11 @@ export function CheckoutSuccessFlashMessage() {
 		);
 
 		// `fetchQuery` rather than cached data: the persisted cache can still hold
-		// the site's pre-purchase plan.
+		// the site's pre-purchase plan. No retries, so a failure falls back to the
+		// generic message right away.
 		const planName = planSiteId
 			? queryClient
-					.fetchQuery( siteByIdQuery( planSiteId ) )
+					.fetchQuery( { ...siteByIdQuery( planSiteId ), retry: false } )
 					.then( getSitePlanDisplayName )
 					.catch( () => '' )
 			: Promise.resolve( '' );
