@@ -97,12 +97,17 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	return setupWithCallbacks( { canRevoke, isAgencyOwner } ).isEligible;
 }
 
-function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
+function setupWithCallbacks( {
+	canRevoke = true,
+	isAgencyOwner = true,
+	isProvisioning = false,
+} = {} ) {
 	const onOpenHosting = jest.fn();
 	const actions = getLicenseActions( {
 		agencyId: 1,
 		canRevoke,
 		isAgencyOwner,
+		isProvisioning,
 		onCopyKey: () => {},
 		onDownload: () => {},
 		onOpenHosting,
@@ -122,7 +127,14 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		}
 		return action.isEligible( item );
 	};
-	return { isEligible, run, onOpenHosting };
+	const isDisabled = ( id: string ) => {
+		const action = actions.find( ( a ) => a.id === id );
+		if ( ! action ) {
+			throw new Error( `Action "${ id }" not found` );
+		}
+		return Boolean( action.disabled );
+	};
+	return { isEligible, isDisabled, run, onOpenHosting };
 }
 
 const SITE_ACTIONS = [
@@ -209,6 +221,16 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'create-site', unassignedWpcom ) ).toBe( true );
 		expect( isEligible( 'assign-license', unassignedWpcom ) ).toBe( false );
 		expect( isEligible( 'create-site', unassigned ) ).toBe( false );
+	} );
+
+	it( 'keeps site creation visible but disabled while a site is being created', () => {
+		const { isEligible, isDisabled } = setupWithCallbacks( { isProvisioning: true } );
+		expect( isEligible( 'create-site', unassignedWpcom ) ).toBe( true );
+		expect( isDisabled( 'create-site' ) ).toBe( true );
+	} );
+
+	it( 'leaves site creation enabled when nothing is being created', () => {
+		expect( setupWithCallbacks().isDisabled( 'create-site' ) ).toBe( false );
 	} );
 
 	it( 'never offers revoke for referral or standard licenses', () => {

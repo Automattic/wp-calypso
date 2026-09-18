@@ -31,6 +31,7 @@ export function getLicenseActions( {
 	agencyId,
 	canRevoke,
 	isAgencyOwner,
+	isProvisioning,
 	onCopyKey,
 	onDownload,
 	onOpenHosting,
@@ -38,6 +39,8 @@ export function getLicenseActions( {
 }: {
 	agencyId: number;
 	canRevoke: boolean;
+	// A site is already being created, and only one can be at a time.
+	isProvisioning: boolean;
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
 	onDownload: ( license: JetpackLicense ) => void;
@@ -143,6 +146,7 @@ export function getLicenseActions( {
 			id: 'create-site',
 			label: __( 'Create site' ),
 			isEligible: ( item ) => isAssignable( item ) && isWpcomHostingLicense( item ),
+			disabled: isProvisioning,
 			modalHeader: __( 'Configure your new site' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
@@ -234,10 +238,12 @@ export function useLicenseActions( {
 	agencyId,
 	canRevoke,
 	isAgencyOwner,
+	isProvisioning,
 }: {
 	agencyId: number;
 	canRevoke: boolean;
 	isAgencyOwner: boolean;
+	isProvisioning: boolean;
 } ): Action< JetpackLicense >[] {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -289,11 +295,21 @@ export function useLicenseActions( {
 				agencyId,
 				canRevoke,
 				isAgencyOwner,
+				isProvisioning,
 				onCopyKey,
 				onDownload,
 				onOpenHosting,
 				recordTracksEvent,
 			} ),
-		[ agencyId, canRevoke, isAgencyOwner, onCopyKey, onDownload, onOpenHosting, recordTracksEvent ]
+		[
+			agencyId,
+			canRevoke,
+			isAgencyOwner,
+			isProvisioning,
+			onCopyKey,
+			onDownload,
+			onOpenHosting,
+			recordTracksEvent,
+		]
 	);
 }
