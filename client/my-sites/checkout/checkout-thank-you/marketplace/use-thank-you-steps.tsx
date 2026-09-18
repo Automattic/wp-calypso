@@ -51,7 +51,7 @@ export function useThankYouSteps( {
 				: [
 						...( pluginSlugs.length > 0 ? pluginsProgressbarSteps : [] ),
 						...( themeSlugs.length > 0 ? themesProgressbarSteps : [] ),
-				  ],
+					],
 		[
 			defaultSteps,
 			multipleProductTypes,

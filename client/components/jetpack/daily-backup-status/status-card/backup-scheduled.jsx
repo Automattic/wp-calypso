@@ -56,7 +56,7 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 				: translate( 'In the next %d hour', 'In the next %d hours', {
 						args: [ totalHoursForNextBackup ],
 						count: totalHoursForNextBackup,
-				  } );
+					} );
 	}
 
 	return (

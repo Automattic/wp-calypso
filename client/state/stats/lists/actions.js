@@ -108,7 +108,7 @@ export function requestSiteStats( siteId, statType, query ) {
 						apiNamespace,
 					},
 					options
-			  )
+				)
 			: wpcom.site( siteId )[ statType ](
 					options,
 					// stats/video/:id takes its window and series selection from
@@ -119,9 +119,9 @@ export function requestSiteStats( siteId, statType, query ) {
 								[ 'statType', 'period', 'num', 'date', 'start_date' ]
 									.filter( ( param ) => query[ param ] !== undefined )
 									.map( ( param ) => [ param, query[ param ] ] )
-						  )
+							)
 						: {}
-			  );
+				);
 
 		return requestStats
 			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )

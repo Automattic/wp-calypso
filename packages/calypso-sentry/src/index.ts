@@ -52,7 +52,7 @@ type SentryState =
 	// Sentry will not be enabled
 	| { state: 'disabled'; params: SentryOptions }
 	// Fully loaded!
-	| { state: 'loaded'; params: SentryOptions; sentry: typeof import('@sentry/react') };
+	| { state: 'loaded'; params: SentryOptions; sentry: typeof import( '@sentry/react' ) };
 let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(

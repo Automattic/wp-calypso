@@ -27,11 +27,11 @@ export function getDataFormCountryCodes( countries: CountryListItem[] ): Country
 						label: `${ countryCode } - ${ countryName }`,
 						value: countryCode,
 					};
-			  } )
+				} )
 			: {
 					label: `${ country.code } - ${ country.name }`,
 					value: country.code,
-			  }
+				}
 	);
 	return codes.flat();
 }

@@ -33,9 +33,8 @@ export default function BillingHistory() {
 	// Hosts without a `me` section embed these screens already scoped to a site,
 	// so the site filter is theirs to set rather than the visitor's.
 	const supportsMe = Boolean( supports.me );
-	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } = useQuery(
-		userReceiptsQuery()
-	);
+	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } =
+		useQuery( userReceiptsQuery() );
 	const { data: countryList = [] } = useQuery( countryListQuery() );
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingReceipts || isLoadingSites;

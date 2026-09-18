@@ -54,10 +54,10 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 						),
 					},
 				}
-		  )
+			)
 		: translate(
 				'To fix, go to Complianz > Integrations > Plugins and use the toggle to disable Jetpack integration.'
-		  );
+			);
 
 	return (
 		<div className={ classNames }>

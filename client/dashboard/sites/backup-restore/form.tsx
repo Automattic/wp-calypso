@@ -111,10 +111,10 @@ function SiteBackupRestoreForm( {
 	const restoreWarning = formData.sqls
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-		  )
+			)
 		: __(
 				'This action will replace the selected content with the content from the selected restore point.'
-		  );
+			);
 
 	const isFormValid = Object.values( formData ).some( ( value ) => value );
 

@@ -83,7 +83,7 @@ export default function AgencyTierProgressCard( {
 											/* translators: %s is the tier name */
 											'You’ve been given early access to %s tier benefits. Keep up the great work!',
 											currentTier.name
-									  )
+										)
 									: currentTier.progressCardDescription }
 							</Text>
 						</VStack>

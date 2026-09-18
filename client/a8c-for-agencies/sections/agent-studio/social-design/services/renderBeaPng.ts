@@ -352,7 +352,7 @@ function renderBlock(
 	if ( block.type === 'stat' ) {
 		const variant = block.useDisplay ? ' bea-stat--display' : '';
 		const label = block.useDisplay
-			? input.slots.statLabel ?? ''
+			? ( input.slots.statLabel ?? '' )
 			: input.slots.statLabel || input.slots.dek || '';
 		return `<div class="${ baseClass } bea-stat${ variant }" style="${ style }"><strong>${ esc(
 			value
@@ -387,7 +387,7 @@ export function composeBeaHtml( input: BeaRenderInput ): { html: string; size: O
 		input.fontFamily ?? '"SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif';
 	const displayFontDef = input.pack.fonts.find( ( fontDef ) => fontDef.role === 'display' );
 	const hasDisplayFont = Boolean( displayFontDef );
-	const displayFont = hasDisplayFont ? input.displayFontFamily ?? headlineFont : headlineFont;
+	const displayFont = hasDisplayFont ? ( input.displayFontFamily ?? headlineFont ) : headlineFont;
 	// CSS only handles uppercase; sentence-case is baked into the headline text
 	// in renderBlock. So these resolve to 'uppercase' or 'none'.
 	const headlineCase = beaHeadlineCase( input.pack, false ).isUppercase ? 'uppercase' : 'none';
@@ -1101,8 +1101,8 @@ function fitStoryHeadlines( container: HTMLElement ) {
 			image
 				? image.offsetTop - requiredGap
 				: logo && logo.offsetTop > headlineTop
-				? logo.offsetTop - requiredGap
-				: canvas.clientHeight - padding;
+					? logo.offsetTop - requiredGap
+					: canvas.clientHeight - padding;
 
 		fitHeadlineByMeasuredLines( {
 			headline,

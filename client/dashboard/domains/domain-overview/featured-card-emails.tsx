@@ -33,7 +33,7 @@ const getAdditionlMailboxesLabel = ( count: number ) => {
 				// translators: %d is the number of additional mailboxes.
 				__( '+ %d more mailboxes' ),
 				count
-		  );
+			);
 };
 
 const getDescription = ( mailboxes: DomainMailbox[] ) => {
@@ -82,11 +82,11 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 					? router.buildLocation( {
 							to: emailsRoute.fullPath,
 							search: { domainName: domain.domain },
-					  } ).href
+						} ).href
 					: router.buildLocation( {
 							to: chooseEmailSolutionRoute.fullPath,
 							params: { domain: domain.domain },
-					  } ).href
+						} ).href
 			}
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }

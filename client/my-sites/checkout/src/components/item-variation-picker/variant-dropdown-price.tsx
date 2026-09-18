@@ -71,7 +71,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		? formatCurrency( compareToPriceForVariantTerm, variant.currency, {
 				stripZeros: true,
 				isSmallestUnit: true,
-		  } )
+			} )
 		: undefined;
 	// Introductory offer variables
 	const introTerm = variant.introductoryTerm;
@@ -129,22 +129,22 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					? translate(
 							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 							{ args: multiYearArgs }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 							{ args: multiYearArgs }
-					  );
+						);
 				// translation example: $1 first month then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return introTerm === 'month'
 					? translate(
 							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  );
+						);
 				// translation example: $1 first month then $2 per year
 			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
 				return translate(
@@ -167,24 +167,24 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 								'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 								{ args: multiYearArgs }
 							)
-					  )
+						)
 					: preventWidows(
 							translate(
 								'%(formattedCurrentPrice)s for first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
 								{ args: multiYearArgs }
 							)
-					  );
+						);
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
 				return introTerm === 'month'
 					? translate(
 							'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  )
+						)
 					: translate(
 							'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per year',
 							{ args }
-					  );
+						);
 			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
 				return translate(
 					'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per month',

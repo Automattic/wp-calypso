@@ -130,7 +130,7 @@ const SetupForm = ( {
 				variant="primary"
 				type="submit"
 			>
-				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }
+				{ isLoading ? __( 'Loading' ) : ( translatedText?.buttonText ?? __( 'Continue' ) ) }
 			</Button>
 			{ isSubmitError && (
 				<FormInputValidation

@@ -210,7 +210,7 @@ export function mightStillAutoRenew( purchase: Purchase ): boolean {
 }
 
 export function getPartnerName( purchase: Purchase ): string | null {
-	return isPartnerPurchase( purchase ) ? purchase.partner_name ?? null : null;
+	return isPartnerPurchase( purchase ) ? ( purchase.partner_name ?? null ) : null;
 }
 
 export function canEditPaymentDetails( purchase: Purchase ): boolean {

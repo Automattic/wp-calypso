@@ -51,11 +51,11 @@ const NotFoundSiteSubscriptions = (): JSX.Element => {
 				? translate( "You're not subscribed to any matching sites.", {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
-				  } )
+					} )
 				: translate( 'No results found.', {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
-				  } ) }{ ' ' }
+					} ) }{ ' ' }
 			{ getFeedSearchMessage( filteredUnsubscribedFeedItems.length ) }
 		</div>
 	);

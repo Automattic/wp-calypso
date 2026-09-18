@@ -13,9 +13,9 @@ export async function translateFromPage(
 		( _el, [ string, context ] ) =>
 			context === undefined
 				? // eslint-disable-next-line @wordpress/i18n-no-variables
-				  ( window as any )?.wp?.i18n?.__( string )
+					( window as any )?.wp?.i18n?.__( string )
 				: // eslint-disable-next-line @wordpress/i18n-no-variables
-				  ( window as any )?.wp?.i18n?._x( string, context ),
+					( window as any )?.wp?.i18n?._x( string, context ),
 		[ string, context ]
 	);
 

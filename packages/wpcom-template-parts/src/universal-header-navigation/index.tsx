@@ -310,7 +310,7 @@ const UniversalNavbarHeader = ( {
 									if ( ! event.currentTarget.contains( event.relatedTarget as Node ) ) {
 										setActiveDropdown( null );
 									}
-							  }
+								}
 							: undefined
 					}
 				>
@@ -332,7 +332,7 @@ const UniversalNavbarHeader = ( {
 														recordNavItemHover( isScrolled, 'logo', false );
 														// Hovering a non-dropdown item closes the open dropdown.
 														showDropdown( DROPDOWN_CLOSE_DELAY, null );
-												  }
+													}
 												: undefined
 										}
 										// Keyboard parity: focusing into the logo also closes the open dropdown.

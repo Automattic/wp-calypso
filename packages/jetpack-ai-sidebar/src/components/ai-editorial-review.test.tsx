@@ -106,9 +106,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -124,7 +124,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
 jest.mock( '@wordpress/components', () => {
-	const React = jest.requireActual< typeof import('react') >( 'react' );
+	const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			React.createElement(

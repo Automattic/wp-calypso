@@ -62,7 +62,7 @@ function postsFromPages( pages: ReadStreamResponse[] ): ReadStreamPost[] {
 	return pages.flatMap( ( page ) =>
 		page.cards
 			? page.cards.filter( ( card ) => card.type === 'post' ).map( ( card ) => card.data )
-			: page.posts ?? []
+			: ( page.posts ?? [] )
 	);
 }
 
