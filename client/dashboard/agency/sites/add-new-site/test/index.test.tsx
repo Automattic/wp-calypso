@@ -82,14 +82,15 @@ describe( 'agency AddNewSite', () => {
 		expect( onSelectAction ).toHaveBeenCalledWith( 'jetpack-connection' );
 	} );
 
-	test( 'sends the WordPress.com entry to the setup queue once sites are waiting', async () => {
+	test( 'sends the WordPress.com entry to the waiting licenses once sites are waiting', async () => {
 		await renderMenu( { pendingSiteCount: 2 } );
 
 		expect( screen.getByText( '2 sites available' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toHaveAttribute(
-			'href',
-			expect.stringContaining( '/sites/need-setup' )
-		);
+
+		const href = screen.getByRole( 'link', { name: /on WordPress.com/ } ).getAttribute( 'href' );
+		expect( href ).toContain( '/marketplace/purchases' );
+		expect( href ).toContain( 'status=unassigned' );
+		expect( href ).toContain( 'search=WordPress.com' );
 	} );
 
 	test( 'sends the WordPress.com entry to the marketplace when nothing is waiting', async () => {
@@ -151,10 +152,12 @@ describe( 'agency AddNewSite', () => {
 		expect( devSiteButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
-	test( 'treats an agency with no approval status at all as approved', async () => {
+	// Classic's `hasApprovedAgencyStatus` accepts only 'approved' or an empty
+	// string, so a missing status is not an approval.
+	test( 'blocks the free development site when the agency has no approval status', async () => {
 		await renderMenu( { agency: { approval_status: undefined } } );
 
-		expect( devSiteButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	test( 'ignores a pending site the backend has not licensed yet', async () => {

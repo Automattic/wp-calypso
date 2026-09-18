@@ -20,14 +20,12 @@ export function getPressableOwnershipType(
 }
 
 /**
- * Whether the agency has been approved. Agencies created before approval
- * existed have no status at all, and count as approved.
+ * Whether the agency has been approved. Matches `hasApprovedAgencyStatus` in
+ * classic: agencies predating approval report an empty status and count as
+ * approved, but a missing status does not.
  */
 export function isAgencyApproved( agency: Agency | null | undefined ): boolean {
-	if ( ! agency ) {
-		return false;
-	}
-	return ! agency.approval_status || agency.approval_status === 'approved';
+	return agency?.approval_status === 'approved' || agency?.approval_status === '';
 }
 
 /**

@@ -6,6 +6,7 @@ import {
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQuery } from '@tanstack/react-query';
+import { useLinkProps } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -17,7 +18,7 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
-import { dashboardLink } from '../../../utils/link';
+import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import A4ALogo from './a4a-logo';
 import DevSiteCard from './dev-site-card';
 import { getAvailablePendingSites, getPressableOwnershipType, isAgencyApproved } from './lib';
@@ -25,9 +26,19 @@ import type { AddNewSiteAction, AddNewSiteProps } from './types';
 // The shared Column and MenuItem above are styled by the dotcom menu's stylesheet.
 import '../../../sites/add-new-site/style.scss';
 
-import './style.scss';
-
 const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
+
+/**
+ * `useLinkProps` describes a bare anchor: it widens `children` past the single
+ * element MenuItem takes, and makes `href` optional because it drops it for a
+ * disabled link. These links are never disabled, so a missing href is a bug.
+ */
+function toMenuItemProps( { children, href, ...rest }: ReturnType< typeof useLinkProps > ) {
+	if ( ! href ) {
+		throw new Error( 'Router link resolved without an href' );
+	}
+	return { ...rest, href };
+}
 
 function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -53,6 +64,25 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const recordNavigation = ( action: string ) => {
 		recordTracksEvent( 'calypso_dashboard_agency_sites_new_site_action_click_item', { action } );
 	};
+
+	// Both entries below change destination once the agency loads. Keeping one
+	// MenuItem and swapping only its props avoids remounting the element, which
+	// Google Translate breaks.
+	const pressableMarketplaceProps = useLinkProps( {
+		to: getMarketplaceHostingSectionRoute( 'pressable' ),
+		onClick: () => recordNavigation( 'pressable' ),
+	} );
+	const wpcomMarketplaceProps = useLinkProps( {
+		to: getMarketplaceHostingSectionRoute( 'wpcom' ),
+		onClick: () => recordNavigation( 'wpcom' ),
+	} );
+	// Licenses already paid for are set up from Purchases, filtered down to the
+	// ones with no site yet.
+	const wpcomPendingLicensesProps = useLinkProps( {
+		to: '/marketplace/purchases',
+		search: { status: 'unassigned', search: 'WordPress.com' },
+		onClick: () => recordNavigation( 'wpcom' ),
+	} );
 
 	const selectAction = ( action: AddNewSiteAction ) => {
 		recordNavigation( action );
@@ -81,30 +111,26 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					onClick={ () => selectAction( 'jetpack-connection' ) }
 				/>
 			</Column>
-			{ /* The marketplace and pending-sites screens don't exist in the dashboard yet, so
-			     these are `dashboardLink()` hrefs (a full page load) rather than router links.
-			     Swap them for `Link` once the routes land. */ }
 			<Column title={ __( 'Add a new production site' ) }>
 				<MenuItem
 					icon={ <img src={ pressableIcon } alt="" width={ 24 } /> }
 					title="Pressable"
 					description={ __( 'Optimized and hassle-free hosting for business websites.' ) }
-					onClick={ () => recordNavigation( 'pressable' ) }
-					href={
-						ownsPressableDirectly
-							? EXTERNAL_PRESSABLE_AUTH_URL
-							: dashboardLink( '/marketplace/hosting/pressable' )
-					}
-					target={ ownsPressableDirectly ? '_blank' : undefined }
+					{ ...( ownsPressableDirectly
+						? {
+								href: EXTERNAL_PRESSABLE_AUTH_URL,
+								target: '_blank',
+								onClick: () => recordNavigation( 'pressable' ),
+							}
+						: toMenuItemProps( pressableMarketplaceProps ) ) }
 					aria-label={ __( 'Add a new production site on Pressable' ) }
 				/>
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					title="WordPress.com"
 					description={ __( 'Best for large-scale businesses and major eCommerce sites.' ) }
-					onClick={ () => recordNavigation( 'wpcom' ) }
-					href={ dashboardLink(
-						hasPendingSites ? '/sites/need-setup' : '/marketplace/hosting/wpcom'
+					{ ...toMenuItemProps(
+						hasPendingSites ? wpcomPendingLicensesProps : wpcomMarketplaceProps
 					) }
 					aria-label={ __( 'Add a new production site on WordPress.com' ) }
 				>
