@@ -146,6 +146,28 @@ describe( '<SiteConfigurationModal>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Create site' } ) ).not.toBeInTheDocument();
 	} );
 
+	// The modal opens from a row action, so a payload that is not the expected
+	// list must leave it standing rather than throwing mid-render.
+	test( 'survives a response that is not a list of pending sites', async () => {
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/agency' )
+			.query( true )
+			.reply( 200, [ { id: 1 } ] );
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/agency/1/sites/pending' )
+			.reply( 200, { error: 'unauthorized' } );
+		mockAddressSuggestion( 'ramblingthoughts' );
+		renderModal();
+
+		expect(
+			await screen.findByText(
+				'This license has no site left to set up. If you just created one, it may still be provisioning.'
+			)
+		).toBeVisible();
+	} );
+
 	test( 'keeps the agency fully managed when client access is turned off', async () => {
 		mockPendingSites( [
 			{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
