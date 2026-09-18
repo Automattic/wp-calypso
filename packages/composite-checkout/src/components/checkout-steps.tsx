@@ -809,6 +809,7 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
+	disableContinueButton,
 	submitButton,
 	onPageLoadError,
 	continueToNextIncompleteStep,
@@ -817,6 +818,11 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
+	/**
+	 * Disables the "Continue" button shown by `continueToNextIncompleteStep`,
+	 * for when a step's content is not ready to be validated yet.
+	 */
+	disableContinueButton?: boolean;
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	continueToNextIncompleteStep?: boolean;
@@ -1024,7 +1030,7 @@ export function CheckoutFormSubmit( {
 							: __( 'Continue to the next step' )
 					}
 					onClick={ goToNextIncompleteStep }
-					disabled={ formStatus !== FormStatus.READY }
+					disabled={ disableContinueButton || formStatus !== FormStatus.READY }
 					isBusy={ formStatus === FormStatus.VALIDATING }
 				>
 					{ formStatus === FormStatus.VALIDATING ? __( 'Please wait…' ) : __( 'Continue' ) }

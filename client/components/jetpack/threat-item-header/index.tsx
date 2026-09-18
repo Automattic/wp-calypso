@@ -35,7 +35,7 @@ const getThreatMessage = ( threat: Threat ) => {
 			return version
 				? translate( 'Vulnerable WordPress version: %s', {
 						args: [ version ],
-				  } )
+					} )
 				: translate( 'Vulnerable WordPress version.' );
 
 		case 'core_file':

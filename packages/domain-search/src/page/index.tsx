@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useEvent } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect } from 'react';
+import { NamePulseResults } from '../name-pulse';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { InitialState } from './initial-state';
 import { ResultsPage } from './results';
@@ -26,6 +27,10 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 	const getContent = () => {
 		if ( ! contextValue.query ) {
 			return <InitialState />;
+		}
+
+		if ( contextValue.config.showNamePulseSearch ) {
+			return <NamePulseResults />;
 		}
 
 		return <ResultsPage />;

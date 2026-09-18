@@ -138,8 +138,8 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							const finalUrl = addQueryArgs( checkoutUrl, {
 								...( checkoutChoosesDestination
 									? // Declines checkout's upsell, which if taken leaves it an email cart the
-									  // plugin can't be read from.
-									  { upgrade: 1 }
+										// plugin can't be read from.
+										{ upgrade: 1 }
 									: { redirect_to: redirectTo || dashboardLink( '/sites' ) } ),
 								cancel_to: currentPath,
 							} );

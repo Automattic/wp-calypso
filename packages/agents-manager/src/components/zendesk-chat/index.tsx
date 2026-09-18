@@ -69,7 +69,7 @@ export default function ZendeskChat( {
 						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
 						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
 						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
-				  }
+					}
 				: {},
 		[ siteUrl, zendeskTicketProductFieldValue ]
 	);

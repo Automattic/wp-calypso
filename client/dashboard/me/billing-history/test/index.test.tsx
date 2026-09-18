@@ -4,8 +4,10 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import BillingHistory from '../index';
+import type { AppConfig } from '../../../app/context';
 import type { Receipt, Site, User } from '@automattic/api-core';
 
 const SITE_A_ID = 1;
@@ -86,6 +88,15 @@ const receipts = [
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
+// Hosts that scope these screens to a site have no `me` section of their own.
+const configWithMeSection: AppConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: {
+		...APP_CONTEXT_DEFAULT_CONFIG.supports,
+		me: { billing: { monetizeSubscriptions: false }, security: false, apps: false },
+	},
+};
+
 function mockEndpoints( { siteList = sites }: { siteList?: Site[] } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -117,7 +128,7 @@ describe( '<BillingHistory>', () => {
 	test( 'offers a site filter when the user has more than one site', async () => {
 		mockEndpoints();
 		const user = userEvent.setup();
-		render( <BillingHistory />, { user: testUser } );
+		render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
 
 		await screen.findByRole( 'table' );
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
@@ -127,6 +138,17 @@ describe( '<BillingHistory>', () => {
 
 	test( 'does not offer a site filter when the user only has one site', async () => {
 		mockEndpoints( { siteList: [ sites[ 0 ] ] } );
+		const user = userEvent.setup();
+		render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+		await screen.findByRole( 'table' );
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Site' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not offer a site filter when the host scopes the screen to one site', async () => {
+		mockEndpoints();
 		const user = userEvent.setup();
 		render( <BillingHistory />, { user: testUser } );
 

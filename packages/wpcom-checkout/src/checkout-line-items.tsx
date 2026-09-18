@@ -772,7 +772,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your plan will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
-						  )
+							)
 				),
 			};
 		case 'domain':
@@ -828,7 +828,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
-						  )
+							)
 				),
 			};
 	}
@@ -1120,7 +1120,7 @@ export function LineItemSublabelAndPrice( {
 						{ isRenewalPricingExperiment
 							? translate( 'Auto-renews at %(price)s/month. Billed every month.', {
 									args: { price: actualMonthlyPrice },
-							  } )
+								} )
 							: translate( 'Billed every month' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1825,7 +1825,7 @@ function CheckoutLineItem( {
 			? formatCurrency( compareToPrice, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 
 	// For products with stacked cost overrides (e.g. premium domains with a
@@ -1840,7 +1840,7 @@ function CheckoutLineItem( {
 		? formatCurrency( priceBeforeDiscountsInteger, product.currency, {
 				isSmallestUnit: true,
 				stripZeros: true,
-		  } )
+			} )
 		: undefined;
 
 	const isEmail =

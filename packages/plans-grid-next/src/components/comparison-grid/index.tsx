@@ -795,7 +795,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	let title =
 		featureSlug === FEATURE_REALTIME_BACKUPS_JP
 			? // Always display the short title for backups in comparison grid.
-			  translate( 'Real-time backups', { textOnly: true } )
+				translate( 'Real-time backups', { textOnly: true } )
 			: feature?.getTitle?.();
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.

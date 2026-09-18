@@ -36,7 +36,7 @@ export default function canUpgradeToPlan(
 
 	// An expired (but still active) plan is treated as the free plan for upgrade
 	// purposes. `expired` comes from the endpoint's `is_expired` field.
-	const currentPlanSlug = plan?.expired ? freePlan : plan?.productSlug ?? freePlan;
+	const currentPlanSlug = plan?.expired ? freePlan : ( plan?.productSlug ?? freePlan );
 
 	// Exception for upgrading Atomic v1 sites to eCommerce
 	const isAtomicV1 =

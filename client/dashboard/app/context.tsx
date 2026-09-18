@@ -22,7 +22,9 @@ export type AgencySupports = {
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
+	amplify: boolean;
 	sites: boolean;
+	plugins: boolean;
 	team: boolean;
 	earn: boolean;
 };

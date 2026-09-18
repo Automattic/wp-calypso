@@ -45,11 +45,11 @@ function getEventNames( { isPurchaseAssignment }: { isPurchaseAssignment: boolea
 		? {
 				success: 'calypso_dashboard_purchase_payment_method_change',
 				failure: 'calypso_dashboard_purchase_payment_method_change_failure',
-		  }
+			}
 		: {
 				success: 'calypso_dashboard_payment_method_add',
 				failure: 'calypso_dashboard_payment_method_add_failure',
-		  };
+			};
 }
 
 /**

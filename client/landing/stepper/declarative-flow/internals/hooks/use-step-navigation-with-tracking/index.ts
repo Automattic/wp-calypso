@@ -75,7 +75,7 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 					// It's a tiny edge case where the use navigates before this hook is ready.
 					...( tracksEventPropsFromFlow?.isLoading
 						? undefined
-						: tracksEventPropsFromFlow?.eventsProperties?.[ event ] ?? {} ),
+						: ( tracksEventPropsFromFlow?.eventsProperties?.[ event ] ?? {} ) ),
 				},
 			} );
 		},

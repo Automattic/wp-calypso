@@ -110,7 +110,7 @@ const SubscriptionsListMobileView = ( {
 							isFetching={ isFetchingProducts }
 							onCancelSubscription={ onCancelSubscription }
 						/>
-				  ) )
+					) )
 				: translate( 'No subscriptions found' ) }
 		</div>
 	);

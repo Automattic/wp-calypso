@@ -15,6 +15,6 @@ const getUpsellProps = ( {
 				cancelActionText: translate( 'Skip' ),
 				onCancel: () => page( `/checkout/${ siteSlug }` ),
 				showCancelButton: true,
-		  };
+			};
 
 export default getUpsellProps;

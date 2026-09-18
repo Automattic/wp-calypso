@@ -23,6 +23,7 @@ export interface FetchAgencySitesOptions {
 	sort_direction?: 'asc' | 'desc';
 	page?: number;
 	per_page?: number;
+	not_multisite?: boolean;
 }
 
 export interface FetchAgencySitesResponse {

@@ -192,12 +192,12 @@ const JetpackComFooter: React.FC = () => {
 									'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
 								),
 								trackId: 'privacy_policy_california',
-						  },
+							},
 					shouldSeeDoNotSell
 						? {
 								label: translate( 'Do Not Sell or Share My Data' ),
 								onClick: openDialog,
-						  }
+							}
 						: null,
 				],
 			},

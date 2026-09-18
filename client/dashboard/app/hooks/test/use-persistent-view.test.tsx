@@ -178,6 +178,32 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
+		it( 'should lock the transient filters when `lockQueryParamFilters` is set', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { domainName: 'example.com' };
+			const queryParamFilterFields = [ 'domainName' ];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+						lockQueryParamFilters: true,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'domainName', operator: 'isAny', value: [ 'example.com' ], isLocked: true },
+				] );
+			} );
+		} );
+
 		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
 			mockGetCalypsoPreferences( {} );
 

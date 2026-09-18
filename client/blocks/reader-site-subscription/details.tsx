@@ -315,7 +315,7 @@ const SiteSubscriptionDetails = ( {
 											? translate( 'Complimentary: %(title)s', {
 													args: { title },
 													comment: 'Label showing a complimentary subscription plan name',
-											  } )
+												} )
 											: renewalPrice }
 									</dd>
 									<dt>{ translate( 'Period' ) }</dt>

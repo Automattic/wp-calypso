@@ -41,7 +41,7 @@ export const useCreateZendeskConversation = () => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const getErrorMessage = ( error: unknown ) =>
-		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+		error instanceof Error ? error.message : ( error?.toString?.() ?? 'Unknown error' );
 
 	// The Smooch (Zendesk Web Messenger) SDK is initialized asynchronously elsewhere.
 	// When an escalation fires before init completes, `Smooch.createConversation` is
@@ -102,7 +102,7 @@ export const useCreateZendeskConversation = () => {
 			is_from_error: isFromError,
 			is_chat_loaded: isChatLoaded,
 			escalation_on_second_attempt: escalationOnSecondAttempt,
-			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
+			error_reason: isFromError ? ( errorReason ?? 'Unknown error' ) : '',
 		} );
 
 		// Store previous state to restore on error
