@@ -69,7 +69,11 @@ function useLicensesReadyToSetUp(): number {
 		enabled: !! agency?.id,
 	} );
 
-	return ( pendingSites ?? [] ).filter( hasWpcomLicenseWithoutSite ).length;
+	// This counts on every `/sites` load, so a response that is not the expected
+	// list must not take the route down with it.
+	return Array.isArray( pendingSites )
+		? pendingSites.filter( hasWpcomLicenseWithoutSite ).length
+		: 0;
 }
 
 function NeedsSetupDescription( { count }: { count: number } ) {
