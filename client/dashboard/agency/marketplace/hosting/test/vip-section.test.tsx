@@ -11,7 +11,7 @@ const DEMO_URL =
 	'https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a';
 const REFER_PATH = '/marketplace/hosting/refer-enterprise-hosting';
 
-// The classic pitch line is repeated under VIP capabilities, so look at the card header only.
+// As in classic, the VIP capabilities card repeats the pitch line, so look at the card header only.
 function pitchCardHeader() {
 	return screen.getByRole( 'heading', { name: /Deliver unmatched performance/ } ).parentElement;
 }
