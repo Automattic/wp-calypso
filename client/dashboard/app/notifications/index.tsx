@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { Text } from '../../components/text';
-import { dashboardLink } from '../../utils/link';
+import { dashboardLink, wpcomLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
@@ -234,6 +234,7 @@ export default function Notifications( {
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
+						wpcomUrl={ wpcomLink }
 					/>
 				</Suspense>
 			) }

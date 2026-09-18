@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PendingApprovalBadge from '../../shared/pending-approval-badge';
-import { getActions } from '../helpers/notes';
+import { getActions, getCommentsUrl, getReferenceId } from '../helpers/notes';
 import { html } from '../indices-to-html';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
@@ -171,7 +171,9 @@ export class NoteBody extends Component {
 				{ preface }
 				{ showPendingApprovalBadge && (
 					<div className="wpnc__pending-approval-section">
-						<PendingApprovalBadge note={ this.props.note } />
+						<PendingApprovalBadge
+							commentsUrl={ getCommentsUrl( getReferenceId( this.props.note, 'site' ) ) }
+						/>
 					</div>
 				) }
 				<div className="wpnc__body-content">{ body }</div>
