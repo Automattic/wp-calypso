@@ -1117,9 +1117,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// "Get started" CTA — filled pill by default, outlined on hover. The fill/ink
-	// pair defaults to the white-nav matrix (blue fill, white label); sections that
-	// rest the bar transparent over a dark hero swap it to white fill, blue label.
+	// "Get started" CTA: blue fill and white label by default; dark-hero pages swap the
+	// fill/ink pair to a white pill with a blue label.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
@@ -1537,9 +1536,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 /* Leaves-WordPress.com marker; shared by the 2026 desktop dropdown and mobile menu. */
-// Scrolled or dropdown open: the bar is white, so the CTA goes back to the
-// blue-fill matrix whatever a page set for the resting bar. Declared directly,
-// not only as vars, so a page's hardcoded !important colours can't keep it white.
+// Scrolled or menu open: white bar, so back to the blue fill. Declared directly, not
+// only as vars, so a page's hardcoded !important colours can't keep it white.
 .lpc-header-nav-wrapper
 	.lpc-header-nav-container.is-scrolled
 	.masterbar-menu

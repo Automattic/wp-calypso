@@ -5,8 +5,7 @@ import { Nav2026ItemContent } from './item-content';
 import type { Nav2026Group, Nav2026Menu } from './types';
 
 // Groups sharing a `columnGroup` key stack in one column; the rest get their own.
-// `columnIndex` reorders the columns for desktop, because the taxonomy array order
-// drives the mobile list and the two orders differ.
+// `columnIndex` sets the desktop column order; the array order stays the mobile list order.
 function toColumns( groups: Nav2026Group[] ): Nav2026Group[][] {
 	const columns: Nav2026Group[][] = [];
 	const byKey = new Map< string, Nav2026Group[] >();
