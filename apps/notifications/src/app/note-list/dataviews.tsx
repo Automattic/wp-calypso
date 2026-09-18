@@ -14,7 +14,9 @@ import {
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
+import { getActions } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
@@ -78,9 +80,17 @@ const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 
 const NoteBadge = ( { note }: { note: Note } ) => {
 	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
+	const isUnapproved =
+		note.type === 'comment' && 'approve-comment' in getActions( note ) && ! isApproved;
 
 	return (
-		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+		<span
+			className={ clsx( 'wpnc__gridicon', {
+				'is-unread': ! isRead,
+				'is-unapproved': isUnapproved,
+			} ) }
+		>
 			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
 		</span>
 	);

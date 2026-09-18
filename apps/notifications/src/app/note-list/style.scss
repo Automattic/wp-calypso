@@ -52,6 +52,12 @@
 			color: $white;
 			background: var(--wp-admin-theme-color);
 		}
+
+		&.is-unapproved {
+			color: $white;
+			background: var(--color-warning, #9d6e00);
+			border-color: var(--color-warning-0, #f5f1e1);
+		}
 	}
 }
 

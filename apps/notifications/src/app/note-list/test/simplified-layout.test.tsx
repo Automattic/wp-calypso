@@ -37,6 +37,7 @@ const noteAboutAPost = () => ( {
 		},
 		{ text: 'Nice post, really helpful!', ranges: [], media: [] },
 	],
+	body: [],
 } );
 
 const REPLY_TITLE = 'The tide tables are wrong';
@@ -66,6 +67,7 @@ const replyNote = () => ( {
 			media: [],
 		},
 	],
+	body: [],
 } );
 
 const renderList = (

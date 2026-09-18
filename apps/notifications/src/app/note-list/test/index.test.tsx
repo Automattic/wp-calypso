@@ -20,6 +20,7 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	timestamp: `2026-06-0${ id % 10 }T00:00:00+00:00`,
 	title: `${ label } title`,
 	subject: [ { text: label, ranges: [], media: [] } ],
+	body: [],
 } );
 
 const renderTab = (
@@ -222,6 +223,29 @@ describe( 'NoteList loading state', () => {
 		} );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+	} );
+
+	// A comment awaiting approval marks its row's icon badge, which the CSS paints
+	// gold — the same signal the old panel gave.
+	it( 'marks the icon badge of a comment awaiting approval', () => {
+		const store = initStore();
+		const pending = {
+			...makeNote( 800, 'Pending comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': false } } ],
+		};
+		const approved = {
+			...makeNote( 801, 'Approved comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': true } } ],
+		};
+		store.dispatch( actions.notes.addNotes( [ pending, approved ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		const badge = ( label: string ) =>
+			screen.getByText( label ).closest( '[role="article"]' )?.querySelector( '.wpnc__gridicon' );
+		expect( badge( 'Pending comment' ) ).toHaveClass( 'is-unapproved' );
+		expect( badge( 'Approved comment' ) ).not.toHaveClass( 'is-unapproved' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {
