@@ -55,6 +55,7 @@ describe( 'Static site import flow', () => {
 
 	beforeEach( () => {
 		config.enable( 'migration/non-wordpress-source' );
+		window.location.search = '';
 		( window.location.assign as jest.Mock ).mockClear();
 		( window.location.replace as jest.Mock ).mockClear();
 		( goToCheckout as jest.Mock ).mockClear();
@@ -74,40 +75,33 @@ describe( 'Static site import flow', () => {
 		expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
 	} );
 
-	describe( 'identify', () => {
-		it( 'reads a non-WordPress site', () => {
-			const destination = runNavigation( {
-				from: STEPS.SITE_MIGRATION_IDENTIFY,
-				dependencies: { action: 'continue', ...SOURCE },
-			} );
+	describe( 'initialize', () => {
+		const identifyPath = '/setup/site-migration/site-migration-identify';
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READING,
-				query: { ...SOURCE, importSessionId: '' },
-			} );
+		it( 'runs for a non-WordPress source', () => {
+			window.location.search = '?from=busybearscleaning.com&platform=wix';
+
+			expect( staticSiteImportFlow.initialize() ).not.toBe( false );
+			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 
-		it( 'hands WordPress sites back to the migration flow', () => {
-			runNavigation( {
-				from: STEPS.SITE_MIGRATION_IDENTIFY,
-				dependencies: { action: 'continue', from: 'example.com', platform: 'wordpress' },
-			} );
+		it( 'sends everything else to the migration flow to be identified', () => {
+			window.location.search = '?from=example.com&platform=wordpress&siteId=42';
 
-			expect( lastExit() ).toMatchObject( {
-				path: '/setup/site-migration/create-site',
-				query: { from: 'example.com', platform: 'wordpress' },
-			} );
+			expect( staticSiteImportFlow.initialize() ).toBe( false );
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				`${ identifyPath }?from=example.com&platform=wordpress&siteId=42`
+			);
 		} );
 
-		it( 'hands every source back when the flag is off', () => {
+		it( 'sends every source there when the flag is off', () => {
 			config.disable( 'migration/non-wordpress-source' );
+			window.location.search = '?from=busybearscleaning.com&platform=wix';
 
-			runNavigation( {
-				from: STEPS.SITE_MIGRATION_IDENTIFY,
-				dependencies: { action: 'continue', ...SOURCE },
-			} );
-
-			expect( lastExit().path ).toBe( '/setup/site-migration/create-site' );
+			expect( staticSiteImportFlow.initialize() ).toBe( false );
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				`${ identifyPath }?from=busybearscleaning.com&platform=wix`
+			);
 		} );
 	} );
 
