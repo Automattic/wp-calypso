@@ -4,6 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
+import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -18,10 +19,12 @@ export default function DashboardBackportSitePurchases( {
 	path,
 	section,
 	siteId,
+	siteSlug,
 }: {
 	path: string;
 	section?: PurchasesSection;
 	siteId?: number | null;
+	siteSlug: string;
 } ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -62,10 +65,14 @@ export default function DashboardBackportSitePurchases( {
 			router.preloadRoute( { to: path } ),
 		] ).then( () => {
 			rootInstanceRef.current?.render(
-				<Layout analyticsClient={ analyticsClient } path={ path } />
+				<Layout
+					analyticsClient={ analyticsClient }
+					path={ path }
+					subNav={ section && <PurchasesNavigation section={ section } siteSlug={ siteSlug } /> }
+				/>
 			);
 		} );
-	}, [ analyticsClient, user, path ] );
+	}, [ analyticsClient, user, path, section, siteSlug ] );
 
 	// Use data already available in Redux to seed the React Query cache and avoid redundant data fetching.
 	useEffect( () => {
