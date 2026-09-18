@@ -10,6 +10,7 @@ import { wpcom } from '../../panel/rest-client/wpcom';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { p, zipWithSignature } from '../../panel/templates/functions';
 import PendingApprovalBadge from '../../shared/pending-approval-badge';
+import { pendingCommentsPath } from '../../shared/wpcom-url';
 import { useAppContext } from '../context';
 import NoteActions from './actions';
 import Comment from './block-comment';
@@ -109,9 +110,9 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	};
 	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
-	const { wpcomUrl } = useAppContext();
+	const { getWpcomUrl } = useAppContext();
 	const siteId = getReferenceId( note, 'site' );
-	const commentsUrl = siteId ? wpcomUrl( `/comments/pending/${ siteId }` ) : null;
+	const commentsUrl = siteId ? getWpcomUrl( pendingCommentsPath( siteId ) ) : null;
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;

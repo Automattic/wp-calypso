@@ -1,19 +1,13 @@
 import { createContext, useContext, useMemo } from 'react';
+import { sameOriginWpcomUrl } from '../shared/wpcom-url';
 import type { Client } from './types';
-
-const sameOriginWpcomUrl = ( path: string ) => {
-	const host =
-		document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
-
-	return `${ document.location.protocol }//${ host }${ path }`;
-};
 
 export type AppContextData = {
 	client: Client | null;
 	locale: string;
 	isViewSettingsEnabled: boolean;
 	onPreferenceChange: ( key: string, value: unknown ) => Promise< unknown >;
-	wpcomUrl: ( path: string ) => string;
+	getWpcomUrl: ( path: string ) => string;
 };
 
 const AppContext = createContext< AppContextData >( {
@@ -21,7 +15,7 @@ const AppContext = createContext< AppContextData >( {
 	locale: 'en',
 	isViewSettingsEnabled: false,
 	onPreferenceChange: () => Promise.resolve(),
-	wpcomUrl: sameOriginWpcomUrl,
+	getWpcomUrl: sameOriginWpcomUrl,
 } );
 
 export const AppProvider = ( {
@@ -29,14 +23,14 @@ export const AppProvider = ( {
 	locale,
 	isViewSettingsEnabled = false,
 	onPreferenceChange = () => Promise.resolve(),
-	wpcomUrl = sameOriginWpcomUrl,
+	getWpcomUrl = sameOriginWpcomUrl,
 	children,
 }: {
 	client: Client | null;
 	locale: string;
 	isViewSettingsEnabled?: boolean;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
-	wpcomUrl?: ( path: string ) => string;
+	getWpcomUrl?: ( path: string ) => string;
 	children: React.ReactNode;
 } ) => {
 	const value = useMemo(
@@ -45,9 +39,9 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			onPreferenceChange,
-			wpcomUrl,
+			getWpcomUrl,
 		} ),
-		[ client, locale, isViewSettingsEnabled, onPreferenceChange, wpcomUrl ]
+		[ client, locale, isViewSettingsEnabled, onPreferenceChange, getWpcomUrl ]
 	);
 
 	return <AppContext.Provider value={ value }>{ children }</AppContext.Provider>;

@@ -234,7 +234,7 @@ export default function Notifications( {
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
-						wpcomUrl={ wpcomLink }
+						getWpcomUrl={ wpcomLink }
 					/>
 				</Suspense>
 			) }

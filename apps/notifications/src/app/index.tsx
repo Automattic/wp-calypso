@@ -141,7 +141,7 @@ const NotificationApp = ( {
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
-	wpcomUrl,
+	getWpcomUrl,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
@@ -151,7 +151,7 @@ const NotificationApp = ( {
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
-	wpcomUrl?: ( path: string ) => string;
+	getWpcomUrl?: ( path: string ) => string;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
@@ -263,7 +263,7 @@ const NotificationApp = ( {
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
 					onPreferenceChange={ onPreferenceChange }
-					wpcomUrl={ wpcomUrl }
+					getWpcomUrl={ getWpcomUrl }
 				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>
