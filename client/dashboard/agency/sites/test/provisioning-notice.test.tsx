@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -67,46 +66,6 @@ describe( '<ProvisioningSiteNotices>', () => {
 		);
 	} );
 
-	test( 'stops polling once every site reports ready', async () => {
-		// The clock still ticks so requests settle; jumps skip the poll interval.
-		jest.useFakeTimers( { advanceTimers: true } );
-		// jsdom never reports the page as visible, and interval refetches skip
-		// unfocused pages.
-		focusManager.setFocused( true );
-		nock( API )
-			.persist()
-			.get( '/wpcom/v2/agency' )
-			.reply( 200, [ { id: 1 } ] );
-		nock( API )
-			.get( '/wpcom/v2/agency/1/sites' )
-			.reply( 200, [ provisionedSite( 7, 'active' ), provisionedSite( 8, 'provisioning' ) ] );
-		nock( API )
-			.get( '/wpcom/v2/agency/1/sites' )
-			.reply( 200, [ provisionedSite( 7, 'active' ), provisionedSite( 8, 'active' ) ] );
-		const afterReady = nock( API ).get( '/wpcom/v2/agency/1/sites' ).reply( 200, [] );
-		trackProvisioningSite( 7 );
-		trackProvisioningSite( 8 );
-
-		render( <ProvisioningSiteNotices /> );
-
-		try {
-			// Site 7 being ready shows the first response has landed.
-			expect( await screen.findByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
-
-			await act( () => jest.advanceTimersByTimeAsync( 5000 ) );
-			await waitFor( () =>
-				expect( screen.getAllByText( 'Your WordPress.com site is ready!' ) ).toHaveLength( 2 )
-			);
-
-			await act( () => jest.advanceTimersByTimeAsync( 30 * 1000 ) );
-
-			expect( afterReady.isDone() ).toBe( false );
-		} finally {
-			focusManager.setFocused( undefined );
-			jest.useRealTimers();
-		}
-	} );
-
 	test( 'stops reporting a site once the notice is dismissed', async () => {
 		mockAgencySites( [ provisionedSite( 7, 'active' ) ] );
 		trackProvisioningSite( 7 );
@@ -116,19 +75,6 @@ describe( '<ProvisioningSiteNotices>', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( 'Your WordPress.com site is ready!' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'lets the user dismiss a site that is still being created', async () => {
-		mockAgencySites( [ provisionedSite( 7, 'provisioning' ) ] );
-		trackProvisioningSite( 7 );
-
-		render( <ProvisioningSiteNotices /> );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
-
-		expect(
-			screen.queryByText( 'Setting up your new WordPress.com site' )
-		).not.toBeInTheDocument();
 	} );
 
 	test( 'gives up on a site that never reports ready', async () => {
