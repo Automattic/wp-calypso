@@ -24,3 +24,18 @@ export interface AgencyPendingSite {
 export interface CreateAgencySiteResponse {
 	success: boolean;
 }
+
+export interface ProvisionAgencySiteParams {
+	id: number;
+	site_name?: string;
+	php_version?: string;
+	primary_data_center?: string;
+	is_fully_managed_agency_site?: boolean;
+}
+
+/**
+ * Whether a `.wordpress.com` address is free for the agency to claim.
+ */
+export interface AgencySiteAddressValidation {
+	valid: boolean;
+}

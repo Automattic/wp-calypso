@@ -23,10 +23,12 @@ import {
 	isWpcomHostingLicense,
 } from './license-status';
 import RevokeLicenseModal from './revoke-license-modal';
+import SiteConfigurationModal from './site-configuration-modal';
 import type { JetpackLicense } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 export function getLicenseActions( {
+	agencyId,
 	canRevoke,
 	isAgencyOwner,
 	onCopyKey,
@@ -34,6 +36,7 @@ export function getLicenseActions( {
 	onOpenHosting,
 	recordTracksEvent,
 }: {
+	agencyId: number;
 	canRevoke: boolean;
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
@@ -140,9 +143,15 @@ export function getLicenseActions( {
 			id: 'create-site',
 			label: __( 'Create site' ),
 			isEligible: ( item ) => isAssignable( item ) && isWpcomHostingLicense( item ),
-			// The site setup flow still lives in the classic dashboard.
-			// TODO: open the site configuration modal here once it lands in the dashboard (#114251).
-			callback: () => window.location.assign( a4aLink( '/sites/need-setup' ) ),
+			modalHeader: __( 'Configure your new site' ),
+			modalSize: 'medium',
+			RenderModal: ( { items, closeModal } ) => (
+				<SiteConfigurationModal
+					agencyId={ agencyId }
+					license={ items[ 0 ] }
+					closeModal={ closeModal }
+				/>
+			),
 		},
 		{
 			id: 'assign-license',
@@ -208,12 +217,12 @@ export function getLicenseActions( {
 							__( 'Revoke bundle of %1$d %2$s licenses?' ),
 							items[ 0 ].quantity ?? 0,
 							getLicenseProductName( items[ 0 ] )
-						)
+					  )
 					: sprintf(
 							/* translators: %s is the product name. */
 							__( 'Revoke %s license?' ),
 							getLicenseProductName( items[ 0 ] )
-						),
+					  ),
 			RenderModal: ( { items, closeModal } ) => (
 				<RevokeLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
 			),
@@ -277,6 +286,7 @@ export function useLicenseActions( {
 	return useMemo(
 		() =>
 			getLicenseActions( {
+				agencyId,
 				canRevoke,
 				isAgencyOwner,
 				onCopyKey,
@@ -284,6 +294,6 @@ export function useLicenseActions( {
 				onOpenHosting,
 				recordTracksEvent,
 			} ),
-		[ canRevoke, isAgencyOwner, onCopyKey, onDownload, onOpenHosting, recordTracksEvent ]
+		[ agencyId, canRevoke, isAgencyOwner, onCopyKey, onDownload, onOpenHosting, recordTracksEvent ]
 	);
 }
