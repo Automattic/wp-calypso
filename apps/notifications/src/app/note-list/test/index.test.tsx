@@ -248,10 +248,10 @@ describe( 'NoteList loading state', () => {
 		expect( badge( 'Approved comment' ) ).not.toHaveClass( 'is-unapproved' );
 
 		const pendingRow = screen.getByText( 'Pending comment' ).closest( '[role="article"]' );
-		expect( pendingRow ).toHaveTextContent( 'Pending Approval' );
+		expect( pendingRow ).toHaveTextContent( 'Pending approval' );
 		expect(
 			screen.getByText( 'Approved comment' ).closest( '[role="article"]' )
-		).not.toHaveTextContent( 'Pending Approval' );
+		).not.toHaveTextContent( 'Pending approval' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {

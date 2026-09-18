@@ -23,7 +23,7 @@ const PendingApprovalBadge = ( {
 	return (
 		<div className="wpnc-pending-approval-badge">
 			<Icon icon={ pending } size={ 20 } />
-			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending Approval' ) }</span>
+			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending approval' ) }</span>
 			{ showManageLink && commentsUrl && (
 				<a
 					className="wpnc-pending-approval-badge__link"
