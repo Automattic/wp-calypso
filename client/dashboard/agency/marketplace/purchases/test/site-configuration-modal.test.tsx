@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
+import { getProvisioningSiteIds, untrackProvisioningSite } from '../../../sites/provisioning-sites';
 import SiteConfigurationModal from '../site-configuration-modal';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -67,7 +68,10 @@ async function waitForSuggestedAddress() {
 }
 
 describe( '<SiteConfigurationModal>', () => {
-	afterEach( () => nock.cleanAll() );
+	afterEach( () => {
+		nock.cleanAll();
+		getProvisioningSiteIds().forEach( untrackProvisioningSite );
+	} );
 
 	test( 'creates the site at the suggested address', async () => {
 		mockPendingSites( [
@@ -96,6 +100,8 @@ describe( '<SiteConfigurationModal>', () => {
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect( closeModal ).toHaveBeenCalled();
+		// The sites page reports on it from here.
+		expect( getProvisioningSiteIds() ).toEqual( [ 7 ] );
 	} );
 
 	test( 'provisions the pending site belonging to this license', async () => {

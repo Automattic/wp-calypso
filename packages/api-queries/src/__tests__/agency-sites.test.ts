@@ -4,7 +4,11 @@
 
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import nock from 'nock';
-import { agencyPendingSitesQuery, agencySitesImportMutation } from '../agency-sites';
+import {
+	agencyPendingSitesQuery,
+	agencySitesImportMutation,
+	provisionedAgencySitesQuery,
+} from '../agency-sites';
 import { dehydrateOptions } from '../dehydrate-options';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -67,6 +71,16 @@ describe( 'agencyPendingSitesQuery', () => {
 		const client = new QueryClient();
 
 		await client.prefetchQuery( { ...agencyPendingSitesQuery( 1 ), queryFn: () => [] } );
+
+		expect( dehydrate( client, dehydrateOptions ).queries ).toHaveLength( 0 );
+	} );
+} );
+
+describe( 'provisionedAgencySitesQuery', () => {
+	test( 'is left out of the persisted cache', async () => {
+		const client = new QueryClient();
+
+		await client.prefetchQuery( { ...provisionedAgencySitesQuery( 1 ), queryFn: () => [] } );
 
 		expect( dehydrate( client, dehydrateOptions ).queries ).toHaveLength( 0 );
 	} );
