@@ -1,0 +1,25 @@
+.step-container-v2--static-site-import-how-it-works {
+	.static-site-import-how-it-works__steps {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		margin: 0;
+		padding-inline-start: 40px;
+
+		li {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			padding-inline-start: 8px;
+
+			&::marker {
+				color: var( --color-text-subtle );
+			}
+		}
+	}
+
+	.static-site-import-how-it-works__step-title {
+		color: var( --color-text );
+		font-weight: 500;
+	}
+}

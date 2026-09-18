@@ -314,59 +314,75 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
 	},
 
-	SITE_MIGRATION_SCAN: {
-		slug: 'site-migration-scan',
+	STATIC_SITE_IMPORT_READING: {
+		slug: 'static-site-import-reading',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-scan' */ './steps-repository/site-migration-scan'
+				/* webpackChunkName: 'async-step-static-site-import-reading' */ './steps-repository/static-site-import-reading'
 			),
 	},
 
-	SITE_MIGRATION_DESTINATION: {
-		slug: 'site-migration-destination',
+	STATIC_SITE_IMPORT_RESULTS: {
+		slug: 'static-site-import-results',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-destination' */ './steps-repository/site-migration-destination'
+				/* webpackChunkName: 'async-step-static-site-import-results' */ './steps-repository/static-site-import-results'
 			),
 	},
 
-	SITE_MIGRATION_PREVIEW: {
-		slug: 'site-migration-preview',
+	STATIC_SITE_IMPORT_HOW_IT_WORKS: {
+		slug: 'static-site-import-how-it-works',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-preview' */ './steps-repository/site-migration-preview'
+				/* webpackChunkName: 'async-step-static-site-import-how-it-works' */ './steps-repository/static-site-import-how-it-works'
 			),
 	},
 
-	SITE_MIGRATION_DOMAIN: {
-		slug: 'site-migration-domain',
+	STATIC_SITE_IMPORT_ADDRESS: {
+		slug: 'static-site-import-address',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-domain' */ './steps-repository/site-migration-domain'
+				/* webpackChunkName: 'async-step-static-site-import-address' */ './steps-repository/static-site-import-address'
 			),
 	},
 
-	SITE_MIGRATION_SEO: {
-		slug: 'site-migration-seo',
+	STATIC_SITE_IMPORT_READY: {
+		slug: 'static-site-import-ready',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-seo' */ './steps-repository/site-migration-seo'
+				/* webpackChunkName: 'async-step-static-site-import-ready' */ './steps-repository/static-site-import-ready'
 			),
 	},
 
-	SITE_MIGRATION_REVIEW: {
-		slug: 'site-migration-review',
+	STATIC_SITE_IMPORT_BUILDING: {
+		slug: 'static-site-import-building',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-review' */ './steps-repository/site-migration-review'
+				/* webpackChunkName: 'async-step-static-site-import-building' */ './steps-repository/static-site-import-building'
 			),
 	},
 
-	SITE_MIGRATION_IMPORT_PROGRESS: {
-		slug: 'site-migration-import-progress',
+	STATIC_SITE_IMPORT_DONE: {
+		slug: 'static-site-import-done',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-import-progress' */ './steps-repository/site-migration-import-progress'
+				/* webpackChunkName: 'async-step-static-site-import-done' */ './steps-repository/static-site-import-done'
+			),
+	},
+
+	STATIC_SITE_IMPORT_EXPERT: {
+		slug: 'static-site-import-expert',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import-expert' */ './steps-repository/static-site-import-expert'
+			),
+	},
+
+	STATIC_SITE_IMPORT_FAILED: {
+		slug: 'static-site-import-failed',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import-failed' */ './steps-repository/static-site-import-failed'
 			),
 	},
 
