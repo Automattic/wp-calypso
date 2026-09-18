@@ -36,8 +36,6 @@ function mockPage( pendingSites: unknown[] ) {
 }
 
 describe( '<AgencySites>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'points licenses waiting to be set up at the unassigned Purchases filter', async () => {
 		mockPage( [ pendingSite( 7, 'pending' ), pendingSite( 8, 'pending', 'wpcom-hosting-x_def' ) ] );
 
