@@ -31,6 +31,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	welcome_email_content: product.welcome_email_content,
 	type: product.type,
 	tier: product.tier,
+	is_read_only: Boolean( product.is_read_only ),
 } );
 
 export const membershipCouponFromApi = ( coupon ) => ( {

@@ -22,9 +22,10 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 	const [ cancelSubscriptions, setCancelSubscriptions ] = useState( false );
+	const isReadOnly = product.is_read_only || annualProduct?.is_read_only;
 
 	const onClose = ( action?: string ) => {
-		if ( action === 'delete' ) {
+		if ( action === 'delete' && ! isReadOnly ) {
 			dispatch(
 				requestDeleteProduct(
 					siteId,
@@ -53,6 +54,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 					isPrimary: true,
 					additionalClassNames: 'is-scary',
 					action: 'delete',
+					disabled: isReadOnly,
 				},
 			] }
 			onClose={ onClose }
