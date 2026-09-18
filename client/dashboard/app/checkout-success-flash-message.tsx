@@ -1,5 +1,5 @@
 import FlashMessage from '../components/flash-message';
-import { CHECKOUT_SUCCESS_PLAN_PARAM, getCheckoutSuccessMessage } from './checkout-success-flash';
+import { getCheckoutSuccessMessage } from './checkout-success-flash';
 
 /**
  * Flash id used to show a post-checkout success snackbar when the checkout
@@ -14,11 +14,5 @@ import { CHECKOUT_SUCCESS_PLAN_PARAM, getCheckoutSuccessMessage } from './checko
 export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
 
 export function CheckoutSuccessFlashMessage() {
-	return (
-		<FlashMessage
-			id={ CHECKOUT_SUCCESS_FLASH_ID }
-			message={ getCheckoutSuccessMessage() }
-			paramsToRemove={ [ CHECKOUT_SUCCESS_PLAN_PARAM ] }
-		/>
-	);
+	return <FlashMessage id={ CHECKOUT_SUCCESS_FLASH_ID } message={ getCheckoutSuccessMessage() } />;
 }

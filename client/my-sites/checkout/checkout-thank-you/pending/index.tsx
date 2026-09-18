@@ -388,9 +388,14 @@ function useRedirectOnTransactionSuccess( {
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
 		const isDashboardRedirect = isDashboardUrl( finalUrl );
 		if ( isSuccessRedirect && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
-			// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
-			// the generic one a saved signup destination carries to My Home.
-			const url = isRenewal ? removeQueryArgs( finalUrl, PURCHASE_NOTICE_QUERY_KEY ) : finalUrl;
+			const url = removeQueryArgs(
+				finalUrl,
+				// A plan slug left over from an earlier checkout started on the same page.
+				CHECKOUT_SUCCESS_PLAN_PARAM,
+				// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
+				// the generic one a saved signup destination carries to My Home.
+				...( isRenewal ? [ PURCHASE_NOTICE_QUERY_KEY ] : [] )
+			);
 			finalUrl = addQueryArgs( url, {
 				...( isDashboardRedirect && { flash: CHECKOUT_SUCCESS_FLASH_ID } ),
 				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
