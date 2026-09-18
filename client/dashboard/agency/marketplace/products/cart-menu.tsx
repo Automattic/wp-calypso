@@ -25,6 +25,9 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
+	/** Controls the dropdown, for pages that open the cart after adding to it. */
+	open?: boolean;
+	onToggle?: ( willOpen: boolean ) => void;
 	onRemove: ( slug: string ) => void;
 	onCheckout: () => void;
 }
@@ -40,6 +43,8 @@ export default function CartMenu( {
 	term,
 	isReferralMode,
 	isAgencyApproved,
+	open,
+	onToggle,
 	onRemove,
 	onCheckout,
 }: Props ) {
@@ -93,6 +98,8 @@ export default function CartMenu( {
 
 	return (
 		<Dropdown
+			open={ open }
+			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
 			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
