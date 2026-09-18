@@ -45,13 +45,13 @@ function withEditor( {
 					getBlocksByName: ( name: string ) =>
 						name === 'core/post-content' && postContent ? [ postContent ] : [],
 					getSectionRootClientId: () => sectionRoot,
-			  }
+				}
 			: {
 					getCurrentPostId: () => postId,
 					getCurrentPostType: () => 'page',
 					getEditedPostAttribute: ( attribute: string ) =>
 						attribute === 'title' ? title : undefined,
-			  }
+				}
 	);
 	( dispatch as jest.Mock ).mockReturnValue( {
 		replaceInnerBlocks,
