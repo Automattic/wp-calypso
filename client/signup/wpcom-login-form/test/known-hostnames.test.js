@@ -4,59 +4,57 @@
 
 import fs from 'fs';
 import path from 'path';
+import { CALYPSO_ONLY_HOSTNAMES } from '..';
 
 const configDir = path.resolve( __dirname, '..', '..', '..', '..', 'config' );
 
-function readConfig( filename ) {
-	return JSON.parse( fs.readFileSync( path.join( configDir, filename ), 'utf8' ) );
-}
+// Configs for apps that are not Calypso or the Dashboard. They serve their own
+// login flows, so their hostnames are deliberately absent from the list.
+const OTHER_APP_CONFIGS = /^(jetpack-cloud|a8c-for-agencies)-/;
 
-const sharedConfig = readConfig( '_shared.json' );
-const allCalypsoHostnames = sharedConfig.all_calypso_hostnames;
+// wordpress.com is the default origin, and unlike the Calypso-only deployments
+// it does serve wp-login.php.
+const EXCLUDED_HOSTNAMES = [ 'wordpress.com' ];
 
-// Hostnames that are intentionally excluded from all_calypso_hostnames
-// (e.g. wordpress.com is the default everywhere, jetpack/a8c apps have separate login flows).
-const EXCLUDED_HOSTNAMES = [
-	'wordpress.com',
-	// jetpack-cloud hostnames
-	'jetpack.cloud.localhost',
-	'cloud.jetpack.com',
-	// a8c-for-agencies hostnames
-	'agencies.localhost',
-	'agencies.automattic.com',
-];
+function getConfiguredHostnames() {
+	const hostnames = new Set();
 
-describe( 'all_calypso_hostnames in _shared.json', () => {
 	const configFiles = fs
 		.readdirSync( configDir )
 		.filter(
-			( f ) =>
-				f.endsWith( '.json' ) &&
-				f !== '_shared.json' &&
-				f !== 'client.json' &&
-				f !== 'secrets.json' &&
-				f !== 'empty-secrets.json'
+			( file ) =>
+				file.endsWith( '.json' ) &&
+				! file.startsWith( '_' ) &&
+				! OTHER_APP_CONFIGS.test( file ) &&
+				! [ 'client.json', 'secrets.json', 'empty-secrets.json' ].includes( file )
 		);
 
-	test( 'every Calypso/Dashboard config hostname is present', () => {
-		const expectedHostnames = new Set();
+	for ( const file of configFiles ) {
+		const config = JSON.parse( fs.readFileSync( path.join( configDir, file ), 'utf8' ) );
 
-		for ( const file of configFiles ) {
-			const config = readConfig( file );
-
-			if ( config.hostname && ! EXCLUDED_HOSTNAMES.includes( config.hostname ) ) {
-				expectedHostnames.add( config.hostname );
-			}
-
-			if ( Array.isArray( config.hostname_allowlist ) ) {
-				for ( const h of config.hostname_allowlist ) {
-					if ( ! EXCLUDED_HOSTNAMES.includes( h ) ) {
-						expectedHostnames.add( h );
-					}
-				}
+		for ( const hostname of [ config.hostname, ...( config.hostname_allowlist ?? [] ) ] ) {
+			if ( hostname && ! EXCLUDED_HOSTNAMES.includes( hostname ) ) {
+				hostnames.add( hostname );
 			}
 		}
+	}
 
-		expect( [ ...allCalypsoHostnames ].sort() ).toEqual( [ ...expectedHostnames ].sort() );
+	return hostnames;
+}
+
+describe( 'CALYPSO_ONLY_HOSTNAMES', () => {
+	test( 'covers every hostname configured for Calypso and the Dashboard', () => {
+		const missing = [ ...getConfiguredHostnames() ]
+			.filter( ( hostname ) => ! CALYPSO_ONLY_HOSTNAMES.includes( hostname ) )
+			.sort();
+
+		expect( missing ).toEqual( [] );
+	} );
+
+	test( 'does not list hostnames that are no longer configured', () => {
+		const configured = getConfiguredHostnames();
+		const stale = CALYPSO_ONLY_HOSTNAMES.filter( ( hostname ) => ! configured.has( hostname ) );
+
+		expect( stale ).toEqual( [] );
 	} );
 } );

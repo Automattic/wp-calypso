@@ -5,23 +5,6 @@ import WpcomLoginForm from '..';
 
 jest.mock( '@automattic/calypso-config' );
 
-function mockHostnameConfig( hostname ) {
-	config.mockImplementation( ( key ) => {
-		if ( key === 'hostname' ) {
-			return hostname;
-		}
-		if ( key === 'all_calypso_hostnames' ) {
-			return [
-				'wpcalypso.wordpress.com',
-				'horizon.wordpress.com',
-				'my.wordpress.com',
-				'my.woo.ai',
-			];
-		}
-		return undefined;
-	} );
-}
-
 describe( 'WpcomLoginForm', () => {
 	const props = {
 		log: 'log_text',
@@ -29,10 +12,6 @@ describe( 'WpcomLoginForm', () => {
 		authorization: 'authorization_token',
 		redirectTo: 'https://test.wordpress.com',
 	};
-
-	beforeEach( () => {
-		config.mockReset();
-	} );
 
 	test( 'should render default fields as expected.', () => {
 		const { container, rerender } = render( <WpcomLoginForm { ...props } /> );
@@ -87,7 +66,7 @@ describe( 'WpcomLoginForm', () => {
 		);
 
 		// should be default url
-		mockHostnameConfig( 'wpcalypso.wordpress.com' );
+		config.mockReturnValueOnce( 'wpcalypso.wordpress.com' );
 		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
@@ -95,7 +74,7 @@ describe( 'WpcomLoginForm', () => {
 		);
 
 		// should has the same hostname with redirectTo prop.
-		mockHostnameConfig( 'bar.wordpress.com' );
+		config.mockReturnValueOnce( 'bar.wordpress.com' );
 		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
@@ -103,7 +82,7 @@ describe( 'WpcomLoginForm', () => {
 		);
 
 		// should be default url
-		mockHostnameConfig( 'horizon.wordpress.com' );
+		config.mockReturnValueOnce( 'horizon.wordpress.com' );
 		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
@@ -145,7 +124,7 @@ describe( 'WpcomLoginForm', () => {
 	} );
 
 	test( 'its action should have no subdomain when `hostname` is my.wordpress.com', () => {
-		mockHostnameConfig( 'my.wordpress.com' );
+		config.mockReturnValueOnce( 'my.wordpress.com' );
 		const { container } = render(
 			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
 		);

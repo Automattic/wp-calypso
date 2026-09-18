@@ -2,7 +2,34 @@
  * @jest-environment jsdom
  */
 
+import fs from 'fs';
+import path from 'path';
 import { getCalypsoUrl } from '../src';
+
+const configDir = path.resolve( __dirname, '..', '..', '..', 'config' );
+
+// This package can't read the Calypso config — it's also consumed from outside
+// Calypso — so the allowed origins are hardcoded. Collect the hostnames Calypso
+// is actually configured to run on, so the test below catches them drifting apart.
+// Configs for the Dashboard and the other apps are excluded: they're separate
+// deployments, and whether `calypso_origin` should accept them is an open question.
+function getCalypsoConfigHostnames() {
+	const otherApps = /^(dashboard|jetpack-cloud|a8c-for-agencies)-/;
+
+	return fs
+		.readdirSync( configDir )
+		.filter(
+			( file ) =>
+				file.endsWith( '.json' ) &&
+				! file.startsWith( '_' ) &&
+				! otherApps.test( file ) &&
+				! [ 'client.json', 'secrets.json', 'empty-secrets.json' ].includes( file )
+		)
+		.map(
+			( file ) => JSON.parse( fs.readFileSync( path.join( configDir, file ), 'utf8' ) ).hostname
+		)
+		.filter( Boolean );
+}
 
 let backupWindow;
 
@@ -62,6 +89,14 @@ describe( 'getCalypsoUrl', () => {
 		mockCaplysoOriginQueryArg( 'https://calypso.localhost:3000' );
 		expect( getCalypsoUrl() ).toBe( 'https://calypso.localhost:3000' );
 	} );
+
+	test.each( [ ...new Set( getCalypsoConfigHostnames() ) ] )(
+		'it accepts %s, the hostname of a configured Calypso environment',
+		( hostname ) => {
+			mockCaplysoOriginQueryArg( `https://${ hostname }` );
+			expect( getCalypsoUrl() ).toBe( `https://${ hostname }` );
+		}
+	);
 
 	test( 'it returns a URL with path with a path provided', () => {
 		mockCaplysoOriginQueryArg( '' );
