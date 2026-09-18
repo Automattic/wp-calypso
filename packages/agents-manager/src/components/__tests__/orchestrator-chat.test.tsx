@@ -396,6 +396,9 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+jest.mock( '../../hooks/use-credits', () => ( {
+	useCredits: () => ( { beforeSubmit: () => true } ),
+} ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
