@@ -83,3 +83,12 @@ export function editGlobalStyles( id: string, edits: GlobalStylesRecord ): void 
 
 	coreDispatch.editEntityRecord( 'root', 'globalStyles', id, edits, { undoIgnore: true } );
 }
+
+/** The site's custom CSS in `record`, `''` when it holds none. */
+export const getCustomCss = ( record: GlobalStylesRecord ): string =>
+	typeof record.styles?.css === 'string' ? record.styles.css : '';
+
+/** Replaces the site's custom CSS, keeping the rest of `styles`. */
+export function setCustomCss( globalStyles: EditedGlobalStyles, css: string ): void {
+	editGlobalStyles( globalStyles.id, { styles: { ...globalStyles.record.styles, css } } );
+}

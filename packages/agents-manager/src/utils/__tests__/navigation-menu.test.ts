@@ -15,8 +15,10 @@ import { parse } from '@wordpress/blocks';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
 import {
 	addNavigationItem,
+	getLoadedMenuItems,
 	getMenuIdsToRelabel,
 	prefetchMenus,
+	readMenuItems,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../navigation-menu';
@@ -85,6 +87,30 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
 	saveSpecifiedEntityEdits.mockReset();
+} );
+
+describe( 'getLoadedMenuItems', () => {
+	const serveMenu = ( menu: unknown ) => {
+		( select as jest.Mock ).mockReturnValue( { getEditedEntityRecord: () => menu } );
+		( resolveSelect as jest.Mock ).mockReturnValue( { getEditedEntityRecord: async () => menu } );
+	};
+
+	// Parsing mints new clientIds: parsed again, the items the page structure
+	// showed the agent would be gone by the time an ability reads the menu.
+	it( 'parses a record once, so a later read finds the same items', async () => {
+		serveMenu( { id: 10, content: { raw: '<!-- wp:navigation-link /-->' } } );
+
+		const items = getLoadedMenuItems( 10 );
+
+		await expect( readMenuItems( 10 ) ).resolves.toBe( items );
+		expect( parse ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'is undefined while the menu has not loaded', () => {
+		serveMenu( undefined );
+
+		expect( getLoadedMenuItems( 10 ) ).toBeUndefined();
+	} );
 } );
 
 describe( 'addNavigationItem', () => {

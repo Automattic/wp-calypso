@@ -1,8 +1,8 @@
 import { providerSelectors } from './provider-store';
 import type { UseCheckpointReturn } from './load-external-providers';
 
-// TODO (ability-migration): Delete this bridge once the last checkpoint-writing
-// Big Sky ability migrates — every checkpoint then lives in AM's own store.
+// TODO (ability-migration): Delete this bridge with Big Sky's checkpoint copies
+// (AM-72) — every checkpoint then lives in AM's own store.
 /**
  * Bridge to the provider's checkpoint store. While Big Sky still executes some
  * mutating tools, their checkpoints live in its store — `restore-checkpoint`
