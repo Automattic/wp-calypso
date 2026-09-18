@@ -1,20 +1,32 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
-// Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
-// wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
-.wpnc__note .wpnc__body .wpnc__pending-approval-section {
+// Legacy standalone panel only — `.wpnc__note-body` exists there and not in the
+// new app, whose pending note is framed instead (see below).
+.wpnc__note .wpnc__note-body .wpnc__body .wpnc__pending-approval-section {
 	margin: 0;
 	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
-// New notifications app (Dashboard + redesigned standalone widget), scoped to
-// the `.wpnc-app` root where `.wpnc__note` is a sibling of `.wpnc__body`.
-.wpnc-app .wpnc__pending-approval-section {
-	box-shadow: inset 3px 0 0 var(--color-warning);
+// New notifications app (Dashboard + redesigned standalone widget): the whole
+// note is framed in the warning color, with the strip as its first row.
+.wpnc-app .wpnc__note.wpnc__comment-unapproved {
+	border: 1px solid var(--color-warning, #9d6e00);
+	border-radius: 4px;
+	overflow: hidden;
+
+	// The frame carries the warning color, so nothing inside repeats it: the strip
+	// drops its tint and the comment drops its quote bar.
+	.wpnc-pending-approval-badge {
+		background-color: transparent;
+	}
+
+	.wpnc__body .wpnc__body-content {
+		box-shadow: none;
+	}
 
 	// Match the badge text's lighter warning foreground in dark mode.
 	@include ui-mixins.when-dark-theme {
-		box-shadow: inset 3px 0 0 var(--dashboard__foreground-color-warning, #f5c15c);
+		border-color: var(--dashboard__foreground-color-warning, #f5c15c);
 	}
 }
 
