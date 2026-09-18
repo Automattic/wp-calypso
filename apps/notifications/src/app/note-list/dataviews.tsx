@@ -101,8 +101,6 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 	);
 };
 
-// The strip sits in the title cell but is positioned across the top of the row,
-// which is the only place a full-width band can come from inside a DataViews cell.
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isUnapproved = useIsUnapproved( note );
 
