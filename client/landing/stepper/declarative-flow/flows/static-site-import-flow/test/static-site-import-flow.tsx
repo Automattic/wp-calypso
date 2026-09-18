@@ -137,7 +137,7 @@ describe( 'Static site import flow', () => {
 
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
-				dependencies: { action: 'unavailable', reason: 'static_site_import_disabled' },
+				dependencies: { action: 'unavailable' },
 				query: SOURCE,
 			} );
 

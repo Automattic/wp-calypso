@@ -90,12 +90,7 @@ describe( 'StaticSiteImportReading', () => {
 
 		const submit = render( '/static-site-import-reading?from=busybearscleaning.com' );
 
-		await waitFor( () =>
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'unavailable',
-				reason: 'static_site_import_disabled',
-			} )
-		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
 	} );
 
 	it( 'reports a failed capture', async () => {
@@ -113,11 +108,6 @@ describe( 'StaticSiteImportReading', () => {
 			'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123'
 		);
 
-		await waitFor( () =>
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'unavailable',
-				reason: 'static_site_capture_capture_failed',
-			} )
-		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
 	} );
 } );

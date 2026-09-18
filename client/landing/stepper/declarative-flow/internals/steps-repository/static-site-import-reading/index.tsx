@@ -1,7 +1,4 @@
-import {
-	STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES,
-	getStaticSiteImportErrorCode,
-} from '@automattic/api-core';
+import { STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES } from '@automattic/api-core';
 import {
 	createStaticSiteImportSessionMutation,
 	pollStaticSiteImportSessionUntil,
@@ -29,7 +26,7 @@ import './style.scss';
 export type StaticSiteImportReadingSubmits =
 	| { action: 'session-created'; importSessionId: string }
 	| { action: 'continue'; importSessionId: string }
-	| { action: 'unavailable'; reason?: string };
+	| { action: 'unavailable' };
 
 const PROGRESS: Partial< Record< StaticSiteImportState, number > > = {
 	capture_queued: 10,
@@ -77,10 +74,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			const error = createError ?? pollError;
 			if ( ! sourceUrl || error || session?.state === 'failed' ) {
 				hasSubmitted.current = true;
-				navigation.submit?.( {
-					action: 'unavailable',
-					reason: getStaticSiteImportErrorCode( error ) ?? session?.receipt?.code,
-				} );
+				navigation.submit?.( { action: 'unavailable' } );
 			} else if (
 				sessionId &&
 				session &&
