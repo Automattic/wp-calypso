@@ -16,8 +16,7 @@ export const NAME_PULSE_PAGE_SIZE = 12;
 export const NAME_PULSE_AVAILABILITY_BATCH_SIZE = 36;
 
 /**
- * Pause after the last keystroke before the availability and suggestion
- * requests go out; the grid itself re-renders on every keystroke.
+ * Pause after the last keystroke before the availability and suggestion requests go out.
  */
 export const NAME_PULSE_QUERY_SETTLE_MS = 300;
 

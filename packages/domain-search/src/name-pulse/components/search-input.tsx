@@ -18,8 +18,7 @@ export const NamePulseSearchInput = () => {
 		input?.setSelectionRange( input.value.length, input.value.length );
 	}, [] );
 
-	// Each keystroke echoes back normalised (lowercased, non-domain characters
-	// dropped); only adopt a query that no longer describes what is in the box.
+	// The query comes back normalised; keep what the user typed unless it changed.
 	useEffect( () => {
 		setLocalQuery( ( current ) =>
 			sanitizeDomainInput( current ) === sanitizeDomainInput( query ) ? current : query

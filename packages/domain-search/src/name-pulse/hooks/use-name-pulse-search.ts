@@ -49,10 +49,9 @@ const toSuggestionResults = (
 };
 
 /**
- * Takes the query as typed: rows regenerate on every keystroke, while the
- * availability and suggestion requests wait for the query to settle. Rows keep
- * their previous status when a new search still lists them. Until the TLD list
- * arrives the input is treated as a plain name and no rows are generated.
+ * Rows regenerate on every keystroke; availability and suggestion requests wait
+ * for the query to settle. Rows keep their status when a new search still lists
+ * them. Until the TLD list arrives no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
