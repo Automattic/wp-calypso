@@ -27,7 +27,7 @@ const PendingApprovalBadge = ( {
 			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending approval' ) }</span>
 			{ showManageLink && commentsUrl && (
 				<ExternalLink className="wpnc-pending-approval-badge__link" href={ commentsUrl }>
-					{ translate( 'Manage Comments' ) }
+					{ translate( 'Manage comments' ) }
 				</ExternalLink>
 			) }
 		</div>
