@@ -1,0 +1,31 @@
+@import '../style';
+
+.videopress-channel-setup {
+	.step-container {
+		padding-top: 20px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
+
+	// Repeated to increase specificity, as the other setup steps do.
+	.step-container__content.step-container__content {
+		display: flex;
+		justify-content: center;
+
+		input,
+		form-textarea {
+			&::placeholder {
+				color: var( --studio-gray-30 );
+			}
+		}
+	}
+
+	.step-container__header {
+		margin-bottom: 40px;
+		@include break-medium {
+			margin-top: 36px;
+			margin-bottom: 58px;
+		}
+	}
+}
