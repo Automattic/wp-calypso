@@ -2,11 +2,11 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
-import { getPlanActivatedMessage } from './checkout-success-flash';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-} from './checkout-success-flash-constants';
+	getPlanActivatedMessage,
+} from './checkout-success-flash';
 
 /**
  * Rendered in the app shell (`app/root`) so the toast appears regardless of

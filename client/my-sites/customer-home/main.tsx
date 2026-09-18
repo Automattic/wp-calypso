@@ -2,8 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import { getPlanActivatedMessage } from 'calypso/dashboard/app/checkout-success-flash';
-import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash-constants';
+import {
+	CHECKOUT_SUCCESS_PLAN_PARAM,
+	getPlanActivatedMessage,
+} from 'calypso/dashboard/app/checkout-success-flash';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,

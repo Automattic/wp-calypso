@@ -15,7 +15,7 @@ import Main from 'calypso/components/main';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-} from 'calypso/dashboard/app/checkout-success-flash-constants';
+} from 'calypso/dashboard/app/checkout-success-flash';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
