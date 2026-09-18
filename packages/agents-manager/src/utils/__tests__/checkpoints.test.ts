@@ -5,6 +5,14 @@ jest.mock( '../tool-call-history', () => ( {
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 	dispatch: jest.fn(),
+	resolveSelect: jest.fn(),
+} ) );
+// Reached through the navigation domain, and it registers a store on import —
+// which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn(),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( () => '' ),
 } ) );
 
 const GLOBAL_STYLES_RECORD = {
@@ -25,14 +33,30 @@ async function loadCheckpoints() {
 			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
 	);
 	const editEntityRecord = jest.fn();
+	const saveSpecifiedEntityEdits = jest.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
 	} );
-	dispatch.mockReturnValue( { editEntityRecord } );
+	dispatch.mockReturnValue( {
+		editEntityRecord,
+		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
+	} );
 	const checkpoints = await import( '../checkpoints' );
-	return { ...checkpoints, getGlobalStylesId, getEditedEntityRecord, editEntityRecord };
+	return {
+		...checkpoints,
+		getGlobalStylesId,
+		getEditedEntityRecord,
+		editEntityRecord,
+		saveSpecifiedEntityEdits,
+	};
 }
+
+/** What `resolveSelect` serves for every record read. */
+const withRecord = ( record: unknown ) =>
+	jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+		getEditedEntityRecord: jest.fn().mockResolvedValue( record ),
+	} );
 
 beforeEach( () => jest.clearAllMocks() );
 
@@ -65,7 +89,7 @@ describe( 'setCheckpoint', () => {
 		};
 		getEditedEntityRecord.mockReturnValue( liveRecord );
 
-		setCheckpoint( 'toolu_1', [] );
+		setCheckpoint( 'toolu_1', [ 'color' ] );
 		liveRecord.settings.color = { palette: [ 'mutated' ] };
 
 		expect( getCheckpoints()[ 0 ].themeBeforeUpdate?.settings ).toEqual( { color: {} } );
@@ -113,6 +137,18 @@ describe( 'setCheckpoint', () => {
 			{ id: 'toolu_1', keys: [ 'button' ], summary: 'Second.' },
 			{ id: 'toolu_2', keys: [ 'font' ], summary: undefined },
 		] );
+	} );
+} );
+
+describe( 'theme domain', () => {
+	it( 'snapshots the global styles only for theme checkpoints', async () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
+		setCheckpoint( 'title-call', [ checkpointKeys.SITE_TITLE ] );
+
+		expect( getCheckpoint( 'color-call' )?.themeBeforeUpdate ).toEqual( GLOBAL_STYLES_RECORD );
+		expect( getCheckpoint( 'title-call' )?.themeBeforeUpdate ).toBeUndefined();
 	} );
 } );
 
@@ -188,6 +224,21 @@ describe( 'logo domain', () => {
 	} );
 } );
 
+describe( 'site domains', () => {
+	// The snapshot is missing only when the site record had not loaded, so a
+	// silent skip would report an undo that never ran.
+	it.each( [
+		[ 'site_title', 'Checkpoint has no site-title snapshot to restore.' ],
+		[ 'site_metadata', 'Checkpoint has no site-metadata snapshot to restore.' ],
+	] )( 'throws rather than skipping a %s restore with no snapshot', async ( key, message ) => {
+		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( undefined );
+		setCheckpoint( 'site-call', [ key ] );
+
+		await expect( restoreCheckpoint( 'site-call' ) ).rejects.toThrow( message );
+	} );
+} );
+
 describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 	it( 'tracks and clears checkpoints by id, oldest first', async () => {
 		const { setCheckpoint, hasCheckpoint, getCheckpoint, clearCheckpoint, getCheckpoints } =
@@ -209,6 +260,43 @@ describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 } );
 
 describe( 'getAvailableCheckpoints', () => {
+	// The list is re-sent to the agent every turn; snapshots carry whole
+	// global-styles records, menu block trees and site metadata.
+	it( 'sends no snapshot fields to the model', async () => {
+		const { withCheckpoint, getCheckpoint, getAvailableCheckpoints, checkpointKeys } =
+			await loadCheckpoints();
+		const write = { toolId: 'tool', keys: Object.values( checkpointKeys ), summary: 'x' };
+		withRecord( { blocks: [] } );
+
+		await withCheckpoint( write, async ( recorder ) => {
+			await recorder.captureMenu( 19 );
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } );
+			recorder.markWritten( 'site_title' );
+		} );
+
+		// Every snapshot field is on the record, so a leak of any one would show.
+		expect( Object.keys( getCheckpoint( 'call-1' ) ?? {} ) ).toEqual(
+			expect.arrayContaining( [
+				'themeBeforeUpdate',
+				'logoBeforeUpdate',
+				'siteTitleBeforeUpdate',
+				'siteMetadataBeforeUpdate',
+				'menusBeforeUpdate',
+				'pageRenames',
+				'writtenKeys',
+			] )
+		);
+		expect( Object.keys( getAvailableCheckpoints()[ 0 ] ).sort() ).toEqual( [
+			'checkpointId',
+			'checkpointIndex',
+			'checkpointKeys',
+			'createdAt',
+			'isLatestForTool',
+			'summary',
+			'toolId',
+		] );
+	} );
+
 	it( 'returns an empty list without checkpoints', async () => {
 		const { getAvailableCheckpoints } = await loadCheckpoints();
 
@@ -344,6 +432,18 @@ describe( 'restoreCheckpoint', () => {
 describe( 'withCheckpoint', () => {
 	const LOGO_WRITE = { toolId: 'big_sky__set_site_logo', keys: [ 'logo' ], summary: 'Logo set.' };
 
+	// Every restore is key-gated, so a keyless checkpoint would offer an undo
+	// that silently does nothing.
+	it( 'records nothing when the write claims no domain', async () => {
+		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+
+		await withCheckpoint( { toolId: 'tool', toolCallId: 'call-1', keys: [], summary: 'x' }, () =>
+			Promise.resolve( 'done' )
+		);
+
+		expect( getCheckpoints() ).toEqual( [] );
+	} );
+
 	it( 'snapshots under the tool call id before writing, and returns the write', async () => {
 		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
 		let checkpointsAtWrite = 0;
@@ -417,6 +517,116 @@ describe( 'withCheckpoint', () => {
 		expect( hasCheckpoint( 'call-1' ) ).toBe( false );
 	} );
 
+	// The first run snapshots; a repeat of the same call still records the
+	// page or menu it reaches, or an undo would leave that change behind.
+	it( 'still records what a repeat of the same call touches', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const write = { toolId: 'tool', toolCallId: 'call-1', keys: [ 'page' ], summary: 'x' };
+		const first = { pageId: 7, from: 'Old', to: 'New' };
+		const second = { pageId: 8, from: 'Then', to: 'Now' };
+
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( first ) );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( second ) );
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ first, second ] );
+	} );
+
+	// A partial first run drops the domains it never reached; a repeat must be
+	// able to record them, or its rename would apply with no way back.
+	it( 'lets a repeat record a domain the first run dropped as unrecorded', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ ...LOGO_WRITE.keys, 'page' ] };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		await withCheckpoint( write, () => {} );
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).not.toContain( 'page' );
+
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
+	} );
+
+	// The first run's snapshot must not stand in for a fresh one that failed.
+	it( 'refuses a repeat whose re-added domain cannot be snapshotted again', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		getEditedEntityRecord.mockReturnValue( undefined );
+		await expect( withCheckpoint( write, jest.fn() ) ).rejects.toThrow(
+			'Cannot record a way back for site_title'
+		);
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+	} );
+
+	// A domain that snapshots up front and cannot be read would leave the
+	// change with no way back, so the write is refused instead.
+	it( 'refuses a write whose eager domain cannot be snapshotted', async () => {
+		const { withCheckpoint, hasCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = jest.fn();
+
+		getEditedEntityRecord.mockReturnValue( undefined );
+
+		await expect(
+			withCheckpoint( { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] }, write )
+		).rejects.toThrow( 'Cannot record a way back for site_title' );
+		expect( write ).not.toHaveBeenCalled();
+		expect( hasCheckpoint( 'call-1' ) ).toBe( false );
+	} );
+
+	// The first run never wrote the domain it dropped, so the snapshot it left
+	// behind may predate a change made since; the repeat's own is the true one.
+	it( 'snapshots a re-added eager domain afresh', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Before the first attempt' } );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Changed since' } );
+		await withCheckpoint( write, ( recorder ) => recorder.markWritten( 'site_title' ) );
+
+		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBe( 'Changed since' );
+	} );
+
+	// Site title and metadata snapshot up front but are written mid-batch, so a
+	// batch that fails before reaching them must not keep an undo for them.
+	it( 'drops an eager site domain the write never reached', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+	} );
+
+	it( "puts a repeat's re-declared domains back when it throws", async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		// The first run never reaches the site title, so the domain is dropped.
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		await expect(
+			withCheckpoint( write, () => {
+				throw new Error( 'x' );
+			} )
+		).rejects.toThrow( 'x' );
+
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+	} );
+
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
 		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
 		await withCheckpoint( LOGO_WRITE, () => {} );
@@ -427,5 +637,262 @@ describe( 'withCheckpoint', () => {
 			} )
 		).rejects.toThrow();
 		expect( hasCheckpoint( 'call-1' ) ).toBe( true );
+	} );
+} );
+
+describe( 'restore by domain', () => {
+	const ITEM = { name: 'core/navigation-link', attributes: { label: 'Old' }, innerBlocks: [] };
+
+	it( 'puts the menus back as they were, out of the undo stack', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		withRecord( { id: 19, blocks: [] } );
+		setCheckpoint( 'call-1', [ 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			menusBeforeUpdate: [ { id: 19, items: [ ITEM ] } ],
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'wp_navigation',
+			19,
+			{ blocks: [ ITEM ], content: '' },
+			{ undoIgnore: true }
+		);
+	} );
+
+	// Checked before any write: a menu deleted since would otherwise fail
+	// after the others were already put back.
+	it( 'writes no menu when one of them no longer exists', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn( ( _kind: string, _name: string, id: number ) =>
+				Promise.resolve( id === 19 ? { id, blocks: [] } : null )
+			),
+		} );
+		setCheckpoint( 'call-1', [ 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			menusBeforeUpdate: [
+				{ id: 19, items: [] },
+				{ id: 20, items: [] },
+			],
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow(
+			'Navigation menu not found: 20'
+		);
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// Newest first, so a page renamed twice in one call ends at its first title.
+	it( 'puts page titles back newest first', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		withRecord( { title: 'C' } );
+		setCheckpoint( 'call-1', [ 'page' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			pageRenames: [
+				{ pageId: 7, from: 'A', to: 'B' },
+				{ pageId: 7, from: 'B', to: 'C' },
+			],
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord ).toHaveBeenNthCalledWith(
+			1,
+			'postType',
+			'page',
+			7,
+			{ title: 'B' },
+			{ undoIgnore: true }
+		);
+		expect( editEntityRecord ).toHaveBeenNthCalledWith(
+			2,
+			'postType',
+			'page',
+			7,
+			{ title: 'A' },
+			{ undoIgnore: true }
+		);
+	} );
+
+	it( 'puts the site title and metadata back, and saves each', async () => {
+		const {
+			setCheckpoint,
+			restoreCheckpoint,
+			getEditedEntityRecord,
+			editEntityRecord,
+			saveSpecifiedEntityEdits,
+		} = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( {
+			title: 'Old',
+			big_sky_site_metadata: '{"personality":"calm"}',
+		} );
+		setCheckpoint( 'call-1', [ 'site_title', 'site_metadata' ] );
+		// A key introduced since: the metadata is replaced, not merged onto.
+		getEditedEntityRecord.mockReturnValue( {
+			title: 'New',
+			big_sky_site_metadata: '{"personality":"bold","siteLocation":{"name":"Lisbon"}}',
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			{ title: 'Old' },
+			{
+				undoIgnore: true,
+			}
+		);
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			{ big_sky_site_metadata: JSON.stringify( { personality: 'calm' } ) },
+			{ undoIgnore: true }
+		);
+		expect( saveSpecifiedEntityEdits.mock.calls.map( ( call ) => call[ 3 ] ) ).toEqual( [
+			[ 'title' ],
+			[ 'big_sky_site_metadata' ],
+		] );
+	} );
+} );
+
+describe( 'restore order', () => {
+	// A page deleted since makes the title restore throw; menus must not have
+	// been rewritten by then, or the failure leaves a half-restored site.
+	it( 'restores page titles before menus, so a missing page fails first', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		withRecord( null );
+
+		setCheckpoint( 'call-1', [ 'page', 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			pageRenames: [ { pageId: 7, from: 'Old', to: 'New' } ],
+			menusBeforeUpdate: [ { id: 19, items: [] } ],
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'Page 7 could not be read' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'setReciprocalCheckpoint', () => {
+	const target = ( pageRenames: unknown[], menusBeforeUpdate: unknown[] = [] ) =>
+		( {
+			id: 'target',
+			checkpointKeys: [ 'page', 'navigation' ],
+			createdAt: 0,
+			pageRenames,
+			menusBeforeUpdate,
+		} ) as never;
+
+	// The redo returns to the title the undo is about to overwrite.
+	it( 'records each renamed page once, at its current title', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		withRecord( { title: 'Renamed since' } );
+
+		await setReciprocalCheckpoint(
+			'redo',
+			target( [
+				{ pageId: 7, from: 'A', to: 'B' },
+				{ pageId: 7, from: 'B', to: 'C' },
+			] ),
+			{}
+		);
+
+		expect( getCheckpoint( 'redo' )?.pageRenames ).toEqual( [
+			{ pageId: 7, from: 'Renamed since', to: 'Renamed since' },
+		] );
+	} );
+
+	// The redo puts back the menu as the undo is about to overwrite it.
+	it( 'snapshots each menu as it is now', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const item = { name: 'core/navigation-link', attributes: { label: 'Now' }, innerBlocks: [] };
+		withRecord( { id: 19, blocks: [ item ] } );
+
+		await setReciprocalCheckpoint( 'redo', target( [], [ { id: 19, items: [] } ] ), {} );
+
+		expect( getCheckpoint( 'redo' )?.menusBeforeUpdate ).toEqual( [ { id: 19, items: [ item ] } ] );
+	} );
+
+	it( 'records nothing when a menu it must snapshot cannot be read', async () => {
+		const { setReciprocalCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		withRecord( null );
+
+		await expect(
+			setReciprocalCheckpoint( 'redo', target( [], [ { id: 19, items: [] } ] ), {} )
+		).rejects.toThrow( 'Navigation menu not found: 19' );
+		expect( hasCheckpoint( 'redo' ) ).toBe( false );
+	} );
+
+	it( 'records nothing when a claimed domain cannot be snapshotted', async () => {
+		const { setReciprocalCheckpoint, hasCheckpoint, getEditedEntityRecord } =
+			await loadCheckpoints();
+		const siteTitleTarget = { id: 'target', checkpointKeys: [ 'site_title' ], createdAt: 0 };
+		getEditedEntityRecord.mockReturnValue( undefined );
+
+		await expect( setReciprocalCheckpoint( 'redo', siteTitleTarget, {} ) ).rejects.toThrow(
+			'Could not snapshot site_title for a redo.'
+		);
+		expect( hasCheckpoint( 'redo' ) ).toBe( false );
+	} );
+} );
+
+describe( 'checkpoint recorder', () => {
+	const RENAME = { pageId: 7, from: 'Old', to: 'New' };
+	const write = ( keys: string[] ) => ( { toolId: 'tool', keys, summary: 'Changed.' } );
+
+	// The recorder captures domains a write only discovers as it runs, so the
+	// key gate has to hold there too — a restore must never touch a domain the
+	// write did not declare.
+	it( 'ignores a rename from a write that never claimed the page domain', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) =>
+			recorder.capturePageRename( RENAME )
+		);
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toBeUndefined();
+	} );
+
+	it( 'refuses the write when the menu it must snapshot cannot be read', async () => {
+		const { withCheckpoint } = await loadCheckpoints();
+		withRecord( null );
+
+		await expect(
+			withCheckpoint( write( [ 'navigation' ] ), ( recorder ) => recorder.captureMenu( 19 ) )
+		).rejects.toThrow( 'Navigation menu not found: 19' );
+	} );
+
+	// The caller discards the snapshot it took when its write fails; a second
+	// write to the same menu must not take the first one's snapshot with it.
+	it( 'reports only the call that added the menu snapshot', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		withRecord( { blocks: [] } );
+		const captured: boolean[] = [];
+
+		await withCheckpoint( write( [ 'navigation' ] ), async ( recorder ) => {
+			captured.push( await recorder.captureMenu( 19 ) );
+			captured.push( await recorder.captureMenu( 19 ) );
+		} );
+
+		expect( captured ).toEqual( [ true, false ] );
+		expect( getCheckpoint( 'call-1' )?.menusBeforeUpdate ).toHaveLength( 1 );
+	} );
+
+	it( 'ignores a menu from a write that never claimed the navigation domain', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) => recorder.captureMenu( 19 ) );
+
+		expect( getCheckpoint( 'call-1' )?.menusBeforeUpdate ).toBeUndefined();
 	} );
 } );
