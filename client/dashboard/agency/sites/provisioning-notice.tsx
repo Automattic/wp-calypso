@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
+import { wpcomLink } from '../../utils/link';
 import { untrackProvisioningSite, useProvisioningSiteIds } from './provisioning-sites';
 import type { MigrationCommissionSite } from '@automattic/api-core';
 
@@ -102,7 +103,7 @@ export default function ProvisioningSiteNotices() {
 												// The agency site route may not resolve the site for a few
 												// minutes yet, so this one opens it on WordPress.com.
 												<ExternalLink
-													href={ `https://wordpress.com/overview/${ getSiteSlug( site.url ) }` }
+													href={ wpcomLink( `/overview/${ getSiteSlug( site.url ) }` ) }
 												>
 													{ getSiteSlug( site.url ) }
 												</ExternalLink>
