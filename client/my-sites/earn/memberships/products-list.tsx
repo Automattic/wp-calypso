@@ -5,7 +5,8 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
@@ -127,10 +128,10 @@ function ProductsList() {
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 	};
 
-	function renderEllipsisMenu( productId: number ) {
+	function renderEllipsisMenu( productId: number, canEdit: boolean ) {
 		return (
 			<EllipsisMenu position="bottom left">
-				{ hasStripeFeature && (
+				{ hasStripeFeature && canEdit && (
 					<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
 						<Gridicon size={ 18 } icon="pencil" />
 						{ translate( 'Edit' ) }
@@ -153,6 +154,14 @@ function ProductsList() {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
 			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			if (
+				! currentProduct ||
+				currentProduct.tier ||
+				currentProduct.is_read_only ||
+				currentAnnualProduct?.is_read_only
+			) {
+				return;
+			}
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -167,6 +176,9 @@ function ProductsList() {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
 			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			if ( ! currentProduct || currentProduct.is_read_only || currentAnnualProduct?.is_read_only ) {
+				return;
+			}
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -269,11 +281,16 @@ function ProductsList() {
 			) }
 			{ hasLoadedFeatures &&
 				products
-					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+					.filter(
+						( currentProduct: Product ) =>
+							! currentProduct.tier ||
+							! products.some( ( parentProduct ) => parentProduct.ID === currentProduct.tier )
+					)
 					.map( function ( currentProduct: Product ) {
 						const currentAnnualProduct = products.find(
 							( _prod: Product ) => _prod.tier === currentProduct.ID
 						);
+						const isReadOnly = currentProduct.is_read_only || currentAnnualProduct?.is_read_only;
 						const price = formatCurrency(
 							currentProduct?.price || 0,
 							currentProduct?.currency || ''
@@ -334,8 +351,20 @@ function ProductsList() {
 											<Badge type="info">{ translate( 'Donation' ) }</Badge>
 										</div>
 									) }
+									{ isReadOnly && (
+										<div className="memberships__products-product-read-only">
+											<Tooltip text={ __( 'Managed on the owning site.' ) }>
+												<Badge type="info" tabIndex={ 0 }>
+													{ __( 'Read-only' ) }
+												</Badge>
+											</Tooltip>
+										</div>
+									) }
 								</div>
-								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
+								{ ! isReadOnly &&
+									currentProduct &&
+									currentProduct.ID &&
+									renderEllipsisMenu( currentProduct.ID, ! currentProduct.tier ) }
 							</CompactCard>
 						);
 					} ) }
