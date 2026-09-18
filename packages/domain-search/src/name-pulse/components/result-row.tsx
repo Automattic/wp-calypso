@@ -1,7 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -190,20 +190,22 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
 			<span className="name-pulse-row__name">
-				<span className="name-pulse-row__domain" title={ domainName }>
-					<Text
-						as="span"
-						variant="muted"
-						truncate
-						ellipsizeMode="middle"
-						limit={ labelTruncateLimit }
-					>
-						{ label }
-					</Text>
-					<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
-						{ suffix ? `.${ suffix }` : '' }
-					</Text>
-				</span>
+				<Tooltip text={ domainName }>
+					<span className="name-pulse-row__domain">
+						<Text
+							as="span"
+							variant="muted"
+							truncate
+							ellipsizeMode="middle"
+							limit={ labelTruncateLimit }
+						>
+							{ label }
+						</Text>
+						<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
+							{ suffix ? `.${ suffix }` : '' }
+						</Text>
+					</span>
+				</Tooltip>
 				{ showSaleBadge && (
 					<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
 				) }
