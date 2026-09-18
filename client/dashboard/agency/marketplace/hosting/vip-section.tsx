@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
 	ExternalLink,
@@ -159,7 +160,13 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 										'Earn up to a <percentage /> one-time commission on client referrals to WordPress VIP. <a>Full Terms</a>'
 									),
 									{
-										percentage: <>{ `${ VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE }%` }</>,
+										percentage: (
+											<>
+												{ formatNumber( VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE / 100, {
+													numberFormatOptions: { style: 'percent' },
+												} ) }
+											</>
+										),
 										a: <ExternalLink href={ VIP_PROGRAM_INCENTIVES_URL } children={ null } />,
 									}
 								) }
