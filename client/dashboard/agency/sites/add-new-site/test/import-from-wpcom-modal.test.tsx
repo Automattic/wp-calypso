@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import ImportFromWPCOMModal from '../import-from-wpcom-modal';
 
@@ -30,19 +31,29 @@ interface Options {
 	sites?: Record< string, unknown >[];
 	managedSites?: { blog_id: number }[];
 	failManagedSites?: boolean;
+	/** Mounts the snackbar region, for the tests that assert on notice text. */
+	withSnackbars?: boolean;
 }
 
 function mockEndpoints( {
 	sites = [ site( {} ) ],
 	managedSites = [],
 	failManagedSites = false,
+	withSnackbars = false,
 }: Options = {} ) {
 	nock( BASE )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
 		.reply( 200, [ { id: AGENCY_ID, approval_status: 'approved' } ] );
 
-	nock( BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites } );
+	let sitesRequestQuery: Record< string, string > | undefined;
+	nock( BASE )
+		.get( '/rest/v1.2/me/sites' )
+		.query( ( query ) => {
+			sitesRequestQuery = query as Record< string, string >;
+			return true;
+		} )
+		.reply( 200, { sites } );
 
 	if ( failManagedSites ) {
 		nock( BASE )
@@ -58,14 +69,17 @@ function mockEndpoints( {
 	}
 
 	const onClose = jest.fn();
-	render( <ImportFromWPCOMModal onClose={ onClose } /> );
+	render(
+		<>
+			<ImportFromWPCOMModal onClose={ onClose } />
+			{ withSnackbars && <Snackbars /> }
+		</>
+	);
 
-	return { onClose };
+	return { onClose, getSitesRequestQuery: () => sitesRequestQuery };
 }
 
 const addButton = () => screen.getByRole( 'button', { name: /^Add/ } );
-
-afterEach( () => nock.cleanAll() );
 
 describe( 'ImportFromWPCOMModal', () => {
 	test( 'lists the sites the agency can still add', async () => {
@@ -185,6 +199,32 @@ describe( 'ImportFromWPCOMModal', () => {
 		expect( onClose ).not.toHaveBeenCalled();
 	} );
 
+	test( 'reports the server’s reason when the import fails', async () => {
+		// Snackbar needs this, and jsdom has no scrolling.
+		window.scrollTo = jest.fn();
+		mockEndpoints( { withSnackbars: true } );
+		nock( BASE )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/sites` )
+			.reply( 403, { message: 'That site is already managed elsewhere.' } );
+
+		await screen.findByText( 'Example' );
+		await userEvent.click( screen.getByRole( 'option', { name: /Example/ } ) );
+		await userEvent.click( addButton() );
+
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText( 'That site is already managed elsewhere.' );
+		expect( notice ).toBeVisible();
+	} );
+
+	test( 'asks for hidden sites too, which classic listed', async () => {
+		const { getSitesRequestQuery } = mockEndpoints( {
+			sites: [ site( { ID: 1, name: 'Hidden site', visible: false } ) ],
+		} );
+
+		expect( await screen.findByText( 'Hidden site' ) ).toBeVisible();
+		expect( getSitesRequestQuery()?.site_visibility ).toBe( 'all' );
+	} );
+
 	test( 'offers nothing when the agency’s managed sites cannot be loaded', async () => {
 		mockEndpoints( { sites: [ site( { ID: 1, name: 'Example' } ) ], failManagedSites: true } );
 
@@ -194,10 +234,13 @@ describe( 'ImportFromWPCOMModal', () => {
 
 	test( 'holds the modal open while the import is running', async () => {
 		const { onClose } = mockEndpoints();
+		let finishImport: () => void = () => {};
+		const importStarted = new Promise< void >( ( resolve ) => {
+			finishImport = resolve;
+		} );
 		nock( BASE )
 			.post( `/wpcom/v2/agency/${ AGENCY_ID }/sites`, { blog_id: 1 } )
-			.delay( 100 )
-			.reply( 200, { success: true } );
+			.reply( 200, () => importStarted.then( () => ( { success: true } ) ) );
 
 		await screen.findByText( 'Example' );
 		await userEvent.click( screen.getByRole( 'option', { name: /Example/ } ) );
@@ -206,6 +249,7 @@ describe( 'ImportFromWPCOMModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
 		expect( onClose ).not.toHaveBeenCalled();
 
+		finishImport();
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 	} );
 
