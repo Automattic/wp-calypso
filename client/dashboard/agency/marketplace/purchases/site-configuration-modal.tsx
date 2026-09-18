@@ -49,14 +49,19 @@ type SiteConfigurationFormData = {
 /**
  * The pending site this license will become. `provisioning` does not count:
  * creation has already started, so there is nothing left to configure.
+ *
+ * Takes the raw response: a payload that is not the expected list should leave
+ * the modal saying there is nothing to set up, not throw mid-render.
  */
-function findPendingSite(
-	pendingSites: PendingAgencySite[],
-	licenseKey: string
-): PendingAgencySite | undefined {
-	return pendingSites.find(
+function findPendingSite( data: unknown, licenseKey: string ): PendingAgencySite | undefined {
+	if ( ! Array.isArray( data ) ) {
+		return undefined;
+	}
+
+	return ( data as PendingAgencySite[] ).find(
 		( { features } ) =>
-			features.wpcom_atomic.license_key === licenseKey && features.wpcom_atomic.state === 'pending'
+			features?.wpcom_atomic?.license_key === licenseKey &&
+			features?.wpcom_atomic?.state === 'pending'
 	);
 }
 
@@ -325,7 +330,7 @@ export default function SiteConfigurationModal( {
 		);
 	}
 
-	const pendingSite = findPendingSite( pendingSites ?? [], license.license_key );
+	const pendingSite = findPendingSite( pendingSites, license.license_key );
 
 	if ( ! pendingSite ) {
 		return <NothingToConfigure closeModal={ closeModal } />;
