@@ -40,7 +40,11 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 		const { siteId, siteSlug } = useSiteData();
 		const { host, platformName } = useStaticSiteImportSource();
 
-		const { data: session, error: sessionError } = useQuery( {
+		const {
+			data: session,
+			error: sessionError,
+			refetch,
+		} = useQuery( {
 			...staticSiteImportSessionQuery( sessionId ),
 			enabled: Boolean( sessionId ),
 		} );
@@ -83,6 +87,24 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 				);
 			}
 		};
+
+		const errorAction = ( () => {
+			if ( errorCode === 'static_site_import_atomic_unavailable' ) {
+				return (
+					<Button variant="secondary" href={ `/plans/${ siteSlug }` }>
+						{ __( 'Upgrade plan' ) }
+					</Button>
+				);
+			}
+			if ( sessionError ) {
+				return (
+					<Button variant="secondary" onClick={ () => refetch() }>
+						{ __( 'Try again' ) }
+					</Button>
+				);
+			}
+			return null;
+		} )();
 
 		const errorMessage =
 			{
@@ -136,16 +158,7 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 								</Notice>
 							) }
 							{ hasError && (
-								<Notice
-									variant="error"
-									actions={
-										errorCode === 'static_site_import_atomic_unavailable' && (
-											<Button variant="secondary" href={ `/plans/${ siteSlug }` }>
-												{ __( 'Upgrade plan' ) }
-											</Button>
-										)
-									}
-								>
+								<Notice variant="error" actions={ errorAction }>
 									{ errorMessage }
 								</Notice>
 							) }
