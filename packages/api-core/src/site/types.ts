@@ -1,3 +1,23 @@
+export type CreateSiteParams = {
+	blog_name: string;
+	blog_title: string;
+	public: 0 | 1;
+	find_available_url?: boolean;
+	validate?: boolean;
+	locale?: string;
+	client_id: number | string;
+	client_secret: string;
+	options: Record< string, unknown >;
+};
+
+export type CreateSiteResponse = {
+	success: boolean;
+	blog_details: {
+		blogid: number;
+		url: string;
+	};
+};
+
 export interface JetpackRecoverySessionError {
 	kind: string;
 	slug: string;
