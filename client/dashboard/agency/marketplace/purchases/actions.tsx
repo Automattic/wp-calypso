@@ -37,7 +37,8 @@ export function getLicenseActions( {
 	recordTracksEvent,
 }: {
 	canRevoke: boolean;
-	// A site is already being created, and only one can be at a time.
+	// A site is already being created. Holding the rest back is a UI convention
+	// carried over from the classic dashboard, not something the API enforces.
 	isProvisioning: boolean;
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
