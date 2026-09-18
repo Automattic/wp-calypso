@@ -154,6 +154,9 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			);
 		};
 
+		const restartReading = () =>
+			navigate( `${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=` );
+
 		const goToImportCheckout = (
 			destinationSiteId: number,
 			destinationSiteSlug: string,
@@ -232,6 +235,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_RESULTS.slug:
+					if ( providedDependencies.action === 'restart' ) {
+						return restartReading();
+					}
+
 					return navigate( STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS.slug );
 
 				case STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS.slug: {
@@ -321,7 +328,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 				case STEPS.STATIC_SITE_IMPORT_READY.slug: {
 					if ( providedDependencies.action === 'restart' ) {
-						return navigate( `${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=` );
+						return restartReading();
 					}
 
 					return navigate( STEPS.STATIC_SITE_IMPORT_BUILDING.slug, undefined, true );
