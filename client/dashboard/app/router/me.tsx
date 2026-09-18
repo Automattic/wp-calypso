@@ -350,7 +350,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
 				} ),
 				isDotcomPlan( purchase )
-					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
+					? queryClient.prefetchQuery( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,
 			] );
 		}
