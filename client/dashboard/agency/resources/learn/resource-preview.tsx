@@ -1,13 +1,16 @@
 import {
 	Button,
 	Modal,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { external, link, download, chevronLeft, chevronRight } from '@wordpress/icons';
+import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { getResourceTags } from './resource-presentation';
+import ResourceProductLogo from './resource-product-logo';
 import { sampleDocuments } from './sample-documents';
 import type { sampleResources } from './sample-resources';
 
@@ -33,8 +36,10 @@ export default function ResourcePreview( {
 	onFilter: ( field: string, value: string ) => void;
 } ) {
 	const [ copyState, setCopyState ] = useState( '' );
+	const [ downloadError, setDownloadError ] = useState( '' );
 	useEffect( () => {
 		setCopyState( '' );
+		setDownloadError( '' );
 	}, [ resource.id ] );
 	const [ page, setPage ] = useState( 0 );
 	useEffect( () => setPage( 0 ), [ resource.id ] );
@@ -67,7 +72,8 @@ export default function ResourcePreview( {
 		<Modal
 			className="resource-preview"
 			overlayClassName="resource-preview-overlay"
-			title={ resource.title }
+			contentLabel={ resource.title }
+			__experimentalHideHeader
 			size="large"
 			onRequestClose={ onClose }
 			onKeyDown={ ( event ) => {
@@ -95,85 +101,123 @@ export default function ResourcePreview( {
 			} }
 		>
 			<div className="resource-preview-layout" ref={ contentRef }>
-				<HStack className="resource-preview-summary" spacing={ 4 } alignment="top" wrap>
-					<Text>{ resource.description }</Text>
-				</HStack>
-				<HStack
-					className="resource-preview-action-row"
-					alignment="bottom"
-					justify="space-between"
-					spacing={ 3 }
-					wrap
-				>
-					<HStack
-						className="resource-preview-actions"
-						spacing={ 2 }
-						justify="start"
-						expanded={ false }
-					>
-						{ ! isVideo && (
+				<div className="resource-preview-heading-scope">
+					<header className="resource-preview-header">
+						<div className="resource-preview-heading-row">
+							<div className="resource-preview-heading-copy">
+								<div className="resource-preview-brand" data-product={ resource.product }>
+									<ResourceProductLogo product={ resource.product } />
+								</div>
+								<Heading level={ 1 } className="resource-preview-title" dir="auto">
+									{ resource.title }
+								</Heading>
+							</div>
 							<Button
-								variant="tertiary"
+								className="resource-preview-close"
+								icon={ closeSmall }
 								size="compact"
-								icon={ download }
-								href={ documentUrl }
-								download={ `${ resource.title }.pdf` }
-							>
-								{ __( 'Download' ) }
-							</Button>
-						) }
-						<Button
-							variant="tertiary"
-							className="resource-preview-mobile-icon has-text"
-							label={ copyState || __( 'Copy link' ) }
-							size="compact"
-							icon={ link }
-							onClick={ async () => {
-								try {
-									await navigator.clipboard.writeText( window.location.href );
-									setCopyState( __( 'Link copied' ) );
-								} catch {
-									setCopyState( __( 'Copy the link from your address bar.' ) );
-								}
-							} }
+								label={ __( 'Close' ) }
+								onClick={ onClose }
+							/>
+						</div>
+						<HStack className="resource-preview-summary" spacing={ 4 } alignment="top" wrap>
+							<Text dir="auto">{ resource.description }</Text>
+						</HStack>
+						<HStack
+							className="resource-preview-action-row"
+							role="group"
+							aria-label={ __( 'Resource actions and filters' ) }
+							alignment="center"
+							justify="space-between"
+							spacing={ 3 }
+							wrap
 						>
-							<span className="resource-preview-action-label">
-								{ copyState === __( 'Link copied' ) ? copyState : __( 'Copy link' ) }
-							</span>
-						</Button>
-						<Button
-							variant="tertiary"
-							className="resource-preview-mobile-icon has-text"
-							label={ __( 'Open in tab' ) }
-							size="compact"
-							href={ documentUrl }
-							target="_blank"
-							rel="noopener noreferrer"
-							icon={ external }
-						>
-							<span className="resource-preview-action-label">{ __( 'Open in tab' ) }</span>
-						</Button>
-					</HStack>
-					<HStack spacing={ 2 } justify="end" expanded={ false } wrap>
-						{ ( [ 'format', 'audience', 'product' ] as const ).map( ( field ) => (
-							<button
-								key={ field }
-								type="button"
-								className="resource-preview-tag-button"
-								aria-label={ sprintf(
-									/* translators: %s is a resource tag. */
-									__( 'Filter by %s' ),
-									resource[ field ]
-								) }
-								onClick={ () => onFilter( field, resource[ field ] ) }
+							<HStack
+								className="resource-preview-actions"
+								spacing={ 2 }
+								justify="start"
+								expanded={ false }
 							>
-								<Badge className="resource-preview-tag" intent="draft">
-									{ resource[ field ] }
-								</Badge>
-							</button>
-						) ) }
-					</HStack>
-				</HStack>
+								<Button
+									variant="primary"
+									size="compact"
+									href={ documentUrl }
+									download={ `${ resource.title }.${ isVideo ? 'mp4' : 'pdf' }` }
+									onClick={ async (
+										event: MouseEvent< HTMLAnchorElement | HTMLButtonElement >
+									) => {
+										if ( ! isVideo ) {
+											return;
+										}
+										event.preventDefault();
+										setDownloadError( '' );
+										try {
+											// Cross-origin video links ignore the download attribute.
+											const response = await fetch( resource.url );
+											if ( ! response.ok ) {
+												throw new Error( 'Download failed' );
+											}
+											const url = URL.createObjectURL( await response.blob() );
+											const anchor = window.document.createElement( 'a' );
+											anchor.href = url;
+											anchor.download = `${ resource.title }.mp4`;
+											window.document.body.appendChild( anchor );
+											anchor.click();
+											anchor.remove();
+											window.setTimeout( () => URL.revokeObjectURL( url ), 1000 );
+										} catch {
+											setDownloadError( __( 'Download failed. Please try again.' ) );
+										}
+									} }
+								>
+									{ __( 'Download' ) }
+								</Button>
+								<Button
+									variant="tertiary"
+									label={ copyState || __( 'Copy link' ) }
+									showTooltip={ false }
+									size="compact"
+									onClick={ async () => {
+										try {
+											await navigator.clipboard.writeText( window.location.href );
+											setCopyState( __( 'Link copied' ) );
+										} catch {
+											setCopyState( __( 'Copy the link from your address bar.' ) );
+										}
+									} }
+								>
+									<span>{ copyState === __( 'Link copied' ) ? copyState : __( 'Copy link' ) }</span>
+								</Button>
+							</HStack>
+							<HStack
+								className="resource-preview-metadata"
+								spacing={ 2 }
+								justify="end"
+								expanded={ false }
+								wrap
+							>
+								{ getResourceTags( resource ).map( ( { field, value } ) => (
+									<button
+										key={ field }
+										type="button"
+										className="resource-preview-tag-button"
+										aria-label={ sprintf(
+											/* translators: %s is a resource tag. */
+											__( 'Filter by %s' ),
+											value
+										) }
+										onClick={ () => onFilter( field, value ) }
+									>
+										<Badge intent={ field === 'featured' ? 'informational' : 'draft' }>
+											{ value }
+										</Badge>
+									</button>
+								) ) }
+							</HStack>
+						</HStack>
+					</header>
+				</div>
+				{ downloadError && <p role="alert">{ downloadError }</p> }
 				<span role="status" className="screen-reader-text">
 					{ copyState }
 				</span>

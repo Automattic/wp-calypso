@@ -8,13 +8,22 @@ import {
 } from '@wordpress/components';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties } from 'react';
 import { learnRoute } from '../../../app/router/agency';
 import { DataViews } from '../../../components/dataviews';
+import { getResourceColorSlot, getResourceTags, topResources } from './resource-presentation';
 import ResourcePreview from './resource-preview';
+import ResourceProductLogo from './resource-product-logo';
 import ResourceTags from './resource-tags';
 import ResourceThumbnail from './resource-thumbnail';
 import { sampleResources } from './sample-resources';
+import TemporaryDesignSwitch, {
+	type CardPalette,
+	type CardColorBy,
+	type CardIntensity,
+	type CardLogoPlacement,
+} from './temporary-design-switch';
+import useResourceCoverHeight from './use-resource-cover-height';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './sample-resource-grid.scss';
@@ -34,25 +43,41 @@ const initialView: View = {
 	filters: [],
 };
 
-const topResources = [ 'sample-01', 'sample-06', 'sample-11', 'sample-27', 'sample-42' ];
-
 const createFields = (
-	onFilter: ( field: string, value: string ) => void
+	onFilter: ( field: string, value: string ) => void,
+	design: 'original' | 'typographic',
+	colorBy: CardColorBy
 ): Field< Resource >[] => [
 	{
 		id: 'title',
 		label: __( 'Title' ),
 		getValue: ( { item } ) => item.title,
-		render: ( { item } ) => (
-			<VStack spacing={ 3 }>
-				<ResourceThumbnail
-					imageUrl={ item.imageUrl }
-					format={ item.format }
-					resourceId={ item.id }
-				/>
-				<span className="resource-card-title">{ item.title }</span>
-			</VStack>
-		),
+		render: ( { item } ) =>
+			design === 'typographic' ? (
+				<div
+					className="resource-title-cover"
+					data-product={ item.product }
+					data-color-slot={ getResourceColorSlot( item, colorBy ) }
+				>
+					<div className="resource-title-cover-label">
+						<span>{ item.format }</span>
+						<ResourceThumbnail compact format={ item.format } resourceId={ item.id } />
+					</div>
+					<span className="resource-title-cover-heading">{ item.title }</span>
+					<div className="resource-title-cover-brand">
+						<ResourceProductLogo product={ item.product } />
+					</div>
+				</div>
+			) : (
+				<VStack spacing={ 3 }>
+					<ResourceThumbnail
+						imageUrl={ item.imageUrl }
+						format={ item.format }
+						resourceId={ item.id }
+					/>
+					<span className="resource-card-title">{ item.title }</span>
+				</VStack>
+			),
 		enableGlobalSearch: true,
 	},
 	{
@@ -64,14 +89,7 @@ const createFields = (
 				<Text className="resource-description">{ item.description }</Text>
 				<ResourceTags
 					onFilter={ onFilter }
-					tags={ [
-						...( topResources.includes( item.id )
-							? [ { field: 'featured', value: __( 'Top resource' ) } ]
-							: [] ),
-						{ field: 'format', value: item.format },
-						{ field: 'audience', value: item.audience },
-						{ field: 'product', value: item.product },
-					] }
+					tags={ getResourceTags( item, design === 'original' ) }
 				/>
 			</VStack>
 		),
@@ -125,7 +143,7 @@ const createFields = (
 export default function SampleResourceGrid() {
 	const [ view, setView ] = useState< View >( initialView );
 	const [ stage, setStage ] = useState( 'All' );
-	const { resource: resourceId } = learnRoute.useSearch();
+	const { resource: resourceId, designTools } = learnRoute.useSearch();
 	const navigate = learnRoute.useNavigate();
 	const [ origin, setOrigin ] = useState< DOMRect | null >( null );
 	const selectedResource = sampleResources.find( ( item ) => item.id === resourceId );
@@ -139,7 +157,33 @@ export default function SampleResourceGrid() {
 			],
 		} ) );
 	}, [] );
-	const fields = useMemo( () => createFields( applyTagFilter ), [ applyTagFilter ] );
+	const [ design, setDesign ] = useState< 'original' | 'typographic' >( 'typographic' );
+	const [ colorBy, setColorBy ] = useState< CardColorBy >( 'product' );
+	const [ palettes, setPalettes ] = useState< Record< CardColorBy, CardPalette > >( {
+		product: 'product-brand',
+		type: 'ink-paper',
+		single: 'ink-paper',
+	} );
+	const selectedPalette = palettes[ colorBy ];
+	const palette =
+		colorBy === 'type' && ( selectedPalette === 'product-brand' || selectedPalette === 'a4a-brand' )
+			? 'ink-paper'
+			: selectedPalette;
+	const [ singleColor, setSingleColor ] = useState( '#dcdcde' );
+	const colorChannels = [ 1, 3, 5 ].map( ( offset ) => {
+		const channel = parseInt( singleColor.slice( offset, offset + 2 ), 16 ) / 255;
+		return channel <= 0.04045 ? channel / 12.92 : ( ( channel + 0.055 ) / 1.055 ) ** 2.4;
+	} );
+	const luminance =
+		colorChannels[ 0 ] * 0.2126 + colorChannels[ 1 ] * 0.7152 + colorChannels[ 2 ] * 0.0722;
+	const singleInk = luminance > 0.179 ? '#000000' : '#ffffff';
+	const [ intensity, setIntensity ] = useState< CardIntensity >( 'vibrant' );
+	const [ logoPlacement, setLogoPlacement ] = useState< CardLogoPlacement >( 'signature' );
+	const libraryRef = useResourceCoverHeight( design, logoPlacement );
+	const fields = useMemo(
+		() => createFields( applyTagFilter, design, colorBy ),
+		[ applyTagFilter, design, colorBy ]
+	);
 	const { data, paginationInfo } = useMemo(
 		() =>
 			filterSortAndPaginate(
@@ -167,7 +211,18 @@ export default function SampleResourceGrid() {
 
 	return (
 		<div
-			className="sample-resource-library"
+			ref={ libraryRef }
+			className="sample-resource-library resource-style-scope"
+			data-card-design={ design }
+			data-card-logo={ logoPlacement }
+			data-card-palette={ colorBy === 'single' ? 'single' : palette }
+			style={
+				{
+					'--resource-single-paper': singleColor,
+					'--resource-single-ink': singleInk,
+				} as CSSProperties
+			}
+			data-card-intensity={ intensity }
 			onKeyDownCapture={ ( event ) => {
 				const target = event.target;
 				if (
@@ -181,6 +236,24 @@ export default function SampleResourceGrid() {
 				}
 			} }
 		>
+			{ designTools && (
+				<TemporaryDesignSwitch
+					value={ design }
+					onChange={ setDesign }
+					colorBy={ colorBy }
+					onColorByChange={ setColorBy }
+					palette={ palette }
+					onPaletteChange={ ( next ) =>
+						setPalettes( ( current ) => ( { ...current, [ colorBy ]: next } ) )
+					}
+					singleColor={ singleColor }
+					onSingleColorChange={ setSingleColor }
+					intensity={ intensity }
+					onIntensityChange={ setIntensity }
+					logoPlacement={ logoPlacement }
+					onLogoPlacementChange={ setLogoPlacement }
+				/>
+			) }
 			<DataViews< Resource >
 				data={ data }
 				fields={ fields }
@@ -193,6 +266,8 @@ export default function SampleResourceGrid() {
 				renderItemLink={ ( { item, ...props } ) => (
 					<a
 						{ ...props }
+						title={ undefined }
+						aria-label={ item.title }
 						tabIndex={ -1 }
 						href={ `?resource=${ item.id }` }
 						onClick={ ( event ) => {

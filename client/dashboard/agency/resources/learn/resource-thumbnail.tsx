@@ -1,24 +1,62 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
-const illustrations = {
-	Video: (
+function VideoIllustration() {
+	const id = useId();
+	const gradientId = `${ id }-gradient`;
+	const clipId = `${ id }-frame`;
+	return (
 		<>
+			<defs>
+				<linearGradient id={ gradientId }>
+					<stop offset="0" stopColor="currentColor" stopOpacity="0" />
+					<stop offset="0.5" stopColor="currentColor" stopOpacity="0.18" />
+					<stop offset="1" stopColor="currentColor" stopOpacity="0" />
+				</linearGradient>
+				<clipPath id={ clipId }>
+					<rect x="35" y="22" width="42" height="28" rx="3" />
+				</clipPath>
+			</defs>
 			<rect x="34" y="21" width="44" height="30" rx="4" />
 			<g className="resource-video-button" fill="currentColor" stroke="none">
-				<path className="resource-video-left" d="M51 29L57 32.5L57 39.5L51 43Z" />
-				<path className="resource-video-right" d="M57 32.5L63 36L63 36L57 39.5Z" />
+				<path d="M51 29L63 36L51 43Z" />
+			</g>
+			<g className="resource-video-scene" clipPath={ `url(#${ clipId })` }>
+				<rect
+					className="resource-video-wipe"
+					x="35"
+					y="22"
+					width="84"
+					height="28"
+					fill={ `url(#${ gradientId })` }
+					stroke="none"
+				/>
+			</g>
+			<g className="resource-video-timeline">
+				<path d="M42 45H70" strokeOpacity="0.25" />
+				<path className="resource-video-progress" d="M42 45H70" pathLength="1" />
+				<circle
+					className="resource-video-playhead"
+					cx="42"
+					cy="45"
+					r="2.5"
+					fill="currentColor"
+					stroke="none"
+				/>
 			</g>
 		</>
-	),
+	);
+}
+
+const illustrations = {
+	Video: <VideoIllustration />,
 	Guide: (
 		<>
-			<path d="M56 25c-8-5-17-5-24-2v28c8-3 16-2 24 2 8-4 16-5 24-2V23c-7-3-16-3-24 2Zm0 0v28" />
+			<path d="M56 18V22M56 31V35M56 44V56" />
 			<path
-				className="resource-book-page"
-				d="M56 25Q68 17 80 23L80 51Q68 48 56 53Z"
-				fill="currentColor"
-				fillOpacity="0.1"
+				className="resource-guide-sign"
+				d="M43 22H65L71 26.5L65 31H43Q41 31 41 29V24Q41 22 43 22Z"
 			/>
+			<path d="M69 35H47L41 39.5L47 44H69Q71 44 71 42V37Q71 35 69 35Z" />
 		</>
 	),
 	Checklist: (
@@ -35,10 +73,16 @@ const illustrations = {
 	'Slide deck': (
 		<>
 			<rect x="34" y="20" width="44" height="29" rx="4" />
-			<path d="M56 49v7m-8 0h16" />
-			<path strokeWidth="2.5" className="resource-chart-bar resource-chart-first" d="M44 40v-7" />
-			<path strokeWidth="2.5" className="resource-chart-bar resource-chart-second" d="M56 40V28" />
-			<path strokeWidth="2.5" className="resource-chart-bar resource-chart-third" d="M68 40v-9" />
+			<path d="M56 49V56M48 56H64" />
+			<svg x="40" y="23" width="32" height="19" viewBox="40 23 32 19" overflow="hidden">
+				<g className="resource-slide-content" strokeWidth="1.5">
+					{ [ 0, 1 ].map( ( slide ) => (
+						<g key={ slide } transform={ `translate(${ slide * 36 } 0)` }>
+							<path d="M44 29H66M44 35H59" />
+						</g>
+					) ) }
+				</g>
+			</svg>
 		</>
 	),
 	'One-pager': (
@@ -103,10 +147,12 @@ export default function ResourceThumbnail( {
 	imageUrl,
 	format,
 	resourceId,
+	compact = false,
 }: {
 	imageUrl?: string;
 	format: string;
 	resourceId: string;
+	compact?: boolean;
 } ) {
 	const [ failedUrl, setFailedUrl ] = useState< string >();
 	if ( imageUrl && imageUrl !== failedUrl ) {
@@ -130,7 +176,7 @@ export default function ResourceThumbnail( {
 		<svg
 			className="resource-thumbnail resource-thumbnail-fallback"
 			data-palette={ palette }
-			viewBox="0 0 224 144"
+			viewBox={ compact ? '84 44 56 56' : '0 0 224 144' }
 			fill="none"
 			stroke="currentColor"
 			strokeWidth="2"

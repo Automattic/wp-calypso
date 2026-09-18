@@ -1,3 +1,5 @@
+@use '@automattic/color-studio/dist/color-variables' as brand;
+
 // DataViews reserves a media placeholder even when showMedia is false.
 .sample-resource-library .dataviews-view-grid__media {
 	display: none;
@@ -28,11 +30,12 @@
 		var( --resource-ink ) 85%,
 		var( --wpds-color-foreground-content-neutral )
 	);
-	background: color-mix(
+	--resource-thumbnail-surface: color-mix(
 		in srgb,
 		currentColor 16%,
 		var( --wpds-color-background-surface-neutral-strong )
 	);
+	background: var( --resource-thumbnail-surface );
 
 	&[data-palette='1'] {
 		--resource-ink: var( --wpds-color-foreground-content-success );
@@ -45,14 +48,6 @@
 	&[data-palette='3'] {
 		--resource-ink: var( --wpds-color-foreground-content-neutral );
 	}
-}
-
-.resource-tag > span {
-	font-size: 11px;
-	line-height: 16px;
-	border-radius: 3px;
-	padding-block: 1px;
-	padding-inline: 5px;
 }
 
 .resource-toolbar {
@@ -236,16 +231,23 @@
 	.dataviews-view-grid__card:is( :hover, :focus-within ) {
 		.resource-video-button {
 			transform-origin: 56px 36px;
-			animation: resource-video-press var( --resource-animation-duration ) ease-in-out infinite;
+			animation: resource-video-press 3.6s ease-in-out infinite;
 		}
-		.resource-video-left {
-			animation: resource-video-left var( --resource-animation-duration ) ease-in-out infinite;
+		.resource-video-scene,
+		.resource-video-timeline {
+			animation: resource-video-timeline 3.6s linear infinite;
 		}
-		.resource-video-right {
-			animation: resource-video-right var( --resource-animation-duration ) ease-in-out infinite;
+		.resource-video-wipe {
+			animation: resource-video-wipe 3.6s linear infinite;
 		}
-		.resource-book-page {
-			animation: resource-page-turn var( --resource-animation-duration ) linear infinite;
+		.resource-video-progress {
+			animation: resource-video-progress 3.6s linear infinite;
+		}
+		.resource-video-playhead {
+			animation: resource-video-playhead 3.6s linear infinite;
+		}
+		.resource-guide-sign {
+			animation: resource-guide-direction 2.4s ease-in-out infinite;
 		}
 		.resource-check-rows {
 			animation: resource-check-advance var( --resource-animation-duration ) ease-in-out infinite;
@@ -254,15 +256,8 @@
 			stroke-dasharray: 1;
 			animation: resource-check-draw var( --resource-animation-duration ) ease-in-out infinite;
 		}
-		.resource-chart-bar {
-			transform-origin: 56px 40px;
-			animation: resource-bar-grow var( --resource-animation-duration ) ease-in-out infinite;
-		}
-		.resource-chart-second {
-			animation-delay: 0.16s;
-		}
-		.resource-chart-third {
-			animation-delay: 0.32s;
+		.resource-slide-content {
+			animation: resource-slide-advance 2.8s ease-in-out infinite;
 		}
 		.resource-paper-lines {
 			animation: resource-paper-scroll var( --resource-animation-duration ) ease-in-out infinite;
@@ -286,66 +281,88 @@
 	}
 }
 
+.resource-video-scene,
+.resource-video-timeline {
+	opacity: 0;
+}
+.resource-video-progress {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+}
 @keyframes resource-video-press {
 	0%,
-	10%,
-	28%,
-	60%,
-	78%,
+	6%,
+	94%,
 	100% {
 		transform: scale( 1 );
-	}
-	20%,
-	70% {
-		transform: scale( 0.78 );
-	}
-}
-@keyframes resource-video-left {
-	0%,
-	12%,
-	88%,
-	100% {
-		d: path( 'M51 29L57 32.5L57 39.5L51 43Z' );
-	}
-	32%,
-	62% {
-		d: path( 'M50 29L54 29L54 43L50 43Z' );
-	}
-}
-@keyframes resource-video-right {
-	0%,
-	12%,
-	88%,
-	100% {
-		d: path( 'M57 32.5L63 36L63 36L57 39.5Z' );
-	}
-	32%,
-	62% {
-		d: path( 'M59 29L63 29L63 43L59 43Z' );
-	}
-}
-@keyframes resource-page-turn {
-	0%,
-	12%,
-	100% {
-		d: path( 'M56 25Q68 17 80 23L80 51Q68 48 56 53Z' );
 		opacity: 1;
 	}
-	38% {
-		d: path( 'M56 25Q61 12 62 16L62 44Q59 46 56 53Z' );
+	12% {
+		transform: scale( 0.72 );
 		opacity: 1;
 	}
-	64% {
-		d: path( 'M56 25Q44 17 32 23L32 51Q44 48 56 53Z' );
+	17% {
+		transform: scale( 0.94 );
 		opacity: 1;
 	}
-	76% {
-		d: path( 'M56 25Q44 17 32 23L32 51Q44 48 56 53Z' );
+	23%,
+	86% {
+		transform: scale( 0.8 );
 		opacity: 0;
 	}
-	77% {
-		d: path( 'M56 25Q68 17 80 23L80 51Q68 48 56 53Z' );
+}
+@keyframes resource-video-timeline {
+	0%,
+	18%,
+	92%,
+	100% {
 		opacity: 0;
+	}
+	25%,
+	85% {
+		opacity: 1;
+	}
+}
+@keyframes resource-video-wipe {
+	0%,
+	18% {
+		transform: translateX( 42px );
+	}
+	90%,
+	100% {
+		transform: translateX( -84px );
+	}
+}
+@keyframes resource-video-progress {
+	0%,
+	25% {
+		stroke-dashoffset: 1;
+	}
+	82%,
+	100% {
+		stroke-dashoffset: 0;
+	}
+}
+@keyframes resource-video-playhead {
+	0%,
+	25% {
+		transform: translateX( 0 );
+	}
+	82%,
+	100% {
+		transform: translateX( 28px );
+	}
+}
+@keyframes resource-guide-direction {
+	0%,
+	15%,
+	75%,
+	100% {
+		transform: translateX( 0 );
+	}
+	35%,
+	50% {
+		transform: translateX( 4px );
 	}
 }
 @keyframes resource-check-advance {
@@ -368,19 +385,14 @@
 		stroke-dashoffset: 0;
 	}
 }
-@keyframes resource-bar-grow {
+@keyframes resource-slide-advance {
 	0%,
+	30% {
+		transform: translateX( 0 );
+	}
+	65%,
 	100% {
-		transform: scaleY( 1 );
-	}
-	20% {
-		transform: scaleY( 0.2 );
-	}
-	55% {
-		transform: scaleY( 1.25 );
-	}
-	75% {
-		transform: scaleY( 0.9 );
+		transform: translateX( -36px );
 	}
 }
 @keyframes resource-paper-scroll {
@@ -447,13 +459,8 @@
 	padding-block: 2px;
 
 	.resource-tag {
-		line-height: 16px;
 		white-space: nowrap;
 		flex: 0 0 auto;
-
-		> span {
-			display: block;
-		}
 	}
 }
 
@@ -493,14 +500,9 @@
 	transform: translate( 0, 0 );
 }
 
-.resource-preview .components-modal__header {
-	block-size: 48px;
-	padding-block: 12px 0;
-}
-
 .resource-preview .components-modal__content {
 	display: flex;
-	margin-block-start: 48px;
+	margin-block-start: 0;
 	padding: 0;
 	overflow: visible;
 }
@@ -545,16 +547,6 @@
 }
 
 @media ( max-width: 600px ) {
-	.resource-preview .components-modal__header-heading {
-		font-size: 16px;
-	}
-
-	.resource-preview .components-modal__header {
-		position: static;
-		block-size: auto;
-		padding: 12px 16px 4px;
-	}
-
 	.resource-preview .components-modal__content {
 		margin-block-start: 0;
 		flex-direction: column;
@@ -575,15 +567,6 @@
 .resource-preview-overlay {
 	animation-duration: 120ms;
 	background: color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 78%, transparent );
-}
-
-.resource-preview .components-modal__header .components-button {
-	color: var( --wpds-color-foreground-content-neutral );
-}
-
-.resource-preview .components-modal__header > .components-button svg {
-	inline-size: 18px;
-	block-size: 18px;
 }
 
 .resource-preview-navigation {
@@ -642,6 +625,10 @@
 	}
 }
 
+.resource-preview-navigation:dir( rtl ) svg {
+	transform: scaleX( -1 );
+}
+
 .resource-preview-neighbor {
 	display: flex;
 	flex-direction: column;
@@ -670,21 +657,28 @@
 	flex-shrink: 0;
 }
 
-.resource-preview-actions {
+.resource-preview .resource-preview-actions {
 	flex-shrink: 0;
 
-	.components-button {
+	.components-button.is-tertiary {
 		color: var( --wpds-color-foreground-content-neutral );
-		background: var( --wpds-color-background-surface-neutral-weak );
+		background: transparent;
+
 		border-radius: 4px;
 
-		&:hover {
+		&:hover:not( :disabled, [aria-disabled='true'] ),
+		&:active:not( :disabled, [aria-disabled='true'] ) {
 			color: var( --wpds-color-foreground-content-neutral );
 			background: color-mix(
 				in srgb,
 				var( --wpds-color-foreground-content-neutral ) 10%,
 				var( --wpds-color-background-surface-neutral-strong )
 			);
+		}
+		&:focus-visible {
+			outline: 2px solid var( --cover-ink, currentColor );
+			outline-offset: 2px;
+			box-shadow: none;
 		}
 	}
 }
@@ -772,10 +766,6 @@
 	}
 }
 
-.resource-preview-tag {
-	border-radius: 3px;
-}
-
 .resource-stage-select {
 	display: none;
 }
@@ -853,16 +843,6 @@
 		min-inline-size: 0;
 	}
 
-	.resource-preview .components-modal__header {
-		flex-shrink: 0;
-		padding-block-start: max( 12px, env( safe-area-inset-top ) );
-	}
-
-	.resource-preview .components-modal__header-heading {
-		white-space: normal;
-		line-height: 1.3;
-	}
-
 	.resource-preview-layout {
 		min-inline-size: 0;
 	}
@@ -910,17 +890,8 @@
 }
 
 @media ( max-width: 600px ) {
-	.resource-preview-action-label,
 	.resource-preview-neighbor {
 		display: none;
-	}
-
-	.resource-preview-actions .resource-preview-mobile-icon {
-		inline-size: 32px;
-		min-inline-size: 32px;
-		padding: 0;
-		justify-content: center;
-		gap: 0;
 	}
 
 	.resource-preview-navigation .components-button {
@@ -949,12 +920,372 @@
 	font: inherit;
 	cursor: pointer;
 
-	&:hover .resource-preview-tag {
-		text-decoration: underline;
-	}
-
 	&:focus-visible {
 		outline: 2px solid var( --wpds-color-stroke-focus );
 		outline-offset: 2px;
+	}
+}
+
+// Display faces from https://automattic.com/for-agencies/.
+@font-face {
+	font-family: 'A4A Knockout';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/knockout/knockout-400-normal.woff2 )
+		format( 'woff2' );
+}
+@font-face {
+	font-family: 'A4A Source Serif';
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/source-serif-4/source-serif-4-variable-normal.woff2 )
+		format( 'woff2' );
+}
+@font-face {
+	font-family: 'A4A Source Serif';
+	font-style: italic;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/source-serif-4/source-serif-4-variable-italic.woff2 )
+		format( 'woff2' );
+}
+// Product ramps come from Color Studio; VIP from Brand OS's approved palette.
+// Pressable red-orange comes from https://pressable.com/press-kit/.
+.resource-title-cover,
+.resource-preview-brand {
+	--resource-brand-wp-ink: #{brand.$studio-white};
+	--resource-brand-wp-paper: #{brand.$studio-wordpress-blue-50};
+	--resource-brand-woo-ink: #{brand.$studio-white};
+	--resource-brand-woo-paper: #{brand.$studio-woocommerce-purple-50};
+	--resource-brand-jetpack-ink: #{brand.$studio-white};
+	--resource-brand-jetpack-paper: #{brand.$studio-jetpack-green-50};
+	--resource-brand-vip-ink: #13191e;
+	--resource-brand-vip-paper: #d8a45f;
+	--resource-brand-pressable-paper: #dd3a03;
+	--resource-brand-a4a-paper: #{brand.$studio-gray-100};
+	--resource-brand-white: #{brand.$studio-white};
+}
+.resource-title-cover {
+	--cover-ink: #{brand.$studio-black};
+	--cover-paper: #{brand.$studio-gray-0};
+	position: relative;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 18px;
+	min-block-size: var( --resource-cover-height, 184px );
+	padding: 18px 20px;
+	color: var( --cover-ink );
+	--resource-cover-surface: var( --cover-paper );
+	background: var( --resource-cover-surface );
+	border-start-start-radius: 4px;
+	border-start-end-radius: 4px;
+
+	&[data-product='WordPress VIP'] {
+		--cover-ink: var( --resource-brand-vip-ink );
+		--cover-paper: var( --resource-brand-vip-paper );
+		.resource-title-cover-heading {
+			font-family: 'A4A Source Serif', Georgia, serif;
+			font-weight: 600;
+			letter-spacing: -0.045em;
+		}
+	}
+	&[data-product='Pressable'] {
+		--cover-ink: #{brand.$studio-black};
+		--cover-paper: var( --resource-brand-pressable-paper );
+		.resource-title-cover-heading {
+			font-family: 'A4A Knockout', Impact, sans-serif;
+			font-size: 38px;
+			text-transform: uppercase;
+			font-weight: 400;
+			letter-spacing: 0;
+		}
+	}
+	&[data-product='WooCommerce'] {
+		--cover-ink: var( --resource-brand-woo-ink );
+		--cover-paper: var( --resource-brand-woo-paper );
+		.resource-title-cover-heading {
+			font-weight: 700;
+			letter-spacing: -0.045em;
+		}
+	}
+	&[data-product='WordPress.com'] {
+		--cover-ink: var( --resource-brand-wp-ink );
+		--cover-paper: var( --resource-brand-wp-paper );
+		.resource-title-cover-heading {
+			font-family: 'A4A Source Serif', Georgia, serif;
+			font-weight: 500;
+			font-style: italic;
+		}
+	}
+	&[data-product='Jetpack'] {
+		--cover-ink: var( --resource-brand-jetpack-ink );
+		--cover-paper: var( --resource-brand-jetpack-paper );
+		.resource-title-cover-heading {
+			border-inline-start: 4px solid currentColor;
+			padding-inline-start: 12px;
+			font-weight: 700;
+			font-size: 28px;
+		}
+	}
+	&[data-product='Automattic for Agencies'] {
+		--cover-ink: #{brand.$studio-white};
+		--cover-paper: var( --resource-brand-a4a-paper );
+		.resource-title-cover-heading {
+			font-family: 'A4A Knockout', Impact, sans-serif;
+			font-size: 38px;
+			font-weight: 400;
+			text-transform: uppercase;
+			letter-spacing: 0;
+		}
+	}
+}
+
+// Temporary palettes: assign each swatch by product or resource type.
+@each $palette,
+	$swatches
+		in (
+			'product-brand': (
+				( 1, var( --resource-brand-vip-paper ), #13191e ),
+				( 2, var( --resource-brand-pressable-paper ), #000 ),
+				( 3, var( --resource-brand-woo-paper ), #fff ),
+				( 4, var( --resource-brand-wp-paper ), #fff ),
+				( 5, var( --resource-brand-jetpack-paper ), #fff ),
+				( 6, var( --resource-brand-a4a-paper ), #fff ),
+				( 7, var( --resource-brand-vip-paper ), #13191e ),
+			),
+			'a4a-brand': (
+				( 1, #0387ff, #000 ),
+				( 2, #0240e4, #fff ),
+				( 3, #72b3ff, #000 ),
+				( 4, #0260c8, #fff ),
+				( 5, #0387ff, #000 ),
+				( 6, #0387ff, #000 ),
+				( 7, #72b3ff, #000 ),
+			),
+			'ink-paper': (
+				( 1, #e9dfcc, #252d2a ),
+				( 2, #284b43, #fff ),
+				( 3, #c6d1b0, #252d2a ),
+				( 4, #713f4c, #fff ),
+				( 5, #ddd0bb, #252d2a ),
+				( 6, #293e50, #fff ),
+				( 7, #d8ac78, #252d2a ),
+			)
+		)
+{
+	.resource-style-scope[data-card-palette='#{$palette}'] .resource-title-cover {
+		@each $slot, $paper, $ink in $swatches {
+			&[data-color-slot='#{$slot}'] {
+				--cover-paper: #{$paper};
+				--cover-ink: #{$ink};
+			}
+		}
+	}
+}
+.resource-style-scope[data-card-palette='single'] .resource-title-cover {
+	--cover-paper: var( --resource-single-paper );
+	--cover-ink: var( --resource-single-ink );
+}
+.resource-style-scope[data-card-intensity='subdued'] .resource-title-cover {
+	color: #{brand.$studio-black};
+	--resource-cover-surface: color-mix( in srgb, var( --cover-paper ) 22%, #{brand.$studio-white} );
+}
+
+.resource-title-cover-label {
+	min-block-size: 34px;
+	padding-inline-end: 70px;
+	display: flex;
+	align-items: flex-start;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	.resource-thumbnail {
+		position: absolute;
+		inset-block-start: 10px;
+		inset-inline-end: 14px;
+		inline-size: 56px;
+		block-size: 56px;
+		background: transparent;
+		color: inherit;
+		transform: rotate( -8deg );
+	}
+}
+.resource-title-cover-heading {
+	margin-block-start: auto;
+	display: block;
+	font-size: 31px;
+	font-weight: 600;
+	line-height: 1.03;
+	letter-spacing: -0.035em;
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+.sample-resource-library[data-card-design='typographic'] .resource-card-details {
+	padding-block-start: 12px;
+}
+
+.resource-product-logo {
+	display: block;
+	block-size: 20px;
+	inline-size: var( --resource-logo-width );
+	max-inline-size: 100%;
+	background: currentColor;
+	mask-image: var( --resource-logo-image );
+	mask-size: contain;
+	mask-position: left center;
+	mask-repeat: no-repeat;
+}
+.resource-title-cover-brand {
+	margin-block-start: 0;
+	flex-shrink: 0;
+}
+.sample-resource-library[data-card-logo='none'] .resource-title-cover-brand {
+	display: none;
+}
+.sample-resource-library[data-card-logo='header'] .resource-title-cover {
+	.resource-title-cover-brand {
+		order: -1;
+		margin-block-start: 0;
+		padding-inline-end: 56px;
+	}
+	.resource-title-cover-label {
+		min-block-size: 0;
+		padding-inline-end: 0;
+	}
+	.resource-title-cover-heading {
+		margin-block-start: auto;
+	}
+}
+.sample-resource-library[data-card-logo='signature'] .resource-title-cover {
+	.resource-title-cover-brand {
+		padding-block-start: 12px;
+		border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
+	}
+}
+.sample-resource-library[data-card-logo='strip'] .resource-title-cover {
+	.resource-title-cover-brand {
+		margin-inline: -20px;
+		margin-block-end: -18px;
+		padding: 12px 20px;
+		background: color-mix( in srgb, currentColor 8%, transparent );
+		border-block-start: 1px solid color-mix( in srgb, currentColor 20%, transparent );
+	}
+}
+
+.resource-preview-heading-scope {
+	flex-shrink: 0;
+	max-block-size: 50dvh;
+	overflow-y: auto;
+	border-start-start-radius: 8px;
+	border-start-end-radius: 8px;
+}
+.resource-preview .resource-preview-header {
+	color: var( --wpds-color-foreground-content-neutral );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	min-block-size: 0;
+	padding: 20px 24px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border-radius: 0;
+	.resource-preview-summary {
+		padding: 8px 0 16px;
+		> span {
+			color: inherit;
+		}
+	}
+	.resource-preview-action-row {
+		box-sizing: border-box;
+		inline-size: calc( 100% + 48px );
+		margin-inline: -24px;
+		padding: 8px 24px;
+		gap: 8px 16px;
+		background: color-mix(
+			in srgb,
+			var( --wpds-color-background-surface-neutral-weak ) 30%,
+			var( --wpds-color-background-surface-neutral-strong )
+		);
+		border-block-start: 1px solid var( --wpds-color-stroke-surface-neutral );
+	}
+	.resource-preview-actions .components-button {
+		min-block-size: 32px;
+		font-size: 12px;
+	}
+	.resource-preview-title {
+		color: inherit;
+		margin: 0;
+		font-family: inherit;
+		font-style: normal;
+		font-size: 20px;
+		letter-spacing: normal;
+		text-transform: none;
+		font-weight: 500;
+		line-height: 1.3;
+		text-wrap: pretty;
+	}
+	.resource-preview-close {
+		color: inherit;
+		flex-shrink: 0;
+		&:hover {
+			background: color-mix( in srgb, currentColor 12%, transparent );
+		}
+		&:focus-visible {
+			outline: 2px solid currentColor;
+			outline-offset: 2px;
+		}
+	}
+}
+.resource-preview-heading-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+.resource-preview-heading-copy {
+	min-inline-size: 0;
+}
+.resource-preview-brand {
+	display: flex;
+	margin-block-end: 8px;
+
+	&[data-product='WordPress VIP'] {
+		color: var( --resource-brand-vip-paper );
+	}
+	&[data-product='Pressable'] {
+		color: var( --resource-brand-pressable-paper );
+	}
+	&[data-product='WooCommerce'] {
+		color: var( --resource-brand-woo-paper );
+	}
+	&[data-product='WordPress.com'] {
+		color: var( --resource-brand-wp-paper );
+	}
+	&[data-product='Jetpack'] {
+		color: var( --resource-brand-jetpack-paper );
+	}
+	&[data-product='Automattic for Agencies'] {
+		color: var( --resource-brand-a4a-paper );
+	}
+}
+
+@media ( max-width: 600px ) {
+	.resource-preview-heading-scope {
+		border-radius: 0;
+	}
+	.resource-preview .resource-preview-header {
+		padding: max( 16px, env( safe-area-inset-top ) ) 16px 0;
+		.resource-preview-action-row {
+			inline-size: calc( 100% + 32px );
+			margin-inline: -16px;
+			padding-inline: 16px;
+		}
+		.resource-preview-metadata {
+			justify-content: flex-start;
+		}
 	}
 }

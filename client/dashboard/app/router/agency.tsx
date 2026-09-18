@@ -471,8 +471,9 @@ export const learnRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/learn',
-	validateSearch: ( search ): { resource?: string } => ( {
+	validateSearch: ( search ): { resource?: string; designTools?: boolean } => ( {
 		resource: typeof search.resource === 'string' ? search.resource : undefined,
+		designTools: search.designTools === true || search.designTools === 'true' ? true : undefined,
 	} ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
