@@ -20,9 +20,7 @@ import {
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
-import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
-import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
+import { BRAND_MARKS } from './lib/brand-marks';
 import { getBrandLabels, getCategoryShortLabels } from './lib/product-categories';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 
@@ -49,16 +47,10 @@ const CATEGORY_ICONS: Record< ProductCategory, JSX.Element > = {
 	'store-management': store,
 };
 
-const BRAND_LOGOS: Record< ProductBrand, string > = {
-	jetpack: jetpackLogo,
-	woocommerce: wooLogo,
-	pressable: pressableLogo,
-};
-
 export function isCategoryTileValue( value: unknown ): value is CategoryTileValue {
 	return (
 		typeof value === 'string' &&
-		[ ...Object.keys( BRAND_LOGOS ), ...Object.keys( CATEGORY_ICONS ) ].includes( value )
+		[ ...Object.keys( BRAND_MARKS ), ...Object.keys( CATEGORY_ICONS ) ].includes( value )
 	);
 }
 
@@ -75,7 +67,7 @@ function getTiles( { showPressable }: { showPressable: boolean } ): Tile[] {
 		...brands.map( ( brand ) => ( {
 			value: brand,
 			label: brandLabels[ brand ],
-			logo: BRAND_LOGOS[ brand ],
+			logo: BRAND_MARKS[ brand ],
 		} ) ),
 		...categories.map( ( category ) => ( {
 			value: category,
