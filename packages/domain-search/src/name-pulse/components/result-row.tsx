@@ -188,7 +188,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		>
 			<span className="name-pulse-row__name">
 				<span className="name-pulse-row__domain">
-					<Text as="span" variant="muted" truncate>
+					<Text as="span" variant="muted">
 						{ label }
 					</Text>
 					<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
@@ -199,7 +199,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 					<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
 				) }
 				{ showPremiumBadge && (
-					<DomainSuggestionBadge variation="warning">{ __( 'Premium' ) }</DomainSuggestionBadge>
+					<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
 				) }
 			</span>
 			<span className="name-pulse-row__status">
