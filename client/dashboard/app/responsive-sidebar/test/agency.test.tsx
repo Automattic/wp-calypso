@@ -17,6 +17,7 @@ const agencySupports: AgencySupports = {
 	exclusiveOffers: true,
 	learn: true,
 	mcp: true,
+	amplify: true,
 	sites: true,
 	plugins: true,
 	team: true,
@@ -30,7 +31,7 @@ const config = {
 	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, agency: agencySupports },
 };
 
-function mockAgency( capabilities: string[] ) {
+function mockAgency( capabilities: string[], amplifyAllowed = true ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/wpcom/v2/agency' )
@@ -38,13 +39,14 @@ function mockAgency( capabilities: string[] ) {
 			{
 				id: 1,
 				partner_directory: { allowed: true, directories: [] },
+				amplify: { allowed: amplifyAllowed },
 				user: { capabilities },
 			},
 		] );
 }
 
-async function renderSidebar( capabilities: string[] ) {
-	mockAgency( capabilities );
+async function renderSidebar( capabilities: string[], amplifyAllowed = true ) {
+	mockAgency( capabilities, amplifyAllowed );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -155,5 +157,26 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
 		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Amplify as an external link when the agency and the user have access', async () => {
+		await renderSidebar( [ 'a4a_read_amplify' ] );
+
+		const amplify = screen.getByRole( 'link', { name: /Amplify/ } );
+		expect( amplify ).toBeVisible();
+		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
+		expect( amplify ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	test( 'hides Amplify when the user lacks the amplify capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides Amplify when the agency is not allowed to use it', async () => {
+		await renderSidebar( [ 'a4a_read_amplify' ], false );
+
+		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
 	} );
 } );
