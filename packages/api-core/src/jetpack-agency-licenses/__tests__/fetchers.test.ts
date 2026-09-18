@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { fetchJetpackLicenses } from '..';
+import { fetchJetpackAgencyDevLicenses, fetchJetpackLicenses } from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -50,6 +50,21 @@ describe( 'fetchJetpackLicenses', () => {
 			sortDirection: 'desc',
 		} );
 
+		expect( scope.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'fetchJetpackAgencyDevLicenses', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'fetches the remaining free development licenses for the agency', async () => {
+		const response = { licenses: [ { license_id: 1 } ], available: 4 };
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/jetpack-licensing/dev-licenses' )
+			.query( ( q ) => q.agency_id === '123' )
+			.reply( 200, response );
+
+		await expect( fetchJetpackAgencyDevLicenses( 123 ) ).resolves.toEqual( response );
 		expect( scope.isDone() ).toBe( true );
 	} );
 } );

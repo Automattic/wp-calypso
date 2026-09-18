@@ -1,5 +1,6 @@
 import {
 	assignJetpackLicenseToSite,
+	fetchJetpackAgencyDevLicenses,
 	fetchJetpackLicenseCounts,
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
@@ -33,6 +34,15 @@ export const paginatedJetpackAgencyLicensesQuery = (
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'paginated', options ],
 		queryFn: () => fetchJetpackLicensesPage( agencyId, options ),
+	} );
+
+// The free development licenses an agency may still spend. Shares the
+// `jetpack-agency-licenses` key prefix so issuing or spending one invalidates
+// the remaining allowance too.
+export const jetpackAgencyDevLicensesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev' ] as const,
+		queryFn: () => fetchJetpackAgencyDevLicenses( agencyId ),
 	} );
 
 export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
