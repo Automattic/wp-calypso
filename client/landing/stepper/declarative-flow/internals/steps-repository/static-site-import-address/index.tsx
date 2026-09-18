@@ -1,23 +1,35 @@
+import { freeSuggestionQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardBody, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight, globe } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getFreeSubdomain, useStaticSiteImportSource } from '../components/static-site-import';
+import { useStaticSiteImportSource } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
-import '../components/static-site-import/style.scss';
 import './style.scss';
 
 export type StaticSiteImportDomainChoice = 'keep' | 'free' | 'register';
 
+export type StaticSiteImportAddressSubmits = {
+	domainChoice: StaticSiteImportDomainChoice;
+	siteUrl?: string;
+};
+
 const StaticSiteImportAddress: StepType< {
-	submits: { domainChoice: StaticSiteImportDomainChoice };
+	submits: StaticSiteImportAddressSubmits;
 } > = function StaticSiteImportAddress( { navigation } ) {
 	const { __ } = useI18n();
 	const { host } = useStaticSiteImportSource();
+	const { data: freeSuggestion } = useQuery( {
+		...freeSuggestionQuery( host.split( '.' )[ 0 ], { only_wordpressdotcom: true } ),
+		enabled: Boolean( host ),
+	} );
+	const freeAddress = freeSuggestion?.domain_name;
 
 	const options: {
 		value: StaticSiteImportDomainChoice;
@@ -39,15 +51,17 @@ const StaticSiteImportAddress: StepType< {
 						),
 						badge: __( 'Recommended' ),
 					},
-			  ]
+				]
 			: [] ),
 		{
 			value: 'free',
-			title: sprintf(
-				/* translators: %s: a free WordPress.com address, e.g. yoursite.wordpress.com. */
-				__( 'Use %s' ),
-				getFreeSubdomain( host )
-			),
+			title: freeAddress
+				? sprintf(
+						/* translators: %s: a free WordPress.com address, e.g. yoursite.wordpress.com. */
+						__( 'Use %s' ),
+						freeAddress
+					)
+				: __( 'Use a free WordPress.com address' ),
 			text: __( 'Free forever. You can connect a custom domain whenever you’re ready.' ),
 		},
 		{
@@ -65,7 +79,7 @@ const StaticSiteImportAddress: StepType< {
 					host
 				),
 				{ br: <br /> }
-		  )
+			)
 		: __( 'Start with a free address and connect a domain later, or register a new one.' );
 
 	return (
@@ -85,30 +99,37 @@ const StaticSiteImportAddress: StepType< {
 					<Step.Heading text={ __( 'Keep or change your address' ) } subText={ subText } />
 				}
 			>
-				<div className="static-site-import__panel static-site-import-address__options">
-					{ options.map( ( option ) => (
-						<button
-							key={ option.value }
-							type="button"
-							className="static-site-import-address__option"
-							onClick={ () => navigation.submit?.( { domainChoice: option.value } ) }
-						>
-							<Icon className="static-site-import-address__icon" icon={ globe } size={ 24 } />
-							<span className="static-site-import-address__text">
-								<span className="static-site-import-address__title">
-									{ option.title }
-									{ option.badge && <Badge type="info-green">{ option.badge }</Badge> }
+				<Card>
+					<CardBody size="large" className="static-site-import-address__options">
+						{ options.map( ( option ) => (
+							<button
+								key={ option.value }
+								type="button"
+								className="static-site-import-address__option"
+								onClick={ () =>
+									navigation.submit?.( {
+										domainChoice: option.value,
+										siteUrl: option.value === 'free' ? freeAddress : undefined,
+									} )
+								}
+							>
+								<Icon className="static-site-import-address__icon" icon={ globe } size={ 24 } />
+								<span className="static-site-import-address__text">
+									<span className="static-site-import-address__title">
+										{ option.title }
+										{ option.badge && <Badge type="info-green">{ option.badge }</Badge> }
+									</span>
+									<Text variant="muted">{ option.text }</Text>
 								</span>
-								<span className="static-site-import__muted">{ option.text }</span>
-							</span>
-							<Icon
-								className="static-site-import-address__icon"
-								icon={ chevronRight }
-								size={ 24 }
-							/>
-						</button>
-					) ) }
-				</div>
+								<Icon
+									className="static-site-import-address__icon"
+									icon={ chevronRight }
+									size={ 24 }
+								/>
+							</button>
+						) ) }
+					</CardBody>
+				</Card>
 			</Step.CenteredColumnLayout>
 		</>
 	);

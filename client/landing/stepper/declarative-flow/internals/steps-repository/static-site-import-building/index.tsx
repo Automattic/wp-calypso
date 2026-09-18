@@ -1,23 +1,21 @@
 import { STATIC_SITE_IMPORT_TERMINAL_STATES } from '@automattic/api-core';
-import { staticSiteImportSessionQuery } from '@automattic/api-queries';
+import {
+	pollStaticSiteImportSessionUntil,
+	staticSiteImportSessionQuery,
+} from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import {
-	Panel,
-	StatusNotice,
-	useStaticSiteImportSource,
-	useUserEmail,
-} from '../components/static-site-import';
+import Notice from 'calypso/dashboard/components/notice';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { ImportCard, useStaticSiteImportSource } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
-
-import '../components/static-site-import/style.scss';
-
-export const POLL_INTERVAL = 10000;
 
 export type StaticSiteImportBuildingSubmits = { state: 'finished' | 'failed' };
 
@@ -27,17 +25,13 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 		const [ searchParams ] = useSearchParams();
 		const sessionId = searchParams.get( 'importSessionId' ) ?? '';
 		const { platformName } = useStaticSiteImportSource();
-		const email = useUserEmail();
+		const email = useSelector( getCurrentUserEmail );
 
-		const { data: session, isError } = useQuery( {
+		// A failed request keeps polling; only the session itself can fail the move.
+		const { data: session } = useQuery( {
 			...staticSiteImportSessionQuery( sessionId ),
 			enabled: Boolean( sessionId ),
-			refetchInterval: ( query ) => {
-				const state = query.state.data?.state;
-				return state && STATIC_SITE_IMPORT_TERMINAL_STATES.includes( state )
-					? false
-					: POLL_INTERVAL;
-			},
+			refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
 		} );
 
 		const hasSubmitted = useRef( false );
@@ -45,20 +39,19 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 			if ( hasSubmitted.current ) {
 				return;
 			}
-			if ( ! sessionId || isError || session?.state === 'failed' ) {
+			if ( ! sessionId || session?.state === 'failed' ) {
 				hasSubmitted.current = true;
 				navigation.submit?.( { state: 'failed' } );
 			} else if ( session?.state === 'finished' ) {
 				hasSubmitted.current = true;
 				navigation.submit?.( { state: 'finished' } );
 			}
-		}, [ isError, navigation, session?.state, sessionId ] );
+		}, [ navigation, session?.state, sessionId ] );
 
 		return (
 			<>
 				<DocumentHead title={ __( 'We’re building your site' ) } />
 				<Step.CenteredColumnLayout
-					className="step-container-v2--static-site-import-building"
 					columnWidth={ 8 }
 					topBar={ <Step.TopBar /> }
 					heading={
@@ -70,8 +63,8 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 						/>
 					}
 				>
-					<Panel title={ __( 'Move in progress' ) }>
-						<StatusNotice status="info">
+					<ImportCard title={ __( 'Move in progress' ) }>
+						<Notice variant="info">
 							{ platformName
 								? sprintf(
 										/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
@@ -79,21 +72,21 @@ const StaticSiteImportBuilding: StepType< { submits: StaticSiteImportBuildingSub
 											'We’re rebuilding your pages on WordPress.com. Your %s site stays live and unchanged.'
 										),
 										platformName
-								  )
+									)
 								: __(
 										'We’re rebuilding your pages on WordPress.com. Your current site stays live and unchanged.'
-								  ) }
-						</StatusNotice>
+									) }
+						</Notice>
 						{ email && (
-							<p className="static-site-import__muted">
+							<Text variant="muted">
 								{ sprintf(
 									/* translators: %s: the user's email address. */
 									__( 'We’ll email %s as soon as it’s done.' ),
 									email
 								) }
-							</p>
+							</Text>
 						) }
-					</Panel>
+					</ImportCard>
 				</Step.CenteredColumnLayout>
 			</>
 		);

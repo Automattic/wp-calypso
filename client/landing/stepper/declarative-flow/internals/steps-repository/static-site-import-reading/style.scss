@@ -1,18 +1,3 @@
-.step-container-v2--static-site-import-reading {
-	.static-site-import-reading__progress {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-
-		.static-site-import-reading__bar {
-			width: 100%;
-			max-width: none;
-		}
-	}
-
-	.static-site-import-reading__progress-labels {
-		display: flex;
-		justify-content: space-between;
-		gap: 16px;
-	}
+.static-site-import-reading__bar {
+	width: 100%;
 }

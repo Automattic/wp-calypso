@@ -2,7 +2,6 @@ import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { getSourceHost } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/static-site-import/utils';
 import {
@@ -63,7 +62,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const searchParams = new URLSearchParams( window.location.search );
 		return ! searchParams.has( 'siteSlug' ) && ! searchParams.has( 'siteId' );
 	},
-	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepsProps() {
@@ -76,9 +74,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: ! hasDestinationSite,
-				wrapperProps: {
-					goBack: () => window.history.back(),
-				},
+			},
+			// "Keep my domain" is its own choice on the address step.
+			[ STEPS.DOMAIN_SEARCH.slug ]: {
+				hideUseMyDomainLink: true,
 			},
 		};
 	},
@@ -100,7 +99,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			'domainChoice'
 		) as StaticSiteImportDomainChoice | null;
 		const siteCount = useSelector( getCurrentUserSiteCount );
-		const { set, get, sessionId } = useFlowState();
 		const recordSignupComplete = useRecordSignupComplete( flowPath );
 		const {
 			setDomain,
@@ -114,15 +112,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
 
 		const exitFlow = ( to: string, replace = false ) => {
-			const url = addQueryArgs( { sessionId, ref: STATIC_SITE_IMPORT_FLOW }, to );
+			const url = addQueryArgs( { ref: STATIC_SITE_IMPORT_FLOW }, to );
 			return replace ? window.location.replace( url ) : window.location.assign( url );
 		};
 
-		/**
-		 * Hands the source back to the regular migration flow: WordPress sources continue there,
-		 * anything else ends up in the content-only importer, as it did before this flow existed.
-		 * Without a destination site that flow picks or creates one first.
-		 */
 		const exitToMigrationFlow = ( source: string, sourcePlatform: ImporterPlatform ) => {
 			if ( ! hasSite( siteId, siteSlug ) ) {
 				const step = siteCount && siteCount > 1 ? STEPS.PICK_SITE : STEPS.SITE_CREATION_STEP;
@@ -161,7 +154,11 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			);
 		};
 
-		const goToImportCheckout = ( destinationSiteId: number, destinationSiteSlug: string ) => {
+		const goToImportCheckout = (
+			destinationSiteId: number,
+			destinationSiteSlug: string,
+			plan?: string
+		) => {
 			const destination = addQueryArgs(
 				{
 					siteId: destinationSiteId,
@@ -180,7 +177,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				siteSlug: destinationSiteSlug,
 				destination,
 				from,
-				plan: get( STEPS.UNIFIED_PLANS.slug )?.cartItems?.[ 0 ]?.product_slug,
+				plan,
 				historyBack: true,
 			} );
 		};
@@ -200,7 +197,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					// Anything this flow cannot take belongs to the regular migration flow.
 					if (
 						action === 'skip_platform_identification' ||
 						! canUseStaticSiteImport( identifiedPlatform, identifiedFrom )
@@ -209,7 +205,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							identifiedFrom ?? '',
 							action === 'skip_platform_identification'
 								? 'unknown'
-								: identifiedPlatform ?? 'unknown'
+								: ( identifiedPlatform ?? 'unknown' )
 						);
 					}
 
@@ -240,7 +236,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 				case STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS.slug: {
 					if ( hasSite( siteId, siteSlug ) ) {
-						// An existing site already has an address, so only a plan may be missing.
 						return navigate(
 							isSiteOnPaidPlan ? STEPS.STATIC_SITE_IMPORT_READY.slug : STEPS.UNIFIED_PLANS.slug
 						);
@@ -250,21 +245,19 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_ADDRESS.slug: {
-					const choice = providedDependencies.domainChoice;
+					const { domainChoice: choice, siteUrl } = providedDependencies;
 					if ( choice === 'register' ) {
 						return navigate( `${ STEPS.DOMAIN_SEARCH.slug }?domainChoice=${ choice }` );
+					}
+					if ( siteUrl ) {
+						setSiteUrl( siteUrl );
 					}
 
 					return navigate( `${ STEPS.UNIFIED_PLANS.slug }?domainChoice=${ choice }` );
 				}
 
 				case STEPS.DOMAIN_SEARCH.slug: {
-					if ( providedDependencies?.navigateToUseMyDomain ) {
-						// Bringing a domain you own is the "keep" choice, which connects it after the move.
-						return navigate( `${ STEPS.UNIFIED_PLANS.slug }?domainChoice=keep` );
-					}
-
-					if ( providedDependencies ) {
+					if ( providedDependencies && ! providedDependencies.navigateToUseMyDomain ) {
 						setSiteUrl( providedDependencies.siteUrl as string );
 						setDomain( providedDependencies.suggestion as DomainSuggestion );
 						setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
@@ -282,10 +275,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					if ( planCartItem ) {
 						setPlanCartItem( planCartItem );
 					}
-					set( STEPS.UNIFIED_PLANS.slug, providedDependencies );
 
+					// A new site gets the plan in its cart when it's created; an existing one needs it here.
 					if ( hasSite( siteId, siteSlug ) ) {
-						return goToImportCheckout( siteId, siteSlug );
+						return goToImportCheckout( siteId, siteSlug, planCartItem?.product_slug );
 					}
 
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
@@ -381,6 +374,15 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					return navigate( STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS.slug );
 				case STEPS.DOMAIN_SEARCH.slug:
 					return navigate( STEPS.STATIC_SITE_IMPORT_ADDRESS.slug );
+				case STEPS.UNIFIED_PLANS.slug:
+					if ( hasSite( siteId, siteSlug ) ) {
+						return navigate( STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS.slug );
+					}
+					return navigate(
+						domainChoice === 'register'
+							? STEPS.DOMAIN_SEARCH.slug
+							: STEPS.STATIC_SITE_IMPORT_ADDRESS.slug
+					);
 			}
 		};
 
