@@ -1272,8 +1272,9 @@
 		flex-direction: column;
 		gap: 8px;
 		margin-bottom: 40px;
-		font-size: 14px;
-		line-height: 26px;
+		/* Host themes style bare lists (e.g. `:root :where(ul)`), so out-specify them. */
+		font-size: 14px !important;
+		line-height: 26px !important;
 	}
 
 	.lp-footer-legal a,
@@ -1371,7 +1372,7 @@
 			flex-wrap: wrap;
 			gap: 4px 16px;
 			margin-bottom: 0;
-			font-size: 12px;
+			font-size: 12px !important;
 		}
 
 		.lp-footer-bottom__copyright {
