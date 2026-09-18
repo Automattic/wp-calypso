@@ -72,9 +72,13 @@ const NoteSummaryTitle = ( { block, link }: { block: Subject; link?: string } ) 
 };
 
 // Detail-view header: built from `note.header` so the first row anchors the
-// panel with the post owner / author + post title (matching the legacy
-// `SummaryInSingle`).
-const NoteSummary = ( { header, url }: { header: Subject[]; url: string } ) => {
+// panel with the post owner / author + post title, like the generic path of
+// the legacy `SummaryInSingle`.
+const NoteSummary = ( { header, url }: { header?: Subject[]; url: string } ) => {
+	if ( ! header?.length ) {
+		return null;
+	}
+
 	const subject = header[ 0 ];
 	const snippet = header[ 1 ];
 	const subjectLink = getHeaderLink( subject );
