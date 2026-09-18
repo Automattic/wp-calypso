@@ -3,10 +3,7 @@
  * themselves are ported separately.
  */
 export type AddNewSiteAction =
-	| 'import-from-wpcom'
-	| 'a4a-connection'
-	| 'jetpack-connection'
-	| 'dev-site-configurations';
+	'import-from-wpcom' | 'a4a-connection' | 'jetpack-connection' | 'dev-site-configurations';
 
 export interface AddNewSiteProps {
 	onSelectAction: ( action: AddNewSiteAction ) => void;
