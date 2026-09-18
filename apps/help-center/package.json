@@ -51,7 +51,8 @@
 		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/router": "^1.48.0",
 		"@wordpress/url": "^4.48.0",
-		"postcss-prefix-selector": "^1.16.1"
+		"postcss-prefix-selector": "^1.16.1",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

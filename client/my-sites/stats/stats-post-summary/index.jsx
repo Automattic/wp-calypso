@@ -74,7 +74,7 @@ class StatsPostSummary extends Component {
 	// read directly off stats.data rather than built into record objects.
 	getTotalRecordCount() {
 		return this.state.period === 'day'
-			? this.props.stats?.data?.length ?? 0
+			? ( this.props.stats?.data?.length ?? 0 )
 			: this.getAllRecordsForPeriod().length;
 	}
 
@@ -288,7 +288,7 @@ class StatsPostSummary extends Component {
 										? {
 												chartStart: pageDateRange.start.format( 'YYYY-MM-DD' ),
 												chartEnd: pageDateRange.end.format( 'YYYY-MM-DD' ),
-										  }
+											}
 										: undefined
 								}
 								isShort

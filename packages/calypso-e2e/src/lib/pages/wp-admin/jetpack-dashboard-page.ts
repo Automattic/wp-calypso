@@ -13,8 +13,7 @@ export type SettingsTabs =
 	| 'Monetize';
 // Discriminated union type.
 type JetpackTabs =
-	| { view: 'Dashboard'; tab: DashboardTabs }
-	| { view: 'Settings'; tab: SettingsTabs };
+	{ view: 'Dashboard'; tab: DashboardTabs } | { view: 'Settings'; tab: SettingsTabs };
 
 /**
  * Represents the Jetpack pages in WP-Admin.

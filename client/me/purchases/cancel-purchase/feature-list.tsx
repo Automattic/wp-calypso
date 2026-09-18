@@ -26,11 +26,11 @@ const CancelPurchaseFeatureList = ( {
 		? cancellationFeatures.map( ( feature ) => ( {
 				key: feature.feature_id,
 				title: feature.title,
-		  } ) )
+			} ) )
 		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
 				key: `fallback-${ idx }`,
 				title,
-		  } ) );
+			} ) );
 
 	if ( ! items.length ) {
 		return null;

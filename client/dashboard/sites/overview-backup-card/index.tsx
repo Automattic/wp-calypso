@@ -41,7 +41,7 @@ function BackupCardFailed( {
 				/* translators: %s: time since last successful backup, e.g. '2h ago' */
 				__( 'Last successful backup was %s.' ),
 				timeSinceLastSuccessful
-		  )
+			)
 		: 'No successful backups found.';
 
 	return (

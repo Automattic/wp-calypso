@@ -15,11 +15,11 @@ export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) =>
 						? translate(
 								'Schedule a one-on-one session with a WordPress.com expert ' +
 									'to get your site up and running quickly.'
-						  )
+							)
 						: translate(
 								'Schedule a one-on-one orientation session to set up your site ' +
 									'and learn more about Jetpack.'
-						  )
+							)
 				}
 				buttonText={ translate( 'Schedule a session' ) }
 				href={ link }

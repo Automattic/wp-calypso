@@ -40,7 +40,7 @@ import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost } from 'calypso/reader/post-key';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -81,6 +81,7 @@ export class FullPostView extends Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
+	hasAutoMarkedAsSeen = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
@@ -102,6 +103,7 @@ export class FullPostView extends Component {
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
+		this.hasAutoMarkedAsSeen = false;
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
@@ -135,19 +137,30 @@ export class FullPostView extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
+		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
+		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
+
 		// Send page view if applicable
-		if (
-			prevProps?.post?.ID !== this.props?.post?.ID ||
-			prevProps?.feed?.ID !== this.props?.feed?.ID ||
-			prevProps?.site?.ID !== this.props?.site?.ID
-		) {
+		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
+
+			// Keyed on the canonical post key: `post.ID` is only unique within a
+			// site and `feed_item_ID` is absent on non-feed posts, so either alone
+			// can read two distinct posts as one.
+			const hasViewedPostChanged = ! keysAreEqual(
+				keyForPost( prevProps?.post ),
+				keyForPost( this.props?.post )
+			);
+			if ( hasViewedPostChanged ) {
+				this.hasAutoMarkedAsSeen = false;
+			}
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
+			if ( hasPostChanged ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -155,6 +168,12 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
+		}
+
+		// Seen eligibility resolves after mount, so the mark on load is often
+		// skipped. Nothing else retries it once eligibility turns true.
+		if ( this.props.canMarkSeen && ! prevProps.canMarkSeen ) {
+			this.maybeMarkAsSeenOnLoad();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -533,9 +552,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.props.canMarkSeen && ! post.is_seen ) {
-				this.markAsSeen();
-			}
+			this.maybeMarkAsSeenOnLoad();
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -595,6 +612,24 @@ export class FullPostView extends Component {
 		}, 100 );
 	};
 
+	// Auto-marks the viewed post as seen at most once per post.
+	maybeMarkAsSeenOnLoad = () => {
+		const { post, canMarkSeen } = this.props;
+
+		if (
+			this.hasAutoMarkedAsSeen ||
+			! canMarkSeen ||
+			! post ||
+			post._state === 'pending' ||
+			post.is_seen
+		) {
+			return;
+		}
+
+		this.hasAutoMarkedAsSeen = true;
+		this.markAsSeen();
+	};
+
 	markAsSeen = () => {
 		const { post } = this.props;
 
@@ -647,12 +682,12 @@ export class FullPostView extends Component {
 					text: 'Mark post as unread',
 					newCopy: translate( 'Mark post as unread' ),
 					oldCopy: translate( 'Mark post as unseen' ),
-			  } )
+				} )
 			: fixMe( {
 					text: 'Mark post as read',
 					newCopy: translate( 'Mark post as read' ),
 					oldCopy: translate( 'Mark post as seen' ),
-			  } );
+				} );
 
 		return (
 			<button

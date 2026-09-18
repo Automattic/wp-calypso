@@ -59,9 +59,9 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 
 	const label = isHelpCenterShown
 		? /* translators: Accessible label on the floating Help button when the Help Center panel is open. */
-		  __( 'Close help' )
+			__( 'Close help' )
 		: /* translators: Accessible label on the floating Help button that opens the Help Center. */
-		  __( 'Help' );
+			__( 'Help' );
 
 	return (
 		<>

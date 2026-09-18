@@ -45,8 +45,8 @@ let root: Root;
 // Throws rather than returning undefined: a missing chip would otherwise turn
 // every click into a no-op and let a negative assertion pass vacuously.
 const getButton = ( label: string ): HTMLButtonElement => {
-	const button = Array.from( container.querySelectorAll( 'button' ) ).find(
-		( candidate ) => candidate.textContent?.includes( label )
+	const button = Array.from( container.querySelectorAll( 'button' ) ).find( ( candidate ) =>
+		candidate.textContent?.includes( label )
 	);
 	if ( ! button ) {
 		throw new Error( `No button found containing "${ label }".` );

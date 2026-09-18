@@ -17,6 +17,7 @@ const defaultValues: Required< UserPreferences > = {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'reader-seen-posts': true,
 	'sites-landing-page': {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
@@ -49,6 +50,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
+	'reader-seen-posts': 'rdseen',
 	'sites-landing-page': 'stland',
 	'logged-in-homepage': 'lohp',
 	'achievements-visibility': 'achvis',
@@ -107,9 +109,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 			return fetchedValue === undefined
 				? defaultValues[ preferenceName ]
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
-				  // as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
-				  // the query is used in the component.
-				  ( fetchedValue as Required< UserPreferences >[ P ] );
+					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
+					// the query is used in the component.
+					( fetchedValue as Required< UserPreferences >[ P ] );
 		},
 	} );
 

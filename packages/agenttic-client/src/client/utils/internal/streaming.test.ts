@@ -291,11 +291,10 @@ describe( 'parseSSEStream', () => {
 			updates.push( update );
 		}
 
-		const sawStaleToolCall = updates.some(
-			( u ) =>
-				u.status.message?.parts?.some(
-					( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-stale'
-				)
+		const sawStaleToolCall = updates.some( ( u ) =>
+			u.status.message?.parts?.some(
+				( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-stale'
+			)
 		);
 		expect( sawStaleToolCall ).toBe( true );
 

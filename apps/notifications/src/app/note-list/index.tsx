@@ -12,9 +12,7 @@ import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
-import getNotes from '../../panel/state/selectors/get-notes';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -56,8 +54,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// This tab's cached id list, keyed by tab name, or undefined until its first
 	// fetch. A tab never reads the previous tab's list.
 	const cachedNoteIds = useSelector( ( state ) => getFilteredNoteIds( state, filterName ) ) as
-		| number[]
-		| undefined;
+		number[] | undefined;
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
@@ -147,32 +144,26 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		fields
 	);
 
-	// DataViews shows the unread dot from `note.read`, which an in-app read leaves
-	// stale. Swap in the effective read state, and tag the open note so its row
-	// can render the active highlight. Reuse the note object when neither changed
-	// so only the affected rows re-render.
-	const notesState = useSelector( getNotes );
-	const data = filteredData.map( ( note ) => {
-		const isRead = getIsNoteRead( notesState, note );
-		const isActive = note.id.toString() === selectedNoteId;
-		if ( !! note.read === isRead && ! isActive ) {
-			return note;
-		}
-		return { ...note, read: isRead ? 1 : 0, isActive };
-	} );
+	// Tag the open note so its row can render the active highlight. Reuse the note
+	// object otherwise so only the affected rows re-render.
+	const data = filteredData.map( ( note ) =>
+		note.id.toString() === selectedNoteId ? { ...note, isActive: true } : note
+	);
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
 	// `totalItems` stays ahead of the window, so reporting the loaded count
 	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. Report an
-	// optimistic total while the REST client still has notes left to fetch so
-	// DataViews keeps advancing the window and driving `loadMore()`.
+	// `onChangeView` fires, and `loadMore()` is never called again. While the REST
+	// client still has notes left to fetch, report two extra: DataViews then
+	// advances as soon as the window is full, landing on the first unloaded note.
+	// More would let it skip past unloaded notes; fewer can strand a reader at the
+	// bottom when the next page lands outside the window and adds no rows.
 	// Pass the rendered tab: the client's own `filterName` lags a render behind
 	// a switch, which would answer for the previous tab and stall scroll.
 	const hasMoreNotes = client?.hasMoreNotes( filterName ) ?? false;
 	const effectivePaginationInfo = hasMoreNotes
-		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
+		? { ...paginationInfo, totalItems: paginationInfo.totalItems + 2 }
 		: paginationInfo;
 
 	const infiniteScrollHandler = useCallback( () => {
@@ -217,8 +208,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
 	// our own at the foot of the list, while a fetch is in flight. An empty list
-	// uses the `empty` slot above instead.
-	const showLoadMore = hasMoreNotes && data.length > 0 && tab.isLoading;
+	// uses the `empty` slot above instead. Check the loaded notes, not `data`: the
+	// window can move past them while DataViews still renders the earlier rows.
+	const showLoadMore = hasMoreNotes && visibleNotes.length > 0 && tab.isLoading;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
 	// is mounted and in-flight loading shows in the `empty` slot or the foot.

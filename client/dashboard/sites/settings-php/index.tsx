@@ -75,7 +75,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),
 				getSitePlanDisplayName( site )
-		  );
+			);
 
 	return (
 		<PageLayout

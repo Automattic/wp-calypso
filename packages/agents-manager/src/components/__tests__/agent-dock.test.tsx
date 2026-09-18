@@ -180,6 +180,7 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import { getSessionId } from '../../utils/agent-session';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
@@ -224,6 +225,8 @@ function useWpAdminAgent() {
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
@@ -709,7 +712,22 @@ describe( 'AgentDock', () => {
 			render( dock() );
 
 			expect( chatOpenedCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_opened', { restored: true } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+			] );
+		} );
+
+		it( 'labels an open a host asked for through the actions bridge', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			const { rerender } = render( dock() );
+
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'host' } ],
 			] );
 		} );
 
@@ -730,19 +748,47 @@ describe( 'AgentDock', () => {
 			rerender( dock() );
 
 			expect( chatOpenedCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
-				[ 'calypso_agents_manager_chat_opened', { restored: false } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
 			] );
 		} );
 
-		it( 'records nothing while the chat is minimized to the entry bar', () => {
+		it( 'labels an expand from minimized that a host asked for', () => {
 			useWpAdminAgent();
 			mockHasAdminBar = true;
 			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
-
-			render( dock() );
+			const { rerender } = render( dock() );
 
 			expect( chatOpenedCalls() ).toEqual( [] );
+
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'consumes a leftover host mark on a restored open so the next open is not labelled host', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			markActionOrigin( 'open', 'host' );
+			const { rerender } = render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+			] );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+			] );
 		} );
 	} );
 } );

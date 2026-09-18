@@ -77,7 +77,7 @@ jest.mock( '@wordpress/data', () => {
 				? {
 						getConnections: () => mockState.connections,
 						isSharingCurrentPost: () => mockState.isSharingCurrentPost,
-				  }
+					}
 				: null;
 		}
 		return {};

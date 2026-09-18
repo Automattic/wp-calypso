@@ -67,10 +67,10 @@ export const PressableUsageLimitNotice = () => {
 				{ pressablePlanUsageLimitExceeded
 					? translate(
 							'Your Pressable plan has exceeded its allocated limits. Consider upgrading your plan to avoid additional fees.'
-					  )
+						)
 					: translate(
 							'Your Pressable plan is close to exceeding its allocated limits. Consider upgrading your plan to avoid additional fees.'
-					  ) }
+						) }
 			</p>
 
 			<div className="pressable-usage-limit-notice__actions">

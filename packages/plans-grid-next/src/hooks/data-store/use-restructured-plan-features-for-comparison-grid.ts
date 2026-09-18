@@ -160,7 +160,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 									availableOnlyForAnnualPlans,
 									availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 								};
-						  } )
+							} )
 						: null;
 
 				const jetpackFeaturesTransformed: TransformedFeatureObject[] | null | undefined =
@@ -175,18 +175,18 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 									availableOnlyForAnnualPlans,
 									availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 								};
-						  } )
+							} )
 						: null;
 
 				const featuresAvailable = isWooExpressPlan( planSlug )
 					? {
 							wpcomFeatures: wpcomFeaturesTransformed ?? [],
 							jetpackFeatures: [],
-					  }
+						}
 					: {
 							wpcomFeatures: wpcomFeaturesTransformed ?? [],
 							jetpackFeatures: jetpackFeaturesTransformed ?? [],
-					  };
+						};
 
 				const previousPlanFeatures = {
 					wpcomFeatures: previousPlan !== null ? planFeatureMap[ previousPlan ].wpcomFeatures : [],

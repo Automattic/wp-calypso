@@ -45,8 +45,10 @@ const NoSitesMessage = ( {
 						) }
 				</p>
 			}
-			action={ hideAction ? undefined : action ?? __( 'Create a site' ) }
-			actionURL={ hideAction ? undefined : actionURL ?? onboardingUrl() + '?ref=calypso-nosites' }
+			action={ hideAction ? undefined : ( action ?? __( 'Create a site' ) ) }
+			actionURL={
+				hideAction ? undefined : ( actionURL ?? onboardingUrl() + '?ref=calypso-nosites' )
+			}
 			actionCallback={ hideAction ? undefined : actionCallback }
 		/>
 	);

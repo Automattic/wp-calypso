@@ -34,6 +34,7 @@ export function getNav2026Menus( {
 	const buildGroup: Nav2026Group = {
 		title: __( 'Build', __i18n_text_domain__ ),
 		columnGroup: 'build-publish',
+		columnIndex: 0,
 		items: [
 			{
 				label: __( 'Website', __i18n_text_domain__ ),
@@ -55,6 +56,7 @@ export function getNav2026Menus( {
 	const publishGroup: Nav2026Group = {
 		title: __( 'Publish', __i18n_text_domain__ ),
 		columnGroup: 'build-publish',
+		columnIndex: 0,
 		items: [
 			{
 				label: __( 'Blog', __i18n_text_domain__ ),
@@ -79,6 +81,7 @@ export function getNav2026Menus( {
 				{
 					title: __( 'Hosting', __i18n_text_domain__ ),
 					columnGroup: 'hosting',
+					columnIndex: 1,
 					items: [
 						{
 							label: __( 'Managed hosting', __i18n_text_domain__ ),
@@ -98,8 +101,33 @@ export function getNav2026Menus( {
 					],
 				},
 				{
+					title: __( 'Enterprise', __i18n_text_domain__ ),
+					columnGroup: 'hosting',
+					columnIndex: 1,
+					items: [
+						{
+							label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+							url: 'https://wpvip.com/',
+							isExternal: true,
+						},
+					],
+				},
+				{
+					title: __( 'Affiliates', __i18n_text_domain__ ),
+					columnGroup: 'affiliates',
+					columnIndex: 3,
+					items: [
+						{
+							label: __( 'Affiliate program', __i18n_text_domain__ ),
+							url: localizeUrl( '//wordpress.com/affiliates/' ),
+							target: '_self',
+						},
+					],
+				},
+				{
 					title: __( 'Domains', __i18n_text_domain__ ),
 					columnGroup: 'domains',
+					columnIndex: 2,
 					items: [
 						{
 							label: __( 'Find a domain', __i18n_text_domain__ ),
@@ -116,33 +144,12 @@ export function getNav2026Menus( {
 				{
 					title: __( 'Email', __i18n_text_domain__ ),
 					columnGroup: 'domains',
+					columnIndex: 2,
 					items: [
 						{
 							label: __( 'Professional email', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/professional-email/' ),
 							target: '_self',
-						},
-					],
-				},
-				{
-					title: __( 'Affiliates', __i18n_text_domain__ ),
-					columnGroup: 'affiliates-enterprise',
-					items: [
-						{
-							label: __( 'Affiliate program', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/affiliates/' ),
-							target: '_self',
-						},
-					],
-				},
-				{
-					title: __( 'Enterprise', __i18n_text_domain__ ),
-					columnGroup: 'affiliates-enterprise',
-					items: [
-						{
-							label: __( 'Enterprise hosting', __i18n_text_domain__ ),
-							url: 'https://wpvip.com/',
-							isExternal: true,
 						},
 					],
 				},
@@ -163,11 +170,6 @@ export function getNav2026Menus( {
 						{
 							label: __( 'Logo generator', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/logo-maker/' ),
-							target: '_self',
-						},
-						{
-							label: __( 'Speed test', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/speed-test/' ),
 							target: '_self',
 						},
 						{
@@ -236,7 +238,7 @@ export function getNav2026Menus( {
 							target: '_self',
 						},
 						{
-							label: __( 'View all', __i18n_text_domain__ ),
+							label: __( 'View all features', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/features/' ),
 							target: '_self',
 						},

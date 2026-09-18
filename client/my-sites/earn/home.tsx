@@ -3,7 +3,9 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	getPlan,
 	getYearlyPlanByMonthly,
@@ -179,7 +181,7 @@ const Home = () => {
 						trackCtaButton( 'simple-payments' );
 						window.location.href = localizeUrl( ctaURL );
 					},
-			  }
+				}
 			: {
 					text: translate( 'Upgrade' ),
 					isPrimary: true,
@@ -203,7 +205,7 @@ const Home = () => {
 						 */
 						page( url );
 					},
-			  };
+				};
 		const title = translate( 'Collect PayPal payments' );
 		const body = translate(
 			'Accept credit and debit card payments via PayPal for physical products, services, donations, tips, or memberships.'
@@ -247,10 +249,10 @@ const Home = () => {
 				{ hasConnectedAccount
 					? translate(
 							'Let visitors pay for digital goods and services or make quick, pre-set donations by inserting the Payment Button block.'
-					  )
+						)
 					: translate(
 							'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
-					  ) }
+						) }
 			</>
 		);
 
@@ -397,8 +399,9 @@ const Home = () => {
 		const isMonthlyPlan = isPaidWpcomPlan && isMonthly( planSlug );
 		const isEligible = isPaidWpcomPlan && ! isMonthlyPlan;
 
-		// Only a monthly plan has a single obvious plan to buy; everyone else chooses.
-		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : '';
+		// Personal is the cheapest annual plan that qualifies for referral credits.
+		const freePlanUpgradeSlug = planSlug === PLAN_FREE ? PLAN_PERSONAL : '';
+		const annualPlanSlug = isMonthlyPlan ? getYearlyPlanByMonthly( planSlug ) : freePlanUpgradeSlug;
 
 		const cta: CtaButton = isEligible
 			? {
@@ -408,19 +411,19 @@ const Home = () => {
 						onPeerReferralCtaClick();
 					},
 					disabled: isPeerReferralCtaDisabled,
-			  }
+				}
 			: {
 					text: translate( 'Upgrade' ),
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
 						if ( site?.slug && annualPlanSlug ) {
-							page(
-								addQueryArgs(
-									`/checkout/${ site.slug }/${ annualPlanSlug }`,
-									getUpsellCheckoutQueryArgs()
-								)
+							const url = addQueryArgs(
+								`/checkout/${ site.slug }/${ annualPlanSlug }`,
+								getUpsellCheckoutQueryArgs()
 							);
+							// Jetpack Cloud has no checkout of its own, whatever the site type.
+							page( isJetpackCloud() ? getCalypsoUrl( url ) : url );
 							return;
 						}
 						const url = addQueryArgs( plansLink( '/plans', site?.slug, 'yearly', true ), {
@@ -435,7 +438,7 @@ const Home = () => {
 						}
 						page( url );
 					},
-			  };
+				};
 
 		if ( peerReferralLink && isEligible ) {
 			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
@@ -452,7 +455,7 @@ const Home = () => {
 		const eligibleBody = peerReferralLink
 			? translate(
 					'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
-			  )
+				)
 			: translate(
 					'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
 					{
@@ -466,7 +469,7 @@ const Home = () => {
 							),
 						},
 					}
-			  );
+				);
 		return {
 			title: translate( 'Refer a friend' ),
 			body: isEligible ? eligibleBody : notEligibleBody,
@@ -494,7 +497,7 @@ const Home = () => {
 								`${ earnPath }/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }`
 							);
 						},
-				  }
+					}
 				: {
 						text: translate( 'Upgrade' ),
 						isPrimary: true,
@@ -518,7 +521,7 @@ const Home = () => {
 							 */
 							page( url );
 						},
-				  };
+					};
 
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 

@@ -353,13 +353,13 @@ class DnsRecords extends Component {
 														selectedSite.slug,
 														selectedDomainName,
 														mappingSetupStep
-												  )
+													)
 												: domainManagementEdit(
 														selectedSite.slug,
 														selectedDomainName,
 														currentRoute,
 														{ nameservers: true }
-												  )
+													)
 										}
 									></a>
 								),

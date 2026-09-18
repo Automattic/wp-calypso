@@ -290,7 +290,7 @@ const EmailProvidersStackedComparison = ( {
 				{ isDomainInCart
 					? translate( 'Add a professional email address to %(domainName)s', {
 							args: { domainName: selectedDomainName },
-					  } )
+						} )
 					: translate( 'Pick an email solution' ) }
 			</h1>
 
@@ -302,10 +302,10 @@ const EmailProvidersStackedComparison = ( {
 								{
 									components: comparisonComponents,
 								}
-						  )
+							)
 						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 								components: comparisonComponents,
-						  } ) }
+							} ) }
 				</div>
 			) }
 

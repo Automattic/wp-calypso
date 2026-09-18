@@ -71,7 +71,7 @@ const Table = ( {
 				? renderedGridPlans
 				: renderedGridPlans.filter(
 						( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug
-				  ),
+					),
 		[ renderedGridPlans, gridPlanForSpotlight ]
 	);
 	// Search for a plan with a highlight label. Some margin is applied in the stylesheet to cover the badges/labels

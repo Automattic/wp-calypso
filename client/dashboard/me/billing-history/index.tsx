@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -28,9 +29,12 @@ import type { Receipt } from '@automattic/api-core';
 const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
-	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } = useQuery(
-		userReceiptsQuery()
-	);
+	const { supports } = useAppContext();
+	// Hosts without a `me` section embed these screens already scoped to a site,
+	// so the site filter is theirs to set rather than the visitor's.
+	const supportsMe = Boolean( supports.me );
+	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } =
+		useQuery( userReceiptsQuery() );
 	const { data: countryList = [] } = useQuery( countryListQuery() );
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingReceipts || isLoadingSites;
@@ -43,6 +47,7 @@ export default function BillingHistory() {
 		defaultView,
 		queryParams: searchParams,
 		queryParamFilterFields: [ 'site' ],
+		lockQueryParamFilters: ! supportsMe,
 	} );
 
 	const ref = useResizeObserver( ( entries ) => {
@@ -66,9 +71,10 @@ export default function BillingHistory() {
 				view.fields ?? WIDE_FIELDS,
 				locale,
 				sites,
-				searchParams.site
+				searchParams.site,
+				supportsMe
 			),
-		[ receipts, countryList, view.fields, locale, sites, searchParams.site ]
+		[ receipts, countryList, view.fields, locale, sites, searchParams.site, supportsMe ]
 	);
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
@@ -97,6 +103,7 @@ export default function BillingHistory() {
 					title={ __( 'Billing history' ) }
 					description={ __( 'View receipts and billing history for your purchases.' ) }
 					actions={
+						supportsMe &&
 						activeSiteId !== undefined && (
 							<RouterLinkButton
 								variant="secondary"

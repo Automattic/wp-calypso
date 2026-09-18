@@ -348,7 +348,7 @@ export function MobileCheckoutStickySummary() {
 			? formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 	const { setSlotEl } = useSubmitButtonSlot();
 	const [ isOpen, setIsOpen ] = useState( false );
