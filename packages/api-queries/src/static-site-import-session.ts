@@ -2,6 +2,7 @@ import {
 	approveStaticSiteImportSession,
 	createStaticSiteImportSession,
 	fetchStaticSiteImportSession,
+	isWpError,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import type {
@@ -19,9 +20,16 @@ export const staticSiteImportSessionQuery = ( sessionId: string ) =>
 		meta: { persist: false },
 	} );
 
+/** A 4xx will not change by asking again; anything else is worth another try. */
+export const isPermanentStaticSiteImportError = ( error: unknown ) =>
+	isWpError( error ) && error.status < 500;
+
 export const pollStaticSiteImportSessionUntil =
 	( states: readonly StaticSiteImportState[] ) =>
-	( query: { state: { data?: StaticSiteImportSession } } ) => {
+	( query: { state: { data?: StaticSiteImportSession; error?: unknown } } ) => {
+		if ( isPermanentStaticSiteImportError( query.state.error ) ) {
+			return false;
+		}
 		const state = query.state.data?.state;
 		return state && states.includes( state ) ? false : POLL_INTERVAL;
 	};
