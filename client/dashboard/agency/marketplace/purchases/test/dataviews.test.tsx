@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 import { JetpackLicenseFilter, JetpackLicenseSortField } from '@automattic/api-core';
-import { DEFAULT_VIEW, toFetchOptions } from '../dataviews';
+import { screen } from '@testing-library/react';
+import { render } from '../../../../test-utils';
+import { DEFAULT_VIEW, getLicenseFields, toFetchOptions } from '../dataviews';
+import type { JetpackLicense } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 describe( 'toFetchOptions', () => {
@@ -47,5 +50,35 @@ describe( 'toFetchOptions', () => {
 	it( 'falls back to sorting by issue date for fields the endpoint cannot sort', () => {
 		const view: View = { ...DEFAULT_VIEW, sort: { field: 'product', direction: 'asc' } };
 		expect( toFetchOptions( view ).sortField ).toBe( JetpackLicenseSortField.IssuedAt );
+	} );
+} );
+
+describe( 'the site field', () => {
+	const unassignedWpcom = {
+		license_id: 1,
+		license_key: 'wpcom-hosting-business_abc',
+		product: 'WordPress.com Business',
+		siteurl: null,
+		revoked_at: null,
+	} as JetpackLicense;
+
+	function renderSiteCell( provisioningLicenseKeys: Set< string > ) {
+		const fields = getLicenseFields( {
+			locale: 'en',
+			isAgencyOwner: true,
+			provisioningLicenseKeys,
+		} );
+		const site = fields.find( ( field ) => field.id === 'site' );
+		render( <>{ site?.render?.( { item: unassignedWpcom, field: site } ) }</> );
+	}
+
+	it( 'reports a license whose site is being created', () => {
+		renderSiteCell( new Set( [ 'wpcom-hosting-business_abc' ] ) );
+		expect( screen.getByText( 'Being created…' ) ).toBeVisible();
+	} );
+
+	it( 'reports an unassigned license with no site on the way', () => {
+		renderSiteCell( new Set() );
+		expect( screen.getByText( 'Not assigned' ) ).toBeVisible();
 	} );
 } );
