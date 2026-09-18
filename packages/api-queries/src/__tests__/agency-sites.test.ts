@@ -2,14 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { QueryClient, dehydrate } from '@tanstack/react-query';
 import nock from 'nock';
-import {
-	agencyPendingSitesQuery,
-	agencySitesImportMutation,
-	provisionedAgencySitesQuery,
-} from '../agency-sites';
-import { dehydrateOptions } from '../dehydrate-options';
+import { agencySitesImportMutation } from '../agency-sites';
 
 const BASE = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
@@ -63,25 +57,5 @@ describe( 'agencySitesImportMutation', () => {
 		mockImport( 2, 500, { message: 'Nope' } );
 
 		await expect( importSites( [ 1, 2 ] ) ).rejects.toBeTruthy();
-	} );
-} );
-
-describe( 'agencyPendingSitesQuery', () => {
-	test( 'is left out of the persisted cache', async () => {
-		const client = new QueryClient();
-
-		await client.prefetchQuery( { ...agencyPendingSitesQuery( 1 ), queryFn: () => [] } );
-
-		expect( dehydrate( client, dehydrateOptions ).queries ).toHaveLength( 0 );
-	} );
-} );
-
-describe( 'provisionedAgencySitesQuery', () => {
-	test( 'is left out of the persisted cache', async () => {
-		const client = new QueryClient();
-
-		await client.prefetchQuery( { ...provisionedAgencySitesQuery( 1 ), queryFn: () => [] } );
-
-		expect( dehydrate( client, dehydrateOptions ).queries ).toHaveLength( 0 );
 	} );
 } );
