@@ -71,4 +71,15 @@ describe( 'useCredits', () => {
 		expect( result.current.notice ).toBeUndefined();
 		expect( result.current.beforeSubmit() ).toBe( true );
 	} );
+
+	it( 'blocks submits at zero on paid plans too, still without a notice', () => {
+		seed( '?am_credits=0&am_plan=paid' );
+		const { result } = renderHook( () => useCredits( { enabled: true } ) );
+		expect( result.current.notice ).toBeUndefined();
+		let allowed: boolean | undefined;
+		act( () => {
+			allowed = result.current.beforeSubmit();
+		} );
+		expect( allowed ).toBe( false );
+	} );
 } );

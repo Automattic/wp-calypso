@@ -157,13 +157,14 @@ export function useCredits( { enabled }: UseCreditsOptions ): UseCreditsResult {
 		return undefined;
 	}, [ status, isExhausted, isLow, isLowNoticeDismissed, handleAction ] );
 
-	// At zero the upsell opens instead of running; the mock spends otherwise.
+	// At zero, on any plan, the popover opens instead of running (Upgrade on
+	// free, Add credits on paid); the mock spends otherwise.
 	const beforeSubmit = useCallback( () => {
 		if ( ! status ) {
 			return true;
 		}
 
-		if ( isExhausted && status.plan === 'free' ) {
+		if ( isExhausted ) {
 			setIsPopoverOpen( true );
 			return false;
 		}

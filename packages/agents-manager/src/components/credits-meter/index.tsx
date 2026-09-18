@@ -105,6 +105,7 @@ export default function CreditsMeter( { status, isOpen, onToggle, onAction, mana
 			renderContent={ () => (
 				<div
 					className="agents-manager-credits-meter__content"
+					role="dialog"
 					aria-label={ __( 'Site credits', __i18n_text_domain__ ) }
 				>
 					<div className="agents-manager-credits-meter__header">
