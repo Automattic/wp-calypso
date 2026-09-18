@@ -14,10 +14,11 @@ export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
 export const CHECKOUT_SUCCESS_PLAN_PARAM = 'purchased_plan';
 
 /**
- * The toast for a completed order, naming the plan when `planSlug` is a known
- * one. The slug comes from the URL, so only own keys count.
+ * The toast for a completed order, naming the plan when the current URL's
+ * `purchased_plan` is a known one. The slug is untrusted, so only own keys count.
  */
-export function getCheckoutSuccessMessage( planSlug: string | null ): string {
+export function getCheckoutSuccessMessage(): string {
+	const planSlug = new URLSearchParams( window.location.search ).get( CHECKOUT_SUCCESS_PLAN_PARAM );
 	const planNames: Record< string, string > = getPlanNames();
 	if ( ! planSlug || ! Object.hasOwn( planNames, planSlug ) ) {
 		return __( 'Your purchase was completed.' );

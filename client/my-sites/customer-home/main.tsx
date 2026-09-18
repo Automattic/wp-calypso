@@ -40,7 +40,7 @@ function usePostPurchaseNotice(): void {
 		const message =
 			notice === PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
 				? translate( 'Your plan and domain are ready!' )
-				: getCheckoutSuccessMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) );
+				: getCheckoutSuccessMessage();
 		reduxDispatch(
 			successNotice( message, {
 				id: 'post-purchase-success',
