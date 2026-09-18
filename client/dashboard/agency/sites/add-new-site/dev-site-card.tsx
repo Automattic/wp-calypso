@@ -30,11 +30,11 @@ export default function DevSiteCard( {
 	const blockedReason = ! isAgencyApproved
 		? __(
 				'Your agency is not yet approved. Please wait for approval before creating a development site.'
-		  )
+			)
 		: undefined;
 
 	return (
-		<Card isBorderless variant="secondary" className="dashboard-agency-add-new-site__dev-site-card">
+		<Card isBorderless variant="secondary">
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<img src={ devSiteBanner } alt="" />
@@ -48,7 +48,7 @@ export default function DevSiteCard( {
 					</VStack>
 					<VStack spacing={ 1 } alignment="left">
 						<Text variant="muted">
-							<TextBlur isBlurred={ ! isCountKnown } length={ 30 }>
+							<TextBlur isBlurred={ ! isCountKnown } length={ 20 }>
 								{ sprintf(
 									/* translators: %1$d is the number of free licenses left, %2$d the total allowance. */
 									__( '%1$d of %2$d free licenses available' ),
