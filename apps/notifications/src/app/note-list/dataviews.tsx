@@ -18,6 +18,7 @@ import { getActions } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
+import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
 import { splitSubject } from './simplified-subject';
@@ -78,11 +79,15 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
+const useIsUnapproved = ( note: Note ) => {
+	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
+
+	return note.type === 'comment' && 'approve-comment' in getActions( note ) && ! isApproved;
+};
+
 const NoteBadge = ( { note }: { note: Note } ) => {
 	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
-	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
-	const isUnapproved =
-		note.type === 'comment' && 'approve-comment' in getActions( note ) && ! isApproved;
+	const isUnapproved = useIsUnapproved( note );
 
 	return (
 		<span
@@ -93,6 +98,26 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 		>
 			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
 		</span>
+	);
+};
+
+// The strip sits in the title cell but is positioned across the top of the row,
+// which is the only place a full-width band can come from inside a DataViews cell.
+const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
+	const isUnapproved = useIsUnapproved( note );
+
+	return (
+		<>
+			{ isUnapproved && <PendingApprovalBadge note={ note } showManageLink={ false } /> }
+			<div
+				className={ clsx( 'wpnc__subject', {
+					// Marks the open note's row for the active highlight (see CSS).
+					'is-active': ( note as Note & { isActive?: boolean } ).isActive,
+				} ) }
+				/* eslint-disable-next-line react/no-danger */
+				dangerouslySetInnerHTML={ { __html: subject } }
+			/>
+		</>
 	);
 };
 
@@ -113,14 +138,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div
-					className={ clsx( 'wpnc__subject', {
-						// Marks the open note's row for the active highlight (see CSS).
-						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-					} ) }
-					/* eslint-disable-next-line react/no-danger */
-					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-				/>
+				<NoteSubject note={ item } subject={ field.getValue( { item } ) } />
 			),
 		},
 		{

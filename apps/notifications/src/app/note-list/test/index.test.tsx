@@ -225,9 +225,9 @@ describe( 'NoteList loading state', () => {
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
 	} );
 
-	// A comment awaiting approval marks its row's icon badge, which the CSS paints
-	// gold — the same signal the old panel gave.
-	it( 'marks the icon badge of a comment awaiting approval', () => {
+	// A comment awaiting approval gets the gold icon badge and the pending strip,
+	// the same signals the old panel gave.
+	it( 'flags a comment awaiting approval in its row', () => {
 		const store = initStore();
 		const pending = {
 			...makeNote( 800, 'Pending comment' ),
@@ -246,6 +246,12 @@ describe( 'NoteList loading state', () => {
 			screen.getByText( label ).closest( '[role="article"]' )?.querySelector( '.wpnc__gridicon' );
 		expect( badge( 'Pending comment' ) ).toHaveClass( 'is-unapproved' );
 		expect( badge( 'Approved comment' ) ).not.toHaveClass( 'is-unapproved' );
+
+		const pendingRow = screen.getByText( 'Pending comment' ).closest( '[role="article"]' );
+		expect( pendingRow ).toHaveTextContent( 'Pending Approval' );
+		expect(
+			screen.getByText( 'Approved comment' ).closest( '[role="article"]' )
+		).not.toHaveTextContent( 'Pending Approval' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {
