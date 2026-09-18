@@ -49,7 +49,10 @@ const SORTABLE_FIELDS = [
 ];
 
 export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
-	const status = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
+	// A filter from the URL arrives as `isAny` with a single-entry array, while
+	// one chosen in the UI is a bare string.
+	const rawStatus = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
+	const status = Array.isArray( rawStatus ) ? rawStatus[ 0 ] : rawStatus;
 	const sortField = SORTABLE_FIELDS.find( ( field ) => field === view.sort?.field );
 
 	return {
