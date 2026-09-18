@@ -142,7 +142,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 									/* translators: %d is the number of paid-for sites waiting to be set up. */
 									_n( '%d site available', '%d sites available', availablePendingSites.length ),
 									availablePendingSites.length
-							  )
+								)
 							: '' }
 					</Text>
 				</MenuItem>

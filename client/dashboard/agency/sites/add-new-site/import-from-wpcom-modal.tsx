@@ -3,7 +3,6 @@ import {
 	agencyManagedSiteIdsQuery,
 	agencySitesImportMutation,
 	agencySitesQueryKey,
-	allSitesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -19,6 +18,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useAppContext } from '../../../app/context';
 import { useIntlLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
@@ -30,6 +30,9 @@ import { getSiteDisplayUrl } from '../../../utils/site-url';
 import { getImportableSites } from './lib';
 import type { Site } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
+
+// How long the backend takes to make a freshly imported site queryable.
+const SITE_INDEXING_DELAY_MS = 1000;
 
 const DEFAULT_VIEW: View = {
 	type: 'pickerTable',
@@ -98,6 +101,7 @@ interface ImportFromWPCOMModalProps {
  */
 export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { queries } = useAppContext();
 	const queryClient = useQueryClient();
 	const locale = useIntlLocale();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -109,11 +113,13 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	} = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
+	// Classic listed every site the user has, hidden ones included, so this asks
+	// for all visibilities rather than the default 'visible'.
 	const {
 		data: sites,
 		isLoading: isLoadingSites,
 		isError: isSitesError,
-	} = useQuery( allSitesQuery() );
+	} = useQuery( queries.sitesQuery( { site_visibility: 'all', include_a8c_owned: false } ) );
 	const {
 		data: managedSiteIds,
 		isLoading: isLoadingManagedSites,
@@ -191,9 +197,18 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 
 		importSites.mutate( blogIds, {
 			onSuccess: ( { imported, failed } ) => {
-				// A4A runs on Calypso's QueryClient, so the refresh belongs here
-				// rather than in the mutation factory.
-				queryClient.invalidateQueries( { queryKey: agencySitesQueryKey } );
+				// Invalidating here rather than in the mutation factory keeps this
+				// timing hack out of the shared data layer, and reads whichever
+				// QueryClient is in context.
+				const refreshSites = () =>
+					queryClient.invalidateQueries( { queryKey: agencySitesQueryKey } );
+
+				// The site isn't queryable the instant the import returns, so the
+				// first refresh can come back without it. Classic waited a second
+				// before refreshing at all; refreshing twice keeps the modal quick
+				// and still settles on the real list.
+				refreshSites();
+				setTimeout( refreshSites, SITE_INDEXING_DELAY_MS );
 
 				const notice = getImportNotice( imported.length, failed.length );
 				const createNotice = failed.length ? createErrorNotice : createSuccessNotice;
@@ -201,8 +216,8 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 
 				onClose();
 			},
-			onError: () =>
-				createErrorNotice( __( 'Something went wrong. Please try again.' ), {
+			onError: ( error ) =>
+				createErrorNotice( error.message || __( 'Failed to add sites. Please try again.' ), {
 					type: 'snackbar',
 				} ),
 		} );
@@ -294,7 +309,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 									/* translators: %d is the number of sites selected. */
 									_n( 'Add %d site', 'Add %d sites', selection.length ),
 									selection.length
-							  )
+								)
 							: __( 'Add sites' ) }
 					</Button>
 				</ButtonStack>
