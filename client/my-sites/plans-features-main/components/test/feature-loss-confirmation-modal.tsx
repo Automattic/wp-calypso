@@ -31,7 +31,7 @@ describe( 'FeatureLossConfirmationModal', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );
 
 		expect( screen.getByText( /Donations/ ) ).toBeInTheDocument();
-		expect( screen.getByText( /Payment buttons/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Payment button/ ) ).toBeInTheDocument();
 	} );
 
 	/**
