@@ -35,13 +35,21 @@ describe( 'toFetchOptions', () => {
 	} );
 
 	it( 'ignores a status filter value it does not know', () => {
-		for ( const value of [ 'constructor', 'active', [ 'revoked' ] ] ) {
+		for ( const value of [ 'constructor', 'active', [ 'constructor' ], [] ] ) {
 			const view: View = {
 				...DEFAULT_VIEW,
 				filters: [ { field: 'status', operator: 'is', value } ],
 			};
 			expect( toFetchOptions( view ).filter ).toBe( JetpackLicenseFilter.NotRevoked );
 		}
+	} );
+
+	it( 'reads a status filter that arrived from the URL as an array', () => {
+		const view: View = {
+			...DEFAULT_VIEW,
+			filters: [ { field: 'status', operator: 'isAny', value: [ 'unassigned' ] } ],
+		};
+		expect( toFetchOptions( view ).filter ).toBe( JetpackLicenseFilter.Detached );
 	} );
 
 	it( 'falls back to sorting by issue date for fields the endpoint cannot sort', () => {
