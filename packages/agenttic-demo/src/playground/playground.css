@@ -169,18 +169,11 @@
    tooltip and popover lives in the host) */
 
 .demo-credits-ring {
-	all: unset;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: 32px;
 	height: 32px;
-	border-radius: 50%;
-	cursor: pointer;
-
-	&:hover {
-		background: color-mix( in srgb, var( --color-foreground ) 8%, transparent );
-	}
 }
 
 /* Credits tool panel content */

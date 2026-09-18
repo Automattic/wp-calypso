@@ -133,7 +133,9 @@ export interface AgentUIProps {
 	triggerTitle?: string; // Title shown next to the icon in the 'minimized' state (defaults to 'Ask AI')
 	placeholder?: string | string[];
 	notice?: NoticeConfig;
-	beforeSubmit?: ( message: string, source: SubmitSource ) => boolean; // Return false to keep the message in the input instead of sending it
+	// Return false to block a submit. Typed text stays in the input; a blocked
+	// auto-submit suggestion stays in the list and never overwrites the input.
+	beforeSubmit?: ( message: string, source: SubmitSource ) => boolean;
 	leadingActions?: React.ReactNode; // Pinned to the start of the composer's actions row
 	trailingActions?: TrailingActions; // Grouped with the submit button; see TrailingActions
 	onOpen?: () => void;
