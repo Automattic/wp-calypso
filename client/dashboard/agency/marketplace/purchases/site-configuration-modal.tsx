@@ -83,7 +83,7 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 							{ alternative }
 						</Button>
 					),
-			  } )
+				} )
 			: '';
 	}
 
