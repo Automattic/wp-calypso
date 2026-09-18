@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -31,6 +31,7 @@ import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
 import type {
 	AssertConditionResult,
@@ -219,6 +220,23 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 
 						return navigate( paths.siteCreationPath( { from, platform, ssh: 'true', host } ) );
+					}
+
+					if (
+						action !== 'skip_platform_identification' &&
+						canUseStaticSiteImport( platform, from )
+					) {
+						return exitFlow(
+							addQueryArgs(
+								{
+									from,
+									platform,
+									siteId: hasDestinationSite ? siteId : undefined,
+									siteSlug: hasDestinationSite ? siteSlug : undefined,
+								},
+								`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`
+							)
+						);
 					}
 
 					if ( hasDestinationSite ) {

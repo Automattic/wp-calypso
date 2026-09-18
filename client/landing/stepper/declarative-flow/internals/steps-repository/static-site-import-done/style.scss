@@ -1,0 +1,67 @@
+.step-container-v2--static-site-import-done {
+	.static-site-import-done__frame {
+		overflow: hidden;
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 8px;
+	}
+
+	.static-site-import-done__frame-bar {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		padding: 12px 20px;
+		border-block-end: 1px solid var( --color-border-subtle );
+		background-color: var( --studio-gray-0 );
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.static-site-import-done__frame-url {
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.static-site-import-done__frame-body {
+		position: relative;
+		min-height: 240px;
+		padding: 24px;
+		background: linear-gradient( 180deg, var( --studio-gray-0 ), var( --color-surface ) );
+	}
+
+	.static-site-import-done__frame-site {
+		color: var( --color-text );
+		font-size: 0.875rem;
+	}
+
+	.static-site-import-done__frame-button {
+		position: absolute;
+		inset-inline-end: 16px;
+		inset-block-end: 16px;
+	}
+
+	.static-site-import-done__feedback {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+		justify-content: space-between;
+		padding-block-start: 24px;
+		border-block-start: 1px solid var( --color-border-subtle );
+	}
+
+	.static-site-import-done__feedback-question {
+		font-weight: 500;
+	}
+
+	.static-site-import-done__report {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+}

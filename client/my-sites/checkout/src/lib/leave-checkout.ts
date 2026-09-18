@@ -1,4 +1,8 @@
-import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import {
+	isTailoredSignupFlow,
+	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
+} from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
@@ -71,7 +75,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		! [ SITE_MIGRATION_FLOW ].includes( signupFlowName )
+		! [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
