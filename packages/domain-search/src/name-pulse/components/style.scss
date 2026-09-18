@@ -52,7 +52,10 @@
 		align-items: center;
 		gap: 0.5rem;
 		min-width: 0;
-		flex: 1 1 auto;
+		// A zero basis (rather than `auto`) keeps this item's full-content width
+		// out of the row's wrap calculation, so it shrinks/truncates in place
+		// instead of pushing `&__status` onto a second line.
+		flex: 1 1 0%;
 
 		.domain-suggestion-badge {
 			flex-shrink: 0;
@@ -69,6 +72,12 @@
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+
+		// The Text component sets `text-wrap: pretty` on itself, which lets it
+		// wrap independently of this container's `white-space: nowrap`.
+		.components-text {
+			text-wrap: nowrap;
+		}
 	}
 
 	&__status {
