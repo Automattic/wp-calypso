@@ -7,7 +7,7 @@ import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
@@ -31,6 +31,7 @@ import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+	PURCHASE_NOTICE_QUERY_KEY,
 	appendNoticeQueryParam,
 } from '../purchase-notice-constants';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -387,7 +388,10 @@ function useRedirectOnTransactionSuccess( {
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
 		const isDashboardRedirect = isDashboardUrl( finalUrl );
 		if ( isSuccessRedirect && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
-			finalUrl = addQueryArgs( finalUrl, {
+			// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
+			// the generic one a saved signup destination carries to My Home.
+			const url = isRenewal ? removeQueryArgs( finalUrl, PURCHASE_NOTICE_QUERY_KEY ) : finalUrl;
+			finalUrl = addQueryArgs( url, {
 				...( isDashboardRedirect && { flash: CHECKOUT_SUCCESS_FLASH_ID } ),
 				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
 			} );

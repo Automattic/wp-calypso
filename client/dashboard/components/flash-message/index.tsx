@@ -7,6 +7,8 @@ interface FlashMessageProps {
 	id: string;
 	message: string;
 	type?: 'success' | 'error';
+	/** Other query params that belong to this message, cleared along with it. */
+	paramsToRemove?: string[];
 }
 
 const PARAM_NAME = 'flash';
@@ -20,7 +22,12 @@ export function reloadWithFlashMessage( messageId: string ) {
  * Allows a snackbar to be shown on page load based on a query parameter.
  * Clears the query parameter when done.
  */
-export default function FlashMessage( { id, message, type = 'success' }: FlashMessageProps ) {
+export default function FlashMessage( {
+	id,
+	message,
+	type = 'success',
+	paramsToRemove = [],
+}: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
@@ -39,6 +46,7 @@ export default function FlashMessage( { id, message, type = 'success' }: FlashMe
 			}
 
 			params.delete( PARAM_NAME );
+			paramsToRemove.forEach( ( name ) => params.delete( name ) );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );
