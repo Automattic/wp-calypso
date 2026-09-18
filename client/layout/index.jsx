@@ -66,6 +66,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
+import useShouldLoadAgentsManager from './use-should-load-agents-manager';
 import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
@@ -296,7 +297,7 @@ class Layout extends Component {
 		return null;
 	}
 
-	renderMasterbar( loadHelpCenterIcon, loadAgentsManager ) {
+	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -342,7 +343,6 @@ class Layout extends Component {
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
 					loadHelpCenterIcon={ loadHelpCenterIcon }
-					loadAgentsManager={ loadAgentsManager }
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
@@ -408,10 +408,6 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
-		const loadAgentsManager =
-			[ 'home', 'help' ].includes( this.props.sectionName ) ||
-			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute );
-
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
@@ -422,10 +418,9 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<AgentsManagerLoader
-					sectionName={ this.props.sectionName }
-					loadAgentsManager={ loadAgentsManager }
-				/>
+				{ this.props.loadAgentsManager && (
+					<AgentsManagerLoader sectionName={ this.props.sectionName } />
+				) }
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
@@ -454,9 +449,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
-				<div className="layout__header-section">
-					{ this.renderMasterbar( loadHelpCenter, loadAgentsManager ) }
-				</div>
+				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (
@@ -512,8 +505,8 @@ class Layout extends Component {
 	}
 }
 
-export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
+const ConnectedLayout = connect(
+	( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
@@ -584,7 +577,7 @@ export default withCurrentRoute(
 					isGlobalSidebarVisible,
 					sidebarIsHidden,
 					sectionName,
-				} );
+			  } );
 		const needsColorScheme =
 			! isE2ETest() &&
 			! sidebarIsHidden &&
@@ -659,5 +652,13 @@ export default withCurrentRoute(
 			isGravatarDomain,
 			hasUniversalHeader,
 		};
-	} )( Layout )
-);
+	}
+)( Layout );
+
+function LayoutWithAgentsManagerLoading( props ) {
+	const loadAgentsManager = useShouldLoadAgentsManager( props.currentSection?.name );
+
+	return <ConnectedLayout { ...props } loadAgentsManager={ loadAgentsManager } />;
+}
+
+export default withCurrentRoute( LayoutWithAgentsManagerLoading );

@@ -80,7 +80,6 @@ interface Eligibility {
 	is_chat_restricted: boolean;
 	wapuu_assistant_enabled: boolean;
 	user_field_flow_name: string;
-	unified_agent_enabled?: boolean;
 }
 
 export interface HelpCenterCTAData {
@@ -110,7 +109,13 @@ export interface SupportActivity {
 }
 
 type ResultType =
-	'DISABLED' | 'LOADING' | 'OWNED_BY_USER' | 'WPORG' | 'UNKNOWN' | 'NOT_OWNED_BY_USER' | 'UNKNOWN';
+	| 'DISABLED'
+	| 'LOADING'
+	| 'OWNED_BY_USER'
+	| 'WPORG'
+	| 'UNKNOWN'
+	| 'NOT_OWNED_BY_USER'
+	| 'UNKNOWN';
 
 export type AnalysisReport = {
 	result: ResultType;

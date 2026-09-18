@@ -227,18 +227,18 @@ describe( 'AgentSetup', () => {
 
 		window.history.replaceState( {}, '', '/?canvas=edit' );
 		mockIsStoreReady = true;
-		mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat', isLoading: false };
+		mockAgentConfig = { agentId: 'host-agent', isLoading: false };
 		rerender( manager( 111 ) );
 
 		await waitFor( () =>
 			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					agentId: 'wpcom-workflow-unified_chat',
+					agentId: 'host-agent',
 					sessionId: 'url-session',
 				} )
 			)
 		);
-		expect( getSessionId( 'wpcom-workflow-unified_chat', '111' ) ).toBe( 'url-session' );
+		expect( getSessionId( 'host-agent', '111' ) ).toBe( 'url-session' );
 		expect( window.location.search ).toBe( '?canvas=edit' );
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
 	} );

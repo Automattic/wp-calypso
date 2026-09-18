@@ -26,7 +26,6 @@ let mockAgentsManagerState: {
 	isSplitScreen?: boolean;
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
-let mockShouldUseUnifiedAgent = false;
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -82,9 +81,6 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 } );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
-} ) );
-jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
-	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
@@ -228,7 +224,6 @@ describe( 'AgentDock', () => {
 		takeActionOrigin( 'open' );
 		takeActionOrigin( 'send' );
 		mockHasAdminBar = false;
-		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
 		mockCanDock = null;
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -320,7 +315,6 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the support guides view when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -336,23 +330,11 @@ describe( 'AgentDock', () => {
 		// mid-session entry-button change (Site Editor navigation) can't
 		// redirect a user off the list.
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
 
 		renderAgentDock( '/support-guides' );
 
 		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'hides the support guides list without the unified agent', () => {
-		// Unknown paths fall back to `/chat`.
-		useWpAdminAgent();
-		mockHasAdminBar = true;
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
@@ -386,7 +368,6 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -483,7 +464,7 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
-	it( 'dual-fires the unified and Big Sky events for New chat', () => {
+	it( 'dual-fires the Agents Manager and Big Sky events for New chat', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );

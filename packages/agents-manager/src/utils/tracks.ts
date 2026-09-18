@@ -4,10 +4,10 @@
  * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working, and mirrors the chat and feedback events
- *   as `calypso_agents_manager_<same suffix>` with the unified props so analysis
+ *   as `calypso_agents_manager_<same suffix>` with the shared props so analysis
  *   can move off the Big Sky family before it is retired. Removable once that
  *   parity is dropped.
- * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
+ * - `recordAgentsManagerTracksEvent` uses the property schema shared across the new
  *   AI products.
  *
  * Callers pass event names in full — the template-literal parameter types enforce
@@ -30,7 +30,7 @@ export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
 export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
 
 /**
- * Big Sky events also recorded under the unified name. The rest stay Big
+ * Big Sky events also recorded under the Agents Manager name. The rest stay Big
  * Sky-only until the Tracks plan for the family (AM-47) decides whether each
  * one moves or retires; each mirrored name needs registering.
  */
@@ -52,7 +52,8 @@ type EditorSelectStore =
 	| undefined;
 
 type CoreSelectStore =
-	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
+	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
+	| undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -122,7 +123,8 @@ function getBigSkyPageProps(): TracksProps {
 		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
-			{ page_on_front?: number } | undefined;
+			| { page_on_front?: number }
+			| undefined;
 
 		return {
 			...surfaceProps,
@@ -137,7 +139,7 @@ function getBigSkyPageProps(): TracksProps {
 /**
  * Records an event under Big Sky's exact name and props so the existing Big Sky
  * dashboards keep working, then mirrors chat and feedback events under the
- * unified name.
+ * Agents Manager name.
  */
 export function recordBigSkyTracksEvent(
 	eventName: BigSkyEventName,
@@ -215,7 +217,7 @@ function hasEditorStore(): boolean {
  * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
  * absence means a Calypso-rendered page.
  */
-function getUnifiedSurface(): string {
+function getAgentsManagerSurface(): string {
 	if ( isReaderChatHost() ) {
 		return 'reader-chat';
 	}
@@ -226,10 +228,10 @@ function getUnifiedSurface(): string {
 	if ( ! inlineData ) {
 		return 'calypso';
 	}
-	return inlineData.sectionName?.startsWith( 'ciab' ) ? 'ciab' : 'wp-admin';
+	return 'wp-admin';
 }
 
-function getUnifiedBaseProps(): TracksProps {
+function getAgentsManagerBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
@@ -239,7 +241,7 @@ function getUnifiedBaseProps(): TracksProps {
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		agent_manager_version: getAgentManagerVersion(),
 		provider_ids: getProviderIds(),
-		surface: getUnifiedSurface(),
+		surface: getAgentsManagerSurface(),
 		...( typeof window !== 'undefined' && window.pagenow ? { screen: window.pagenow } : {} ),
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
@@ -249,13 +251,13 @@ function getUnifiedBaseProps(): TracksProps {
 }
 
 /**
- * Records an Agents Manager event using the shared unified property names.
+ * Records an Agents Manager event using the shared property names.
  */
 export function recordAgentsManagerTracksEvent(
 	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
-	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
+	recordTracksEvent( eventName, { ...getAgentsManagerBaseProps(), ...props } );
 }
 
 /**

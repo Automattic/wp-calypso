@@ -22,8 +22,7 @@ declare const __i18n_text_domain__: string;
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
-			useUnifiedExperience?: boolean;
+			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			agentId?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
@@ -34,7 +33,7 @@ declare const agentsManagerData:
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
-			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			/** The host section the chat runs in, e.g. `wp-admin` or `gutenberg`. */
 			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
@@ -106,7 +105,7 @@ interface AgentsManagerExternalContextCard {
 	 * Publisher-owned card body. AM renders this inside the card frame
 	 * and only adds the dismiss button and actions row.
 	 */
-	body: import( 'react' ).ReactNode;
+	body: import('react').ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
 }
@@ -124,7 +123,7 @@ interface AgentsManagerActions {
 	 * props. `eventName` includes the family prefix.
 	 */
 	recordBigSkyTracksEvent?: (
-		eventName: import( './utils/tracks' ).BigSkyEventName,
+		eventName: import('./utils/tracks').BigSkyEventName,
 		props?: Record< string, unknown >
 	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
@@ -139,7 +138,7 @@ interface AgentsManagerActions {
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
-	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
+	chatNavigate: import('react-router-dom').NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
 	getCurrentRoute: () => string;

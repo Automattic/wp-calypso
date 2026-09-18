@@ -17,7 +17,7 @@ interface Props {
 
 /**
  * Help Center "?" dropdown for the block editor header, shown to the left of the AI chat button.
- * Replaces the legacy Help Center button in the unified experience (which dequeues it). Items
+ * Renders the Help Center menu alongside the editor AI chat entry point. Items
  * and behavior mirror the `/wp-admin` admin-bar Help menu. The `PinnedItems/core` fill is inert
  * outside the editor.
  */

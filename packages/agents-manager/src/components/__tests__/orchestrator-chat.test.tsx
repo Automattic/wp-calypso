@@ -104,7 +104,8 @@ function mockGetCheckpointIdForMessage( message: {
 
 const mockCheckpointActions = () => {
 	let getCheckpointActionState:
-		( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' ) | undefined;
+		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
+		| undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
@@ -113,7 +114,7 @@ const mockCheckpointActions = () => {
 
 		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
 			? 'hidden'
-			: ( getCheckpointActionState?.( checkpointId ) ?? 'enabled' );
+			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
@@ -321,8 +322,7 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => {
-	const { useEffect, useReducer, useRef } =
-		jest.requireActual< typeof import( 'react' ) >( 'react' );
+	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -436,7 +436,7 @@ jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
 jest.mock( '../agent-chat', () => {
-	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
+	const { useEffect, useRef } = jest.requireActual< typeof import('react') >( 'react' );
 	// Report the empty-view chips the way Agenttic does: nothing behind the loading
 	// skeleton, once per distinct id set, truncated when a test simulates the
 	// floating limit.
@@ -3518,7 +3518,7 @@ describe( 'OrchestratorChat', () => {
 								onClick: onRegenerate,
 								disabled: ! options.isLatestAgentMessage,
 							},
-						]
+					  ]
 					: []
 		);
 		mockUseAgentChat.mockReturnValue(
@@ -3859,22 +3859,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 			expect( addMessage ).not.toHaveBeenCalled();
-		} );
-
-		it( 'aborts for unified chat as well as the orchestrator', () => {
-			// The canvas abilities are migrating into AM, which serves them on
-			// unified-chat surfaces. Gating on the orchestrator alone would leave this
-			// switched off exactly where those abilities are heading.
-			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
-			const { abortCurrentRequest } = mockUseAgentChat();
-
-			render( chat() );
-			bindToOpenCanvas();
-
-			openPage( CONTACT_PAGE );
-
-			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'never aborts on a surface with no editor', () => {
