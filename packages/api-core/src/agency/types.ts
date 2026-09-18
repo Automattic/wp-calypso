@@ -158,6 +158,7 @@ export interface Agency {
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
 		capabilities: string[];
+		role?: 'a4a_administrator' | 'a4a_manager';
 	};
 	third_party?: null | {
 		pressable?: null | {
