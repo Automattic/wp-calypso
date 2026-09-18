@@ -9,7 +9,9 @@ const ENABLED_SECTIONS: string[] = [ 'home' ];
 export default function useShouldLoadAgentsManager( sectionName?: string | null ): boolean {
 	return useMemo(
 		() =>
-			config( 'env_id' ) === 'stage' && !! sectionName && ENABLED_SECTIONS.includes( sectionName ),
+			config.isEnabled( 'calypso/agents-manager' ) &&
+			!! sectionName &&
+			ENABLED_SECTIONS.includes( sectionName ),
 		[ sectionName ]
 	);
 }
