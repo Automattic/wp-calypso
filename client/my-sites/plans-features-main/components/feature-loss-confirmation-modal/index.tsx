@@ -12,11 +12,11 @@ function useFeatureTitle(): ( slug: string ) => TranslateResult {
 
 	const titles: Record< string, TranslateResult > = {
 		donations: translate( 'Donations block' ),
-		'payment-buttons': translate( 'Payment buttons' ), //?
-		'paypal-payment-buttons': translate( 'PayPal payment buttons' ), //?
+		'payment-buttons': translate( 'Payment button block' ),
+		'paypal-payment-buttons': translate( 'PayPal Payment button block' ),
 		'field-file': translate( 'File upload field' ),
 		'multistep-form': translate( 'Multi-step forms' ),
-		'form-integrations': translate( 'Form integrations' ), //?
+		'form-integrations': translate( 'Conditional logic' ),
 	};
 
 	return ( slug: string ) => titles[ slug ] ?? slug;
