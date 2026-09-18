@@ -13,7 +13,10 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
+import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
@@ -50,11 +53,27 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	// Pressable's introductory price only applies to agencies without a plan,
+	// so the cart checks for one itself and matches the Hosting page everywhere.
+	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
+	const applyPressableIntroductoryPrice =
+		isReferralMode ||
+		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
+			'agency';
 
 	const lines = items
 		.map( ( item ) => {
 			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			return product ? { item, product, priceInfo: getProductPriceInfo( product, term ) } : null;
+			if ( ! product ) {
+				return null;
+			}
+			const applyIntroductoryPrice =
+				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
+			return {
+				item,
+				product,
+				priceInfo: getProductPriceInfo( product, term, { applyIntroductoryPrice } ),
+			};
 		} )
 		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
 

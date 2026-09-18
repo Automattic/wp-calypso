@@ -25,6 +25,7 @@ import {
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
@@ -221,7 +222,10 @@ export const marketplaceHostingRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+			] );
 		}
 	},
 } );
@@ -307,7 +311,11 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The cart prices Pressable plans by whether the agency owns one.
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>

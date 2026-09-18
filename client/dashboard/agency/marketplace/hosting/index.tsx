@@ -20,9 +20,13 @@ import CartMenu from '../products/cart-menu';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
+import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableSection from './pressable-section';
 import type { HostingSection } from '../paths';
+import type { AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -53,10 +57,9 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the per-host sections land.
-const PLACEHOLDERS: Record< HostingSection, string > = {
+// Placeholder content until the WordPress.com and VIP sections land.
+const PLACEHOLDERS: Record< Exclude< HostingSection, 'pressable' >, string > = {
 	wpcom: 'WordPress.com hosting content will appear here.',
-	pressable: 'Pressable hosting content will appear here.',
 	vip: 'WordPress VIP hosting content will appear here.',
 };
 
@@ -76,9 +79,37 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const agencyApproved = isAgencyApproved( agency );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
+	const {
+		plan: agencyPressablePlan,
+		products: pressableProducts,
+		ownership: pressableOwnership,
+		isReady: isPressableReady,
+	} = useAgencyPressablePlan();
+	const effectivePressableOwnership = getEffectivePressableOwnership(
+		pressableOwnership,
+		agencyPressablePlan,
+		isReferralMode
+	);
 
-	const { items: cartItems, removeItem, clearCart } = useShoppingCart();
+	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
+
+	// A hosting plan replaces the plan of the same family already in the cart.
+	const addToCart = ( plan: AgencyProduct, quantity: number ) => {
+		const sameFamilySlugs = cartItems
+			.map( ( item ) => allProducts?.find( ( product ) => product.slug === item.slug ) )
+			.filter( ( product ): product is AgencyProduct => !! product )
+			.filter( ( product ) => product.family_slug === plan.family_slug )
+			.map( ( product ) => product.slug );
+		swapItems( sameFamilySlugs, { slug: plan.slug, quantity } );
+		setIsCartOpen( true );
+		recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+			quantity,
+			item: plan.family_slug,
+			purchase_mode: marketplaceType,
+			term_pricing: termPricing,
+		} );
+	};
 
 	const handleSectionChange = ( tab: string | null | undefined ) => {
 		if ( ! tab || tab === section ) {
@@ -88,9 +119,24 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		navigate( { to: getMarketplaceHostingSectionRoute( tab as HostingSection ) } );
 	};
 
-	const renderSection = ( brand: HostingSection ) => (
-		<Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>
-	);
+	const renderSection = ( brand: HostingSection ) => {
+		if ( brand !== 'pressable' ) {
+			return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+		}
+		if ( ! isPressableReady ) {
+			return null;
+		}
+		return (
+			<PressableSection
+				products={ pressableProducts }
+				existingPlan={ agencyPressablePlan }
+				ownership={ effectivePressableOwnership }
+				term={ termPricing }
+				isReferralMode={ isReferralMode }
+				onAddToCart={ addToCart }
+			/>
+		);
+	};
 
 	return (
 		<PageLayout
