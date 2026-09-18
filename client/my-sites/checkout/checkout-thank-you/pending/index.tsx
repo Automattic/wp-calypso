@@ -32,7 +32,6 @@ import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
 	PURCHASE_NOTICE_QUERY_KEY,
-	appendNoticeQueryParam,
 } from '../purchase-notice-constants';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
@@ -408,7 +407,9 @@ function useRedirectOnTransactionSuccess( {
 		// arrival - we cannot dispatch from here because the global notice renderer
 		// has no concept of "show only on the next page".
 		let finalUrl = isPlanAndDomainPurchase
-			? appendNoticeQueryParam( redirectInstructions.url, PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE )
+			? addQueryArgs( redirectInstructions.url, {
+					[ PURCHASE_NOTICE_QUERY_KEY ]: PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+			  } )
 			: redirectInstructions.url;
 
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
