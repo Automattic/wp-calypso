@@ -589,19 +589,6 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
-// `/earn` – summary of the agency's earning programs (default Earn screen)
-export const earnOverviewRoute = createRoute( {
-	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
-	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
-	getParentRoute: () => agencyRoute,
-	path: 'earn',
-} ).lazy( () =>
-	import( '../../agency/earn/overview' ).then( ( d ) =>
-		createLazyRoute( 'earn-overview' )( { component: d.default } )
-	)
-);
-
 // `/earn/referrals` – referral commissions
 export const earnReferralsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
@@ -716,6 +703,40 @@ export const earnPayoutSettingsRoute = createRoute( {
 		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
 	)
 );
+
+// The Earn sections in sidebar order; `/earn` redirects to the first one allowed.
+export const earnSectionRoutes = [
+	earnReferralsRoute,
+	earnWooPaymentsRoute,
+	earnMigrationsRoute,
+	earnPayoutSettingsRoute,
+];
+
+// `/earn` – no screen of its own; sends the user to the first Earn section their
+// capabilities allow, so stale `/earn` links keep working.
+export const earnRoute = createRoute( {
+	// Any-of: reaching the redirect only requires access to one of the sections.
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
+	getParentRoute: () => agencyRoute,
+	path: 'earn',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		const destination = earnSectionRoutes.find( ( route ) =>
+			isRouteAllowedByCapabilities( route, capabilities )
+		);
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
@@ -1884,7 +1905,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
-		earnOverviewRoute,
+		earnRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,
