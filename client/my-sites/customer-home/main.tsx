@@ -2,10 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import {
-	CHECKOUT_SUCCESS_PLAN_PARAM,
-	getPlanActivatedMessage,
-} from 'calypso/dashboard/app/checkout-success-flash';
+import { getPlanActivatedMessage } from 'calypso/dashboard/app/checkout-success-flash';
+import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash-constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
@@ -18,9 +16,9 @@ import HomeContent from './components/home-content';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
- * Checkout tags redirects to this page with `?notice=<value>` and, for a new
- * plan, `?purchased_plan=<slug>` so it can show a post-purchase success toast
- * on arrival. Read the params, dispatch the matching notice once, then strip
+ * Checkout tags redirects to this page with `?notice=<value>`, plus
+ * `?purchased_plan=<slug>` to name a new plan, so it can show a post-purchase
+ * success toast on arrival. Read the params, dispatch the matching notice once, then strip
  * them from the URL so a refresh doesn't re-fire.
  */
 function usePostPurchaseNotice(): void {
@@ -30,11 +28,9 @@ function usePostPurchaseNotice(): void {
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
 		const notice = params.get( PURCHASE_NOTICE_QUERY_KEY );
-		const planSlug = params.get( CHECKOUT_SUCCESS_PLAN_PARAM );
 		if (
 			notice !== PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE &&
-			notice !== PURCHASE_SUCCESS_NOTICE_QUERY_VALUE &&
-			! planSlug
+			notice !== PURCHASE_SUCCESS_NOTICE_QUERY_VALUE
 		) {
 			return;
 		}
@@ -42,7 +38,8 @@ function usePostPurchaseNotice(): void {
 		const message =
 			notice === PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
 				? translate( 'Your plan and domain are ready!' )
-				: getPlanActivatedMessage( planSlug ) ?? translate( 'Your purchase was completed.' );
+				: getPlanActivatedMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) ) ??
+				  translate( 'Your purchase was completed.' );
 		reduxDispatch(
 			successNotice( message, {
 				id: 'post-purchase-success',

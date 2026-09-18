@@ -115,6 +115,12 @@ describe( 'CustomerHome post-purchase notice', () => {
 		expect( noticeTexts() ).toEqual( [ 'Your plan and domain are ready!' ] );
 	} );
 
+	it( 'ignores a plan param that checkout did not pair with a notice', () => {
+		const noticeTexts = arriveFromCheckout( 'purchased_plan=personal-bundle' );
+
+		expect( noticeTexts() ).toEqual( [] );
+	} );
+
 	it( 'confirms a purchase that included no plan', () => {
 		const noticeTexts = arriveFromCheckout( 'notice=purchase-success' );
 
