@@ -34,9 +34,15 @@ const InvoicePlaceholderCard = memo( function InvoicePlaceholderCard() {
 			<div>
 				<TextPlaceholder />
 			</div>
+
+			<div>
+				<TextPlaceholder />
+			</div>
 		</InvoicesListRow>
 	);
 } );
+
+InvoicePlaceholderCard.displayName = 'InvoicePlaceholderCard';
 
 export default function InvoicesList() {
 	const translate = useTranslate();
@@ -96,6 +102,7 @@ export default function InvoicesList() {
 		<div className="invoices-list">
 			<InvoicesListRow header>
 				<div>{ translate( 'Number' ) }</div>
+				<div>{ translate( 'Issued' ) }</div>
 				<div>{ translate( 'Due Date' ) }</div>
 				<div>{ translate( 'Status' ) }</div>
 				<div>{ translate( 'Total' ) }</div>
