@@ -24,10 +24,7 @@ interface DevToolSectionProps {
 		href: string;
 		onClick: () => void;
 	};
-	image: {
-		src: string;
-		alt: string;
-	};
+	image: string;
 }
 
 export default function DevToolSection( {
@@ -89,8 +86,8 @@ export default function DevToolSection( {
 						</VStack>
 						<HStack alignment="center">
 							<img
-								src={ image.src }
-								alt={ image.alt }
+								src={ image }
+								alt=""
 								width={ 400 }
 								height={ 300 }
 								style={ { maxWidth: '100%', height: 'auto' } }

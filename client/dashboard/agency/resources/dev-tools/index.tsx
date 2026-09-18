@@ -41,7 +41,7 @@ export default function DevTools() {
 					href: 'https://developer.wordpress.com/studio/',
 					onClick: () => recordTracksEvent( 'calypso_a4a_dev_tools_download_studio_click' ),
 				} }
-				image={ { src: studioImage, alt: __( 'WordPress Studio' ) } }
+				image={ studioImage }
 			/>
 
 			<DevToolSection
@@ -63,7 +63,7 @@ export default function DevTools() {
 					href: 'https://developer.wordpress.com/docs/developer-tools/github-deployments/',
 					onClick: () => recordTracksEvent( 'calypso_a4a_dev_tools_connect_repository_click' ),
 				} }
-				image={ { src: githubImage, alt: __( 'GitHub Deployments' ) } }
+				image={ githubImage }
 			/>
 
 			<DevToolSection
@@ -85,7 +85,7 @@ export default function DevTools() {
 					href: 'https://playground.wordpress.net/',
 					onClick: () => recordTracksEvent( 'calypso_a4a_dev_tools_wp_playground_click' ),
 				} }
-				image={ { src: playgroundImage, alt: __( 'WordPress Playground' ) } }
+				image={ playgroundImage }
 			/>
 
 			<DevToolSection
@@ -107,7 +107,7 @@ export default function DevTools() {
 					href: 'https://jurassic.ninja/',
 					onClick: () => recordTracksEvent( 'calypso_a4a_dev_tools_jurassic_ninja_click' ),
 				} }
-				image={ { src: jurassicImage, alt: __( 'Jurassic.ninja' ) } }
+				image={ jurassicImage }
 			/>
 		</PageLayout>
 	);
