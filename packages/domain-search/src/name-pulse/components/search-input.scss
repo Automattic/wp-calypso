@@ -1,0 +1,21 @@
+// Match the results page width so the bar does not jump on the first query.
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
+}
+
+.name-pulse-search-input {
+	.domain-search-controls__input .components-input-control__container {
+		// SearchControl puts the magnifier in the prefix; the design wants it at the end.
+		.components-input-control__prefix {
+			order: 1;
+
+			> div {
+				padding-inline: 0.25rem 1rem;
+			}
+		}
+
+		.components-input-control__suffix > div {
+			padding-inline-end: 0;
+		}
+	}
+}
