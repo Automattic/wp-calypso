@@ -63,6 +63,6 @@ describe( 'PureUniversalNavbarFooter', () => {
 			footerClass
 		);
 		expect( document.querySelector( '.lp-footer-section' ) ).toHaveClass( sectionClass );
-		expect( document.querySelector( '.lp-footer-section footer' ) ).toHaveClass( sectionClass );
+		expect( document.querySelector( '.lp-footer-section.lp-section' ) ).toHaveClass( sectionClass );
 	} );
 } );

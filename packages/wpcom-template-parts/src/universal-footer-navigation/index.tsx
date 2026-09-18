@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
+import appDownloadQrDark from './assets/app-download-qr-dark.svg';
+import appDownloadQrLight from './assets/app-download-qr-light.svg';
 import {
 	AppStoreIconSvg,
 	ChevronSvg,
@@ -63,6 +65,8 @@ export const languageEntries: [ string, string ][] = [
 	[ 'en', 'English' ],
 ];
 
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /get/ routes are not part of this destination.
+const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/get/?campaign=qrcode-apps';
 const APP_STORE_URL =
 	'https://apps.apple.com/app/apple-store/id1565481562?ct=wp.com--footer&mt=8&pt=299112';
 const GOOGLE_PLAY_URL =
@@ -87,10 +91,12 @@ export const getFooterColorway = (
 const FooterStack = ( {
 	column,
 	open,
+	showLegalSlot = true,
 	additionalCompanyLinks,
 }: {
 	column: FooterColumn;
 	open: boolean;
+	showLegalSlot?: boolean;
 	additionalCompanyLinks?: React.ReactNode;
 } ) => (
 	<div className="lp-grid__column-span-4 lp-grid__column-span-1@L">
@@ -120,11 +126,209 @@ const FooterStack = ( {
 				{ /* The twin's do-not-sell script targets this exact class; the empty
 				     li must render even when the slot is unfilled so the anchor point
 				     exists. Fill it via the additionalCompanyLinks prop. */ }
-				{ column.id === 'company' && (
+				{ column.id === 'company' && showLegalSlot && (
 					<li className="lp-block x-nav-footer--ccpa-dnsd">{ additionalCompanyLinks }</li>
 				) }
 			</ul>
 		</details>
+	</div>
+);
+
+const Footer2026Bottom = ( {
+	colorway,
+	isLoggedIn,
+	locale,
+	currentRoute,
+	localizeUrl = pureLocalizeUrl,
+	automatticBranding,
+	additionalCompanyLinks,
+	showCaliforniaNotice,
+}: PureFooterProps ) => (
+	<div
+		className={
+			isLoggedIn ? 'lp-footer-bottom lp-footer-bottom--without-language' : 'lp-footer-bottom'
+		}
+	>
+		<div className="lp-footer-bottom__language" hidden={ isLoggedIn }>
+			{ ! isLoggedIn && (
+				<div
+					className="lp-language-picker"
+					role="combobox"
+					aria-expanded="false"
+					aria-controls="language-picker-select"
+					aria-label={ __( 'Change language', __i18n_text_domain__ ) }
+				>
+					<select
+						id="language-picker-select"
+						className="lp-language-picker__content"
+						title={ __( 'Change Language', __i18n_text_domain__ ) }
+						onChange={ defaultOnLanguageChange }
+						defaultValue={ locale }
+					>
+						{ languageEntries.map( ( [ code, label ] ) => (
+							<option key={ code } lang={ code } value={ code }>
+								{ label }
+							</option>
+						) ) }
+					</select>
+					<LanguageGlobeSvg />
+					<ChevronSvg className="lp-language-picker__chevron" />
+					{ languageEntries.map( ( [ code, label ] ) => {
+						const href =
+							code === 'en'
+								? `https://wordpress.com/${ currentRoute ?? '' }`
+								: `https://wordpress.com/${ code }/${ currentRoute ?? '' }`;
+						return (
+							<a
+								key={ code }
+								className="lp-language-picker__link lp-hidden"
+								lang={ code }
+								href={ href }
+								data-href={ href }
+								tabIndex={ -1 }
+							>
+								{ label }
+							</a>
+						);
+					} ) }
+				</div>
+			) }
+		</div>
+		<div className="lp-footer-bottom__downloads">
+			<a className="lp-footer-app-download" href={ APP_DOWNLOAD_URL }>
+				<img
+					src={ colorway === 'dark' ? appDownloadQrDark : appDownloadQrLight }
+					width="34"
+					height="34"
+					alt=""
+					loading="lazy"
+				/>
+				<span>{ __( 'Download our app', __i18n_text_domain__ ) }</span>
+			</a>
+			<ul className="lp-footer-apps" aria-label={ __( 'Mobile Apps', __i18n_text_domain__ ) }>
+				<li>
+					<div className="lp-block lp-mobile-badge lp-mobile-badge--type-apple-app-store">
+						<a className="lp-mobile-badge__link" href={ APP_STORE_URL }>
+							<span className="lp-mobile-badge__content">
+								<AppStoreIconSvg />
+								<span className="lp-mobile-badge__content__label">
+									<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
+										{ __( 'Download on the', __i18n_text_domain__ ) }
+									</span>{ ' ' }
+									<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
+										App Store
+									</span>
+								</span>
+							</span>
+						</a>
+					</div>
+				</li>
+				<li>
+					<div className="lp-block lp-mobile-badge lp-mobile-badge--type-google-play">
+						<a className="lp-mobile-badge__link" href={ GOOGLE_PLAY_URL }>
+							<span className="lp-mobile-badge__content">
+								<GooglePlayIconSvg />
+								<span className="lp-mobile-badge__content__label">
+									<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
+										{ __( 'Get it on', __i18n_text_domain__ ) }
+									</span>{ ' ' }
+									<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
+										Google Play
+									</span>
+								</span>
+							</span>
+						</a>
+					</div>
+				</li>
+			</ul>
+			<ul className="lp-footer-social-media">
+				<li className="lp-block x-nav-footer--facebook ">
+					<a
+						className="lp-display-block lp-color"
+						href="https://www.facebook.com/WordPresscom/"
+						title="WordPress.com on Facebook"
+					>
+						<span className="lp-hidden">
+							{ __( 'WordPress.com on Facebook', __i18n_text_domain__ ) }
+						</span>
+						<FacebookIconSvg redesigned />
+					</a>
+				</li>
+				<li className="lp-block x-nav-footer--twitter">
+					<a
+						className="lp-display-block lp-color"
+						href="https://x.com/wordpressdotcom"
+						title="WordPress.com on X (Twitter)"
+					>
+						<span className="lp-hidden">
+							{ __( 'WordPress.com on X (Twitter)', __i18n_text_domain__ ) }
+						</span>
+						<XIconSvg redesigned />
+					</a>
+				</li>
+				<li className="lp-block x-nav-footer--instagram">
+					<a
+						className="lp-display-block lp-color"
+						href="https://www.instagram.com/wordpressdotcom/"
+						title="WordPress.com on Instagram"
+					>
+						<span className="lp-hidden">
+							{ __( 'WordPress.com on Instagram', __i18n_text_domain__ ) }
+						</span>
+						<InstagramIconSvg redesigned />
+					</a>
+				</li>
+				<li className="lp-block x-nav-footer--youtube">
+					<a
+						className="lp-display-block lp-color"
+						href="https://www.youtube.com/WordPressdotcom"
+						title="WordPress.com on YouTube"
+					>
+						<span className="lp-hidden">
+							{ __( 'WordPress.com on YouTube', __i18n_text_domain__ ) }
+						</span>
+						<YoutubeIconSvg redesigned />
+					</a>
+				</li>
+			</ul>
+		</div>
+		<ul className="lp-footer-legal" aria-label={ __( 'Legal links', __i18n_text_domain__ ) }>
+			<li className="x-nav-footer--tos">
+				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) }>
+					{ __( 'Terms of service', __i18n_text_domain__ ) }
+				</a>
+			</li>
+			<li className="x-nav-footer--privacy">
+				<a href={ localizeUrl( 'https://automattic.com/privacy/' ) }>
+					{ __( 'Privacy policy', __i18n_text_domain__ ) }
+				</a>
+			</li>
+			{ showCaliforniaNotice && (
+				<li className="x-nav-footer--ccpa-privacy">
+					<a
+						href={ localizeUrl(
+							'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
+						) }
+					>
+						{ __( 'Privacy notice for California users', __i18n_text_domain__ ) }
+					</a>
+				</li>
+			) }
+			{ additionalCompanyLinks && (
+				<li className="x-nav-footer--ccpa-dnsd">{ additionalCompanyLinks }</li>
+			) }
+		</ul>
+		<div className="lp-footer-bottom__copyright">
+			© Automattic Inc. { new Date().getUTCFullYear() }
+		</div>
+		<div className="lp-footer-bottom__branding">
+			<a
+				className="lp-flex lp-flex--inline lp-link-invisible lp-no-wrap"
+				href="https://automattic.com"
+			>
+				{ automatticBranding }
+			</a>
+		</div>
 	</div>
 );
 
@@ -137,13 +341,25 @@ export const PureUniversalNavbarFooter = ( {
 		: false,
 	additionalCompanyLinks = null,
 	localizeUrl = pureLocalizeUrl,
-	automatticBranding = <AutomatticBrand />,
+	colorway,
+	automatticBranding = <AutomatticBrand redesigned={ Boolean( colorway ) } />,
 	locale,
 	currentRoute,
 	collapseStacks = false,
-	colorway,
+	showCaliforniaNotice = false,
 }: PureFooterProps ) => {
-	const columns = getFooterColumns( { localizeUrl, locale, isLoggedIn } );
+	const columns = getFooterColumns( {
+		localizeUrl,
+		locale,
+		isLoggedIn,
+	} );
+	if ( colorway ) {
+		columns.forEach( ( column ) => {
+			column.links = column.links.filter(
+				( link ) => ! [ 'tos', 'privacy', 'ccpa-privacy' ].includes( link.slug )
+			);
+		} );
+	}
 	const sectionColorwayClass =
 		colorway === 'white'
 			? 'is-style-text-gray-100-background-white'
@@ -173,7 +389,7 @@ export const PureUniversalNavbarFooter = ( {
 					<div className="lp-wrapper lp-wrapper--layout-center-minus lp-wrapper--layout-wide@L">
 						<div className="lp-padding-bottom-5 lp-padding-bottom-6@L">
 							<h2 className="lp-hidden">WordPress.com</h2>
-							<FooterLogoSvg />
+							<FooterLogoSvg redesigned={ Boolean( colorway ) } />
 						</div>
 						<div className="lp-grid lp-grid--type-footer lp-grid--gutter-y-4">
 							{ columns.map( ( column ) => (
@@ -181,180 +397,196 @@ export const PureUniversalNavbarFooter = ( {
 									key={ column.id }
 									column={ column }
 									open={ ! collapseStacks }
+									showLegalSlot={ ! colorway }
 									additionalCompanyLinks={ additionalCompanyLinks }
 								/>
 							) ) }
 						</div>
-						<div className="lp-grid lp-grid--type-footer lp-padding-top-7">
-							<div className="lp-grid__column-span-4 lp-grid__column-span-1@L lp-grid__order-1@L lp-pb-36 lp-pb-0@L">
-								{ ! isLoggedIn && (
-									<div
-										className="lp-language-picker"
-										role="combobox"
-										aria-expanded="false"
-										aria-controls="language-picker-select"
-										aria-label={ __( 'Change language', __i18n_text_domain__ ) }
-									>
-										<select
-											id="language-picker-select"
-											className="lp-language-picker__content"
-											title={ __( 'Change Language', __i18n_text_domain__ ) }
-											onChange={ defaultOnLanguageChange }
-											defaultValue={ locale }
+						{ colorway ? (
+							<Footer2026Bottom
+								colorway={ colorway }
+								isLoggedIn={ isLoggedIn }
+								locale={ locale }
+								currentRoute={ currentRoute }
+								localizeUrl={ localizeUrl }
+								automatticBranding={ automatticBranding }
+								additionalCompanyLinks={ additionalCompanyLinks }
+								showCaliforniaNotice={ showCaliforniaNotice }
+							/>
+						) : (
+							<div className="lp-grid lp-grid--type-footer lp-padding-top-7">
+								<div className="lp-grid__column-span-4 lp-grid__column-span-1@L lp-grid__order-1@L lp-pb-36 lp-pb-0@L">
+									{ ! isLoggedIn && (
+										<div
+											className="lp-language-picker"
+											role="combobox"
+											aria-expanded="false"
+											aria-controls="language-picker-select"
+											aria-label={ __( 'Change language', __i18n_text_domain__ ) }
 										>
-											{ languageEntries.map( ( [ code, label ] ) => (
-												<option key={ code } lang={ code } value={ code }>
-													{ label }
-												</option>
-											) ) }
-										</select>
-										<LanguageGlobeSvg />
-										<ChevronSvg className="lp-language-picker__chevron" />
-										{ languageEntries.map( ( [ code, label ] ) => {
-											const href =
-												code === 'en'
-													? `https://wordpress.com/${ currentRoute ?? '' }`
-													: `https://wordpress.com/${ code }/${ currentRoute ?? '' }`;
-											return (
+											<select
+												id="language-picker-select"
+												className="lp-language-picker__content"
+												title={ __( 'Change Language', __i18n_text_domain__ ) }
+												onChange={ defaultOnLanguageChange }
+												defaultValue={ locale }
+											>
+												{ languageEntries.map( ( [ code, label ] ) => (
+													<option key={ code } lang={ code } value={ code }>
+														{ label }
+													</option>
+												) ) }
+											</select>
+											<LanguageGlobeSvg />
+											<ChevronSvg className="lp-language-picker__chevron" />
+											{ languageEntries.map( ( [ code, label ] ) => {
+												const href =
+													code === 'en'
+														? `https://wordpress.com/${ currentRoute ?? '' }`
+														: `https://wordpress.com/${ code }/${ currentRoute ?? '' }`;
+												return (
+													<a
+														key={ code }
+														className="lp-language-picker__link lp-hidden"
+														lang={ code }
+														href={ href }
+														data-href={ href }
+														tabIndex={ -1 }
+													>
+														{ label }
+													</a>
+												);
+											} ) }
+										</div>
+									) }
+								</div>
+								<div className="lp-grid__column-span-4 lp-grid__column-span-4@L">
+									<div className="lp-flex@L lp-flex--align-center@L has-text-align-center">
+										<h3 className="lp-hidden">{ __( 'Mobile Apps', __i18n_text_domain__ ) }</h3>
+										<ul className="lp-flex lp-flex--justify-center lp-flex--wrap lp-flex--gap-1 has-normal-font-size">
+											<li>
+												<div className="lp-block lp-mobile-badge lp-mobile-badge--type-apple-app-store">
+													<a className="lp-mobile-badge__link" href={ APP_STORE_URL }>
+														<span className="lp-mobile-badge__content">
+															<AppStoreIconSvg />
+															<span className="lp-mobile-badge__content__label">
+																<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
+																	{ __( 'Download on the', __i18n_text_domain__ ) }
+																</span>{ ' ' }
+																<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
+																	App Store
+																</span>
+															</span>
+														</span>
+													</a>
+												</div>
+											</li>
+											<li>
+												<div className="lp-block lp-mobile-badge lp-mobile-badge--type-google-play">
+													<a className="lp-mobile-badge__link" href={ GOOGLE_PLAY_URL }>
+														<span className="lp-mobile-badge__content">
+															<GooglePlayIconSvg />
+															<span className="lp-mobile-badge__content__label">
+																<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
+																	{ __( 'Get it on', __i18n_text_domain__ ) }
+																</span>{ ' ' }
+																<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
+																	Google Play
+																</span>
+															</span>
+														</span>
+													</a>
+												</div>
+											</li>
+										</ul>
+										<h3 className="lp-hidden">{ __( 'Social Media', __i18n_text_domain__ ) }</h3>
+										<ul className="lp-footer-social-media lp-flex lp-flex--justify-center lp-pt-18 lp-pt-0@L lp-pl-24@L">
+											<li className="lp-block x-nav-footer--facebook lp-pl-8@L">
 												<a
-													key={ code }
-													className="lp-language-picker__link lp-hidden"
-													lang={ code }
-													href={ href }
-													data-href={ href }
-													tabIndex={ -1 }
+													className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
+													href="https://www.facebook.com/WordPresscom/"
+													title="WordPress.com on Facebook"
 												>
-													{ label }
+													<span className="lp-hidden">
+														{ __( 'WordPress.com on Facebook', __i18n_text_domain__ ) }
+													</span>
+													<FacebookIconSvg />
 												</a>
-											);
-										} ) }
+											</li>
+											<li className="lp-block x-nav-footer--twitter">
+												<a
+													className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
+													href="https://x.com/wordpressdotcom"
+													title="WordPress.com on X (Twitter)"
+												>
+													<span className="lp-hidden">
+														{ __( 'WordPress.com on X (Twitter)', __i18n_text_domain__ ) }
+													</span>
+													<XIconSvg />
+												</a>
+											</li>
+											<li className="lp-block x-nav-footer--instagram">
+												<a
+													className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
+													href="https://www.instagram.com/wordpressdotcom/"
+													title="WordPress.com on Instagram"
+												>
+													<span className="lp-hidden">
+														{ __( 'WordPress.com on Instagram', __i18n_text_domain__ ) }
+													</span>
+													<InstagramIconSvg />
+												</a>
+											</li>
+											<li className="lp-block x-nav-footer--youtube">
+												<a
+													className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
+													href="https://www.youtube.com/WordPressdotcom"
+													title="WordPress.com on YouTube"
+												>
+													<span className="lp-hidden">
+														{ __( 'WordPress.com on YouTube', __i18n_text_domain__ ) }
+													</span>
+													<YoutubeIconSvg />
+												</a>
+											</li>
+										</ul>
 									</div>
-								) }
-							</div>
-							<div className="lp-grid__column-span-4 lp-grid__column-span-4@L">
-								<div className="lp-flex@L lp-flex--align-center@L has-text-align-center">
-									<h3 className="lp-hidden">{ __( 'Mobile Apps', __i18n_text_domain__ ) }</h3>
-									<ul className="lp-flex lp-flex--justify-center lp-flex--wrap lp-flex--gap-1 has-normal-font-size">
-										<li>
-											<div className="lp-block lp-mobile-badge lp-mobile-badge--type-apple-app-store">
-												<a className="lp-mobile-badge__link" href={ APP_STORE_URL }>
-													<span className="lp-mobile-badge__content">
-														<AppStoreIconSvg />
-														<span className="lp-mobile-badge__content__label">
-															<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
-																{ __( 'Download on the', __i18n_text_domain__ ) }
-															</span>{ ' ' }
-															<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
-																App Store
-															</span>
-														</span>
-													</span>
-												</a>
-											</div>
-										</li>
-										<li>
-											<div className="lp-block lp-mobile-badge lp-mobile-badge--type-google-play">
-												<a className="lp-mobile-badge__link" href={ GOOGLE_PLAY_URL }>
-													<span className="lp-mobile-badge__content">
-														<GooglePlayIconSvg />
-														<span className="lp-mobile-badge__content__label">
-															<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
-																{ __( 'Get it on', __i18n_text_domain__ ) }
-															</span>{ ' ' }
-															<span className="lp-mobile-badge__line lp-mobile-badge__line--is-bottom">
-																Google Play
-															</span>
-														</span>
-													</span>
-												</a>
-											</div>
-										</li>
-									</ul>
-									<h3 className="lp-hidden">{ __( 'Social Media', __i18n_text_domain__ ) }</h3>
-									<ul className="lp-footer-social-media lp-flex lp-flex--justify-center lp-pt-18 lp-pt-0@L lp-pl-24@L">
-										<li className="lp-block x-nav-footer--facebook lp-pl-8@L">
-											<a
-												className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
-												href="https://www.facebook.com/WordPresscom/"
-												title="WordPress.com on Facebook"
-											>
-												<span className="lp-hidden">
-													{ __( 'WordPress.com on Facebook', __i18n_text_domain__ ) }
-												</span>
-												<FacebookIconSvg />
-											</a>
-										</li>
-										<li className="lp-block x-nav-footer--twitter">
-											<a
-												className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
-												href="https://x.com/wordpressdotcom"
-												title="WordPress.com on X (Twitter)"
-											>
-												<span className="lp-hidden">
-													{ __( 'WordPress.com on X (Twitter)', __i18n_text_domain__ ) }
-												</span>
-												<XIconSvg />
-											</a>
-										</li>
-										<li className="lp-block x-nav-footer--instagram">
-											<a
-												className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
-												href="https://www.instagram.com/wordpressdotcom/"
-												title="WordPress.com on Instagram"
-											>
-												<span className="lp-hidden">
-													{ __( 'WordPress.com on Instagram', __i18n_text_domain__ ) }
-												</span>
-												<InstagramIconSvg />
-											</a>
-										</li>
-										<li className="lp-block x-nav-footer--youtube">
-											<a
-												className="lp-display-block lp-pt-12 lp-pr-8 lp-pb-12 lp-pl-8 lp-color"
-												href="https://www.youtube.com/WordPressdotcom"
-												title="WordPress.com on YouTube"
-											>
-												<span className="lp-hidden">
-													{ __( 'WordPress.com on YouTube', __i18n_text_domain__ ) }
-												</span>
-												<YoutubeIconSvg />
-											</a>
-										</li>
-									</ul>
 								</div>
 							</div>
+						) }
+					</div>
+					{ ! colorway && (
+						<div className="lp-wrapper lp-wrapper--layout-full lp-padding-top-5">
+							<footer
+								className={ `lp-section ${ automatticBarColorwayClass } lp-padding-top-4 lp-padding-bottom-4` }
+							>
+								<div className="lp-section__content has-tiny-font-size has-text-align-center">
+									<h2 className="lp-hidden">Automattic</h2>
+									<div className="lp-wrapper lp-wrapper--layout-wide">
+										<div className="lp-grid lp-grid--type-footer lp-grid--align-baseline lp-grid--gutter-y-3">
+											<div className="lp-grid__column-span-4 lp-grid__column-span-2@M lp-text-left@M color-blue-50">
+												<a
+													className="lp-flex lp-flex--inline lp-link-invisible lp-no-wrap"
+													href="https://automattic.com"
+												>
+													{ automatticBranding }
+												</a>
+											</div>
+											<div className="lp-grid__column-span-4 lp-grid__column-span-2@M lp-text-right@M lp-color-primary">
+												<a
+													className="lp-link-invisible lp-link-chevron-external"
+													href="https://automattic.com/work-with-us/"
+													title={ __( 'Remote Jobs', __i18n_text_domain__ ) }
+												>
+													{ __( 'Work With Us', __i18n_text_domain__ ) }
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</footer>
 						</div>
-					</div>
-					<div className="lp-wrapper lp-wrapper--layout-full lp-padding-top-5">
-						<footer
-							className={ `lp-section ${ automatticBarColorwayClass } lp-padding-top-4 lp-padding-bottom-4` }
-						>
-							<div className="lp-section__content has-tiny-font-size has-text-align-center">
-								<h2 className="lp-hidden">Automattic</h2>
-								<div className="lp-wrapper lp-wrapper--layout-wide">
-									<div className="lp-grid lp-grid--type-footer lp-grid--align-baseline lp-grid--gutter-y-3">
-										<div className="lp-grid__column-span-4 lp-grid__column-span-2@M lp-text-left@M color-blue-50">
-											<a
-												className="lp-flex lp-flex--inline lp-link-invisible lp-no-wrap"
-												href="https://automattic.com"
-											>
-												{ automatticBranding }
-											</a>
-										</div>
-										<div className="lp-grid__column-span-4 lp-grid__column-span-2@M lp-text-right@M lp-color-primary">
-											<a
-												className="lp-link-invisible lp-link-chevron-external"
-												href="https://automattic.com/work-with-us/"
-												title={ __( 'Remote Jobs', __i18n_text_domain__ ) }
-											>
-												{ __( 'Work With Us', __i18n_text_domain__ ) }
-											</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</footer>
-					</div>
+					) }
 				</div>
 			</section>
 		</div>
@@ -365,6 +597,7 @@ const UniversalNavbarFooter = ( {
 	isLoggedIn = false,
 	currentRoute,
 	additionalCompanyLinks,
+	showCaliforniaNotice,
 	colorway,
 }: FooterProps ) => {
 	const localizeUrl = useLocalizeUrl();
@@ -393,8 +626,8 @@ const UniversalNavbarFooter = ( {
 	}, [] );
 
 	useIsomorphicEffect( () => {
-		setAutomatticBranding( getAutomatticBrandingNoun( translate ) );
-	}, [ translate ] );
+		setAutomatticBranding( getAutomatticBrandingNoun( translate, Boolean( colorway ) ) );
+	}, [ translate, colorway ] );
 
 	return (
 		<PureUniversalNavbarFooter
@@ -402,6 +635,7 @@ const UniversalNavbarFooter = ( {
 			isLoggedIn={ isLoggedIn }
 			currentRoute={ pathNameWithoutLocale }
 			additionalCompanyLinks={ additionalCompanyLinks }
+			showCaliforniaNotice={ showCaliforniaNotice }
 			colorway={ colorway }
 			localizeUrl={ localizeUrl }
 			automatticBranding={ automatticBranding }
