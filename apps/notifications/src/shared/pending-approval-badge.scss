@@ -7,15 +7,25 @@
 	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
-// New notifications app (Dashboard + redesigned standalone widget), scoped to
-// the `.wpnc-app` root where `.wpnc__note` is a sibling of `.wpnc__body`.
-.wpnc-app .wpnc__pending-approval-section {
+// In the new app the bar runs the height of the note, so nothing inside repeats
+// the warning color: the strip drops its tint and the comment its quote bar.
+.wpnc-app .wpnc__note.wpnc__comment-unapproved {
 	box-shadow: inset 3px 0 0 var(--color-warning);
 
-	// Match the badge text's lighter warning foreground in dark mode.
-	@include ui-mixins.when-dark-theme {
-		box-shadow: inset 3px 0 0 var(--dashboard__foreground-color-warning, #f5c15c);
+	.wpnc-pending-approval-badge {
+		background-color: transparent;
 	}
+
+	.wpnc__body .wpnc__body-content {
+		box-shadow: none;
+	}
+}
+
+// The new app runs the strip smaller than the legacy panel, in the list and the
+// note alike.
+.wpnc-app .wpnc-pending-approval-badge {
+	gap: 6px;
+	font-size: 12px;
 }
 
 .wpnc-pending-approval-badge {
@@ -23,12 +33,22 @@
 	align-items: center;
 	gap: 8px;
 	padding: 12px;
-	background-color: color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent);
+	background-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
 	font-size: 13px;
 	color: var(--color-text);
 
+	// The WPDS warning surface has no dark counterpart. Tint the dark surface the
+	// way the Dashboard's own warning notices do.
+	@include ui-mixins.when-dark-theme {
+		background-color: color-mix(
+			in srgb,
+			var(--dashboard__background-color-warning, #d47608) 8%,
+			var(--dashboard-surface__background-color, #2a2a2a)
+		);
+	}
+
 	svg {
-		fill: var(--color-warning, #f0b849);
+		fill: var(--wpds-color-foreground-content-warning-weak, #926300);
 		flex-shrink: 0;
 
 		@include ui-mixins.when-dark-theme {
@@ -38,10 +58,10 @@
 
 	.wpnc-pending-approval-badge__text {
 		font-weight: 500;
-		color: var(--color-warning-80, #614200);
+		color: var(--wpds-color-foreground-content-warning, #2e1900);
 
-		// The `-80` warning shade is too dark to read in dark mode; use the
-		// lighter warning foreground instead.
+		// The WPDS warning foreground is near-black, unreadable on the dark
+		// surface; use the lighter warning foreground instead.
 		@include ui-mixins.when-dark-theme {
 			color: var(--dashboard__foreground-color-warning, #f5c15c);
 		}
@@ -49,21 +69,12 @@
 
 	.wpnc-pending-approval-badge__link {
 		margin-inline-start: auto;
-		color: var(--color-warning-80, #614200);
-		text-decoration: none;
+		color: var(--wpds-color-foreground-content-warning, #2e1900);
 		font-weight: 500;
-		// Keep the link visibly lighter than the label while still meeting the
-		// WCAG AA 4.5:1 contrast minimum in both light and dark modes.
-		opacity: 0.8;
 		white-space: nowrap;
 
 		@include ui-mixins.when-dark-theme {
 			color: var(--dashboard__foreground-color-warning, #f5c15c);
-		}
-
-		&:hover {
-			text-decoration: underline;
-			opacity: 1;
 		}
 	}
 }

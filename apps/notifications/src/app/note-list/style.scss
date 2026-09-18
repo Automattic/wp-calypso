@@ -26,6 +26,20 @@
 		text-overflow: ellipsis;
 	}
 
+	// Pending-approval strip: a band across the top of the row. It renders inside
+	// the title cell, so it's positioned against the row wrapper instead.
+	div[role="article"]:has(.wpnc-pending-approval-badge) .dataviews-view-list__item-wrapper {
+		padding-top: 48px;
+	}
+
+	.wpnc-pending-approval-badge {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding: 8px 16px;
+	}
+
 	.wpnc__note-icon .wpnc__gridicon {
 		position: absolute;
 		bottom: -6px;
@@ -46,6 +60,12 @@
 		&.is-unread {
 			color: $white;
 			background: var(--wp-admin-theme-color);
+		}
+
+		&.is-unapproved {
+			color: $white;
+			background: var(--wpds-color-stroke-surface-warning-strong, #926300);
+			border-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
 		}
 	}
 }

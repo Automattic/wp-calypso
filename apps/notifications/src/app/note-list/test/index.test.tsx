@@ -20,6 +20,7 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	timestamp: `2026-06-0${ id % 10 }T00:00:00+00:00`,
 	title: `${ label } title`,
 	subject: [ { text: label, ranges: [], media: [] } ],
+	body: [],
 } );
 
 const renderTab = (
@@ -222,6 +223,29 @@ describe( 'NoteList loading state', () => {
 		} );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+	} );
+
+	// A comment awaiting approval is flagged in its row, the way the old panel did.
+	it( 'flags a comment awaiting approval in its row', () => {
+		const store = initStore();
+		const pending = {
+			...makeNote( 800, 'Pending comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': false } } ],
+		};
+		const approved = {
+			...makeNote( 801, 'Approved comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': true } } ],
+		};
+		store.dispatch( actions.notes.addNotes( [ pending, approved ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		const pendingRow = screen.getByText( 'Pending comment' ).closest( '[role="article"]' );
+		expect( pendingRow ).toHaveTextContent( 'Pending approval' );
+		expect(
+			screen.getByText( 'Approved comment' ).closest( '[role="article"]' )
+		).not.toHaveTextContent( 'Pending approval' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {

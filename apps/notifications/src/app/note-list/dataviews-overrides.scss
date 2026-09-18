@@ -116,6 +116,14 @@
 		}
 	}
 
+	// A pending comment keeps its warning color when open, so the bar matches its
+	// icon badge and strip rather than switching to the theme accent.
+	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc-pending-approval-badge) {
+		.dataviews-view-list__item-wrapper {
+			box-shadow: inset 3px 0 0 var(--color-warning);
+		}
+	}
+
 	@include ui-mixins.when-dark-theme {
 		@include dark-unread-note-list-item;
 
