@@ -151,6 +151,16 @@ const Omnibar = ( props ) => (
 	/>
 );
 
+function CalypsoAgentsManagerLoader( { sectionName } ) {
+	const shouldLoad = useShouldLoadAgentsManager( sectionName );
+
+	if ( ! shouldLoad ) {
+		return null;
+	}
+
+	return <AgentsManagerLoader sectionName={ sectionName } />;
+}
+
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
 function SidebarScrollSynchronizer() {
@@ -418,9 +428,7 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				{ this.props.loadAgentsManager && (
-					<AgentsManagerLoader sectionName={ this.props.sectionName } />
-				) }
+				<CalypsoAgentsManagerLoader sectionName={ this.props.sectionName } />
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
@@ -505,8 +513,8 @@ class Layout extends Component {
 	}
 }
 
-const ConnectedLayout = connect(
-	( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
+export default withCurrentRoute(
+	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
@@ -652,13 +660,5 @@ const ConnectedLayout = connect(
 			isGravatarDomain,
 			hasUniversalHeader,
 		};
-	}
-)( Layout );
-
-function LayoutWithAgentsManagerLoading( props ) {
-	const loadAgentsManager = useShouldLoadAgentsManager( props.currentSection?.name );
-
-	return <ConnectedLayout { ...props } loadAgentsManager={ loadAgentsManager } />;
-}
-
-export default withCurrentRoute( LayoutWithAgentsManagerLoading );
+	} )( Layout )
+);
