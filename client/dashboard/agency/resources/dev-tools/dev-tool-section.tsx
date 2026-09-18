@@ -57,7 +57,12 @@ export default function DevToolSection( {
 								<Text weight={ 500 }>{ tagline }</Text>
 							</VStack>
 							<Text size={ 15 }>{ description }</Text>
-							<VStack as="ul" spacing={ 1 } style={ { margin: 0, padding: 0, listStyle: 'none' } }>
+							<VStack
+								as="ul"
+								role="list"
+								spacing={ 1 }
+								style={ { margin: 0, padding: 0, listStyle: 'none' } }
+							>
 								{ features.map( ( feature ) => (
 									<HStack as="li" key={ feature } alignment="topLeft" spacing={ 1 }>
 										<Icon
@@ -87,7 +92,8 @@ export default function DevToolSection( {
 								src={ image.src }
 								alt={ image.alt }
 								width={ 400 }
-								style={ { maxWidth: '100%' } }
+								height={ 300 }
+								style={ { maxWidth: '100%', height: 'auto' } }
 							/>
 						</HStack>
 					</Grid>

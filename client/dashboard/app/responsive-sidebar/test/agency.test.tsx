@@ -180,4 +180,16 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'shows Developer tools when the user holds the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_learn' ] );
+
+		expect( screen.getByRole( 'link', { name: 'Developer tools' } ) ).toBeVisible();
+	} );
+
+	test( 'hides Developer tools when the user lacks the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: 'Developer tools' } ) ).not.toBeInTheDocument();
+	} );
 } );
