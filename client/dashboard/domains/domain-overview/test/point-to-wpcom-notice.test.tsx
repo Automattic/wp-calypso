@@ -3,6 +3,7 @@
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { domainQuery, queryClient } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -38,6 +39,16 @@ const renderWithSharedClient = ( domain: Domain ) => {
 	queryClient.setQueryData( domainQuery( domainName ).queryKey, domain );
 	return render( <PointToWpcomNotice domain={ domain } />, { queryClient } );
 };
+
+const interceptDomainDetails = () =>
+	nock( 'https://public-api.wordpress.com' ).get( `/rest/v1.2/domain-details/${ domainName }` );
+
+// Mirrors how DomainOverview feeds the notice: the domain comes from the query,
+// so a successful mutation is only visible once the refetch lands.
+function PointToWpcomNoticeFromQuery() {
+	const { data: domain } = useQuery( domainQuery( domainName ) );
+	return domain ? <PointToWpcomNotice domain={ domain } /> : null;
+}
 
 const openDialog = async ( user: ReturnType< typeof userEvent.setup > ) => {
 	await user.click( screen.getByRole( 'button', { name: BUTTON_LABEL } ) );
@@ -128,6 +139,37 @@ describe( '<PointToWpcomNotice>', () => {
 		expect( queryClient.getQueryState( domainQuery( domainName ).queryKey )?.isInvalidated ).toBe(
 			true
 		);
+	} );
+
+	test( 'keeps the button busy until the domain refetch lands, then hides the notice', async () => {
+		const user = userEvent.setup();
+		interceptDomainDetails().reply( 200, getMockedDomainData() );
+		const postScope = interceptPointToWpcom().reply( 200 );
+		const refetchScope = interceptDomainDetails()
+			.delay( 500 )
+			.reply( 200, getMockedDomainData( { points_to_wpcom: true } ) );
+
+		render( <PointToWpcomNoticeFromQuery />, { queryClient } );
+
+		const button = await screen.findByRole( 'button', { name: BUTTON_LABEL } );
+		await user.click( button );
+		const dialog = await screen.findByRole( 'dialog' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Continue' } ) );
+
+		await waitFor( () => {
+			expect( postScope.isDone() ).toBe( true );
+		} );
+		await waitFor( () => {
+			expect( queryClient.isFetching( { queryKey: domainQuery( domainName ).queryKey } ) ).toBe(
+				1
+			);
+		} );
+		expect( button ).toBeDisabled();
+
+		await waitFor( () => {
+			expect( screen.queryByText( NOTICE_TITLE ) ).not.toBeInTheDocument();
+		} );
+		expect( refetchScope.isDone() ).toBe( true );
 	} );
 
 	test( 'cancelling the dialog does not post the domain', async () => {
