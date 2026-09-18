@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .wpnc__keyboard-shortcuts-popover {
 	width: min-content;
 
@@ -14,6 +16,10 @@
 		min-height: 25px;
 		text-align: center;
 		margin-right: 5px;
+
+		@include ui-mixins.when-dark-theme {
+			border-color: var(--wp-components-color-gray-400, #424855);
+		}
 	}
 
 	.shortcut.letter {

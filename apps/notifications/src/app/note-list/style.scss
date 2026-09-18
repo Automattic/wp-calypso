@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
@@ -54,4 +55,8 @@
 	display: inline-block;
 	transform: translateY(2px);
 	fill: #8c8f94;
+
+	@include ui-mixins.when-dark-theme {
+		fill: var(--wp-components-color-gray-700, #9aa2b1);
+	}
 }
