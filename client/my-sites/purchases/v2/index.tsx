@@ -1,9 +1,12 @@
 import { getPersistQueryClientPromise, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
+import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
 import { useSelector } from 'calypso/state';
@@ -26,6 +29,7 @@ export default function DashboardBackportSitePurchases( {
 	siteId?: number | null;
 	siteSlug: string;
 } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( getCurrentUser );
@@ -67,12 +71,22 @@ export default function DashboardBackportSitePurchases( {
 			rootInstanceRef.current?.render(
 				<Layout
 					analyticsClient={ analyticsClient }
+					header={
+						section && {
+							title: titles.sectionTitle,
+							description: hasEnTranslation(
+								'View and manage your active plans, purchases, and payment methods.'
+							)
+								? __( 'View and manage your active plans, purchases, and payment methods.' )
+								: __( 'View and manage your active plans and purchases.' ),
+						}
+					}
 					path={ path }
 					subNav={ section && <PurchasesNavigation section={ section } siteSlug={ siteSlug } /> }
 				/>
 			);
 		} );
-	}, [ analyticsClient, user, path, section, siteSlug ] );
+	}, [ analyticsClient, user, path, section, siteSlug, hasEnTranslation ] );
 
 	// Use data already available in Redux to seed the React Query cache and avoid redundant data fetching.
 	useEffect( () => {

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider } from 'calypso/dashboard/app/auth';
 import { AppProvider } from 'calypso/dashboard/app/context';
+import { PageHeaderOverrideProvider } from 'calypso/dashboard/components/page-header';
 import { PageSubNavProvider } from 'calypso/dashboard/components/page-layout';
 import router, {
 	routerConfig,
@@ -36,21 +37,31 @@ function RouterProviderWithConfig( { path }: { path?: string } ) {
 
 function Layout( {
 	analyticsClient,
+	header,
 	path,
 	subNav,
 }: {
 	analyticsClient: AnalyticsClient;
+	header?: { title: React.ReactNode; description?: React.ReactNode };
 	path?: string;
 	subNav?: React.ReactNode;
 } ) {
+	const content = (
+		<PageSubNavProvider subNav={ subNav }>
+			<RouterProviderWithConfig path={ path } />
+		</PageSubNavProvider>
+	);
+
 	return (
 		<AppProvider config={ routerConfig }>
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
 					<AnalyticsProvider client={ analyticsClient }>
-						<PageSubNavProvider subNav={ subNav }>
-							<RouterProviderWithConfig path={ path } />
-						</PageSubNavProvider>
+						{ header ? (
+							<PageHeaderOverrideProvider { ...header }>{ content }</PageHeaderOverrideProvider>
+						) : (
+							content
+						) }
 					</AnalyticsProvider>
 				</AuthProvider>
 			</QueryClientProvider>
