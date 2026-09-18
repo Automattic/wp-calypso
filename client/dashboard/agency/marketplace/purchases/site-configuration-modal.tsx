@@ -1,5 +1,9 @@
 import { getDataCenterOptions } from '@automattic/api-core';
-import { pendingAgencySitesQuery, provisionAgencySiteMutation } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	pendingAgencySitesQuery,
+	provisionAgencySiteMutation,
+} from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -295,16 +299,16 @@ function NothingToConfigure( { closeModal }: { closeModal?: () => void } ) {
 }
 
 export default function SiteConfigurationModal( {
-	agencyId,
 	license,
 	closeModal,
 }: {
-	agencyId: number;
 	license: JetpackLicense;
 	closeModal?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: pendingSites, isLoading } = useQuery( {
+	const { data: agency, isLoading: isLoadingAgency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id ?? 0;
+	const { data: pendingSites, isLoading: isLoadingPendingSites } = useQuery( {
 		...pendingAgencySitesQuery( agencyId ),
 		enabled: agencyId > 0,
 	} );
@@ -313,7 +317,7 @@ export default function SiteConfigurationModal( {
 		recordTracksEvent( 'calypso_a4a_create_site_config' );
 	}, [ recordTracksEvent ] );
 
-	if ( isLoading ) {
+	if ( isLoadingAgency || isLoadingPendingSites ) {
 		return (
 			<VStack spacing={ 4 } alignment="center">
 				<Spinner />

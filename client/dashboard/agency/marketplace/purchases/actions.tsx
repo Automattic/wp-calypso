@@ -28,7 +28,6 @@ import type { JetpackLicense } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 export function getLicenseActions( {
-	agencyId,
 	canRevoke,
 	isAgencyOwner,
 	isProvisioning,
@@ -37,7 +36,6 @@ export function getLicenseActions( {
 	onOpenHosting,
 	recordTracksEvent,
 }: {
-	agencyId: number;
 	canRevoke: boolean;
 	// A site is already being created, and only one can be at a time.
 	isProvisioning: boolean;
@@ -150,11 +148,7 @@ export function getLicenseActions( {
 			modalHeader: __( 'Configure your new site' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
-				<SiteConfigurationModal
-					agencyId={ agencyId }
-					license={ items[ 0 ] }
-					closeModal={ closeModal }
-				/>
+				<SiteConfigurationModal license={ items[ 0 ] } closeModal={ closeModal } />
 			),
 		},
 		{
@@ -292,7 +286,6 @@ export function useLicenseActions( {
 	return useMemo(
 		() =>
 			getLicenseActions( {
-				agencyId,
 				canRevoke,
 				isAgencyOwner,
 				isProvisioning,
@@ -302,7 +295,6 @@ export function useLicenseActions( {
 				recordTracksEvent,
 			} ),
 		[
-			agencyId,
 			canRevoke,
 			isAgencyOwner,
 			isProvisioning,

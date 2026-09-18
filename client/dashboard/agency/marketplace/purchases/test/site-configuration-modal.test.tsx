@@ -34,6 +34,11 @@ const license: JetpackLicense = {
 };
 
 function mockPendingSites( sites: unknown[] ) {
+	nock( API )
+		.persist()
+		.get( '/wpcom/v2/agency' )
+		.query( true )
+		.reply( 200, [ { id: 1 } ] );
 	nock( API ).persist().get( '/wpcom/v2/agency/1/sites/pending' ).reply( 200, sites );
 }
 
@@ -50,7 +55,7 @@ function mockAddressSuggestion( address: string ) {
 }
 
 function renderModal( closeModal = jest.fn() ) {
-	render( <SiteConfigurationModal agencyId={ 1 } license={ license } closeModal={ closeModal } /> );
+	render( <SiteConfigurationModal license={ license } closeModal={ closeModal } /> );
 	return { closeModal, user: userEvent.setup() };
 }
 

@@ -100,7 +100,6 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const onOpenHosting = jest.fn();
 	const actions = getLicenseActions( {
-		agencyId: 1,
 		canRevoke,
 		isAgencyOwner,
 		isProvisioning: false,
