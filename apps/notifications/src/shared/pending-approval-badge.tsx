@@ -5,7 +5,6 @@ import { type JSX } from 'react';
 import './pending-approval-badge.scss';
 
 interface PendingApprovalBadgeProps {
-	// Built by the caller: only the host knows where Calypso is served from.
 	commentsUrl?: string | null;
 }
 
