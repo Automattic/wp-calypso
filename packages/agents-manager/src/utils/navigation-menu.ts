@@ -117,7 +117,7 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
 
 	const content = record.content;
 	const serialized =
-		typeof content === 'string' ? content : ( content as { raw?: string } )?.raw ?? '';
+		typeof content === 'string' ? content : ( ( content as { raw?: string } )?.raw ?? '' );
 
 	return serialized ? ( parse( serialized ) as NavigationBlock[] ) : [];
 };
@@ -138,6 +138,19 @@ export function getRenderedMenuIds(): MenuId[] {
 	];
 }
 
+const MENU_QUERY = { per_page: -1, status: [ 'publish', 'draft' ] };
+
+/**
+ * Starts the menu list request, so a menu edit that has to wait for another
+ * write first finds the list in flight or already in the store. A failure
+ * here is left to that later read, which reports it.
+ */
+export function prefetchMenus(): void {
+	coreResolve()
+		.getEntityRecords( 'postType', 'wp_navigation', MENU_QUERY )
+		.catch( () => {} );
+}
+
 /**
  * Every menu the site has, the rendered ones first, then the one site metadata
  * names, then the rest. A menu off screen still holds its links, so a page
@@ -145,10 +158,7 @@ export function getRenderedMenuIds(): MenuId[] {
  */
 async function getMenuIds(): Promise< MenuId[] > {
 	const records =
-		( await coreResolve().getEntityRecords( 'postType', 'wp_navigation', {
-			per_page: -1,
-			status: [ 'publish', 'draft' ],
-		} ) ) ?? [];
+		( await coreResolve().getEntityRecords( 'postType', 'wp_navigation', MENU_QUERY ) ) ?? [];
 	const ids = [ ...getRenderedMenuIds() ];
 
 	for ( const id of [ getSiteMetadata()?.navigationId, ...records.map( ( r ) => r.id ) ] ) {
