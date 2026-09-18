@@ -1,17 +1,12 @@
-import { getPlanNames } from '@automattic/api-core';
 import { useDispatch } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-} from './checkout-success-flash-constants';
-
-function getPlanName( slug: string | null ) {
-	const planNames: Record< string, string > = getPlanNames();
-	return slug && Object.hasOwn( planNames, slug ) ? planNames[ slug ] : undefined;
-}
+	getPlanActivatedMessage,
+} from './checkout-success-flash';
 
 /**
  * Rendered in the app shell (`app/root`) so the toast appears regardless of
@@ -25,7 +20,9 @@ export function CheckoutSuccessFlashMessage() {
 		if ( params.get( 'flash' ) !== CHECKOUT_SUCCESS_FLASH_ID ) {
 			return;
 		}
-		const planName = getPlanName( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) );
+		const message =
+			getPlanActivatedMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) ) ??
+			__( 'Your purchase was completed.' );
 
 		params.delete( 'flash' );
 		params.delete( CHECKOUT_SUCCESS_PLAN_PARAM );
@@ -36,16 +33,7 @@ export function CheckoutSuccessFlashMessage() {
 			window.location.pathname + ( search ? `?${ search }` : '' ) + window.location.hash
 		);
 
-		createSuccessNotice(
-			planName
-				? sprintf(
-						/* translators: %(planName)s is the name of the plan, e.g. "Business" */
-						__( "You're in! The %(planName)s Plan is now active." ),
-						{ planName }
-				  )
-				: __( 'Your purchase was completed.' ),
-			{ type: 'snackbar' }
-		);
+		createSuccessNotice( message, { type: 'snackbar' } );
 	}, [ createSuccessNotice ] );
 
 	return null;

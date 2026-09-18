@@ -15,7 +15,7 @@ import Main from 'calypso/components/main';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-} from 'calypso/dashboard/app/checkout-success-flash-constants';
+} from 'calypso/dashboard/app/checkout-success-flash';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -387,11 +387,14 @@ function useRedirectOnTransactionSuccess( {
 		// the classic notice mechanisms, so tag the URL with the Dashboard's `flash`
 		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
-		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
-			finalUrl = addQueryArgs( finalUrl, {
-				flash: CHECKOUT_SUCCESS_FLASH_ID,
-				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
-			} );
+		const isDashboardRedirect = isSuccessRedirect && isDashboardUrl( finalUrl );
+		if ( isDashboardRedirect ) {
+			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
+		}
+
+		// The Dashboard and classic My Home both name the new plan in their toast.
+		if ( purchasedPlanSlug && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
+			finalUrl = addQueryArgs( finalUrl, { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
