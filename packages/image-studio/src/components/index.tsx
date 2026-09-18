@@ -10,6 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
+import { type AiCreditsState, useAiCredits } from '../hooks/use-ai-credits';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
@@ -66,13 +67,16 @@ function ImageStudioAgentChat( {
 	attachmentId,
 	mode,
 	onChatSubmit,
+	aiCredits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
+	aiCredits: AiCreditsState;
 } ) {
 	const agentChatProps = useAgentChat( agentConfigProp );
+	const { notice: creditsNotice, isLimitReached, isLoading: isCheckingCredits } = aiCredits;
 	const { addNotice } = useDispatch( imageStudioStore );
 	// Storing the input value for detecting when it is cleared
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -125,7 +129,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		mode,
 		inputValue,
-		disabled: isVideoMode,
+		disabled: isVideoMode || isLimitReached || isCheckingCredits,
 	} );
 
 	const videoSuggestions = useVideoClipSuggestions( {
@@ -133,7 +137,7 @@ function ImageStudioAgentChat( {
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
 		inputValue,
-		disabled: ! isVideoMode,
+		disabled: ! isVideoMode || isLimitReached || isCheckingCredits,
 		style: selectedVideoStyle,
 	} );
 
@@ -211,13 +215,17 @@ function ImageStudioAgentChat( {
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
+				notice={ creditsNotice }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
-						{ suggestionsComponent }
+						{ ! isLimitReached && suggestionsComponent }
 						<AgentUI.Notice />
-						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
+						<AgentUI.Input
+							readOnly={ isLimitReached }
+							disabled={ isStopDisabled || isLimitReached ? true : undefined }
+						/>
 						<div className="image-studio-modal__input-toolbar">
 							{ mode === ImageStudioMode.Generate && isVideoMode && (
 								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
@@ -255,12 +263,14 @@ const ImageStudioAgentUIComponent = ( {
 	modalOpenKey,
 	onChatSubmit,
 	mode,
+	aiCredits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
+	aiCredits: AiCreditsState;
 } ) => {
 	return (
 		<ImageStudioAgentChat
@@ -269,6 +279,7 @@ const ImageStudioAgentUIComponent = ( {
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
+			aiCredits={ aiCredits }
 		/>
 	);
 };
@@ -332,7 +343,9 @@ const ImageStudioContent = withInstanceId(
 			};
 		}, [] );
 
-		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
+		const { addNotice, setIsSidebarOpen, setIsAiCreditsNoticeShown } = useDispatch(
+			imageStudioStore
+		) as ImageStudioActions;
 
 		const {
 			handleAnnotationDone,
@@ -481,6 +494,13 @@ const ImageStudioContent = withInstanceId(
 		const mode: ImageStudioMode = memoizedConfig?.attachmentId
 			? ImageStudioMode.Edit
 			: ImageStudioMode.Generate;
+
+		const aiCredits = useAiCredits( { mode, isProcessing: isAiProcessing } );
+
+		// Lets the canvas ability skip the backend's own low-credits banner while the chat shows ours.
+		useEffect( () => {
+			setIsAiCreditsNoticeShown( Boolean( aiCredits.notice ) );
+		}, [ aiCredits.notice, setIsAiCreditsNoticeShown ] );
 
 		const modalClasses = cn(
 			'image-studio-modal',
@@ -670,6 +690,7 @@ const ImageStudioContent = withInstanceId(
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
+										aiCredits={ aiCredits }
 									/>
 								) : (
 									<div className="image-studio-agent-loading">

@@ -43,7 +43,7 @@ export function useErrorNotice(
 			// Show upgrade notices as persistent warning notices
 			if ( ! trackedImpressions.current.has( content ) ) {
 				trackedImpressions.current.add( content );
-				trackImageStudioUpgradeNoticeShown( { mode } );
+				trackImageStudioUpgradeNoticeShown( { mode, trigger: 'error' } );
 			}
 			addNotice( content, 'warning', [
 				{
@@ -52,7 +52,7 @@ export function useErrorNotice(
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
-					onClick: () => trackImageStudioUpgradeNoticeClick( { mode } ),
+					onClick: () => trackImageStudioUpgradeNoticeClick( { mode, trigger: 'error' } ),
 				},
 			] );
 		} else if ( url ) {
