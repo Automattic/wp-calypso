@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -39,6 +40,10 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
 
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
@@ -59,6 +64,7 @@ describe( 'Checkout contact step', () => {
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
+		( useViewportMatch as jest.Mock ).mockReturnValue( false );
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -100,6 +106,20 @@ describe( 'Checkout contact step', () => {
 		).toBeInTheDocument();
 	} );
 
+	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
+		// The sidebar submit area, which renders this Continue, is only used at large viewports.
+		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
+		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Retrieving contact details…' ) ).not.toBeInTheDocument();
+		} );
+		await waitFor( () => {
+			expect( screen.getByLabelText( 'Continue to the next step' ) ).not.toBeDisabled();
+		} );
+	} );
+
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
@@ -122,6 +142,17 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a help link in the contact step title when a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
+		);
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
@@ -177,6 +208,19 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		const { container } = render(
+			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
+		);
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( screen.getByPlaceholderText( 'Phone' ), '+447911123456' );
+
+		expect( container.querySelector( '.phone-input__country-select' ) ).toHaveValue( 'GB' );
+		expect( screen.getByPlaceholderText( 'Phone' ) ).toHaveValue( '+44 7911 123456' );
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {

@@ -15,9 +15,24 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import AnalysisProgress from './analysis-progress';
 import AnalysisTypeCards from './analysis-type-cards';
 import AmplifySiteSelector from './site-selector';
-import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
+import type { AmplifyApiError, AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
 
 import './style.scss';
+
+function getErrorMessage( error: AmplifyApiError | null ) {
+	switch ( error?.code ) {
+		case 'site_unreachable':
+			return __(
+				'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
+			);
+		case 'amplify_report_rate_limited':
+			return __(
+				'You’ve reached the limit of 10 Amplify reports in a 24-hour period. Try again after one of your earlier reports is more than 24 hours old.'
+			);
+		default:
+			return __( 'Could not start the analysis. Please try again.' );
+	}
+}
 
 export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void } ) {
 	const dispatch = useDispatch();
@@ -29,13 +44,14 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 	const handleTargetChange = useCallback( ( url: string ) => setTargetUrl( url ), [] );
 
 	const mutation = useStartAmplifyAnalysis( {
-		// The run is seeded into the jobs cache by the hook, so closing this
-		// modal reveals the in-progress row. Here we just switch to the
-		// progress view instead of showing a notice.
+		// The new report is seeded into the reports cache by the hook, so
+		// closing this modal reveals the in-progress row. Here we just switch
+		// to the progress view instead of showing a notice.
 		onSuccess: () => setInProgress( true ),
-		onError: () => {
+		onError: ( error ) => {
+			const message = getErrorMessage( error );
 			dispatch(
-				errorNotice( __( 'Could not start the analysis. Please try again.' ), {
+				errorNotice( message, {
 					id: 'amplify-analysis-error',
 					duration: 8000,
 				} )
@@ -44,6 +60,11 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 	} );
 
 	const handleViewReports = () => {
+		const isReportsPage = window.location.pathname === A4A_AMPLIFY_REPORTS_LINK;
+		if ( isReportsPage ) {
+			onClose();
+			return;
+		}
 		page.redirect( A4A_AMPLIFY_REPORTS_LINK );
 	};
 

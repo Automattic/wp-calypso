@@ -232,7 +232,7 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 
 									page( '/dashboard' );
 								},
-						  }
+							}
 						: undefined
 				}
 			/>
@@ -249,12 +249,12 @@ const ManageSelectedSiteSidebar = ( { path }: { path: string } ) => {
 								description: translate(
 									'Click here when you want to return to managing all of your sites.'
 								),
-						  }
+							}
 						: {
 								target: '.jetpack-cloud-sidebar__header .site-icon',
 								title: translate( 'Switch Sites Easily' ),
 								description: translate( 'Here you can navigate between your different sites.' ),
-						  },
+							},
 				] }
 			/>
 		</>

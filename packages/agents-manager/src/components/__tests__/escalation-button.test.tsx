@@ -6,7 +6,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { MouseEventHandler, ReactNode } from 'react';
 import type { ZendeskConversation } from '../../types';
 
-const mockGetActiveSessionId = jest.fn();
+const mockGetTabSessionId = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseGetZendeskConversations = jest.fn();
@@ -58,7 +58,7 @@ jest.mock( '../../contexts', () => ( {
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: 'ai-chat-123',
 		},
-		getActiveSessionId: mockGetActiveSessionId,
+		getTabSessionId: mockGetTabSessionId,
 		zendeskSmoochIntegrationKey: 'woo',
 	} ),
 } ) );
@@ -81,7 +81,7 @@ function createConversation(
 describe( 'EscalationButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockGetActiveSessionId.mockReturnValue( 'ai-chat-123' );
+		mockGetTabSessionId.mockReturnValue( 'ai-chat-123' );
 		mockUseGetZendeskConversations.mockReturnValue( {
 			conversations: [],
 			isLoading: false,

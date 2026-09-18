@@ -55,9 +55,6 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
-	// Make the container focusable when there's no <a> child to receive focus, so keyboard users can trigger the hovercard.
-	const needsTabIndex = ! wpcomProfileUrl && ! hideHovercard;
-
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
 	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
 
@@ -119,10 +116,6 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			className="user-avatar ignore-click"
 			onMouseEnter={ handleShowHovercard }
 			onMouseLeave={ handleHideHovercard }
-			onFocus={ handleShowHovercard }
-			onBlur={ handleHideHovercard }
-			tabIndex={ needsTabIndex ? 0 : undefined }
-			role={ needsTabIndex ? 'button' : undefined }
 			aria-label={ translate( 'User Profile: %s', { args: name } ) as string }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
@@ -134,7 +127,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 					offset={ 5 }
 					placement={ placement }
 					flip={ false } // We compute our own placement and don't want Popover to change it.
-					focusOnMount
+					focusOnMount={ false }
 					noArrow
 					onMouseEnter={ clearHoverTimer }
 					onMouseLeave={ handleHideHovercard }

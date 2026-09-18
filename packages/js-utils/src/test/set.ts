@@ -13,7 +13,7 @@ describe( 'set', () => {
 		expect( set( {}, 'a[0].b', 9 ) ).toEqual( { a: [ { b: 9 } ] } );
 	} );
 
-	it( 'treats numeric array-path segments as indices, like lodash', () => {
+	it( 'treats numeric array-path segments as indices', () => {
 		expect( set( {}, [ 'a', 2 ], 'x' ) ).toEqual( { a: [ undefined, undefined, 'x' ] } );
 	} );
 
@@ -42,7 +42,7 @@ describe( 'set', () => {
 		expect( ( {} as Record< string, unknown > ).polluted ).toBeUndefined();
 	} );
 
-	it( 'preserves symbol path segments, like lodash', () => {
+	it( 'preserves symbol path segments', () => {
 		const sym = Symbol( 's' );
 		const object: Record< PropertyKey, unknown > = {};
 		set( object, [ sym ], 1 );
@@ -51,11 +51,11 @@ describe( 'set', () => {
 		expect( ( object.x as Record< PropertyKey, unknown > )[ sym ] ).toBe( 2 );
 	} );
 
-	it( 'maps a negative-zero segment to "-0", like lodash', () => {
+	it( 'maps a negative-zero segment to "-0"', () => {
 		expect( set( {}, [ -0 ], 9 ) ).toEqual( { '-0': 9 } );
 	} );
 
-	it( 'skips the write for a same-value (SameValueZero) assignment, like lodash', () => {
+	it( 'skips the write for a same-value (SameValueZero) assignment', () => {
 		let writes = 0;
 		let stored: unknown = 5;
 		const object = {};

@@ -36,7 +36,7 @@ export function PresetsListbox( {
 			<Composite
 				aria-labelledby={ labelId }
 				activeId={ compositeActiveId ?? undefined }
-				setActiveId={ ( id ) => setCompositeActiveId( id ?? null ) }
+				setActiveId={ ( id: string | null | undefined ) => setCompositeActiveId( id ?? null ) }
 				focusLoop
 				virtualFocus
 				role="listbox"

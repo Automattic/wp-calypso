@@ -2,7 +2,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UpdateNameServersReponse } from 'calypso/data/domains/nameservers/types';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 export type WhoisData = {
 	fname: string;
@@ -32,8 +31,6 @@ export type SettingsPagePassedProps = {
 export type SettingsPageConnectedProps = {
 	currentRoute: string;
 	domain: ResponseDomain | undefined;
-	isLoadingPurchase: boolean;
-	purchase: Purchase | null;
 	whoisData: WhoisData[];
 	dns: DnsRequest;
 };

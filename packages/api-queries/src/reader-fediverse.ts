@@ -402,6 +402,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 		FollowFediverseActorVars,
 		FollowFediverseMutationContext
 	>( {
+		meta: { statId: 'fediverse-actor-follow' },
 		mutationFn: ( vars ) =>
 			createFediverseFollow( { connectionId: vars.connectionId, actor: vars.actor } ),
 		onMutate: async ( vars ) => {
@@ -426,7 +427,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 								following: isLocked ? false : true,
 								requested: isLocked ? true : false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -448,7 +449,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {
@@ -481,6 +482,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 		FollowFediverseActorVars,
 		FollowFediverseMutationContext
 	>( {
+		meta: { statId: 'fediverse-actor-unfollow' },
 		mutationFn: ( vars ) =>
 			deleteFediverseFollow( { connectionId: vars.connectionId, actor: vars.actor } ),
 		onMutate: async ( vars ) => {
@@ -500,7 +502,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 								following: false,
 								requested: false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -520,7 +522,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {
@@ -568,6 +570,7 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
 		FediverseCreatePostParams,
 		CreateFediversePostContext
 	>( {
+		meta: { statId: 'fediverse-post-create' },
 		mutationFn: createFediversePost,
 		onMutate: async ( vars ) => {
 			const timelineKey = readerFediverseKeys.timeline( vars.connectionId );

@@ -1,9 +1,7 @@
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
-	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	findFirstSimilarPlanKey,
 	getPlan,
@@ -54,7 +52,6 @@ import {
 	isJetpackSite,
 	isRequestingSite,
 } from 'calypso/state/sites/selectors';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -220,7 +217,6 @@ export class SiteSettingsFormSEO extends Component {
 	render() {
 		const {
 			conflictedSeoPlugin,
-			hasGatingFlag,
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
@@ -252,28 +248,25 @@ export class SiteSettingsFormSEO extends Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const upsellPlan = hasGatingFlag ? PLAN_PREMIUM : PLAN_BUSINESS;
-		const upsellPlanType = hasGatingFlag ? TYPE_PREMIUM : TYPE_BUSINESS;
-
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
 				? {
 						title: translate( 'Boost your search engine ranking' ),
 						feature: FEATURE_SEO_PREVIEW_TOOLS,
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
-				  }
+					}
 				: {
 						title: translate(
 							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
-							{ args: { planName: getPlan( upsellPlan ).getTitle() } }
+							{ args: { planName: getPlan( PLAN_PREMIUM ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: upsellPlanType,
+								type: TYPE_PREMIUM,
 							} ),
-				  };
+					};
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
@@ -465,7 +458,6 @@ const mapStateToProps = ( state ) => {
 		: null;
 	return {
 		conflictedSeoPlugin,
-		hasGatingFlag: !! getSiteOption( state, siteId, 'is_gating_business_q1' ),
 		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,

@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import type { Action, AnyAction } from 'redux';
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 

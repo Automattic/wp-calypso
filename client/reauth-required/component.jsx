@@ -2,6 +2,7 @@ import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { logToLogstash } from 'calypso/lib/logstash';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequiredComponent from 'calypso/me/reauth-required';
 import './style.scss';
@@ -33,6 +34,16 @@ export default function ReauthRequired() {
 					} else {
 						// eslint-disable-next-line no-console
 						console.warn( `Skipping potentially unsafe redirect to: ${ redirectTo }` );
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: 'Reauth required: blocked redirect to untrusted origin',
+							severity: 'warning',
+							tags: [ 'dashboard' ],
+							extra: {
+								type: 'reauth_required_redirect_blocked',
+								redirect_to: redirectTo,
+							},
+						} ).catch( () => undefined );
 						// Optionally redirect to a default safe page, e.g., '/'
 						// window.location.href = '/';
 					}
@@ -40,8 +51,28 @@ export default function ReauthRequired() {
 					// Handle invalid URL if necessary
 					// eslint-disable-next-line no-console
 					console.error( `Invalid redirect URL: ${ redirectTo }`, e );
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Reauth required: invalid redirect URL',
+						severity: 'warning',
+						tags: [ 'dashboard' ],
+						extra: {
+							type: 'reauth_required_redirect_invalid_url',
+							redirect_to: redirectTo,
+							error: e instanceof Error ? e.message : String( e ),
+						},
+					} ).catch( () => undefined );
 				}
 			} else {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Reauth required: missing redirect_to query param',
+					severity: 'warning',
+					tags: [ 'dashboard' ],
+					extra: {
+						type: 'reauth_required_redirect_missing',
+					},
+				} ).catch( () => undefined );
 				// Optional: Redirect to a default location if redirect_to is not present or invalid
 				// window.location.href = '/';
 			}

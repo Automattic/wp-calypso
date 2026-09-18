@@ -7,26 +7,44 @@ interface APIResponse {
 	ticket_id?: number;
 }
 
-function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {
-	let path = '/agency/help/zendesk/create-ticket';
+function getMutationFn( isSignup: boolean ) {
+	return function mutationSubmitSupportForm(
+		params: SubmitContactSupportParams
+	): Promise< APIResponse > {
+		let path = '/agency/help/zendesk/create-ticket';
 
-	if ( params.product === 'pressable' && params.contact_type === 'support' ) {
-		path = '/agency/help/pressable/support';
-	}
+		if ( isSignup ) {
+			// Public endpoint used before the user has an agency, e.g. when the
+			// signup flow is blocked by a duplicate-agency check.
+			path = '/agency/signup/contact-support';
+		} else if ( params.product === 'pressable' && params.contact_type === 'support' ) {
+			path = '/agency/help/pressable/support';
+		}
 
-	// Create the ticket in Zendesk
-	return wpcom.req.post( {
-		apiNamespace: 'wpcom/v2',
-		path,
-		body: params,
-	} );
+		return wpcom.req.post( {
+			apiNamespace: 'wpcom/v2',
+			path,
+			body: params,
+		} );
+	};
 }
 
+type MutationOptions< TContext > = UseMutationOptions<
+	APIResponse,
+	APIError,
+	SubmitContactSupportParams,
+	TContext
+> & {
+	isSignup?: boolean;
+};
+
 export default function useSubmitSupportFormMutation< TContext = unknown >(
-	options?: UseMutationOptions< APIResponse, APIError, SubmitContactSupportParams, TContext >
+	options?: MutationOptions< TContext >
 ): UseMutationResult< APIResponse, APIError, SubmitContactSupportParams, TContext > {
+	const { isSignup = false, ...mutationOptions } = options ?? {};
+
 	return useMutation< APIResponse, APIError, SubmitContactSupportParams, TContext >( {
-		...options,
-		mutationFn: mutationSubmitSupportForm,
+		...mutationOptions,
+		mutationFn: getMutationFn( isSignup ),
 	} );
 }

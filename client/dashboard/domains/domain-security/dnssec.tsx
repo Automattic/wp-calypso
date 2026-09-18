@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -22,16 +23,13 @@ interface DnsSecProps {
 
 export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const mutation = useMutation( {
-		...domainDnssecMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNSSEC setting for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( domainDnssecMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'DNSSEC setting for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const { isPending } = mutation;
 

@@ -1,0 +1,21 @@
+import { BlockFlow, InstagramBlockFlow } from '@automattic/calypso-e2e';
+import { tags } from '../../lib/pw-base';
+import { createBlockTests } from './shared/block-smoke-testing';
+
+const blockFlows: BlockFlow[] = [
+	new InstagramBlockFlow( {
+		embedUrl: 'https://www.instagram.com/p/BlDOZMil933/',
+		expectedPostText: 'woocommerce',
+	} ),
+	// Skip Twitter embed test for now, upstream API is being too flaky.
+	// p1730760290984869-slack-C07RS1SCKBK
+	//new TwitterBlockFlow( {
+	//	embedUrl: 'https://twitter.com/automattic/status/1360312228415700993',
+	//	expectedTweetText: '@automattic',
+	//} ),
+];
+
+createBlockTests( 'Blocks: Jetpack Extended Core Blocks', blockFlows, [
+	tags.GUTENBERG,
+	tags.JETPACK_WPCOM_INTEGRATION,
+] );

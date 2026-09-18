@@ -50,6 +50,7 @@ const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 )
 const mockUserData = {
 	email: 'test@example.com',
 	registrationDate: '2024-01-15T00:00:00+00:00',
+	userId: 123,
 };
 
 describe( 'survicate', () => {
@@ -145,11 +146,25 @@ describe( 'survicate', () => {
 			expect( loadSurvicateScript ).toHaveBeenCalledWith( 'test-workspace-id' );
 		} );
 
-		test( 'should set visitor traits with email and account_age_in_days when script loads', async () => {
+		test( 'should set visitor traits with user_id, email and account_age_in_days when script loads', async () => {
 			addSurvicate( mockUserData );
 			await flushPromises();
 
 			expect( getAccountAgeInDays ).toHaveBeenCalledWith( mockUserData.registrationDate );
+			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
+				user_id: '123',
+				email: 'test@example.com',
+				account_age_in_days: 42,
+			} );
+		} );
+
+		test( 'should omit user_id when no user ID is provided', async () => {
+			addSurvicate( {
+				email: mockUserData.email,
+				registrationDate: mockUserData.registrationDate,
+			} );
+			await flushPromises();
+
 			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 				account_age_in_days: 42,
@@ -186,6 +201,7 @@ describe( 'survicate', () => {
 			// Should have called setSurvicateVisitorTraits without loading script again
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
+				user_id: '123',
 				email: 'test@example.com',
 				account_age_in_days: 42,
 			} );

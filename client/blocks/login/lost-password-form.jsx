@@ -88,6 +88,10 @@ const LostPasswordForm = ( {
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
+		if ( blackbox.isSubmitBlocked ) {
+			return;
+		}
+
 		if ( isWooJPC ) {
 			const accountType = await getAuthAccountTypeRequest( userLogin );
 			if ( accountType?.passwordless === true ) {
@@ -118,6 +122,7 @@ const LostPasswordForm = ( {
 			const result = await lostPasswordRequest();
 			setBusy( false );
 			if ( result.includes( 'Unable to reset password' ) ) {
+				blackbox.reset();
 				return setError(
 					translate( "I'm sorry, but we weren't able to find a user with that login information." )
 				);
@@ -173,6 +178,9 @@ const LostPasswordForm = ( {
 	};
 
 	const showError = !! error;
+	// A challenge raised by the submit's own collect holds the request until it is
+	// solved, so stop spinning while it is up.
+	const isSendingReset = isBusy && ! blackbox.isSubmitBlocked;
 	return (
 		<form
 			name="lostpasswordform"
@@ -211,10 +219,10 @@ const LostPasswordForm = ( {
 					variant="primary"
 					type="submit"
 					disabled={ userLogin.length === 0 || showError || isBusy || blackbox.isSubmitBlocked }
-					isBusy={ isBusy }
+					isBusy={ isSendingReset }
 					__next40pxDefaultSize
 				>
-					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
+					{ isSendingReset && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
 				</Button>
 			</div>
 			<div className="login__form-help">

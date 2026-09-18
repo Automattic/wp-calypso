@@ -1,8 +1,22 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addFilter } from '@wordpress/hooks';
-import { unescape } from 'lodash';
 
 import './editor.scss';
+
+const HTML_UNESCAPES = {
+	'&amp;': '&',
+	'&lt;': '<',
+	'&gt;': '>',
+	'&quot;': '"',
+	'&#39;': "'",
+};
+
+// Decodes the basic HTML entities (`&` `<` `>` `"` `'`).
+const unescape = ( string ) =>
+	String( string ?? '' ).replace(
+		/&(?:amp|lt|gt|quot|#39);/g,
+		( entity ) => HTML_UNESCAPES[ entity ]
+	);
 
 /*
  * This is a workaround for the way Gutenberg autocomplete works. It only looks for

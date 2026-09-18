@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Publish against `@automattic/ui@^2.0.0`, resolving a duplicate/mismatched `@automattic/ui` version in the installed dependency tree (previously published `1.0.4` pinned `@automattic/ui@^1.0.3`).
+
 ## 1.0.5
 
 - Packaging: declare `sass` as a runtime dependency for the package build script.

@@ -1,7 +1,7 @@
 import toFinite from '../to-finite';
 
 describe( 'toFinite', () => {
-	// Expected values verified against lodash `toFinite`.
+	// Expected values verified against the reference implementation.
 	it.each( [
 		[ 'integer', 5, 5 ],
 		[ 'negative', -5, -5 ],
@@ -28,7 +28,7 @@ describe( 'toFinite', () => {
 		[ 'single-element array', [ 5 ], 5 ],
 		[ 'multi-element array', [ 5, 6 ], 0 ],
 		[ 'plain object', {}, 0 ],
-	] )( 'coerces %s to %p like lodash', ( _label, input, expected ) => {
+	] )( 'coerces %s to %p', ( _label, input, expected ) => {
 		expect( toFinite( input ) ).toBe( expected );
 	} );
 
@@ -36,16 +36,16 @@ describe( 'toFinite', () => {
 		expect( toFinite( Symbol( 'x' ) ) ).toBe( 0 );
 	} );
 
-	it( 'returns 0 for a boxed symbol, like lodash', () => {
+	it( 'returns 0 for a boxed symbol', () => {
 		expect( toFinite( Object( Symbol( 'x' ) ) ) ).toBe( 0 );
 	} );
 
-	it( 'derives object values from valueOf only, like lodash', () => {
+	it( 'derives object values from valueOf only', () => {
 		// `valueOf` returning a primitive is used directly.
 		expect( toFinite( { valueOf: () => 8 } ) ).toBe( 8 );
 		expect( toFinite( { valueOf: () => '8' } ) ).toBe( 8 );
-		// `valueOf` returning an object is stringified — lodash does NOT fall back
-		// to the original object's `toString`, so this is 0 (not 8) like lodash.
+		// `valueOf` returning an object is stringified — there is no fall back
+		// to the original object's `toString`, so this is 0 (not 8).
 		expect( toFinite( { valueOf: () => ( {} ), toString: () => '8' } ) ).toBe( 0 );
 		// With no custom `valueOf`, the default returns the object, so `toString`
 		// is consulted via stringification.

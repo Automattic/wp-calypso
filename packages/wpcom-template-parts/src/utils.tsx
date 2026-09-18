@@ -69,7 +69,7 @@ export function AutomatticBrand() {
 		<>
 			<span className="lp-hidden">Automattic</span>
 			<svg
-				className="lp-icon lp-icon--custom-automattic-footer"
+				className="lp-icon lp-icon--custom-automattic-footer lp-color-primary"
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 126 11"
 				aria-hidden="true"

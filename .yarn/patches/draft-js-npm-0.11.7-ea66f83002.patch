@@ -1,0 +1,108 @@
+diff --git a/lib/ContentState.js b/lib/ContentState.js
+index 2bb77556e46adde8accd5da672f0ef17b31b8369..fe45a8fdb759c82866f42d597360d41b835d37cc 100644
+--- a/lib/ContentState.js
++++ b/lib/ContentState.js
+@@ -112,7 +112,7 @@ var ContentState = /*#__PURE__*/function (_ContentStateRecord) {
+   };
+ 
+   _proto.getBlocksAsArray = function getBlocksAsArray() {
+-    return this.getBlockMap().toArray();
++    return this.getBlockMap().valueSeq().toArray();
+   };
+ 
+   _proto.getFirstBlock = function getFirstBlock() {
+diff --git a/lib/ContentState.js.flow b/lib/ContentState.js.flow
+index 987f5e34ce8e5203b01753d1cbfa1ed2680132a6..d3df4b1898e016b537de87f1a685628368f14841 100644
+--- a/lib/ContentState.js.flow
++++ b/lib/ContentState.js.flow
+@@ -108,7 +108,7 @@ class ContentState extends ContentStateRecord {
+   }
+ 
+   getBlocksAsArray(): Array<BlockNodeRecord> {
+-    return this.getBlockMap().toArray();
++    return this.getBlockMap().valueSeq().toArray();
+   }
+ 
+   getFirstBlock(): BlockNodeRecord {
+diff --git a/lib/DraftTreeInvariants.js b/lib/DraftTreeInvariants.js
+index 496d4a3abbce83f7c5838b649cd38dfa82c89784..e6ca538d678bfaa65a41b9e5e12e64e02b29d3ac 100644
+--- a/lib/DraftTreeInvariants.js
++++ b/lib/DraftTreeInvariants.js
+@@ -96,7 +96,7 @@ var DraftTreeInvariants = {
+    */
+   isConnectedTree: function isConnectedTree(blockMap) {
+     // exactly one node has no previous sibling + no parent
+-    var eligibleFirstNodes = blockMap.toArray().filter(function (block) {
++    var eligibleFirstNodes = blockMap.valueSeq().toArray().filter(function (block) {
+       return block.getParentKey() == null && block.getPrevSiblingKey() == null;
+     });
+ 
+@@ -159,7 +159,7 @@ var DraftTreeInvariants = {
+   isValidTree: function isValidTree(blockMap) {
+     var _this = this;
+ 
+-    var blocks = blockMap.toArray();
++    var blocks = blockMap.valueSeq().toArray();
+ 
+     if (!blocks.every(function (block) {
+       return _this.isValidBlock(block, blockMap);
+diff --git a/lib/DraftTreeInvariants.js.flow b/lib/DraftTreeInvariants.js.flow
+index e2b713c4fd15749a759e12dbf7fe51dd8d43e166..d9ac319db2d80028bbe6296da42705b35f383fc9 100644
+--- a/lib/DraftTreeInvariants.js.flow
++++ b/lib/DraftTreeInvariants.js.flow
+@@ -93,7 +93,7 @@ const DraftTreeInvariants = {
+    */
+   isConnectedTree(blockMap: BlockMap): boolean {
+     // exactly one node has no previous sibling + no parent
+-    const eligibleFirstNodes = blockMap.toArray().filter(block => block.getParentKey() == null && block.getPrevSiblingKey() == null);
++    const eligibleFirstNodes = blockMap.valueSeq().toArray().filter(block => block.getParentKey() == null && block.getPrevSiblingKey() == null);
+ 
+     if (eligibleFirstNodes.length !== 1) {
+       warning(true, 'Tree is not connected. More or less than one first node');
+@@ -147,7 +147,7 @@ const DraftTreeInvariants = {
+    * Checks that the block map is a connected tree with valid blocks
+    */
+   isValidTree(blockMap: BlockMap): boolean {
+-    const blocks = blockMap.toArray();
++    const blocks = blockMap.valueSeq().toArray();
+ 
+     if (!blocks.every(block => this.isValidBlock(block, blockMap))) {
+       return false;
+diff --git a/lib/randomizeBlockMapKeys.js b/lib/randomizeBlockMapKeys.js
+index 2da51d665ac373b60547a555e08f0a8484f15765..f44725e7e1f8b77a3f6189febb412243912ef423 100644
+--- a/lib/randomizeBlockMapKeys.js
++++ b/lib/randomizeBlockMapKeys.js
+@@ -84,13 +84,13 @@ var randomizeContentBlockNodeKeys = function randomizeContentBlockNodeKeys(block
+         }
+       });
+     });
+-  }).toArray().map(function (block) {
++  }).valueSeq().toArray().map(function (block) {
+     return [newKeysRef[block.getKey()], block.set('key', newKeysRef[block.getKey()])];
+   }));
+ };
+ 
+ var randomizeContentBlockKeys = function randomizeContentBlockKeys(blockMap) {
+-  return OrderedMap(blockMap.toArray().map(function (block) {
++  return OrderedMap(blockMap.valueSeq().toArray().map(function (block) {
+     var key = generateRandomKey();
+     return [key, block.set('key', key)];
+   }));
+diff --git a/lib/randomizeBlockMapKeys.js.flow b/lib/randomizeBlockMapKeys.js.flow
+index 9ef399472ffbcafe280d2f44f50c56c553808aa9..0e9d8898aa1f7c6016058dc5bc66f9f2ebe1a8b6 100644
+--- a/lib/randomizeBlockMapKeys.js.flow
++++ b/lib/randomizeBlockMapKeys.js.flow
+@@ -86,11 +86,11 @@ const randomizeContentBlockNodeKeys = (blockMap: BlockMap): BlockMap => {
+         }
+       });
+     });
+-  }).toArray().map(block => [newKeysRef[block.getKey()], block.set('key', newKeysRef[block.getKey()])]));
++  }).valueSeq().toArray().map(block => [newKeysRef[block.getKey()], block.set('key', newKeysRef[block.getKey()])]));
+ };
+ 
+ const randomizeContentBlockKeys = (blockMap: BlockMap): BlockMap => {
+-  return OrderedMap(blockMap.toArray().map(block => {
++  return OrderedMap(blockMap.valueSeq().toArray().map(block => {
+     const key = generateRandomKey();
+     return [key, block.set('key', key)];
+   }));

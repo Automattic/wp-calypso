@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,23 +15,51 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useInterval } from 'calypso/lib/interval';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { describeStepMount } from '../../step-mount-registry';
 import { ProcessingResult } from './constants';
+import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
+import type { ProcessingLoadingMessage } from './hooks/types';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
+
+/**
+ * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
+ * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site.
+ */
+function SiteTransferWait( {
+	transferStatus,
+	startedAt,
+}: {
+	transferStatus: string | null;
+	startedAt: number | null;
+} ) {
+	const { siteSlug } = useSiteData();
+
+	return (
+		<TransferWaitCard
+			transferStatus={ transferStatus }
+			startedAt={ startedAt }
+			isPluginInstall={ false }
+			siteSlug={ siteSlug }
+		/>
+	);
+}
 
 const ProcessingStep: StepType< {
 	submits:
@@ -58,20 +87,25 @@ const ProcessingStep: StepType< {
 	accepts: {
 		title?: string;
 		subtitle?: string;
+		loadingMessages?: ProcessingLoadingMessage[];
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const loadingMessages = useProcessingLoadingMessages( flow );
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
+	const loadingMessages: ProcessingLoadingMessage[] =
+		props.loadingMessages && props.loadingMessages.length > 0
+			? props.loadingMessages
+			: defaultLoadingMessages;
 
-	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState<
 		{ siteCreated?: boolean } | undefined
 	>( {} );
+	const safeMessageIndex = useLoadingMessageIndex( loadingMessages );
 
 	/**
 	 * There is a long-term bug here that the `submit` function will be called multiple times if we
@@ -97,13 +131,6 @@ const ProcessingStep: StepType< {
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
-	useInterval(
-		() => {
-			setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
-		},
-		loadingMessages[ currentMessageIndex ]?.duration
-	);
-
 	const action = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),
 		[]
@@ -116,9 +143,38 @@ const ProcessingStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
 		[]
 	);
+	const transferStatus = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStatus(),
+		[]
+	);
+	const transferStartedAt = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
+		[]
+	);
+
+	// How the wait ended is known only inside the callback that ends it, and that callback submits —
+	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
+	// object the heartbeat is already holding is what gets it onto the closing event.
+	// Read once per mount, so a second mount of this step reports its own arrival, not the first's.
+	const waitProperties = useRef< Record< string, unknown > >( {
+		flow,
+		previous_step: props.data?.previousStep ?? null,
+		outcome: null,
+		...describeStepMount( props.stepName ),
+	} ).current;
+	waitProperties.flow = flow;
+	waitProperties.previous_step = props.data?.previousStep ?? null;
+
+	// Only a step with something to wait on is a wait. A flow that reaches here with no pending
+	// action resolves in the same tick, and beating for it would bury the real waits in noise.
+	useWaitHeartbeat( {
+		surface: 'stepper_processing',
+		enabled: typeof action === 'function' && ! hasActionSuccessfullyRun,
+		properties: waitProperties,
+	} );
 
 	const getCurrentMessage = () => {
-		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
+		return props.title || progressTitle || loadingMessages[ safeMessageIndex ]?.title;
 	};
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
@@ -137,9 +193,11 @@ const ProcessingStep: StepType< {
 					// that is frozen from before we called action().
 					// We can now get the most up to date values from hooks inside the flow creating submit(),
 					// including the values that were updated during the action() running.
+					waitProperties.outcome = 'success';
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
 				} catch ( e: any ) {
+					waitProperties.outcome = 'failure';
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
@@ -212,7 +270,7 @@ const ProcessingStep: StepType< {
 	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
 
 	const getSubtitle = () => {
-		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
+		return props.subtitle || loadingMessages[ safeMessageIndex ]?.subtitle;
 	};
 
 	const flowName = props.flow || '';
@@ -233,7 +291,11 @@ const ProcessingStep: StepType< {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				{ isTransferringHostedSiteCreationFlow( flow ) ? (
+					<SiteTransferWait transferStatus={ transferStatus } startedAt={ transferStartedAt } />
+				) : (
+					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				) }
 			</>
 		);
 	}

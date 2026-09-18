@@ -97,9 +97,7 @@ module.exports = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
+				prelude: `@use '${ require.resolve( 'calypso/assets/stylesheets/shared/_utils.scss' ) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -141,8 +139,20 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				// `react-dom/client` is not a registered handle; reuse `react-dom`.
+				if ( request === 'react-dom/client' ) {
+					return 'react-dom';
+				}
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				// The default extraction only maps bare `react-dom`, so this subpath would
+				// otherwise bundle a second react-dom that crashes against the page's external
+				// React. Same fix as help-center (#112576) and agents-manager.
+				if ( request === 'react-dom/client' ) {
+					return 'ReactDOM';
+				}
 				if (
 					! [
 						'lodash',
@@ -161,6 +171,9 @@ module.exports = {
 						'@wordpress/is-shallow-equal',
 						'@wordpress/primitives',
 						'@wordpress/url',
+						'@wordpress/private-apis',
+						'@wordpress/element',
+						'@wordpress/data',
 						'moment',
 						'../moment',
 					].includes( request )

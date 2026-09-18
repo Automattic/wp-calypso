@@ -10,8 +10,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-  id-token: write
-
+  id-token: write # Required by claude-code-action for GitHub App token exchange.
 jobs:
   claude:
     runs-on: ubuntu-latest
@@ -20,12 +19,46 @@ jobs:
       contains(github.event.comment.body, '@claude') &&
       github.event.comment.user.login == 'matticbot'
     steps:
+      # issue_comment payloads identify PR comments, but do not include the PR
+      # head repo. Query the PR before allowing Claude to run on fork PRs.
+      - name: Check PR origin
+        id: pr-origin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_PULL_REQUEST_URL: ${{ github.event.issue.pull_request.url }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "issue_comment" ] && [ -z "$ISSUE_PULL_REQUEST_URL" ]; then
+            echo "is_internal=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          pr_number="${PULL_REQUEST_NUMBER:-$ISSUE_NUMBER}"
+          if ! head_repo="$(gh api "repos/${REPOSITORY}/pulls/${pr_number}" --jq '.head.repo.full_name')"; then
+            echo "Unable to determine PR head repository for #${pr_number}; skipping Claude."
+            echo "is_internal=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$head_repo" = "$REPOSITORY" ]; then
+            echo "is_internal=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_internal=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping Claude for external PR from ${head_repo:-unknown}."
+          fi
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        if: steps.pr-origin.outputs.is_internal == 'true'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       - name: Run Claude
+        if: steps.pr-origin.outputs.is_internal == 'true'
         uses: anthropics/claude-code-action@fbda2eb1bdc90d319b8d853f5deb53bca199a7c1 # v1.0.140
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

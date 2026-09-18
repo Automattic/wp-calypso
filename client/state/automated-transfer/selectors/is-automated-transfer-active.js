@@ -19,7 +19,8 @@ export const isActive = ( status ) =>
 				transferStates.REVERTED,
 				transferStates.CONFLICTS,
 				transferStates.INQUIRING,
-		  ].includes( status )
+				transferStates.CLIENT_TIMEOUT,
+			].includes( status )
 		: false;
 /**
  * Indicates whether or not an automated transfer is active for a given site

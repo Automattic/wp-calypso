@@ -1,0 +1,14 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/react-1.jsx:10
+msgid "Prop string"
+msgstr ""
+
+#: test/examples/react-1.jsx:13
+#. Extract from leading
+msgctxt "react"
+msgid "Child string"
+msgid_plural "Child string plural"
+msgstr[0] ""
+msgstr[1] ""

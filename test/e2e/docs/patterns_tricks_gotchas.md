@@ -1,4 +1,4 @@
-[← Style Guide](./style_guide.md) | [Top](./../README.md) | [Debugging →](./debugging.md)
+[← Documentation index](./overview.md)
 
 # Patterns, Tricks, and Gotchas
 
@@ -6,7 +6,7 @@
 
 - [Patterns, Tricks, and Gotchas](#patterns-tricks-and-gotchas)
   - [Asserting against page content](#asserting-against-page-content)
-    - [Returned values and Jest expect()](#returned-values-and-jest-expect)
+    - [Returned values and expect()](#returned-values-and-expect)
   - [Using waitForSelector, text selectors, and 'validate\*' methods](#using-waitforselector-text-selectors-and-validate-methods)
   - [Race conditions with handler registration](#race-conditions-with-handler-registration)
   - [Handling Calypso navigation](#handling-calypso-navigation)
@@ -17,21 +17,21 @@
 
 Let's say you want to validate some state or content on a page in Calypso. How should you go about doing that? There are two patterns that are used throughout our E2E tests.
 
-### Returned values and Jest expect()
+### Returned values and expect()
 
-If it's easy to find and return some discrete piece of information from the page under test, you can return that discrete value from the POM class function, and assert against it using the Jest `expect` library.
+If it's easy to find and return some discrete piece of information from the page under test, you can return that discrete value from the library object function, and assert against it with the `expect` re-exported from [`lib/pw-base.ts`](../lib/pw-base.ts).
 
 Example:
 
 ```typescript
-// In the POM class...
+// In the library object class...
 async getActiveTabName(): Promise< string > {
 	return 'foo';
 }
 
 // In the test spec...
-it( 'Active tab is "foo"', async function () {
-	expect( await pomClass.getActiveTabName() ).toBe( 'foo' );
+await test.step( 'Then the active tab is "foo"', async function () {
+	expect( await someObject.getActiveTabName() ).toBe( 'foo' );
 } );
 ```
 
@@ -45,12 +45,12 @@ You can validate something about a given page under test by leveraging Playwrigh
 
 Because these functions throw an error if the provided selector is not found within the timeout period, they can be used for validation, as the thrown error will fail the test. This, combined with [Playwright's powerful syntax for text-based selectors](https://playwright.dev/docs/selectors#text-selector), can provide an effective way to do wait-safe validation during a test.
 
-If you are doing a simple text validation, you can include the `waitForSelector` call directly in the testing spec. However, if the selector is more complicated or has logic, it should be included in the POM class in a function prefixed with `validate*`.
+If you are doing a simple text validation, you can include the `waitForSelector` call directly in the testing spec. However, if the selector is more complicated or has logic, it should be included in the library object class in a function prefixed with `validate*`.
 
 Example:
 
 ```typescript
-// In the POM class...
+// In the library object class...
 async validateActiveTab( name: string ): Promise< void > {
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 		await this.page.waitForSelector( selectors.mobileActiveTab( name ) );
@@ -60,8 +60,8 @@ async validateActiveTab( name: string ): Promise< void > {
 }
 
 // In the test spec...
-it( 'Active tab is "foo"', async function () {
-	await pomClass.validateActiveTab( 'foo' );
+await test.step( 'Then the active tab is "foo"', async function () {
+	await someObject.validateActiveTab( 'foo' );
 } );
 ```
 

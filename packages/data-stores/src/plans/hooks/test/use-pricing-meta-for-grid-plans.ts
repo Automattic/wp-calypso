@@ -28,7 +28,12 @@ jest.mock( '../../../purchases', () => ( {
 jest.mock( '../../../wpcom-plans-ui', () => ( {
 	store: 'wpcom-plans-ui',
 } ) );
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	logToLogstash: jest.fn().mockResolvedValue( undefined ),
+} ) );
 
+import { logToLogstash } from '@automattic/api-core';
 import { PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
 import * as Plans from '../../';
@@ -156,12 +161,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			} ) );
 			// Yearly purchase: renewal 600/yr, active intro 120/yr.
 			Purchases.useSitePurchaseById.mockImplementation( () => ( {
-				priceInteger: 600,
-				currencyCode: 'USD',
-				billPeriodDays: 365,
-				introductoryOffer: {
-					isWithinPeriod: true,
-					costPerIntervalInteger: 120,
+				price_integer: 600,
+				currency_code: 'USD',
+				bill_period_days: 365,
+				introductory_offer: {
+					is_within_period: true,
+					cost_per_interval_integer: 120,
 				},
 			} ) );
 		} );
@@ -226,6 +231,46 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 			expect( pricingMeta ).toEqual( expectedPricingMeta );
 		} );
+	} );
+
+	it( 'should fall back to the site plan price and log when the purchase has an unknown bill_period_days', () => {
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			productSlug: PLAN_BUSINESS,
+			planSlug: PLAN_BUSINESS,
+			purchaseId: 1234,
+		} ) );
+		Purchases.useSitePurchaseById.mockImplementation( () => ( {
+			ID: '1234',
+			product_slug: PLAN_BUSINESS,
+			price_integer: 600,
+			currency_code: 'USD',
+			bill_period_days: 999,
+		} ) );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_BUSINESS ],
+			siteId,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+		} );
+
+		expect( pricingMeta?.[ PLAN_BUSINESS ]?.originalPrice ).toEqual( {
+			full: 500,
+			monthly: 500,
+		} );
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				feature: 'calypso_client',
+				message: 'usePricingMetaForGridPlans: purchase has an unknown bill_period_days',
+				site_id: siteId,
+				extra: expect.objectContaining( {
+					plan_slug: PLAN_BUSINESS,
+					purchase_id: '1234',
+					bill_period_days_snake: '999',
+					object_keys: expect.stringContaining( 'bill_period_days' ),
+				} ),
+			} )
+		);
 	} );
 
 	it( 'should return the original price as the site plan price and discounted price as Null for plans not available for purchase', () => {

@@ -18,8 +18,8 @@ const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
 
 /**
- * Native Sort - replacement of _.sortBy Lodash function
- * @returns Sorted array.
+ * Comparator that orders entries alphabetically by `to.name`.
+ * @returns A negative, zero, or positive number for use with `Array#sort`.
  */
 const compareByName = ( objA, objB ) => {
 	if ( objA.to.name > objB.to.name ) {
@@ -35,8 +35,7 @@ const compareByName = ( objA, objB ) => {
  */
 
 /**
- * pickBy function is a replacement for the Lodash _.pickby
- *
+ * Returns a new object containing only the entries for which `fn( value, key )` is truthy.
  */
 const pickBy = ( palette, fn ) =>
 	Object.keys( palette ?? {} )

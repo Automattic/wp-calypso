@@ -164,7 +164,7 @@ function getCardTitle( cardId: string ): string {
 		case 'built-by':
 			return __( 'Let us build for you' );
 		case 'ask-ai-assistant':
-			return __( 'Ask our AI assistant' );
+			return __( 'Ask WordPress Agent' );
 		case 'upgrade-for-full-access':
 			return __( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
@@ -199,7 +199,7 @@ function getCardDescription( cardId: string ): string {
 		case 'built-by':
 			return __( 'Our team can build your site so you can focus on what matters.' );
 		case 'ask-ai-assistant':
-			return __( 'Use our AI assistant to quickly find solutions.' );
+			return __( 'Use WordPress Agent to quickly find solutions.' );
 		case 'upgrade-for-full-access':
 			return __( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
@@ -326,7 +326,7 @@ export default function SolutionsCardsUpsellStep( {
 		? addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ yearlyPlanSlug }` ), {
 				redirect_to: dashboardLink( '/me/billing/purchases' ),
 				cancel_to: purchaseSettingsUrl,
-		  } )
+			} )
 		: undefined;
 
 	const handleCardAction = ( solutionId: string ) => {
@@ -427,19 +427,19 @@ export default function SolutionsCardsUpsellStep( {
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
 						card.id === 'speak-with-support' ||
-							card.id === 'ask-ai-assistant' ||
-							card.id === 'built-by' ||
-							card.id === 'change-plan' ||
-							card.id === 'renew-now-pay-less' ||
-							card.id === 'switch-to-monthly' ||
-							card.id === 'switch-to-yearly' ||
-							card.id === 'upgrade-for-full-access' ||
-							card.id === 'get-theme-addon' ||
-							card.id === 'find-guides' ||
-							card.id === 'make-site-faster' ||
-							card.id === 'use-migration-tools' ||
-							card.id === 'use-domain-guide' ||
-							card.id === 'explore-domain-options'
+						card.id === 'ask-ai-assistant' ||
+						card.id === 'built-by' ||
+						card.id === 'change-plan' ||
+						card.id === 'renew-now-pay-less' ||
+						card.id === 'switch-to-monthly' ||
+						card.id === 'switch-to-yearly' ||
+						card.id === 'upgrade-for-full-access' ||
+						card.id === 'get-theme-addon' ||
+						card.id === 'find-guides' ||
+						card.id === 'make-site-faster' ||
+						card.id === 'use-migration-tools' ||
+						card.id === 'use-domain-guide' ||
+						card.id === 'explore-domain-options'
 					);
 					const href = getCardHref(
 						card.id,

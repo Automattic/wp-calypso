@@ -1,6 +1,7 @@
 import { SiteResetContentSummary } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { wpcomLink } from '../../utils/link';
 
 interface ContentItem {
 	text: string;
@@ -17,9 +18,9 @@ export default function ContentInfo( {
 	siteDomain: string;
 } ) {
 	const types: ContentType[] = [
-		[ 'post_count', 'post', `/posts/${ siteDomain }` ],
-		[ 'page_count', 'page', `/pages/${ siteDomain }` ],
-		[ 'media_count', 'media item', `/media/${ siteDomain }` ],
+		[ 'post_count', 'post', wpcomLink( `/posts/${ siteDomain }` ) ],
+		[ 'page_count', 'page', wpcomLink( `/pages/${ siteDomain }` ) ],
+		[ 'media_count', 'media item', wpcomLink( `/media/${ siteDomain }` ) ],
 		[ 'plugin_count', 'plugin', `https://${ siteDomain }/wp-admin/plugins.php` ],
 	];
 

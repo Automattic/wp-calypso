@@ -13,9 +13,11 @@ import { chevronDown, chevronUp } from '@wordpress/icons';
 import { Fragment, useRef, useState } from 'react';
 import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -38,6 +40,7 @@ interface SubGroup {
 
 export default function McpRead() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const isDesktop = useViewportMatch( 'medium' );
@@ -53,6 +56,7 @@ export default function McpRead() {
 		}
 		setOpenGroups( new Set( openGroupsRef.current ) );
 		recordTracksEvent( 'calypso_dashboard_mcp_read_group_toggled', {
+			...tracksAudienceProps,
 			group: groupName ?? 'other',
 			is_open: willBeOpen,
 		} );
@@ -66,15 +70,12 @@ export default function McpRead() {
 	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
 	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'MCP settings saved.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	const handleToolChange = ( toolId: string, enabled: boolean, groupName: string | null ) => {
 		mutation.mutate(
@@ -86,7 +87,8 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
-						tool_id: toolId,
+						...tracksAudienceProps,
+						ability_name: toolId,
 						enabled,
 						group: groupName ?? 'other',
 					} );
@@ -97,8 +99,7 @@ export default function McpRead() {
 
 	const handlePageToggle = ( enabled: boolean ) => {
 		const overrides = getOverridesToMatch( allTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents: Record< string, boolean > = { [ TOOL_CATEGORY ]: enabled };
 		if ( ! enabled ) {
 			groupDescriptors.forEach( ( group ) => {
@@ -115,6 +116,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						...tracksAudienceProps,
 						enabled,
 						scope: 'page',
 					} );
@@ -129,8 +131,7 @@ export default function McpRead() {
 		enabled: boolean
 	) => {
 		const overrides = getOverridesToMatch( groupTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents = groupName
 			? { [ groupIntentKey( TOOL_CATEGORY, groupName ) ]: enabled }
 			: undefined;
@@ -149,6 +150,7 @@ export default function McpRead() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						...tracksAudienceProps,
 						enabled,
 						scope: 'group',
 						group: groupName ?? 'other',
@@ -169,7 +171,10 @@ export default function McpRead() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_read_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_read_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 4 }>
 				<Card>
 					<CardBody>

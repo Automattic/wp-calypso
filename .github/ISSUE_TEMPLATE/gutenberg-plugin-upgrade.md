@@ -9,12 +9,12 @@ assignees: ''
 
 <!--
 IMPORTANT: When updating this template, please make sure both copies are kept the same! This ensures our upgrade helper bot is in sync with our manual template.
-Github template: https://github.com/Automattic/wp-calypso/blob/trunk/.github/ISSUE_TEMPLATE/gutenberg-plugin-upgrade.md
+GitHub template: https://github.com/Automattic/wp-calypso/blob/trunk/.github/ISSUE_TEMPLATE/gutenberg-plugin-upgrade.md
 Gutenberg Upgrade Helper Bot™ template: trunk/bin/gutenberg-plugin-upgrade-tracking-issue-template.md
 
 Thanks for updating Gutenberg! Please be sure to update the title above with the version number you're upgrading. This post will cover all potential RCs and point releases (Example, "Gutenberg: v11.2.x plugin upgrade" would cover everything from 11.2.0-rc.1 to 11.2.1, should those all become available)
 
-- Previous Upgrade issue should be linked using Github issue numbers (for example, #53725)
+- Previous Upgrade issue should be linked using GitHub issue numbers (for example, #53725)
 - Release notes for the version(s) you're implementing should be linked directly to the WordPress/gutenberg repo tag
 (for example, linking the text 'v11.0.0-rc.1' to https://github.com/WordPress/gutenberg/releases/tag/v11.0.0-rc.1)
 -->

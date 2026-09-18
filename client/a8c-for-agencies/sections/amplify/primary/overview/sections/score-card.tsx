@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/components';
 import {
 	Card,
 	CardBody,
@@ -9,8 +8,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -134,7 +135,7 @@ export default function AmplifyScoreCard() {
 						<Text as="code" variant="muted" size={ 12 }>
 							{ SAMPLE_URL }
 						</Text>
-						<Badge type="success">{ __( 'Audit complete' ) }</Badge>
+						<Badge intent="stable">{ __( 'Audit complete' ) }</Badge>
 					</HStack>
 
 					<ToggleGroupControl
@@ -172,7 +173,7 @@ export default function AmplifyScoreCard() {
 								{ thresholdLabel( data.score ) }
 							</Text>
 							<Text variant="muted" size={ 13 }>
-								{ data.body }
+								{ preventWidows( data.body ) }
 							</Text>
 						</VStack>
 					</HStack>

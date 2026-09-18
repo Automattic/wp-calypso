@@ -276,12 +276,12 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-// Mobile treatment experiment: thumb-friendly layout per the Figma.
+// Mobile signup layout: thumb-friendly per the Figma.
 // Heading at the top of the content area, action cluster (social row → divider →
 // email field → Continue → ToS) anchored to the bottom of the viewport. Scoped to
-// the class added when isMobileTreatment is true so desktop and control-group
-// mobile users are never affected.
-.step-container-v2:has(.step-container-v2--user-mobile-treatment) {
+// the class added when isMobileCompactLayout is true so desktop users are never
+// affected.
+.step-container-v2:has(.step-container-v2--user-mobile) {
 	// Pin the top bar to the viewport. The header is the user's connection to
 	// the next onboarding step (Log in link, brand), so it must remain visible
 	// even when the form overflows and the document scrolls. The ToS is sticky
@@ -318,23 +318,6 @@ $breakpoint-mobile: 660px;
 	// Subtitle color: Gray 50 (#646970) per Figma.
 	.step-container-v2__heading p {
 		color: var(--studio-gray-50);
-	}
-
-	// Top-position ToS (treatment_tos_top): rendered as the direct sibling of
-	// .step-container-v2__heading inside the heading slot. The adjacent-sibling
-	// selector pins this rule to that exact position so the form-internal ToS
-	// (nested two levels deeper) and any future content-row children can't
-	// accidentally pick it up. Mirrors the subtitle's paragraph styling
-	// (Heading.scss `.step-container-v2__heading p`) so it reads as a
-	// continuation paragraph in the heading block. `text-wrap: pretty` (not
-	// `balance` like the subtitle) — `balance` equalizes line lengths, which
-	// produces unnatural breaks on body-length sentences.
-	.step-container-v2__heading + .signup-form-social-first__tos-link {
-		margin-block: 0.5rem 0;
-		color: var(--studio-gray-50);
-		font-size: 0.875rem;
-		line-height: 1.5;
-		text-wrap: pretty;
 	}
 
 	.signup-form-social-first--mobile-compact {
@@ -402,10 +385,9 @@ $breakpoint-mobile: 660px;
 			margin-block-end: 24px;
 		}
 
-		// ToS sits flush below the form's 24 px bottom margin. Matches the
-		// top-position arm's font-size / color (legal asked for the larger,
-		// darker treatment) while keeping center alignment for the in-form
-		// placement. Sticky at the viewport bottom so it remains visible when
+		// ToS sits flush below the form's 24 px bottom margin. Larger, darker
+		// font-size / color (per legal) while keeping center alignment for the
+		// in-form placement. Sticky at the viewport bottom so it remains visible when
 		// the form overflows (validation notices, longer locales, landscape
 		// orientation, the smallest portrait viewports). Solid background
 		// prevents the element behind it from showing through when sticky

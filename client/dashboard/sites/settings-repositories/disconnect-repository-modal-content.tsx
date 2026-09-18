@@ -12,6 +12,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import type { Field } from '@wordpress/dataviews';
 
@@ -33,15 +34,12 @@ export function DisconnectRepositoryModalContent( {
 		removeFiles: false,
 	} );
 
-	const { mutate: deleteDeployment, isPending: isDisconnecting } = useMutation( {
-		...codeDeploymentDeleteMutation( deployment?.blog_id, deployment?.id ),
-		meta: {
-			snackbar: {
-				success: __( 'Repository disconnected.' ),
-				error: __( 'Failed to disconnect repository.' ),
-			},
-		},
-	} );
+	const { mutate: deleteDeployment, isPending: isDisconnecting } = useMutation(
+		withSnackbar( codeDeploymentDeleteMutation( deployment?.blog_id, deployment?.id ), {
+			success: __( 'Repository disconnected.' ),
+			error: __( 'Failed to disconnect repository.' ),
+		} )
+	);
 
 	const handleDisconnect = () => {
 		deleteDeployment( !! formData.removeFiles, {

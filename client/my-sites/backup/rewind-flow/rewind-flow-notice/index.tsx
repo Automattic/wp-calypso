@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
@@ -35,6 +36,14 @@ const RewindFlowNotice: FunctionComponent< Props > = ( {
 		}
 	};
 
+	// The level also goes on the wrapper so the whole notice, not just its
+	// heading, can carry a tinted background.
+	const levelClassName = {
+		[ RewindFlowNoticeLevel.NOTICE ]: 'is-notice',
+		[ RewindFlowNoticeLevel.WARNING ]: 'is-warning',
+		[ RewindFlowNoticeLevel.REMINDER ]: 'is-reminder',
+	}[ type ];
+
 	const renderLink = () => (
 		<a className={ getTitleClassName() } href={ link } target="_blank" rel="noopener noreferrer">
 			<Gridicon icon={ gridicon } />
@@ -50,7 +59,7 @@ const RewindFlowNotice: FunctionComponent< Props > = ( {
 	);
 
 	return (
-		<div className="rewind-flow-notice">
+		<div className={ clsx( 'rewind-flow-notice', levelClassName ) }>
 			{ link ? renderLink() : renderNonLink() }
 			{ message && <p>{ message }</p> }
 		</div>

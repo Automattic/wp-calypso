@@ -25,8 +25,8 @@ describe( 'partition', () => {
 		expect( partition( undefined, () => true ) ).toEqual( [ [], [] ] );
 	} );
 
-	it( 'invokes the predicate with only the value, matching lodash', () => {
-		// lodash `partition` passes a function predicate only the value (not the
+	it( 'invokes the predicate with only the value', () => {
+		// The predicate receives only the value (not the
 		// index/key), so this helper does the same.
 		const argCounts: number[] = [];
 		partition( [ 10, 20, 30 ], ( ...args ) => {

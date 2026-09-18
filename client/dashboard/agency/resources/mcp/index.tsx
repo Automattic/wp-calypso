@@ -12,14 +12,26 @@ export default function Mcp() {
 	const { settings, isLoading, isSaving, save } = useMcpSettings();
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'MCP' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'AI and MCP' ) }
+					description={ __(
+						'Control how AI assistants interact with your Automattic for Agencies account and sites.'
+					) }
+				/>
+			}
+		>
 			<McpOverview
 				settings={ settings }
 				isLoading={ isLoading }
 				isSaving={ isSaving }
 				onSave={ save }
 				recordTracksEvent={ recordTracksEvent }
-				onNavigate={ ( path ) => navigate( { to: path as '/resources/ai-mcp/tools' } ) }
+				onNavigate={ ( path ) =>
+					navigate( { to: path as '/resources/ai-mcp/read' | '/resources/ai-mcp/write' } )
+				}
 			/>
 		</PageLayout>
 	);

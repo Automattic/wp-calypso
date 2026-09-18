@@ -130,8 +130,7 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + String( data.label ) : String( data.label );
-	// eslint-disable-next-line
-	const escapedLabel = label.replace( /\"/, '""' );
+	const escapedLabel = label.replace( /"/g, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -834,10 +833,36 @@ export const normalizers = {
 		}
 
 		let data = [];
-		if ( payload.data ) {
-			data = payload.data.map( ( item ) => {
-				return { period: item[ 0 ], value: item[ 1 ] };
-			} );
+		// When the requested window has no rows at all, the endpoint returns a single
+		// `{ date, p }` object instead of the usual `[ date, value ]` tuples.
+		if ( Array.isArray( payload.data ) ) {
+			data = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					return { period: item[ 0 ], value: item[ 1 ] };
+				} );
+		}
+
+		// `fields` names the tuple columns after the leading period (one metric
+		// for a single statType, four for statType=all). Rows keyed by metric
+		// name let consumers pick series without caring about column order.
+		let metrics = null;
+		let rows = null;
+		if (
+			Array.isArray( payload.fields ) &&
+			payload.fields.length >= 2 &&
+			Array.isArray( payload.data )
+		) {
+			metrics = payload.fields.slice( 1 );
+			rows = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					const row = { period: item[ 0 ] };
+					metrics.forEach( ( metric, index ) => {
+						row[ metric ] = Number( item[ index + 1 ] ) || 0;
+					} );
+					return row;
+				} );
 		}
 
 		let pages = [];
@@ -850,7 +875,18 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// The endpoint also returns the video's attachment post, which carries
+		// the title and upload date.
+		return {
+			pages,
+			data,
+			post: payload.post ?? null,
+			metrics,
+			rows,
+			// Range queries also return canonical totals over the window, keyed
+			// by metric name.
+			total: payload.total ?? null,
+		};
 	},
 
 	/**
@@ -1187,6 +1223,7 @@ export const normalizers = {
 			return [];
 		}
 
+		// Never-emailed posts are filtered server-side, before pagination (STATS-452).
 		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(

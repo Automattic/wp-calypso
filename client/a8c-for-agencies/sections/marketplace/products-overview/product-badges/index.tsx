@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useProductCategories } from '../../hooks/use-product-categories';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
@@ -14,7 +14,9 @@ export default function ProductBadges( { product }: Props ) {
 	return (
 		<div className="product-badges">
 			{ badges.map( ( badge: string ) => (
-				<Badge key={ badge }>{ badge }</Badge>
+				<Badge key={ badge } intent="draft">
+					{ badge }
+				</Badge>
 			) ) }
 		</div>
 	);

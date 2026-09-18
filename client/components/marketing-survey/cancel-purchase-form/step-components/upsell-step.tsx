@@ -19,8 +19,8 @@ import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purc
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { UpsellType } from '../get-upsell-type';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -89,7 +89,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 function getLiveChatUrl( type: UpsellType, site: SiteDetails, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
-			return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
+			return `/purchases/subscriptions/${ site.slug }/${ purchase.ID }`;
 		case 'live-chat:plugins':
 			return `/plugins/${ site.slug }`;
 		case 'live-chat:themes':
@@ -179,14 +179,14 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 								{
 									components: { b: <strong /> },
 								}
-						  )
+							)
 						: translate(
 								'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to chat. ' +
 									'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.',
 								{
 									components: { b: <strong /> },
 								}
-						  ) }
+							) }
 				</Upsell>
 			);
 		case 'built-by':
@@ -286,7 +286,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 											),
 										},
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>
@@ -315,13 +315,13 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 										comment: '%(plan)s is WordPress.com Personal or another plan',
 									}
-							  )
+								)
 							: translate(
 									'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
 									{
 										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 									}
-							  ) }{ ' ' }
+								) }{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +
@@ -351,7 +351,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'But we’d love to see you stick around to build on what you started. ' +
 							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
 						{
-							args: { planName: getPlan( purchase.productSlug )?.getTitle() ?? '' },
+							args: { planName: getPlan( purchase.product_slug )?.getTitle() ?? '' },
 						}
 					) }
 				</Upsell>

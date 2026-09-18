@@ -29,10 +29,12 @@ export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
-const noClickStyle = {
-	css: 'a[href], button, input, textarea { pointer-events: none; }',
-	isGlobalStyles: true,
-};
+const noClickStyles = [
+	{
+		css: 'a[href], button, input, textarea { pointer-events: none; }',
+		isGlobalStyles: true,
+	},
+];
 
 // Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
 // hacky script is injected into pattern preview iframes to force rerender those elements.
@@ -126,32 +128,32 @@ function PatternPreviewFragment( {
 		? translate( 'Copied link to pattern', {
 				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
 				textOnly: true,
-		  } )
+			} )
 		: translate( 'Copy link to pattern', {
 				comment: 'Tooltip text in Pattern Library',
 				textOnly: true,
-		  } );
+			} );
 
 	let copyButtonText = isPreviewLarge
 		? translate( 'Copy pattern', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } )
+			} )
 		: translate( 'Copy', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } );
+			} );
 
 	if ( isPatternCopied ) {
 		copyButtonText = isPreviewLarge
 			? translate( 'Pattern copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
-			  } )
+				} )
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
-			  } );
+				} );
 	}
 
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
@@ -305,7 +307,7 @@ function PatternPreviewFragment( {
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
-					styles={ [ noClickStyle ] }
+					styles={ noClickStyles }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>

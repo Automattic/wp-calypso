@@ -1,8 +1,21 @@
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { globe, commentAuthorAvatar, envelope, bell, wordpress } from '@wordpress/icons';
+import {
+	globe,
+	commentAuthorAvatar,
+	envelope,
+	bell,
+	wordpress,
+	plugins,
+	cog,
+	payment,
+	receipt,
+	lock,
+} from '@wordpress/icons';
 import { useAppContext } from '../context';
 import type { AppConfig } from '../context';
+
+type Supports = AppConfig[ 'supports' ];
 
 export interface Command {
 	name: string;
@@ -10,8 +23,9 @@ export interface Command {
 	searchLabel: string;
 	path: string;
 	icon: React.ReactNode;
-	// Optional feature flag that controls when command is available
-	feature?: keyof AppConfig[ 'supports' ];
+	// Optional predicate that controls when the command is available, based on
+	// the app's supported features. Omit to always show the command.
+	isEnabled?: ( supports: Supports ) => boolean;
 }
 
 export const navigationCommands: Command[] = [
@@ -21,15 +35,7 @@ export const navigationCommands: Command[] = [
 		searchLabel: __( 'Navigate to Sites dashboard Sites page' ),
 		path: '/sites',
 		icon: wordpress,
-		feature: 'sites',
-	},
-	{
-		name: 'dashboard-go-to-emails',
-		label: __( 'Go to Emails' ),
-		searchLabel: __( 'Navigate to Email management Email inbox' ),
-		path: '/emails',
-		icon: envelope,
-		feature: 'emails',
+		isEnabled: ( supports ) => supports.sites,
 	},
 	{
 		name: 'dashboard-go-to-domains',
@@ -37,7 +43,23 @@ export const navigationCommands: Command[] = [
 		searchLabel: __( 'Navigate to Domain management Domains list' ),
 		path: '/domains',
 		icon: globe,
-		feature: 'domains',
+		isEnabled: ( supports ) => supports.domains,
+	},
+	{
+		name: 'dashboard-go-to-emails',
+		label: __( 'Go to Emails' ),
+		searchLabel: __( 'Navigate to Email management Email inbox' ),
+		path: '/emails',
+		icon: envelope,
+		isEnabled: ( supports ) => supports.emails,
+	},
+	{
+		name: 'dashboard-go-to-plugins',
+		label: __( 'Go to Plugins' ),
+		searchLabel: __( 'Navigate to Plugins management install plugins' ),
+		path: '/plugins',
+		icon: plugins,
+		isEnabled: ( supports ) => supports.plugins,
 	},
 	{
 		name: 'dashboard-go-to-account',
@@ -45,7 +67,39 @@ export const navigationCommands: Command[] = [
 		searchLabel: __( 'Navigate to User account profile settings' ),
 		path: '/me/account',
 		icon: commentAuthorAvatar,
-		feature: 'me',
+		isEnabled: ( supports ) => !! supports.me,
+	},
+	{
+		name: 'dashboard-go-to-preferences',
+		label: __( 'Go to Preferences' ),
+		searchLabel: __( 'Navigate to account preferences settings appearance language' ),
+		path: '/me/preferences',
+		icon: cog,
+		isEnabled: ( supports ) => !! supports.me,
+	},
+	{
+		name: 'dashboard-go-to-billing',
+		label: __( 'Go to Billing' ),
+		searchLabel: __( 'Navigate to billing payment methods active subscriptions' ),
+		path: '/me/billing',
+		icon: payment,
+		isEnabled: ( supports ) => !! ( supports.me && supports.me.billing ),
+	},
+	{
+		name: 'dashboard-go-to-purchases',
+		label: __( 'Go to Purchases' ),
+		searchLabel: __( 'Navigate to purchases receipts billing history' ),
+		path: '/me/billing/purchases',
+		icon: receipt,
+		isEnabled: ( supports ) => !! ( supports.me && supports.me.billing ),
+	},
+	{
+		name: 'dashboard-go-to-security',
+		label: __( 'Go to Security' ),
+		searchLabel: __( 'Navigate to account security password two-step authentication' ),
+		path: '/me/security',
+		icon: lock,
+		isEnabled: ( supports ) => !! ( supports.me && supports.me.security ),
 	},
 	{
 		name: 'dashboard-go-to-notifications',
@@ -53,7 +107,7 @@ export const navigationCommands: Command[] = [
 		searchLabel: __( 'Check your WordPress notifications alerts' ),
 		path: '/me/notifications',
 		icon: bell,
-		feature: 'notifications',
+		isEnabled: ( supports ) => supports.notifications,
 	},
 ];
 
@@ -64,13 +118,10 @@ export function useNavigationCommandLoader() {
 	const router = useRouter();
 	const { supports } = useAppContext();
 
-	// Filter commands based on feature flags from app context
-	const enabledCommands = navigationCommands.filter( ( cmd ) => {
-		if ( ! cmd.feature ) {
-			return true;
-		}
-		return supports[ cmd.feature ];
-	} );
+	// Filter commands based on the app's supported features.
+	const enabledCommands = navigationCommands.filter(
+		( cmd ) => ! cmd.isEnabled || cmd.isEnabled( supports )
+	);
 
 	return {
 		commands: enabledCommands.map( ( cmd ) => ( {

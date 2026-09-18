@@ -195,6 +195,167 @@ describe( 'reader post cache', () => {
 		} );
 	} );
 
+	it( 'keeps feed stream posts distinct when blog post IDs are zero', async () => {
+		const queryClient = makeQueryClient();
+		const feedId = 101852522;
+		const siteId = 162509141;
+		const posts = [
+			{
+				ID: 0,
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 6110855097,
+				global_ID: 'global-feed-item-1',
+				title: 'First TIME post',
+				is_external: false,
+			},
+			{
+				ID: 0,
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 6110855098,
+				global_ID: 'global-feed-item-2',
+				title: 'Second TIME post',
+				is_external: false,
+			},
+		];
+
+		upsertPostCache( queryClient, posts );
+
+		expect( getCachedPost( queryClient, { feedId, postId: 6110855097 } ) ).toMatchObject( {
+			title: 'First TIME post',
+			feed_item_ID: 6110855097,
+		} );
+		expect( getCachedPost( queryClient, { feedId, postId: 6110855098 } ) ).toMatchObject( {
+			title: 'Second TIME post',
+			feed_item_ID: 6110855098,
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 0 } ) ).toBeNull();
+
+		const postKeys = [
+			{ feedId, postId: 6110855097 },
+			{ feedId, postId: 6110855098 },
+		];
+		const { result } = renderHook( () => useCachedPosts( postKeys ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => {
+			expect( result.current ).toEqual( [
+				expect.objectContaining( { title: 'First TIME post' } ),
+				expect.objectContaining( { title: 'Second TIME post' } ),
+			] );
+		} );
+	} );
+
+	it( 'keeps distinct blog posts from the same feed from colliding when feed item IDs are zero', () => {
+		const queryClient = makeQueryClient();
+		const feedId = 90433325;
+		const siteId = 1007522;
+		// Older externally-crawled posts on the same feed often carry
+		// `feed_item_ID: 0` (never assigned one), not a real, shared id.
+		const posts = [
+			blogPost( 231, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Celebration of the suffering woman',
+			} ),
+			blogPost( 284, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Subtle art of choosing the best books',
+			} ),
+			blogPost( 188, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Nay.. Not dead',
+			} ),
+		];
+
+		// Simulate each post syncing in on its own page fetch, the way the
+		// infinite stream upserts one page's posts at a time.
+		posts.forEach( ( post ) => upsertPostCache( queryClient, [ post ] ) );
+
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 231 } ) ).toMatchObject( {
+			title: 'Celebration of the suffering woman',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 284 } ) ).toMatchObject( {
+			title: 'Subtle art of choosing the best books',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 188 } ) ).toMatchObject( {
+			title: 'Nay.. Not dead',
+		} );
+
+		// Locks in the fix at its source: no `feed-0-{feedId}` entry should exist
+		// for any of these posts to share, so a later identity branch can't
+		// resurrect the collision by matching against it.
+		expect( getCachedPost( queryClient, { feedId, postId: 0 } ) ).toBeNull();
+	} );
+
+	it( 'keeps distinct blog posts from colliding when a shared `0` sits in feed_item_IDs', () => {
+		const queryClient = makeQueryClient();
+		const feedId = 90433325;
+		const siteId = 1007522;
+
+		// A `0` in `feed_item_IDs` means "no id assigned" here too, same as the
+		// scalar `feed_item_ID` — it must not make two different posts "share"
+		// an id just because they both list an unassigned `0`.
+		upsertPostCache( queryClient, [
+			blogPost( 1, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_IDs: [ 0 ],
+				global_ID: undefined,
+			} ),
+		] );
+		upsertPostCache( queryClient, [
+			blogPost( 2, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_IDs: [ 0 ],
+				global_ID: undefined,
+			} ),
+		] );
+
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 1 } ) ).toMatchObject( {
+			title: 'Post 1',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 2 } ) ).toMatchObject( {
+			title: 'Post 2',
+		} );
+
+		// Same rule when the unassigned `0` is mixed in alongside a real id.
+		upsertPostCache( queryClient, [
+			blogPost( 3, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_IDs: [ 0, 123 ],
+				global_ID: undefined,
+			} ),
+		] );
+		upsertPostCache( queryClient, [
+			blogPost( 4, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_IDs: [ 0, 456 ],
+				global_ID: undefined,
+			} ),
+		] );
+
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 3 } ) ).toMatchObject( {
+			title: 'Post 3',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 4 } ) ).toMatchObject( {
+			title: 'Post 4',
+		} );
+	} );
+
 	it( 'exposes dynamic cached post lists through useCachedPosts', async () => {
 		const queryClient = makeQueryClient();
 		const postKeys = [

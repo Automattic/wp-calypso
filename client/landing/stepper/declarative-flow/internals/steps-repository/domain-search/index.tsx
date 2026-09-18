@@ -1,6 +1,8 @@
+import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	isAIBuilderFlow,
+	isAIBuilderOnboardingFlow,
 	isCopySiteFlow,
 	isDomainFlow,
 	isDomainAndPlanFlow,
@@ -27,6 +29,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -49,8 +52,8 @@ import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboardi
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
-import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -91,7 +94,10 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
+		freeSubdomainTitle?: string;
+		freeSubdomainButtonLabel?: string;
 		allowedTlds?: string[];
+		freeForFirstYearTlds?: string[];
 	};
 } > = function DomainSearchStep( {
 	navigation,
@@ -102,7 +108,10 @@ const DomainSearchStep: StepType< {
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
+	freeSubdomainTitle,
+	freeSubdomainButtonLabel,
 	allowedTlds: allowedTldsProp,
+	freeForFirstYearTlds: freeForFirstYearTldsProp,
 } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -131,17 +140,27 @@ const DomainSearchStep: StepType< {
 		}
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
-	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
+	const showHelpCenter = isOnboardingFlow( flow );
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
+	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
+	// option to offer — show only a "Set up a domain later" skip control.
+	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
+	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 		[]
 	);
+
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -187,12 +206,24 @@ const DomainSearchStep: StepType< {
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
+				freeForFirstYearTlds: freeForFirstYearTldsProp,
 			},
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
+			// Free-subdomain skip card copy, in order of precedence: per-flow
+			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
+			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
+			// then the flow default resolved by `getSkipSuggestionCopy`.
+			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
+				title: freeSubdomainTitle ?? wowSkipCopy,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
+			} ),
+			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
+			// the skip control.
+			hideFreeSubdomainSuggestion: isWowFunnel,
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -202,11 +233,25 @@ const DomainSearchStep: StepType< {
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
+				! isAIBuilderOnboardingFlow( flow ) &&
 				! isNewHostedSiteCreationFlow( flow ) &&
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
+	}, [
+		__,
+		flow,
+		isCiab,
+		isWooHostingSolutions,
+		isWowFunnel,
+		wowSkipCopy,
+		tldQuery,
+		query,
+		allowedTldsProp,
+		freeForFirstYearTldsProp,
+		freeSubdomainTitle,
+		freeSubdomainButtonLabel,
+	] );
 
 	const { submit } = navigation;
 
@@ -323,12 +368,18 @@ const DomainSearchStep: StepType< {
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
+		// A plan chosen before this step never reaches the shopping cart, so the cart's own
+		// monthly check cannot see it. Monthly plans do not carry the free first year.
+		if ( planCartItem?.product_slug && isMonthly( planCartItem.product_slug ) ) {
+			return false;
+		}
+
 		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
 			return false;
 		}
 
 		return true;
-	}, [ flow, isCiab, site, sourceSlug ] );
+	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -585,7 +636,12 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && (
+							<OnboardingProgress
+								currentStep="domains"
+								shouldHidePlansStep={ shouldHidePlansStep }
+							/>
+						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

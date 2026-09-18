@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
+import { adaptUserSettings } from './adapters';
 import type { UserSettings } from './types';
 
 export async function fetchUserSettings(): Promise< UserSettings > {
-	return await wpcom.req.get( '/me/settings' );
+	return adaptUserSettings( await wpcom.req.get( '/me/settings' ) );
 }

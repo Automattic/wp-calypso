@@ -14,14 +14,35 @@ async function resolveAgencyId(): Promise< number > {
 	return agency.id;
 }
 
-export const paginatedAgencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
+// Pass an explicit `agencyId` (e.g. from Redux in the classic A4A app) to skip
+// the async agency resolution; otherwise the active agency is resolved for you.
+// The full response (including `total`) is returned so callers can paginate.
+export const paginatedAgencySitesQuery = (
+	options: FetchAgencySitesOptions = {},
+	agencyId?: number
+) =>
 	queryOptions( {
-		queryKey: [ ...agencySitesQueryKey, 'paginated', options ],
-		queryFn: async () => fetchAgencySites( await resolveAgencyId(), options ),
+		queryKey: [ ...agencySitesQueryKey, 'paginated', agencyId ?? null, options ],
+		queryFn: async () => fetchAgencySites( agencyId ?? ( await resolveAgencyId() ), options ),
 	} );
 
 export const agencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
 	queryOptions( {
 		queryKey: [ ...agencySitesQueryKey, options ],
 		queryFn: async () => ( await fetchAgencySites( await resolveAgencyId(), options ) ).sites,
+	} );
+
+// The endpoint has no single-site lookup, so we search the agency's sites by
+// URL and select the exact match. TODO: replace with a dedicated single-site
+// endpoint.
+export const agencySiteQuery = ( siteUrl: string ) =>
+	queryOptions( {
+		queryKey: [ ...agencySitesQueryKey, 'site', siteUrl ],
+		queryFn: async () => {
+			const { sites } = await fetchAgencySites( await resolveAgencyId(), {
+				search: siteUrl,
+				per_page: 100,
+			} );
+			return sites.find( ( site ) => site.url === siteUrl ) ?? null;
+		},
 	} );

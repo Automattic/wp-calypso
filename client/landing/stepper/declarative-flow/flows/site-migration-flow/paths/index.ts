@@ -59,17 +59,6 @@ export const sitePickerPath = buildPathHelper<
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
 
-export const importOrMigratePath = buildPathHelper<
-	{
-		queryParams: {
-			from?: string;
-			siteSlug: string;
-			siteId?: number | string;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
->( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
-
 export const howToMigratePath = buildPathHelper<
 	{
 		queryParams: {
@@ -247,31 +236,19 @@ export const siteSetupImportListPath = buildPathHelper< {
 	};
 } >( `/setup/site-setup/${ STEPS.IMPORT_LIST.slug }` );
 
-export const calypsoImporterPath = buildPathHelper< {
-	queryParams: { engine: string; ref: string };
-	params: { siteSlug: string };
-} >( '/import/:siteSlug' );
-
 export const siteSetupImportWordpressPath = buildPathHelper< {
 	queryParams: {
 		siteId?: number | string;
 		siteSlug: string;
-		from: string;
+		from?: string | null;
 		backToFlow: string;
 	};
-} >( '/setup/site-setup/importerWordpress' );
+} >( `/setup/site-setup/${ STEPS.IMPORTER_WORDPRESS.slug }` );
 
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
 	params: { siteSlug: string };
 } >( '/overview/:siteSlug' );
-
-export const siteSetupGoalsPath = buildPathHelper< {
-	queryParams: {
-		siteId?: number | string;
-		siteSlug: string;
-	};
-} >( '/setup/site-setup/goals' );
 
 export const dashboardSiteSSHMigration = buildPathHelper< {
 	queryParams: {

@@ -9,7 +9,7 @@ import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
@@ -25,7 +25,7 @@ type ActionButtonProps = {
 	isInSignup?: boolean;
 	isMonthlyPlan?: boolean;
 	planSlug: PlanSlug;
-	buttonText?: string;
+	buttonText?: TranslateResult;
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	isStuck: boolean;
@@ -38,6 +38,7 @@ const ActionButton = ( {
 	currentSitePlanSlug,
 	visibleGridPlans,
 	availableForPurchase,
+	buttonText,
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
@@ -101,6 +102,9 @@ const ActionButton = ( {
 		pricing: gridPlansIndex[ planSlug ]?.pricing,
 		isMonthlyPlan,
 	} );
+	const shouldUseButtonText = !! buttonText && ! current && availableForPurchase;
+	const primaryText = shouldUseButtonText ? buttonText : text;
+	const primaryAriaLabel = shouldUseButtonText ? buttonText : ariaLabel;
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
 	} = useAction( {
@@ -140,9 +144,9 @@ const ActionButton = ( {
 			busy={ busy }
 			disabled={ ! callback || 'disabled' === status }
 			classes={ variant === 'secondary' ? 'is-secondary' : '' }
-			ariaLabel={ String( ariaLabel || '' ) }
+			ariaLabel={ String( primaryAriaLabel || '' ) }
 		>
-			{ text }
+			{ primaryText }
 		</PlanButton>
 	);
 
@@ -187,9 +191,9 @@ const ActionButton = ( {
 							onClick={ callback }
 							busy={ busy }
 							borderless
-							ariaLabel={ String( ariaLabel || '' ) }
+							ariaLabel={ String( primaryAriaLabel || '' ) }
 						>
-							{ text }
+							{ primaryText }
 						</PlanButton>
 					) }
 				</div>
@@ -204,9 +208,9 @@ const ActionButton = ( {
 						// is scheduled) should render as a plan-colored CTA, not the muted
 						// current-plan style.
 						current={ current && variant !== 'primary' }
-						ariaLabel={ String( ariaLabel || '' ) }
+						ariaLabel={ String( primaryAriaLabel || '' ) }
 					>
-						{ text }
+						{ primaryText }
 					</PlanButton>
 					{ showPostButtonText && postButtonText && (
 						<span
@@ -243,7 +247,7 @@ const ActionButton = ( {
 		<div className="plans-grid-next-action-button">
 			<div
 				className="plans-grid-next-action-button__content"
-				style={ ! text ? { visibility: 'hidden' } : undefined }
+				style={ ! primaryText ? { visibility: 'hidden' } : undefined }
 			>
 				{ actionButton }
 			</div>

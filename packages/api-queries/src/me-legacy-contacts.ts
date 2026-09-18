@@ -28,7 +28,9 @@ export const legacyContactQuery = ( legacyContactId: number ) =>
 
 export const addLegacyContactMutation = () =>
 	mutationOptions( {
-		mutationFn: ( email: string ) => addLegacyContact( email ),
+		meta: { statId: 'legacy-contact-add' },
+		mutationFn: ( { email, notes }: { email: string; notes?: string } ) =>
+			addLegacyContact( email, notes ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( legacyContactsQuery() );
 		},
@@ -36,15 +38,14 @@ export const addLegacyContactMutation = () =>
 
 export const deleteLegacyContactMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'legacy-contact-delete' },
 		mutationFn: ( legacyContactId: number ) => deleteLegacyContact( legacyContactId ),
 		onSuccess: ( _data, legacyContactId ) => {
 			// Drop the contact from the cached list right away so the UI returns to
 			// the empty state immediately, rather than showing the removed contact
 			// until the invalidation refetch below completes.
-			queryClient.setQueryData< LegacyContact[] >(
-				legacyContactsQuery().queryKey,
-				( contacts ) =>
-					contacts?.filter( ( contact ) => contact.legacy_contact_id !== legacyContactId )
+			queryClient.setQueryData< LegacyContact[] >( legacyContactsQuery().queryKey, ( contacts ) =>
+				contacts?.filter( ( contact ) => contact.legacy_contact_id !== legacyContactId )
 			);
 			queryClient.invalidateQueries( legacyContactsQuery() );
 			// Drop the single-contact query from the cache; it holds a sensitive

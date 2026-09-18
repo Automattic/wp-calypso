@@ -52,8 +52,10 @@
 	}
 }
 
-// Overrides layout for WP Admin.
-.wp-admin {
+// Overrides layout for WP Admin. Scoped to `.jp-stats-dashboard` (the class Jetpack's PHP puts on
+// the Stats app's mount element) rather than `.wp-admin`, since WP core puts `.wp-admin` on the
+// real `<body>` — using it here would apply these overrides to the whole wp-admin page.
+.jp-stats-dashboard {
 	// CSS variable overrides.
 	--sidebar-width-max: 160px;
 	--sidebar-width-min: 36px;
@@ -110,8 +112,12 @@
 		margin: 0;
 		color: inherit;
 	}
+}
 
-	// Offset margin of menu items set in Calypso.
+// Counteracts the `ul ul { margin-left: 1.5em }` that Calypso's unscoped global stylesheet leaks
+// onto wp-admin's flyout submenus. `#adminmenu` lives outside `.jp-stats-dashboard`, so this one
+// override must stay at `.wp-admin` scope until the global styles are scoped.
+.wp-admin {
 	ul.wp-submenu,
 	ul.wp-submenu-wrap {
 		margin-left: 0;

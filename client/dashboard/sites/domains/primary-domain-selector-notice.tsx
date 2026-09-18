@@ -18,6 +18,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
@@ -48,19 +49,16 @@ const PrimaryDomainSelectorNotice = ( {
 		( ! ( primaryWithPlanOnly && isOnFreePlan ) &&
 			( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false ) ) ||
 		isFlexSite;
-	const setPrimaryDomainMutation = useMutation( {
-		...siteSetPrimaryDomainMutation(),
-		meta: {
-			snackbar: {
-				success: sprintf(
-					/* translators: %s is domain */
-					__( 'Primary site address changed: all domains will redirect to %s.' ),
-					formData.primaryDomain
-				),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const setPrimaryDomainMutation = useMutation(
+		withSnackbar( siteSetPrimaryDomainMutation(), {
+			success: sprintf(
+				/* translators: %s is domain */
+				__( 'Primary site address changed: all domains will redirect to %s.' ),
+				formData.primaryDomain
+			),
+			error: { source: 'server' },
+		} )
+	);
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {

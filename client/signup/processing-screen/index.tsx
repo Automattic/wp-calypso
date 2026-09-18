@@ -1,4 +1,9 @@
-import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/onboarding';
+import {
+	ACCOUNT_FLOW,
+	HOSTING_LP_FLOW,
+	ENTREPRENEUR_FLOW,
+	READER_FLOW,
+} from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -50,6 +55,7 @@ const useSteps = ( {
 		case ACCOUNT_FLOW:
 		case HOSTING_LP_FLOW:
 		case ENTREPRENEUR_FLOW:
+		case READER_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		case 'do-it-for-me':
@@ -122,7 +128,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 				progress={ progressValue }
 				subtitle={
 					totalSteps > 1 &&
-					// translators: these are progress steps. Eg: step 1 of 4.
+					// translators: %(currentStep)d is the current step number; %(totalSteps)d is the total number of steps. Eg: step 1 of 4.
 					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
 						currentStep: currentStep + 1,
 						totalSteps,

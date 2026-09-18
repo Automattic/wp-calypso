@@ -1,6 +1,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
+import { HELP_CENTER_STORE } from '../../constants';
 import { TypingPlaceholder } from './typing-placeholder';
 
 type ZendeskTypingIndicatorProps = {

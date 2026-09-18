@@ -23,19 +23,29 @@ const SITE_ID = 1;
 const OWNER_USER_ID = 10;
 const NON_OWNER_USER_ID = 99;
 
-const site = {
-	ID: SITE_ID,
-	name: 'Test Site',
-	slug: 'test-site.wordpress.com',
-	URL: 'https://test-site.wordpress.com',
-	site_owner: OWNER_USER_ID,
-	plan: {
-		product_slug: 'free_plan',
-		product_name_short: 'Free',
-		is_free: true,
-		features: { active: [] },
-	},
-} as unknown as Site;
+const makeSite = ( plan: Record< string, unknown > ) =>
+	( {
+		ID: SITE_ID,
+		name: 'Test Site',
+		slug: 'test-site.wordpress.com',
+		URL: 'https://test-site.wordpress.com',
+		site_owner: OWNER_USER_ID,
+		plan,
+	} ) as unknown as Site;
+
+const freeSitePlan = {
+	product_slug: 'free_plan',
+	product_name_short: 'Free',
+	is_free: true,
+	features: { active: [] },
+};
+
+const paidSitePlan = {
+	product_slug: 'personal-bundle',
+	product_name_short: 'Personal',
+	is_free: false,
+	features: { active: [] },
+};
 
 const ownerUser = {
 	ID: OWNER_USER_ID,
@@ -60,7 +70,7 @@ const freePlan = {
 	product_tier_id: 1,
 	product_tier_product_ids: [ 1 ],
 	interval: 365,
-	current_plan: true,
+	current_plan: false,
 	raw_price: 0,
 	raw_price_integer: 0,
 	raw_discount: 0,
@@ -99,33 +109,72 @@ const personalPlan = {
 	is_domain_upgrade: false,
 };
 
-function mockApis() {
+const businessPlan = {
+	product_id: 3,
+	product_slug: 'business-bundle',
+	product_name: 'Business',
+	plan_card_name: 'Business',
+	plan_card_order: 2,
+	product_tier_id: 3,
+	product_tier_product_ids: [ 3 ],
+	interval: 365,
+	current_plan: false,
+	raw_price: 8,
+	raw_price_integer: 800,
+	raw_discount: 0,
+	raw_discount_integer: 0,
+	formatted_price: '$8',
+	formatted_original_price: '$8',
+	formatted_discount: '$0',
+	currency_code: 'USD',
+	original_price: { amount: 8, currency: 'USD' },
+	discount_reason: null,
+	cost_overrides: [],
+	is_domain_upgrade: false,
+};
+
+function mockApis( {
+	sitePlan,
+	plans,
+}: {
+	sitePlan: Record< string, unknown >;
+	plans: Record< number, Record< string, unknown > >;
+} ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.get( '/rest/v1.1/sites/test-site.wordpress.com' )
 		.query( true )
-		.reply( 200, site );
+		.reply( 200, makeSite( sitePlan ) );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.4/sites/${ SITE_ID }/plans` )
 		.query( true )
-		.reply( 200, {
-			plans: {
-				1: freePlan,
-				2: personalPlan,
-			},
-		} );
+		.reply( 200, { plans } );
+}
+
+function mockFreeSite() {
+	mockApis( {
+		sitePlan: freeSitePlan,
+		plans: { 1: { ...freePlan, current_plan: true }, 2: personalPlan },
+	} );
+}
+
+function mockPaidSite( { userIsOwner }: { userIsOwner: boolean } ) {
+	mockApis( {
+		sitePlan: paidSitePlan,
+		plans: {
+			2: { ...personalPlan, current_plan: true, user_is_owner: userIsOwner },
+			3: businessPlan,
+		},
+	} );
 }
 
 describe( '<SitePlans>', () => {
-	beforeEach( () => {
-		mockApis();
-	} );
-
 	afterEach( () => {
 		nock.cleanAll();
 	} );
 
-	test( 'shows upgrade button for site owner', async () => {
+	test( 'shows upgrade CTAs on a free site for the site owner', async () => {
+		mockFreeSite();
 		render( <SitePlans />, { user: ownerUser } );
 
 		await screen.findByText( 'Personal' );
@@ -133,15 +182,35 @@ describe( '<SitePlans>', () => {
 		expect( screen.getByRole( 'link', { name: 'Get Personal' } ) ).toBeVisible();
 	} );
 
-	test( 'hides upgrade button for non-owner', async () => {
+	test( 'shows upgrade CTAs on a free site for a non-owner', async () => {
+		mockFreeSite();
 		render( <SitePlans />, { user: nonOwnerUser } );
 
 		await screen.findByText( 'Personal' );
 
-		expect( screen.queryByRole( 'link', { name: 'Get Personal' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Get Personal' } ) ).toBeVisible();
+	} );
+
+	test( 'shows upgrade CTAs when the user owns the current paid plan', async () => {
+		mockPaidSite( { userIsOwner: true } );
+		render( <SitePlans />, { user: ownerUser } );
+
+		await screen.findByText( 'Business' );
+
+		expect( screen.getByRole( 'link', { name: 'Get Business' } ) ).toBeVisible();
+	} );
+
+	test( 'hides upgrade CTAs when the current paid plan is owned by someone else', async () => {
+		mockPaidSite( { userIsOwner: false } );
+		render( <SitePlans />, { user: nonOwnerUser } );
+
+		await screen.findByText( 'Business' );
+
+		expect( screen.queryByRole( 'link', { name: 'Get Business' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows "Your plan" indicator for current plan regardless of ownership', async () => {
+		mockPaidSite( { userIsOwner: false } );
 		render( <SitePlans />, { user: nonOwnerUser } );
 
 		await screen.findByText( 'Personal' );

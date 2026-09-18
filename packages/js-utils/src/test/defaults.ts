@@ -24,20 +24,20 @@ describe( 'defaults', () => {
 		expect( target ).toEqual( { a: 1, b: 2 } );
 	} );
 
-	it( 'coerces a nullish destination to a new object, like lodash', () => {
+	it( 'coerces a nullish destination to a new object', () => {
 		// @ts-expect-error -- exercises runtime tolerance of a nullish destination.
 		expect( defaults( null, { a: 1 } ) ).toEqual( { a: 1 } );
 		// @ts-expect-error -- see above.
 		expect( defaults( undefined, { b: 2 } ) ).toEqual( { b: 2 } );
 	} );
 
-	it( 'copies inherited enumerable source properties, like lodash', () => {
+	it( 'copies inherited enumerable source properties', () => {
 		const source = Object.create( { inherited: 9 } );
 		source.own = 1;
 		expect( defaults( {}, source ) ).toEqual( { own: 1, inherited: 9 } );
 	} );
 
-	it( 'fills keys that resolve through Object.prototype, like lodash', () => {
+	it( 'fills keys that resolve through Object.prototype', () => {
 		const result = defaults( {}, { constructor: 'x', toString: 'y', own: 1 } );
 		expect( result.constructor ).toBe( 'x' );
 		expect( result.toString ).toBe( 'y' );

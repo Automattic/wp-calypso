@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import { useSiteSubscriptions, useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import {
@@ -18,7 +19,6 @@ import {
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
-import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { recordFollow } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';

@@ -3,6 +3,14 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
+		// `client` is a leaf application project — nothing references it as a
+		// composite project, so it never needs to emit declarations. Opting out
+		// of declaration emit avoids React 19 `@types/react` declaration-emit
+		// errors (e.g. the private `VoidOrUndefinedOnly` name leaking through
+		// `connect()` HOC exports) without affecting type-checking.
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
 		"types": [
 			"node",
 			"@types/gtag.js",

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { ClickableItem } from '../menu-items';
 import { Nav2026AppBanner } from './app-banner';
+import { Nav2026ItemContent } from './item-content';
 import type { Nav2026Menu } from './types';
 
 // Mystery-person Gravatar fallback for the mobile footer avatar.
@@ -35,7 +36,7 @@ interface Nav2026MobileMenuProps {
 	__: Translate;
 	variant: 'default' | 'minimal';
 	mobilePlatform: 'ios' | 'android' | null;
-	mobileFooterRef: React.RefObject< HTMLDivElement >;
+	mobileFooterRef: React.RefObject< HTMLDivElement | null >;
 	closeMobileMenu: ( reason: string ) => void;
 	setCurrentDropdown: ( name: string | null ) => void;
 }
@@ -139,14 +140,14 @@ export function Nav2026MobileMenu( {
 									'is-hidden': !! activeCategory,
 								} ) }
 							>
-								{ nav2026Menus.map( ( menu, index ) => (
-									<li
-										className="x-menu-mobile-nav-item"
-										role="none"
-										key={ menu.name }
-										style={ { '--stagger-index': index } as React.CSSProperties }
-									>
-										{ menu.groups ? (
+								{ nav2026Menus.map( ( menu, index ) =>
+									menu.groups ? (
+										<li
+											className="x-menu-mobile-nav-item"
+											role="none"
+											key={ menu.name }
+											style={ { '--stagger-index': index } as React.CSSProperties }
+										>
 											<button
 												className="x-menu-mobile-nav-link x-link"
 												onClick={ () => setCurrentDropdown( menu.name ) }
@@ -155,18 +156,21 @@ export function Nav2026MobileMenu( {
 												{ menu.title }
 												<span className="x-menu-mobile-nav-chevron" aria-hidden="true" />
 											</button>
-										) : (
-											<ClickableItem
-												titleValue=""
-												content={ menu.title }
-												urlValue={ menu.href }
-												type="menu"
-												typeClassName="x-menu-mobile-nav-link x-link"
-												tabIndex={ mobileMenuTabIndex }
-											/>
-										) }
-									</li>
-								) ) }
+										</li>
+									) : (
+										<ClickableItem
+											key={ menu.name }
+											index={ index }
+											className="x-menu-mobile-nav-item"
+											titleValue=""
+											content={ menu.title }
+											urlValue={ menu.href }
+											type="menu"
+											typeClassName="x-menu-mobile-nav-link x-link"
+											tabIndex={ mobileMenuTabIndex }
+										/>
+									)
+								) }
 							</ul>
 							{ nav2026Menus
 								.filter( ( menu ) => menu.groups )
@@ -177,6 +181,8 @@ export function Nav2026MobileMenu( {
 										<ul
 											className={ clsx( 'x-menu-mobile-dropdown-list', {
 												'is-visible': isActive,
+												// Only this list's subtitle sits flush; the rest keep their top padding.
+												'is-first-group': groupIndex === 0,
 											} ) }
 											data-dropdown-name={ menu.name }
 											key={ `${ menu.name }-${ group.title }` }
@@ -185,38 +191,24 @@ export function Nav2026MobileMenu( {
 												{ group.title }
 											</li>
 											{ group.items.map( ( item, itemIndex ) => (
-												<li
-													className="x-menu-mobile-dropdown-item"
-													role="none"
+												<ClickableItem
 													key={ item.url }
-													style={
-														{
-															'--stagger-index': groupIndex * 4 + itemIndex,
-														} as React.CSSProperties
+													index={ groupIndex * 4 + itemIndex }
+													className="x-menu-mobile-dropdown-item"
+													titleValue=""
+													content={
+														<Nav2026ItemContent
+															item={ item }
+															badgeClassName="x-menu-mobile-dropdown-badge-new"
+														/>
 													}
-												>
-													<ClickableItem
-														titleValue=""
-														content={
-															item.badge ? (
-																<>
-																	{ item.label }
-																	<span className="x-menu-mobile-dropdown-badge-new">
-																		{ item.badge }
-																	</span>
-																</>
-															) : (
-																item.label
-															)
-														}
-														urlValue={ item.url }
-														type="menu"
-														typeClassName="x-menu-mobile-dropdown-link x-link"
-														trackingText={ item.label }
-														target={ item.target }
-														tabIndex={ isActive ? mobileMenuTabIndex : -1 }
-													/>
-												</li>
+													urlValue={ item.url }
+													type="menu"
+													typeClassName="x-menu-mobile-dropdown-link x-link"
+													trackingText={ item.label }
+													target={ item.target }
+													tabIndex={ isActive ? mobileMenuTabIndex : -1 }
+												/>
 											) ) }
 										</ul>
 									) );

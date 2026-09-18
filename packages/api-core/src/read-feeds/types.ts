@@ -8,7 +8,9 @@ export enum ReadFeedSearchSort {
 export interface ReadFeedSearchResponse {
 	algorithm: string;
 	feeds: ReadFeedItem[];
-	next_page: string;
+	// Omitted by the endpoint once the result set is exhausted (or the 200-result
+	// ceiling is reached), so consumers must treat its absence as "no more pages".
+	next_page?: string;
 	total: number;
 }
 

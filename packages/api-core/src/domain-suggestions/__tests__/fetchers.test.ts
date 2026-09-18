@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { fetchBundleSuggestion } from '..';
+import { fetchBundleForDomain, fetchBundleMetadata } from '..';
 import type { BundleSuggestion } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -31,22 +31,26 @@ const bundleSuggestion: BundleSuggestion = {
 	catalogue_version: '1',
 };
 
-describe( 'fetchBundleSuggestion', () => {
+describe( 'fetchBundleMetadata', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'requests /domains/suggestions with with_bundles=1 and returns the bundle portion', async () => {
+	it( 'requests /domains/suggestions with with_bundles=1 and returns both bundle fields', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query( ( query ) => query.with_bundles === '1' && query.query === 'example' )
 			.reply( 200, {
 				domain_suggestions: [],
 				bundle_suggestion: bundleSuggestion,
+				bundle_triggers: [ 'com' ],
 			} );
 
-		const bundle = await fetchBundleSuggestion( 'example' );
+		const metadata = await fetchBundleMetadata( 'example' );
 
 		expect( scope.isDone() ).toBe( true );
-		expect( bundle ).toEqual( bundleSuggestion );
+		expect( metadata ).toEqual( {
+			bundle_suggestion: bundleSuggestion,
+			bundle_triggers: [ 'com' ],
+		} );
 	} );
 
 	it( 'lowercases the query before sending it', async () => {
@@ -56,19 +60,58 @@ describe( 'fetchBundleSuggestion', () => {
 			.reply( 200, {
 				domain_suggestions: [],
 				bundle_suggestion: bundleSuggestion,
+				bundle_triggers: [ 'com' ],
 			} );
 
-		await fetchBundleSuggestion( 'MyBrand.com' );
+		await fetchBundleMetadata( 'MyBrand.com' );
 
 		expect( scope.isDone() ).toBe( true );
 	} );
 
-	it( 'returns null when the response carries no bundle suggestion', async () => {
+	it( 'normalises a missing bundle suggestion to null and missing triggers to []', async () => {
 		nock( BASE ).get( '/rest/v1.1/domains/suggestions' ).query( true ).reply( 200, {
 			domain_suggestions: [],
-			bundle_suggestion: null,
 		} );
 
-		expect( await fetchBundleSuggestion( 'example' ) ).toBeNull();
+		expect( await fetchBundleMetadata( 'example' ) ).toEqual( {
+			bundle_suggestion: null,
+			bundle_triggers: [],
+		} );
+	} );
+} );
+
+describe( 'fetchBundleForDomain', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'requests the v2 /domains/bundle endpoint with the fqdn and returns the bundle', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/bundle' )
+			.query( ( query ) => query.query === 'flowers.com' )
+			.reply( 200, { bundle_suggestion: bundleSuggestion } );
+
+		const bundle = await fetchBundleForDomain( 'flowers.com' );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( bundle ).toEqual( bundleSuggestion );
+	} );
+
+	it( 'lowercases the fqdn before sending it', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/bundle' )
+			.query( ( query ) => query.query === 'flowers.com' )
+			.reply( 200, { bundle_suggestion: bundleSuggestion } );
+
+		await fetchBundleForDomain( 'Flowers.com' );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'returns null when the endpoint carries no bundle suggestion', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/domains/bundle' )
+			.query( true )
+			.reply( 200, { bundle_suggestion: null } );
+
+		expect( await fetchBundleForDomain( 'flowers.com' ) ).toBeNull();
 	} );
 } );

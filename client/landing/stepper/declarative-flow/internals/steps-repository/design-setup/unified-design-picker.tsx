@@ -1,11 +1,12 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
-import { Onboard, updateLaunchpadSettings, useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
 	useDesignPickerFilters,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { StepContainer, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -426,12 +427,19 @@ const UnifiedDesignPickerStep: StepType< {
 		if ( isComingFromSuccessfulImport ) {
 			return undefined;
 		}
-		return intent === 'update-design'
-			? () =>
-					submit?.( {
-						eventProps: commonFilterProperties,
-					} )
-			: () => handleBackClick();
+		// Site Setup enters directly on the design picker, so there is nothing to
+		// go back to. Return no handler so Stepper's automatic history-back button
+		// (which would just leave the flow) is suppressed.
+		if ( isSiteSetupFlow( flow ) ) {
+			return undefined;
+		}
+		if ( intent === 'update-design' ) {
+			return () =>
+				submit?.( {
+					eventProps: commonFilterProperties,
+				} );
+		}
+		return () => handleBackClick();
 	};
 
 	const backButton = getGoBackHandler();

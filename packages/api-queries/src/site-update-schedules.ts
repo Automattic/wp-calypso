@@ -36,6 +36,7 @@ const invalidateSiteUpdateSchedules = ( siteId: number ) => {
 // Mutation: create single-site schedule
 export const siteUpdateScheduleCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-upd-sched-create' },
 		mutationFn: ( body: CreateSiteUpdateScheduleBody ) => createSiteUpdateSchedule( siteId, body ),
 		onSuccess: () => {
 			invalidateSiteUpdateSchedules( siteId );
@@ -45,6 +46,7 @@ export const siteUpdateScheduleCreateMutation = ( siteId: number ) =>
 // Mutation: edit single-site schedule
 export const siteUpdateScheduleEditMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-upd-sched-edit' },
 		mutationFn: ( variables: { scheduleId: string; body: EditSiteUpdateScheduleBody } ) =>
 			editSiteUpdateSchedule( siteId, variables.scheduleId, variables.body ),
 		onSuccess: () => {
@@ -55,6 +57,7 @@ export const siteUpdateScheduleEditMutation = ( siteId: number ) =>
 // Mutation: delete single-site schedule
 export const siteUpdateScheduleDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-upd-sched-delete' },
 		mutationFn: ( scheduleId: string ) => deleteSiteUpdateSchedule( siteId, scheduleId ),
 		onSuccess: () => {
 			invalidateSiteUpdateSchedules( siteId );
@@ -64,6 +67,7 @@ export const siteUpdateScheduleDeleteMutation = ( siteId: number ) =>
 // Mutation: toggle active for any site (siteId provided in variables)
 export const siteUpdateScheduleSetActiveMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-upd-sched-activate' },
 		mutationFn: ( variables: { siteId: number; scheduleId: string; active: boolean } ) =>
 			setSiteUpdateScheduleActive( variables.siteId, variables.scheduleId, variables.active ),
 		onSuccess: ( _data, variables ) => {
@@ -75,6 +79,7 @@ export const siteUpdateScheduleSetActiveMutation = () =>
 // Batch create across multiple sites
 export const updateSchedulesBatchCreateMutation = ( siteIds: number[] ) =>
 	mutationOptions( {
+		meta: { statId: 'site-upd-sched-batch-create' },
 		mutationFn: async ( body: CreateSiteUpdateScheduleBody ) => {
 			const results = await Promise.all(
 				siteIds.map( async ( siteId ) => {

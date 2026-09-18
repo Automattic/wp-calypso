@@ -63,8 +63,8 @@ export class RegionAddressFieldsets extends Component<
 		const { getFieldProps, translate, shouldAutoFocusAddressField } = this.props;
 
 		return (
-			<div>
-				<div>
+			<div className="region-address-fieldsets">
+				<div className="region-address-fieldsets__street-address">
 					<Input
 						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 						label={ translate( 'Address' ) }

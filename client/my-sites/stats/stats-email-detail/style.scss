@@ -80,15 +80,20 @@ $break-large-stats-countries: 1280px;
 			width: 100%;
 			display: grid;
 			gap: 0 24px;
-			grid-template-columns: 7fr 5fr;
-			grid-template-areas: "map list" "more more";
-	
-			@media (max-width: $break-large-stats-countries) {
-				grid-template-columns: 100%;
-				grid-template-areas:
-					"map"
-					"list"
-					"more";
+			grid-template-columns: 1fr;
+			grid-template-areas: "list" "more";
+
+			&:has(.stats-card--hero) {
+				grid-template-columns: 7fr 5fr;
+				grid-template-areas: "map list" "more more";
+
+				@media (max-width: $break-large-stats-countries) {
+					grid-template-columns: 100%;
+					grid-template-areas:
+						"map"
+						"list"
+						"more";
+				}
 			}
 	
 			.stats-card--hero {

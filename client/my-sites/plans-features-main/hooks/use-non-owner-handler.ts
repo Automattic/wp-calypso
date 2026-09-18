@@ -32,12 +32,14 @@ export function useNonOwnerHandler( {
 			const currentSitePurchase = currentPlan?.purchaseId
 				? sitePurchases[ currentPlan?.purchaseId ]
 				: undefined;
+			const ownerUserId =
+				currentSitePurchase?.user_id != null ? Number( currentSitePurchase.user_id ) : undefined;
 
 			const siteOwner = await queryClient.ensureQueryData(
 				getUseSiteUserQueryOptions(
 					siteId,
-					currentSitePurchase?.userId,
-					siteQueryKeys.siteUser( siteId, currentSitePurchase?.userId )
+					ownerUserId,
+					siteQueryKeys.siteUser( siteId, ownerUserId )
 				)
 			);
 
@@ -95,7 +97,7 @@ ${
 						niceName: siteOwner.nice_name,
 					},
 				}
-		  )
+			)
 		: translate(
 				"I noticed you're trying to downgrade your plan, but only the plan owner can make these changes. The owner of this plan is %(name)s (%(niceName)s).",
 				{
@@ -104,7 +106,7 @@ ${
 						niceName: siteOwner.nice_name,
 					},
 				}
-		  )
+			)
 }
 
 ${
@@ -117,7 +119,7 @@ ${
 						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
 					},
 				}
-		  )
+			)
 		: translate(
 				'If you need to downgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
 				{
@@ -126,7 +128,7 @@ ${
 						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
 					},
 				}
-		  )
+			)
 }
 
 ${ translate(

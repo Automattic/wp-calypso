@@ -145,11 +145,15 @@ const StatsModuleUTM = ( {
 
 			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
-				if ( ! clonedParams.has( 'startDate' ) ) {
-					clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
-				}
-				if ( ! clonedParams.has( 'endDate' ) ) {
-					clonedParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+				if ( ! clonedParams.has( 'chartStart' ) || ! clonedParams.has( 'chartEnd' ) ) {
+					clonedParams.delete( 'chartStart' );
+					clonedParams.delete( 'chartEnd' );
+					if ( ! clonedParams.has( 'startDate' ) ) {
+						clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+					}
+					if ( ! clonedParams.has( 'endDate' ) ) {
+						clonedParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+					}
 				}
 
 				return `${ basePath }?${ clonedParams.toString() }`;
@@ -186,6 +190,7 @@ const StatsModuleUTM = ( {
 				onSelect={ setSelectedOption }
 				selectOptions={ optionLabels }
 				selected={ selectedOption }
+				siteId={ siteId }
 			/>
 		</div>
 	);
@@ -232,7 +237,7 @@ const StatsModuleUTM = ( {
 								? {
 										url: summaryUrl,
 										label: translate( 'View more' ),
-								  }
+									}
 								: undefined
 						}
 					/>
@@ -256,11 +261,11 @@ const StatsModuleUTM = ( {
 											data.length >= 10
 												? translate( 'View all', {
 														context: 'Stats: Button link to show more detailed stats information',
-												  } )
+													} )
 												: translate( 'View details', {
 														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
+													} ),
+									}
 								: undefined
 						}
 						error={ hasError && <ErrorPanel /> }

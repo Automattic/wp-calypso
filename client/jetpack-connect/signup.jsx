@@ -178,6 +178,7 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
+		let submitError;
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
 				.createAccount( {
@@ -191,8 +192,11 @@ export class JetpackSignup extends Component {
 						plugins: this.props.authQuery.plugins,
 					},
 				} )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
-				.finally( afterSubmit )
+				.then( this.handleUserCreationSuccess, ( error ) => {
+					submitError = error;
+					this.handleUserCreationError( error );
+				} )
+				.finally( () => afterSubmit( submitError ) )
 		);
 	};
 
@@ -246,15 +250,15 @@ export class JetpackSignup extends Component {
 			const text =
 				error.data && error.data.email
 					? // translators: email is an email address. eg you@name.com
-					  translate(
+						translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
-					  )
+						)
 					: translate(
 							'The email address is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
-					  );
+						);
 
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,

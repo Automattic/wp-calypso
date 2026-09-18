@@ -15,7 +15,6 @@ export default function SidebarItem( props ) {
 	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
 	const classes = clsx( props.className, props.tipTarget, {
 		selected: props.selected,
-		'has-unseen': props.hasUnseen,
 		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );

@@ -24,6 +24,7 @@ export const isCreatingStagingSiteQuery = ( stagingSiteId: number ) =>
 
 export const stagingSiteCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'staging-site-create' },
 		mutationFn: () => createStagingSite( siteId ),
 		onMutate: () => {
 			queryClient.setQueryData( isCreatingStagingSiteQuery( siteId ).queryKey, true );
@@ -39,6 +40,7 @@ export const isDeletingStagingSiteQuery = ( stagingSiteId: number ) =>
 
 export const stagingSiteDeleteMutation = ( stagingSiteId: number, productionSiteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'staging-site-delete' },
 		mutationFn: () => deleteStagingSite( stagingSiteId, productionSiteId ),
 		onSuccess: () => {
 			queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, true );

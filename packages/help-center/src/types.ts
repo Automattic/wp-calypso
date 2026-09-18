@@ -83,6 +83,19 @@ interface Eligibility {
 	unified_agent_enabled?: boolean;
 }
 
+export interface HelpCenterCTAData {
+	id: string;
+	variant: string;
+	url: string;
+	title: string;
+	description?: string;
+	url_text?: string;
+	/** Unix timestamp (UTC) in seconds representing the time of purchase. */
+	purchased_at?: number;
+	/** Plan family slug (e.g. "business", "commerce"). */
+	plan_family?: string;
+}
+
 export interface SupportStatus {
 	eligibility: Eligibility;
 	availability: Availability;
@@ -97,13 +110,7 @@ export interface SupportActivity {
 }
 
 type ResultType =
-	| 'DISABLED'
-	| 'LOADING'
-	| 'OWNED_BY_USER'
-	| 'WPORG'
-	| 'UNKNOWN'
-	| 'NOT_OWNED_BY_USER'
-	| 'UNKNOWN';
+	'DISABLED' | 'LOADING' | 'OWNED_BY_USER' | 'WPORG' | 'UNKNOWN' | 'NOT_OWNED_BY_USER' | 'UNKNOWN';
 
 export type AnalysisReport = {
 	result: ResultType;

@@ -1,10 +1,17 @@
 import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	WPCOM_DIFM_LITE,
+	getPlan,
+	TERM_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Site, AddOns } from '@automattic/data-stores';
-import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
-import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
+import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
@@ -59,7 +66,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
 				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
-		  )
+			)
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -466,19 +473,41 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
-	const plugins = getMarketplaceProducts( state, pluginSlug );
+/**
+ * Maps the plan the user picked to the marketplace plugin's subscription term (MONTHLY or
+ * ANNUALLY) so the plan and plugin terms stay in sync. Multi-year plans map to the plugin's annual
+ * term. Falls back to `fallbackBillingPeriod` (the CTA default) when the plan term is unknown.
+ */
+export function getPluginBillingPeriodForPlan( planSlug, fallbackBillingPeriod ) {
+	const planTerm = getPlan( planSlug )?.term;
+
+	if ( ! planTerm ) {
+		return fallbackBillingPeriod;
+	}
+
+	return planTerm === TERM_MONTHLY ? 'MONTHLY' : 'ANNUALLY';
+}
+
+/**
+ * Picks the marketplace plugin variant whose subscription term matches `billingPeriod` (MONTHLY or
+ * ANNUALLY). When no billing period is given, or the requested term has no variant, returns the
+ * first available variant instead of nothing: the plugin subscription and the plan bill as
+ * independent line items, so we keep the product the user came to install rather than dropping it
+ * when its term can't match the chosen plan.
+ */
+export function pickMarketplacePluginVariant( variants, billingPeriod = '' ) {
 	const billingPeriodToTerm = {
 		MONTHLY: 'month',
 		ANNUALLY: 'year',
 	};
-	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+	const term = billingPeriodToTerm[ billingPeriod ] || '';
+	const match = term && variants?.find( ( variant ) => variant.product_term === term );
 
-	if ( ! term ) {
-		return plugins?.[ 0 ] || null;
-	}
+	return match || variants?.[ 0 ] || null;
+}
 
-	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	return pickMarketplacePluginVariant( getMarketplaceProducts( state, pluginSlug ), billingPeriod );
 }
 
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -597,7 +626,14 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 
 	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
-		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const state = reduxStore.getState();
+
+		// Match the plugin's subscription term to the plan the user picked in the grid, so the plan
+		// and plugin terms don't diverge (billing_period from the CTA is only the default).
+		const planSlug = getPlanCartItem( cartItems )?.product_slug;
+		const pluginBillingPeriod = getPluginBillingPeriodForPlan( planSlug, billingPeriod );
+
+		const marketplacePlugin = findMarketplacePlugin( state, plugin, pluginBillingPeriod );
 		const providedDependencies = { cartItems };
 
 		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(
@@ -628,29 +664,6 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		lastKnownFlow,
 	} );
 }
-export function addAddOnsToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const slug = siteSlug || dependencies.siteSlug;
-	const { cartItem } = stepProvidedItems;
-
-	const providedDependencies = stepProvidedDependencies || { cartItem };
-	if ( ! cartItem || isEmpty( cartItem ) ) {
-		// the user hans't selected any addons
-		setTimeout( callback, 0 );
-
-		return;
-	}
-
-	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
-}
-
 export function addDomainToCart(
 	callback,
 	dependencies,
@@ -809,7 +822,7 @@ export function createAccount(
 							message: error.message,
 							...emailInError,
 						},
-				  ]
+					]
 				: undefined;
 
 		if ( errors ) {
@@ -922,7 +935,7 @@ export function createAccount(
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-					  }
+						}
 					: null,
 				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
 				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
@@ -931,57 +944,6 @@ export function createAccount(
 			responseHandler( SIGNUP_TYPE_DEFAULT )
 		);
 	}
-}
-
-export function createSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, themeSlugWithRepo } = stepData;
-	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
-	const locale = getLocaleSlug();
-
-	const theme =
-		dependencies?.themeSlugWithRepo ||
-		themeSlugWithRepo ||
-		( signupDependencies?.themeSlugWithRepo ?? false );
-
-	const data = {
-		blog_name: site,
-		blog_title: '',
-		public: Visibility.PublicNotIndexed,
-		options: {
-			theme,
-			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	// ************************************************************************
-	// ****  Experiment skeleton left in for future BBE copy change tests  ****
-	// ************************************************************************
-	// Pre Load Experiment relevant to the post site creation goal screen
-	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
 }
 
 function recordExcludeStepEvent( step, value ) {
@@ -1075,40 +1037,22 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	}
 }
 
-export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep, sitePlanSlug, store } = nextProps;
-	const fulfilledDependencies = [];
-	const cartItem = [];
-
-	const state = store.getState();
-	const selectedStorage = getSignupDependencyStore( state )?.storage ?? null;
-
-	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
-		const selectedAddOn = getAddOn( selectedStorage );
-		cartItem.push( {
-			product_slug: PRODUCT_1GB_SPACE,
-			quantity: selectedAddOn.quantity,
-			volume: 1,
-			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
-		} );
-		recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-			add_on_slug: selectedAddOn.addOnSlug,
-		} );
-	}
-
-	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
-	fulfilledDependencies.push( 'cartItems' );
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-		recordExcludeStepEvent( stepName, sitePlanSlug );
-	}
-}
+const FREE_TRIAL_PLAN_SLUGS = [
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+];
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
+
+	// A free trial has a non-free product ID, so it reads as a paid plan. Keep the plan
+	// step available so trial sites can still purchase the underlying plan on launch.
+	const isFreeTrialPlan = FREE_TRIAL_PLAN_SLUGS.includes( sitePlanSlug );
 
 	// Check for plan-specific default theme
 	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
@@ -1116,7 +1060,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
 
-	if ( isPaidPlan ) {
+	if ( isPaidPlan && ! isFreeTrialPlan ) {
 		const cartItems = undefined;
 		submitSignupStep(
 			{ stepName, cartItems, wasSkipped: true },

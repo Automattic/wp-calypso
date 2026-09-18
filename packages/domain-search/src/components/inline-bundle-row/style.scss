@@ -1,0 +1,47 @@
+.inline-bundle-row {
+	box-sizing: border-box;
+	padding: 16px 24px;
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
+	border-radius: 8px;
+}
+
+.inline-bundle-row--loading {
+	display: flex;
+	align-items: center;
+}
+
+.inline-bundle-row__spinner {
+	margin: 0;
+}
+
+.inline-bundle-row__info {
+	min-width: 0;
+}
+
+.inline-bundle-row__heading {
+	// Let the badge wrap below the domain chips instead of overlapping them when
+	// the row is narrow.
+	flex-wrap: wrap;
+}
+
+.inline-bundle-row__lock-icon {
+	fill: #757575;
+	flex-shrink: 0;
+}
+
+.inline-bundle-row__subline {
+	word-break: break-word;
+}
+
+.inline-bundle-row__actions {
+	flex-shrink: 0;
+}
+
+.inline-bundle-row__cta {
+	justify-content: center;
+
+	&.is-secondary {
+		color: var( --domain-search-secondary-action-color );
+		box-shadow: inset 0 0 0 1px var( --domain-search-secondary-action-box-shadow-color );
+	}
+}

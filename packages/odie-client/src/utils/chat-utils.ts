@@ -3,6 +3,36 @@ import type { Chat, OdieChat, OdieMessage, Message, LoggedOutOdieConversation } 
 
 const MAX_ESCALATION_ATTEMPT_TIME = 3 * 24 * 60 * 60 * 1000; // three days
 
+const STALE_CHAT_THRESHOLD = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * An Odie-only chat stops accepting replies once its last message is older than
+ * STALE_CHAT_THRESHOLD. Chats handed over to Zendesk are excluded.
+ *
+ * Odie messages loaded from the server always carry `created_at`; the ones appended locally
+ * — the message the user just sent and the bot's reply to it — never do. So a last message
+ * without a timestamp means the chat is active right now, however old the rest of it is.
+ */
+export const isStaleOdieChat = ( chat: Chat ) => {
+	if ( chat?.provider !== 'odie' || chat?.status === 'loading' || ! chat?.messages?.length ) {
+		return false;
+	}
+
+	const { created_at: lastMessageDate } = chat.messages[ chat.messages.length - 1 ];
+
+	if ( ! lastMessageDate ) {
+		return false;
+	}
+
+	const lastMessageTimestamp = getTimestamp( lastMessageDate ) * 1000;
+
+	if ( ! Number.isFinite( lastMessageTimestamp ) ) {
+		return false;
+	}
+
+	return Date.now() - lastMessageTimestamp >= STALE_CHAT_THRESHOLD;
+};
+
 export const hasRecentEscalationAttempt = ( chat: Chat ) => {
 	if ( ! chat?.messages?.length ) {
 		return false;

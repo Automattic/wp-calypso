@@ -1,16 +1,26 @@
 import { UniversalNavbarHeader, type HeaderProps } from '@automattic/wpcom-template-parts';
-import clsx from 'clsx';
-import { useNav2026Props } from 'calypso/layout/use-nav-2026-props';
+import { useSelector } from 'calypso/state';
+import {
+	getCurrentUser,
+	getCurrentUserDisplayName,
+	getCurrentUserEmail,
+} from 'calypso/state/current-user/selectors';
 
-export function Nav2026UniversalHeader( { className, variant, ...headerProps }: HeaderProps ) {
-	const nav2026Props = useNav2026Props( { variant } );
+/**
+ * `UniversalNavbarHeader` wired to the signed-in user's avatar, name, and
+ * email, which the 2026 nav's mobile menu shows when logged in.
+ */
+export function Nav2026UniversalHeader( props: HeaderProps ) {
+	const userAvatar = useSelector( ( state ) => getCurrentUser( state )?.avatar_URL );
+	const userName = useSelector( getCurrentUserDisplayName );
+	const userEmail = useSelector( getCurrentUserEmail );
 
 	return (
 		<UniversalNavbarHeader
-			{ ...headerProps }
-			{ ...nav2026Props }
-			variant={ variant }
-			className={ clsx( className, nav2026Props.className ) }
+			{ ...props }
+			userAvatar={ userAvatar }
+			userName={ userName }
+			userEmail={ userEmail }
 		/>
 	);
 }

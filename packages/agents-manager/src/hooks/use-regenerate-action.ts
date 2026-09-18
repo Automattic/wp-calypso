@@ -59,8 +59,8 @@ export default function useRegenerateAction( {
 			return [
 				{
 					id: 'regenerate',
-					label: __( 'Regenerate', '__i18n_text_domain__' ),
-					tooltip: __( 'Regenerate response', '__i18n_text_domain__' ),
+					label: __( 'Regenerate', __i18n_text_domain__ ),
+					tooltip: __( 'Regenerate response', __i18n_text_domain__ ),
 					icon: createElement( RegenerateAltIcon, {
 						className: 'agents-manager-message-action-icon',
 					} ),

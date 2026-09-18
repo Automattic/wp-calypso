@@ -38,11 +38,11 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"debug": "^4.4.1",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^6.0.3"
-	},
-	"private": true
+	}
 }

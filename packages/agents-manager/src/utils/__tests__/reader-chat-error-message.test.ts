@@ -9,23 +9,33 @@ describe( 'getReaderChatErrorMessage', () => {
 		expect( getReaderChatErrorMessage( null ) ).toBeNull();
 	} );
 
-	it( 'maps Search usage errors to stable Reader Chat copy', () => {
+	it( 'maps Search usage errors to stable Site Chat copy', () => {
 		expect( getReaderChatErrorMessage( { code: 'reader_chat_search_ai_over_limit' } ) ).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 
-	it( 'maps production Search usage message strings to stable Reader Chat copy', () => {
+	it( 'maps production Search usage message strings to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage(
 				'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search AI usage limit.'
 			)
 		).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 
-	it( 'maps wrapped Search usage Error messages to stable Reader Chat copy', () => {
+	it( 'maps new production Search usage message strings to stable Site Chat copy', () => {
+		expect(
+			getReaderChatErrorMessage(
+				'Site Chat is temporarily unavailable because this site has reached its Jetpack Search AI usage limit.'
+			)
+		).toBe(
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+		);
+	} );
+
+	it( 'maps wrapped Search usage Error messages to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage(
 				new Error(
@@ -33,36 +43,44 @@ describe( 'getReaderChatErrorMessage', () => {
 				)
 			)
 		).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 
-	it( 'maps JSON-encoded Search usage error codes to stable Reader Chat copy', () => {
+	it( 'maps JSON-encoded Search usage error codes to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage( new Error( '{"code":"reader_chat_search_over_limit"}' ) )
 		).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 
-	it( 'maps unavailable target errors to stable Reader Chat copy', () => {
+	it( 'maps unavailable target errors to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage( { data: { code: 'reader_chat_search_not_supported' } } )
-		).toBe( 'Reader Chat is not available for this site.' );
+		).toBe( 'Site Chat is not available for this site.' );
 	} );
 
-	it( 'maps JSON-encoded unavailable error codes to stable Reader Chat copy', () => {
+	it( 'maps JSON-encoded unavailable error codes to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage( new Error( '{"code":"reader_chat_search_not_supported"}' ) )
-		).toBe( 'Reader Chat is not available for this site.' );
+		).toBe( 'Site Chat is not available for this site.' );
 	} );
 
-	it( 'maps production unavailable message strings to stable Reader Chat copy', () => {
+	it( 'maps old production unavailable message strings to stable Site Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage(
 				'Reader Chat is not available because Jetpack Search is not available for this site.'
 			)
-		).toBe( 'Reader Chat is not available for this site.' );
+		).toBe( 'Site Chat is not available for this site.' );
+	} );
+
+	it( 'maps new production unavailable message strings to stable Site Chat copy', () => {
+		expect(
+			getReaderChatErrorMessage(
+				'Site Chat is not available because Jetpack Search is not available for this site.'
+			)
+		).toBe( 'Site Chat is not available for this site.' );
 	} );
 
 	it( 'maps rate limit errors by status', () => {
@@ -111,13 +129,13 @@ describe( 'getReaderChatErrorMessage', () => {
 
 	it( 'uses generic copy for unknown string errors', () => {
 		expect( getReaderChatErrorMessage( 'Unexpected failure' ) ).toBe(
-			'Reader Chat is unavailable. Please try again later.'
+			'Site Chat is unavailable. Please try again later.'
 		);
 	} );
 
 	it( 'reads nested agentic error codes', () => {
 		expect( getReaderChatErrorMessage( { error: { code: 'jetpack_ai_usage' } } ) ).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 
@@ -130,7 +148,7 @@ describe( 'getReaderChatErrorMessage', () => {
 				},
 			} )
 		).toBe(
-			'Reader Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
+			'Site Chat is temporarily unavailable because this site has reached its Jetpack Search usage limit.'
 		);
 	} );
 } );

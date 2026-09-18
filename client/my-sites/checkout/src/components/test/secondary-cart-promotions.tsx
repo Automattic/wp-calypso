@@ -3,6 +3,8 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import { normalizePurchase } from '@automattic/api-core';
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { RawAPIProductsList, StoreProductSlug } from '@automattic/data-stores/src/products-list';
@@ -60,9 +62,21 @@ jest.mock( 'wpcom-proxy-request', () => async ( data: WpcomRequestParams ) => {
 	}
 } );
 
+function createQueryClientWithPurchases() {
+	const queryClient = new QueryClient();
+	const { ui, purchases } = storeData();
+	// The fixture holds the API's raw response, so run it through the same
+	// normalization the fetcher applies before the component sees it.
+	queryClient.setQueryData(
+		sitePurchasesQuery( ui.selectedSiteId ).queryKey,
+		purchases.data.map( normalizePurchase )
+	);
+	return queryClient;
+}
+
 function TestWrapper( { children, initialCart } ) {
 	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( storeData ) );
-	const [ queryClient ] = useState( () => new QueryClient() );
+	const [ queryClient ] = useState( createQueryClientWithPurchases );
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,

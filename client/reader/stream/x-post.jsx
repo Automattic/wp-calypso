@@ -6,17 +6,17 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
-import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import {
+	useCanMarkSeen,
+	useIsSeenVisible,
+	useMarkAsSeenMutation,
+} from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-class CrossPost extends PureComponent {
+export class CrossPost extends PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		isSelected: PropTypes.bool.isRequired,
@@ -27,9 +27,9 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		isWPForTeamsItem: PropTypes.bool,
-		currentRoute: PropTypes.string,
-		hasOrganization: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
+		isSeenVisible: PropTypes.bool,
+		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
 	cardRef = createRef();
@@ -76,8 +76,23 @@ class CrossPost extends PureComponent {
 		if ( ! event.defaultPrevented ) {
 			// some child handled it
 			event.preventDefault();
+			this.markAsSeen();
 			this.props.handleClick( this.props.xMetadata );
 		}
+	};
+
+	markAsSeen = () => {
+		const { canMarkSeen, post, postKey, requestMarkAsSeen } = this.props;
+		const feedId = postKey?.feedId || post.feed_ID;
+		if ( ! canMarkSeen || post.is_seen || ! feedId || ! post.feed_item_ID ) {
+			return;
+		}
+
+		requestMarkAsSeen( {
+			feedId,
+			feedItemIds: [ post.feed_item_ID ],
+			globalIds: post.global_ID ? [ post.global_ID ] : [],
+		} );
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
@@ -162,17 +177,12 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
-
-		let isSeen = false;
-		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
-			isSeen = post?.is_seen;
-		}
+		const { post, translate } = this.props;
 		const articleClasses = clsx( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': isSeen,
+			'is-seen': this.props.isSeenVisible,
 		} );
 
 		// Remove the x-post text from the title.
@@ -215,18 +225,7 @@ class CrossPost extends PureComponent {
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const ConnectedCrossPost = connect( ( state, ownProps ) => {
-	const { blogId } = ownProps.postKey;
-	const feed = ownProps.feed;
-	const site = ownProps.site;
-	return {
-		currentRoute: getCurrentRoute( state ),
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ) ||
-			( site?.ID ? isSiteWPForTeams( state, site.ID ) : false ),
-	};
-} )( localize( CrossPost ) );
+const LocalizedCrossPost = localize( CrossPost );
 
 export default function CrossPostContainer( props ) {
 	const { feedId, blogId } = props.postKey || {};
@@ -235,13 +234,19 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
+	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
+	const canMarkSeen = useCanMarkSeen( seenProps );
+	const isSeenVisible = useIsSeenVisible( seenProps );
+
 	return (
-		<ConnectedCrossPost
+		<LocalizedCrossPost
 			{ ...props }
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
-			hasOrganization={ hasOrganization }
+			canMarkSeen={ canMarkSeen }
+			isSeenVisible={ isSeenVisible }
+			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);
 }

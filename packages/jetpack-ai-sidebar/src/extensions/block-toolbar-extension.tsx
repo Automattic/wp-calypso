@@ -2,6 +2,7 @@ import { BigSkyLogo } from '@automattic/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
@@ -16,33 +17,65 @@ type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
 		isReady?: boolean;
 		setChatOpen?: ( isOpen: boolean ) => void;
+		isChatVisible?: () => boolean;
 	};
+};
+
+// Agents Manager registers this store on the shared `wp.data` registry; the
+// sidebar bundle already dispatches to it (see `index.ts`). We read it for the
+// reactive pressed state, and drive open/close through `__agentsManagerActions`
+// (below), which also handles dock/minimize layout.
+const AGENTS_MANAGER_STORE = 'automattic/agents-manager';
+
+type AgentsManagerStoreSelectors = {
+	getAgentsManagerState: () => { isOpen?: boolean; isMinimized?: boolean };
 };
 
 let isWaitingForAgentsManagerReady = false;
 
-function openAgentsManagerChat() {
+function isAgentsManagerChatVisible(): boolean {
+	const actions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
+	return actions?.isChatVisible?.() ?? false;
+}
+
+function toggleAgentsManagerChat() {
 	const actions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 
-	// Open the chat in whatever state the user last left it (docked or
-	// floating). The toolbar entry only opens the chat — it never reshapes its
-	// layout.
-	actions?.setChatOpen?.( true );
+	// Toggle open/closed without reshaping the chat's docked/floating layout.
+	actions?.setChatOpen?.( ! isAgentsManagerChatVisible() );
+}
+
+/**
+ * Whether the chat is on screen (open and not minimized), tracked reactively so
+ * the toolbar button reflects a pressed state. Reads the shared Agents Manager
+ * store; returns `false` until that store is registered.
+ */
+function useAgentsManagerChatVisible(): boolean {
+	return useSelect( ( select ) => {
+		const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerStoreSelectors | undefined;
+		if ( ! store?.getAgentsManagerState ) {
+			return false;
+		}
+		const { isOpen, isMinimized } = store.getAgentsManagerState();
+		return Boolean( isOpen ) && ! isMinimized;
+	}, [] );
 }
 
 function handleAgentsManagerReady() {
 	isWaitingForAgentsManagerReady = false;
-	openAgentsManagerChat();
+	// Apply the queued click as a toggle, so it stays correct however the chat
+	// loaded.
+	toggleAgentsManagerChat();
 }
 
-export function openJetpackAiSidebarChat(): void {
+export function toggleJetpackAiSidebarChat(): void {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
 
 	const actions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 	if ( actions?.isReady ) {
-		openAgentsManagerChat();
+		toggleAgentsManagerChat();
 		return;
 	}
 
@@ -60,6 +93,8 @@ export function openJetpackAiSidebarChat(): void {
 export const withJetpackAiToolbarButton = createHigherOrderComponent(
 	( BlockEdit: ComponentType< BlockEditProps > ) => {
 		const JetpackAiToolbarButtonInner = ( props: BlockEditProps ) => {
+			const isChatVisible = useAgentsManagerChatVisible();
+
 			if ( ! isBlockToolbarButtonEnabled() ) {
 				return <BlockEdit { ...props } />;
 			}
@@ -72,7 +107,8 @@ export const withJetpackAiToolbarButton = createHigherOrderComponent(
 							<ToolbarButton
 								icon={ <BigSkyLogo.CentralLogo fill="currentColor" heartless size={ 20 } /> }
 								label={ __( 'Ask AI', __i18n_text_domain__ ) }
-								onClick={ openJetpackAiSidebarChat }
+								isPressed={ isChatVisible }
+								onClick={ toggleJetpackAiSidebarChat }
 							/>
 						</ToolbarGroup>
 					</BlockControls>

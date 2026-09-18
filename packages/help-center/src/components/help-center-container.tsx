@@ -2,11 +2,15 @@
  * External Dependencies
  */
 import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils/observe-editor-canvas-pointerdown';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
-import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
+import {
+	useConstrainedTabbing,
+	useFocusOnMount,
+	useFocusReturn,
+	useMergeRefs,
+} from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC, useState, type RefObject } from 'react';
@@ -16,11 +20,13 @@ import Draggable, { DraggableProps } from 'react-draggable';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useActionHooks } from '../hooks';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { ZendeskStagingNotice } from './help-center-zendesk-staging-notice';
 import { PersistentRouter } from './persistent-router';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 interface OptionalDraggableProps extends Partial< DraggableProps > {
@@ -58,6 +64,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [] );
 	const { sectionName } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -73,11 +80,26 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		recordTracksEvent( 'calypso_inlinehelp_close', {
 			section: sectionName,
 		} );
-	}, [ handleClose, sectionName ] );
+	}, [ handleClose, recordTracksEvent, sectionName ] );
 
 	const focusReturnRef = useFocusReturn();
 
-	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+	// Focus the dialog itself on open so keyboard/screen-reader users land in
+	// the Help Center (announcing its title) instead of having to tab through
+	// the whole page to reach it. On desktop the dialog is deliberately
+	// non-modal — no focus trap — so users can keep interacting with the page
+	// underneath. The mobile sheet covers the viewport behind a scrim, so there
+	// it presents as modal: constrain tabbing to match.
+	const focusOnMountRef = useFocusOnMount( true );
+	const constrainedTabbingRef = useConstrainedTabbing();
+	const isModalSheet = isMobile && ! isMinimized;
+
+	const cardMergeRefs = useMergeRefs( [
+		nodeRef,
+		focusReturnRef,
+		focusOnMountRef,
+		isModalSheet ? constrainedTabbingRef : null,
+	] );
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
@@ -168,8 +190,16 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 				handle=".help-center-header__text"
 				bounds="body"
 			>
-				<Card className={ classNames } ref={ cardMergeRefs }>
+				<Card
+					className={ classNames }
+					ref={ cardMergeRefs }
+					role="dialog"
+					aria-modal={ isModalSheet || undefined }
+					aria-labelledby="header-text"
+					tabIndex={ -1 }
+				>
 					<HelpCenterHeader onDismiss={ onDismiss } />
+					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }
 					{ ! isMobile && (

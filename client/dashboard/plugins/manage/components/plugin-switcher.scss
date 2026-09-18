@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/breakpoints';
 @import './variables.scss';
 
 .plugin-switcher-card {
@@ -8,6 +9,10 @@
 	max-height: $card-height;
 	padding: 8px 0 0;
 	overflow-y: auto;
+
+	@media ( max-width: $break-medium ) {
+		padding-block-start: 0;
+	}
 }
 
 .plugin-switcher-search {
@@ -34,7 +39,7 @@
 			background: rgba(var(--wp-admin-theme-color--rgb), 0.08);
 		}
 
-		.plugin-switcher-item-site-count {
+		.switcher-item__description {
 			color: var(--wp-admin-theme-color);
 		}
 	}
@@ -46,7 +51,7 @@
 	&:hover {
 		background-color: #f8f8f8;
 
-		.plugin-switcher-item-site-count {
+		.switcher-item__description {
 			color: var(--wp-admin-theme-color);
 		}
 	}
@@ -56,12 +61,4 @@
 		box-shadow: none;
 		outline: none;
 	}
-}
-
-.plugin-switcher-item-name {
-	color: #2f2f2f;
-	font-weight: 500;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-wrap-mode: nowrap;
 }

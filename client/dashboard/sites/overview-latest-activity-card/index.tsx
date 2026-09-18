@@ -60,9 +60,11 @@ function getActivityLogUrl( site: Site ) {
 export default function LatestActivityCard( {
 	site,
 	isCompact = false,
+	activityLogUrl,
 }: {
 	site: Site;
 	isCompact?: boolean;
+	activityLogUrl?: string;
 } ) {
 	const notGroup = getActivityLogHiddenGroups( site );
 	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ) );
@@ -106,7 +108,7 @@ export default function LatestActivityCard( {
 			{ data && data.length > 0 && (
 				<SummaryButtonCardFooter
 					title={ __( 'See all activity' ) }
-					href={ getActivityLogUrl( site ) }
+					href={ activityLogUrl ?? getActivityLogUrl( site ) }
 					density="medium"
 					onClick={ handleClickSeeAll }
 				/>

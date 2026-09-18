@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';
 

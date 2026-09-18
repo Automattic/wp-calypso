@@ -1,5 +1,4 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { getBlogLaunchedTask, getSiteLaunchedTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
@@ -22,15 +21,6 @@ describe( 'getSiteLaunchedTask', () => {
 			useCalypsoPath: false,
 		} );
 	} );
-
-	it( 'returns disabled when is an blog onboarding flow', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getSiteLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
-			disabled: true,
-		} );
-	} );
 } );
 
 describe( 'getBlogLaunchedTask', () => {
@@ -42,15 +32,6 @@ describe( 'getBlogLaunchedTask', () => {
 
 		expect( getBlogLaunchedTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: false,
-		} );
-	} );
-
-	it( 'returns disabled when is an blog onboarding flow', () => {
-		const siteSlug = 'site.wordpress.com';
-		const context = buildContext( { siteSlug } );
-
-		expect( getBlogLaunchedTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
-			disabled: true,
 		} );
 	} );
 } );

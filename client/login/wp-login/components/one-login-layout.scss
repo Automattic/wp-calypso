@@ -8,6 +8,12 @@
 	gap: 2em;
 }
 
+// The wrapper centers its children, so a notice would otherwise shrink to its
+// text. Span it, like the heading and form below.
+.wp-login__one-login-layout-content-wrapper > .components-notice {
+	width: 100%;
+}
+
 .wp-login__one-login-layout-heading {
 	color: var( --color-neutral-100 );
 	font-size: $font-body;
@@ -78,4 +84,10 @@
 
 .wp-login__one-login-header-client-name {
 	text-transform: capitalize;
+
+	// Pre-branded, exact-case names (e.g. "Jetpack for iOS") must not be
+	// title-cased, which would render "iOS" as "IOS" and "for" as "For".
+	&.is-exact-case {
+		text-transform: none;
+	}
 }

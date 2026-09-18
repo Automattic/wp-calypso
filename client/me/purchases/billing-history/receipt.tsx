@@ -79,7 +79,7 @@ interface BillingReceiptProps {
 }
 
 interface BillingReceiptConnectedProps {
-	transactionFetchError?: string;
+	transactionFetchError: boolean;
 	transaction: BillingTransaction | undefined;
 	translate: LocalizeProps[ 'translate' ];
 	previousRoute: string;
@@ -274,9 +274,39 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	);
 }
 
+interface ReceiptVatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
+}
+
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( transaction: BillingTransaction ): {
+	vatDetails: ReceiptVatDetails;
+	isLoading: boolean;
+	fetchError: unknown;
+} {
+	const { vatDetails, isLoading, fetchError } = useVatDetails();
+
+	if ( transaction.tax_customer_info ) {
+		return { vatDetails: transaction.tax_customer_info, isLoading: false, fetchError: null };
+	}
+
+	return { vatDetails, isLoading, fetchError };
+}
+
 function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
-	const { vatDetails, isLoading, fetchError } = useVatDetails();
+	const { vatDetails, isLoading, fetchError } = useReceiptVatDetails( transaction );
 	const reduxDispatch = useDispatch();
 
 	const getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
@@ -479,7 +509,7 @@ function ReceiptItemDiscounts( {
 						? formatCurrency( -costOverride.discountAmount, item.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
-						  } )
+							} )
 						: '';
 				if (
 					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
@@ -561,6 +591,24 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 		return null;
 	}
 
+	if ( transaction.tax_breakdown && transaction.tax_breakdown.length > 0 ) {
+		return (
+			<>
+				{ transaction.tax_breakdown.map( ( entry ) => (
+					<div key={ entry.label } className="billing-history__transaction-tax-amount">
+						<span>{ `${ entry.label } ${ entry.rate_display }` }</span>
+						<span>
+							{ formatCurrency( entry.local_tax_collected_integer, transaction.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
+					</div>
+				) ) }
+			</>
+		);
+	}
+
 	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );
 	const businessTaxSuffixLabel =
 		transaction.tax_is_for_business && transaction.tax_state
@@ -570,7 +618,7 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 						comment:
 							'Label indicating a state-level business use tax. %(state)s is a state name like "Ohio".',
 					} )
-			  )
+				)
 			: null;
 
 	return (
@@ -705,10 +753,12 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 	);
 }
 
-function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
+export function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
 	// Pre-load the billing details textarea and hidden div with the name and email if available.
 	const initialDetailsText =
-		transaction.cc_num !== 'XXXX' ? transaction.cc_name + '\n' + transaction.cc_email : '';
+		transaction.cc_num !== 'XXXX'
+			? [ transaction.cc_name, transaction.cc_email ].filter( Boolean ).join( '\n' )
+			: '';
 	// When the content of the text area is empty, hide the "Billing Details" label for printing.
 	const [ hideDetailsOnPrint, setHideDetailsOnPrint ] = useState(
 		initialDetailsText.trim().length === 0
@@ -725,16 +775,12 @@ function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) 
 		[ setHideDetailsOnPrint ]
 	);
 
-	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {
-		return null;
-	}
-
 	return (
 		<li className="billing-history__billing-details">
 			<ReceiptLabels hideDetailsOnPrint={ hideDetailsOnPrint } />
 			<TextareaAutosize
 				className="billing-history__billing-details-editable receipt__no-print"
-				aria-labelledby="billing-history__billing-details-description"
+				aria-describedby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows="1"
 				value={ billingDetailsText }

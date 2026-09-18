@@ -1,6 +1,5 @@
 import { camelCase, mapValues, pickBy, isEmpty } from '@automattic/js-utils';
 import { debounce } from '@wordpress/compose';
-import update from 'immutability-helper';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -148,14 +147,15 @@ Controller.prototype.resetFields = function ( fieldValues ) {
 
 function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
 	const fieldState = getField( formState, name );
-	const command = {};
 
 	// We reset the errors if we weren't showing them already to avoid a flash of
 	// error messages when the user starts typing.
 	const errors = fieldState.isShowingErrors ? fieldState.errors : [];
 
-	command[ name ] = {
-		$merge: {
+	return {
+		...formState,
+		[ name ]: {
+			...formState[ name ],
 			value: value,
 			errors: errors,
 			isShowingErrors: ! hideFieldErrorsOnChange,
@@ -163,8 +163,6 @@ function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
 			isValidating: false,
 		},
 	};
-
-	return update( formState, command );
 }
 
 function changeFieldValues( formState, fieldValues ) {

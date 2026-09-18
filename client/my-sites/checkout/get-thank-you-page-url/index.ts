@@ -57,6 +57,7 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
+import { PURCHASE_SUCCESS_NOTICE_QUERY_VALUE } from '../checkout-thank-you/purchase-notice-constants';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -371,6 +372,14 @@ export default function getThankYouPageUrl( {
 		return addQueryArgs( { checkout_type: 'unified' }, '/' );
 	}
 
+	// WordPress.com siteless checkout
+	if ( sitelessCheckoutType === 'wpcom' ) {
+		debug( 'redirecting to siteless WordPress.com thank you' );
+		return receiptIdOrPlaceholder
+			? `/checkout/thank-you/no-site/${ receiptIdOrPlaceholder }`
+			: '/checkout/thank-you/no-site';
+	}
+
 	// If there is no purchase, then send the user to a generic page (not
 	// post-purchase related).
 	if ( noPurchaseMade ) {
@@ -456,7 +465,7 @@ export default function getThankYouPageUrl( {
 					siteSlug,
 					hideUpsell: Boolean( hideNudge ),
 					domains,
-			  } )
+				} )
 			: undefined;
 
 	if ( redirectUrlForPostCheckoutUpsell ) {
@@ -804,9 +813,9 @@ function getProfessionalEmailUpsellUrl( {
 
 function getNoticeType(
 	cart: ResponseCart | undefined
-): undefined | { notice: 'purchase-success' } {
+): undefined | { notice: typeof PURCHASE_SUCCESS_NOTICE_QUERY_VALUE } {
 	if ( cart ) {
-		return { notice: 'purchase-success' };
+		return { notice: PURCHASE_SUCCESS_NOTICE_QUERY_VALUE };
 	}
 	return undefined;
 }

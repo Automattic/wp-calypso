@@ -61,7 +61,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
 	const locale = useLocale();
-	// No slug to look up — resolve immediately to avoid a loading flash.
+	// No slug to look up yet — the consumer may still be deriving it.
 	const hasPluginSlug = !! pluginSlug;
 	const {
 		data: sitesPlugins,
@@ -69,9 +69,8 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
-		marketplacePluginsQuery()
-	);
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } =
+		useQuery( marketplacePluginsQuery() );
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
 		...wpOrgPluginQuery( pluginSlug, locale ),
@@ -82,7 +81,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		queries: hasPluginSlug
 			? Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
 					sitePluginQuery( Number( id ), pluginSlug )
-			  )
+				)
 			: [],
 	} );
 	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
@@ -181,13 +180,14 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	}
 
 	return {
-		isLoading:
-			hasPluginSlug &&
-			( isLoadingSitesPlugins ||
+		isLoading: hasPluginSlug
+			? isLoadingSitesPlugins ||
 				isLoadingSites ||
 				isLoadingWpOrgPlugin ||
 				isLoadingMarketplacePlugins ||
-				isLoadingSitePlugins ),
+				isLoadingSitePlugins
+			: // Report loading while the slug is pending so DataViews doesn't latch an empty state.
+				isLoadingSitesPlugins || isLoadingSites,
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,

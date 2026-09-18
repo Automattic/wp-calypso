@@ -3,6 +3,16 @@
  */
 
 /**
+ * Text domain placeholder, replaced at build time by webpack's DefinePlugin
+ * with `'default'`. Must be used as the bare identifier (not a quoted
+ * `__i18n_text_domain__` string) so DefinePlugin can substitute it — a quoted
+ * literal is never rewritten and resolves to a dead text domain at runtime,
+ * leaving strings untranslated. Matches the convention in other Calypso
+ * packages (help-center, odie-client, components, …).
+ */
+declare const __i18n_text_domain__: string;
+
+/**
  * `agentsManagerData` is set as a global const via wp_add_inline_script
  * in Jetpack's Agents Manager feature.
  *
@@ -12,12 +22,22 @@
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
+			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
+			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
+			isWpcomPlatform?: boolean;
+			/** The deployed bundle build, as `{variant}:{version}`. */
+			version?: string;
+			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			sectionName?: string;
+			/** The site's canonical identity; injected on wp-admin only. */
+			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
 	  }
@@ -27,6 +47,7 @@ declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';
 	interface BlockEditorSelectors {
 		getSelectedBlock(): {
+			clientId: string;
 			name: string;
 			attributes?: {
 				content?: {
@@ -85,7 +106,7 @@ interface AgentsManagerExternalContextCard {
 	 * Publisher-owned card body. AM renders this inside the card frame
 	 * and only adds the dismiss button and actions row.
 	 */
-	body: import('react').ReactNode;
+	body: import( 'react' ).ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
 }
@@ -96,6 +117,16 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/** The `tab_id` the chat's Tracks events carry, so a host's events can join on it. */
+	getTabId?: () => string;
+	/**
+	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
+	 * props. `eventName` includes the family prefix.
+	 */
+	recordBigSkyTracksEvent?: (
+		eventName: import( './utils/tracks' ).BigSkyEventName,
+		props?: Record< string, unknown >
+	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
@@ -108,7 +139,7 @@ interface AgentsManagerActions {
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
-	chatNavigate: import('react-router-dom').NavigateFunction;
+	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
 	getCurrentRoute: () => string;
@@ -121,6 +152,15 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Set to `true` by builds that broadcast the agent's activity as window
+	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
+	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
+	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
+	 * edits it can attribute to nobody) must check this first: against a build
+	 * without it, the agent is always silent.
+	 */
+	broadcastsAgentActivity?: boolean;
 }
 
 /**
@@ -128,6 +168,10 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
+	COMMIT_SHA?: string;
+	/** WordPress's current admin screen id, e.g. `woocommerce_page_wc-admin`; set on wp-admin pages. */
+	pagenow?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;

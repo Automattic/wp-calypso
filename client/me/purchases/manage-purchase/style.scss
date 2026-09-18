@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/dashboard/app-dotcom/style.scss";
+@import "calypso/dashboard/app/wp-components-overrides.scss";
 
 .manage-purchase > button.card,
 .manage-purchase > a.card,
@@ -49,14 +51,6 @@
 		.manage-purchase__detail,
 		.manage-purchase__detail .user {
 			opacity: 0.7;
-		}
-	}
-
-	&.is-expired + .calypso-notice {
-		margin-top: -10px;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			margin-top: -16px;
 		}
 	}
 
@@ -140,8 +134,9 @@
 	}
 }
 
+.manage-purchase__content-purchase-description,
 .manage-purchase__content-domain-description {
-	margin-bottom: 4px;
+	margin-bottom: 8px;
 }
 
 .manage-purchase__header {
@@ -218,11 +213,6 @@
 	clear: none;
 }
 
-.manage-purchase__contact-partner {
-	font-weight: 600;
-	display: block;
-}
-
 .manage-purchase__description {
 	color: var( --color-text-subtle );
 	display: block;
@@ -236,7 +226,6 @@
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	transform: translateX( -4px );
 }
 
 .manage-purchase__feature-list-item {
@@ -372,13 +361,24 @@
 
 	.manage-purchase__no-payment-method {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
+		flex-direction: column;
 		gap: 4px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			clear: left;
+			text-align: left;
+		}
 
 		svg {
 			flex-shrink: 0;
 			fill: var( --color-warning-30 );
 		}
+	}
+
+	.manage-purchase__add-payment-method-link {
+		margin-block-start: 4px;
+		height: auto;
 	}
 
 	.payment-logo {
@@ -398,6 +398,16 @@
 	&.is-expiring .manage-purchase__detail-date-span {
 		color: var( --studio-red );
 	}
+
+	// Use the same tokens the dashboard Notice does, so these and the notice are
+	// literally the same color rather than two hand-matched hexes.
+	&.is-expiring-warning {
+		color: var( --dashboard__foreground-color-warning );
+	}
+
+	&.is-expiring-error {
+		color: var( --dashboard__foreground-color-error );
+	}
 }
 
 .manage-purchase__renewal-text {
@@ -416,8 +426,10 @@
 	margin-bottom: 6px;
 }
 
-.manage-purchase__expiring-credit-card-notice.calypso-notice,
-.manage-purchase__purchase-expiring-notice.calypso-notice {
+// Match the spacing of the cards below, which are full-width with their own
+// internal padding. The notice pads its own contents too, so only the gap
+// underneath needs setting here.
+.manage-purchase__notices .dashboard-notice {
 	margin-bottom: 10px;
 
 	@include breakpoint-deprecated( '>660px' ) {

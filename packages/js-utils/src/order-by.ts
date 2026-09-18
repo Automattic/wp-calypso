@@ -3,7 +3,7 @@ import type { Iteratee, Order } from './base-order-by';
 
 /**
  * Like `sortBy`, but allows specifying a sort order (`'asc'` or `'desc'`) per
- * iteratee, matching lodash `orderBy`. Iteratees may be functions or property
+ * iteratee. Iteratees may be functions or property
  * names/indices (including dotted/bracket paths and path arrays); a nullish
  * iteratee (or none) sorts by the values themselves. Orders shorter than the
  * iteratee list default to ascending. The sort is stable, works on arrays and
@@ -18,7 +18,7 @@ const orderBy = < T >(
 	iteratees?: Iteratee< T > | ReadonlyArray< Iteratee< T > > | null,
 	orders?: Order | ReadonlyArray< Order > | null
 ): T[] => {
-	// A nullish (single or array) argument normalizes to an empty list, like lodash.
+	// A nullish (single or array) argument normalizes to an empty list.
 	let normalizedIteratees: ReadonlyArray< Iteratee< T > >;
 	if ( iteratees == null ) {
 		normalizedIteratees = [];

@@ -6,9 +6,9 @@ writing in the anonymous Write editor at `/write-editor` and clicked Publish.
 
 ## Feature flag
 
-Gated by `calypso/write-on-flow`. Enabled on `development`, `stage`, and
-`wpcalypso`; disabled on `production` and `horizon`. When the flag is off,
-`initialize()` redirects to `/setup/onboarding` before any steps mount.
+Gated by `calypso/write-on-flow`, enabled in all environments. The flag is
+kept as a kill switch: when it is off, `initialize()` redirects to
+`/setup/onboarding` before any steps mount.
 
 ## Flow
 

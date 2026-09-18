@@ -13,7 +13,7 @@ const eq = ( value: unknown, other: unknown ): boolean =>
 	value === other || ( Number.isNaN( value as number ) && Number.isNaN( other as number ) );
 
 // Assigns only when the value actually changes, so setters/proxy traps aren't
-// triggered for same-value writes, matching lodash `assignValue`.
+// triggered for same-value writes.
 const assignValue = (
 	object: Record< PropertyKey, unknown >,
 	key: PropertyKey,
@@ -29,7 +29,7 @@ const assignValue = (
 };
 
 // Whether a path segment is a valid array index (so the intermediate container
-// created for it should be an array rather than a plain object), like lodash.
+// created for it should be an array rather than a plain object).
 const isIndex = ( value: PropertyKey ): boolean => {
 	const type = typeof value;
 	if ( type !== 'number' && ( type === 'symbol' || ! reIsUint.test( value as string ) ) ) {
@@ -40,7 +40,7 @@ const isIndex = ( value: PropertyKey ): boolean => {
 };
 
 // Converts a path segment to a property key, preserving symbols and mapping
-// negative zero to `'-0'`, like lodash `toKey`.
+// negative zero to `'-0'`.
 const toKey = ( value: PropertyKey ): PropertyKey => {
 	if ( typeof value === 'string' || typeof value === 'symbol' ) {
 		return value;
@@ -50,8 +50,8 @@ const toKey = ( value: PropertyKey ): PropertyKey => {
 
 /**
  * Sets the value at `path` of `object`, creating missing intermediate
- * containers (arrays for index-like segments, objects otherwise), matching
- * lodash `set`. `object` is mutated and returned; a non-object `object` is
+ * containers (arrays for index-like segments, objects otherwise).
+ * `object` is mutated and returned; a non-object `object` is
  * returned unchanged. Assignments to `__proto__`/`constructor`/`prototype` keys
  * are skipped to avoid prototype pollution.
  * @param object The object to modify.

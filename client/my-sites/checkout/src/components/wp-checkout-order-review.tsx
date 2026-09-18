@@ -24,6 +24,7 @@ import {
 } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -146,6 +147,7 @@ export default function WPCheckoutOrderReview( {
 
 	const selectedSiteData = useSelector( getSelectedSite );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
@@ -168,17 +170,34 @@ export default function WPCheckoutOrderReview( {
 					isSummary && 'is-summary',
 				] ) }
 			>
-				{ domainUrl && (
-					<SiteSummary className="checkout-review-order__site">
-						{ isCheckoutUiRedesignV1 ? domainUrl : translate( 'Site: %s', { args: domainUrl } ) }
-					</SiteSummary>
-				) }
-				{ currentUserEmail && ! isGiftPurchase && (
-					<EmailSummary className="checkout-review-order__email">
-						{ isCheckoutUiRedesignV1
-							? currentUserEmail
-							: translate( 'Account: %s', { args: currentUserEmail } ) }
-					</EmailSummary>
+				{ isMobileCheckoutStickySummary ? (
+					currentUserEmail &&
+					! isGiftPurchase && (
+						<p className="checkout-review-order__signed-in">
+							{ translate( 'You’re signed in as {{em}}%(email)s{{/em}}.', {
+								args: { email: currentUserEmail },
+								components: { em: <strong /> },
+								comment: 'Shown at the top of mobile checkout under the order details heading.',
+							} ) }
+						</p>
+					)
+				) : (
+					<>
+						{ domainUrl && (
+							<SiteSummary className="checkout-review-order__site">
+								{ isCheckoutUiRedesignV1
+									? domainUrl
+									: translate( 'Site: %s', { args: domainUrl } ) }
+							</SiteSummary>
+						) }
+						{ currentUserEmail && ! isGiftPurchase && (
+							<EmailSummary className="checkout-review-order__email">
+								{ isCheckoutUiRedesignV1
+									? currentUserEmail
+									: translate( 'Account: %s', { args: currentUserEmail } ) }
+							</EmailSummary>
+						) }
+					</>
 				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
 					<SiteSummary className="checkout-review-order__site">
@@ -249,7 +268,7 @@ export function CouponFieldArea( {
 
 	if ( isCouponFieldVisible ) {
 		return (
-			<CouponAreaWrapper>
+			<CouponAreaWrapper className="checkout__coupon-area">
 				<CouponField
 					id="order-review-coupon"
 					disabled={ formStatus !== FormStatus.READY }
@@ -261,7 +280,7 @@ export function CouponFieldArea( {
 	}
 
 	return (
-		<CouponAreaWrapper>
+		<CouponAreaWrapper className="checkout__coupon-area">
 			<CouponLinkWrapper>
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"

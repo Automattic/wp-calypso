@@ -27,6 +27,7 @@ import {
 	forwardRef,
 } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { hasTailoredFeatureList } from '../../constants';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
 import useGridSize from '../../hooks/use-grid-size';
@@ -734,6 +735,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							) }
 							{ hasFeature && ! featureLabel && (
 								<Gridicon
+									className="plan-comparison-grid__available-checkmark"
 									icon="checkmark"
 									color="var(--studio-wordpress-blue-50)"
 									aria-label={ translate( 'Feature available' ) }
@@ -793,7 +795,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	let title =
 		featureSlug === FEATURE_REALTIME_BACKUPS_JP
 			? // Always display the short title for backups in comparison grid.
-			  translate( 'Real-time backups', { textOnly: true } )
+				translate( 'Real-time backups', { textOnly: true } )
 			: feature?.getTitle?.();
 	if ( featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ) {
 		// Use the short title for the guided website builder in the comparison grid.
@@ -933,16 +935,22 @@ const FeatureGroup = ( {
 	};
 	plansLength: number;
 } ) => {
-	const { allFeaturesList, isExperimentVariant } = usePlansGridContext();
+	const { allFeaturesList, intent, isExperimentVariant } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.getFeatures();
 
+	// Row titles follow the list: the experiment copy renames features the experiment override
+	// lists, so pairing it with a curated list mistitles the rows.
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
-		getPlanFeaturesObject( allFeaturesList, features, isExperimentVariant )
+		getPlanFeaturesObject(
+			allFeaturesList,
+			features,
+			isExperimentVariant && ! hasTailoredFeatureList( intent )
+		)
 	);
 
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );

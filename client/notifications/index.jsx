@@ -17,9 +17,10 @@ import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Component, Suspense, lazy, useMemo } from 'react';
-import { connect } from 'react-redux';
+import { Component, Suspense, lazy, useCallback, useEffect, useMemo } from 'react';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import localStorageHelper from 'store';
+import { useQueryPreferences } from 'calypso/components/data/query-preferences';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { requestAdminMenu as requestAdminMenuAction } from 'calypso/state/admin-menu/actions';
@@ -27,6 +28,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import { setUnseenCount } from 'calypso/state/notifications/actions';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -55,6 +58,8 @@ const isDesktop = config.isEnabled( 'desktop' );
 
 const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
 
+const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+
 let notificationAppModule;
 
 const loadNotificationApp = () => {
@@ -76,7 +81,8 @@ const refreshNotes = () => notificationAppModule?.then( ( module ) => module.ref
 
 const debug = debugFactory( 'notifications:panel' );
 
-const getMasterbarBell = () => document.querySelector( '.masterbar-notifications' );
+const getMasterbarBell = () =>
+	document.querySelector( '.masterbar-notifications, .omnibar__notifications' );
 
 const Notifications3PCNotice = ( { className } ) => {
 	const translate = useTranslate();
@@ -111,8 +117,46 @@ const RedesignedNotifications = ( {
 	locale,
 	actionHandlers,
 	closePanel,
+	updateUnseenCount,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+	const reduxDispatch = useDispatch();
+
+	useQueryPreferences();
+
+	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+	const layoutStyle = useSelector( ( state ) =>
+		getPreference( state, 'notifications-layout-style' )
+	);
+	const viewSettingsSeen = useSelector( ( state ) =>
+		getPreference( state, 'notifications-view-settings-seen' )
+	);
+
+	const preferences = useMemo(
+		() => ( hasPreferences ? { layoutStyle, viewSettingsSeen } : undefined ),
+		[ hasPreferences, layoutStyle, viewSettingsSeen ]
+	);
+
+	const handlePreferenceChange = useCallback(
+		( key, value ) => reduxDispatch( savePreference( key, value ) ),
+		[ reduxDispatch ]
+	);
+
+	useEffect( () => {
+		let unsubscribe;
+		let cancelled = false;
+
+		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
+			if ( ! cancelled ) {
+				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
+	}, [ updateUnseenCount ] );
 
 	// Resolve the bell at measurement time: the masterbar remounts it when
 	// the unseen count changes, so a captured node can go stale.
@@ -130,6 +174,9 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
+						preferences={ preferences }
+						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -172,6 +219,9 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
+						preferences={ preferences }
+						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -199,7 +249,9 @@ export class Notifications extends Component {
 		OPEN_LINK: [
 			( store, { href, tracksEvent } ) => {
 				if ( tracksEvent ) {
-					this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
+					// range_info.context from the notes API can be hyphenated, which Tracks rejects.
+					const suffix = tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
+					this.props.recordTracksEventAction( 'calypso_notifications_' + suffix, {
 						link: href,
 					} );
 				}
@@ -458,6 +510,7 @@ export class Notifications extends Component {
 					locale={ localeSlug }
 					actionHandlers={ this.actionHandlers }
 					closePanel={ this.closePanel }
+					updateUnseenCount={ this.props.setUnseenCount }
 				/>
 			);
 
@@ -501,6 +554,7 @@ export class Notifications extends Component {
 							actionHandlers={ this.actionHandlers }
 							isShowing={ this.props.isShowing }
 							isVisible={ this.state.isVisible }
+							isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 							locale={ localeSlug }
 							wpcom={ wpcom }
 						/>

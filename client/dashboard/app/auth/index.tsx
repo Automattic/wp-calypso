@@ -5,17 +5,115 @@ import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
+	hashKey,
 	useQuery,
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { wpcomLink } from '../../utils/link';
+import { bumpStat } from '../analytics';
 import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
+
+const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
+
+const AUTH_LOOP_WINDOW_MS = 30 * 1000;
+
+// Cap the reported loop count (reported as "10+") so a runaway loop can't
+// inflate stat cardinality.
+const AUTH_LOOP_MAX_COUNT = 10;
+
+interface AuthBounceRecord {
+	count: number;
+	at: number;
+}
+
+// bumpStat when we have a login redirect loop.
+// We track the time of the last bounce, and if it was within a window we count
+// it towards our loop count. This is more reliable than clearing the counter on
+// successful auth, because how do we know when it is safe to clear the count?
+// It could be that immediately after successful auth, the very next API returns
+// 401 and causes a bounce, yet we would have already cleared the count.
+function trackAuthBounceLoop() {
+	try {
+		const now = Date.now();
+		const storedRecord: unknown = JSON.parse(
+			window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
+		);
+		const previousRecord = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
+		const withinWindow = previousRecord !== null && now - previousRecord.at < AUTH_LOOP_WINDOW_MS;
+		const count = withinWindow ? previousRecord.count + 1 : 1;
+
+		window.sessionStorage.setItem(
+			AUTH_BOUNCE_COUNT_KEY,
+			JSON.stringify( { count, at: now } satisfies AuthBounceRecord )
+		);
+
+		if ( count >= 2 ) {
+			const value = count >= AUTH_LOOP_MAX_COUNT ? `${ AUTH_LOOP_MAX_COUNT }+` : String( count );
+			bumpStat( 'dashboard-auth-loop', value );
+		}
+	} catch {
+		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.
+	}
+}
+
+function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'count' in value &&
+		typeof value.count === 'number' &&
+		'at' in value &&
+		typeof value.at === 'number'
+	);
+}
+
+/**
+ * Whether the session behind the current page can still authenticate.
+ *
+ * `unknown` is separate from `dead` so a caller can choose not to act on a
+ * guess.
+ */
+export type SessionState = 'alive' | 'dead' | 'unknown';
+
+export const SESSION_STATE_QUERY_KEY = [ 'auth', 'session-state' ];
+
+/**
+ * Requesting the current user is the only way to tell a dead session from an
+ * account that merely lacks a permission: the failing request reports both the
+ * same way.
+ */
+export const sessionStateQuery = () => ( {
+	queryKey: SESSION_STATE_QUERY_KEY,
+	queryFn: (): Promise< SessionState > =>
+		fetchUser().then(
+			() => 'alive' as const,
+			( error: unknown ) =>
+				isWpError( error ) &&
+				( error.statusCode === 401 || error.error === 'authorization_required' )
+					? ( 'dead' as const )
+					: ( 'unknown' as const )
+		),
+	retry: false,
+	// Without this the query is parked in `pending` while the browser is offline,
+	// and callers waiting on a verdict never get one.
+	networkMode: 'always' as const,
+	// One answer serves the whole page: a dead session fails every request alike.
+	staleTime: Infinity,
+	meta: { persist: false },
+} );
+
+export function useSessionStateQuery() {
+	return useQuery( sessionStateQuery() );
+}
 
 function getOAuthAuthorizeUrl( {
 	state,
@@ -55,20 +153,35 @@ interface AuthContextType {
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
-export async function initializeCurrentUser(): Promise< User > {
+function shouldUseBootstrap(): boolean {
 	// In support user session the `currentUser` refers to the wrong person so we should request
 	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
 	// sessions the server does bootstrap the correct `currentUser`.
-	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
+	return ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
+}
 
-	if ( useBootstrap ) {
+export async function initializeCurrentUser(): Promise< User > {
+	if ( shouldUseBootstrap() ) {
 		if ( window.currentUser ) {
 			return window.currentUser;
 		}
-		throw new Error( 'Failed to bootstrap user object' );
+		throw new Error( BOOTSTRAP_ERROR_MESSAGE );
 	}
 
 	return fetchUser();
+}
+
+function getAuthErrorReason( error: unknown ): string {
+	if ( error instanceof Error && error.message === BOOTSTRAP_ERROR_MESSAGE ) {
+		return 'bootstrap';
+	}
+	if (
+		isWpError( error ) &&
+		( error.error === 'authorization_required' || error.statusCode === 401 )
+	) {
+		return 'unauthorized';
+	}
+	return 'error';
 }
 
 /**
@@ -86,6 +199,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		data: user,
 		isLoading: userIsLoading,
 		isError: userIsError,
+		error: userError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
 		queryFn: initializeCurrentUser,
@@ -107,61 +221,64 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	const handleAuthError = useCallback( () => {
-		// Prevents repeated calls to redirect
-		if ( authErrorHandled.current ) {
-			return;
-		}
+	const handleAuthError = useCallback(
+		( reason: string ) => {
+			// Prevents repeated calls to redirect
+			if ( authErrorHandled.current ) {
+				return;
+			}
 
-		authErrorHandled.current = true;
+			authErrorHandled.current = true;
 
-		if ( config.isEnabled( 'oauth' ) ) {
-			const state = crypto.randomUUID();
-			sessionStorage.setItem( 'wpcom_oauth_state', state );
+			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+			trackAuthBounceLoop();
 
-			// Default to the signup screen rather than the login screen for certain routes.
-			const isNewUser =
-				supports.startStoreRoute === true && window.location.pathname === '/start-store';
+			if ( config.isEnabled( 'oauth' ) ) {
+				const state = crypto.randomUUID();
+				sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-			window.location.replace(
-				getOAuthAuthorizeUrl( {
-					state,
-					isNewUser,
-					next: window.location.pathname + window.location.search,
-				} )
-			);
-			return;
-		}
+				// Default to the signup screen rather than the login screen for certain routes.
+				const isNewUser =
+					supports.startStoreRoute === true && window.location.pathname === '/start-store';
 
-		const currentPath = window.location.href;
-		const path = config( 'wpcom_login_url' ) || '/log-in';
-		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-		window.location.href = loginUrl;
-	}, [ supports.startStoreRoute ] );
+				window.location.replace(
+					getOAuthAuthorizeUrl( {
+						state,
+						isNewUser,
+						next: window.location.pathname + window.location.search,
+					} )
+				);
+				return;
+			}
+
+			const currentPath = window.location.href;
+			const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
+			const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
+			window.location.href = loginUrl;
+		},
+		[ supports.startStoreRoute ]
+	);
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
 		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			if ( [ 'authorization_required' ].includes( error ) ) {
-				return true;
-			}
-
-			if ( statusCode === 401 && error === 'rest_forbidden' ) {
-				return true;
-			}
-
-			return false;
+			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
 		};
 
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
+			// Errors fetching the user object itself are handled (and classified) below.
+			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
+				return;
+			}
+
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
 				isAuthError( event.action.error )
 			) {
-				handleAuthError();
+				handleAuthError( 'expired' );
 			}
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
@@ -172,9 +289,15 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ queryClient, handleAuthError ] );
 
+	const successStatBumped = useRef( false );
 	useEffect( () => {
 		if ( user?.ID ) {
 			setUser( { id: user.ID.toString() } );
+
+			if ( ! successStatBumped.current ) {
+				successStatBumped.current = true;
+				bumpStat( 'dashboard-auth', shouldUseBootstrap() ? 'success:bootstrap' : 'success:fetch' );
+			}
 		}
 	}, [ user ] );
 
@@ -182,7 +305,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// `authorization_required` errors or not.
 	if ( userIsError ) {
 		if ( typeof window !== 'undefined' ) {
-			handleAuthError();
+			handleAuthError( getAuthErrorReason( userError ) );
 		}
 		return null;
 	}

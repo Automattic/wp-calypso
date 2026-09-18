@@ -3,6 +3,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
@@ -80,23 +82,32 @@ export default function WPContactForm( {
 	contactDetailsType,
 	isLoggedOutCart,
 	setShouldShowContactDetailsValidationErrors,
+	setIsPrefillPending,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
+	setIsPrefillPending?: ( isPending: boolean ) => void;
 } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const hasCompleted = usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors,
 		isLoggedOut: isLoggedOutCart,
+		suppressScrollOnAutoComplete: isMobileCheckoutStickySummary,
 	} );
+
+	useEffect( () => {
+		setIsPrefillPending?.( ! hasCompleted );
+	}, [ hasCompleted, setIsPrefillPending ] );
+	useEffect( () => () => setIsPrefillPending?.( false ), [ setIsPrefillPending ] );
 
 	return (
 		<>

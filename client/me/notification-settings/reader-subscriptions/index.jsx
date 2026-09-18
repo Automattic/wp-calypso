@@ -32,7 +32,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { useSiteSubscriptions } from 'calypso/reader/following/use-site-subscriptions';
+import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
@@ -332,13 +332,13 @@ class NotificationSubscriptions extends Component {
 								{ this.props.deliveryWindowIsUtcFallback || ! this.props.deliveryWindowTimezone
 									? this.props.translate(
 											"We couldn't detect your time zone, so these times are shown in UTC."
-									  )
+										)
 									: this.props.translate(
 											'Times are shown in your local time zone (%(timezone)s).',
 											{
 												args: { timezone: this.props.deliveryWindowTimezone },
 											}
-									  ) }
+										) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
@@ -432,12 +432,12 @@ const mapDispatchToProps = {
 };
 
 const NotificationSubscriptionsWithHooks = ( props ) => {
-	const { hasNonSelfSubscriptions } = useSiteSubscriptions();
+	const { nonSelfSubscriptionsCount } = useNonSelfSubscriptionsCount();
 	const { offsetHours, isUtcFallback, timezone } = useDeliveryWindowTimezone();
 	return (
 		<NotificationSubscriptions
 			{ ...props }
-			hasSubscriptions={ hasNonSelfSubscriptions }
+			hasSubscriptions={ nonSelfSubscriptionsCount > 0 }
 			deliveryWindowOffsetHours={ offsetHours }
 			deliveryWindowIsUtcFallback={ isUtcFallback }
 			deliveryWindowTimezone={ timezone }

@@ -35,7 +35,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -50,12 +50,12 @@
 		"@wordpress/block-editor": "^15.21.0",
 		"@wordpress/block-library": "^9.48.0",
 		"@wordpress/blocks": "^15.21.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/global-styles-engine": "^1.14.1",
 		"@wordpress/global-styles-ui": "^1.14.1",
 		"@wordpress/keycodes": "^4.48.0",
-		"@wordpress/private-apis": "^1.48.0",
+		"@wordpress/private-apis": "^1.51.0",
 		"clsx": "^2.1.1",
 		"deepmerge": "^4.3.1",
 		"i18n-calypso": "workspace:^",

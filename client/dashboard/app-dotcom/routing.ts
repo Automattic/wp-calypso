@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { calypsoLiveRedirectorLink } from '../utils/link';
 
 const DOTCOM_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.localhost', 'my.wordpress.com' ];
 
@@ -12,6 +13,10 @@ export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 }
 
 export function buildDotcomDashboardLink( path: string = '' ) {
+	const liveLink = calypsoLiveRedirectorLink( path, 'dashboard' );
+	if ( liveLink ) {
+		return liveLink;
+	}
 	if ( config( 'env' ) === 'development' ) {
 		const port = config( 'port' ) ?? 3000;
 		return new URL( path, `http://my.localhost:${ port }` ).href;

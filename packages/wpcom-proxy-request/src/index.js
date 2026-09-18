@@ -211,25 +211,6 @@ export function requestAllBlogsAccess() {
 }
 
 /**
- * Set localStorage item in the proxy iframe.
- * @param {string} key - The key to set.
- * @param {string} value - The value to set.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function setCrossOriginStorageItem( key, value ) {
-	return request( { metaAPI: { setCrossOriginStorageItem: { key, value } } } );
-}
-
-/**
- * Get localStorage item in the proxy iframe.
- * @param {string} key - The key to get.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function getCrossOriginStorageItem( key ) {
-	return request( { metaAPI: { getCrossOriginStorageItem: { key } } } );
-}
-
-/**
  * Calls the `postMessage()` function on the <iframe>.
  * @param {Object} params
  */
@@ -424,6 +405,11 @@ function onmessage( e ) {
 		return;
 	}
 
+	// Another string non-JSON message, client can ignore it.
+	if ( data === 'cookie-auth-ok' ) {
+		return;
+	}
+
 	if ( postStrings && 'string' === typeof data ) {
 		data = JSON.parse( data );
 	}
@@ -566,6 +552,7 @@ const localDevHosts = [
 	'agencies.localhost',
 	'my.localhost',
 	'my.woo.localhost',
+	'my.a4a.localhost',
 ];
 
 function isLocalDevOrigin( urlOrigin ) {

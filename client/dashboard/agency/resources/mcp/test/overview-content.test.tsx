@@ -1,0 +1,173 @@
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render } from '../../../../test-utils';
+import McpOverview from '../overview-content';
+import type { McpAvailableAbility, McpSettings } from '@automattic/api-core';
+
+function ability( name: string, enabled: boolean, isReadonly = true ): McpAvailableAbility {
+	return { name, title: name, description: '', category: 'sites', enabled, readonly: isReadonly };
+}
+
+function settings( enabled: boolean, abilities: McpAvailableAbility[] = [] ): McpSettings {
+	return {
+		enabled,
+		available_categories: [ { slug: 'sites', label: 'Sites' } ],
+		available_abilities: abilities,
+	};
+}
+
+describe( '<McpOverview>', () => {
+	test( 'toggling MCP access saves the new value', async () => {
+		const onSave = jest.fn();
+		render( <McpOverview settings={ settings( false ) } onSave={ onSave } /> );
+
+		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) );
+
+		expect( onSave ).toHaveBeenCalledWith( { enabled: true } );
+	} );
+
+	test( 'shows how many read tools are enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [
+					ability( 'get-site-health', true ),
+					ability( 'list-invoices', true ),
+					ability( 'get-billing-summary', false ),
+				] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( '2 of 3 enabled' ) ).toBeVisible();
+	} );
+
+	test( 'shows "All enabled" when every read tool is on', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'All enabled' ) ).toBeVisible();
+	} );
+
+	test( 'shows "None enabled" when every read tool is off', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', false ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'None enabled' ) ).toBeVisible();
+	} );
+
+	test( 'links Read and Connect to their screens once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/read'
+		);
+		expect(
+			screen.getByRole( 'link', { name: /^Connect external AI assistant/ } )
+		).toHaveAttribute( 'href', '/resources/ai-mcp/connect' );
+	} );
+
+	test( 'hides the tool and connection rows until MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) ).toBeVisible();
+		expect( screen.queryByText( /^Read$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Write$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Connect external AI assistant$/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Starter prompts$/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'links Write to its screen once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'submit-feedback', true, false ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/write'
+		);
+	} );
+
+	test( 'counts read and write tools separately', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [
+					ability( 'get-site-health', true ),
+					ability( 'list-invoices', false ),
+					ability( 'submit-feedback', true, false ),
+				] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveTextContent( '1 of 2 enabled' );
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveTextContent( 'All enabled' );
+	} );
+
+	test( 'shows the Write row as empty when the account has no write tools', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveTextContent(
+			'No tools available'
+		);
+	} );
+
+	test( 'links Starter prompts to its screen once MCP access is enabled', () => {
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: /^Starter prompts/ } ) ).toHaveAttribute(
+			'href',
+			'/resources/ai-mcp/prompts'
+		);
+	} );
+
+	test( 'navigates via onNavigate instead of the href when provided', async () => {
+		const onNavigate = jest.fn();
+		render(
+			<McpOverview
+				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
+				onSave={ jest.fn() }
+				onNavigate={ onNavigate }
+			/>
+		);
+
+		await userEvent.click( screen.getByRole( 'link', { name: /^Read\b/ } ) );
+
+		expect( onNavigate ).toHaveBeenCalledWith( '/resources/ai-mcp/read' );
+	} );
+} );

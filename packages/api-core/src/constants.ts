@@ -244,6 +244,8 @@ export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 
+export const PRODUCT_STUDIO_CODE_AI_CREDITS = 'studio-code-ai-credits';
+
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
 export const AkismetUpgradesProductMap: Record< string, string > = {
@@ -277,6 +279,7 @@ export const DomainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	DOTCOM_DOMAIN_REGISTRATION: 'domain_reg',
 	DOMAIN_MOVE_INTERNAL: 'domain_move_internal',
+	DOMAIN_MAPPING: 'domain_map',
 } as const;
 
 export const TitanMailSlugs = {
@@ -342,11 +345,26 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
 } );
 
+// Every billing-period variant of a plan maps to the same display name, so that
+// looking up a name by product slug works regardless of term (monthly, annual,
+// 2-year, 3-year).
 export const getPlanNames = () => ( {
 	[ DotcomPlans.PERSONAL ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_MONTHLY ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_2_YEARS ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_3_YEARS ]: __( 'Personal' ),
 	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_MONTHLY ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_2_YEARS ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_3_YEARS ]: __( 'Premium' ),
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_MONTHLY ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_2_YEARS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_3_YEARS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_MONTHLY ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_2_YEARS ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_3_YEARS ]: __( 'Commerce' ),
 } );
 
 export const PaymentPartners = {

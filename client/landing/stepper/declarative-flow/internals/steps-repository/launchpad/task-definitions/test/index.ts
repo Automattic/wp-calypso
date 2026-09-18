@@ -53,17 +53,4 @@ describe( 'getEnhancedTasks', () => {
 			} );
 		} );
 	} );
-	describe( 'when checking if the first post is published', () => {
-		describe( 'and the flow is start-writing', () => {
-			it( 'disable the click link so the user will not get distracted going back to the post', () => {
-				const fakeTasks = [ buildTask( { id: 'first_post_published', completed: true } ) ];
-				const enhancedTasks = getEnhancedTasks( {
-					...defaultProps,
-					tasks: fakeTasks,
-					flow: 'start-writing',
-				} );
-				expect( enhancedTasks[ 0 ].disabled ).toEqual( true );
-			} );
-		} );
-	} );
 } );

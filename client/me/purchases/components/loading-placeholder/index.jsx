@@ -14,7 +14,7 @@ class LoadingPlaceholder extends Component {
 	};
 
 	goBack = () => {
-		page.back( this.props.path || '/' );
+		page.back( this.props.path || '/me/purchases' );
 	};
 
 	render() {

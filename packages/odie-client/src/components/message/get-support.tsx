@@ -12,7 +12,7 @@ import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status
 import './get-support.scss';
 
 interface GetSupportProps {
-	onClickAdditionalEvent?: ( destination: string ) => void;
+	onClickAdditionalEvent?: ( destination: string, props?: Record< string, unknown > ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
 	forceEmailSupport?: boolean;
@@ -130,12 +130,12 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							? __( 'No, connect me with someone new', __i18n_text_domain__ )
 							: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
-							onClickAdditionalEvent?.( 'chat' );
-							if ( isChatLoaded ) {
-								createZendeskConversation( {
-									createdFrom: 'chat_support_button',
-								} );
-							}
+							onClickAdditionalEvent?.( 'chat', {
+								has_open_conversation: !! supportInteraction,
+							} );
+							await createZendeskConversation( {
+								createdFrom: 'chat_support_button',
+							} );
 						},
 					} );
 				}

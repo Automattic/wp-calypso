@@ -12,6 +12,7 @@ export const siteSettingsQuery = ( siteId: number ) =>
 
 export const siteSettingsMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-settings-update' },
 		mutationFn: ( data: Partial< SiteSettings > ) => updateSiteSettings( siteId, data ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( siteSettingsQuery( siteId ).queryKey, ( oldData ) => {

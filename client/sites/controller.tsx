@@ -6,6 +6,7 @@ import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -188,6 +189,7 @@ export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => vo
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'site-list' );
 			window.location.replace( dashboardLink( '/sites' ) );
 			return;
 		}

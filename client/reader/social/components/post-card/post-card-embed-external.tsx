@@ -109,7 +109,7 @@ export function PostCardEmbedExternal( {
 					args: { minutes: doc.reading_time },
 					comment:
 						'Estimated reading time for a long-form article, in minutes (e.g. "6m"). Shown next to the publication date.',
-			  } )
+				} )
 			: '';
 	const metaLine = [ publishedDate, readingTime ].filter( Boolean ).join( ' · ' );
 
@@ -184,8 +184,7 @@ export function PostCardEmbedExternal( {
 						<ExternalLink
 							className="social-post-card-embed-external__publication-pill-link"
 							href={ pillUrl }
-							// ExternalLink adds `external noopener`; keep `noreferrer` too.
-							rel="noreferrer"
+							rel="noopener noreferrer"
 							onClick={ handleViewPublication }
 						>
 							{ translate( 'View publication' ) }

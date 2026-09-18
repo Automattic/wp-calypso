@@ -32,6 +32,7 @@ export interface NoticeAction {
 	label: string;
 	url: string;
 	openInNewTab?: boolean;
+	onClick?: () => void;
 }
 export interface Notice {
 	id: string;
@@ -790,7 +791,7 @@ const actions = {
 				? {
 						source: isProcessing.source || 'default',
 						value: isProcessing.value,
-				  }
+					}
 				: { source: 'default', value: isProcessing };
 		return {
 			type: 'SET_IMAGE_STUDIO_AI_PROCESSING',

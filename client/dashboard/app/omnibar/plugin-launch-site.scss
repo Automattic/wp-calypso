@@ -1,0 +1,28 @@
+.omnibar .omnibar__menu.omnibar__launch-site {
+	background-color: var( --wp-admin-theme-color, #3858e9 );
+	color: var( --studio-white, #fff );
+
+	&:hover:not( [aria-disabled='true'] ),
+	&:focus-visible:not( [aria-disabled='true'] ),
+	&:active:not( [aria-disabled='true'] ) {
+		background-color: var( --wp-admin-theme-color-darker-10, #2145e6 );
+		color: var( --studio-white, #fff );
+
+		svg {
+			color: var( --studio-white, #fff );
+		}
+	}
+
+	&[aria-disabled='true'] {
+		cursor: default;
+	}
+
+	svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	@media ( max-width: 781px ) {
+		display: none;
+	}
+}

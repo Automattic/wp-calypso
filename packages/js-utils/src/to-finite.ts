@@ -1,10 +1,10 @@
 import isSymbol from './is-symbol';
 
-// lodash's largest finite number; ±Infinity coerce to this in `toFinite`.
+// The largest finite number; ±Infinity coerce to this in `toFinite`.
 const MAX_INTEGER = 1.7976931348623157e308;
 
 /**
- * Coerces a value to a number, matching lodash `toNumber`. Notably, the
+ * Coerces a value to a number. Notably, the
  * primitive of an object is derived from `valueOf` only — if `valueOf` returns
  * another object, that result is stringified (rather than falling back to the
  * original object's `toString`, as native `Number` would). Symbols become `NaN`.
@@ -28,7 +28,7 @@ const toNumber = ( value: unknown ): number => {
 };
 
 /**
- * Coerces a value to a finite number, matching lodash `toFinite`: numeric
+ * Coerces a value to a finite number: numeric
  * strings (including binary/octal/hex) are parsed, `±Infinity` clamp to
  * `±MAX_INTEGER`, and everything non-numeric (symbols, objects, `NaN`, etc.)
  * becomes `0` — never throwing. Internal helper; not part of the public API.

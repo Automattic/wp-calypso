@@ -38,7 +38,7 @@ export function SidebarExpandableMenuItem( {
 	}, [ isActive ] );
 
 	return (
-		<VStack className="dashboard-sidebar__expandable" spacing={ 1 }>
+		<VStack className="dashboard-sidebar__expandable" spacing={ isOpen ? 1 : 0 }>
 			<Button
 				className="dashboard-sidebar__menu-item"
 				variant="tertiary"

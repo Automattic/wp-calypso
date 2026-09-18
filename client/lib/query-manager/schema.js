@@ -1,5 +1,4 @@
 import deepFreeze from 'deep-freeze';
-import { cloneDeepWith } from 'lodash';
 
 const queryManagerSchema = deepFreeze( {
 	additionalProperties: false,
@@ -55,11 +54,9 @@ const queryManagerSchema = deepFreeze( {
  * @returns {Object}            Customized schema
  */
 export function withItemsSchema( itemsSchema ) {
-	return cloneDeepWith( queryManagerSchema, ( value ) => {
-		if ( value === queryManagerSchema.properties.data.properties.items ) {
-			return itemsSchema;
-		}
-	} );
+	const schema = structuredClone( queryManagerSchema );
+	schema.properties.data.properties.items = itemsSchema;
+	return schema;
 }
 
 export default queryManagerSchema;

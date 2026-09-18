@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginForm from 'calypso/blocks/login/login-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import loginReducer from 'calypso/state/login/reducer';
@@ -20,13 +21,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = require( 'react' );
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
-	};
-} );
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
@@ -53,8 +48,9 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
-		expect( notice ).toBeInTheDocument();
+		const notice = screen.getByText( /already a WordPress.com account for/i );
+		expect( notice ).toBeVisible();
+		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'displays notice when social account is linking and last used authentication method is set', async () => {
@@ -64,8 +60,26 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeInTheDocument();
+	} );
+
+	test( 'displays notice when isUserAccountEmailUpdateRedirect is true', async () => {
+		render( <LoginForm isUserAccountEmailUpdateRedirect /> );
+
+		const notice = screen.getByText(
+			/Please log in using the original email address for your account, not the updated email address you are verifying/i
+		);
+		expect( notice ).toBeInTheDocument();
+	} );
+
+	test( 'does not display the new user email notice by default', async () => {
+		render( <LoginForm /> );
+
+		const notice = screen.queryByText(
+			/Please log in using the original email address for your account, not the updated email address you are verifying/i
+		);
+		expect( notice ).not.toBeInTheDocument();
 	} );
 
 	test( 'hides the notice when username input is changed', async () => {
@@ -76,7 +90,7 @@ describe( 'LoginForm', () => {
 		const username = screen.getByLabelText( /username/i );
 		await userEvent.type( username, 'test@example.com' );
 
-		const notice = screen.queryByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.queryByText( /already a WordPress.com account for/i );
 		expect( notice ).not.toBeInTheDocument();
 	} );
 
@@ -257,6 +271,7 @@ describe( 'LoginForm', () => {
 			mockFetch.mockReset();
 			getBlackboxSessionId.mockReset();
 			getBlackboxSessionId.mockResolvedValue( undefined );
+			MockBlackboxChallenge.blocked = false;
 			delete window.Blackbox;
 		} );
 
@@ -306,6 +321,40 @@ describe( 'LoginForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
 
 			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
+		} );
+
+		test( 'sends no request when Enter submits while a challenge is blocking', async () => {
+			MockBlackboxChallenge.blocked = true;
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+			renderRegularLoginForm();
+
+			const form = document.querySelector( 'form[method="post"]' );
+			act( () => {
+				form.requestSubmit();
+			} );
+
+			await waitFor( () => expect( getBlackboxSessionId ).not.toHaveBeenCalled() );
+			expect( mockFetch ).not.toHaveBeenCalled();
+		} );
+
+		test( 'sends only one login request when the form is submitted twice', async () => {
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+			mockFetch.mockResolvedValue( {
+				ok: false,
+				status: 400,
+				text: jest.fn().mockResolvedValue( '' ),
+			} );
+
+			renderRegularLoginForm();
+
+			const form = document.querySelector( 'form[method="post"]' );
+			act( () => {
+				form.requestSubmit();
+				form.requestSubmit();
+			} );
+
+			await waitFor( () => expect( mockFetch ).toHaveBeenCalledTimes( 1 ) );
 		} );
 	} );
 } );

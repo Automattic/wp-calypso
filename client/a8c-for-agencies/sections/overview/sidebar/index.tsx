@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -27,7 +27,6 @@ const OverviewSidebar = () => {
 		<div className="overview-sidebar">
 			{ isNewArrangement && (
 				<>
-					<OverviewSidebarRelaunchWelcomeTour />
 					<OverviewSidebarGrowthAccelerator />
 				</>
 			) }
@@ -37,8 +36,11 @@ const OverviewSidebar = () => {
 			<PressablePremiumPlanMigrationCard />
 			{ ! isNewArrangement && <OverviewSidebarGrowthAccelerator /> }
 			<OverviewSidebarContactSupport />
+			<OverviewSidebarRelaunchWelcomeTour />
 			<Button
 				className="overview__sidebar-button"
+				variant="secondary"
+				__next40pxDefaultSize
 				onClick={ onProgramIncentiveClick }
 				href="https://automattic.com/for-agencies/program-incentives/"
 				target="_blank"

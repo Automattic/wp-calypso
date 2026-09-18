@@ -18,6 +18,7 @@ function snapToMinute( sec: number ): number {
 
 export const siteApmEnabledMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-apm-toggle' },
 		mutationFn: ( active: boolean ) => updateApmEnabled( siteId, active ),
 		onSuccess: ( _data, active ) => {
 			queryClient.setQueriesData< Site >( siteQueryFilter( siteId ), ( site ) =>
@@ -25,7 +26,7 @@ export const siteApmEnabledMutation = ( siteId: number ) =>
 					? {
 							...site,
 							options: { ...site.options, apm_enabled: active } as Site[ 'options' ],
-					  }
+						}
 					: site
 			);
 		},

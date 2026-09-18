@@ -4,8 +4,7 @@ import toFinite from './to-finite';
  * Creates an array of numbers progressing from `start` up to, but not
  * including, `end`. A `step` of `-1` is used if a negative `start` is specified
  * without an `end` or `step`. If `end` is not specified, it's set to `start`
- * with `start` then set to `0`. Bounds are coerced to finite numbers, matching
- * lodash.
+ * with `start` then set to `0`. Bounds are coerced to finite numbers.
  * @param start The start of the range (or the end, if `end` is omitted).
  * @param end   The end of the range (exclusive).
  * @param step  The value to increment or decrement by.

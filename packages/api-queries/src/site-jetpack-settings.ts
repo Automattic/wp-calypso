@@ -63,6 +63,7 @@ export const siteJetpackSettingsQuery = ( siteId: number ) =>
 
 export const siteJetpackSettingsMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-jp-settings-update' },
 		mutationFn: ( settings: Partial< JetpackSettings > ) =>
 			updateJetpackSettings( siteId, settings ),
 		onSuccess: ( newData: unknown, newSettings: Partial< JetpackSettings > ) => {

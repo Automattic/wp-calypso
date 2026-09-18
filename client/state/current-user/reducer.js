@@ -24,7 +24,7 @@ import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './sche
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return action.user.ID;
+			return action.user?.ID ?? state;
 	}
 
 	return state;
@@ -33,7 +33,7 @@ export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 export const user = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return action.user;
+			return action.user?.ID ? action.user : state;
 		case CURRENT_USER_SET_EMAIL_VERIFIED:
 			return {
 				...state,

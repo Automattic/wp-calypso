@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
-	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_READ_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
+	A4A_AI_MCP_STARTER_PROMPTS_LINK,
+	A4A_AI_MCP_WRITE_TOOLS_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_BENCHMARKS_LINK,
@@ -10,10 +12,7 @@ import {
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import {
-	requireAccessContext,
-	requireMcpBetaAccessContext,
-} from 'calypso/a8c-for-agencies/controller';
+import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	agentStudioBriefContext,
@@ -21,7 +20,9 @@ import {
 	agentStudioOutputContext,
 } from '../agent-studio/controller';
 import {
-	aiMcpAvailableToolsContext,
+	aiMcpReadToolsContext,
+	aiMcpWriteToolsContext,
+	aiMcpStarterPromptsContext,
 	aiMcpConnectContext,
 	aiMcpOverviewContext,
 } from '../ai-mcp/controller';
@@ -67,26 +68,31 @@ export default function () {
 		page( A4A_BENCHMARKS_LINK, requireAccessContext, benchmarksContext, makeLayout, clientRender );
 	}
 
+	page( A4A_AI_MCP_LINK, requireAccessContext, aiMcpOverviewContext, makeLayout, clientRender );
 	page(
-		A4A_AI_MCP_LINK,
+		A4A_AI_MCP_READ_TOOLS_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
-		aiMcpOverviewContext,
+		aiMcpReadToolsContext,
 		makeLayout,
 		clientRender
 	);
 	page(
-		A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+		A4A_AI_MCP_WRITE_TOOLS_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
-		aiMcpAvailableToolsContext,
+		aiMcpWriteToolsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_AI_MCP_STARTER_PROMPTS_LINK,
+		requireAccessContext,
+		aiMcpStarterPromptsContext,
 		makeLayout,
 		clientRender
 	);
 	page(
 		A4A_AI_MCP_CONNECT_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
 		aiMcpConnectContext,
 		makeLayout,
 		clientRender

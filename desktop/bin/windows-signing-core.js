@@ -4,15 +4,13 @@ const { spawn } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 
-// Azure Artifact Signing is SHA256-only. The PFX path matches it so both modes
-// emit a single SHA256 signature.
+// Azure Artifact Signing is SHA256-only.
 const FILE_DIGEST = 'SHA256';
 const TIMESTAMP_DIGEST = 'SHA256';
 
 // HTTPS against the Azure timestamp endpoint currently fails; HTTP is the
 // working protocol (Beeper hit the same, AINFRA-2275).
 const AZURE_TIMESTAMP_SERVER = 'http://timestamp.acs.microsoft.com';
-const PFX_TIMESTAMP_SERVER = 'http://timestamp.sectigo.com';
 
 // electron-builder routes *.exe through the sign callback but not these, so
 // native binaries ship unsigned without an explicit afterPack pass — and
@@ -20,52 +18,25 @@ const PFX_TIMESTAMP_SERVER = 'http://timestamp.sectigo.com';
 const NATIVE_BINARY_EXTENSIONS = new Set( [ '.node', '.dll' ] );
 
 // Resolve the active signer from the environment, or throw naming exactly what
-// is missing. Azure takes precedence; the PFX fallback engages only when no
-// Azure env is present. A partially-configured mode is an error, not a reason
-// to fall through to the other.
+// is missing.
 function resolveSigner( env = process.env ) {
-	const azureIntended = !! ( env.AZURE_CODE_SIGNING_DLIB || env.AZURE_METADATA_JSON );
-	const pfxIntended = !! ( env.WIN_CSC_LINK || env.WIN_CSC_KEY_PASSWORD );
-
-	if ( azureIntended ) {
-		const missing = [ 'AZURE_CODE_SIGNING_DLIB', 'AZURE_METADATA_JSON', 'SIGNTOOL_PATH' ].filter(
-			( name ) => ! env[ name ]
-		);
-		if ( missing.length ) {
-			throw new Error(
-				`Azure Artifact Signing selected but missing: ${ missing.join(
-					', '
-				) }. Did setup_azure_trusted_signing.ps1 run?`
-			);
-		}
-		return {
-			kind: 'azure',
-			signtoolPath: env.SIGNTOOL_PATH,
-			dlib: env.AZURE_CODE_SIGNING_DLIB,
-			metadata: env.AZURE_METADATA_JSON,
-			timestampServer: env.AZURE_TIMESTAMP_SERVER || AZURE_TIMESTAMP_SERVER,
-		};
-	}
-
-	if ( pfxIntended ) {
-		const missing = [ 'WIN_CSC_LINK', 'WIN_CSC_KEY_PASSWORD', 'SIGNTOOL_PATH' ].filter(
-			( name ) => ! env[ name ]
-		);
-		if ( missing.length ) {
-			throw new Error( `PFX fallback selected but missing: ${ missing.join( ', ' ) }.` );
-		}
-		return {
-			kind: 'pfx',
-			signtoolPath: env.SIGNTOOL_PATH,
-			pfx: env.WIN_CSC_LINK,
-			password: env.WIN_CSC_KEY_PASSWORD,
-			timestampServer: env.PFX_TIMESTAMP_SERVER || PFX_TIMESTAMP_SERVER,
-		};
-	}
-
-	throw new Error(
-		'No Windows signing configuration found: set Azure (AZURE_CODE_SIGNING_DLIB, AZURE_METADATA_JSON, SIGNTOOL_PATH) or PFX (WIN_CSC_LINK, WIN_CSC_KEY_PASSWORD, SIGNTOOL_PATH) env vars.'
+	const missing = [ 'AZURE_CODE_SIGNING_DLIB', 'AZURE_METADATA_JSON', 'SIGNTOOL_PATH' ].filter(
+		( name ) => ! env[ name ]
 	);
+	if ( missing.length ) {
+		throw new Error(
+			`Azure Artifact Signing missing: ${ missing.join(
+				', '
+			) }. Did setup_azure_trusted_signing.ps1 run?`
+		);
+	}
+	return {
+		kind: 'azure',
+		signtoolPath: env.SIGNTOOL_PATH,
+		dlib: env.AZURE_CODE_SIGNING_DLIB,
+		metadata: env.AZURE_METADATA_JSON,
+		timestampServer: env.AZURE_TIMESTAMP_SERVER || AZURE_TIMESTAMP_SERVER,
+	};
 }
 
 function buildSignToolArgs( signer, file ) {
@@ -84,10 +55,7 @@ function buildSignToolArgs( signer, file ) {
 		TIMESTAMP_DIGEST,
 	];
 
-	if ( signer.kind === 'azure' ) {
-		return [ ...common, '/dlib', signer.dlib, '/dmdf', signer.metadata, file ];
-	}
-	return [ ...common, '/f', signer.pfx, '/p', signer.password, file ];
+	return [ ...common, '/dlib', signer.dlib, '/dmdf', signer.metadata, file ];
 }
 
 function signFile( signer, file ) {

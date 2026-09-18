@@ -8,6 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -26,7 +27,14 @@ const FAQS = [
 		id: 'how-is-the-score-calculated',
 		question: __( 'How is the score calculated?' ),
 		answer: __(
-			'Every score is a combination of programmatic checks and AI analysis. Programmatic checks cover signals with one right answer: element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
+			'Every score Amplify by Automattic for Agencies produces is grounded in established research, published standards, and established resources. Each score combines programmatic checks with AI analysis. Programmatic checks cover signals with one right answer, such as element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
+		),
+	},
+	{
+		id: 'how-to-read-your-score',
+		question: __( 'How do I read my score?' ),
+		answer: __(
+			'Amplify scores are directional indicators grounded in established research and the expertise of Automattic. They are not definitive verdicts. A score reflects a point-in-time audit of your homepage and may not account for all site-specific context, audience nuances, or intentional design decisions.'
 		),
 	},
 	{
@@ -94,7 +102,9 @@ export default function AmplifyFAQ() {
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<Heading level={ 2 }>{ __( 'Frequently asked questions' ) }</Heading>
-						<Text variant="muted">{ __( 'Curious about the details? We have answers.' ) }</Text>
+						<Text variant="muted" size={ 16 }>
+							{ __( 'Curious about the details? We have answers.' ) }
+						</Text>
 					</VStack>
 					<Panel className="amplify-faq">
 						{ FAQS.map( ( faq ) => (
@@ -104,7 +114,7 @@ export default function AmplifyFAQ() {
 								initialOpen={ false }
 								onToggle={ ( isOpen ) => onToggle( faq.id, isOpen ) }
 							>
-								<Text>{ faq.answer }</Text>
+								<Text>{ preventWidows( faq.answer ) }</Text>
 							</PanelBody>
 						) ) }
 					</Panel>

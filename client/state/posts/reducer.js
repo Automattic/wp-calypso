@@ -1,8 +1,7 @@
 /* eslint-disable no-case-declarations */
 
-import { mapValues, omit, omitBy, set, isEmpty } from '@automattic/js-utils';
+import { mapValues, merge, omit, omitBy, set, isEmpty } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { merge } from 'lodash';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
@@ -10,7 +9,6 @@ import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
-	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -28,7 +26,6 @@ import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/
 import counts from './counts/reducer';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
-	appendToPostEditsLog,
 	getSerializedPostsQuery,
 	getUnappliedMetadataEdits,
 	isAuthorEqual,
@@ -377,22 +374,6 @@ export function edits( state = {}, action ) {
 
 				return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
 			}, state );
-
-		case POST_EDIT: {
-			// process new edit for a post: merge it into the existing edits
-			const siteId = action.siteId;
-			const postId = action.postId || '';
-			const postEditsLog = state?.[ siteId ]?.[ postId ];
-			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
-				},
-			};
-		}
 
 		case EDITOR_STOP:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {

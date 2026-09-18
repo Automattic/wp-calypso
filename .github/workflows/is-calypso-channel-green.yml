@@ -4,12 +4,78 @@ run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
 on:
   merge_group:
   pull_request:
+    # Include labeled/unlabeled so adding or removing "Ignore Red Slack"
+    # re-triggers the check with the current label set.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   check-channel-status:
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Should this check be bypassed?
+        id: bypass
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGE_HEAD_REF: ${{ github.event.merge_group.head_ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # A PR bypasses the red-channel gate if it is a revert or is
+          # explicitly labelled "Ignore Red Slack". Title and labels are read
+          # live via `gh pr view` (not the event payload) so re-running the
+          # check picks up a label added after the run was first triggered.
+          is_revert_or_labeled() {
+            local pr="$1" data title labels
+            data=$(gh pr view "$pr" --json title,labels)
+            title=$(printf '%s' "$data" | jq -r '.title')
+            labels=$(printf '%s' "$data" | jq -c '[.labels[].name]')
+            echo "PR #$pr: $title (labels: $labels)"
+            case "$title" in
+              "Revert "*) return 0 ;;
+            esac
+            printf '%s' "$labels" | jq -e 'any(.[]?; . == "Ignore Red Slack")' >/dev/null 2>&1
+          }
+
+          bypass=false
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            if is_revert_or_labeled "$PR_NUMBER"; then
+              bypass=true
+            fi
+          elif [ "$EVENT_NAME" = "merge_group" ]; then
+            # The merge-queue ref looks like
+            # refs/heads/gh-readonly-queue/trunk/pr-123-<sha>, so pull the
+            # merged PR number(s) out of it and inspect each one. Only bypass
+            # when every PR in the group qualifies.
+            pr_numbers=$(printf '%s' "$MERGE_HEAD_REF" | grep -oE 'pr-[0-9]+' | grep -oE '[0-9]+' || true)
+            if [ -n "$pr_numbers" ]; then
+              bypass=true
+              for pr in $pr_numbers; do
+                if ! is_revert_or_labeled "$pr"; then
+                  bypass=false
+                  break
+                fi
+              done
+            fi
+          fi
+
+          echo "Bypass channel check: $bypass"
+          echo "bypass=$bypass" >> "$GITHUB_OUTPUT"
+
+      - name: Pass for reverts / "Ignore Red Slack" PRs
+        if: steps.bypass.outputs.bypass == 'true'
+        run: echo "Revert or \"Ignore Red Slack\" PR — skipping the red-channel gate."
+
+      - name: Check channel status
+        if: steps.bypass.outputs.bypass != 'true'
+        run: |
           STATUS=$(curl -s https://public-api.wordpress.com/wpcom/v2/calypso-slack-channel-status --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}" | xargs)
           if [ "$STATUS" = "GREEN" ]; then
             echo "Calypso Slack channel is green."

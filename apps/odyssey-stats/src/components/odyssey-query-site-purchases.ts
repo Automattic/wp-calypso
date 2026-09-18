@@ -34,7 +34,7 @@ async function queryOdysseyQuerySitePurchases(
 		wpcom.req
 			.get( {
 				path: getApiPath( apiPath, { siteId } ),
-				apiNamespace: getApiNamespace( apiNamespace ),
+				apiNamespace: getApiNamespace( apiNamespace, 'rest/v1.2' ),
 			} )
 			// Endpoint `site/purchases` returns a stringified JSON object as data.
 			// Our own endpoint `/sites/${ siteId }/purchases` returns a JSON object.
@@ -75,7 +75,7 @@ async function queryOdysseyQuerySitePurchasesFromMyJetpack(
 	return wpcom.req
 		.get( {
 			path: getApiPath( '/site/purchases', { siteId } ),
-			apiNamespace: getApiNamespace( 'my-jetpack/v1' ),
+			apiNamespace: getApiNamespace( 'my-jetpack/v1', 'rest/v1.2' ),
 		} )
 		.catch( ( error: APIError ) => error );
 }

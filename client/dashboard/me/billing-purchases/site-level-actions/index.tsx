@@ -95,6 +95,13 @@ function getRenewalDescription( item: Purchase, action: SiteAction, locale: stri
 		if ( ! item.expiry_date ) {
 			return '';
 		}
+		if ( item.is_past_expiry_date ) {
+			return sprintf(
+				/* translators: %s: formatted date */
+				__( 'Expired on %s.' ),
+				formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+			);
+		}
 		return sprintf(
 			/* translators: %s: formatted date */
 			__( 'Expires on %s.' ),
@@ -104,19 +111,43 @@ function getRenewalDescription( item: Purchase, action: SiteAction, locale: stri
 	const price = formatCurrency( item.price_integer, item.currency_code, {
 		isSmallestUnit: true,
 	} );
-	const renewOrExpiryDate = item.renew_date ?? item.expiry_date;
-	if ( ! renewOrExpiryDate ) {
-		return '';
+	const expiryDate = item.expiry_date
+		? formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+		: null;
+	// Once the expiry date has passed, lead with the expiry status rather than
+	// any scheduled auto-renewal date. During the grace period the UI should
+	// steer toward manual renewal — a remaining auto-renewal attempt is unlikely
+	// to succeed — so show "Expired on" even if `renew_date` is still set.
+	if ( item.is_past_expiry_date && expiryDate ) {
+		return sprintf(
+			/* translators: %1$s: formatted price, %2$s: formatted date */
+			__( 'Renews at %1$s. Expired on %2$s.' ),
+			price,
+			expiryDate
+		);
 	}
-	const date = formatDate( new Date( renewOrExpiryDate ), locale, {
-		dateStyle: 'long',
-	} );
-	return sprintf(
-		/* translators: %1$s: formatted price, %2$s: formatted date */
-		__( 'Renews at %1$s on %2$s.' ),
-		price,
-		date
-	);
+	// An upcoming scheduled renewal: show its date. `renew_date` is only
+	// populated when there is an upcoming auto-renewal, so an empty value means
+	// "not renewing".
+	if ( item.renew_date ) {
+		return sprintf(
+			/* translators: %1$s: formatted price, %2$s: formatted date */
+			__( 'Renews at %1$s on %2$s.' ),
+			price,
+			formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } )
+		);
+	}
+	// Not yet expired and not renewing: show the upcoming expiry date.
+	if ( expiryDate ) {
+		return sprintf(
+			/* translators: %1$s: formatted price, %2$s: formatted date */
+			__( 'Renews at %1$s. Expires on %2$s.' ),
+			price,
+			expiryDate
+		);
+	}
+	// One-time/perpetual purchase (no renewal, no expiry): no subtitle.
+	return '';
 }
 
 export default function SiteLevelActions() {

@@ -18,7 +18,7 @@ import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
-import { useSurvicate } from './survicate';
+import { useSurvicate, useSurvicateVisitTraits } from './survicate';
 import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
@@ -29,7 +29,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog } = useAppContext();
+	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -62,12 +62,21 @@ function AnalyticsProviderWithClient( {
 				recordTracksPageViewWithPageParams( url, {
 					device_type: resolveDeviceTypeByViewPort(),
 				} );
+				if ( app ) {
+					recordTracksEvent( 'wpcom_unified_admin_page_view', {
+						source: 'msd',
+						app,
+						path: router.state.location.pathname,
+						route: url,
+					} );
+				}
 			},
 		} ),
-		[ router ]
+		[ router, app ]
 	);
 
 	useSurvicate();
+	useSurvicateVisitTraits();
 
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }

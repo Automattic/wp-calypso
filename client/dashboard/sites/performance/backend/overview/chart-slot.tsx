@@ -4,7 +4,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useLocale } from '../../../../app/locale';
+import { dashboardChartTheme } from '../../../../app/chart-theme';
+import { useIntlLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
@@ -62,7 +63,7 @@ export default function ChartSlot( {
 	timeseries: ApmTimePoint[];
 	summary: ApmSummary;
 } ) {
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const data = toSeriesData( timeseries );
 
 	return (
@@ -85,7 +86,7 @@ export default function ChartSlot( {
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<GlobalChartsProvider>
+				<GlobalChartsProvider theme={ dashboardChartTheme }>
 					<AreaChart
 						chartId={ CHART_ID }
 						height={ 320 }

@@ -42,7 +42,7 @@ function SubscribersTeam( props: Props ) {
 				search: `*${ search }*`,
 				search_columns: [ 'display_name', 'user_login', 'user_email' ],
 				...defaultTeamFetchOptions,
-		  }
+			}
 		: defaultTeamFetchOptions;
 
 	const followersQuery = useFollowersQuery(

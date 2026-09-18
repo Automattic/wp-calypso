@@ -2,9 +2,12 @@
 	position: relative;
 	margin: auto;
 	overflow: hidden;
+	padding-bottom: 15px;
+	border-bottom: 1px solid var(--color-neutral-5);
+	margin-bottom: 20px;
 
 	@media only screen and (max-width: 600px) {
-		padding: 0 24px;
+		padding: 0 24px 15px;
 	}
 
 	@media only screen and (max-width: 660px) {
@@ -15,9 +18,10 @@
 	.scrollable-horizontal-navigation__right-button-wrapper {
 		position: absolute;
 		z-index: 1;
+		display: flex;
+		align-items: center;
 		pointer-events: none;
-		height: 100%;
-		margin-top: 5px;
+		top: 5px;
 
 		&.display-none {
 			display: none;
@@ -25,8 +29,10 @@
 
 		.scrollable-horizontal-navigation__left-button,
 		.scrollable-horizontal-navigation__right-button {
+			background: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
 			border-radius: 50%;
-			padding: 6px 10px;
+			padding: 7px;
 			pointer-events: auto;
 			width: 40px;
 			height: 40px;
@@ -38,22 +44,20 @@
 	.scrollable-horizontal-navigation__right-button-wrapper {
 		right: 0;
 		padding-left: 30px;
-		background: linear-gradient(270deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
+		background: linear-gradient(270deg, var(--color-surface) 30%, transparent 100%);
 	}
+
 	.scrollable-horizontal-navigation__left-button-wrapper {
 		left: 0;
 		padding-right: 30px;
-		background: linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
+		background: linear-gradient(90deg, var(--color-surface) 30%, transparent 100%);
 	}
 
 	.scrollable-horizontal-navigation__tabs {
 		position: relative;
 		overflow-x: scroll;
 		left: -5px;
-		margin-bottom: 20px;
 		padding-top: 5px;
-		padding-bottom: 15px;
-		border-bottom: 1px solid var(--color-neutral-5);
 		-ms-overflow-style: none;  /* Internet Explorer 10+ */
 		scrollbar-width: none;  /* Firefox */
 
@@ -74,6 +78,12 @@
 				&:not(.is-selected) {
 					.segmented-control__link {
 						background: var(--color-surface);
+					}
+				}
+
+				&.is-selected {
+					.segmented-control__link {
+						border-color: var(--color-primary);
 					}
 				}
 			}

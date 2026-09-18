@@ -44,11 +44,11 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain, hash, routerOrigin } = props;
-	const hostingRef = useRef( null );
-	const domainRef = useRef( null );
-	const perfomanceMetricsRef = useRef( null );
-	const healthMetricsRef = useRef( null );
-	const securityMetricsRef = useRef( null );
+	const hostingRef = useRef< HTMLElement >( null );
+	const domainRef = useRef< HTMLElement >( null );
+	const perfomanceMetricsRef = useRef< HTMLElement >( null );
+	const healthMetricsRef = useRef< HTMLElement >( null );
+	const securityMetricsRef = useRef< HTMLElement >( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {

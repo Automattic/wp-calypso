@@ -201,30 +201,31 @@ a.purchase-item__link {
 		color: var(--color-error-50);
 		position: relative;
 		display: inline-block;
-
-		@include breakpoint-deprecated( ">960px" ) {
-			&::after {
-				content: "";
-				display: block;
-				width: 8px;
-				height: 8px;
-				position: absolute;
-				top: calc(50% - 4px);
-				left: -16px;
-				background: var(--color-error-50);
-				border-radius: 100%;
-			}
-		}
 	}
 
 	.purchase-item__is-warning {
 		color: var(--color-warning-50);
+	}
+}
 
-		@include breakpoint-deprecated( ">960px" ) {
-			&::after {
-				background: var(--color-warning-50);
-			}
-		}
+// A button that has to read as text: `inline` so it still wraps in the narrow
+// column, and `inherit` so the wrapper's colors come through.
+.purchase-item__expiry-link {
+	display: inline;
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+	text-decoration: underline;
+
+	svg {
+		// The glyph is inset by a quarter of the icon box on every side, so the
+		// box has to hang below the baseline for the arrow itself to sit near
+		// it. Keep in step with the icon's size.
+		vertical-align: -3.5px;
+		fill: currentColor;
 	}
 }
 

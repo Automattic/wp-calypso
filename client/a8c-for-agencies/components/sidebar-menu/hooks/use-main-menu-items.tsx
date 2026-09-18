@@ -84,7 +84,7 @@ const useMainMenuItems = ( path: string ) => {
 						menu_item: 'Automattic for Agencies / Migrations',
 					},
 					withChevron: true,
-			  }
+				}
 			: {};
 
 		return [
@@ -127,7 +127,7 @@ const useMainMenuItems = ( path: string ) => {
 							},
 							withChevron: true,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				icon: category,
@@ -150,19 +150,8 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Plugins',
 							},
 						},
-				  ]
+					]
 				: [] ),
-			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: translate( 'Reports' ),
-				badge: translate( 'Beta' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
-				},
-				withChevron: true,
-			},
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
@@ -223,7 +212,7 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Settings',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-team' )
 				? [
@@ -236,23 +225,34 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Team',
 							},
 						},
-				  ]
+					]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-amplify' )
+			...( agency?.amplify?.allowed
 				? [
 						{
 							icon: megaphone,
 							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
 							title: translate( 'Amplify' ),
-							badge: translate( 'Alpha' ),
+							badge: translate( 'Beta' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
 							withChevron: true,
 						},
-				  ]
+					]
 				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );

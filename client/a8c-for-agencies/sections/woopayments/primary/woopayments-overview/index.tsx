@@ -86,7 +86,7 @@ const WooPaymentsOverview = () => {
 				'Multi-Currency support is built-in. Accept payments in 135+ currencies using WooPayments.'
 			),
 			translate(
-				'Increase conversions by enabling payment methods including {{wooPay}}WooPay{{/wooPay}}, {{applePay}}Apple Pay®{{/applePay}}, {{googlePay}}Google Pay{{/googlePay}}, {{iDeal}}iDeal{{/iDeal}}, {{p24}}P24{{/p24}}, {{eps}}EPS{{/eps}}, and {{bancontact}}Bancontact{{/bancontact}}.',
+				'Increase conversions by enabling payment methods including {{wooPay}}WooPay{{/wooPay}}, {{applePay}}Apple Pay®{{/applePay}}, {{googlePay}}Google Pay{{/googlePay}}, {{iDeal}}iDEAL{{/iDeal}}, {{p24}}P24{{/p24}}, {{eps}}EPS{{/eps}}, and {{bancontact}}Bancontact{{/bancontact}}.',
 				{
 					components: {
 						wooPay: (
@@ -170,7 +170,7 @@ const WooPaymentsOverview = () => {
 				}
 			),
 			translate(
-				'You may be eligible to earn up to {{a}}20% discount on Payment Processing Fees{{/a}}.',
+				'You may be eligible to earn up to a {{a}}20% discount on Payment Processing Fees{{/a}}.',
 				{
 					components: {
 						a: (
@@ -212,7 +212,7 @@ const WooPaymentsOverview = () => {
 				}
 			),
 			translate(
-				"Simplify your workflow. No more logging into third-party payment processor sites - manage everything from the comfort of your store's dashboard."
+				"Simplify your workflow. No more logging into third-party payment processor sites — manage everything from the comfort of your store's dashboard."
 			),
 			translate(
 				'Set a custom payout schedule to get your funds into your bank account as often as you need — daily, weekly, monthly, or even on-demand.'
@@ -434,7 +434,7 @@ const WooPaymentsOverview = () => {
 							</table>
 							<div className="woopayments-overview__legend">
 								{ translate(
-									"*Example earnings are calculated annually based on the TPV and revenue share rate shown and are subject change based on your client's TPV."
+									"*Example earnings are calculated annually based on the TPV and revenue share rate shown and are subject to change based on your client's TPV."
 								) }
 							</div>
 							<div className="woopayments-overview__legend">

@@ -1,4 +1,4 @@
-import { mergeWith } from 'lodash';
+import { mergeWith } from '@automattic/js-utils';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`

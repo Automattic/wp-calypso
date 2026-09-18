@@ -1,4 +1,5 @@
 import { ComponentProps } from 'react';
+import EmailVerificationNotification from 'calypso/a8c-for-agencies/components/email-verification-notification';
 import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
 
@@ -12,6 +13,7 @@ export default function LayoutWithPaymentNotification( {
 	return (
 		<LayoutTop withNavigation={ withNavigation }>
 			<PendingPaymentNotification isFullWidth={ isFullWidth } />
+			<EmailVerificationNotification isFullWidth={ isFullWidth } />
 			{ children }
 		</LayoutTop>
 	);

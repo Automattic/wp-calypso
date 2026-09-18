@@ -64,8 +64,7 @@ export default function MigrationsHostingFeatures() {
 						title={ translate( 'Security' ) }
 						items={ [
 							translate( 'Real-time backups' ),
-							translate( 'Global CDN with 28+ locations' ),
-							translate( 'DDOS protection and mitigation' ),
+							translate( 'DDoS protection and mitigation' ),
 							translate( 'Brute-force protection' ),
 							translate( 'Malware detection & removal' ),
 							translate( 'Spam protection with Akismet' ),

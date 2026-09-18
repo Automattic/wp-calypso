@@ -1,41 +1,10 @@
+import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getAdminUrl, getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
+import AgencySiteIcon from '../site-icon';
+import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
-
-// TODO: make this fallback themeable (incl. dark mode) once A4A supports dark mode.
-const FALLBACK_SITE_COLOR = 'linear-gradient( 45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4 )';
-
-function AgencySiteIcon( { site, size }: { site: AgencySite; size: number } ) {
-	const ico = site.icon?.img || site.icon?.ico;
-
-	if ( ico ) {
-		return (
-			<img
-				src={ ico }
-				alt=""
-				width={ size }
-				height={ size }
-				loading="lazy"
-				style={ { borderRadius: 4, objectFit: 'cover', display: 'block' } }
-			/>
-		);
-	}
-
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'block',
-				width: size,
-				height: size,
-				borderRadius: 4,
-				background: site.site_color || FALLBACK_SITE_COLOR,
-			} }
-		/>
-	);
-}
 
 export function getSiteIconField( viewType?: string ): Field< AgencySite > {
 	const isGrid = viewType === 'grid';
@@ -64,18 +33,15 @@ export function getSiteNameField(
 		enableSorting: true,
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
-		// TODO: temporary raw link to wp-admin; replace with the full site-link
-		// implementation once the agency site detail experience exists.
 		render: ( { item } ) => (
-			<a
-				href={ getAdminUrl( item ) }
-				target="_blank"
-				rel="noreferrer"
+			<Link
+				to="/sites/$siteSlug"
+				params={ { siteSlug: item.url } }
 				style={ { color: 'inherit', textDecoration: 'none' } }
 				onClick={ () => onSiteClick?.( item ) }
 			>
 				{ getSiteName( item ) }
-			</a>
+			</Link>
 		),
 	};
 }

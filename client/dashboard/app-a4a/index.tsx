@@ -17,6 +17,7 @@ import './style.scss';
 
 boot( {
 	name: 'A4A',
+	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,
@@ -24,19 +25,25 @@ boot( {
 		agency: {
 			overview: true,
 			tiers: true,
+			partnerDirectory: true,
+			marketplace: true,
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,
+			amplify: true,
 			sites: true,
+			plugins: true,
+			team: true,
+			earn: true,
 		},
 		agencyClient: { subscriptions: true },
 		sites: false,
 		domains: false,
 		emails: false,
-		themes: false,
 		reader: false,
 		help: true,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: false,
 		plugins: false,
 		commandPalette: false,
@@ -48,10 +55,7 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {
-		// Temporary: reuse the generic site switcher until it's agency-scoped.
-		siteSwitcher: () => import( '../sites/site-switcher' ),
-	},
+	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

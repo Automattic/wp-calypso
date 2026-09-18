@@ -1,5 +1,5 @@
 import { isWpComEcommercePlan } from '@automattic/calypso-products';
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -56,7 +56,7 @@ export default function ThankYouPlanProduct( {
 		launchpad && launchpad.checklist
 			? launchpad.checklist.filter(
 					( item ) => item?.completed === false && item?.disabled === false
-			  ).length > 0
+				).length > 0
 			: false;
 
 	useEffect( () => {

@@ -13,7 +13,7 @@ export default function PreferencesAiMcp( { density }: { density?: Density } ) {
 	const badges = [
 		{
 			text: isEnabled ? __( 'Enabled' ) : __( 'Disabled' ),
-			intent: isEnabled ? ( 'success' as const ) : undefined,
+			intent: isEnabled ? ( 'stable' as const ) : ( 'draft' as const ),
 		},
 	];
 

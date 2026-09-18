@@ -3,6 +3,7 @@ import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -12,6 +13,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -22,11 +24,12 @@ import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
-import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dropdown';
+import PreferencesLoginSiteDropdown from '../../preferences-defaults/site-dropdown';
 import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
@@ -62,15 +65,12 @@ export default function McpMcpSites() {
 		( site: Site ) => ! managedSiteIds.includes( site.ID )
 	);
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'MCP settings saved.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	const handleSiteAdd = ( siteId: number ) => {
 		const eventName = mcpEnabled
@@ -89,7 +89,7 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( eventName, { site_id: siteId } );
+					recordTracksEvent( eventName, { ...tracksAudienceProps, site_id: siteId } );
 				},
 			}
 		);
@@ -104,7 +104,10 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
+					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', {
+						...tracksAudienceProps,
+						site_id: siteId,
+					} );
 				},
 			}
 		);
@@ -146,7 +149,10 @@ export default function McpMcpSites() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_mcp_sites_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_mcp_sites_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>

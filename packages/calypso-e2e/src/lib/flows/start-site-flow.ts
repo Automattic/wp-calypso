@@ -5,14 +5,8 @@ import { Page } from 'playwright';
  *
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
-export type StepName =
-	| 'goals'
-	| 'vertical'
-	| 'intent'
-	| 'design-setup'
-	| 'options'
-	| 'designChoices';
-type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
+export type StepName = 'vertical' | 'design-setup' | 'options' | 'designChoices';
+type WriteActions = 'Start writing' | 'View designs';
 
 const selectors = {
 	// Generic
@@ -26,18 +20,10 @@ const selectors = {
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
 
-	// Goals
-	goalButton: ( goal: string ) =>
-		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
-	selectedGoalButton: ( goal: string ) =>
-		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
-
 	// Step containers
 	contentAgnosticContainer: '.step-container',
 	themePickerContainer: '.design-picker',
-	goalsStepContainer: '.goals-step',
 	verticalsStepContainer: '.site-vertical',
-	intentStepContainer: '.intent-step',
 	optionsStepContainer: '.is-step-write',
 	designChoicesStepContainer: '.design-choices',
 };
@@ -72,12 +58,6 @@ export class StartSiteFlow {
 	async getCurrentStep(): Promise< StepName > {
 		// Make sure the container is loaded first, then we can see which it is.
 		await this.page.waitForSelector( selectors.contentAgnosticContainer );
-		if ( ( await this.page.locator( selectors.goalsStepContainer ).count() ) > 0 ) {
-			return 'goals';
-		}
-		if ( ( await this.page.locator( selectors.intentStepContainer ).count() ) > 0 ) {
-			return 'intent';
-		}
 		if ( ( await this.page.locator( selectors.themePickerContainer ).count() ) > 0 ) {
 			return 'design-setup';
 		}
@@ -88,21 +68,6 @@ export class StartSiteFlow {
 			return 'designChoices';
 		}
 		throw new Error( 'Unknown or invalid step' );
-	}
-
-	/**
-	 * Select a goal by text.
-	 *
-	 * @param {string} goal The goal to select
-	 */
-	async selectGoal( goal: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.goalsStepContainer, { timeout: 30_000 } );
-
-		const goalLocator = this.page.locator( selectors.goalButton( goal ) );
-		await goalLocator.waitFor( { state: 'visible', timeout: 30_000 } );
-		await goalLocator.scrollIntoViewIfNeeded();
-		await goalLocator.click();
-		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
 
 	/**
@@ -165,9 +130,6 @@ export class StartSiteFlow {
 			// Extended timeout because the site is being
 			// headstarted at this time.
 			await this.page.waitForURL( /setup\/site-setup\/processing/, { timeout: 20 * 1000 } );
-		}
-		if ( action === 'Start learning' ) {
-			await this.page.waitForURL( /setup\/site-setup\/courses/ );
 		}
 		if ( action === 'View designs' ) {
 			await this.page.waitForURL( /setup\/site-setup\/design-setup/ );

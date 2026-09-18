@@ -101,6 +101,26 @@ describe( 'index', () => {
 		).toBeInTheDocument();
 	} );
 
+	test( 'Should show error status when the wait times out on the client', async () => {
+		const mockStore = configureStore();
+		mockInitialState.automatedTransfer[ 1 ].status = transferStates.CLIENT_TIMEOUT;
+		const store = mockStore( mockInitialState );
+
+		render(
+			<Provider store={ store }>
+				<HostingActivateStatus context="hosting" />
+			</Provider>
+		);
+
+		expect(
+			screen.queryByText( 'Please wait while we activate the hosting features.' )
+		).not.toBeInTheDocument();
+
+		expect(
+			screen.queryByText( 'There was an error activating hosting features.' )
+		).toBeInTheDocument();
+	} );
+
 	test( 'Should show error status and the transfer fails', async () => {
 		const mockStore = configureStore();
 		mockInitialState.automatedTransfer[ 1 ].status = transferStates.ERROR;

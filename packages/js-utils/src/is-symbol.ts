@@ -1,6 +1,6 @@
 /**
  * Whether a value is a symbol, including boxed symbols (`Object( Symbol() )`).
- * Uses the object tag so the check is realm-safe, matching lodash `isSymbol`.
+ * Uses the object tag so the check is realm-safe.
  * Internal helper; not part of the public API.
  */
 const isSymbol = ( value: unknown ): boolean =>

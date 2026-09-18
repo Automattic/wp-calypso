@@ -1,4 +1,4 @@
-import config from '../config-api';
+import { optionalConfig } from '../config-api';
 
 // TODO: fix `intial_state` typo.
-export default () => config( 'intial_state' ) ?? {};
+export default () => optionalConfig( 'intial_state' ) ?? {};

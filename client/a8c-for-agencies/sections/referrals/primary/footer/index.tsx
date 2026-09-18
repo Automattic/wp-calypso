@@ -11,7 +11,7 @@ export default function ReferralsFooter() {
 	return (
 		<div className="referrals-footer">
 			{ translate(
-				'Payments are issued once a quarter with 60 day terms and are net of refunds and chargebacks. See the {{a}}payout schedule{{/a}} for more exact dates.',
+				'Payments are issued once a quarter with 60-day terms and are net of refunds and chargebacks. See the {{a}}payout schedule{{/a}} for more exact dates.',
 				{
 					components: {
 						a: <ExternalLink href={ link } children={ null } />,

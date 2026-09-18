@@ -1,9 +1,12 @@
 export interface AgencySite {
 	blog_id: number;
+	a4a_site_id?: number;
+	a4a_is_dev_site?: boolean;
 	url: string;
 	blogname?: string;
 	url_with_scheme?: string;
 	has_backup?: boolean;
+	has_scan?: boolean;
 	jetpack_boost_scores?: {
 		overall: number;
 	};
@@ -20,6 +23,7 @@ export interface FetchAgencySitesOptions {
 	sort_direction?: 'asc' | 'desc';
 	page?: number;
 	per_page?: number;
+	not_multisite?: boolean;
 }
 
 export interface FetchAgencySitesResponse {

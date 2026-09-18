@@ -1,4 +1,3 @@
-import { TAB_INVITED_MEMBERS } from 'calypso/a8c-for-agencies/sections/team/constants';
 import {
 	A4A_TEAM_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
@@ -86,7 +85,7 @@ export const getA4AfeedbackProps = (
 					"We sent %(email)s an invite. After accepting, they'll become an active member in your Team section.",
 					{ args: { email: args?.email } }
 				) as string,
-				redirectUrl: `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }`,
+				redirectUrl: A4A_TEAM_LINK,
 				suggestion: {
 					label: translate( 'What could have been better during the team invitation process?' ),
 					options: [

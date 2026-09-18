@@ -3,8 +3,12 @@
 // The only bespoke bits are the severity dot — a small status indicator with no
 // core equivalent — and keeping the mode toggle from shrinking in the header.
 
-.amplify-landing-workflow-mode-toggle {
+// `isBlock` is what makes core paint the enclosing border at rest rather than
+// only on hover/focus; it also stretches the control to the full header width,
+// which we undo here. Card-scoped so it outweighs the component's emotion class.
+.amplify-landing-workflow-card .amplify-landing-workflow-mode-toggle {
 	flex-shrink: 0;
+	inline-size: auto;
 }
 
 // Calypso's global `hr` reset (client/assets/stylesheets/_main.scss) paints

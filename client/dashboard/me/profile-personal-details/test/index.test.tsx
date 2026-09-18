@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
-import type { UserSettings } from '@automattic/api-core';
+import type { User, UserSettings } from '@automattic/api-core';
 
 const settings = {
 	first_name: 'John',
@@ -19,6 +19,14 @@ const settings = {
 	user_login_can_be_changed: true,
 	is_dev_account: false,
 } as unknown as UserSettings;
+
+const unverifiedUser = {
+	ID: 1,
+	username: 'johndoe',
+	email: 'john@example.com',
+	email_verified: false,
+	language: 'en',
+} as User;
 
 function mockUserSettings( data: UserSettings ) {
 	return nock( 'https://public-api.wordpress.com' )
@@ -38,6 +46,20 @@ function mockIsAutomattician( isAutomattician: boolean ) {
 		.reply( 200, {
 			number: isAutomattician ? 1 : 0,
 			teams: isAutomattician ? [ { slug: 'a8c', title: 'Automatticians' } ] : [],
+		} );
+}
+
+function mockAccountRecovery( {
+	email = '',
+	phone = null,
+}: { email?: string; phone?: object | null } = {} ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/account-recovery' )
+		.reply( 200, {
+			email,
+			email_validated: false,
+			phone,
+			phone_validated: false,
 		} );
 }
 
@@ -114,10 +136,10 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 
 		test( 'disables username field for unverified email users', async () => {
-			mockUserSettings( { ...settings, email_verified: false } as unknown as UserSettings );
+			mockUserSettings( settings );
 			mockIsAutomattician( false );
 
-			render( <PersonalDetailsSection /> );
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
@@ -189,6 +211,18 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
 		} );
 
+		test( 'shows the unverified notice when the account email is not verified', async () => {
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+			expect( screen.getByText( 'Verify your email' ) ).toBeVisible();
+		} );
+
 		test( 'cancels pending email change', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( {
@@ -218,6 +252,132 @@ describe( '<PersonalDetailsSection>', () => {
 			await waitFor( () => {
 				expect( scope.isDone() ).toBe( true );
 			} );
+		} );
+
+		test( 'holds back the email field cancellation while the banner is resending', async () => {
+			const user = userEvent.setup();
+			const pending = {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings;
+			mockUserSettings( pending );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			// Held open so the resend is still running while the cancellation is checked.
+			let deliverResend: () => void;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+				.reply(
+					() =>
+						new Promise( ( resolve ) => {
+							deliverResend = () => resolve( [ 200, pending ] );
+						} )
+				);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Resend email' } ) );
+
+			// The banner and the email field each offer a cancellation and neither can see the
+			// other's state, so a resend re-saving the pending address has to lock both.
+			const cancelLink = screen.getByRole( 'button', {
+				name: 'Cancel the pending email change.',
+			} );
+			expect( cancelLink ).toBeDisabled();
+			deliverResend!();
+
+			await waitFor( () => expect( cancelLink ).toBeEnabled() );
+		} );
+
+		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery();
+
+			render( <PersonalDetailsSection /> );
+
+			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+		} );
+
+		test( 'shows a CTA linking to the account recovery settings page', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery();
+
+			render( <PersonalDetailsSection /> );
+
+			expect(
+				await screen.findByRole( 'link', { name: /set up account recovery/i } )
+			).toHaveAttribute( 'href', '/me/security/account-recovery' );
+		} );
+
+		test( 'does not warn when a recovery email is already set', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery( { email: 'backup@gmail.com' } );
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not warn when a recovery phone is already set', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mycustomdomain.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery( {
+				phone: {
+					country_code: 'US',
+					country_numeric_code: '+1',
+					number: '5551234',
+					number_full: '+15551234',
+				},
+			} );
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not warn for a free email provider', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@gmail.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery();
+
+			render( <PersonalDetailsSection /> );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'warns for a subdomain of a free email provider', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email: 'jane@mail.gmail.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+			mockAccountRecovery();
+
+			render( <PersonalDetailsSection /> );
+
+			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
 		test( 'disables save when email is invalid', async () => {

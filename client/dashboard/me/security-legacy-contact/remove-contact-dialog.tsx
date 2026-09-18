@@ -1,6 +1,7 @@
 import { deleteLegacyContactMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ConfirmModal from '../../components/confirm-modal';
 import type { LegacyContact } from '@automattic/api-core';
 
@@ -15,15 +16,12 @@ export default function RemoveContactDialog( {
 	isOpen,
 	onClose,
 }: RemoveContactDialogProps ) {
-	const mutation = useMutation( {
-		...deleteLegacyContactMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Legacy contact removed.' ),
-				error: __( 'Failed to remove legacy contact.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( deleteLegacyContactMutation(), {
+			success: __( 'Legacy contact removed.' ),
+			error: __( 'Failed to remove legacy contact.' ),
+		} )
+	);
 
 	const handleRemove = () => {
 		mutation.mutate( contact.legacy_contact_id, {

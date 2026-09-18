@@ -84,6 +84,15 @@
 	}
 }
 
+// Inline bundle offers for featured triggers, stacked full-width below the
+// featured section. The row chrome (border/radius/padding) is self-contained in
+// .inline-bundle-row; this wrapper only supplies the gap between multiple rows.
+.domain-search--results__featured-inline-bundles {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
 // The in-flow SearchBar and in-flow promo card are the desktop affordances. On
 // mobile, the persistent fixed overlay below replaces both, so we hide these
 // in-flow nodes via CSS rather than unmounting them — keeping desktop markup

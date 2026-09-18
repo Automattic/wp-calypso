@@ -46,7 +46,7 @@
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/block-library": "^9.48.0",
 		"@wordpress/blocks": "^15.21.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/format-library": "^5.48.0",

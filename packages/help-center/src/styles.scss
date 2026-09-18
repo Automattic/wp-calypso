@@ -20,6 +20,12 @@ a[href^='https://smooch.io/live-web-chat'] {
 	z-index: $help-center-z-index;
 	cursor: default;
 
+	// The dialog container receives programmatic focus on open (tabindex="-1");
+	// it isn't interactive itself, so don't draw a focus ring on it.
+	&:focus {
+		outline: none;
+	}
+
 	// Raise above the Agents Manager panel while focused, so the last-clicked
 	// panel wins. Both panels share one base/focused scale.
 	&.is-focused {
@@ -145,10 +151,10 @@ a[href^='https://smooch.io/live-web-chat'] {
 		bottom: 0;
 		left: 0;
 		right: 0;
-		/* If the masterbar is there, don't cover it, if not, go to the top. */
-		top: var( --masterbar-height, 0 );
-		max-height: calc( 100% - 45px );
-		height: calc( 100% - var( --masterbar-height, 0 ) );
+		/* Go fullscreen, covering the masterbar. */
+		top: 0;
+		max-height: 100%;
+		height: 100%;
 		animation: none;
 		transition: none;
 

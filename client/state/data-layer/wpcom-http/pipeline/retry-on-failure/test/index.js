@@ -1,5 +1,5 @@
+import { merge } from '@automattic/js-utils';
 import deepFreeze from 'deep-freeze';
-import { merge } from 'lodash';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';
@@ -23,7 +23,7 @@ const withRetries = ( retryCount ) => ( actionOrInbound ) =>
 	undefined !== actionOrInbound.originalRequest
 		? merge( actionOrInbound, {
 				originalRequest: withRetries( retryCount )( actionOrInbound.originalRequest ),
-		  } )
+			} )
 		: merge( actionOrInbound, { meta: { dataLayer: { retryCount } } } );
 
 const createMockStore = () => ( { dispatch: jest.fn() } );

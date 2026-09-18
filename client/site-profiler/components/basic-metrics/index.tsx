@@ -72,7 +72,7 @@ export const BasicMetrics = forwardRef(
 			domain,
 			isWpCom,
 		}: { basicMetrics: BasicMetricsScored; domain: string; isWpCom: boolean },
-		ref: ForwardedRef< HTMLObjectElement >
+		ref: ForwardedRef< HTMLElement >
 	) => {
 		const translate = useTranslate();
 
@@ -82,7 +82,7 @@ export const BasicMetrics = forwardRef(
 		);
 
 		return (
-			<Container className="basic-metrics" ref={ ref }>
+			<Container className="basic-metrics" ref={ ref as ForwardedRef< HTMLDivElement > }>
 				<div className="basic-metric-details result-list">
 					{ ( Object.entries( copies ) as CopiesReturnValueList ).map(
 						( [ metricKey, metricCopies ] ) => {

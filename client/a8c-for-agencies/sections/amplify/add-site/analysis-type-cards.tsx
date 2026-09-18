@@ -80,7 +80,7 @@ function options(): Option[] {
 			),
 		},
 		{
-			value: 'fullanalysis',
+			value: 'full',
 			icon: ICON_TARGET,
 			iconClass: 'is-full',
 			title: __( 'Full analysis' ),

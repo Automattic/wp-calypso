@@ -2,12 +2,7 @@ import { useRef } from 'react';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-
-let lastScrollPosition = 0; // Used for calculating scroll direction.
-let sidebarTop = 0; // Current sidebar top position.
-let pinnedSidebarTop = true; // We pin sidebar to the top by default.
-let pinnedSidebarBottom = false;
-let ticking = false; // Used for Scroll event throttling.
+import { getOmnibarElement } from 'calypso/lib/omnibar-element';
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
 	if ( isWpMobileApp() ) {
@@ -32,147 +27,89 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
 	);
 }
 
-export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
-	// Do not run until next requestAnimationFrame or if running out of browser context.
-	if ( ticking ) {
-		return;
-	}
+/**
+ * Drops the inline styles `handleScroll` and `syncSidebarHeight` write.
+ */
+export function clearSidebarScrollStyles(): void {
+	document.getElementById( 'content' )?.removeAttribute( 'style' );
+	document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+}
 
+type LayoutMetrics = {
+	windowHeight: number;
+	secondaryEl: HTMLElement | null;
+	secondaryElHeight?: number;
+	masterbarHeight?: number;
+};
+
+/**
+ * Sizes `#content` so the window can scroll far enough to reveal a sidebar taller than
+ * the viewport, and returns the measurements it took.
+ */
+export function syncSidebarHeight(): LayoutMetrics {
 	const windowHeight = window.innerHeight;
 	const contentEl = document.getElementById( 'content' );
-	const contentHeight = contentEl?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
-	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+	const masterbarHeight = getOmnibarElement()?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
-	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {
-		if ( contentHeight < secondaryElHeight ) {
-			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
-			contentEl.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
-		}
-
-		if (
-			windowHeight >= secondaryElHeight + masterbarHeight &&
-			contentEl &&
-			secondaryEl &&
-			( contentEl.style.minHeight !== 'initial' || secondaryEl.style.position )
-		) {
-			// In case that window is taller than the sidebar we reinstate the content min-height. CSS code: client/layout/style.scss:30.
-			contentEl.style.minHeight = 'initial';
+	if ( contentEl && secondaryEl && masterbarHeight && secondaryElHeight ) {
+		if ( secondaryElHeight + masterbarHeight > windowHeight ) {
+			contentEl.style.minHeight = `${ secondaryElHeight + masterbarHeight }px`;
+		} else {
+			contentEl.style.removeProperty( 'min-height' );
 			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
 			secondaryEl.removeAttribute( 'style' );
 		}
 	}
 
-	if (
-		secondaryEl &&
-		secondaryElHeight !== undefined &&
-		masterbarHeight !== undefined &&
-		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
-	) {
-		// Throttle scroll event
-		window.requestAnimationFrame( function () {
-			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
-			const scrollY = -document.body.getBoundingClientRect().top; // Get current scroll position.
+	return { windowHeight, secondaryEl, secondaryElHeight, masterbarHeight };
+}
 
-			// Check for overscrolling, this happens when swiping up at the top of the document in modern browsers.
-			if ( scrollY < 0 ) {
-				// Stick the sidebar to the top.
-				if ( ! pinnedSidebarTop ) {
-					pinnedSidebarTop = true;
-					pinnedSidebarBottom = false;
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = '0';
-					secondaryEl.style.bottom = '0';
-				}
+export const handleScroll = (): void => {
+	const { windowHeight, secondaryEl, secondaryElHeight, masterbarHeight } = syncSidebarHeight();
 
-				ticking = false;
-				return;
-			} else if ( scrollY + windowHeight > document.body.scrollHeight - 1 ) {
-				// When overscrolling at the bottom, stick the sidebar to the bottom.
-				if ( ! pinnedSidebarBottom ) {
-					pinnedSidebarBottom = true;
-					pinnedSidebarTop = false;
+	if ( ! secondaryEl || ! secondaryElHeight || ! masterbarHeight ) {
+		return;
+	}
 
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = '0';
-				}
+	if ( secondaryElHeight + masterbarHeight <= windowHeight ) {
+		// The menu fits, and `syncSidebarHeight` has already handed it back to the stylesheet.
+		return;
+	}
 
-				ticking = false;
-				return;
-			}
+	const maxScroll = secondaryElHeight + masterbarHeight - windowHeight;
+	const scrollY = -document.body.getBoundingClientRect().top; // Negative while overscrolling.
 
-			if ( scrollY >= lastScrollPosition ) {
-				// When a down scroll has been detected.
-
-				if ( pinnedSidebarTop ) {
-					pinnedSidebarTop = false;
-					sidebarTop = masterbarHeight;
-
-					if ( scrollY > maxScroll ) {
-						//In case we have already passed the available scroll of the sidebar, add the current scroll
-						sidebarTop += scrollY;
-					}
-
-					secondaryEl.style.position = 'absolute';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				} else if (
-					! pinnedSidebarBottom &&
-					scrollY + masterbarHeight > maxScroll + secondaryEl.offsetTop
-				) {
-					// Pin it to the bottom.
-					pinnedSidebarBottom = true;
-
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = '0';
-				}
-			} else if ( scrollY < lastScrollPosition ) {
-				// When a scroll up is detected.
-
-				// If it was pinned to the bottom, unpin and calculate relative scroll.
-				if ( pinnedSidebarBottom ) {
-					pinnedSidebarBottom = false;
-
-					// Calculate new offset position.
-					sidebarTop = Math.max( 0, scrollY + masterbarHeight - maxScroll );
-					if ( contentHeight === secondaryElHeight + masterbarHeight ) {
-						// When content is originally shorter than the sidebar and
-						// we have already made it equal to the sidebar + masterbar
-						// the offset will always be the masterbar height (top position).
-						sidebarTop = masterbarHeight;
-					}
-
-					secondaryEl.style.position = 'absolute';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				} else if ( ! pinnedSidebarTop && scrollY + masterbarHeight < sidebarTop ) {
-					// Pin it to the top.
-					pinnedSidebarTop = true;
-					sidebarTop = masterbarHeight;
-
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				}
-			}
-
-			lastScrollPosition = scrollY;
-
-			ticking = false;
-		} );
-		ticking = true;
+	if ( scrollY > maxScroll ) {
+		secondaryEl.style.position = 'fixed';
+		secondaryEl.style.top = 'auto';
+		secondaryEl.style.bottom = '0';
+	} else if ( scrollY <= 0 ) {
+		secondaryEl.style.position = 'fixed';
+		secondaryEl.style.top = `${ masterbarHeight }px`;
+		secondaryEl.style.bottom = '0';
+	} else {
+		secondaryEl.style.position = 'absolute';
+		secondaryEl.style.top = `${ masterbarHeight }px`;
+		secondaryEl.style.bottom = 'auto';
 	}
 };
 
-const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+const getFlowFromRedirectURL = ( redirectTo: string ) => {
+	if ( ! redirectTo ) {
+		return '';
+	}
+
 	const { pathname, search } = new URL( redirectTo, 'http://example.com' );
 
-	return shouldUseStepContainerV2( getFlowFromURL( pathname, search ) );
+	return getFlowFromURL( pathname, search );
+};
+
+const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+	return shouldUseStepContainerV2( getFlowFromRedirectURL( redirectTo ) );
 };
 
 const isMarketplaceThankYouRedirect = ( redirectTo: string ) => {
@@ -230,6 +167,36 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 export const useInitialIsInStepContainerV2FlowContext = () => {
 	const ref = useRef(
 		isInStepContainerV2FlowContext( window.location.pathname, window.location.search )
+	);
+
+	return ref.current;
+};
+
+/**
+ * Returns the stepper flow name associated with the current page, if any.
+ * On `/setup` this is the flow in the URL. On `/checkout` the flow (if any) is
+ * inferred from the `redirect_to`/`cancel_to` query params, since checkout
+ * itself isn't part of a stepper flow.
+ */
+export const getStepperFlowFromContext = ( pathname: string, query: string ): string => {
+	if ( pathname.startsWith( '/setup' ) ) {
+		return getFlowFromURL( pathname, query );
+	}
+
+	if ( pathname.startsWith( '/checkout' ) ) {
+		const params = new URLSearchParams( query );
+		const redirectTo = params.get( 'redirect_to' ) ?? '';
+		const cancelTo = params.get( 'cancel_to' ) ?? '';
+
+		return getFlowFromRedirectURL( redirectTo ) || getFlowFromRedirectURL( cancelTo );
+	}
+
+	return '';
+};
+
+export const useInitialStepperFlowFromContext = () => {
+	const ref = useRef(
+		getStepperFlowFromContext( window.location.pathname, window.location.search )
 	);
 
 	return ref.current;

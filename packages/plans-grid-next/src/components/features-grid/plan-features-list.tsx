@@ -68,6 +68,22 @@ const PlanFeaturesList = ( {
 			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
 		);
 	}, [ renderedGridPlans ] );
+	const featureBadgesBySlug = useMemo( () => {
+		const featureBadges = new Map<
+			string,
+			NonNullable< GridPlan[ 'features' ][ 'wpcomFeatures' ][ number ][ 'badgeText' ] >
+		>();
+
+		plansWithFeatures.forEach( ( { features: { wpcomFeatures, jetpackFeatures } } ) => {
+			[ ...wpcomFeatures, ...jetpackFeatures ].forEach( ( feature ) => {
+				if ( feature.badgeText && ! featureBadges.has( feature.getSlug() ) ) {
+					featureBadges.set( feature.getSlug(), feature.badgeText );
+				}
+			} );
+		} );
+
+		return featureBadges;
+	}, [ plansWithFeatures ] );
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
@@ -75,9 +91,9 @@ const PlanFeaturesList = ( {
 			const filteredWpcomFeatures =
 				featureGroup?.slug === FEATURE_GROUP_ALL_FEATURES
 					? wpcomFeatures
-					: wpcomFeatures.filter(
-							( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
-					  );
+					: wpcomFeatures.filter( ( feature ) =>
+							featureGroup?.getFeatures().includes( feature.getSlug() )
+						);
 
 			/**
 			 * 1. Storage group is still it's own thing, with no actual features associated. It will join the rest in a follow-up.
@@ -160,6 +176,7 @@ const PlanFeaturesList = ( {
 						hideUnavailableFeatures={ hideUnavailableFeatures }
 						selectedFeature={ selectedFeature }
 						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+						featureBadgesBySlug={ featureBadgesBySlug }
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
@@ -184,6 +201,7 @@ const PlanFeaturesList = ( {
 								generatedWPComSubdomain={ generatedWPComSubdomain }
 								hideUnavailableFeatures={ hideUnavailableFeatures }
 								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								featureBadgesBySlug={ featureBadgesBySlug }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 							/>

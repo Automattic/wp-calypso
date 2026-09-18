@@ -29,6 +29,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		expiryDate: purchase.expiry_date,
 		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
+		daysUntilExpiry:
+			purchase.days_until_expiry == null ? null : Number( purchase.days_until_expiry ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -53,7 +55,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 						purchase.introductory_offer.should_prorate_when_offer_ends
 					),
 					isNextRenewalProrated: Boolean( purchase.introductory_offer.is_next_renewal_prorated ),
-			  }
+				}
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomain: Boolean( purchase.is_domain ),
@@ -61,6 +63,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
+		isPastExpiryDate: Boolean( purchase.is_past_expiry_date ),
+		isPlan: purchase.is_plan,
 		isPlanTypeDowngradable: Boolean( purchase.is_plan_type_downgradable ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
@@ -71,16 +75,14 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		meta: purchase.meta,
 		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
-		priceTierList: purchase.price_tier_list?.map(
-			( rawTier ): PurchasePriceTier => ( {
-				minimumUnits: rawTier.minimum_units,
-				maximumUnits: rawTier.maximum_units,
-				minimumPrice: rawTier.minimum_price,
-				maximumPrice: rawTier.maximum_price,
-				minimumPriceDisplay: rawTier.minimum_price_display,
-				maximumPriceDisplay: rawTier.maximum_price_display,
-			} )
-		),
+		priceTierList: purchase.price_tier_list?.map( ( rawTier ): PurchasePriceTier => ( {
+			minimumUnits: rawTier.minimum_units,
+			maximumUnits: rawTier.maximum_units,
+			minimumPrice: rawTier.minimum_price,
+			maximumPrice: rawTier.maximum_price,
+			minimumPriceDisplay: rawTier.minimum_price_display,
+			maximumPriceDisplay: rawTier.maximum_price_display,
+		} ) ),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
 		partnerType: purchase.partner_type,
@@ -110,7 +112,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		refundPeriodInDays: purchase.refund_period_in_days,
 		regularPriceText: purchase.regular_price_text,
 		regularPriceInteger: purchase.regular_price_integer,
-		renewDate: purchase.renew_date,
+		renewDate: purchase.renew_date ?? '',
 		saleAmount: purchase.sale_amount,
 		saleAmountInteger: purchase.sale_amount_integer,
 		siteId: Number( purchase.blog_id ),
@@ -121,10 +123,14 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
+		isPastLastAutoRenewAttemptDate: purchase.is_past_last_auto_renew_attempt_date,
+		mightStillAutoRenew: purchase.might_still_auto_renew,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
 		isDelayedDowngradePending: Boolean( purchase.is_delayed_downgrade_pending ),
 		delayedDowngradeToProductSlug: purchase.delayed_downgrade_to_product_slug ?? null,
+
+		rawPurchase: purchase,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

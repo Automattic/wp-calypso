@@ -17,7 +17,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, lineSolid } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React, { Fragment, useState } from 'react';
-import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
@@ -228,7 +227,7 @@ function PlanPrice( {
 							/* translators: %d is the number of years, e.g. "3" */
 							__( 'your first %d years' ),
 							intervalCount
-					  );
+						);
 		} else {
 			introPeriod =
 				intervalCount === 1
@@ -237,7 +236,7 @@ function PlanPrice( {
 							/* translators: %d is the number of months, e.g. "3" */
 							__( 'your first %d months' ),
 							intervalCount
-					  );
+						);
 		}
 
 		const formattedOriginalPrice = formatCurrency( originalPrice, sitePlan.currency_code, {
@@ -277,7 +276,8 @@ function PlanPrice( {
 					) }
 					<span className="site-plans__price-number">
 						{ introPriceObj.integer }
-						{ introPriceObj.hasNonZeroFraction && introPriceObj.fraction }
+						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+						{ introPriceObj.hasNonZeroFraction && <span>{ introPriceObj.fraction }</span> }
 					</span>
 					{ introPriceObj.symbolPosition === 'after' && (
 						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
@@ -290,7 +290,8 @@ function PlanPrice( {
 						) }
 						<span className="site-plans__price-number site-plans__price-number--original">
 							{ regularPriceObj.integer }
-							{ regularPriceObj.hasNonZeroFraction && regularPriceObj.fraction }
+							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+							{ regularPriceObj.hasNonZeroFraction && <span>{ regularPriceObj.fraction }</span> }
 						</span>
 						{ regularPriceObj.symbolPosition === 'after' && (
 							<sup className="site-plans__price-currency site-plans__price-currency--original">
@@ -336,7 +337,8 @@ function PlanPrice( {
 					) }
 					<span className="site-plans__price-number">
 						{ perMonthObj.integer }
-						{ perMonthObj.hasNonZeroFraction && perMonthObj.fraction }
+						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+						{ perMonthObj.hasNonZeroFraction && <span>{ perMonthObj.fraction }</span> }
 					</span>
 					{ perMonthObj.symbolPosition === 'after' && (
 						<sup className="site-plans__price-currency">{ perMonthObj.symbol }</sup>
@@ -355,7 +357,7 @@ function PlanPrice( {
 			? Math.round(
 					( 1 - ( annualSitePlan.raw_price + annualSitePlan.raw_discount ) / 12 / originalPrice ) *
 						100
-			  )
+				)
 			: 0;
 
 	return (
@@ -366,7 +368,8 @@ function PlanPrice( {
 				) }
 				<span className="site-plans__price-number">
 					{ monthlyObj.integer }
-					{ monthlyObj.hasNonZeroFraction && monthlyObj.fraction }
+					{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+					{ monthlyObj.hasNonZeroFraction && <span>{ monthlyObj.fraction }</span> }
 				</span>
 				{ monthlyObj.symbolPosition === 'after' && (
 					<sup className="site-plans__price-currency">{ monthlyObj.symbol }</sup>
@@ -392,7 +395,7 @@ function PlanCardCTA( {
 	tierRank,
 	currentTierRank,
 	redirectAfterPurchase,
-	isSiteOwner,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -400,7 +403,7 @@ function PlanCardCTA( {
 	tierRank: number;
 	currentTierRank: number;
 	redirectAfterPurchase: string;
-	isSiteOwner: boolean;
+	canPurchasePlan: boolean;
 } ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
@@ -414,7 +417,7 @@ function PlanCardCTA( {
 		);
 	}
 
-	if ( ! isSiteOwner ) {
+	if ( ! canPurchasePlan ) {
 		return null;
 	}
 
@@ -466,7 +469,7 @@ function PlanCard( {
 	currentTierRank,
 	redirectAfterPurchase,
 	totalPlanCount,
-	isSiteOwner,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -476,7 +479,7 @@ function PlanCard( {
 	currentTierRank: number;
 	redirectAfterPurchase: string;
 	totalPlanCount: number;
-	isSiteOwner: boolean;
+	canPurchasePlan: boolean;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
@@ -495,9 +498,10 @@ function PlanCard( {
 					{ isCurrentPlan && (
 						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
 					) }
+					{ /* Coalesce, don't optional-chain; `?.map` trips the Google Translate lint (react/react#11538) */ }
 					{ showBadgesAtTop &&
 						! isCurrentPlan &&
-						sitePlan.badges?.map( ( badge ) => (
+						( sitePlan.badges ?? [] ).map( ( badge ) => (
 							<span key={ badge } className="site-plans__plan-badge">
 								{ badge }
 							</span>
@@ -509,8 +513,9 @@ function PlanCard( {
 							<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
 								{ sitePlan.plan_card_name ?? sitePlan.product_name }
 							</Text>
+							{ /* Coalesce, don't optional-chain; `?.map` trips the Google Translate lint (react/react#11538) */ }
 							{ ! showBadgesAtTop &&
-								sitePlan.badges?.map( ( badge ) => (
+								( sitePlan.badges ?? [] ).map( ( badge ) => (
 									<span key={ badge } className="site-plans__plan-badge">
 										{ badge }
 									</span>
@@ -541,7 +546,7 @@ function PlanCard( {
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
-						isSiteOwner={ isSiteOwner }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 
 					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
@@ -715,8 +720,6 @@ export default function SitePlans() {
 	const { siteSlug } = siteRoute.useParams();
 	const { redirect_to } = useSearch( { from: sitePlansRoute.fullPath } );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { user } = useAuth();
-	const isSiteOwner = user.ID === site.site_owner;
 
 	const [ billingInterval, setBillingInterval ] = useState< SubscriptionBillPeriodValue >(
 		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
@@ -730,6 +733,12 @@ export default function SitePlans() {
 		enabled: !! site.ID,
 	} );
 	const sitePlans = sitePlansData?.plans;
+
+	// A paid plan can only be changed by the account that owns it; a free or plan-less
+	// site can be upgraded by anyone with access.
+	const currentPlan = sitePlans?.find( ( p ) => p.current_plan );
+	const isPaidPlan = !! site.plan && ! site.plan.is_free;
+	const canPurchasePlan = ! isPaidPlan || !! currentPlan?.user_is_owner;
 	const pageContext = sitePlansData?.pageContext;
 	// Index sitePlans by product_id for O(1) sibling lookups
 	const plansByProductId = new Map< number, SiteContextualPlan >(
@@ -849,7 +858,7 @@ export default function SitePlans() {
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
 						totalPlanCount={ shownPlans.length }
-						isSiteOwner={ isSiteOwner }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 				) ) }
 			</div>

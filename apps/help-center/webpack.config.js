@@ -63,11 +63,28 @@ function getIndividualConfig( options = {} ) {
 						return null;
 					}
 
+					// Externalize the `react-dom/client` subpath to WordPress's `ReactDOM`
+					// global so `createRoot` comes from the same React that WordPress provides.
+					// The default extraction only maps bare `react-dom`, so this subpath would
+					// otherwise bundle our own react-dom (React 19), which reads React internals
+					// off the host's React and throws ("Cannot read properties of undefined").
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+
 					// Bundle @wordpress/dataviews and @wordpress/ui instead of externalizing.
 					// These are only used by HelpCenterA4AContactForm which is lazy-loaded,
 					// so we don't want them listed as dependencies for the main entry point.
 					if ( request === '@wordpress/dataviews' || request === '@wordpress/ui' ) {
 						return null;
+					}
+				},
+				requestToHandle( request ) {
+					// `react-dom/client` is externalized to the `ReactDOM` global above; point its
+					// script dependency at the existing `react-dom` handle since the request name
+					// itself is not a registered handle.
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
 					}
 				},
 			} ),

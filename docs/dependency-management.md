@@ -35,7 +35,7 @@ yarn add <dependency>
 
 # Example:
 # cd packages/calypso-analytics
-# yarn add lodash
+# yarn add uuid
 ```
 
 You should add dependencies to the root project _only_ when it will be used to test and/or build other packages. To do this, run:
@@ -65,13 +65,13 @@ yarn remove <dependency>
 
 # Example:
 # cd packages/calypso-analytics
-# yarn remove lodash
+# yarn remove uuid
 ```
 
 To delete a dependency of the root project, run:
 
 ```
-yarn remove -w lodash
+yarn remove -w uuid
 ```
 
 ### Update a dependency

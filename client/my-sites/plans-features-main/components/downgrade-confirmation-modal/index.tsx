@@ -113,7 +113,7 @@ function ModalBody( {
 									comment:
 										'Message shown when scheduling a plan downgrade for a specific renewal date',
 								}
-						  )
+							)
 						: translate(
 								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
 								{
@@ -121,7 +121,7 @@ function ModalBody( {
 									comment:
 										'Message shown when scheduling a plan downgrade for end of the current billing term',
 								}
-						  ) }
+							) }
 				</p>
 				{ lostFeatures.length > 0 && (
 					<>
@@ -228,7 +228,7 @@ const DowngradeConfirmationModal = ( {
 	const translate = useTranslate();
 
 	const { data: cancelFeaturesData, isLoading } = useQuery( {
-		...purchaseCancelFeaturesQuery( purchaseId ?? 0, 'control', targetPlanSlug ?? undefined ),
+		...purchaseCancelFeaturesQuery( purchaseId ?? 0, 'treatment', targetPlanSlug ?? undefined ),
 		enabled: !! purchaseId && !! targetPlanSlug && isOpen,
 		// The feature delta is fixed for the dialog's lifetime. Don't refetch on
 		// window focus: in the instant-downgrade flow the dialog stays open (with its

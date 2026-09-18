@@ -20,6 +20,22 @@ import {
 } from './util';
 
 describe( 'upiProcessor', () => {
+	// jsdom does not implement the native <dialog> showModal/close API, so
+	// polyfill them to mirror a browser that supports dialogs.
+	beforeAll( () => {
+		if ( ! HTMLDialogElement.prototype.showModal ) {
+			HTMLDialogElement.prototype.showModal = function showModal() {
+				this.open = true;
+			};
+		}
+		if ( ! HTMLDialogElement.prototype.close ) {
+			HTMLDialogElement.prototype.close = function close() {
+				this.open = false;
+				this.dispatchEvent( new Event( 'close' ) );
+			};
+		}
+	} );
+
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -97,7 +113,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -120,6 +136,49 @@ describe( 'upiProcessor', () => {
 		} );
 
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
+	} );
+
+	it( 'surfaces the specific Stripe failure message when the backend provides one', async () => {
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'upi-modal-target' } ) );
+
+		const orderId = 54321;
+		// The order-details endpoint now returns a customer-facing, already
+		// translated failure message for redirect/async Stripe methods, the same
+		// way synchronous card failures do. See SHILL-1811.
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+			error_code: 'insufficient_funds',
+			error_message: 'Your card has insufficient funds.',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
+		const expected = {
+			payload: 'Your card has insufficient funds.',
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				upiProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {
@@ -155,6 +214,38 @@ describe( 'upiProcessor', () => {
 		} );
 	} );
 
+	it( 'does not require a pre-existing modal target to be rendered', async () => {
+		// Intentionally do NOT render a `.upi-modal-target` element. In
+		// production that element is rendered by the outer checkout React tree,
+		// and mounting the dialog root into it breaks under React 19 (the outer
+		// re-render wipes the nested root). The processor must create its own
+		// modal container so it never depends on an outer-owned node.
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const expected = { payload: 'test error', type: 'ERROR' };
+
+		await act( async () => {
+			await expect(
+				upiProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+	} );
+
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
 		// The processor renders the dialog into a div so that div must be
 		// present to avoid errors.
@@ -172,7 +263,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -229,7 +320,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -297,7 +388,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 

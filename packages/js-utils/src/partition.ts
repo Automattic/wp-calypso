@@ -1,8 +1,8 @@
 /**
  * Splits the values of `collection` into two groups: the first contains values
- * for which `predicate` returns truthy, the second the rest. Mirrors lodash
- * `partition`: works on arrays and plain objects (iterating values) and treats
- * a nullish collection as empty.
+ * for which `predicate` returns truthy, the second the rest. Works on arrays
+ * and plain objects (iterating values) and treats a nullish collection as
+ * empty.
  * @param collection The array or object to iterate over.
  * @param predicate  Invoked per value.
  * @returns A tuple of `[ truthy, falsy ]` value arrays.

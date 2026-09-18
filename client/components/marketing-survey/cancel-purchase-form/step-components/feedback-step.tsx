@@ -5,7 +5,7 @@ import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 type ChangeCallback = ( value: string ) => void;
@@ -29,7 +29,7 @@ function CancellationReason( {
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
 	const [ feedbackValue, setFeedbackValue ] = useState( '' );
-	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.productSlug } );
+	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.product_slug } );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
 	const selectedSubOption = selectedReason?.selectOptions?.find(
 		( option ) => option.value === details

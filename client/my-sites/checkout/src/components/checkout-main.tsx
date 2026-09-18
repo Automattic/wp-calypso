@@ -41,6 +41,9 @@ import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/us
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useHasNonRenewableDomainError } from '../hooks/use-has-non-renewable-domain-error';
+import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
+import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -215,8 +218,9 @@ export default function CheckoutMain( {
 			return marketplaceSiteSlug;
 		}
 
-		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
-		if ( sitelessCheckoutType === 'unified' ) {
+		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
+		// otherwise fall back to "no-user".
+		if ( sitelessCheckoutType === 'unified' || sitelessCheckoutType === 'wpcom' ) {
 			return undefined;
 		}
 
@@ -373,9 +377,9 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	// Display errors. Note that we display all errors if any of them change,
-	// because errorNotice() otherwise will remove the previously displayed
-	// errors.
+	// Display errors. These notices share an ID so that a new one replaces the
+	// last rather than stacking; that means each notice must render every error
+	// currently active, not just the ones which have changed.
 	const errorsToDisplay = [
 		cartLoadingError,
 		stripeLoadingError?.message,
@@ -383,11 +387,24 @@ export default function CheckoutMain( {
 	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
-			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
+			errorNotice(
+				errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ),
+				{ id: 'checkout-cart-error' }
+			)
 		);
 	} );
 
 	const responseCartErrors = responseCart.messages?.errors ?? [];
+
+	// A renewal for a subscription owned by another account gets its own screen
+	// rather than the generic empty cart page, because there is something the
+	// customer can do about it.
+	const isWrongAccountRenewal = useHasWrongAccountRenewalError( responseCart );
+
+	// Likewise for a domain renewal that arrived too late to be a renewal at
+	// all: the customer can still go and look for another domain.
+	const isNonRenewableDomain = useHasNonRenewableDomainError( responseCart );
+
 	const areThereErrors =
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
@@ -460,7 +477,7 @@ export default function CheckoutMain( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
-		  } );
+			} );
 	debug( 'filtered payment method objects', paymentMethods );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
@@ -631,7 +648,7 @@ export default function CheckoutMain( {
 				highlight: colors[ 'WordPress Blue 50' ],
 				highlightBorder: colors[ 'WordPress Blue 80' ],
 				highlightOver: colors[ 'WordPress Blue 60' ],
-		  }
+			}
 		: {};
 
 	// A4A Theme
@@ -644,7 +661,7 @@ export default function CheckoutMain( {
 					highlight: colors[ 'Automattic Blue 50' ],
 					highlightBorder: colors[ 'Automattic Blue 80' ],
 					highlightOver: colors[ 'Automattic Blue 60' ],
-			  }
+				}
 			: {};
 
 	const theme = {
@@ -655,6 +672,8 @@ export default function CheckoutMain( {
 
 	const isCheckoutV2ExperimentLoading = false;
 	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
+	const { isLoading: isMobileCheckoutStickySummaryLoading } =
+		useMobileCheckoutStickySummaryExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -680,7 +699,10 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
-		{ name: translate( 'Loading checkout' ), isLoading: isCheckoutUiRedesignLoading },
+		{
+			name: translate( 'Loading checkout' ),
+			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+		},
 	];
 
 	if ( shouldSetMigrationSticker ) {
@@ -907,6 +929,8 @@ export default function CheckoutMain( {
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }
+						isWrongAccountRenewal={ isWrongAccountRenewal }
+						isNonRenewableDomain={ isNonRenewableDomain }
 						isInitialCartLoading={ isInitialCartLoading }
 						addItemToCart={ addItemAndLog }
 						changeSelection={ changeSelection }

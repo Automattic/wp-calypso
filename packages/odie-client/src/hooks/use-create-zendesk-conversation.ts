@@ -1,4 +1,11 @@
-import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import {
+	useUpdateZendeskUserFields,
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
+	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+	type ZendeskConversation,
+} from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import {
@@ -31,9 +38,10 @@ export const useCreateZendeskConversation = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const interactionStatusByUuid = useOpenInteractionStatusMap();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const getErrorMessage = ( error: unknown ) =>
-		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+		error instanceof Error ? error.message : ( error?.toString?.() ?? 'Unknown error' );
 
 	// The Smooch (Zendesk Web Messenger) SDK is initialized asynchronously elsewhere.
 	// When an escalation fires before init completes, `Smooch.createConversation` is
@@ -94,7 +102,7 @@ export const useCreateZendeskConversation = () => {
 			is_from_error: isFromError,
 			is_chat_loaded: isChatLoaded,
 			escalation_on_second_attempt: escalationOnSecondAttempt,
-			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
+			error_reason: isFromError ? ( errorReason ?? 'Unknown error' ) : '',
 		} );
 
 		// Store previous state to restore on error
@@ -163,6 +171,20 @@ export const useCreateZendeskConversation = () => {
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
+		// The messaging user fields submitted above can take up to a minute to become
+		// visible to Zendesk's ticket-creation triggers, so tickets created within
+		// seconds of a user's first contact come out with blank Site URL / Started
+		// from. Ticket-field metadata travels atomically with the conversation, so
+		// duplicate the critical fields here. See DOTSUP-472.
+		const ticketFieldMetadata = {
+			[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]:
+				selectedSiteURL || window.location.href,
+			[ `zen:ticket_field:${ ZENDESK_SOURCE_URL_TICKET_FIELD_ID }` ]: window.location.href,
+			...( chatId
+				? { [ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID }` ]: String( chatId ) }
+				: {} ),
+		};
+
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
 		const SMOOCH_RETRY_INTERVAL_MS = 250;
 		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
@@ -175,6 +197,7 @@ export const useCreateZendeskConversation = () => {
 						createdAt: Date.now(),
 						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 						...( chatId ? { odieChatId: chatId } : {} ),
+						...ticketFieldMetadata,
 					},
 				} );
 				break;
@@ -239,7 +262,7 @@ export const useCreateZendeskConversation = () => {
 				conversationId: conversationId,
 				messages: [
 					...prevChat.messages,
-					...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+					...getOdieTransferMessages( currentSupportInteraction?.bot_slug, hasEnTranslation ),
 					getZendeskChatStartedMetaMessage(),
 				],
 				provider: 'zendesk',

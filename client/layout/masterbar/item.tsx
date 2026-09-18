@@ -33,7 +33,6 @@ type MasterbarItemOwnProps = {
 	wrapperClassName?: string;
 	isActive?: boolean;
 	preloadSection?: () => void;
-	hasUnseen?: boolean;
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
@@ -67,7 +66,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
-		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
 		hasGlobalBorderStyle: PropTypes.bool,
@@ -81,7 +79,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	static defaultProps = {
 		icon: '',
 		onClick: noop,
-		hasUnseen: false,
 		url: '',
 		asProps: {},
 	};
@@ -113,13 +110,10 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	};
 
 	renderChildren() {
-		const { children, hasUnseen, icon } = this.props;
+		const { children, icon } = this.props;
 
 		return (
 			<Fragment>
-				{ hasUnseen && (
-					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
-				) }
 				{ !! icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
 				{ children && <span className="masterbar__item-content">{ children }</span> }
 			</Fragment>
@@ -263,7 +257,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	render() {
 		const itemClasses = clsx( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
-			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
 			'is-open': this.state.isOpenForNonMouseFlow,

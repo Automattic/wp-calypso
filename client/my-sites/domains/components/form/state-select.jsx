@@ -78,7 +78,9 @@ class StateSelect extends PureComponent {
 							aria-describedby={ validationId }
 							id={ `${ this.constructor.name }-${ fieldId }` }
 							name={ name }
-							value={ value }
+							// An undefined value leaves the select uncontrolled, which makes the
+							// browser preselect the first state instead of the disabled placeholder.
+							value={ value ?? '' }
 							disabled={ disabled }
 							onBlur={ onBlur }
 							onChange={ onChange }

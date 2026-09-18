@@ -3,17 +3,17 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { differenceInCalendarDays } from 'date-fns';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString } from '../../../utils/datetime';
+import { isEligibleForPlanExpiryNotice } from '../../../components/plan-expiry-notice';
+import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
 	isExpiring,
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
+	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
-	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -35,12 +35,19 @@ export function shouldShowExpiringNotice(
 	if (
 		! isExpiring( currentPurchase ) ||
 		currentPurchase?.is_trial_plan ||
-		isInExpirationGracePeriod( currentPurchase )
+		isAkismetFreeProduct( currentPurchase )
 	) {
 		return false;
 	}
 
 	if ( purchase.is_hundred_year_domain ) {
+		return false;
+	}
+
+	// PlanExpiryNotice owns this scenario for the plans it covers. When it
+	// stays quiet for one of them that is a decision, not a gap, so we must
+	// not fall back on this weaker message.
+	if ( isEligibleForPlanExpiryNotice( currentPurchase ) ) {
 		return false;
 	}
 
@@ -100,12 +107,12 @@ export function PurchaseExpiringNotice( {
 						),
 						{
 							purchaseName: currentPurchase.is_domain
-								? currentPurchase.meta ?? ''
+								? ( currentPurchase.meta ?? '' )
 								: currentPurchase.product_name,
 							includedPurchaseName: includedPurchase.is_domain
-								? includedPurchase.meta ?? ''
+								? ( includedPurchase.meta ?? '' )
 								: includedPurchase.product_name,
-							expiry: getRelativeTimeString( new Date( currentPurchase.expiry_date ) ),
+							expiry: getRelativeDayString( new Date( currentPurchase.expiry_date ), 'upcoming' ),
 						}
 					),
 					{
@@ -156,11 +163,16 @@ function ExpiringText( {
 		return <ExpiringLaterText purchase={ purchase } isDomainWithoutSite={ isDomainWithoutSite } />;
 	}
 
-	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
+	const purchaseName = purchase.is_domain ? ( purchase.meta ?? '' ) : purchase.product_name;
+	const daysToExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 
-	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
-		const daysToExpiry = differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
-
+	// A monthly purchase expiring today (or already past its expiry date, while
+	// still reported as expiring) falls through to the relative wording below,
+	// which renders "today" rather than "in 0 days".
+	if (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD &&
+		daysToExpiry > 0
+	) {
 		if ( purchase.is_attached_to_holding_site ) {
 			return sprintf(
 				// translators: %(purchaseName)s: the name of the plan, %(daysToExpiry)d: a number of days
@@ -174,13 +186,13 @@ function ExpiringText( {
 
 		const message = isDomainWithoutSite
 			? // translators: %(purchaseName)s: the name of the domain, %(daysToExpiry)d: a number of days
-			  __(
+				__(
 					'%(purchaseName)s will expire and be removed from your account in %(daysToExpiry)d days.'
-			  )
+				)
 			: // translators: %(purchaseName)s: the name of the plan, %(daysToExpiry)d: a number of days
-			  __(
+				__(
 					'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days.'
-			  );
+				);
 		return sprintf( message, {
 			purchaseName,
 			daysToExpiry,
@@ -191,18 +203,18 @@ function ExpiringText( {
 		// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
 		return sprintf( __( '%(purchaseName)s will expire and be removed %(expiry)s.' ), {
 			purchaseName,
-			expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+			expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 		} );
 	}
 
 	const message = isDomainWithoutSite
 		? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-		  __( '%(purchaseName)s will expire and be removed from your account %(expiry)s.' )
+			__( '%(purchaseName)s will expire and be removed from your account %(expiry)s.' )
 		: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-		  __( '%(purchaseName)s will expire and be removed from your site %(expiry)s.' );
+			__( '%(purchaseName)s will expire and be removed from your site %(expiry)s.' );
 	return sprintf( message, {
 		purchaseName,
-		expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+		expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 	} );
 }
 
@@ -215,8 +227,8 @@ export function ExpiringLaterText( {
 	autoRenewingUpgradesAction?: () => void;
 	isDomainWithoutSite?: boolean;
 } ) {
-	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
-	const expiry = getRelativeTimeString( new Date( purchase.expiry_date ) );
+	const purchaseName = purchase.is_domain ? ( purchase.meta ?? '' ) : purchase.product_name;
+	const expiry = getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' );
 
 	if ( purchase.payment_type === 'credits' ) {
 		if ( autoRenewingUpgradesAction ) {
@@ -262,13 +274,13 @@ export function ExpiringLaterText( {
 
 			const message = isDomainWithoutSite
 				? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-				  __(
+					__(
 						'%(purchaseName)s will expire and be removed from your account %(expiry)s. Please enable auto-renewal so you don‘t lose out on your paid features!'
-				  )
+					)
 				: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-				  __(
+					__(
 						'%(purchaseName)s will expire and be removed from your site %(expiry)s. Please enable auto-renewal so you don‘t lose out on your paid features!'
-				  );
+					);
 			return sprintf( message, { purchaseName, expiry } );
 		}
 
@@ -289,13 +301,13 @@ export function ExpiringLaterText( {
 
 		const message = isDomainWithoutSite
 			? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-			  __(
+				__(
 					'%(purchaseName)s will expire and be removed from your account %(expiry)s. Please renew before expiry so you don‘t lose out on your paid features!'
-			  )
+				)
 			: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-			  __(
+				__(
 					'%(purchaseName)s will expire and be removed from your site %(expiry)s. Please renew before expiry so you don‘t lose out on your paid features!'
-			  );
+				);
 		return sprintf( message, { purchaseName, expiry } );
 	}
 
@@ -316,12 +328,12 @@ export function ExpiringLaterText( {
 
 	const message = isDomainWithoutSite
 		? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-		  __(
+			__(
 				'%(purchaseName)s will expire and be removed from your account %(expiry)s. Update your payment information so you don‘t lose out on your paid features!'
-		  )
+			)
 		: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-		  __(
+			__(
 				'%(purchaseName)s will expire and be removed from your site %(expiry)s. Update your payment information so you don‘t lose out on your paid features!'
-		  );
+			);
 	return sprintf( message, { purchaseName, expiry } );
 }

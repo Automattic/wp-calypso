@@ -4,8 +4,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 const mockSetNewMessagingChat = jest.fn();
 const mockSetNavigateToRoute = jest.fn();
@@ -59,9 +59,9 @@ jest.mock( 'calypso/components/formatted-header', () => {
 } );
 
 const purchase = {
-	id: 123,
-	productSlug: 'business-bundle',
-	currencyCode: 'USD',
+	ID: 123,
+	product_slug: 'business-bundle',
+	currency_code: 'USD',
 } as Purchase;
 
 const site = {

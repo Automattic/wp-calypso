@@ -34,8 +34,7 @@ const TRACKS_EVENT_VIEW_FLOATING_PANEL = 'stats_feedback_action_view_floating_pa
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
-const FEEDBACK_SEND_FEEDBACK_URL =
-	'https://jetpack.com/?logmein=1&redirect_to=https%3A%2F%2Fjetpack.com%2Fcontact-support%2F%3Fcontact-form';
+const FEEDBACK_SEND_FEEDBACK_URL = 'https://jetpack.com/submit-feedback/';
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
@@ -109,6 +108,7 @@ interface FeedbackPanelProps {
 	onDismissPanel: () => void;
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
 function FeedbackPanel( {
@@ -116,6 +116,7 @@ function FeedbackPanel( {
 	onDismissPanel,
 	onLeaveReview,
 	onSendFeedback,
+	siteId,
 }: FeedbackPanelProps ) {
 	const translate = useTranslate();
 	const [ animationClassName, setAnimationClassName ] = useState(
@@ -123,18 +124,18 @@ function FeedbackPanel( {
 	);
 
 	const handleDismissPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL, { blog_id: siteId } );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 		onDismissPanel();
 	};
 
 	const handleLeaveReviewFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL, { blog_id: siteId } );
 		onLeaveReview();
 	};
 
 	const handleSendFeedbackFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -168,30 +169,31 @@ function FeedbackPanel( {
 interface FeedbackCardProps {
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
-function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+function FeedbackCard( { onLeaveReview, onSendFeedback, siteId }: FeedbackCardProps ) {
 	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
 	const inlineFeedbackCardRef = useRef( null );
 	const isVisible = useOnScreen( inlineFeedbackCardRef );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
-	}, [] );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD, { blog_id: siteId } );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		if ( isVisible && ! hasFiredViewEvent ) {
-			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD );
+			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD, { blog_id: siteId } );
 			setHasFiredViewEvent( true );
 		}
-	}, [ isVisible, hasFiredViewEvent ] );
+	}, [ isVisible, hasFiredViewEvent, siteId ] );
 
 	const handleLeaveReviewFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD, { blog_id: siteId } );
 		onLeaveReview();
 	};
 	const handleSendFeedbackFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -215,10 +217,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
-				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
+				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL, { blog_id: siteId } );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel, siteId ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
@@ -244,12 +246,17 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	return (
 		<div className="stats-feedback-container">
-			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
+			<FeedbackCard
+				onLeaveReview={ handleLeaveReview }
+				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
+			/>
 			<FeedbackPanel
 				isOpen={ isFloatingPanelOpen }
 				onDismissPanel={ handleDismissPanel }
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
 			/>
 		</div>
 	);

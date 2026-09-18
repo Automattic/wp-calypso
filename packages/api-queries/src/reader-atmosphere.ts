@@ -115,6 +115,7 @@ export function useCreateConnectionMutation() {
 	const client = useQueryClient();
 	return useMutation< AtmosphereCreateConnectionResponse, AtmosphereError, CreateConnectionParams >(
 		{
+			meta: { statId: 'atmo-conn-create' },
 			mutationFn: createConnection,
 			onSuccess: () => {
 				client.invalidateQueries( { queryKey: readerAtmosphereKeys.connections() } );
@@ -472,8 +473,7 @@ type ActorListInfiniteData = InfiniteData< AtmosphereScopedProfilesPage >;
  * (matches `<FollowButton>`'s gating on `mutation.isPending`).
  */
 type ActorListViewerPatch =
-	| { following: null; following_rkey: null }
-	| { following: string; following_rkey: string };
+	{ following: null; following_rkey: null } | { following: string; following_rkey: string };
 
 /**
  * Snapshot of an actor-list row's prior viewer state, captured by
@@ -649,6 +649,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 		FollowAtmosphereActorVars,
 		FollowAtmosphereMutationContext
 	>( {
+		meta: { statId: 'atmo-actor-follow' },
 		mutationFn: ( vars ) =>
 			createFollow( { connectionId: vars.connectionId, subject_did: vars.subjectDid } ),
 		onMutate: async ( vars ) => {
@@ -664,7 +665,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: 'pending',
 								following_rkey: 'pending',
 							},
-					  }
+						}
 					: old
 			);
 			const actorListSnapshots = patchActorListsForSubject(
@@ -696,7 +697,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: data.follow.uri,
 								following_rkey: data.follow.rkey,
 							},
-					  }
+						}
 					: old
 			);
 			patchActorListsForSubject( queryClient, vars.connectionId, vars.subjectDid, {
@@ -732,6 +733,7 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 		UnfollowAtmosphereActorVars,
 		FollowAtmosphereMutationContext
 	>( {
+		meta: { statId: 'atmo-actor-unfollow' },
 		mutationFn: ( vars ) => deleteFollow( { connectionId: vars.connectionId, rkey: vars.rkey } ),
 		onMutate: async ( vars ) => {
 			const key = scopedProfileKey( vars );
@@ -746,7 +748,7 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 								following: null,
 								following_rkey: null,
 							},
-					  }
+						}
 					: old
 			);
 			const actorListSnapshots = patchActorListsForSubject(
@@ -873,7 +875,7 @@ function patchAtmosphereQueryData(
 						? {
 								...page,
 								items: patchFeedItems( page.items, postUri, patch, items, seenOccurrences ),
-						  }
+							}
 						: page
 				),
 			},
@@ -1004,7 +1006,7 @@ function restoreAtmosphereQueryData(
 					? {
 							...page,
 							items: restoreFeedItems( page.items, itemSnapshots, seenOccurrences ),
-					  }
+						}
 					: page
 			),
 		};
@@ -1054,6 +1056,7 @@ export function useCreateLikeMutation( connectionId: number ) {
 		{ postUri: string; postCid: string },
 		OptimisticContext
 	>( {
+		meta: { statId: 'atmo-like-create' },
 		mutationFn: ( { postUri, postCid } ) => createLike( { connectionId, postUri, postCid } ),
 		onMutate: async ( { postUri } ) => {
 			await queryClient.cancelQueries( {
@@ -1085,6 +1088,7 @@ export function useDeleteLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
 		{
+			meta: { statId: 'atmo-like-delete' },
 			mutationFn: ( { rkey } ) => deleteLike( { connectionId, rkey } ),
 			onMutate: async ( { postUri } ) => {
 				await queryClient.cancelQueries( {
@@ -1112,6 +1116,7 @@ export function useCreateRepostMutation( connectionId: number ) {
 		{ postUri: string; postCid: string },
 		OptimisticContext
 	>( {
+		meta: { statId: 'atmo-repost-create' },
 		mutationFn: ( { postUri, postCid } ) => createRepost( { connectionId, postUri, postCid } ),
 		onMutate: async ( { postUri } ) => {
 			await queryClient.cancelQueries( {
@@ -1143,6 +1148,7 @@ export function useDeleteRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
 		{
+			meta: { statId: 'atmo-repost-delete' },
 			mutationFn: ( { rkey } ) => deleteRepost( { connectionId, rkey } ),
 			onMutate: async ( { postUri } ) => {
 				await queryClient.cancelQueries( {
@@ -1299,6 +1305,7 @@ export function useDeletePostMutation(
 ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, DeletePostMutationVars, RemovalContext >( {
+		meta: { statId: 'atmo-post-delete' },
 		mutationFn: ( { rkey } ) => deletePost( { connectionId, rkey } ),
 		onMutate: async ( { postUri, replyParentUri } ) => {
 			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );
@@ -1725,6 +1732,7 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
 	mutationOptions< UploadBlobResult, AtmosphereError, UploadBlobParams >( {
+		meta: { statId: 'atmo-blob-upload' },
 		mutationFn: uploadBlob,
 	} );
 
@@ -1754,6 +1762,7 @@ export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
  */
 export const createPostMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< CreatePostResult, AtmosphereError, CreatePostParams, CreatePostContext >( {
+		meta: { statId: 'atmo-post-create' },
 		mutationFn: createPost,
 		onMutate: async ( vars ) => {
 			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );

@@ -2,9 +2,9 @@ import baseExtremum from './base-extremum';
 
 /**
  * Returns the element of `array` with the maximum `iteratee` value. Iteratee
- * values are compared numerically (the supported subset of lodash `maxBy`);
- * nullish/`NaN` values are skipped, and `undefined` is returned for a nullish or
- * empty array.
+ * values are compared numerically (other comparison modes are not supported);
+ * nullish/`NaN` values are skipped, and `undefined` is
+ * returned for a nullish or empty array.
  * @param array    The array to iterate over.
  * @param iteratee Invoked per element to produce the value to rank by.
  * @returns The element with the maximum value, or `undefined`.

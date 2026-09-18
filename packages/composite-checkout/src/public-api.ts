@@ -15,8 +15,10 @@ import {
 	useCompleteAllSteps,
 	useMakeStepActive,
 	useNextIncompleteStepId,
+	useSuppressNextForwardScroll,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
+import { PAYMENT_METHOD_STEP_ID } from './components/default-steps';
 import RadioButton from './components/radio-button';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
@@ -56,6 +58,7 @@ export {
 	CheckoutStepBody,
 	CheckoutStepGroup,
 	PaymentMethodStep,
+	PAYMENT_METHOD_STEP_ID,
 	checkoutTheme,
 	createCheckoutStepGroupStore,
 	makeErrorResponse,
@@ -74,6 +77,7 @@ export {
 	useProcessPayment,
 	useSetStepComplete,
 	useCompleteAllSteps,
+	useSuppressNextForwardScroll,
 	useTogglePaymentMethod,
 	useTransactionStatus,
 	useMakeStepActive,

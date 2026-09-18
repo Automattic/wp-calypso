@@ -1,9 +1,14 @@
 import {
 	availableTldsQuery,
+	bundleForDomainQuery,
 	bundleSuggestionQuery,
+	bundleTriggersQuery,
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
@@ -49,6 +54,11 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
 		bundleSuggestion: ( query: string ) => bundleSuggestionQuery( query ),
+		bundleTriggers: ( query: string ) => bundleTriggersQuery( query ),
+		bundleForDomain: ( fqdn: string ) => bundleForDomainQuery( fqdn ),
+		namePulseSuggestions: ( params ) => namePulseSuggestionsQuery( params ),
+		namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
+		namePulseTlds: () => namePulseTldsQuery(),
 	},
 	cart: {
 		items: [],
@@ -65,6 +75,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
+		hideFreeSubdomainSuggestion: false,
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
 		allowsUsingOwnDomain: false,
@@ -72,6 +83,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
+		showNamePulseSearch: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -176,6 +188,20 @@ export const useDomainSearchContextValue = ( {
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
+				bundleTriggers: ( query ) => ( {
+					...bundleTriggersQuery( query ),
+					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				bundleForDomain: ( fqdn ) => ( {
+					...bundleForDomainQuery( fqdn ),
+					enabled: false,
+					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
 				domainAvailability: ( domainName, isCartPreCheck = false ) => ( {
 					...domainAvailabilityQuery( domainName, {
 						vendor: normalizedConfig.vendor,
@@ -184,6 +210,17 @@ export const useDomainSearchContextValue = ( {
 					} ),
 					enabled: false,
 					staleTime: Infinity,
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseSuggestions: ( params ) => ( {
+					...namePulseSuggestionsQuery( params ),
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
+				namePulseTlds: () => ( {
+					...namePulseTldsQuery(),
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),

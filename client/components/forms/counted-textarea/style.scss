@@ -5,6 +5,13 @@
 	border-radius: 2px;
 	background-color: var(--color-neutral-0);
 
+	// Highlight the whole control on focus so the textarea and its count panel
+	// read as one field, matching the sibling form inputs.
+	&:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
 	&.is-exceeding-acceptable-length {
 		background: var(--color-error);
 
@@ -13,17 +20,25 @@
 			color: var(--color-text-inverted);
 		}
 	}
-}
 
-.counted-textarea__input {
-	display: block;
-	resize: vertical;
-	border: none;
-	padding: 8px;
+	// Keep the textarea borderless and drop its own focus ring; nesting outranks
+	// the `.form-textarea` border and box-shadow it would otherwise inherit.
+	// `:focus:hover` is listed explicitly to outrank `.form-textarea:focus:hover`.
+	.counted-textarea__input {
+		display: block;
+		resize: vertical;
+		border: none;
+
+		&:focus,
+		&:focus:hover {
+			box-shadow: none;
+		}
+	}
 }
 
 .counted-textarea__count-panel {
 	padding: 8px;
+	border-top: 1px solid var(--color-neutral-10);
 	font-size: $font-body-extra-small;
 	color: var(--color-neutral-50);
 }

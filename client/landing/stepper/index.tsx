@@ -8,6 +8,7 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
+import { setRequester as setLaunchpadRequester } from '@automattic/launchpad';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -61,7 +62,7 @@ import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
 const loadCookieBanner = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+		/* webpackChunkName: "async-load-calypso-blocks-privacy-prefs" */ 'calypso/blocks/cookie-banner'
 	);
 const loadGlobalNotices = () =>
 	import(
@@ -160,7 +161,11 @@ async function main() {
 				}
 			} );
 		};
+		// Each package holds its own requester. One left out here silently falls back to an
+		// unauthenticated proxy request instead of failing, so every package that talks to
+		// the API on Stepper's behalf needs a line below.
 		setDataStoresRequester( requester );
+		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
 	}
 

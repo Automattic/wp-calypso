@@ -17,6 +17,18 @@ export interface ReadPost {
 	feed_ID?: number;
 	feed_item_ID?: number;
 	global_ID: string;
+	title?: string;
+	site_name?: string;
+	excerpt?: string;
+	description?: string;
+	better_excerpt?: string;
+	date?: string;
+	URL?: string;
+	feed_URL?: string;
+	is_seen?: boolean;
+	site_icon?: { ico?: string; [ key: string ]: unknown };
+	author?: { name?: string; [ key: string ]: unknown };
+	canonical_media?: { src?: string; mediaType?: string; [ key: string ]: unknown };
 	[ key: string ]: unknown;
 }
 

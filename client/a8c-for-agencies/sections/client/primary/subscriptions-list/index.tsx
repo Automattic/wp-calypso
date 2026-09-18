@@ -145,9 +145,9 @@ export default function SubscriptionsList() {
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 			withBorder
 		>
-			<LayoutTop>
-				<PurchaseConfirmationMessage />
+			<PurchaseConfirmationMessage />
 
+			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
 				</LayoutHeader>

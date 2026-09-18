@@ -3,10 +3,12 @@ import {
 	deleteSiteUser,
 	fetchSiteUsers,
 	fetchWpcomSiteUsers,
+	updateCurrentSiteUserMeta,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
+import type { SiteUserMeta } from '@automattic/api-core';
 
 export const siteCurrentUserQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -14,8 +16,18 @@ export const siteCurrentUserQuery = ( siteId: number ) =>
 		queryFn: () => fetchCurrentSiteUser( siteId ),
 	} );
 
+export const siteCurrentUserMetaMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-user-meta-update' },
+		mutationFn: ( meta: SiteUserMeta ) => updateCurrentSiteUserMeta( siteId, meta ),
+		onSuccess: ( user ) => {
+			queryClient.setQueryData( siteCurrentUserQuery( siteId ).queryKey, user );
+		},
+	} );
+
 export const siteUserDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-user-delete' },
 		mutationFn: ( userId: number ) => deleteSiteUser( siteId, userId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

@@ -6,7 +6,11 @@ import {
 } from 'calypso/state/action-types';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
+import {
+	getConsumedBlackboxSessionId,
+	getTwoFactorAuthNonce,
+	getTwoFactorUserId,
+} from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 
 import 'calypso/state/login/init';
@@ -21,6 +25,8 @@ export const loginUserWithTwoFactorVerificationCode =
 	( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 		dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
+		const blackboxSessionId = getConsumedBlackboxSessionId( getState() );
+
 		return postLoginRequest( 'two-step-authentication-endpoint', {
 			user_id: getTwoFactorUserId( getState() ),
 			auth_type: twoFactorAuthType,
@@ -29,6 +35,7 @@ export const loginUserWithTwoFactorVerificationCode =
 			remember_me: true,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} )
 			.then( ( response ) => {
 				return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {

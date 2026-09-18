@@ -7,7 +7,7 @@ import type { AppConfig } from '../app/context';
 
 /** CSS selector for elements whose text is safe to show. */
 const UNMASK_SELECTOR =
-	'.dashboard-header-bar, .dashboard-section-header, .environment-badge, h1, h2, h3, h4, h5, h6, label, th, button';
+	'.dashboard-section-header, .environment-badge, h1, h2, h3, h4, h5, h6, label, th, button';
 
 /** CSS selector for elements to block entirely from session recordings. */
 const BLOCK_SELECTOR =

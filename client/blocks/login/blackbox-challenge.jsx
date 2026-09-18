@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 
@@ -18,12 +19,20 @@ export default function BlackboxChallenge( { enabled, onSubmitBlockedChange } ) 
 	} );
 
 	useIsomorphicLayoutEffect( () => {
-		onSubmitBlockedChange( isChallengeActive || isLoading || hasChallengeContent );
-	}, [ isChallengeActive, isLoading, hasChallengeContent, onSubmitBlockedChange ] );
+		onSubmitBlockedChange( isChallengeActive || isLoading );
+	}, [ isChallengeActive, isLoading, onSubmitBlockedChange ] );
 
 	if ( ! enabled ) {
 		return null;
 	}
 
-	return <div ref={ containerRef } className="login__form-blackbox-challenge" />;
+	// The container is a permanent mount point; only a rendered widget takes space.
+	return (
+		<div
+			ref={ containerRef }
+			className={ clsx( 'login__form-blackbox-challenge', {
+				'has-visible-challenge': hasChallengeContent,
+			} ) }
+		/>
+	);
 }

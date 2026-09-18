@@ -39,6 +39,7 @@ jest.mock( '@automattic/odie-client/src/utils', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
 	recordTracksEvent: jest.fn(),
 } ) );
 

@@ -4,5 +4,6 @@ import type { CreatePayPalAgreementParams } from '@automattic/api-core';
 
 export const createPayPalAgreementMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'paypal-agreement-create' },
 		mutationFn: ( params: CreatePayPalAgreementParams ) => createPayPalAgreement( params ),
 	} );

@@ -18,6 +18,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -41,22 +42,16 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 		enabled: ! isDomainConnection,
 	} );
 	const registrantEmail = findRegistrantWhois( whoisData )?.email;
-	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation( {
-		...domainLockMutation( domainName ),
-		meta: {
-			snackbar: {
-				error: { source: 'server' },
-			},
-		},
-	} );
-	const { mutate: requestTransferCode, isPending: isRequestingTransferCode } = useMutation( {
-		...domainTransferCodeMutation( domainName ),
-		meta: {
-			snackbar: {
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation(
+		withSnackbar( domainLockMutation( domainName ), {
+			error: { source: 'server' },
+		} )
+	);
+	const { mutate: requestTransferCode, isPending: isRequestingTransferCode } = useMutation(
+		withSnackbar( domainTransferCodeMutation( domainName ), {
+			error: { source: 'server' },
+		} )
+	);
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const handleToggleChange = ( enabled: boolean ) => {
@@ -75,9 +70,9 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 				createSuccessNotice(
 					enabled
 						? /* translators: %s is the domain name */
-						  sprintf( __( 'Transfer lock enabled for %s.' ), domainName )
+							sprintf( __( 'Transfer lock enabled for %s.' ), domainName )
 						: /* translators: %s is the domain name */
-						  sprintf( __( 'Transfer lock disabled for %s.' ), domainName ),
+							sprintf( __( 'Transfer lock disabled for %s.' ), domainName ),
 					{ type: 'snackbar' }
 				);
 			},
@@ -181,10 +176,10 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 								'We have sent the transfer authorization code to %s. If you don’t receive the email shortly, please check your spam folder.'
 							),
 							registrantEmail
-					  )
+						)
 					: __(
 							'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
-					  );
+						);
 
 				createSuccessNotice( successMessage, { type: 'snackbar' } );
 			},

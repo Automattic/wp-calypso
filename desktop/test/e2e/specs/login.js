@@ -31,7 +31,6 @@ switch ( process.platform ) {
 
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
-const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
@@ -60,9 +59,9 @@ describe( 'User Can log in', () => {
 			executablePath: APP_PATH,
 			args: LAUNCH_ARGS,
 			timeout: 0,
-			recordHar: {
-				path: HAR_PATH,
-			},
+			// Important! Do not enable `recordHar`: the login POST body and session cookies land in the
+			// artifact in cleartext.
+			// recordHar: { path: HAR_PATH },
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
@@ -108,9 +107,9 @@ describe( 'User Can log in', () => {
 	} );
 
 	skipIfOAuthLogin( 'Log in with username and password', async function () {
-		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
+		await mainWindow.fill( '#usernameOrEmail', process.env.WP_DESKTOP_E2E_USERNAME );
 		await mainWindow.keyboard.press( 'Enter' );
-		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
+		await mainWindow.fill( '#password', process.env.WP_DESKTOP_E2E_PASSWORD );
 
 		// Wait for response from the Login endpoint.
 		const [ response ] = await Promise.all( [

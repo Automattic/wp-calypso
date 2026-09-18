@@ -1,11 +1,10 @@
-import { mergeWith } from 'lodash';
+import { mergeWith } from '@automattic/js-utils';
 
 /**
- * Merge handler for lodash.mergeWith
+ * Merge customizer for `mergeWith`.
  *
  * Note that a return value of `undefined`
- * indicates to lodash that it should use
- * its normal merge algorithm.
+ * defers to the default merge algorithm.
  *
  * In this case, we want to merge keys if
  * they don't exists but when they do, we

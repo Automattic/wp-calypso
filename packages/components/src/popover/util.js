@@ -109,7 +109,7 @@ function choosePrimary( prefered, room ) {
 
 		// less chopped of than other sides
 		if ( space > best ) {
-			( best = space ), ( bestPos = prefered );
+			( ( best = space ), ( bestPos = prefered ) );
 		}
 	}
 
@@ -128,7 +128,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ prefered ] }`
 					: `${ opposite[ prefered ] } ${ primary }`,
-		  ]
+			]
 		: [
 				primary,
 				isVertical
@@ -137,7 +137,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
 					: `${ opposite[ adjacent[ primary ] ] } ${ primary }`,
-		  ];
+			];
 
 	let bestPos;
 	let best = 0;
@@ -167,7 +167,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 
 		// shows more of the tip than the other positions
 		if ( area > best ) {
-			( best = area ), ( bestPos = pos );
+			( ( best = area ), ( bestPos = pos ) );
 		}
 	}
 
@@ -320,17 +320,44 @@ function _offset( box, doc ) {
 	};
 }
 
+const ARROW_EDGE_INSET = 20;
+
+export function arrowLeftOffset( off, el, target ) {
+	const docEl = document.documentElement;
+	const body = document.body;
+	const scrollLeft = typeof window.pageXOffset === 'number' ? window.pageXOffset : docEl.scrollLeft;
+	const clientLeft = docEl.clientLeft || ( body && body.clientLeft ) || 0;
+	const containerWidth = el.getBoundingClientRect().width;
+	const targetRect = target.getBoundingClientRect();
+	const targetCenter = targetRect.left + scrollLeft - clientLeft + targetRect.width / 2 - off.left;
+	// Center the arrow when the popover is too narrow for the full inset
+	const inset = Math.min( ARROW_EDGE_INSET, containerWidth / 2 );
+
+	return Math.min( Math.max( targetCenter, inset ), containerWidth - inset );
+}
+
 /**
  * Constrain a left to keep the element in the window
  * @param {Object} off Proposed offset before constraining
- * @param {window.Element} el Element to be constained to viewport
- * @returns {number}    the best width
+ * @param {window.Element} el Element to be constrained to viewport
+ * @param {boolean} ignoreViewport Whether to skip the viewport's right boundary
+ * @param {number|Function} leftBoundary Left boundary or function returning one
+ * @param {number|Function} rightBoundary Right boundary or function returning one
+ * @returns {Object}    the offset with its left constrained
  */
-export function constrainLeft( off, el, ignoreViewport = false ) {
-	const viewport = getViewport();
+export function constrainLeft(
+	off,
+	el,
+	ignoreViewport = false,
+	leftBoundary = 0,
+	rightBoundary = getViewport().width
+) {
 	const ew = el.getBoundingClientRect().width;
-	const offsetLeft = ignoreViewport ? off.left : Math.min( off.left, viewport.width - ew );
-	off.left = Math.max( 0, offsetLeft );
+	const resolvedLeftBoundary = typeof leftBoundary === 'function' ? leftBoundary() : leftBoundary;
+	const resolvedRightBoundary =
+		typeof rightBoundary === 'function' ? rightBoundary() : rightBoundary;
+	const offsetLeft = ignoreViewport ? off.left : Math.min( off.left, resolvedRightBoundary - ew );
+	off.left = Math.max( resolvedLeftBoundary, offsetLeft );
 
 	return off;
 }

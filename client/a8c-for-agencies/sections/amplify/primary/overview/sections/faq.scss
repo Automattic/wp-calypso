@@ -1,9 +1,11 @@
-// PageSectionColumns styles every .components-button inside its content for hero
-// CTAs (`width: fit-content` at large, centered). The FAQ accordion toggles are
-// also .components-button and get caught. The toggle is a flex container (base
-// .components-button is inline-flex, justify-content: center), so restore full
-// width and left-align the title with `justify-content: flex-start`.
-.amplify-faq .components-panel__body-toggle.components-button {
+// The FAQ accordion toggles are .components-button, so two global rules catch
+// them: the A4A theme (client/a8c-for-agencies/style.scss) centers and un-wraps
+// every button, and PageSectionColumns sizes buttons for hero CTAs. The theme
+// rule matches at the same specificity as this one, so it needs the theme class
+// here to win reliably rather than by stylesheet order.
+.theme-a8c-for-agencies .amplify-faq .components-panel__body-toggle.components-button {
 	inline-size: 100%;
 	justify-content: flex-start;
+	text-align: start;
+	white-space: normal;
 }

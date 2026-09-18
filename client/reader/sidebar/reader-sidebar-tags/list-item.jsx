@@ -39,7 +39,12 @@ export class ReaderSidebarTagsListItem extends Component {
 		const selected = computedClassName.includes( 'selected' );
 
 		return (
-			<MenuItem ref={ this.itemRef } key={ tag.id } selected={ selected }>
+			<MenuItem
+				ref={ this.itemRef }
+				key={ tag.id }
+				className="sidebar__menu-item--reader-tag"
+				selected={ selected }
+			>
 				<MenuItemLink
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }

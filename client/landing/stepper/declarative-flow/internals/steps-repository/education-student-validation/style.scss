@@ -1,0 +1,263 @@
+@use '@automattic/typography/styles/variables' as typography;
+@use '@wordpress/base-styles/mixins';
+
+// Decorative backdrop colors from the Education rebrand mockup; no Studio tokens exist for these.
+$edu-grid-line: color-mix(
+	in srgb,
+	var( --studio-wordpress-blue-50 ) 16%,
+	var( --studio-wordpress-blue-5 )
+);
+$edu-blue-stripe: #233181;
+$edu-coral: #ee7a53;
+$edu-coral-stripe: #854731;
+
+// Half the form card's width (the card is 40vw, clamped). The stripe-band boundary is
+// tied to the same value so it always meets the card's right edge, as in the mockup.
+$edu-card-half-width: clamp( 260px, 20vw, 410px );
+
+.education-student-validation__backdrop {
+	background: var( --studio-wordpress-blue-5 );
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	position: fixed;
+	z-index: -1;
+
+	.education-student-validation__backdrop-grid {
+		background-image: repeating-linear-gradient(
+			to right,
+			$edu-grid-line 0 1px,
+			transparent 1px 48px
+		);
+		block-size: 78%;
+		inset-block-end: 0;
+		inset-inline: 0;
+		mask-image: repeating-linear-gradient( to bottom, #000 0 5px, transparent 5px 11px );
+		position: absolute;
+
+		@include mixins.break-medium {
+			block-size: 56%;
+		}
+	}
+
+	.education-student-validation__backdrop-band-blue {
+		background-color: var( --studio-wordpress-blue-50 );
+		background-image: repeating-linear-gradient(
+			to right,
+			$edu-blue-stripe 0 2px,
+			transparent 2px 48px
+		);
+		block-size: 40px;
+		inline-size: 70%;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		position: absolute;
+
+		@include mixins.break-medium {
+			inline-size: calc( 50% + #{$edu-card-half-width} );
+		}
+	}
+
+	// Full-width and clipped (rather than sized to its visible region) so the stripe
+	// rhythm stays in phase with the blue block and the dashed grid columns.
+	.education-student-validation__backdrop-band-coral {
+		background-color: $edu-coral;
+		background-image: repeating-linear-gradient(
+			to right,
+			$edu-coral-stripe 0 2px,
+			transparent 2px 48px
+		);
+		block-size: 40px;
+		clip-path: inset( 0 0 0 63% );
+		inset-block-end: 0;
+		inset-inline: 0;
+		position: absolute;
+
+		@include mixins.break-medium {
+			clip-path: inset( 0 0 0 calc( 50% + #{$edu-card-half-width} - 12px ) );
+		}
+	}
+}
+
+.step-container-v2__content-wrapper:has( .education-student-validation ) {
+	padding-block-start: 64px;
+
+	@include mixins.break-medium {
+		gap: 32px;
+		padding-block-start: 48px;
+		padding-block-end: 0;
+	}
+}
+
+.education-student-validation__top-bar-logo {
+	.step-container-v2__top-bar-wordpress-logo {
+		color: var( --studio-wordpress-blue-50 );
+		fill: var( --studio-wordpress-blue-50 );
+	}
+}
+
+.education-student-validation__heading {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+
+	.education-student-validation__logo {
+		display: block;
+		height: 38px;
+		width: auto;
+	}
+
+	.step-container-v2__heading {
+		margin-block-start: 24px;
+
+		h1.wp-brand-font {
+			color: var( --studio-wordpress-blue-50 );
+			font-size: 2.25rem;
+
+			@include mixins.break-large {
+				font-size: 3.75rem; /* stylelint-disable-line scales/font-sizes */
+			}
+		}
+
+		p {
+			font-size: 1rem;
+			margin-inline: auto;
+			max-width: 540px;
+
+			@include mixins.break-large {
+				font-size: 1.25rem;
+			}
+		}
+	}
+}
+
+.education-student-validation {
+	width: 100%;
+
+	@include mixins.break-small {
+		max-width: calc(
+			8 * var( --step-container-v2-content-column-width ) + 7 *
+				var( --step-container-v2-content-column-gap )
+		);
+	}
+
+	.education-student-validation__steps {
+		display: grid;
+		gap: 32px;
+		grid-template-columns: 1fr;
+		list-style: none;
+		margin-block: 40px 0;
+		margin-inline: 0;
+		padding: 0;
+
+		@include mixins.break-medium {
+			gap: 40px;
+			grid-template-columns: repeat( 3, 1fr );
+			margin-block-start: 80px;
+		}
+	}
+
+	.education-student-validation__step {
+		background: var( --studio-wordpress-blue-5 );
+		border-radius: 4px;
+		margin: 0;
+		padding: 16px;
+	}
+
+	.education-student-validation__step-number {
+		color: var( --studio-wordpress-blue-50 );
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 1;
+		margin-block-end: 18px;
+	}
+
+	.education-student-validation__step-title {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0 0 6px;
+	}
+
+	.education-student-validation__step-description {
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.education-student-validation__form {
+		background: var( --color-surface );
+		border-radius: 8px;
+		box-shadow: 0 4px 20px rgba( 0, 0, 0, 0.08 );
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin: 0 auto;
+		max-width: 520px;
+		padding: 24px;
+		width: 100%;
+
+		@include mixins.break-medium {
+			max-width: calc( 2 * #{$edu-card-half-width} );
+			padding: 36px;
+		}
+	}
+
+	.education-student-validation__field {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.form-label {
+		color: var( --studio-gray-60 );
+		margin-block-end: 8px;
+	}
+
+	input[type='text'] {
+		border-color: var( --studio-gray-10 );
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-family: typography.$code;
+		font-size: 0.875rem;
+		height: 52px;
+		letter-spacing: 0.06em;
+		padding-block: 0.875rem;
+		padding-inline: 1rem;
+
+		&:focus {
+			border-color: var( --studio-gray-10 );
+			box-shadow: 0 0 0 2px var( --color-primary-10 );
+			outline: none;
+
+			@media ( forced-colors: active ) {
+				outline: 2px solid;
+			}
+		}
+	}
+
+	.step-container-v2__primary-button {
+		justify-content: center;
+		min-height: 48px;
+		width: 100%;
+	}
+
+	.form-input-validation {
+		margin-block-start: 8px;
+		padding-block-end: 0;
+	}
+
+	.education-student-validation__enroll-note {
+		color: var( --color-text-subtle );
+		font-size: 0.75rem;
+		margin: 0;
+		text-align: center;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}

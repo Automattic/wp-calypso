@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 
 export default function StartCapturingButton( {
 	site,
@@ -21,15 +22,12 @@ export default function StartCapturingButton( {
 		recordTracksEvent( 'calypso_dashboard_site_apm_enable_impression', { context } );
 	}, [ recordTracksEvent, context ] );
 
-	const { mutate, isPending } = useMutation( {
-		...siteApmEnabledMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'APM enabled.' ),
-				error: __( 'Failed to enable APM.' ),
-			},
-		},
-	} );
+	const { mutate, isPending } = useMutation(
+		withSnackbar( siteApmEnabledMutation( site.ID ), {
+			success: __( 'APM enabled.' ),
+			error: __( 'Failed to enable APM.' ),
+		} )
+	);
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_site_apm_enable_click', { context } );

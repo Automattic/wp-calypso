@@ -4,6 +4,7 @@ import type { AchievementKey, UnlockAchievementResponse } from '@automattic/api-
 
 export const unlockAchievementMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< UnlockAchievementResponse, Error, AchievementKey >( {
+		meta: { statId: 'achievement-unlock' },
 		mutationFn: unlockAchievement,
 		onSuccess: ( result ) => {
 			if ( result.granted ) {

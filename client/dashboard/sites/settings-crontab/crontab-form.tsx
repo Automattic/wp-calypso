@@ -4,19 +4,14 @@ import {
 	siteCrontabUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import {
-	siteRoute,
-	siteSettingsCrontabAddRoute,
-	siteSettingsCrontabEditRoute,
-	siteSettingsCrontabRoute,
-} from '../../app/router/sites';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -32,11 +27,9 @@ interface CrontabFormProps {
 
 export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const isEditMode = !! crontab;
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( {
-		from: isEditMode ? siteSettingsCrontabEditRoute.fullPath : siteSettingsCrontabAddRoute.fullPath,
-	} );
+	const navigate = useNavigate();
 
 	// Initialize form data once from the loaded crontab (edit mode) or defaults (add mode)
 	const [ formData, setFormData ] = useState< CrontabFormData >( () => {
@@ -52,33 +45,24 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 		};
 	} );
 
-	const { mutate: createCrontab, isPending: isCreating } = useMutation( {
-		...siteCrontabCreateMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Scheduled job created.' ),
-				error: __( 'Failed to create scheduled job.' ),
-			},
-		},
-	} );
+	const { mutate: createCrontab, isPending: isCreating } = useMutation(
+		withSnackbar( siteCrontabCreateMutation( site.ID ), {
+			success: __( 'Scheduled job created.' ),
+			error: __( 'Failed to create scheduled job.' ),
+		} )
+	);
 
-	const { mutate: updateCrontab, isPending: isUpdating } = useMutation( {
-		...siteCrontabUpdateMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Scheduled job updated.' ),
-				error: __( 'Failed to update scheduled job.' ),
-			},
-		},
-	} );
+	const { mutate: updateCrontab, isPending: isUpdating } = useMutation(
+		withSnackbar( siteCrontabUpdateMutation( site.ID ), {
+			success: __( 'Scheduled job updated.' ),
+			error: __( 'Failed to update scheduled job.' ),
+		} )
+	);
 
 	const isPending = isEditMode ? isUpdating : isCreating;
 
 	const handleCancel = () => {
-		navigate( {
-			to: siteSettingsCrontabRoute.fullPath,
-			params: { siteSlug },
-		} );
+		navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -89,10 +73,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 		}
 
 		const onSuccess = () => {
-			navigate( {
-				to: siteSettingsCrontabRoute.fullPath,
-				params: { siteSlug },
-			} );
+			navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 		};
 
 		if ( isEditMode && crontab ) {

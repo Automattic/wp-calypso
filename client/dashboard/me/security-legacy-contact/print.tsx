@@ -1,6 +1,7 @@
 import { legacyContactQuery, legacyContactsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
@@ -24,26 +25,50 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 	return (
 		<VStack spacing={ 6 }>
 			<SectionHeader title={ __( 'Your legacy contact' ) } level={ 3 } />
-			<VStack spacing={ 2 }>
-				<Text>
-					{ __(
-						'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
+			<Text as="p" size={ 15 } lineHeight={ 1.5 }>
+				{ __(
+					'Keep this information somewhere safe. After your death, your legacy contact can give this key to WordPress.com to request access to your account.'
+				) }
+			</Text>
+
+			<dl className="legacy-contact-print__fields">
+				<VStack spacing={ 1 } alignment="flex-start">
+					<Text as="dt" upperCase variant="muted" size={ 11 }>
+						{ __( 'Legacy contact email' ) }
+					</Text>
+					<Text as="dd" size={ 15 }>
+						{ contact.contact_email }
+					</Text>
+				</VStack>
+
+				<VStack spacing={ 1 } alignment="flex-start">
+					<Text as="dt" upperCase variant="muted" size={ 11 }>
+						{ __( 'Access key' ) }
+					</Text>
+					<dd className="legacy-contact-print__key">{ contact.access_key }</dd>
+				</VStack>
+			</dl>
+
+			<VStack spacing={ 1 } alignment="flex-start">
+				<Text
+					as="h4"
+					upperCase
+					variant="muted"
+					size={ 11 }
+					className="legacy-contact-print__heading"
+				>
+					{ __( 'How to claim access' ) }
+				</Text>
+				<Text as="p" size={ 15 } lineHeight={ 1.5 }>
+					{ createInterpolateElement(
+						__(
+							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
+						),
+						{
+							link: <a href="https://wordpress.com/digital-legacy" />,
+						}
 					) }
 				</Text>
-			</VStack>
-
-			<VStack spacing={ 1 } alignment="flex-start">
-				<Text upperCase variant="muted" size={ 11 }>
-					{ __( 'Legacy contact email' ) }
-				</Text>
-				<Text size={ 15 }>{ contact.contact_email }</Text>
-			</VStack>
-
-			<VStack spacing={ 1 } alignment="flex-start">
-				<Text upperCase variant="muted" size={ 11 }>
-					{ __( 'Access key' ) }
-				</Text>
-				<div className="legacy-contact-print__key">{ contact.access_key }</div>
 			</VStack>
 
 			<ButtonStack justify="flex-start" className="legacy-contact-print__actions">

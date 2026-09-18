@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { User, TwoStep } from './types';
 
-let decode: Promise< typeof import('he').decode > | undefined;
+let decode: Promise< typeof import( 'he' ).decode > | undefined;
 
 async function decodeText( text: string ) {
 	if ( ! decode ) {

@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasDeletedSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -28,10 +29,11 @@ import {
 	sitePlansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteAdminBarQuery,
+	siteAdminMenuQuery,
 	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
-	purchaseQuery,
 	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteScanQuery,
@@ -47,6 +49,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -67,6 +70,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -85,9 +89,12 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the deleted-sites check before first paint.
+			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
 	},
 } );
@@ -161,7 +168,11 @@ export const siteRoute = createRoute( {
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
-		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+		if (
+			isSiteMigrationInProgress( site ) &&
+			! isSupportSession() &&
+			! location.pathname.includes( migrationUrl )
+		) {
 			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
@@ -179,10 +190,18 @@ export const siteRoute = createRoute( {
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id
 			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
+		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
+
+		if ( otherEnvironmentSiteId ) {
+			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+
 		await Promise.all( [
-			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settles the plan-expiry notice before paint so it can outrank page notices.
+			ensureSiteExpiryNoticeData( site ),
 		] );
 
 		return { site };
@@ -215,10 +234,8 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.prefetchQuery( sitePreviewLinksQuery( site.ID ) );
 			}
 
-			const currentPlan = await queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) );
-			if ( currentPlan.id ) {
-				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
-			}
+			queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+			queryClient.prefetchQuery( sitePurchasesQuery( site.ID ) );
 		}
 
 		await Promise.all( [
@@ -561,6 +578,11 @@ export const siteDomainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
+	// Deep link for Calypso's domain management page, which has no dashboard
+	// equivalent for the free address and redirects here instead.
+	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
+		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
+	} ),
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
@@ -606,13 +628,6 @@ export const sitePerformanceIndexRoute = createRoute( {
 } );
 
 export const sitePerformanceFrontendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Frontend' ),
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
@@ -624,13 +639,6 @@ export const sitePerformanceFrontendRoute = createRoute( {
 );
 
 export const sitePerformanceBackendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Backend' ),
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
 } );
@@ -793,6 +801,13 @@ export const siteSettingsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+
+		// SFTP/SSH is the only settings page reachable while the site is broken,
+		// and it doesn't need the data fetched below.
+		if ( site.__inaccessible_jetpack_error ) {
+			return;
+		}
+
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
@@ -1334,7 +1349,10 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsServer' },
+	staticData: {
+		requiresSiteTypeSupport: 'settingsServer',
+		availableToInaccessibleJetpackSites: true,
+	},
 	head: () => ( {
 		meta: [
 			{
@@ -1839,7 +1857,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 							sitePerformanceBackendExternalRequestsRoute,
 							sitePerformanceBackendRequestDetailRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] ),
 		siteMonitoringRoute,

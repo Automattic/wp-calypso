@@ -17,10 +17,16 @@ import type { PostHogOverrides } from '@automattic/posthog';
 export type AgencySupports = {
 	overview: boolean;
 	tiers: boolean;
+	partnerDirectory: boolean;
+	marketplace: boolean;
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
+	amplify: boolean;
 	sites: boolean;
+	plugins: boolean;
+	team: boolean;
+	earn: boolean;
 };
 
 export type AgencyClientSupports = {
@@ -47,6 +53,7 @@ export type SiteOverviewSupports = {
 
 export type AppConfig = {
 	name: string;
+	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -58,10 +65,10 @@ export type AppConfig = {
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
-		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
+		resurrectedWelcomeModal: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
@@ -78,7 +85,7 @@ export type AppConfig = {
 	components: {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		siteSwitcher: () => Promise< { default: React.FC< any > } >;
+		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
@@ -105,10 +112,10 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		plugins: false,
 		domains: false,
 		emails: false,
-		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,

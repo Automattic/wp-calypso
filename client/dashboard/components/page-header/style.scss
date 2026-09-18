@@ -1,0 +1,7 @@
+.dashboard-page-header {
+	// Pin the heading row and line-height to the page header row height so
+	// the offset to the content below is deterministic — with `line-height:
+	// normal` some heading fonts render taller than the row.
+	--dashboard-section-header__heading-row-min-height: var( --dashboard-page-header__row-height, 40px );
+	--dashboard-h1__line-height: var( --dashboard-page-header__row-height, 40px );
+}

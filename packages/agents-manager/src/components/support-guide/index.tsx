@@ -1,14 +1,13 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FROM_CHAT } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
-import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
-import { AGENTS_MANAGER_STORE } from '../../stores';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
@@ -38,21 +37,17 @@ export default function SupportGuide( {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
-	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
-	const isFromChat = !! ( state?.sessionId || state?.conversationId );
-	const title = __( 'Support Guides', '__i18n_text_domain__' );
+	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const isFromChat = state?.from === FROM_CHAT || !! state?.conversationId;
+	const title = __( 'Support Guides', __i18n_text_domain__ );
 
 	// Navigate back to the source route, preserving relevant state.
 	const handleBack = () => {
-		if ( state?.sessionId ) {
-			navigate( '/chat', { state } );
+		if ( state?.from === FROM_CHAT ) {
+			navigate( '/chat' );
 		} else if ( state?.conversationId ) {
 			navigate( '/zendesk', { state } );
 		} else {
@@ -62,10 +57,7 @@ export default function SupportGuide( {
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
@@ -73,6 +65,7 @@ export default function SupportGuide( {
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }
@@ -95,12 +88,13 @@ export default function SupportGuide( {
 							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
+							siteId={ site?.ID }
 						/>
 					</div>
 					{ ! isFromChat && (
 						<div className="agent-manager-support-guide-footer">
 							<Button variant="primary" onClick={ () => navigate( '/' ) }>
-								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
+								{ __( 'Start a new chat', __i18n_text_domain__ ) }
 							</Button>
 						</div>
 					) }

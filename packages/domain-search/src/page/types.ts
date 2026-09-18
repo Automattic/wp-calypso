@@ -1,9 +1,14 @@
 import {
 	availableTldsQuery,
+	bundleForDomainQuery,
 	bundleSuggestionQuery,
+	bundleTriggersQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
@@ -15,6 +20,7 @@ import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
+	NamePulseSuggestionsQuery,
 } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -106,13 +112,40 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
-	onBundleShown: ( bundle: BundleSuggestion ) => void;
-	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
+	/**
+	 * A bundle offer became visible. `placement` distinguishes the top featured
+	 * `BundleCard` (`'card'`) from an inline row beneath a trigger suggestion
+	 * (`'inline'`) so the shown → accepted funnel can segment by surface.
+	 */
+	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
 }
+
+/**
+ * Where a bundle offer is surfaced: the top featured card or an inline row.
+ */
+export type BundlePlacement = 'card' | 'inline';
 
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
+	/**
+	 * Optional copy overrides for the free-subdomain skip card. When omitted, the
+	 * card keeps its default "Start free with %(domain)s" title and "Start Free"
+	 * CTA. `title` may include the `%(domain)s` placeholder, interpolated with the
+	 * free subdomain (e.g. flows that require a paid plan can drop the "free"
+	 * framing).
+	 */
+	skipSuggestionCopy?: {
+		title?: string;
+		buttonText?: string;
+	};
+	/**
+	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
+	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
+	 * atomic funnel, which always transfers to Atomic).
+	 */
+	hideFreeSubdomainSuggestion?: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;
@@ -126,6 +159,8 @@ export interface DomainSearchConfig {
 	 * false, so bundles stay hidden unless a consumer opts in.
 	 */
 	showBundleSuggestions: boolean;
+	/** Set from the `domain-search/name-pulse` flag by the signup domain-only step. */
+	showNamePulseSearch: boolean;
 }
 
 export interface DomainSearchProps {
@@ -142,11 +177,10 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
-export interface DomainSearchContextType
-	extends Omit<
-		DomainSearchProps,
-		'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
-	> {
+export interface DomainSearchContextType extends Omit<
+	DomainSearchProps,
+	'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
@@ -165,6 +199,15 @@ export interface DomainSearchContextType
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
+		bundleTriggers: ( query: string ) => ReturnType< typeof bundleTriggersQuery >;
+		bundleForDomain: ( fqdn: string ) => ReturnType< typeof bundleForDomainQuery >;
+		namePulseSuggestions: (
+			params: NamePulseSuggestionsQuery
+		) => ReturnType< typeof namePulseSuggestionsQuery >;
+		namePulseAvailability: (
+			domainNames: string[]
+		) => ReturnType< typeof namePulseAvailabilityQuery >;
+		namePulseTlds: () => ReturnType< typeof namePulseTldsQuery >;
 	};
 	config: DomainSearchConfig;
 }

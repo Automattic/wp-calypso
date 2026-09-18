@@ -12,6 +12,7 @@ import SecurityPasswordSummary from '../security-password/summary';
 import SecuritySocialLoginsSummary from '../security-social-logins/summary';
 import SecuritySshKeySummary from '../security-ssh-key/summary';
 import SecurityTwoStepAuthSummary from '../security-two-step-auth/summary';
+import RecoveryNudgeNotice from './recovery-nudge-notice';
 
 function Security() {
 	const { supports } = useAppContext();
@@ -30,6 +31,7 @@ function Security() {
 					description={ __( 'Manage your account security settings and authentication methods.' ) }
 				/>
 			}
+			notices={ <RecoveryNudgeNotice /> }
 		>
 			<SummaryButtonList>
 				<SecurityPasswordSummary />

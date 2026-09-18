@@ -2,21 +2,25 @@
  * @jest-environment jsdom
  */
 
+import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
-import useFetchTaggedSitesForMigration from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration';
-import useFetchReferrals from '../../../hooks/use-fetch-referrals';
+import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import useHasCommissionActivity from '../use-has-commission-activity';
 
-jest.mock( '../../../hooks/use-fetch-referrals' );
-jest.mock(
-	'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration'
-);
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
+} ) );
+jest.mock( 'calypso/state', () => ( {
+	useSelector: jest.fn( () => 1 ),
+} ) );
+jest.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
 jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
 jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
 
-const mockUseFetchReferrals = useFetchReferrals as jest.MockedFunction< typeof useFetchReferrals >;
+const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 const mockUseFetchTaggedSitesForMigration = useFetchTaggedSitesForMigration as jest.MockedFunction<
 	typeof useFetchTaggedSitesForMigration
 >;
@@ -55,8 +59,8 @@ const setMocks = ( {
 		plugins?: boolean;
 	};
 } = {} ) => {
-	mockUseFetchReferrals.mockReturnValue(
-		queryResult( referrals, loading.referrals ) as ReturnType< typeof useFetchReferrals >
+	mockUseQuery.mockReturnValue(
+		queryResult( referrals, loading.referrals ) as unknown as ReturnType< typeof useQuery >
 	);
 	mockUseFetchTaggedSitesForMigration.mockReturnValue(
 		queryResult( taggedSites, loading.migrations ) as ReturnType<

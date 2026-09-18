@@ -1,0 +1,35 @@
+// wp-admin publishes its own interactive colour on <body> — `--wp-admin-theme-color` and its two
+// darker shades — and that value is authoritative for the site's WordPress version. Calypso's scheme
+// blocks alias all three to `--color-accent`, wp-admin's decorative `$highlight-color`, on anything
+// carrying `color-scheme is-<scheme>`. In Odyssey that class lands on elements inside the page
+// rather than on <body>, so the alias shadows the value wp-admin already set. `inherit` hands the
+// property back, letting <body>'s value through again.
+//
+// Each entry point applies this to the roots it actually renders, which is why it is a mixin taking
+// selectors rather than a fixed list: the app has the Stats mount and RootChild's portal wrapper,
+// the dashboard widget has its own mount. Keeping the selectors in this app also keeps Calypso,
+// Blaze Dashboard, Stepper and reader-mobile — all of which ship the colour-scheme package — from
+// carrying rules that can never match there.
+//
+// Only the schemes wp-admin ships are listed: the WordPress.com-only ones have no counterpart for
+// wp-admin to have set a value for, so there is nothing to hand back. `fresh` is here even though
+// `@wordpress/base-styles` has no `admin-scheme()` block for it — core treats it as the `:root`
+// default rather than a named scheme, but wp-admin still puts `admin-color-fresh` on <body>,
+// `useWPAdminTheme` still turns that into `is-fresh`, and `_fresh.scss` still aliases the token, so
+// leaving it out would exempt the default scheme, the one most Odyssey installs run.
+//
+// Scheme names are quoted so Sass reads `blue` as a name rather than a colour.
+$wp-admin-schemes: "blue", "coffee", "ectoplasm", "fresh", "light", "midnight", "modern", "ocean",
+	"sunrise";
+
+@mixin odyssey-admin-theme-handback( $roots... ) {
+	@each $scheme in $wp-admin-schemes {
+		@each $root in $roots {
+			#{$root}.is-#{$scheme} {
+				--wp-admin-theme-color: inherit;
+				--wp-admin-theme-color-darker-10: inherit;
+				--wp-admin-theme-color-darker-20: inherit;
+			}
+		}
+	}
+}

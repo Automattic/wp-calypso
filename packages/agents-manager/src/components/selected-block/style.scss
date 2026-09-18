@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/variables';
-@import '../../styles/mixins';
 
 .agents-manager-selected-block {
 	max-width: 150px;
@@ -55,8 +54,8 @@
 }
 
 // Docked chat overrides
-@include docked-chat-without-modal {
+.agents-manager-chat--docked {
 	.agents-manager-selected-block {
-		margin-top: 8px;
+		margin-top: $grid-unit-10;
 	}
 }
