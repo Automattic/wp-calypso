@@ -40,7 +40,7 @@ describe( 'StaticSiteImportReading', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'starts a session for the HTTPS source URL and continues once the preview is ready', async () => {
+	it( 'starts a session for the HTTPS source URL and hands its id to the flow', async () => {
 		let postedBody: Record< string, unknown > = {};
 		mockApi()
 			.post( '/wpcom/v2/static-site-import-session', ( body ) => {
@@ -49,10 +49,6 @@ describe( 'StaticSiteImportReading', () => {
 			} )
 			.query( true )
 			.reply( 200, session( 'capture_queued' ) );
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'preview_ready', { archive_hash: 'hash' } ) );
 
 		const submit = render( '/static-site-import-reading?from=busybearscleaning.com&platform=wix' );
 
@@ -63,7 +59,7 @@ describe( 'StaticSiteImportReading', () => {
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( {
-				action: 'continue',
+				action: 'session-created',
 				importSessionId: 'abc123',
 			} )
 		);
