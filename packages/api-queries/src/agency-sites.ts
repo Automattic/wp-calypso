@@ -1,4 +1,5 @@
 import {
+	fetchAgencyMigrationCommissionSites,
 	fetchAgencySitesWithPlugins,
 	fetchPendingAgencySites,
 	provisionAgencySite,
@@ -26,6 +27,19 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'sites', 'pending' ] as const,
 		queryFn: () => fetchPendingAgencySites( agencyId ),
 		// Not persisted: checkout and provisioning both change this server-side.
+		meta: { persist: false },
+	} );
+
+/**
+ * Every site the agency has. Backs the readiness check behind the provisioning
+ * notice, which polls it while a site is being created.
+ */
+export const provisionedAgencySitesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'sites', 'provisioned' ] as const,
+		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId ),
+		// Not persisted: it is polled while a site is created, and the full site
+		// list is too large to rewrite to storage on every poll.
 		meta: { persist: false },
 	} );
 

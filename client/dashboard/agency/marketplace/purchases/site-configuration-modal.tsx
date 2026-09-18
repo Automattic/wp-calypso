@@ -2,6 +2,7 @@ import { getDataCenterOptions } from '@automattic/api-core';
 import { pendingAgencySitesQuery, provisionAgencySiteMutation } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	CheckboxControl,
@@ -19,6 +20,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import SuffixInputControl from '../../../components/input-control/suffix-input-control';
+import { trackProvisioningSite } from '../../sites/provisioning-sites';
 import { useSiteAddress } from './use-site-address';
 import type { SiteAddress } from './use-site-address';
 import type { JetpackLicense, PendingAgencySite } from '@automattic/api-core';
@@ -145,6 +147,7 @@ function SiteConfigurationForm( {
 	pendingSiteId: number;
 	closeModal?: () => void;
 } ) {
+	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const siteAddress = useSiteAddress( agencyId );
 	const { phpVersions, recommendedValue } = getPHPVersions();
@@ -157,7 +160,7 @@ function SiteConfigurationForm( {
 
 	const mutation = useMutation(
 		withSnackbar( provisionAgencySiteMutation( agencyId ), {
-			success: __( 'Site creation started. It usually takes a few minutes.' ),
+			success: __( 'Site creation started.' ),
 			// The server explains itself here — an address claimed since we checked
 			// it, a blocked account, an unverified email — and a generic message
 			// would leave the agency with nothing to act on.
@@ -219,9 +222,13 @@ function SiteConfigurationForm( {
 			{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
 			{
 				onSuccess: () => {
+					// The sites page reports on it from here; the site itself takes
+					// a few minutes to answer.
+					trackProvisioningSite( pendingSiteId );
 					// The next site gets its own address rather than the one just claimed.
 					siteAddress.refreshSuggestion();
 					closeModal?.();
+					navigate( { to: '/sites' } );
 				},
 				// The address is checked before submit but only claimed by the
 				// provision itself, so anything that failed may have failed on the
