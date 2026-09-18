@@ -21,7 +21,10 @@ const loadTrackResurrections = () =>
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
 	);
 
-function FollowingStream( { ...props } ) {
+function FollowingStream( {
+	suppressReaderOnboarding: forceSuppressReaderOnboarding = false,
+	...props
+} ) {
 	const { currentView } = useFollowingView();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
@@ -48,7 +51,8 @@ function FollowingStream( { ...props } ) {
 	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
 
 	const suppressReaderOnboarding =
-		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
+		forceSuppressReaderOnboarding ||
+		( readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding ) );
 
 	// Set the selected feed based on route param.
 	useEffect( () => {

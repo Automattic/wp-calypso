@@ -142,6 +142,7 @@
 		"reader/social": true,
 		"reader/shelves": true,
 		"reader/full-errors": false,
+		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": false,
 		"readymade-templates/showcase": false,

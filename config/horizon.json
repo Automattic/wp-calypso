@@ -116,6 +116,7 @@
 		"reader/social": true,
 		"reader/shelves": true,
 		"reader/full-errors": false,
+		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
 		"readymade-templates/showcase": false,

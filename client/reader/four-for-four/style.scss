@@ -1,0 +1,62 @@
+// Frame, columns, list cards, and preview pane come from the onboarding
+// discover step (`.subscribe-modal`); this file only adds the 4 for 4 pieces.
+.four-for-four-modal {
+	&__progress {
+		width: auto;
+	}
+
+	&__progress-dots {
+		display: inline-flex;
+		gap: 6px;
+	}
+
+	&__progress-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: var( --color-neutral-10 );
+
+		&.is-filled {
+			background-color: var( --color-accent );
+		}
+	}
+
+	&__progress-label {
+		font-size: 0.875rem;
+		color: var( --color-text-subtle );
+	}
+
+	&__complete {
+		margin: 4px 24px 0;
+		padding: 12px 16px;
+		border: 1px solid color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
+		border-radius: 8px;
+		background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
+	}
+
+	&__complete-icon {
+		flex-shrink: 0;
+		fill: var( --color-accent );
+	}
+
+	&__loading {
+		padding: 24px 12px;
+		text-align: center;
+	}
+}
+
+// Let the byline use the card's full width: the subscribe control sits over
+// the top-right corner instead of taking a column of its own, and only the
+// title line reserves room for it.
+.subscribe-modal.four-for-four-modal .subscribe-modal__site-list-column .reader-subscription-list-item {
+	.reader-subscription-list-item__options {
+		position: absolute;
+		top: 12px;
+		inset-inline-end: 12px;
+	}
+
+	.reader-subscription-list-item__site-title {
+		display: block;
+		padding-inline-end: 28px;
+	}
+}
