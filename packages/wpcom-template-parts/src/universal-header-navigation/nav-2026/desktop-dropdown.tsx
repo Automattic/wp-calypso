@@ -24,13 +24,11 @@ function toColumns( groups: Nav2026Group[] ): Nav2026Group[][] {
 		}
 	}
 
-	// Explicit index wins; columns without one keep their array order.
+	// Explicit index wins; columns without one sort after the indexed ones and
+	// keep their array order (stable sort).
 	return columns.sort( ( a, b ) => {
-		const aIndex = a[ 0 ].columnIndex;
-		const bIndex = b[ 0 ].columnIndex;
-		if ( aIndex === undefined || bIndex === undefined ) {
-			return 0;
-		}
+		const aIndex = a[ 0 ].columnIndex ?? Number.MAX_SAFE_INTEGER;
+		const bIndex = b[ 0 ].columnIndex ?? Number.MAX_SAFE_INTEGER;
 		return aIndex - bIndex;
 	} );
 }
