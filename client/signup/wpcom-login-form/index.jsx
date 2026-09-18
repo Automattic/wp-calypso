@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { useEffect, useRef } from 'react';
 
-// Calypso-only deployments that do not serve wp-login.php. Kept in sync with the
-// `hostname` and `hostname_allowlist` values in `config/` by `test/known-hostnames.test.js`.
+// Calypso-only deployments that do not serve wp-login.php.
+// List is kept in sync with the `hostname` and `hostname_allowlist` values in
+// `config/` by the `test/known-hostnames.test.js` tests.
 export const CALYPSO_ONLY_HOSTNAMES = [
 	'calypso.localhost',
 	'wpcalypso.wordpress.com',

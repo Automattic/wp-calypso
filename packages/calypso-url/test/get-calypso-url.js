@@ -8,12 +8,11 @@ import { getCalypsoUrl } from '../src';
 
 const configDir = path.resolve( __dirname, '..', '..', '..', 'config' );
 
-// This package can't read the Calypso config — it's also consumed from outside
-// Calypso — so the allowed origins are hardcoded. Collect the hostnames Calypso
-// is actually configured to run on, so the test below catches them drifting apart.
-// Configs for the Dashboard and the other apps are excluded: they're separate
-// deployments, and whether `calypso_origin` should accept them is an open question.
+// This package can't read the Calypso config because it is used from outside
+// Calypso, so the allowed origins are hardcoded. These tests ensure the
+// hardcoded origins don't get out of sync with the config.
 function getCalypsoConfigHostnames() {
+	// At least for now, getCalypsoUrl() should return URLs for these apps.
 	const otherApps = /^(dashboard|jetpack-cloud|a8c-for-agencies)-/;
 
 	return fs
