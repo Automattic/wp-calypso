@@ -208,6 +208,16 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						return exitToMigrationFlow( from, platform );
 					}
 
+					if ( providedDependencies.action === 'session-created' ) {
+						return navigate(
+							`${ STEPS.STATIC_SITE_IMPORT_READING.slug }?importSessionId=${ encodeURIComponent(
+								providedDependencies.importSessionId
+							) }`,
+							undefined,
+							true
+						);
+					}
+
 					return navigate(
 						`${ STEPS.STATIC_SITE_IMPORT_RESULTS.slug }?importSessionId=${ encodeURIComponent(
 							providedDependencies.importSessionId

@@ -106,6 +106,19 @@ describe( 'Static site import flow', () => {
 	} );
 
 	describe( 'reading', () => {
+		it( 'records the new session in the URL', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'session-created', importSessionId: 'abc123' },
+				query: { ...SOURCE, importSessionId: '' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_READING,
+				query: { importSessionId: 'abc123' },
+			} );
+		} );
+
 		it( 'shows the results once the site is read', () => {
 			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,

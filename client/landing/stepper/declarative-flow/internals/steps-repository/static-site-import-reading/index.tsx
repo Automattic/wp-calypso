@@ -27,7 +27,9 @@ import type { StaticSiteImportState } from '@automattic/api-core';
 import './style.scss';
 
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable'; reason?: string };
+	| { action: 'session-created'; importSessionId: string }
+	| { action: 'continue'; importSessionId: string }
+	| { action: 'unavailable'; reason?: string };
 
 const PROGRESS: Partial< Record< StaticSiteImportState, number > > = {
 	capture_queued: 10,
@@ -38,7 +40,7 @@ const PROGRESS: Partial< Record< StaticSiteImportState, number > > = {
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
-		const [ searchParams, setSearchParams ] = useSearchParams();
+		const [ searchParams ] = useSearchParams();
 		const { sourceUrl, platformName } = useStaticSiteImportSource();
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
@@ -55,16 +57,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			hasRequestedSession.current = true;
 			createSession( sourceUrl, {
 				onSuccess: ( session ) =>
-					setSearchParams(
-						( params ) => {
-							const nextParams = new URLSearchParams( params );
-							nextParams.set( 'importSessionId', session.session_id );
-							return nextParams;
-						},
-						{ replace: true }
-					),
+					navigation.submit?.( { action: 'session-created', importSessionId: session.session_id } ),
 			} );
-		}, [ createSession, sessionId, sourceUrl, setSearchParams ] );
+		}, [ createSession, navigation, sessionId, sourceUrl ] );
 
 		const { data: session, error: pollError } = useQuery( {
 			...staticSiteImportSessionQuery( sessionId ?? '' ),
