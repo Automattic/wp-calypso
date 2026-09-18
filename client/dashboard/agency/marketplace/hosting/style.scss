@@ -98,6 +98,14 @@
 	object-position: left;
 }
 
+.dashboard-marketplace-hosting__brand-logo {
+	block-size: 24px;
+	inline-size: auto;
+	max-inline-size: 100%;
+	object-fit: contain;
+	object-position: left;
+}
+
 .dashboard-marketplace-hosting__avatar {
 	inline-size: 40px;
 	block-size: 40px;
@@ -113,4 +121,37 @@
 
 .dashboard-marketplace-hosting__rail-check {
 	fill: var( --wpds-color-foreground-content-neutral-weak, currentColor );
+}
+
+// Client logos on the Enterprise tab: two across, three from small, six from xlarge.
+.dashboard-marketplace-hosting__logos {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	gap: 12px;
+
+	@include break-small {
+		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	}
+
+	@include break-xlarge {
+		grid-template-columns: repeat( 6, minmax( 0, 1fr ) );
+	}
+}
+
+.dashboard-marketplace-hosting__logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 72px;
+	padding: 12px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+
+	img {
+		max-block-size: 22px;
+		max-inline-size: 100%;
+		inline-size: auto;
+		block-size: auto;
+		opacity: 0.6;
+	}
 }

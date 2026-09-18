@@ -260,3 +260,35 @@ export function Testimonials( { brand }: { brand: HostingBrand } ) {
 		</Card>
 	);
 }
+
+export function VipCapabilities() {
+	return (
+		<Card>
+			<CardHeader>
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'VIP capabilities' ) }
+					description={ __(
+						'Combine the ease of WordPress with enterprise-grade security and scalability.'
+					) }
+				/>
+			</CardHeader>
+			<CardBody>
+				<CheckGrid
+					columns={ 3 }
+					items={ [
+						__( 'Rapid content authoring' ),
+						__( 'Experience creation' ),
+						__( 'Content guidance' ),
+						__( 'Headless CMS' ),
+						__( 'Development tools' ),
+						__( 'Scalable platform' ),
+						__( 'Enterprise-grade security' ),
+						__( 'Website management' ),
+						__( 'Integrated commerce' ),
+					] }
+				/>
+			</CardBody>
+		</Card>
+	);
+}
