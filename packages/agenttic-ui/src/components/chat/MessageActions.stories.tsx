@@ -222,3 +222,49 @@ export const DisabledActions: Story = {
 		return <Message message={ messageWithDisabledActions } />;
 	},
 };
+
+// Story 7: Feedback on earlier turns is revealed on hover
+export const RevealOnHover: Story = {
+	args: {
+		message: mockAgentMessage,
+	},
+	render: () => {
+		const feedbackManager = createFeedbackActions( {
+			onFeedback: async ( messageId: string, feedback: 'up' | 'down' ) => {
+				console.log( `Feedback submitted: ${ messageId } - ${ feedback }` );
+			},
+			icons: {
+				up: <ThumbsUpIcon />,
+				down: <ThumbsDownIcon />,
+			},
+		} );
+		const previousTurn: MessageType = {
+			...mockAgentMessage,
+			id: 'previous-turn',
+			actions: feedbackManager
+				.getActionsForMessage( mockAgentMessage )
+				.map( ( action ) => ( { ...action, revealOnHover: true } ) ),
+		};
+		const latestTurn: MessageType = {
+			...mockLongAgentMessage,
+			id: 'latest-turn',
+			actions: feedbackManager.getActionsForMessage( mockLongAgentMessage ),
+		};
+
+		return (
+			<div>
+				<Message message={ previousTurn } />
+				<Message message={ mockUserMessage } />
+				<Message message={ latestTurn } />
+			</div>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Feedback on an earlier turn floats in a panel below the reply while it is hovered or focused, and docks into a plain row once a thumb is pressed; the latest turn keeps its row visible.',
+			},
+		},
+	},
+};

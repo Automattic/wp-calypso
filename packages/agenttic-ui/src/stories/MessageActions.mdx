@@ -19,6 +19,7 @@ interface MessageAction {
   onClick: (message: Message) => void | Promise<void>;
   disabled?: boolean;
   tooltip?: string;
+  revealOnHover?: boolean; // floats in a panel below the message on hover; docks into a row once a button in it is pressed
 }
 ```
 
