@@ -9,6 +9,8 @@ import {
 	isPlatformImportable,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
+import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
@@ -26,6 +28,7 @@ import type { OnboardActions } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { StaticSiteImportDomainChoice } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/static-site-import-address';
 import type {
+	AssertConditionResult,
 	FlowV2,
 	NavigateV2,
 	SubmitHandler,
@@ -87,6 +90,17 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [ resetOnboardStore, setIntent ] );
+	},
+	useAssertConditions(): AssertConditionResult {
+		const { isAdmin } = useIsSiteAdmin();
+
+		useEffect( () => {
+			if ( isAdmin === false ) {
+				window.location.assign( '/start' );
+			}
+		}, [ isAdmin ] );
+
+		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
