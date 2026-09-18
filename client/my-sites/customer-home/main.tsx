@@ -4,7 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import {
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-	getPlanActivatedMessage,
+	getCheckoutSuccessMessage,
 } from 'calypso/dashboard/app/checkout-success-flash';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
@@ -20,8 +20,8 @@ import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Checkout tags redirects to this page with `?notice=<value>`, plus
  * `?purchased_plan=<slug>` to name a new plan, so it can show a post-purchase
- * success toast on arrival. Read the params, dispatch the matching notice once, then strip
- * them from the URL so a refresh doesn't re-fire.
+ * success toast on arrival. Read the params, dispatch the matching notice
+ * once, then strip them from the URL so a refresh doesn't re-fire.
  */
 function usePostPurchaseNotice(): void {
 	const reduxDispatch = useDispatch();
@@ -40,8 +40,7 @@ function usePostPurchaseNotice(): void {
 		const message =
 			notice === PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
 				? translate( 'Your plan and domain are ready!' )
-				: getPlanActivatedMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) ) ??
-				  translate( 'Your purchase was completed.' );
+				: getCheckoutSuccessMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) );
 		reduxDispatch(
 			successNotice( message, {
 				id: 'post-purchase-success',

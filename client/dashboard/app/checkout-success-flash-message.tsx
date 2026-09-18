@@ -1,11 +1,10 @@
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
-	getPlanActivatedMessage,
+	getCheckoutSuccessMessage,
 } from './checkout-success-flash';
 
 /**
@@ -20,9 +19,7 @@ export function CheckoutSuccessFlashMessage() {
 		if ( params.get( 'flash' ) !== CHECKOUT_SUCCESS_FLASH_ID ) {
 			return;
 		}
-		const message =
-			getPlanActivatedMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) ) ??
-			__( 'Your purchase was completed.' );
+		const message = getCheckoutSuccessMessage( params.get( CHECKOUT_SUCCESS_PLAN_PARAM ) );
 
 		params.delete( 'flash' );
 		params.delete( CHECKOUT_SUCCESS_PLAN_PARAM );

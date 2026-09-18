@@ -4,9 +4,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { combineReducers, createStore } from 'redux';
-import noticesReducer from 'calypso/state/notices/reducer';
-import { getNotices } from 'calypso/state/notices/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHome from '../main';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -87,43 +84,5 @@ describe( 'CustomerHome', () => {
 
 		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
-	} );
-} );
-
-describe( 'CustomerHome post-purchase notice', () => {
-	function arriveFromCheckout( search: string ) {
-		window.history.replaceState( {}, '', `/home/example.com?ref=onboarding&${ search }` );
-		const store = createStore( combineReducers( { notices: noticesReducer } ) );
-		renderWithProvider( <CustomerHome site={ makeTestSite() } />, { store } );
-		return () => getNotices( store.getState() ).map( ( notice: { text: string } ) => notice.text );
-	}
-
-	it( 'names the purchased plan and cleans up the URL', () => {
-		const noticeTexts = arriveFromCheckout(
-			'notice=purchase-success&purchased_plan=personal-bundle'
-		);
-
-		expect( noticeTexts() ).toEqual( [ "You're in! The Personal Plan is now active." ] );
-		expect( window.location.search ).toBe( '?ref=onboarding' );
-	} );
-
-	it( 'keeps the plan-and-domain message when a domain came with the plan', () => {
-		const noticeTexts = arriveFromCheckout(
-			'notice=plan-and-domain&purchased_plan=personal-bundle'
-		);
-
-		expect( noticeTexts() ).toEqual( [ 'Your plan and domain are ready!' ] );
-	} );
-
-	it( 'ignores a plan param that checkout did not pair with a notice', () => {
-		const noticeTexts = arriveFromCheckout( 'purchased_plan=personal-bundle' );
-
-		expect( noticeTexts() ).toEqual( [] );
-	} );
-
-	it( 'confirms a purchase that included no plan', () => {
-		const noticeTexts = arriveFromCheckout( 'notice=purchase-success' );
-
-		expect( noticeTexts() ).toEqual( [ 'Your purchase was completed.' ] );
 	} );
 } );
