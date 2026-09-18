@@ -2,14 +2,8 @@ import { getPlanNames } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
- * Query params the checkout pending page adds to a successful redirect, read by
- * `<CheckoutSuccessFlashMessage>` in the Dashboard app shell and by classic My
- * Home.
- */
-export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
-
-/**
- * Product slug of the plan bought in that order, if any.
+ * Product slug of a plan bought in the order. The checkout pending page adds it
+ * to successful redirects into the Dashboard and classic My Home.
  */
 export const CHECKOUT_SUCCESS_PLAN_PARAM = 'purchased_plan';
 
