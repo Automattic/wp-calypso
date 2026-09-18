@@ -114,6 +114,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	// Keep scrolling past the end of a pane from scrolling the page behind it.
+	overscroll-behavior: contain;
 	background: var(--color-surface, #fff);
 	// DataViews paints its wrapper with --wp-dataviews-color-background, which
 	// falls back to a --wpds surface token (the dark canvas in the dashboard).
