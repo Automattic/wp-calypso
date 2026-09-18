@@ -5,7 +5,11 @@
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
-import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
+import {
+	renderFlow,
+	runFlowNavigation,
+} from 'calypso/landing/stepper/declarative-flow/test/helpers';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -17,6 +21,7 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: jest.fn().mockReturnValue( jest.fn() ),
 } ) );
@@ -56,6 +61,17 @@ describe( 'Static site import flow', () => {
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
 		jest.mocked( useSite ).mockReturnValue( undefined );
+		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
+	} );
+
+	it( 'sends users who cannot manage the destination site to the start page', () => {
+		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
+
+		renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
+			currentStep: STEPS.STATIC_SITE_IMPORT_READY.slug,
+		} );
+
+		expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
 	} );
 
 	describe( 'identify', () => {
