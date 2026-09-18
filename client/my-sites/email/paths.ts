@@ -82,6 +82,18 @@ function getPath(
 	return '/email';
 }
 
+// The `:domain` route parameter is still percent-encoded when a route handler sees
+// it: getPath encodes it twice and the router decodes the path only once. Re-encode
+// it exactly once so slash-containing values (e.g. site-redirect targets) survive a
+// round trip into a URL built elsewhere.
+export function reencodeDomainRouteParameter( domainName: string ) {
+	try {
+		return encodeURIComponent( decodeURIComponent( domainName ) );
+	} catch {
+		return domainName;
+	}
+}
+
 // Retrieves the URL of the Add New Mailboxes page for email forwarding
 export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	siteName,

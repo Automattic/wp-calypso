@@ -81,7 +81,7 @@ export default function () {
 		handlers: [
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard(
-				( params ) => `/emails?domainName=${ encodeURIComponent( params.domain ) }`,
+				( params ) => `/emails?domainName=${ paths.reencodeDomainRouteParameter( params.domain ) }`,
 				() => isEnabled( 'emails/titan-tiers' )
 			),
 			...commonHandlers,
@@ -172,7 +172,8 @@ export default function () {
 		handlers: [
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard(
-				( params ) => `/emails/choose-email-solution/${ encodeURIComponent( params.domain ) }`,
+				( params ) =>
+					`/emails/choose-email-solution/${ paths.reencodeDomainRouteParameter( params.domain ) }`,
 				() => isEnabled( 'emails/titan-tiers' )
 			),
 			...commonHandlers,

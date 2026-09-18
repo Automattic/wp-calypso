@@ -20,6 +20,7 @@ import {
 	getProfessionalEmailCheckoutUpsellPath,
 	getMailboxesPath,
 	isUnderEmailManagementAll,
+	reencodeDomainRouteParameter,
 	getEmailCheckoutPath,
 } from '../paths';
 
@@ -250,5 +251,39 @@ describe( 'path helper functions', () => {
 		[ '/email/all/', true ],
 	] )( 'isUnderEmailManagement %s', ( path, expectedResult ) => {
 		expect( isUnderEmailManagementAll( path ) ).toEqual( expectedResult );
+	} );
+
+	describe( 'reencodeDomainRouteParameter', () => {
+		// Mirrors what a route handler receives: getPath double-encodes the segment
+		// and the router decodes the path once before matching.
+		const asRouteParameter = ( domain: string ) =>
+			decodeURIComponent( getEmailManagementPath( siteName, domain ).split( '/' )[ 2 ] );
+
+		it( 'leaves an ordinary domain name untouched', () => {
+			expect( reencodeDomainRouteParameter( asRouteParameter( 'hello.com' ) ) ).toEqual(
+				'hello.com'
+			);
+		} );
+
+		it( 'round-trips a site-redirect target containing a path', () => {
+			const parameter = asRouteParameter( 'hello.com/blog' );
+
+			expect( parameter ).toEqual( 'hello.com%2Fblog' );
+			expect( decodeURIComponent( reencodeDomainRouteParameter( parameter ) ) ).toEqual(
+				'hello.com/blog'
+			);
+		} );
+
+		it( 'round-trips a domain name with non-ASCII characters', () => {
+			const parameter = asRouteParameter( 'héllo.com' );
+
+			expect( decodeURIComponent( reencodeDomainRouteParameter( parameter ) ) ).toEqual(
+				'héllo.com'
+			);
+		} );
+
+		it( 'returns the parameter unchanged when it cannot be decoded', () => {
+			expect( reencodeDomainRouteParameter( '%zz.com' ) ).toEqual( '%zz.com' );
+		} );
 	} );
 } );
