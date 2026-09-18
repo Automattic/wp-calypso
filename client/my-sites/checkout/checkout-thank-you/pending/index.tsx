@@ -383,18 +383,16 @@ function useRedirectOnTransactionSuccess( {
 			? appendNoticeQueryParam( redirectInstructions.url, PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE )
 			: redirectInstructions.url;
 
-		// A successful redirect back into the Dashboard (a separate SPA) can't rely on
-		// the classic notice mechanisms, so tag the URL with the Dashboard's `flash`
-		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
+		// The Dashboard (a separate SPA) can't rely on the classic notice mechanisms,
+		// so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`. It and
+		// classic My Home both name a newly bought plan in their toast.
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
-		const isDashboardRedirect = isSuccessRedirect && isDashboardUrl( finalUrl );
-		if ( isDashboardRedirect ) {
-			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
-		}
-
-		// The Dashboard and classic My Home both name the new plan in their toast.
-		if ( purchasedPlanSlug && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
-			finalUrl = addQueryArgs( finalUrl, { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } );
+		const isDashboardRedirect = isDashboardUrl( finalUrl );
+		if ( isSuccessRedirect && ( isDashboardRedirect || finalUrl.startsWith( '/home/' ) ) ) {
+			finalUrl = addQueryArgs( finalUrl, {
+				...( isDashboardRedirect && { flash: CHECKOUT_SUCCESS_FLASH_ID } ),
+				...( purchasedPlanSlug && { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } ),
+			} );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
