@@ -7,15 +7,28 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 	resolveSelect: jest.fn(),
 } ) );
-jest.mock( '../editor-blocks', () => ( {
-	getRootBlocks: jest.fn( () => [] ),
-	resolveBlocksRoot: jest.fn( () => ( {
-		kind: 'post-content',
-		clientId: 'pc',
-		post: { id: 7, type: 'page', title: 'About' },
-	} ) ),
-	stageRootBlocks: jest.fn(),
-} ) );
+jest.mock( '../editor-blocks', () => {
+	const getRootBlocks = jest.fn( () => [] );
+	const getTemplatePartBlocks = jest.fn( () => [] );
+
+	return {
+		findTemplatePartClientId: jest.fn(),
+		getBlocks: jest.fn( () => [] ),
+		getPageBlocks: jest.fn( () => ( {
+			blocks: getRootBlocks(),
+			templateParts: getTemplatePartBlocks(),
+		} ) ),
+		getRootBlocks,
+		getTemplatePartBlocks,
+		replaceRootBlocks: jest.fn(),
+		resolveBlocksRoot: jest.fn( () => ( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 7, type: 'page', title: 'About' },
+		} ) ),
+		stageRootBlocks: jest.fn(),
+	};
+} );
 jest.mock( '../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 // Reached through the navigation domain, and it registers a store on import —
 // which the mocked `@wordpress/data` above cannot serve.
@@ -288,6 +301,7 @@ describe( 'getAvailableCheckpoints', () => {
 			await recorder.captureMenu( 19 );
 			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } );
 			recorder.markWritten( 'site_title' );
+			recorder.markWritten( 'blocks' );
 		} );
 
 		// Every snapshot field is on the record, so a leak of any one would show.
@@ -296,6 +310,7 @@ describe( 'getAvailableCheckpoints', () => {
 				'themeBeforeUpdate',
 				'logoBeforeUpdate',
 				'blocksBeforeUpdate',
+				'customCssBeforeUpdate',
 				'siteTitleBeforeUpdate',
 				'siteMetadataBeforeUpdate',
 				'menusBeforeUpdate',
@@ -790,7 +805,12 @@ describe( 'blocks domain', () => {
 		id: 'target',
 		checkpointKeys: [ 'blocks' ],
 		createdAt: 0,
-		blocksBeforeUpdate: { rootKind: 'post-content', blocks: [], post: { id: 7, type: 'page' } },
+		blocksBeforeUpdate: {
+			rootKind: 'post-content',
+			blocks: [],
+			templateParts: [],
+			post: { id: 7, type: 'page' },
+		},
 	} as never;
 
 	it( 'snapshots the root by kind, its blocks by value, and the post', async () => {
@@ -804,6 +824,7 @@ describe( 'blocks domain', () => {
 		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate ).toEqual( {
 			rootKind: 'post-content',
 			blocks: page( 1 ),
+			templateParts: [],
 			post,
 		} );
 	} );
@@ -925,8 +946,32 @@ describe( 'blocks domain', () => {
 		expect( getCheckpoint( 'redo' )?.blocksBeforeUpdate ).toEqual( {
 			rootKind: 'post-content',
 			blocks: page( 2 ),
+			templateParts: [],
 			post,
 		} );
+	} );
+
+	it( 'refuses a restore from another page, and records it', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 8, type: 'page' },
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'belongs to “About”' );
+
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_checkpoint_restore_blocked',
+			expect.objectContaining( {
+				reason: 'editor_scope_mismatch',
+				checkpoint_post_id: 7,
+				current_post_id: 8,
+			} )
+		);
 	} );
 
 	it( 'refuses a reciprocal from another page', async () => {
@@ -1074,5 +1119,251 @@ describe( 'checkpoint recorder', () => {
 		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) => recorder.captureMenu( 19 ) );
 
 		expect( getCheckpoint( 'call-1' )?.menusBeforeUpdate ).toBeUndefined();
+	} );
+} );
+
+describe( 'template parts', () => {
+	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+	const part = ( slug: string, content: string ) => ( {
+		slug,
+		blocks: [
+			{ clientId: `${ slug }-1`, name: 'core/paragraph', attributes: { content }, innerBlocks: [] },
+		],
+	} );
+
+	// The page shows every part under `<slug>-part`; loaded after the module
+	// reset, which hands out fresh mock instances.
+	async function loadWithParts() {
+		const checkpoints = await loadCheckpoints();
+		jest.requireMock( '@wordpress/blocks' ).serialize.mockImplementation( JSON.stringify );
+		editorBlocks().findTemplatePartClientId.mockImplementation(
+			( slug: string ) => `${ slug }-part`
+		);
+
+		return checkpoints;
+	}
+
+	// The editor keeps a part's blocks apart from the tree, so the root's
+	// snapshot alone would miss an edit inside the header.
+	it( 'snapshots every part beside the root, and puts back only those that differ', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint } = await loadWithParts();
+		editorBlocks().getTemplatePartBlocks.mockReturnValue( [
+			part( 'header', 'Old' ),
+			part( 'footer', 'Same' ),
+		] );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getBlocks.mockImplementation( ( clientId: string ) =>
+			clientId === 'header-part' ? part( 'header', 'New' ).blocks : part( 'footer', 'Same' ).blocks
+		);
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( getCheckpoint( 'call-1' )?.blocksBeforeUpdate?.templateParts ).toEqual( [
+			part( 'header', 'Old' ),
+			part( 'footer', 'Same' ),
+		] );
+		expect( editorBlocks().stageRootBlocks.mock.calls ).toEqual( [
+			[ 'pc', [] ],
+			[ 'header-part', part( 'header', 'Old' ).blocks ],
+		] );
+	} );
+
+	// A part still loading reads as empty; put back, the next save would empty
+	// it. The rest of the page is still restored.
+	it( 'leaves a part alone whose snapshot is empty while it has content, and records it', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadWithParts();
+		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		editorBlocks().getTemplatePartBlocks.mockReturnValue( [ { slug: 'header', blocks: [] } ] );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().getBlocks.mockReturnValue( part( 'header', 'Loaded' ).blocks );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editorBlocks().stageRootBlocks.mock.calls ).toEqual( [ [ 'pc', [] ] ] );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_checkpoint_restore_blocked',
+			expect.objectContaining( { reason: 'template_part_would_empty' } )
+		);
+	} );
+
+	it( 'refuses, before any write, when a snapshotted part is not on the page', async () => {
+		const { setCheckpoint, restoreCheckpoint } = await loadWithParts();
+		editorBlocks().getTemplatePartBlocks.mockReturnValue( [ part( 'header', 'Old' ) ] );
+		setCheckpoint( 'call-1', [ 'blocks' ] );
+		editorBlocks().findTemplatePartClientId.mockReturnValue( undefined );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow(
+			'“header” template part is not on this page'
+		);
+
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'custom CSS domain', () => {
+	it.each( [
+		[ 'the css it holds', { styles: { css: 'a{}' } }, 'a{}' ],
+		[ 'an empty string without one', { styles: {} }, '' ],
+	] )( 'snapshots %s and puts it back beside the other styles', async ( _, record, css ) => {
+		const {
+			setCheckpoint,
+			restoreCheckpoint,
+			getCheckpoint,
+			getEditedEntityRecord,
+			editEntityRecord,
+		} = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( record );
+		setCheckpoint( 'call-1', [ 'custom_css' ] );
+		getEditedEntityRecord.mockReturnValue( { styles: { css: 'b{}', color: {} } } );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( getCheckpoint( 'call-1' )?.customCssBeforeUpdate ).toBe( css );
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'globalStyles',
+			'global-styles-1',
+			{ styles: { css, color: {} } },
+			{ undoIgnore: true }
+		);
+	} );
+
+	it( 'refuses the write when the global styles cannot be read', async () => {
+		const { withCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( undefined );
+		const write = jest.fn();
+
+		await expect(
+			withCheckpoint( { toolId: 'tool', keys: [ 'custom_css' ], summary: 'x' }, write )
+		).rejects.toThrow( 'Cannot record a way back for custom_css' );
+
+		expect( write ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'mid-batch domains', () => {
+	// The blocks and CSS are written part-way through a batch: a batch that
+	// never changed them would otherwise offer an undo that does nothing.
+	it.each( [ 'blocks', 'custom_css' ] )(
+		'keeps the %s domain only when the write marks it written',
+		async ( key ) => {
+			const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+			const write = { toolId: 'tool', keys: [ key ], summary: 'x' };
+
+			await withCheckpoint( { ...write, toolCallId: 'unwritten' }, () => undefined );
+			await withCheckpoint( { ...write, toolCallId: 'written' }, ( recorder ) =>
+				recorder.markWritten( key )
+			);
+
+			expect( getCheckpoint( 'unwritten' ) ).toBeUndefined();
+			expect( getCheckpoint( 'written' )?.checkpointKeys ).toEqual( [ key ] );
+		}
+	);
+} );
+
+describe( 'inline swap', () => {
+	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+	const paragraph = ( content: string ) => ( {
+		clientId: 'p1',
+		name: 'core/paragraph',
+		attributes: { content },
+		innerBlocks: [],
+	} );
+	const before = [ paragraph( 'Before' ) ];
+	const after = [ paragraph( 'After' ) ];
+
+	// A sealed checkpoint of `before`, with the page now showing `after`; a
+	// tracked write shows what it wrote, as the store does.
+	async function sealedEdit() {
+		const checkpoints = await loadCheckpoints();
+		jest.requireMock( '@wordpress/blocks' ).serialize.mockImplementation( JSON.stringify );
+		editorBlocks().replaceRootBlocks.mockImplementation( ( _: string, blocks: unknown ) =>
+			editorBlocks().getRootBlocks.mockReturnValue( blocks )
+		);
+		editorBlocks().getRootBlocks.mockReturnValueOnce( before );
+		checkpoints.setCheckpoint( 'call-1', [ 'blocks' ], { toolId: 'big_sky__apply_block_edits' } );
+		editorBlocks().getRootBlocks.mockReturnValue( after );
+
+		return checkpoints;
+	}
+
+	it( 'seals only a checkpoint that holds nothing but the page blocks', async () => {
+		const { setCheckpoint, sealCheckpointForSwap, canSwapCheckpoint } = await sealedEdit();
+		setCheckpoint( 'mixed', [ 'blocks', 'custom_css' ] );
+
+		expect( sealCheckpointForSwap( 'mixed' ) ).toBe( false );
+		expect( sealCheckpointForSwap( 'call-1' ) ).toBe( true );
+		expect( canSwapCheckpoint( 'mixed' ) ).toBeUndefined();
+		expect( canSwapCheckpoint( 'call-1' ) ).toBe( true );
+	} );
+
+	it( 'cannot swap or restore once the page drifted', async () => {
+		const { sealCheckpointForSwap, canSwapCheckpoint, swapCheckpoint, restoreCheckpoint } =
+			await sealedEdit();
+		sealCheckpointForSwap( 'call-1' );
+		editorBlocks().getRootBlocks.mockReturnValue( [ paragraph( 'Typed since' ) ] );
+
+		expect( canSwapCheckpoint( 'call-1' ) ).toBe( false );
+		await expect( swapCheckpoint( 'call-1' ) ).rejects.toThrow( 'Checkpoint swap was blocked' );
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'editor content changed' );
+		expect( editorBlocks().replaceRootBlocks ).not.toHaveBeenCalled();
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+	} );
+
+	it( 'cannot swap from another page', async () => {
+		const { sealCheckpointForSwap, canSwapCheckpoint } = await sealedEdit();
+		sealCheckpointForSwap( 'call-1' );
+		editorBlocks().resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 8, type: 'page' },
+		} );
+
+		expect( canSwapCheckpoint( 'call-1' ) ).toBe( false );
+	} );
+
+	// Undo puts `before` back as a tracked write and keeps `after` for the
+	// redo, which the agent sees as the restore it was; redo swaps back.
+	it( 'swaps back and forth as tracked writes, each side holding the other', async () => {
+		const { sealCheckpointForSwap, swapCheckpoint, getCheckpoint, canSwapCheckpoint } =
+			await sealedEdit();
+		sealCheckpointForSwap( 'call-1' );
+
+		await swapCheckpoint( 'call-1' );
+
+		expect( editorBlocks().replaceRootBlocks ).toHaveBeenLastCalledWith( 'pc', before );
+		expect( editorBlocks().stageRootBlocks ).not.toHaveBeenCalled();
+		expect( getCheckpoint( 'call-1' ) ).toEqual(
+			expect.objectContaining( {
+				toolId: 'big_sky__restore_checkpoint',
+				requestIntentType: 'redo',
+				createdByRequestIntentType: 'undo',
+				blocksBeforeUpdate: expect.objectContaining( { blocks: after } ),
+				inlineSwap: {
+					action: 'redo',
+					expectedSignature: expect.any( String ),
+					toolId: 'big_sky__apply_block_edits',
+				},
+			} )
+		);
+
+		expect( canSwapCheckpoint( 'call-1' ) ).toBe( true );
+		await swapCheckpoint( 'call-1' );
+
+		expect( editorBlocks().replaceRootBlocks ).toHaveBeenLastCalledWith( 'pc', after );
+		expect( getCheckpoint( 'call-1' ) ).toEqual(
+			expect.objectContaining( {
+				toolId: 'big_sky__apply_block_edits',
+				requestIntentType: 'undo',
+				blocksBeforeUpdate: expect.objectContaining( { blocks: before } ),
+			} )
+		);
+	} );
+
+	it( 'keeps the seal out of the model-facing list', async () => {
+		const { sealCheckpointForSwap, getAvailableCheckpoints } = await sealedEdit();
+		sealCheckpointForSwap( 'call-1' );
+
+		expect( getAvailableCheckpoints()[ 0 ] ).not.toHaveProperty( 'inlineSwap' );
 	} );
 } );

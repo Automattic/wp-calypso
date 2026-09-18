@@ -1,14 +1,27 @@
 import { serialize } from '@wordpress/blocks';
 import { deepClone } from './deep-clone';
 import {
+	findTemplatePartClientId,
+	getBlocks,
+	getPageBlocks,
 	getRootBlocks,
+	getTemplatePartBlocks,
+	replaceRootBlocks,
 	resolveBlocksRoot,
 	stageRootBlocks,
 	type BlocksRoot,
 	type CurrentPost,
 	type EditorBlock,
+	type PageBlocks,
+	type TemplatePartBlocks,
 } from './editor-blocks';
-import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
+import {
+	editGlobalStyles,
+	getCustomCss,
+	getEditedGlobalStyles,
+	setCustomCss,
+	type GlobalStylesRecord,
+} from './global-styles';
 import {
 	isSameMenuId,
 	readMenuItems,
@@ -29,8 +42,8 @@ import type { Block } from '@wordpress/blocks';
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
  * execute as plain callbacks. Every migrated domain restores here: global
- * styles, the site logo, the site title, site metadata, pages, navigation and
- * the page's blocks. Checkpoints Big Sky's remaining tools write live in its
+ * styles, custom CSS, the site logo, the site title, site metadata, pages,
+ * navigation and the page's blocks. Checkpoints Big Sky's remaining tools write live in its
  * store and restore through the `provider-checkpoints` bridge.
  *
  * Big Sky also re-applies the checkpoint's variation titles after a restore, to
@@ -47,6 +60,7 @@ export const checkpointKeys = {
 	BUTTON: 'button',
 	LOGO: 'logo',
 	BLOCKS: 'blocks',
+	CUSTOM_CSS: 'custom_css',
 	PAGE: 'page',
 	NAVIGATION: 'navigation',
 	SITE_METADATA: 'site_metadata',
@@ -81,14 +95,26 @@ interface PageRename {
 }
 
 /**
- * The page's blocks under the root a design wrote into, and the post they
- * belong to. The root is recorded by kind and resolved again on restore: its
- * clientId does not survive the editor remounting.
+ * The page's blocks under the root a write went into, the template parts shown
+ * beside them (the editor keeps their blocks apart from the tree), and the post
+ * they belong to. The root is recorded by kind and resolved again on restore:
+ * its clientId does not survive the editor remounting.
  */
-interface BlocksSnapshot {
+interface BlocksSnapshot extends PageBlocks {
 	rootKind: BlocksRoot[ 'kind' ];
-	blocks: EditorBlock[];
 	post: CurrentPost;
+}
+
+/**
+ * The chat's inline Undo / Redo on a text edit: which way the next swap goes,
+ * the page markup it expects to find (swapping over a page that changed since
+ * would wipe those changes), and the tool the edit came from, which the
+ * record takes back as its `toolId` once a swap puts the edit back.
+ */
+interface InlineSwap {
+	action: 'undo' | 'redo';
+	expectedSignature: string;
+	toolId?: string;
 }
 
 export interface CheckpointRecord extends CheckpointMetadata {
@@ -98,6 +124,7 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	themeBeforeUpdate?: Required< GlobalStylesRecord >;
 	logoBeforeUpdate?: SiteLogo;
 	blocksBeforeUpdate?: BlocksSnapshot;
+	customCssBeforeUpdate?: string;
 	siteTitleBeforeUpdate?: string;
 	siteMetadataBeforeUpdate?: SiteMetadata;
 	// A list, not a map: object keys are strings, and a menu id is a post id —
@@ -106,6 +133,7 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	pageRenames?: PageRename[];
 	// The eager domains a batch write reached; one it never wrote is dropped.
 	writtenKeys?: string[];
+	inlineSwap?: InlineSwap;
 }
 
 const records = new Map< string, CheckpointRecord >();
@@ -152,57 +180,103 @@ function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
 	setSiteLogo( checkpoint.logoBeforeUpdate );
 }
 
-function captureBlocksSnapshot( root = resolveBlocksRoot() ): BlocksSnapshot | undefined {
-	if ( ! root ) {
-		return undefined;
-	}
+function captureCustomCssSnapshot(): string | undefined {
+	const globalStyles = getEditedGlobalStyles();
 
-	return {
-		rootKind: root.kind,
-		blocks: deepClone( getRootBlocks( root.clientId ) ),
-		post: root.post,
-	};
+	return globalStyles && getCustomCss( globalStyles.record );
 }
 
-// The root is resolved again, so a write lands where the page is now, and
-// only on the page the snapshot was taken from.
-function resolveSnapshotRoot( snapshot: BlocksSnapshot ): BlocksRoot {
-	const root = resolveBlocksRoot();
-	// The editor hands out the id as a number or a string, depending on the surface.
-	const samePost =
-		String( root?.post.id ) === String( snapshot.post.id ) &&
-		root?.post.type === snapshot.post.type;
-
-	if ( ! root || root.kind !== snapshot.rootKind || ! samePost ) {
-		const { title, type, id } = snapshot.post;
-
-		throw new Error(
-			`The page design checkpoint belongs to ${
-				title ? `“${ title }”` : `${ type } ${ id }`
-			}, which is not open now. Open it to restore.`
-		);
+function restoreCustomCssSnapshot( checkpoint: CheckpointRecord ): void {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.CUSTOM_CSS ) ) {
+		return;
 	}
 
-	return root;
+	if ( checkpoint.customCssBeforeUpdate === undefined ) {
+		throw new Error( 'Checkpoint has no custom-CSS snapshot to restore.' );
+	}
+
+	const globalStyles = getEditedGlobalStyles();
+
+	if ( ! globalStyles ) {
+		throw new Error( 'Global styles are unavailable to restore into.' );
+	}
+
+	setCustomCss( globalStyles, checkpoint.customCssBeforeUpdate );
 }
+
+const snapshotBlocks = ( root: BlocksRoot ): BlocksSnapshot => ( {
+	rootKind: root.kind,
+	post: root.post,
+	...deepClone( getPageBlocks() ),
+} );
+
+const captureBlocksSnapshot = ( root = resolveBlocksRoot() ): BlocksSnapshot | undefined =>
+	root ? snapshotBlocks( root ) : undefined;
+
+// The editor hands out the id as a number or a string, depending on the surface.
+const isSnapshotRoot = ( root: BlocksRoot, snapshot: BlocksSnapshot ): boolean =>
+	root.kind === snapshot.rootKind &&
+	String( root.post.id ) === String( snapshot.post.id ) &&
+	root.post.type === snapshot.post.type;
 
 const countBlocks = ( blocks: EditorBlock[] ): number =>
 	blocks.reduce( ( count, block ) => count + 1 + countBlocks( block.innerBlocks ), 0 );
 
-// Big Sky's measure, with the JSON size standing in when a block cannot serialize.
-function markupLength( blocks: EditorBlock[] ): number {
+// The page's markup, with the JSON standing in when a block cannot serialize.
+function toMarkup( blocks: EditorBlock[] ): string {
 	try {
-		return serialize( blocks as Block[] ).length;
+		return serialize( blocks as Block[] );
 	} catch {
-		return JSON.stringify( blocks ).length;
+		return JSON.stringify( blocks );
 	}
 }
 
-/**
- * Big Sky's guard against a snapshot taken before the canvas had loaded:
- * putting it back would wipe the page. Recorded under Big Sky's event name so
- * its dashboard keeps counting.
- */
+// Recorded under Big Sky's event name so its dashboard keeps counting.
+function recordBlockedRestore(
+	reason: 'editor_scope_mismatch' | 'content_shrink' | 'template_part_would_empty',
+	checkpoint: CheckpointRecord,
+	snapshot: BlocksSnapshot,
+	current: { post?: CurrentPost; blocks: EditorBlock[] }
+): void {
+	recordBigSkyTracksEvent( 'jetpack_big_sky_checkpoint_restore_blocked', {
+		reason,
+		checkpoint_id: checkpoint.id,
+		checkpoint_tool_id: checkpoint.toolId ?? '',
+		current_post_id: current.post?.id ?? '',
+		current_post_type: current.post?.type ?? '',
+		checkpoint_post_id: snapshot.post.id,
+		checkpoint_post_type: snapshot.post.type,
+		current_block_count: countBlocks( current.blocks ),
+		restore_block_count: countBlocks( snapshot.blocks ),
+		current_serialized_length: toMarkup( current.blocks ).length,
+		restore_serialized_length: toMarkup( snapshot.blocks ).length,
+	} );
+}
+
+// The root is resolved again, so a write lands where the page is now, and
+// only on the page the snapshot was taken from.
+function resolveSnapshotRoot( checkpoint: CheckpointRecord, snapshot: BlocksSnapshot ): BlocksRoot {
+	const root = resolveBlocksRoot();
+
+	if ( root && isSnapshotRoot( root, snapshot ) ) {
+		return root;
+	}
+
+	recordBlockedRestore( 'editor_scope_mismatch', checkpoint, snapshot, {
+		post: root?.post,
+		blocks: root ? getRootBlocks( root.clientId ) : [],
+	} );
+
+	const { title, type, id } = snapshot.post;
+
+	throw new Error(
+		`The checkpoint belongs to ${
+			title ? `“${ title }”` : `${ type } ${ id }`
+		}, which is not open now. Open it to restore.`
+	);
+}
+
+// A snapshot taken before the canvas had loaded would wipe the page if put back.
 function throwIfRestoreCollapsesPage(
 	checkpoint: CheckpointRecord,
 	snapshot: BlocksSnapshot,
@@ -210,29 +284,18 @@ function throwIfRestoreCollapsesPage(
 ): void {
 	const current = getRootBlocks( root.clientId );
 	const currentCount = countBlocks( current );
-	const restoreCount = countBlocks( snapshot.blocks );
-	const currentLength = markupLength( current );
-	const restoreLength = markupLength( snapshot.blocks );
+	const currentLength = toMarkup( current ).length;
 	const collapses =
-		( currentCount >= 5 && restoreCount <= 2 ) ||
-		( currentLength >= 1000 && restoreLength < currentLength * 0.2 );
+		( currentCount >= 5 && countBlocks( snapshot.blocks ) <= 2 ) ||
+		( currentLength >= 1000 && toMarkup( snapshot.blocks ).length < currentLength * 0.2 );
 
 	if ( ! collapses ) {
 		return;
 	}
 
-	recordBigSkyTracksEvent( 'jetpack_big_sky_checkpoint_restore_blocked', {
-		reason: 'content_shrink',
-		checkpoint_id: checkpoint.id,
-		checkpoint_tool_id: checkpoint.toolId ?? '',
-		current_post_id: root.post.id,
-		current_post_type: root.post.type,
-		checkpoint_post_id: snapshot.post.id,
-		checkpoint_post_type: snapshot.post.type,
-		current_block_count: currentCount,
-		restore_block_count: restoreCount,
-		current_serialized_length: currentLength,
-		restore_serialized_length: restoreLength,
+	recordBlockedRestore( 'content_shrink', checkpoint, snapshot, {
+		post: root.post,
+		blocks: current,
 	} );
 
 	throw new Error(
@@ -240,9 +303,62 @@ function throwIfRestoreCollapsesPage(
 	);
 }
 
-// Written outside the undo stack, as every agent restore is: `restore-checkpoint`
-// records its own reciprocal, and that is the way back.
-function restoreBlocksSnapshot( checkpoint: CheckpointRecord ): void {
+// A sealed checkpoint restores over the page as the swap left it and nothing
+// else: the snapshot replaces the whole root, so later changes would go with it.
+function throwIfSealedPageDrifted( checkpoint: CheckpointRecord, root: BlocksRoot ): void {
+	if (
+		checkpoint.inlineSwap &&
+		checkpoint.inlineSwap.expectedSignature !== getBlocksSignature( root )
+	) {
+		throw new Error(
+			'Checkpoint restore was blocked because the editor content changed after the checkpoint was created.'
+		);
+	}
+}
+
+/**
+ * The snapshotted template parts that differ from the page: writing a part
+ * marks it as edited, so one the write never changed is left alone. A part the
+ * page no longer shows refuses the restore, as another page does. An empty
+ * snapshot over a part with content is skipped and recorded: a part still
+ * loading reads as empty, and the next save would commit it that way.
+ */
+function resolveSnapshotParts(
+	checkpoint: CheckpointRecord,
+	snapshot: BlocksSnapshot,
+	root: BlocksRoot
+): { clientId: string; blocks: EditorBlock[] }[] {
+	return snapshot.templateParts.flatMap( ( { slug, blocks } ) => {
+		const clientId = findTemplatePartClientId( slug );
+
+		if ( ! clientId ) {
+			throw new Error(
+				`The checkpoint's “${ slug }” template part is not on this page. Open the page it was taken from to restore.`
+			);
+		}
+
+		const current = getBlocks( clientId );
+
+		if ( ! blocks.length && current.length ) {
+			recordBlockedRestore( 'template_part_would_empty', checkpoint, snapshot, {
+				post: root.post,
+				blocks: getRootBlocks( root.clientId ),
+			} );
+
+			return [];
+		}
+
+		return toMarkup( current ) === toMarkup( blocks ) ? [] : [ { clientId, blocks } ];
+	} );
+}
+
+/**
+ * Puts the snapshotted page back. Outside the undo stack, as every agent
+ * restore is: `restore-checkpoint` records its own reciprocal, and that is the
+ * way back. The chat's inline swap writes tracked instead, since it behaves as
+ * the editor's own Undo.
+ */
+function restoreBlocksSnapshot( checkpoint: CheckpointRecord, { tracked = false } = {} ): void {
 	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.BLOCKS ) ) {
 		return;
 	}
@@ -253,10 +369,133 @@ function restoreBlocksSnapshot( checkpoint: CheckpointRecord ): void {
 		throw new Error( 'Checkpoint has no blocks snapshot to restore.' );
 	}
 
-	const root = resolveSnapshotRoot( snapshot );
+	const root = resolveSnapshotRoot( checkpoint, snapshot );
 
+	throwIfSealedPageDrifted( checkpoint, root );
 	throwIfRestoreCollapsesPage( checkpoint, snapshot, root );
-	stageRootBlocks( root.clientId, deepClone( snapshot.blocks ) );
+
+	// Resolved before any write: a missing part refuses the whole restore.
+	const parts = resolveSnapshotParts( checkpoint, snapshot, root );
+	const write = tracked ? replaceRootBlocks : stageRootBlocks;
+
+	write( root.clientId, deepClone( snapshot.blocks ) );
+	parts.forEach( ( { clientId, blocks } ) => write( clientId, deepClone( blocks ) ) );
+}
+
+let signatureCache: { blocks: EditorBlock[]; parts: TemplatePartBlocks[]; signature: string };
+
+/**
+ * The page's markup, root and template parts, as one string. Cached on the
+ * store's own array identities: the chat asks after every render, and the
+ * store hands out the same arrays until a block changes.
+ */
+function getBlocksSignature( root: BlocksRoot ): string {
+	const blocks = getRootBlocks( root.clientId );
+	const parts = getTemplatePartBlocks();
+	const cached = signatureCache;
+	const isCached =
+		cached?.blocks === blocks &&
+		cached.parts.length === parts.length &&
+		cached.parts.every(
+			( part, index ) => part.slug === parts[ index ].slug && part.blocks === parts[ index ].blocks
+		);
+
+	if ( isCached ) {
+		return cached.signature;
+	}
+
+	const signature = JSON.stringify( [
+		toMarkup( blocks ),
+		...parts.map( ( part ) => [ part.slug, toMarkup( part.blocks ) ] ),
+	] );
+
+	signatureCache = { blocks, parts, signature };
+
+	return signature;
+}
+
+/**
+ * Offers a checkpoint to the chat's inline Undo, which swaps the page between
+ * the states before and after the edit. Only a checkpoint that holds nothing
+ * but the page's blocks can swap, and only while the page stays as the edit
+ * left it. Reports whether the seal was set.
+ */
+export function sealCheckpointForSwap( id: string ): boolean {
+	const checkpoint = records.get( id );
+	const root = resolveBlocksRoot();
+	const holdsBlocksOnly =
+		checkpoint?.blocksBeforeUpdate &&
+		checkpoint.checkpointKeys.length === 1 &&
+		checkpoint.checkpointKeys[ 0 ] === checkpointKeys.BLOCKS;
+
+	if ( ! holdsBlocksOnly || ! root ) {
+		return false;
+	}
+
+	records.set( id, {
+		...checkpoint,
+		inlineSwap: {
+			action: 'undo',
+			expectedSignature: getBlocksSignature( root ),
+			toolId: checkpoint.toolId,
+		},
+	} );
+
+	return true;
+}
+
+/**
+ * `undefined` for a checkpoint that was never sealed, which restores one way
+ * through `restore-checkpoint`; otherwise whether the page is still as the
+ * last swap left it, on the page the checkpoint belongs to.
+ */
+export function canSwapCheckpoint( id: string ): boolean | undefined {
+	const checkpoint = records.get( id );
+	const snapshot = checkpoint?.blocksBeforeUpdate;
+
+	if ( ! checkpoint?.inlineSwap || ! snapshot ) {
+		return undefined;
+	}
+
+	const root = resolveBlocksRoot();
+
+	return (
+		!! root &&
+		isSnapshotRoot( root, snapshot ) &&
+		getBlocksSignature( root ) === checkpoint.inlineSwap.expectedSignature
+	);
+}
+
+/**
+ * Swaps the page to the other side of a sealed checkpoint, as a tracked write
+ * so the editor's own Undo sees it. The record then holds the state just
+ * replaced, ready for the swap back, and reads to the agent as the restore it
+ * was, so a redo request finds it.
+ */
+export async function swapCheckpoint( id: string ): Promise< void > {
+	const checkpoint = records.get( id );
+	const root = resolveBlocksRoot();
+
+	if ( ! checkpoint?.inlineSwap || ! root || canSwapCheckpoint( id ) !== true ) {
+		throw new Error(
+			'Checkpoint swap was blocked because the editor content changed or the checkpoint is not a text edit.'
+		);
+	}
+
+	const { action, toolId } = checkpoint.inlineSwap;
+	const nextAction = action === 'undo' ? 'redo' : 'undo';
+	const current = snapshotBlocks( root );
+
+	restoreBlocksSnapshot( checkpoint, { tracked: true } );
+
+	records.set( id, {
+		...checkpoint,
+		blocksBeforeUpdate: current,
+		toolId: nextAction === 'redo' ? RESTORE_CHECKPOINT_TOOL_ID : toolId,
+		requestIntentType: nextAction,
+		createdByRequestIntentType: action,
+		inlineSwap: { action: nextAction, expectedSignature: getBlocksSignature( root ), toolId },
+	} );
 }
 
 function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): void {
@@ -363,6 +602,9 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	const blocksBeforeUpdate = keys.includes( checkpointKeys.BLOCKS )
 		? captureBlocksSnapshot()
 		: undefined;
+	const customCssBeforeUpdate = keys.includes( checkpointKeys.CUSTOM_CSS )
+		? captureCustomCssSnapshot()
+		: undefined;
 	const siteTitleBeforeUpdate = keys.includes( checkpointKeys.SITE_TITLE )
 		? getSiteTitle()
 		: undefined;
@@ -374,6 +616,7 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
 		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
 		...( blocksBeforeUpdate && { blocksBeforeUpdate } ),
+		...( customCssBeforeUpdate !== undefined && { customCssBeforeUpdate } ),
 		...( siteTitleBeforeUpdate !== undefined && { siteTitleBeforeUpdate } ),
 		...( siteMetadataBeforeUpdate && {
 			siteMetadataBeforeUpdate: deepClone( siteMetadataBeforeUpdate ),
@@ -381,7 +624,14 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	};
 }
 
-const SITE_KEYS: string[] = [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ];
+// The eager domains a batch write reaches part-way through, so a batch that
+// failed before them never changed what their snapshot would put back.
+const MID_BATCH_KEYS: string[] = [
+	checkpointKeys.SITE_TITLE,
+	checkpointKeys.SITE_METADATA,
+	checkpointKeys.BLOCKS,
+	checkpointKeys.CUSTOM_CSS,
+];
 
 /** The record field each domain that snapshots up front captures into. */
 const SNAPSHOT_FIELDS: Record< string, keyof CheckpointRecord > = {
@@ -389,6 +639,7 @@ const SNAPSHOT_FIELDS: Record< string, keyof CheckpointRecord > = {
 	[ checkpointKeys.SITE_METADATA ]: 'siteMetadataBeforeUpdate',
 	[ checkpointKeys.LOGO ]: 'logoBeforeUpdate',
 	[ checkpointKeys.BLOCKS ]: 'blocksBeforeUpdate',
+	[ checkpointKeys.CUSTOM_CSS ]: 'customCssBeforeUpdate',
 	...Object.fromEntries( THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, 'themeBeforeUpdate' ] ) ),
 };
 
@@ -431,7 +682,7 @@ export async function setReciprocalCheckpoint(
 	// The blocks as they stand now, under the root the target wrote into. A page
 	// showing another root or post could not take the redo, so it gets none.
 	const blocksBeforeUpdate = target.blocksBeforeUpdate
-		? captureBlocksSnapshot( resolveSnapshotRoot( target.blocksBeforeUpdate ) )
+		? snapshotBlocks( resolveSnapshotRoot( target, target.blocksBeforeUpdate ) )
 		: undefined;
 
 	// Each page's title as it stands now, not the one the target recorded: the
@@ -611,14 +862,13 @@ function dropUnrecordedDomains( id: string ): void {
 	const restorable: Record< string, boolean > = {
 		[ checkpointKeys.PAGE ]: renamed,
 		[ checkpointKeys.NAVIGATION ]: renamed || !! checkpoint.menusBeforeUpdate?.length,
-		// The site domains snapshot up front but are written mid-batch, so both
-		// are needed there: a site record that could not be read leaves the key
-		// claimed with nothing behind it, and a batch that failed before the
-		// site edit never changed what the snapshot would put back.
+		// The mid-batch domains need both: a record that could not be read leaves
+		// the key claimed with nothing behind it, and a batch that never reached
+		// the domain left its snapshot with nothing to put back.
 		...Object.fromEntries(
 			EAGER_KEYS.map( ( key ) => [
 				key,
-				hasSnapshot( checkpoint, key ) && ( ! SITE_KEYS.includes( key ) || written( key ) ),
+				hasSnapshot( checkpoint, key ) && ( ! MID_BATCH_KEYS.includes( key ) || written( key ) ),
 			] )
 		),
 	};
@@ -758,6 +1008,7 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 	}
 
 	restoreThemeSnapshot( checkpoint );
+	restoreCustomCssSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
 	restoreBlocksSnapshot( checkpoint );
 	restoreSiteTitleSnapshot( checkpoint );
@@ -791,9 +1042,9 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 		}
 	} );
 
-	// Snapshots stay out of the model-facing list: they carry whole global-styles
-	// records, menu block trees and site metadata, none of which the agent needs
-	// and all of which would be re-sent every turn.
+	// Snapshots and the swap seal stay out of the model-facing list: they carry
+	// whole global-styles records, menu block trees and site metadata, none of
+	// which the agent needs and all of which would be re-sent every turn.
 	return checkpoints.map(
 		(
 			{
@@ -801,11 +1052,13 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 				themeBeforeUpdate: _theme,
 				logoBeforeUpdate: _logo,
 				blocksBeforeUpdate: _blocks,
+				customCssBeforeUpdate: _customCss,
 				siteTitleBeforeUpdate: _siteTitle,
 				siteMetadataBeforeUpdate: _siteMetadata,
 				menusBeforeUpdate: _menus,
 				pageRenames: _renames,
 				writtenKeys: _written,
+				inlineSwap: _inlineSwap,
 				...checkpoint
 			},
 			index

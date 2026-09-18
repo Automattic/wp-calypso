@@ -29,9 +29,9 @@ The allowlist contains:
   current block-editor canvas. It does not save or publish the edit, so the result remains visible
   and reviewable. Its WebMCP contract supplies item-level schemas for updates, insertions, and
   deletions, accepts serialized Gutenberg pattern markup as an insertion, strips internal-only
-  arguments, and injects an identity mapping for IDs from the most recent block-tree read. On
-  current trunk it is owned by the Big Sky fallback provider; the
-  merged-provider seam continues to work when ownership migrates to Agents Manager.
+  arguments, and injects an identity mapping for IDs from the most recent block-tree read. It is
+  owned by Agents Manager (`abilities/apply-block-edits`), which resolves the supplied mapping
+  ahead of its own short ids.
 
 - `big-sky/show-template`: an Agents Manager-owned, client-only ability that turns on the editor's
   Show template mode. Use it when the block-tree result does not contain the requested header or
@@ -105,7 +105,7 @@ aborts all registrations. An already-aborted tool execution is rejected, but an 
 execution cannot currently be cancelled because `ToolProvider.executeAbility()` has no signal.
 
 The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
-current editor and refreshes the identity map used by the Big Sky callback.
+current editor and refreshes the identity map the callback resolves through.
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` or REST-backed tools to

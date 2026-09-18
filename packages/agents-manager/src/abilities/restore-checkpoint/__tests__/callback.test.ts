@@ -14,6 +14,7 @@ import {
 	getProviderCheckpoints,
 } from '../../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
+import { recordBigSkyTracksEvent } from '../../../utils/tracks';
 import { restoreCheckpointCallback } from '../callback';
 
 jest.mock( '../../../utils/checkpoints', () => ( {
@@ -31,6 +32,7 @@ jest.mock( '../../../utils/provider-checkpoints', () => ( {
 	getProviderCheckpointRecords: jest.fn( () => [] ),
 	getProviderCheckpoints: jest.fn(),
 } ) );
+jest.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
 	getToolCallIdFromConversationHistory: jest.fn( () => null ),
 } ) );
@@ -118,6 +120,32 @@ describe( 'restoreCheckpointCallback', () => {
 			error: 'Checkpoint not found: toolu_gone',
 			details: { checkpointId: 'toolu_gone' },
 		} );
+	} );
+
+	// The chat's Undo button records the same event; `source` tells the two apart,
+	// and the id is the tool call the checkpoint is keyed by.
+	it.each( [
+		{ case: 'a restore that landed', input: makeInput(), action: 'undo', outcome: 'success' },
+		{
+			case: 'one refused for an unknown id',
+			input: makeInput( { checkpointId: 'toolu_gone', requestIntentType: 'redo' } ),
+			action: 'redo',
+			outcome: 'failed',
+		},
+		{
+			case: 'one with no usable intent, as a plain restore',
+			input: makeInput( { requestIntentType: 'rewind' } ),
+			action: 'restore',
+			outcome: 'success',
+		},
+	] )( 'records $case, once', async ( { input, action, outcome } ) => {
+		await restoreCheckpointCallback( input as never );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_restore_checkpoint_action',
+			{ action, id: input.checkpointId, outcome, source: 'chat' }
+		);
 	} );
 
 	it( 'restores the checkpoint and confirms with the given summary', async () => {
