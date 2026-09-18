@@ -101,7 +101,7 @@ export function useSiteAddress( agencyId: number ): SiteAddress {
 		revalidate: () => {
 			setTrustSuggestion( false );
 			queryClient.invalidateQueries( {
-				queryKey: agencySiteAddressValidationQuery( agencyId, address ).queryKey,
+				queryKey: agencySiteAddressValidationQuery( agencyId, debouncedAddress ).queryKey,
 			} );
 		},
 	};
