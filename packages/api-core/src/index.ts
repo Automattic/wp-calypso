@@ -31,6 +31,7 @@ export * from './domain-forwarding';
 export * from './domain-glue-records';
 export * from './domain-name-servers';
 export * from './domain-notices';
+export * from './domain-point-to-wpcom';
 export * from './domain-privacy';
 export * from './domain-propagation-status';
 export * from './domain-ssl';
