@@ -41,6 +41,8 @@ const sendResponse = ( req, settings, fn ) => {
 
 	req.end( ( error, response ) => {
 		if ( error && ! response ) {
+			// Network errors don't say which endpoint they were calling.
+			error.url = settings.url;
 			return fn( error );
 		}
 
