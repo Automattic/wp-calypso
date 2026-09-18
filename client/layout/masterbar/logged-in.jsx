@@ -1,4 +1,3 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
@@ -66,8 +65,6 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import MasterbarAiChatButton from './masterbar-agents-manager/ai-chat-button';
-import HelpIcon from './masterbar-agents-manager/help-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 import MasterbarStatsSparkline from './masterbar-stats-sparkline';
@@ -82,11 +79,6 @@ const loadMasterbarCartWrapper = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
 	);
-const loadMasterbarAgentsManager = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
-	);
-
 class MasterbarLoggedIn extends Component {
 	static propTypes = {
 		user: PropTypes.object.isRequired,
@@ -100,14 +92,12 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
-		loadAgentsManager: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		canUserViewStats: PropTypes.bool,
 		statsAdminUrl: PropTypes.string,
 		statsSparkline: PropTypes.node,
-		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
 		commandPalette: PropTypes.bool,
@@ -328,8 +318,8 @@ class MasterbarLoggedIn extends Component {
 											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
-							] ),
-				];
+						  ] ),
+			  ];
 
 		return (
 			<Item
@@ -518,7 +508,7 @@ class MasterbarLoggedIn extends Component {
 					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
 					</span>
-				) )
+			  ) )
 			: null;
 	}
 
@@ -943,37 +933,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	// The legacy Help Center entry point lives in the omnibar now; only the
-	// unified-agent variant is still drawn by this masterbar.
-	renderHelpCenter() {
-		const { siteId, translate, useUnifiedAgent } = this.props;
-
-		if ( ! useUnifiedAgent ) {
-			return null;
-		}
-
-		const placeholder = (
-			<Item
-				className="masterbar__item-agents-manager"
-				tooltip={ translate( 'Help' ) }
-				icon={ <HelpIcon /> }
-			/>
-		);
-
-		if ( ! this.state.mounted ) {
-			return placeholder;
-		}
-
-		return (
-			<AsyncLoad
-				require={ loadMasterbarAgentsManager }
-				siteId={ siteId }
-				tooltip={ translate( 'Help' ) }
-				placeholder={ placeholder }
-			/>
-		);
-	}
-
 	openCommandPalette = () => {
 		dispatch( commandsStore ).open();
 	};
@@ -994,14 +953,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const {
-			isCheckout,
-			isCheckoutPending,
-			isCheckoutFailed,
-			loadHelpCenterIcon,
-			loadAgentsManager,
-			useUnifiedAgent,
-		} = this.props;
+		const { isCheckout, isCheckoutPending, isCheckoutFailed } = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -1025,10 +977,6 @@ class MasterbarLoggedIn extends Component {
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
 					{ this.renderReader() }
-					{ loadHelpCenterIcon && this.renderHelpCenter() }
-					{ /* Show the AI button only where the chat dock is mounted (same two
-					     conditions the dock loads on), so clicking it always opens the chat. */ }
-					{ useUnifiedAgent && loadAgentsManager && <MasterbarAiChatButton /> }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
@@ -1113,10 +1061,4 @@ const ConnectedMasterbarLoggedIn = connect(
 	}
 )( localize( MasterbarLoggedIn ) );
 
-// Source the unified-experience flag from `useShouldUseUnifiedAgent` so the masterbar
-// stays in sync with the rest of the agents-manager UI. A hook can't run in the
-// connected class, hence this thin wrapper.
-export default function MasterbarLoggedInWithUnifiedAgent( props ) {
-	const useUnifiedAgent = useShouldUseUnifiedAgent();
-	return <ConnectedMasterbarLoggedIn { ...props } useUnifiedAgent={ !! useUnifiedAgent } />;
-}
+export default ConnectedMasterbarLoggedIn;

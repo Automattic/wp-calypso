@@ -296,7 +296,7 @@ export function useSetupCustomActions( {
 		broadcastsAgentActivity: true,
 	} );
 
-	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.
+	// Hosts listen for `agents-manager-ready` to invoke actions without polling.
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 	}, [] );

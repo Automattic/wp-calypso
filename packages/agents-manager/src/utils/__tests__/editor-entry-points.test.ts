@@ -1,9 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../get-agents-manager-inline-data', () => ( {
-	getAgentsManagerInlineData: jest.fn(),
-} ) );
 jest.mock( '../is-editor-page', () => ( {
 	isEditorPage: jest.fn(),
 } ) );
@@ -23,15 +20,13 @@ function setOmnibarActive( active: boolean ) {
 let isAdminBarInEditor: () => boolean;
 let isEditorAiEntryEnabled: () => boolean;
 let isEditorHelpMenuEnabled: () => boolean;
-let mockInlineData: jest.Mock;
 let mockIsEditorPage: jest.Mock;
 
 beforeEach( async () => {
 	jest.resetModules();
-	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } =
-		await import( '../editor-entry-points' ) );
-	mockInlineData = ( await import( '../get-agents-manager-inline-data' ) )
-		.getAgentsManagerInlineData as unknown as jest.Mock;
+	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } = await import(
+		'../editor-entry-points'
+	) );
 	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;
 } );
 
@@ -131,43 +126,31 @@ describe( 'isEditorHelpMenuEnabled', () => {
 	}
 
 	afterEach( () => {
-		mockInlineData.mockReset();
 		mockIsEditorPage.mockReset();
 		delete ( window as TestWindow ).__experimentalAdminBarInEditor;
 		window.matchMedia = originalMatchMedia;
 	} );
 
-	it( 'returns true on an editor page, on desktop, in the unified experience', () => {
+	it( 'returns true on an editor page on desktop', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { useUnifiedExperience: true } );
 		setDesktop( true );
 		expect( isEditorHelpMenuEnabled() ).toBe( true );
 	} );
 
-	it( 'returns false outside the unified experience', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { useUnifiedExperience: false } );
-		setDesktop( true );
-		expect( isEditorHelpMenuEnabled() ).toBe( false );
-	} );
-
 	it( 'returns false outside an editor page', () => {
 		mockIsEditorPage.mockReturnValue( false );
-		mockInlineData.mockReturnValue( { useUnifiedExperience: true } );
 		setDesktop( true );
 		expect( isEditorHelpMenuEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false on mobile', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { useUnifiedExperience: true } );
 		setDesktop( false );
 		expect( isEditorHelpMenuEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false when the omnibar experiment is active', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { useUnifiedExperience: true } );
 		setDesktop( true );
 		setOmnibarActive( true );
 		expect( isEditorHelpMenuEnabled() ).toBe( false );

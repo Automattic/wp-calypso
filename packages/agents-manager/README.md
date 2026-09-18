@@ -1,6 +1,6 @@
 # @automattic/agents-manager
 
-Unified AI Agent manager for WordPress and Calypso.
+AI agent manager for WordPress and Calypso.
 
 ## Installation
 
@@ -87,25 +87,12 @@ The host page URL can carry these query parameters:
 | `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
 | `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                  |
 | `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `agentId`                        | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| `agentId`                        | `string` (optional)            | Explicit agent ID supplied by the host.                                                                                  |
 | `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                           |
 | `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
 | `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 
 ### Exported Hooks and Utilities
-
-```tsx
-import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
-
-function MyComponent() {
-	// Check if the unified agent experience is active. Outside a
-	// `QueryClientProvider`, pass a client: `useShouldUseUnifiedAgent( queryClient )`.
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
-
-	// Read the unified experience flag from inline script data (non-hook)
-	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
-}
-```
 
 Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`, `getAgentsManagerChatRoute`) and `recordAgentsManagerTracksEvent` are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 

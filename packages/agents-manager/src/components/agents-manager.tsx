@@ -48,7 +48,7 @@ export interface AgentsManagerProps {
 	currentRoute?: string;
 	/** The ID of the currently selected site, or undefined for non-site contexts. */
 	currentSiteId?: number;
-	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
+	/** Explicit agent ID supplied by the host. */
 	agentId?: string;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];

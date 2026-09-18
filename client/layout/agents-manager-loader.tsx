@@ -1,4 +1,3 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -10,21 +9,10 @@ const importAgentsManager = () =>
 		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
 	);
 
-export default function AgentsManagerLoader( {
-	sectionName,
-	loadAgentsManager,
-}: {
-	sectionName: string;
-	loadAgentsManager: boolean;
-} ) {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+export default function AgentsManagerLoader( { sectionName }: { sectionName: string } ) {
 	const user = useSelector( getCurrentUser );
 	const isSiteSpecific = useSelector( isSiteSection );
 	const { selectedSite, site } = useHelpCenterSite();
-
-	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
-		return null;
-	}
 
 	return (
 		<AsyncLoad
