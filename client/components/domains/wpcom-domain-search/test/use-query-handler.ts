@@ -71,7 +71,7 @@ describe( 'useQueryHandler', () => {
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBe( 'new-domain' );
 	} );
 
-	it( 'should clear query from sessionStorage when clearQuery is called', () => {
+	it( 'should clear sessionStorage but keep the query in state when clearQuery is called', () => {
 		const { result } = renderHook( () => useQueryHandler( {} ) );
 
 		act( () => {
@@ -83,9 +83,10 @@ describe( 'useQueryHandler', () => {
 		} );
 
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		expect( result.current.query ).toBe( 'test-domain' );
 	} );
 
-	it( 'should keep the current query in state when clearQuery is called', () => {
+	it( 'should clear sessionStorage and the query in state when resetQuery is called', () => {
 		const { result } = renderHook( () => useQueryHandler( {} ) );
 
 		act( () => {
@@ -93,10 +94,11 @@ describe( 'useQueryHandler', () => {
 		} );
 
 		act( () => {
-			result.current.clearQuery();
+			result.current.resetQuery();
 		} );
 
-		expect( result.current.query ).toBe( 'test-domain' );
+		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		expect( result.current.query ).toBeUndefined();
 	} );
 
 	it( 'should clear a stored query when clearSessionStorageQuery is called directly', () => {
@@ -143,31 +145,6 @@ describe( 'useQueryHandler', () => {
 			} );
 
 			expect( result.current.query ).toBe( 'new-domain' );
-			expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
-		} );
-
-		it( 'should reset the query when clearQuery is called', () => {
-			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
-
-			act( () => {
-				result.current.setQuery( 'test-domain' );
-			} );
-
-			act( () => {
-				result.current.clearQuery();
-			} );
-
-			expect( result.current.query ).toBeUndefined();
-		} );
-
-		it( 'should remove a stale stored query when clearQuery is called', () => {
-			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
-			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
-
-			act( () => {
-				result.current.clearQuery();
-			} );
-
 			expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
 		} );
 	} );

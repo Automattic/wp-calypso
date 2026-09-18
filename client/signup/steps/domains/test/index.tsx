@@ -9,9 +9,10 @@ jest.mock(
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
 } ) );
-jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	useQueryHandler: jest.fn( () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ) ),
-} ) );
+jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => {
+	const handler = { query: '', setQuery: jest.fn(), clearQuery: jest.fn(), resetQuery: jest.fn() };
+	return { useQueryHandler: jest.fn( () => handler ) };
+} );
 
 import config from '@automattic/calypso-config';
 import React from 'react';
@@ -22,6 +23,7 @@ import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
 const mockUseQueryHandler = useQueryHandler as jest.Mock;
+const mockQueryHandler = mockUseQueryHandler() as { clearQuery: jest.Mock; resetQuery: jest.Mock };
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -40,6 +42,8 @@ const baseProps = {
 function renderStep( props = baseProps, options = {} ) {
 	mockWPCOMDomainSearch.mockClear();
 	mockUseQueryHandler.mockClear();
+	mockQueryHandler.clearQuery.mockClear();
+	mockQueryHandler.resetQuery.mockClear();
 	renderWithProvider( <DomainSearchStep { ...props } />, options );
 	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
 }
@@ -156,49 +160,39 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		isEnabledSpy.mockRestore();
 	} );
 
-	it( 'enables it for the domain-only flow when the flag is on', () => {
-		renderStep();
+	const namePulseWiring = ( events: { onQueryClear: () => void } ) => {
+		events.onQueryClear();
 
-		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( true );
+		return {
+			showNamePulseSearch: mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch,
+			persistQuery: mockUseQueryHandler.mock.calls[ 0 ][ 0 ].persistQuery,
+			clearedWith: mockQueryHandler.resetQuery.mock.calls.length ? 'resetQuery' : 'clearQuery',
+		};
+	};
+
+	it( 'enables it for the domain-only flow when the flag is on: no persisted query, clearing resets', () => {
+		expect( namePulseWiring( renderStep() ) ).toEqual( {
+			showNamePulseSearch: true,
+			persistQuery: false,
+			clearedWith: 'resetQuery',
+		} );
 	} );
 
 	it( 'keeps it off for other flows', () => {
-		renderStep( { ...baseProps, flowName: 'onboarding' } );
-
-		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
+		expect( namePulseWiring( renderStep( { ...baseProps, flowName: 'onboarding' } ) ) ).toEqual( {
+			showNamePulseSearch: false,
+			persistQuery: true,
+			clearedWith: 'clearQuery',
+		} );
 	} );
 
 	it( 'keeps it off when the flag is off', () => {
 		isEnabledSpy.mockImplementation( () => false );
 
-		renderStep();
-
-		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
-	} );
-
-	it( 'does not persist the query for the domain-only flow when the flag is on', () => {
-		renderStep();
-
-		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
-			expect.objectContaining( { persistQuery: false } )
-		);
-	} );
-
-	it( 'keeps persisting the query for other flows', () => {
-		renderStep( { ...baseProps, flowName: 'onboarding' } );
-
-		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
-			expect.objectContaining( { persistQuery: true } )
-		);
-	} );
-
-	it( 'keeps persisting the query when the flag is off', () => {
-		isEnabledSpy.mockImplementation( () => false );
-
-		renderStep();
-
-		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
-			expect.objectContaining( { persistQuery: true } )
-		);
+		expect( namePulseWiring( renderStep() ) ).toEqual( {
+			showNamePulseSearch: false,
+			persistQuery: true,
+			clearedWith: 'clearQuery',
+		} );
 	} );
 } );

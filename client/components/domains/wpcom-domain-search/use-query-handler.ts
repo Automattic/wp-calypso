@@ -60,16 +60,15 @@ export const useQueryHandler = ( {
 		[ persistQuery ]
 	);
 
-	const clearQuery = useCallback( () => {
+	const resetQuery = useCallback( () => {
 		clearSessionStorageQuery();
-		if ( ! persistQuery ) {
-			setLocalQuery( undefined );
-		}
-	}, [ persistQuery ] );
+		setLocalQuery( undefined );
+	}, [] );
 
 	return {
 		query: localQuery?.trim().toLowerCase(),
 		setQuery,
-		clearQuery,
+		clearQuery: clearSessionStorageQuery,
+		resetQuery,
 	};
 };
