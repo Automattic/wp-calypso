@@ -1,3 +1,9 @@
+// The initial state is narrower than the results page; keep the Name Pulse
+// input the same width in both so it does not jump on the first query.
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
+}
+
 .name-pulse-search-input {
 	.domain-search-controls__input .components-input-control__container {
 		// SearchControl renders the magnifier as the input prefix; the design
