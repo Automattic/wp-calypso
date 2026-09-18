@@ -69,9 +69,9 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 				: 'plans-upgrade';
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';
-		// The import is delivered through an Atomic transfer, which the free plan cannot grant.
+		// Paid plans only: the import is delivered through an Atomic transfer.
 		case STATIC_SITE_IMPORT_FLOW:
-			return 'plans-ai-assembler-paid-only';
+			return 'plans-migration';
 		default:
 			return null;
 	}
