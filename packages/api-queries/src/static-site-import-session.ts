@@ -4,7 +4,6 @@ import {
 	fetchStaticSiteImportSession,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { queryClient } from './query-client';
 import type {
 	ApproveStaticSiteImportSessionParams,
 	StaticSiteImportSession,
@@ -17,6 +16,7 @@ export const staticSiteImportSessionQuery = ( sessionId: string ) =>
 	queryOptions( {
 		queryKey: [ 'static-site-import-session', sessionId ],
 		queryFn: () => fetchStaticSiteImportSession( sessionId ),
+		meta: { persist: false },
 	} );
 
 export const pollStaticSiteImportSessionUntil =
@@ -30,12 +30,6 @@ export const createStaticSiteImportSessionMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'static-site-import-create' },
 		mutationFn: ( sourceUrl: string ) => createStaticSiteImportSession( sourceUrl ),
-		onSuccess: ( session ) => {
-			queryClient.setQueryData(
-				staticSiteImportSessionQuery( session.session_id ).queryKey,
-				session
-			);
-		},
 	} );
 
 export const approveStaticSiteImportSessionMutation = () =>
@@ -43,10 +37,4 @@ export const approveStaticSiteImportSessionMutation = () =>
 		meta: { statId: 'static-site-import-approve' },
 		mutationFn: ( params: ApproveStaticSiteImportSessionParams ) =>
 			approveStaticSiteImportSession( params ),
-		onSuccess: ( session ) => {
-			queryClient.setQueryData(
-				staticSiteImportSessionQuery( session.session_id ).queryKey,
-				session
-			);
-		},
 	} );
