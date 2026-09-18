@@ -13,13 +13,15 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
-import { useUrlSessionId } from '../hooks/use-url-session-id';
+import { useSessionHandoffLinks } from '../hooks/use-session-handoff-links';
+import { useUrlSessionHandoff } from '../hooks/use-url-session-handoff';
 import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import {
 	clearSessionId,
 	getOrCreateSessionId,
 	getSessionId,
+	NO_SITE,
 	saveSessionId,
 } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
@@ -29,6 +31,7 @@ import {
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
+import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
 import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -101,7 +104,7 @@ export default function AgentsManager( {
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
-	const urlSessionId = useUrlSessionId();
+	const urlSessionHandoff = useUrlSessionHandoff();
 
 	// Wait for the store to load so persisted UI state (open/docked/minimized)
 	// is restored before the dock first renders.
@@ -118,7 +121,7 @@ export default function AgentsManager( {
 		return null;
 	}
 
-	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
+	const siteKey = currentSiteId ? String( currentSiteId ) : NO_SITE;
 
 	return (
 		<QueryClientProvider client={ queryClient }>
@@ -135,7 +138,7 @@ export default function AgentsManager( {
 						zendeskTicketProductFieldValue,
 					} }
 				>
-					<AgentSetup agentId={ agentId } initialSessionId={ urlSessionId } />
+					<AgentSetup agentId={ agentId } urlSessionHandoff={ urlSessionHandoff } />
 				</AgentsManagerContextProvider>
 			</PersistentRouter>
 		</QueryClientProvider>
@@ -167,10 +170,10 @@ function resolveTabSessionId(
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup( {
 	agentId: hostAgentId,
-	initialSessionId,
+	urlSessionHandoff,
 }: {
 	agentId?: string;
-	initialSessionId: string;
+	urlSessionHandoff: SessionHandoff | null;
 } ): JSX.Element | null {
 	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
@@ -202,6 +205,14 @@ function AgentSetup( {
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
+	useSessionHandoffLinks( isAgentConfigLoading ? undefined : agentId );
+
+	// A handed-off session is stored under its own site scope and resumed only
+	// when this page is in that scope, as a site switch within one origin would.
+	const handoff = urlSessionHandoff && isHandoffAgent( agentId ) ? urlSessionHandoff : null;
+	const handoffSiteKey = handoff?.siteKey ?? siteKey;
+	const initialSessionId = handoff && handoffSiteKey === siteKey ? handoff.sessionId : '';
+
 	let sessionId: string;
 	if ( initialSessionId && ! agentConfig ) {
 		sessionId = initialSessionId;
@@ -221,8 +232,8 @@ function AgentSetup( {
 		if ( isAgentConfigLoading ) {
 			return;
 		}
-		if ( ! agentConfigRef.current && initialSessionId ) {
-			saveSessionId( initialSessionId, agentId, siteKey, userId );
+		if ( ! agentConfigRef.current && handoff ) {
+			saveSessionId( handoff.sessionId, agentId, handoffSiteKey, userId );
 		}
 		// A dep change supersedes this run mid-await — a stale initialization
 		// must not navigate or publish its config over the newer run's.
@@ -339,7 +350,8 @@ function AgentSetup( {
 		isAgentConfigLoading,
 		isChatViewShowing,
 		isNewChat,
-		initialSessionId,
+		handoff,
+		handoffSiteKey,
 		navigate,
 		sessionId,
 		sectionName,
