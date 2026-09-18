@@ -134,7 +134,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $5,000 */
 			__(
-				'Reach %s IAR to become a Pro Partner and unlock free agency hosting, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
+				'Reach %s IAR to become a Pro Partner and unlock qualified leads, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
 				stripZeros: true,

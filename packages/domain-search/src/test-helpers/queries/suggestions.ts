@@ -43,32 +43,51 @@ export const mockGetSuggestionsQuery = ( {
 // the other half of the payload is silently absent. When a test needs both
 // fields on the same query, use this combined helper instead.
 export const mockGetBundleMetadataQuery = ( {
-	params,
+	params: rawParams,
 	bundleSuggestion = null,
 	bundleTriggers = [],
+	delayMs,
 }: {
 	params: Partial< DomainSuggestionQuery >;
 	bundleSuggestion?: BundleSuggestion | null;
 	bundleTriggers?: string[];
+	/** Hold the reply so a test can observe the in-flight state. */
+	delayMs?: number;
 } ) => {
-	return nock( 'https://public-api.wordpress.com' )
+	// The wrapped request carries the plain request's params plus with_bundles
+	// (DOMAINS-2238), so the expected query mirrors mockGetSuggestionsQuery.
+	const params = {
+		include_wordpressdotcom: false,
+		include_dotblogsubdomain: false,
+		only_wordpressdotcom: false,
+		quantity: 30,
+		vendor: 'variation2_front',
+		exact_sld_matches_only: false,
+		include_internal_move_eligible: false,
+		...rawParams,
+		with_bundles: 1,
+	};
+
+	const request = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
-		.query( {
-			vendor: 'variation2_front',
-			with_bundles: 1,
-			...params,
-		} )
-		.reply( 200, { bundle_suggestion: bundleSuggestion, bundle_triggers: bundleTriggers } );
+		.query( qs.stringify( params, { arrayFormat: 'brackets' } ) );
+
+	return ( delayMs ? request.delay( delayMs ) : request ).reply( 200, {
+		bundle_suggestion: bundleSuggestion,
+		bundle_triggers: bundleTriggers,
+	} );
 };
 
 export const mockGetBundleSuggestionQuery = ( {
 	params,
 	bundleSuggestion,
+	delayMs,
 }: {
 	params: Partial< DomainSuggestionQuery >;
 	bundleSuggestion: BundleSuggestion | null;
+	delayMs?: number;
 } ) => {
-	return mockGetBundleMetadataQuery( { params, bundleSuggestion } );
+	return mockGetBundleMetadataQuery( { params, bundleSuggestion, delayMs } );
 };
 
 export const mockGetBundleTriggersQuery = ( {
