@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
+import './search-input.scss';
 
 const DELAY_TIMEOUT = 300;
 
@@ -28,7 +29,7 @@ export const NamePulseSearchInput = () => {
 	}, [ query ] );
 
 	return (
-		<div className="domain-search__search-bar">
+		<div className="domain-search__search-bar name-pulse-search-input">
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
