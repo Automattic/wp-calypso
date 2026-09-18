@@ -190,7 +190,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
 			<span className="name-pulse-row__name">
-				<span className="name-pulse-row__domain">
+				<span className="name-pulse-row__domain" title={ domainName }>
 					<Text
 						as="span"
 						variant="muted"
