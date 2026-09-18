@@ -6,7 +6,7 @@ import {
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -74,16 +74,13 @@ function useLicensesReadyToSetUp(): number {
 
 function NeedsSetupDescription( { count }: { count: number } ) {
 	return createInterpolateElement(
-		sprintf(
-			/* translators: %d is the number of WordPress.com licenses waiting to be set up. */
-			_n(
-				'%d WordPress.com license is ready to set up. <link>Set it up in Purchases</link>',
-				'%d WordPress.com licenses are ready to set up. <link>Set them up in Purchases</link>',
-				count
-			),
+		_n(
+			'<count/> WordPress.com license is ready to set up. <link>Set it up in Purchases</link>',
+			'<count/> WordPress.com licenses are ready to set up. <link>Set them up in Purchases</link>',
 			count
 		),
 		{
+			count: <>{ count }</>,
 			link: (
 				<Link
 					to="/marketplace/purchases"
