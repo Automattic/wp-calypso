@@ -8,7 +8,6 @@ import {
 	getFullImporterUrl,
 	isPlatformImportable,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
-import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -36,7 +35,6 @@ import type {
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 const BASE_STEPS = [
-	STEPS.SITE_MIGRATION_IDENTIFY,
 	STEPS.STATIC_SITE_IMPORT_READING,
 	STEPS.STATIC_SITE_IMPORT_RESULTS,
 	STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS,
@@ -53,7 +51,19 @@ const BASE_STEPS = [
 	STEPS.ERROR,
 ];
 
+// Sources are identified by site-migration, which hands eligible ones here with `from` and `platform`.
 function initialize() {
+	const { search } = window.location;
+	const searchParams = new URLSearchParams( search );
+	const platform = searchParams.get( 'platform' ) as ImporterPlatform | null;
+
+	if ( ! canUseStaticSiteImport( platform, searchParams.get( 'from' ) ) ) {
+		window.location.replace(
+			`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }${ search }`
+		);
+		return false as const;
+	}
+
 	return stepsWithRequiredLogin( BASE_STEPS );
 }
 
@@ -142,16 +152,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				);
 			}
 
-			if ( sourcePlatform === 'wordpress' ) {
-				return exitFlow(
-					addQueryArgs(
-						{ from: source, siteId, siteSlug },
-						`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`
-					),
-					true
-				);
-			}
-
 			if ( isPlatformImportable( sourcePlatform ) && source ) {
 				return exitFlow( getFullImporterUrl( sourcePlatform, siteSlug, source ), true );
 			}
@@ -162,7 +162,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					siteSlug,
 					from: source,
 					origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-					backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+					backToFlow: `/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 				} ),
 				true
 			);
@@ -203,37 +203,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					const {
-						from: identifiedFrom,
-						platform: identifiedPlatform,
-						action,
-					} = providedDependencies as {
-						from?: string;
-						platform?: ImporterPlatform;
-						action: SiteMigrationIdentifyAction;
-					};
-
-					if (
-						action === 'skip_platform_identification' ||
-						! canUseStaticSiteImport( identifiedPlatform, identifiedFrom )
-					) {
-						return exitToMigrationFlow(
-							identifiedFrom ?? '',
-							action === 'skip_platform_identification'
-								? 'unknown'
-								: ( identifiedPlatform ?? 'unknown' )
-						);
-					}
-
-					return navigate(
-						addQueryArgs(
-							{ from: identifiedFrom, platform: identifiedPlatform, importSessionId: '' },
-							STEPS.STATIC_SITE_IMPORT_READING.slug
-						) as `${ typeof STEPS.STATIC_SITE_IMPORT_READING.slug }?${ string }`
-					);
-				}
-
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
 					if ( providedDependencies.action === 'unavailable' ) {
 						return exitToMigrationFlow( from, platform );

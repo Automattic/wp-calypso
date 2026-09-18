@@ -2,14 +2,14 @@
 
 Moves a site built on another platform (Wix, Squarespace, and similar) to WordPress.com.
 
-The `site-migration` flow hands non-WordPress sources to this flow from its identify step. Anything
-this flow can’t take is sent back to `site-migration`.
+The `site-migration` flow identifies the source and hands non-WordPress ones here with `from` and
+`platform`. Opening this flow without them sends you to that identify step. Anything this flow can’t
+take is sent back to `site-migration`.
 
 ## Steps
 
 | Step                              | Screen                              |
 | --------------------------------- | ----------------------------------- |
-| `site-migration-identify`         | Let’s find your site                |
 | `static-site-import-reading`      | Reading your site                   |
 | `static-site-import-results`      | Your site is ready to move          |
 | `static-site-import-how-it-works` | Here’s how the move works           |
