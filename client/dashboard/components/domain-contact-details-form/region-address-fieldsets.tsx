@@ -11,6 +11,10 @@ import {
 import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 import { type CountryListItem } from './custom-form-fieldsets/types';
 
+// The registry (RTR) rejects address lines shorter than two characters, so
+// enforce the same minimum on the client before submission.
+const ADDRESS_LINE_MIN_LENGTH = 2;
+
 const getPostalCodeLabel = ( countryCode: string ): string => {
 	switch ( countryCode ) {
 		case 'US':
@@ -92,6 +96,7 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address1', asyncValidator ),
 			},
 		},
@@ -100,6 +105,7 @@ export function RegionAddressFieldsets(
 			label: __( 'Address line 2' ),
 			type: 'text',
 			isValid: {
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address2', asyncValidator ),
 			},
 		},
