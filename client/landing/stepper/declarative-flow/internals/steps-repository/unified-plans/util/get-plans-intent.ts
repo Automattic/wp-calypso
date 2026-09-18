@@ -7,6 +7,7 @@ import {
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -68,6 +69,9 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 				: 'plans-upgrade';
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';
+		// The import is delivered through an Atomic transfer, which the free plan cannot grant.
+		case STATIC_SITE_IMPORT_FLOW:
+			return 'plans-ai-assembler-paid-only';
 		default:
 			return null;
 	}

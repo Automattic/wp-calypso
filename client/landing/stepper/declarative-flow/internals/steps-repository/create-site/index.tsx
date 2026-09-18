@@ -4,6 +4,7 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	EDUCATION_FLOW,
 	ENTREPRENEUR_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	StepContainer,
 	addProductsToCart,
 	createSite,
@@ -208,7 +209,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		wooFlows.includes( flow || '' ) ||
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||
-		flow === EDUCATION_FLOW
+		flow === EDUCATION_FLOW ||
+		flow === STATIC_SITE_IMPORT_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
