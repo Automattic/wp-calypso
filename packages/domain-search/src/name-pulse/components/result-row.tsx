@@ -90,7 +90,7 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 				<Text size={ 12 } variant="muted">
 					{ sprintf(
 						// translators: %(price)s is the domain renewal price.
-						__( '%(price)s/year renewal' ),
+						__( '%(price)s /year renewal' ),
 						{ price: yearlyPrice }
 					) }
 				</Text>
