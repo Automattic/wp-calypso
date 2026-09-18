@@ -9,7 +9,11 @@ import './style.scss';
 
 // Only allow redirects to production environments,
 // as two-step authentication is only available on production environments.
-const ALLOWED_ORIGINS = [ 'https://my.wordpress.com', 'https://my.woo.ai' ];
+export const ALLOWED_ORIGINS = [
+	'https://my.wordpress.com',
+	'https://my.woo.ai',
+	'https://agencies-beta.automattic.com',
+];
 
 export default function ReauthRequired() {
 	useEffect( () => {
