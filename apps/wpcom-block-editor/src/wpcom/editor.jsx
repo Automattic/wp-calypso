@@ -8,6 +8,7 @@ import './features/tracking';
 import { OnboardingNextStepAfterPublishingPost } from './features/onboarding-next-step-after-publishing-post';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
+import './features/video-upload-plan-nudge';
 import './editor.scss';
 import './features/tracking/site-editor-load';
 
