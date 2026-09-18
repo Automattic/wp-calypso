@@ -6,13 +6,14 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
-import { marketplacePurchasesRoute } from '../../../app/router/agency';
+import { hasAnyCapability, marketplacePurchasesRoute } from '../../../app/router/agency';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { OWNER_ROLE } from '../../team/constants';
+import { useLicenseActions } from './actions';
 import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -21,6 +22,7 @@ export default function MarketplacePurchases() {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
+	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
 
@@ -39,6 +41,8 @@ export default function MarketplacePurchases() {
 		() => getLicenseFields( { locale, isAgencyOwner } ),
 		[ locale, isAgencyOwner ]
 	);
+	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner } );
+
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
 		totalPages: data?.total_pages ?? 1,
@@ -71,6 +75,7 @@ export default function MarketplacePurchases() {
 				<DataViews< JetpackLicense >
 					data={ data?.items ?? [] }
 					fields={ fields }
+					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
