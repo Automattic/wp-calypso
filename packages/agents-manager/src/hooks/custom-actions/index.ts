@@ -12,6 +12,7 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import { getTabId } from '../../utils/tab-id';
 import {
 	BIG_SKY_EVENT_PREFIX,
 	recordAgentsManagerTracksEvent,
@@ -275,6 +276,7 @@ export function useSetupCustomActions( {
 		isChatVisible: getIsChatVisible,
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
+		getTabId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
