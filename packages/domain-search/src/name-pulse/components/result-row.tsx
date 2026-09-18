@@ -188,7 +188,7 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 		>
 			<span className="name-pulse-row__name">
 				<span className="name-pulse-row__domain">
-					<Text as="span" variant="muted">
+					<Text as="span" variant="muted" truncate ellipsizeMode="middle" limit={ 20 }>
 						{ label }
 					</Text>
 					<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
