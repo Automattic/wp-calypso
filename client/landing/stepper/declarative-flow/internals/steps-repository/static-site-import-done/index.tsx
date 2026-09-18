@@ -2,7 +2,13 @@ import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
 import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
-import { Button, TextareaControl } from '@wordpress/components';
+import {
+	Button,
+	TextareaControl,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, external, lock } from '@wordpress/icons';
@@ -10,15 +16,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/dashboard/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	StatusNotice,
+	ImportCard,
 	useStaticSiteImportSource,
 	useStaticSiteImportTicket,
 } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
-import '../components/static-site-import/style.scss';
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -63,7 +69,7 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 				await sendTicket( `Static site import: something’s off. ${ details.trim() }` );
 				navigation.submit?.( { action: 'reported' } );
 			} catch {
-				// The error notice below covers it.
+				// Shown by the error notice.
 			}
 		};
 
@@ -99,21 +105,21 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 											/* translators: %s: the site's domain, e.g. example.com. */
 											__( 'Have a look around. It stays private until you switch %s over to it.' ),
 											host
-									  )
+										)
 									: __( 'Have a look around. It stays private until you launch it.' )
 							}
 						/>
 					}
 				>
-					<div className="static-site-import__panel">
+					<ImportCard>
 						{ host && (
-							<StatusNotice status="success">
+							<Notice variant="success">
 								{ sprintf(
 									/* translators: %s: the site's domain, e.g. example.com. */
 									__( '%s has been rebuilt on WordPress.com.' ),
 									host
 								) }
-							</StatusNotice>
+							</Notice>
 						) }
 
 						<div className="static-site-import-done__frame">
@@ -134,18 +140,14 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 							</div>
 						</div>
 
-						<div className="static-site-import__actions">
+						<HStack justify="flex-start" wrap>
 							{ previewLink( __( 'Preview your new site' ), '', 'secondary' ) }
-							<span className="static-site-import__muted">
-								{ __( 'Opens in a new tab. Only you can see it.' ) }
-							</span>
-						</div>
+							<Text variant="muted">{ __( 'Opens in a new tab. Only you can see it.' ) }</Text>
+						</HStack>
 
-						<div className="static-site-import-done__feedback">
-							<span className="static-site-import-done__feedback-question">
-								{ __( 'Does it look right?' ) }
-							</span>
-							<div className="static-site-import__actions">
+						<HStack className="static-site-import-done__feedback" wrap>
+							<Text weight={ 500 }>{ __( 'Does it look right?' ) }</Text>
+							<HStack justify="flex-start" wrap>
 								<Button
 									__next40pxDefaultSize
 									variant="secondary"
@@ -162,11 +164,11 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 								>
 									{ __( 'Something’s off' ) }
 								</Button>
-							</div>
-						</div>
+							</HStack>
+						</HStack>
 
 						{ feedback === 'off' && (
-							<div className="static-site-import-done__report">
+							<VStack spacing={ 4 }>
 								<TextareaControl
 									__nextHasNoMarginBottom
 									label={ __( 'What doesn’t look right?' ) }
@@ -175,9 +177,9 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 									rows={ 3 }
 								/>
 								{ isError && (
-									<StatusNotice status="error">
+									<Notice variant="error">
 										{ __( 'We couldn’t send that. Please try again.' ) }
-									</StatusNotice>
+									</Notice>
 								) }
 								<div>
 									<Button
@@ -190,10 +192,10 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 										{ __( 'Get help with this' ) }
 									</Button>
 								</div>
-							</div>
+							</VStack>
 						) }
 
-						<div className="static-site-import__actions">
+						<HStack justify="flex-start" wrap>
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
@@ -208,14 +210,14 @@ const StaticSiteImportDone: StepType< { submits: StaticSiteImportDoneSubmits } >
 											/* translators: %s: the site's domain, e.g. example.com. */
 											__( 'Connect %s' ),
 											host
-									  )
+										)
 									: __( 'Go to my site' ) }
 							</Button>
 							<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 								{ __( 'Need a hand? Get help' ) }
 							</Button>
-						</div>
-					</div>
+						</HStack>
+					</ImportCard>
 				</Step.CenteredColumnLayout>
 			</>
 		);

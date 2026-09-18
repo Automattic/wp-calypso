@@ -4,28 +4,30 @@ import {
 } from '@automattic/api-core';
 import {
 	createStaticSiteImportSessionMutation,
+	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
 } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ProgressBar } from '@wordpress/components';
+import {
+	ProgressBar,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { Panel, useStaticSiteImportSource } from '../components/static-site-import';
+import { ImportCard, useStaticSiteImportSource } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 import type { StaticSiteImportState } from '@automattic/api-core';
 
-import '../components/static-site-import/style.scss';
 import './style.scss';
 
-export const POLL_INTERVAL = 5000;
-
 export type StaticSiteImportReadingSubmits =
-	| { action: 'continue'; importSessionId: string }
-	| { action: 'unavailable'; reason?: string };
+	{ action: 'continue'; importSessionId: string } | { action: 'unavailable'; reason?: string };
 
 const PROGRESS: Partial< Record< StaticSiteImportState, number > > = {
 	capture_queued: 10,
@@ -38,6 +40,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const { __ } = useI18n();
 		const [ searchParams, setSearchParams ] = useSearchParams();
 		const { sourceUrl, platformName } = useStaticSiteImportSource();
+		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
 
 		const { mutate: createSession, error: createError } = useMutation(
@@ -51,7 +54,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			}
 			hasRequestedSession.current = true;
 			createSession( sourceUrl, {
-				onSuccess: ( session ) => {
+				onSuccess: ( session ) =>
 					setSearchParams(
 						( params ) => {
 							const nextParams = new URLSearchParams( params );
@@ -59,20 +62,16 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 							return nextParams;
 						},
 						{ replace: true }
-					);
-				},
+					),
 			} );
 		}, [ createSession, sessionId, sourceUrl, setSearchParams ] );
 
 		const { data: session, error: pollError } = useQuery( {
 			...staticSiteImportSessionQuery( sessionId ?? '' ),
 			enabled: Boolean( sessionId ),
-			refetchInterval: ( query ) => {
-				const state = query.state.data?.state;
-				return state && STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES.includes( state )
-					? false
-					: POLL_INTERVAL;
-			},
+			refetchInterval: pollStaticSiteImportSessionUntil(
+				STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES
+			),
 		} );
 
 		const hasSubmitted = useRef( false );
@@ -85,14 +84,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				hasSubmitted.current = true;
 				navigation.submit?.( {
 					action: 'unavailable',
-					reason:
-						getStaticSiteImportErrorCode( error ) ??
-						session?.receipt?.code ??
-						( sourceUrl ? 'failed' : 'missing_source' ),
+					reason: getStaticSiteImportErrorCode( error ) ?? session?.receipt?.code,
 				} );
-				return;
-			}
-			if (
+			} else if (
 				sessionId &&
 				session &&
 				STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES.includes( session.state )
@@ -102,19 +96,15 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			}
 		}, [ createError, navigation, pollError, session, sessionId, sourceUrl ] );
 
-		const progress = PROGRESS[ session?.state ?? 'capture_queued' ] ?? 100;
-		const PROGRESS_LABELS: Partial< Record< StaticSiteImportState, string > > = {
-			capturing: __( 'Reading pages' ),
-			building: __( 'Almost done' ),
-		};
+		const state = session?.state ?? 'capture_queued';
 		const progressLabel =
-			PROGRESS_LABELS[ session?.state ?? 'capture_queued' ] ?? __( 'Getting started' );
+			{ capturing: __( 'Reading pages' ), building: __( 'Almost done' ) }[ state as string ] ??
+			__( 'Getting started' );
 
 		return (
 			<>
 				<DocumentHead title={ __( 'Reading your site' ) } />
 				<Step.CenteredColumnLayout
-					className="step-container-v2--static-site-import-reading"
 					columnWidth={ 8 }
 					topBar={ <Step.TopBar /> }
 					heading={
@@ -126,28 +116,31 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 											/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
 											__( 'This can take a few minutes. Your %s site stays live and unchanged.' ),
 											platformName
-									  )
+										)
 									: __( 'This can take a few minutes. Your current site stays live and unchanged.' )
 							}
 						/>
 					}
 				>
-					<Panel title={ __( 'What’s happening' ) }>
-						<p className="static-site-import__muted">
+					<ImportCard title={ __( 'What’s happening' ) }>
+						<Text variant="muted">
 							{ __(
 								'We’re looking at your pages, blog posts, and images to see what we can move.'
 							) }
-						</p>
-						<div className="static-site-import-reading__progress">
-							<div className="static-site-import-reading__progress-labels">
-								<span>{ __( 'Progress' ) }</span>
-								<span className="static-site-import__muted" role="status">
+						</Text>
+						<VStack spacing={ 3 }>
+							<HStack justify="space-between">
+								<Text>{ __( 'Progress' ) }</Text>
+								<Text variant="muted" role="status">
 									{ progressLabel }
-								</span>
-							</div>
-							<ProgressBar className="static-site-import-reading__bar" value={ progress } />
-						</div>
-					</Panel>
+								</Text>
+							</HStack>
+							<ProgressBar
+								className="static-site-import-reading__bar"
+								value={ PROGRESS[ state ] ?? 100 }
+							/>
+						</VStack>
+					</ImportCard>
 				</Step.CenteredColumnLayout>
 			</>
 		);

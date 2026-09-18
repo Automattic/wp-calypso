@@ -1,25 +1,21 @@
 import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { _n, sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { Panel, SourceCard, StatusNotice } from '../components/static-site-import';
+import Notice from 'calypso/dashboard/components/notice';
+import { ImportCard, SourceCard } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
-import type { StaticSiteImportPreviewSummary } from '@automattic/api-core';
-
-import '../components/static-site-import/style.scss';
-import './style.scss';
-
-const getPageCount = ( summary?: StaticSiteImportPreviewSummary | [] ) =>
-	summary && ! Array.isArray( summary ) ? summary.pages : undefined;
-
-const isFullRebuild = ( summary?: StaticSiteImportPreviewSummary | [] ) =>
-	!! summary && ! Array.isArray( summary ) && summary.quality_pass !== false;
 
 const StaticSiteImportResults: StepType = function StaticSiteImportResults( { navigation } ) {
 	const { __ } = useI18n();
@@ -30,7 +26,8 @@ const StaticSiteImportResults: StepType = function StaticSiteImportResults( { na
 		enabled: Boolean( sessionId ),
 	} );
 
-	const pages = getPageCount( session?.preview_summary );
+	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
+	const pages = summary?.pages;
 	const strong = { strong: <strong /> };
 
 	const rows = [
@@ -44,7 +41,7 @@ const StaticSiteImportResults: StepType = function StaticSiteImportResults( { na
 						),
 						strong
 					),
-			  ]
+				]
 			: [] ),
 		createInterpolateElement( __( '<strong>Your images</strong> in full quality' ), strong ),
 		createInterpolateElement( __( '<strong>Your domain</strong> can come with you' ), strong ),
@@ -58,7 +55,6 @@ const StaticSiteImportResults: StepType = function StaticSiteImportResults( { na
 		<>
 			<DocumentHead title={ __( 'Your site is ready to move' ) } />
 			<Step.CenteredColumnLayout
-				className="step-container-v2--static-site-import-results"
 				columnWidth={ 8 }
 				topBar={ <Step.TopBar /> }
 				heading={
@@ -68,30 +64,38 @@ const StaticSiteImportResults: StepType = function StaticSiteImportResults( { na
 					/>
 				}
 			>
-				<div className="static-site-import__stack">
+				<VStack spacing={ 8 }>
 					<SourceCard />
-					<Panel title={ __( 'What we found' ) }>
-						<h3 className="static-site-import-results__subtitle">{ __( 'Comes across' ) }</h3>
-						<ul className="static-site-import-results__list">
+					<ImportCard title={ __( 'What we found' ) }>
+						<VStack spacing={ 4 }>
+							<Heading level={ 3 } size={ 16 } weight={ 600 }>
+								{ __( 'Comes across' ) }
+							</Heading>
 							{ rows.map( ( row, index ) => (
-								<li key={ index }>
-									<Icon className="static-site-import-results__check" icon={ check } size={ 24 } />
+								<HStack key={ index } justify="flex-start" spacing={ 4 }>
+									<Icon icon={ check } size={ 24 } fill="var( --studio-green-50 )" />
 									<span>{ row }</span>
-								</li>
+								</HStack>
 							) ) }
-						</ul>
-						{ isFullRebuild( session?.preview_summary ) && (
-							<StatusNotice status="success">
+						</VStack>
+						{ summary?.quality_pass !== false && summary && (
+							<Notice variant="success">
 								{ __(
 									'Your site is built from standard pages, posts, and images, so we can rebuild all of it.'
 								) }
-							</StatusNotice>
+							</Notice>
 						) }
-						<Button __next40pxDefaultSize variant="primary" onClick={ () => navigation.submit?.() }>
-							{ __( 'Continue' ) }
-						</Button>
-					</Panel>
-				</div>
+						<div>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ () => navigation.submit?.() }
+							>
+								{ __( 'Continue' ) }
+							</Button>
+						</div>
+					</ImportCard>
+				</VStack>
 			</Step.CenteredColumnLayout>
 		</>
 	);

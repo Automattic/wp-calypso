@@ -1,13 +1,19 @@
 import { Step } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
-import { Panel, SourceCard, useStaticSiteImportSource } from '../components/static-site-import';
+import {
+	ImportCard,
+	SourceCard,
+	useStaticSiteImportSource,
+} from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
-
-import '../components/static-site-import/style.scss';
-import './style.scss';
 
 const StaticSiteImportHowItWorks: StepType = function StaticSiteImportHowItWorks( { navigation } ) {
 	const { __ } = useI18n();
@@ -37,7 +43,7 @@ const StaticSiteImportHowItWorks: StepType = function StaticSiteImportHowItWorks
 						/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
 						__( 'Your new site goes public. %s keeps running until then.' ),
 						platformName
-				  )
+					)
 				: __( 'Your new site goes public. Your current site keeps running until then.' ),
 		},
 	];
@@ -46,7 +52,6 @@ const StaticSiteImportHowItWorks: StepType = function StaticSiteImportHowItWorks
 		<>
 			<DocumentHead title={ __( 'Here’s how the move works' ) } />
 			<Step.CenteredColumnLayout
-				className="step-container-v2--static-site-import-how-it-works"
 				columnWidth={ 8 }
 				topBar={
 					<Step.TopBar
@@ -64,30 +69,43 @@ const StaticSiteImportHowItWorks: StepType = function StaticSiteImportHowItWorks
 										/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
 										__( 'Nothing changes on %s until you switch your address.' ),
 										platformName
-								  )
+									)
 								: __( 'Nothing changes on your current site until you switch your address.' )
 						}
 					/>
 				}
 			>
-				<div className="static-site-import__stack">
+				<VStack spacing={ 8 }>
 					<SourceCard />
-					<Panel title={ __( 'What happens next' ) }>
-						<ol className="static-site-import-how-it-works__steps">
-							{ steps.map( ( step ) => (
-								<li key={ step.title }>
-									<span className="static-site-import-how-it-works__step-title">
-										{ step.title }
-									</span>
-									<span className="static-site-import__muted">{ step.text }</span>
-								</li>
+					<ImportCard title={ __( 'What happens next' ) }>
+						<VStack as="ol" spacing={ 6 } style={ { margin: 0, padding: 0, listStyle: 'none' } }>
+							{ steps.map( ( step, index ) => (
+								<HStack
+									as="li"
+									key={ step.title }
+									alignment="top"
+									justify="flex-start"
+									spacing={ 6 }
+								>
+									<Text variant="muted">{ index + 1 }</Text>
+									<VStack spacing={ 1 }>
+										<Text weight={ 500 }>{ step.title }</Text>
+										<Text variant="muted">{ step.text }</Text>
+									</VStack>
+								</HStack>
 							) ) }
-						</ol>
-						<Button __next40pxDefaultSize variant="primary" onClick={ () => navigation.submit?.() }>
-							{ __( 'Choose address and plan' ) }
-						</Button>
-					</Panel>
-				</div>
+						</VStack>
+						<div>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ () => navigation.submit?.() }
+							>
+								{ __( 'Choose address and plan' ) }
+							</Button>
+						</div>
+					</ImportCard>
+				</VStack>
 			</Step.CenteredColumnLayout>
 		</>
 	);
