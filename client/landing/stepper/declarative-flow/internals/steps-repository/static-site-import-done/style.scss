@@ -46,22 +46,7 @@
 	}
 
 	.static-site-import-done__feedback {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 16px;
-		align-items: center;
-		justify-content: space-between;
 		padding-block-start: 24px;
 		border-block-start: 1px solid var( --color-border-subtle );
-	}
-
-	.static-site-import-done__feedback-question {
-		font-weight: 500;
-	}
-
-	.static-site-import-done__report {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
 	}
 }

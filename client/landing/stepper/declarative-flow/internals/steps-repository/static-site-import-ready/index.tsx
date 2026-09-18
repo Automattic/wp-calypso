@@ -1,35 +1,43 @@
-import { isStaticSiteImportError } from '@automattic/api-core';
+import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import {
 	approveStaticSiteImportSessionMutation,
 	staticSiteImportSessionQuery,
 } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/dashboard/components/notice';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import {
-	Panel,
+	ImportCard,
 	SourceCard,
-	StatusNotice,
 	useStaticSiteImportSource,
 } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
-import '../components/static-site-import/style.scss';
-
 export type StaticSiteImportReadySubmits = { action: 'approved' } | { action: 'restart' };
+
+const RESTART_CODES = [
+	'static_site_import_session_not_found',
+	'static_site_import_preview_expired',
+	'static_site_import_archive_mismatch',
+];
 
 const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits } > =
 	function StaticSiteImportReady( { navigation } ) {
 		const { __ } = useI18n();
 		const [ searchParams ] = useSearchParams();
 		const sessionId = searchParams.get( 'importSessionId' ) ?? '';
-		const { siteId } = useSiteData();
+		const { siteId, siteSlug } = useSiteData();
 		const { host, platformName } = useStaticSiteImportSource();
 
 		const { data: session, error: sessionError } = useQuery( {
@@ -42,54 +50,54 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 			error: approveError,
 		} = useMutation( approveStaticSiteImportSessionMutation() );
 
-		// A session approved in an earlier visit has nothing left to approve here.
+		const errorCode =
+			getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
+		const isDelivering =
+			session?.state === 'queued' ||
+			session?.state === 'finished' ||
+			( session?.state === 'failed' && Boolean( session.site_url ) );
+		const shouldForward =
+			isDelivering || errorCode === 'static_site_import_session_already_approved';
+
 		const hasForwarded = useRef( false );
 		useEffect( () => {
-			if ( hasForwarded.current || ! session ) {
-				return;
-			}
-			if ( [ 'queued', 'finished' ].includes( session.state ) ) {
+			if ( shouldForward && ! hasForwarded.current ) {
 				hasForwarded.current = true;
 				navigation.submit?.( { action: 'approved' } );
 			}
-		}, [ navigation, session ] );
+		}, [ navigation, shouldForward ] );
 
-		const isAlreadyApproved = isStaticSiteImportError(
-			approveError,
-			'static_site_import_session_already_approved'
-		);
-		useEffect( () => {
-			if ( isAlreadyApproved && ! hasForwarded.current ) {
-				hasForwarded.current = true;
-				navigation.submit?.( { action: 'approved' } );
-			}
-		}, [ isAlreadyApproved, navigation ] );
-
-		const isExpired =
+		const needsRestart =
 			! sessionId ||
-			session?.state === 'failed' ||
-			isStaticSiteImportError( sessionError, 'static_site_import_session_not_found' ) ||
-			isStaticSiteImportError( approveError, 'static_site_import_preview_expired' );
-		const hasError =
-			! isExpired && ( Boolean( sessionError ) || ( approveError && ! isAlreadyApproved ) );
+			( session?.state === 'failed' && ! session.site_url ) ||
+			RESTART_CODES.includes( errorCode ?? '' );
+		const hasError = ! needsRestart && ! shouldForward && Boolean( approveError ?? sessionError );
 		const canApprove =
-			Boolean( session?.archive_hash && siteId ) && session?.state === 'preview_ready';
+			session?.state === 'preview_ready' && Boolean( session.archive_hash && siteId );
 
 		const onMove = () => {
-			if ( ! session?.archive_hash || ! siteId ) {
-				return;
+			if ( session?.archive_hash && siteId ) {
+				approve(
+					{ sessionId, archiveHash: session.archive_hash, destinationBlogId: siteId },
+					{ onSuccess: () => navigation.submit?.( { action: 'approved' } ) }
+				);
 			}
-			approve(
-				{ sessionId, archiveHash: session.archive_hash, destinationBlogId: siteId },
-				{ onSuccess: () => navigation.submit?.( { action: 'approved' } ) }
-			);
 		};
+
+		const errorMessage =
+			{
+				static_site_import_atomic_unavailable: __(
+					'Your plan can’t host an imported site. Nothing has changed. Upgrade your plan, then come back to start the move.'
+				),
+				import_exists: __(
+					'This site already has an import running. Wait for it to finish, then try again.'
+				),
+			}[ errorCode ?? '' ] ?? __( 'We couldn’t start the move. Please try again.' );
 
 		return (
 			<>
 				<DocumentHead title={ __( 'You’re all set' ) } />
 				<Step.CenteredColumnLayout
-					className="step-container-v2--static-site-import-ready"
 					columnWidth={ 8 }
 					topBar={ <Step.TopBar /> }
 					heading={
@@ -99,10 +107,10 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 						/>
 					}
 				>
-					<div className="static-site-import__stack">
+					<VStack spacing={ 8 }>
 						<SourceCard />
-						<Panel title={ __( 'Ready when you are' ) }>
-							<p className="static-site-import__muted">
+						<ImportCard title={ __( 'Ready when you are' ) }>
+							<Text variant="muted">
 								{ platformName
 									? sprintf(
 											/* translators: %1$s: the site's domain, e.g. example.com. %2$s: the platform it is hosted on today, e.g. Wix. */
@@ -111,48 +119,59 @@ const StaticSiteImportReady: StepType< { submits: StaticSiteImportReadySubmits }
 											),
 											host,
 											platformName
-									  )
+										)
 									: sprintf(
 											/* translators: %s: the site's domain, e.g. example.com. */
 											__(
 												'We’ll rebuild %s on WordPress.com. Your current site stays exactly as it is.'
 											),
 											host
-									  ) }
-							</p>
-							{ isExpired && (
-								<StatusNotice status="error">
+										) }
+							</Text>
+							{ needsRestart && (
+								<Notice variant="error">
 									{ __(
 										'It’s been a while since we read your site, so we need to take a fresh look before moving it.'
 									) }
-								</StatusNotice>
+								</Notice>
 							) }
 							{ hasError && (
-								<StatusNotice status="error">
-									{ __( 'We couldn’t start the move. Please try again.' ) }
-								</StatusNotice>
-							) }
-							{ isExpired ? (
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									onClick={ () => navigation.submit?.( { action: 'restart' } ) }
+								<Notice
+									variant="error"
+									actions={
+										errorCode === 'static_site_import_atomic_unavailable' && (
+											<Button variant="secondary" href={ `/plans/${ siteSlug }` }>
+												{ __( 'Upgrade plan' ) }
+											</Button>
+										)
+									}
 								>
-									{ __( 'Read my site again' ) }
-								</Button>
-							) : (
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									isBusy={ isPending }
-									disabled={ ! canApprove || isPending }
-									onClick={ onMove }
-								>
-									{ __( 'Move my site' ) }
-								</Button>
+									{ errorMessage }
+								</Notice>
 							) }
-						</Panel>
-					</div>
+							<div>
+								{ needsRestart ? (
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										onClick={ () => navigation.submit?.( { action: 'restart' } ) }
+									>
+										{ __( 'Read my site again' ) }
+									</Button>
+								) : (
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										isBusy={ isPending }
+										disabled={ ! canApprove || isPending }
+										onClick={ onMove }
+									>
+										{ __( 'Move my site' ) }
+									</Button>
+								) }
+							</div>
+						</ImportCard>
+					</VStack>
 				</Step.CenteredColumnLayout>
 			</>
 		);

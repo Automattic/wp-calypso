@@ -101,4 +101,48 @@ describe( 'StaticSiteImportReady', () => {
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'restart' } );
 	} );
+
+	it( 'explains when the plan cannot host the imported site', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'preview_ready', { archive_hash: 'hash-1' } ) );
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.query( true )
+			.reply( 403, {
+				code: 'static_site_import_atomic_unavailable',
+				message: 'This site cannot become an Atomic site.',
+			} );
+
+		const submit = render();
+
+		const button = screen.getByRole( 'button', { name: 'Move my site' } );
+		await waitFor( () => expect( button ).toBeEnabled() );
+		await userEvent.click( button );
+
+		expect( await screen.findByText( /Your plan can’t host an imported site/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Upgrade plan' } ) ).toHaveAttribute(
+			'href',
+			'/plans/busybears.wordpress.com'
+		);
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows the outcome of a delivery that already failed', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply(
+				200,
+				session( 'failed', {
+					site_url: 'https://busybears.wordpress.com/',
+					receipt: { success: false, code: 'static_site_import_atomic_delivery_failed' },
+				} )
+			);
+
+		const submit = render();
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'approved' } ) );
+	} );
 } );

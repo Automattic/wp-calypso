@@ -1,21 +1,22 @@
 import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/dashboard/components/notice';
 import {
-	Panel,
-	StatusNotice,
+	ImportCard,
 	useStaticSiteImportSource,
 	useStaticSiteImportTicket,
 } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
-
-import '../components/static-site-import/style.scss';
-import './style.scss';
 
 const StaticSiteImportFailed: StepType = function StaticSiteImportFailed( { navigation } ) {
 	const { __ } = useI18n();
@@ -37,7 +38,7 @@ const StaticSiteImportFailed: StepType = function StaticSiteImportFailed( { navi
 			);
 			navigation.submit?.();
 		} catch {
-			// The error notice below covers it.
+			// Shown by the error notice.
 		}
 	};
 
@@ -45,7 +46,6 @@ const StaticSiteImportFailed: StepType = function StaticSiteImportFailed( { navi
 		<>
 			<DocumentHead title={ __( 'We couldn’t finish your move' ) } />
 			<Step.CenteredColumnLayout
-				className="step-container-v2--static-site-import-failed"
 				columnWidth={ 8 }
 				topBar={ <Step.TopBar /> }
 				heading={
@@ -57,39 +57,43 @@ const StaticSiteImportFailed: StepType = function StaticSiteImportFailed( { navi
 										/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
 										__( 'Your %s site is untouched and still live.' ),
 										platformName
-								  )
+									)
 								: __( 'Your current site is untouched and still live.' )
 						}
 					/>
 				}
 			>
-				<Panel title={ __( 'Move failed' ) }>
-					<StatusNotice status="error">
+				<ImportCard title={ __( 'Move failed' ) }>
+					<Notice variant="error">
 						{ __(
 							'Something went wrong while rebuilding your site. We’ve logged the details so the team can fix it.'
 						) }
-					</StatusNotice>
-					<h3 className="static-site-import-failed__subtitle">{ __( 'What happens now' ) }</h3>
-					<p>
+					</Notice>
+					<Heading level={ 3 } size={ 16 } weight={ 600 }>
+						{ __( 'What happens now' ) }
+					</Heading>
+					<Text>
 						{ __(
 							'Our migrations team has the details and will email you about what got in the way. Your plan stays active. If you’d rather not wait, you can talk to someone now.'
 						) }
-					</p>
+					</Text>
 					{ isError && (
-						<StatusNotice status="error">
+						<Notice variant="error">
 							{ __( 'We couldn’t reach the team just now. Please try again.' ) }
-						</StatusNotice>
+						</Notice>
 					) }
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isBusy={ isPending }
-						disabled={ isPending }
-						onClick={ onTalkToExpert }
-					>
-						{ __( 'Talk to a migration expert' ) }
-					</Button>
-				</Panel>
+					<div>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isPending }
+							disabled={ isPending }
+							onClick={ onTalkToExpert }
+						>
+							{ __( 'Talk to a migration expert' ) }
+						</Button>
+					</div>
+				</ImportCard>
 			</Step.CenteredColumnLayout>
 		</>
 	);

@@ -3,10 +3,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
-
-		> * + * {
-			margin-block-start: 0;
-		}
 	}
 
 	.static-site-import-address__option {

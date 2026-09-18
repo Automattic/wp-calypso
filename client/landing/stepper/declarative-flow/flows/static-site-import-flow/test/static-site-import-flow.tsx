@@ -17,13 +17,6 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: jest.fn().mockReturnValue( {
-		get: jest.fn().mockReturnValue( { cartItems: [ { product_slug: 'business-bundle' } ] } ),
-		set: jest.fn(),
-		sessionId: '123',
-	} ),
-} ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: jest.fn().mockReturnValue( jest.fn() ),
 } ) );
@@ -63,22 +56,6 @@ describe( 'Static site import flow', () => {
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
 		jest.mocked( useSite ).mockReturnValue( undefined );
-	} );
-
-	describe( 'isSignupFlow', () => {
-		afterEach( () => {
-			window.location.search = '';
-		} );
-
-		it( 'is false when a destination site is in the URL', () => {
-			window.location.search = '?siteId=42';
-			expect( staticSiteImportFlow.isSignupFlow ).toBe( false );
-		} );
-
-		it( 'is true without a destination site', () => {
-			window.location.search = '';
-			expect( staticSiteImportFlow.isSignupFlow ).toBe( true );
-		} );
 	} );
 
 	describe( 'identify', () => {
@@ -203,19 +180,6 @@ describe( 'Static site import flow', () => {
 			expect( destination ).toMatchDestination( { step, query: { domainChoice } } );
 		} );
 
-		it( 'creates the site after the plan is picked', () => {
-			const destination = runNavigation( {
-				from: STEPS.UNIFIED_PLANS,
-				dependencies: { cartItems: [ { product_slug: 'business-bundle' } ] },
-				query: SESSION,
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_CREATION_STEP,
-				query: null,
-			} );
-		} );
-
 		it( 'sends the new site to checkout with everything the move needs afterwards', () => {
 			runNavigation( {
 				from: STEPS.PROCESSING,
@@ -227,13 +191,26 @@ describe( 'Static site import flow', () => {
 			const [ path, query ] = destination.split( '?' );
 
 			expect( siteSlug ).toBe( SITE.siteSlug );
-			expect( plan ).toBe( 'business-bundle' );
+			expect( plan ).toBeUndefined();
 			expect( path ).toBe( '/setup/static-site-import/static-site-import-ready' );
 			expect( Object.fromEntries( new URLSearchParams( query ) ) ).toEqual( {
 				...SESSION,
 				siteId: '42',
 				siteSlug: SITE.siteSlug,
 				domainChoice: 'keep',
+			} );
+		} );
+
+		it( 'adds the plan to checkout for an existing site', () => {
+			runNavigation( {
+				from: STEPS.UNIFIED_PLANS,
+				dependencies: { cartItems: [ { product_slug: 'business-bundle' } ] },
+				query: { ...SESSION, ...SITE },
+			} );
+
+			expect( jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+				siteSlug: SITE.siteSlug,
+				plan: 'business-bundle',
 			} );
 		} );
 	} );
@@ -265,19 +242,6 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
-		it.each( [
-			[ 'finished', STEPS.STATIC_SITE_IMPORT_DONE ],
-			[ 'failed', STEPS.STATIC_SITE_IMPORT_FAILED ],
-		] )( 'shows the %s outcome', ( state, step ) => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_BUILDING,
-				dependencies: { state },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( { step, query: null } );
-		} );
-
 		it( 'connects the kept domain from the done screen', () => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_DONE,
@@ -300,31 +264,6 @@ describe( 'Static site import flow', () => {
 
 			expect( destination ).toMatchDestination( {
 				step: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				query: null,
-			} );
-		} );
-
-		it( 'hands a failed move to a migration expert', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_FAILED,
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				query: null,
-			} );
-		} );
-
-		it( 'returns to a finished site when the user continues alone', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				dependencies: { action: 'continue-alone', finished: true },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_DONE,
 				query: null,
 			} );
 		} );

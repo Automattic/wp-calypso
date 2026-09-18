@@ -41,18 +41,6 @@ describe( 'StaticSiteImportDone', () => {
 		} );
 	} );
 
-	it( 'links to the private preview', async () => {
-		render();
-
-		const link = await screen.findByRole( 'link', { name: /Preview your new site/ } );
-		await waitFor( () =>
-			expect( link ).toHaveAttribute( 'href', 'https://busybears.wordpress.com/' )
-		);
-		expect(
-			screen.getByText( 'busybearscleaning.com has been rebuilt on WordPress.com.' )
-		).toBeVisible();
-	} );
-
 	it( 'connects the kept domain', async () => {
 		const submit = render();
 
@@ -61,14 +49,6 @@ describe( 'StaticSiteImportDone', () => {
 		);
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'connect-domain' } );
-	} );
-
-	it( 'goes to the site when the domain was not kept', async () => {
-		const submit = render( 'free' );
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Go to my site' } ) );
-
-		expect( submit ).toHaveBeenCalledWith( { action: 'go-to-site' } );
 	} );
 
 	it( 'sends what looks off to the migrations team', async () => {

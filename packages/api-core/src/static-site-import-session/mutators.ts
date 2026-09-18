@@ -1,10 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { ApproveStaticSiteImportSessionParams, StaticSiteImportSession } from './types';
 
-/**
- * Starts a session for a public HTTPS URL. Starting the same URL again while its
- * session is live returns that session instead of a new one.
- */
 export async function createStaticSiteImportSession(
 	sourceUrl: string
 ): Promise< StaticSiteImportSession > {
