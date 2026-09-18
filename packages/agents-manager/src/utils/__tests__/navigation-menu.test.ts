@@ -16,6 +16,7 @@ import { dispatch, resolveSelect, select } from '@wordpress/data';
 import {
 	addNavigationItem,
 	getMenuIdsToRelabel,
+	prefetchMenus,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../navigation-menu';
@@ -305,6 +306,22 @@ describe( 'getMenuIdsToRelabel', () => {
 		withMenus( { 10: [ link( 7, 'About' ) ], 20: [ link( 7, 'Learn more' ) ] } );
 
 		await expect( getMenuIdsToRelabel( 7, [ 'About' ] ) ).resolves.toEqual( [ 10 ] );
+	} );
+} );
+
+describe( 'prefetchMenus', () => {
+	// The same request as the later read, so the two share one resolution.
+	it( 'requests the menu list as the reads do, and swallows a failure', async () => {
+		const getEntityRecords = jest.fn().mockRejectedValue( new Error( 'offline' ) );
+		( resolveSelect as jest.Mock ).mockReturnValue( { getEntityRecords } );
+
+		expect( () => prefetchMenus() ).not.toThrow();
+		await Promise.resolve();
+
+		expect( getEntityRecords ).toHaveBeenCalledWith( 'postType', 'wp_navigation', {
+			per_page: -1,
+			status: [ 'publish', 'draft' ],
+		} );
 	} );
 } );
 

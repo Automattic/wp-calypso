@@ -18,6 +18,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 	getMenuIdsToRelabel: jest.fn( async () => [ 10 ] ),
 	// The checkpoint recorder snapshots and discards menus through these.
 	isSameMenuId: ( a: unknown, b: unknown ) => String( a ) === String( b ),
+	prefetchMenus: jest.fn(),
 	readMenuItems: jest.fn( async () => [] ),
 	removeNavigationItem: jest.fn( async () => [] ),
 	renameNavigationItem: jest.fn(),
@@ -67,6 +68,7 @@ import { isEditorPage } from '../../../utils/is-editor-page';
 import {
 	addNavigationItem,
 	getMenuIdsToRelabel,
+	prefetchMenus,
 	readMenuItems,
 	removeNavigationItem,
 	renameNavigationItem,
@@ -326,7 +328,8 @@ describe( 'editEntityRecordCallback', () => {
 	} );
 
 	// The url travels with the removal: an item carrying no page id is matched
-	// by it.
+	// by it. The menu list loads alongside the delete, but the item goes only
+	// after it: the menu write persists, and the delete can still fail.
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
@@ -336,6 +339,12 @@ describe( 'editEntityRecordCallback', () => {
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
 			throwOnError: true,
 		} );
+		expect( ( prefetchMenus as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			deleteEntityRecord.mock.invocationCallOrder[ 0 ]
+		);
+		expect( deleteEntityRecord.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			( removeNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
+		);
 	} );
 
 	// A menu edit then snapshots the menu as the deletion left it, so undoing

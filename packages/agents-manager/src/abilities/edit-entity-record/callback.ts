@@ -11,6 +11,7 @@ import {
 	addNavigationItem,
 	getMenuIdsToRelabel,
 	MENU_FIELDS,
+	prefetchMenus,
 	removeNavigationItem,
 	renameNavigationItem,
 	type MenuId,
@@ -538,7 +539,7 @@ async function applyRecordEdit(
 		throw new Error(
 			entityName === NAVIGATION
 				? `Navigation menu not found: ${ recordId }. recordId must be the navigation ` +
-				  "block's numeric `ref` attribute, not its clientId. Nothing was changed."
+						"block's numeric `ref` attribute, not its clientId. Nothing was changed."
 				: `Cannot edit ${ entityName } ${ recordId }: it could not be read and may have been deleted.`
 		);
 	}
@@ -664,7 +665,7 @@ async function applyEdits(
 const deleteProblem = ( { entityName, recordId }: Entity< 'delete' > ): string | undefined =>
 	isOpenInEditor( entityName, recordId ) && ! getEditorHistory()
 		? `Cannot delete ${ entityName } ${ recordId }: it is open in this editor, which cannot ` +
-		  'leave it first. Ask the user to open a different page, then call again.'
+			'leave it first. Ask the user to open a different page, then call again.'
 		: undefined;
 
 /**
@@ -720,6 +721,12 @@ async function applyDeletes(
 		// Read before the delete: a menu item carrying no page id is matched by
 		// its url, and the page is the only place it comes from.
 		const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
+
+		// The menu list is needed only after the delete, but nothing about it
+		// depends on the delete, so it loads alongside.
+		if ( entityName === PAGE ) {
+			prefetchMenus();
+		}
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, undefined, {
 			...options,
@@ -862,7 +869,7 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 		? `${ summary } ${ __(
 				'Your menu has unsaved changes, so the menu item is waiting with them — save when you are ready.',
 				__i18n_text_domain__
-		  ) }`
+			) }`
 		: summary;
 
 	return successResult( message, applied );
