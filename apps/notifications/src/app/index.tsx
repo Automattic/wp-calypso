@@ -151,8 +151,6 @@ const NotificationApp = ( {
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
-	// Builds a URL to a Calypso path. Hosts served from another origin (the
-	// Dashboard) pass their own; the rest fall back to this origin.
 	wpcomUrl?: ( path: string ) => string;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
