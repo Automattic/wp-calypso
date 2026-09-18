@@ -28,7 +28,7 @@ export const pollStaticSiteImportSessionUntil =
 
 export const createStaticSiteImportSessionMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'static-site-import-session-create' },
+		meta: { statId: 'static-site-import-create' },
 		mutationFn: ( sourceUrl: string ) => createStaticSiteImportSession( sourceUrl ),
 		onSuccess: ( session ) => {
 			queryClient.setQueryData(
@@ -40,7 +40,7 @@ export const createStaticSiteImportSessionMutation = () =>
 
 export const approveStaticSiteImportSessionMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'static-site-import-session-approve' },
+		meta: { statId: 'static-site-import-approve' },
 		mutationFn: ( params: ApproveStaticSiteImportSessionParams ) =>
 			approveStaticSiteImportSession( params ),
 		onSuccess: ( session ) => {
