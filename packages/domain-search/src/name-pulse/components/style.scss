@@ -67,14 +67,24 @@
 	}
 
 	&__domain {
-		display: block;
+		display: flex;
 		min-width: 0;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
+
+		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
+		// never loses space to the label and is never cut off.
+		> :first-child {
+			min-width: 0;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		> :last-child {
+			flex-shrink: 0;
+		}
 
 		// The Text component sets `text-wrap: pretty` on itself, which lets it
-		// wrap independently of this container's `white-space: nowrap`.
+		// wrap independently of the `white-space: nowrap` above.
 		.components-text {
 			text-wrap: nowrap;
 		}
