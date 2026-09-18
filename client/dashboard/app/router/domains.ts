@@ -7,7 +7,7 @@ import {
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
 	sslDetailsQuery,
-	mailboxesQuery,
+	mailboxAccountsQuery,
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
@@ -187,7 +187,7 @@ export const domainOverviewRoute = createRoute( {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
-		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
 
 		// The purchase can be forbidden as the domain owner may not be the current user.
 		if ( domain.subscription_id ) {
