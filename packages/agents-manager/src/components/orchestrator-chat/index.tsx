@@ -34,6 +34,7 @@ import useCheckpointAction, {
 } from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { useCredits } from '../../hooks/use-credits';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
@@ -724,6 +725,9 @@ export default function OrchestratorChat( {
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+
+	// Reader chat is a public blog frontend with no site credits to meter.
+	const credits = useCredits( { enabled: ! isReaderChat } );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
@@ -1829,6 +1833,9 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
+			notice={ credits.notice }
+			trailingActions={ credits.trailingActions }
+			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
