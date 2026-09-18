@@ -292,7 +292,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
