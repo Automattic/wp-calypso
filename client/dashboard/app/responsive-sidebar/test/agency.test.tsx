@@ -18,6 +18,7 @@ const agencySupports: AgencySupports = {
 	learn: true,
 	mcp: true,
 	amplify: true,
+	devTools: true,
 	sites: true,
 	plugins: true,
 	team: true,
@@ -178,5 +179,17 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_amplify' ], false );
 
 		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Developer tools when the user holds the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_learn' ] );
+
+		expect( screen.getByRole( 'link', { name: 'Developer tools' } ) ).toBeVisible();
+	} );
+
+	test( 'hides Developer tools when the user lacks the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: 'Developer tools' } ) ).not.toBeInTheDocument();
 	} );
 } );

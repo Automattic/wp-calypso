@@ -487,6 +487,26 @@ export const learnRoute = createRoute( {
 	)
 );
 
+// `/resources/dev-tools` – developer tools that help agencies build, test, and demo
+export const devToolsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Developer tools' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'resources/dev-tools',
+} ).lazy( () =>
+	import( '../../agency/resources/dev-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-dev-tools' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // Prefetch MCP settings for the screens that read them. The connect screen is
 // static, so it intentionally doesn't depend on this request.
 const ensureMcpSettings = async () => {
@@ -1894,6 +1914,7 @@ export const createAgencyRoutes = () => [
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
+		devToolsRoute,
 		mcpRoute.addChildren( [
 			mcpOverviewRoute,
 			mcpReadToolsRoute,
