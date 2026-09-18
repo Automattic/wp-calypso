@@ -30,6 +30,7 @@ boot( {
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,
+			amplify: true,
 			sites: true,
 			plugins: true,
 			team: true,

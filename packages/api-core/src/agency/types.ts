@@ -150,6 +150,9 @@ export interface Agency {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];
 	};
+	amplify?: {
+		allowed: boolean;
+	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {

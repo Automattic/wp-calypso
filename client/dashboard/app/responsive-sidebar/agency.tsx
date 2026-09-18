@@ -1,8 +1,19 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { home, globe, layout, pages, plugins, tag, currencyDollar, people } from '@wordpress/icons';
+import {
+	home,
+	globe,
+	layout,
+	megaphone,
+	pages,
+	plugins,
+	tag,
+	currencyDollar,
+	people,
+} from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
+import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
@@ -47,6 +58,9 @@ export default function AgencySidebar() {
 	);
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessMcp = !! supports.agency.mcp && canAccess( mcpRoute );
+	const canAccessAmplify =
+		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
+		hasAnyCapability( capabilities, 'a4a_read_amplify' );
 	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
 
 	return (
@@ -122,6 +136,11 @@ export default function AgencySidebar() {
 						</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
+			) }
+			{ canAccessAmplify && (
+				<SidebarMenuItem icon={ megaphone } href={ a4aLink( '/amplify' ) }>
+					{ __( 'Amplify' ) }
+				</SidebarMenuItem>
 			) }
 		</>
 	);
