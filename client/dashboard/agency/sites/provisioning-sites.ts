@@ -9,8 +9,13 @@ const PROVISIONING_TTL_MS = 5 * 60 * 1000;
 
 type ProvisioningSite = {
 	id: number;
-	expiresAt: number;
+	// Absent once the site has reported ready. See `holdProvisioningSite`.
+	expiresAt?: number;
 };
+
+function isLive( { expiresAt }: ProvisioningSite ): boolean {
+	return expiresAt === undefined || expiresAt > Date.now();
+}
 
 function canUseLocalStorage(): boolean {
 	return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
@@ -78,9 +83,26 @@ export function untrackProvisioningSite( siteId: number ): void {
 	write( parse( read() ).filter( ( { id } ) => id !== siteId ) );
 }
 
+/**
+ * Stops the clock on a site that has reported ready. The TTL is there to drop
+ * notices that never got an answer; this one is the answer the agency was
+ * waiting for, so it stays until dismissed rather than vanishing mid-read.
+ */
+export function holdProvisioningSite( siteId: number ): void {
+	const sites = parse( read() );
+
+	// Nothing to hold means nothing to write, which is what keeps a caller that
+	// runs this on every render from notifying itself in a loop.
+	if ( ! sites.some( ( { id, expiresAt } ) => id === siteId && expiresAt !== undefined ) ) {
+		return;
+	}
+
+	write( sites.map( ( site ) => ( site.id === siteId ? { id: site.id } : site ) ) );
+}
+
 function toLiveIds( stored: string ): number[] {
 	return parse( stored )
-		.filter( ( { expiresAt } ) => expiresAt > Date.now() )
+		.filter( isLive )
 		.map( ( { id } ) => id );
 }
 
@@ -90,7 +112,7 @@ function toLiveIds( stored: string ): number[] {
  */
 function pruneExpired(): void {
 	const sites = parse( read() );
-	const live = sites.filter( ( { expiresAt } ) => expiresAt > Date.now() );
+	const live = sites.filter( isLive );
 
 	if ( live.length !== sites.length ) {
 		write( live );
@@ -108,13 +130,15 @@ export function useProvisioningSiteIds(): number[] {
 	// otherwise notice the TTL passing while the page stays open: a site that
 	// never reports ready would hold its notice, and its poll, for good.
 	useEffect( () => {
-		const sites = parse( stored );
-		if ( ! sites.length ) {
+		const expiries = parse( stored )
+			.map( ( { expiresAt } ) => expiresAt )
+			.filter( ( expiresAt ): expiresAt is number => expiresAt !== undefined );
+
+		if ( ! expiries.length ) {
 			return;
 		}
 
-		const nextExpiry = Math.min( ...sites.map( ( { expiresAt } ) => expiresAt ) );
-		const timer = setTimeout( pruneExpired, Math.max( nextExpiry - Date.now(), 0 ) );
+		const timer = setTimeout( pruneExpired, Math.max( Math.min( ...expiries ) - Date.now(), 0 ) );
 
 		return () => clearTimeout( timer );
 	}, [ stored ] );

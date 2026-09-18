@@ -3,10 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useMemo } from 'react';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { wpcomLink } from '../../utils/link';
-import { untrackProvisioningSite, useProvisioningSiteIds } from './provisioning-sites';
+import {
+	holdProvisioningSite,
+	untrackProvisioningSite,
+	useProvisioningSiteIds,
+} from './provisioning-sites';
 import type { MigrationCommissionSite } from '@automattic/api-core';
 
 const POLL_INTERVAL_MS = 5000;
@@ -52,15 +57,26 @@ export default function ProvisioningSiteNotices() {
 		},
 	} );
 
+	const readySites = useMemo(
+		() =>
+			new Map(
+				toSiteList( sites )
+					.filter( isReady )
+					.map( ( site ) => [ site.id, site ] as const )
+			),
+		[ sites ]
+	);
+
+	// A site that has reported ready keeps its notice until it is dismissed. The
+	// TTL is there to drop the ones that never got an answer, and it would
+	// otherwise pull this result out from under whoever is reading it.
+	useEffect( () => {
+		provisioningSiteIds.filter( ( id ) => readySites.has( id ) ).forEach( holdProvisioningSite );
+	}, [ provisioningSiteIds, readySites ] );
+
 	if ( ! provisioningSiteIds.length ) {
 		return null;
 	}
-
-	const readySites = new Map(
-		toSiteList( sites )
-			.filter( isReady )
-			.map( ( site ) => [ site.id, site ] )
-	);
 
 	return (
 		<>
