@@ -11,7 +11,7 @@ import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/inter
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import entrepreneurFlow from '../entrepreneur-flow';
 
-const SITE_ID = 257420496;
+const SITE_ID = 123;
 const SITE_SLUG = 'ecom-example.wordpress.com';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
@@ -24,7 +24,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 } ) );
 
 jest.mock( 'calypso/data/segmentaton-survey', () => ( {
-	anonIdCache: { get: jest.fn(), set: jest.fn() },
+	anonIdCache: { store: jest.fn(), get: jest.fn(), clear: jest.fn(), pop: jest.fn() },
 	useCachedAnswers: () => ( { clearAnswers: jest.fn() } ),
 } ) );
 
