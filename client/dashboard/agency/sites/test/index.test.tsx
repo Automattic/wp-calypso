@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { agencyPendingSitesQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -121,6 +123,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'marks a development site in the list', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		const devRow = await screen.findByRole( 'row', { name: /Second/ } );
@@ -131,6 +135,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'opens the development site configuration from the menu', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -170,6 +176,26 @@ describe( '<AgencySites>', () => {
 			'href',
 			'/marketplace/purchases?status=unassigned&search=WordPress.com'
 		);
+	} );
+
+	// The header counts on every /sites load, so it must not take the route down
+	// when the endpoint answers with something other than the expected list.
+	test( 'survives a response that is not a list of pending sites', async () => {
+		mockEndpoints( { error: 'unauthorized' } as unknown as unknown[] );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		render( <AgencySites />, { queryClient } );
+
+		// Assert against the cache rather than the screen: the header renders
+		// before the payload lands, so waiting on it would pass either way.
+		await waitFor( () =>
+			expect( queryClient.getQueryData( agencyPendingSitesQuery( AGENCY_ID ).queryKey ) ).toEqual( {
+				error: 'unauthorized',
+			} )
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.queryByText( /ready to set up/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'says nothing when every license already has its site', async () => {

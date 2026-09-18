@@ -6,5 +6,5 @@ import type { AgencyPendingSite } from '@automattic/api-core';
  * started, so there is nothing left to set up.
  */
 export function hasWpcomLicenseWithoutSite( { features }: AgencyPendingSite ): boolean {
-	return features.wpcom_atomic?.state === 'pending' && !! features.wpcom_atomic?.license_key;
+	return features?.wpcom_atomic?.state === 'pending' && !! features?.wpcom_atomic?.license_key;
 }
