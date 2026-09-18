@@ -243,6 +243,13 @@ export interface AgencyResourcesResponse {
 	total: number;
 }
 
+/**
+ * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
+ */
+export interface AgencyProgramStats {
+	active_agencies: number;
+}
+
 export interface TipaltiIFrameUrl {
 	iframe_url: string;
 }
