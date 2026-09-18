@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import StaticSiteImportBuilding from '..';
@@ -14,7 +15,12 @@ const render = () => {
 		<StaticSiteImportBuilding
 			{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-building' } ) }
 		/>,
-		{ initialEntry: '/static-site-import-building?importSessionId=abc123&siteId=42' }
+		{
+			initialEntry: '/static-site-import-building?importSessionId=abc123&siteId=42',
+			queryClient: new QueryClient( {
+				defaultOptions: { queries: { retry: 3, retryDelay: 0 } },
+			} ),
+		}
 	);
 	return submit;
 };
@@ -35,7 +41,19 @@ describe( 'StaticSiteImportBuilding', () => {
 
 		const submit = render();
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 10000 } );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		expect( submit ).not.toHaveBeenCalled();
-	}, 15000 );
+	} );
+
+	it( 'fails the move when the session no longer exists', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.times( 4 )
+			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Gone' } );
+
+		const submit = render();
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { state: 'failed' } ) );
+	} );
 } );
