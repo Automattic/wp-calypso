@@ -118,27 +118,29 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				messagesPosition="bottom"
 				expandOnClick={ false }
 				notice={
-					demoCredits.notice ?? {
-						message: 'Upgrade now to launch.',
-						action: {
-							label: 'Subscribe',
-							onClick: () => {
-								console.log( 'Subscribe' );
-							},
-						},
-					}
+					demoCredits.plan !== 'none'
+						? demoCredits.notice
+						: {
+								message: 'Upgrade now to launch.',
+								action: {
+									label: 'Subscribe',
+									onClick: () => {
+										console.log( 'Subscribe' );
+									},
+								},
+						  }
 				}
 				beforeSubmit={ demoCredits.beforeSubmit }
 				trailingActions={
 					demoCredits.plan !== 'none' && (
-						<button
-							type="button"
+						<span
+							role="img"
 							className="demo-credits-ring"
 							aria-label={ demoCredits.label }
 							title={ demoCredits.label }
 						>
 							<ProgressRing percent={ demoCredits.percent } tone={ demoCredits.tone } />
-						</button>
+						</span>
 					)
 				}
 				emptyView={ <EmptyView suggestions={ suggestions } /> }

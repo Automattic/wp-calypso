@@ -229,14 +229,14 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 										imageUploaderRef={ uploaderRef }
 										trailingActions={
 											demoCredits.plan !== 'none' && (
-												<button
-													type="button"
+												<span
+													role="img"
 													className="demo-credits-ring"
 													aria-label={ demoCredits.label }
 													title={ demoCredits.label }
 												>
 													<ProgressRing percent={ demoCredits.percent } tone={ demoCredits.tone } />
-												</button>
+												</span>
 											)
 										}
 									/>

@@ -7,13 +7,15 @@ const LOW_THRESHOLD = 20;
 // Each sent message spends this much, so the ring visibly ticks down.
 const COST_PER_MESSAGE = 5;
 
+const clampPercent = ( value: number ) => Math.min( 100, Math.max( 0, value ) );
+
 function readInitialState(): { plan: DemoCreditsPlan; percent: number } {
 	const params = new URLSearchParams( window.location.search );
 	const plan = params.get( 'plan' );
 	const percent = Number( params.get( 'credits' ) );
 	return {
 		plan: plan === 'free' || plan === 'paid' ? plan : 'none',
-		percent: Number.isFinite( percent ) && params.has( 'credits' ) ? percent : 55,
+		percent: Number.isFinite( percent ) && params.has( 'credits' ) ? clampPercent( percent ) : 55,
 	};
 }
 
@@ -91,7 +93,7 @@ export function useDemoCredits() {
 	}, [] );
 
 	const changePercent = useCallback( ( next: number ) => {
-		setPercent( Math.min( 100, Math.max( 0, next ) ) );
+		setPercent( clampPercent( next ) );
 		setIsLowNoticeDismissed( false );
 	}, [] );
 
