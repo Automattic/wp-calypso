@@ -44,7 +44,7 @@ export const TIER_OVERVIEW_CONTENT: Record< AgencyTierType, TierOverviewContent 
 	},
 	'pro-agency-partner': {
 		description: __(
-			'Free agency hosting, a dedicated Partner Manager, priority support, and co-marketing.'
+			'Qualified leads, a dedicated Partner Manager, priority support, and co-marketing.'
 		),
 		hasPartnerManager: true,
 	},
