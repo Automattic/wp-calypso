@@ -49,6 +49,18 @@ const selfHostedSite = {
 
 const unhydratedSite = { ID: 4, name: 'Not loaded yet' };
 
+const lateAtomicSite = {
+	ID: 5,
+	URL: 'https://atomic-later.blog',
+	jetpack: true,
+	is_wpcom_atomic: true,
+	options: {
+		admin_url: 'https://atomic-later.blog/wp-admin/',
+		is_automated_transfer: true,
+		is_wpcom_atomic: true,
+	},
+};
+
 const renderCard = ( { site, siteId = site?.ID, canPublish = true, viewContext = 'home' } = {} ) =>
 	renderWithProvider(
 		<PromptsNavigation
@@ -138,6 +150,24 @@ describe( 'PromptsNavigation "Post Answer" destination', () => {
 
 		expect( navigate ).toHaveBeenCalledWith(
 			'https://simple.wordpress.com/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_home'
+		);
+	} );
+
+	it( 'reaches Write on an Atomic site that loads after the card first rendered', () => {
+		// `isWpcomSite` is memoized per site ID, and an Atomic site reads as
+		// not-simple both before and after it lands in state. Without the site's
+		// Atomic flag among the cache dependants, the pre-hydration `false` is
+		// never invalidated and the card keeps pointing at the block editor.
+		const firstPaint = renderCard( { site: null, siteId: lateAtomicSite.ID } );
+
+		expect( postAnswerLink() ).toHaveAttribute( 'href', '/post?answer_prompt=1' );
+		firstPaint.unmount();
+
+		renderCard( { site: lateAtomicSite } );
+
+		expect( postAnswerLink() ).toHaveAttribute(
+			'href',
+			'https://atomic-later.blog/wp-admin/admin.php?page=write&answer_prompt=1&source=writing_prompt_home'
 		);
 	} );
 } );

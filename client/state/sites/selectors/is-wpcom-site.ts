@@ -14,5 +14,8 @@ export default createSelector(
 		const site = getSite( state, siteId );
 		return !! site && ( ( isSimpleSite( state, siteId ) || site?.is_wpcom_atomic ) ?? false );
 	},
-	( state: AppState, siteId = getSelectedSiteId( state ) ) => [ isSimpleSite( state, siteId ) ]
+	( state: AppState, siteId = getSelectedSiteId( state ) ) => [
+		isSimpleSite( state, siteId ),
+		getSite( state, siteId )?.is_wpcom_atomic,
+	]
 );
