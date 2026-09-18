@@ -62,7 +62,6 @@
 	.wpnc-pending-approval-badge__link {
 		margin-inline-start: auto;
 		color: var(--color-warning-80, #614200);
-		text-decoration: none;
 		font-weight: 500;
 		// Keep the link visibly lighter than the label while still meeting the
 		// WCAG AA 4.5:1 contrast minimum in both light and dark modes.
@@ -74,7 +73,6 @@
 		}
 
 		&:hover {
-			text-decoration: underline;
 			opacity: 1;
 		}
 	}

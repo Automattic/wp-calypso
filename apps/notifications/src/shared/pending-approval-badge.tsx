@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { Icon, pending } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
@@ -25,14 +26,9 @@ const PendingApprovalBadge = ( {
 			<Icon icon={ pending } size={ 20 } />
 			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending approval' ) }</span>
 			{ showManageLink && commentsUrl && (
-				<a
-					className="wpnc-pending-approval-badge__link"
-					href={ commentsUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<ExternalLink className="wpnc-pending-approval-badge__link" href={ commentsUrl }>
 					{ translate( 'Manage Comments' ) }
-				</a>
+				</ExternalLink>
 			) }
 		</div>
 	);
