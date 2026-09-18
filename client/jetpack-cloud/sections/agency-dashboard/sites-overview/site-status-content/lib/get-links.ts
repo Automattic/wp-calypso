@@ -68,10 +68,7 @@ const getLinks = (
 			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
 			isExternalLink = true;
 			if ( ! isAtomicSite ) {
-				link =
-					status === 'warning'
-						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
-						: `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
+				link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
 				isExternalLink = false;
 			}
 			break;
