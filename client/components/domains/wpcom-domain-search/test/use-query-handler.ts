@@ -85,6 +85,20 @@ describe( 'useQueryHandler', () => {
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
 	} );
 
+	it( 'should keep the current query in state when clearQuery is called', () => {
+		const { result } = renderHook( () => useQueryHandler( {} ) );
+
+		act( () => {
+			result.current.setQuery( 'test-domain' );
+		} );
+
+		act( () => {
+			result.current.clearQuery();
+		} );
+
+		expect( result.current.query ).toBe( 'test-domain' );
+	} );
+
 	it( 'should clear a stored query when clearSessionStorageQuery is called directly', () => {
 		sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
 
@@ -104,5 +118,57 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBeUndefined();
 
 		Storage.prototype.getItem = originalGetItem;
+	} );
+
+	describe( 'with persistQuery disabled', () => {
+		it( 'should not seed the query from sessionStorage', () => {
+			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+			expect( result.current.query ).toBeUndefined();
+		} );
+
+		it( 'should still seed the query from initialQuery', () => {
+			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+			const { result } = renderHook( () =>
+				useQueryHandler( { initialQuery: 'test-domain', persistQuery: false } )
+			);
+			expect( result.current.query ).toBe( 'test-domain' );
+		} );
+
+		it( 'should update the query without writing to sessionStorage when setQuery is called', () => {
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+
+			act( () => {
+				result.current.setQuery( 'new-domain' );
+			} );
+
+			expect( result.current.query ).toBe( 'new-domain' );
+			expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		} );
+
+		it( 'should reset the query when clearQuery is called', () => {
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+
+			act( () => {
+				result.current.setQuery( 'test-domain' );
+			} );
+
+			act( () => {
+				result.current.clearQuery();
+			} );
+
+			expect( result.current.query ).toBeUndefined();
+		} );
+
+		it( 'should remove a stale stored query when clearQuery is called', () => {
+			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+
+			act( () => {
+				result.current.clearQuery();
+			} );
+
+			expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		} );
 	} );
 } );

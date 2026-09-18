@@ -72,6 +72,7 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
@@ -91,6 +92,7 @@ const DomainSearchUI = (
 	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
@@ -288,7 +290,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: ( allowedTldParam?.split( ',' ) ?? [] );
+			: allowedTldParam?.split( ',' ) ?? [];
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -302,9 +304,15 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
-			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {

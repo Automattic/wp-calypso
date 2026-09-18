@@ -10,16 +10,18 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
 } ) );
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	useQueryHandler: () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ),
+	useQueryHandler: jest.fn( () => ( { query: '', setQuery: jest.fn(), clearQuery: jest.fn() } ) ),
 } ) );
 
 import config from '@automattic/calypso-config';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
+const mockUseQueryHandler = useQueryHandler as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -37,6 +39,7 @@ const baseProps = {
 
 function renderStep( props = baseProps, options = {} ) {
 	mockWPCOMDomainSearch.mockClear();
+	mockUseQueryHandler.mockClear();
 	renderWithProvider( <DomainSearchStep { ...props } />, options );
 	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
 }
@@ -171,5 +174,31 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		renderStep();
 
 		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch ).toBe( false );
+	} );
+
+	it( 'does not persist the query for the domain-only flow when the flag is on', () => {
+		renderStep();
+
+		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
+			expect.objectContaining( { persistQuery: false } )
+		);
+	} );
+
+	it( 'keeps persisting the query for other flows', () => {
+		renderStep( { ...baseProps, flowName: 'onboarding' } );
+
+		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
+			expect.objectContaining( { persistQuery: true } )
+		);
+	} );
+
+	it( 'keeps persisting the query when the flag is off', () => {
+		isEnabledSpy.mockImplementation( () => false );
+
+		renderStep();
+
+		expect( mockUseQueryHandler ).toHaveBeenCalledWith(
+			expect.objectContaining( { persistQuery: true } )
+		);
 	} );
 } );
