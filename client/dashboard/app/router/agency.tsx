@@ -311,7 +311,11 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The cart prices Pressable plans by whether the agency owns one.
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>
