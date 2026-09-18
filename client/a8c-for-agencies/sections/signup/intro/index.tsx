@@ -1,11 +1,11 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/jetpack.svg';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/pressable.svg';
+import VipLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/vip.svg';
+import WooLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/woo.svg';
+import WpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
 import A8cForAgenciesLogo from './logos/a8c-for-agencies.svg';
-import JetpackLogo from './logos/jetpack.svg';
-import PressableLogo from './logos/pressable.svg';
-import VipLogo from './logos/vip.svg';
-import WooLogo from './logos/woo.svg';
-import WpcomLogo from './logos/wpcom.svg';
 
 import './style.scss';
 
@@ -26,7 +26,7 @@ export default function SignupIntro( { wpAdminUrl }: { wpAdminUrl?: string } ) {
 			</p>
 			<div className="a4a-signup-intro__logos">
 				<img src={ WpcomLogo } alt={ translate( 'WordPress.com' ) } />
-				<img src={ WooLogo } alt={ translate( 'WooCommerce' ) } />
+				<img width={ 55 } height={ 33 } src={ WooLogo } alt={ translate( 'WooCommerce' ) } />
 				<img src={ JetpackLogo } alt={ translate( 'Jetpack' ) } />
 				<img src={ VipLogo } alt={ translate( 'WordPress VIP' ) } />
 				<img src={ PressableLogo } alt={ translate( 'Pressable' ) } />

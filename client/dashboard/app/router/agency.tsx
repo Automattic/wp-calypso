@@ -3,7 +3,6 @@ import {
 	activeAgencyQuery,
 	agencyProductsQuery,
 	agencyQuery,
-	agencyResourcesQuery,
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
@@ -472,13 +471,16 @@ export const learnRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Learn' ),
+				title: __( 'Library' ),
 			},
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/learn',
-	loader: () => queryClient.ensureQueryData( agencyResourcesQuery() ),
+	validateSearch: ( search ): { resource?: string; designTools?: boolean } => ( {
+		resource: typeof search.resource === 'string' ? search.resource : undefined,
+		designTools: search.designTools === true || search.designTools === 'true' ? true : undefined,
+	} ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
 		createLazyRoute( 'resources-learn' )( {

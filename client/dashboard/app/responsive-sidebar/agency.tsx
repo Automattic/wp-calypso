@@ -112,7 +112,7 @@ export default function AgencySidebar() {
 			{ ( canAccessLearn || canAccessMcp ) && (
 				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
 					{ canAccessLearn && (
-						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/resources/learn">{ __( 'Library' ) }</SidebarMenuItem>
 					) }
 					{ canAccessMcp && (
 						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'AI and MCP' ) }</SidebarMenuItem>
