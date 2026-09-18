@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
+import { sameOriginWpcomUrl } from '../shared/wpcom-url';
 import type { Client } from './types';
 
 export type AppContextData = {
@@ -6,6 +7,7 @@ export type AppContextData = {
 	locale: string;
 	isViewSettingsEnabled: boolean;
 	onPreferenceChange: ( key: string, value: unknown ) => Promise< unknown >;
+	getWpcomUrl: ( path: string ) => string;
 };
 
 const AppContext = createContext< AppContextData >( {
@@ -13,6 +15,7 @@ const AppContext = createContext< AppContextData >( {
 	locale: 'en',
 	isViewSettingsEnabled: false,
 	onPreferenceChange: () => Promise.resolve(),
+	getWpcomUrl: sameOriginWpcomUrl,
 } );
 
 export const AppProvider = ( {
@@ -20,12 +23,14 @@ export const AppProvider = ( {
 	locale,
 	isViewSettingsEnabled = false,
 	onPreferenceChange = () => Promise.resolve(),
+	getWpcomUrl = sameOriginWpcomUrl,
 	children,
 }: {
 	client: Client | null;
 	locale: string;
 	isViewSettingsEnabled?: boolean;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
+	getWpcomUrl?: ( path: string ) => string;
 	children: React.ReactNode;
 } ) => {
 	const value = useMemo(
@@ -34,8 +39,9 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			onPreferenceChange,
+			getWpcomUrl,
 		} ),
-		[ client, locale, isViewSettingsEnabled, onPreferenceChange ]
+		[ client, locale, isViewSettingsEnabled, onPreferenceChange, getWpcomUrl ]
 	);
 
 	return <AppContext.Provider value={ value }>{ children }</AppContext.Provider>;

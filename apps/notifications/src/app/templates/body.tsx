@@ -3,13 +3,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getActions } from '../../panel/helpers/notes';
+import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { p, zipWithSignature } from '../../panel/templates/functions';
 import PendingApprovalBadge from '../../shared/pending-approval-badge';
+import { pendingCommentsPath } from '../../shared/wpcom-url';
+import { useAppContext } from '../context';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
@@ -108,6 +110,10 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	};
 	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
+	const { getWpcomUrl } = useAppContext();
+	const siteId = getReferenceId( note, 'site' );
+	const commentsUrl = siteId ? getWpcomUrl( pendingCommentsPath( siteId ) ) : null;
+
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
 	} );
@@ -147,7 +153,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
-					<PendingApprovalBadge note={ note } />
+					<PendingApprovalBadge commentsUrl={ commentsUrl } />
 				</div>
 			) }
 			<div className="wpnc__body-content">{ body }</div>

@@ -106,7 +106,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 
 	return (
 		<>
-			{ isUnapproved && <PendingApprovalBadge note={ note } showManageLink={ false } /> }
+			{ isUnapproved && <PendingApprovalBadge showManageLink={ false } /> }
 			<div
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
