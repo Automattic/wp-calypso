@@ -37,7 +37,7 @@ export async function streamPageDesignCallback(
 			: __(
 					'The generated page content has been staged in the editor for review.',
 					__i18n_text_domain__
-			  );
+				);
 
 	return {
 		result: { success: true, message: summary },

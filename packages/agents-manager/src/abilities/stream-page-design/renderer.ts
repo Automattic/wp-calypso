@@ -414,7 +414,7 @@ export function usePageDesignRenderer( host: EditorHost ): void {
 							...state.topLevelBlocks.slice( 0, index ),
 							...finalBlocks,
 							...state.topLevelBlocks.slice( index + 1 ),
-					  ];
+						];
 
 			stage( rootClientId, topLevelBlocks );
 			state.topLevelBlocks = topLevelBlocks;

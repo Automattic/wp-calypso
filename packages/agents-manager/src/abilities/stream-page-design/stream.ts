@@ -365,7 +365,7 @@ export function withPageDesignStream( next: OnTaskUpdate | undefined ): OnTaskUp
 							...taskUpdate.status,
 							message: { ...taskUpdate.status.message, parts: rest },
 						},
-				  }
+					}
 				: update;
 
 		await next( stripped );
