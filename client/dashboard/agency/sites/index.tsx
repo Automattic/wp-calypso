@@ -1,6 +1,12 @@
-import { paginatedAgencySitesQuery } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	paginatedAgencySitesQuery,
+	pendingAgencySitesQuery,
+} from '@automattic/api-queries';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { Link } from '@tanstack/react-router';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, _n } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -10,6 +16,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
 import { getAgencyFields, getAgencyActions } from './dataviews';
+import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -52,8 +59,45 @@ function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
 	};
 }
 
+/**
+ * WordPress.com licenses the agency has paid for but not yet turned into sites.
+ */
+function useLicensesReadyToSetUp(): number {
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { data: pendingSites } = useQuery( {
+		...pendingAgencySitesQuery( agency?.id ?? 0 ),
+		enabled: !! agency?.id,
+	} );
+
+	// This counts on every `/sites` load, so a response that is not the expected
+	// list must not take the route down with it.
+	return Array.isArray( pendingSites )
+		? pendingSites.filter( hasWpcomLicenseWithoutSite ).length
+		: 0;
+}
+
+function NeedsSetupDescription( { count }: { count: number } ) {
+	return createInterpolateElement(
+		_n(
+			'<count/> WordPress.com license is ready to set up. <link>Set it up in Purchases</link>',
+			'<count/> WordPress.com licenses are ready to set up. <link>Set them up in Purchases</link>',
+			count
+		),
+		{
+			count: <>{ count }</>,
+			link: (
+				<Link
+					to="/marketplace/purchases"
+					search={ { status: 'unassigned', search: 'WordPress.com' } }
+				/>
+			),
+		}
+	);
+}
+
 export default function AgencySites() {
 	const { recordTracksEvent } = useAnalytics();
+	const licensesReadyToSetUp = useLicensesReadyToSetUp();
 	const currentSearchParams = agencySitesRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
@@ -82,7 +126,16 @@ export default function AgencySites() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Sites' ) } /> }
+			header={
+				<PageHeader
+					title={ __( 'Sites' ) }
+					description={
+						licensesReadyToSetUp > 0 ? (
+							<NeedsSetupDescription count={ licensesReadyToSetUp } />
+						) : undefined
+					}
+				/>
+			}
 			notices={ <ProvisioningSiteNotices /> }
 		>
 			{ ! isLoading && <PerformanceTrackerStop /> }

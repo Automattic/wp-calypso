@@ -12,6 +12,7 @@ import {
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
+	pendingAgencySitesQuery,
 	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -563,7 +564,15 @@ export const agencySitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'sites',
-	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// The header counts the licenses waiting to be set up, so settle it
+			// before the first paint rather than letting the line pop in.
+			agency ? queryClient.ensureQueryData( pendingAgencySitesQuery( agency.id ) ) : undefined,
+		] );
+	},
 } ).lazy( () =>
 	import( '../../agency/sites' ).then( ( d ) =>
 		createLazyRoute( 'agency-sites' )( {
