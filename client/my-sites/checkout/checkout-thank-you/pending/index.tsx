@@ -12,7 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
-import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
+import {
+	CHECKOUT_SUCCESS_FLASH_ID,
+	CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM,
+} from 'calypso/dashboard/app/checkout-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -231,6 +234,9 @@ function useRedirectOnTransactionSuccess( {
 		( receipt?.items.some( ( item ) => item.is_plan ) &&
 			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
 		false;
+	const purchasedPlanSiteId = receipt?.items.find(
+		( item ) => item.is_plan && item.type === 'new purchase'
+	)?.site_id;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -382,7 +388,12 @@ function useRedirectOnTransactionSuccess( {
 		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
 		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
-			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
+			finalUrl = addQueryArgs( finalUrl, {
+				flash: CHECKOUT_SUCCESS_FLASH_ID,
+				...( purchasedPlanSiteId && {
+					[ CHECKOUT_SUCCESS_PLAN_SITE_ID_PARAM ]: purchasedPlanSiteId,
+				} ),
+			} );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
@@ -400,6 +411,7 @@ function useRedirectOnTransactionSuccess( {
 		isReceiptLoaded,
 		isRenewal,
 		isPlanAndDomainPurchase,
+		purchasedPlanSiteId,
 		blogId,
 		orderId,
 		productName,
