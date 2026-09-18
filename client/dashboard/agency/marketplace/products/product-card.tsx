@@ -11,10 +11,8 @@ import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
-import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
-import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
-import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
 import woopaymentsLogo from '../exclusive-offers/images/woopayments.svg';
+import { BRAND_MARKS } from './lib/brand-marks';
 import { getProductBadgeLabels, getProductBrand } from './lib/product-categories';
 import { getProductDescription } from './lib/product-descriptions';
 import { getItemProducts } from './lib/product-groups';
@@ -25,12 +23,6 @@ import ProductPrice from './product-price';
 import type { TermPricing } from '../use-term-pricing';
 import type { ProductListItem } from './lib/product-groups';
 import type { AgencyProduct } from '@automattic/api-core';
-
-const BRAND_MARKS = {
-	jetpack: jetpackLogo,
-	woocommerce: wooLogo,
-	pressable: pressableLogo,
-};
 
 export const getWooPaymentsCardCopy = () => ( {
 	title: __( 'Revenue share available' ),

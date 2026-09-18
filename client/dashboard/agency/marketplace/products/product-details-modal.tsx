@@ -11,9 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall, store } from '@wordpress/icons';
 import { Card, CardBody } from '../../../components/card';
-import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
-import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
-import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
+import { BRAND_MARKS } from './lib/brand-marks';
 import { getProductBrand, isWooCommerceProduct } from './lib/product-categories';
 import { getProductDescription } from './lib/product-descriptions';
 import { getProductBenefits, getProductRecommendedFor } from './lib/product-info';
@@ -26,12 +24,6 @@ import { getWooPaymentsCardCopy } from './product-card';
 import ProductPrice from './product-price';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
-
-const BRAND_MARKS = {
-	jetpack: jetpackLogo,
-	woocommerce: wooLogo,
-	pressable: pressableLogo,
-};
 
 const CLIENT_PLUGIN_HELP_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/the-automattic-for-agencies-client-plugin/';

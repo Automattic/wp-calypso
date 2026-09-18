@@ -30,14 +30,12 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import WooPaymentsIllustration from '../../overview/woopayments-illustration';
-import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
-import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
-import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CategoryTiles, { isCategoryTileValue } from './category-tiles';
+import { BRAND_MARKS } from './lib/brand-marks';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
@@ -68,12 +66,6 @@ import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
 
-const BRAND_MARKS: Record< ProductBrand, string > = {
-	jetpack: jetpackLogo,
-	woocommerce: wooLogo,
-	pressable: pressableLogo,
-};
-
 const DEFAULT_VIEW: View = {
 	type: 'list',
 	fields: [],
@@ -97,7 +89,8 @@ const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
 };
 
 const isPressablePlanLicense = ( licenseKey: string ) =>
-	licenseKey.startsWith( 'pressable-' ) && ! licenseKey.startsWith( 'pressable-addon' );
+	( licenseKey.startsWith( 'pressable-' ) || licenseKey.startsWith( 'jetpack-pressable' ) ) &&
+	! licenseKey.startsWith( 'pressable-addon' );
 
 // TODO: Still missing from the classic Products page:
 // - the agency approval notice (pending / approved / rejected)
