@@ -8,6 +8,9 @@
  * The user belongs in the key because `sessionStorage` survives a logout and
  * login in the same tab: without it, the next account resumes the previous
  * account's conversation.
+ *
+ * Storage is per origin, so a same-tab navigation to another origin carries
+ * the session in the URL instead (see `session-handoff.ts`).
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { generateUUID } from './generate-uuid';
@@ -17,7 +20,7 @@ import { getResolvedAgentId } from './resolved-agent-id';
 const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
 /** Scope placeholders for a chat with no selected site, or no logged-in user. */
-const NO_SITE = 'no-site';
+export const NO_SITE = 'no-site';
 const NO_USER = 'no-user';
 
 let activeSiteKey = NO_SITE;
