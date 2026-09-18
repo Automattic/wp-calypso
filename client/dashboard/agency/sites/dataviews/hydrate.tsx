@@ -18,7 +18,7 @@ export function toAgencyField( field: Field< Site > ): Field< AgencySite > {
 
 	// Only DataViews can build a real NormalizedField. Every column delegated
 	// here reads `getValue` and nothing else off it: reading another member
-	// gives `undefined`, and calling one (e.g. `field.render`) throws.
+	// gives `undefined`, and calling one (e.g. `field.getValueFormatted`) throws.
 	const delegateField = { ...field, getValue } as unknown as NormalizedField< Site >;
 	const SiteFieldRender =
 		field.render ??
@@ -28,7 +28,10 @@ export function toAgencyField( field: Field< Site > ): Field< AgencySite > {
 	// renders `field.render` as a component, so a new field would remount
 	// every cell.
 	function HydratedCell( { item }: { item: AgencySite } ) {
-		const { data: site, isPending } = useQuery( siteByIdQuery( item.blog_id ) );
+		const { data: site, isPending } = useQuery( {
+			...siteByIdQuery( item.blog_id ),
+			staleTime: 5 * 60 * 1000,
+		} );
 		// The wrapper stays mounted across the swap below: page translators
 		// reparent inline nodes and React crashes removing them
 		// (react/react#11538).
