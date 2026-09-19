@@ -49,6 +49,27 @@ describe( '<ContactForm>', () => {
 		nock.cleanAll();
 	} );
 
+	test( 'shows the legal owner notice below the organization field', async () => {
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'textbox', { name: 'Organization (Optional)' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				/the listed organization will be considered the legal domain owner and that this information will be publicly visible/
+			)
+		).toBeVisible();
+	} );
+
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {
 		const user = userEvent.setup();
 
