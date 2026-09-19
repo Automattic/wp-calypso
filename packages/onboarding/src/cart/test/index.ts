@@ -1,7 +1,7 @@
 import { Visibility } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import { createSite, getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW } from '../../utils/flows';
+import { HOSTING_LP_FLOW, NEWSLETTER_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
@@ -167,6 +167,63 @@ describe( 'getNewSiteParams', () => {
 		).toEqual(
 			expect.objectContaining( {
 				blog_name: 'janedoe',
+				find_available_url: true,
+			} )
+		);
+	} );
+
+	test.each( [ ONBOARDING_FLOW, 'onboarding-pm', 'site-migration', 'with-theme', 'with-plugin' ] )(
+		'%s flow sends an empty blog_name instead of the username when site title and URL are missing',
+		( flowToCheck ) => {
+			expect(
+				getNewSiteParams(
+					testParams( {
+						flowToCheck,
+						siteUrl: undefined,
+						siteTitle: '',
+						username: 'janedoe',
+					} )
+				)
+			).toEqual(
+				expect.objectContaining( {
+					blog_name: '',
+					find_available_url: true,
+				} )
+			);
+		}
+	);
+
+	test( 'Flows outside the server-generated list keep falling back to the username', () => {
+		expect(
+			getNewSiteParams(
+				testParams( {
+					flowToCheck: NEWSLETTER_FLOW,
+					siteUrl: undefined,
+					siteTitle: '',
+					username: 'janedoe',
+				} )
+			)
+		).toEqual(
+			expect.objectContaining( {
+				blog_name: 'janedoe',
+				find_available_url: true,
+			} )
+		);
+	} );
+
+	test( 'Onboarding flow still sends the paid domain as blog_name', () => {
+		expect(
+			getNewSiteParams(
+				testParams( {
+					flowToCheck: ONBOARDING_FLOW,
+					siteUrl: 'sandigreene.com',
+					siteTitle: '',
+					username: 'janedoe',
+				} )
+			)
+		).toEqual(
+			expect.objectContaining( {
+				blog_name: 'sandigreene.com',
 				find_available_url: true,
 			} )
 		);
