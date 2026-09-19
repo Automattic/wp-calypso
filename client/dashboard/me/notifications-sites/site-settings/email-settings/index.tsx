@@ -104,6 +104,11 @@ export const EmailSettings = ( { siteId }: { siteId: number } ) => {
 				value: settings?.post_like ?? false,
 			},
 			{
+				id: 'reblog',
+				label: getFieldLabel( 'reblog' ),
+				value: settings?.reblog ?? false,
+			},
+			{
 				id: 'recommended_blog',
 				label: getFieldLabel( 'recommended_blog' ),
 				value: settings?.recommended_blog ?? false,
