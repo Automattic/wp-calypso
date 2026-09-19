@@ -174,11 +174,17 @@ const useFormatPluginData = () => {
 					updates: 0,
 				};
 			}
+			const updateCount = pluginUpdates.length;
 			return {
-				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
-				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
+				value: translate( '%(updates)d Update', '%(updates)d Updates', {
+					count: updateCount,
+					args: {
+						updates: updateCount,
+					},
+				} ) as string,
+				status: updateCount > 0 ? 'warning' : 'success',
 				type: 'plugin',
-				updates: pluginUpdates?.length,
+				updates: updateCount,
 			};
 		},
 		[ translate ]
