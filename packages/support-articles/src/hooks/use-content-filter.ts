@@ -17,6 +17,29 @@ function canParse( url: string, baseUrl?: string ): URL | false {
 	}
 }
 
+const SUPPORT_ROOT_PATH = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/support\//i;
+
+/**
+ * Support articles write links to other articles relative to the support root,
+ * e.g. `/seo/` in a `/es/support/` article means `/es/support/seo/`.
+ * @param href - The root-relative href found in the article content.
+ * @param articleLink - The URL of the article being displayed.
+ * @returns The absolute URL, or false if it cannot be resolved.
+ */
+export function resolveRootRelativeHref( href: string, articleLink: string ): string | false {
+	const article = canParse( articleLink );
+	if ( ! article ) {
+		return false;
+	}
+
+	const supportRoot = article.pathname.match( SUPPORT_ROOT_PATH )?.[ 0 ];
+	if ( ! supportRoot || SUPPORT_ROOT_PATH.test( href ) ) {
+		return new URL( href, article ).href;
+	}
+
+	return new URL( href.slice( 1 ), article.origin + supportRoot ).href;
+}
+
 /**
  * Temporary: the Odie backend returns links with no protocol.
  * This function ensures that the link has a protocol.
@@ -55,9 +78,12 @@ export const useContentFilter = ( node: HTMLDivElement | null, currentSiteDomain
 						element.parentNode?.replaceChild( image, element );
 					}
 
-					// Make the href absolute to the support guide.
 					if ( href.startsWith( '/' ) ) {
-						element.setAttribute( 'href', new URL( href, link ).href );
+						const absoluteHref = resolveRootRelativeHref( href, link );
+						if ( ! absoluteHref ) {
+							return;
+						}
+						element.setAttribute( 'href', absoluteHref );
 					}
 
 					// /support/contact is a landing page, not a doc — its layout
@@ -74,7 +100,7 @@ export const useContentFilter = ( node: HTMLDivElement | null, currentSiteDomain
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
 
-						navigate( `/post?link=${ element.href }` );
+						navigate( `/post?link=${ encodeURIComponent( element.href ) }` );
 					};
 				},
 			},
