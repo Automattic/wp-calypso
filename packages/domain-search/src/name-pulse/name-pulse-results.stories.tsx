@@ -13,7 +13,7 @@ import {
 	withNamePulseQueries,
 } from '../test-helpers/factories/name-pulse';
 import { NamePulseResults } from '.';
-import type { DomainSearchCart, SelectedDomain } from '../page/types';
+import type { DomainSearchCart, DomainSearchProps, SelectedDomain } from '../page/types';
 import type { DomainAvailability } from '@automattic/api-core';
 import type { Meta } from '@storybook/react';
 
@@ -90,12 +90,19 @@ const useStoryCart = (): DomainSearchCart => {
 	};
 };
 
-const StoryDomainSearch = ( { query }: { query: string } ) => {
+const StoryDomainSearch = ( {
+	query,
+	slots,
+}: {
+	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
+} ) => {
 	const cart = useStoryCart();
 	const [ currentQuery, setCurrentQuery ] = useState( query );
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query: currentQuery,
+		slots,
 		config: { showNamePulseSearch: true },
 		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
@@ -150,3 +157,12 @@ export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
 // Starts on the initial state so the swap to the results page can be checked
 // for layout shifts.
 export const EmptyQuery = () => <StoryDomainSearch query="" />;
+
+// The real promo card lives in `client/`, out of this package's reach.
+const BeforeResultsStandIn = () => (
+	<div style={ { padding: '1rem', border: '1px dashed currentColor' } }>Promo card slot</div>
+);
+
+export const WithBeforeResults = () => (
+	<StoryDomainSearch query="icecream" slots={ { BeforeResults: BeforeResultsStandIn } } />
+);

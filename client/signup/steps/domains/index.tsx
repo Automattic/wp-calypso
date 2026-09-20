@@ -319,8 +319,9 @@ const DomainSearchUI = (
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
+				// The i4 design puts the promo on the Name Pulse results page.
 				if (
-					isDomainOnlyFlow ||
+					( isDomainOnlyFlow && ! config.showNamePulseSearch ) ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -343,7 +344,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow, config.showNamePulseSearch ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
