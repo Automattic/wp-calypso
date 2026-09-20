@@ -33,11 +33,15 @@ describe( 'captureCanvasCallback', () => {
 		} );
 	} );
 
-	it( 'describes the visible area when no block was named', async () => {
-		const { result } = await captureCanvasCallback( {} );
+	it.each( [ {}, null ] )(
+		'describes the visible area when no block was named (%p)',
+		async ( input ) => {
+			const { result } = await captureCanvasCallback( input );
 
-		expect( result.message ).toMatch( /^Here is the visible area/ );
-	} );
+			expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
+			expect( result.message ).toMatch( /^Here is the visible area/ );
+		}
+	);
 
 	// The picture that exists is described, not the one that was asked for.
 	it( 'describes the whole page when the capture covered it, and only then', async () => {

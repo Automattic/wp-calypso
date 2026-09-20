@@ -45,16 +45,18 @@ const findTemplatePart = (
 ): string | undefined =>
 	slugs.map( ( slug ) => parts.find( ( part ) => part.slug === slug )?.clientId ).find( Boolean );
 
-// The editor keeps a template part's blocks apart from the tree, and a menu
-// keeps its items in its record.
+// The editor keeps a template part's blocks and a rendered menu's items apart
+// from the tree; a menu the view does not render is read from its record.
 const withControlledBlocks = ( blocks: EditorBlock[] ): EditorBlock[] =>
 	blocks.map( ( block ) => {
 		let innerBlocks = block.innerBlocks ?? [];
 
-		if ( block.name === TEMPLATE_PART_BLOCK ) {
+		if ( block.name === TEMPLATE_PART_BLOCK || block.name === NAVIGATION_BLOCK ) {
 			innerBlocks = getBlocks( block.clientId );
-		} else if ( block.name === NAVIGATION_BLOCK && block.attributes.ref ) {
-			innerBlocks = getLoadedMenuItems( block.attributes.ref as MenuId ) ?? innerBlocks;
+		}
+
+		if ( block.name === NAVIGATION_BLOCK && ! innerBlocks.length && block.attributes.ref ) {
+			innerBlocks = getLoadedMenuItems( block.attributes.ref as MenuId ) ?? [];
 		}
 
 		return { ...block, innerBlocks: withControlledBlocks( innerBlocks ) };

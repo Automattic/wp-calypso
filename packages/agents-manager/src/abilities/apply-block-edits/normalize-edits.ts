@@ -39,6 +39,10 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block must have a name property' );
 	}
 
+	if ( value.clientId != null && typeof value.clientId !== 'string' ) {
+		throw new Error( 'Block clientId must be a string' );
+	}
+
 	if ( ! value.clientId && ! availableNames.has( String( value.name ) ) ) {
 		throw new Error( `Block type "${ String( value.name ) }" is not available` );
 	}
@@ -74,6 +78,10 @@ function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert 
 	}
 
 	const { parentClientId, index, block } = value;
+
+	if ( parentClientId != null && typeof parentClientId !== 'string' ) {
+		throw new Error( 'Insertion parentClientId must be a string' );
+	}
 
 	assertBlock( block, availableNames );
 

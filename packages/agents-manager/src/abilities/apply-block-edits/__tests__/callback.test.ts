@@ -181,20 +181,17 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	// The caller's own ids win, and a replaced block is repointed in that map.
-	it( 'resolves through a supplied reverse map ahead of the page structure', async () => {
-		const reverseMap = { a1: 'real-a1' };
-
-		await applyBlockEditsCallback( { ...input, reverseMap } );
+	it( 'resolves through a supplied reverse map first, then the page structure', async () => {
+		await applyBlockEditsCallback( { ...input, reverseMap: { a1: 'real-a1' } } );
 
 		const { resolve, onReplaced } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
 
 		expect( resolve( 'a1' ) ).toBe( 'real-a1' );
-		expect( resolve( 'other' ) ).toBe( 'other' );
+		expect( resolve( 'other' ) ).toBe( 'resolved-other' );
 
 		onReplaced( 'a1', 'new-a1' );
 
-		expect( reverseMap ).toEqual( { a1: 'new-a1' } );
-		expect( repointShortId ).not.toHaveBeenCalled();
+		expect( resolve( 'a1' ) ).toBe( 'new-a1' );
 	} );
 
 	// A block sent by its clientId has no short id to repoint, so the call
@@ -240,6 +237,8 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( setCustomCss ).toHaveBeenCalledWith( expect.objectContaining( { id: 'gs' } ), 'b{}' );
 		expect( recorder.markWritten ).toHaveBeenCalledWith( 'custom_css' );
 		expect( result ).toEqual( expect.objectContaining( { outcome: 'updated' } ) );
+		// Site-wide CSS shows anywhere on the page.
+		expect( captureCanvas ).toHaveBeenCalledWith( expect.objectContaining( { fullPage: true } ) );
 	} );
 
 	it( 'skips custom CSS the page already has, claiming no domain', async () => {
@@ -248,10 +247,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 		const { result } = await applyBlockEditsCallback( { customCSS: 'a{}', toolCallId: 'call-1' } );
 
-		expect( withCheckpoint ).toHaveBeenCalledWith(
-			expect.objectContaining( { keys: [] } ),
-			expect.any( Function )
-		);
+		expect( withCheckpoint ).not.toHaveBeenCalled();
 		expect( setCustomCss ).not.toHaveBeenCalled();
 		expect( recorder.markWritten ).not.toHaveBeenCalled();
 		expect( result ).toEqual( {
@@ -269,16 +265,26 @@ describe( 'applyBlockEditsCallback', () => {
 		jest
 			.mocked( normalizeEdits )
 			.mockReturnValue( edits( { updates: 'updates' in request ? [ update ] : [] } ) );
-		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( request );
 
 		expect( result ).toEqual( { success: true, message, outcome: 'no-changes' } );
-		expect( recorder.markWritten ).not.toHaveBeenCalled();
+		expect( withCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_big_sky_block_edits_applied',
 			expect.objectContaining( { outcome: 'no-changes' } )
 		);
+	} );
+
+	// Decided before the menus are looked at: a satisfied edit inside one has nothing to undo either.
+	it( 'reports no changes for a satisfied update inside a menu, capturing nothing', async () => {
+		jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+
+		const { result } = await applyBlockEditsCallback( input );
+
+		expect( result ).toEqual( expect.objectContaining( { outcome: 'no-changes' } ) );
+		expect( withCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'fails when the edits changed nothing, without an undo', async () => {
@@ -323,7 +329,10 @@ describe( 'applyBlockEditsCallback', () => {
 
 		await applyBlockEditsCallback( input );
 
-		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [ 'resolved-a1', 'new-1' ] } );
+		expect( captureCanvas ).toHaveBeenCalledWith( {
+			clientIds: [ 'resolved-a1', 'new-1' ],
+			fullPage: false,
+		} );
 	} );
 
 	// The writes that landed stay in place, so the checkpoint is the way back.
@@ -358,8 +367,14 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( result.result ).toEqual(
 			expect.objectContaining( { success: false, error: 'Updates must be an array' } )
 		);
-		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [] } );
+		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
 		expect( result.__file_parts ).toHaveLength( 1 );
+	} );
+
+	it( 'takes an input that is not an object as an empty request', async () => {
+		await applyBlockEditsCallback( null );
+
+		expect( normalizeEdits ).toHaveBeenCalledWith( {} );
 	} );
 
 	it( 'refuses off the editor', async () => {
@@ -386,7 +401,10 @@ describe( 'applyBlockEditsCallback', () => {
 			followUpTasks: true,
 		} );
 
-		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [ 'resolved-a1' ] } );
+		expect( captureCanvas ).toHaveBeenCalledWith( {
+			clientIds: [ 'resolved-a1' ],
+			fullPage: false,
+		} );
 		expect( parseAgentMessage( result.agentMessage ).data ).toEqual( {
 			result: result.result,
 			followUpTasks: true,

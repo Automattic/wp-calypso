@@ -48,6 +48,16 @@ describe( 'normalizeEdits', () => {
 			'Inner blocks must be an array',
 		],
 		[
+			'a nested block whose clientId is not a string',
+			{ updates: [ { ...paragraph, innerBlocks: [ { clientId: 7 } ] } ] },
+			'Block clientId must be a string',
+		],
+		[
+			'an insert whose parentClientId is not a string',
+			{ inserts: [ { parentClientId: 123, block: { name: 'core/group' } } ] },
+			'Insertion parentClientId must be a string',
+		],
+		[
 			'a delete that is neither a string nor `{ clientId }`',
 			{ deletes: [ 5 ] },
 			'Each deletion must be a clientId string',

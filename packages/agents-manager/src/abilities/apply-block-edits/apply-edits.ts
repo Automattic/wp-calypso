@@ -1,3 +1,4 @@
+import { assertCanvasUnmoved } from '../../utils/canvas-guard';
 import {
 	getBlock,
 	getBlockParents,
@@ -132,6 +133,7 @@ async function applyInsert(
 
 	// Without this delay nested `innerBlocks` are not reliably part of the insert.
 	await wait( 200 );
+	assertCanvasUnmoved();
 	writers.insert( created, index, parent );
 	await wait( 0 );
 
@@ -144,10 +146,11 @@ async function applyInsert(
 
 function applyUpdate(
 	update: BlockUpdate,
-	{ resolve, onReplaced }: ApplyEditsOptions,
+	options: ApplyEditsOptions,
 	writers: Writers,
 	recoveredTargetIds: Set< string >
 ): void {
+	const { resolve, onReplaced } = options;
 	const { clientId: requestedId, ...blockData } = update;
 	const clientId = resolve( requestedId );
 	const target = getBlock( clientId );
@@ -195,6 +198,18 @@ function applyUpdate(
 		} );
 
 		writers.replaceChildren( clientId, children );
+
+		// The list moves the children as they are; the edits they carry follow.
+		innerBlocks.forEach( ( child, index ) => {
+			if ( Object.keys( child.attributes ?? {} ).length || child.innerBlocks?.length ) {
+				applyUpdate(
+					{ ...child, clientId: children[ index ].clientId, name: children[ index ].name },
+					options,
+					writers,
+					recoveredTargetIds
+				);
+			}
+		} );
 	} else if ( ! innerBlocks.length ) {
 		// Keeps the block instance, which re-renders in place.
 		writers.updateAttributes(
@@ -265,7 +280,9 @@ function deepestFirst( updates: BlockUpdate[], resolve: ResolveClientId ): Block
 
 /**
  * Writes the edits into the editor: inserts first, since an update can change
- * the clientIds an insert names, then updates, then deletes.
+ * the clientIds an insert names, then updates, then deletes. The batch yields
+ * between steps, so every write checks that the canvas is still the one the
+ * call was made for.
  */
 export async function applyEdits(
 	edits: BlockEdits,
@@ -285,10 +302,12 @@ export async function applyEdits(
 	}
 
 	for ( const update of deepestFirst( edits.updates, resolve ) ) {
+		assertCanvasUnmoved();
 		applyUpdate( update, options, writers, recoveredTargetIds );
 	}
 
 	for ( const requestedId of edits.deletes ) {
+		assertCanvasUnmoved();
 		await applyDelete( requestedId, resolve, writers );
 	}
 

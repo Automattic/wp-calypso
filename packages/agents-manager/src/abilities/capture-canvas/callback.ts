@@ -1,13 +1,9 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { resolveClientId } from '../../utils/block-ids';
 import { captureCanvas } from '../../utils/canvas-capture';
+import { isRecord } from '../../utils/is-record';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
-
-interface CaptureCanvasInput {
-	clientIds?: unknown;
-	fullPage?: unknown;
-}
 
 // A clientId or a short id; anything else names no block and would break the selector.
 const isClientId = ( value: unknown ): value is string =>
@@ -18,7 +14,8 @@ const isClientId = ( value: unknown ): value is string =>
  * picture is a failure on purpose: "done" without one would invite the agent
  * to carry on as though it had seen the page.
  */
-export async function captureCanvasCallback( input: CaptureCanvasInput ): Promise< AbilityResult > {
+export async function captureCanvasCallback( rawInput: unknown ): Promise< AbilityResult > {
+	const input = isRecord( rawInput ) ? rawInput : {};
 	// An id that maps to no block passes through: it may be a clientId already,
 	// and framing on nothing falls back to the viewport.
 	const clientIds = Array.isArray( input.clientIds )

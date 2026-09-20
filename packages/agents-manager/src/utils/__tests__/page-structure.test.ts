@@ -268,20 +268,16 @@ describe( 'a template part inside a wrapper', () => {
 describe( 'a menu', () => {
 	const link = ( clientId: string, label: string, innerBlocks: EditorBlock[] = [] ) =>
 		block( clientId, 'core/navigation-link', { label }, innerBlocks );
-	const page = ( ref?: number ) => ( {
-		blocks: [ block( 'nav', 'core/navigation', { ref }, [ link( 'held', 'Held' ) ] ) ],
+	const page = ( ref?: number, items: EditorBlock[] = [] ) => ( {
+		blocks: [ block( 'nav', 'core/navigation', { ref }, items ) ],
 	} );
 
-	// A menu keeps its items in its record, and their clientIds may resolve to
-	// no block, so what each short id stood for is kept by its attributes too.
-	it( "lists the items of its record, and keeps each one's attributes", () => {
-		withEditor( page( 9 ) );
-		jest
-			.mocked( getLoadedMenuItems )
-			.mockReturnValue( [ link( 'about', 'About', [ link( 'team', 'Team' ) ] ) ] as never );
+	// The rendered items are the blocks the editor can address, so they come first.
+	it( "lists the items the view renders, and keeps each one's attributes", () => {
+		withEditor( page( 9, [ link( 'about', 'About', [ link( 'team', 'Team' ) ] ) ] ) );
 
 		expect( pageOutline() ).toEqual( [ [ 's:nav', [ 's:about', [ 's:team' ] ] ] ] );
-		expect( getLoadedMenuItems ).toHaveBeenCalledWith( 9 );
+		expect( getLoadedMenuItems ).not.toHaveBeenCalled();
 		expect( setMenuItemAttributes ).toHaveBeenCalledWith(
 			new Map( [
 				[ 's:about', { label: 'About' } ],
@@ -290,13 +286,26 @@ describe( 'a menu', () => {
 		);
 	} );
 
+	// Its items' clientIds name no block, so what each short id stood for is
+	// kept by its attributes too.
+	it( 'lists the items of the record of a menu the view does not render', () => {
+		withEditor( page( 9 ) );
+		jest.mocked( getLoadedMenuItems ).mockReturnValue( [ link( 'about', 'About' ) ] as never );
+
+		expect( pageOutline() ).toEqual( [ [ 's:nav', [ 's:about' ] ] ] );
+		expect( getLoadedMenuItems ).toHaveBeenCalledWith( 9 );
+		expect( setMenuItemAttributes ).toHaveBeenCalledWith(
+			new Map( [ [ 's:about', { label: 'About' } ] ] )
+		);
+	} );
+
 	it.each( [
 		{ case: 'its record has not loaded', ref: 9 },
 		{ case: 'it names no record', ref: undefined },
-	] )( 'keeps the blocks the editor holds while $case', ( { ref } ) => {
+	] )( 'lists an unrendered menu empty while $case', ( { ref } ) => {
 		withEditor( page( ref ) );
 
-		expect( pageOutline() ).toEqual( [ [ 's:nav', [ 's:held' ] ] ] );
+		expect( pageOutline() ).toEqual( [ [ 's:nav' ] ] );
 	} );
 } );
 
