@@ -84,8 +84,7 @@ describe( 'getEditedMenuIds', () => {
 	} );
 
 	// The menu's record holds its items, so each target is traced to the
-	// `core/navigation` it sits in; a target that is the block itself edits the
-	// page's blocks, not the menu.
+	// `core/navigation` it sits in; the block's own attributes are the page's.
 	it.each( [
 		[
 			'an update inside a saved menu',
@@ -96,12 +95,19 @@ describe( 'getEditedMenuIds', () => {
 			'an insert under a saved menu, at any depth',
 			{ inserts: [ { parentClientId: 'link', block: { name: 'core/navigation-link' } } ] },
 		],
+		[
+			'an update listing the items of a saved menu',
+			{ updates: [ { ...contentUpdate, clientId: 'nav', innerBlocks: [ { clientId: 'link' } ] } ] },
+		],
 	] )( 'names the menu for %s', ( _, partial ) => {
 		expect( getEditedMenuIds( edits( partial ), resolve ) ).toEqual( [ 19 ] );
 	} );
 
 	it.each( [
-		[ 'the navigation block itself', { updates: [ { ...contentUpdate, clientId: 'nav' } ] } ],
+		[
+			"the navigation block's own attributes",
+			{ updates: [ { ...contentUpdate, clientId: 'nav' } ] },
+		],
 		[
 			'an unsaved navigation',
 			{ inserts: [ { parentClientId: 'unsaved', block: { name: 'x' } } ] },

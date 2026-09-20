@@ -93,7 +93,11 @@ function resolveInsertParent(
 	if ( ! parentClientId ) {
 		const root = resolveBlocksRoot();
 
-		return root?.kind === 'document' ? undefined : root?.clientId;
+		if ( ! root ) {
+			throw new Error( '[Edit Blocks] The editor has no page open to insert into.' );
+		}
+
+		return root.kind === 'document' ? undefined : root.clientId;
 	}
 
 	const parent = resolve( parentClientId );
@@ -231,8 +235,9 @@ async function applyUpdate(
 	} else {
 		let holder = clientId;
 
-		if ( ! innerBlocks.length ) {
-			// Keeps the block instance, which re-renders in place.
+		// A block keeps its instance for an attribute change; a type change
+		// needs a new one.
+		if ( ! innerBlocks.length && blockData.name === target.name ) {
 			writers.updateAttributes(
 				clientId,
 				mergeAttributes( target.attributes, blockData.attributes )

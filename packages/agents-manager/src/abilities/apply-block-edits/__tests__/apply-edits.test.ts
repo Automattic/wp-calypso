@@ -121,6 +121,9 @@ beforeEach( () => {
 		.mocked( getBlocks )
 		.mockImplementation( ( id = '' ) => controlled[ id ] ?? blocks[ id ]?.innerBlocks ?? [] );
 	jest.mocked( getBlockRootClientId ).mockImplementation( ( id ) => parents[ id ] );
+	jest
+		.mocked( resolveBlocksRoot )
+		.mockReturnValue( { kind: 'document', clientId: '', post: { id: 1, type: 'page' } } );
 	jest.mocked( getBlockParents ).mockImplementation( ( id ) => {
 		const ancestors: string[] = [];
 
@@ -179,6 +182,15 @@ describe( 'inserts', () => {
 		await run( { inserts: [ { block: paragraph } ] } );
 
 		expect( insertBlock ).toHaveBeenCalledWith( expect.anything(), 0, parent );
+	} );
+
+	it( 'refuses a parentless insert while the editor holds no page', async () => {
+		jest.mocked( resolveBlocksRoot ).mockReturnValue( null );
+
+		await expect( run( { inserts: [ { block: paragraph } ] } ) ).rejects.toThrow(
+			'[Edit Blocks] The editor has no page open to insert into.'
+		);
+		expect( insertBlock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'refuses a parent that names no block', async () => {
@@ -417,6 +429,18 @@ describe( 'updates', () => {
 
 		expect( updateBlockAttributes ).toHaveBeenLastCalledWith( clientId, { isDark: true } );
 		expect( writes ).toHaveLength( written + 1 );
+	} );
+
+	it( 'replaces the block when the update changes its type', async () => {
+		await run( {
+			updates: [ { clientId: 'ref-b', name: 'core/heading', attributes: { level: 2 } } ],
+		} );
+
+		expect( replaceBlock ).toHaveBeenCalledWith(
+			'b',
+			expect.objectContaining( { name: 'core/heading', attributes: { content: 'B', level: 2 } } )
+		);
+		expect( updateBlockAttributes ).not.toHaveBeenCalled();
 	} );
 
 	it( 'replaces the block for a structural change and reports its new clientId', async () => {
