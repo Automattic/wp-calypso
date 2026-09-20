@@ -89,9 +89,8 @@ function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
 }
 
 /**
- * Throws once the canvas has moved, for a write that yields between its steps:
- * the policy checks only as an ability starts. The rest of the turn is refused
- * as well.
+ * Throws, and refuses the rest of the turn, once the canvas has moved. For a
+ * write that yields between its steps: the policy checks only as an ability starts.
  */
 export function assertCanvasUnmoved(): void {
 	const move = getBlockingMove();

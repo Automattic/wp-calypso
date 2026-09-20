@@ -324,7 +324,7 @@ export async function applyEdits(
 		await applyDelete( requestedId, resolve, writers );
 	}
 
-	// The last write yields before this returns, and the result is read from the page.
+	// The last write yields before this returns.
 	assertCanvasUnmoved();
 
 	return { recoveredTargetIds, insertedClientIds };
