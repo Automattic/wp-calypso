@@ -13,6 +13,7 @@ import {
 	updateBlockAttributes,
 } from '../../utils/editor-blocks';
 import { NAVIGATION_BLOCK } from '../../utils/navigation-menu';
+import { updateCoverOverlay } from './cover-overlay';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
@@ -159,12 +160,12 @@ async function applyInsert(
 	return getBlock( created.clientId )?.clientId;
 }
 
-function applyUpdate(
+async function applyUpdate(
 	update: BlockUpdate,
 	options: ApplyEditsOptions,
 	writers: Writers,
 	recoveredTargetIds: Set< string >
-): void {
+): Promise< void > {
 	const { resolve, onReplaced } = options;
 	const { clientId: requestedId, ...blockData } = update;
 	const clientId = resolve( requestedId );
@@ -217,27 +218,34 @@ function applyUpdate(
 		writers.replaceChildren( clientId, children );
 
 		// The list moves the children as they are; the edits they carry follow.
-		innerBlocks.forEach( ( child, index ) => {
+		for ( const [ index, child ] of innerBlocks.entries() ) {
 			if ( Object.keys( child.attributes ?? {} ).length || child.innerBlocks?.length ) {
-				applyUpdate(
+				await applyUpdate(
 					{ ...child, clientId: children[ index ].clientId, name: children[ index ].name },
 					options,
 					writers,
 					recoveredTargetIds
 				);
 			}
-		} );
+		}
 	} else if ( ! innerBlocks.length ) {
 		// Keeps the block instance, which re-renders in place.
 		writers.updateAttributes(
 			clientId,
 			mergeAttributes( target.attributes, blockData.attributes )
 		);
+		await updateCoverOverlay( clientId, target, blockData.attributes, writers.updateAttributes );
 	} else {
 		const created = createBlockRecursively( mergeBlocksRecursively( target, blockData, resolve ) );
 
 		writers.replace( clientId, created );
 		onReplaced( requestedId, created.clientId );
+		await updateCoverOverlay(
+			created.clientId,
+			target,
+			blockData.attributes,
+			writers.updateAttributes
+		);
 	}
 }
 
@@ -317,7 +325,7 @@ export async function applyEdits(
 	}
 
 	for ( const update of deepestFirst( edits.updates, resolve ) ) {
-		applyUpdate( update, options, writers, recoveredTargetIds );
+		await applyUpdate( update, options, writers, recoveredTargetIds );
 	}
 
 	for ( const requestedId of edits.deletes ) {
