@@ -256,20 +256,20 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
  */
 export async function restoreCheckpointCallback( rawInput: unknown ): Promise< AbilityResult > {
 	const input = isRecord( rawInput ) ? rawInput : {};
-	const { requestIntentType } = input;
 	const checkpointId = typeof input.checkpointId === 'string' ? input.checkpointId : '';
+	const requestIntentType =
+		input.requestIntentType === 'undo' || input.requestIntentType === 'redo'
+			? input.requestIntentType
+			: 'restore';
 
 	const result = await restore( {
 		checkpointId,
 		summary: typeof input.summary === 'string' ? input.summary : '',
-		...( ( requestIntentType === 'undo' ||
-			requestIntentType === 'redo' ||
-			requestIntentType === 'restore' ) && { requestIntentType } ),
+		requestIntentType,
 	} );
 
 	recordBigSkyTracksEvent( 'jetpack_big_sky_restore_checkpoint_action', {
-		action:
-			requestIntentType === 'undo' || requestIntentType === 'redo' ? requestIntentType : 'restore',
+		action: requestIntentType,
 		id: checkpointId,
 		outcome: result.result.success ? 'success' : 'failed',
 		source: 'chat',

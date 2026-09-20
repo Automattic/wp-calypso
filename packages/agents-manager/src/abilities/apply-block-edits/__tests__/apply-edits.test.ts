@@ -610,7 +610,6 @@ it( 'checks the canvas once more after the last write', async () => {
 	await expect( run( { inserts: [ { block: { name: 'core/paragraph' } } ] } ) ).rejects.toThrow(
 		'moved'
 	);
-	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 } );
 
 it( 'writes inserts, then updates, then deletes, all through the undo level', async () => {

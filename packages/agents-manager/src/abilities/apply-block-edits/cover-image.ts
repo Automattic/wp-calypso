@@ -30,23 +30,14 @@ const loadColorLibraries = () =>
 const asNumber = ( value: unknown ): number | undefined =>
 	typeof value === 'number' ? value : undefined;
 
-const keepsOverlay = ( before: EditorBlock, requested: BlockAttributes ): boolean =>
-	before.attributes.isUserOverlayColor === true ||
-	requested.overlayColor !== undefined ||
-	requested.customOverlayColor !== undefined;
+const setsOverlay = ( { overlayColor, customOverlayColor }: BlockAttributes ): boolean =>
+	overlayColor !== undefined || customOverlayColor !== undefined;
 
-/**
- * The overlay the cover shows after the update: the request's where it sets
- * one, else the block's, else the stylesheet's. A palette slug the palette
- * lacks resolves to `undefined`.
- */
-function getOverlayColor( before: EditorBlock, requested: BlockAttributes ): string | undefined {
-	const source =
-		'overlayColor' in requested || 'customOverlayColor' in requested
-			? requested
-			: before.attributes;
-	const { overlayColor, customOverlayColor } = source;
-
+/** The overlay `attributes` show; a palette slug the palette lacks is `undefined`. */
+function getOverlayColor( {
+	overlayColor,
+	customOverlayColor,
+}: BlockAttributes ): string | undefined {
 	if ( typeof overlayColor === 'string' ) {
 		return getPaletteColor( overlayColor );
 	}
@@ -104,19 +95,12 @@ export async function syncCoverWithImage(
 	}
 
 	const [ { colord }, { FastAverageColor } ] = await loadColorLibraries();
-	const { r, g, b, a } = colord( DEFAULT_IMAGE_COLOR ).toRgb();
 	let imageColor = DEFAULT_IMAGE_COLOR;
 
 	try {
-		// A failed read resolves to the default colour rather than rejecting.
-		imageColor = (
-			await new FastAverageColor().getColorAsync( url, {
-				defaultColor: [ r, g, b, a * 255 ],
-				silent: true,
-			} )
-		).hex;
+		imageColor = ( await new FastAverageColor().getColorAsync( url, { silent: true } ) ).hex;
 	} catch {
-		// Kept as the default.
+		// An unreadable image keeps the default.
 	}
 
 	const derived: BlockAttributes = {
@@ -126,7 +110,8 @@ export async function syncCoverWithImage(
 		...( before.attributes.url === undefined &&
 			before.attributes.dimRatio === 100 && { dimRatio: 50 } ),
 	};
-	const recolours = ! keepsOverlay( before, requested );
+	const requestsOverlay = setsOverlay( requested );
+	const recolours = ! requestsOverlay && before.attributes.isUserOverlayColor !== true;
 
 	if ( recolours ) {
 		Object.assign( derived, {
@@ -136,7 +121,9 @@ export async function syncCoverWithImage(
 		} );
 	}
 
-	const overlayColor = recolours ? imageColor : getOverlayColor( before, requested );
+	const overlayColor = recolours
+		? imageColor
+		: getOverlayColor( requestsOverlay ? requested : before.attributes );
 	const dimRatio =
 		asNumber( requested.dimRatio ) ??
 		asNumber( derived.dimRatio ) ??

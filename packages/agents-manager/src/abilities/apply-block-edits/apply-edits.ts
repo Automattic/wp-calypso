@@ -228,24 +228,26 @@ async function applyUpdate(
 				);
 			}
 		}
-	} else if ( ! innerBlocks.length ) {
-		// Keeps the block instance, which re-renders in place.
-		writers.updateAttributes(
-			clientId,
-			mergeAttributes( target.attributes, blockData.attributes )
-		);
-		await syncCoverWithImage( clientId, target, blockData.attributes, writers.updateAttributes );
 	} else {
-		const created = createBlockRecursively( mergeBlocksRecursively( target, blockData, resolve ) );
+		let holder = clientId;
 
-		writers.replace( clientId, created );
-		onReplaced( requestedId, created.clientId );
-		await syncCoverWithImage(
-			created.clientId,
-			target,
-			blockData.attributes,
-			writers.updateAttributes
-		);
+		if ( ! innerBlocks.length ) {
+			// Keeps the block instance, which re-renders in place.
+			writers.updateAttributes(
+				clientId,
+				mergeAttributes( target.attributes, blockData.attributes )
+			);
+		} else {
+			const created = createBlockRecursively(
+				mergeBlocksRecursively( target, blockData, resolve )
+			);
+
+			writers.replace( clientId, created );
+			onReplaced( requestedId, created.clientId );
+			holder = created.clientId;
+		}
+
+		await syncCoverWithImage( holder, target, blockData.attributes, writers.updateAttributes );
 	}
 }
 

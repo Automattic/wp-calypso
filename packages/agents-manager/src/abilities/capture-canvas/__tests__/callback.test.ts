@@ -3,7 +3,7 @@ jest.mock( '../../../utils/block-ids', () => ( {
 } ) );
 jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn( ( clientId: string ) => clientId.startsWith( 'resolved-' ) || undefined ),
+	getBlock: jest.fn( () => ( {} ) ),
 } ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';

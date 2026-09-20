@@ -87,7 +87,10 @@ function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert 
 		throw new Error( 'Insertion parentClientId must be a string' );
 	}
 
-	if ( index != null && ( ! Number.isInteger( index ) || ( index as number ) < 0 ) ) {
+	if (
+		index != null &&
+		( typeof index !== 'number' || ! Number.isInteger( index ) || index < 0 )
+	) {
 		throw new Error( 'Insertion index must be a non-negative integer' );
 	}
 
