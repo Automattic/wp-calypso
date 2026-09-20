@@ -90,7 +90,7 @@ export default function usePlanBillingDescription( {
 				yearlyVariantPricing.discountedPrice?.monthly
 			)
 				? yearlyVariantPricing.discountedPrice?.monthly
-				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
+				: ( yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null );
 		}
 
 		const discountRate =
@@ -111,14 +111,14 @@ export default function usePlanBillingDescription( {
 			? formatCurrency( discountedPrice.full, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
-			  } )
+				} )
 			: null;
 	const originalPriceFullTermText =
 		currencyCode && originalPrice?.full
 			? formatCurrency( originalPrice.full, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
-			  } )
+				} )
 			: null;
 
 	/*
@@ -140,7 +140,7 @@ export default function usePlanBillingDescription( {
 				? formatCurrency( discountedPriceFull, currencyCode, {
 						stripZeros: true,
 						isSmallestUnit: true,
-				  } )
+					} )
 				: null;
 
 		if ( originalPriceFullTermText && introOfferFullTermText ) {
