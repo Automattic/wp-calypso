@@ -408,6 +408,15 @@ describe( 'updates', () => {
 			{ url: 'new.jpg' },
 			expect.any( Function )
 		);
+
+		// The derived write lands in the same undo level as the edit.
+		const write = jest.mocked( updateCoverForImage ).mock.calls[ 0 ][ 3 ];
+		const written = writes.length;
+
+		write( clientId, { isDark: true } );
+
+		expect( updateBlockAttributes ).toHaveBeenLastCalledWith( clientId, { isDark: true } );
+		expect( writes ).toHaveLength( written + 1 );
 	} );
 
 	it( 'replaces the block for a structural change and reports its new clientId', async () => {
