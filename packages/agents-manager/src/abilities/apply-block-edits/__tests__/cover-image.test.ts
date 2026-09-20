@@ -40,10 +40,7 @@ describe( 'syncCoverWithImage', () => {
 	it( 'recolours the overlay from the new image and drops what belonged to the old one', async () => {
 		await syncCoverWithImage( 'cover', cover(), { url: 'new.jpg' }, write );
 
-		expect( mockGetColorAsync ).toHaveBeenCalledWith(
-			'new.jpg',
-			expect.objectContaining( { silent: true } )
-		);
+		expect( mockGetColorAsync ).toHaveBeenCalledWith( 'new.jpg', { silent: true } );
 		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( DARK, true ) );
 	} );
 

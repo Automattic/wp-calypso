@@ -83,11 +83,9 @@ function createResolver( reverseMap: unknown ): Resolver {
 
 	return {
 		resolve: ( id ) => {
-			const clientId = supplied[ id ];
+			const clientId = replaced.get( id ) ?? supplied[ id ];
 
-			return (
-				replaced.get( id ) ?? ( typeof clientId === 'string' ? clientId : resolveClientId( id ) )
-			);
+			return typeof clientId === 'string' ? clientId : resolveClientId( id );
 		},
 		onReplaced: ( requestedId, clientId ) => {
 			replaced.set( requestedId, clientId );
