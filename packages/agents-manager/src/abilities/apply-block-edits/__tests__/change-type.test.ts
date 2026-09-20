@@ -10,7 +10,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 } ) );
 
 import { getBlock, getBlockParents } from '../../../utils/editor-blocks';
-import { getChangeType, getEditedMenuIds } from '../change-type';
+import { getChangeType, getEditedMenuIds, getMenuIdAround } from '../change-type';
 import type { EditorBlock } from '../../../utils/editor-blocks';
 import type { BlockEdits, BlockUpdate } from '../types';
 
@@ -115,6 +115,14 @@ describe( 'getEditedMenuIds', () => {
 		[ 'blocks outside any menu', { updates: [ contentUpdate ], deletes: [ 'missing' ] } ],
 	] )( 'names no menu for %s', ( _, partial ) => {
 		expect( getEditedMenuIds( edits( partial ), resolve ) ).toEqual( [] );
+	} );
+
+	it.each( [
+		[ 'an item inside a saved menu', 'sub', 19 ],
+		[ 'the navigation block itself', 'nav', 19 ],
+		[ 'a block outside any menu', 'para', undefined ],
+	] )( 'names the menu around %s', ( _, clientId, expected ) => {
+		expect( getMenuIdAround( clientId ) ).toBe( expected );
 	} );
 
 	it( 'names a menu once, however many edits reach it', () => {

@@ -6,6 +6,7 @@
  */
 
 import { getBlock, getPaletteColor } from '../../utils/editor-blocks';
+import { mergeAttributes } from './merge-blocks';
 import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
 
 const COVER_BLOCK = 'core/cover';
@@ -16,6 +17,17 @@ const DEFAULT_IMAGE_COLOR = '#FFF';
 
 // The overlay a cover shows when none is chosen, from the block's stylesheet.
 const DEFAULT_OVERLAY_COLOR = '#000';
+
+// What the derived write reads or sets.
+const COVER_KEYS = [
+	'url',
+	'dimRatio',
+	'focalPoint',
+	'useFeaturedImage',
+	'overlayColor',
+	'customOverlayColor',
+	'isUserOverlayColor',
+];
 
 type Colord = typeof import( 'colord' ).colord;
 type Write = ( clientId: string, attributes: BlockAttributes ) => void;
@@ -108,10 +120,17 @@ export async function syncCoverWithImage(
 		}
 	}
 
-	// The waits above are long enough for the user to act: the cover as it is now decides.
-	const current = getBlock( clientId );
+	// The waits above are long enough for the user to act: a cover that no
+	// longer reads as the update left it is left alone.
+	const expected = mergeAttributes( before.attributes, requested );
+	const current = getBlock( clientId )?.attributes;
 
-	if ( current?.attributes.url !== url ) {
+	if (
+		! current ||
+		COVER_KEYS.some(
+			( key ) => JSON.stringify( current[ key ] ) !== JSON.stringify( expected[ key ] )
+		)
+	) {
 		return;
 	}
 
@@ -129,7 +148,7 @@ export async function syncCoverWithImage(
 	};
 	const requestsOverlay = setsOverlay( requested );
 	const recolours =
-		!! libraries && ! requestsOverlay && current.attributes.isUserOverlayColor !== true;
+		!! libraries && ! requestsOverlay && before.attributes.isUserOverlayColor !== true;
 
 	if ( recolours ) {
 		Object.assign( derived, {

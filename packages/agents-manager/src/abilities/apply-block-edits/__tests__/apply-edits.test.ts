@@ -77,6 +77,7 @@ const useControlledChildren = ( parent: string, children: EditorBlock[] ) => {
 // The agent refers to blocks by `ref-<clientId>`.
 const resolve = ( id: string ) => id.replace( /^ref-/, '' );
 const onReplaced = jest.fn();
+const beforeWrite = jest.fn( async () => {} );
 // Every write goes through the level; which ones, in what order, is what it records.
 const writes: unknown[] = [];
 const level: UndoLevel = {
@@ -93,7 +94,7 @@ const level: UndoLevel = {
 const run = ( edits: Partial< BlockEdits > ) => {
 	const applied = applyEdits(
 		{ inserts: [], updates: [], deletes: [], ...edits },
-		{ resolve, onReplaced, level }
+		{ resolve, beforeWrite, onReplaced, level }
 	);
 
 	// Both handled at once, so a rejection reaches the test instead of the process.
@@ -670,6 +671,26 @@ it( 'stops before the next write once the canvas has moved', async () => {
 	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 	// The refused write never reached the undo level, so it marked nothing.
 	expect( writes ).toHaveLength( 1 );
+} );
+
+// A menu is snapshotted here, so it must come before the write and name the block written.
+it( 'tells the caller which block each write is about to change, before it', async () => {
+	useTree( [
+		block( 'group', 'core/group' ),
+		block( 'h', 'core/heading' ),
+		block( 'gone', 'core/paragraph' ),
+	] );
+
+	await run( {
+		inserts: [ { parentClientId: 'ref-group', block: { name: 'core/paragraph' } } ],
+		updates: [ { clientId: 'ref-h', name: 'core/heading', attributes: { level: 3 } } ],
+		deletes: [ 'ref-gone' ],
+	} );
+
+	expect( beforeWrite.mock.calls ).toEqual( [ [ 'group' ], [ 'h' ], [ 'gone' ] ] );
+	expect( beforeWrite.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		jest.mocked( insertBlock ).mock.invocationCallOrder[ 0 ]
+	);
 } );
 
 it( 'checks the canvas once more after the last write', async () => {

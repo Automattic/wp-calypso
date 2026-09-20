@@ -22,7 +22,7 @@ import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { errorResult } from '../ability-result';
 import { areUpdateEditsAlreadySatisfied } from './already-applied';
 import { applyEdits, type ApplyEditsOptions } from './apply-edits';
-import { getChangeType, getEditedMenuIds } from './change-type';
+import { getChangeType, getEditedMenuIds, getMenuIdAround } from './change-type';
 import { hasRequestedBlockEdits, normalizeEdits, type RawBlockEdits } from './normalize-edits';
 import {
 	captureTargets,
@@ -73,7 +73,7 @@ const createAgentMessage = (
 		data: { result, followUpTasks, ...( visualCheckPending && { visualCheckPending: true } ) },
 	} );
 
-type Resolver = Omit< ApplyEditsOptions, 'level' >;
+type Resolver = Pick< ApplyEditsOptions, 'resolve' | 'onReplaced' >;
 
 // A caller's own map is read first, as the WebMCP adapter's; the rest are the
 // page structure's. A replaced block keeps its id for the rest of the call.
@@ -152,8 +152,7 @@ async function applyEditsAction(
 
 	// A saved menu's items live in its record, which the blocks snapshot cannot
 	// hold and the page's blocks do not show: the menu is captured as well.
-	const menuIds = getEditedMenuIds( edits, resolve );
-	const hasNavigationEdit = menuIds.length > 0;
+	const hasNavigationEdit = getEditedMenuIds( edits, resolve ).length > 0;
 	// A menu edit cannot be swapped inline: its checkpoint holds more than blocks.
 	const changeType = hasNavigationEdit ? 'other' : getChangeType( edits );
 	const capturedTargets = captureTargets( edits, resolve );
@@ -190,15 +189,21 @@ async function applyEditsAction(
 				return blocksChanged;
 			};
 
+			// Snapshotted as the first write reaches it, so a batch that fails
+			// earlier keeps no undo for a menu it never changed.
+			const beforeWrite = async ( clientId: string ) => {
+				const menuId = getMenuIdAround( clientId );
+
+				if ( menuId ) {
+					await recorder.captureMenu( menuId );
+				}
+			};
 			let recoveredTargetIds: Set< string >;
 
 			try {
-				for ( const menuId of menuIds ) {
-					await recorder.captureMenu( menuId );
-				}
-
 				( { recoveredTargetIds, insertedClientIds } = await applyEdits( edits, {
 					resolve,
+					beforeWrite,
 					onReplaced,
 					level,
 				} ) );
