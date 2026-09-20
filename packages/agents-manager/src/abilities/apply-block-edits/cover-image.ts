@@ -1,7 +1,8 @@
 /**
- * A cover block's overlay is derived from its image: the editor's media picker
- * recolours it, and keeps `isDark` in step, whenever the image changes. An
- * image the agent writes gets the same treatment.
+ * A cover's image carries attributes the editor's media picker keeps in step:
+ * the overlay and `isDark` from the image's colour, the focal point and
+ * featured-image flag that belonged to the old image, and a dim ratio that
+ * would hide a first image. An image the agent writes gets the same treatment.
  */
 
 import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
@@ -42,11 +43,16 @@ async function getImageColor( url: string ): Promise< { color: string; isDark: b
 	return { color, isDark: colord( color ).isDark() };
 }
 
+const keepsOverlay = ( before: EditorBlock, requested: BlockAttributes ): boolean =>
+	before.attributes.isUserOverlayColor === true ||
+	requested.overlayColor !== undefined ||
+	requested.customOverlayColor !== undefined;
+
 /**
- * Recolours the overlay of a cover whose update gave it a new image, unless
- * the update sets an overlay of its own or the user chose the current one.
+ * Writes what a cover's new image implies, after the update that set it. The
+ * request's own values win; the overlay is left to a user who chose it.
  */
-export async function updateCoverOverlay(
+export async function updateCoverForImage(
 	clientId: string,
 	before: EditorBlock,
 	requested: BlockAttributes | null | undefined,
@@ -55,23 +61,36 @@ export async function updateCoverOverlay(
 	const url = requested?.url;
 
 	if (
+		! requested ||
 		before.name !== COVER_BLOCK ||
 		typeof url !== 'string' ||
 		! url ||
-		url === before.attributes.url ||
-		requested?.overlayColor !== undefined ||
-		requested?.customOverlayColor !== undefined ||
-		before.attributes.isUserOverlayColor === true
+		url === before.attributes.url
 	) {
 		return;
 	}
 
-	const { color, isDark } = await getImageColor( url );
+	const derived: BlockAttributes = {
+		focalPoint: undefined,
+		useFeaturedImage: undefined,
+		// A first image would otherwise sit under a full-strength overlay.
+		...( before.attributes.url === undefined &&
+			before.attributes.dimRatio === 100 && { dimRatio: 50 } ),
+	};
 
-	write( clientId, {
-		overlayColor: undefined,
-		customOverlayColor: color,
-		isUserOverlayColor: false,
-		isDark,
-	} );
+	if ( ! keepsOverlay( before, requested ) ) {
+		const { color, isDark } = await getImageColor( url );
+
+		Object.assign( derived, {
+			overlayColor: undefined,
+			customOverlayColor: color,
+			isUserOverlayColor: false,
+			isDark,
+		} );
+	}
+
+	write(
+		clientId,
+		Object.fromEntries( Object.entries( derived ).filter( ( [ key ] ) => ! ( key in requested ) ) )
+	);
 }
