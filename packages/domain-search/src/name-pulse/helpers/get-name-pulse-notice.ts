@@ -20,8 +20,6 @@ export interface NamePulseNotice {
 }
 
 const REGISTERED_ELSEWHERE = [
-	DomainAvailabilityStatus.REGISTERED,
-	DomainAvailabilityStatus.NOT_AVAILABLE,
 	DomainAvailabilityStatus.TRANSFERRABLE,
 	DomainAvailabilityStatus.TRANSFERRABLE_PREMIUM,
 ];
@@ -31,9 +29,13 @@ const OWNED_BY_USER = [
 	DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
 ];
 
-// MAPPED_SAME_SITE_REGISTRABLE is left out: the domain is connected but the
-// user can still register it here, so the search result is the useful answer.
+// `registered_domain` means registered *with* WordPress.com, which is why both
+// the classic flow and this one describe it as connected rather than offering
+// to bring it over. MAPPED_SAME_SITE_REGISTRABLE is left out: the domain is
+// connected but the user can still register it here, so the search result is
+// the useful answer.
 const CONNECTED_TO_WPCOM = [
+	DomainAvailabilityStatus.REGISTERED,
 	DomainAvailabilityStatus.MAPPED,
 	DomainAvailabilityStatus.MAPPED_SAME_SITE_TRANSFERRABLE,
 	DomainAvailabilityStatus.MAPPED_SAME_SITE_NOT_TRANSFERRABLE,

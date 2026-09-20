@@ -67,6 +67,29 @@ describe( 'getNamePulseNotice', () => {
 		} );
 	} );
 
+	// `registered_domain` means registered *with* WordPress.com, not elsewhere,
+	// so it is never something the user could transfer in.
+	it( 'offers no transfer for a domain registered with WordPress.com', () => {
+		expect(
+			getNamePulseNotice(
+				layoutFor( 'wordpress.com' ),
+				verdict( DomainAvailabilityStatus.REGISTERED, 'wordpress.com' )
+			)
+		).toEqual( {
+			status: 'error',
+			message: 'This domain is already connected to a WordPress.com site.',
+		} );
+	} );
+
+	it( 'leaves a plainly unavailable domain to the row that shows it', () => {
+		expect(
+			getNamePulseNotice(
+				layoutFor( 'icecream.com' ),
+				verdict( DomainAvailabilityStatus.NOT_AVAILABLE )
+			)
+		).toBeNull();
+	} );
+
 	it( 'offers no transfer for a domain the user already owns', () => {
 		expect(
 			getNamePulseNotice(
@@ -108,7 +131,7 @@ describe( 'getNamePulseNotice', () => {
 		expect(
 			getNamePulseNotice(
 				layoutFor( 'shop.icecream.com' ),
-				verdict( DomainAvailabilityStatus.REGISTERED )
+				verdict( DomainAvailabilityStatus.TRANSFERRABLE )
 			)
 		).toMatchObject( { message: 'This domain is already registered.' } );
 	} );
