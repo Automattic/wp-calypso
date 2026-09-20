@@ -10,9 +10,7 @@ interface NamePulseSearchNoticeProps {
 }
 
 /**
- * The single notice above the results. Its own component rather than
- * `DomainSearchNotice` because the design asks for a neutral tone and a
- * trailing action, neither of which the shared notice offers.
+ * Not `DomainSearchNotice`: the design needs a neutral tone and a trailing action.
  */
 export const NamePulseSearchNotice = ( {
 	notice,

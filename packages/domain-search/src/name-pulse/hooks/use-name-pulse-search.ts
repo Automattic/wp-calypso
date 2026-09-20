@@ -168,8 +168,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
-	// The bulk check is zone-file based, so it can say a domain is taken but not
-	// why. Only a typed domain needs that "why", and only it is checked here.
+	// The bulk check is zone-file based: it says a domain is taken, not why.
 	const typedDomain = layout.fqdn?.fullDomain ?? '';
 	const { data: typedDomainAvailability } = useQuery( {
 		...queries.domainAvailability( typedDomain ),

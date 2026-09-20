@@ -176,8 +176,7 @@
 	}
 }
 
-// Tones come from the WPDS palette that `@wordpress/components` already ships;
-// the hex fallbacks mirror how that package references the same tokens.
+// Hex fallbacks mirror how `@wordpress/components` references the same tokens.
 .name-pulse-notice {
 	display: flex;
 	align-items: flex-start;

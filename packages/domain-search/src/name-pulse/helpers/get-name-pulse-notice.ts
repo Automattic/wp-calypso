@@ -2,9 +2,6 @@ import { DomainAvailabilityStatus, type DomainAvailability } from '@automattic/a
 import { __, sprintf } from '@wordpress/i18n';
 import type { NamePulseResultsLayout } from './get-results-layout';
 
-/**
- * The fields of a real-time availability check the notice depends on.
- */
 export type NamePulseAvailabilityVerdict = Pick<
 	DomainAvailability,
 	'status' | 'domain_name' | 'tld'
@@ -13,14 +10,9 @@ export type NamePulseAvailabilityVerdict = Pick<
 export interface NamePulseNotice {
 	status: 'warning' | 'neutral' | 'error';
 	message: string;
-	/**
-	 * Set when the domain is registered elsewhere and could be brought over.
-	 */
+	/** Set when the domain is registered elsewhere and could be brought over. */
 	transferDomain?: string;
-	/**
-	 * Only the notices about how the query was read: the user can put them away
-	 * and keep the results they got.
-	 */
+	/** Only the notices about how the query was read. */
 	dismissible?: true;
 }
 
@@ -34,11 +26,8 @@ const OWNED_BY_USER = [
 	DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
 ];
 
-// `registered_domain` means registered *with* WordPress.com, which is why both
-// the classic flow and this one describe it as connected rather than offering
-// to bring it over. MAPPED_SAME_SITE_REGISTRABLE is left out: the domain is
-// connected but the user can still register it here, so the search result is
-// the useful answer.
+// `registered_domain` means registered *with* WordPress.com, not elsewhere.
+// MAPPED_SAME_SITE_REGISTRABLE is left out: it is still registrable here.
 const CONNECTED_TO_WPCOM = [
 	DomainAvailabilityStatus.REGISTERED,
 	DomainAvailabilityStatus.MAPPED,
@@ -139,9 +128,8 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 }
 
 /**
- * The single notice shown above the results. A verdict on the domain the user
- * is actually being shown outranks an explanation of how the query was read,
- * so a registered root domain wins over "we dropped the subdomain".
+ * A verdict on the domain being shown outranks an explanation of how the query
+ * was read, so a registered root domain wins over "we dropped the subdomain".
  */
 export function getNamePulseNotice(
 	layout: NamePulseResultsLayout,
