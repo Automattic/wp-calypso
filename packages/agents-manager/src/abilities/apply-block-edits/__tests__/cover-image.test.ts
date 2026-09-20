@@ -1,19 +1,19 @@
 const mockGetColorAsync = jest.fn();
 
-jest.mock( 'colord', () => ( {
-	colord: ( color: string ) => ( {
-		toRgb: () => ( { r: 255, g: 255, b: 255, a: 1 } ),
-		isDark: () => color === '#112233',
-	} ),
-} ) );
 jest.mock( 'fast-average-color', () => ( {
 	FastAverageColor: class {
 		getColorAsync = mockGetColorAsync;
 	},
 } ) );
+jest.mock( '../../../utils/editor-blocks', () => ( {
+	getPaletteColor: ( slug: string ) => ( slug === 'vivid-red' ? '#cf2e2e' : undefined ),
+} ) );
 
 import { updateCoverForImage } from '../cover-image';
 import type { EditorBlock } from '../../../utils/editor-blocks';
+
+const DARK = '#112233';
+const LIGHT = '#eeeeee';
 
 const cover = ( attributes: Record< string, unknown > = {} ): EditorBlock => ( {
 	clientId: 'cover',
@@ -22,18 +22,18 @@ const cover = ( attributes: Record< string, unknown > = {} ): EditorBlock => ( {
 	innerBlocks: [],
 } );
 const write = jest.fn();
-const recoloured = {
-	focalPoint: undefined,
-	useFeaturedImage: undefined,
+const cleared = { focalPoint: undefined, useFeaturedImage: undefined };
+const recoloured = ( color: string, isDark: boolean ) => ( {
+	...cleared,
 	overlayColor: undefined,
-	customOverlayColor: '#112233',
+	customOverlayColor: color,
 	isUserOverlayColor: false,
-	isDark: true,
-};
+	isDark,
+} );
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	mockGetColorAsync.mockResolvedValue( { hex: '#112233' } );
+	mockGetColorAsync.mockResolvedValue( { hex: DARK } );
 } );
 
 describe( 'updateCoverForImage', () => {
@@ -44,7 +44,7 @@ describe( 'updateCoverForImage', () => {
 			'new.jpg',
 			expect.objectContaining( { silent: true } )
 		);
-		expect( write ).toHaveBeenCalledWith( 'cover', recoloured );
+		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( DARK, true ) );
 	} );
 
 	it( 'falls back to white when the image cannot be read', async () => {
@@ -52,10 +52,7 @@ describe( 'updateCoverForImage', () => {
 
 		await updateCoverForImage( 'cover', cover(), { url: 'new.jpg' }, write );
 
-		expect( write ).toHaveBeenCalledWith(
-			'cover',
-			expect.objectContaining( { customOverlayColor: '#FFF', isDark: false } )
-		);
+		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( '#FFF', false ) );
 	} );
 
 	it( 'eases the dim ratio for a first image, which a full overlay would hide', async () => {
@@ -66,7 +63,7 @@ describe( 'updateCoverForImage', () => {
 			write
 		);
 
-		expect( write ).toHaveBeenCalledWith( 'cover', { ...recoloured, dimRatio: 50 } );
+		expect( write ).toHaveBeenCalledWith( 'cover', { ...recoloured( DARK, true ), dimRatio: 50 } );
 	} );
 
 	it( "keeps the request's own values", async () => {
@@ -80,32 +77,47 @@ describe( 'updateCoverForImage', () => {
 		expect( write ).toHaveBeenCalledWith( 'cover', {
 			useFeaturedImage: undefined,
 			overlayColor: undefined,
-			customOverlayColor: '#112233',
+			customOverlayColor: DARK,
 			isUserOverlayColor: false,
 			isDark: true,
 		} );
 	} );
 
+	// A chosen overlay stays, and `isDark` follows it composited over the new image.
 	it.each( [
 		[
-			'the request sets an overlay colour',
-			cover(),
-			{ url: 'new.jpg', overlayColor: 'vivid-red' },
+			'an opaque dark overlay over a light image',
+			cover( { isUserOverlayColor: true, customOverlayColor: '#000', dimRatio: 100 } ),
+			{ url: 'new.jpg' },
+			LIGHT,
+			true,
 		],
 		[
-			'the request sets a custom overlay',
-			cover(),
-			{ url: 'new.jpg', customOverlayColor: '#000' },
+			'a faint light overlay over a dark image',
+			cover( { isUserOverlayColor: true, customOverlayColor: '#fff', dimRatio: 30 } ),
+			{ url: 'new.jpg' },
+			DARK,
+			true,
 		],
-		[ 'the user chose the overlay', cover( { isUserOverlayColor: true } ), { url: 'new.jpg' } ],
-	] )( 'leaves the overlay alone when %s', async ( _, before, requested ) => {
+		[
+			'a half-strength palette overlay the request sets, over a light image',
+			cover(),
+			{ url: 'new.jpg', overlayColor: 'vivid-red' },
+			LIGHT,
+			false,
+		],
+	] )( 'keeps %s and judges its darkness', async ( _, before, requested, image, isDark ) => {
+		mockGetColorAsync.mockResolvedValue( { hex: image } );
+
 		await updateCoverForImage( 'cover', before, requested, write );
 
-		expect( mockGetColorAsync ).not.toHaveBeenCalled();
-		expect( write ).toHaveBeenCalledWith( 'cover', {
-			focalPoint: undefined,
-			useFeaturedImage: undefined,
-		} );
+		expect( write ).toHaveBeenCalledWith( 'cover', { ...cleared, isDark } );
+	} );
+
+	it( 'leaves `isDark` alone for a palette overlay the palette lacks', async () => {
+		await updateCoverForImage( 'cover', cover(), { url: 'new.jpg', overlayColor: 'gone' }, write );
+
+		expect( write ).toHaveBeenCalledWith( 'cover', cleared );
 	} );
 
 	it.each( [
@@ -116,6 +128,7 @@ describe( 'updateCoverForImage', () => {
 	] )( 'writes nothing when %s', async ( _, before, requested ) => {
 		await updateCoverForImage( 'cover', before, requested, write );
 
+		expect( mockGetColorAsync ).not.toHaveBeenCalled();
 		expect( write ).not.toHaveBeenCalled();
 	} );
 } );

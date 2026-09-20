@@ -5,14 +5,19 @@
  * would hide a first image. An image the agent writes gets the same treatment.
  */
 
+import { getPaletteColor } from '../../utils/editor-blocks';
 import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
 
 const COVER_BLOCK = 'core/cover';
 
 // White, like the editor's fallback: an image that cannot be read is more
 // often light than dark.
-const DEFAULT_COLOR = '#FFF';
+const DEFAULT_IMAGE_COLOR = '#FFF';
 
+// The overlay a cover shows when none is chosen, from the block's stylesheet.
+const DEFAULT_OVERLAY_COLOR = '#000';
+
+type Colord = typeof import( 'colord' ).colord;
 type Write = ( clientId: string, attributes: BlockAttributes ) => void;
 
 // Loaded on the first cover image, in their own chunk.
@@ -22,31 +27,59 @@ const loadColorLibraries = () =>
 		import( /* webpackChunkName: "am-cover-color" */ 'fast-average-color' ),
 	] );
 
-/** The image's average colour as hex, and whether it reads as dark. */
-async function getImageColor( url: string ): Promise< { color: string; isDark: boolean } > {
-	const [ { colord }, { FastAverageColor } ] = await loadColorLibraries();
-	const { r, g, b, a } = colord( DEFAULT_COLOR ).toRgb();
-	let color = DEFAULT_COLOR;
-
-	try {
-		// A failed read resolves to the default colour rather than rejecting.
-		color = (
-			await new FastAverageColor().getColorAsync( url, {
-				defaultColor: [ r, g, b, a * 255 ],
-				silent: true,
-			} )
-		).hex;
-	} catch {
-		// Kept as the default.
-	}
-
-	return { color, isDark: colord( color ).isDark() };
-}
+const asNumber = ( value: unknown ): number | undefined =>
+	typeof value === 'number' ? value : undefined;
 
 const keepsOverlay = ( before: EditorBlock, requested: BlockAttributes ): boolean =>
 	before.attributes.isUserOverlayColor === true ||
 	requested.overlayColor !== undefined ||
 	requested.customOverlayColor !== undefined;
+
+/**
+ * The overlay the cover shows after the update: the request's where it sets
+ * one, else the block's, else the stylesheet's. A palette slug the palette
+ * lacks resolves to `undefined`.
+ */
+function getOverlayColor( before: EditorBlock, requested: BlockAttributes ): string | undefined {
+	const source =
+		'overlayColor' in requested || 'customOverlayColor' in requested
+			? requested
+			: before.attributes;
+	const { overlayColor, customOverlayColor } = source;
+
+	if ( typeof overlayColor === 'string' ) {
+		return getPaletteColor( overlayColor );
+	}
+
+	return typeof customOverlayColor === 'string' ? customOverlayColor : DEFAULT_OVERLAY_COLOR;
+}
+
+/** Whether the overlay over the image reads as dark, as the editor judges it. */
+function compositeIsDark(
+	colord: Colord,
+	dimRatio: number,
+	overlayColor: string,
+	imageColor: string
+): boolean {
+	if ( overlayColor === imageColor || dimRatio === 100 ) {
+		return colord( overlayColor ).isDark();
+	}
+
+	const overlay = colord( overlayColor )
+		.alpha( dimRatio / 100 )
+		.toRgb();
+	const image = colord( imageColor ).toRgb();
+	const alpha = overlay.a + image.a * ( 1 - overlay.a );
+	const channel = ( over: number, under: number ) =>
+		over * overlay.a + under * image.a * ( 1 - overlay.a );
+
+	return colord( {
+		r: channel( overlay.r, image.r ),
+		g: channel( overlay.g, image.g ),
+		b: channel( overlay.b, image.b ),
+		a: alpha,
+	} ).isDark();
+}
 
 /**
  * Writes what a cover's new image implies, after the update that set it. The
@@ -70,6 +103,22 @@ export async function updateCoverForImage(
 		return;
 	}
 
+	const [ { colord }, { FastAverageColor } ] = await loadColorLibraries();
+	const { r, g, b, a } = colord( DEFAULT_IMAGE_COLOR ).toRgb();
+	let imageColor = DEFAULT_IMAGE_COLOR;
+
+	try {
+		// A failed read resolves to the default colour rather than rejecting.
+		imageColor = (
+			await new FastAverageColor().getColorAsync( url, {
+				defaultColor: [ r, g, b, a * 255 ],
+				silent: true,
+			} )
+		).hex;
+	} catch {
+		// Kept as the default.
+	}
+
 	const derived: BlockAttributes = {
 		focalPoint: undefined,
 		useFeaturedImage: undefined,
@@ -77,16 +126,25 @@ export async function updateCoverForImage(
 		...( before.attributes.url === undefined &&
 			before.attributes.dimRatio === 100 && { dimRatio: 50 } ),
 	};
+	const recolours = ! keepsOverlay( before, requested );
 
-	if ( ! keepsOverlay( before, requested ) ) {
-		const { color, isDark } = await getImageColor( url );
-
+	if ( recolours ) {
 		Object.assign( derived, {
 			overlayColor: undefined,
-			customOverlayColor: color,
+			customOverlayColor: imageColor,
 			isUserOverlayColor: false,
-			isDark,
 		} );
+	}
+
+	const overlayColor = recolours ? imageColor : getOverlayColor( before, requested );
+	const dimRatio =
+		asNumber( requested.dimRatio ) ??
+		asNumber( derived.dimRatio ) ??
+		asNumber( before.attributes.dimRatio ) ??
+		100;
+
+	if ( overlayColor ) {
+		derived.isDark = compositeIsDark( colord, dimRatio, overlayColor, imageColor );
 	}
 
 	write(
