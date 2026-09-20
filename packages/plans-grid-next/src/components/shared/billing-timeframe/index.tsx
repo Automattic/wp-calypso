@@ -21,6 +21,8 @@ const DiscountPromotion = styled.div`
 
 const BillingTimeframeContainer = styled.p`
 	margin-bottom: 0;
+	text-wrap: balance; // Fallback until Safari supports 'pretty'.
+	text-wrap: pretty;
 `;
 
 interface RefundNoticeProps {
@@ -91,9 +93,10 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 
 		return (
 			<BillingTimeframeContainer>
-				{ translate( 'Starts at %(price)s/month per site', {
+				{ translate( 'Starts at %(price)s/month per site, excl. taxes', {
 					args: { price },
-					comment: 'Translators: %(price)s is the monthly price for agencies',
+					comment:
+						'Translators: %(price)s is the monthly price for agencies. "Excl. taxes" is short for excluding taxes',
 				} ) }
 			</BillingTimeframeContainer>
 		);
