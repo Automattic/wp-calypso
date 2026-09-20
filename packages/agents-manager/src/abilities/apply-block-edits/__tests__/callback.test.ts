@@ -306,9 +306,14 @@ describe( 'applyBlockEditsCallback', () => {
 	// show: the menu is captured before the edit, and that is what an undo puts back.
 	it( 'captures the menu a navigation edit reaches, beside the blocks snapshot', async () => {
 		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		jest.mocked( getChangeType ).mockReturnValue( 'text-content' );
 		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( input );
+
+		// Its checkpoint holds the menu too, which the inline swap cannot take back.
+		expect( result.changeType ).toBe( 'other' );
+		expect( sealCheckpointForSwap ).not.toHaveBeenCalled();
 
 		expect( withCheckpoint ).toHaveBeenCalledWith(
 			expect.objectContaining( { keys: [ 'blocks', 'navigation' ] } ),

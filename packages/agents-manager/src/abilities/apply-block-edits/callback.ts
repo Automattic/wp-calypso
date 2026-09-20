@@ -153,7 +153,8 @@ async function applyEditsAction(
 	// hold and the page's blocks do not show: the menu is captured as well.
 	const menuIds = getEditedMenuIds( edits, resolve );
 	const hasNavigationEdit = menuIds.length > 0;
-	const changeType = getChangeType( edits );
+	// A menu edit cannot be swapped inline: its checkpoint holds more than blocks.
+	const changeType = hasNavigationEdit ? 'other' : getChangeType( edits );
 	const capturedTargets = captureTargets( edits, resolve );
 	const successMessage = summary ?? __( 'I have completed the edits.', __i18n_text_domain__ );
 	const keys = [

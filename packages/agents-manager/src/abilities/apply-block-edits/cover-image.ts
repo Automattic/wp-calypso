@@ -103,12 +103,17 @@ export async function syncCoverWithImage(
 		// An unreadable image keeps the default.
 	}
 
+	const setsSlug = typeof requested.overlayColor === 'string';
+	const setsCustom = typeof requested.customOverlayColor === 'string';
 	const derived: BlockAttributes = {
 		focalPoint: undefined,
 		useFeaturedImage: undefined,
 		// A first image would otherwise sit under a full-strength overlay.
 		...( before.attributes.url === undefined &&
 			before.attributes.dimRatio === 100 && { dimRatio: 50 } ),
+		// One overlay form at a time: a slug left in place would win over a custom colour.
+		...( setsSlug !== setsCustom &&
+			( setsSlug ? { customOverlayColor: undefined } : { overlayColor: undefined } ) ),
 	};
 	const requestsOverlay = setsOverlay( requested );
 	const recolours = ! requestsOverlay && before.attributes.isUserOverlayColor !== true;

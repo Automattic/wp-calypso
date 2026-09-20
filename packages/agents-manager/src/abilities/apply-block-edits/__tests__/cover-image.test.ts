@@ -80,35 +80,43 @@ describe( 'syncCoverWithImage', () => {
 		} );
 	} );
 
-	// A chosen overlay stays, and `isDark` follows it composited over the new image.
+	// A chosen overlay stays, and `isDark` follows it composited over the new
+	// image. A form the request sets clears the other, which would win over it.
 	it.each( [
 		[
 			'an opaque dark overlay over a light image',
 			cover( { isUserOverlayColor: true, customOverlayColor: '#000', dimRatio: 100 } ),
 			{ url: 'new.jpg' },
 			LIGHT,
-			true,
+			{ isDark: true },
 		],
 		[
 			'a faint light overlay over a dark image',
 			cover( { isUserOverlayColor: true, customOverlayColor: '#fff', dimRatio: 30 } ),
 			{ url: 'new.jpg' },
 			DARK,
-			true,
+			{ isDark: true },
 		],
 		[
 			'a half-strength palette overlay the request sets, over a light image',
-			cover(),
+			cover( { customOverlayColor: '#000' } ),
 			{ url: 'new.jpg', overlayColor: 'vivid-red' },
 			LIGHT,
-			false,
+			{ customOverlayColor: undefined, isDark: false },
 		],
-	] )( 'keeps %s and judges its darkness', async ( _, before, requested, image, isDark ) => {
+		[
+			'a half-strength custom overlay the request sets, over a light image',
+			cover( { overlayColor: 'vivid-red' } ),
+			{ url: 'new.jpg', customOverlayColor: '#000' },
+			LIGHT,
+			{ overlayColor: undefined, isDark: true },
+		],
+	] )( 'keeps %s and judges its darkness', async ( _, before, requested, image, expected ) => {
 		mockGetColorAsync.mockResolvedValue( { hex: image } );
 
 		await syncCoverWithImage( 'cover', before, requested, write );
 
-		expect( write ).toHaveBeenCalledWith( 'cover', { ...cleared, isDark } );
+		expect( write ).toHaveBeenCalledWith( 'cover', { ...cleared, ...expected } );
 	} );
 
 	it( 'leaves `isDark` alone for a palette overlay the palette lacks', async () => {

@@ -34,8 +34,9 @@ export function getChangeType( edits: BlockEdits ): ChangeType {
 
 /**
  * The saved menus the edits reach, by the `ref` of the navigation block a
- * target sits inside or an insert lands under. A target that is the navigation
- * block itself names no menu: its own attributes are in the page's blocks.
+ * target sits inside, an insert lands under, or an update lists the items of.
+ * A navigation block's own attributes are in the page's blocks, so an update
+ * of those alone names no menu.
  */
 export function getEditedMenuIds( edits: BlockEdits, resolve: ResolveClientId ): MenuId[] {
 	const menuOf = ( chain: string[] ): MenuId | undefined => {
@@ -47,7 +48,9 @@ export function getEditedMenuIds( edits: BlockEdits, resolve: ResolveClientId ):
 	const above = ( id: string ) => getBlockParents( resolve( id ) );
 	const under = ( id?: string | null ) => ( id ? [ resolve( id ), ...above( id ) ] : [] );
 	const menuIds = [
-		...edits.updates.map( ( update ) => menuOf( above( update.clientId ) ) ),
+		...edits.updates.map( ( update ) =>
+			menuOf( update.innerBlocks?.length ? under( update.clientId ) : above( update.clientId ) )
+		),
 		...edits.deletes.map( ( id ) => menuOf( above( id ) ) ),
 		...edits.inserts.map( ( insert ) => menuOf( under( insert.parentClientId ) ) ),
 	].filter( isMenuId );
