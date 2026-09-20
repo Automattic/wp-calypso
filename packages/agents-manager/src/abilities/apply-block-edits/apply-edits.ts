@@ -13,7 +13,7 @@ import {
 	updateBlockAttributes,
 } from '../../utils/editor-blocks';
 import { NAVIGATION_BLOCK } from '../../utils/navigation-menu';
-import { updateCoverForImage } from './cover-image';
+import { syncCoverWithImage } from './cover-image';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
@@ -234,13 +234,13 @@ async function applyUpdate(
 			clientId,
 			mergeAttributes( target.attributes, blockData.attributes )
 		);
-		await updateCoverForImage( clientId, target, blockData.attributes, writers.updateAttributes );
+		await syncCoverWithImage( clientId, target, blockData.attributes, writers.updateAttributes );
 	} else {
 		const created = createBlockRecursively( mergeBlocksRecursively( target, blockData, resolve ) );
 
 		writers.replace( clientId, created );
 		onReplaced( requestedId, created.clientId );
-		await updateCoverForImage(
+		await syncCoverWithImage(
 			created.clientId,
 			target,
 			blockData.attributes,

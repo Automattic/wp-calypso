@@ -85,7 +85,7 @@ function compositeIsDark(
  * Writes what a cover's new image implies, after the update that set it. The
  * request's own values win; the overlay is left to a user who chose it.
  */
-export async function updateCoverForImage(
+export async function syncCoverWithImage(
 	clientId: string,
 	before: EditorBlock,
 	requested: BlockAttributes | null | undefined,
