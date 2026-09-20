@@ -61,10 +61,8 @@ export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetect
 	if ( ! tlds.includes( tld ) && ! wpcomMultiLevelTlds.includes( tld ) ) {
 		// An empty list means it has not arrived yet, not that every ending is
 		// unrecognised. The caller re-runs once it does.
-		const issue =
-			tlds.length > 0
-				? ( { type: 'unknown-tld', ending: labels[ labels.length - 1 ] } as const )
-				: undefined;
+		const issue: FqdnIssue | undefined =
+			tlds.length > 0 ? { type: 'unknown-tld', ending: labels[ labels.length - 1 ] } : undefined;
 
 		return notFqdn( sanitizeDomainInput( labels[ labels.length - 2 ] ), issue );
 	}
@@ -83,13 +81,14 @@ export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetect
 	}
 
 	const fullDomain = `${ baseName }.${ tld }`;
-	const hasSubdomain = remainder.length > 1;
+	const issue: FqdnIssue | undefined =
+		remainder.length > 1 ? { type: 'subdomain', rootDomain: fullDomain } : undefined;
 
 	return {
 		isFqdn: true,
 		baseName,
 		tld,
 		fullDomain,
-		...( hasSubdomain ? { issue: { type: 'subdomain' as const, rootDomain: fullDomain } } : {} ),
+		...( issue ? { issue } : {} ),
 	};
 }

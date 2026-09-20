@@ -55,8 +55,6 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;
-	// `detectFqdn` already resolves the single-token base name, including the
-	// fallbacks for input it could not take at face value.
 	const baseName = detection
 		? detection.baseName
 		: sanitizeDomainInput( sanitizeKeywordInput( trimmed ) );

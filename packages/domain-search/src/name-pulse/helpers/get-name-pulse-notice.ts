@@ -147,5 +147,7 @@ export function getNamePulseNotice(
 	layout: NamePulseResultsLayout,
 	availability?: NamePulseAvailabilityVerdict
 ): NamePulseNotice | null {
-	return ( availability && fromAvailability( availability ) ) || fromQueryShape( layout );
+	const verdictNotice = availability ? fromAvailability( availability ) : null;
+
+	return verdictNotice ?? fromQueryShape( layout );
 }

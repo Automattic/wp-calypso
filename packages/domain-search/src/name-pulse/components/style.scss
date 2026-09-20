@@ -215,8 +215,6 @@
 		overflow-wrap: anywhere;
 	}
 
-	// The action sits at the end of the same row on wide viewports and wraps
-	// under the message when there is no space for both.
 	&__action {
 		margin: 0;
 		padding-block: 2px;

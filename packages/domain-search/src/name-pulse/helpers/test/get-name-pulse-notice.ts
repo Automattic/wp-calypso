@@ -71,8 +71,6 @@ describe( 'getNamePulseNotice', () => {
 		} );
 	} );
 
-	// `registered_domain` means registered *with* WordPress.com, not elsewhere,
-	// so it is never something the user could transfer in.
 	it( 'offers no transfer for a domain registered with WordPress.com', () => {
 		expect(
 			getNamePulseNotice(
