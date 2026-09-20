@@ -10,6 +10,7 @@ import {
 	getBlock,
 	getBlockParents,
 	getBlocks,
+	getCurrentPost,
 	getSectionRootClientId,
 	getSelectedBlockClientId,
 	getTemplatePartClientIds,
@@ -148,12 +149,17 @@ function getPageRegions(): PageBlock[] {
 }
 
 /**
- * The page structure under short ids, or `null` when it cannot be read: a
- * context read must never fail the turn. Records the menu items it lists, for
- * `getMenuItemAttributes()`.
+ * The page structure under short ids, or `null` before the editor holds a
+ * post or when it cannot be read: a context read must never fail the turn,
+ * and an empty structure would displace the provider's. Records the menu
+ * items it lists, for `getMenuItemAttributes()`.
  */
 export function getPageStructure(): PageStructure | null {
 	try {
+		if ( ! getCurrentPost() ) {
+			return null;
+		}
+
 		const { toShortId, findShortId } = createShortIdLookup();
 		const menuItemAttributes = new Map< string, Record< string, unknown > >();
 

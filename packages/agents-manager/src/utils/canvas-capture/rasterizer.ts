@@ -133,6 +133,8 @@ interface CaptureRect {
 	y: number;
 	width: number;
 	height: number;
+	/** How many of the named blocks the band was framed on. */
+	framed: number;
 }
 
 /**
@@ -268,7 +270,7 @@ const getEditedSpan = (
 	canvasDocument: Document,
 	canvasWindow: Window,
 	clientIds: string[]
-): { top: number; bottom: number } | null => {
+): { top: number; bottom: number; count: number } | null => {
 	const scrollY = canvasWindow.scrollY || 0;
 	const boxes = clientIds
 		.map( ( clientId ) => canvasDocument.querySelector( `[data-block="${ clientId }"]` ) )
@@ -286,6 +288,7 @@ const getEditedSpan = (
 	return {
 		top: Math.min( ...boxes.map( ( box ) => box.top ) ) + scrollY,
 		bottom: Math.max( ...boxes.map( ( box ) => box.bottom ) ) + scrollY,
+		count: boxes.length,
 	};
 };
 
@@ -342,7 +345,7 @@ export const getCaptureRect = (
 	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
 
 	if ( ! span ) {
-		return { x: 0, y: scrollY, width, height };
+		return { x: 0, y: scrollY, width, height, framed: 0 };
 	}
 
 	// The blocks decide where to look, never how much. The agent routinely edits
@@ -356,6 +359,7 @@ export const getCaptureRect = (
 		y: Math.max( 0, Math.min( centre - height / 2, documentHeight - height ) ),
 		width,
 		height,
+		framed: span.count,
 	};
 };
 
@@ -1204,11 +1208,18 @@ export const getInkSpans = (
 	const spans: Array< { top: number; bottom: number } > = [];
 
 	Array.from( body.querySelectorAll( '*' ) ).forEach( ( element ) => {
+		// A cover's photograph is a CSS background, drawn as a placeholder.
+		const hasBackgroundImage = () => {
+			const background = view.getComputedStyle( element ).backgroundImage;
+
+			return !! background && background !== 'none';
+		};
 		const drawsSomething =
 			element.tagName === 'IMG' ||
 			Array.from( element.childNodes ).some(
 				( node ) => node.nodeType === 3 && ( node.textContent || '' ).trim()
-			);
+			) ||
+			hasBackgroundImage();
 
 		if ( ! drawsSomething ) {
 			return;
@@ -1497,7 +1508,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			},
 			// Images are placeholders, so a reader of this capture must not
 			// conclude the page's photographs are missing or broken.
-			metadata: { imagesArePlaceholders: true, fullPage: wholePage },
+			metadata: { imagesArePlaceholders: true, fullPage: wholePage, framed: rect.framed },
 		},
 	] as FilePart[];
 };

@@ -17,7 +17,7 @@ import { syncCoverWithImage } from './cover-image';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
-import type { BlockEdits, BlockInsert, BlockUpdate, ResolveClientId } from './types';
+import type { BlockData, BlockEdits, BlockInsert, BlockUpdate, ResolveClientId } from './types';
 import type { EditorBlock, UndoLevel } from '../../utils/editor-blocks';
 
 export interface ApplyEditsOptions {
@@ -48,14 +48,17 @@ const REPLACE_INNER_BLOCKS_STRUCTURAL_PARENTS = new Set( [
 
 const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
 
-// Every write checks the canvas first: the batch yields between steps, and
-// the user may leave the page while it does.
+// Every write checks the canvas first, before the undo level marks anything:
+// the batch yields between steps, and the user may leave the page while it does.
 const createWriters = ( level: UndoLevel ) => {
-	const guarded = < Args extends unknown[] >( write: ( ...args: Args ) => void ) =>
-		level.write( ( ...args: Args ) => {
+	const guarded = < Args extends unknown[] >( write: ( ...args: Args ) => void ) => {
+		const inLevel = level.write( write );
+
+		return ( ...args: Args ) => {
 			assertCanvasUnmoved();
-			write( ...args );
-		} );
+			inLevel( ...args );
+		};
+	};
 
 	return {
 		insert: guarded( insertBlock ),
@@ -223,9 +226,15 @@ async function applyUpdate(
 
 		// The list moves the children as they are; the edits they carry follow.
 		for ( const [ index, child ] of innerBlocks.entries() ) {
-			if ( Object.keys( child.attributes ?? {} ).length || child.innerBlocks?.length ) {
+			const name = child.name ?? children[ index ].name;
+
+			if (
+				name !== children[ index ].name ||
+				Object.keys( child.attributes ?? {} ).length ||
+				child.innerBlocks?.length
+			) {
 				await applyUpdate(
-					{ ...child, clientId: children[ index ].clientId, name: children[ index ].name },
+					{ ...child, clientId: children[ index ].clientId, name },
 					options,
 					writers,
 					recoveredTargetIds
@@ -249,10 +258,59 @@ async function applyUpdate(
 
 			writers.replace( clientId, created );
 			onReplaced( requestedId, created.clientId );
+			await followReplacedChildren(
+				target.innerBlocks,
+				blockData.innerBlocks,
+				created.innerBlocks,
+				options,
+				writers
+			);
 			holder = created.clientId;
 		}
 
 		await syncCoverWithImage( holder, target, blockData.attributes, writers.updateAttributes );
+	}
+}
+
+/**
+ * A replaced block's children are recreated with new clientIds: the ids the
+ * call knows them by follow, and a cover among them is synced like the parent.
+ */
+async function followReplacedChildren(
+	before: EditorBlock[],
+	requested: BlockData[] | null | undefined,
+	created: EditorBlock[],
+	options: ApplyEditsOptions,
+	writers: Writers
+): Promise< void > {
+	const { resolve, onReplaced } = options;
+	const listed: BlockData[] = requested?.length
+		? requested
+		: before.map( ( { clientId } ) => ( { clientId } ) );
+
+	for ( const [ index, child ] of listed.entries() ) {
+		const block = created[ index ];
+		const previous =
+			child.clientId && before.find( ( { clientId } ) => clientId === resolve( child.clientId! ) );
+
+		if ( ! child.clientId || ! block || ! previous ) {
+			continue;
+		}
+
+		onReplaced( child.clientId, block.clientId );
+		await syncCoverWithImage(
+			block.clientId,
+			previous,
+			child.attributes,
+			writers.updateAttributes
+		);
+		await followReplacedChildren(
+			previous.innerBlocks,
+			child.innerBlocks,
+			block.innerBlocks,
+			options,
+			writers
+		);
 	}
 }
 

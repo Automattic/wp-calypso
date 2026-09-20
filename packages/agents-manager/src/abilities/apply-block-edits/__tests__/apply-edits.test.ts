@@ -431,6 +431,52 @@ describe( 'updates', () => {
 		expect( writes ).toHaveLength( written + 1 );
 	} );
 
+	// The recreated children get new clientIds; ids the call still uses follow them.
+	it( 'follows the children of a replaced block, listed or not', async () => {
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-g',
+					name: 'core/group',
+					attributes: { className: 'g2' },
+					innerBlocks: [ { clientId: 'ref-b' }, { clientId: 'ref-a' } ],
+				},
+			],
+		} );
+
+		expect( onReplaced ).toHaveBeenCalledWith( 'ref-b', 'new-core/paragraph' );
+		expect( onReplaced ).toHaveBeenCalledWith( 'ref-a', 'new-core/group' );
+		expect( onReplaced ).toHaveBeenCalledWith( 'x', 'new-core/paragraph' );
+		expect( syncCoverWithImage ).toHaveBeenCalledWith(
+			'new-core/group',
+			expect.objectContaining( { clientId: 'a' } ),
+			undefined,
+			expect.any( Function )
+		);
+	} );
+
+	it( 'applies a type change to a reordered child of a structural parent', async () => {
+		const paragraphs = [ 0, 1 ].map( ( i ) => block( `p${ i }`, 'core/paragraph' ) );
+
+		useTree( [ block( 'post-content', 'core/post-content' ) ] );
+		useControlledChildren( 'post-content', paragraphs );
+
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-post-content',
+					name: 'core/post-content',
+					innerBlocks: [ { clientId: 'ref-p1', name: 'core/heading' }, { clientId: 'ref-p0' } ],
+				},
+			],
+		} );
+
+		expect( replaceBlock ).toHaveBeenCalledWith(
+			'p1',
+			expect.objectContaining( { name: 'core/heading' } )
+		);
+	} );
+
 	it( 'replaces the block when the update changes its type', async () => {
 		await run( {
 			updates: [ { clientId: 'ref-b', name: 'core/heading', attributes: { level: 2 } } ],
@@ -621,6 +667,8 @@ it( 'stops before the next write once the canvas has moved', async () => {
 		} )
 	).rejects.toThrow( 'moved' );
 	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
+	// The refused write never reached the undo level, so it marked nothing.
+	expect( writes ).toHaveLength( 1 );
 } );
 
 it( 'checks the canvas once more after the last write', async () => {

@@ -79,10 +79,11 @@ export function getReorderOperations(
  * id names no block. The agent addresses top-level reorders to a
  * `core/post-content` parent, which the post editor does not have: its content
  * blocks are the tree roots (AI-1133). The children must share one list,
- * cover it completely (`replaceInnerBlocks` drops any block left out) and not
- * repeat (a repeat would put one block twice under a single clientId); else
- * `null`, for the caller's usual not-found error. Attributes on the missing
- * parent are dropped: no block exists to carry them.
+ * cover it completely (`replaceInnerBlocks` drops any block left out), not
+ * repeat (a repeat would put one block twice under a single clientId) and
+ * carry no edit of their own, which a reorder could not apply; else `null`,
+ * for the caller's usual not-found error. Attributes on the missing parent
+ * are dropped: no block exists to carry them.
  */
 export function getUnmappedParentReorder(
 	update: BlockData,
@@ -97,7 +98,12 @@ export function getUnmappedParentReorder(
 	for ( const child of update.innerBlocks ) {
 		const block = child.clientId ? getBlock( resolve( child.clientId ) ) : undefined;
 
-		if ( ! block ) {
+		if (
+			! block ||
+			( child.name && child.name !== block.name ) ||
+			Object.keys( child.attributes ?? {} ).length ||
+			child.innerBlocks?.length
+		) {
 			return null;
 		}
 

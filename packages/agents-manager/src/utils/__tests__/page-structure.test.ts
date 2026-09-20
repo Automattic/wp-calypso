@@ -7,6 +7,7 @@ jest.mock( '../editor-blocks', () => ( {
 	getBlock: jest.fn(),
 	getBlockParents: jest.fn(),
 	getBlocks: jest.fn(),
+	getCurrentPost: jest.fn(),
 	getSectionRootClientId: jest.fn(),
 	getSelectedBlockClientId: jest.fn(),
 	getTemplatePartClientIds: jest.fn(),
@@ -74,6 +75,7 @@ function withEditor( {
 			.map( ( item ) => ( { slug: String( item.attributes.slug ), clientId: item.clientId } ) )
 	);
 	editor.getSectionRootClientId.mockReturnValue( sectionRoot );
+	editor.getCurrentPost.mockReturnValue( { id: 1, type: 'page' } );
 	editor.getSelectedBlockClientId.mockReturnValue( selected );
 }
 
@@ -316,6 +318,14 @@ it.each( [
 	withEditor( { blocks: [ block( 'intro', 'core/paragraph' ) ], selected } );
 
 	expect( getPageStructure()?.selectedBlockClientId ).toBe( expected );
+} );
+
+// An empty structure would displace the provider's while the editor loads.
+it( 'is null until the editor holds a post', () => {
+	withEditor( { blocks: [ block( 'intro', 'core/paragraph' ) ] } );
+	editor.getCurrentPost.mockReturnValue( undefined );
+
+	expect( getPageStructure() ).toBeNull();
 } );
 
 // A context read must never fail the turn: the context goes out without it.
