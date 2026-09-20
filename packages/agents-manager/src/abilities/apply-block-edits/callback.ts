@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { repointShortId, resolveClientId } from '../../utils/block-ids';
+import { getBlockingMove } from '../../utils/canvas-binding';
 import { captureCanvas } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
@@ -305,14 +306,17 @@ export async function applyBlockEditsCallback(
 
 	// Captured after every path, the no-change and failure ones most of all:
 	// there the block tree cannot say whether the user's problem is fixed. CSS
-	// alone shows anywhere on the page, so that call gets the whole of it.
-	const fileParts = await captureCanvas( {
-		clientIds: [
-			...( edits ? getEditedClientIds( edits, resolver.resolve ) : [] ),
-			...insertedClientIds,
-		],
-		fullPage: !! edits && edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits ),
-	} );
+	// alone shows anywhere on the page, so that call gets the whole of it. A
+	// call stopped by a move gets none: the page on screen is not the one it edited.
+	const fileParts = getBlockingMove()
+		? null
+		: await captureCanvas( {
+				clientIds: [
+					...( edits ? getEditedClientIds( edits, resolver.resolve ) : [] ),
+					...insertedClientIds,
+				],
+				fullPage: !! edits && edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits ),
+			} );
 
 	// `visualCheckPending` ships only with an image: the chat withholds the
 	// summary on the strength of it, and with nothing to look at the server's

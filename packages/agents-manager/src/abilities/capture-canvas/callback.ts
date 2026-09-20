@@ -1,13 +1,12 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { resolveClientId } from '../../utils/block-ids';
 import { captureCanvas } from '../../utils/canvas-capture';
+import { getBlock } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
 
-// A clientId or a short id; anything else names no block and would break the selector.
-const isClientId = ( value: unknown ): value is string =>
-	typeof value === 'string' && /^[\w-]+$/.test( value );
+const isString = ( value: unknown ): value is string => typeof value === 'string';
 
 /**
  * A picture of the canvas as it renders now, framed on the named blocks. No
@@ -16,11 +15,11 @@ const isClientId = ( value: unknown ): value is string =>
  */
 export async function captureCanvasCallback( rawInput: unknown ): Promise< AbilityResult > {
 	const input = isRecord( rawInput ) ? rawInput : {};
-	// An id that maps to no block passes through: it may be a clientId already,
-	// and framing on nothing falls back to the viewport.
-	const clientIds = Array.isArray( input.clientIds )
-		? input.clientIds.filter( isClientId ).map( resolveClientId )
-		: [];
+	// Only blocks on the canvas can be framed, so the reply describes what was.
+	const clientIds = ( Array.isArray( input.clientIds ) ? input.clientIds : [] )
+		.filter( isString )
+		.map( resolveClientId )
+		.filter( ( clientId ) => getBlock( clientId ) );
 	const fullPage = input.fullPage === true;
 
 	const fileParts = await captureCanvas( { clientIds, fullPage } );

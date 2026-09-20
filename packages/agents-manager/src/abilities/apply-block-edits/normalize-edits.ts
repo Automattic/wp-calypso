@@ -43,6 +43,10 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block clientId must be a string' );
 	}
 
+	if ( value.attributes != null && ! isRecord( value.attributes ) ) {
+		throw new Error( 'Block attributes must be an object' );
+	}
+
 	if ( ! value.clientId && ! availableNames.has( String( value.name ) ) ) {
 		throw new Error( `Block type "${ String( value.name ) }" is not available` );
 	}
@@ -81,6 +85,10 @@ function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert 
 
 	if ( parentClientId != null && typeof parentClientId !== 'string' ) {
 		throw new Error( 'Insertion parentClientId must be a string' );
+	}
+
+	if ( index != null && ( ! Number.isInteger( index ) || ( index as number ) < 0 ) ) {
+		throw new Error( 'Insertion index must be a non-negative integer' );
 	}
 
 	assertBlock( block, availableNames );

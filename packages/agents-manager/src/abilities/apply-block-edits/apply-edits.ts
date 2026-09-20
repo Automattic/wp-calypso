@@ -4,14 +4,15 @@ import {
 	getBlockParents,
 	getBlockRootClientId,
 	getBlocks,
-	getSectionRootClientId,
 	insertBlock,
 	removeBlock,
 	replaceBlock,
 	replaceInnerBlocks,
+	resolveBlocksRoot,
 	TEMPLATE_PART_BLOCK,
 	updateBlockAttributes,
 } from '../../utils/editor-blocks';
+import { NAVIGATION_BLOCK } from '../../utils/navigation-menu';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
@@ -35,22 +36,34 @@ interface ApplyEditsResult {
 
 const POST_CONTENT_BLOCK_NAME = 'core/post-content';
 
-// Parents whose children move in place: replacing them is refused in content-only editing.
+// Parents whose children move in place: replacing them is refused in
+// content-only editing, and a menu's items live in its record.
 const REPLACE_INNER_BLOCKS_STRUCTURAL_PARENTS = new Set( [
 	POST_CONTENT_BLOCK_NAME,
 	TEMPLATE_PART_BLOCK,
+	NAVIGATION_BLOCK,
 	'core/columns',
 ] );
 
 const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
 
-const createWriters = ( level: UndoLevel ) => ( {
-	insert: level.write( insertBlock ),
-	remove: level.write( removeBlock ),
-	replace: level.write( replaceBlock ),
-	replaceChildren: level.write( replaceInnerBlocks ),
-	updateAttributes: level.write( updateBlockAttributes ),
-} );
+// Every write checks the canvas first: the batch yields between steps, and
+// the user may leave the page while it does.
+const createWriters = ( level: UndoLevel ) => {
+	const guarded = < Args extends unknown[] >( write: ( ...args: Args ) => void ) =>
+		level.write( ( ...args: Args ) => {
+			assertCanvasUnmoved();
+			write( ...args );
+		} );
+
+	return {
+		insert: guarded( insertBlock ),
+		remove: guarded( removeBlock ),
+		replace: guarded( replaceBlock ),
+		replaceChildren: guarded( replaceInnerBlocks ),
+		updateAttributes: guarded( updateBlockAttributes ),
+	};
+};
 
 type Writers = ReturnType< typeof createWriters >;
 
@@ -75,8 +88,11 @@ function resolveInsertParent(
 	parentClientId: string | null | undefined,
 	resolve: ResolveClientId
 ): string | undefined {
+	// The page's root, as the checkpoint snapshots it.
 	if ( ! parentClientId ) {
-		return getSectionRootClientId();
+		const root = resolveBlocksRoot();
+
+		return root?.kind === 'document' ? undefined : root?.clientId;
 	}
 
 	const parent = resolve( parentClientId );
@@ -133,7 +149,6 @@ async function applyInsert(
 
 	// Without this delay nested `innerBlocks` are not reliably part of the insert.
 	await wait( 200 );
-	assertCanvasUnmoved();
 	writers.insert( created, index, parent );
 	await wait( 0 );
 
@@ -157,7 +172,9 @@ function applyUpdate(
 
 	if ( ! target ) {
 		const recovery =
-			requestedId === POST_CONTENT_BLOCK_NAME && getUnmappedParentReorder( update, resolve );
+			requestedId === POST_CONTENT_BLOCK_NAME &&
+			update.name === POST_CONTENT_BLOCK_NAME &&
+			getUnmappedParentReorder( update, resolve );
 
 		if ( recovery ) {
 			applyReorders( [ recovery ], writers );
@@ -280,9 +297,7 @@ function deepestFirst( updates: BlockUpdate[], resolve: ResolveClientId ): Block
 
 /**
  * Writes the edits into the editor: inserts first, since an update can change
- * the clientIds an insert names, then updates, then deletes. The batch yields
- * between steps, so every write checks that the canvas is still the one the
- * call was made for.
+ * the clientIds an insert names, then updates, then deletes.
  */
 export async function applyEdits(
 	edits: BlockEdits,
@@ -302,14 +317,15 @@ export async function applyEdits(
 	}
 
 	for ( const update of deepestFirst( edits.updates, resolve ) ) {
-		assertCanvasUnmoved();
 		applyUpdate( update, options, writers, recoveredTargetIds );
 	}
 
 	for ( const requestedId of edits.deletes ) {
-		assertCanvasUnmoved();
 		await applyDelete( requestedId, resolve, writers );
 	}
+
+	// The last write yields before this returns, and the result is read from the page.
+	assertCanvasUnmoved();
 
 	return { recoveredTargetIds, insertedClientIds };
 }

@@ -5,13 +5,14 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	getBlockParents: jest.fn(),
 	getBlockRootClientId: jest.fn(),
 	getBlocks: jest.fn(),
-	getSectionRootClientId: jest.fn(),
 	insertBlock: jest.fn(),
 	removeBlock: jest.fn(),
 	replaceBlock: jest.fn(),
 	replaceInnerBlocks: jest.fn(),
+	resolveBlocksRoot: jest.fn(),
 	updateBlockAttributes: jest.fn(),
 } ) );
+jest.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
 
 import { createBlock } from '@wordpress/blocks';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
@@ -20,11 +21,11 @@ import {
 	getBlockParents,
 	getBlockRootClientId,
 	getBlocks,
-	getSectionRootClientId,
 	insertBlock,
 	removeBlock,
 	replaceBlock,
 	replaceInnerBlocks,
+	resolveBlocksRoot,
 	updateBlockAttributes,
 } from '../../../utils/editor-blocks';
 import { applyEdits } from '../apply-edits';
@@ -164,12 +165,18 @@ describe( 'inserts', () => {
 		expect( insertedClientIds ).toEqual( [ 'new-core/paragraph' ] );
 	} );
 
-	it( 'inserts at the top of the section root when no parent is given', async () => {
-		jest.mocked( getSectionRootClientId ).mockReturnValue( 'section' );
+	// The same root the checkpoint snapshots; the document root has no block.
+	it.each( [
+		[ 'the page root', { kind: 'section', clientId: 'section' }, 'section' ],
+		[ 'the document', { kind: 'document', clientId: 'document-root' }, undefined ],
+	] )( 'inserts at the top of %s when no parent is given', async ( _, root, parent ) => {
+		jest
+			.mocked( resolveBlocksRoot )
+			.mockReturnValue( { ...root, post: { id: 1, type: 'page' } } as never );
 
 		await run( { inserts: [ { block: paragraph } ] } );
 
-		expect( insertBlock ).toHaveBeenCalledWith( expect.anything(), 0, 'section' );
+		expect( insertBlock ).toHaveBeenCalledWith( expect.anything(), 0, parent );
 	} );
 
 	it( 'refuses a parent that names no block', async () => {
@@ -321,6 +328,31 @@ describe( 'updates', () => {
 		expect( updateBlockAttributes ).toHaveBeenCalledWith( 'p1', { content: 'Last first' } );
 	} );
 
+	it( "moves a menu's items in place rather than rebuilding its navigation block", async () => {
+		const items = [ 0, 1 ].map( ( i ) => block( `i${ i }`, 'core/navigation-link' ) );
+
+		useTree( [ block( 'nav', 'core/navigation', { ref: 9 } ) ] );
+		useControlledChildren( 'nav', items );
+
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-nav',
+					name: 'core/navigation',
+					attributes: { overlayMenu: 'never' },
+					innerBlocks: [ { clientId: 'ref-i1' }, { clientId: 'ref-i0' } ],
+				},
+			],
+		} );
+
+		expect( updateBlockAttributes ).toHaveBeenCalledWith(
+			'nav',
+			expect.objectContaining( { overlayMenu: 'never' } )
+		);
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [ items[ 1 ], items[ 0 ] ] );
+		expect( replaceBlock ).not.toHaveBeenCalled();
+	} );
+
 	it( 'refuses a structural parent child that names no block', async () => {
 		useTree( [ block( 'columns', 'core/columns', {}, [ block( 'c', 'core/column' ) ] ) ] );
 
@@ -436,6 +468,23 @@ describe( 'updates', () => {
 			expect( recoveredTargetIds ).toEqual( new Set( [ 'core/post-content' ] ) );
 		} );
 
+		it( 'declines an update that names another block type', async () => {
+			useTree( [ block( 'h', 'core/heading' ), block( 'p', 'core/paragraph' ) ] );
+
+			await expect(
+				run( {
+					updates: [
+						{
+							clientId: 'core/post-content',
+							name: 'core/group',
+							innerBlocks: [ { clientId: 'ref-p' }, { clientId: 'ref-h' } ],
+						},
+					],
+				} )
+			).rejects.toThrow( '[Edit Blocks] Block not found with clientId: core/post-content' );
+			expect( replaceInnerBlocks ).not.toHaveBeenCalled();
+		} );
+
 		it( 'keeps the not-found error when the recovery declines', async () => {
 			await expect( reorderPostContent( 'second', 'first' ) ).rejects.toThrow(
 				'[Edit Blocks] Block not found with clientId: core/post-content'
@@ -512,6 +561,20 @@ it( 'stops before the next write once the canvas has moved', async () => {
 	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 } );
 
+it( 'checks the canvas once more after the last write', async () => {
+	jest
+		.mocked( assertCanvasUnmoved )
+		.mockImplementationOnce( () => {} )
+		.mockImplementationOnce( () => {
+			throw new Error( 'moved' );
+		} );
+
+	await expect( run( { inserts: [ { block: { name: 'core/paragraph' } } ] } ) ).rejects.toThrow(
+		'moved'
+	);
+	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
+} );
+
 it( 'writes inserts, then updates, then deletes, all through the undo level', async () => {
 	useTree( [ block( 'h', 'core/heading', { content: 'Hi' } ), block( 'p', 'core/paragraph' ) ] );
 
@@ -521,5 +584,10 @@ it( 'writes inserts, then updates, then deletes, all through the undo level', as
 		inserts: [ { block: { name: 'core/separator' } } ],
 	} );
 
-	expect( writes ).toEqual( [ insertBlock, updateBlockAttributes, removeBlock ] );
+	const order = [ insertBlock, updateBlockAttributes, removeBlock ].map(
+		( write ) => jest.mocked( write ).mock.invocationCallOrder[ 0 ]
+	);
+
+	expect( writes ).toHaveLength( 3 );
+	expect( order ).toEqual( [ ...order ].sort( ( a, b ) => a - b ) );
 } );

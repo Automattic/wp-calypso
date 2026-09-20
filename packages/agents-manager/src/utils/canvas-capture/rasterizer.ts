@@ -1286,11 +1286,12 @@ const drawPageToBlob = async (
 		const bottom = Math.round( ( band.y + band.height ) * scale );
 		const inkExpected = bandExpectsInk( inkSpans, band );
 
-		// Each band gets the same patience a single capture does. Drawing once
-		// after a single frame loses whichever band happened not to be ready —
-		// and because the blank check only runs on the assembled page, one lost
-		// band among six is invisible: the result looks complete apart from a
-		// missing footer.
+		// Each band gets the same patience a single capture does: drawing once
+		// after a single frame loses whichever band happened not to be ready.
+		// Bands over a gap between sections are legitimately empty, and no
+		// amount of waiting adds content that is not there.
+		let rendered = false;
+
 		for ( const settleMs of RENDER_SETTLE_STEPS ) {
 			await settle( settleMs );
 			context.clearRect( 0, top, canvas.width, bottom - top );
@@ -1306,17 +1307,22 @@ const drawPageToBlob = async (
 				bottom - top
 			);
 
-			// Bands over a gap between sections are legitimately empty, and no
-			// amount of waiting adds content that is not there.
-			if (
+			rendered =
 				! inkExpected ||
 				! looksUnrendered( context, canvas.width, canvas.height, {
 					top,
 					height: bottom - top,
-				} )
-			) {
+				} );
+
+			if ( rendered ) {
 				break;
 			}
+		}
+
+		// Refused rather than kept: on the assembled page one lost band among
+		// six is invisible, a result complete apart from a missing section.
+		if ( ! rendered ) {
+			throw new UnfaithfulCaptureError( `The band at ${ band.y }px rendered blank`, 'blank' );
 		}
 	}
 
