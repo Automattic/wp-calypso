@@ -70,15 +70,6 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 		};
 	}
 
-	if ( verdict.status === DomainAvailabilityStatus.DISALLOWED ) {
-		return {
-			status: 'error',
-			message: __(
-				'Due to trademark policy, domains containing “WordPress” cannot be registered here. Please contact support if you have any questions.'
-			),
-		};
-	}
-
 	if ( verdict.status === DomainAvailabilityStatus.RESTRICTED ) {
 		return {
 			status: 'error',

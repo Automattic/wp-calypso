@@ -102,17 +102,13 @@ describe( 'getNamePulseNotice', () => {
 		} );
 	} );
 
-	it( 'explains the WordPress trademark restriction', () => {
+	it( 'leaves a disallowed domain to the row that shows it', () => {
 		expect(
 			getNamePulseNotice(
-				layoutFor( 'wordpress.com' ),
-				verdict( DomainAvailabilityStatus.DISALLOWED, 'wordpress.com' )
+				layoutFor( 'mywordpressblog.com' ),
+				verdict( DomainAvailabilityStatus.DISALLOWED, 'mywordpressblog.com' )
 			)
-		).toEqual( {
-			status: 'error',
-			message:
-				'Due to trademark policy, domains containing “WordPress” cannot be registered here. Please contact support if you have any questions.',
-		} );
+		).toBeNull();
 	} );
 
 	it( 'explains an ending WordPress.com does not sell', () => {
