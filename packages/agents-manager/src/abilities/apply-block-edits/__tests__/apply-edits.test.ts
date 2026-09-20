@@ -1,4 +1,5 @@
 jest.mock( '@wordpress/blocks', () => ( { createBlock: jest.fn() } ) );
+jest.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: jest.fn() } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( {
 	getBlock: jest.fn(),
 	getBlockParents: jest.fn(),
@@ -13,6 +14,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 } ) );
 
 import { createBlock } from '@wordpress/blocks';
+import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
 import {
 	getBlock,
 	getBlockParents,
@@ -290,6 +292,35 @@ describe( 'updates', () => {
 		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'columns', [ columns[ 1 ], columns[ 0 ] ] );
 	} );
 
+	it( 'applies the edits the reordered children carry', async () => {
+		const paragraphs = [ 0, 1 ].map( ( i ) =>
+			block( `p${ i }`, 'core/paragraph', { content: `${ i }` } )
+		);
+
+		useTree( [ block( 'post-content', 'core/post-content' ) ] );
+		useControlledChildren( 'post-content', paragraphs );
+
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-post-content',
+					name: 'core/post-content',
+					innerBlocks: [
+						{ clientId: 'ref-p1', attributes: { content: 'Last first' } },
+						{ clientId: 'ref-p0' },
+					],
+				},
+			],
+		} );
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'post-content', [
+			paragraphs[ 1 ],
+			paragraphs[ 0 ],
+		] );
+		expect( updateBlockAttributes ).toHaveBeenCalledTimes( 1 );
+		expect( updateBlockAttributes ).toHaveBeenCalledWith( 'p1', { content: 'Last first' } );
+	} );
+
 	it( 'refuses a structural parent child that names no block', async () => {
 		useTree( [ block( 'columns', 'core/columns', {}, [ block( 'c', 'core/column' ) ] ) ] );
 
@@ -462,6 +493,23 @@ describe( 'deletes', () => {
 			expect( consoleError ).toHaveBeenCalled();
 		} );
 	} );
+} );
+
+// The batch yields between writes, and the user may leave the page while it does.
+it( 'stops before the next write once the canvas has moved', async () => {
+	jest
+		.mocked( assertCanvasUnmoved )
+		.mockImplementationOnce( () => {} )
+		.mockImplementationOnce( () => {
+			throw new Error( 'moved' );
+		} );
+
+	await expect(
+		run( {
+			inserts: [ { block: { name: 'core/paragraph' } }, { block: { name: 'core/heading' } } ],
+		} )
+	).rejects.toThrow( 'moved' );
+	expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 } );
 
 it( 'writes inserts, then updates, then deletes, all through the undo level', async () => {

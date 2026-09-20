@@ -34,7 +34,7 @@ import type { AbilityResult } from '../types';
 
 interface ApplyBlockEditsInput extends RawBlockEdits {
 	followUpTasks?: unknown;
-	toolCallId?: string;
+	toolCallId?: unknown;
 	/** Ids the caller resolves itself, ahead of the page structure's. */
 	reverseMap?: unknown;
 	/** Set by the server when it may hold its ack back for a look at the capture. */
@@ -74,27 +74,20 @@ const createAgentMessage = (
 
 type Resolver = Omit< ApplyEditsOptions, 'level' >;
 
-// A caller's own map wins, as the WebMCP adapter's does; otherwise the ids
-// are the page structure's. A replaced block keeps its id either way: in the
-// map, and for a clientId sent as it is, for the rest of this call.
+// A caller's own map is read first, as the WebMCP adapter's; the rest are the
+// page structure's. A replaced block keeps its id for the rest of the call.
 function createResolver( reverseMap: unknown ): Resolver {
-	if ( isRecord( reverseMap ) ) {
-		return {
-			resolve: ( id ) => {
-				const clientId = reverseMap[ id ];
-
-				return typeof clientId === 'string' ? clientId : id;
-			},
-			onReplaced: ( requestedId, clientId ) => {
-				reverseMap[ requestedId ] = clientId;
-			},
-		};
-	}
-
+	const supplied = isRecord( reverseMap ) ? reverseMap : {};
 	const replaced = new Map< string, string >();
 
 	return {
-		resolve: ( id ) => replaced.get( id ) ?? resolveClientId( id ),
+		resolve: ( id ) => {
+			const clientId = supplied[ id ];
+
+			return (
+				replaced.get( id ) ?? ( typeof clientId === 'string' ? clientId : resolveClientId( id ) )
+			);
+		},
 		onReplaced: ( requestedId, clientId ) => {
 			replaced.set( requestedId, clientId );
 			repointShortId( requestedId, clientId );
@@ -135,10 +128,6 @@ async function applyEditsAction(
 	const hasBlockEdits = hasRequestedBlockEdits( edits );
 	const hasCustomCss = edits.customCSS !== undefined;
 
-	if ( ! hasBlockEdits && ! hasCustomCss ) {
-		return { result: noChangesResult( summary ), insertedClientIds: [] };
-	}
-
 	// The post editor does not load the record at boot; reading it starts the
 	// fetch, so wait for it rather than fail the first request.
 	const globalStyles = hasCustomCss ? await waitForEditedGlobalStyles() : undefined;
@@ -152,16 +141,24 @@ async function applyEditsAction(
 		globalStyles && edits.customCSS !== getCustomCss( globalStyles.record )
 			? edits.customCSS
 			: undefined;
+
+	// Nothing to write: no checkpoint, so no undo that does nothing.
+	if (
+		customCss === undefined &&
+		( ! hasBlockEdits || areUpdateEditsAlreadySatisfied( edits, resolve ) )
+	) {
+		return { result: noChangesResult( summary ), insertedClientIds: [] };
+	}
+
 	// A saved menu's items live in its record, which the blocks snapshot cannot
 	// hold and the page's blocks do not show: the menu is captured as well.
 	const menuIds = getEditedMenuIds( edits, resolve );
 	const hasNavigationEdit = menuIds.length > 0;
 	const changeType = getChangeType( edits );
-	const alreadySatisfied = areUpdateEditsAlreadySatisfied( edits, resolve );
 	const capturedTargets = captureTargets( edits, resolve );
 	const successMessage = summary ?? __( 'I have completed the edits.', __i18n_text_domain__ );
 	const keys = [
-		...( hasBlockEdits && ! alreadySatisfied ? [ checkpointKeys.BLOCKS ] : [] ),
+		...( hasBlockEdits ? [ checkpointKeys.BLOCKS ] : [] ),
 		...( customCss !== undefined ? [ checkpointKeys.CUSTOM_CSS ] : [] ),
 		...( hasNavigationEdit ? [ checkpointKeys.NAVIGATION ] : [] ),
 	];
@@ -221,14 +218,8 @@ async function applyEditsAction(
 
 			const blocksChanged = closeBlockWrites();
 
-			if (
-				customCss === undefined &&
-				! hasNavigationEdit &&
-				( alreadySatisfied || ! blocksChanged )
-			) {
-				return alreadySatisfied || ! hasBlockEdits
-					? noChangesResult( summary )
-					: nothingChangedResult();
+			if ( customCss === undefined && ! hasNavigationEdit && ! blocksChanged ) {
+				return nothingChangedResult();
 			}
 
 			return {
@@ -265,7 +256,7 @@ const countRequested = ( list: unknown ): number => ( Array.isArray( list ) ? li
  * call past the editor guard, joined to a later undo by the tool call id.
  */
 export async function applyBlockEditsCallback(
-	input: ApplyBlockEditsInput
+	rawInput: unknown
 ): Promise< ApplyBlockEditsResult > {
 	if ( ! isEditorPage() ) {
 		return errorResult(
@@ -274,8 +265,12 @@ export async function applyBlockEditsCallback(
 		);
 	}
 
+	// The wire hands the arguments over as they are; an invalid shape fails below.
+	const input: ApplyBlockEditsInput = isRecord( rawInput ) ? rawInput : {};
+	const suppliedToolCallId =
+		typeof input.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const toolCallId =
-		input.toolCallId ??
+		suppliedToolCallId ??
 		getToolCallIdFromConversationHistory( APPLY_BLOCK_EDITS_TOOL_ID ) ??
 		undefined;
 	const summary =
@@ -309,12 +304,14 @@ export async function applyBlockEditsCallback(
 	} );
 
 	// Captured after every path, the no-change and failure ones most of all:
-	// there the block tree cannot say whether the user's problem is fixed.
+	// there the block tree cannot say whether the user's problem is fixed. CSS
+	// alone shows anywhere on the page, so that call gets the whole of it.
 	const fileParts = await captureCanvas( {
 		clientIds: [
 			...( edits ? getEditedClientIds( edits, resolver.resolve ) : [] ),
 			...insertedClientIds,
 		],
+		fullPage: !! edits && edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits ),
 	} );
 
 	// `visualCheckPending` ships only with an image: the chat withholds the
@@ -328,9 +325,9 @@ export async function applyBlockEditsCallback(
 		returnToAgent: true,
 		// Rendered by the chat, so only a call the chat made carries one; the
 		// history's id stands in for the checkpoint alone.
-		...( input.toolCallId && {
+		...( suppliedToolCallId && {
 			agentMessage: createAgentMessage(
-				input.toolCallId,
+				suppliedToolCallId,
 				result,
 				followUpTasks,
 				visualCheckPending

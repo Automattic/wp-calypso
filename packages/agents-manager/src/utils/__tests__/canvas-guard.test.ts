@@ -8,7 +8,12 @@ import {
 	getCanvasMove,
 	startNewUserRequest,
 } from '../canvas-binding';
-import { bindToEditorPath, withCanvasBinding, withCanvasGuard } from '../canvas-guard';
+import {
+	assertCanvasUnmoved,
+	bindToEditorPath,
+	withCanvasBinding,
+	withCanvasGuard,
+} from '../canvas-guard';
 import type { ClientContextType, ToolProvider } from '../../types';
 
 jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
@@ -497,6 +502,30 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		const abilities = await withCanvasGuard( provider )!.getAbilities();
 
 		expect( abilities[ 0 ].callback ).toBeUndefined();
+	} );
+} );
+
+describe( 'assertCanvasUnmoved', () => {
+	beforeEach( () => {
+		mockSelect.mockReset();
+		startNewUserRequest();
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+	} );
+
+	it( 'passes while the canvas has not moved', () => {
+		expect( () => assertCanvasUnmoved() ).not.toThrow();
+		expect( getBlockingMove() ).toBeNull();
+	} );
+
+	it( 'throws once it has, and blocks the rest of the request', () => {
+		setOpenPost( CONTACT_PAGE );
+
+		expect( () => assertCanvasUnmoved() ).toThrow( 'the editor left About' );
+
+		setOpenPost( ABOUT_PAGE );
+
+		expect( getBlockingMove() ).toEqual( { from: 'About', to: 'Contact' } );
 	} );
 } );
 

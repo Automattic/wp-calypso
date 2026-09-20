@@ -98,8 +98,8 @@ export function repointShortId( shortId: string, clientId: string ): void {
 
 /**
  * Keeps the attributes of the menu items in the last page structure, by short
- * id. A menu's items live in its record, so their clientIds may resolve to no
- * block; what the structure showed for an item still says which one it is.
+ * id. A menu the view does not render lists its record's items, whose clientIds
+ * name no block; what the structure showed for an item still says which one it is.
  */
 export function setMenuItemAttributes( attributes: Map< string, BlockAttributes > ): void {
 	menuItemAttributes = attributes;
