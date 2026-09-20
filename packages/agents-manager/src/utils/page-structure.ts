@@ -155,6 +155,17 @@ function getPageRegions(): PageBlock[] {
  * items it lists, for `getMenuItemAttributes()`.
  */
 export function getPageStructure(): PageStructure | null {
+	const structure = readPageStructure();
+
+	// Items recorded for another page must not identify this one's.
+	if ( ! structure ) {
+		setMenuItemAttributes( new Map() );
+	}
+
+	return structure;
+}
+
+function readPageStructure(): PageStructure | null {
 	try {
 		if ( ! getCurrentPost() ) {
 			return null;

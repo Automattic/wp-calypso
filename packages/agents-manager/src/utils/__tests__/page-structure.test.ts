@@ -326,6 +326,7 @@ it( 'is null until the editor holds a post', () => {
 	editor.getCurrentPost.mockReturnValue( undefined );
 
 	expect( getPageStructure() ).toBeNull();
+	expect( setMenuItemAttributes ).toHaveBeenCalledWith( new Map() );
 } );
 
 // A context read must never fail the turn: the context goes out without it.
@@ -335,4 +336,5 @@ it( 'is null when the editor cannot be read', () => {
 	} );
 
 	expect( getPageStructure() ).toBeNull();
+	expect( setMenuItemAttributes ).toHaveBeenCalledWith( new Map() );
 } );

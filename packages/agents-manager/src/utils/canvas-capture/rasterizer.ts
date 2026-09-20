@@ -414,8 +414,9 @@ export const replaceImagesWithPlaceholders = (
 			return;
 		}
 
+		// A gradient is colour, not a photograph, and paints without a fetch.
 		const backgroundImage = view.getComputedStyle( liveElement ).backgroundImage;
-		if ( backgroundImage && backgroundImage !== 'none' ) {
+		if ( backgroundImage && /url\(/i.test( backgroundImage ) ) {
 			cloneElement.style.backgroundImage = 'none';
 			cloneElement.style.backgroundColor = PLACEHOLDER_FILL;
 		}

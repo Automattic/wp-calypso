@@ -5,7 +5,7 @@
  * would hide a first image. An image the agent writes gets the same treatment.
  */
 
-import { getPaletteColor } from '../../utils/editor-blocks';
+import { getBlock, getPaletteColor } from '../../utils/editor-blocks';
 import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
 
 const COVER_BLOCK = 'core/cover';
@@ -94,13 +94,25 @@ export async function syncCoverWithImage(
 		return;
 	}
 
-	const [ { colord }, { FastAverageColor } ] = await loadColorLibraries();
+	// The image is already written; a chunk that fails to load costs the colour, not the rest.
+	const libraries = await loadColorLibraries().catch( () => undefined );
 	let imageColor = DEFAULT_IMAGE_COLOR;
 
-	try {
-		imageColor = ( await new FastAverageColor().getColorAsync( url, { silent: true } ) ).hex;
-	} catch {
-		// An unreadable image keeps the default.
+	if ( libraries ) {
+		try {
+			imageColor = (
+				await new libraries[ 1 ].FastAverageColor().getColorAsync( url, { silent: true } )
+			).hex;
+		} catch {
+			// An unreadable image keeps the default.
+		}
+	}
+
+	// The waits above are long enough for the user to act: the cover as it is now decides.
+	const current = getBlock( clientId );
+
+	if ( current?.attributes.url !== url ) {
+		return;
 	}
 
 	const setsSlug = typeof requested.overlayColor === 'string';
@@ -116,7 +128,8 @@ export async function syncCoverWithImage(
 			( setsSlug ? { customOverlayColor: undefined } : { overlayColor: undefined } ) ),
 	};
 	const requestsOverlay = setsOverlay( requested );
-	const recolours = ! requestsOverlay && before.attributes.isUserOverlayColor !== true;
+	const recolours =
+		!! libraries && ! requestsOverlay && current.attributes.isUserOverlayColor !== true;
 
 	if ( recolours ) {
 		Object.assign( derived, {
@@ -135,8 +148,8 @@ export async function syncCoverWithImage(
 		asNumber( before.attributes.dimRatio ) ??
 		100;
 
-	if ( overlayColor ) {
-		derived.isDark = compositeIsDark( colord, dimRatio, overlayColor, imageColor );
+	if ( libraries && overlayColor ) {
+		derived.isDark = compositeIsDark( libraries[ 0 ].colord, dimRatio, overlayColor, imageColor );
 	}
 
 	write(

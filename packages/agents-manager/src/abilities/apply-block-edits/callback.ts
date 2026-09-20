@@ -175,9 +175,13 @@ async function applyEditsAction(
 			// The blocks written land as one native undo level, and the checkpoint
 			// keeps its blocks domain only when they changed.
 			const closeBlockWrites = (): boolean => {
+				const written = level.hasWritten();
+
 				level.close();
 
-				const blocksChanged = haveBlocksChanged( before, getPageBlocks() );
+				// After a move the page on screen is another one, so it says nothing.
+				const blocksChanged =
+					written && ( !! getBlockingMove() || haveBlocksChanged( before, getPageBlocks() ) );
 
 				if ( blocksChanged ) {
 					recorder.markWritten( checkpointKeys.BLOCKS );

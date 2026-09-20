@@ -162,6 +162,7 @@ describe( 'writes', () => {
 
 		write( 'a', blocks );
 
+		expect( level.hasWritten() ).toBe( true );
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
 		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
 		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'a', blocks );
@@ -179,6 +180,7 @@ describe( 'writes', () => {
 
 		level.close();
 
+		expect( level.hasWritten() ).toBe( false );
 		expect( markLastChangeAsPersistent ).not.toHaveBeenCalled();
 	} );
 

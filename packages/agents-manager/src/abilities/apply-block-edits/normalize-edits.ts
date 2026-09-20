@@ -39,8 +39,8 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block must have a name property' );
 	}
 
-	if ( value.clientId != null && typeof value.clientId !== 'string' ) {
-		throw new Error( 'Block clientId must be a string' );
+	if ( value.clientId != null && ( typeof value.clientId !== 'string' || ! value.clientId ) ) {
+		throw new Error( 'Block clientId must be a non-empty string' );
 	}
 
 	if ( value.name != null && ( typeof value.name !== 'string' || ! value.name ) ) {
@@ -128,7 +128,7 @@ export function normalizeEdits( raw: RawBlockEdits ): BlockEdits {
 		raw.updates == null &&
 		raw.inserts == null &&
 		raw.deletes == null &&
-		! raw.summary &&
+		( typeof raw.summary !== 'string' || ! raw.summary.trim() ) &&
 		typeof raw.customCSS !== 'string'
 	) {
 		throw new Error(

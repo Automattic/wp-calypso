@@ -87,6 +87,7 @@ const level: UndoLevel = {
 			write( ...args );
 		},
 	close: jest.fn(),
+	hasWritten: () => writes.length > 0,
 };
 
 const run = ( edits: Partial< BlockEdits > ) => {
