@@ -23,13 +23,17 @@ export function calculateTopTlds( baseName: string, tlds: readonly string[] ): s
 	return topTlds.slice( 0, NAME_PULSE_TOP_RESULTS_TLDS.length );
 }
 
+/**
+ * A real-time verdict means the user just clicked the row, so it holds its slot to
+ * carry the outcome instead of being replaced by a backfill under the cursor.
+ */
 const isCandidate = ( result: NamePulseDomainResult ) =>
 	result.status === NamePulseDomainStatus.AVAILABLE ||
-	result.status === NamePulseDomainStatus.WAITING;
+	result.status === NamePulseDomainStatus.WAITING ||
+	!! result.is_realtime;
 
 /**
- * Preferred TLDs first, then backfill in list order; only available or
- * still-checking rows qualify.
+ * Preferred TLDs first, then backfill in list order.
  */
 export function getTopResults(
 	results: NamePulseDomainResult[],
