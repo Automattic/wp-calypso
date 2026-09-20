@@ -1,4 +1,4 @@
-import { detectFqdn } from './detect-fqdn';
+import { detectFqdn, type FqdnIssue } from './detect-fqdn';
 import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from './sanitize';
 
 export type NamePulseMode = 'empty' | 'fqdn' | 'single' | 'keyword' | 'ai';
@@ -8,6 +8,7 @@ export interface NamePulseResultsLayout {
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
+	issue?: FqdnIssue;
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
 }
@@ -54,9 +55,11 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;
-	const baseName = fqdn
-		? fqdn.baseName
-		: sanitizeDomainInput( isMultiWord ? sanitizeKeywordInput( trimmed ) : trimmed );
+	// `detectFqdn` already resolves the single-token base name, including the
+	// fallbacks for input it could not take at face value.
+	const baseName = detection
+		? detection.baseName
+		: sanitizeDomainInput( sanitizeKeywordInput( trimmed ) );
 	const wordCount = isMultiWord ? getWordCount( trimmed ) : Number( baseName.length > 0 );
 	const mode = getMode( baseName, wordCount, Boolean( fqdn ) );
 
@@ -65,6 +68,7 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 		baseName,
 		wordCount,
 		...( fqdn ? { fqdn } : {} ),
+		...( detection?.issue ? { issue: detection.issue } : {} ),
 		...SECTIONS_BY_MODE[ mode ],
 	};
 }

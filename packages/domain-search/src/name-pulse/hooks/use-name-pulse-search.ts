@@ -6,6 +6,7 @@ import {
 	calculateTopTlds,
 	excludeDomains,
 	generateExactMatches,
+	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
 	mergeResultUpdate,
@@ -167,6 +168,19 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
+	// The bulk check is zone-file based, so it can say a domain is taken but not
+	// why. Only a typed domain needs that "why", and only it is checked here.
+	const typedDomain = layout.fqdn?.fullDomain ?? '';
+	const { data: typedDomainAvailability } = useQuery( {
+		...queries.domainAvailability( typedDomain ),
+		enabled: Boolean( typedDomain ),
+	} );
+
+	const notice = useMemo(
+		() => getNamePulseNotice( layout, typedDomainAvailability ),
+		[ layout, typedDomainAvailability ]
+	);
+
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
@@ -218,6 +232,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		topResults,

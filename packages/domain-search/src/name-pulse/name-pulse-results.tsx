@@ -1,4 +1,5 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
@@ -13,9 +14,14 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const { query } = useDomainSearch();
+	const {
+		query,
+		events,
+		config: { allowsUsingOwnDomain },
+	} = useDomainSearch();
 	const {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		topResults,
@@ -31,6 +37,27 @@ export const NamePulseResults = () => {
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
 			<VStack spacing={ 6 } key={ query }>
+				{ notice && ! isTldsError && (
+					<DomainSearchNotice status={ notice.status }>
+						{ notice.message }
+						{ notice.transferDomain && allowsUsingOwnDomain && (
+							<>
+								{ ' ' }
+								{ createInterpolateElement(
+									__( 'Already yours? <button>Transfer it here</button>' ),
+									{
+										button: (
+											<Button
+												variant="link"
+												onClick={ () => events.onExternalDomainClick( notice.transferDomain ) }
+											/>
+										),
+									}
+								) }
+							</>
+						) }
+					</DomainSearchNotice>
+				) }
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }

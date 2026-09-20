@@ -24,6 +24,14 @@ import type {
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
 
+const stubBulkAvailability = () =>
+	nock( API )
+		.persist()
+		.post( AVAILABILITY_PATH )
+		.reply( 200, ( _uri, body: { domain_names: string[] } ) =>
+			Object.fromEntries( body.domain_names.map( ( name ) => [ name, { is_available: true } ] ) )
+		);
+
 const renderSearch = ( query: string ) =>
 	renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
 		initialProps: { q: query },
@@ -195,5 +203,43 @@ describe( 'useNamePulseSearch', () => {
 		);
 		expect( result.current.isLoadingKeyword ).toBe( false );
 		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports a typed domain that is registered elsewhere', async () => {
+		stubBulkAvailability();
+		nock( API )
+			.get( '/rest/v1.3/domains/icecream.com/is-available' )
+			.query( true )
+			.reply( 200, { status: 'transferrable', domain_name: 'icecream.com', tld: 'com' } );
+
+		const { result } = renderSearch( 'icecream.com' );
+
+		await waitFor( () =>
+			expect( result.current.notice ).toEqual( {
+				status: 'error',
+				message: 'This domain is already registered.',
+				transferDomain: 'icecream.com',
+			} )
+		);
+	} );
+
+	it( 'explains an unrecognised ending without a real-time check', async () => {
+		stubBulkAvailability();
+		const realTimeCheck = nock( API )
+			.get( /is-available/ )
+			.query( true )
+			.reply( 200, {} );
+
+		const { result } = renderSearch( 'icecream.d' );
+
+		await waitFor( () =>
+			expect( result.current.notice?.message ).toBe(
+				'We don’t recognise the ending .d. Showing results for “icecream” instead.'
+			)
+		);
+		await waitFor( () =>
+			expect( result.current.topResults[ 0 ].status ).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
+		expect( realTimeCheck.isDone() ).toBe( false );
 	} );
 } );
