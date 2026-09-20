@@ -22,16 +22,19 @@ describe( 'getNamePulseNotice', () => {
 		).toBeNull();
 	} );
 
-	it( 'names the unrecognised ending and the name it searched instead', () => {
+	it( 'names the unrecognised ending', () => {
 		expect( getNamePulseNotice( layoutFor( 'icecream.d' ) ) ).toEqual( {
-			status: 'info',
-			message: 'We don’t recognise the ending .d. Showing results for “icecream” instead.',
+			status: 'warning',
+			dismissible: true,
+			message:
+				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.',
 		} );
 	} );
 
 	it( 'explains that a subdomain was dropped', () => {
 		expect( getNamePulseNotice( layoutFor( 'shop.icecream.com' ) ) ).toEqual( {
-			status: 'info',
+			status: 'warning',
+			dismissible: true,
 			message:
 				'Domains are registered without a subdomain. Showing results for “icecream.com” instead.',
 		} );
@@ -39,7 +42,8 @@ describe( 'getNamePulseNotice', () => {
 
 	it( 'explains that a free subdomain is not registrable', () => {
 		expect( getNamePulseNotice( layoutFor( 'mysite.wordpress.com' ) ) ).toEqual( {
-			status: 'info',
+			status: 'warning',
+			dismissible: true,
 			message:
 				'That’s a free WordPress.com subdomain, not a domain you can register. Showing results for “mysite” instead.',
 		} );
@@ -52,7 +56,7 @@ describe( 'getNamePulseNotice', () => {
 				verdict( DomainAvailabilityStatus.TRANSFERRABLE )
 			)
 		).toEqual( {
-			status: 'error',
+			status: 'neutral',
 			message: 'This domain is already registered.',
 			transferDomain: 'icecream.com',
 		} );
@@ -97,7 +101,7 @@ describe( 'getNamePulseNotice', () => {
 				verdict( DomainAvailabilityStatus.REGISTERED_SAME_SITE )
 			)
 		).toEqual( {
-			status: 'info',
+			status: 'neutral',
 			message: 'You already own this domain.',
 		} );
 	} );

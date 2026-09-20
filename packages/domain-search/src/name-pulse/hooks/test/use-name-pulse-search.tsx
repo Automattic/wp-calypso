@@ -216,7 +216,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice ).toEqual( {
-				status: 'error',
+				status: 'neutral',
 				message: 'This domain is already registered.',
 				transferDomain: 'icecream.com',
 			} )
@@ -234,7 +234,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice?.message ).toBe(
-				'We don’t recognise the ending .d. Showing results for “icecream” instead.'
+				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			)
 		);
 		await waitFor( () =>

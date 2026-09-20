@@ -11,12 +11,17 @@ export type NamePulseAvailabilityVerdict = Pick<
 >;
 
 export interface NamePulseNotice {
-	status: 'error' | 'info';
+	status: 'warning' | 'neutral' | 'error';
 	message: string;
 	/**
 	 * Set when the domain is registered elsewhere and could be brought over.
 	 */
 	transferDomain?: string;
+	/**
+	 * Only the notices about how the query was read: the user can put them away
+	 * and keep the results they got.
+	 */
+	dismissible?: true;
 }
 
 const REGISTERED_ELSEWHERE = [
@@ -53,14 +58,14 @@ const UNSUPPORTED_ENDING = [
 function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNotice | null {
 	if ( REGISTERED_ELSEWHERE.includes( verdict.status ) ) {
 		return {
-			status: 'error',
+			status: 'neutral',
 			message: __( 'This domain is already registered.' ),
 			transferDomain: verdict.domain_name,
 		};
 	}
 
 	if ( OWNED_BY_USER.includes( verdict.status ) ) {
-		return { status: 'info', message: __( 'You already own this domain.' ) };
+		return { status: 'neutral', message: __( 'You already own this domain.' ) };
 	}
 
 	if ( CONNECTED_TO_WPCOM.includes( verdict.status ) ) {
@@ -98,18 +103,18 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 
 	if ( layout.issue.type === 'unknown-tld' ) {
 		return {
-			status: 'info',
-			message: sprintf(
-				// translators: %(ending)s is the unrecognised ending the user typed, %(name)s is the name searched instead.
-				__( 'We don’t recognise the ending .%(ending)s. Showing results for “%(name)s” instead.' ),
-				{ ending: layout.issue.ending, name: layout.baseName }
+			status: 'warning',
+			dismissible: true,
+			message: __(
+				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			),
 		};
 	}
 
 	if ( layout.issue.type === 'subdomain' ) {
 		return {
-			status: 'info',
+			status: 'warning',
+			dismissible: true,
 			message: sprintf(
 				// translators: %(domain)s is the domain searched instead, without the subdomain.
 				__(
@@ -121,7 +126,8 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 	}
 
 	return {
-		status: 'info',
+		status: 'warning',
+		dismissible: true,
 		message: sprintf(
 			// translators: %(name)s is the name searched instead of the free subdomain.
 			__(

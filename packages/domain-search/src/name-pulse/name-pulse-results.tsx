@@ -1,10 +1,10 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
+import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
@@ -38,25 +38,10 @@ export const NamePulseResults = () => {
 			<NamePulseSearchInput />
 			<VStack spacing={ 6 } key={ query }>
 				{ notice && ! isTldsError && (
-					<DomainSearchNotice status={ notice.status }>
-						{ notice.message }
-						{ notice.transferDomain && allowsUsingOwnDomain && (
-							<>
-								{ ' ' }
-								{ createInterpolateElement(
-									__( 'Already yours? <button>Transfer it here</button>' ),
-									{
-										button: (
-											<Button
-												variant="link"
-												onClick={ () => events.onExternalDomainClick( notice.transferDomain ) }
-											/>
-										),
-									}
-								) }
-							</>
-						) }
-					</DomainSearchNotice>
+					<NamePulseSearchNotice
+						notice={ notice }
+						onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
+					/>
 				) }
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">

@@ -88,11 +88,9 @@ const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
 
 const findNotice = async () => {
-	await waitFor( () =>
-		expect( document.querySelector( '.components-notice__content' ) ).not.toBeNull()
-	);
+	await waitFor( () => expect( document.querySelector( '.name-pulse-notice' ) ).not.toBeNull() );
 
-	return document.querySelector( '.components-notice__content' ) as HTMLElement;
+	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
 };
 
 const domainsIn = ( id: string ) =>
@@ -279,7 +277,7 @@ describe( 'NamePulseResults', () => {
 		render( <NamePulseTestSearch query="icecream.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognise the ending .d. Showing results for “icecream” instead.'
+			'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 		);
 		expect(
 			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
@@ -287,6 +285,18 @@ describe( 'NamePulseResults', () => {
 		expect(
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
+	} );
+
+	it( 'lets the reader dismiss the notice about how their query was read', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
 	} );
 
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
@@ -310,7 +320,8 @@ describe( 'NamePulseResults', () => {
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
 		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
 
-		await user.click( screen.getByRole( 'button', { name: 'Transfer it here' } ) );
+		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
+		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
 
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
 	} );
@@ -328,7 +339,8 @@ describe( 'NamePulseResults', () => {
 		expect( await findNotice() ).toHaveTextContent(
 			'This domain is already connected to a WordPress.com site.'
 		);
-		expect( screen.queryByRole( 'button', { name: 'Transfer it here' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Transfer it here.' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'runs the real-time check on add to cart: a taken verdict flips the row, an available one adds it', async () => {
