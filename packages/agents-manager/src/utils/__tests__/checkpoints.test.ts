@@ -990,6 +990,26 @@ describe( 'blocks domain', () => {
 } );
 
 describe( 'restore order', () => {
+	// The page guard refuses before any site-wide domain is written.
+	it( 'restores blocks before the site-wide domains, so a page guard fails first', async () => {
+		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = await loadCheckpoints();
+		const editorBlocks = jest.requireMock( '../editor-blocks' );
+		editorBlocks.resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 7, type: 'page' },
+		} );
+		setCheckpoint( 'call-1', [ 'blocks', 'custom_css' ] );
+		editorBlocks.resolveBlocksRoot.mockReturnValue( {
+			kind: 'post-content',
+			clientId: 'pc',
+			post: { id: 8, type: 'page' },
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'belongs to' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
 	// A page deleted since makes the title restore throw; menus must not have
 	// been rewritten by then, or the failure leaves a half-restored site.
 	it( 'restores page titles before menus, so a missing page fails first', async () => {

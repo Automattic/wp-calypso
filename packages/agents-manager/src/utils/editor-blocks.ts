@@ -242,6 +242,7 @@ export interface UndoLevel {
 	) => ( ...args: Args ) => void;
 	/** Folds the writes into one undo record; nothing to fold is a no-op. */
 	close: () => void;
+	hasWritten: () => boolean;
 }
 
 /**
@@ -270,6 +271,7 @@ export function openUndoLevel(): UndoLevel {
 				requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 			}
 		},
+		hasWritten: () => hasWritten,
 	};
 }
 

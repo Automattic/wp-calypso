@@ -213,6 +213,16 @@ describe( 'replaceImagesWithPlaceholders', () => {
 		expect( cover.style.backgroundColor ).toBeTruthy();
 	} );
 
+	it( 'leaves a gradient background in place, which is colour rather than a photograph', () => {
+		const { live, clone, view } = setup( '<div class="band"></div>', {
+			backgroundImage: 'linear-gradient(180deg, #000, #fff)',
+		} );
+
+		replaceImagesWithPlaceholders( live, clone, view );
+
+		expect( ( clone.querySelector( '.band' ) as HTMLElement ).style.backgroundImage ).toBe( '' );
+	} );
+
 	it( 'leaves an element without a background image alone', () => {
 		const { live, clone, view } = setup( '<div class="plain"></div>' );
 

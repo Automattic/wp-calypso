@@ -1007,10 +1007,12 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 		throw new Error( `Checkpoint not found: ${ id }` );
 	}
 
+	// Blocks first: their guards refuse a restore from another page before
+	// any site-wide domain is written.
+	restoreBlocksSnapshot( checkpoint );
 	restoreThemeSnapshot( checkpoint );
 	restoreCustomCssSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
-	restoreBlocksSnapshot( checkpoint );
 	restoreSiteTitleSnapshot( checkpoint );
 	restoreSiteMetadataSnapshot( checkpoint );
 

@@ -6,9 +6,11 @@ jest.mock( 'fast-average-color', () => ( {
 	},
 } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: jest.fn(),
 	getPaletteColor: ( slug: string ) => ( slug === 'vivid-red' ? '#cf2e2e' : undefined ),
 } ) );
 
+import { getBlock } from '../../../utils/editor-blocks';
 import { syncCoverWithImage } from '../cover-image';
 import type { EditorBlock } from '../../../utils/editor-blocks';
 
@@ -34,6 +36,8 @@ const recoloured = ( color: string, isDark: boolean ) => ( {
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockGetColorAsync.mockResolvedValue( { hex: DARK } );
+	// The cover as the image analysis finds it: the new image, nothing else changed.
+	jest.mocked( getBlock ).mockReturnValue( cover( { url: 'new.jpg' } ) );
 } );
 
 describe( 'syncCoverWithImage', () => {
@@ -113,6 +117,9 @@ describe( 'syncCoverWithImage', () => {
 		],
 	] )( 'keeps %s and judges its darkness', async ( _, before, requested, image, expected ) => {
 		mockGetColorAsync.mockResolvedValue( { hex: image } );
+		jest
+			.mocked( getBlock )
+			.mockReturnValue( { ...before, attributes: { ...before.attributes, url: 'new.jpg' } } );
 
 		await syncCoverWithImage( 'cover', before, requested, write );
 
@@ -123,6 +130,41 @@ describe( 'syncCoverWithImage', () => {
 		await syncCoverWithImage( 'cover', cover(), { url: 'new.jpg', overlayColor: 'gone' }, write );
 
 		expect( write ).toHaveBeenCalledWith( 'cover', cleared );
+	} );
+
+	// The analysis takes a moment, and the user may act during it.
+	it( 'writes nothing when the image changed again meanwhile', async () => {
+		jest.mocked( getBlock ).mockReturnValue( cover( { url: 'other.jpg' } ) );
+
+		await syncCoverWithImage( 'cover', cover(), { url: 'new.jpg' }, write );
+
+		expect( write ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps an overlay the user chose meanwhile', async () => {
+		jest
+			.mocked( getBlock )
+			.mockReturnValue( cover( { url: 'new.jpg', isUserOverlayColor: true } ) );
+
+		await syncCoverWithImage( 'cover', cover(), { url: 'new.jpg' }, write );
+
+		expect( write ).toHaveBeenCalledWith( 'cover', { ...cleared, isDark: true } );
+	} );
+
+	// The image is already written by then; the colour is what a failed chunk costs.
+	it( 'settles the image without a colour when the colour libraries fail to load', async () => {
+		jest.resetModules();
+		jest.doMock( 'colord', () => {
+			throw new Error( 'chunk failed' );
+		} );
+		const editorBlocks = await import( '../../../utils/editor-blocks' );
+		const { syncCoverWithImage: sync } = await import( '../cover-image' );
+		jest.mocked( editorBlocks.getBlock ).mockReturnValue( cover( { url: 'new.jpg' } ) );
+
+		await sync( 'cover', cover(), { url: 'new.jpg' }, write );
+
+		expect( write ).toHaveBeenCalledWith( 'cover', cleared );
+		jest.dontMock( 'colord' );
 	} );
 
 	it.each( [

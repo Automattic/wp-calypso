@@ -50,7 +50,17 @@ describe( 'normalizeEdits', () => {
 		[
 			'a nested block whose clientId is not a string',
 			{ updates: [ { ...paragraph, innerBlocks: [ { clientId: 7 } ] } ] },
-			'Block clientId must be a string',
+			'Block clientId must be a non-empty string',
+		],
+		[
+			'a nested block whose clientId is empty',
+			{ updates: [ { ...paragraph, innerBlocks: [ { clientId: '', name: 'core/paragraph' } ] } ] },
+			'Block clientId must be a non-empty string',
+		],
+		[
+			'a summary that is not a string, with nothing else',
+			{ summary: 5 },
+			'Response must contain updates, insertions, deletions, custom CSS, or a summary message',
 		],
 		[
 			'an insert whose parentClientId is not a string',

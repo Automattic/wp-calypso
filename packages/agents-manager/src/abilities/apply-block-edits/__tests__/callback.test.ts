@@ -81,7 +81,7 @@ const edits = ( overrides = {} ) => ( {
 	...overrides,
 } );
 const recorder = { captureMenu: jest.fn(), markWritten: jest.fn() };
-const level = { write: jest.fn(), close: jest.fn() };
+const level = { write: jest.fn(), close: jest.fn(), hasWritten: jest.fn() };
 const input = { updates: [ update ], summary: 'Done.', toolCallId: 'call-1' };
 
 const parseAgentMessage = ( agentMessage?: string ) => JSON.parse( agentMessage ?? 'null' );
@@ -96,6 +96,7 @@ beforeEach( () => {
 		.mocked( getPageBlocks )
 		.mockReturnValue( { blocks: [ paragraph( 'Old' ) ], templateParts: [] } );
 	jest.mocked( openUndoLevel ).mockReturnValue( level );
+	level.hasWritten.mockReturnValue( true );
 	jest.mocked( getCustomCss ).mockReturnValue( 'a{}' );
 	const globalStyles = { id: 'gs', record: { settings: {}, styles: { css: 'a{}' } } };
 	jest.mocked( waitForEditedGlobalStyles ).mockResolvedValue( globalStyles );
@@ -381,14 +382,21 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	// The page on screen is not the one the call edited.
-	it( 'captures nothing once the canvas has moved', async () => {
+	it.each( [
+		[ 'keeps the blocks domain for the writes that landed', true ],
+		[ 'drops the blocks domain when nothing was written', false ],
+	] )( 'captures nothing once the canvas has moved, and %s', async ( _, written ) => {
 		jest.mocked( getBlockingMove ).mockReturnValue( { from: 'Home', to: 'About' } );
 		jest.mocked( applyEdits ).mockRejectedValue( new Error( 'Stopped' ) );
+		level.hasWritten.mockReturnValue( written );
 
 		const { result } = await applyBlockEditsCallback( input );
 
 		expect( result.success ).toBe( false );
 		expect( captureCanvas ).not.toHaveBeenCalled();
+		// The page on screen is another one, so only the writes decide.
+		expect( haveBlocksChanged ).not.toHaveBeenCalled();
+		expect( recorder.markWritten.mock.calls ).toEqual( written ? [ [ 'blocks' ] ] : [] );
 	} );
 
 	it( 'takes an input that is not an object as an empty request', async () => {
