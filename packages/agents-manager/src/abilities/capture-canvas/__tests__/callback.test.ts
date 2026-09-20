@@ -2,12 +2,8 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
 jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn( () => ( {} ) ),
-} ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';
-import { getBlock } from '../../../utils/editor-blocks';
 import { captureCanvasCallback } from '../callback';
 
 const filePart = ( metadata?: Record< string, unknown > ) => ( {
@@ -23,6 +19,8 @@ beforeEach( () => {
 
 describe( 'captureCanvasCallback', () => {
 	it( 'frames the capture on the resolved blocks and sends the image beside the result', async () => {
+		jest.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 2 } ) ] );
+
 		const result = await captureCanvasCallback( { clientIds: [ 'a1', 7, 'b2' ] } );
 
 		expect( captureCanvas ).toHaveBeenCalledWith( {
@@ -32,7 +30,7 @@ describe( 'captureCanvasCallback', () => {
 		expect( result ).toEqual( {
 			result: { success: true, message: expect.stringContaining( 'around 2 blocks' ) },
 			returnToAgent: true,
-			__file_parts: [ filePart() ],
+			__file_parts: [ filePart( { framed: 2 } ) ],
 		} );
 	} );
 
@@ -46,13 +44,12 @@ describe( 'captureCanvasCallback', () => {
 		}
 	);
 
-	// A stale id frames nothing, so the reply must not claim it did.
-	it( 'drops an id that names no block on the canvas', async () => {
-		jest.mocked( getBlock ).mockReturnValue( undefined );
+	// The rasterizer says what it framed; a block with no box on the canvas frames nothing.
+	it( 'describes the visible area when none of the named blocks was framed', async () => {
+		jest.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 0 } ) ] );
 
 		const { result } = await captureCanvasCallback( { clientIds: [ 'gone' ] } );
 
-		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
 		expect( result.message ).toMatch( /^Here is the visible area/ );
 	} );
 

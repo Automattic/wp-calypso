@@ -91,6 +91,7 @@ describe( 'getCaptureRect', () => {
 			y: 2058,
 			width: 981,
 			height: 1000,
+			framed: 0,
 		} );
 	} );
 
@@ -109,6 +110,7 @@ describe( 'getCaptureRect', () => {
 			y: 2741,
 			width: 981,
 			height: 1000,
+			framed: 1,
 		} );
 	} );
 
@@ -509,7 +511,7 @@ describe( 'getInkSpans', () => {
 	const setup = (
 		html: string,
 		boxes: { top: number; height: number }[],
-		{ scrollY = 0 } = {}
+		{ scrollY = 0, backgroundImage = 'none' } = {}
 	) => {
 		const body = document.createElement( 'div' );
 		body.innerHTML = html;
@@ -519,7 +521,10 @@ describe( 'getInkSpans', () => {
 				box( { left: 0, top: rect.top, width: 100, height: rect.height } ) as DOMRect;
 		} );
 
-		return { body, view: asWindow( { scrollY } ) };
+		return {
+			body,
+			view: asWindow( { scrollY, getComputedStyle: () => ( { backgroundImage } ) } ),
+		};
 	};
 
 	it.each( [
@@ -541,6 +546,14 @@ describe( 'getInkSpans', () => {
 		const { body, view } = setup( '<div><span></span></div>', [ { top: 0, height: 500 } ] );
 
 		expect( getInkSpans( body, view ) ).toEqual( [] );
+	} );
+
+	it( 'counts an element whose image is a CSS background', () => {
+		const { body, view } = setup( '<div class="cover"></div>', [ { top: 0, height: 500 } ], {
+			backgroundImage: 'url(photo.jpg)',
+		} );
+
+		expect( getInkSpans( body, view ) ).toEqual( [ { top: 0, bottom: 500 } ] );
 	} );
 
 	it( 'reports spans in document coordinates', () => {

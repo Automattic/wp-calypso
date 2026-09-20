@@ -58,6 +58,11 @@ describe( 'normalizeEdits', () => {
 			'Insertion parentClientId must be a string',
 		],
 		[
+			'a nested block whose name is not a non-empty string',
+			{ updates: [ { ...paragraph, innerBlocks: [ { clientId: 'child', name: 7 } ] } ] },
+			'Block name must be a non-empty string',
+		],
+		[
 			'attributes that are not an object',
 			{ updates: [ { ...paragraph, attributes: 'red' } ] },
 			'Block attributes must be an object',

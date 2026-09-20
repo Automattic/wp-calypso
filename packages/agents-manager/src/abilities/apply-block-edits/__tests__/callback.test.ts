@@ -203,9 +203,11 @@ describe( 'applyBlockEditsCallback', () => {
 
 		const { resolve, onReplaced } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
 		onReplaced( 'a1', 'new-a1' );
+		onReplaced( 'resolved-b2', 'new-b2' );
 
 		expect( resolve( 'a1' ) ).toBe( 'new-a1' );
-		expect( resolve( 'b2' ) ).toBe( 'resolved-b2' );
+		// A replacement recorded by clientId is found through a short id too.
+		expect( resolve( 'b2' ) ).toBe( 'new-b2' );
 		expect( repointShortId ).toHaveBeenCalledWith( 'a1', 'new-a1' );
 	} );
 

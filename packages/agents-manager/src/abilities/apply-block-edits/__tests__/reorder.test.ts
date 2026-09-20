@@ -203,6 +203,10 @@ describe( 'getUnmappedParentReorder', () => {
 			'a repeated child, which would put one block twice',
 			children( 'heading', 'heading', 'second', 'first' ),
 		],
+		[
+			'a child that carries an edit, which a reorder cannot apply',
+			[ { clientId: 'ref-heading', attributes: { level: 3 } }, ...children( 'second', 'first' ) ],
+		],
 	] )( 'declines with %s', ( _, innerBlocks ) => {
 		setupList( undefined, [ heading, first, second ] );
 

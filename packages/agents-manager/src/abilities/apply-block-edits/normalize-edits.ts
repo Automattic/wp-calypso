@@ -43,6 +43,10 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block clientId must be a string' );
 	}
 
+	if ( value.name != null && ( typeof value.name !== 'string' || ! value.name ) ) {
+		throw new Error( 'Block name must be a non-empty string' );
+	}
+
 	if ( value.attributes != null && ! isRecord( value.attributes ) ) {
 		throw new Error( 'Block attributes must be an object' );
 	}
