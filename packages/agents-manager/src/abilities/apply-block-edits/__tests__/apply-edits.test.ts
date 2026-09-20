@@ -13,7 +13,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	updateBlockAttributes: jest.fn(),
 } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
-jest.mock( '../cover-image', () => ( { updateCoverForImage: jest.fn() } ) );
+jest.mock( '../cover-image', () => ( { syncCoverWithImage: jest.fn() } ) );
 
 import { createBlock } from '@wordpress/blocks';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
@@ -30,7 +30,7 @@ import {
 	updateBlockAttributes,
 } from '../../../utils/editor-blocks';
 import { applyEdits } from '../apply-edits';
-import { updateCoverForImage } from '../cover-image';
+import { syncCoverWithImage } from '../cover-image';
 import type { EditorBlock, UndoLevel } from '../../../utils/editor-blocks';
 import type { BlockEdits } from '../types';
 
@@ -402,7 +402,7 @@ describe( 'updates', () => {
 			],
 		} );
 
-		expect( updateCoverForImage ).toHaveBeenCalledWith(
+		expect( syncCoverWithImage ).toHaveBeenCalledWith(
 			clientId,
 			cover,
 			{ url: 'new.jpg' },
@@ -410,7 +410,7 @@ describe( 'updates', () => {
 		);
 
 		// The derived write lands in the same undo level as the edit.
-		const write = jest.mocked( updateCoverForImage ).mock.calls[ 0 ][ 3 ];
+		const write = jest.mocked( syncCoverWithImage ).mock.calls[ 0 ][ 3 ];
 		const written = writes.length;
 
 		write( clientId, { isDark: true } );
