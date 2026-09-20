@@ -9,6 +9,7 @@ import {
 	setReciprocalCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { isRecord } from '../../utils/is-record';
 import {
 	getProviderCheckpoint,
 	getProviderCheckpointRecords,
@@ -253,12 +254,18 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
  * records the same event without a `source`, and the id is the tool call the
  * checkpoint is keyed by, which joins an undo to the edit it undid.
  */
-export async function restoreCheckpointCallback(
-	input: RestoreCheckpointInput
-): Promise< AbilityResult > {
-	const { checkpointId, requestIntentType } = input;
+export async function restoreCheckpointCallback( rawInput: unknown ): Promise< AbilityResult > {
+	const input = isRecord( rawInput ) ? rawInput : {};
+	const { requestIntentType } = input;
+	const checkpointId = typeof input.checkpointId === 'string' ? input.checkpointId : '';
 
-	const result = await restore( input );
+	const result = await restore( {
+		checkpointId,
+		summary: typeof input.summary === 'string' ? input.summary : '',
+		...( ( requestIntentType === 'undo' ||
+			requestIntentType === 'redo' ||
+			requestIntentType === 'restore' ) && { requestIntentType } ),
+	} );
 
 	recordBigSkyTracksEvent( 'jetpack_big_sky_restore_checkpoint_action', {
 		action:

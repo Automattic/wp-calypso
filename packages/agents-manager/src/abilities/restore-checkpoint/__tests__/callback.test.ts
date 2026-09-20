@@ -122,6 +122,16 @@ describe( 'restoreCheckpointCallback', () => {
 		} );
 	} );
 
+	it( 'refuses an input that is not an object, recording the attempt', async () => {
+		const result = await restoreCheckpointCallback( null );
+
+		expect( result.result.success ).toBe( false );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_restore_checkpoint_action',
+			{ action: 'restore', id: '', outcome: 'failed', source: 'chat' }
+		);
+	} );
+
 	// The chat's Undo button records the same event; `source` tells the two apart,
 	// and the id is the tool call the checkpoint is keyed by.
 	it.each( [

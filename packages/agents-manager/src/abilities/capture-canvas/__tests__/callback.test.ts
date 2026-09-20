@@ -2,8 +2,12 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
 jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
+jest.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: jest.fn( ( clientId: string ) => clientId.startsWith( 'resolved-' ) || undefined ),
+} ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';
+import { getBlock } from '../../../utils/editor-blocks';
 import { captureCanvasCallback } from '../callback';
 
 const filePart = ( metadata?: Record< string, unknown > ) => ( {
@@ -19,8 +23,7 @@ beforeEach( () => {
 
 describe( 'captureCanvasCallback', () => {
 	it( 'frames the capture on the resolved blocks and sends the image beside the result', async () => {
-		// An id that could not name a block is dropped: in a selector it would throw.
-		const result = await captureCanvasCallback( { clientIds: [ 'a1', '', 7, 'x"]', 'b2' ] } );
+		const result = await captureCanvasCallback( { clientIds: [ 'a1', 7, 'b2' ] } );
 
 		expect( captureCanvas ).toHaveBeenCalledWith( {
 			clientIds: [ 'resolved-a1', 'resolved-b2' ],
@@ -42,6 +45,16 @@ describe( 'captureCanvasCallback', () => {
 			expect( result.message ).toMatch( /^Here is the visible area/ );
 		}
 	);
+
+	// A stale id frames nothing, so the reply must not claim it did.
+	it( 'drops an id that names no block on the canvas', async () => {
+		jest.mocked( getBlock ).mockReturnValue( undefined );
+
+		const { result } = await captureCanvasCallback( { clientIds: [ 'gone' ] } );
+
+		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
+		expect( result.message ).toMatch( /^Here is the visible area/ );
+	} );
 
 	// The picture that exists is described, not the one that was asked for.
 	it( 'describes the whole page when the capture covered it, and only then', async () => {

@@ -2,6 +2,7 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	repointShortId: jest.fn(),
 	resolveClientId: jest.fn(),
 } ) );
+jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
 jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks', CUSTOM_CSS: 'custom_css', NAVIGATION: 'navigation' },
@@ -41,6 +42,7 @@ jest.mock( '../validation-details', () => ( {
 } ) );
 
 import { repointShortId, resolveClientId } from '../../../utils/block-ids';
+import { getBlockingMove } from '../../../utils/canvas-binding';
 import { captureCanvas } from '../../../utils/canvas-capture';
 import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
 import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
@@ -369,6 +371,17 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
 		expect( result.__file_parts ).toHaveLength( 1 );
+	} );
+
+	// The page on screen is not the one the call edited.
+	it( 'captures nothing once the canvas has moved', async () => {
+		jest.mocked( getBlockingMove ).mockReturnValue( { from: 'Home', to: 'About' } );
+		jest.mocked( applyEdits ).mockRejectedValue( new Error( 'Stopped' ) );
+
+		const { result } = await applyBlockEditsCallback( input );
+
+		expect( result.success ).toBe( false );
+		expect( captureCanvas ).not.toHaveBeenCalled();
 	} );
 
 	it( 'takes an input that is not an object as an empty request', async () => {

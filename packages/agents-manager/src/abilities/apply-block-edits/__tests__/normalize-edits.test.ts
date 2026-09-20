@@ -58,6 +58,16 @@ describe( 'normalizeEdits', () => {
 			'Insertion parentClientId must be a string',
 		],
 		[
+			'attributes that are not an object',
+			{ updates: [ { ...paragraph, attributes: 'red' } ] },
+			'Block attributes must be an object',
+		],
+		[
+			'an insert whose index is not a non-negative integer',
+			{ inserts: [ { index: '3', block: { name: 'core/group' } } ] },
+			'Insertion index must be a non-negative integer',
+		],
+		[
 			'a delete that is neither a string nor `{ clientId }`',
 			{ deletes: [ 5 ] },
 			'Each deletion must be a clientId string',
