@@ -6,6 +6,7 @@ import {
 	clearBlockSelection,
 	DOCUMENT_ROOT_CLIENT_ID,
 	getCurrentPost,
+	getPaletteColor,
 	getRootBlocks,
 	openUndoLevel,
 	replaceRootBlocks,
@@ -104,6 +105,15 @@ it( 'reads the document root as the top-level blocks', () => {
 
 	expect( getRootBlocks( DOCUMENT_ROOT_CLIENT_ID ) ).toEqual( [ block( 'a', 'core/paragraph' ) ] );
 	expect( getRootBlocks( 'a' ) ).toEqual( [] );
+} );
+
+it( 'reads a palette colour by slug', () => {
+	jest.mocked( select ).mockReturnValue( {
+		getSettings: () => ( { colors: [ { slug: 'vivid-red', color: '#cf2e2e' } ] } ),
+	} as never );
+
+	expect( getPaletteColor( 'vivid-red' ) ).toBe( '#cf2e2e' );
+	expect( getPaletteColor( 'unknown' ) ).toBeUndefined();
 } );
 
 it( 'reads the post the editor holds', () => {

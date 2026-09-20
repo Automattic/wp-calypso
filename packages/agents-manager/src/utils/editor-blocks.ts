@@ -51,6 +51,7 @@ interface BlockEditorSelect {
 	getBlockRootClientId?: ( clientId: string ) => string | null;
 	getSelectedBlockClientId?: () => string | null;
 	getSectionRootClientId?: () => string | undefined;
+	getSettings?: () => { colors?: { slug: string; color: string }[] };
 }
 
 interface BlockEditorDispatch {
@@ -101,6 +102,12 @@ export const getBlockRootClientId = ( clientId: string ): string | undefined =>
 
 export const getSelectedBlockClientId = (): string | undefined =>
 	blockEditorSelect()?.getSelectedBlockClientId?.() ?? undefined;
+
+/** The colour a palette slug stands for, or `undefined` when the palette lacks it. */
+export const getPaletteColor = ( slug: string ): string | undefined =>
+	blockEditorSelect()
+		?.getSettings?.()
+		.colors?.find( ( entry ) => entry.slug === slug )?.color;
 
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {
