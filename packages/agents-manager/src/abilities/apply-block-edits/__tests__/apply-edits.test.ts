@@ -13,7 +13,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	updateBlockAttributes: jest.fn(),
 } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
-jest.mock( '../cover-overlay', () => ( { updateCoverOverlay: jest.fn() } ) );
+jest.mock( '../cover-image', () => ( { updateCoverForImage: jest.fn() } ) );
 
 import { createBlock } from '@wordpress/blocks';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
@@ -30,7 +30,7 @@ import {
 	updateBlockAttributes,
 } from '../../../utils/editor-blocks';
 import { applyEdits } from '../apply-edits';
-import { updateCoverOverlay } from '../cover-overlay';
+import { updateCoverForImage } from '../cover-image';
 import type { EditorBlock, UndoLevel } from '../../../utils/editor-blocks';
 import type { BlockEdits } from '../types';
 
@@ -383,7 +383,7 @@ describe( 'updates', () => {
 		expect( replaceBlock ).not.toHaveBeenCalled();
 	} );
 
-	// The recolour follows the write, on the block that holds the image now.
+	// The image's derived attributes follow the write, on the block that holds it now.
 	it.each( [
 		[ 'in place', {}, 'cover' ],
 		[
@@ -391,7 +391,7 @@ describe( 'updates', () => {
 			{ innerBlocks: [ { name: 'core/heading', attributes: { content: 'Hi' } } ] },
 			'new-core/cover',
 		],
-	] )( "recolours a cover's overlay after its image changes %s", async ( _, extra, clientId ) => {
+	] )( 'settles a cover after its image changes %s', async ( _, extra, clientId ) => {
 		const cover = block( 'cover', 'core/cover', { url: 'old.jpg' } );
 
 		useTree( [ cover ] );
@@ -402,7 +402,7 @@ describe( 'updates', () => {
 			],
 		} );
 
-		expect( updateCoverOverlay ).toHaveBeenCalledWith(
+		expect( updateCoverForImage ).toHaveBeenCalledWith(
 			clientId,
 			cover,
 			{ url: 'new.jpg' },
