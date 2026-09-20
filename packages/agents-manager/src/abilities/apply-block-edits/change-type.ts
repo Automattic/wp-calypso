@@ -32,6 +32,17 @@ export function getChangeType( edits: BlockEdits ): ChangeType {
 	return isTextOnly ? 'text-content' : 'other';
 }
 
+const menuOf = ( chain: string[] ): MenuId | undefined => {
+	const navigation = chain.map( getBlock ).find( ( block ) => block?.name === NAVIGATION_BLOCK );
+	const ref = navigation?.attributes.ref;
+
+	return isMenuId( ref ) ? ref : undefined;
+};
+
+/** The saved menu `clientId` sits in, or is, by the `ref` of its navigation block. */
+export const getMenuIdAround = ( clientId: string ): MenuId | undefined =>
+	menuOf( [ clientId, ...getBlockParents( clientId ) ] );
+
 /**
  * The saved menus the edits reach, by the `ref` of the navigation block a
  * target sits inside, an insert lands under, or an update lists the items of.
@@ -39,20 +50,16 @@ export function getChangeType( edits: BlockEdits ): ChangeType {
  * of those alone names no menu.
  */
 export function getEditedMenuIds( edits: BlockEdits, resolve: ResolveClientId ): MenuId[] {
-	const menuOf = ( chain: string[] ): MenuId | undefined => {
-		const navigation = chain.map( getBlock ).find( ( block ) => block?.name === NAVIGATION_BLOCK );
-		const ref = navigation?.attributes.ref;
-
-		return isMenuId( ref ) ? ref : undefined;
-	};
-	const above = ( id: string ) => getBlockParents( resolve( id ) );
-	const under = ( id?: string | null ) => ( id ? [ resolve( id ), ...above( id ) ] : [] );
+	const above = ( id: string ) => menuOf( getBlockParents( resolve( id ) ) );
+	const around = ( id: string ) => getMenuIdAround( resolve( id ) );
 	const menuIds = [
 		...edits.updates.map( ( update ) =>
-			menuOf( update.innerBlocks?.length ? under( update.clientId ) : above( update.clientId ) )
+			update.innerBlocks?.length ? around( update.clientId ) : above( update.clientId )
 		),
-		...edits.deletes.map( ( id ) => menuOf( above( id ) ) ),
-		...edits.inserts.map( ( insert ) => menuOf( under( insert.parentClientId ) ) ),
+		...edits.deletes.map( above ),
+		...edits.inserts.map( ( insert ) =>
+			insert.parentClientId ? around( insert.parentClientId ) : undefined
+		),
 	].filter( isMenuId );
 
 	return menuIds.filter(

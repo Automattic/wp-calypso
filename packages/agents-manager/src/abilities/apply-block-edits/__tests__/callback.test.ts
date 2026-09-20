@@ -29,6 +29,7 @@ jest.mock( '../apply-edits', () => ( { applyEdits: jest.fn() } ) );
 jest.mock( '../change-type', () => ( {
 	getChangeType: jest.fn(),
 	getEditedMenuIds: jest.fn(),
+	getMenuIdAround: jest.fn(),
 } ) );
 jest.mock( '../normalize-edits', () => ( {
 	hasRequestedBlockEdits: jest.fn(),
@@ -58,7 +59,7 @@ import { recordBigSkyTracksEvent } from '../../../utils/tracks';
 import { areUpdateEditsAlreadySatisfied } from '../already-applied';
 import { applyEdits } from '../apply-edits';
 import { applyBlockEditsCallback } from '../callback';
-import { getChangeType, getEditedMenuIds } from '../change-type';
+import { getChangeType, getEditedMenuIds, getMenuIdAround } from '../change-type';
 import { hasRequestedBlockEdits, normalizeEdits } from '../normalize-edits';
 import {
 	captureTargets,
@@ -143,6 +144,7 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 		expect( applyEdits ).toHaveBeenCalledWith( edits(), {
 			resolve: expect.any( Function ),
+			beforeWrite: expect.any( Function ),
 			onReplaced: expect.any( Function ),
 			level,
 		} );
@@ -307,8 +309,11 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// A saved menu's items live in its record, which the page's blocks do not
 	// show: the menu is captured before the edit, and that is what an undo puts back.
-	it( 'captures the menu a navigation edit reaches, beside the blocks snapshot', async () => {
+	it( 'captures the menu a navigation edit reaches, as the first write reaches it', async () => {
 		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		jest
+			.mocked( getMenuIdAround )
+			.mockImplementation( ( clientId ) => ( clientId === 'link' ? 19 : undefined ) );
 		jest.mocked( getChangeType ).mockReturnValue( 'text-content' );
 		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
 
@@ -322,10 +327,16 @@ describe( 'applyBlockEditsCallback', () => {
 			expect.objectContaining( { keys: [ 'blocks', 'navigation' ] } ),
 			expect.any( Function )
 		);
-		expect( recorder.captureMenu ).toHaveBeenCalledWith( 19 );
-		expect( recorder.captureMenu.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			jest.mocked( applyEdits ).mock.invocationCallOrder[ 0 ]
-		);
+
+		// Not captured up front: a batch that fails before the menu keeps no undo for it.
+		const { beforeWrite } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
+
+		expect( recorder.captureMenu ).not.toHaveBeenCalled();
+
+		await beforeWrite( 'para' );
+		await beforeWrite( 'link' );
+
+		expect( recorder.captureMenu.mock.calls ).toEqual( [ [ 19 ] ] );
 		expect( recorder.markWritten ).not.toHaveBeenCalled();
 		expect( result ).toEqual( expect.objectContaining( { outcome: 'updated' } ) );
 	} );

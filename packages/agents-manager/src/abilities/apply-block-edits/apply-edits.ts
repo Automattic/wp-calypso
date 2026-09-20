@@ -22,6 +22,8 @@ import type { EditorBlock, UndoLevel } from '../../utils/editor-blocks';
 
 export interface ApplyEditsOptions {
 	resolve: ResolveClientId;
+	/** Told which block a write is about to change, before it: a menu is snapshotted here. */
+	beforeWrite: ( clientId: string ) => Promise< void >;
 	/** Told when a block is replaced, so `resolve` can follow it to its new clientId. */
 	onReplaced: ( requestedId: string, clientId: string ) => void;
 	/** The undo level every write lands in. */
@@ -148,12 +150,16 @@ async function insertBySplicing(
 /** Inserts the block and resolves to its clientId, or `undefined` when it did not land. */
 async function applyInsert(
 	{ parentClientId, index = 0, block }: BlockInsert,
-	resolve: ResolveClientId,
+	{ resolve, beforeWrite }: ApplyEditsOptions,
 	writers: Writers
 ): Promise< string | undefined > {
 	const parent = resolveInsertParent( parentClientId, resolve );
 	const childrenBefore = parent ? getBlocks( parent ).length : 0;
 	const created = createBlockRecursively( block );
+
+	if ( parent ) {
+		await beforeWrite( parent );
+	}
 
 	// Without this delay nested `innerBlocks` are not reliably part of the insert.
 	await wait( 200 );
@@ -173,7 +179,7 @@ async function applyUpdate(
 	writers: Writers,
 	recoveredTargetIds: Set< string >
 ): Promise< void > {
-	const { resolve, onReplaced } = options;
+	const { resolve, onReplaced, beforeWrite } = options;
 	const { clientId: requestedId, ...blockData } = update;
 	const clientId = resolve( requestedId );
 	const target = getBlock( clientId );
@@ -193,6 +199,8 @@ async function applyUpdate(
 
 		throw new Error( `[Edit Blocks] Block not found with clientId: ${ clientId }` );
 	}
+
+	await beforeWrite( clientId );
 
 	const innerBlocks = blockData.innerBlocks ?? [];
 	const reorderOperations = innerBlocks.length
@@ -339,7 +347,7 @@ async function removeBySplicing( clientId: string, writers: Writers ): Promise< 
 
 async function applyDelete(
 	requestedId: string,
-	resolve: ResolveClientId,
+	{ resolve, beforeWrite }: ApplyEditsOptions,
 	writers: Writers
 ): Promise< void > {
 	const clientId = resolve( requestedId );
@@ -351,6 +359,7 @@ async function applyDelete(
 		return;
 	}
 
+	await beforeWrite( clientId );
 	writers.remove( clientId );
 	await wait( 0 );
 
@@ -382,7 +391,7 @@ export async function applyEdits(
 	const insertedClientIds: string[] = [];
 
 	for ( const blockInsert of edits.inserts ) {
-		const clientId = await applyInsert( blockInsert, resolve, writers );
+		const clientId = await applyInsert( blockInsert, options, writers );
 
 		if ( clientId ) {
 			insertedClientIds.push( clientId );
@@ -394,7 +403,7 @@ export async function applyEdits(
 	}
 
 	for ( const requestedId of edits.deletes ) {
-		await applyDelete( requestedId, resolve, writers );
+		await applyDelete( requestedId, options, writers );
 	}
 
 	// The last write yields before this returns.
