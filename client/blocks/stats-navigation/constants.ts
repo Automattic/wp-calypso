@@ -111,6 +111,12 @@ const realtime = {
 	showIntervals: false,
 } as NavItem;
 
+const settings = {
+	label: translate( 'Settings' ),
+	path: '/stats/settings',
+	showIntervals: false,
+} as NavItem;
+
 export interface NavItems {
 	traffic: NavItem;
 	insights: NavItem;
@@ -119,6 +125,7 @@ export interface NavItems {
 	googleMyBusiness: NavItem;
 	subscribers?: NavItem;
 	realtime?: NavItem;
+	settings?: NavItem;
 }
 
 const assembleNavItems = () => {
@@ -130,6 +137,7 @@ const assembleNavItems = () => {
 		store,
 		wordads,
 		googleMyBusiness,
+		settings,
 	} as NavItems;
 
 	return navItems;
