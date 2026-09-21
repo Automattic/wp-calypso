@@ -125,10 +125,12 @@ describe( 'domain throttle actions', () => {
 	test( 'an expired suggestions signal leaves the search unchanged', async () => {
 		const listitem = {
 			count: jest.fn( async () => 0 ),
+			getAttribute: jest.fn( async () => 'example.com' ),
 			first: jest.fn(),
 		};
 		listitem.first.mockReturnValue( listitem );
 		const searchbox = {
+			inputValue: jest.fn( async () => '' ),
 			fill: jest.fn( async () => undefined ),
 			press: jest.fn( async () => undefined ),
 		};
@@ -158,10 +160,12 @@ describe( 'domain throttle actions', () => {
 	test( 'domain suggestions record a throttled search without acting on it', async () => {
 		const listitem = {
 			count: jest.fn( async () => 0 ),
+			getAttribute: jest.fn( async () => 'example.com' ),
 			first: jest.fn(),
 		};
 		listitem.first.mockReturnValue( listitem );
 		const searchbox = {
+			inputValue: jest.fn( async () => '' ),
 			fill: jest.fn( async () => undefined ),
 			press: jest.fn( async () => undefined ),
 		};
