@@ -572,6 +572,11 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Select conversation' ) );
 
 		expect( getSessionId( undefined, 'site-1' ) ).toBe( 'conversation-session-id' );
+		// Recorded after the session is saved, so it carries the resumed session's id.
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_history_conversation_selected',
+			{ is_zendesk: false }
+		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
 	} );
 
