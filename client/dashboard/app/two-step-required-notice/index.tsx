@@ -38,7 +38,7 @@ export default function TwoStepRequiredNotice( { sites }: { sites: Site[] } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_two_step_required_notice_impression" />
 			<Notice
-				variant="error"
+				variant="warning"
 				title={ __( 'Set up two-step authentication to access WP Admin' ) }
 				actions={
 					<RouterLinkButton to="/me/security/two-step-auth" variant="primary">
