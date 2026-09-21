@@ -7,12 +7,12 @@ import {
 	comment,
 	info,
 	lockOutline,
-	pending,
 	plus,
 	store,
 	thumbsUp,
 	update,
 } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
@@ -101,13 +101,6 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 	);
 };
 
-const PendingChip = () => (
-	<span className="wpnc__pending-chip">
-		<Icon icon={ pending } size={ 16 } />
-		{ __( 'Pending' ) }
-	</span>
-);
-
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isUnapproved = useIsUnapproved( note );
 
@@ -121,7 +114,11 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={ { __html: subject } }
 			/>
-			{ isUnapproved && <PendingChip /> }
+			{ isUnapproved && (
+				<Badge className="wpnc__pending-badge" intent="medium">
+					{ __( 'Pending' ) }
+				</Badge>
+			) }
 		</div>
 	);
 };

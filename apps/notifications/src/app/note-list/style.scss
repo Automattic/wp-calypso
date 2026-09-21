@@ -1,5 +1,3 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
@@ -35,7 +33,7 @@
 
 	.wpnc__title-row {
 		display: flex;
-		// Keeps the chip on the subject's first line when the subject wraps.
+		// Keeps the badge on the subject's first line when the subject wraps.
 		align-items: flex-start;
 		gap: 8px;
 	}
@@ -45,38 +43,12 @@
 		min-width: 0;
 	}
 
-	.wpnc__pending-chip {
-		display: inline-flex;
+	// The wp-ui Badge has no solid-fill intent; the design calls for the strong
+	// warning surface the unapproved icon badge already uses, with white text.
+	.wpnc__pending-badge {
 		flex-shrink: 0;
-		align-items: center;
-		gap: 4px;
-		padding: 0 8px;
-		border-radius: 16px;
-		background-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
-		font-size: 11px;
-		font-weight: 500;
-		line-height: 20px;
-		white-space: nowrap;
-		color: var(--wpds-color-foreground-content-warning, #2e1900);
-
-		svg {
-			fill: var(--wpds-color-foreground-content-warning-weak, #926300);
-		}
-
-		// The WPDS warning surface has no dark counterpart. Tint the dark surface
-		// the way the Dashboard's own warning notices do.
-		@include ui-mixins.when-dark-theme {
-			background-color: color-mix(
-				in srgb,
-				var(--dashboard__background-color-warning, #d47608) 8%,
-				var(--dashboard-surface__background-color, #2a2a2a)
-			);
-			color: var(--dashboard__foreground-color-warning, #f5c15c);
-
-			svg {
-				fill: var(--dashboard__foreground-color-warning, #f5c15c);
-			}
-		}
+		background-color: var(--wpds-color-stroke-surface-warning-strong, #926300);
+		color: $white;
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

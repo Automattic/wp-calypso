@@ -117,8 +117,8 @@
 	}
 
 	// A pending comment keeps its warning color when open, so the bar matches its
-	// icon badge and chip rather than switching to the theme accent.
-	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-chip) {
+	// icon badge and badge rather than switching to the theme accent.
+	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
 		.dataviews-view-list__item-wrapper {
 			box-shadow: inset 3px 0 0 var(--color-warning);
 		}
