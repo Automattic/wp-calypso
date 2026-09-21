@@ -121,7 +121,7 @@ export default function JetpackSearchUpsell() {
 											siteId && selectedSiteSlug
 												? addQueryArgs( `/checkout/${ selectedSiteSlug }/jetpack_search`, {
 														redirect_to: postCheckoutUrl,
-												  } )
+													} )
 												: WPComUpgradeUrl,
 										onClick: onUpgradeClick,
 										selfTarget: true,

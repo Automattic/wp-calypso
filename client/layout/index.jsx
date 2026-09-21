@@ -584,7 +584,7 @@ export default withCurrentRoute(
 					isGlobalSidebarVisible,
 					sidebarIsHidden,
 					sectionName,
-			  } );
+				} );
 		const needsColorScheme =
 			! isE2ETest() &&
 			! sidebarIsHidden &&

@@ -10,9 +10,7 @@ import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types'
 import type { Field, View } from '@wordpress/dataviews';
 
 type ActiveModal =
-	| { kind: 'untag'; site: TaggedSite }
-	| { kind: 'request-review'; site: TaggedSite }
-	| null;
+	{ kind: 'untag'; site: TaggedSite } | { kind: 'request-review'; site: TaggedSite } | null;
 
 const INITIAL_VIEW: View = {
 	search: '',

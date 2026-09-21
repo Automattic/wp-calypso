@@ -111,7 +111,7 @@ class PostByline extends Component {
 			showBylineSecondarySiteLink,
 		} = this.props;
 		const feedId = feed ? feed.feed_ID : post?.feed_ID;
-		const feedIcon = feed ? feed.site_icon ?? feed.image : null;
+		const feedIcon = feed ? ( feed.site_icon ?? feed.image ) : null;
 		const siteId = site?.ID;
 		const siteSlug = site?.slug;
 		const siteUrl = site?.URL;

@@ -55,7 +55,7 @@ export default function SiteAIToolsWrite() {
 	const siteAccountAbilities = siteContextToolIds.size
 		? Object.fromEntries(
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
-		  )
+			)
 		: accountAbilities;
 	const mergedAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 
@@ -71,7 +71,7 @@ export default function SiteAIToolsWrite() {
 					id,
 					{ ...tool, enabled: defaultToolEnabled },
 				] )
-		  );
+			);
 
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
 		( [ , tool ] ) => tool.visible !== false

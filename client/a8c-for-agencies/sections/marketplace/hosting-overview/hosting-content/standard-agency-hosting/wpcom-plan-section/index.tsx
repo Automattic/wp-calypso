@@ -167,7 +167,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 						tooltip: ! isAgencyApproved
 							? translate(
 									'Your agency is not yet approved. Please wait for approval before creating a development site.'
-							  )
+								)
 							: undefined,
 					} }
 				>

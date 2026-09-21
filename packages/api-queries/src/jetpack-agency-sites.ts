@@ -46,3 +46,21 @@ export const agencySiteQuery = ( siteUrl: string ) =>
 			return sites.find( ( site ) => site.url === siteUrl ) ?? null;
 		},
 	} );
+
+// The blog IDs the agency already manages, so the import picker can leave them
+// out. The endpoint has no "all" mode, so the count comes first and sizes the
+// second request.
+export const agencyManagedSiteIdsQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ ...agencySitesQueryKey, 'managed-ids', agencyId ] as const,
+		queryFn: async (): Promise< number[] > => {
+			const { total } = await fetchAgencySites( agencyId, { per_page: 1 } );
+
+			if ( ! total ) {
+				return [];
+			}
+
+			const { sites } = await fetchAgencySites( agencyId, { per_page: total } );
+			return sites.map( ( site ) => site.blog_id );
+		},
+	} );

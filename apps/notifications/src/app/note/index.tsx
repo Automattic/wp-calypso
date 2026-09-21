@@ -149,8 +149,12 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
-					<NoteSummary note={ note } />
-					<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
+					{ !! note.header?.length && (
+						<>
+							<NoteSummary header={ note.header } url={ note.url } />
+							<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
+						</>
+					) }
 					<div className={ getClasses( { note, isApproved, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>

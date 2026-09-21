@@ -227,7 +227,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	} );
 	let savings =
 		termVariantReferencePrice && currentPlanPrice
-			? calculateDiscountPercentage( termVariantReferencePrice, currentPlanPrice ) ?? 0
+			? ( calculateDiscountPercentage( termVariantReferencePrice, currentPlanPrice ) ?? 0 )
 			: 0;
 
 	const renderPricingBadge = (
@@ -316,7 +316,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						currencyCode,
 						referencePrice: compareToMonthlyPrice,
 						translate,
-				  } )
+					} )
 				: termSavingsTooltipText;
 		// Recalculate the savings for Monthly plans with introductory offers
 		// since we are comparing the introductory price with the same plan
@@ -337,7 +337,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
 									comment: 'Example: Save 35%',
-							  } )
+								} )
 							: translate( 'Special Offer' ),
 						{ tooltipId: 'intro-offer', tooltipText: introOfferTooltipText }
 					) }
@@ -382,7 +382,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		const monthlyPrice =
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
-				: originalPrice.monthly ?? 0;
+				: ( originalPrice.monthly ?? 0 );
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current &&
@@ -509,7 +509,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 								comment: 'Example: Save 35%',
 							} ),
 							{ tooltipId: 'fallback-savings', tooltipText: termSavingsTooltipText }
-					  )
+						)
 					: renderPricingBadge( "' '", { isHidden: true, tooltipId: 'fallback-placeholder' } ) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">

@@ -1,0 +1,31 @@
+@import 'calypso/dashboard/app/dataforms-overrides.scss';
+@import 'calypso/dashboard/app/dataviews-overrides.scss';
+@import 'calypso/dashboard/app/wp-components-overrides.scss';
+@import 'calypso/dashboard/app-dotcom/style.scss';
+
+.dashboard-backport-site-purchases {
+	.dashboard-page-layout {
+		margin: 0;
+		padding: 0;
+
+		// The narrow screens have no section tabs to line up with, so they sit
+		// centered in the classic wide layout rather than against its left edge.
+		&.is-small {
+			margin-inline: auto;
+		}
+	}
+
+	// The section tabs are handed to the page layout, which owns the vertical
+	// rhythm between the header, the tabs and the content below them.
+	.section-nav {
+		margin-block-end: 0;
+	}
+
+	.dataviews-wrapper .dataviews-no-results {
+		// In v1 we specify a bottom margin for <p> globally in <body>.
+		// Here, we revert it to make <p> look good in DataViews' empty state.
+		p {
+			margin-block-end: revert;
+		}
+	}
+}

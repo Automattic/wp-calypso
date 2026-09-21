@@ -29,7 +29,7 @@ const DomainUpsellCard = ( { siteId } ) => {
 		: getDomainAndPlanUpsellUrl( {
 				siteSlug: domain,
 				step: 'domains',
-		  } );
+			} );
 	const translate = useTranslate();
 	const recordClick = () => {
 		const domainRegExp = new RegExp( `/${ domain }$` );
@@ -80,11 +80,11 @@ const DomainPendingWarning = ( { siteId, domains } ) => {
 		? translate(
 				'Wait until your new domain activates before sharing your profile. {{link}}Check your domain’s status{{/link}}.',
 				translateArgs
-		  )
+			)
 		: translate(
 				'You’ve added a domain, but it’s not primary. To make it primary, {{link}}manage your domains{{/link}}.',
 				translateArgs
-		  );
+			);
 
 	return (
 		<Notice status="is-warning" isCompact className="is-full-width">

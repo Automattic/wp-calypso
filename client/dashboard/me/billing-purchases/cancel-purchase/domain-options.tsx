@@ -105,7 +105,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							{
 								domain: includedDomainPurchase.meta,
 							}
-					  )
+						)
 					: sprintf(
 							/* translators: %(domain)s is the domain name */
 							__(
@@ -114,7 +114,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							{
 								domain: includedDomainPurchase.meta,
 							}
-					  ) }
+						) }
 			</p>
 			{ planPurchase.is_refundable && (
 				<p>

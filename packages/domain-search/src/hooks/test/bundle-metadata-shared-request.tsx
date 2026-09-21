@@ -3,9 +3,13 @@
  */
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import qs from 'qs';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
-import { mockGetSuggestionsQuery } from '../../test-helpers/queries/suggestions';
+import {
+	mockGetBundleMetadataQuery,
+	mockGetSuggestionsQuery,
+} from '../../test-helpers/queries/suggestions';
 import { queryClient, TestDomainSearch } from '../../test-helpers/renderer';
 import { useInlineBundles } from '../use-inline-bundles';
 import { useSuggestionsList } from '../use-suggestions-list';
@@ -47,7 +51,22 @@ describe( 'bundle metadata shared request', () => {
 		let withBundlesCallCount = 0;
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/domains/suggestions' )
-			.query( { vendor: 'variation2_front', with_bundles: 1, query: 'flowers.com' } )
+			.query(
+				qs.stringify(
+					{
+						include_wordpressdotcom: false,
+						include_dotblogsubdomain: false,
+						only_wordpressdotcom: false,
+						quantity: 30,
+						vendor: 'variation2_front',
+						exact_sld_matches_only: false,
+						include_internal_move_eligible: false,
+						query: 'flowers.com',
+						with_bundles: 1,
+					},
+					{ arrayFormat: 'brackets' }
+				)
+			)
 			.reply( 200, () => {
 				withBundlesCallCount++;
 				return { bundle_suggestion: TEST_BUNDLE, bundle_triggers: [ 'com' ] };
@@ -74,5 +93,88 @@ describe( 'bundle metadata shared request', () => {
 
 		expect( result.current.suggestions.bundleSuggestion?.sld ).toBe( 'flowers' );
 		expect( withBundlesCallCount ).toBe( 1 );
+	} );
+
+	// DOMAINS-2238: the backend anchors a bare-term bundle on its own suggestion
+	// list, so the wrapped request must carry the plain request's params — a TLD
+	// filter here changes which list the backend walks.
+	it( 'sends the plain suggestion params, including the TLD filter, on the with_bundles request', async () => {
+		mockGetSuggestionsQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			suggestions: [],
+		} );
+
+		const scope = mockGetBundleMetadataQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			bundleSuggestion: null,
+			bundleTriggers: [ 'com' ],
+		} );
+
+		const { result } = renderHook( () => useInlineBundles(), {
+			wrapper: ( { children } ) => (
+				<TestDomainSearch
+					query="flowers"
+					config={ { showBundleSuggestions: true, allowedTlds: [ 'com', 'net' ] } }
+				>
+					{ children }
+				</TestDomainSearch>
+			),
+		} );
+
+		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [ 'com' ] ) );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	// DOMAINS-2238: because the wrapped request carries the plain params, those
+	// params are part of the `domain-bundle-metadata` key. Two TLD filters on one
+	// term are two different backend lists, so they must not share a cache entry.
+	// Both trees stay mounted for the whole test: `staleTime: Infinity` means a
+	// shared key would serve the second tree from the first tree's entry and leave
+	// the second interceptor unconsumed.
+	it( 'keeps separate cache entries for one query under two param sets', async () => {
+		mockGetSuggestionsQuery( { params: { query: 'flowers', tlds: [ 'com' ] }, suggestions: [] } );
+		mockGetSuggestionsQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			suggestions: [],
+		} );
+
+		const comScope = mockGetBundleMetadataQuery( {
+			params: { query: 'flowers', tlds: [ 'com' ] },
+			bundleTriggers: [ 'com' ],
+		} );
+		const comNetScope = mockGetBundleMetadataQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			bundleTriggers: [ 'com', 'net' ],
+		} );
+
+		const com = renderHook( () => useInlineBundles(), {
+			wrapper: ( { children } ) => (
+				<TestDomainSearch
+					query="flowers"
+					config={ { showBundleSuggestions: true, allowedTlds: [ 'com' ] } }
+				>
+					{ children }
+				</TestDomainSearch>
+			),
+		} );
+
+		const comNet = renderHook( () => useInlineBundles(), {
+			wrapper: ( { children } ) => (
+				<TestDomainSearch
+					query="flowers"
+					config={ { showBundleSuggestions: true, allowedTlds: [ 'com', 'net' ] } }
+				>
+					{ children }
+				</TestDomainSearch>
+			),
+		} );
+
+		await waitFor( () => {
+			expect( com.result.current.bundleTriggers ).toEqual( [ 'com' ] );
+			expect( comNet.result.current.bundleTriggers ).toEqual( [ 'com', 'net' ] );
+		} );
+
+		expect( comScope.isDone() ).toBe( true );
+		expect( comNetScope.isDone() ).toBe( true );
 	} );
 } );

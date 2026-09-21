@@ -470,7 +470,7 @@ export function AgentUIContainer( {
 	const computedEmptyView = showEmptyView
 		? React.cloneElement( emptyView, {
 				onSuggestionClick: handleSuggestionSubmit,
-		  } as any )
+			} as any )
 		: undefined;
 
 	// Compute notice - prioritize input limit error over user-provided notice
@@ -483,7 +483,7 @@ export function AgentUIContainer( {
 				),
 				dismissible: false,
 				status: 'error' as const,
-		  }
+			}
 		: notice;
 
 	// Create context value
@@ -630,7 +630,7 @@ export function AgentUIContainer( {
 											? STYLE_CONSTANTS.COLLAPSED_SIZE
 											: STYLE_CONSTANTS.COMPACT_WIDTH,
 									height: getHeightForState( chat.state ),
-							  } ),
+								} ),
 						x:
 							chat.state === 'collapsed' && currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE

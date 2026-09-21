@@ -315,11 +315,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 										[ NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY ]: email,
 										[ NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY ]: referral.checkout_url,
 										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
-								  } )
+									} )
 								: addQueryArgs( A4A_FEEDBACK_LINK, {
 										args: { email },
 										type: FeedbackType.ReferralCompleted,
-								  } )
+									} )
 						);
 						setEmail( '' );
 						setMessage( '' );
@@ -341,7 +341,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 													),
 												},
 											}
-									  )
+										)
 									: error.message
 							)
 						);

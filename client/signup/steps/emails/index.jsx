@@ -27,7 +27,7 @@ class EmailsStep extends Component {
 					extra: {
 						new_quantity: 1,
 					},
-			  } )
+				} )
 			: undefined;
 
 		// It may be cleaner to call handleSkip() if emailItem is undefined.

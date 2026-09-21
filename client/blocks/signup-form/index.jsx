@@ -740,12 +740,12 @@ class SignupForm extends Component {
 					inputPlaceholder: this.props.translate( 'Enter your email address' ),
 					submitButtonLabel: this.props.translate( 'Continue' ),
 					submitButtonLoadingLabel: this.props.translate( 'Continue' ),
-			  }
+				}
 			: {
 					inputPlaceholder: null,
 					submitButtonLabel: this.props.translate( 'Continue' ),
 					submitButtonLoadingLabel: <Spinner />,
-			  };
+				};
 
 		return (
 			<div

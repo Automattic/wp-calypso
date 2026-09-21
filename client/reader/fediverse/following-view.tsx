@@ -202,7 +202,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 										onError: ( error ) => showFollowError( error, 'unfollow', item.handle ),
 									}
 								),
-					  },
+						},
 		};
 	};
 

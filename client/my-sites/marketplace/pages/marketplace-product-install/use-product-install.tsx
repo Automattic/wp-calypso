@@ -333,8 +333,8 @@ export function useProductInstall( {
 	const marketplaceInstallationInProgress = isPluginUploadFlow
 		? isInstallationPending
 		: isInstallationPending &&
-		  !! productSlugInstalled &&
-		  [ pluginSlug, themeSlug ].includes( productSlugInstalled );
+			!! productSlugInstalled &&
+			[ pluginSlug, themeSlug ].includes( productSlugInstalled );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
 	const isAtomic = useSelector( ( state ) =>

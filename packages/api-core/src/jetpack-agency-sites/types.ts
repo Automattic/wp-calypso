@@ -15,6 +15,11 @@ export interface AgencySite {
 		img: string;
 		ico: string;
 	};
+	php_version?: string;
+	wordpress_version?: string;
+	hosting_provider_guess?: string;
+	is_atomic?: boolean;
+	is_simple?: boolean;
 }
 
 export interface FetchAgencySitesOptions {
@@ -23,6 +28,7 @@ export interface FetchAgencySitesOptions {
 	sort_direction?: 'asc' | 'desc';
 	page?: number;
 	per_page?: number;
+	not_multisite?: boolean;
 }
 
 export interface FetchAgencySitesResponse {
