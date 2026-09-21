@@ -44,6 +44,45 @@ if ( process.platform === 'linux' ) {
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
 const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
+// Datacenter IPs are liable to be served a bot challenge instead of the login page. That page loads
+// cleanly, so the login selectors simply time out and report a missing button rather than the real
+// cause. Detect it up front and say so.
+const BOT_CHALLENGE_MARKERS = [
+	'Confirm you are human',
+	'Checking your browser',
+	'Verify you are human',
+	'cf-challenge',
+	'cf_chl_opt',
+];
+
+async function assertLoadedExpectedPage( window ) {
+	const url = window.url();
+	const title = await window.title();
+	const body = await window.evaluate( () => document.body?.innerText ?? '' ).catch( () => '' );
+	const html = await window.content().catch( () => '' );
+
+	const challenge = BOT_CHALLENGE_MARKERS.find(
+		( marker ) => body.includes( marker ) || title.includes( marker ) || html.includes( marker )
+	);
+	if ( challenge ) {
+		throw new Error(
+			`Expected the desktop login page but got a bot challenge ("${ challenge }") at ${ url }.\n` +
+				'The CI runner is being challenged instead of served the login page. This is an ' +
+				'infrastructure issue: allow the runner egress IPs, or point WP_DESKTOP_BASE_URL at an ' +
+				'environment exempt from bot protection.'
+		);
+	}
+
+	// The app shows a local error page when the remote page fails to load.
+	if ( url.startsWith( 'file://' ) ) {
+		throw new Error(
+			`Expected the desktop login page at ${ BASE_URL } but the window is showing a local page ` +
+				`(${ url }). The app likely failed to load the remote URL, or the main window could not ` +
+				'be identified.'
+		);
+	}
+}
+
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
 
@@ -96,6 +135,8 @@ describe( 'User Can log in', () => {
 		for ( const [ , frame ] of mainWindow.frames().entries() ) {
 			await frame.waitForLoadState();
 		}
+
+		await assertLoadedExpectedPage( mainWindow );
 	} );
 
 	runIfOAuthLogin( 'Start the OAuth login flow', async function () {
