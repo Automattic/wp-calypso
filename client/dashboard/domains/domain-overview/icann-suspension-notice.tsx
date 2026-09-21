@@ -144,13 +144,18 @@ export default function IcannSuspensionNotice( { domain }: { domain: Domain } ) 
 		__(
 			'If the address is correct but you can’t find the email, use the button below to resend it.'
 		),
-		createInterpolateElement(
-			__(
-				'If you no longer have access to it, <link>change the contact email address</link> and we’ll send a new verification email.'
-			),
-			{ link: <Link to={ domainContactInfoRoute.fullPath } params={ { domainName } } /> }
-		),
 	];
+
+	if ( domain.current_user_is_owner ) {
+		sentences.push(
+			createInterpolateElement(
+				__(
+					'If you no longer have access to it, <link>change the contact email address</link> and we’ll send a new verification email.'
+				),
+				{ link: <Link to={ domainContactInfoRoute.fullPath } params={ { domainName } } /> }
+			)
+		);
+	}
 
 	return (
 		<Notice

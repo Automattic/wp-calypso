@@ -9,6 +9,7 @@ import type { Domain } from '@automattic/api-core';
 const getMockedDomain = ( customProps: Partial< Domain > = {} ): Domain => {
 	return {
 		domain: 'example.com',
+		current_user_is_owner: true,
 		is_pending_icann_verification: true,
 		is_icann_verification_suspended: false,
 		domain_registrant_email: 'registrant@example.com',
@@ -87,6 +88,21 @@ describe( '<IcannSuspensionNotice>', () => {
 		expect(
 			screen.getByRole( 'link', { name: 'change the contact email address' } )
 		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeVisible();
+	} );
+
+	test( 'does not offer to change the contact email address to users who do not own the domain', () => {
+		render(
+			<IcannSuspensionNotice domain={ getMockedDomain( { current_user_is_owner: false } ) } />
+		);
+
+		expect(
+			screen.queryByRole( 'link', { name: 'change the contact email address' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'If you no longer have access to it', { exact: false } )
+		).not.toBeInTheDocument();
+		expect( screen.getByText( 'registrant@example.com' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeVisible();
 	} );
 } );
