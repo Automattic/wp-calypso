@@ -24,7 +24,7 @@ function mergeValue( current: unknown, requested: unknown ): unknown {
 
 /**
  * The block's attributes with the requested ones merged in, nested objects
- * included. An empty object, an array or nothing requests no change.
+ * included. An empty object or nothing requests no change.
  */
 export function mergeAttributes(
 	current: BlockAttributes,
