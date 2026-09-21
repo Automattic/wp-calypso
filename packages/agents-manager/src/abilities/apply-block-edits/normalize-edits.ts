@@ -36,9 +36,16 @@ function toList( value: unknown, invalidMessage: string ): unknown[] {
 // The backend serializes an empty `attributes` object as `[]`; either way there is nothing to set.
 const isEmptyArray = ( value: unknown ): boolean => Array.isArray( value ) && value.length === 0;
 
-// An existing block may carry any name, or none: the editor's own is what counts.
-function assertBlock( value: unknown, availableNames: Set< string > ): asserts value is BlockData {
-	if ( ! isRecord( value ) || ( ! value.name && ! value.clientId ) ) {
+// An existing block may carry any name, or none: the editor's own is what
+// counts. A block to create, children included, needs an available one.
+function assertBlock(
+	value: unknown,
+	availableNames: Set< string >,
+	creatable: boolean
+): asserts value is BlockData {
+	const needsName = creatable || ! isRecord( value ) || ! value.clientId;
+
+	if ( ! isRecord( value ) || ( needsName && ! value.name ) ) {
 		throw new Error( 'Block must have a name property' );
 	}
 
@@ -58,7 +65,7 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block attributes must be an object' );
 	}
 
-	if ( ! value.clientId && ! availableNames.has( String( value.name ) ) ) {
+	if ( needsName && ! availableNames.has( String( value.name ) ) ) {
 		throw new Error( `Block type "${ String( value.name ) }" is not available` );
 	}
 
@@ -67,7 +74,9 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 			throw new Error( 'Inner blocks must be an array' );
 		}
 
-		value.innerBlocks.forEach( ( innerBlock ) => assertBlock( innerBlock, availableNames ) );
+		value.innerBlocks.forEach( ( innerBlock ) =>
+			assertBlock( innerBlock, availableNames, creatable )
+		);
 	}
 }
 
@@ -92,7 +101,7 @@ function toUpdate( value: unknown, availableNames: Set< string > ): BlockUpdate 
 		throw new Error( 'Updates must contain clientId and name' );
 	}
 
-	assertBlock( value, availableNames );
+	assertBlock( value, availableNames, false );
 
 	return { ...withoutEmptyAttributes( value ), clientId, name };
 }
@@ -115,7 +124,7 @@ function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert 
 		throw new Error( 'Insertion index must be a non-negative integer' );
 	}
 
-	assertBlock( block, availableNames );
+	assertBlock( block, availableNames, true );
 
 	return {
 		...( typeof parentClientId === 'string' && { parentClientId } ),

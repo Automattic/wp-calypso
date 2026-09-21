@@ -63,6 +63,11 @@ describe( 'normalizeEdits', () => {
 			'Response must contain updates, insertions, deletions, custom CSS, or a summary message',
 		],
 		[
+			'an inserted child without a name',
+			{ inserts: [ { block: { name: 'core/group', innerBlocks: [ { clientId: 'abcd' } ] } } ] },
+			'Block must have a name property',
+		],
+		[
 			'an insert whose parentClientId is not a string',
 			{ inserts: [ { parentClientId: 123, block: { name: 'core/group' } } ] },
 			'Insertion parentClientId must be a string',

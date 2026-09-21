@@ -291,6 +291,18 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 	} );
 
+	it( 'reports no changes when the site already holds the CSS and the updates are satisfied', async () => {
+		jest
+			.mocked( areUpdateEditsAlreadySatisfied )
+			.mockImplementation( ( { customCSS } ) => customCSS === undefined );
+		jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'a{}' } ) );
+
+		const { result } = await applyBlockEditsCallback( { ...input, customCSS: 'a{}' } );
+
+		expect( result ).toEqual( expect.objectContaining( { outcome: 'no-changes' } ) );
+		expect( withCheckpoint ).not.toHaveBeenCalled();
+	} );
+
 	// Decided before the menus are looked at: a satisfied edit inside one has nothing to undo either.
 	it( 'reports no changes for a satisfied update inside a menu, capturing nothing', async () => {
 		jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );

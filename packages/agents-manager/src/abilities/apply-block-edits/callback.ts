@@ -148,10 +148,12 @@ async function applyEditsAction(
 			? edits.customCSS
 			: undefined;
 
-	// Nothing to write: no checkpoint, so no undo that does nothing.
+	// Nothing to write (CSS the site already holds asks for nothing): no
+	// checkpoint, so no undo that does nothing.
 	if (
 		customCss === undefined &&
-		( ! hasBlockEdits || areUpdateEditsAlreadySatisfied( edits, resolve ) )
+		( ! hasBlockEdits ||
+			areUpdateEditsAlreadySatisfied( { ...edits, customCSS: undefined }, resolve ) )
 	) {
 		return { result: noChangesResult( summary ), insertedClientIds: [] };
 	}
