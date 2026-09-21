@@ -1051,23 +1051,6 @@
 		}
 	}
 
-	.lp-grid.lp-padding-top-7.lp-padding-top-7 {
-		padding-top: 60px;
-
-		@media ( min-width: 1152px ) {
-			padding-top: 64px;
-		}
-	}
-
-	/* Badges and social sit above the language control on mobile: picker column last. */
-	.lp-grid__order-1\@L.lp-pb-36.lp-pb-36 {
-		order: 1;
-		padding: 36px 0 0;
-
-		@media ( min-width: 1152px ) {
-			padding-top: 0;
-		}
-	}
 
 	.lp-language-picker__icon {
 		display: none;
