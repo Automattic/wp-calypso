@@ -471,10 +471,11 @@ export function PurchaseExpiryStatus( {
 		return __( 'Included with Plan' );
 	}
 
-	if (
-		( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-		purchase.product_slug !== 'domain_transfer'
-	) {
+	if ( isOneTimePurchase( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
+		return __( 'One-time purchase' );
+	}
+
+	if ( isAkismetFreeProduct( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
 		return __( 'Never Expires' );
 	}
 

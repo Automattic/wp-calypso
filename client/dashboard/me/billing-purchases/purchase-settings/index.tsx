@@ -1631,6 +1631,9 @@ export default function PurchaseSettings() {
 		if ( displayRenewDate ) {
 			return __( 'Renews' );
 		}
+		if ( isOneTimePurchase( purchase ) ) {
+			return __( 'Renewal status' );
+		}
 		return __( 'Expires' );
 	} )();
 
@@ -1762,7 +1765,10 @@ export default function PurchaseSettings() {
 									if ( isExpiredAndInGracePeriod( purchase ) ) {
 										return formattedExpiry;
 									}
-									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'One-time purchase' );
+									}
+									if ( isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
 									if ( displayRenewDate ) {
@@ -1805,6 +1811,9 @@ export default function PurchaseSettings() {
 									}
 									if ( purchase.is_auto_renew_enabled ) {
 										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'Does not renew' );
 									}
 									return __( 'Auto-renew is disabled' );
 								} )() }
