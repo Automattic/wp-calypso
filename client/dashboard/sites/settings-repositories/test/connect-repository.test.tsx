@@ -25,14 +25,11 @@ const repository = {
 	private: false,
 };
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+jest.mock( '@tanstack/react-router', () => {
+	const actual = jest.requireActual( '@tanstack/react-router' );
 	return {
 		...actual,
-		siteRoute: {
-			...actual.siteRoute,
-			useParams: () => ( { siteSlug: 'test-site' } ),
-		},
+		useParams: () => ( { siteSlug: 'test-site' } ),
 	};
 } );
 

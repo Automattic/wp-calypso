@@ -87,6 +87,14 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 				commentToTrash
 			);
 
+			// Both comments are on the same post, so the simplified rows would read
+			// identically — it drops the excerpt, which is the only part that differs.
+			// Seeing the settings also keeps the layout tour off the top of the list.
+			await notificationUserRestAPIClient.setCalypsoPreferences( {
+				'notifications-layout-style': 'detailed',
+				'notifications-view-settings-seen': true,
+			} );
+
 			await notificationsUser.authenticate( page );
 		} );
 

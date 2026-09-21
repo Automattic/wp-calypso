@@ -227,7 +227,7 @@ export const VgsCreditCardFields = ( {
 		? {
 				...VGSCollectFieldStyles,
 				...styles.input,
-		  }
+			}
 		: VGSCollectFieldStyles;
 
 	// Expiry and CVC are always on the same line since they're short fields

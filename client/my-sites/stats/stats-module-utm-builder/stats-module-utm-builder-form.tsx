@@ -183,7 +183,7 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 		? translate( 'Fill out campaign parameters to see the URL' )
 		: `${ url }${
 				campaignString ? `${ url.includes( '?' ) ? '&' : '?' }${ campaignString }` : ''
-		  }`;
+			}`;
 
 	const handleCopy = () => {
 		if ( url ) {

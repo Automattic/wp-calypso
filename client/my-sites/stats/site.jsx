@@ -235,7 +235,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							icon: chartBar,
 							onSelect: () => setIsPreviewDialogOpen( true ),
 						},
-				  ]
+					]
 				: [],
 		[ isInvitedToPreview, previewDashboardUrl ]
 	);

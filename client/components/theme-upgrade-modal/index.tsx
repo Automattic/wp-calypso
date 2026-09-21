@@ -85,8 +85,7 @@ export const ThemeUpgradeModal = ( {
 
 	// Check current theme: Does it have a plugin bundled?
 	const themeSoftwareSet = theme?.data?.taxonomies?.theme_software_set as
-		| ThemeSoftwareSet[]
-		| undefined;
+		ThemeSoftwareSet[] | undefined;
 	const showBundleVersion = themeSoftwareSet?.length;
 	const isExternallyManaged = theme?.data?.theme_type === 'managed-external';
 

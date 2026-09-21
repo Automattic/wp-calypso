@@ -36,10 +36,10 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					description: isThemeShowcaseModern
 						? translate(
 								'Choose from thousands of free and premium themes to launch your blog, portfolio, store, or business—and customize every detail to make it your own.'
-						  )
+							)
 						: translate(
 								'Professional WordPress themes for business, blogs, and ecommerce. 1000+ mobile-responsive designs with easy customization. Browse free and premium.'
-						  ),
+							),
 				},
 				free: {
 					title: translate( 'Free WordPress Themes' ),

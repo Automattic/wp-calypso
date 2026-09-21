@@ -9,6 +9,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import ApmSettingsSummary from '../settings-apm/summary';
@@ -47,6 +48,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					description={ __( 'Configure your site’s general, server, and security settings.' ) }
 				/>
 			}
+			notices={ <SitesNoticeArbiter /> }
 		>
 			{ siteTypeSupports.settingsGeneral && (
 				<VStack spacing={ 3 }>

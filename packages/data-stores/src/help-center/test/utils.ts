@@ -20,7 +20,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 } ) );
 
 describe( 'help-center utils — localStorage persistence (logged out)', () => {
-	let utils: typeof import('../utils');
+	let utils: typeof import( '../utils' );
 
 	beforeEach( async () => {
 		jest.resetModules();
@@ -66,7 +66,7 @@ describe( 'help-center utils — localStorage persistence (logged out)', () => {
 describe( 'getPersistedPreference — server preferences (logged in)', () => {
 	async function setup(
 		preferences: Record< string, unknown >
-	): Promise< typeof import('../utils') > {
+	): Promise< typeof import( '../utils' ) > {
 		jest.resetModules();
 
 		const { select } = await import( '@wordpress/data' );

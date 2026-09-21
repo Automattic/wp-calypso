@@ -1,3 +1,6 @@
+import { userPreferenceQuery, userPreferencesMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -11,6 +14,7 @@ import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
@@ -30,6 +34,31 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+
+	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+
+	// Both share one query key, so this is a single request — and it is skipped entirely
+	// without the picker, where nothing reads either value.
+	const { data: layoutStyle } = useQuery( {
+		...userPreferenceQuery( 'notifications-layout-style' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { data: viewSettingsSeen } = useQuery( {
+		...userPreferenceQuery( 'notifications-view-settings-seen' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { mutateAsync: savePreferences } = useMutation( userPreferencesMutation() );
+
+	const handlePreferenceChange = useCallback(
+		( key: string, value: unknown ) =>
+			savePreferences( { [ key ]: value } as Partial< UserPreferences > ),
+		[ savePreferences ]
+	);
+
+	const notificationPreferences = useMemo(
+		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
+		[ layoutStyle, viewSettingsSeen ]
+	);
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
@@ -200,6 +229,9 @@ export default function Notifications( {
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
+						preferences={ notificationPreferences }
+						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

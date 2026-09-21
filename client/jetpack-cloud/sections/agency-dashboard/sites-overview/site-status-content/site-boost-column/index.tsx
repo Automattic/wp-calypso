@@ -55,7 +55,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 						? clsx(
 								'sites-overview__boost-score sites-overview__disabled',
 								getBoostRatingClass( overallScore )
-						  )
+							)
 						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
 				}
 				href={ siteError ? '' : noBoostHrefOption }
@@ -81,7 +81,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 						? clsx(
 								'sites-overview__boost-score sites-overview__disabled',
 								getBoostRatingClass( overallScore )
-						  )
+							)
 						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
 				}
 				href={ siteError ? '' : jetpackBoostHref }

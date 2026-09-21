@@ -32,14 +32,7 @@ export type PurchaseForCopy = {
  * distinct heading / notice / checkbox / fallback-loss phrasing.
  */
 export type ProductCategory =
-	| 'plan'
-	| 'domain'
-	| 'email'
-	| 'jetpack'
-	| 'akismet'
-	| 'marketplace'
-	| 'one-time'
-	| 'other';
+	'plan' | 'domain' | 'email' | 'jetpack' | 'akismet' | 'marketplace' | 'one-time' | 'other';
 
 function isTitanMailSlug( productSlug: string ): boolean {
 	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( productSlug );

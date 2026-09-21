@@ -10,6 +10,7 @@ import {
 import { render, renderHook } from '@testing-library/react';
 import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
+import { adminBarIcon } from '../admin-bar-icon';
 import { useHelpCenterPlugin } from '../plugin-help-center';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
@@ -32,6 +33,13 @@ jest.mock( '../../analytics', () => ( {
 } ) );
 jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
+} ) );
+jest.mock( '../admin-bar-icon', () => ( {
+	adminBarIcon: jest.fn( ( _name, className ) => (
+		<span className={ className }>
+			<svg />
+		</span>
+	) ),
 } ) );
 
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
@@ -83,6 +91,12 @@ const HELP_NODES: AdminBarNode[] = [
 	} ),
 ];
 
+const HELP_CENTER_NODE = node( 'help-center', {
+	parent: 'top-secondary',
+	href: 'https://wordpress.com/help',
+	meta: { icon: ICON, class: 'menupop', target: '_blank' },
+} );
+
 const renderPlugin = ( adminBarNodes: AdminBarNode[] ) =>
 	renderHook( () => useHelpCenterPlugin( { sectionName: 'sites', adminBarNodes } ) ).result.current;
 
@@ -106,7 +120,7 @@ describe( 'useHelpCenterPlugin', () => {
 
 	it.each( [
 		[ 'agents manager', HELP_NODES ],
-		[ 'legacy help', [] ],
+		[ 'help center', [] ],
 	] )( 'does not track an unrendered %s node', ( _, nodes ) => {
 		renderPlugin( nodes );
 
@@ -115,7 +129,7 @@ describe( 'useHelpCenterPlugin', () => {
 
 	it.each( [
 		[ 'agents manager', HELP_NODES ],
-		[ 'legacy help', [] ],
+		[ 'help center', [] ],
 	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
 		const result = renderPlugin( nodes );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
@@ -239,13 +253,14 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( result.children ).toBeUndefined();
 	} );
 
-	it( 'falls back to the legacy Help Center when the payload has no agents manager node', () => {
+	it( 'falls back to the Help Center when the payload has no agents manager node', () => {
 		const result = renderPlugin( [] );
 
 		const { container } = render( result.icon as React.ReactElement );
 
 		expect( result.id ).toBe( 'help-center' );
 		expect( result.label ).toBe( 'Help' );
+		expect( result.title ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
 
 		// The icon must keep the wrapper the stylesheet sizes through.
@@ -253,5 +268,32 @@ describe( 'useHelpCenterPlugin', () => {
 
 		result.onClick?.( {} as React.MouseEvent );
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'stays icon only when the Help Center node carries no menu title', () => {
+		const result = renderPlugin( [ HELP_CENTER_NODE ] );
+		render( result.icon as React.ReactElement );
+
+		expect( result.id ).toBe( 'help-center' );
+		expect( result.label ).toBe( 'Help' );
+		expect( result.title ).toBeUndefined();
+		expect( result.tooltip ).toBeUndefined();
+		expect( result.children ).toBeUndefined();
+		expect( adminBarIcon ).toHaveBeenLastCalledWith( ICON, 'omnibar__help-icon' );
+
+		result.onClick?.( {} as React.MouseEvent );
+		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'shows the entry label the backend sends as the menu title', () => {
+		const result = renderPlugin( [
+			node( 'help-center', {
+				...HELP_CENTER_NODE,
+				meta: { ...HELP_CENTER_NODE.meta, menu_title: 'Get Help' },
+			} ),
+		] );
+
+		expect( result.title ).toBe( 'Get Help' );
+		expect( result.tooltip ).toBe( 'Get Help' );
 	} );
 } );

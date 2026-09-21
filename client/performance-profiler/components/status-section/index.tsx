@@ -73,7 +73,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 										/>
 									),
 								},
-						  } )
+							} )
 						: translate(
 								'{{a}}View %(quantity)d recommendation{{/a}}',
 								'{{a}}View %(quantity)d recommendations{{/a}}',
@@ -100,7 +100,7 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 										),
 									},
 								}
-						  ) }
+							) }
 				</div>
 			) }
 		</div>

@@ -55,7 +55,7 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 							args: { monitorAction, siteCountText },
 							comment:
 								"%(monitorAction)s is the monitor's currently performed action which could be either 'resume' or 'pause'. %(siteCountText) is no of sites, e.g. '2 sites'",
-					  } )
+						} )
 					: translate(
 							'You are about to %(monitorAction)s the monitor for {{em}}%(siteUrl)s{{/em}}.',
 							{
@@ -66,7 +66,7 @@ export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScr
 									em: <em />,
 								},
 							}
-					  );
+						);
 
 			return dialogContent( heading, content, ( accepted: boolean ) =>
 				toggleMonitor( accepted, activate )
@@ -113,14 +113,14 @@ export function useHandleResetNotification(
 							comment: "%(siteCountText) is no of sites, e.g. '2 sites'",
 							components,
 						}
-				  )
+					)
 				: translate(
 						'You are about to reset the monitor schedule to {{strong}}5 minutes{{/strong}} for {{em}}%(siteUrl)s{{/em}}.',
 						{
 							args: { siteUrl: siteCountText },
 							components,
 						}
-				  );
+					);
 
 		return dialogContent( heading, content, resetMonitorDuration );
 	}, [ resetMonitorDuration, selectedSites.length, siteCountText, translate ] );

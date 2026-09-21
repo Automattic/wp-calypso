@@ -24,12 +24,12 @@ const animations = {
 const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
 
 export default function SelectedBlock() {
-	const { block, name, icon } = useSelect( ( select ) => {
+	const { clientId, name, icon } = useSelect( ( select ) => {
 		const selectedBlock = select( blockEditorStore ).getSelectedBlock();
 
 		if ( ! selectedBlock ) {
 			return {
-				block: null,
+				clientId: null,
 				name: null,
 				icon: null,
 			};
@@ -40,7 +40,7 @@ export default function SelectedBlock() {
 		const selectedText = getSelectedTextContext( select );
 
 		return {
-			block: selectedBlock,
+			clientId: selectedBlock.clientId,
 			name: selectedText
 				? `“${ selectedText.text }”`
 				: selectedBlock.attributes?.content?.text || blockType?.title,
@@ -55,13 +55,15 @@ export default function SelectedBlock() {
 		window.dispatchEvent( new Event( SELECTED_BLOCK_CLEAR_EVENT ) );
 	};
 
-	if ( ! block ) {
+	if ( ! clientId ) {
 		return null;
 	}
 
+	// Keyed by block, not label: the label tracks the block's content, so a
+	// label key would remount and re-animate the pill on every keystroke.
 	return (
 		<motion.div
-			key={ name }
+			key={ clientId }
 			className="agents-manager-selected-block"
 			initial={ animations.hidden }
 			animate={ animations.visible }

@@ -27,6 +27,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import { useIntlLocale } from '../../app/locale';
 import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
@@ -90,12 +91,20 @@ const SshKeyCard = ( {
 };
 
 const AddSshKeyButton = () => {
+	const { supports } = useAppContext();
+
 	if ( isDashboardBackport() ) {
 		return (
 			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
 				{ __( 'Add new SSH key ↗' ) }
 			</Button>
 		);
+	}
+
+	// The SSH key settings page only exists in dashboards that register the
+	// `/me/security` routes.
+	if ( ! ( supports.me && supports.me.security ) ) {
+		return null;
 	}
 
 	return (
@@ -178,10 +187,10 @@ export default function SshCard( {
 					sshEnabled
 						? __(
 								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
-						  )
+							)
 						: __(
 								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
-						  ),
+							),
 					{
 						type: 'snackbar',
 					}
@@ -289,13 +298,13 @@ export default function SshCard( {
 				? userSshKeys.map( ( userSshKey: UserSshKey ) => ( {
 						label: `${ user.username }-${ userSshKey.name }`,
 						value: userSshKey.name,
-				  } ) )
+					} ) )
 				: [
 						{
 							label: __( 'No SSH keys available' ),
 							value: '',
 						},
-				  ],
+					],
 		},
 	];
 

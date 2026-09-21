@@ -47,7 +47,7 @@ export function useVisibleGridPlans( {
 				? gridPlans.find(
 						( gridPlan ) =>
 							getPlanClass( gridPlan.planSlug ) === getPlanClass( currentSitePlanSlug )
-				  )
+					)
 				: null;
 
 			// Check if previous state is stale

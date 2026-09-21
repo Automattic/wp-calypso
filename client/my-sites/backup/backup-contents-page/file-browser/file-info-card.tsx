@@ -75,7 +75,7 @@ function FileInfoCard( {
 		? new Intl.DateTimeFormat( locale, {
 				dateStyle: 'medium',
 				timeStyle: 'short',
-		  } ).format( new Date( fileInfo.mtime * 1000 ) )
+			} ).format( new Date( fileInfo.mtime * 1000 ) )
 		: null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 

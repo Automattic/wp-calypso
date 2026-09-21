@@ -36,12 +36,12 @@ describe( 'useIsSeenEnabled', () => {
 	} );
 
 	describe( 'regular users', () => {
-		it( 'returns false when user is subscribed to a feed that is not a P2', () => {
+		it( 'returns true when user is subscribed to a feed that is not a P2', () => {
 			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
 				wrapper: createSeenPostsWrapper( { subscriptions: [ subscription ] } ),
 			} );
 
-			expect( result.current ).toBe( false );
+			expect( result.current ).toBe( true );
 		} );
 
 		it( 'returns false on a P2 the user does not subscribe to', () => {
@@ -155,12 +155,12 @@ describe( 'useIsSeenEnabled', () => {
 			expect( result.current ).toBe( false );
 		} );
 
-		it( 'returns false for a non-P2 feed in a subscribed list for a regular user', () => {
+		it( 'returns true for a non-P2 feed in a subscribed list for a regular user', () => {
 			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
 				wrapper: createSeenPostsWrapper( { subscribedListFeedIds: [ FEED_ID ] } ),
 			} );
 
-			expect( result.current ).toBe( false );
+			expect( result.current ).toBe( true );
 		} );
 
 		it( 'returns true for a P2 feed in a subscribed list the regular user does not follow', () => {
@@ -238,6 +238,55 @@ describe( 'useIsSeenEnabled', () => {
 					wrapper: createSeenPostsWrapper( { ...eligible, route: '/reader' } ),
 				}
 			);
+
+			expect( result.current ).toBe( true );
+		} );
+	} );
+
+	describe( 'reader-seen-posts preference', () => {
+		const eligible = { subscriptions: [ subscription ] };
+		const eligibleArgs = { feedId: FEED_ID, organizationId: ORG_ID };
+
+		it( 'defaults to enabled when the preference is unset', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: null } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+
+		it( 'stays disabled while remote preferences have not loaded', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, remotePreferencesReceived: false } ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false when the preference is disabled for an Automattician', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: createSeenPostsWrapper( {
+					subscriptions: [ subscription ],
+					isAutomattician: true,
+					readerSeenPostsPreference: false,
+				} ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false when the preference is disabled', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: false } ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns true when the preference is explicitly enabled', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( eligibleArgs ), {
+				wrapper: createSeenPostsWrapper( { ...eligible, readerSeenPostsPreference: true } ),
+			} );
 
 			expect( result.current ).toBe( true );
 		} );

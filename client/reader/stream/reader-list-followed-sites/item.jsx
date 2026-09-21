@@ -20,7 +20,7 @@ const ReaderListFollowingItem = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { site } = useSite( siteId );
 	const { data: feed } = useFeedQuery( follow?.feed_ID );
-	const siteIcon = site ? site.site_icon ?? site?.icon?.img : null;
+	const siteIcon = site ? ( site.site_icon ?? site?.icon?.img ) : null;
 	let feedIcon = follow?.site_icon;
 
 	if ( ! follow ) {

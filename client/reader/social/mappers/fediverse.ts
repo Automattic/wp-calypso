@@ -53,7 +53,7 @@ export function mapFediverseFeedItemToSocialPost(
 						handle: qualifyAcct( item.boost.by.acct, options.host ),
 						display_name: item.boost.by.display_name,
 					},
-			  }
+				}
 			: null,
 		counts: {
 			replies: item.counts.replies,

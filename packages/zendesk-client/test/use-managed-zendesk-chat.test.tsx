@@ -140,7 +140,7 @@ function renderUseManagedZendeskChat( {
 					startedFromAiChatId,
 					startedFromChatSessionId,
 					startedFromMessageId,
-			  },
+				},
 	};
 
 	return renderHook(

@@ -17,6 +17,7 @@ import './style.scss';
 
 boot( {
 	name: 'A4A',
+	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,
@@ -29,7 +30,10 @@ boot( {
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,
+			amplify: true,
+			devTools: true,
 			sites: true,
+			plugins: true,
 			team: true,
 			earn: true,
 		},

@@ -37,7 +37,7 @@ export const FreeDomainForAYearPromo = ( {
 				{ isCiab
 					? __(
 							'With your annual plan purchase, the first year of domain registration is on us! Discount automatically applied at checkout.'
-					  )
+						)
 					: __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
@@ -55,7 +55,7 @@ export const FreeDomainForAYearPromo = ( {
 					{
 						br: <br />,
 					}
-			  )
+				)
 			: createInterpolateElement(
 					__(
 						"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
@@ -63,7 +63,7 @@ export const FreeDomainForAYearPromo = ( {
 					{
 						br: <br />,
 					}
-			  ) );
+				) );
 
 	return (
 		<Card ref={ containerRef } size="small" className="free-domain-for-a-year-promo">

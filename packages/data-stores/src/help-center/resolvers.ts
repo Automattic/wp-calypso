@@ -20,7 +20,7 @@ export function isHelpCenterShown() {
 							chatId: chat.odieId,
 							sessionId: chat.sessionId,
 							botSlug: chat.botSlug,
-					  } )
+						} )
 					: '/odie';
 			}
 			dispatch( {

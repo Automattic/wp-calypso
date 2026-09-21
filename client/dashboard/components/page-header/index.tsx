@@ -1,8 +1,33 @@
 import { useMatches } from '@tanstack/react-router';
-import { isValidElement } from 'react';
+import { createContext, isValidElement, useContext } from 'react';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
 import './style.scss';
+
+type PageHeaderOverride = Pick< PageHeaderProps, 'title' | 'description' >;
+
+/**
+ * A title and description owned by a host that embeds these screens in chrome
+ * of its own, such as a section whose tabs already name the current screen.
+ * When provided, they replace the ones the page passes to its PageHeader.
+ */
+const PageHeaderOverrideContext = createContext< PageHeaderOverride | null >( null );
+
+export function PageHeaderOverrideProvider( {
+	children,
+	title,
+	description,
+}: {
+	children: React.ReactNode;
+	title: React.ReactNode;
+	description?: React.ReactNode;
+} ) {
+	return (
+		<PageHeaderOverrideContext.Provider value={ { title, description } }>
+			{ children }
+		</PageHeaderOverrideContext.Provider>
+	);
+}
 
 const PageTitle = () => {
 	const title = useMatches( {
@@ -39,11 +64,14 @@ const ActionMenu = ( { children }: { children: React.ReactElement | null } ) => 
  * of the last matched route.
  */
 export const PageHeader = ( props: PageHeaderProps ) => {
+	const override = useContext( PageHeaderOverrideContext );
+
 	return (
 		<SectionHeader
 			{ ...props }
+			{ ...override }
 			level={ 1 }
-			title={ props.title ?? <PageTitle /> }
+			title={ override?.title ?? props.title ?? <PageTitle /> }
 			className="dashboard-page-header"
 		/>
 	);

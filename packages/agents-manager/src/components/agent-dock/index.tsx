@@ -8,7 +8,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+	Navigate,
+	NavigationType,
+	Route,
+	Routes,
+	useLocation,
+	useNavigate,
+	useNavigationType,
+} from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -17,6 +25,7 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
@@ -101,6 +110,7 @@ export default function AgentDock( {
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
+	const navigationType = useNavigationType();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
@@ -388,6 +398,26 @@ export default function AgentDock( {
 	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
+	// Recorded here rather than from the entry buttons: the dock only renders once
+	// the providers have loaded, so `provider_ids` is always set. `restored` marks
+	// a chat that was already open when the page loaded; `trigger` says who
+	// opened it otherwise (the merchant, or a host through the actions bridge).
+	const wasChatOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasChatOpen = wasChatOpenRef.current;
+		wasChatOpenRef.current = chatIsOpen;
+		if ( chatIsOpen && wasChatOpen !== true ) {
+			const restored = wasChatOpen === null;
+			// Always take, even on restore: a leftover host mark must not
+			// label the next merchant open.
+			const origin = takeActionOrigin( 'open' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
+				restored,
+				trigger: restored ? 'restored' : origin,
+			} );
+		}
+	}, [ chatIsOpen ] );
+
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }
@@ -473,7 +503,13 @@ export default function AgentDock( {
 						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
 							path="*"
-							element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> }
+							element={
+								<Navigate
+									to="/chat"
+									state={ navigationType === NavigationType.Push ? { isNewChat: true } : undefined }
+									replace
+								/>
+							}
 						/>
 					</Routes>
 				) }
