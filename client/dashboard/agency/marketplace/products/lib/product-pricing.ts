@@ -118,7 +118,7 @@ export function getWpcomTieredPrice(
 	ownedSites = 0
 ): WpcomTieredPrice {
 	const basePricePerUnit =
-		term === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+		term === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
 	const tierPrices = term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
 	const tierQuantity = quantity + ownedSites;
 	const tier =

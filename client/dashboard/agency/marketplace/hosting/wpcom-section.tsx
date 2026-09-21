@@ -51,7 +51,7 @@ interface VolumeTier {
 }
 
 const getBasePrice = ( plan: AgencyProduct, term: TermPricing ) =>
-	term === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
+	term === 'yearly' ? ( plan.yearly_price ?? 0 ) : ( plan.monthly_price ?? 0 );
 
 // The volume tiers for the term, with the single-site tier always first.
 function getVolumeTiers( plan: AgencyProduct, term: TermPricing ): VolumeTier[] {
@@ -187,12 +187,12 @@ export default function WpcomSection( {
 					/* translators: %d is the number of new WordPress.com sites. */
 					_n( '%d new WordPress.com site', '%d new WordPress.com sites', quantity ),
 					quantity
-			  )
+				)
 			: sprintf(
 					/* translators: %d is the number of WordPress.com sites. */
 					_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
 					quantity
-			  );
+				);
 
 	const ctaLabel = isReferralMode
 		? __( 'Add to referral' )
@@ -200,7 +200,7 @@ export default function WpcomSection( {
 				/* translators: %d is the number of WordPress.com sites. */
 				_n( 'Add %d site to cart', 'Add %d sites to cart', quantity ),
 				quantity
-		  );
+			);
 
 	const getQuantityHeading = () => {
 		if ( isReferralMode ) {
@@ -372,7 +372,7 @@ export default function WpcomSection( {
 																						/* translators: %d is the discount percentage. */
 																						__( '%d%% off' ),
 																						tier.discountPercentage
-																				  )
+																					)
 																				: '' }
 																		</Text>
 																	</VStack>
