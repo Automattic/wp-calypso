@@ -3,7 +3,7 @@
  */
 import { act, render, screen } from '@testing-library/react';
 import { Suspense, useEffect, useState } from 'react';
-import { tryPreload } from '../hooks/use-preload-steps';
+import { lazyCache, tryPreload } from '../hooks/use-preload-steps';
 import { flowStepComponent } from '../index';
 import type { StepperStep } from '../types';
 
@@ -82,5 +82,18 @@ describe( 'flowStepComponent', () => {
 		} );
 
 		expect( mounts ).toBe( 1 );
+	} );
+
+	// A preload that resolves with nothing yet rendered must still warm the cache with the raw
+	// component, so the first render gets it straight away instead of a lazy() wrapper.
+	it( 'warms the cache with the raw component when a preload resolves before any render', async () => {
+		const step = {
+			slug: 'processing',
+			asyncComponent: () => Promise.resolve( { default: StepBody } ),
+		} as unknown as StepperStep;
+
+		await tryPreload( step );
+
+		expect( lazyCache.get( step.asyncComponent ) ).toBe( StepBody );
 	} );
 } );
