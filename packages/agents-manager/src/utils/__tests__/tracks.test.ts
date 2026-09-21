@@ -530,6 +530,31 @@ describe( 'tracks wrappers', () => {
 		);
 	} );
 
+	describe( "the site's tracking opt-in", () => {
+		it( 'records nothing from either family when the host says tracking is off', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				isTrackingAllowed: false,
+			};
+
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened' );
+
+			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'records as before when the host says nothing', () => {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened' );
+
+			expect( recordedEventNames() ).toEqual( [
+				'jetpack_big_sky_chat_input_send_message',
+				'calypso_agents_manager_chat_input_send_message',
+				'calypso_agents_manager_chat_opened',
+			] );
+		} );
+	} );
+
 	describe( 'is_test (getIsTest)', () => {
 		it( 'is true when agentsManagerData asserts dev mode', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: true };

@@ -22,12 +22,23 @@ export const usePlanUpsellInfo = ( { planSlug }: { planSlug: PlanSlug } ): PlanU
 		useCheckPlanAvailabilityForPurchase,
 	} );
 	const currencyCode = pricingMeta?.[ planSlug ].currencyCode ?? 'USD';
+	const introOffer = pricingMeta?.[ planSlug ].introOffer;
+	// The upsell modals only quote annual plans, so only a first-year offer maps onto their copy.
+	const introOfferPrice =
+		introOffer &&
+		! introOffer.isOfferComplete &&
+		introOffer.intervalUnit === 'year' &&
+		introOffer.intervalCount === 1
+			? introOffer.rawPrice
+			: null;
 	const priceMonthly =
 		( pricingMeta?.[ planSlug ].discountedPrice.monthly ||
+			introOfferPrice?.monthly ||
 			pricingMeta?.[ planSlug ].originalPrice.monthly ) ??
 		0;
 	const priceFull =
 		( pricingMeta?.[ planSlug ].discountedPrice.full ||
+			introOfferPrice?.full ||
 			pricingMeta?.[ planSlug ].originalPrice.full ) ??
 		0;
 
