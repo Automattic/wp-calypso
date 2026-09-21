@@ -150,16 +150,20 @@ function ProductsList() {
 		openAddEditDialog();
 	}
 
+	function getProductPair( productId: number ) {
+		const currentProduct = products.find( ( prod ) => prod.ID === productId );
+		const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
+		return {
+			currentProduct,
+			currentAnnualProduct,
+			isReadOnly: Boolean( currentProduct?.is_read_only || currentAnnualProduct?.is_read_only ),
+		};
+	}
+
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
-			if (
-				! currentProduct ||
-				currentProduct.tier ||
-				currentProduct.is_read_only ||
-				currentAnnualProduct?.is_read_only
-			) {
+			const { currentProduct, currentAnnualProduct, isReadOnly } = getProductPair( productId );
+			if ( ! currentProduct || currentProduct.tier || isReadOnly ) {
 				return;
 			}
 			setShowAddEditDialog( true );
@@ -174,9 +178,8 @@ function ProductsList() {
 
 	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
-			if ( ! currentProduct || currentProduct.is_read_only || currentAnnualProduct?.is_read_only ) {
+			const { currentProduct, currentAnnualProduct, isReadOnly } = getProductPair( productId );
+			if ( ! currentProduct || isReadOnly ) {
 				return;
 			}
 			setShowDeleteDialog( true );
@@ -290,7 +293,9 @@ function ProductsList() {
 						const currentAnnualProduct = products.find(
 							( _prod: Product ) => _prod.tier === currentProduct.ID
 						);
-						const isReadOnly = currentProduct.is_read_only || currentAnnualProduct?.is_read_only;
+						const isReadOnly = Boolean(
+							currentProduct.is_read_only || currentAnnualProduct?.is_read_only
+						);
 						const price = formatCurrency(
 							currentProduct?.price || 0,
 							currentProduct?.currency || ''

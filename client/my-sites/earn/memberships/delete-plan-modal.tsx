@@ -22,7 +22,7 @@ const RecurringPaymentsPlanDeleteModal = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 	const [ cancelSubscriptions, setCancelSubscriptions ] = useState( false );
-	const isReadOnly = product.is_read_only || annualProduct?.is_read_only;
+	const isReadOnly = Boolean( product.is_read_only || annualProduct?.is_read_only );
 
 	const onClose = ( action?: string ) => {
 		if ( action === 'delete' && ! isReadOnly ) {

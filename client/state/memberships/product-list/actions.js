@@ -14,7 +14,10 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/memberships/init';
 
-const getResponseBody = ( response ) => response.body ?? response;
+const getProductError = ( response ) => {
+	const error = ( response.body ?? response ).error;
+	return error ? new Error( error ) : null;
+};
 
 export const requestProducts = ( siteId ) => ( {
 	siteId,
@@ -94,11 +97,13 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				product
 			)
 			.then( ( newProduct ) => {
-				const responseBody = getResponseBody( newProduct );
-				if ( responseBody.error ) {
-					throw new Error( responseBody.error );
+				const error = getProductError( newProduct );
+				if ( error ) {
+					throw error;
 				}
-				const membershipProduct = membershipProductFromApi( responseBody.product );
+				const membershipProduct = membershipProductFromApi(
+					( newProduct.body ?? newProduct ).product
+				);
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				if ( noticeText ) {
 					dispatch(
@@ -160,9 +165,9 @@ export const requestDeleteProduct = (
 					}
 				)
 				.then( ( response ) => {
-					const responseBody = getResponseBody( response );
-					if ( responseBody.error ) {
-						throw new Error( responseBody.error );
+					const error = getProductError( response );
+					if ( error ) {
+						throw error;
 					}
 				} )
 		);
