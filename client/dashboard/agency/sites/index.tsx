@@ -15,6 +15,7 @@ import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
 import { useAgencyFields, getAgencyActions } from './dataviews';
+import ProvisioningSiteNotices from './provisioning-notice';
 import type { AddNewSiteAction } from './add-new-site/types';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -124,6 +125,7 @@ export default function AgencySites() {
 					}
 				/>
 			}
+			notices={ <ProvisioningSiteNotices /> }
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
