@@ -44,10 +44,13 @@ function getFields( {
 			Edit: statesList && statesList.length > 0 ? 'select' : 'text',
 			elements:
 				statesList && statesList.length > 0
-					? statesList.map( ( state ) => ( {
-							label: state.name,
-							value: state.code,
-						} ) )
+					? [
+							{ label: __( 'Select State/Province' ), value: '' },
+							...statesList.map( ( state ) => ( {
+								label: state.name,
+								value: state.code,
+							} ) ),
+						]
 					: undefined,
 		},
 		{
@@ -197,12 +200,16 @@ export function TaxLocationForm( {
 		return null;
 	}
 
-	const handleChange = ( updated: Partial< StoredPaymentMethodTaxLocation > ) => {
+	const handleChange = ( changed: Partial< StoredPaymentMethodTaxLocation > ) => {
+		const updated = { ...changed };
+		// Subdivision codes are only meaningful for the country they belong to.
+		if ( updated.country_code !== undefined && updated.country_code !== data.country_code ) {
+			updated.subdivision_code = '';
+		}
 		// The checkbox is hidden once the location stops being eligible, so drop
 		// the declaration too rather than submitting one the buyer can't see.
 		if ( data.is_for_business && ! isBusinessUseTaxLocation( { ...data, ...updated } ) ) {
-			onChange( { ...updated, is_for_business: undefined } );
-			return;
+			updated.is_for_business = undefined;
 		}
 		onChange( updated );
 	};

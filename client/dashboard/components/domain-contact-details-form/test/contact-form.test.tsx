@@ -36,7 +36,15 @@ describe( '<ContactForm>', () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-countries' ) )
-			.reply( 200, [ { code: 'FR', name: 'France' } ] )
+			.reply( 200, [
+				{ code: 'FR', name: 'France' },
+				{ code: 'CA', name: 'Canada' },
+			] )
+			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/CA' ) )
+			.reply( 200, [
+				{ code: 'AB', name: 'Alberta' },
+				{ code: 'BC', name: 'British Columbia' },
+			] )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/' ) )
 			.reply( 200, [] )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/meta/sms-country-codes/' ) )
@@ -47,6 +55,29 @@ describe( '<ContactForm>', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
+	} );
+
+	test( 'clears a state that does not belong to the selected country instead of substituting one', async () => {
+		render(
+			<ContactForm
+				initialData={ {
+					...frIndividualContact,
+					countryCode: 'CA',
+					city: 'Grande Prairie',
+					state: 'XX',
+					postalCode: 'T8V 7S1',
+					extra: {},
+				} }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const provinceSelect = await screen.findByRole( 'combobox', { name: 'Select Province' } );
+		expect( await screen.findByRole( 'option', { name: 'Alberta' } ) ).toBeVisible();
+		expect( provinceSelect ).toHaveValue( '' );
 	} );
 
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {
