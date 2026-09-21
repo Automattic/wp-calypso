@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { cn } from '../../utils/classNames';
@@ -21,6 +21,25 @@ interface MessagesProps {
 	className?: string;
 	messagesPosition?: 'top' | 'bottom';
 	showAgentIcon?: boolean;
+}
+
+function getSpokenText( element: Element | null | undefined ): string {
+	if ( ! element ) {
+		return '';
+	}
+	const walker = element.ownerDocument.createTreeWalker( element, NodeFilter.SHOW_TEXT, {
+		acceptNode: ( node ) => {
+			const hidden = node.parentElement?.closest( '[aria-hidden="true"]' );
+			return hidden && element.contains( hidden )
+				? NodeFilter.FILTER_REJECT
+				: NodeFilter.FILTER_ACCEPT;
+		},
+	} );
+	const parts: string[] = [];
+	while ( walker.nextNode() ) {
+		parts.push( walker.currentNode.textContent ?? '' );
+	}
+	return parts.join( ' ' ).replace( /\s+/g, ' ' ).trim();
 }
 
 export function Messages( {
@@ -56,8 +75,7 @@ export function Messages( {
 			.join( ' ' );
 	}, [ visibleMessages ] );
 
-	// Debounce live region updates to prevent repeated announcements during streaming
-	const [ announcedText ] = useDebounce( liveRegionText, 1000 );
+	const [ settledText ] = useDebounce( liveRegionText, 1000 );
 
 	// Hide the indicator only while text is actively arriving, not just because
 	// an agent message exists. We compare current agent text to its 1s debounced
@@ -65,7 +83,28 @@ export function Messages( {
 	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
 	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
 	// the indicator does not flicker during steady streaming.
-	const isAgentTextStreaming = liveRegionText !== announcedText;
+	const isAgentTextStreaming = liveRegionText !== settledText;
+
+	// Announce the rendered reply once it finishes: what is on screen rather than
+	// markdown source, and never history that was already there on open.
+	const [ announcement, setAnnouncement ] = useState( '' );
+	const textWhenProcessingStartedRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( isProcessing ) {
+			textWhenProcessingStartedRef.current ??= liveRegionText;
+			return;
+		}
+		const textWhenStarted = textWhenProcessingStartedRef.current;
+		textWhenProcessingStartedRef.current = null;
+		if ( textWhenStarted === null || textWhenStarted === liveRegionText ) {
+			return;
+		}
+		const agentMessages = scrollAreaRef.current?.querySelectorAll(
+			'[data-slot="message"][data-role="agent"]'
+		);
+		const latest = agentMessages?.[ agentMessages.length - 1 ];
+		setAnnouncement( getSpokenText( latest?.querySelector( '[data-slot="message-bubble"]' ) ) );
+	}, [ isProcessing, liveRegionText ] );
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
@@ -100,7 +139,7 @@ export function Messages( {
 					overflow: 'hidden',
 				} }
 			>
-				{ announcedText }
+				{ announcement }
 			</div>
 			<div
 				data-slot="messages"
