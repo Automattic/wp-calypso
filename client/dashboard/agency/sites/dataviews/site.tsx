@@ -39,16 +39,20 @@ export function getSiteNameField(
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { item } ) => (
-			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+			<HStack justify="flex-start" alignment="center" spacing={ 1 } expanded={ false }>
 				<Link
 					to="/sites/$siteSlug"
 					params={ { siteSlug: item.url } }
-					style={ { color: 'inherit', textDecoration: 'none' } }
+					style={ { color: 'inherit', textDecoration: 'none', ...titleFieldTextOverflowStyles } }
 					onClick={ () => onSiteClick?.( item ) }
 				>
 					{ getSiteName( item ) }
 				</Link>
-				{ item.a4a_is_dev_site && <Badge>{ __( 'Development' ) }</Badge> }
+				{ item.a4a_is_dev_site && (
+					<span style={ { flexShrink: 0 } }>
+						<Badge intent="draft">{ __( 'Development' ) }</Badge>
+					</span>
+				) }
 			</HStack>
 		),
 	};
