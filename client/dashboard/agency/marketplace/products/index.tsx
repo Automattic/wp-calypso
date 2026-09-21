@@ -140,7 +140,7 @@ export default function MarketplaceProducts() {
 	} ) );
 	const [ selectedTile, setSelectedTile ] = useState< CategoryTileValue | null >( () => {
 		const category = searchParams.category
-			? CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category
+			? ( CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
 			: null;
 		return isCategoryTileValue( category ) ? category : null;
 	} );
@@ -228,7 +228,7 @@ export default function MarketplaceProducts() {
 						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
 							tileCategory
 						)
-				  )
+					)
 				: products,
 		[ products, tileCategory ]
 	);
@@ -454,7 +454,7 @@ export default function MarketplaceProducts() {
 								section.key === 'featured'
 									? section.items.filter(
 											( item ) => getItemProducts( item )[ 0 ].slug !== WOOPAYMENTS_PRODUCT_SLUG
-									  )
+										)
 									: section.items
 							) }
 						</VStack>
