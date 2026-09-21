@@ -5,7 +5,6 @@
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
 @import "./variables";
-@import "calypso/my-sites/stats/modernized-tooltip-styles";
 
 // The width below which the widget's metric pairs stop fitting side by side. A pair is
 // roughly 250px ("Visitors —" over "1.7K", twice, plus the gap), so this leaves headroom
@@ -16,11 +15,6 @@ $stats-widget-stack-width: 360px;
 
 	// At narrow widths the metric pairs stop fitting side by side. Everything else in
 	// the widget is already a single column, so this is all the narrow view needs.
-	//
-	// This mixin used to carry far more: a padding override, revealing the highlights
-	// tab strip, collapsing a two-column highlights grid and a modules grid. All of that
-	// described the pre-card layout and referred to markup that no longer exists — the
-	// tabs are always shown now, and each section owns its own stacking.
 	.stats-widget-metrics {
 		flex-direction: column;
 		gap: 16px;

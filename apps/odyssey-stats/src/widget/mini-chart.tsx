@@ -17,7 +17,6 @@ import './mini-chart.scss';
 interface MiniChartProps {
 	siteId: number;
 	gmtOffset: number;
-	statsBaseUrl: string;
 	range: DateRange;
 }
 

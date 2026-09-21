@@ -107,7 +107,6 @@ export function init() {
 							<MiniChart
 								siteId={ currentSiteId }
 								gmtOffset={ config( 'gmt_offset' ) }
-								statsBaseUrl={ statsBaseUrl }
 								range={ range }
 							/>
 						</WidgetSection>

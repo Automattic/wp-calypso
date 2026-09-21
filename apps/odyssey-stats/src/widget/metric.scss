@@ -2,7 +2,7 @@
 
 // The metric treatment shared by every figure in the widget — the Views/Visitors totals
 // in Overview and the blocked-attempt counts in Site protection. Kept in one place so the
-// two sections cannot drift apart as they did before.
+// two sections stay in step.
 
 // A row of metrics. Each takes an equal share, so the row spans the card rather than
 // bunching at the start. `flex-basis: 0` makes the split even regardless of how wide

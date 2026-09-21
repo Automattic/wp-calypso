@@ -1,7 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { TabPanel } from '@wordpress/components';
 import { Icon, chartBar, external } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
@@ -31,7 +30,6 @@ interface TopColumnProps {
 	siteId: number;
 	isItemLinkExternal?: boolean;
 	isItemLink?: boolean;
-	className?: null | string;
 }
 
 interface HighlightsProps {
@@ -118,12 +116,11 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	siteId,
 	isItemLink = false,
 	isItemLinkExternal = false,
-	className = null,
 } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className={ clsx( 'stats-widget-highlights-card', className ) }>
+		<div className="stats-widget-highlights-card">
 			<GrowHeight>
 				{ items.length === 0 && isLoading && (
 					// One row, not a full list: how many items come back is unknown, and the one
@@ -238,7 +235,6 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 
 					return (
 						<TopColumn
-							className="stats-widget-highlights__column"
 							viewAllUrl={ active.viewAllUrl }
 							viewAllText={ translate( 'See more' ) }
 							items={ active.items }
