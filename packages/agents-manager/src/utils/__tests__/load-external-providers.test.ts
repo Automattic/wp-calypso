@@ -366,12 +366,14 @@ describe( 'loadExternalProviders', () => {
 			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
 		};
 		const onTaskUpdate = jest.fn();
+		const useCheckpoint = jest.fn();
 		setAgentsManagerData( {
 			agentProviders: [
 				{
 					toolProvider: bigSkyProvider,
 					contextProvider: { getClientContext: () => ( {} ) },
 					onTaskUpdate,
+					useCheckpoint,
 				},
 			],
 		} );
@@ -399,8 +401,10 @@ describe( 'loadExternalProviders', () => {
 			).resolves.toEqual( { handledBy: 'big-sky' } );
 			expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
 
-			// The page-design stream and the page context are the provider copy's too.
+			// The page-design stream, the chat's Undo and the page context are the
+			// provider copy's too.
 			expect( providers.onTaskUpdate ).toBe( onTaskUpdate );
+			expect( providers.useCheckpoint ).toBe( useCheckpoint );
 
 			// The mocks are shared with every other test, whose reads must not count.
 			jest.mocked( getPageContentMarkup ).mockClear();
