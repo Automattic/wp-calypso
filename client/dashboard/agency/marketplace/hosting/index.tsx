@@ -31,6 +31,7 @@ import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
 import PressableSection from './pressable-section';
+import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -63,11 +64,6 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 		subtitle: __( 'WordPress for enterprise-level demands' ),
 	},
 ];
-
-// Placeholder content until the VIP section lands.
-const PLACEHOLDERS: Record< Exclude< HostingSection, 'wpcom' | 'pressable' >, string > = {
-	vip: 'WordPress VIP hosting content will appear here.',
-};
 
 // TODO: Still missing from the classic Hosting page:
 // - the agency approval notice (pending / approved / rejected)
@@ -166,7 +162,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				/>
 			);
 		}
-		return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+		return <VipSection isReferralMode={ isReferralMode } />;
 	};
 
 	return (
