@@ -170,6 +170,8 @@ describe( 'abilities facade', () => {
 
 		// Named, not just derived from the list: an ability filed under the
 		// AM-only one by mistake would still satisfy a comparison against it.
+		expect( amOnlyNames ).not.toContain( 'big-sky/apply-block-edits' );
+		expect( amOnlyNames ).not.toContain( 'big-sky/capture-canvas' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/edit-entity-record' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
