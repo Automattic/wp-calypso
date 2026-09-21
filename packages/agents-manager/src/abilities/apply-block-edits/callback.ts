@@ -13,6 +13,7 @@ import {
 } from '../../utils/global-styles';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isRecord } from '../../utils/is-record';
+import { getMenuIdAround, type MenuId } from '../../utils/navigation-menu';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
@@ -22,8 +23,13 @@ import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { errorResult } from '../ability-result';
 import { areUpdateEditsAlreadySatisfied } from './already-applied';
 import { applyEdits, type ApplyEditsOptions } from './apply-edits';
-import { getChangeType, getEditedMenuIds, getMenuIdAround } from './change-type';
-import { hasRequestedBlockEdits, normalizeEdits, type RawBlockEdits } from './normalize-edits';
+import { getChangeType, getEditedMenuIds } from './change-type';
+import {
+	hasRequestedBlockEdits,
+	isCssOnly,
+	normalizeEdits,
+	type RawBlockEdits,
+} from './normalize-edits';
 import {
 	captureTargets,
 	getEditedClientIds,
@@ -31,7 +37,6 @@ import {
 	haveBlocksChanged,
 } from './validation-details';
 import type { BlockEdits, ChangeType } from './types';
-import type { MenuId } from '../../utils/navigation-menu';
 import type { AbilityResult } from '../types';
 
 interface ApplyBlockEditsInput extends RawBlockEdits {
@@ -102,7 +107,7 @@ const noChangesResult = ( summary: string | undefined ): ApplyBlockEditsResultDa
 	outcome: 'no-changes',
 } );
 
-const nothingChangedResult = (): ApplyBlockEditsResultData => ( {
+const noEffectResult = (): ApplyBlockEditsResultData => ( {
 	success: false,
 	message: __(
 		"I was not able to make the changes you requested. Either I don't have the capability to do so or I didn't understand your request. You can ask me to try again or ask me to do something else.",
@@ -236,7 +241,7 @@ async function applyEditsAction(
 			const blocksChanged = closeBlockWrites();
 
 			if ( customCss === undefined && ! hasNavigationEdit && ! blocksChanged ) {
-				return nothingChangedResult();
+				return noEffectResult();
 			}
 
 			return {
@@ -282,7 +287,6 @@ export async function applyBlockEditsCallback(
 		);
 	}
 
-	// The wire hands the arguments over as they are; an invalid shape fails below.
 	const input: ApplyBlockEditsInput = isRecord( rawInput ) ? rawInput : {};
 	const suppliedToolCallId =
 		typeof input.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
@@ -330,7 +334,7 @@ export async function applyBlockEditsCallback(
 					...( edits ? getEditedClientIds( edits, resolver.resolve ) : [] ),
 					...insertedClientIds,
 				],
-				fullPage: !! edits && edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits ),
+				fullPage: !! edits && isCssOnly( edits ),
 			} );
 
 	// `visualCheckPending` ships only with an image: the chat withholds the

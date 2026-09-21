@@ -6,6 +6,7 @@
  */
 
 import { getBlock, getPaletteColor } from '../../utils/editor-blocks';
+import { sameJson } from '../../utils/same-json';
 import { mergeAttributes } from './merge-blocks';
 import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
 
@@ -125,12 +126,7 @@ export async function syncCoverWithImage(
 	const expected = mergeAttributes( before.attributes, requested );
 	const current = getBlock( clientId )?.attributes;
 
-	if (
-		! current ||
-		COVER_KEYS.some(
-			( key ) => JSON.stringify( current[ key ] ) !== JSON.stringify( expected[ key ] )
-		)
-	) {
+	if ( ! current || COVER_KEYS.some( ( key ) => ! sameJson( current[ key ], expected[ key ] ) ) ) {
 		return;
 	}
 

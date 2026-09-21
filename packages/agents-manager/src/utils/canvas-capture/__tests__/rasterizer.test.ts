@@ -699,6 +699,7 @@ describe( 'whenStill', () => {
 					if ( tops.length ) {
 						top = tops.shift();
 					}
+
 					if ( scrolls.length ) {
 						canvasWindow.scrollY = scrolls.shift();
 					}

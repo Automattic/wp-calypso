@@ -149,3 +149,14 @@ export function normalizeEdits( raw: RawBlockEdits ): BlockEdits {
 /** Whether the call asks for any block to change. */
 export const hasRequestedBlockEdits = ( edits: BlockEdits ): boolean =>
 	edits.updates.length > 0 || edits.inserts.length > 0 || edits.deletes.length > 0;
+
+/** Whether the call asks for updates and nothing else. */
+export const isUpdateOnly = ( edits: BlockEdits ): boolean =>
+	edits.updates.length > 0 &&
+	! edits.inserts.length &&
+	! edits.deletes.length &&
+	edits.customCSS === undefined;
+
+/** Whether the call asks for custom CSS and nothing else. */
+export const isCssOnly = ( edits: BlockEdits ): boolean =>
+	edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits );

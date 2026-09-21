@@ -1,6 +1,7 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { getBlock, getBlockParents } from './editor-blocks';
 import { normalizeLabel } from './entity-title';
 import { readRecord } from './read-record';
 import { sameUrl } from './same-url';
@@ -101,6 +102,18 @@ const hasPendingEdits = ( id: MenuId ): boolean =>
 			| { hasEditsForEntityRecord?: ( kind: string, name: string, id: MenuId ) => boolean }
 			| undefined
 	 )?.hasEditsForEntityRecord?.( 'postType', 'wp_navigation', id );
+
+/** The saved menu the first navigation block in `chain` shows, by its `ref`. */
+export const getMenuIdOf = ( chain: string[] ): MenuId | undefined => {
+	const navigation = chain.map( getBlock ).find( ( block ) => block?.name === NAVIGATION_BLOCK );
+	const ref = navigation?.attributes.ref;
+
+	return isMenuId( ref ) ? ref : undefined;
+};
+
+/** The saved menu `clientId` sits in, or is. */
+export const getMenuIdAround = ( clientId: string ): MenuId | undefined =>
+	getMenuIdOf( [ clientId, ...getBlockParents( clientId ) ] );
 
 /** Whether the block is a menu item: a link, or a submenu holding more of them. */
 export const isMenuItem = ( block: { name?: string } ): boolean =>

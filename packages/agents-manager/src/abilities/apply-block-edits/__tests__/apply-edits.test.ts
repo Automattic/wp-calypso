@@ -199,7 +199,7 @@ describe( 'inserts', () => {
 	it( 'refuses a parent that names no block', async () => {
 		await expect(
 			run( { inserts: [ { parentClientId: 'nope', block: paragraph } ] } )
-		).rejects.toThrow( '[Edit Pattern] Parent block not found with clientId: nope' );
+		).rejects.toThrow( '[Edit Blocks] Parent block not found with clientId: nope' );
 		expect( insertBlock ).not.toHaveBeenCalled();
 	} );
 

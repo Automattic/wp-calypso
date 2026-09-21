@@ -1,15 +1,15 @@
-import { getCanvasDocument } from '../../editor-canvas';
-import { recordBigSkyTracksEvent } from '../../tracks';
-import { captureCanvasFileParts } from '../capture';
-import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
-import type { FilePart } from '../capture';
-
 jest.mock( '../../editor-canvas', () => ( { getCanvasDocument: jest.fn() } ) );
 jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '../rasterizer', () => ( {
 	...jest.requireActual( '../rasterizer' ),
 	rasterizeCanvas: jest.fn(),
 } ) );
+
+import { getCanvasDocument } from '../../editor-canvas';
+import { recordBigSkyTracksEvent } from '../../tracks';
+import { captureCanvasFileParts } from '../capture';
+import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
+import type { FilePart } from '../capture';
 
 const mockGetCanvasDocument = jest.mocked( getCanvasDocument );
 const mockRasterizeCanvas = jest.mocked( rasterizeCanvas );

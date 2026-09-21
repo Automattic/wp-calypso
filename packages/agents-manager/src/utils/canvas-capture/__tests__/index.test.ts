@@ -1,6 +1,6 @@
-import type { FilePart } from '..';
-
 jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+
+import type { FilePart } from '..';
 
 const screenshot: FilePart = {
 	type: 'file',

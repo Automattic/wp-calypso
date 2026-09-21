@@ -26,13 +26,14 @@ jest.mock( '../../../utils/tool-call-history', () => ( {
 jest.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '../already-applied', () => ( { areUpdateEditsAlreadySatisfied: jest.fn() } ) );
 jest.mock( '../apply-edits', () => ( { applyEdits: jest.fn() } ) );
+jest.mock( '../../../utils/navigation-menu', () => ( { getMenuIdAround: jest.fn() } ) );
 jest.mock( '../change-type', () => ( {
 	getChangeType: jest.fn(),
 	getEditedMenuIds: jest.fn(),
-	getMenuIdAround: jest.fn(),
 } ) );
 jest.mock( '../normalize-edits', () => ( {
 	hasRequestedBlockEdits: jest.fn(),
+	isCssOnly: jest.fn(),
 	normalizeEdits: jest.fn(),
 } ) );
 jest.mock( '../validation-details', () => ( {
@@ -54,13 +55,14 @@ import {
 	waitForEditedGlobalStyles,
 } from '../../../utils/global-styles';
 import { isEditorPage } from '../../../utils/is-editor-page';
+import { getMenuIdAround } from '../../../utils/navigation-menu';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { recordBigSkyTracksEvent } from '../../../utils/tracks';
 import { areUpdateEditsAlreadySatisfied } from '../already-applied';
 import { applyEdits } from '../apply-edits';
 import { applyBlockEditsCallback } from '../callback';
-import { getChangeType, getEditedMenuIds, getMenuIdAround } from '../change-type';
-import { hasRequestedBlockEdits, normalizeEdits } from '../normalize-edits';
+import { getChangeType, getEditedMenuIds } from '../change-type';
+import { hasRequestedBlockEdits, isCssOnly, normalizeEdits } from '../normalize-edits';
 import {
 	captureTargets,
 	getEditedClientIds,
@@ -107,6 +109,11 @@ beforeEach( () => {
 		.mocked( hasRequestedBlockEdits )
 		.mockImplementation(
 			( { updates, inserts, deletes } ) => updates.length + inserts.length + deletes.length > 0
+		);
+	jest
+		.mocked( isCssOnly )
+		.mockImplementation(
+			( edits ) => edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits )
 		);
 	jest.mocked( getChangeType ).mockReturnValue( 'other' );
 	jest.mocked( getEditedMenuIds ).mockReturnValue( [] );
@@ -205,6 +212,7 @@ describe( 'applyBlockEditsCallback', () => {
 		await applyBlockEditsCallback( input );
 
 		const { resolve, onReplaced } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
+
 		onReplaced( 'a1', 'new-a1' );
 		onReplaced( 'resolved-b2', 'new-b2' );
 
@@ -313,7 +321,7 @@ describe( 'applyBlockEditsCallback', () => {
 		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
 		jest
 			.mocked( getMenuIdAround )
-			.mockImplementation( ( clientId ) => ( clientId === 'link' ? 19 : undefined ) );
+			.mockImplementation( ( clientId: string ) => ( clientId === 'link' ? 19 : undefined ) );
 		jest.mocked( getChangeType ).mockReturnValue( 'text-content' );
 		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
 

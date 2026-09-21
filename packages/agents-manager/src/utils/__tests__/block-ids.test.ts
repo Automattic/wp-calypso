@@ -74,9 +74,9 @@ it( 'repoints a short id, or every short id that stood for a replaced block', ()
 } );
 
 // TODO (ability-migration): Goes with the shared map in `block-ids.ts`.
-describe( "with Big Sky's map", () => {
-	// Big Sky looks a block up in its map before minting, and resolves through
-	// it, so one object keeps both sides on the same ids.
+describe( 'with a provider-held map', () => {
+	// The provider looks a block up in its map before minting, and resolves
+	// through it, so one object keeps both sides on the same ids.
 	it( 'reuses the ids it holds', () => {
 		const { createShortIdLookup, resolveClientId } = loadBlockIds( { bMnU: 'uuid-hero' } );
 
