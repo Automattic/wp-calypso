@@ -93,6 +93,8 @@ export const sitesRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settles the two-step-required notice; a failed request only hides it.
+			queryClient.prefetchQuery( userSettingsQuery() ),
 			// Settle the deleted-sites check before first paint.
 			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
@@ -202,6 +204,8 @@ export const siteRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// Settles the plan-expiry notice before paint so it can outrank page notices.
 			ensureSiteExpiryNoticeData( site ),
+			// Settles the two-step-required notice; a failed request only hides it.
+			queryClient.prefetchQuery( userSettingsQuery() ),
 		] );
 
 		return { site };

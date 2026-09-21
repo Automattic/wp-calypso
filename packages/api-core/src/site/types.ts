@@ -57,6 +57,7 @@ export interface SiteOptions {
 		recovery_session_exited_at?: number;
 		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
+	jetpack_sso_require_two_step?: boolean;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;

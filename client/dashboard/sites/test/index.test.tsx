@@ -53,6 +53,7 @@ function mockSitesEndpoint( sites: Site[] ) {
 
 const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
 const RECOVERY_MATCH_NOTICE_TITLE = 'Your recovery email is the same as your account email';
+const TWO_STEP_REQUIRED_NOTICE_TITLE = 'Set up two-step authentication to access WP Admin';
 
 // Register before mockSitesEndpoint so the catch-all interceptor doesn't
 // consume the deleted-sites check request.
@@ -128,6 +129,55 @@ describe( '<Sites>', () => {
 
 		await screen.findByRole( 'button', { name: 'Add new site' } );
 		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the two-step-required notice when a listed site requires it and the user has no two-step', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { two_step_enabled: false } );
+		mockSitesEndpoint( [
+			{
+				...mockSites[ 0 ],
+				jetpack: true,
+				jetpack_modules: [ 'sso' ],
+				options: { jetpack_sso_require_two_step: true },
+			} as Site,
+			mockSites[ 1 ],
+		] );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		expect( await screen.findByText( TWO_STEP_REQUIRED_NOTICE_TITLE ) ).toBeVisible();
+		expect( screen.getByText( /My First Site requires two-step authentication/ ) ).toBeVisible();
+	} );
+
+	test( 'hides the two-step-required notice when the user already has two-step', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, { two_step_enabled: true } );
+		mockSitesEndpoint( [
+			{
+				...mockSites[ 0 ],
+				jetpack: true,
+				jetpack_modules: [ 'sso' ],
+				options: { jetpack_sso_require_two_step: true },
+			} as Site,
+		] );
+
+		render( <Sites />, {
+			user: {
+				site_count: 1,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		await screen.findByText( 'My First Site' );
+		expect( screen.queryByText( TWO_STEP_REQUIRED_NOTICE_TITLE ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the recovery-email-matches-account-email notice at the top of the sites list', async () => {
