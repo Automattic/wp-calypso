@@ -104,7 +104,7 @@ export default function CartMenu( {
 									/* translators: %d is the number of items in the cart. */
 									_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
 									items.length
-							  )
+								)
 							: __( 'Shopping cart' )
 					}
 					aria-expanded={ isOpen }
@@ -134,7 +134,7 @@ export default function CartMenu( {
 												__( '%1$s x %2$d' ),
 												getCartProductName( product ),
 												item.quantity
-										  )
+											)
 										: getCartProductName( product ) }
 								</Text>
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
