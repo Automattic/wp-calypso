@@ -4,6 +4,10 @@
  * WP-ADMIN Masterbar Styling
  */
 #wpadminbar #wp-toolbar {
+	#wp-admin-bar-agents-manager-support-guides {
+		display: none;
+	}
+
 	// Shared styling for the Help button and the standalone AI button.
 	#wp-admin-bar-agents-manager,
 	#wp-admin-bar-agents-manager-ai-chat {

@@ -2,7 +2,6 @@ import {
 	listConversationsFromServer,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
-import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
@@ -12,16 +11,17 @@ import { getConversationBotId } from '../utils/conversation-bot-id';
 import { parseUTCTimestamp } from '../utils/conversation-history-formatters';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { normalizeZendeskConversations } from '../utils/zendesk';
+import useWooZendeskConversations from './use-woo-zendesk-conversations';
 
 export default function useConversationList() {
-	const { agentConfig, site, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
+	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
 	const botId = getConversationBotId( agentId, hasAgentParam );
 	const isReaderChat = isReaderChatAgent( agentId );
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		useGetZendeskConversations( ! isReaderChat, zendeskSmoochIntegrationKey, site?.ID );
+		useWooZendeskConversations( ! isReaderChat );
 
 	const {
 		data: orchestratorConversations,

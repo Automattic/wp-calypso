@@ -28,6 +28,7 @@ import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -84,7 +85,8 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser, zendeskSmoochIntegrationKey } =
+		useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -201,7 +203,7 @@ export default function AgentDock( {
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	const showZendeskChat = ! isReaderChat;
+	const showZendeskChat = ! isReaderChat && isWooAiProvider( zendeskSmoochIntegrationKey );
 	// `/support-guides` (the list) is registered even
 	// without an entry button: unregistering it mid-session (Site Editor
 	// navigation) would yank the route from under a user viewing it, and the

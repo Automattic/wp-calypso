@@ -1,11 +1,11 @@
 import { loadAllMessagesFromServer, type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { SummaryButton, TimeSince } from '@automattic/components';
-import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { createInterpolateElement, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useWooZendeskConversations from '../../hooks/use-woo-zendesk-conversations';
 import { getConversationBotId } from '../../utils/conversation-bot-id';
 import type { ZendeskConversation } from '../../types';
 import './style.scss';
@@ -107,17 +107,12 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getTabSessionId, site, zendeskSmoochIntegrationKey } =
-		useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const tabSessionId = getTabSessionId();
 	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
 
-	const { conversations, isLoading } = useGetZendeskConversations(
-		!! tabSessionId,
-		zendeskSmoochIntegrationKey,
-		site?.ID
-	);
+	const { conversations, isLoading } = useWooZendeskConversations( !! tabSessionId );
 	const existingConversation = useMemo(
 		() => findConversationByChatSessionId( conversations, tabSessionId ),
 		[ conversations, tabSessionId ]

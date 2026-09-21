@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DropdownMenu, Fill } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, comment, help, page, rss, video } from '@wordpress/icons';
+import { backup, comment, help, rss, video } from '@wordpress/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';
@@ -54,8 +54,8 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 	const openExternalLink = ( url: string ) => window.open( url, '_blank', 'noopener,noreferrer' );
 
 	// Grouped like the admin-bar Help menu: a chat group, then a resources group, split by a
-	// divider. Chat support, Chat history, and Support guides open the chat; Courses and Product
-	// updates open external pages (untracked, matching the admin bar's plain links).
+	// divider. Chat support and Chat history open the chat; Courses and Product updates open
+	// external pages (untracked, matching the admin bar's plain links).
 	const controls = [
 		[
 			{
@@ -71,14 +71,6 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 			},
 		],
 		[
-			{
-				title: __( 'Support guides', __i18n_text_domain__ ),
-				icon: page,
-				onClick: () =>
-					selectChatRoute( 'agents-manager-support-guides', '/support-guides', () =>
-						navigate( '/support-guides' )
-					),
-			},
 			{
 				title: __( 'Courses', __i18n_text_domain__ ),
 				icon: video,

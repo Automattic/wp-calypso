@@ -368,6 +368,7 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
 		useWpAdminAgent();
+		mockContext.zendeskSmoochIntegrationKey = 'woo';
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -375,6 +376,15 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
 
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
+	} );
+
+	it( 'does not register the Zendesk route without the Woo AI provider', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/zendesk' );
+
+		expect( screen.queryByTestId( 'zendesk-chat' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
