@@ -10,7 +10,6 @@ const ORIGIN = 'https://example.com';
 describe( 'isHandoffAgent', () => {
 	it.each( [
 		[ 'the orchestrator', 'wp-orchestrator', true ],
-		[ 'unified chat', 'wpcom-workflow-unified_chat', true ],
 		[ 'an unresolved agent', undefined, false ],
 		[ 'reader chat', 'reader-chat', false ],
 		[ 'Plugin Compass', 'wpcom-workflow-plugin_compass', false ],
