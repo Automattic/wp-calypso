@@ -43,12 +43,8 @@
 		min-width: 0;
 	}
 
-	// The wp-ui Badge has no solid-fill intent; the design calls for the strong
-	// warning surface the unapproved icon badge already uses, with white text.
 	.wpnc__pending-badge {
 		flex-shrink: 0;
-		background-color: var(--wpds-color-stroke-surface-warning-strong, #926300);
-		color: $white;
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {
