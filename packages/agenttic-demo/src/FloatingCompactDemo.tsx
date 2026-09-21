@@ -128,7 +128,7 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 										console.log( 'Subscribe' );
 									},
 								},
-						  }
+							}
 				}
 				beforeSubmit={ demoCredits.beforeSubmit }
 				trailingActions={
