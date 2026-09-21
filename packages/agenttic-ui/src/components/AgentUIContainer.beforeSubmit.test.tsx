@@ -38,7 +38,11 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 		container.remove();
 	} );
 
-	async function render( beforeSubmit: BeforeSubmit, onSubmit = vi.fn() ) {
+	async function render(
+		beforeSubmit: BeforeSubmit,
+		onSubmit = vi.fn(),
+		onSuggestionClick = vi.fn()
+	) {
 		await act( async () => {
 			root.render(
 				<AgentUIContainer
@@ -48,6 +52,7 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 					variant="embedded"
 					suggestions={ SUGGESTIONS }
 					beforeSubmit={ beforeSubmit }
+					onSuggestionClick={ onSuggestionClick }
 				>
 					<AgentUISuggestions />
 					<AgentUIInput />
@@ -94,14 +99,16 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 		expect( textarea.value ).toBe( 'hello' );
 	} );
 
-	it( 'blocks an auto-submit suggestion without clearing the list', async () => {
+	it( 'blocks an auto-submit suggestion without clearing the list or reporting the click', async () => {
 		const beforeSubmit = vi.fn( (): boolean => false );
-		const { onSubmit, suggestion } = await render( beforeSubmit );
+		const onSuggestionClick = vi.fn();
+		const { onSubmit, suggestion } = await render( beforeSubmit, vi.fn(), onSuggestionClick );
 		await act( async () => {
 			suggestion?.click();
 		} );
 		expect( beforeSubmit ).toHaveBeenCalledWith( 'Run it now', 'suggestion' );
 		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( onSuggestionClick ).not.toHaveBeenCalled();
 		expect(
 			Array.from( container.querySelectorAll( 'button' ) ).some(
 				( button ) => button.textContent === 'Run it'

@@ -308,8 +308,9 @@ export function AgentUIContainer( {
 				// Auto-submit: send message directly to LLM
 				const message = value.trim();
 
+				// A blocked send is a no-op: the suggestion stays in the list and the
+				// click is not reported, so hosts don't retire it as consumed.
 				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
-					onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 					return;
 				}
 
