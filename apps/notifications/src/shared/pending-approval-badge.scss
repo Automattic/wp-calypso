@@ -22,7 +22,7 @@
 }
 
 // In the new app the warning reads as two aligned rules, down the strip and down
-// the comment, so the strip carries no tint of its own.
+// the comment.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
 	// Cancels the body VStack's gap so the strip's rule meets the comment's.
 	.wpnc__pending-approval-section {
@@ -32,7 +32,9 @@
 	}
 
 	.wpnc-pending-approval-badge {
-		background-color: transparent;
+		background-color: var(--wpds-color-background-surface-warning, #fde6be);
+
+		@include dark-warning-surface;
 	}
 
 	.wpnc__body .wpnc__body-content {
