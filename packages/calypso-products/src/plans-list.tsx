@@ -562,21 +562,37 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
-	i18n.translate( 'per month, billed annually, excl. taxes', {
-		comment: 'Excl. Taxes is short for excluding taxes',
-	} );
+	i18n.fixMe( {
+		text: 'per month, billed annually, excl. taxes',
+		newCopy: i18n.translate( 'per month, billed annually, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( 'per month, billed annually' ),
+	} ) as TranslateResult;
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every two years, excl. taxes', {
-		comment: 'Excl. Taxes is short for excluding taxes',
-	} );
+	i18n.fixMe( {
+		text: '/month, billed every two years, excl. taxes',
+		newCopy: i18n.translate( '/month, billed every two years, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( '/month, billed every two years' ),
+	} ) as TranslateResult;
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every three years, excl. taxes', {
-		comment: 'Excl. Taxes is short for excluding taxes',
-	} );
+	i18n.fixMe( {
+		text: '/month, billed every three years, excl. taxes',
+		newCopy: i18n.translate( '/month, billed every three years, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( '/month, billed every three years' ),
+	} ) as TranslateResult;
 const WPComGetMonthlyBillingTimeframe = (): TranslateResult =>
-	i18n.translate( 'per month, billed monthly, excl. taxes', {
-		comment: 'Excl. Taxes is short for excluding taxes',
-	} );
+	i18n.fixMe( {
+		text: 'per month, billed monthly, excl. taxes',
+		newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( 'per month, billed monthly' ),
+	} ) as TranslateResult;
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -997,7 +1013,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? {
 					...baseFeatures,
 					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
-				}
+			  }
 			: baseFeatures;
 	},
 
@@ -1286,7 +1302,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-				}
+			  }
 			: baseFeatures;
 	},
 	getHostingSignupFeatures: ( term ) => () =>
@@ -1835,7 +1851,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-				}
+			  }
 			: baseFeatures;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
@@ -2164,7 +2180,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-				}
+			  }
 			: featureLabels;
 	},
 
@@ -2538,12 +2554,12 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			? i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 					plansDescriptionHeadingComponent
-				)
+			  )
 			: i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 						'and premium themes.',
 					plansDescriptionHeadingComponent
-				),
+			  ),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,

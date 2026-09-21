@@ -5,6 +5,7 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
+import { fixMe } from 'i18n-calypso';
 import type { Plans as PlansType } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -45,11 +46,18 @@ export function getRenewalPricingText( {
 	} );
 
 	if ( billingPeriod === PLAN_MONTHLY_PERIOD ) {
-		return translate( 'Auto-renews at %(price)s per month. Billed every month, excl. taxes.', {
-			args: { price: formattedMonthlyPrice },
-			comment:
-				'%(price)s is a formatted price like $10. "Excl. taxes" is short for excluding taxes',
-		} );
+		return fixMe( {
+			text: 'Auto-renews at %(price)s per month. Billed every month, excl. taxes.',
+			newCopy: translate( 'Auto-renews at %(price)s per month. Billed every month, excl. taxes.', {
+				args: { price: formattedMonthlyPrice },
+				comment:
+					'%(price)s is a formatted price like $10. "Excl. taxes" is short for excluding taxes',
+			} ),
+			oldCopy: translate( 'Auto-renews at %(price)s per month. Billed every month.', {
+				args: { price: formattedMonthlyPrice },
+				comment: '%(price)s is a formatted price like $10',
+			} ),
+		} ) as TranslateResult;
 	}
 
 	// Determine the billing period in months
@@ -63,15 +71,26 @@ export function getRenewalPricingText( {
 		billingMonths = 12;
 	}
 
-	return translate(
-		'Auto-renews at %(price)s per month. Billed every %(months)s months, excl. taxes.',
-		{
+	return fixMe( {
+		text: 'Auto-renews at %(price)s per month. Billed every %(months)s months, excl. taxes.',
+		newCopy: translate(
+			'Auto-renews at %(price)s per month. Billed every %(months)s months, excl. taxes.',
+			{
+				args: {
+					price: formattedMonthlyPrice,
+					months: billingMonths,
+				},
+				comment:
+					'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36). "Excl. taxes" is short for excluding taxes',
+			}
+		),
+		oldCopy: translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
 			args: {
 				price: formattedMonthlyPrice,
 				months: billingMonths,
 			},
 			comment:
-				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36). "Excl. taxes" is short for excluding taxes',
-		}
-	);
+				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
+		} ),
+	} ) as TranslateResult;
 }
