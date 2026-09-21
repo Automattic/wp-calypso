@@ -137,6 +137,30 @@ describe( 'normalizeEdits', () => {
 		expect( normalizeEdits( { updates: [ update ] } ).updates ).toEqual( [ update ] );
 	} );
 
+	// The backend serializes an empty attributes object as `[]`.
+	it( 'drops `[]` attributes on updates, inserts and their children', () => {
+		const edits = normalizeEdits( {
+			updates: [
+				{
+					clientId: 'group',
+					name: 'core/group',
+					attributes: [],
+					innerBlocks: [ { clientId: 'child-b', attributes: [] }, { clientId: 'child-a' } ],
+				},
+			],
+			inserts: [ { block: { name: 'core/group', attributes: [] } } ],
+		} );
+
+		expect( edits.updates ).toEqual( [
+			{
+				clientId: 'group',
+				name: 'core/group',
+				innerBlocks: [ { clientId: 'child-b' }, { clientId: 'child-a' } ],
+			},
+		] );
+		expect( edits.inserts ).toEqual( [ { block: { name: 'core/group' } } ] );
+	} );
+
 	it( 'keeps only the typed fields of an insert, so `parentClientId: null` means the top level', () => {
 		const edits = normalizeEdits( {
 			inserts: [ { parentClientId: null, index: 2, block: { name: 'core/group' }, extra: true } ],

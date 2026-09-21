@@ -33,6 +33,9 @@ function toList( value: unknown, invalidMessage: string ): unknown[] {
 	return value.filter( ( entry ) => entry != null );
 }
 
+// The backend serializes an empty `attributes` object as `[]`; either way there is nothing to set.
+const isEmptyArray = ( value: unknown ): boolean => Array.isArray( value ) && value.length === 0;
+
 // An existing block may carry any name, or none: the editor's own is what counts.
 function assertBlock( value: unknown, availableNames: Set< string > ): asserts value is BlockData {
 	if ( ! isRecord( value ) || ( ! value.name && ! value.clientId ) ) {
@@ -47,7 +50,11 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 		throw new Error( 'Block name must be a non-empty string' );
 	}
 
-	if ( value.attributes != null && ! isRecord( value.attributes ) ) {
+	if (
+		value.attributes != null &&
+		! isRecord( value.attributes ) &&
+		! isEmptyArray( value.attributes )
+	) {
 		throw new Error( 'Block attributes must be an object' );
 	}
 
@@ -64,6 +71,16 @@ function assertBlock( value: unknown, availableNames: Set< string > ): asserts v
 	}
 }
 
+function withoutEmptyAttributes( block: BlockData ): BlockData {
+	const { attributes, innerBlocks, ...rest } = block;
+
+	return {
+		...rest,
+		...( isRecord( attributes ) && { attributes } ),
+		...( innerBlocks != null && { innerBlocks: innerBlocks.map( withoutEmptyAttributes ) } ),
+	};
+}
+
 function toUpdate( value: unknown, availableNames: Set< string > ): BlockUpdate {
 	if ( ! isRecord( value ) ) {
 		throw new Error( 'Updates must contain clientId and name' );
@@ -77,7 +94,7 @@ function toUpdate( value: unknown, availableNames: Set< string > ): BlockUpdate 
 
 	assertBlock( value, availableNames );
 
-	return { ...value, clientId, name };
+	return { ...withoutEmptyAttributes( value ), clientId, name };
 }
 
 function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert {
@@ -103,7 +120,7 @@ function toInsert( value: unknown, availableNames: Set< string > ): BlockInsert 
 	return {
 		...( typeof parentClientId === 'string' && { parentClientId } ),
 		...( typeof index === 'number' && { index } ),
-		block,
+		block: withoutEmptyAttributes( block ),
 	};
 }
 
