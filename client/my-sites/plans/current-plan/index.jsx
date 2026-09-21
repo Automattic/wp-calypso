@@ -38,14 +38,13 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isCloseToExpiration } from 'calypso/lib/purchases';
-import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import { isCloseToExpiration } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -233,7 +232,7 @@ class CurrentPlan extends Component {
 		let purchase = null;
 
 		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
-			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
+			purchase = purchases?.find( ( { product_slug } ) => product_slug === currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
@@ -313,7 +312,7 @@ export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDomainsBySiteId( state, selectedSiteId );
-	const purchases = getSitePurchases( state, selectedSiteId );
+	const purchases = getRawSitePurchases( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );

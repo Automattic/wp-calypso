@@ -33,18 +33,18 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
 import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getRawByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
@@ -230,7 +230,7 @@ class PlansComponent extends Component {
 
 		return (
 			<ECommerceTrialPlansPage
-				isWooExpressTrial={ !! purchase?.isWooExpressTrial }
+				isWooExpressTrial={ !! purchase?.is_woo_express_trial }
 				interval={ interval }
 				site={ selectedSite }
 			/>
@@ -367,7 +367,7 @@ class PlansComponent extends Component {
 				},
 			} );
 
-		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isWooExpressTrial = purchase?.is_woo_express_trial;
 		const isA4APlan = purchase && isPartnerPurchase( purchase );
 		const is100YearPlan = purchase && is100Year( purchase );
 
@@ -378,7 +378,7 @@ class PlansComponent extends Component {
 		}
 
 		// Hide for WooExpress plans and Entrepreneur trials that are not WooExpress trials
-		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
+		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.is_woo_express_trial;
 		const showPlansNavigation = ! isUntangled && ! ( isWooExpressPlan || isEntrepreneurTrial );
 
 		return (
@@ -438,7 +438,7 @@ const ConnectedPlans = connect(
 
 		return {
 			currentPlan,
-			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
+			purchase: currentPlan ? getRawByPurchaseId( state, currentPlan.purchaseId ) : null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isUntangled: isPlansPageUntangled( state ),

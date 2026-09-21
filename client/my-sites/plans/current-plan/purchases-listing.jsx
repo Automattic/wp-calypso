@@ -1,6 +1,7 @@
 import {
+	camelOrSnakeSlug,
 	isFreeJetpackPlan,
-	isFreePlan,
+	isFreePlanProduct,
 	isJetpackProduct,
 	getJetpackProductTagline,
 	isJetpackBackup,
@@ -27,18 +28,18 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
+import { shouldAddPaymentSourceInsteadOfRenewingNow } from 'calypso/lib/purchases';
 import {
-	isExpiring,
-	isExpiredOrRemoved,
 	getDisplayName,
-	isPartnerPurchase,
-	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'calypso/lib/purchases';
+	isExpiredOrRemoved,
+	isExpiring,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import {
 	getCurrentPlan,
@@ -84,17 +85,17 @@ class PurchasesListing extends Component {
 			return false;
 		}
 
-		return ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan );
+		return ! currentPlan || isFreePlanProduct( currentPlan ) || isFreeJetpackPlan( currentPlan );
 	}
 
 	isProductExpiring( product ) {
 		const { moment } = this.props;
 
-		if ( ! product.expiryDate ) {
+		if ( ! product.expiry_date ) {
 			return false;
 		}
 
-		return moment( product.expiryDate ) < moment().add( 30, 'days' );
+		return moment( product.expiry_date ) < moment().add( 30, 'days' );
 	}
 
 	getProductPurchases() {
@@ -127,7 +128,9 @@ class PurchasesListing extends Component {
 		const { translate } = this.props;
 
 		if ( plan ) {
-			const productPurchases = this.getProductPurchases().map( ( { productSlug } ) => productSlug );
+			const productPurchases = this.getProductPurchases().map(
+				( { product_slug } ) => product_slug
+			);
 			const planObject = getPlan( plan.productSlug );
 			return (
 				planObject.getTagline?.( productPurchases ) ??
@@ -151,10 +154,13 @@ class PurchasesListing extends Component {
 		// When a downgrade is scheduled for the end of the term, surface that in place
 		// of the usual "Renews on ..." line so the user remembers the change is queued.
 		const planPurchase = purchases?.find(
-			( purchase ) => isPlan( purchase ) && purchase.productSlug === plan.productSlug
+			( purchase ) => isPlan( purchase ) && purchase.product_slug === plan.productSlug
 		);
-		if ( planPurchase?.isDelayedDowngradePending && planPurchase.delayedDowngradeToProductSlug ) {
-			const targetPlan = getPlan( planPurchase.delayedDowngradeToProductSlug );
+		if (
+			planPurchase?.is_delayed_downgrade_pending &&
+			planPurchase.delayed_downgrade_to_product_slug
+		) {
+			const targetPlan = getPlan( planPurchase.delayed_downgrade_to_product_slug );
 			if ( targetPlan ) {
 				return translate( 'Changing to %(plan)s at renewal', {
 					args: { plan: targetPlan.getTitle() },
@@ -178,59 +184,68 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
+		const expiryMoment = purchase.expiry_date ? this.props.moment( purchase.expiry_date ) : null;
 
 		const renewMoment =
-			! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && purchase.renewDate
-				? this.props.moment( purchase.renewDate )
+			! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && purchase.renew_date
+				? this.props.moment( purchase.renew_date )
 				: null;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
-	getActionButton( purchase ) {
+	getActionButton( planOrPurchase ) {
 		const { selectedSiteSlug, translate, currentUserId } = this.props;
 
 		// No action button if there's no site selected.
-		if ( ! selectedSiteSlug || ! purchase ) {
+		if ( ! selectedSiteSlug || ! planOrPurchase ) {
 			return null;
 		}
 
 		// For free plan show a button redirecting to the plans comparison.
-		if ( this.isFreePlan( purchase ) ) {
+		if ( this.isFreePlan( planOrPurchase ) ) {
 			return (
 				<Button href={ `/plans/${ selectedSiteSlug }` }>{ translate( 'Compare plans' ) }</Button>
 			);
 		}
 
+		// Called with the site plan from `getCurrentPlan` as well as with the raw
+		// purchases, and the two shapes name their ids differently.
+		const purchaseId = planOrPurchase.ID ?? planOrPurchase.id;
+
 		// If there's no purchase id, there's no manage purchase link so exit.
-		if ( ! purchase.id ) {
+		if ( ! purchaseId ) {
 			return null;
 		}
 
 		// For plans, show action button only to the site owners.
-		if ( ! isJetpackProduct( purchase ) && ! purchase.userIsOwner ) {
+		if ( ! isJetpackProduct( planOrPurchase ) && ! planOrPurchase.userIsOwner ) {
 			return null;
 		}
 
 		let label = translate( 'Manage plan' );
 
-		if ( isJetpackProduct( purchase ) ) {
+		if ( isJetpackProduct( planOrPurchase ) ) {
 			label = translate( 'Manage subscription' );
 		}
 
-		const isLocked = this.props.purchases.some( ( p ) => p.id === purchase.id && p.isLocked );
+		const isLocked = this.props.purchases.some( ( p ) => p.ID === purchaseId && p.is_locked );
 
+		// Only the site plan carries `autoRenew`, so the camelCase expiry helper
+		// below never sees a purchase.
 		if (
-			purchase.autoRenew &&
-			! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) &&
+			planOrPurchase.autoRenew &&
+			! shouldAddPaymentSourceInsteadOfRenewingNow( planOrPurchase ) &&
 			! isLocked
 		) {
 			label = translate( 'Renew now' );
 		}
 
+		// Conversely, only a purchase carries an owner id; the site plan says
+		// whether the current user owns it and nothing more.
 		const userIsPurchaseOwner =
-			purchase?.userIsOwner || ( currentUserId !== null && currentUserId === purchase?.userId );
+			planOrPurchase.userIsOwner ||
+			( currentUserId !== null && currentUserId === planOrPurchase.user_id );
 
 		return (
 			<Button
@@ -239,7 +254,7 @@ class PurchasesListing extends Component {
 					// If it's rendered as <button />, `OwnerInfo` uses `InfoPopover` and that also renders a button
 					// we can't render <button /> inside another <button />
 					userIsPurchaseOwner
-						? this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchase.id )
+						? this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
@@ -247,7 +262,7 @@ class PurchasesListing extends Component {
 			>
 				{ label }
 				&nbsp;
-				<OwnerInfo purchase={ purchase } />
+				<OwnerInfo purchase={ planOrPurchase } />
 			</Button>
 		);
 	}
@@ -337,7 +352,7 @@ class PurchasesListing extends Component {
 			isJetpackBackup( purchase ) ||
 			( isPlan( purchase ) &&
 				JETPACK_BACKUP_PRODUCTS.some( ( feature ) =>
-					planHasFeature( purchase.productSlug, feature )
+					planHasFeature( camelOrSnakeSlug( purchase ), feature )
 				) );
 
 		// Only Backup-inclusive products and plans have this section for now
@@ -379,13 +394,13 @@ class PurchasesListing extends Component {
 		const backupSortedArray = [];
 		const addOnProducts = [];
 		products.forEach( ( product ) => {
-			if ( JETPACK_BACKUP_ADDON_PRODUCTS.includes( product.productSlug ) ) {
+			if ( JETPACK_BACKUP_ADDON_PRODUCTS.includes( product.product_slug ) ) {
 				if ( backupIndex === -1 ) {
 					addOnProducts.push( product );
 				} else {
 					backupSortedArray.splice( backupIndex + 1, 0, product );
 				}
-			} else if ( JETPACK_BACKUP_PRODUCTS.includes( product.productSlug ) ) {
+			} else if ( JETPACK_BACKUP_PRODUCTS.includes( product.product_slug ) ) {
 				backupSortedArray.push( product );
 				backupIndex = backupSortedArray.length - 1;
 				if ( addOnProducts.length ) {
@@ -416,15 +431,15 @@ class PurchasesListing extends Component {
 				</Card>
 				{ productPurchases.map( ( purchase ) =>
 					this.isLoading() ? (
-						<MyPlanCard isPlaceholder key={ purchase.id } />
+						<MyPlanCard isPlaceholder key={ purchase.ID } />
 					) : (
 						<MyPlanCard
-							key={ purchase.id }
+							key={ purchase.ID }
 							action={ this.getProductActionButtons( purchase ) }
 							details={ this.getExpirationInfoForPurchase( purchase ) }
 							isError={ this.isProductExpiring( purchase ) }
-							product={ purchase.productSlug }
-							tagline={ getJetpackProductTagline( { product_slug: purchase.productSlug }, true ) }
+							product={ purchase.product_slug }
+							tagline={ getJetpackProductTagline( purchase, true ) }
 							title={ this.getTitle( purchase ) }
 							headerChildren={ this.getHeaderChildren( purchase ) }
 						/>
@@ -459,7 +474,7 @@ export default connect( ( state ) => {
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isRequestingPlans: isRequestingSitePlans( state, selectedSiteId ),
-		purchases: getSitePurchases( state, selectedSiteId ),
+		purchases: getRawSitePurchases( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
