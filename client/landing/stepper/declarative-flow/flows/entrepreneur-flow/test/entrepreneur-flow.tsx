@@ -10,6 +10,7 @@ import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps'
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import entrepreneurFlow from '../entrepreneur-flow';
+import type { StepperStep } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 const SITE_ID = 123;
 const SITE_SLUG = 'ecom-example.wordpress.com';
@@ -35,7 +36,9 @@ jest.mock( 'calypso/data/segmentaton-survey', () => ( {
  */
 const SurveyThenProcessing = () => {
 	const navigate = useNavigate();
-	const [ currentStep, setCurrentStep ] = useState( 'start' );
+	// The flow registers the survey step under `start`, which is not a listed step slug. Use the
+	// same cast the flow does.
+	const [ currentStep, setCurrentStep ] = useState( 'start' as StepperStep[ 'slug' ] );
 	const { submit } = entrepreneurFlow.useStepNavigation( currentStep, ( path, state ) =>
 		navigate( path, { state } )
 	);
