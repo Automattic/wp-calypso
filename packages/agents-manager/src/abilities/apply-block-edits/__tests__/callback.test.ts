@@ -410,13 +410,11 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 	} );
 
-	it( 'fails an invalid request before any checkpoint, still capturing the canvas', async () => {
+	// The page was not touched, so a picture of it would only cost time.
+	it( 'fails an invalid request before any checkpoint, capturing nothing', async () => {
 		jest.mocked( normalizeEdits ).mockImplementation( () => {
 			throw new Error( 'Updates must be an array' );
 		} );
-		jest
-			.mocked( captureCanvas )
-			.mockResolvedValue( [ { type: 'file', file: { name: 'canvas.webp' } } ] );
 
 		const result = await applyBlockEditsCallback( { updates: 'nope', toolCallId: 'call-1' } );
 
@@ -424,8 +422,8 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( result.result ).toEqual(
 			expect.objectContaining( { success: false, error: 'Updates must be an array' } )
 		);
-		expect( captureCanvas ).toHaveBeenCalledWith( { clientIds: [], fullPage: false } );
-		expect( result.__file_parts ).toHaveLength( 1 );
+		expect( captureCanvas ).not.toHaveBeenCalled();
+		expect( result.__file_parts ).toBeUndefined();
 	} );
 
 	// The page on screen is not the one the call edited.

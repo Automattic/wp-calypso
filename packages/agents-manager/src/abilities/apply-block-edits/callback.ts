@@ -326,18 +326,17 @@ export async function applyBlockEditsCallback(
 		requested_delete_count: countRequested( requested.deletes ),
 	} );
 
-	// Captured after every path, the no-change and failure ones most of all:
-	// there the block tree cannot say whether the user's problem is fixed. A
-	// CSS-only call gets the whole page; a call stopped by a move gets none.
-	const fileParts = getBlockingMove()
-		? null
-		: await captureCanvas( {
-				clientIds: [
-					...( edits ? getEditedClientIds( edits, resolver.resolve ) : [] ),
-					...insertedClientIds,
-				],
-				fullPage: !! edits && isCssOnly( edits ),
-			} );
+	// Captured after every path that reached the page, the no-change and
+	// failure ones most of all: there the block tree cannot say whether the
+	// user's problem is fixed. A CSS-only call gets the whole page; a request
+	// refused before any write, or a call stopped by a move, gets none.
+	const fileParts =
+		! edits || getBlockingMove()
+			? null
+			: await captureCanvas( {
+					clientIds: [ ...getEditedClientIds( edits, resolver.resolve ), ...insertedClientIds ],
+					fullPage: isCssOnly( edits ),
+				} );
 
 	// `visualCheckPending` ships only with an image: the chat withholds the
 	// summary on the strength of it, and with nothing to look at the server's
