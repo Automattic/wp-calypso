@@ -1,6 +1,7 @@
 import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import useShouldLoadAgentsManager from 'calypso/dashboard/app/agents-manager/use-should-load-agents-manager';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from 'calypso/dashboard/app/context';
 import { omnibarEvents, useOmnibarEvent } from 'calypso/dashboard/app/omnibar/events';
@@ -14,7 +15,6 @@ import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useShouldLoadAgentsManager from '../use-should-load-agents-manager';
 import CommandPalette from './command-palette';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { AppConfig } from 'calypso/dashboard/app/context';
@@ -74,7 +74,7 @@ export default function Omnibar( {
 	useOmnibarBridge();
 
 	const sectionName = useSelector( getSectionName );
-	const showAiChat = useShouldLoadAgentsManager( sectionName, currentRoute );
+	const showAiChat = useShouldLoadAgentsManager( currentRoute );
 
 	const config: AppConfig = {
 		...APP_CONTEXT_DEFAULT_CONFIG,

@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
-import { shouldLoadAgentsManager } from '../use-should-load-agents-manager';
+import { renderHook } from '@testing-library/react';
+import useShouldLoadAgentsManager, {
+	shouldLoadAgentsManager,
+} from '../use-should-load-agents-manager';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
@@ -10,22 +13,24 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 const mockedIsEnabled = jest.mocked( isEnabled );
 
-describe( 'shouldLoadAgentsManager', () => {
+describe( 'useShouldLoadAgentsManager', () => {
 	beforeEach( () => {
 		mockedIsEnabled.mockReturnValue( true );
 	} );
 
 	it.each( [ '/sites/example.wordpress.com', '/sites/example.com/' ] )(
 		'loads Agents Manager on a site overview at %s',
-		( pathname ) => {
-			expect( shouldLoadAgentsManager( pathname ) ).toBe( true );
+		( currentRoute ) => {
+			const { result } = renderHook( () => useShouldLoadAgentsManager( currentRoute ) );
+
+			expect( result.current ).toBe( true );
 		}
 	);
 
-	it.each( [ '/sites', '/sites/example.com/domains', '/me', '/' ] )(
+	it.each( [ '/sites', '/sites/example.com/domains', '/me', '/', null, undefined ] )(
 		'does not load Agents Manager at %s',
-		( pathname ) => {
-			expect( shouldLoadAgentsManager( pathname ) ).toBe( false );
+		( currentRoute ) => {
+			expect( shouldLoadAgentsManager( currentRoute ) ).toBe( false );
 		}
 	);
 

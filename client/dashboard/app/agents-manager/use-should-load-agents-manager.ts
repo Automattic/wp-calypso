@@ -3,13 +3,14 @@ import { useMemo } from 'react';
 
 const ENABLED_ROUTES: RegExp[] = [ /^\/sites\/[^/]+\/?$/ ];
 
-export function shouldLoadAgentsManager( pathname: string ): boolean {
+export function shouldLoadAgentsManager( currentRoute?: string | null ): boolean {
 	return (
 		isEnabled( 'calypso/agents-manager' ) &&
-		ENABLED_ROUTES.some( ( route ) => route.test( pathname ) )
+		!! currentRoute &&
+		ENABLED_ROUTES.some( ( route ) => route.test( currentRoute ) )
 	);
 }
 
-export default function useShouldLoadAgentsManager( pathname: string ): boolean {
-	return useMemo( () => shouldLoadAgentsManager( pathname ), [ pathname ] );
+export default function useShouldLoadAgentsManager( currentRoute?: string | null ): boolean {
+	return useMemo( () => shouldLoadAgentsManager( currentRoute ), [ currentRoute ] );
 }

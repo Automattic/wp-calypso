@@ -16,6 +16,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import useShouldLoadAgentsManager from 'calypso/dashboard/app/agents-manager/use-should-load-agents-manager';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
@@ -66,7 +67,6 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
-import useShouldLoadAgentsManager from './use-should-load-agents-manager';
 import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
@@ -152,7 +152,7 @@ const Omnibar = ( props ) => (
 );
 
 function CalypsoAgentsManagerLoader( { sectionName, currentRoute } ) {
-	const shouldLoad = useShouldLoadAgentsManager( sectionName, currentRoute );
+	const shouldLoad = useShouldLoadAgentsManager( currentRoute );
 
 	if ( ! shouldLoad ) {
 		return null;
