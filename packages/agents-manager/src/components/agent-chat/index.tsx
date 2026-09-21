@@ -348,7 +348,11 @@ export default function AgentChat( {
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }
 				{ showFeedbackInput && (
-					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
+					<FeedbackInput
+						variant="dialog"
+						onSubmit={ onSubmitFeedbackText }
+						onCancel={ onCancelFeedback }
+					/>
 				) }
 				{ alternativeFooter ? (
 					alternativeFooter

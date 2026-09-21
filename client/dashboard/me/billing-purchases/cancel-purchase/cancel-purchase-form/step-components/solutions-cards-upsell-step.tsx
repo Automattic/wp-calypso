@@ -326,7 +326,7 @@ export default function SolutionsCardsUpsellStep( {
 		? addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ yearlyPlanSlug }` ), {
 				redirect_to: dashboardLink( '/me/billing/purchases' ),
 				cancel_to: purchaseSettingsUrl,
-		  } )
+			} )
 		: undefined;
 
 	const handleCardAction = ( solutionId: string ) => {
@@ -427,19 +427,19 @@ export default function SolutionsCardsUpsellStep( {
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
 						card.id === 'speak-with-support' ||
-							card.id === 'ask-ai-assistant' ||
-							card.id === 'built-by' ||
-							card.id === 'change-plan' ||
-							card.id === 'renew-now-pay-less' ||
-							card.id === 'switch-to-monthly' ||
-							card.id === 'switch-to-yearly' ||
-							card.id === 'upgrade-for-full-access' ||
-							card.id === 'get-theme-addon' ||
-							card.id === 'find-guides' ||
-							card.id === 'make-site-faster' ||
-							card.id === 'use-migration-tools' ||
-							card.id === 'use-domain-guide' ||
-							card.id === 'explore-domain-options'
+						card.id === 'ask-ai-assistant' ||
+						card.id === 'built-by' ||
+						card.id === 'change-plan' ||
+						card.id === 'renew-now-pay-less' ||
+						card.id === 'switch-to-monthly' ||
+						card.id === 'switch-to-yearly' ||
+						card.id === 'upgrade-for-full-access' ||
+						card.id === 'get-theme-addon' ||
+						card.id === 'find-guides' ||
+						card.id === 'make-site-faster' ||
+						card.id === 'use-migration-tools' ||
+						card.id === 'use-domain-guide' ||
+						card.id === 'explore-domain-options'
 					);
 					const href = getCardHref(
 						card.id,

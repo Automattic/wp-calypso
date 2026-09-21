@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -118,6 +119,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			},
 		} ) );
 		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
+		updateValidationError( { phoneNumber: undefined } );
 	};
 
 	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
@@ -373,21 +375,29 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 			{ noCountryList && <QuerySmsCountries /> }
 
-			<FormPhoneInput
-				isDisabled={ noCountryList }
-				countriesList={ countriesList }
-				onChange={ handlePhoneInputChange }
-				className="contact-form__phone-input"
-				phoneInputProps={ {
-					id: 'phone_number',
-					placeholder: translate( 'Phone number' ),
-				} }
-				countrySelectProps={ {
-					id: 'country_code',
-				} }
-				initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
-				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
-			/>
+			<div>
+				<FormPhoneInput
+					isDisabled={ noCountryList }
+					countriesList={ countriesList }
+					onChange={ handlePhoneInputChange }
+					className="contact-form__phone-input"
+					phoneInputProps={ {
+						id: 'phone_number',
+						placeholder: translate( 'Phone number' ),
+					} }
+					countrySelectProps={ {
+						id: 'country_code',
+					} }
+					initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+					initialPhoneNumber={ initialFormData.phone?.phoneNumber }
+				/>
+				<div
+					className={ clsx( 'a4a-form__error', { hidden: ! validationError.phoneNumber } ) }
+					role="alert"
+				>
+					{ validationError.phoneNumber }
+				</div>
+			</div>
 
 			{ showInternalFlags && (
 				<div className="signup-contact-form__internal-flags">{ internalFlagsFields }</div>

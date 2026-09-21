@@ -227,7 +227,7 @@ export function createStreamDataFromCards(
 					return acc;
 				},
 				{ cardPosts: [], cardRecommendedSites: [], newSites: [] }
-		  )
+			)
 		: EMPTY_BUCKETS;
 	return {
 		...createStreamDataFromPosts( buckets.cardPosts, dateProperty ),

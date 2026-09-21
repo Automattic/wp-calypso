@@ -44,7 +44,7 @@ export default function globalSidebarMenu( { showP2s = false, hasOptIn = false }
 						type: 'menu-item',
 						url: '/p2s',
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: <Icon icon={ globe } size={ 24 } className="sidebar__menu-icon svg_all-domains" />,

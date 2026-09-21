@@ -17,12 +17,10 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { fromApi, toApi } from './api';
-import { appStates } from './constants';
+import { appStates, ID_GENERATOR_PREFIX } from './constants';
 import { isImporterLocked } from './selectors';
 
 import 'calypso/state/imports/init';
-
-const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
 /*
  * The following `order` functions prepare objects that can be

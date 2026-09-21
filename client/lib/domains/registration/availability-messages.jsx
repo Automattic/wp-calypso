@@ -254,8 +254,8 @@ function getAvailabilityNotice(
 			const transferStatusUrl = dashboard
 				? dashboardLink( `/domains/${ domain }/transfer` )
 				: site
-				? domainManagementTransferIn( site, domain )
-				: '/domains/manage';
+					? domainManagementTransferIn( site, domain )
+					: '/domains/manage';
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
 				{

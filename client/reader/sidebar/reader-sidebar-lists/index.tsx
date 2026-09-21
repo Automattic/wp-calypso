@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
@@ -41,7 +41,7 @@ const ReaderSidebarLists = ( {
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
-	const isSeenEnabled = useIsSeenPostsUiEnabled();
+	const isSeenEnabled = useSeenPostsPreferenceEnabled();
 	const lists = hideEmptyRecommendedBlogsPlaceholder( allLists );
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )

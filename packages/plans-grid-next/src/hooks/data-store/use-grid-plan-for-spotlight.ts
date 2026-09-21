@@ -27,7 +27,7 @@ const useGridPlanForSpotlight = ( {
 		return gridPlans && sitePlanSlug && isSpotlightOnCurrentPlan && isIntentSpotlightEnabled
 			? gridPlans.find(
 					( { planSlug } ) => getPlanClass( planSlug ) === getPlanClass( sitePlanSlug )
-			  )
+				)
 			: undefined;
 	}, [ sitePlanSlug, isSpotlightOnCurrentPlan, intent, gridPlans ] );
 };

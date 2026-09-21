@@ -34,8 +34,8 @@ function shouldUseUnifiedFlow( blogDetails?: InviteBlogDetails ): boolean {
 	// Enable for CIAB (Commerce Garden) sites
 	return Boolean(
 		blogDetails?.is_garden_site &&
-			blogDetails?.garden?.partner === 'woo' &&
-			blogDetails?.garden?.name === 'commerce'
+		blogDetails?.garden?.partner === 'woo' &&
+		blogDetails?.garden?.name === 'commerce'
 	);
 }
 

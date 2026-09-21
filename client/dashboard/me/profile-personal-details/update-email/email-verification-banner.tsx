@@ -154,7 +154,7 @@ export default function EmailVerificationBanner( {
 					/* translators: %s is the email address awaiting verification */
 					__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
 					email
-			  )
+				)
 			: __( 'Verification email sent.' );
 
 	// Honour a refusal whenever it lands, but only mention it while that endpoint is on screen,
@@ -263,7 +263,7 @@ export default function EmailVerificationBanner( {
 									/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
 									__( 'Resend email (%s)' ),
 									formatCooldown( secondsUntilResend )
-							  )
+								)
 							: __( 'Resend email' ) }
 					</Button>
 					{ isEmailChangePending && (

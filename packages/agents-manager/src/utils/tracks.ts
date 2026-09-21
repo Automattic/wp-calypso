@@ -22,6 +22,7 @@ import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
+import { getTabId } from './tab-id';
 
 type TracksProps = Record< string, unknown >;
 
@@ -51,8 +52,7 @@ type EditorSelectStore =
 	| undefined;
 
 type CoreSelectStore =
-	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
-	| undefined;
+	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -122,8 +122,7 @@ function getBigSkyPageProps(): TracksProps {
 		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
-			| { page_on_front?: number }
-			| undefined;
+			{ page_on_front?: number } | undefined;
 
 		return {
 			...surfaceProps,
@@ -235,6 +234,8 @@ function getUnifiedBaseProps(): TracksProps {
 	const blogId = getBlogId();
 	return {
 		ai_session_id: getActiveSessionId(),
+		// Joins the events before the server assigns a session to the conversation.
+		tab_id: getTabId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		agent_manager_version: getAgentManagerVersion(),
 		provider_ids: getProviderIds(),

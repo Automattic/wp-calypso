@@ -4,7 +4,7 @@ export default (
 	{ site, post = {}, tag = '', date = '', archiveTitle = '' }
 ) => {
 	const processPiece = ( piece = {}, data ) =>
-		'string' === piece.type ? piece.value : data[ piece.type ] ?? '';
+		'string' === piece.type ? piece.value : ( data[ piece.type ] ?? '' );
 
 	const buildTitle = ( format, data ) =>
 		( titleFormats[ format ] ?? [] ).map( ( piece ) => processPiece( piece, data ) ).join( '' );

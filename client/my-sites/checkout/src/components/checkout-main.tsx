@@ -477,7 +477,7 @@ export default function CheckoutMain( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
-		  } );
+			} );
 	debug( 'filtered payment method objects', paymentMethods );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
@@ -648,7 +648,7 @@ export default function CheckoutMain( {
 				highlight: colors[ 'WordPress Blue 50' ],
 				highlightBorder: colors[ 'WordPress Blue 80' ],
 				highlightOver: colors[ 'WordPress Blue 60' ],
-		  }
+			}
 		: {};
 
 	// A4A Theme
@@ -661,7 +661,7 @@ export default function CheckoutMain( {
 					highlight: colors[ 'Automattic Blue 50' ],
 					highlightBorder: colors[ 'Automattic Blue 80' ],
 					highlightOver: colors[ 'Automattic Blue 60' ],
-			  }
+				}
 			: {};
 
 	const theme = {

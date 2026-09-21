@@ -13,7 +13,7 @@ import type { ChatSize } from '../types';
 
 // Spy on animate while keeping the real implementation so the springs still run.
 vi.mock( 'framer-motion', async ( importOriginal ) => {
-	const actual = await importOriginal< typeof import('framer-motion') >();
+	const actual = await importOriginal< typeof import( 'framer-motion' ) >();
 	return { ...actual, animate: vi.fn( actual.animate ) };
 } );
 const animateSpy = vi.mocked( animate );
@@ -193,6 +193,27 @@ describe( 'useFloatingPanelPosition', () => {
 		} as unknown as React.PointerEvent< HTMLDivElement > );
 
 		expect( startSpy ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not start a move-drag from inside a chat dialog', async () => {
+		harness = renderHook( {} );
+		await harness.render();
+		const result = harness.captured.current!;
+		const startSpy = vi.spyOn( result.dragControls, 'start' );
+
+		const dialog = document.createElement( 'div' );
+		dialog.setAttribute( 'data-slot', 'chat-dialog' );
+		const textarea = document.createElement( 'textarea' );
+		dialog.appendChild( textarea );
+		document.body.appendChild( dialog );
+		result.handlePointerDown( {
+			target: textarea,
+			nativeEvent: {},
+			preventDefault: () => {},
+		} as unknown as React.PointerEvent< HTMLDivElement > );
+
+		expect( startSpy ).not.toHaveBeenCalled();
+		dialog.remove();
 	} );
 
 	it( 'does not start a move-drag when the target is from an iframe', async () => {

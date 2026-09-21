@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -39,6 +40,10 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
 
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
@@ -59,6 +64,7 @@ describe( 'Checkout contact step', () => {
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
+		( useViewportMatch as jest.Mock ).mockReturnValue( false );
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -98,6 +104,20 @@ describe( 'Checkout contact step', () => {
 		expect(
 			await screen.findByText( /Enter your (billing|contact) information/ )
 		).toBeInTheDocument();
+	} );
+
+	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
+		// The sidebar submit area, which renders this Continue, is only used at large viewports.
+		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
+		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Retrieving contact details…' ) ).not.toBeInTheDocument();
+		} );
+		await waitFor( () => {
+			expect( screen.getByLabelText( 'Continue to the next step' ) ).not.toBeDisabled();
+		} );
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
