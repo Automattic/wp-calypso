@@ -622,7 +622,11 @@ export const agencySitesRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// The header counts the licenses waiting to be set up, so settle it
 			// before the first paint rather than letting the line pop in.
-			agency ? queryClient.ensureQueryData( agencyPendingSitesQuery( agency.id ) ) : undefined,
+			agency
+				? queryClient
+						.ensureQueryData( agencyPendingSitesQuery( agency.id ) )
+						.catch( () => undefined )
+				: undefined,
 		] );
 	},
 } ).lazy( () =>
