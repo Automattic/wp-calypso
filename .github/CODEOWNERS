@@ -119,7 +119,7 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository/domain-search @Automattic/quake
 /client/my-sites/domains/domain-search @Automattic/quake
 /packages/domain-search @Automattic/quake
-/packages/domain-search/src/name-pulse @Automattic/yolo
+/packages/domain-search/src/name-pulse @sejas @gavande1
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech
