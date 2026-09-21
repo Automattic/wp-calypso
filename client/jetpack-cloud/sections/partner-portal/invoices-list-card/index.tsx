@@ -64,9 +64,11 @@ function InvoicesListCard( {
 		<InvoicesListRow>
 			<div>{ number }</div>
 			<div>
+				<span className="invoices-list-card__date-label">{ translate( 'Issued' ) }</span>
 				<FormattedDate date={ moment.unix( created ) } format="ll" />
 			</div>
 			<div>
+				<span className="invoices-list-card__date-label">{ translate( 'Due Date' ) }</span>
 				{ dueDate && <FormattedDate date={ moment( dueDate ) } format="ll" /> }
 				{ ! dueDate && <Gridicon icon="minus" /> }
 			</div>

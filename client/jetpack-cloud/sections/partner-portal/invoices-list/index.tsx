@@ -42,8 +42,6 @@ const InvoicePlaceholderCard = memo( function InvoicePlaceholderCard() {
 	);
 } );
 
-InvoicePlaceholderCard.displayName = 'InvoicePlaceholderCard';
-
 export default function InvoicesList() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -83,11 +81,11 @@ export default function InvoicesList() {
 					? {
 							starting_after: items[ items.length - 1 ].id,
 							ending_before: '',
-						}
+					  }
 					: {
 							starting_after: '',
 							ending_before: items[ 0 ].id,
-						}
+					  }
 			);
 		},
 		[ invoices.isSuccess, invoices.data?.items, setPagination ]
