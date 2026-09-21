@@ -107,12 +107,6 @@
 		}
 	}
 
-	// The unread tint muddies the badge's own surface, so the pill flips to a
-	// plain white one and keeps its warning label.
-	div[role="article"]:has(.is-unread) .wpnc__pending-badge {
-		background-color: var(--wpds-color-background-surface-neutral-strong, #fff);
-	}
-
 	// Open note: a left accent bar marks the row whose detail is showing. Driven
 	// by our own `is-active` marker (see getFields), not DataViews selection, so
 	// the unread tint still shows through on a selected unread row.
