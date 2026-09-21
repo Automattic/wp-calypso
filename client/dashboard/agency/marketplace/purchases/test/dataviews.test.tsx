@@ -44,7 +44,7 @@ describe( 'toFetchOptions', () => {
 		}
 	} );
 
-	it( 'reads a status filter that arrived from the URL as an array', () => {
+	it( 'reads the first value of a multi-select status filter', () => {
 		const view: View = {
 			...DEFAULT_VIEW,
 			filters: [ { field: 'status', operator: 'isAny', value: [ 'unassigned' ] } ],
