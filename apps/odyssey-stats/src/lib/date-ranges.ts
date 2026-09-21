@@ -25,11 +25,13 @@ export interface DateRange {
 
 export const DATE_RANGE_LAST_7_DAYS = 'last_7_days';
 export const DATE_RANGE_LAST_30_DAYS = 'last_30_days';
+export const DATE_RANGE_LAST_90_DAYS = 'last_90_days';
 export const DATE_RANGE_LAST_12_MONTHS = 'last_12_months';
 
 export type DateRangeId =
 	| typeof DATE_RANGE_LAST_7_DAYS
 	| typeof DATE_RANGE_LAST_30_DAYS
+	| typeof DATE_RANGE_LAST_90_DAYS
 	| typeof DATE_RANGE_LAST_12_MONTHS;
 
 export const DEFAULT_DATE_RANGE_ID: DateRangeId = DATE_RANGE_LAST_7_DAYS;
@@ -37,6 +39,7 @@ export const DEFAULT_DATE_RANGE_ID: DateRangeId = DATE_RANGE_LAST_7_DAYS;
 export const DATE_RANGES: DateRange[] = [
 	{ id: DATE_RANGE_LAST_7_DAYS, unit: 'day', quantity: 7 },
 	{ id: DATE_RANGE_LAST_30_DAYS, unit: 'day', quantity: 30 },
+	{ id: DATE_RANGE_LAST_90_DAYS, unit: 'day', quantity: 90 },
 	{ id: DATE_RANGE_LAST_12_MONTHS, unit: 'month', quantity: 12 },
 ];
 

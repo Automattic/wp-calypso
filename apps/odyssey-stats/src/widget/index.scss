@@ -29,6 +29,18 @@ $segmentedControlItemBorderRadius: 4px;
 	min-width: initial;
 }
 
+// wp-components draws focus rings with `--wpds-color-stroke-focus`, falling back to the
+// admin theme colour only when that token is missing. WordPress 7.1 always loads it
+// (`design-tokens.css`, a dependency of `wp-components`) as a fixed blue on `:root`, and
+// the admin colour schemes set only `--wp-admin-theme-color`, on `body` — so under any
+// scheme but the default the rings stayed blue. Pointing the token back at the scheme
+// colour here fixes it for the widget, and for the date range menu, which WordPress
+// renders outside the widget in its popover container.
+.stats-widget-content,
+.stats-widget-date-range__popover {
+	--wpds-color-stroke-focus: var(--wp-admin-theme-color, #3858e9);
+}
+
 .stats-widget-content {
 	font-family: $font-sf-pro-text;
 

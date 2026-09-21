@@ -6,6 +6,7 @@ import {
 	DATE_RANGES,
 	DATE_RANGE_LAST_7_DAYS,
 	DATE_RANGE_LAST_30_DAYS,
+	DATE_RANGE_LAST_90_DAYS,
 	DATE_RANGE_LAST_12_MONTHS,
 	DateRangeId,
 } from '../lib/date-ranges';
@@ -34,6 +35,7 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 	const labels: Record< DateRangeId, string > = {
 		[ DATE_RANGE_LAST_7_DAYS ]: translate( 'Last 7 days' ),
 		[ DATE_RANGE_LAST_30_DAYS ]: translate( 'Last 30 days' ),
+		[ DATE_RANGE_LAST_90_DAYS ]: translate( 'Last 90 days' ),
 		[ DATE_RANGE_LAST_12_MONTHS ]: translate( 'Last 12 months' ),
 	};
 
@@ -44,7 +46,7 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 			text={ labels[ value ] }
 			label={ translate( 'Date range' ) }
 			// The control sits at the header's right edge, so the menu lines up with it.
-			popoverProps={ { placement: 'bottom-end' } }
+			popoverProps={ { placement: 'bottom-end', className: 'stats-widget-date-range__popover' } }
 			toggleProps={ {
 				className: 'stats-widget-date-range__toggle',
 				iconPosition: 'right',

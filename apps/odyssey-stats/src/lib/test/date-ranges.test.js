@@ -2,6 +2,7 @@ import {
 	DATE_RANGES,
 	DATE_RANGE_LAST_7_DAYS,
 	DATE_RANGE_LAST_30_DAYS,
+	DATE_RANGE_LAST_90_DAYS,
 	DATE_RANGE_LAST_12_MONTHS,
 	DEFAULT_DATE_RANGE_ID,
 	getDateRange,
@@ -22,6 +23,14 @@ describe( 'getDateRange', () => {
 			id: DATE_RANGE_LAST_30_DAYS,
 			unit: 'day',
 			quantity: 30,
+		} );
+	} );
+
+	it( 'should map the 90 day range to a quarter of daily buckets', () => {
+		expect( getDateRange( DATE_RANGE_LAST_90_DAYS ) ).toEqual( {
+			id: DATE_RANGE_LAST_90_DAYS,
+			unit: 'day',
+			quantity: 90,
 		} );
 	} );
 
