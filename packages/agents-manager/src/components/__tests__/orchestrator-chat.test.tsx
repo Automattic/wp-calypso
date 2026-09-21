@@ -1485,6 +1485,34 @@ describe( 'OrchestratorChat', () => {
 			'jetpack_big_sky_chat_input_send_message',
 			expect.anything()
 		);
+
+		// The blocked host send must not leave its origin pending for the
+		// composer send that follows.
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'gates a regeneration on credits', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( agentticRegenerate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {

@@ -618,6 +618,11 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, isRegenerating ] );
 
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+
+	// Reader chat is a public blog frontend with no site credits to meter.
+	const credits = useCredits( { enabled: ! isReaderChat, isProcessing } );
+
 	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
 	// false`), so retention must not resurrect the old picker as a stale copy.
@@ -629,6 +634,11 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regeneration is a new agent request, so it takes the same
+				// credits gate as a send.
+				if ( ! credits.beforeSubmit() ) {
+					return;
+				}
 				setIsRegenerating( true );
 				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
 				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
@@ -648,7 +658,7 @@ export default function OrchestratorChat( {
 				}
 			};
 		},
-		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler, credits.beforeSubmit ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -725,10 +735,6 @@ export default function OrchestratorChat( {
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
-
-	// Reader chat is a public blog frontend with no site credits to meter.
-	const credits = useCredits( { enabled: ! isReaderChat, isProcessing } );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
@@ -1405,7 +1411,10 @@ export default function OrchestratorChat( {
 
 			// Composer sends are gated by Agenttic before reaching `onSubmitWithImages`;
 			// context cards and the host bridge arrive here instead, so gate them too.
+			// A blocked send consumes any origin the bridge marked for it, so it
+			// can't label the next successful send.
 			if ( ! credits.beforeSubmit() ) {
+				takeActionOrigin( 'send' );
 				return;
 			}
 
