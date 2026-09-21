@@ -3,16 +3,23 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import type { Purchase } from '@automattic/api-core';
-import type { Purchase as CamelCasePurchase } from 'calypso/lib/purchases/types';
+/**
+ * The fields this reads, spelled the way each caller's object spells them: the
+ * raw api-core purchase names its owner and site in snake_case, the Redux
+ * camelCase purchase (SHILL-2256) in camelCase, and the site plan the
+ * current-plan page renders through the same button carries only `userIsOwner`.
+ */
+type OwnedSubscription = {
+	blogname?: string;
+	domain?: string;
+	siteName?: string;
+	userId?: number;
+	userIsOwner?: boolean;
+	user_id?: number;
+};
 
 type OwnProps = {
-	/**
-	 * Accepts either purchase shape because callers outside /me/purchases still
-	 * read the Redux-assembled camelCase one (SHILL-2256). Drop the camelCase
-	 * half once they don't.
-	 */
-	purchase: Purchase | CamelCasePurchase;
+	purchase: OwnedSubscription;
 	isTransferredOwnership?: boolean;
 };
 
@@ -20,14 +27,8 @@ const OwnerInfo: React.FC< OwnProps > = ( { purchase, isTransferredOwnership = f
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
 
-	// The camelCase shape carries a `userIsOwner` flag that the raw purchase has
-	// no equivalent for; some callers pass a site plan, which only sets that flag
-	// and no owner id.
-	const isOwner =
-		'user_id' in purchase
-			? currentUserId === purchase.user_id
-			: purchase.userIsOwner || currentUserId === purchase.userId;
-	const siteName = 'blogname' in purchase ? purchase.blogname : purchase.siteName;
+	const isOwner = purchase.userIsOwner || currentUserId === ( purchase.user_id ?? purchase.userId );
+	const siteName = purchase.blogname ?? purchase.siteName;
 
 	if ( isOwner ) {
 		return null;

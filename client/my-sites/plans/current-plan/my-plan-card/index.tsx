@@ -1,8 +1,19 @@
 import { Card, ProductIcon } from '@automattic/components';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
+
+interface Props {
+	action?: ReactNode;
+	details?: ReactNode;
+	headerChildren?: ReactNode;
+	isError?: boolean;
+	isPlaceholder?: boolean;
+	product?: string;
+	tagline?: ReactNode;
+	title?: ReactNode;
+}
 
 const MyPlanCard = ( {
 	action,
@@ -13,7 +24,7 @@ const MyPlanCard = ( {
 	tagline,
 	title,
 	headerChildren,
-} ) => {
+}: Props ) => {
 	const cardClassNames = clsx( 'my-plan-card', {
 		'is-placeholder': isPlaceholder,
 		'has-action-only': action && ! details && ! isPlaceholder,
@@ -40,16 +51,6 @@ const MyPlanCard = ( {
 			) }
 		</Card>
 	);
-};
-
-MyPlanCard.propTypes = {
-	action: PropTypes.node,
-	isError: PropTypes.bool,
-	isPlaceholder: PropTypes.bool,
-	details: PropTypes.node,
-	product: PropTypes.string,
-	tagline: PropTypes.node,
-	title: PropTypes.node,
 };
 
 export default MyPlanCard;

@@ -25,26 +25,25 @@ import { Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, type ComponentProps } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
 import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getRawByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
@@ -64,25 +63,63 @@ import ModernizedLayout from './modernized-layout';
 import StudentPlansPage from './student-plans-page';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
+import type { Purchase } from '@automattic/api-core';
+import type { PlanSlug } from '@automattic/calypso-products';
+import type { Context } from '@automattic/calypso-router';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { WithShoppingCartProps } from '@automattic/shopping-cart';
+import type { AppState } from 'calypso/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
 import './style.scss';
 
 // Plan tiers from lowest to highest, used to filter the visible plans list
 const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 
-class PlansComponent extends Component {
-	static propTypes = {
-		context: PropTypes.object.isRequired,
-		coupon: PropTypes.string,
-		redirectToAddDomainFlow: PropTypes.bool,
-		intervalType: PropTypes.string,
-		customerType: PropTypes.string,
-		selectedFeature: PropTypes.string,
-		redirectTo: PropTypes.string,
-		pluginSlug: PropTypes.string,
-		selectedSite: PropTypes.object,
-	};
+type CurrentPlan = ReturnType< typeof Plans.useCurrentPlan >;
+type IntervalType = ComponentProps< typeof PlansFeaturesMain >[ 'intervalType' ];
 
+// The terms the plans grid can be shown in. `getIntervalTypeForTerm` can also
+// report '100yearly', which the grid has no column for.
+const SUPPORTED_INTERVAL_TYPES = [ 'monthly', 'yearly', '2yearly', '3yearly' ] as const;
+
+const isSupportedIntervalType = ( interval: string | null | undefined ): interval is IntervalType =>
+	SUPPORTED_INTERVAL_TYPES.some( ( supported ) => supported === interval );
+
+interface OwnProps {
+	context: Context;
+	coupon?: string;
+	currentPlan: CurrentPlan;
+	customerType?: string;
+	discountEndDate?: Date;
+	intervalType?: IntervalType;
+	jetpackAppPlans?: boolean;
+	pluginSlug?: string;
+	redirectTo?: string;
+	redirectToAddDomainFlow?: boolean;
+	selectedFeature?: string;
+	selectedPlan?: PlanSlug;
+	selectedSiteId: number | null;
+}
+
+interface ConnectedProps {
+	canAccessPlans: boolean;
+	domainFromHomeUpsellFlow: string | null;
+	fetchSitePlans: ( siteId: number ) => void;
+	isFreePlan: boolean;
+	isJetpackNotAtomic: boolean | null;
+	isSiteEligibleForMonthlyPlan: boolean;
+	isUntangled: boolean;
+	isWPForTeamsSite: boolean | null;
+	locale: string;
+	purchase: Purchase | null | undefined;
+	selectedSite: SiteDetails | null | undefined;
+	siteHasLegacyStorage: boolean;
+}
+
+type Props = OwnProps & ConnectedProps & LocalizeProps & WithShoppingCartProps;
+
+class PlansComponent extends Component< Props > {
 	static defaultProps = {
 		intervalType: 'yearly',
 	};
@@ -117,18 +154,18 @@ class PlansComponent extends Component {
 		const { selectedSite } = this.props;
 
 		if ( this.isInvalidPlanInterval() ) {
-			page.redirect( '/plans/yearly/' + selectedSite.slug );
+			page.redirect( '/plans/yearly/' + selectedSite?.slug );
 		}
 	}
 
-	onSelectPlan = ( item ) => {
+	onSelectPlan = ( item: { product_slug: string } ) => {
 		const {
 			selectedSite,
 			context: {
 				query: { discount },
 			},
 		} = this.props;
-		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
+		const checkoutPath = `/checkout/${ selectedSite?.slug }/${ item.product_slug }/`;
 
 		page(
 			discount
@@ -175,7 +212,7 @@ class PlansComponent extends Component {
 			: undefined;
 
 		// Filter the visible plan tiers to those at or above the current plan.
-		const currentTier = getPlan( currentPlan?.productSlug )?.type;
+		const currentTier = getPlan( currentPlan?.productSlug ?? '' )?.type;
 		const visiblePlanTiers =
 			currentTier && PLAN_TIERS.includes( currentTier )
 				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
@@ -202,8 +239,8 @@ class PlansComponent extends Component {
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
-				hideEnterprisePlan={ isFreePlan }
-				hideEcommercePlan={ isFreePlan }
+				hideEnterprisePlan={ !! isFreePlan }
+				hideEcommercePlan={ !! isFreePlan }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -230,7 +267,7 @@ class PlansComponent extends Component {
 
 		return (
 			<ECommerceTrialPlansPage
-				isWooExpressTrial={ !! purchase?.isWooExpressTrial }
+				isWooExpressTrial={ !! purchase?.is_woo_express_trial }
 				interval={ interval }
 				site={ selectedSite }
 			/>
@@ -250,7 +287,7 @@ class PlansComponent extends Component {
 	renderWooExpressPlansPage() {
 		const { currentPlan, selectedSite, isSiteEligibleForMonthlyPlan } = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
 
@@ -269,7 +306,7 @@ class PlansComponent extends Component {
 	renderStudentPlansPage() {
 		const { currentPlan, selectedSite, intervalType } = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
 
@@ -294,7 +331,7 @@ class PlansComponent extends Component {
 		isStudent,
 		isA4APlan,
 		is100YearPlan,
-	} ) {
+	}: Record< string, boolean | null | undefined > ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -319,7 +356,7 @@ class PlansComponent extends Component {
 		return (
 			<>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
-				{ isUntangled && (
+				{ isUntangled && selectedSite && (
 					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
 				) }
 				{ this.renderContent() }
@@ -354,8 +391,8 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
-		].includes( currentPlanSlug );
-		const isStudent = isStudentPlan( currentPlan.productSlug );
+		].includes( currentPlanSlug ?? '' );
+		const isStudent = isStudentPlan( currentPlan.productSlug ?? '' );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
@@ -367,7 +404,7 @@ class PlansComponent extends Component {
 				},
 			} );
 
-		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isWooExpressTrial = purchase?.is_woo_express_trial;
 		const isA4APlan = purchase && isPartnerPurchase( purchase );
 		const is100YearPlan = purchase && is100Year( purchase );
 
@@ -378,7 +415,7 @@ class PlansComponent extends Component {
 		}
 
 		// Hide for WooExpress plans and Entrepreneur trials that are not WooExpress trials
-		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
+		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.is_woo_express_trial;
 		const showPlansNavigation = ! isUntangled && ! ( isWooExpressPlan || isEntrepreneurTrial );
 
 		return (
@@ -401,8 +438,8 @@ class PlansComponent extends Component {
 						{ isUntangled && <CurrentPlanPanel /> }
 						{ ! isUntangled && (
 							<PlansHeader
-								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
-								subHeaderText={ subHeaderText }
+								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow ?? undefined }
+								subHeaderText={ subHeaderText ?? undefined }
 							/>
 						) }
 						<div
@@ -410,7 +447,7 @@ class PlansComponent extends Component {
 							className="plans plans__has-sidebar is-de-emphasized-current-plan"
 						>
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
-							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
+							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ !! isWooExpressTrial }>
 								{ this.renderMainContent( {
 									isEcommerceTrial,
 									isBusinessTrial,
@@ -433,12 +470,14 @@ class PlansComponent extends Component {
 }
 
 const ConnectedPlans = connect(
-	( state, props ) => {
+	( state: AppState, props: OwnProps ) => {
 		const { currentPlan, selectedSiteId } = props;
 
 		return {
 			currentPlan,
-			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
+			purchase: currentPlan?.purchaseId
+				? getRawByPurchaseId( state, currentPlan.purchaseId )
+				: null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isUntangled: isPlansPageUntangled( state ),
@@ -447,18 +486,16 @@ const ConnectedPlans = connect(
 			isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, {
 				treatAtomicAsJetpackSite: false,
 			} ),
-			isFreePlan: isFreePlanProduct( currentPlan ),
+			isFreePlan: !! currentPlan && isFreePlanProduct( currentPlan ),
 			domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 			siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 			locale: getCurrentLocaleSlug( state ),
 		};
 	},
-	( dispatch ) => ( {
-		fetchSitePlans: ( siteId ) => dispatch( fetchSitePlans( siteId ) ),
-	} )
+	{ fetchSitePlans }
 )( withCartKey( withShoppingCart( localize( PlansComponent ) ) ) );
 
-export default function PlansWrapper( props ) {
+export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'selectedSiteId' > ) {
 	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
@@ -471,6 +508,7 @@ export default function PlansWrapper( props ) {
 	const intervalTypeForCurrentPlanTerm = useSelector( ( state ) =>
 		getIntervalTypeForTerm( getCurrentPlanTerm( state, selectedSiteId ) )
 	);
+	const intervalType = intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm;
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -478,7 +516,7 @@ export default function PlansWrapper( props ) {
 				{ ...props }
 				currentPlan={ currentPlan }
 				selectedSiteId={ selectedSiteId }
-				intervalType={ intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm }
+				intervalType={ isSupportedIntervalType( intervalType ) ? intervalType : undefined }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

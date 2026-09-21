@@ -21,7 +21,6 @@ import {
 import { Dialog } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -38,19 +37,18 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isCloseToExpiration } from 'calypso/lib/purchases';
-import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import { isCloseToExpiration } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
@@ -64,6 +62,12 @@ import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import PurchasesListing from './purchases-listing';
 import TrialCurrentPlan from './trials/trial-current-plan';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { SitePlanData } from 'calypso/state/sites/plans/types';
+import type { AppState } from 'calypso/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -72,29 +76,32 @@ const loadProductPurchaseFeaturesList = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-product-purchase-features-list" */ 'calypso/blocks/product-purchase-features-list'
 	);
 
-class CurrentPlan extends Component {
+interface OwnProps {
+	path: string;
+	product?: string;
+	requestThankYou?: boolean;
+}
+
+interface ConnectedProps {
+	currentPlan: SitePlanData | null;
+	domains: ResponseDomain[];
+	hasDomainsLoaded: boolean;
+	isJetpackNotAtomic: boolean | null;
+	isRequestingSitePlans: boolean;
+	purchases: Purchase[];
+	scheduleId: number | null;
+	selectedSite: SiteDetails | null | undefined;
+	selectedSiteId: number | null;
+	shouldShowDomainWarnings: boolean | null;
+	showJetpackChecklist: boolean | null;
+	showThankYou: boolean | null | undefined;
+}
+
+type Props = OwnProps & ConnectedProps & LocalizeProps;
+
+class CurrentPlan extends Component< Props, { hideThankYouModal: boolean } > {
 	state = {
 		hideThankYouModal: false,
-	};
-
-	static propTypes = {
-		selectedSiteId: PropTypes.number,
-		selectedSite: PropTypes.object,
-		isRequestingSitePlans: PropTypes.bool,
-		path: PropTypes.string.isRequired,
-		domains: PropTypes.array,
-		purchases: PropTypes.array,
-		currentPlan: PropTypes.object,
-		plan: PropTypes.string,
-		product: PropTypes.string,
-		requestThankYou: PropTypes.bool,
-		shouldShowDomainWarnings: PropTypes.bool,
-		hasDomainsLoaded: PropTypes.bool,
-		showJetpackChecklist: PropTypes.bool,
-		showThankYou: PropTypes.bool,
-
-		// From localize() HoC
-		translate: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -115,42 +122,51 @@ class CurrentPlan extends Component {
 		} );
 	};
 
-	renderThankYou() {
-		const { currentPlan, jetpackSearchCustomizeUrl, product } = this.props;
+	isThankYouProduct( productSlugs: readonly string[] ) {
+		const { product } = this.props;
 
-		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
+		return !! product && productSlugs.includes( product );
+	}
+
+	renderThankYou() {
+		const { currentPlan } = this.props;
+
+		if ( this.isThankYouProduct( JETPACK_BACKUP_PRODUCTS ) ) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( JETPACK_SCAN_PRODUCTS.includes( product ) ) {
+		if ( this.isThankYouProduct( JETPACK_SCAN_PRODUCTS ) ) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( product ) ) {
+		if ( this.isThankYouProduct( JETPACK_ANTI_SPAM_PRODUCTS ) ) {
 			return <AntiSpamProductThankYou />;
 		}
 
-		if ( JETPACK_VIDEOPRESS_PRODUCTS.includes( product ) ) {
+		if ( this.isThankYouProduct( JETPACK_VIDEOPRESS_PRODUCTS ) ) {
 			return <VideoPressProductThankYou />;
 		}
 
-		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			return <SearchProductThankYou { ...{ jetpackSearchCustomizeUrl } } />;
+		if ( this.isThankYouProduct( JETPACK_SEARCH_PRODUCTS ) ) {
+			return <SearchProductThankYou />;
 		}
 
 		if (
-			[ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ].includes( product )
+			this.isThankYouProduct( [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] )
 		) {
 			return <JetpackSecurityDailyThankYou />;
 		}
 
 		if (
-			[ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ].includes( product )
+			this.isThankYouProduct( [
+				PLAN_JETPACK_SECURITY_REALTIME,
+				PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+			] )
 		) {
 			return <JetpackSecurityRealtimeThankYou />;
 		}
 
-		if ( JETPACK_COMPLETE_PLANS.includes( product ) ) {
+		if ( this.isThankYouProduct( JETPACK_COMPLETE_PLANS ) ) {
 			return <JetpackCompleteThankYou />;
 		}
 
@@ -230,11 +246,10 @@ class CurrentPlan extends Component {
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
 		let showExpiryNotice = false;
-		let purchase = null;
 
-		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
-			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
-			showExpiryNotice = purchase && isCloseToExpiration( purchase );
+		if ( ( JETPACK_LEGACY_PLANS as readonly string[] ).includes( currentPlanSlug ) ) {
+			const purchase = purchases?.find( ( { product_slug } ) => product_slug === currentPlanSlug );
+			showExpiryNotice = !! purchase && isCloseToExpiration( purchase );
 		}
 
 		const planDescription = isJetpackNotAtomic
@@ -292,7 +307,7 @@ class CurrentPlan extends Component {
 
 							{ showExpiryNotice && (
 								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+									<NoticeAction href={ `/plans/${ selectedSite?.slug || '' }` }>
 										{ translate( 'View plans' ) }
 									</NoticeAction>
 								</Notice>
@@ -309,11 +324,11 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, { requestThankYou } ) => {
+export default connect( ( state: AppState, { requestThankYou }: OwnProps ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDomainsBySiteId( state, selectedSiteId );
-	const purchases = getSitePurchases( state, selectedSiteId );
+	const purchases = getRawSitePurchases( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
@@ -328,7 +343,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		purchases,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, selectedSiteId ),
 		selectedSite,
 		selectedSiteId,
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
