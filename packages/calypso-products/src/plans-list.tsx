@@ -563,11 +563,11 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
 	i18n.fixMe( {
-		text: 'per month, billed annually, excl. taxes',
-		newCopy: i18n.translate( 'per month, billed annually, excl. taxes', {
+		text: 'per month, billed yearly, excl. taxes',
+		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
 			comment: 'Excl. Taxes is short for excluding taxes',
 		} ),
-		oldCopy: i18n.translate( 'per month, billed annually' ),
+		oldCopy: i18n.translate( 'per month, billed yearly' ),
 	} ) as TranslateResult;
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
 	i18n.fixMe( {
@@ -584,14 +584,6 @@ const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
 			comment: 'Excl. Taxes is short for excluding taxes',
 		} ),
 		oldCopy: i18n.translate( '/month, billed every three years' ),
-	} ) as TranslateResult;
-const WPComGetYearlyBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: 'per month, billed yearly, excl. taxes',
-		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( 'per month, billed yearly' ),
 	} ) as TranslateResult;
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
@@ -3975,7 +3967,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
-	getBillingTimeFrame: WPComGetYearlyBillingTimeframe,
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -4007,7 +3999,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	term: TERM_ANNUALLY,
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getBillingTimeFrame: WPComGetYearlyBillingTimeframe,
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {

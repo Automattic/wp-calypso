@@ -42,7 +42,7 @@ import BillingTimeframe from '../shared/billing-timeframe';
 
 describe( 'BillingTimeframe', () => {
 	const defaultProps = {
-		billingTimeframe: 'per month, billed annually, excl. taxes',
+		billingTimeframe: 'per month, billed yearly, excl. taxes',
 	};
 
 	beforeEach( () => {
