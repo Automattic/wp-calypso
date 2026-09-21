@@ -1,5 +1,4 @@
 import { ExternalLink } from '@wordpress/components';
-import { Icon, pending } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
@@ -17,7 +16,6 @@ const PendingApprovalBadge = ( { note }: PendingApprovalBadgeProps ): JSX.Elemen
 
 	return (
 		<div className="wpnc-pending-approval-badge">
-			<Icon icon={ pending } size={ 20 } />
 			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending approval' ) }</span>
 			{ commentsUrl && (
 				<ExternalLink className="wpnc-pending-approval-badge__link" href={ commentsUrl }>
