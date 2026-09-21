@@ -123,4 +123,81 @@ describe( '<ContactForm>', () => {
 			{ timeout: 3000 }
 		);
 	} );
+
+	// Regression test for DOMENG-1172: the registry rejects address lines shorter
+	// than two characters, so the form must catch them before submission.
+	test( 'blocks saving when a required address line is a single character', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const address1 = await screen.findByRole( 'textbox', { name: 'Address' } );
+
+		await user.clear( address1 );
+		await user.type( address1, 'a' );
+		// Blur the field so its validation message is revealed.
+		await user.tab();
+
+		expect( await screen.findByText( 'Value is too short.' ) ).toBeVisible();
+		await waitFor( () => expect( save ).toBeDisabled(), { timeout: 3000 } );
+
+		await user.type( address1, 'b' );
+
+		await waitFor(
+			() => {
+				expect( screen.queryByText( 'Value is too short.' ) ).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	// The second address line is optional, so an empty value must stay valid while
+	// a single character is still rejected. Start from a non-empty line 2 so that
+	// clearing it is still an edit (Save is gated on the form being dirty).
+	test( 'keeps an empty second address line valid but rejects a single character', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ { ...frIndividualContact, address2: 'Second floor' } }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const address2 = await screen.findByRole( 'textbox', { name: /Address line 2/ } );
+
+		await user.clear( address2 );
+		await user.type( address2, 'a' );
+		// Blur the field so its validation message is revealed.
+		await user.tab();
+
+		expect( await screen.findByText( 'Value is too short.' ) ).toBeVisible();
+		await waitFor( () => expect( save ).toBeDisabled(), { timeout: 3000 } );
+
+		// Clearing it back to empty is valid — the field is optional — so saving is
+		// unblocked even though line 2 is now blank.
+		await user.clear( address2 );
+
+		await waitFor(
+			() => {
+				expect( screen.queryByText( 'Value is too short.' ) ).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
 } );
