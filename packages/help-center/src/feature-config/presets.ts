@@ -99,6 +99,7 @@ const wooPreset: HelpCenterFeatureConfig = {
 		enabled: true,
 		filterByBotSlug: true,
 		flowName: null,
+		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
 	},
