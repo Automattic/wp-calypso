@@ -29,13 +29,22 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 		<div
 			className="agents-manager-credits-meter__pool"
 			role="group"
-			aria-label={ sprintf(
-				/* translators: 1: pool name, 2: percentage left, 3: reset or expiry date */
-				__( '%1$s, %2$d%% left, %3$s', __i18n_text_domain__ ),
-				pool.label,
-				percent,
-				pool.dateLabel ?? ''
-			) }
+			aria-label={
+				pool.dateLabel
+					? sprintf(
+							/* translators: 1: pool name, 2: percentage left, 3: reset or expiry date */
+							__( '%1$s, %2$d%% left, %3$s', __i18n_text_domain__ ),
+							pool.label,
+							percent,
+							pool.dateLabel
+						)
+					: sprintf(
+							/* translators: 1: pool name, 2: percentage left */
+							__( '%1$s, %2$d%% left', __i18n_text_domain__ ),
+							pool.label,
+							percent
+						)
+			}
 		>
 			<div className="agents-manager-credits-meter__pool-header">
 				<span className="agents-manager-credits-meter__pool-label">{ pool.label }</span>

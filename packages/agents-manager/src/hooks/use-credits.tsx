@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import {
@@ -83,6 +83,8 @@ function buildMockStatus( plan: CreditsPlan, percent: number ): CreditsStatus {
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
+	/** The agent request state; the mock spends when a request finishes. */
+	isProcessing: boolean;
 }
 
 interface UseCreditsResult {
@@ -100,11 +102,23 @@ interface UseCreditsResult {
  * popover. One hook so the pieces stay together when the mock source is
  * replaced by the backend snapshot.
  */
-export function useCredits( { enabled }: UseCreditsOptions ): UseCreditsResult {
+export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseCreditsResult {
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+
+	// Spend once a request has actually run, not on the submit attempt: sends
+	// dropped before dispatch (upload failure, re-entry) never touch the agent's
+	// processing state, so they cost nothing. The real snapshot arrives the
+	// same way, on the terminal response.
+	const wasProcessingRef = useRef( isProcessing );
+	useEffect( () => {
+		if ( wasProcessingRef.current && ! isProcessing && enabled && seed ) {
+			setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
+		}
+		wasProcessingRef.current = isProcessing;
+	}, [ isProcessing, enabled, seed ] );
 
 	const status = useMemo(
 		() => ( enabled && seed ? buildMockStatus( seed.plan, percent ) : undefined ),
@@ -176,8 +190,6 @@ export function useCredits( { enabled }: UseCreditsOptions ): UseCreditsResult {
 			setIsPopoverOpen( true );
 			return false;
 		}
-
-		setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
 
 		return true;
 	}, [ status, isExhausted ] );

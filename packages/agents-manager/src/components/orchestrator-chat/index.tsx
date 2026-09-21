@@ -728,7 +728,7 @@ export default function OrchestratorChat( {
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
 	// Reader chat is a public blog frontend with no site credits to meter.
-	const credits = useCredits( { enabled: ! isReaderChat } );
+	const credits = useCredits( { enabled: ! isReaderChat, isProcessing } );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
