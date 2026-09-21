@@ -90,8 +90,39 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 	},
 };
 
+/** WooCommerce.com: chat enabled with filtered history, Woo docs instead of dotcom-specific links. */
+const wooPreset: HelpCenterFeatureConfig = {
+	header: {
+		ellipsisMenu: true,
+	},
+	chat: {
+		enabled: true,
+		filterByBotSlug: true,
+		flowName: null,
+		hasPremiumSupport: true,
+		skipSupportStatus: true,
+	},
+	home: {
+		recentConversations: true,
+	},
+	contextualCta: {
+		enabled: false,
+	},
+	moreResources: {
+		visible: true,
+		supportHistory: true,
+		courses: false,
+		productUpdates: false,
+		supportGuidesUrl: 'https://woocommerce.com/docs/',
+	},
+	contactForm: {
+		variant: 'standard',
+	},
+};
+
 export const PRODUCT_PRESETS: Record< HelpCenterProduct, HelpCenterFeatureConfig > = {
 	wpcom: wpcomPreset,
 	a4a: a4aPreset,
 	'commerce-garden': commerceGardenPreset,
+	woo: wooPreset,
 };
