@@ -114,7 +114,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		] );
 	} );
 
-	it( 'switches on, records it, and takes the reader to the new Traffic tab', async () => {
+	it( 'switches on, records it, and takes the reader to the new Traffic and Insights tabs', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
@@ -394,7 +394,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * Back from the preview, the browser can restore this page from its cache with the
 	 * button still busy. The site is on by then, so the cache says so and the notices host takes
 	 * the invitation down.
 	 */

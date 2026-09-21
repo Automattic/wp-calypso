@@ -69,7 +69,7 @@ describe( 'SwitchOnDialog', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'switches on, records it, and takes the reader to the new Traffic tab', async () => {
+	it( 'switches on, records it, and takes the reader to the new Traffic and Insights tabs', async () => {
 		renderDialog();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
@@ -94,7 +94,7 @@ describe( 'SwitchOnDialog', () => {
 	} );
 
 	/**
-	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * Back from the preview, the browser can restore this page from its cache with the
 	 * dialog still open and every way out disabled.
 	 */
 	it( 'closes itself when the page is restored from the back/forward cache', () => {

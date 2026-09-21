@@ -10,7 +10,7 @@ type Surface = 'notice' | 'menu';
 export const NAVIGATION_DELAY = 250;
 
 /**
- * Record a Tracks event for the new Traffic tab invitation, prefixed by the build we are in.
+ * Record a Tracks event for the preview invitation, prefixed by the build we are in.
  *
  * `is_odyssey` rather than `is_running_in_jetpack_site`: that one is false in a Simple site's
  * wp-admin and would file those events under Calypso.
