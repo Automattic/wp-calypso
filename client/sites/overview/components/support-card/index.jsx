@@ -46,7 +46,7 @@ export default function SupportCard() {
 				)
 					? translate(
 							'Our AI assistant can answer your questions and connect you to our Happiness Engineers for further assistance.'
-					  )
+						)
 					: translate( 'Our AI assistant can help, or connect you to our support team.' ) }
 			</p>
 			<Button onClick={ onClick }>{ translate( 'Get help' ) }</Button>

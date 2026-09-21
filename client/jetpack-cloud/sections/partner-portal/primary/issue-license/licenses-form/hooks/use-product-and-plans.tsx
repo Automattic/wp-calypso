@@ -126,10 +126,9 @@ export default function useProductAndPlans( {
 		// List only products that is compatible with current bundle size.
 		const supportedProducts =
 			selectedBundleSize > 1
-				? data?.filter(
-						( { supported_bundles } ) =>
-							supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
-				  )
+				? data?.filter( ( { supported_bundles } ) =>
+						supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
+					)
 				: data;
 
 		// We pre-filter the list by current selected filter

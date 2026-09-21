@@ -136,7 +136,7 @@ export default function useUpdateEmailForwardMutation(
 									strong: <strong />,
 								},
 							}
-					  )
+						)
 					: translate(
 							'Failed to update email forward for {{strong}}%(mailbox)s@%(domain)s{{/strong}}. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 							{
@@ -149,7 +149,7 @@ export default function useUpdateEmailForwardMutation(
 									strong: <strong />,
 								},
 							}
-					  ),
+						),
 				{ duration: 7000 }
 			)
 		);

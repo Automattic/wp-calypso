@@ -194,7 +194,7 @@ function ConnectedOmnibar( {
 				// The AI chat button, plus any other node a builder claimed above.
 				...( baseOmnibarNodes.plugins ?? [] ),
 				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
-		  ]
+			]
 		: [];
 
 	const omnibarNodes = trackOmnibarNodes(

@@ -70,9 +70,9 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 				createSuccessNotice(
 					enabled
 						? /* translators: %s is the domain name */
-						  sprintf( __( 'Transfer lock enabled for %s.' ), domainName )
+							sprintf( __( 'Transfer lock enabled for %s.' ), domainName )
 						: /* translators: %s is the domain name */
-						  sprintf( __( 'Transfer lock disabled for %s.' ), domainName ),
+							sprintf( __( 'Transfer lock disabled for %s.' ), domainName ),
 					{ type: 'snackbar' }
 				);
 			},
@@ -176,10 +176,10 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 								'We have sent the transfer authorization code to %s. If you don’t receive the email shortly, please check your spam folder.'
 							),
 							registrantEmail
-					  )
+						)
 					: __(
 							'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
-					  );
+						);
 
 				createSuccessNotice( successMessage, { type: 'snackbar' } );
 			},

@@ -53,9 +53,8 @@ export function useAtomicTransfer(
 	);
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 
-	const [ isAtomicTransferCheckComplete, setIsAtomicTransferCheckComplete ] = useState(
-		! isAtomicNeeded
-	);
+	const [ isAtomicTransferCheckComplete, setIsAtomicTransferCheckComplete ] =
+		useState( ! isAtomicNeeded );
 	const [ showProgressBar, setShowProgressBar ] = useState(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);

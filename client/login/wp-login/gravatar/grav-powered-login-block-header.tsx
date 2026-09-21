@@ -68,7 +68,7 @@ const GravPoweredLoginBlockHeader = ( {
 					? translate( 'Please log in with your email and password.' )
 					: translate(
 							'If you prefer logging in with a password, or a social media account, choose below:'
-					  ) }
+						) }
 			</p>
 		);
 	} else if ( fromSite ) {

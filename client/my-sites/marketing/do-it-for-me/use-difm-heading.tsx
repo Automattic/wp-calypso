@@ -50,11 +50,11 @@ export const useDIFMHeading = ( {
 		? translate(
 				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
-		  )
+			)
 		: translate(
 				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
-		  );
+			);
 
 	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
@@ -64,7 +64,7 @@ export const useDIFMHeading = ( {
 						freePages: 5,
 					},
 				}
-		  )
+			)
 		: translate(
 				"It's a one time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:",
 				{
@@ -73,7 +73,7 @@ export const useDIFMHeading = ( {
 						freePages: 5,
 					},
 				}
-		  );
+			);
 
 	return {
 		headerText,

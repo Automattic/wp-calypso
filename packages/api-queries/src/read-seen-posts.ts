@@ -87,14 +87,3 @@ export const markAllReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 			patchListsSeenCount( queryClient, params.feedIds, () => 0 );
 		},
 	} );
-
-type TeamLike = { slug: string };
-
-/**
- * Whether the seen-posts feature is rolled out to this user.
- *
- * Currently Automattician-only. Releasing to all users means returning true here.
- */
-export function isSeenPostsAvailable( teams?: TeamLike[] | null ): boolean {
-	return Boolean( teams?.some( ( team ) => team.slug === 'a8c' ) );
-}

@@ -16,8 +16,8 @@ export const useSubscriptionDetails = ( subscription?: ReferralProduct ) => {
 	const productName = useMemo( () => {
 		return isBillingTypeBD && storeSubscription?.product_name
 			? storeSubscription.product_name
-			: products?.find( ( product ) => product.product_id === subscription?.product_id )?.name ??
-					'';
+			: ( products?.find( ( product ) => product.product_id === subscription?.product_id )?.name ??
+					'' );
 	}, [ isBillingTypeBD, storeSubscription?.product_name, products, subscription?.product_id ] );
 
 	const expiryDate = useMemo( () => {

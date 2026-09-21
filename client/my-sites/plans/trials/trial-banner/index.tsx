@@ -74,7 +74,7 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 						? translate( 'Your free trial has expired' )
 						: translate( 'day left in trial', 'days left in trial', {
 								count: trialDaysLeftToDisplay,
-						  } ) }
+							} ) }
 				</span>
 			</div>
 		</Card>

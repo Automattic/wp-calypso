@@ -47,7 +47,7 @@ function getFields( {
 					? statesList.map( ( state ) => ( {
 							label: state.name,
 							value: state.code,
-					  } ) )
+						} ) )
 					: undefined,
 		},
 		{

@@ -76,11 +76,11 @@ const useDisplayCheckoutNotice = ( checkoutStatus: CheckoutStatus ) => {
 			? __(
 					'You have successfully upgraded your plan! You can now activate the theme.',
 					'wpcom-live-preview'
-			  )
+				)
 			: __(
 					"Sorry, we couldn't process your payment. Please try again later.",
 					'wpcom-live-preview'
-			  );
+				);
 	};
 
 	useEffect( () => {

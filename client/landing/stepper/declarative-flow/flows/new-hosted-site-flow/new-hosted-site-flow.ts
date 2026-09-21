@@ -210,9 +210,8 @@ const hosting: FlowV2< typeof initialize > = {
 							} );
 						} else if ( isWooPartner ) {
 							// For partners, we'll redirect to the WooCommerce admin page
-							destinationParams[
-								'redirect_to'
-							] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
+							destinationParams[ 'redirect_to' ] =
+								`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
 						}
 						// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 						const destination = addQueryArgs(

@@ -78,7 +78,7 @@ const HorizontalBarListItem = ( {
 								/>
 								<span>{ decodeEntities( item.label ) }</span>
 							</Fragment>
-					  ) )
+						) )
 					: label[ 0 ].label }
 			</>
 		);
@@ -133,7 +133,7 @@ const HorizontalBarListItem = ( {
 					! usePlainCard
 						? ( {
 								[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
-						  } as React.CSSProperties )
+							} as React.CSSProperties )
 						: {}
 				}
 				onClick={ rowClick } // only execute onClick if url is not defined, otherwise anchor click will be ignored

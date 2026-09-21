@@ -125,9 +125,8 @@ async function restoreProviderCheckpoint(
 			} );
 
 			// Capture the navigation snapshots before the restore mutates them.
-			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach(
-				( navigationId ) =>
-					providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
+			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach( ( navigationId ) =>
+				providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
 			);
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
