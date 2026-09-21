@@ -17,25 +17,33 @@ describe( 'useShouldLoadAgentsManager', () => {
 		mockedIsEnabled.mockReturnValue( true );
 	} );
 
-	it( 'loads Agents Manager on site home', () => {
-		const { result } = renderHook( () => useShouldLoadAgentsManager( 'home' ) );
+	it( 'loads Agents Manager on a site overview', () => {
+		const { result } = renderHook( () =>
+			useShouldLoadAgentsManager( 'sites-dashboard', '/sites/example.wordpress.com' )
+		);
 
 		expect( result.current ).toBe( true );
 	} );
 
 	it( 'does not load Agents Manager when the feature is disabled', () => {
 		mockedIsEnabled.mockReturnValue( false );
-		const { result } = renderHook( () => useShouldLoadAgentsManager( 'home' ) );
+		const { result } = renderHook( () =>
+			useShouldLoadAgentsManager( 'sites-dashboard', '/sites/example.wordpress.com' )
+		);
 
 		expect( result.current ).toBe( false );
 	} );
 
-	it.each( [ 'help', 'plugins', 'reader', undefined, null ] )(
-		'does not load Agents Manager for %s',
-		( sectionName ) => {
-			const { result } = renderHook( () => useShouldLoadAgentsManager( sectionName ) );
+	it.each( [
+		[ 'sites-dashboard', '/sites' ],
+		[ 'sites-dashboard', '/sites/example.wordpress.com/settings' ],
+		[ 'home', '/home/example.wordpress.com' ],
+		[ 'help', '/help' ],
+		[ undefined, '/sites/example.wordpress.com' ],
+		[ 'sites-dashboard', null ],
+	] )( 'does not load Agents Manager for %s at %s', ( sectionName, currentRoute ) => {
+		const { result } = renderHook( () => useShouldLoadAgentsManager( sectionName, currentRoute ) );
 
-			expect( result.current ).toBe( false );
-		}
-	);
+		expect( result.current ).toBe( false );
+	} );
 } );

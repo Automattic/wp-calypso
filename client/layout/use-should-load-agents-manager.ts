@@ -1,17 +1,21 @@
 import config from '@automattic/calypso-config';
 import { useMemo } from 'react';
 
-const ENABLED_SECTIONS: string[] = [ 'home' ];
+const ENABLED_ROUTES: RegExp[] = [ /^\/sites\/[^/]+\/?$/ ];
 
 /**
- * Controls which Calypso sections load Agents Manager in the staging environment.
+ * Controls which Calypso routes load Agents Manager in enabled environments.
  */
-export default function useShouldLoadAgentsManager( sectionName?: string | null ): boolean {
+export default function useShouldLoadAgentsManager(
+	sectionName?: string | null,
+	currentRoute?: string | null
+): boolean {
 	return useMemo(
 		() =>
 			config.isEnabled( 'calypso/agents-manager' ) &&
-			!! sectionName &&
-			ENABLED_SECTIONS.includes( sectionName ),
-		[ sectionName ]
+			sectionName === 'sites-dashboard' &&
+			!! currentRoute &&
+			ENABLED_ROUTES.some( ( route ) => route.test( currentRoute ) ),
+		[ currentRoute, sectionName ]
 	);
 }
