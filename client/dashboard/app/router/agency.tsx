@@ -51,6 +51,8 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
+import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
@@ -259,6 +261,21 @@ export const marketplaceHostingRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/hosting',
+	loader: async () => {
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+		if ( agency?.id ) {
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+			] );
+		}
+	},
 } );
 
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
@@ -342,7 +359,14 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The cart prices Pressable plans by whether the agency owns one.
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -482,6 +506,26 @@ export const learnRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
 		createLazyRoute( 'resources-learn' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/resources/dev-tools` – developer tools that help agencies build, test, and demo
+export const devToolsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Developer tools' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'resources/dev-tools',
+} ).lazy( () =>
+	import( '../../agency/resources/dev-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-dev-tools' )( {
 			component: d.default,
 		} )
 	)
@@ -1894,6 +1938,7 @@ export const createAgencyRoutes = () => [
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
+		devToolsRoute,
 		mcpRoute.addChildren( [
 			mcpOverviewRoute,
 			mcpReadToolsRoute,

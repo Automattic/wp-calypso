@@ -257,6 +257,57 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'resumes a session handed off for this site', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '' );
+	} );
+
+	it( 'keeps a session handed off for another site until that site is reached', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=222' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: '' } )
+			)
+		);
+		expect( getSessionId( undefined, '222' ) ).toBe( 'url-session' );
+		mockAgentManager.removeAgent.mockImplementation( () => {
+			mockAgentManager.hasAgent.mockReturnValue( false );
+		} );
+
+		rerender( manager( 222 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'url-session' } )
+		);
+	} );
+
+	it( 'ignores a handed-off session for a surface-bound agent', async () => {
+		mockAgentConfig = { agentId: 'wpcom-workflow-plugin_compass', isLoading: false };
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { sessionId: '' } )
+		);
+		expect( getSessionId( 'wpcom-workflow-plugin_compass', '111' ) ).toBe( '' );
+		expect( window.location.search ).toBe( '' );
+	} );
+
 	it( 'aligns the config with the stored session when leaving the chat view', async () => {
 		const { rerender } = render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );

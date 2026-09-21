@@ -31,6 +31,7 @@ boot( {
 			learn: true,
 			mcp: true,
 			amplify: true,
+			devTools: true,
 			sites: true,
 			plugins: true,
 			team: true,
