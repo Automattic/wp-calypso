@@ -18,7 +18,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
@@ -52,43 +51,57 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import MyPlanCard from './my-plan-card';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { WithLocalizedMomentProps } from 'calypso/components/localized-moment';
+import type { SitePlanData } from 'calypso/state/sites/plans/types';
+import type { AppState } from 'calypso/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
-class PurchasesListing extends Component {
-	static propTypes = {
-		getManagePurchaseUrlFor: PropTypes.func,
-		currentPlan: PropTypes.object,
-		isPlanExpiring: PropTypes.bool,
-		isRequestingPlans: PropTypes.bool,
-		selectedSite: PropTypes.object,
-		selectedSiteId: PropTypes.number,
-		selectedSiteSlug: PropTypes.string,
-		purchases: PropTypes.array,
-		currentUserId: PropTypes.number,
+/**
+ * `PurchasesListing` renders the site's plan alongside its Jetpack product
+ * purchases, and the two are different objects: the plan is the camelCase
+ * `SitePlanData` the Redux plans assembler builds, while the purchases are
+ * the raw snake_case ones the API serves.
+ */
+type PlanOrPurchase = SitePlanData | Purchase;
 
-		// From withLocalizedMoment() HoC
-		moment: PropTypes.func.isRequired,
+const isRawPurchase = ( planOrPurchase: PlanOrPurchase ): planOrPurchase is Purchase =>
+	'ID' in planOrPurchase;
 
-		// From localize() HoC
-		translate: PropTypes.func.isRequired,
-	};
+interface ConnectedProps {
+	currentPlan: SitePlanData | null;
+	currentUserId: number | null;
+	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
+	isCloudEligible: boolean | null | undefined;
+	isPlanExpiring: boolean;
+	isRequestingPlans: boolean;
+	purchases: Purchase[];
+	selectedSite: SiteDetails | null | undefined;
+	selectedSiteId: number | null;
+	selectedSiteSlug: string | null;
+}
 
+type Props = ConnectedProps & LocalizeProps & WithLocalizedMomentProps;
+
+class PurchasesListing extends Component< Props > {
 	isLoading() {
 		const { currentPlan, selectedSite, isRequestingPlans, isCloudEligible } = this.props;
 
 		return ! currentPlan || ! selectedSite || isRequestingPlans || undefined === isCloudEligible;
 	}
 
-	isFreePlan( purchase ) {
+	isFreePlan( planOrPurchase: PlanOrPurchase | null ) {
 		const { currentPlan } = this.props;
 
-		if ( purchase && isJetpackProduct( purchase ) ) {
+		if ( planOrPurchase && isJetpackProduct( planOrPurchase ) ) {
 			return false;
 		}
 
 		return ! currentPlan || isFreePlanProduct( currentPlan ) || isFreeJetpackPlan( currentPlan );
 	}
 
-	isProductExpiring( product ) {
+	isProductExpiring( product: Purchase ) {
 		const { moment } = this.props;
 
 		if ( ! product.expiry_date ) {
@@ -102,15 +115,18 @@ class PurchasesListing extends Component {
 		return this.props.purchases?.filter( ( purchase ) => isJetpackProduct( purchase ) ) ?? [];
 	}
 
-	getTitle( purchase ) {
+	getTitle( planOrPurchase: PlanOrPurchase ) {
 		const { currentPlan, translate } = this.props;
 
-		if ( isJetpackProduct( purchase ) ) {
-			return getDisplayName( purchase );
+		if ( isRawPurchase( planOrPurchase ) ) {
+			return getDisplayName( planOrPurchase );
 		}
 
 		if ( currentPlan ) {
 			const planObject = getPlan( currentPlan.productSlug );
+			if ( ! planObject ) {
+				return null;
+			}
 			if ( planObject.term === TERM_MONTHLY ) {
 				return (
 					<>
@@ -124,7 +140,7 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getPlanTagline( plan ) {
+	getPlanTagline( plan: SitePlanData | null ) {
 		const { translate } = this.props;
 
 		if ( plan ) {
@@ -133,7 +149,7 @@ class PurchasesListing extends Component {
 			);
 			const planObject = getPlan( plan.productSlug );
 			return (
-				planObject.getTagline?.( productPurchases ) ??
+				planObject?.getTagline?.( productPurchases ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -143,7 +159,7 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getExpirationInfoForPlan( plan ) {
+	getExpirationInfoForPlan( plan: SitePlanData ) {
 		const { purchases, translate } = this.props;
 
 		// No expiration date for free plans.
@@ -170,31 +186,33 @@ class PurchasesListing extends Component {
 			}
 		}
 
-		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
+		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : undefined;
 
 		const renewMoment =
-			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
+			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : undefined;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
-	getExpirationInfoForPurchase( purchase ) {
+	getExpirationInfoForPurchase( purchase: Purchase ) {
 		// No expiration date for free plan or partner site.
 		if ( this.isFreePlan( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
-		const expiryMoment = purchase.expiry_date ? this.props.moment( purchase.expiry_date ) : null;
+		const expiryMoment = purchase.expiry_date
+			? this.props.moment( purchase.expiry_date )
+			: undefined;
 
 		const renewMoment =
 			! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && purchase.renew_date
 				? this.props.moment( purchase.renew_date )
-				: null;
+				: undefined;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
-	getActionButton( planOrPurchase ) {
+	getActionButton( planOrPurchase: PlanOrPurchase | null ) {
 		const { selectedSiteSlug, translate, currentUserId } = this.props;
 
 		// No action button if there's no site selected.
@@ -209,9 +227,12 @@ class PurchasesListing extends Component {
 			);
 		}
 
-		// Called with the site plan from `getCurrentPlan` as well as with the raw
-		// purchases, and the two shapes name their ids differently.
-		const purchaseId = planOrPurchase.ID ?? planOrPurchase.id;
+		// The plan and the purchases name their ids differently, and each carries
+		// only half of the ownership information: the plan knows whether the
+		// current user owns it, a purchase names its owner.
+		const isPurchase = isRawPurchase( planOrPurchase );
+		const purchaseId = isPurchase ? planOrPurchase.ID : planOrPurchase.id;
+		const planIsOwnedByUser = isPurchase ? undefined : planOrPurchase.userIsOwner;
 
 		// If there's no purchase id, there's no manage purchase link so exit.
 		if ( ! purchaseId ) {
@@ -219,7 +240,7 @@ class PurchasesListing extends Component {
 		}
 
 		// For plans, show action button only to the site owners.
-		if ( ! isJetpackProduct( planOrPurchase ) && ! planOrPurchase.userIsOwner ) {
+		if ( ! isJetpackProduct( planOrPurchase ) && ! planIsOwnedByUser ) {
 			return null;
 		}
 
@@ -231,9 +252,10 @@ class PurchasesListing extends Component {
 
 		const isLocked = this.props.purchases.some( ( p ) => p.ID === purchaseId && p.is_locked );
 
-		// Only the site plan carries `autoRenew`, so the camelCase expiry helper
-		// below never sees a purchase.
+		// Only the plan carries `autoRenew`, so renewal labelling — and the
+		// camelCase expiry helper it gates — only ever applies to that shape.
 		if (
+			! isPurchase &&
 			planOrPurchase.autoRenew &&
 			! shouldAddPaymentSourceInsteadOfRenewingNow( planOrPurchase ) &&
 			! isLocked
@@ -241,11 +263,9 @@ class PurchasesListing extends Component {
 			label = translate( 'Renew now' );
 		}
 
-		// Conversely, only a purchase carries an owner id; the site plan says
-		// whether the current user owns it and nothing more.
 		const userIsPurchaseOwner =
-			planOrPurchase.userIsOwner ||
-			( currentUserId !== null && currentUserId === planOrPurchase.user_id );
+			planIsOwnedByUser ||
+			( currentUserId !== null && isPurchase && currentUserId === planOrPurchase.user_id );
 
 		return (
 			<Button
@@ -267,7 +287,7 @@ class PurchasesListing extends Component {
 		);
 	}
 
-	getPlanActionButtons( plan ) {
+	getPlanActionButtons( plan: SitePlanData ) {
 		const { translate, selectedSiteSlug: site } = this.props;
 
 		// Determine if the plan contains Backup or Scan.
@@ -305,7 +325,7 @@ class PurchasesListing extends Component {
 		);
 	}
 
-	getProductActionButtons( purchase ) {
+	getProductActionButtons( purchase: Purchase ) {
 		const { translate, selectedSiteSlug: site, isCloudEligible } = this.props;
 		const actionButton = this.getActionButton( purchase );
 
@@ -347,12 +367,12 @@ class PurchasesListing extends Component {
 		);
 	}
 
-	getHeaderChildren( purchase ) {
+	getHeaderChildren( planOrPurchase: PlanOrPurchase ) {
 		const includesBackup =
-			isJetpackBackup( purchase ) ||
-			( isPlan( purchase ) &&
+			isJetpackBackup( planOrPurchase ) ||
+			( isPlan( planOrPurchase ) &&
 				JETPACK_BACKUP_PRODUCTS.some( ( feature ) =>
-					planHasFeature( camelOrSnakeSlug( purchase ), feature )
+					planHasFeature( camelOrSnakeSlug( planOrPurchase ), feature )
 				) );
 
 		// Only Backup-inclusive products and plans have this section for now
@@ -371,7 +391,7 @@ class PurchasesListing extends Component {
 				<Card compact>
 					<strong>{ translate( 'My Plan' ) }</strong>
 				</Card>
-				{ this.isLoading() ? (
+				{ this.isLoading() || ! currentPlan ? (
 					<MyPlanCard isPlaceholder />
 				) : (
 					<MyPlanCard
@@ -388,19 +408,23 @@ class PurchasesListing extends Component {
 		);
 	}
 
-	sortBackupProducts( products ) {
+	sortBackupProducts( products: Purchase[] ) {
 		//create a new array with the backup products first then the add-ons
 		let backupIndex = -1;
-		const backupSortedArray = [];
-		const addOnProducts = [];
+		const backupSortedArray: Purchase[] = [];
+		const addOnProducts: Purchase[] = [];
 		products.forEach( ( product ) => {
-			if ( JETPACK_BACKUP_ADDON_PRODUCTS.includes( product.product_slug ) ) {
+			if (
+				( JETPACK_BACKUP_ADDON_PRODUCTS as readonly string[] ).includes( product.product_slug )
+			) {
 				if ( backupIndex === -1 ) {
 					addOnProducts.push( product );
 				} else {
 					backupSortedArray.splice( backupIndex + 1, 0, product );
 				}
-			} else if ( JETPACK_BACKUP_PRODUCTS.includes( product.product_slug ) ) {
+			} else if (
+				( JETPACK_BACKUP_PRODUCTS as readonly string[] ).includes( product.product_slug )
+			) {
 				backupSortedArray.push( product );
 				backupIndex = backupSortedArray.length - 1;
 				if ( addOnProducts.length ) {
@@ -466,7 +490,7 @@ class PurchasesListing extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( ( state: AppState ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
