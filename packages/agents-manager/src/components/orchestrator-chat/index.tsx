@@ -1403,6 +1403,12 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// Composer sends are gated by Agenttic before reaching `onSubmitWithImages`;
+			// context cards and the host bridge arrive here instead, so gate them too.
+			if ( ! credits.beforeSubmit() ) {
+				return;
+			}
+
 			await onSubmitWithImages( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
@@ -1412,7 +1418,7 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
 	const submitChatMessageFromHost = useCallback(

@@ -413,8 +413,10 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+// Returns `undefined` after a mock reset, which the wrapper reads as allowed.
+const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 jest.mock( '../../hooks/use-credits', () => ( {
-	useCredits: () => ( { beforeSubmit: () => true } ),
+	useCredits: () => ( { beforeSubmit: () => mockCreditsBeforeSubmit() !== false } ),
 } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
@@ -1450,6 +1452,37 @@ describe( 'OrchestratorChat', () => {
 				expect.objectContaining( { source: 'composer' } )
 			);
 		} );
+	} );
+
+	it( 'gates a context-card submit on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await act( async () => {} );
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'gates a host submit through the actions bridge on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
 	} );
 
 	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {

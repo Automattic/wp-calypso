@@ -65,9 +65,11 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 	const percent = clampPercent( status.percent );
 
 	if ( status.plan === 'paid' ) {
+		// The aggregate across the plan and top-up pools, hence "site credits"
+		// (the popover's heading), not the monthly allowance alone.
 		return sprintf(
-			/* translators: %d: percentage of the monthly credit allowance left */
-			__( '%d%% of monthly credits left', __i18n_text_domain__ ),
+			/* translators: %d: percentage of the site's credits left */
+			__( '%d%% of site credits left', __i18n_text_domain__ ),
 			percent
 		);
 	}

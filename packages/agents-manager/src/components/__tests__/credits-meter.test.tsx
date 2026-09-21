@@ -105,7 +105,7 @@ describe( 'CreditsMeter', () => {
 	it( 'labels the ring with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
-		const toggle = screen.getByRole( 'button', { name: '72% of monthly credits left' } );
+		const toggle = screen.getByRole( 'button', { name: '72% of site credits left' } );
 		expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );

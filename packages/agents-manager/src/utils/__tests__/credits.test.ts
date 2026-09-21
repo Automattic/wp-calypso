@@ -73,7 +73,7 @@ describe( 'getCreditsTone', () => {
 describe( 'getCreditsLabel', () => {
 	it( 'names the pool by plan', () => {
 		expect( getCreditsLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
-		expect( getCreditsLabel( paid( 72 ) ) ).toBe( '72% of monthly credits left' );
+		expect( getCreditsLabel( paid( 72 ) ) ).toBe( '72% of site credits left' );
 	} );
 } );
 

@@ -194,5 +194,8 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 		return true;
 	}, [ status, isExhausted ] );
 
-	return { trailingActions, notice, beforeSubmit };
+	return useMemo(
+		() => ( { trailingActions, notice, beforeSubmit } ),
+		[ trailingActions, notice, beforeSubmit ]
+	);
 }
