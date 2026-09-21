@@ -361,4 +361,80 @@ describe( '<DevSiteConfigurationModal>', () => {
 		// The response is the only place a development site's id comes from.
 		await waitFor( () => expect( getProvisioningSiteIds() ).toEqual( [ 42 ] ) );
 	} );
+
+	// This modal owns its own <Modal>, so it is the one that has to stay put:
+	// closing mid-creation would leave the site landing server-side with nothing
+	// left to redirect, track it or say how it went.
+	test( 'cannot be dismissed while the site is being created', async () => {
+		mockAgency();
+		mockAddressSuggestion( 'ramblingthoughts' );
+		const closeModal = jest.fn();
+		render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
+		const user = userEvent.setup();
+
+		await waitForSuggestedAddress();
+		expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeVisible();
+
+		nock( API )
+			.post( '/wpcom/v2/agency/1/sites/provision-dev-site' )
+			.delay( 200 )
+			.reply( 200, {
+				site: {
+					id: 42,
+					title: 'Rambling Thoughts',
+					url: 'http://ramblingthoughts.wpcomstaging.com',
+				},
+			} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Create site' } ) );
+
+		await waitFor( () =>
+			expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument()
+		);
+		await user.keyboard( '{Escape}' );
+		expect( closeModal ).not.toHaveBeenCalled();
+
+		await waitFor( () => expect( closeModal ).toHaveBeenCalled() );
+	} );
+
+	// Same as the paid flow: the address is only claimed by the creation itself,
+	// so a failure there has to send it back for a check.
+	test( 're-checks the suggested address when creating the site rejects it', async () => {
+		mockAgency();
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/site-suggestions' )
+			.reply( 200, { suggestions: [ { title: 'Rambling Thoughts' } ] } );
+		// The title seeds the address; the address then seeds the alternative.
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( { query } ) => query === 'rambling thoughts' )
+			.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( { query } ) => query === 'ramblingthoughts' )
+			.reply( 200, [ { domain_name: 'ramblingthoughts2.wordpress.com' } ] );
+		nock( API )
+			.persist()
+			.post( '/wpcom/v2/agency/1/validate-site-address' )
+			.reply( 200, { valid: false } );
+		nock( API )
+			.post( '/wpcom/v2/agency/1/sites/provision-dev-site' )
+			.reply( 400, { message: 'Sorry, that site address is unavailable.' } );
+
+		render( <DevSiteConfigurationModal closeModal={ jest.fn() } /> );
+		const user = userEvent.setup();
+
+		await waitForSuggestedAddress();
+
+		await user.click( screen.getByRole( 'button', { name: 'Create site' } ) );
+
+		expect(
+			await screen.findByRole( 'button', { name: 'ramblingthoughts2' }, { timeout: 3000 } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+		expect( getProvisioningSiteIds() ).toEqual( [] );
+	} );
 } );
