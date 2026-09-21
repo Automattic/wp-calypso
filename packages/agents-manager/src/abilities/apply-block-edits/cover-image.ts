@@ -16,6 +16,16 @@ const COVER_BLOCK = 'core/cover';
 // often light than dark.
 const DEFAULT_IMAGE_COLOR = '#FFF';
 
+// A stalled image would otherwise hold the whole call open, undo level included.
+const IMAGE_COLOR_TIMEOUT = 5000;
+
+const withDeadline = < T >( promise: Promise< T >, milliseconds: number ): Promise< T > =>
+	new Promise( ( resolve, reject ) => {
+		const timer = setTimeout( () => reject( new Error( 'Timed out' ) ), milliseconds );
+
+		promise.then( resolve, reject ).finally( () => clearTimeout( timer ) );
+	} );
+
 // The overlay a cover shows when none is chosen, from the block's stylesheet.
 const DEFAULT_OVERLAY_COLOR = '#000';
 
@@ -113,11 +123,11 @@ export async function syncCoverWithImage(
 
 	if ( libraries ) {
 		try {
-			imageColor = (
-				await new libraries[ 1 ].FastAverageColor().getColorAsync( url, { silent: true } )
-			).hex;
+			const color = new libraries[ 1 ].FastAverageColor().getColorAsync( url, { silent: true } );
+
+			imageColor = ( await withDeadline( color, IMAGE_COLOR_TIMEOUT ) ).hex;
 		} catch {
-			// An unreadable image keeps the default.
+			// An unreadable or stalled image keeps the default.
 		}
 	}
 

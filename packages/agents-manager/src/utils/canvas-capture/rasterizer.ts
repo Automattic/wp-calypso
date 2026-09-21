@@ -746,7 +746,9 @@ export const inlineFonts = async (
 			Array.from( block.matchAll( URL_PATTERN ) ).map( ( match ) => match[ 1 ] )
 		)
 		.filter( ( url ) => ! url.startsWith( 'data:' ) );
-	const uniqueUrls = Array.from( new Set( urls ) );
+	// Longest first: a url that starts with another (`a.woff2`, `a.woff`) must
+	// be rewritten before the shorter one can match inside it.
+	const uniqueUrls = Array.from( new Set( urls ) ).sort( ( a, b ) => b.length - a.length );
 
 	if ( ! uniqueUrls.length ) {
 		return styleText.replace( FONT_FACE_PATTERN, ( block ) => ( isUsed( block ) ? block : '' ) );

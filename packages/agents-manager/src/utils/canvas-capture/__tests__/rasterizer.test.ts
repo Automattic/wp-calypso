@@ -424,6 +424,18 @@ describe( 'inlineFonts', () => {
 		} );
 	} );
 
+	it( 'rewrites a url that another one starts with, without touching the longer one', async () => {
+		stubFont();
+
+		const css = await inlineFonts(
+			'@font-face{font-family:"A";src:url("https://x/a.woff")}' +
+				'@font-face{font-family:"A";font-weight:700;src:url("https://x/a.woff2")}'
+		);
+
+		expect( css.match( /url\("data:font\/woff2;base64,AQID"\)/g ) ).toHaveLength( 2 );
+		expect( css ).not.toContain( 'AQID2' );
+	} );
+
 	it( 'keeps every face when no used set is given', async () => {
 		stubFont();
 

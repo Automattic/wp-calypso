@@ -63,6 +63,18 @@ describe( 'syncCoverWithImage', () => {
 		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( '#FFF', false ) );
 	} );
 
+	it( 'keeps the default colour when the image never loads', async () => {
+		jest.useFakeTimers();
+		mockGetColorAsync.mockReturnValue( new Promise( () => {} ) );
+
+		const synced = sync( cover(), { url: 'new.jpg' } );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await synced;
+
+		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( '#FFF', false ) );
+		jest.useRealTimers();
+	} );
+
 	it( 'eases the dim ratio for a first image, which a full overlay would hide', async () => {
 		await sync( cover( { url: undefined, dimRatio: 100 } ), { url: 'new.jpg' } );
 
