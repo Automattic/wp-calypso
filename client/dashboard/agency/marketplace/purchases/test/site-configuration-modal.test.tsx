@@ -217,6 +217,38 @@ describe( '<SiteConfigurationModal>', () => {
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
 	} );
 
+	// An address is only verified by the check, so one that never came back must
+	// not leave the button offering to create a site at it.
+	test( 'keeps the button disabled when the address check fails', async () => {
+		mockPendingSites( [
+			{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
+		] );
+		mockAddressSuggestion( 'ramblingthoughts' );
+		const scope = nock( API )
+			.persist()
+			.post( '/wpcom/v2/agency/1/validate-site-address' )
+			.reply( 500, { message: 'Nope' } );
+		const { user } = renderModal();
+
+		await waitForSuggestedAddress();
+
+		const input = screen.getByLabelText( 'Site address' );
+		await user.clear( input );
+		await user.type( input, 'uncheckedname' );
+
+		expect( await screen.findByText( 'Checking availability…' ) ).toBeVisible();
+		await waitFor(
+			() =>
+				expect(
+					screen.getByText( 'You can connect a custom domain once the site is created.' )
+				).toBeVisible(),
+			{ timeout: 3000 }
+		);
+
+		expect( scope.isDone() ).toBe( true );
+		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+	} );
+
 	// The suggested address is taken on trust until it isn't: it is only claimed
 	// by the provision itself, so a failure there has to send it back for a check.
 	test( 're-checks the suggested address when provisioning rejects it', async () => {

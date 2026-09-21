@@ -94,7 +94,15 @@ export function useSiteAddress( agencyId: number ): SiteAddress {
 		isChecking,
 		isTaken,
 		alternative: alternative.data?.domain_name.split( '.' )[ 0 ],
-		isReady: !! address && ! formatError && ! isChecking && ! isTaken && ! suggestion.isLoading,
+		// A check that never came back leaves the address unverified, so the
+		// suggestion aside, nothing but a `valid` verdict enables the button.
+		isReady:
+			!! address &&
+			! formatError &&
+			! isChecking &&
+			! isTaken &&
+			! suggestion.isLoading &&
+			( skipCheck || validation.data?.valid === true ),
 		refreshSuggestion: () => {
 			suggestion.refetch();
 		},
