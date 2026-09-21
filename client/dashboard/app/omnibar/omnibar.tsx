@@ -15,7 +15,7 @@ import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
-import { createAiChatNodeBuilder } from './plugin-ai-chat';
+import { createAiChatNodeBuilder, ensureAiChatNode } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
@@ -67,15 +67,22 @@ export default function OmnibarContainer( {
 	cartManagerClient,
 	sectionGroup,
 	sectionName,
+	showAiChat = false,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
 	sectionGroup?: string;
 	sectionName?: string;
+	showAiChat?: boolean;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
+			<ConnectedOmnibar
+				user={ user }
+				sectionGroup={ sectionGroup }
+				sectionName={ sectionName }
+				showAiChat={ showAiChat }
+			/>
 		</ShoppingCartProvider>
 	);
 }
@@ -84,10 +91,12 @@ function ConnectedOmnibar( {
 	user,
 	sectionGroup,
 	sectionName,
+	showAiChat,
 }: {
 	user?: User;
 	sectionGroup?: string;
 	sectionName?: string;
+	showAiChat: boolean;
 } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
@@ -123,17 +132,17 @@ function ConnectedOmnibar( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
-			...( supports.help
+			...( supports.help || showAiChat
 				? { 'agents-manager-ai-chat': createAiChatNodeBuilder( sectionName ) }
 				: {} ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser, sectionName, supports.help ]
+		[ authUser, sectionName, showAiChat, supports.help ]
 	);
 
 	const adminBarNodes = useMemo(
-		() => siteNodes ?? dashboardNodes ?? [],
-		[ siteNodes, dashboardNodes ]
+		() => ensureAiChatNode( siteNodes ?? dashboardNodes ?? [], showAiChat ),
+		[ siteNodes, dashboardNodes, showAiChat ]
 	);
 
 	const baseOmnibarNodes = useMemo( () => {

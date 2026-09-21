@@ -14,6 +14,7 @@ import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useShouldLoadAgentsManager from '../use-should-load-agents-manager';
 import CommandPalette from './command-palette';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { AppConfig } from 'calypso/dashboard/app/context';
@@ -64,13 +65,16 @@ function useOmnibarBridge() {
 export default function Omnibar( {
 	sectionGroup,
 	loadHelpCenterIcon,
+	currentRoute,
 }: {
 	sectionGroup?: string;
 	loadHelpCenterIcon?: boolean;
+	currentRoute?: string;
 } ) {
 	useOmnibarBridge();
 
 	const sectionName = useSelector( getSectionName );
+	const showAiChat = useShouldLoadAgentsManager( sectionName, currentRoute );
 
 	const config: AppConfig = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
@@ -94,6 +98,7 @@ export default function Omnibar( {
 							cartManagerClient={ cartManagerClient }
 							sectionGroup={ sectionGroup }
 							sectionName={ sectionName ?? undefined }
+							showAiChat={ showAiChat }
 						/>
 					</div>
 					<CommandPalette />

@@ -10,6 +10,30 @@ import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-ai-chat.scss';
 
+const FALLBACK_AI_CHAT_NODE: AdminBarNode = {
+	id: 'agents-manager-ai-chat',
+	title: 'Agent',
+	parent: 'top-secondary',
+	href: '',
+	group: false,
+	meta: {
+		menu_title: 'Agent',
+		icon: 'sparkle',
+	},
+};
+
+/**
+ * Supplies the standard Agent entry when Calypso loads Agents Manager but the site's admin-bar
+ * response does not yet provide the Jetpack node.
+ */
+export function ensureAiChatNode( nodes: AdminBarNode[], enabled: boolean ): AdminBarNode[] {
+	if ( ! enabled || nodes.some( ( node ) => node.id === FALLBACK_AI_CHAT_NODE.id ) ) {
+		return nodes;
+	}
+
+	return [ ...nodes, FALLBACK_AI_CHAT_NODE ];
+}
+
 export function createAiChatNodeBuilder( sectionName?: string ) {
 	return ( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => ( {
 		title: undefined,

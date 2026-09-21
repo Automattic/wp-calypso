@@ -8,7 +8,7 @@ import {
 	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
 import { render, screen } from '@testing-library/react';
-import { createAiChatNodeBuilder } from '../plugin-ai-chat';
+import { createAiChatNodeBuilder, ensureAiChatNode } from '../plugin-ai-chat';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
@@ -93,5 +93,31 @@ describe( 'createAiChatNodeBuilder', () => {
 		);
 		expect( closeAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'ensureAiChatNode', () => {
+	it( 'adds the standard Agent node when enabled and missing', () => {
+		const nodes = ensureAiChatNode( [], true );
+
+		expect( nodes ).toContainEqual(
+			expect.objectContaining( {
+				id: 'agents-manager-ai-chat',
+				parent: 'top-secondary',
+				meta: { menu_title: 'Agent', icon: 'sparkle' },
+			} )
+		);
+	} );
+
+	it( 'preserves the backend Agent node when present', () => {
+		const nodes = [ AI_CHAT_NODE ];
+
+		expect( ensureAiChatNode( nodes, true ) ).toBe( nodes );
+	} );
+
+	it( 'does not add the Agent node when disabled', () => {
+		const nodes: AdminBarNode[] = [];
+
+		expect( ensureAiChatNode( nodes, false ) ).toBe( nodes );
 	} );
 } );
