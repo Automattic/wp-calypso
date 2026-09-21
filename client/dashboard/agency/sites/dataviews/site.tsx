@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import SitePreview from '../../../sites/site-preview';
 import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
@@ -38,14 +39,17 @@ export function getSiteNameField(
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { item } ) => (
-			<Link
-				to="/sites/$siteSlug"
-				params={ { siteSlug: item.url } }
-				style={ { color: 'inherit', textDecoration: 'none' } }
-				onClick={ () => onSiteClick?.( item ) }
-			>
-				{ getSiteName( item ) }
-			</Link>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<Link
+					to="/sites/$siteSlug"
+					params={ { siteSlug: item.url } }
+					style={ { color: 'inherit', textDecoration: 'none' } }
+					onClick={ () => onSiteClick?.( item ) }
+				>
+					{ getSiteName( item ) }
+				</Link>
+				{ item.a4a_is_dev_site && <Badge>{ __( 'Development' ) }</Badge> }
+			</HStack>
 		),
 	};
 }

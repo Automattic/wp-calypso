@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -14,7 +14,13 @@ const AGENCY_ID = 123;
 
 const mockSites = [
 	{ blog_id: 1, a4a_site_id: 1, url: 'first.example.com', blogname: 'First' },
-	{ blog_id: 2, a4a_site_id: 2, url: 'second.example.com', blogname: 'Second' },
+	{
+		blog_id: 2,
+		a4a_site_id: 2,
+		url: 'second.example.com',
+		blogname: 'Second',
+		a4a_is_dev_site: true,
+	},
 ] as AgencySite[];
 
 function mockEndpoints() {
@@ -102,6 +108,16 @@ describe( '<AgencySites>', () => {
 			'calypso_dashboard_agency_sites_new_site_action_click_item',
 			{ action: 'jetpack-connection' }
 		);
+	} );
+
+	test( 'marks a development site in the list', async () => {
+		render( <AgencySites /> );
+
+		const devRow = await screen.findByRole( 'row', { name: /Second/ } );
+		expect( within( devRow ).getByText( 'Development' ) ).toBeVisible();
+		expect(
+			within( screen.getByRole( 'row', { name: /First/ } ) ).queryByText( 'Development' )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'opens the development site configuration from the menu', async () => {
