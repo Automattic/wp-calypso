@@ -1,8 +1,4 @@
-import {
-	NamePulseDomainStatus,
-	type NamePulseDomainResult,
-	type NamePulseDomainUpdate,
-} from './types';
+import { NamePulseDomainStatus, type NamePulseDomainUpdate } from './types';
 
 /**
  * UNKNOWN is what a failed or timed-out batch leaves behind, so it is retried
@@ -14,11 +10,12 @@ export const needsAvailabilityCheck = ( status: NamePulseDomainStatus ) =>
 /**
  * A real-time verdict is never overwritten by a bulk zone-file one, and UNKNOWN
  * only lands on rows still WAITING, so a late timer never erases a verdict.
+ * Works for a row as well as for a stored verdict.
  */
-export const mergeResultUpdate = (
-	existing: NamePulseDomainResult,
+export const mergeResultUpdate = < T extends NamePulseDomainUpdate >(
+	existing: T,
 	update: NamePulseDomainUpdate
-): NamePulseDomainResult => {
+): T => {
 	if ( existing.is_realtime && ! update.is_realtime ) {
 		return existing;
 	}

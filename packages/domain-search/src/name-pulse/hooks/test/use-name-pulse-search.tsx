@@ -137,6 +137,31 @@ describe( 'useNamePulseSearch', () => {
 		);
 	} );
 
+	it( 'keeps the verdict of a row that leaves the grid and comes back', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, availability } = renderTypedSearch( 'test' );
+		const rowOf = ( name: string ) =>
+			[ ...result.current.topResults, ...result.current.exactList ].find(
+				( row ) => row.domain_name === name
+			);
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		await waitFor( () =>
+			expect( rowOf( 'test.com' )?.status ).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
+		const checked = rowOf( 'test.com' );
+		expect( availability ).toHaveBeenCalledTimes( 1 );
+
+		rerender( { q: 'testx' } );
+		expect( rowOf( 'test.com' ) ).toBeUndefined();
+
+		rerender( { q: 'test' } );
+		expect( rowOf( 'test.com' ) ).toEqual( checked );
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		expect( availability ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
 		jest.useFakeTimers();
 		const { result, rerender, availability } = renderTypedSearch( 'a' );

@@ -25,6 +25,15 @@ import type { NamePulseSuggestion } from '@automattic/api-core';
 
 const EMPTY_RESULTS: NamePulseDomainResult[] = [];
 
+const applyVerdicts = (
+	rows: NamePulseDomainResult[],
+	verdicts: Map< string, NamePulseDomainUpdate >
+) =>
+	rows.map( ( row ) => {
+		const verdict = verdicts.get( row.domain_name );
+		return verdict ? mergeResultUpdate( row, verdict ) : row;
+	} );
+
 /**
  * Suggestions come back pre-filtered for availability by the providers, so they
  * render as AVAILABLE straight away; the real-time check on add-to-cart is the guard.
@@ -78,34 +87,26 @@ export const useNamePulseSearch = ( query: string ) => {
 	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
 	const isLoadingTlds = isPendingTlds && showExactGrid;
 
-	const [ exactResults, setExactResults ] = useState< Map< string, NamePulseDomainResult > >(
+	// Verdicts are kept by domain name for the life of the search, so a name that
+	// leaves the grid and comes back (type a letter, delete it) keeps its price
+	// instead of reloading. Keyword rows are never bulk-checked; the real-time
+	// verdict on click is the only update they receive.
+	const [ verdicts, setVerdicts ] = useState< Map< string, NamePulseDomainUpdate > >(
 		() => new Map()
 	);
-	const exactResultsRef = useRef( exactResults );
-	exactResultsRef.current = exactResults;
-	// Keyword rows are never bulk-checked; the real-time verdict on click is the
-	// only update they receive, kept aside so a refetch does not erase it.
-	const [ keywordVerdicts, setKeywordVerdicts ] = useState< Map< string, NamePulseDomainUpdate > >(
-		() => new Map()
-	);
+	const verdictsRef = useRef( verdicts );
+	verdictsRef.current = verdicts;
 
 	const updateResult = useCallback( ( update: NamePulseDomainUpdate ) => {
-		setKeywordVerdicts( ( prev ) => new Map( prev ).set( update.domain_name, update ) );
-		setExactResults( ( prev ) => {
+		setVerdicts( ( prev ) => {
 			const existing = prev.get( update.domain_name );
+			const merged = existing ? mergeResultUpdate( existing, update ) : update;
 
-			if ( ! existing ) {
-				return prev;
-			}
-
-			const merged = mergeResultUpdate( existing, update );
 			if ( merged === existing ) {
 				return prev;
 			}
 
-			const next = new Map( prev );
-			next.set( update.domain_name, merged );
-			return next;
+			return new Map( prev ).set( update.domain_name, merged );
 		} );
 	}, [] );
 
@@ -117,29 +118,19 @@ export const useNamePulseSearch = ( query: string ) => {
 	);
 
 	useEffect( () => {
-		const previous = exactResultsRef.current;
-
-		setExactResults(
-			new Map(
-				exactRows.map( ( row ) => [ row.domain_name, previous.get( row.domain_name ) ?? row ] )
-			)
-		);
-	}, [ exactRows ] );
-
-	useEffect( () => {
 		if ( ! isSettled ) {
 			return;
 		}
 
-		const known = exactResultsRef.current;
+		const known = verdictsRef.current;
 
 		checkDomains(
 			exactRows
 				.slice( 0, initialCheckCount )
 				.map( ( row ) => row.domain_name )
 				.filter( ( name ) => {
-					const row = known.get( name );
-					return ! row || needsAvailabilityCheck( row.status );
+					const verdict = known.get( name );
+					return ! verdict?.status || needsAvailabilityCheck( verdict.status );
 				} )
 		);
 	}, [ isSettled, exactRows, initialCheckCount, checkDomains ] );
@@ -159,17 +150,20 @@ export const useNamePulseSearch = ( query: string ) => {
 			return EMPTY_RESULTS;
 		}
 
-		return toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' ).map( ( row ) => {
-			const verdict = keywordVerdicts.get( row.domain_name );
-			return verdict ? mergeResultUpdate( row, verdict ) : row;
-		} );
-	}, [ keywordActive, keywordQueryResult.data, keywordVerdicts ] );
+		return applyVerdicts(
+			toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' ),
+			verdicts
+		);
+	}, [ keywordActive, keywordQueryResult.data, verdicts ] );
 
 	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
-	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
+	const rawExactList = useMemo(
+		() => applyVerdicts( exactRows, verdicts ),
+		[ exactRows, verdicts ]
+	);
 
 	const topResults = useMemo(
 		() => getTopResults( rawExactList, topTlds ),
