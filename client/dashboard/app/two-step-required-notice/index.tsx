@@ -22,9 +22,6 @@ export function getSitesRequiringTwoStep( sites: Site[] ) {
  * Whether the two-step-required notice is eligible to show. Read at the call site so the
  * notice never decides its own visibility inside the arbiter.
  * See client/dashboard/sites/AGENTS.md.
- *
- * `two_step_enabled` rides on the authenticated user, so eligibility costs no request. It is
- * absent until wpcom deploys the field; the notice stays hidden rather than guessing.
  */
 export function useShouldShowTwoStepRequiredNotice( sites: Site[] ) {
 	const { user } = useAuth();

@@ -304,10 +304,10 @@ export default function Sites() {
 				notices={
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 						{ showTwoStepRequiredNotice && (
 							<TwoStepRequiredNotice sites={ getSitesRequiringTwoStep( sites ?? [] ) } />
 						) }
-						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
 						{ showRecoveryEmailMatchesAccountEmailNotice && (
 							<RecoveryEmailMatchesAccountEmailNotice />
 						) }
