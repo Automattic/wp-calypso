@@ -1,9 +1,10 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from '@wordpress/element';
+import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
+import { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import config from '../lib/config-api';
@@ -13,6 +14,7 @@ import {
 	getDateRange,
 	isDateRangeId,
 } from '../lib/date-ranges';
+import getExploreMoreUrl from '../lib/get-explore-more-url';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 import getSiteStatsBaseUrl from '../lib/selectors/get-site-stats-base-url';
 import setLocale from '../lib/set-locale';
@@ -20,6 +22,7 @@ import DateRangeControl from './date-range-control';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
 
 import './index.scss';
@@ -64,6 +67,7 @@ export function init() {
 
 	const statsBaseUrl = getSiteStatsBaseUrl();
 	const adminBaseUrl = getSiteAdminUrl( currentSiteId );
+	const exploreMoreUrl = getExploreMoreUrl( `${ statsBaseUrl }/stats/day/${ currentSiteId }` );
 
 	const queryClient = new QueryClient();
 
@@ -93,17 +97,20 @@ export function init() {
 					id="stats-widget-content"
 					className={ clsx( 'stats-widget-content', 'color-scheme', customTheme ) }
 				>
-					<div className="stats-widget-header">
-						<h3 className="stats-widget-header__title">{ translate( 'Overview' ) }</h3>
-						<DateRangeControl value={ rangeId } onChange={ onRangeChange } />
-					</div>
-					<MiniChart
-						siteId={ currentSiteId }
-						gmtOffset={ config( 'gmt_offset' ) }
-						statsBaseUrl={ statsBaseUrl }
-						range={ range }
-					/>
 					<div className="stats-widget-wrapper">
+						<WidgetSection
+							title={ translate( 'Overview' ) }
+							icon={ trendingUp }
+							className="stats-widget-overview"
+							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
+						>
+							<MiniChart
+								siteId={ currentSiteId }
+								gmtOffset={ config( 'gmt_offset' ) }
+								statsBaseUrl={ statsBaseUrl }
+								range={ range }
+							/>
+						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }
 							gmtOffset={ config( 'gmt_offset' ) }
@@ -120,9 +127,7 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ `${ statsBaseUrl }/stats/day/${ currentSiteId }` }>
-								{ translate( 'View all stats' ) }
-							</a>
+							<a href={ exploreMoreUrl }>{ translate( 'Explore more' ) }</a>
 						</div>
 					</div>
 				</div>

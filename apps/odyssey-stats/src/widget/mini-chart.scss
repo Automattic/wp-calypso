@@ -1,94 +1,55 @@
 @import "@automattic/typography/styles/variables";
+@import "./metric";
 
 .stats-widget-minichart {
-	border-bottom: 1px solid #c3c4c7;
 
-	// For empty chart placeholder
-	.chart.is-placeholder {
-		padding: 8px 16px;
+	// The title row carries the series colour swatch, so the pair doubles as the legend.
+	.stats-widget-metric__title {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
 
-		.chart__y-axis-marker.is-hundred {
-			display: none;
-		}
+	// Totals carry the series colour, so they double as the chart's legend.
+	.stats-widget-metrics {
+		margin-block-end: 16px;
+	}
 
-		.chart__bar {
-			&,
-			&:hover {
-				.chart__bar-section {
-					background-color: var(--color-accent-0);
-				}
-			}
+	// Matches the line weight the chart draws, so the pairing reads as the same series.
+	.stats-widget-metric__swatch {
+		display: inline-block;
+		inline-size: 16px;
+		block-size: 2px;
+		border-radius: 2px;
+	}
+
+
+	// The notice colours its icon through `color` and relies on `fill: currentColor` to
+	// paint it, which nothing on wp-admin provides; an SVG without a fill paints black.
+	// Jetpack Backup restores it the same way (`backup-detail/style.scss`). Scoped to the
+	// notice so the chart's own SVG keeps its fills.
+	.stats-widget-empty-notice {
+		// Only as wide as its message, centred, rather than a banner across the card. The component
+		// makes itself an inline-size container, which sizes it as if it had no content,
+		// so `fit-content` collapses it to its padding. Its only container query moves a
+		// title under narrow widths, and this notice has no title, so it can go.
+		container-type: normal;
+		inline-size: fit-content;
+		max-inline-size: 100%;
+		margin-inline: auto;
+		margin-block: var(--wpds-dimension-gap-lg, 16px);
+
+		svg {
+			fill: currentColor;
 		}
 	}
 
-	.chart__legend {
-		margin: 16px 0;
-		padding: 0;
+	// Fixed box for the responsive chart to measure. Without it the chart and its
+	// auto-height parent size off each other and grow without bound.
+	.stats-widget-chart {
+		inline-size: 100%;
+		overflow: hidden;
 
-		.chart__legend-options {
-			margin: auto;
-		}
 	}
 
-	.chart__legend-option {
-		.chart__legend-checkbox {
-			display: none;
-		}
-
-		.chart__legend-label.is-selectable.form-label {
-			cursor: auto;
-		}
-
-		.chart__legend-color {
-			width: 14px;
-			height: 14px;
-			vertical-align: middle;
-			margin-top: -3px;
-		}
-	}
-
-	.chart__legend-label {
-		font-size: $font-body-small;
-		font-weight: 400;
-		line-height: 24px;
-		margin-top: -3px;
-		vertical-align: middle;
-		color: var(--studio-gray-100);
-		letter-spacing: -0.02em;
-	}
-
-	.chart__y-axis-marker {
-		border-color: color-mix(in srgb, var(--color-neutral-5) 50%, transparent);
-	}
-
-	.chart__y-axis {
-		padding: 0 5px;
-	}
-
-	.chart__x-axis-label,
-	.chart__y-axis-label {
-		&:not(.chart__x-axis-width-spacer) {
-			font-size: $font-body-extra-small;
-			letter-spacing: -0.02em;
-			color: var(--color-neutral-60);
-			white-space: nowrap;
-		}
-	}
-
-	.stats__empty-state {
-		.empty-state-card {
-			padding: 24px;
-			border: 1px solid var(--studio-gray-5);
-			box-shadow: none;
-		}
-
-		.empty-state-card-heading {
-			font-size: $font-body-large;
-		}
-
-		.empty-state-card-info {
-			margin: 0;
-			color: var(--studio-gray-60);
-		}
-	}
 }

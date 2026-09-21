@@ -1,0 +1,11 @@
+// While the height eases up, the content is already at full size and would spill over
+// whatever follows, so it is clipped for the duration. `clip-path` rather than
+// `overflow: hidden`: the negative inline inset keeps the rows' hover fill, which bleeds
+// past the edges, visible. Only while growing, so focus rings are never cut off at rest —
+// and only with motion allowed, since without a transition nothing ends the growing state.
+@media not (prefers-reduced-motion) {
+	.stats-widget-grow-height.is-growing {
+		clip-path: inset(0 -16px);
+		transition: height var(--wpds-motion-duration-lg, 300ms) var(--wpds-motion-easing-subtle, cubic-bezier(0.15, 0, 0.15, 1));
+	}
+}

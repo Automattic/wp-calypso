@@ -3,136 +3,167 @@
 $offset-padding-hovering: 8px;
 
 .stats-widget-highlights {
-	.stats-widget-highlights__header {
-		display: flex;
-		justify-content: space-between;
 
-		label {
-			font-weight: 500;
-			font-size: $font-body-large;
-			line-height: 26px;
+	.stats-widget-highlights__tabs {
+		// TabPanel's own tab strip; the underline marks the active tab.
+		.components-tab-panel__tabs {
+			border-bottom: 1px solid var(--color-neutral-5);
+		}
+
+		// TabPanel has no full-width option, but the strip is a flex row and each tab draws
+		// its own indicator, so growing the tabs equally is enough to split the width.
+		.components-tab-panel__tabs-item {
+			flex: 1;
+			justify-content: center;
 		}
 	}
 
-	.stats-widget-highlights__tabs {
-		display: none;
-		margin-top: 16px;
-	}
-
-	.stats-widget-highlights__body {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		column-gap: 24px;
-		margin: 16px (-$offset-padding-hovering) 0;
-	}
 
 	.stats-widget-highlights__column {
 		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
 	}
 
-	.stats-widget-highlights-card__title {
-		display: block;
-		font-weight: 500;
-		font-size: $font-body;
-		line-height: 26px;
-		margin: 0 0 16px $offset-padding-hovering;
+
+	// Mirrors `Skeleton` from `@wordpress/ui` — same fill token, pulse and forced-colours
+	// border — without bundling that package and its Base UI dependency for a grey box.
+	// The row itself reuses the list and item classes, so it has a real row's geometry
+	// and nothing shifts when the data lands.
+	.stats-widget-highlights-card__skeleton .stats-widget-highlights-card__item {
+		align-items: center;
+		// A real row's height is its text line; the bars are shorter than that.
+		min-block-size: var(--wpds-typography-line-height-sm, 20px);
+		box-sizing: content-box;
 	}
 
+	.stats-widget-highlights-card__skeleton-bar {
+		display: block;
+		block-size: var(--wpds-dimension-size-3xs, 12px);
+		border-radius: var(--wpds-border-radius-md, 4px);
+		background-color: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+
+		@media not (prefers-reduced-motion) {
+			animation: stats-widget-skeleton-pulse 1.5s ease-in-out infinite;
+		}
+
+		@media (forced-colors: active) {
+			border: 1px solid CanvasText;
+		}
+
+		// Short of the full width, so it reads as a title rather than a rule across the row.
+		&.is-title {
+			inline-size: 60%;
+		}
+
+		// Stands in for a formatted count, as in Premium Analytics' highlights skeleton.
+		&.is-value {
+			flex-shrink: 0;
+			inline-size: 46px;
+			margin-inline-start: auto;
+		}
+	}
+
+	@keyframes stats-widget-skeleton-pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+
+		50% {
+			opacity: 0.4;
+		}
+	}
+
+	// The empty message. No inline offset: the list text it stands in for sits flush with
+	// the tabs, since the rows' hover padding is pulled back out.
 	.stats-widget-highlights-card__empty {
-		min-height: 40px;
-		margin: 0 0 0 $offset-padding-hovering;
+		margin: 0;
+		padding-block: var(--wpds-dimension-padding-lg, 16px);
 		color: var(--studio-gray-40);
 	}
 
 	.stats-widget-highlights-card__list {
 		list-style: none;
 		padding: 0;
-		margin: 0;
+		// Rows carry inline padding for their hover fill; pulling them out by the same
+		// amount keeps the text aligned with the tabs and the "See more" link.
+		margin: 8px (-$offset-padding-hovering) 0;
 
+		// wp-admin's common.css gives every `li` a 6px bottom margin; the rows' own
+		// padding already spaces them.
 		li {
-			&:not(:last-child) {
-				margin-bottom: 8px;
-			}
-
-			&:hover {
-				& > a {
-					background-color: var(--studio-gray-0);
-					border-radius: 4px;
-				}
-
-				svg {
-					display: block;
-				}
-			}
-
-			// For the wrapper padding
-			& > * {
-				padding: 4px $offset-padding-hovering;
-			}
-
-			& > a {
-				display: block;
-				position: relative;
-				color: inherit;
-				// For the svg icon
-				padding-right: 26px;
-				cursor: pointer;
-
-				&:focus {
-					outline: 0;
-					box-shadow: none;
-				}
-
-				p {
-					text-decoration: underline;
-				}
-
-				svg {
-					display: none;
-					position: absolute;
-					top: 12px;
-					right: 10px;
-				}
-			}
-
-			p {
-				margin: 0;
-
-				font-size: $font-body-small;
-				font-weight: 500;
-				letter-spacing: -0.24px;
-				line-height: 20px;
-
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-			}
-
-			span {
-				font-size: $font-body-small;
-				font-weight: 400;
-				letter-spacing: -0.24px;
-				line-height: 20px;
-				color: var(--studio-gray-60);
-			}
+			margin: 0;
 		}
 	}
 
-	.stats-widget-highlights-card__view-all {
-		margin: 16px 0 0 $offset-padding-hovering;
-		font-weight: 600;
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: -0.24px;
+	// Title on the left, figure on the right, on one line.
+	.stats-widget-highlights-card__item {
+		display: flex;
+		align-items: baseline;
+		gap: 16px;
+		padding: 6px $offset-padding-hovering;
+		border-radius: 4px;
+		font-size: var(--wpds-typography-font-size-md, 13px);
+		line-height: var(--wpds-typography-line-height-sm, 20px);
+		color: inherit;
+		text-decoration: none;
+	}
 
-		a {
-			color: inherit;
-			text-decoration: none;
+	a.stats-widget-highlights-card__item {
+		&:hover,
+		&:focus-visible {
+			background-color: var(--studio-gray-0);
 
-			&:visited {
-				color: var(--studio-gray-100);
+			.stats-widget-highlights-card__title-text {
+				text-decoration: underline;
+			}
+
+			.stats-icon {
+				visibility: visible;
 			}
 		}
+
+		&:focus {
+			outline: 0;
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) var(--wp-admin-theme-color, var(--color-accent));
+		}
+	}
+
+	.stats-widget-highlights-card__title {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		flex: 1;
+		min-width: 0;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
+
+		// Reserved even while hidden, so the title does not reflow on hover.
+		.stats-icon {
+			flex-shrink: 0;
+			visibility: hidden;
+			fill: currentColor;
+		}
+	}
+
+	.stats-widget-highlights-card__title-text {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.stats-widget-highlights-card__value {
+		flex-shrink: 0;
+		font-variant-numeric: tabular-nums;
+		font-weight: var(--wpds-typography-font-weight-emphasis, 600);
+		color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+	}
+
+	// A plain wp-admin link, like Site protection's footer link.
+	.stats-widget-highlights-card__view-all {
+		margin-block-start: var(--wpds-dimension-gap-sm, 8px);
 	}
 }

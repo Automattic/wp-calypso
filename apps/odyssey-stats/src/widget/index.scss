@@ -38,27 +38,20 @@ $segmentedControlItemBorderRadius: 4px;
 	// not load the main app's stylesheet.
 	@include stats-interactive-colors;
 
-	// Holds the range control that drives both the chart and the highlights.
-	// Picks up the padding the chart head used to carry.
-	.stats-widget-header {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		padding: 16px 24px;
-		box-sizing: border-box;
+	// None of the widget's links sit in running text, so they drop the underline the way
+	// core's own dashboard widgets do (`#dashboard-widgets li a`, `.community-events-footer a`).
+	// It returns on hover and keyboard focus so the links still respond. The Highlights rows
+	// handle their own hover, underlining only the title.
+	a {
+		text-decoration: none;
+
+		&:not(.stats-widget-highlights-card__item):is(:hover, :focus-visible) {
+			text-decoration: underline;
+		}
 	}
 
-	// Matches the Highlights section heading so the two read as siblings.
-	.stats-widget-header__title {
-		margin: 0;
-		padding: 0;
-		font-weight: 500;
-		font-size: $font-body-large;
-		line-height: 26px;
-	}
+	// Holds the range control that drives both the chart and the highlights.
+	// Picks up the padding the chart head used to carry.
 
 	// Used by the Highlights tabs.
 	.segmented-control {
@@ -112,8 +105,25 @@ $segmentedControlItemBorderRadius: 4px;
 	}
 }
 
+// The single card stack. Previously this was "everything except the full-bleed chart";
+// with all three sections carded it is simply the layout.
 .stats-widget-wrapper {
-	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	// Matches the wrapper padding, so the space between cards and around the stack reads as one rhythm.
+	gap: 8px;
+	padding: 8px;
+	// The ground the cards sit on. `--color-surface-backdrop` is the semantic token for
+	// exactly that and resolves to #f6f7f7, so it tracks the colour scheme instead of
+	// pinning a grey.
+	background-color: var(--color-surface-backdrop);
+
+	// Chained with the section's own class so it outranks the shared body padding in
+	// widget-section.scss regardless of which stylesheet loads first.
+	.stats-widget-section.stats-widget-overview .stats-widget-section__body,
+	.stats-widget-section.stats-widget-modules .stats-widget-section__body {
+		padding-block-start: 8px;
+	}
 
 	label {
 		cursor: auto;
@@ -122,36 +132,30 @@ $segmentedControlItemBorderRadius: 4px;
 }
 
 // Shared styles for the stats widget cards.
-.stats-widget-card {
-	padding: 16px;
-	color: var(--studio-gray-100);
-	background-color: var(--studio-white);
-	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
-	border-radius: 4px;
-}
+
+// Section heading shared by all three cards.
+
+
 
 .stats-widget-footer {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 24px;
+	padding: var(--wpds-dimension-padding-sm, 8px);
 
+	// Left as plain wp-admin links, like "See more" and "Anti-spam insights". Flex only so
+	// the logo link sizes to the logo: as an inline SVG it sat on the text baseline, and
+	// the room kept below it for descenders pushed it off centre in the row.
 	a {
-		display: inline-block;
-		font-style: normal;
-		font-weight: 500;
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		text-decoration-line: underline;
-		color: var(--studio-gray-100);
+		display: flex;
+		align-items: center;
 	}
 }
 
-@container (max-width: #{$break-mobile}) {
-	@include stats-widget-single-column-view;
-}
-
-@media only screen and (max-width: $break-small) {
+// Container query only. What decides whether the metrics fit is the widget's own width,
+// not the viewport's — the widget is as narrow in a two-column desktop dashboard as it is
+// on a phone. The viewport-based rule this replaces fired at 600px and disagreed with the
+// container rule at 480px, so the same widget stacked or not depending on which won.
+@container (max-width: #{$stats-widget-stack-width}) {
 	@include stats-widget-single-column-view;
 }

@@ -1,20 +1,16 @@
-import { SegmentedControl } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Icon, external } from '@wordpress/icons';
+import { TabPanel } from '@wordpress/components';
+import { Icon, chartBar, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState, FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
-import {
-	DATE_RANGE_LAST_7_DAYS,
-	DATE_RANGE_LAST_30_DAYS,
-	DATE_RANGE_LAST_12_MONTHS,
-	DateRange,
-	DateRangeId,
-} from '../lib/date-ranges';
+import { DateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
+import GrowHeight from './grow-height';
+import WidgetSection from './widget-section';
 
 import './highlights.scss';
 
@@ -30,7 +26,6 @@ interface TopColumnProps {
 	items: Array< HighLightItem >;
 	viewAllUrl: string;
 	viewAllText: string;
-	title: string;
 	isLoading: boolean;
 	statsBaseUrl: string;
 	siteId: number;
@@ -68,21 +63,32 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	// The bare figure is what the design shows; screen readers get the worded version so
+	// the number is not announced without its unit.
 	const renderedItem = (
-		<div>
-			<p>{ item.title }</p>
-			<span>
+		<>
+			<span className="stats-widget-highlights-card__title">
+				<span className="stats-widget-highlights-card__title-text">{ item.title }</span>
+				{ isItemLink && isItemLinkExternal && (
+					<Icon className="stats-icon" icon={ external } size={ 16 } />
+				) }
+			</span>
+			<span className="stats-widget-highlights-card__value" aria-hidden="true">
+				{ formatNumber( item.views ) }
+			</span>
+			<span className="screen-reader-text">
 				{ translate( '%(views)s Views', {
 					args: {
 						views: formatNumber( item.views ),
 					},
 				} ) }
 			</span>
-		</div>
+		</>
 	);
 
 	return isItemLink ? (
 		<a
+			className="stats-widget-highlights-card__item"
 			href={
 				isItemLinkExternal ? externalLink( item ) : postAndPageLink( statsBaseUrl, siteId, item.id )
 			}
@@ -97,10 +103,9 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 			} ) }
 		>
 			{ renderedItem }
-			{ isItemLinkExternal && <Icon className="stats-icon" icon={ external } size={ 18 } /> }
 		</a>
 	) : (
-		renderedItem
+		<div className="stats-widget-highlights-card__item">{ renderedItem }</div>
 	);
 };
 
@@ -108,7 +113,6 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	items,
 	viewAllUrl,
 	viewAllText,
-	title,
 	isLoading,
 	statsBaseUrl,
 	siteId,
@@ -120,27 +124,37 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 
 	return (
 		<div className={ clsx( 'stats-widget-highlights-card', className ) }>
-			<label className="stats-widget-highlights-card__title">{ title }</label>
-			{ items.length === 0 && (
-				<p className="stats-widget-highlights-card__empty">
-					{ isLoading ? `${ translate( 'Loading' ) }...` : translate( 'No data to show' ) }
-				</p>
-			) }
-			{ items.length > 0 && (
-				<ul className="stats-widget-highlights-card__list">
-					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
-						<li key={ idx }>
-							<ItemWrapper
-								item={ item }
-								statsBaseUrl={ statsBaseUrl }
-								siteId={ siteId }
-								isItemLink={ isItemLink }
-								isItemLinkExternal={ isItemLinkExternal }
-							/>
-						</li>
-					) ) }
-				</ul>
-			) }
+			<GrowHeight>
+				{ items.length === 0 && isLoading && (
+					// One row, not a full list: how many items come back is unknown, and the one
+					// thing a loading list can promise is that there is at least one.
+					<div className="stats-widget-highlights-card__list stats-widget-highlights-card__skeleton">
+						<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+						<div className="stats-widget-highlights-card__item" aria-hidden="true">
+							<span className="stats-widget-highlights-card__skeleton-bar is-title" />
+							<span className="stats-widget-highlights-card__skeleton-bar is-value" />
+						</div>
+					</div>
+				) }
+				{ items.length === 0 && ! isLoading && (
+					<p className="stats-widget-highlights-card__empty">{ translate( 'No data to show' ) }</p>
+				) }
+				{ items.length > 0 && (
+					<ul className="stats-widget-highlights-card__list">
+						{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
+							<li key={ idx }>
+								<ItemWrapper
+									item={ item }
+									statsBaseUrl={ statsBaseUrl }
+									siteId={ siteId }
+									isItemLink={ isItemLink }
+									isItemLinkExternal={ isItemLinkExternal }
+								/>
+							</li>
+						) ) }
+					</ul>
+				) }
+			</GrowHeight>
 			<div className="stats-widget-highlights-card__view-all">
 				<a href={ viewAllUrl }>{ viewAllText }</a>
 			</div>
@@ -152,31 +166,8 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	const translate = useTranslate();
 	const { unit, quantity } = range;
 
-	// Worded per range rather than interpolated, so translators get a whole,
-	// naturally-pluralised phrase instead of a number in a sentence fragment.
-	const headingTitles: Record< DateRangeId, string > = {
-		[ DATE_RANGE_LAST_7_DAYS ]: translate( '7 Day Highlights' ),
-		[ DATE_RANGE_LAST_30_DAYS ]: translate( '30 Day Highlights' ),
-		[ DATE_RANGE_LAST_12_MONTHS ]: translate( '12 Month Highlights' ),
-	};
-
-	const headingTitle = headingTitles[ range.id ];
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
-
-	const moduleTabs = [
-		{
-			value: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-			label: topPostsAndPagesTitle,
-		},
-		{
-			value: HIGHLIGHT_TAB_TOP_REFERRERS,
-			label: topReferrersTitle,
-		},
-	];
-
-	// Default to the first tab `topPostsAndPages`.
-	const [ selectedTab, setSelectedTab ] = useState( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
@@ -200,57 +191,66 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 		queryDate
 	);
 
+	// Nothing to show in either list, once both have answered: drop the section rather
+	// than leave a card of two empty tabs. While either is loading it stays, showing its
+	// skeleton. A single empty list keeps its tab and says so.
+	const isEmpty =
+		! isFetchingPostsAndPages &&
+		! isFetchingReferrers &&
+		topPostsAndPages.length === 0 &&
+		topReferrers.length === 0;
+
+	if ( isEmpty ) {
+		return null;
+	}
+
+	const tabs = [
+		{
+			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
+			title: topPostsAndPagesTitle,
+			items: topPostsAndPages,
+			isLoading: isFetchingPostsAndPages,
+			viewAllUrl: viewAllPostsStatsUrl,
+			isItemLinkExternal: false,
+		},
+		{
+			name: HIGHLIGHT_TAB_TOP_REFERRERS,
+			title: topReferrersTitle,
+			items: topReferrers,
+			isLoading: isFetchingReferrers,
+			viewAllUrl: viewAllReferrerStatsUrl,
+			isItemLinkExternal: true,
+		},
+	];
+
 	return (
-		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
-			<div className="stats-widget-highlights__header">
-				<label>{ headingTitle }</label>
-			</div>
-			<div className="stats-widget-highlights__tabs">
-				<SegmentedControl primary>
-					{ moduleTabs.map( ( tab ) => {
-						return (
-							<SegmentedControl.Item
-								key={ tab.value }
-								selected={ tab.value === selectedTab }
-								onClick={ () => setSelectedTab( tab.value ) }
-							>
-								{ tab.label }
-							</SegmentedControl.Item>
-						);
-					} ) }
-				</SegmentedControl>
-			</div>
-			<div className="stats-widget-highlights__body">
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-					} ) }
-					title={ topPostsAndPagesTitle }
-					viewAllUrl={ viewAllPostsStatsUrl }
-					viewAllText={ translate( 'View all posts & pages stats' ) }
-					items={ topPostsAndPages }
-					isLoading={ isFetchingPostsAndPages }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-				/>
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
-					} ) }
-					title={ topReferrersTitle }
-					viewAllUrl={ viewAllReferrerStatsUrl }
-					viewAllText={ translate( 'View all referrer stats' ) }
-					items={ topReferrers }
-					isLoading={ isFetchingReferrers }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-					isItemLinkExternal
-				/>
-			</div>
-		</div>
+		<WidgetSection
+			title={ translate( 'Popular content & referrers' ) }
+			icon={ chartBar }
+			className="stats-widget-highlights"
+		>
+			<TabPanel
+				className="stats-widget-highlights__tabs"
+				tabs={ tabs.map( ( { name, title } ) => ( { name, title } ) ) }
+			>
+				{ ( tab ) => {
+					const active = tabs.find( ( candidate ) => candidate.name === tab.name ) ?? tabs[ 0 ];
+
+					return (
+						<TopColumn
+							className="stats-widget-highlights__column"
+							viewAllUrl={ active.viewAllUrl }
+							viewAllText={ translate( 'See more' ) }
+							items={ active.items }
+							isLoading={ active.isLoading }
+							statsBaseUrl={ statsBaseUrl }
+							siteId={ siteId }
+							isItemLink
+							isItemLinkExternal={ active.isItemLinkExternal }
+						/>
+					);
+				} }
+			</TabPanel>
+		</WidgetSection>
 	);
 }

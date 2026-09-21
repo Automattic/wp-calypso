@@ -1,0 +1,70 @@
+@import "@automattic/typography/styles/variables";
+
+// Height of the tallest thing a section header can hold: the compact SelectControl.
+// Pinning the heading group to it keeps every section header the same height, whether
+// or not that section has a control.
+$section-header-content-height: 32px;
+
+.stats-widget-section {
+
+	// CardHeader is already a flex row that separates its children, so the title and
+	// the optional action only need their own alignment.
+	.stats-widget-section__header {
+		align-items: center;
+		min-block-size: 0;
+	}
+
+	// CardBody's `size` prop only offers 0 / 8 / 16 / 24 / 32px, so 12px cannot come from
+	// a token. Overriding here keeps the intent visible; our two classes outrank the
+	// component's single emotion class, so no !important is needed.
+	.stats-widget-section__body {
+		padding: 0 12px 12px;
+	}
+
+	// Icon and title travel together on the left; CardHeader pushes the action right.
+	.stats-widget-section__heading {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-block-size: $section-header-content-height;
+
+		// The icon is an inline SVG, so it otherwise sits on the text baseline rather
+		// than centring against it. Blockifying lets `align-items` do its job, and the
+		// shrink guard keeps it square if the title wraps.
+		// `chartBar`'s ink sits between y=5 and y=20 of its 24px box, so its optical
+		// centre is ~1px below the text's cap-height centre. Geometric centring is
+		// already correct; this is the optical correction on top of it.
+		svg {
+			display: block;
+			flex-shrink: 0;
+			margin-block-start: -1px;
+		}
+	}
+
+}
+
+// wp-admin styles dashboard headings with `#dashboard-widgets h3` — an ID plus an
+// element, so (1,0,1). Odyssey's CSS is emitted behind a `:where()` scope that adds no
+// specificity, which leaves our class selectors at (0,2,0) and losing: the title was
+// being forced to 14px/400 with a `0 12px 8px` margin.
+//
+// `:is()` takes the specificity of its heaviest argument, so naming the widget's own
+// mount id lifts this to (1,1,0) and wins, without an `!important` or an arms race on
+// every property. The h3 stays a real heading, which is what screen readers want under
+// the postbox's own h2.
+// The id is WordPress's, set by `WP_Dashboard_Odyssey_Widget::render()`, so it cannot
+// be renamed to satisfy the kebab-case rule.
+/* stylelint-disable-next-line selector-id-pattern */
+:is(#dashboard_stats, .stats-widget-section) .stats-widget-section__title {
+	margin: 0;
+	padding: 0;
+	font-family: inherit;
+	// Heading LG from the design, 15px/20px. Section headers are the only text in the
+	// widget at this size; everything else but the metric figures is 13px.
+	font-size: var(--wpds-typography-font-size-lg, 15px);
+	font-weight: 500;
+	line-height: var(--wpds-typography-line-height-sm, 20px);
+	// The design specifies #1E1E1E; `--studio-gray-90` (#1d2327) is the nearest token,
+	// and is also the colour wp-admin gives dashboard headings.
+	color: var(--studio-gray-90);
+}
