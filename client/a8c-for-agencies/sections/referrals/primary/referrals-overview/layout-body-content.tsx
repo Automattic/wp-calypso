@@ -163,7 +163,7 @@ export default function LayoutBodyContent( {
 												}
 											},
 										},
-								  ]
+									]
 								: []
 						}
 						renderClient={ ( item ) => (

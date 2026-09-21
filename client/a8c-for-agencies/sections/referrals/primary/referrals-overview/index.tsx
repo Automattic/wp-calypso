@@ -106,7 +106,7 @@ export default function ReferralsOverview() {
 							type: prevView.type,
 							titleField: prevView.titleField,
 							fields: prevView.fields,
-					  }
+						}
 					: nextView
 			);
 		},

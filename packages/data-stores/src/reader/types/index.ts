@@ -158,8 +158,7 @@ export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
 >;
 
 export type SiteSubscriptionDetailsResponse< DateT = Date > =
-	| SiteSubscriptionDetails< DateT >
-	| SiteSubscriptionDetailsErrorResponse;
+	SiteSubscriptionDetails< DateT > | SiteSubscriptionDetailsErrorResponse;
 
 export interface FeedItem {
 	ID: string;

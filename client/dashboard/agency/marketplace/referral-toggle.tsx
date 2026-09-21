@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { isAgencyApproved } from './is-agency-approved';
 import { useMarketplaceType } from './use-marketplace-type';
 import useReferralsGuide from './use-referrals-guide';
 import { useTermPricing } from './use-term-pricing';
@@ -27,8 +28,7 @@ export default function ReferralToggle() {
 	const { data: guideSeen, isFetched } = useQuery( userPreferenceQuery( GUIDE_SEEN_PREFERENCE ) );
 	const { mutate: saveGuideSeen } = useMutation( userPreferenceMutation( GUIDE_SEEN_PREFERENCE ) );
 
-	// Old agencies didn't have approval_status set, so we need to account for that.
-	const isAgencyApproved = agency?.approval_status === 'approved' || agency?.approval_status === '';
+	const agencyApproved = isAgencyApproved( agency );
 
 	useEffect( () => {
 		if ( marketplaceType === 'referral' && isFetched && ! guideSeen ) {
@@ -53,7 +53,7 @@ export default function ReferralToggle() {
 				<ToggleControl
 					__nextHasNoMarginBottom
 					checked={ marketplaceType === 'referral' }
-					disabled={ ! isAgencyApproved }
+					disabled={ ! agencyApproved }
 					label={ __( 'Refer products' ) }
 					onChange={ handleToggle }
 				/>

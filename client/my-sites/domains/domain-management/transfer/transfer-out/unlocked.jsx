@@ -123,11 +123,11 @@ class Unlocked extends Component {
 							'Our Happiness Engineers have been notified about ' +
 								'your transfer request and will be in touch shortly to help ' +
 								'you complete the process.'
-					  )
+						)
 					: translate(
 							'Please request an authorization code to notify our ' +
 								'Happiness Engineers of your intention.'
-					  ) }
+						) }
 			</p>
 		);
 	}

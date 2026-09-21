@@ -332,6 +332,16 @@ describe( 'Region Address Fieldsets', () => {
 			expect( stateSelect ).toBeInTheDocument();
 		} );
 
+		test( 'should leave the select unselected until a state is chosen', () => {
+			const fields = RegionAddressFieldsets( mockStatesListCA, 'CA' );
+			const stateField = fields.find( ( f ) => f.id === 'state' );
+
+			render( <TestFieldEdit field={ stateField } data={ { state: '' } } /> );
+
+			expect( screen.getByLabelText( 'Select Province' ) ).toHaveValue( '' );
+			expect( screen.getByRole( 'option', { name: 'Select Province' } ) ).toHaveValue( '' );
+		} );
+
 		test( 'should populate select options from states list', () => {
 			const fields = RegionAddressFieldsets( mockStatesListUS, 'US' );
 			const stateField = fields.find( ( f ) => f.id === 'state' );

@@ -55,7 +55,7 @@ export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessa
 								branch: deployment.branch_name,
 								repo: deployment.repository_name,
 							}
-					  )
+						)
 					: getManualDeploymentMessage() }
 			</i>
 		</td>

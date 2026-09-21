@@ -1,21 +1,14 @@
-import { isSeenPostsAvailable, readTeamsQuery, userPreferenceQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { userPreferenceQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PreferencesReader( { density }: { density?: Density } ) {
-	// Not suspense: a slow or failing /read/teams must not block the
-	// preferences index, so the section stays hidden until teams resolve.
-	const { data: teamsData } = useQuery( readTeamsQuery() );
 	const { data: isSeenPostsEnabled } = useSuspenseQuery(
 		userPreferenceQuery( 'reader-seen-posts' )
 	);
-
-	if ( ! isSeenPostsAvailable( teamsData?.teams ) ) {
-		return null;
-	}
 
 	const badges = [
 		{

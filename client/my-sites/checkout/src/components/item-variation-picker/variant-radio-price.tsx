@@ -134,10 +134,10 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const discountPercentage = compareToInfo
-		? calculateDiscountPercentage(
+		? ( calculateDiscountPercentage(
 				getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
 				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
-		  ) ?? 0
+			) ?? 0 )
 		: 0;
 
 	// Calculate months per bill period with introductory offers.

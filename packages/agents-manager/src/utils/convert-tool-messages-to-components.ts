@@ -387,7 +387,7 @@ export default function convertToolMessagesToComponents( {
 								componentType: contentType,
 								toolId: textData.tool_id,
 								...( toolCallId ? { toolCallId } : {} ),
-						  } )
+							} )
 						: undefined,
 				};
 			}
@@ -401,7 +401,7 @@ export default function convertToolMessagesToComponents( {
 									type: 'text' as const,
 									text: summaryText,
 								},
-						  ]
+							]
 						: [] ),
 					{
 						type: 'component' as const,
@@ -427,7 +427,7 @@ export default function convertToolMessagesToComponents( {
 										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
 									},
 								},
-						  ]
+							]
 						: [] ),
 				],
 				disabled: isStale,
@@ -484,13 +484,13 @@ export default function convertToolMessagesToComponents( {
 								type: 'text' as const,
 								text: __( '✓ No changes needed', __i18n_text_domain__ ),
 							},
-					  ]
+						]
 					: [
 							{
 								type: 'text' as const,
 								text: summary as string,
 							},
-					  ];
+						];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,

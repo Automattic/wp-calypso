@@ -553,7 +553,7 @@ export default function FeedbackList( {
 									/* translators: %d is the number of one-click fixes available. */
 									__( 'Apply all (%d)', __i18n_text_domain__ ),
 									applyAllTargets.length
-							  ) }
+								) }
 					</button>
 				</footer>
 			) }

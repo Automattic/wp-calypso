@@ -104,11 +104,11 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {
 			type: T;
 			payload?: P;
-	  }
+		}
 	: {
 			type: T;
 			payload?: P;
-	  };
+		};
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
@@ -174,9 +174,7 @@ export type PaymentProcessorRedirect = {
 };
 
 export type PaymentProcessorResponse =
-	| PaymentProcessorError
-	| PaymentProcessorSuccess
-	| PaymentProcessorRedirect;
+	PaymentProcessorError | PaymentProcessorSuccess | PaymentProcessorRedirect;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -213,28 +211,35 @@ export interface TransactionStatusPayloads {
 	url?: string;
 }
 
-export interface TransactionStatusPayloadNotStarted
-	extends Pick< TransactionStatusPayloads, 'status' > {
+export interface TransactionStatusPayloadNotStarted extends Pick<
+	TransactionStatusPayloads,
+	'status'
+> {
 	status: TransactionStatus.NOT_STARTED;
 }
 
-export interface TransactionStatusPayloadPending
-	extends Pick< TransactionStatusPayloads, 'status' > {
+export interface TransactionStatusPayloadPending extends Pick<
+	TransactionStatusPayloads,
+	'status'
+> {
 	status: TransactionStatus.PENDING;
 }
 
-export interface TransactionStatusPayloadComplete
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'response' > > {
+export interface TransactionStatusPayloadComplete extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'response' >
+> {
 	status: TransactionStatus.COMPLETE;
 }
 
-export interface TransactionStatusPayloadRedirecting
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'url' > > {
+export interface TransactionStatusPayloadRedirecting extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'url' >
+> {
 	status: TransactionStatus.REDIRECTING;
 }
 
-export interface TransactionStatusPayloadError
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'error' > > {
+export interface TransactionStatusPayloadError extends Required<
+	Pick< TransactionStatusPayloads, 'status' | 'error' >
+> {
 	status: TransactionStatus.ERROR;
 }
 

@@ -157,7 +157,7 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 						translate( 'Tax', {
 							context: "Shortened form of 'Sales Tax', not a country-specific tax name",
 						} )
-				  );
+					);
 			return {
 				id,
 				label: label + businessTaxSuffix,

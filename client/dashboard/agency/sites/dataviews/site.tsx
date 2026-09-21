@@ -1,9 +1,13 @@
 import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
+import SitePreview from '../../../sites/site-preview';
+import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
-import type { AgencySite } from '@automattic/api-core';
+import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export function getSiteIconField( viewType?: string ): Field< AgencySite > {
@@ -54,9 +58,56 @@ export function getSiteUrlField(): Field< AgencySite > {
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getDisplayUrl( item ),
 		render: ( { item } ) => (
-			<ExternalLink className="dataviews-url-field" href={ getSiteUrl( item ) }>
+			<ExternalLink
+				className="dataviews-url-field"
+				style={ titleFieldTextOverflowStyles }
+				href={ getSiteUrl( item ) }
+			>
 				{ getDisplayUrl( item ) }
 			</ExternalLink>
 		),
+	};
+}
+
+function Preview( { site }: { site: AgencySite } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
+	return (
+		<div
+			style={ {
+				display: 'block',
+				height: '100%',
+				width: '100%',
+				borderRadius: 'inherit',
+				overflow: 'hidden',
+			} }
+		>
+			{ resizeListener }
+			{ width && (
+				<SitePreview
+					url={ getSiteUrl( site ).replace( /\/$/, '' ) }
+					scale={ width / 1200 }
+					height={ 1200 }
+				/>
+			) }
+		</div>
+	);
+}
+
+export function getPreviewField(): Field< AgencySite > {
+	return {
+		id: 'preview',
+		label: __( 'Preview' ),
+		render: ( { item } ) => <Preview site={ item } />,
+		enableHiding: false,
+		enableSorting: false,
+	};
+}
+
+// The WordPress.com "Finish setup" nag also shows for public and Pressable
+// agency sites, so agency rows only show the label.
+export function withoutLaunchNag( field: Field< Site > ): Field< Site > {
+	return {
+		...field,
+		render: ( { item } ) => <>{ getVisibilityLabels()[ getSiteVisibility( item ) ] }</>,
 	};
 }

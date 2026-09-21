@@ -1,3 +1,9 @@
+import {
+	activeAgencyQuery,
+	agencyDevLicensesQuery,
+	agencyProductsQuery,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalDivider as Divider,
@@ -8,13 +14,31 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { isAgencyApproved } from '../is-agency-approved';
+import { getWpcomPlan } from '../lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../paths';
+import CartMenu from '../products/cart-menu';
+import { useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
+import { useMarketplaceType } from '../use-marketplace-type';
+import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
+import { useTermPricing } from '../use-term-pricing';
+import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableOffers from './pressable-offer-banner';
+import PressableSection from './pressable-section';
+import PressableUsageLimitNotice from './pressable-usage-limit-notice';
+import VipSection from './vip-section';
+import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
+import type { AgencyProduct } from '@automattic/api-core';
+
+import './style.scss';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -43,17 +67,61 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the per-host sections from the i3 design are built.
-const PLACEHOLDERS: Record< HostingSection, string > = {
-	wpcom: 'WordPress.com hosting content will appear here.',
-	pressable: 'Pressable hosting content will appear here.',
-	vip: 'WordPress VIP hosting content will appear here.',
-};
-
+// TODO: Still missing from the classic Hosting page:
+// - the agency approval notice (pending / approved / rejected)
+// - the guided tour
 export default function MarketplaceHosting( { section }: { section: HostingSection } ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
+	const { marketplaceType } = useMarketplaceType();
+	const { termPricing } = useTermPricing();
+	const isReferralMode = marketplaceType === 'referral';
 	const hostingBrands = getHostingBrands();
+
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id ?? 0;
+	const agencyApproved = isAgencyApproved( agency );
+
+	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
+	const { data: devLicenses } = useQuery( {
+		...agencyDevLicensesQuery( agencyId ),
+		enabled: agencyId > 0,
+	} );
+	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
+
+	const wpcomPlan = useMemo( () => getWpcomPlan( allProducts ?? [] ), [ allProducts ] );
+
+	const {
+		plan: agencyPressablePlan,
+		products: pressableProducts,
+		ownership: pressableOwnership,
+		isReady: isPressableReady,
+	} = useAgencyPressablePlan();
+	const effectivePressableOwnership = getEffectivePressableOwnership(
+		pressableOwnership,
+		agencyPressablePlan,
+		isReferralMode
+	);
+
+	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
+	const [ isCartOpen, setIsCartOpen ] = useState( false );
+
+	// A hosting plan replaces the plan of the same family already in the cart.
+	const addToCart = ( plan: AgencyProduct, quantity: number ) => {
+		const sameFamilySlugs = cartItems
+			.map( ( item ) => allProducts?.find( ( product ) => product.slug === item.slug ) )
+			.filter( ( product ): product is AgencyProduct => !! product )
+			.filter( ( product ) => product.family_slug === plan.family_slug )
+			.map( ( product ) => product.slug );
+		swapItems( sameFamilySlugs, { slug: plan.slug, quantity } );
+		setIsCartOpen( true );
+		recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+			quantity,
+			item: plan.family_slug,
+			purchase_mode: marketplaceType,
+			term_pricing: termPricing,
+		} );
+	};
 
 	const handleSectionChange = ( tab: string | null | undefined ) => {
 		if ( ! tab || tab === section ) {
@@ -61,6 +129,42 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		}
 		recordTracksEvent( 'calypso_a4a_marketplace_hosting_tab_click', { tab } );
 		navigate( { to: getMarketplaceHostingSectionRoute( tab as HostingSection ) } );
+	};
+
+	const renderSection = ( brand: HostingSection ) => {
+		if ( brand === 'wpcom' ) {
+			if ( ! wpcomPlan ) {
+				return null;
+			}
+			return (
+				<WpcomSection
+					plan={ wpcomPlan }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					ownedSites={ ownedWpcomSites }
+					isOwnedSitesReady={ isOwnedSitesReady }
+					isAgencyApproved={ agencyApproved }
+					availableDevSites={ devLicenses?.available }
+					onAddToCart={ addToCart }
+				/>
+			);
+		}
+		if ( brand === 'pressable' ) {
+			if ( ! isPressableReady ) {
+				return null;
+			}
+			return (
+				<PressableSection
+					products={ pressableProducts }
+					existingPlan={ agencyPressablePlan }
+					ownership={ effectivePressableOwnership }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					onAddToCart={ addToCart }
+				/>
+			);
+		}
+		return <VipSection isReferralMode={ isReferralMode } />;
 	};
 
 	return (
@@ -71,10 +175,27 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 					description={ __(
 						'Choose the right hosting for each client, from single sites to enterprise platforms.'
 					) }
-					actions={ <ReferralToggle /> }
+					actions={
+						<HStack spacing={ 4 } expanded={ false }>
+							<ReferralToggle />
+							<CartMenu
+								items={ cartItems }
+								products={ allProducts ?? [] }
+								term={ termPricing }
+								isReferralMode={ isReferralMode }
+								isAgencyApproved={ agencyApproved }
+								open={ isCartOpen }
+								onToggle={ setIsCartOpen }
+								onRemove={ removeItem }
+								onCheckout={ clearCart }
+							/>
+						</HStack>
+					}
 				/>
 			}
 		>
+			<PressableUsageLimitNotice agency={ agency } />
+			<PressableOffers agency={ agency } />
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
 					<HStack justify="space-between" wrap>
@@ -96,7 +217,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				</VStack>
 				{ hostingBrands.map( ( brand ) => (
 					<Tabs.TabPanel key={ brand.key } tabId={ brand.key }>
-						<Text variant="muted">{ PLACEHOLDERS[ brand.key ] }</Text>
+						{ brand.key === section && renderSection( brand.key ) }
 					</Tabs.TabPanel>
 				) ) }
 			</Tabs>

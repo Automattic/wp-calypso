@@ -1,15 +1,21 @@
 import {
 	assignJetpackLicenseToSite,
+	fetchAgencyDevLicenses,
 	fetchJetpackLicenseCounts,
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
+	fetchJetpackLicensesPage,
 	issueJetpackLicenses,
 	revokeJetpackLicense,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { agencySitesQueryKey } from './jetpack-agency-sites';
 import { queryClient } from './query-client';
-import type { FetchJetpackLicensesOptions, IssueJetpackLicensesInput } from '@automattic/api-core';
+import type {
+	FetchJetpackLicensesOptions,
+	FetchJetpackLicensesPageOptions,
+	IssueJetpackLicensesInput,
+} from '@automattic/api-core';
 
 export const jetpackAgencyLicensesQuery = (
 	agencyId: number,
@@ -20,13 +26,29 @@ export const jetpackAgencyLicensesQuery = (
 		queryFn: () => fetchJetpackLicenses( agencyId, options ),
 	} );
 
+// One page of licenses, with the totals the caller needs to paginate.
+export const paginatedJetpackAgencyLicensesQuery = (
+	agencyId: number,
+	options: FetchJetpackLicensesPageOptions
+) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'paginated', options ],
+		queryFn: () => fetchJetpackLicensesPage( agencyId, options ),
+	} );
+
 export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'counts' ],
 		queryFn: () => fetchJetpackLicenseCounts( agencyId ),
 	} );
 
-function invalidateAgencyLicenses( agencyId: number | undefined ) {
+export const agencyDevLicensesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev-licenses' ],
+		queryFn: () => fetchAgencyDevLicenses( agencyId ),
+	} );
+
+export function invalidateAgencyLicenses( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
 	} );

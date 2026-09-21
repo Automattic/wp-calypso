@@ -106,12 +106,7 @@ export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;
 export type IntervalHandle = ReturnType< typeof setInterval >;
 export type JSONSerializable =
-	| null
-	| boolean
-	| number
-	| string
-	| JSONSerializable[]
-	| { [ prop: string ]: JSONSerializable };
+	null | boolean | number | string | JSONSerializable[] | { [ prop: string ]: JSONSerializable };
 
 /**
  * Calypso application state

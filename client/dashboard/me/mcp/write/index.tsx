@@ -99,8 +99,7 @@ export default function McpWrite() {
 
 	const handlePageToggle = ( enabled: boolean ) => {
 		const overrides = getOverridesToMatch( allTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents: Record< string, boolean > = { [ TOOL_CATEGORY ]: enabled };
 		if ( ! enabled ) {
 			groupDescriptors.forEach( ( group ) => {
@@ -132,8 +131,7 @@ export default function McpWrite() {
 		enabled: boolean
 	) => {
 		const overrides = getOverridesToMatch( groupTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents = groupName
 			? { [ groupIntentKey( TOOL_CATEGORY, groupName ) ]: enabled }
 			: undefined;

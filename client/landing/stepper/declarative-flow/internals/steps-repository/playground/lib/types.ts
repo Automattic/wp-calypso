@@ -59,8 +59,7 @@ export type Blueprint = BlueprintV1;
  * Mount device configuration for WordPress Playground.
  */
 export type MountDevice =
-	| { type: 'opfs'; path: string }
-	| { type: 'local-fs'; handle: FileSystemDirectoryHandle };
+	{ type: 'opfs'; path: string } | { type: 'local-fs'; handle: FileSystemDirectoryHandle };
 
 /**
  * Describes a filesystem mount for WordPress Playground.

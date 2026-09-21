@@ -29,10 +29,7 @@ export interface ContentStepContent {
 }
 
 export type CompSkipReason =
-	| 'no_tier'
-	| 'multiple_tiers'
-	| 'chosen_tier_gone'
-	| 'tier_lookup_failed';
+	'no_tier' | 'multiple_tiers' | 'chosen_tier_gone' | 'tier_lookup_failed';
 
 export interface SubscribersStepContent {
 	available_tiers?: Product[];

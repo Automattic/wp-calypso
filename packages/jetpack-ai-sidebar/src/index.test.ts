@@ -100,9 +100,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -120,7 +120,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -1443,8 +1443,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
@@ -1660,8 +1660,8 @@ describe( 'Proofread', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
@@ -3624,6 +3624,36 @@ describe( 'toolProvider', () => {
 			expect( executeAbility ).not.toHaveBeenCalled();
 			expect( result.result ).toMatchObject( { success: false } );
 			expect( result.result.error ).toMatch( /missing type/ );
+		} );
+
+		it( 'omits server-registered abilities from the registry', async () => {
+			const clientCallback = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'big-sky/capture-canvas', category: 'big-sky' },
+					{
+						name: 'big-sky/stream-page-design',
+						meta: { streaming: { enabled: true } },
+					},
+					{
+						name: 'plugin/client-with-rest-meta',
+						callback: clientCallback,
+						meta: { show_in_rest: true },
+					},
+					{ name: 'wpcom/get-posts', meta: { show_in_rest: true, public: false } },
+					{ name: 'core/get-site-info', meta: { show_in_rest: true, public: true } },
+				] ),
+				executeAbility: jest.fn(),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( 'big-sky/capture-canvas' );
+			expect( names ).toContain( 'big-sky/stream-page-design' );
+			expect( names ).toContain( 'plugin/client-with-rest-meta' );
+			expect( names ).not.toContain( 'wpcom/get-posts' );
+			expect( names ).not.toContain( 'core/get-site-info' );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {

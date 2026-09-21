@@ -19,8 +19,7 @@ export const domainNameServersMutation = ( domainName: string ) =>
 		mutationFn: ( nameServers: string[] ) => updateDomainNameServers( domainName, nameServers ),
 		onSuccess: ( _, data ) => {
 			const oldData = queryClient.getQueryData( domainNameServersQuery( domainName ).queryKey ) as
-				| DomainNameServersResponse
-				| undefined;
+				DomainNameServersResponse | undefined;
 
 			// optimistically update the query data
 			queryClient.setQueryData( domainNameServersQuery( domainName ).queryKey, {

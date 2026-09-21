@@ -65,4 +65,6 @@ export interface UserPreferences {
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;
+	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
+	'pressable-limit-notification-dismissed'?: number;
 }

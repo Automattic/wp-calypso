@@ -138,9 +138,8 @@ export const SitesWithoutThisPlugin = ( {
 				isPrimary: isDesktop,
 				modalHeader: __( 'Install plugin' ),
 				RenderModal: ( { items, closeModal } ) => {
-					const { mutateAsync: installPluginMutate, isPending: isInstalling } = useMutation(
-						installPluginMutation()
-					);
+					const { mutateAsync: installPluginMutate, isPending: isInstalling } =
+						useMutation( installPluginMutation() );
 					const site = items[ 0 ];
 					const siteName = getSiteDisplayName( site );
 					const siteUrl = getSiteDisplayUrl( site );

@@ -303,7 +303,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								...( couponParam ? { coupon: couponParam } : {} ),
 								...( storageParam ? { storage: storageParam } : {} ),
 							},
-					  }
+						}
 					: {},
 			} ),
 			[ preselectedPlan, couponParam, storageParam ]
@@ -736,7 +736,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											siteSlug,
 											siteId: providedDependencies.siteId,
 											playground: playgroundId,
-									  } )
+										} )
 									: addQueryArgs(
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
@@ -744,7 +744,7 @@ const onboarding: FlowV2< typeof initialize > = {
 												...( refParameter ? { ref: refParameter } : {} ),
 												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
-									  );
+										);
 
 							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
 							// before post-checkout-onboarding. The Playground import path keeps its own

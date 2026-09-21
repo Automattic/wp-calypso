@@ -24,7 +24,7 @@ function mockCore( {
 			? {
 					__experimentalGetCurrentGlobalStylesId: () => globalStylesId,
 					getEditedEntityRecord: () => record,
-			  }
+				}
 			: undefined
 	);
 }

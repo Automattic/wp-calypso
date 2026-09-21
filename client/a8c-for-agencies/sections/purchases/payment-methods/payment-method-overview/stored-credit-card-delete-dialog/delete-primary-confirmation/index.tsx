@@ -32,10 +32,10 @@ const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) =
 						{ isClient
 							? translate(
 									'Any items that you bought will be canceled and stop working at the end of their terms.'
-							  )
+								)
 							: translate(
 									'Issuing new licenses will be paused until you add a new primary payment method. Additionally, the existing licenses will be revoked at the end of their respective terms.'
-							  ) }
+								) }
 					</p>
 				</div>
 			</div>

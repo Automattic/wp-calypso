@@ -48,18 +48,18 @@ export default function useGetDisplayDate( selectedSiteId = null ) {
 				? translate( 'Latest: Today, %s', {
 						args: [ formattedDateTime ],
 						comment: '',
-				  } )
+					} )
 				: translate( 'Latest: %s', {
 						args: [ formattedDateTime ],
 						comment: '',
-				  } );
+					} );
 		}
 
 		return isToday
 			? translate( 'Today, %s', {
 					args: [ formattedDateTime ],
 					comment: '',
-			  } )
+				} )
 			: formattedDateTime;
 	};
 }

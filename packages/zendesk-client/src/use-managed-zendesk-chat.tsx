@@ -161,7 +161,7 @@ function useSmooch( enabled = true, integrationKey?: string ) {
 			const integrationId = integrationKey
 				? SMOOCH_INTEGRATION_ID_CUSTOM[
 						integrationKey as keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM
-				  ]
+					]
 				: SMOOCH_INTEGRATION_ID;
 
 			SmoochLibrary.render( container );
@@ -309,8 +309,7 @@ export const useManagedZendeskChat = ( {
 	const clientId = useMemo( () => {
 		const messages = conversation?.messages ?? [];
 		const msg = messages.find( ( m ) => m.source?.type === 'web' && m.source?.id ) as
-			| ZendeskMessage
-			| undefined;
+			ZendeskMessage | undefined;
 		return msg?.source?.id ?? '';
 	}, [ conversation?.messages ] );
 
@@ -479,7 +478,7 @@ export const useManagedZendeskChat = ( {
 						},
 					],
 					actions: ! hasRated
-						? message.actions?.map( ( action ) => {
+						? ( message.actions?.map( ( action ) => {
 								const label =
 									action.metadata.score === 'GOOD'
 										? __( 'Good 👍', '__i18n_text_domain__' )
@@ -494,7 +493,7 @@ export const useManagedZendeskChat = ( {
 									},
 									pressed: action.metadata.score === score,
 								};
-						  } ) ?? []
+							} ) ?? [] )
 						: [],
 				};
 			}
@@ -693,7 +692,7 @@ export const useManagedZendeskChat = ( {
 					handleFilesSelected,
 					handleRemoveImage: handleRemoveImage as ( image: unknown ) => void,
 					uploadImagesToWordPress: () => Promise.resolve( [] as never[] ),
-			  }
+				}
 			: undefined;
 
 	const onSubmitWithAttachments = useCallback(

@@ -51,7 +51,13 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
+import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
+import {
+	mayBeEligibleForPressableExpansionOffer,
+	pressableOfferLicensesQuery,
+} from '../../agency/overview/use-pressable-offer-eligibility';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
@@ -259,6 +265,25 @@ export const marketplaceHostingRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/hosting',
+	loader: async () => {
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+		if ( agency?.id ) {
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				mayBeEligibleForPressableExpansionOffer( agency ) &&
+					queryClient
+						.ensureQueryData( pressableOfferLicensesQuery( agency.id ) )
+						.catch( () => undefined ),
+			] );
+		}
+	},
 } );
 
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
@@ -342,7 +367,14 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The cart prices Pressable plans by whether the agency owns one.
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -365,6 +397,12 @@ export const marketplacePurchasesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/purchases',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-purchases' )( {
@@ -449,7 +487,7 @@ export const marketplaceRoute = createRoute( {
 		const destination = agencySupports
 			? marketplaceSections.find( ( section ) =>
 					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
-			  )?.route
+				)?.route
 			: undefined;
 
 		if ( ! destination ) {
@@ -476,6 +514,26 @@ export const learnRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
 		createLazyRoute( 'resources-learn' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/resources/dev-tools` – developer tools that help agencies build, test, and demo
+export const devToolsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Developer tools' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'resources/dev-tools',
+} ).lazy( () =>
+	import( '../../agency/resources/dev-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-dev-tools' )( {
 			component: d.default,
 		} )
 	)
@@ -580,19 +638,6 @@ export const agencyTeamRoute = createRoute( {
 		createLazyRoute( 'agency-team' )( {
 			component: d.default,
 		} )
-	)
-);
-
-// `/earn` – summary of the agency's earning programs (default Earn screen)
-export const earnOverviewRoute = createRoute( {
-	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
-	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
-	getParentRoute: () => agencyRoute,
-	path: 'earn',
-} ).lazy( () =>
-	import( '../../agency/earn/overview' ).then( ( d ) =>
-		createLazyRoute( 'earn-overview' )( { component: d.default } )
 	)
 );
 
@@ -710,6 +755,40 @@ export const earnPayoutSettingsRoute = createRoute( {
 		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
 	)
 );
+
+// The Earn sections in sidebar order; `/earn` redirects to the first one allowed.
+export const earnSectionRoutes = [
+	earnReferralsRoute,
+	earnWooPaymentsRoute,
+	earnMigrationsRoute,
+	earnPayoutSettingsRoute,
+];
+
+// `/earn` – no screen of its own; sends the user to the first Earn section their
+// capabilities allow, so stale `/earn` links keep working.
+export const earnRoute = createRoute( {
+	// Any-of: reaching the redirect only requires access to one of the sections.
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
+	getParentRoute: () => agencyRoute,
+	path: 'earn',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		const destination = earnSectionRoutes.find( ( route ) =>
+			isRouteAllowedByCapabilities( route, capabilities )
+		);
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
@@ -1035,9 +1114,8 @@ export const agencySitePerformanceBackendRoute = createRoute( {
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
-		'../../sites/performance/backend/timeframe'
-	);
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
+		await import( '../../sites/performance/backend/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
@@ -1128,9 +1206,8 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
-			'../../sites/performance/backend/timeframe'
-		);
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } =
+			await import( '../../sites/performance/backend/timeframe' );
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
 			siteApmDetailQuery( site.ID, { method, route, windowSec } )
@@ -1869,6 +1946,7 @@ export const createAgencyRoutes = () => [
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
+		devToolsRoute,
 		mcpRoute.addChildren( [
 			mcpOverviewRoute,
 			mcpReadToolsRoute,
@@ -1878,7 +1956,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
-		earnOverviewRoute,
+		earnRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

@@ -105,7 +105,7 @@ const RecommendedPostsWithPosts = ( props ) => {
 	const { data: firstPost } = usePost( recommendations[ 0 ] );
 	const { data: secondPost } = usePost( recommendations[ 1 ] );
 	const posts = recommendations.slice( 0, 2 ).map( ( _recommendation, index ) => {
-		return index === 0 ? firstPost ?? null : secondPost ?? null;
+		return index === 0 ? ( firstPost ?? null ) : ( secondPost ?? null );
 	} );
 	const onDismissPost = ( postKey ) => {
 		if ( ! postKey?.blogId ) {

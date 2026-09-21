@@ -149,10 +149,10 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 					{ isEnablingStats
 						? translate( 'Enabling stats…', {
 								comment: 'A message that stats are being enabled',
-						  } )
+							} )
 						: translate( 'Enable stats', {
 								comment: 'A button that enables stats for the site',
-						  } ) }
+							} ) }
 				</Button>
 			);
 		}

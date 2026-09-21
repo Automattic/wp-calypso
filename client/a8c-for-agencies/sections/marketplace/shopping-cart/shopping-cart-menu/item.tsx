@@ -37,7 +37,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 		item.quantity > 1
 			? translate( '%(productName)s x %(quantity)s', {
 					args: { productName: productDisplayName, quantity: item.quantity },
-			  } )
+				} )
 			: productDisplayName;
 
 	const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(

@@ -66,6 +66,18 @@ export interface FetchJetpackLicensesOptions {
 	sortDirection: JetpackLicenseSortDirection;
 }
 
+export interface FetchJetpackLicensesPageOptions extends FetchJetpackLicensesOptions {
+	page?: number;
+	perPage?: number;
+}
+
+export interface JetpackLicensesPage {
+	items: JetpackLicense[];
+	total_items: number;
+	items_per_page: number;
+	total_pages: number;
+}
+
 export interface JetpackLicenseCounts {
 	attached: number;
 	detached: number;
@@ -93,4 +105,11 @@ export interface IssueJetpackLicensesInput {
 
 export interface JetpackLicenseDownloadUrl {
 	download_url: string;
+}
+
+/** Free WordPress.com development-site licenses granted to an agency. */
+export interface AgencyDevLicenses {
+	licenses: JetpackLicense[];
+	/** How many free development licenses are still unused. */
+	available: number;
 }

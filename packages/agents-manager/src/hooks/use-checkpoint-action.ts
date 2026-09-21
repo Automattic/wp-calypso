@@ -158,7 +158,7 @@ export default function useCheckpointAction(
 		const getCurrentActionState = (): CheckpointActionState =>
 			invalidatedCheckpointIds.has( checkpointInfo.checkpointId )
 				? 'hidden'
-				: getCheckpointActionStateRef.current?.( checkpointInfo.checkpointId ) ?? 'enabled';
+				: ( getCheckpointActionStateRef.current?.( checkpointInfo.checkpointId ) ?? 'enabled' );
 		const actionState = getCurrentActionState();
 		if (
 			actionState !== 'disabled' &&
@@ -177,7 +177,7 @@ export default function useCheckpointAction(
 			canCheckSwapAvailability &&
 			( isActionAvailable || ( actionState === 'disabled' && isReverted ) )
 				? pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ||
-				  currentCheckpoint.canSwapCheckpoint?.( checkpointInfo.checkpointId )
+					currentCheckpoint.canSwapCheckpoint?.( checkpointInfo.checkpointId )
 				: undefined;
 		const supportsSwap =
 			swapAvailability !== undefined || redoableCheckpointIds.has( checkpointInfo.checkpointId );
