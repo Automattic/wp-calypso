@@ -13,6 +13,7 @@
  * silently.
  */
 import { broadcastAbilityCompleted } from './agent-activity-events';
+import { recordAgentsManagerTracksEvent } from './tracks';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../types';
 
@@ -31,6 +32,22 @@ function reportsFailure( result: unknown ): boolean {
 }
 
 /**
+ * Announce a finished ability to listeners on the page and to Tracks. Until this,
+ * which abilities ran, and whether they worked, was only visible in Langfuse.
+ * Prop names follow the AI Tracks standard (`ability_name`, `outcome`), as
+ * `wpcom_mcp_tool_called` does.
+ * @param name The ability name, in either form.
+ * @param ok   Whether it did what it was asked.
+ */
+function announce( name: string, ok: boolean ): void {
+	broadcastAbilityCompleted( { name, ok } );
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_ability_completed', {
+		ability_name: name,
+		outcome: ok ? 'success' : 'error',
+	} );
+}
+
+/**
  * Run one ability and announce its completion, however it ends.
  * @param name     The ability name, in either form.
  * @param dispatch Runs the ability itself.
@@ -46,11 +63,11 @@ async function dispatchAndBroadcast(
 		result = await dispatch();
 	} catch ( error ) {
 		// Announced, not swallowed: the caller still sees the failure.
-		broadcastAbilityCompleted( { name, ok: false } );
+		announce( name, false );
 		throw error;
 	}
 
-	broadcastAbilityCompleted( { name, ok: ! reportsFailure( result ) } );
+	announce( name, ! reportsFailure( result ) );
 
 	return result;
 }

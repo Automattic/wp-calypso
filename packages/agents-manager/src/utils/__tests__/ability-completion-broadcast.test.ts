@@ -3,7 +3,10 @@
  */
 import { withAbilityCompletionBroadcast } from '../ability-completion-broadcast';
 import { ABILITY_COMPLETED_EVENT, type AbilityCompletedDetail } from '../agent-activity-events';
+import { recordAgentsManagerTracksEvent } from '../tracks';
 import type { Ability, ToolProvider } from '../../types';
+
+jest.mock( '../tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
 
 function listen() {
 	const events: AbilityCompletedDetail[] = [];
@@ -111,6 +114,25 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			expect( events ).toEqual( [ { name: 'x', ok: false } ] );
 			cleanup();
 		} );
+	} );
+
+	it( 'records each completion in Tracks, with the outcome', async () => {
+		( recordAgentsManagerTracksEvent as jest.Mock ).mockClear();
+		const failing = jest.fn( () => Promise.resolve( { success: false } ) );
+
+		await withAbilityCompletionBroadcast( createToolProvider() )!.executeAbility( 'woo/ok', {} );
+		await withAbilityCompletionBroadcast( createToolProvider( [], failing ) )!.executeAbility(
+			'woo/bad',
+			{}
+		);
+
+		expect( ( recordAgentsManagerTracksEvent as jest.Mock ).mock.calls ).toEqual( [
+			[
+				'calypso_agents_manager_ability_completed',
+				{ ability_name: 'woo/ok', outcome: 'success' },
+			],
+			[ 'calypso_agents_manager_ability_completed', { ability_name: 'woo/bad', outcome: 'error' } ],
+		] );
 	} );
 
 	describe( 'the callback path', () => {

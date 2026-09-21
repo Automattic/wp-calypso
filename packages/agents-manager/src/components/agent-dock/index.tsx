@@ -418,6 +418,21 @@ export default function AgentDock( {
 		}
 	}, [ chatIsOpen ] );
 
+	// The unified counterpart of Big Sky's two close events (`sidebar_close_click`
+	// docked, `dock_back_button_click` floating), so a close stays visible once
+	// those names stop firing. Watches the persisted state, not `chatIsOpen`:
+	// minimizing hides the chat without closing it and has its own event.
+	const wasPersistedOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasPersistedOpen = wasPersistedOpenRef.current;
+		wasPersistedOpenRef.current = isPersistedOpen;
+		if ( ! isPersistedOpen && wasPersistedOpen === true ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_closed', {
+				docked: isDocked,
+			} );
+		}
+	}, [ isPersistedOpen, isDocked ] );
+
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }
