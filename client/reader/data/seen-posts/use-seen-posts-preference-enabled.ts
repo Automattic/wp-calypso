@@ -10,7 +10,7 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 export function useSeenPostsPreferenceEnabled(): boolean {
 	return useSelector( ( state ) =>
 		hasReceivedRemotePreferences( state )
-			? getPreference( state, 'reader-seen-posts' ) ?? true
+			? ( getPreference( state, 'reader-seen-posts' ) ?? true )
 			: false
 	);
 }

@@ -17,7 +17,7 @@ const mockMarkAllAsSeen = jest.fn();
 let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
-	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();

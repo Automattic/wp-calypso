@@ -320,7 +320,7 @@ export function getCanvasMove(): CanvasMove | null {
 		// No live canvas is a move to nowhere, not a reason to wait: see the note
 		// at the top of this module on why a bound request can never be looking at
 		// a canvas that is merely still mounting.
-		to: live ? live.label ?? live.key : null,
+		to: live ? ( live.label ?? live.key ) : null,
 	};
 }
 

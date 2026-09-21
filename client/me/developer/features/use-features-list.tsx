@@ -40,10 +40,10 @@ export const useFeaturesList = () => {
 			title: hasEnTranslation( 'Agency Hosting' )
 				? translate( 'Agency Hosting', {
 						comment: 'Feature title',
-				  } )
+					} )
 				: translate( 'Multiple site management', {
 						comment: 'Feature title',
-				  } ),
+					} ),
 			description: hasEnTranslation(
 				"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
 			)
@@ -52,13 +52,13 @@ export const useFeaturesList = () => {
 						{
 							comment: 'Feature description',
 						}
-				  )
+					)
 				: translate(
 						'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
 						{
 							comment: 'Feature description',
 						}
-				  ),
+					),
 			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
 			linkTarget: '_self',
 		},

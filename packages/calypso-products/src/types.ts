@@ -177,12 +177,9 @@ export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )
 export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
 export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
-	| typeof PLAN_JETPACK_FREE
-	| JetpackLegacyPlanSlug
-	| JetpackResetPlanSlug;
+	typeof PLAN_JETPACK_FREE | JetpackLegacyPlanSlug | JetpackResetPlanSlug;
 export type JetpackPurchasableItemSlug =
-	| JetpackProductSlug
-	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
+	JetpackProductSlug | Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
 /**
  * WooCommerce

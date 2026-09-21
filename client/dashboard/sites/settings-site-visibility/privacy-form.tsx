@@ -138,7 +138,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
 	const isPrimaryDomainStaging = Boolean(
 		primaryDomain?.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
-			primaryDomain?.tags.includes( 'wpcom_staging' )
+		primaryDomain?.tags.includes( 'wpcom_staging' )
 	);
 	const hasNonWpcomDomain = domains.some(
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS

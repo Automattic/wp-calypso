@@ -8,7 +8,6 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
-	isSeenPostsAvailable,
 	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
@@ -496,7 +495,7 @@ export const cancelPurchaseRoute = createRoute( {
 						// rather than failing the whole route (SHILL-1442).
 						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
 						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
-				  ]
+					]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( plansQuery() ),
@@ -1078,18 +1077,6 @@ export const preferencesReaderRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
-	beforeLoad: async () => {
-		// A failed teams request means "not available", not an error page.
-		let teams;
-		try {
-			( { teams } = await queryClient.ensureQueryData( readTeamsQuery() ) );
-		} catch {
-			teams = undefined;
-		}
-		if ( ! isSeenPostsAvailable( teams ) ) {
-			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
-		}
-	},
 	loader: async () => {
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
@@ -1497,7 +1484,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							monetizeSubscriptionsIndexRoute,
 							monetizeSubscriptionRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
@@ -1535,7 +1522,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							securityLegacyContactIndexRoute,
 							securityLegacyContactPrintRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] )
 	);

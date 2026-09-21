@@ -180,7 +180,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 												</strong>
 											),
 										}
-								  )
+									)
 								: failureReason.message }
 						</li>
 					);

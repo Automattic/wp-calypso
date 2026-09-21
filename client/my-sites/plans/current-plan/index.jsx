@@ -172,7 +172,7 @@ class CurrentPlan extends Component {
 				? translate( 'Features included in your 100-Year Plan' )
 				: translate( '{{planName/}} plan features', {
 						components: { planName: <>{ planTitle }</> },
-				  } );
+					} );
 
 		return (
 			<>

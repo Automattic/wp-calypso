@@ -85,22 +85,22 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	// Use staging readiness logic like the environment switcher
 	const supportsStaging = siteWithStagingIds
 		? isStagingSite ||
-		  isAtomicTransferredSite( {
+			isAtomicTransferredSite( {
 				is_wpcom_atomic: siteWithStagingIds.is_wpcom_atomic,
 				capabilities: siteWithStagingIds.capabilities,
-		  } )
+			} )
 		: false;
 
 	const shouldShowSyncDropdown = Boolean(
 		supportsStaging &&
-			! isStagingSiteInTransition &&
-			! isStagingSiteDeletionInProgress &&
-			hasStagingSiteJetpackConnection
+		! isStagingSiteInTransition &&
+		! isStagingSiteDeletionInProgress &&
+		hasStagingSiteJetpackConnection
 	);
 
 	const productionSiteId = isStagingSite
-		? site?.options?.wpcom_production_blog_id ?? 0
-		: itemData.blogId ?? 0;
+		? ( site?.options?.wpcom_production_blog_id ?? 0 )
+		: ( itemData.blogId ?? 0 );
 
 	const { resetSyncStatus, isSyncInProgress, status } = useCheckSyncStatus( productionSiteId );
 

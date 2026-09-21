@@ -97,20 +97,20 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const currentSubscriptionId =
 		localSubscriptionId === null
 			? undefined
-			: localSubscriptionId ??
-			  subscriptionId ??
-			  ( Number.isFinite( cachedSubscriptionId ) && cachedSubscriptionId > 0
+			: ( localSubscriptionId ??
+				subscriptionId ??
+				( Number.isFinite( cachedSubscriptionId ) && cachedSubscriptionId > 0
 					? cachedSubscriptionId
-					: undefined );
+					: undefined ) );
 	// Require an id so Unsubscribe is never shown without a workable unsubscribe target.
 	const isSubscribed = localSubscriptionId === null ? false : Boolean( currentSubscriptionId );
-	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
+	const iconUrl = isWpcomFeed ? ( site?.icon?.img ?? site?.icon?.ico ) : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
 	const title =
 		isWpcomFeed && site
 			? getSiteName( { feed, site } )
-			: feed?.name ?? filterURLForDisplay( subscribeUrl );
+			: ( feed?.name ?? filterURLForDisplay( subscribeUrl ) );
 
 	function onSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {

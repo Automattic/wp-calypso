@@ -37,11 +37,11 @@ export const UpgradeScreen: React.FC< {
 		? __(
 				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation.',
 				'jetpack'
-		  )
+			)
 		: __(
 				'Upgrade your Jetpack AI for access to exclusive features, including logo generation. This upgrade will also increase the amount of requests you can use in all AI-powered features.',
 				'jetpack'
-		  );
+			);
 
 	const upgradeMessageRequests = __(
 		'Not enough requests left to generate a logo. Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',

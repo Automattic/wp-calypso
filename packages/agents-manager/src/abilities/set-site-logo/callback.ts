@@ -42,9 +42,9 @@ export async function setSiteLogoCallback( input: SetSiteLogoInput ): Promise< A
 			? __(
 					"I've set your site logo. You won't see it here yet because this view doesn't include a Site Logo block — add one to your header to display it, or ask me to add it for you.",
 					__i18n_text_domain__
-			  )
+				)
 			: ( typeof summary === 'string' && summary.trim() ) ||
-			  __( 'Logo set successfully.', __i18n_text_domain__ );
+				__( 'Logo set successfully.', __i18n_text_domain__ );
 
 	try {
 		await withCheckpoint(

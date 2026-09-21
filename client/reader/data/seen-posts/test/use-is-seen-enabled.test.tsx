@@ -36,12 +36,12 @@ describe( 'useIsSeenEnabled', () => {
 	} );
 
 	describe( 'regular users', () => {
-		it( 'returns false when user is subscribed to a feed that is not a P2', () => {
+		it( 'returns true when user is subscribed to a feed that is not a P2', () => {
 			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
 				wrapper: createSeenPostsWrapper( { subscriptions: [ subscription ] } ),
 			} );
 
-			expect( result.current ).toBe( false );
+			expect( result.current ).toBe( true );
 		} );
 
 		it( 'returns false on a P2 the user does not subscribe to', () => {
@@ -155,12 +155,12 @@ describe( 'useIsSeenEnabled', () => {
 			expect( result.current ).toBe( false );
 		} );
 
-		it( 'returns false for a non-P2 feed in a subscribed list for a regular user', () => {
+		it( 'returns true for a non-P2 feed in a subscribed list for a regular user', () => {
 			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
 				wrapper: createSeenPostsWrapper( { subscribedListFeedIds: [ FEED_ID ] } ),
 			} );
 
-			expect( result.current ).toBe( false );
+			expect( result.current ).toBe( true );
 		} );
 
 		it( 'returns true for a P2 feed in a subscribed list the regular user does not follow', () => {

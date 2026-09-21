@@ -159,7 +159,7 @@ export function formatDateCell( {
 		: formatDateWithOffset( date, gmtOffset as number, locale, {
 				dateStyle: 'medium',
 				timeStyle: 'short',
-		  } );
+			} );
 }
 
 export function getDateTimeLabel( {

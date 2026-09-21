@@ -12,7 +12,7 @@ const VERSION = process.env.VERSION
 	? process.env.VERSION.replace( 'desktop-', '' )
 	: ( function () {
 			throw new Error( 'Error: no version' );
-	  } )();
+		} )();
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 async function request( method = 'GET', postData ) {

@@ -162,16 +162,14 @@ export function getPurchaseIntroductoryOffer(
  * Returns undefined when the purchase has no price tier list.
  */
 export function getPurchasePriceTierList( purchase: Purchase ): PurchasePriceTier[] | undefined {
-	return purchase.price_tier_list?.map(
-		( rawTier: PriceTierEntry ): PurchasePriceTier => ( {
-			minimumUnits: rawTier.minimum_units,
-			maximumUnits: rawTier.maximum_units,
-			minimumPrice: rawTier.minimum_price,
-			maximumPrice: rawTier.maximum_price,
-			minimumPriceDisplay: rawTier.minimum_price_display,
-			maximumPriceDisplay: rawTier.maximum_price_display,
-		} )
-	);
+	return purchase.price_tier_list?.map( ( rawTier: PriceTierEntry ): PurchasePriceTier => ( {
+		minimumUnits: rawTier.minimum_units,
+		maximumUnits: rawTier.maximum_units,
+		minimumPrice: rawTier.minimum_price,
+		maximumPrice: rawTier.maximum_price,
+		minimumPriceDisplay: rawTier.minimum_price_display,
+		maximumPriceDisplay: rawTier.maximum_price_display,
+	} ) );
 }
 
 /**

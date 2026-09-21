@@ -51,11 +51,12 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 			} );
 		},
 	} );
+	const { mutate } = mutation;
 	const toggleIsBackup = useCallback(
 		( isChecked: boolean ) => {
-			mutation.mutate( isChecked );
+			mutate( isChecked );
 		},
-		[ mutation ]
+		[ mutate ]
 	);
 	if ( isLoading ) {
 		return (
@@ -89,7 +90,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 										isJetpackCloud()
 											? localizeUrl(
 													'https://wordpress.com/support/payment/#backup-payment-methods'
-											  )
+												)
 											: null
 									}
 								/>

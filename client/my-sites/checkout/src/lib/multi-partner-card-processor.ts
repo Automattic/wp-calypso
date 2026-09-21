@@ -298,7 +298,7 @@ export default async function multiPartnerCardProcessor(
 						city: dataForProcessor.contactDetails?.city?.value,
 						organization: dataForProcessor.contactDetails?.organization?.value,
 						address: dataForProcessor.contactDetails?.address1?.value,
-				  };
+					};
 		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,

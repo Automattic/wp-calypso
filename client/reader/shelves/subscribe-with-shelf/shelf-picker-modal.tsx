@@ -373,7 +373,7 @@ function ShelfPickerRow( { shelf, detail, isSelected, disabled, onToggle }: RowP
 				: ( translate( '%(count)d feed', '%(count)d feeds', {
 						count: sourceCount,
 						args: { count: sourceCount },
-				  } ) as string );
+					} ) as string );
 	}
 
 	return (

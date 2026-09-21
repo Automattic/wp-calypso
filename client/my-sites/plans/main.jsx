@@ -134,7 +134,7 @@ class PlansComponent extends Component {
 			discount
 				? addQueryArgs( checkoutPath, {
 						coupon: discount,
-				  } )
+					} )
 				: checkoutPath
 		);
 	};

@@ -13,11 +13,6 @@
 		min-height: 0;
 	}
 
-	// Keep scrolling past the end of the list from scrolling the page behind the panel.
-	.dataviews-layout__container {
-		overscroll-behavior: contain;
-	}
-
 	// The subject and excerpt render in separate DataViews cells (the title and
 	// description fields), so they're styled directly rather than under a shared
 	// row wrapper.

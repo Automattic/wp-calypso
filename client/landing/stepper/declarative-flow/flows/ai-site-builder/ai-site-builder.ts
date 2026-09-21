@@ -139,7 +139,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							? siteLaunchUrl
 							: addQueryArgs( bigSkyUrl, {
 									checkout: 'success',
-							  } ),
+								} ),
 					checkoutBackUrl: addQueryArgs( bigSkyUrl, {
 						checkout: 'cancel',
 					} ),
@@ -296,7 +296,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 											referrer: AI_SITE_BUILDER_FLOW,
 											...( source ? { source } : {} ),
 											...( specId ? { spec_id: specId } : {} ),
-									  } )
+										} )
 									: addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
 											canvas: 'edit',
 											p: '/',
@@ -305,7 +305,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 											...( promptValue ? { prompt: promptValue } : {} ),
 											...( source ? { source } : {} ),
 											...( specId ? { spec_id: specId } : {} ),
-									  } );
+										} );
 
 								if ( isEarlyWpcomAtomicProvisioning ) {
 									logEarlyWpcomAtomicEvent( 'easy_site_editor_redirect', siteId, {

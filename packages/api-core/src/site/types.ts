@@ -100,6 +100,8 @@ export interface Site {
 	feed_URL: string;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
+	/** Connected to an agency through the Automattic for Agencies client plugin. */
+	is_a4a_client?: boolean;
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;

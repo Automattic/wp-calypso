@@ -1,6 +1,12 @@
 # Name Pulse
 
-The Name Pulse results mode for the WordPress.com domain search: keystroke search, an exact-match grid, and keyword and AI suggestions. `SearchResults` renders it when `config.showNamePulseSearch` is on.
+The Name Pulse results mode for the WordPress.com domain search. `DomainSearch` renders `NamePulseResults` instead of the classic results page when `config.showNamePulseSearch` is on and there is a query.
+
+`helpers/get-results-layout.ts` turns the query into a mode and the sections to render; `hooks/use-name-pulse-search.ts` regenerates the rows on every keystroke and sends the availability and suggestion requests once the query settles, and `hooks/use-name-pulse-availability.ts` batches the availability checks. Both read their query options from the `queries` on the DomainSearch context, so tests and Storybook replace them through `test-helpers/factories/name-pulse.ts` instead of network mocks.
+
+## Not yet built
+
+FQDN card for a typed `name.tld`, the "Protect your brand" bundle card, the free-first-year banner, the filter button, AI mode ("Creative matches") for four or more words.
 
 ## Imports
 

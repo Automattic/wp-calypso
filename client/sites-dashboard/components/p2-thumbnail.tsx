@@ -58,11 +58,11 @@ const SiteIconContainer = styled.div< { isSmall: boolean } >(
 			? {
 					left: '8px',
 					top: `${ -SMALL_ICON_PX / 2 - ICON_BORDER_PX }px`,
-			  }
+				}
 			: {
 					left: '32px',
 					top: `${ -LARGE_ICON_PX / 2 - ICON_BORDER_PX }px`,
-			  }
+				}
 );
 
 const SiteIcon = styled.img( {

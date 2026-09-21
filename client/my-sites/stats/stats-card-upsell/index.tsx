@@ -29,7 +29,7 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, butt
 		? translate( 'Upgrade plan' )
 		: translate( 'Upgrade to %(planName)s', {
 				args: { planName: plan.productNameShort },
-		  } );
+			} );
 
 	if ( isSiteJetpackNotAtomic ) {
 		UpsellComponent = StatsCardUpsellJetpack;

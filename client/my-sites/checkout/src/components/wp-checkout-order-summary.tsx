@@ -700,13 +700,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  )
+						)
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
 								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  ) }
+						) }
 			</CheckoutSummaryFeaturesListWrapper>
 			{ props.onChangeSelection && (
 				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />

@@ -138,9 +138,7 @@ export interface SocialThreadBlockedNode {
 export type SocialThreadTombstoneNode = SocialThreadNotFoundNode | SocialThreadBlockedNode;
 
 export type SocialThreadNode =
-	| SocialThreadPostNode
-	| SocialThreadNotFoundNode
-	| SocialThreadBlockedNode;
+	SocialThreadPostNode | SocialThreadNotFoundNode | SocialThreadBlockedNode;
 
 export interface SocialEmbedQuote {
 	type: 'quote';

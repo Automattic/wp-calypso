@@ -17,6 +17,8 @@
 	--domain-search-warning-badge-background-color: #f9edb4;
 	--domain-search-success-badge-border-color: #b8e5be;
 	--domain-search-success-badge-background-color: #d1eed5;
+	--domain-search-premium-badge-border-color: rgba( 56, 88, 233, 0.6 );
+	--domain-search-premium-badge-background-color: rgba( 56, 88, 233, 0.1 );
 	--domain-search-sticky-overlay-z-index: 1;
 	--domain-search-full-cart-z-index: 2;
 	--domain-search-mini-cart-height: 80px;
@@ -28,6 +30,7 @@
 	flex-direction: column;
 	align-items: center;
 	flex: 1;
+	background-color: var( --domain-search-background-color );
 }
 
 .domain-search--initial-state {

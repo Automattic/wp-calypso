@@ -16,10 +16,7 @@ export type SuppressionReason = 'modal' | 'help_center';
  * - `invoke_event` — an explicit `invokeSurvicateEvent()` was skipped.
  */
 export type SuppressionTrigger =
-	| 'survey_displayed'
-	| 'modal_opened'
-	| 'help_center_opened'
-	| 'invoke_event';
+	'survey_displayed' | 'modal_opened' | 'help_center_opened' | 'invoke_event';
 
 /**
  * Records that a survey was suppressed, so we can measure how often (and why)

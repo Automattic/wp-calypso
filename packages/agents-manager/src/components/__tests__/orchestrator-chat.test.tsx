@@ -104,8 +104,7 @@ function mockGetCheckpointIdForMessage( message: {
 
 const mockCheckpointActions = () => {
 	let getCheckpointActionState:
-		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
-		| undefined;
+		( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' ) | undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
@@ -114,7 +113,7 @@ const mockCheckpointActions = () => {
 
 		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
 			? 'hidden'
-			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+			: ( getCheckpointActionState?.( checkpointId ) ?? 'enabled' );
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
@@ -158,6 +157,7 @@ const mockAgentChat = jest.fn(
 		inputValue,
 		onInputChange,
 		emptyViewSuggestions = [],
+		onContextCardAction,
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: (
@@ -172,6 +172,10 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		isLoadingConversation?: boolean;
+		onContextCardAction?: (
+			card: { id: string },
+			action: { label: string; prompt: string; type: 'submit' }
+		) => void;
 	} ) => (
 		<>
 			<button
@@ -272,6 +276,16 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button
+				onClick={ () =>
+					onContextCardAction?.(
+						{ id: 'card-1' },
+						{ label: 'Ask', prompt: 'From the context card', type: 'submit' }
+					)
+				}
+			>
+				Submit context card
+			</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
@@ -307,7 +321,8 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => {
-	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useReducer, useRef } =
+		jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -356,8 +371,10 @@ jest.mock( '../../contexts', () => {
 		} ),
 	};
 } );
+const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
-	useRegisterCustomActions: () => {},
+	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
+		Object.assign( mockRegisteredActions, actions ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -419,7 +436,7 @@ jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
 jest.mock( '../agent-chat', () => {
-	const { useEffect, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	// Report the empty-view chips the way Agenttic does: nothing behind the loading
 	// skeleton, once per distinct id set, truncated when a test simulates the
 	// floating limit.
@@ -445,6 +462,7 @@ jest.mock( '../agent-chat', () => {
 } );
 
 import { getSessionId } from '../../utils/agent-session';
+import { takeActionOrigin } from '../../utils/action-origin';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -661,6 +679,8 @@ const countShowComponentMessages = () => {
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
@@ -1376,6 +1396,76 @@ describe( 'OrchestratorChat', () => {
 		await waitFor( () => {
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
 		} );
+	} );
+
+	it( 'labels a send from the composer', () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'labels a send whose text is a suggestion on screen', () => {
+		render( chat( { emptyViewSuggestions: [ { id: 's1', label: 'Describe these images' } ] } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'suggestion' } )
+		);
+	} );
+
+	it( 'labels a send a host submits through the actions bridge', async () => {
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'host' } )
+		);
+	} );
+
+	it( 'does not label a context-card submit as host', async () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await waitFor( () => {
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_chat_input_send_message',
+				expect.objectContaining( { source: 'composer' } )
+			);
+		} );
+	} );
+
+	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				suggestions: [
+					{ id: 's1', label: 'Describe these images', prompt: 'Describe these images' },
+				],
+			} )
+		);
+
+		render( chat( { suggestionsVisible: false } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
@@ -3428,7 +3518,7 @@ describe( 'OrchestratorChat', () => {
 								onClick: onRegenerate,
 								disabled: ! options.isLatestAgentMessage,
 							},
-					  ]
+						]
 					: []
 		);
 		mockUseAgentChat.mockReturnValue(

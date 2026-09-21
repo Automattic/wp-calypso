@@ -188,7 +188,7 @@ function render( element, key, req ) {
 							type: 'timing',
 							value: rtsTimeMs,
 						},
-				  ] ),
+					] ),
 		] );
 
 		if ( rtsTimeMs > 100 ) {
@@ -393,8 +393,8 @@ export function setShouldServerSideRender( context, next ) {
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
-			! context.user && // logged out only
-			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
+		! context.user && // logged out only
+		( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 
@@ -408,7 +408,7 @@ function isServerSideRenderCompatible( context ) {
 export function shouldServerSideRender( context ) {
 	return Boolean(
 		config.isEnabled( 'server-side-rendering' ) &&
-			isServerSideRenderCompatible( context ) &&
-			context.serverSideRender === true
+		isServerSideRenderCompatible( context ) &&
+		context.serverSideRender === true
 	);
 }

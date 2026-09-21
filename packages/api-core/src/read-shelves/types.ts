@@ -10,14 +10,7 @@ import type { SiteSubscriptionItem } from '../read-follows';
  * below — it only sanitizes — so the client constrains the picker.
  */
 export type ShelfColor =
-	| 'blue'
-	| 'purple'
-	| 'red'
-	| 'orange'
-	| 'gray'
-	| 'green'
-	| 'celadon'
-	| 'pink';
+	'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green' | 'celadon' | 'pink';
 
 /**
  * Accent applied to a shelf's post text (titles + actions). `'none'` keeps the

@@ -307,12 +307,12 @@ function RenewErrorMessage( {
 									siteSlug: purchase.domain,
 								},
 							}
-					  )
+						)
 					: translate( 'The site %(siteSlug)s is no longer connected to WordPress.com.', {
 							args: {
 								siteSlug: purchase.domain,
 							},
-					  } ) }
+						} ) }
 				&nbsp;
 				{ translate(
 					'Not sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',

@@ -3,7 +3,10 @@ import './style.scss';
 import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal, trash } from '@wordpress/icons';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useIsSeenPostsUiEnabled, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import {
+	useSeenPostsPreferenceEnabled,
+	useMarkAllAsSeenMutation,
+} from 'calypso/reader/data/seen-posts';
 import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
@@ -31,7 +34,7 @@ export default function MoreMenuActions( {
 	onUnsubscribed,
 }: MoreMenuActionsProps ) {
 	const translate = useTranslate();
-	const isSeenPostsUiEnabled = useIsSeenPostsUiEnabled();
+	const isSeenEnabled = useSeenPostsPreferenceEnabled();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
 	const unsubscribeWithUndo = useUnsubscribeWithUndo();
@@ -75,16 +78,16 @@ export default function MoreMenuActions( {
 				text: 'Mark as read',
 				newCopy: translate( 'Mark as read' ),
 				oldCopy: translate( 'Mark as seen' ),
-		  } ) as string )
+			} ) as string )
 		: ( fixMe( {
 				text: 'Mark all as read',
 				newCopy: translate( 'Mark all as read' ),
 				oldCopy: translate( 'Mark all as seen' ),
-		  } ) as string );
+			} ) as string );
 
 	const controls = [];
 
-	if ( isSeenPostsUiEnabled ) {
+	if ( isSeenEnabled ) {
 		const markAsSeenControl = {
 			title,
 			icon: check,

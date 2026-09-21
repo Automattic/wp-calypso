@@ -233,8 +233,8 @@ export default function useAdminBarIntegration( {
 		} );
 
 		return () => {
-			listeners.forEach(
-				( { element, handleClick } ) => element?.removeEventListener( 'click', handleClick )
+			listeners.forEach( ( { element, handleClick } ) =>
+				element?.removeEventListener( 'click', handleClick )
 			);
 		};
 	}, [ navigate, sectionName ] );

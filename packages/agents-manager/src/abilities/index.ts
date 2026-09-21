@@ -16,7 +16,7 @@ import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 
-type EditorAbilitiesModule = typeof import('./editor-abilities');
+type EditorAbilitiesModule = typeof import( './editor-abilities' );
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;

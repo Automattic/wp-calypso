@@ -7,8 +7,7 @@ import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
 type RefundEligibilityNoticeProps =
-	| { mode?: 'confirmed'; purchase: Purchase }
-	| { mode: 'refund-eligibility'; purchase: Purchase };
+	{ mode?: 'confirmed'; purchase: Purchase } | { mode: 'refund-eligibility'; purchase: Purchase };
 
 export default function RefundEligibilityNotice( props: RefundEligibilityNoticeProps ) {
 	const { purchase } = props;

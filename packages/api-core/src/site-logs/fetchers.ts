@@ -45,7 +45,9 @@ export async function fetchSiteLogs(
 	const { data } = response as SiteLogsAPIResponse;
 
 	const totalResults =
-		typeof data.total_results === 'number' ? data.total_results : data.total_results?.value ?? 0;
+		typeof data.total_results === 'number'
+			? data.total_results
+			: ( data.total_results?.value ?? 0 );
 
 	const logs = Array.isArray( data.logs ) ? data.logs : [];
 
@@ -85,7 +87,9 @@ export async function fetchSiteLogsBatch(
 	const response = await wpcom.req.get( { path, apiNamespace: 'wpcom/v2' }, queryParams );
 	const { data } = response as SiteLogsAPIResponse;
 	const totalResults =
-		typeof data.total_results === 'number' ? data.total_results : data.total_results?.value ?? 0;
+		typeof data.total_results === 'number'
+			? data.total_results
+			: ( data.total_results?.value ?? 0 );
 	const scroll = ( data as Partial< { scroll_id: string | null } > ).scroll_id ?? null;
 	return {
 		logs: Array.isArray( data.logs ) ? data.logs : [],

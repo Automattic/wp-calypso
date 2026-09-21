@@ -100,7 +100,7 @@ class MailboxNameValidator extends BaseValidator< string > {
 		return supportsApostrophes
 			? i18n.translate(
 					'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
-			  )
+				)
 			: i18n.translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 	}
 

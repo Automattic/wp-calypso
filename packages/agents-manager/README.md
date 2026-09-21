@@ -68,11 +68,13 @@ See `src/hooks/custom-actions/README.md` for details.
 
 The host page URL can carry these query parameters:
 
-| Parameter | Description                                                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
-| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
-| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+| Parameter       | Description                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
+| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                                                        |
+| `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
+| `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
+| `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
 
 ## API Reference
 

@@ -100,9 +100,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -120,7 +120,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -1443,8 +1443,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
@@ -1660,8 +1660,8 @@ describe( 'Proofread', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
