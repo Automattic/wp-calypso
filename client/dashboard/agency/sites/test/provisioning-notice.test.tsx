@@ -58,7 +58,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		expect( await screen.findByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Set up your site' } ) ).toHaveAttribute(
 			'href',
-			'/sites/site7.wordpress.com'
+			'https://wordpress.com/overview/site7.wordpress.com'
 		);
 		expect( screen.getByRole( 'link', { name: /site7\.wordpress\.com/ } ) ).toHaveAttribute(
 			'href',

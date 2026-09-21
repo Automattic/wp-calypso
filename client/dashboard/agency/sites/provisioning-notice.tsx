@@ -1,11 +1,10 @@
 import { activeAgencyQuery, provisionedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo } from 'react';
 import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
 import { wpcomLink } from '../../utils/link';
 import {
 	holdProvisioningSite,
@@ -82,6 +81,9 @@ export default function ProvisioningSiteNotices() {
 		<>
 			{ provisioningSiteIds.map( ( id ) => {
 				const site = readySites.get( id );
+				// The agency site route may not resolve a new site for a few minutes
+				// yet, so both the button and the link open it on WordPress.com.
+				const overviewUrl = site ? wpcomLink( `/overview/${ getSiteSlug( site.url ) }` ) : '';
 
 				// One <Notice> across both states rather than a component per state:
 				// swapping the mounted element when the site reports ready crashes
@@ -98,13 +100,15 @@ export default function ProvisioningSiteNotices() {
 						onClose={ () => untrackProvisioningSite( id ) }
 						actions={
 							site && (
-								<RouterLinkButton
+								<Button
 									variant="primary"
-									to="/sites/$siteSlug"
-									params={ { siteSlug: getSiteSlug( site.url ) } }
+									href={ overviewUrl }
+									target="_blank"
+									rel="noreferrer"
+									__next40pxDefaultSize
 								>
 									{ __( 'Set up your site' ) }
-								</RouterLinkButton>
+								</Button>
 							)
 						}
 					>
@@ -116,11 +120,7 @@ export default function ProvisioningSiteNotices() {
 										),
 										{
 											address: (
-												// The agency site route may not resolve the site for a few
-												// minutes yet, so this one opens it on WordPress.com.
-												<ExternalLink
-													href={ wpcomLink( `/overview/${ getSiteSlug( site.url ) }` ) }
-												>
+												<ExternalLink href={ overviewUrl }>
 													{ getSiteSlug( site.url ) }
 												</ExternalLink>
 											),
