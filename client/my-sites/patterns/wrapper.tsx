@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { useSelector } from 'calypso/state';
@@ -34,7 +35,7 @@ export const PatternsWrapper = ( {
 
 			<Main fullWidthLayout>{ children }</Main>
 
-			{ isLoggedIn && <UniversalNavbarFooter isLoggedIn colorway={ footerColorway } /> }
+			{ isLoggedIn && <GlobalFooter isLoggedIn colorway={ footerColorway } /> }
 		</>
 	);
 };
