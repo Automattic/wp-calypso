@@ -55,7 +55,7 @@ export default function RemoveSiteModal( {
 		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_confirm' );
 
 		const notifyFailure = ( message?: string ) =>
-			createErrorNotice( message || __( 'Failed to remove the site. Please try again.' ), {
+			createErrorNotice( message || __( 'Failed to remove site.' ), {
 				type: 'snackbar',
 			} );
 
@@ -80,7 +80,7 @@ export default function RemoveSiteModal( {
 				refreshSites();
 				setTimeout( refreshSites, SITE_INDEXING_DELAY_MS );
 
-				createSuccessNotice( __( 'The site has been successfully removed.' ), {
+				createSuccessNotice( __( 'Site removed.' ), {
 					type: 'snackbar',
 				} );
 				closeModal?.();
