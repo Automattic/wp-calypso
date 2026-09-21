@@ -115,7 +115,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 				dangerouslySetInnerHTML={ { __html: subject } }
 			/>
 			{ isUnapproved && (
-				<Badge className="wpnc__pending-badge" intent="informational">
+				<Badge className="wpnc__pending-badge" intent="medium">
 					{ __( 'Pending' ) }
 				</Badge>
 			) }
