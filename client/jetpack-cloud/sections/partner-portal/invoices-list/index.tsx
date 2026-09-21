@@ -81,11 +81,11 @@ export default function InvoicesList() {
 					? {
 							starting_after: items[ items.length - 1 ].id,
 							ending_before: '',
-					  }
+						}
 					: {
 							starting_after: '',
 							ending_before: items[ 0 ].id,
-					  }
+						}
 			);
 		},
 		[ invoices.isSuccess, invoices.data?.items, setPagination ]
