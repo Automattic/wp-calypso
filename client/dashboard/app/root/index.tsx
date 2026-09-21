@@ -16,7 +16,6 @@ import { PageViewTracker } from '../../components/page-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
-import DashboardAgentsManager from '../agents-manager';
 import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { bumpStat } from '../analytics';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
@@ -28,6 +27,7 @@ import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
@@ -213,7 +213,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <OmnibarHelpCenter /> }
-			{ shouldLoadAgentsManager && <DashboardAgentsManager pathname={ pathname } /> }
+			{ shouldLoadAgentsManager && <OmnibarAgentsManager pathname={ pathname } /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />

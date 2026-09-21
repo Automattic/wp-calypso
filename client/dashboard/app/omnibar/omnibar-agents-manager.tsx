@@ -1,15 +1,17 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
+import { useAuth } from '../auth';
 
 const AgentsManager = lazy(
 	() =>
 		import(
-			/* webpackChunkName: "async-load-dashboard-agents-manager" */ '@automattic/agents-manager'
+			/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
 		)
 );
 
-export default function DashboardAgentsManager( { pathname }: { pathname: string } ) {
+export default function OmnibarAgentsManager( { pathname }: { pathname: string } ) {
+	const { user } = useAuth();
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
@@ -23,7 +25,7 @@ export default function DashboardAgentsManager( { pathname }: { pathname: string
 	return (
 		<Suspense fallback={ null }>
 			<AgentsManager
-				currentUser={ window.currentUser }
+				currentUser={ user }
 				sectionName="dashboard"
 				site={ { ID: site.ID, domain: site.slug, URL: site.URL } }
 				currentSiteId={ siteId }
