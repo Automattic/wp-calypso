@@ -6,6 +6,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockSetIsMinimized = jest.fn();
+let mockIsInternalOnly = false;
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -37,6 +38,9 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: () => ( { isInternalOnly: mockIsInternalOnly } ),
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -74,6 +78,7 @@ function renderChatHeader( title?: string, isDocked = false ) {
 describe( 'ChatHeader', () => {
 	afterEach( () => {
 		mockSetIsMinimized.mockClear();
+		mockIsInternalOnly = false;
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
@@ -90,6 +95,23 @@ describe( 'ChatHeader', () => {
 		const { container } = renderChatHeader();
 
 		expect( container.querySelector( '.agents-manager-chat-header__title' ) ).toBeNull();
+	} );
+
+	it( 'shows the internal-only pill with an explanatory title', () => {
+		mockIsInternalOnly = true;
+
+		renderChatHeader();
+
+		expect( screen.getByText( 'A8C Only' ) ).toHaveAttribute(
+			'title',
+			'The current screen only has WordPress Agent enabled for internal use.'
+		);
+	} );
+
+	it( 'hides the internal-only pill on generally available screens', () => {
+		renderChatHeader();
+
+		expect( screen.queryByText( 'A8C Only' ) ).toBeNull();
 	} );
 
 	it( 'minimizes the chat when the Minimize button is clicked', () => {

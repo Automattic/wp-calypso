@@ -18,9 +18,9 @@ export default function OmnibarAgentsManager( { pathname }: { pathname: string }
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: !! siteId,
 	} );
-	const shouldLoad = useShouldLoadAgentsManager( pathname, siteId );
+	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( pathname, siteId );
 
-	if ( ! shouldLoad || ! siteId || ! site ) {
+	if ( ! routeIsEnabled || ! siteId || ! site ) {
 		return null;
 	}
 
@@ -32,6 +32,7 @@ export default function OmnibarAgentsManager( { pathname }: { pathname: string }
 				site={ { ID: site.ID, domain: site.slug, URL: site.URL } }
 				currentSiteId={ siteId }
 				currentRoute={ pathname }
+				isInternalOnly={ isInternalOnly }
 			/>
 		</Suspense>
 	);

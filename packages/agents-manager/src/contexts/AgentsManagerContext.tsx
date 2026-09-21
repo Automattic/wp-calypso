@@ -30,6 +30,8 @@ export interface AgentsManagerContextType {
 	sectionName: string;
 	/** The current route path. */
 	currentRoute?: string;
+	/** Whether this screen is currently enabled only for internal users. */
+	isInternalOnly: boolean;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
@@ -59,6 +61,7 @@ const defaultContext: AgentsManagerContextType = {
 	siteKey: NO_SITE,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
+	isInternalOnly: false,
 	isEligibleForChat: false,
 	zendeskConversationTags: [],
 	agentConfig: null,
@@ -77,6 +80,7 @@ export interface AgentsManagerContextProviderProps {
 			| 'currentUser'
 			| 'site'
 			| 'currentRoute'
+			| 'isInternalOnly'
 			| 'isEligibleForChat'
 			| 'zendeskConversationTags'
 			| 'zendeskSmoochIntegrationKey'

@@ -152,13 +152,13 @@ const Omnibar = ( props ) => (
 );
 
 function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
-	const shouldLoad = useShouldLoadAgentsManager( currentRoute, siteId );
+	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( currentRoute, siteId );
 
-	if ( ! shouldLoad ) {
+	if ( ! routeIsEnabled ) {
 		return null;
 	}
 
-	return <AgentsManagerLoader sectionName={ sectionName } />;
+	return <AgentsManagerLoader sectionName={ sectionName } isInternalOnly={ isInternalOnly } />;
 }
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';

@@ -3,36 +3,57 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-const ENABLED_ROUTES: RegExp[] = [ /^\/sites\/[^/]+\/?$/ ];
+interface AgentsManagerRoute {
+	pattern: RegExp;
+	isInternalOnly: boolean;
+}
 
-export function shouldLoadAgentsManager(
+export interface AgentsManagerEligibility {
+	routeIsEnabled: boolean;
+	isInternalOnly: boolean;
+}
+
+const ENABLED_ROUTES: AgentsManagerRoute[] = [
+	{ pattern: /^\/sites\/[^/]+\/?$/, isInternalOnly: true },
+];
+
+export function getAgentsManagerEligibility(
 	currentRoute: string | null | undefined,
 	isWordPressAgentEnabled: boolean
-): boolean {
-	return (
-		isEnabled( 'calypso/agents-manager' ) &&
-		isWordPressAgentEnabled &&
-		!! currentRoute &&
-		ENABLED_ROUTES.some( ( route ) => route.test( currentRoute ) )
-	);
+): AgentsManagerEligibility {
+	const route = currentRoute
+		? ENABLED_ROUTES.find( ( candidate ) => candidate.pattern.test( currentRoute ) )
+		: undefined;
+	const isInternalOnly = route?.isInternalOnly ?? false;
+
+	return {
+		routeIsEnabled:
+			!! route &&
+			isWordPressAgentEnabled &&
+			( ! isInternalOnly || isEnabled( 'calypso/agents-manager-internal' ) ),
+		isInternalOnly,
+	};
 }
 
 export default function useShouldLoadAgentsManager(
 	currentRoute?: string | null,
 	siteId?: number | null
-): boolean {
-	const routeIsEnabled = useMemo(
-		() => shouldLoadAgentsManager( currentRoute, true ),
+): AgentsManagerEligibility {
+	const routeEligibility = useMemo(
+		() => getAgentsManagerEligibility( currentRoute, true ),
 		[ currentRoute ]
 	);
 	const { data: pluginStatus } = useQuery(
 		{
 			...bigSkyPluginQuery( siteId ?? 0 ),
-			enabled: routeIsEnabled && !! siteId,
+			enabled: routeEligibility.routeIsEnabled && !! siteId,
 			staleTime: 5 * 60 * 1000,
 		},
 		queryClient
 	);
 
-	return routeIsEnabled && pluginStatus?.enabled === true;
+	return {
+		...routeEligibility,
+		routeIsEnabled: routeEligibility.routeIsEnabled && pluginStatus?.enabled === true,
+	};
 }

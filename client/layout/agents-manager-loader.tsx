@@ -9,7 +9,13 @@ const importAgentsManager = () =>
 		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
 	);
 
-export default function AgentsManagerLoader( { sectionName }: { sectionName: string } ) {
+export default function AgentsManagerLoader( {
+	sectionName,
+	isInternalOnly = false,
+}: {
+	sectionName: string;
+	isInternalOnly?: boolean;
+} ) {
 	const user = useSelector( getCurrentUser );
 	const isSiteSpecific = useSelector( isSiteSection );
 	const { selectedSite, site } = useHelpCenterSite();
@@ -22,6 +28,7 @@ export default function AgentsManagerLoader( { sectionName }: { sectionName: str
 			sectionName={ sectionName }
 			site={ site }
 			currentSiteId={ isSiteSpecific ? selectedSite?.ID : undefined }
+			isInternalOnly={ isInternalOnly }
 		/>
 	);
 }

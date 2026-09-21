@@ -116,7 +116,7 @@ function ConnectedOmnibar( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
 	} );
-	const showAiChat = useShouldLoadAgentsManager( currentRoute, siteId );
+	const { routeIsEnabled: showAiChat } = useShouldLoadAgentsManager( currentRoute, siteId );
 
 	const { data: { nodes: dashboardNodes } = {} } = useQuery( dashboardAdminBarQuery() );
 	const { data: { nodes: siteNodes } = {} } = useQuery( {
