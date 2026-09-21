@@ -64,12 +64,13 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : stateLabel }
 				value={ currentValue }
-				options={
-					statesList.map( ( state ) => ( {
+				options={ [
+					{ label: stateLabel, value: '' },
+					...statesList.map( ( state ) => ( {
 						label: state.name,
 						value: state.code,
-					} ) ) ?? []
-				}
+					} ) ),
+				] }
 				onChange={ ( value ) => onChange( { [ id ]: value } ) }
 			/>
 		);

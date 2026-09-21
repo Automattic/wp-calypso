@@ -65,6 +65,7 @@ describe( 'User Can log in', () => {
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
+				WP_DESKTOP_E2E: 'true', // Marks the user agent so the edge does not serve a bot challenge.
 				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
 				DEBUG: true,
