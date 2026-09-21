@@ -5,7 +5,9 @@
 // here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
 	// Figma spec is 1248px, wider than the classic results page's content width.
-	max-width: 78rem;
+	// Override the variable rather than `max-width` so the mini cart, which
+	// renders inside this element, lines up with the results above it.
+	--domain-search-content-max-width: 78rem;
 
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;
