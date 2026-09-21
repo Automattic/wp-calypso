@@ -1659,7 +1659,7 @@ export default function OrchestratorChat( {
 							...message,
 							...( traceId && { traceId } ),
 							...( shouldDisableCheckpointMessage && { disabled: true } ),
-					  }
+						}
 					: message;
 
 			const directActions = [
@@ -1781,7 +1781,7 @@ export default function OrchestratorChat( {
 	const handleSuggestionClick = useCallback(
 		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const value =
-				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+				typeof suggestion === 'string' ? suggestion : ( suggestion.prompt ?? suggestion.label );
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
