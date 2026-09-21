@@ -227,18 +227,18 @@ describe( 'AgentSetup', () => {
 
 		window.history.replaceState( {}, '', '/?canvas=edit' );
 		mockIsStoreReady = true;
-		mockAgentConfig = { agentId: 'host-agent', isLoading: false };
+		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 		rerender( manager( 111 ) );
 
 		await waitFor( () =>
 			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					agentId: 'host-agent',
+					agentId: 'wp-orchestrator',
 					sessionId: 'url-session',
 				} )
 			)
 		);
-		expect( getSessionId( 'host-agent', '111' ) ).toBe( 'url-session' );
+		expect( getSessionId( 'wp-orchestrator', '111' ) ).toBe( 'url-session' );
 		expect( window.location.search ).toBe( '?canvas=edit' );
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
 	} );
