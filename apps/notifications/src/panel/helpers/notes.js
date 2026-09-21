@@ -56,6 +56,15 @@ export function getEditCommentLink( note ) {
 }
 
 /**
+ * Returns the pending comments moderation link for the note site.
+ * @param note
+ * @returns {string|undefined}
+ */
+export function getModerateCommentsLink( note ) {
+	return getActionBlock( note.body ).moderate_comments_link;
+}
+
+/**
  * Returns the new post link for the note post.
  * @param note
  * @returns {string}
