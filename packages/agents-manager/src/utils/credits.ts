@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { getLocaleSlug } from 'i18n-calypso';
+import { getBrowserSafeLocale } from 'i18n-calypso';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
@@ -82,9 +82,10 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 }
 
 // The interface locale, not the browser's, so the figures match the
-// translated sentence around them.
+// translated sentence around them. The browser-safe accessor keeps the
+// regional variant (`de-ch`) in a form `Intl` accepts.
 function formatCredits( value: number ): string {
-	const locale = getLocaleSlug() ?? 'en';
+	const locale = getBrowserSafeLocale() ?? 'en';
 	try {
 		return value.toLocaleString( locale );
 	} catch {

@@ -1445,6 +1445,12 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// A send blocked on credits keeps the card, so it can be retried once
+			// credits are back; the gate opens the popover itself.
+			if ( action.type === 'submit' && ! credits.beforeSubmit() ) {
+				return;
+			}
+
 			// Remove the card immediately so the user gets instant collapse feedback.
 			// For 'submit' actions the linked context entry stays until the request
 			// is sent — `consumeNextMessageExternalContextEntries` runs after the
@@ -1458,7 +1464,7 @@ export default function OrchestratorChat( {
 
 			setChatInput( action.prompt );
 		},
-		[ setChatInput, submitChatMessage ]
+		[ setChatInput, submitChatMessage, credits.beforeSubmit ]
 	);
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {

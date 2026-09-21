@@ -9,7 +9,7 @@ import {
 } from '../credits';
 
 const mockLocale = { slug: 'en' as string | undefined };
-jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: () => mockLocale.slug } ) );
+jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => mockLocale.slug } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
@@ -104,6 +104,11 @@ describe( 'formatCreditsDetail', () => {
 		};
 		mockLocale.slug = 'de';
 		expect( formatCreditsDetail( pool ) ).toBe( '10.800 of 15.000 credits' );
+		// A regional variant with different grouping from its base locale.
+		mockLocale.slug = 'es';
+		expect( formatCreditsDetail( pool ) ).toBe( '10.800 of 15.000 credits' );
+		mockLocale.slug = 'es-mx';
+		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
 		mockLocale.slug = 'not a locale';
 		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
 		mockLocale.slug = 'en';

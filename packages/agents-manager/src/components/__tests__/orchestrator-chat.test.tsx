@@ -1454,7 +1454,7 @@ describe( 'OrchestratorChat', () => {
 		} );
 	} );
 
-	it( 'gates a context-card submit on credits', async () => {
+	it( 'gates a context-card submit on credits and keeps the card for a retry', async () => {
 		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
 		render( chat() );
 
@@ -1462,6 +1462,8 @@ describe( 'OrchestratorChat', () => {
 
 		await act( async () => {} );
 		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_input_send_message',
 			expect.anything()

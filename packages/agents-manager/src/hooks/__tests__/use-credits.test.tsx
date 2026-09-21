@@ -5,7 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useCredits } from '../use-credits';
 
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: () => 'en' } ) );
+jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
