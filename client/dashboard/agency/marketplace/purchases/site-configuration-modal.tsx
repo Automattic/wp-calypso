@@ -191,24 +191,28 @@ function DevSiteClientAccess() {
 	);
 }
 
-function SiteConfigurationForm( {
-	agencyId,
-	pendingSiteId,
-	closeModal,
-	onCreatingChange,
-}: {
+interface BaseConfigurationFormProps {
 	agencyId: number;
-	/** Absent for a development site, which has no paid site to provision. */
-	pendingSiteId?: number;
 	closeModal?: () => void;
 	/** Lets a surrounding modal hold itself open until the site is created. */
 	onCreatingChange?: ( isCreating: boolean ) => void;
-} ) {
+}
+
+/**
+ * Which site is being created has to be stated rather than inferred from a
+ * missing id: a pending site that came back without one would otherwise spend a
+ * free development license on a site the agency has already paid for.
+ */
+type SiteConfigurationFormProps =
+	| ( BaseConfigurationFormProps & { isDevSite: true } )
+	| ( BaseConfigurationFormProps & { isDevSite: false; pendingSiteId: number } );
+
+function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
+	const { agencyId, closeModal, onCreatingChange, isDevSite } = props;
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const siteAddress = useSiteAddress( agencyId );
 	const { phpVersions, recommendedValue } = getPHPVersions();
-	const isDevSite = pendingSiteId === undefined;
 
 	const [ formData, setFormData ] = useState< SiteConfigurationFormData >( {
 		php_version: recommendedValue,
@@ -307,7 +311,7 @@ function SiteConfigurationForm( {
 		// have been about the name. Re-check it so the field can say so.
 		const onError = () => siteAddress.revalidate();
 
-		if ( pendingSiteId === undefined ) {
+		if ( props.isDevSite ) {
 			// A development site has no pending record to provision, so the
 			// response is the only place its id comes from.
 			provisionDevSite.mutate(
@@ -315,6 +319,7 @@ function SiteConfigurationForm( {
 				{ onSuccess: ( { site } ) => onCreated( site.id ), onError }
 			);
 		} else {
+			const { pendingSiteId } = props;
 			provisionSite.mutate(
 				{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
 				{ onSuccess: () => onCreated( pendingSiteId ), onError }
@@ -415,6 +420,7 @@ export default function SiteConfigurationModal( {
 	return (
 		<SiteConfigurationForm
 			agencyId={ agencyId }
+			isDevSite={ false }
 			pendingSiteId={ pendingSite.id }
 			closeModal={ closeModal }
 		/>
@@ -459,6 +465,7 @@ export function DevSiteConfigurationModal( { closeModal }: { closeModal: () => v
 			{ ! isLoading && !! agency?.id && (
 				<SiteConfigurationForm
 					agencyId={ agency.id }
+					isDevSite
 					closeModal={ closeModal }
 					onCreatingChange={ setIsCreating }
 				/>
