@@ -30,7 +30,7 @@ export default function PurchaseSiteDetails( {
 
 		const siteSlug = urlToSlug( purchase.site_assigned );
 		return (
-			<RouterLinkButton variant="link" to="/sites/$siteSlug" params={ { siteSlug } }>
+			<RouterLinkButton variant="link" to="/client-work/sites/$siteSlug" params={ { siteSlug } }>
 				{ siteSlug }
 			</RouterLinkButton>
 		);

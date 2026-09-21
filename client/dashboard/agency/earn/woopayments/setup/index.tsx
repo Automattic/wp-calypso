@@ -91,7 +91,7 @@ export default function EarnWooPaymentsSetup() {
 				}
 				onViewCommissionsClick={ () => {
 					recordTracksEvent( 'calypso_a4a_woopayments_site_setup_view_commissions_click' );
-					navigate( { to: '/earn/woopayments' } );
+					navigate( { to: '/earnings/woopayments' } );
 				} }
 			/>
 		</PageLayout>

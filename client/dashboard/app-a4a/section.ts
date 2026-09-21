@@ -5,11 +5,12 @@ export const A4A_DASHBOARD_SECTION_DEFINITION = {
 
 export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/',
+	// Forwarded to `/client-work/sites` by the router; shared site screens still link here.
 	'/sites',
-	'/team',
 	'/oauth/token',
 	'/overview',
 	'/marketplace',
+	'/agency/team',
 	'/agency/tiers',
 	'/agency/partner-directory',
 	'/agency/partner-directory/expertise',
@@ -21,12 +22,8 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/resources/ai-mcp/write',
 	'/resources/ai-mcp/prompts',
 	'/resources/ai-mcp/connect',
-	'/resources/dev-tools',
-	'/earn',
-	'/earn/referrals',
-	'/earn/woopayments',
-	'/earn/migrations',
-	'/earn/payout-settings',
+	'/client-work',
+	'/earnings',
 	'/client',
 	'/client/subscriptions',
 ];

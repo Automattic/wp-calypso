@@ -35,7 +35,7 @@ export default function AgencySiteSidebar() {
 
 	return (
 		<VStack spacing={ 2 }>
-			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
+			<SidebarBackButton to="/client-work/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
 			{ site && (
 				<VStack spacing={ 4 }>
 					<SidebarMenu>
@@ -44,18 +44,21 @@ export default function AgencySiteSidebar() {
 					<SidebarMenu>
 						<SidebarMenuItem
 							icon={ category }
-							to={ `/sites/${ siteSlug }` }
+							to={ `/client-work/sites/${ siteSlug }` }
 							activeOptions={ { exact: true } }
 						>
 							{ __( 'Overview' ) }
 						</SidebarMenuItem>
 						{ supportsPerformance && (
-							<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+							<SidebarMenuItem
+								icon={ chartBar }
+								to={ `/client-work/sites/${ siteSlug }/performance` }
+							>
 								{ __( 'Performance' ) }
 							</SidebarMenuItem>
 						) }
 						{ site.has_backup && (
-							<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
+							<SidebarMenuItem icon={ backup } to={ `/client-work/sites/${ siteSlug }/backups` }>
 								{ __( 'Backups' ) }
 							</SidebarMenuItem>
 						) }
@@ -63,37 +66,40 @@ export default function AgencySiteSidebar() {
 							<SidebarExpandableMenuItem
 								label={ __( 'Scan' ) }
 								icon={ shield }
-								to={ `/sites/${ siteSlug }/scan` }
+								to={ `/client-work/sites/${ siteSlug }/scan` }
 							>
-								<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
+								<SidebarMenuItem to={ `/client-work/sites/${ siteSlug }/scan/active` }>
 									{ __( 'Active threats' ) }
 								</SidebarMenuItem>
-								<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
+								<SidebarMenuItem to={ `/client-work/sites/${ siteSlug }/scan/history` }>
 									{ __( 'History' ) }
 								</SidebarMenuItem>
 							</SidebarExpandableMenuItem>
 						) }
 						{ supportsMonitoring && (
-							<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
+							<SidebarMenuItem
+								icon={ pending }
+								to={ `/client-work/sites/${ siteSlug }/monitoring` }
+							>
 								{ __( 'Monitoring' ) }
 							</SidebarMenuItem>
 						) }
 						<SidebarExpandableMenuItem
 							label={ __( 'Logs' ) }
 							icon={ formatListBullets }
-							to={ `/sites/${ siteSlug }/logs/activity` }
+							to={ `/client-work/sites/${ siteSlug }/logs/activity` }
 						>
-							<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
+							<SidebarMenuItem to={ `/client-work/sites/${ siteSlug }/logs/activity` }>
 								{ __( 'Activity' ) }
 							</SidebarMenuItem>
 						</SidebarExpandableMenuItem>
 						{ supportsDeployments && (
-							<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
+							<SidebarMenuItem icon={ code } to={ `/client-work/sites/${ siteSlug }/deployments` }>
 								{ __( 'Deployments' ) }
 							</SidebarMenuItem>
 						) }
 						{ supportsSettings && (
-							<SidebarMenuItem icon={ settings } to={ `/sites/${ siteSlug }/settings` }>
+							<SidebarMenuItem icon={ settings } to={ `/client-work/sites/${ siteSlug }/settings` }>
 								{ __( 'Settings' ) }
 							</SidebarMenuItem>
 						) }

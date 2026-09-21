@@ -16,5 +16,7 @@ export default function ScanCard( { site, siteSlug }: { site: AgencySite; siteSl
 		);
 	}
 
-	return <ScanCardContent siteId={ site.blog_id } scanUrl={ `/sites/${ siteSlug }/scan` } />;
+	return (
+		<ScanCardContent siteId={ site.blog_id } scanUrl={ `/client-work/sites/${ siteSlug }/scan` } />
+	);
 }

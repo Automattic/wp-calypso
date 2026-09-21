@@ -151,7 +151,7 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 					__(
 						'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
 					),
-					{ a: <Link to="/sites" /> }
+					{ a: <Link to="/client-work/sites" /> }
 				) }
 			</Text>
 			<div className="dashboard-marketplace-purchases__site-picker">

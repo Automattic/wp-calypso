@@ -62,9 +62,9 @@ export default function AgencyOverview() {
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
 					tiers: '/agency/tiers',
-					sites: '/sites',
-					referrals: '/earn/referrals',
-					woopayments: '/earn/woopayments',
+					sites: '/client-work/sites',
+					referrals: '/earnings/referrals',
+					woopayments: '/earnings/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 					contactSupport: CONTACT_SUPPORT_URL,

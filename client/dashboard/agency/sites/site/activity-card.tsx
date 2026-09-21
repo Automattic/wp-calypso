@@ -12,6 +12,9 @@ export default function ActivityCard() {
 	}
 
 	return (
-		<LatestActivityCard site={ site } activityLogUrl={ `/sites/${ siteSlug }/logs/activity` } />
+		<LatestActivityCard
+			site={ site }
+			activityLogUrl={ `/client-work/sites/${ siteSlug }/logs/activity` }
+		/>
 	);
 }

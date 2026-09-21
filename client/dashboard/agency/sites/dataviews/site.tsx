@@ -39,7 +39,7 @@ export function getSiteNameField(
 		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { item } ) => (
 			<Link
-				to="/sites/$siteSlug"
+				to="/client-work/sites/$siteSlug"
 				params={ { siteSlug: item.url } }
 				style={ { color: 'inherit', textDecoration: 'none' } }
 				onClick={ () => onSiteClick?.( item ) }

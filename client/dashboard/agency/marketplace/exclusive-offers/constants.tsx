@@ -28,7 +28,7 @@ const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK = a4aLink(
 	'/marketplace/hosting/refer-enterprise-hosting'
 );
 const A4A_MARKETPLACE_PRODUCTS_LINK = '/marketplace/products';
-const A4A_WOOPAYMENTS_LINK = '/earn/woopayments';
+const A4A_WOOPAYMENTS_LINK = '/earnings/woopayments';
 
 export const filterOptions = {
 	offerTypes: [

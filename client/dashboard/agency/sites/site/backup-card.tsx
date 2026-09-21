@@ -16,5 +16,10 @@ export default function BackupCard( { site }: { site: AgencySite } ) {
 		);
 	}
 
-	return <BackupCardContent siteId={ site.blog_id } backupUrl={ `/sites/${ site.url }/backups` } />;
+	return (
+		<BackupCardContent
+			siteId={ site.blog_id }
+			backupUrl={ `/client-work/sites/${ site.url }/backups` }
+		/>
+	);
 }

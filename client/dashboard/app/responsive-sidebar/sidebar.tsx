@@ -48,10 +48,10 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />
 				</SidebarNavigator.Screen>
-				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
+				<SidebarNavigator.Screen path="/agency/client-work/sites/$siteSlug">
 					<AgencySiteSidebar />
 				</SidebarNavigator.Screen>
-				<SidebarNavigator.Screen path="/agency/earn/referrals/$referralId">
+				<SidebarNavigator.Screen path="/agency/earnings/referrals/$referralId">
 					<ReferralSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">

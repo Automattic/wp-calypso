@@ -242,7 +242,7 @@ function SiteConfigurationForm( {
 					// The next site gets its own address, not the one just claimed.
 					siteAddress.refreshSuggestion();
 					closeModal?.();
-					navigate( { to: '/sites' } );
+					navigate( { to: '/client-work/sites' } );
 				},
 				// The address is only claimed by the provision itself, so a failure
 				// may have been about the name. Re-check it so the field can say so.

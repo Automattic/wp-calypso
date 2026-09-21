@@ -75,10 +75,11 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Team' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Client work' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Resources' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Earnings' } ) ).toBeVisible();
 	} );
 
 	test( 'hides menu items the user lacks the capability for', async () => {
@@ -90,7 +91,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Agency' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Marketplace' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Resources' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Earn' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Earnings' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'leaves only Home when the user holds no capabilities', async () => {
@@ -101,10 +102,11 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: /^Plugins/ } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps the Earn menu but drops the sub-items the user cannot reach', async () => {
+	test( 'keeps the Earnings menu but drops the sub-items the user cannot reach', async () => {
 		await renderSidebar( [ 'a4a_read_migrations' ] );
 
-		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Earnings' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Client work' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Migrations' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
@@ -138,13 +140,13 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Partner Directories' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Tiers' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Agency tier' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'hides Partner Directory when the user lacks the partner directory capability', async () => {
 		await renderSidebar( [ 'a4a_read_agency_tier' ] );
 
-		expect( screen.getByRole( 'link', { name: 'Tiers' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Agency tier' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Partner Directories' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -181,15 +183,15 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows Developer tools when the user holds the learn capability', async () => {
+	test( 'shows Dev tools when the user holds the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_learn' ] );
 
-		expect( screen.getByRole( 'link', { name: 'Developer tools' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Dev tools' } ) ).toBeVisible();
 	} );
 
-	test( 'hides Developer tools when the user lacks the learn capability', async () => {
+	test( 'hides Dev tools when the user lacks the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
-		expect( screen.queryByRole( 'link', { name: 'Developer tools' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Dev tools' } ) ).not.toBeInTheDocument();
 	} );
 } );

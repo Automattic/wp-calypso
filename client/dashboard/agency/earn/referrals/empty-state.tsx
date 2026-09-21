@@ -91,7 +91,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'secondary' : 'primary' }
 									size="compact"
 									__next40pxDefaultSize
-									to="/earn/payout-settings"
+									to="/earnings/payout-settings"
 								>
 									{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
 								</RouterLinkButton>

@@ -79,7 +79,7 @@ export default function EarnReferrals() {
 							isLoading={ isLoading }
 							renderClient={ ( item ) => (
 								<Link
-									to="/earn/referrals/$referralId"
+									to="/earnings/referrals/$referralId"
 									params={ { referralId: String( item.id ) } }
 									style={ { color: 'inherit', textDecoration: 'none' } }
 								>

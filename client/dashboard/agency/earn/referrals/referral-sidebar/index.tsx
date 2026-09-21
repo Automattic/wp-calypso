@@ -11,7 +11,7 @@ export default function ReferralSidebar() {
 
 	return (
 		<VStack spacing={ 2 }>
-			<SidebarBackButton to="/earn/referrals">{ __( 'Back to Referrals' ) }</SidebarBackButton>
+			<SidebarBackButton to="/earnings/referrals">{ __( 'Back to Referrals' ) }</SidebarBackButton>
 			{ referral && (
 				<VStack spacing={ 4 }>
 					<SidebarMenu>
@@ -20,15 +20,18 @@ export default function ReferralSidebar() {
 					<SidebarMenu>
 						<SidebarMenuItem
 							icon={ category }
-							to={ `/earn/referrals/${ referralId }` }
+							to={ `/earnings/referrals/${ referralId }` }
 							activeOptions={ { exact: true } }
 						>
 							{ __( 'Overview' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem icon={ people } to={ `/earn/referrals/${ referralId }/orders` }>
+						<SidebarMenuItem icon={ people } to={ `/earnings/referrals/${ referralId }/orders` }>
 							{ __( 'Referrals' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem icon={ receipt } to={ `/earn/referrals/${ referralId }/purchases` }>
+						<SidebarMenuItem
+							icon={ receipt }
+							to={ `/earnings/referrals/${ referralId }/purchases` }
+						>
 							{ __( 'Purchases' ) }
 						</SidebarMenuItem>
 					</SidebarMenu>

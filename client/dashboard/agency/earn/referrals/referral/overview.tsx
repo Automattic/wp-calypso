@@ -130,7 +130,7 @@ export default function ReferralOverview() {
 					isEmpty={ recentReferrals.length === 0 }
 					emptyText={ __( 'No referrals yet.' ) }
 					seeAllTitle={ __( 'See all referrals' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/orders` }
+					seeAllHref={ `/earnings/referrals/${ referralId }/orders` }
 				>
 					<DataViews< ReferralApiResponse >
 						data={ recentReferrals }
@@ -149,7 +149,7 @@ export default function ReferralOverview() {
 					isEmpty={ recentPurchases.length === 0 }
 					emptyText={ __( 'No purchases yet.' ) }
 					seeAllTitle={ __( 'See all purchases' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/purchases` }
+					seeAllHref={ `/earnings/referrals/${ referralId }/purchases` }
 				>
 					<DataViews< PurchaseItem >
 						data={ recentPurchases }

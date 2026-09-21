@@ -28,7 +28,7 @@ export default function MissingPaymentSettingsNotice( {
 			variant="warning"
 			title={ __( 'Add your payout information to get paid.' ) }
 			actions={
-				<RouterLinkButton variant="primary" to="/earn/payout-settings">
+				<RouterLinkButton variant="primary" to="/earnings/payout-settings">
 					{ __( 'Add payout information now' ) }
 				</RouterLinkButton>
 			}

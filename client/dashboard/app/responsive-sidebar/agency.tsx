@@ -1,17 +1,7 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import {
-	home,
-	globe,
-	layout,
-	megaphone,
-	pages,
-	plugins,
-	tag,
-	currencyDollar,
-	people,
-} from '@wordpress/icons';
+import { home, globe, layout, megaphone, pages, tag, currencyDollar } from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -64,41 +54,33 @@ export default function AgencySidebar() {
 		hasAnyCapability( capabilities, 'a4a_read_amplify' );
 	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
 	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
+	const canAccessMigrations = !! supports.agency.earn && canAccess( earnMigrationsRoute );
+	const canAccessSites = !! supports.agency.sites && canAccess( agencySitesRoute );
+	const canAccessPlugins =
+		!! supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' );
+	const canAccessTeam = !! supports.agency.team && canAccess( agencyTeamRoute );
 
 	return (
 		<>
 			<SidebarMenuItem icon={ home } to="/overview">
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
-			{ supports.agency.sites && canAccess( agencySitesRoute ) && (
-				<SidebarMenuItem icon={ layout } to="/sites">
-					{ __( 'Sites' ) }
-				</SidebarMenuItem>
-			) }
-			{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
-			{ supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' ) && (
-				<SidebarMenuItem icon={ plugins } href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
-					{ __( 'Plugins' ) }
-				</SidebarMenuItem>
-			) }
-			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
-				<SidebarMenuItem icon={ people } to="/team">
-					{ __( 'Team' ) }
-				</SidebarMenuItem>
-			) }
-			{ ( canAccessTiers || canAccessPartnerDirectory ) && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Agency' ) }
-					icon={ globe }
-					to={ canAccessTiers ? '/agency/tiers' : '/agency/partner-directory' }
-				>
-					{ canAccessTiers && (
-						<SidebarMenuItem to="/agency/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
+			{ ( canAccessSites || canAccessPlugins || canAccessDevTools || canAccessMigrations ) && (
+				<SidebarExpandableMenuItem label={ __( 'Client work' ) } icon={ layout } to="/client-work">
+					{ canAccessSites && (
+						<SidebarMenuItem to="/client-work/sites">{ __( 'Sites' ) }</SidebarMenuItem>
 					) }
-					{ canAccessPartnerDirectory && (
-						<SidebarMenuItem to="/agency/partner-directory">
-							{ __( 'Partner Directories' ) }
+					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
+					{ canAccessPlugins && (
+						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
+							{ __( 'Plugins' ) }
 						</SidebarMenuItem>
+					) }
+					{ canAccessDevTools && (
+						<SidebarMenuItem to="/client-work/dev-tools">{ __( 'Dev tools' ) }</SidebarMenuItem>
+					) }
+					{ canAccessMigrations && (
+						<SidebarMenuItem to="/client-work/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
@@ -111,7 +93,7 @@ export default function AgencySidebar() {
 					) ) }
 				</SidebarExpandableMenuItem>
 			) }
-			{ ( canAccessLearn || canAccessMcp || canAccessDevTools ) && (
+			{ ( canAccessLearn || canAccessMcp ) && (
 				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
 					{ canAccessLearn && (
 						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
@@ -119,26 +101,37 @@ export default function AgencySidebar() {
 					{ canAccessMcp && (
 						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'AI and MCP' ) }</SidebarMenuItem>
 					) }
-					{ canAccessDevTools && (
-						<SidebarMenuItem to="/resources/dev-tools">{ __( 'Developer tools' ) }</SidebarMenuItem>
-					) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ canAccessEarn && (
-				<SidebarExpandableMenuItem label={ __( 'Earn' ) } icon={ currencyDollar } to="/earn">
+				<SidebarExpandableMenuItem
+					label={ __( 'Earnings' ) }
+					icon={ currencyDollar }
+					to="/earnings"
+				>
 					{ canAccess( earnReferralsRoute ) && (
-						<SidebarMenuItem to="/earn/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/earnings/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
 					) }
 					{ canAccess( earnWooPaymentsRoute ) && (
-						<SidebarMenuItem to="/earn/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
-					) }
-					{ canAccess( earnMigrationsRoute ) && (
-						<SidebarMenuItem to="/earn/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/earnings/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
 					) }
 					{ canAccess( earnPayoutSettingsRoute ) && (
-						<SidebarMenuItem to="/earn/payout-settings">
+						<SidebarMenuItem to="/earnings/payout-settings">
 							{ __( 'Payout settings' ) }
 						</SidebarMenuItem>
+					) }
+				</SidebarExpandableMenuItem>
+			) }
+			{ ( canAccessTeam || canAccessPartnerDirectory || canAccessTiers ) && (
+				<SidebarExpandableMenuItem label={ __( 'Agency' ) } icon={ globe } to="/agency">
+					{ canAccessTeam && <SidebarMenuItem to="/agency/team">{ __( 'Team' ) }</SidebarMenuItem> }
+					{ canAccessPartnerDirectory && (
+						<SidebarMenuItem to="/agency/partner-directory">
+							{ __( 'Partner Directories' ) }
+						</SidebarMenuItem>
+					) }
+					{ canAccessTiers && (
+						<SidebarMenuItem to="/agency/tiers">{ __( 'Agency tier' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
