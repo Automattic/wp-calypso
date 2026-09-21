@@ -1,5 +1,4 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-@use "../panel/boot/stylesheets/shared/sizes" as sizes;
 
 // The WPDS warning surface has no dark counterpart. Tint the dark surface the
 // way the Dashboard's own warning notices do.
@@ -23,10 +22,7 @@
 // In the new app the warning reads as two aligned rules, down the strip and down
 // the comment, so the strip carries no tint of its own.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
-	// Lines up with the comment's quote rule, which the body content indents by
-	// the same amount.
 	.wpnc__pending-approval-section {
-		margin-inline-start: sizes.$wpnc__padding-medium;
 		box-shadow: none;
 		border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
 	}
