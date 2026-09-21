@@ -3,12 +3,14 @@ import {
 	fetchAgencyMigrationCommissionSites,
 	fetchAgencyPendingSites,
 	fetchAgencySitesWithPlugins,
+	provisionAgencyDevSite,
 	provisionAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { invalidateAgencyLicenses } from './jetpack-agency-licenses';
 import { queryClient } from './query-client';
-import type { ProvisionAgencySiteParams } from '@automattic/api-core';
+import type { ProvisionAgencyDevSiteParams, ProvisionAgencySiteParams } from '@automattic/api-core';
 
 // Backs the agency-scoped `/agency/{id}/sites` endpoint, narrowed to sites with
 // the given plugins installed. For the general managed-sites list (with paging
@@ -83,6 +85,19 @@ export const provisionAgencySiteMutation = ( agencyId: number ) =>
 		mutationFn: ( params: ProvisionAgencySiteParams ) => provisionAgencySite( agencyId, params ),
 		onSuccess: () =>
 			queryClient.invalidateQueries( { queryKey: agencyPendingSitesQuery( agencyId ).queryKey } ),
+	} );
+
+/**
+ * Creates a free development site. It consumes one of the agency's dev
+ * licenses, so the license queries are invalidated: the remaining allowance
+ * gates both create-site CTAs, and the new license belongs in Purchases.
+ */
+export const provisionAgencyDevSiteMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-dev-site-provision' },
+		mutationFn: ( params: ProvisionAgencyDevSiteParams ) =>
+			provisionAgencyDevSite( agencyId, params ),
+		onSuccess: () => invalidateAgencyLicenses( agencyId ),
 	} );
 
 /**
