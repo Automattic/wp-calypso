@@ -1,6 +1,5 @@
 
 import _self.bashNodeScript
-import _self.yarn_install_cmd
 import _self.CalypsoE2ETestsBuildTemplate
 import _self.lib.utils.allBranchesExceptMergeQueue
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
