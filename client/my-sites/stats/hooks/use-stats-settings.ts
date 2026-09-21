@@ -33,8 +33,7 @@ export function useStatsSettingsQuery( siteId: number | null ) {
 }
 
 /**
- * Save some Stats settings. The page shows the change at once and puts the old values back when
- * the site refuses them.
+ * Save some Stats settings. The page shows the change at once and puts the old values back when the site refuses them.
  * @param siteId Site to update.
  */
 export function useStatsSettingsMutation( siteId: number | null ) {

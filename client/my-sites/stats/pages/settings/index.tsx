@@ -87,7 +87,6 @@ function StatsSettingsPage() {
 
 	const renderRoleToggles = ( field: RoleField ) =>
 		data?.roles.map( ( { slug, name } ) => {
-			// Administrators always see Stats, so their toggle only shows that.
 			const isLockedOn = 'roles' === field && 'administrator' === slug;
 			return (
 				<ToggleControl
