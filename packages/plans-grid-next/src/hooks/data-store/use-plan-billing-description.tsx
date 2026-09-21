@@ -74,9 +74,7 @@ export default function usePlanBillingDescription( {
 		// For renewal pricing experiment in FeaturesGrid, show "per month" and move savings text to post-button area
 		// For ComparisonGrid, keep the original savings text above the button
 		if ( showBillingDescriptionForIncreasedRenewalPrice && enableCategorisedFeatures ) {
-			return translate( 'per month, excl. taxes', {
-				comment: 'Excl. Taxes is short for excluding taxes',
-			} );
+			return translate( 'per month' );
 		}
 
 		let yearlyVariantMaybeDiscountedPrice = Number.isFinite(
@@ -90,7 +88,7 @@ export default function usePlanBillingDescription( {
 				yearlyVariantPricing.discountedPrice?.monthly
 			)
 				? yearlyVariantPricing.discountedPrice?.monthly
-				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
+				: ( yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null );
 		}
 
 		const discountRate =
@@ -111,14 +109,14 @@ export default function usePlanBillingDescription( {
 			? formatCurrency( discountedPrice.full, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
-			  } )
+				} )
 			: null;
 	const originalPriceFullTermText =
 		currencyCode && originalPrice?.full
 			? formatCurrency( originalPrice.full, currencyCode, {
 					stripZeros: true,
 					isSmallestUnit: true,
-			  } )
+				} )
 			: null;
 
 	/*
@@ -140,7 +138,7 @@ export default function usePlanBillingDescription( {
 				? formatCurrency( discountedPriceFull, currencyCode, {
 						stripZeros: true,
 						isSmallestUnit: true,
-				  } )
+					} )
 				: null;
 
 		if ( originalPriceFullTermText && introOfferFullTermText ) {
@@ -281,9 +279,7 @@ export default function usePlanBillingDescription( {
 	if ( showBillingDescriptionForIncreasedRenewalPrice && discountedPriceFullTermText ) {
 		// In FeaturesGrid, show "per month" above button
 		if ( enableCategorisedFeatures ) {
-			return translate( 'per month, excl. taxes', {
-				comment: 'Excl. Taxes is short for excluding taxes',
-			} );
+			return translate( 'per month' );
 		}
 		// In ComparisonGrid, continue to renewal pricing section below (don't return here)
 	} else if ( discountedPriceFullTermText ) {
@@ -324,9 +320,7 @@ export default function usePlanBillingDescription( {
 		// In FeaturesGrid (enableCategorisedFeatures), show "per month" and move renewal text below CTA
 		// In ComparisonGrid, show full renewal text above CTA
 		if ( enableCategorisedFeatures ) {
-			return translate( 'per month, excl. taxes', {
-				comment: 'Excl. Taxes is short for excluding taxes',
-			} );
+			return translate( 'per month' );
 		}
 
 		return getRenewalPricingText( {
