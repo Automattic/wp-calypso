@@ -5,6 +5,7 @@ import {
 	getBlockRootClientId,
 	getBlocks,
 	insertBlock,
+	POST_CONTENT_BLOCK,
 	removeBlock,
 	replaceBlock,
 	replaceInnerBlocks,
@@ -37,12 +38,10 @@ interface ApplyEditsResult {
 	insertedClientIds: string[];
 }
 
-const POST_CONTENT_BLOCK_NAME = 'core/post-content';
-
 // Parents whose children move in place: replacing them is refused in
 // content-only editing, and a menu's items live in its record.
 const REPLACE_INNER_BLOCKS_STRUCTURAL_PARENTS = new Set( [
-	POST_CONTENT_BLOCK_NAME,
+	POST_CONTENT_BLOCK,
 	TEMPLATE_PART_BLOCK,
 	NAVIGATION_BLOCK,
 	'core/columns',
@@ -186,8 +185,8 @@ async function applyUpdate(
 
 	if ( ! target ) {
 		const recovery =
-			requestedId === POST_CONTENT_BLOCK_NAME &&
-			update.name === POST_CONTENT_BLOCK_NAME &&
+			requestedId === POST_CONTENT_BLOCK &&
+			update.name === POST_CONTENT_BLOCK &&
 			getUnmappedParentReorder( update, resolve );
 
 		if ( recovery ) {

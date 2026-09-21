@@ -8,6 +8,7 @@
 import { getBlockTypes } from '@wordpress/blocks';
 import { getBlock } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
+import { sameJson } from '../../utils/same-json';
 import type { BlockEdits, ResolveClientId } from './types';
 import type { EditorBlock, PageBlocks } from '../../utils/editor-blocks';
 
@@ -91,9 +92,6 @@ const normalizeValue = ( value: unknown ): unknown => {
 	return typeof value === 'string' ? truncate( value ) : value;
 };
 
-const sameValue = ( a: unknown, b: unknown ): boolean =>
-	JSON.stringify( a ?? null ) === JSON.stringify( b ?? null );
-
 // Key order aside, whether the two differ anywhere: objects and arrays by key, the rest by JSON.
 function valuesDiffer( a: unknown, b: unknown ): boolean {
 	if ( ! isObject( a ) || ! isObject( b ) ) {
@@ -137,11 +135,12 @@ const getRootLists = ( page: PageBlocks ): EditorBlock[][] => [
 	...page.templateParts.map( ( part ) => part.blocks ),
 ];
 
-function flattenPage( page: PageBlocks ): Map< string, EditorBlock > {
-	const byClientId = new Map< string, EditorBlock >();
+// Each block on its own, so an edit deep in a tree counts once, not once per ancestor.
+function flattenPage( page: PageBlocks ): BlocksByClientId {
+	const byClientId: BlocksByClientId = new Map();
 	const add = ( block: EditorBlock ): void => {
 		if ( ! byClientId.has( block.clientId ) ) {
-			byClientId.set( block.clientId, block );
+			byClientId.set( block.clientId, snapshotBlock( block ) );
 		}
 
 		block.innerBlocks.forEach( add );
@@ -320,8 +319,8 @@ const getAttributeResults = (
 					status: getAttributeStatus(
 						before,
 						after,
-						sameValue( requested, afterValue ),
-						sameValue( beforeValue, afterValue )
+						sameJson( requested, afterValue ),
+						sameJson( beforeValue, afterValue )
 					),
 				};
 			} );

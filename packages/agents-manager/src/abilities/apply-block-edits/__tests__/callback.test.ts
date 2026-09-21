@@ -1,5 +1,5 @@
 jest.mock( '../../../utils/block-ids', () => ( {
-	repointShortId: jest.fn(),
+	repointBlockId: jest.fn(),
 	resolveClientId: jest.fn(),
 } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
@@ -42,7 +42,7 @@ jest.mock( '../validation-details', () => ( {
 	haveBlocksChanged: jest.fn(),
 } ) );
 
-import { repointShortId, resolveClientId } from '../../../utils/block-ids';
+import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
 import { getBlockingMove } from '../../../utils/canvas-binding';
 import { captureCanvas } from '../../../utils/canvas-capture';
 import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
@@ -81,7 +81,7 @@ const edits = ( overrides = {} ) => ( {
 	deletes: [],
 	...overrides,
 } );
-const recorder = { captureMenu: jest.fn(), markWritten: jest.fn() };
+const recorder = { captureMenu: jest.fn(), discardMenu: jest.fn(), markWritten: jest.fn() };
 const level = { write: jest.fn(), close: jest.fn(), hasWritten: jest.fn() };
 const input = { updates: [ update ], summary: 'Done.', toolCallId: 'call-1' };
 
@@ -211,7 +211,7 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( resolve( 'a1' ) ).toBe( 'new-a1' );
 		// A replacement recorded by clientId is found through a short id too.
 		expect( resolve( 'b2' ) ).toBe( 'new-b2' );
-		expect( repointShortId ).toHaveBeenCalledWith( 'a1', 'new-a1' );
+		expect( repointBlockId ).toHaveBeenCalledWith( 'a1', 'new-a1' );
 	} );
 
 	// The chat renders the agent message, so only a call the chat made gets one.
@@ -339,6 +339,22 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( recorder.captureMenu.mock.calls ).toEqual( [ [ 19 ] ] );
 		expect( recorder.markWritten ).not.toHaveBeenCalled();
 		expect( result ).toEqual( expect.objectContaining( { outcome: 'updated' } ) );
+	} );
+
+	// The snapshot is taken just before the write; a write that then fails leaves nothing to undo.
+	it( 'discards a menu captured for a batch that wrote nothing', async () => {
+		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		jest.mocked( getMenuIdAround ).mockReturnValue( 19 );
+		recorder.captureMenu.mockResolvedValue( true );
+		level.hasWritten.mockReturnValue( false );
+		jest.mocked( applyEdits ).mockImplementation( async ( _, { beforeWrite } ) => {
+			await beforeWrite( 'link' );
+			throw new Error( 'Stopped' );
+		} );
+
+		await applyBlockEditsCallback( input );
+
+		expect( recorder.discardMenu ).toHaveBeenCalledWith( 19 );
 	} );
 
 	// The user may be scrolled anywhere; the capture frames what the call added.

@@ -71,10 +71,15 @@ const withControlledBlocks = ( blocks: EditorBlock[] ): EditorBlock[] =>
  */
 function getPageRegions(): PageBlock[] {
 	const sectionRoot = getSectionRootClientId();
+
+	if ( ! sectionRoot ) {
+		return withControlledBlocks( getBlocks() );
+	}
+
 	const templateParts = getTemplatePartClientIds();
 	const header = findTemplatePart( templateParts, HEADER_SLUGS );
 	const footer = findTemplatePart( templateParts, [ FOOTER_SLUG ] );
-	const sectionRootParents = sectionRoot ? getBlockParents( sectionRoot ) : [];
+	const sectionRootParents = getBlockParents( sectionRoot );
 
 	// The outermost ancestor that does not hold the content as well. A part
 	// inside the content is already there.
@@ -85,7 +90,7 @@ function getPageRegions(): PageBlock[] {
 
 		const parents = getBlockParents( clientId );
 
-		if ( sectionRoot && parents.includes( sectionRoot ) ) {
+		if ( parents.includes( sectionRoot ) ) {
 			return clientId;
 		}
 
@@ -134,16 +139,12 @@ function getPageRegions(): PageBlock[] {
 
 	return [
 		...toRegion( 'header', headerRoot ),
-		...( sectionRoot
-			? [
-					{
-						name: getBlock( sectionRoot )?.name,
-						type: 'content' as const,
-						clientId: sectionRoot,
-						innerBlocks: content,
-					},
-				]
-			: content ),
+		{
+			name: getBlock( sectionRoot )?.name,
+			type: 'content',
+			clientId: sectionRoot,
+			innerBlocks: content,
+		},
 		...toRegion( 'footer', footerRoot ),
 	];
 }

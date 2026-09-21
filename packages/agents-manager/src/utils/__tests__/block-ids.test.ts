@@ -59,6 +59,20 @@ it.each( [ 'uuid-hero', 'constructor' ] )(
 	}
 );
 
+// A replaced block keeps the id the agent knows it by, whichever form the call used.
+it( 'repoints a short id, or every short id that stood for a replaced block', () => {
+	const { createShortIdLookup, repointBlockId, resolveClientId } = loadBlockIds();
+	const shortId = createShortIdLookup().toShortId( 'uuid-old' );
+
+	repointBlockId( shortId, 'uuid-new' );
+
+	expect( resolveClientId( shortId ) ).toBe( 'uuid-new' );
+
+	repointBlockId( 'uuid-new', 'uuid-newer' );
+
+	expect( resolveClientId( shortId ) ).toBe( 'uuid-newer' );
+} );
+
 // TODO (ability-migration): Goes with the shared map in `block-ids.ts`.
 describe( "with Big Sky's map", () => {
 	// Big Sky looks a block up in its map before minting, and resolves through
