@@ -55,7 +55,11 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 								__( '%d%% left', __i18n_text_domain__ ),
 								percent
 						  )
-						: `${ percent }%` }
+						: sprintf(
+								/* translators: %d: percentage of credits left */
+								__( '%d%%', __i18n_text_domain__ ),
+								percent
+						  ) }
 				</span>
 			</div>
 			<div className="agents-manager-credits-meter__bar" aria-hidden="true">

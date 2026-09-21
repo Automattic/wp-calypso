@@ -82,4 +82,31 @@ describe( 'useCredits', () => {
 		} );
 		expect( allowed ).toBe( false );
 	} );
+
+	it( 'drains the mocked paid pools plan-first, consistently with the aggregate', () => {
+		const pools = ( search: string ) => {
+			seed( search );
+			const { result } = renderHook( () => useCredits( { enabled: true } ) );
+			const meter = result.current.trailingActions as React.ReactElement< {
+				status: { pools: Array< { id: string; remaining?: number; percent: number } > };
+			} >;
+			return Object.fromEntries( meter.props.status.pools.map( ( pool ) => [ pool.id, pool ] ) );
+		};
+
+		const full = pools( '?am_credits=100&am_plan=paid' );
+		expect( full.plan.remaining ).toBe( 15000 );
+		expect( full.topups.remaining ).toBe( 1000 );
+
+		const half = pools( '?am_credits=50&am_plan=paid' );
+		expect( half.plan.remaining ).toBe( 7000 );
+		expect( half.topups.remaining ).toBe( 1000 );
+
+		const low = pools( '?am_credits=5&am_plan=paid' );
+		expect( low.plan.remaining ).toBe( 0 );
+		expect( low.topups.remaining ).toBe( 800 );
+
+		const out = pools( '?am_credits=0&am_plan=paid' );
+		expect( out.plan.percent ).toBe( 0 );
+		expect( out.topups.percent ).toBe( 0 );
+	} );
 } );

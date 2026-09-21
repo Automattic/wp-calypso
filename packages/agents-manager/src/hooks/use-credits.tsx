@@ -39,8 +39,16 @@ function readMockSeed(): MockCreditsSeed | null {
 	return { plan, percent: clampPercent( Number( params.get( 'am_credits' ) ) ) };
 }
 
+const MOCK_PLAN_TOTAL = 15000;
+const MOCK_TOPUPS_TOTAL = 1000;
+
 function buildMockStatus( plan: CreditsPlan, percent: number ): CreditsStatus {
 	if ( plan === 'paid' ) {
+		// Plan credits are spent before top-ups, so the aggregate balance
+		// drains the plan pool first and the top-ups pool only after it hits zero.
+		const remaining = Math.round( ( ( MOCK_PLAN_TOTAL + MOCK_TOPUPS_TOTAL ) * percent ) / 100 );
+		const topupsRemaining = Math.min( MOCK_TOPUPS_TOTAL, remaining );
+		const planRemaining = remaining - topupsRemaining;
 		return {
 			plan,
 			percent,
@@ -48,18 +56,18 @@ function buildMockStatus( plan: CreditsPlan, percent: number ): CreditsStatus {
 				{
 					id: 'plan',
 					label: __( 'Monthly plan', __i18n_text_domain__ ),
-					percent,
+					percent: ( 100 * planRemaining ) / MOCK_PLAN_TOTAL,
 					dateLabel: __( 'Resets 17 Oct', __i18n_text_domain__ ),
-					remaining: Math.round( ( 15000 * percent ) / 100 ),
-					total: 15000,
+					remaining: planRemaining,
+					total: MOCK_PLAN_TOTAL,
 				},
 				{
 					id: 'topups',
 					label: __( 'Top-ups', __i18n_text_domain__ ),
-					percent: 80,
+					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
 					dateLabel: __( 'Expires 15 Sep 2027', __i18n_text_domain__ ),
-					remaining: 800,
-					total: 1000,
+					remaining: topupsRemaining,
+					total: MOCK_TOPUPS_TOTAL,
 				},
 			],
 		};

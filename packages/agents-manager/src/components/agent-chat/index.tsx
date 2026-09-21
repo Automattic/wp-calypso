@@ -334,6 +334,8 @@ export default function AgentChat( {
 			expandOnHover={ false }
 			notice={ notice }
 			beforeSubmit={ beforeSubmit }
+			// On the container so the floating compact composer gets it too
+			trailingActions={ trailingActions }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -394,7 +396,6 @@ export default function AgentChat( {
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
 							imageUploadDisabled={ isChatInputDisabled || imageUpload?.isUploadingImages }
-							trailingActions={ trailingActions }
 							readOnly={ isChatInputDisabled || imageUpload?.isUploadingImages }
 							disabled={
 								isChatInputDisabled || ( imageUpload?.pendingImages?.length ? false : undefined )
