@@ -22,7 +22,7 @@ function applyPostCssConfig( rules, config ) {
 								config,
 							},
 						},
-				  }
+					}
 				: loader
 		),
 	} ) );

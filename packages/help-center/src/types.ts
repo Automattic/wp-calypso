@@ -109,13 +109,7 @@ export interface SupportActivity {
 }
 
 type ResultType =
-	| 'DISABLED'
-	| 'LOADING'
-	| 'OWNED_BY_USER'
-	| 'WPORG'
-	| 'UNKNOWN'
-	| 'NOT_OWNED_BY_USER'
-	| 'UNKNOWN';
+	'DISABLED' | 'LOADING' | 'OWNED_BY_USER' | 'WPORG' | 'UNKNOWN' | 'NOT_OWNED_BY_USER' | 'UNKNOWN';
 
 export type AnalysisReport = {
 	result: ResultType;
