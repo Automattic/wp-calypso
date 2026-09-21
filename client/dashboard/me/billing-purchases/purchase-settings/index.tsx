@@ -1632,7 +1632,7 @@ export default function PurchaseSettings() {
 			return __( 'Renews' );
 		}
 		if ( isOneTimePurchase( purchase ) ) {
-			return __( 'Renewal Status' );
+			return __( 'Renewal status' );
 		}
 		return __( 'Expires' );
 	} )();
