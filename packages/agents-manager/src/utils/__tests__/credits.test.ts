@@ -1,5 +1,6 @@
 import {
 	type CreditsStatus,
+	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsDetail,
 	getCreditsLabel,
@@ -112,5 +113,31 @@ describe( 'formatCreditsDetail', () => {
 		mockLocale.slug = 'not a locale';
 		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
 		mockLocale.slug = 'en';
+	} );
+} );
+
+describe( 'buildMockCreditsStatus', () => {
+	const pools = ( percent: number ) =>
+		Object.fromEntries(
+			buildMockCreditsStatus( 'paid', percent ).pools.map( ( p ) => [ p.id, p ] )
+		);
+
+	it( 'gives free plans a single percent-only pool', () => {
+		expect( buildMockCreditsStatus( 'free', 15 ) ).toEqual( {
+			plan: 'free',
+			percent: 15,
+			pools: [ { id: 'free', label: 'Free credits', percent: 15 } ],
+		} );
+	} );
+
+	it( 'drains the paid plan pool before top-ups, consistently with the aggregate', () => {
+		expect( pools( 100 ).plan.remaining ).toBe( 15000 );
+		expect( pools( 100 ).topups.remaining ).toBe( 1000 );
+		expect( pools( 50 ).plan.remaining ).toBe( 7000 );
+		expect( pools( 50 ).topups.remaining ).toBe( 1000 );
+		expect( pools( 5 ).plan.remaining ).toBe( 0 );
+		expect( pools( 5 ).topups.remaining ).toBe( 800 );
+		expect( pools( 0 ).plan.percent ).toBe( 0 );
+		expect( pools( 0 ).topups.percent ).toBe( 0 );
 	} );
 } );

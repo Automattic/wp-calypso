@@ -105,3 +105,46 @@ export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 		formatCredits( pool.total )
 	);
 }
+
+// Mocked balances until the backend snapshot lands. Plan credits are spent
+// before top-ups, so the aggregate drains the plan pool first.
+const MOCK_PLAN_TOTAL = 15000;
+const MOCK_TOPUPS_TOTAL = 1000;
+
+export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): CreditsStatus {
+	if ( plan === 'paid' ) {
+		// Plan credits are spent before top-ups, so the aggregate balance
+		// drains the plan pool first and the top-ups pool only after it hits zero.
+		const remaining = Math.round( ( ( MOCK_PLAN_TOTAL + MOCK_TOPUPS_TOTAL ) * percent ) / 100 );
+		const topupsRemaining = Math.min( MOCK_TOPUPS_TOTAL, remaining );
+		const planRemaining = remaining - topupsRemaining;
+		return {
+			plan,
+			percent,
+			pools: [
+				{
+					id: 'plan',
+					label: __( 'Monthly plan', __i18n_text_domain__ ),
+					percent: ( 100 * planRemaining ) / MOCK_PLAN_TOTAL,
+					dateLabel: __( 'Resets 17 Oct', __i18n_text_domain__ ),
+					remaining: planRemaining,
+					total: MOCK_PLAN_TOTAL,
+				},
+				{
+					id: 'topups',
+					label: __( 'Top-ups', __i18n_text_domain__ ),
+					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
+					dateLabel: __( 'Expires 15 Sep 2027', __i18n_text_domain__ ),
+					remaining: topupsRemaining,
+					total: MOCK_TOPUPS_TOTAL,
+				},
+			],
+		};
+	}
+
+	return {
+		plan,
+		percent,
+		pools: [ { id: 'free', label: __( 'Free credits', __i18n_text_domain__ ), percent } ],
+	};
+}

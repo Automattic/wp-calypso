@@ -3,7 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import {
 	type CreditsPlan,
-	type CreditsStatus,
+	buildMockCreditsStatus,
 	clampPercent,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -37,47 +37,6 @@ function readMockSeed(): MockCreditsSeed | null {
 	const plan = params.get( 'am_plan' ) === 'paid' ? 'paid' : 'free';
 
 	return { plan, percent: clampPercent( Number( params.get( 'am_credits' ) ) ) };
-}
-
-const MOCK_PLAN_TOTAL = 15000;
-const MOCK_TOPUPS_TOTAL = 1000;
-
-function buildMockStatus( plan: CreditsPlan, percent: number ): CreditsStatus {
-	if ( plan === 'paid' ) {
-		// Plan credits are spent before top-ups, so the aggregate balance
-		// drains the plan pool first and the top-ups pool only after it hits zero.
-		const remaining = Math.round( ( ( MOCK_PLAN_TOTAL + MOCK_TOPUPS_TOTAL ) * percent ) / 100 );
-		const topupsRemaining = Math.min( MOCK_TOPUPS_TOTAL, remaining );
-		const planRemaining = remaining - topupsRemaining;
-		return {
-			plan,
-			percent,
-			pools: [
-				{
-					id: 'plan',
-					label: __( 'Monthly plan', __i18n_text_domain__ ),
-					percent: ( 100 * planRemaining ) / MOCK_PLAN_TOTAL,
-					dateLabel: __( 'Resets 17 Oct', __i18n_text_domain__ ),
-					remaining: planRemaining,
-					total: MOCK_PLAN_TOTAL,
-				},
-				{
-					id: 'topups',
-					label: __( 'Top-ups', __i18n_text_domain__ ),
-					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
-					dateLabel: __( 'Expires 15 Sep 2027', __i18n_text_domain__ ),
-					remaining: topupsRemaining,
-					total: MOCK_TOPUPS_TOTAL,
-				},
-			],
-		};
-	}
-
-	return {
-		plan,
-		percent,
-		pools: [ { id: 'free', label: __( 'Free credits', __i18n_text_domain__ ), percent } ],
-	};
 }
 
 interface UseCreditsOptions {
@@ -121,7 +80,7 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 	}, [ isProcessing, enabled, seed ] );
 
 	const status = useMemo(
-		() => ( enabled && seed ? buildMockStatus( seed.plan, percent ) : undefined ),
+		() => ( enabled && seed ? buildMockCreditsStatus( seed.plan, percent ) : undefined ),
 		[ enabled, seed, percent ]
 	);
 
