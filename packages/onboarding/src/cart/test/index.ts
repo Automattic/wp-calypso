@@ -216,14 +216,14 @@ describe( 'getNewSiteParams', () => {
 			getNewSiteParams(
 				testParams( {
 					flowToCheck: ONBOARDING_FLOW,
-					siteUrl: 'sandigreene.com',
+					siteUrl: 'example.com',
 					siteTitle: '',
 					username: 'janedoe',
 				} )
 			)
 		).toEqual(
 			expect.objectContaining( {
-				blog_name: 'sandigreene.com',
+				blog_name: 'example.com',
 				find_available_url: true,
 			} )
 		);
