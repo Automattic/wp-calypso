@@ -18,6 +18,8 @@
  * Line breaking is a function of font metrics: substitute the font and the
  * capture reports different wrapping than the page has. An image that quietly
  * lies about layout is worse than no image, so this fails closed.
+ *
+ * Internals are exported for their tests only; `rasterizeCanvas` is the entry point.
  */
 
 import type { CanvasCaptureContext, CanvasRasterizer, FilePart } from './capture';
@@ -212,11 +214,13 @@ export const pinViewportPositionedElements = (
 
 	liveElements.forEach( ( liveElement, index ) => {
 		const cloneElement = cloneElements[ index ] as HTMLElement | undefined;
+
 		if ( ! cloneElement ) {
 			return;
 		}
 
 		const position = view.getComputedStyle( liveElement ).position;
+
 		if ( position !== 'fixed' && position !== 'sticky' ) {
 			return;
 		}
@@ -384,6 +388,7 @@ export const replaceImagesWithPlaceholders = (
 
 	liveImages.forEach( ( liveImage, index ) => {
 		const cloneImage = cloneImages[ index ] as HTMLElement | undefined;
+
 		if ( ! cloneImage ) {
 			return;
 		}
@@ -410,12 +415,14 @@ export const replaceImagesWithPlaceholders = (
 
 	liveElements.forEach( ( liveElement, index ) => {
 		const cloneElement = cloneElements[ index ] as HTMLElement | undefined;
+
 		if ( ! cloneElement ) {
 			return;
 		}
 
 		// A gradient is colour, not a photograph, and paints without a fetch.
 		const backgroundImage = view.getComputedStyle( liveElement ).backgroundImage;
+
 		if ( backgroundImage && /url\(/i.test( backgroundImage ) ) {
 			cloneElement.style.backgroundImage = 'none';
 			cloneElement.style.backgroundColor = PLACEHOLDER_FILL;
@@ -557,6 +564,7 @@ const fetchWithDeadline = ( url: string, milliseconds: number ): Promise< Respon
 const fetchStyleSheetText = async ( href: string ): Promise< string | null > => {
 	try {
 		const response = await fetchWithDeadline( href, STYLESHEET_FETCH_TIMEOUT );
+
 		if ( ! response.ok ) {
 			throw new Error( `HTTP ${ response.status }` );
 		}
@@ -581,12 +589,8 @@ const fetchStyleSheetText = async ( href: string ): Promise< string | null > => 
  * still refuses: an unstyled render is not a degraded picture of the page but a
  * convincing picture of a different one.
  *
- * Both counts come back with the text. A dropped sheet makes a degraded capture
- * attributable rather than merely suspicious, and a refetched one is the only
- * thing that puts network time inside what is otherwise a pure CPU read — so a
- * `css_read` that suddenly costs hundreds of milliseconds can be explained.
- * Only the tallies are carried, since these end up in `stages`, which is
- * numbers.
+ * The tallies of dropped and refetched sheets come back with the text, so a
+ * degraded or slow read can be attributed.
  * @param canvasDocument The canvas document.
  * @returns The CSS, and what it cost.
  * @throws When no stylesheet at all could be read.
@@ -601,6 +605,7 @@ export const collectStyleText = async (
 		sheets.map( async ( styleSheet ) => {
 			const sheet = styleSheet as CSSStyleSheet;
 			const text = readStyleSheetText( sheet, canvasDocument.baseURI );
+
 			if ( text !== null ) {
 				return text;
 			}
@@ -608,6 +613,7 @@ export const collectStyleText = async (
 			// An inline sheet cannot be cross-origin, so there is no URL to ask
 			// again with and nothing more to try.
 			const fetched = sheet.href ? await fetchStyleSheetText( sheet.href ) : null;
+
 			if ( fetched !== null ) {
 				refetched++;
 
@@ -737,12 +743,14 @@ export const inlineFonts = async (
 	const dataUris = await Promise.all(
 		uniqueUrls.map( async ( url ) => {
 			const cached = fontCache.get( url );
+
 			if ( cached ) {
 				return cached;
 			}
 
 			try {
 				const response = await fetchWithDeadline( url, FONT_FETCH_TIMEOUT );
+
 				if ( ! response.ok ) {
 					throw new Error( `HTTP ${ response.status }` );
 				}
@@ -777,16 +785,8 @@ export const inlineFonts = async (
 /**
  * The canvas CSS, prepared for embedding: absolute urls and inlined fonts.
  *
- * Deliberately not cached. It was, keyed on the stylesheet count, and that is
- * wrong in exactly the case this feature exists for: a global styles or theme
- * write rewrites the contents of an existing inline sheet and never changes how
- * many sheets there are. The capture then drew the page with the CSS from before
- * the change — reporting the old colours for the very write it was taken to
- * verify, which is worse than not taking it at all.
- *
- * Rebuilding costs a few hundred milliseconds against a capture that already
- * costs a few hundred more, and it is the only way to be sure the picture shows
- * the styles currently in force.
+ * Not cached: a global styles write rewrites an existing sheet in place, and a
+ * capture taken to verify that write must show the styles now in force.
  * @param canvasDocument The canvas document.
  * @param onStats        Receives the read and font timings and the sheet tallies.
  * @returns The prepared CSS.
@@ -1103,6 +1103,7 @@ const drawToBlob = async (
 	canvas.height = Math.round( rect.height * scale );
 
 	const context = canvas.getContext( '2d', { willReadFrequently: true } );
+
 	if ( ! context ) {
 		throw new UnfaithfulCaptureError( 'No 2d context available', 'canvas' );
 	}
@@ -1227,6 +1228,7 @@ export const getInkSpans = (
 		}
 
 		const box = element.getBoundingClientRect();
+
 		if ( box.height > 0 ) {
 			spans.push( {
 				top: box.top + scrollY,
@@ -1277,6 +1279,7 @@ const drawPageToBlob = async (
 	canvas.height = Math.round( documentSize.height * scale );
 
 	const context = canvas.getContext( '2d', { willReadFrequently: true } );
+
 	if ( ! context ) {
 		throw new UnfaithfulCaptureError( 'No 2d context available', 'canvas' );
 	}
@@ -1360,6 +1363,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	fullPage,
 }: CanvasCaptureContext ) => {
 	const body = canvasDocument.body;
+
 	if ( ! body ) {
 		return null;
 	}
@@ -1384,6 +1388,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		Boolean( fullPage ) || editOutgrowsViewport( canvasDocument, canvasWindow, clientIds );
 
 	const rect = getCaptureRect( canvasDocument, canvasWindow, clientIds );
+
 	if ( ! rect.width || ! rect.height ) {
 		return null;
 	}
@@ -1410,11 +1415,11 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		getPreparedStyleText( canvasDocument, ( stats ) => {
 			stages.css_read = stats.read;
 			stages.css_fonts = stats.fonts;
-			// Only when there were any, so an ordinary capture's stages keep
-			// exactly the shape they had.
+			// Only when there were any, so an ordinary capture's stages keep their shape.
 			if ( stats.refetched ) {
 				stages.css_refetched_sheets = stats.refetched;
 			}
+
 			if ( stats.skipped ) {
 				stages.css_skipped_sheets = stats.skipped;
 			}

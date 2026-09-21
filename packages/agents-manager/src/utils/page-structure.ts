@@ -15,6 +15,7 @@ import {
 	getSelectedBlockClientId,
 	getTemplatePartClientIds,
 	TEMPLATE_PART_BLOCK,
+	type BlockAttributes,
 	type EditorBlock,
 } from './editor-blocks';
 import { getLoadedMenuItems, isMenuItem, NAVIGATION_BLOCK, type MenuId } from './navigation-menu';
@@ -22,7 +23,10 @@ import { getLoadedMenuItems, isMenuItem, NAVIGATION_BLOCK, type MenuId } from '.
 // Where a theme offers both, the hero header is the one on the page.
 const HEADER_SLUGS = [ 'header-hero', 'header' ];
 const FOOTER_SLUG = 'footer';
-const REGION_SLUGS: unknown[] = [ ...HEADER_SLUGS, FOOTER_SLUG ];
+const REGION_SLUGS = [ ...HEADER_SLUGS, FOOTER_SLUG ];
+
+const isRegionSlug = ( slug: unknown ): boolean =>
+	typeof slug === 'string' && REGION_SLUGS.includes( slug );
 
 type RegionType = 'header' | 'content' | 'footer';
 
@@ -31,7 +35,7 @@ interface PageBlock {
 	type?: RegionType;
 	clientId: string;
 	name?: string;
-	attributes?: Record< string, unknown >;
+	attributes?: BlockAttributes;
 	innerBlocks: PageBlock[];
 }
 
@@ -132,8 +136,7 @@ function getPageRegions(): PageBlock[] {
 
 	const content = withControlledBlocks(
 		getBlocks( sectionRoot ).filter(
-			( block ) =>
-				block.name !== TEMPLATE_PART_BLOCK || ! REGION_SLUGS.includes( block.attributes.slug )
+			( block ) => block.name !== TEMPLATE_PART_BLOCK || ! isRegionSlug( block.attributes.slug )
 		)
 	);
 
@@ -173,7 +176,7 @@ function readPageStructure(): PageStructure | null {
 		}
 
 		const { toShortId, findShortId } = createShortIdLookup();
-		const menuItemAttributes = new Map< string, Record< string, unknown > >();
+		const menuItemAttributes = new Map< string, BlockAttributes >();
 
 		const shorten = ( block: PageBlock, isInMenu = false ): PageBlock => {
 			const shortId = toShortId( block.clientId );

@@ -72,11 +72,14 @@ const createWriters = ( level: UndoLevel ) => {
 
 type Writers = ReturnType< typeof createWriters >;
 
+const blockNotFound = ( clientId: string ): Error =>
+	new Error( `[Edit Blocks] Block not found with clientId: ${ clientId }` );
+
 function requireBlock( clientId: string ): EditorBlock {
 	const block = getBlock( clientId );
 
 	if ( ! block ) {
-		throw new Error( `[Edit Blocks] Block not found with clientId: ${ clientId }` );
+		throw blockNotFound( clientId );
 	}
 
 	return block;
@@ -107,7 +110,7 @@ function resolveInsertParent(
 	const parent = resolve( parentClientId );
 
 	if ( ! getBlock( parent ) ) {
-		throw new Error( `[Edit Pattern] Parent block not found with clientId: ${ parent }` );
+		throw new Error( `[Edit Blocks] Parent block not found with clientId: ${ parent }` );
 	}
 
 	return parent;
@@ -196,7 +199,7 @@ async function applyUpdate(
 			return;
 		}
 
-		throw new Error( `[Edit Blocks] Block not found with clientId: ${ clientId }` );
+		throw blockNotFound( clientId );
 	}
 
 	await beforeWrite( clientId );

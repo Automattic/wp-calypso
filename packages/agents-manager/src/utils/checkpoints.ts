@@ -43,8 +43,7 @@ import type { Block } from '@wordpress/blocks';
  * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
  * execute as plain callbacks. Every migrated domain restores here: global
  * styles, custom CSS, the site logo, the site title, site metadata, pages,
- * navigation and the page's blocks. Checkpoints Big Sky's remaining tools write live in its
- * store and restore through the `provider-checkpoints` bridge.
+ * navigation and the page's blocks.
  *
  * Big Sky also re-applies the checkpoint's variation titles after a restore, to
  * sync its variation-selection store. AM has no such store, and the entity
@@ -210,8 +209,11 @@ const snapshotBlocks = ( root: BlocksRoot ): BlocksSnapshot => ( {
 	...deepClone( getPageBlocks() ),
 } );
 
-const captureBlocksSnapshot = ( root = resolveBlocksRoot() ): BlocksSnapshot | undefined =>
-	root ? snapshotBlocks( root ) : undefined;
+const captureBlocksSnapshot = (): BlocksSnapshot | undefined => {
+	const root = resolveBlocksRoot();
+
+	return root ? snapshotBlocks( root ) : undefined;
+};
 
 // The editor hands out the id as a number or a string, depending on the surface.
 const isSnapshotRoot = ( root: BlocksRoot, snapshot: BlocksSnapshot ): boolean =>

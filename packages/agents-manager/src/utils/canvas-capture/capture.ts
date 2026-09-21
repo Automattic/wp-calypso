@@ -50,7 +50,7 @@ export interface CanvasCaptureOptions {
 function recordCaptureFailure( reason: string, fullPage: boolean ): void {
 	recordBigSkyTracksEvent( 'jetpack_big_sky_canvas_capture_failed', {
 		reason,
-		full_page: Boolean( fullPage ),
+		full_page: fullPage,
 	} );
 }
 

@@ -1,6 +1,5 @@
 import { getBlock, getBlockRootClientId, getBlocks } from '../../utils/editor-blocks';
-import { isRecord } from '../../utils/is-record';
-import { valueAlreadyMatches } from './already-applied';
+import { attributesAlreadyMatch } from './already-applied';
 import type { BlockData, ResolveClientId } from './types';
 import type { EditorBlock } from '../../utils/editor-blocks';
 
@@ -26,8 +25,7 @@ export function getReorderOperations(
 ): ReorderOperation[] | null {
 	if (
 		( requested.name && requested.name !== current.name ) ||
-		( isRecord( requested.attributes ) &&
-			! valueAlreadyMatches( current.attributes, requested.attributes ) )
+		! attributesAlreadyMatch( current, requested )
 	) {
 		return null;
 	}

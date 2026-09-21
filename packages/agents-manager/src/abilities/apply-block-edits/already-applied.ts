@@ -6,6 +6,7 @@
 import { getBlock, getBlocks } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
 import { sameJson } from '../../utils/same-json';
+import { isUpdateOnly } from './normalize-edits';
 import type { BlockData, BlockEdits, ResolveClientId } from './types';
 import type { EditorBlock } from '../../utils/editor-blocks';
 
@@ -35,47 +36,45 @@ export function valueAlreadyMatches( current: unknown, requested: unknown ): boo
 	return sameJson( current, requested );
 }
 
-// An empty list keeps the children as they are, as the apply does.
-function innerBlocksAlreadyMatch(
-	current: EditorBlock[],
-	requested: BlockData[],
+/** Whether the block's attributes already hold what the update asks for, if it asks at all. */
+export const attributesAlreadyMatch = ( current: EditorBlock, requested: BlockData ): boolean =>
+	! isRecord( requested.attributes ) ||
+	valueAlreadyMatches( current.attributes, requested.attributes );
+
+// A name or attributes the update leaves out are already matched. An empty
+// child list keeps the children as they are, as the apply does.
+function blockAlreadyMatches(
+	current: EditorBlock,
+	requested: BlockData,
 	resolve: ResolveClientId
 ): boolean {
-	if ( requested.length === 0 ) {
-		return true;
-	}
-
-	if ( current.length !== requested.length ) {
+	if ( requested.name && current.name !== requested.name ) {
 		return false;
 	}
 
-	return requested.every( ( requestedBlock, index ) => {
-		const currentBlock = current[ index ];
+	if ( ! attributesAlreadyMatch( current, requested ) ) {
+		return false;
+	}
 
-		if ( requestedBlock.clientId && currentBlock.clientId !== resolve( requestedBlock.clientId ) ) {
-			return false;
-		}
+	const children = requested.innerBlocks ?? [];
 
-		if ( requestedBlock.name && currentBlock.name !== requestedBlock.name ) {
-			return false;
-		}
+	if ( ! children.length ) {
+		return true;
+	}
 
-		if (
-			isRecord( requestedBlock.attributes ) &&
-			! valueAlreadyMatches( currentBlock.attributes, requestedBlock.attributes )
-		) {
-			return false;
-		}
+	const currentChildren = getBlocks( current.clientId );
 
-		return (
-			! Array.isArray( requestedBlock.innerBlocks ) ||
-			innerBlocksAlreadyMatch(
-				getBlocks( currentBlock.clientId ),
-				requestedBlock.innerBlocks,
-				resolve
-			)
-		);
-	} );
+	return (
+		currentChildren.length === children.length &&
+		children.every( ( child, index ) => {
+			const currentChild = currentChildren[ index ];
+
+			return (
+				( ! child.clientId || currentChild.clientId === resolve( child.clientId ) ) &&
+				blockAlreadyMatches( currentChild, child, resolve )
+			);
+		} )
+	);
 }
 
 /** Whether an update-only call asks for nothing the page does not already show. */
@@ -83,28 +82,13 @@ export function areUpdateEditsAlreadySatisfied(
 	edits: BlockEdits,
 	resolve: ResolveClientId
 ): boolean {
-	if ( ! edits.updates.length || edits.inserts.length || edits.deletes.length ) {
+	if ( ! isUpdateOnly( edits ) ) {
 		return false;
 	}
 
 	return edits.updates.every( ( update ) => {
-		const clientId = resolve( update.clientId );
-		const block = getBlock( clientId );
+		const block = getBlock( resolve( update.clientId ) );
 
-		if ( ! block || block.name !== update.name ) {
-			return false;
-		}
-
-		if (
-			isRecord( update.attributes ) &&
-			! valueAlreadyMatches( block.attributes, update.attributes )
-		) {
-			return false;
-		}
-
-		return (
-			! Array.isArray( update.innerBlocks ) ||
-			innerBlocksAlreadyMatch( getBlocks( clientId ), update.innerBlocks, resolve )
-		);
+		return !! block && blockAlreadyMatches( block, update, resolve );
 	} );
 }

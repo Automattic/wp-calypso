@@ -69,7 +69,7 @@ interface BlockEditorDispatch {
 		updateSelection: boolean
 	) => void;
 	resetBlocks: ( blocks: EditorBlock[] ) => void;
-	updateBlockAttributes: ( clientId: string, attributes: Record< string, unknown > ) => void;
+	updateBlockAttributes: ( clientId: string, attributes: BlockAttributes ) => void;
 	clearSelectedBlock: () => void;
 	__unstableMarkNextChangeAsNotPersistent: ( options?: { history?: 'ignore' } ) => void;
 	__unstableMarkLastChangeAsPersistent: () => void;

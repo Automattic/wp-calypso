@@ -6,6 +6,7 @@
  */
 
 import { getBlockTypes } from '@wordpress/blocks';
+import { deepClone } from '../../utils/deep-clone';
 import { getBlock } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
 import { sameJson } from '../../utils/same-json';
@@ -95,7 +96,7 @@ const normalizeValue = ( value: unknown ): unknown => {
 // Key order aside, whether the two differ anywhere: objects and arrays by key, the rest by JSON.
 function valuesDiffer( a: unknown, b: unknown ): boolean {
 	if ( ! isObject( a ) || ! isObject( b ) ) {
-		return JSON.stringify( a ) !== JSON.stringify( b );
+		return ! sameJson( a, b );
 	}
 
 	return (
@@ -127,7 +128,7 @@ function collectAttributePaths(
 const snapshotBlock = ( { clientId, name, attributes }: EditorBlock ): BlockSnapshot => ( {
 	clientId,
 	name,
-	attributes: JSON.parse( JSON.stringify( attributes ) ),
+	attributes: deepClone( attributes ),
 } );
 
 const getRootLists = ( page: PageBlocks ): EditorBlock[][] => [
@@ -174,7 +175,7 @@ function countAppliedOperations(
 		! addedCount &&
 		! removedCount &&
 		! modifiedCount &&
-		JSON.stringify( getRootOrder( before ) ) !== JSON.stringify( getRootOrder( after ) );
+		! sameJson( getRootOrder( before ), getRootOrder( after ) );
 
 	return { addedCount, removedCount, modifiedCount: isRootReorder ? 1 : modifiedCount };
 }
@@ -400,7 +401,7 @@ export function captureTargets(
 
 /** Whether the page's blocks differ at all between the two states. */
 export const haveBlocksChanged = ( before: PageBlocks, after: PageBlocks ): boolean =>
-	JSON.stringify( before ) !== JSON.stringify( after );
+	! sameJson( before, after );
 
 /** The post-apply summary for the agent: lists capped at 10 entries, strings at 300 characters. */
 export function getValidationDetails( {

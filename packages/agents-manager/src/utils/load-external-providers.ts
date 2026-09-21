@@ -469,23 +469,22 @@ function withAmCheckpointActions(
 	return () => {
 		const provider = useCheckpoint?.();
 		const am = getAmCheckpointActions();
-		const ownedByAm = ( id: string ) => !! am?.hasCheckpoint( id );
 
 		return {
 			...provider,
-			hasCheckpoint: ( id ) => ownedByAm( id ) || !! provider?.hasCheckpoint( id ),
+			hasCheckpoint: ( id ) => !! am?.hasCheckpoint( id ) || !! provider?.hasCheckpoint( id ),
 			restoreCheckpoint: async ( id ) => {
-				if ( ownedByAm( id ) ) {
-					await am?.restoreCheckpoint( id );
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.restoreCheckpoint( id );
 				} else {
 					await provider?.restoreCheckpoint( id );
 				}
 			},
 			canSwapCheckpoint: ( id ) =>
-				ownedByAm( id ) ? am?.canSwapCheckpoint( id ) : provider?.canSwapCheckpoint?.( id ),
+				am?.hasCheckpoint( id ) ? am.canSwapCheckpoint( id ) : provider?.canSwapCheckpoint?.( id ),
 			swapCheckpoint: async ( id ) => {
-				if ( ownedByAm( id ) ) {
-					await am?.swapCheckpoint( id );
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.swapCheckpoint( id );
 				} else if ( provider?.swapCheckpoint ) {
 					await provider.swapCheckpoint( id );
 				} else {
