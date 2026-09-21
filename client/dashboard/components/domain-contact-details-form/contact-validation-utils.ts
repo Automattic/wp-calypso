@@ -8,7 +8,7 @@ import type {
 	RawContactValidationResponseMessages,
 	SMSCountryCode,
 } from '@automattic/api-core';
-import type { NormalizedField } from '@wordpress/dataviews';
+import type { NormalizedField, useFormValidity } from '@wordpress/dataviews';
 
 /**
  * Type for the async validation function
@@ -184,5 +184,21 @@ export function resolveSmsCountry(
 	return (
 		countriesForCode.find( ( country ) => country.code === preferredCountryCode ) ??
 		countriesForCode[ 0 ]
+	);
+}
+
+type FormValidity = ReturnType< typeof useFormValidity >[ 'validity' ];
+
+/**
+ * Whether a form validity has no invalid or pending field, mirroring the
+ * `isValid` useFormValidity returns, for a validity the form has adjusted.
+ */
+export function isValidityValid( validity: FormValidity ): boolean {
+	return Object.values( validity ?? {} ).every( ( fieldValidity ) =>
+		Object.entries( fieldValidity ).every( ( [ key, rule ] ) =>
+			key === 'children'
+				? isValidityValid( rule as FormValidity )
+				: rule?.type !== 'invalid' && rule?.type !== 'validating'
+		)
 	);
 }

@@ -127,23 +127,34 @@ function setFrRegistrantType(
 }
 
 /**
- * The error shown on the organization field when a `.fr` individual registrant
- * has one, and null otherwise.
+ * The error shown on the organization field when it does not match the `.fr`
+ * registrant type, and null otherwise.
  *
- * Guards the state setFrRegistrantType's clearing cannot reach: the registrant
- * typing an organization back in after selecting the individual type. Left
- * alone, that combination registers the contact as a legal entity at AFNIC.
+ * An individual registrant must not have an organization. This guards the state
+ * setFrRegistrantType's clearing cannot reach: the registrant typing an
+ * organization back in after selecting the individual type. Left alone, that
+ * combination registers the contact as a legal entity at AFNIC.
+ *
+ * A company or organization registrant must have one, which the validation
+ * endpoint enforces too.
  *
  * The form applies this against the whole item rather than as the organization
  * field's own validator, so the error lifts when the registrant type changes
  * and not only when the organization is edited again.
  */
 export function validateFrOrganization( data: DomainContactDetails ): string | null {
-	if ( 'individual' === getFrExtra( data ).registrantType && data.organization ) {
+	const { registrantType } = getFrExtra( data );
+
+	if ( 'individual' === registrantType && data.organization ) {
 		return __(
 			'An individual .fr registrant cannot have an organization. Clear this field, or choose the company or organization option.'
 		);
 	}
+
+	if ( hasFrOrganizationFields( registrantType ) && ! data.organization?.trim() ) {
+		return __( 'Enter the name of the company or organization this .fr domain is for.' );
+	}
+
 	return null;
 }
 

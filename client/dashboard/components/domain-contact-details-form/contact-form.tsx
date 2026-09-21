@@ -18,12 +18,13 @@ import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getCaContactFormFields, getCaContactFormLayout, hasCaDomain } from './ca-contact-fields';
 import { getContactFormFields } from './contact-form-fields';
-import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
+import { isValidityValid, mapValidationMessagesToFieldErrors } from './contact-validation-utils';
 import {
 	getFrContactFormFields,
 	getFrContactFormLayout,
 	getFrExtra,
 	hasFrDomain,
+	hasFrOrganizationFields,
 	validateFrOrganization,
 } from './fr-contact-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
@@ -126,6 +127,7 @@ export default function ContactForm( {
 	const needsFrFields = useMemo( () => hasFrDomain( domainNames ), [ domainNames ] );
 	const frRegistrantType = getFrExtra( normalizedFormData ).registrantType;
 	const needsCaFields = useMemo( () => hasCaDomain( domainNames ), [ domainNames ] );
+	const isOrganizationRequired = needsFrFields && hasFrOrganizationFields( frRegistrantType );
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
 		() => [
@@ -133,7 +135,8 @@ export default function ContactForm( {
 				countryList ?? [],
 				statesList ?? [],
 				selectedCountryCode,
-				asyncValidator
+				asyncValidator,
+				isOrganizationRequired
 			),
 			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
 			...( needsFrFields ? getFrContactFormFields( frRegistrantType ) : [] ),
@@ -144,6 +147,7 @@ export default function ContactForm( {
 			statesList,
 			selectedCountryCode,
 			asyncValidator,
+			isOrganizationRequired,
 			needsUkFields,
 			ukRegistrantType,
 			needsFrFields,
@@ -179,7 +183,21 @@ export default function ContactForm( {
 		],
 	};
 
-	const { validity, isValid: isFormValid } = useFormValidity( normalizedFormData, fields, form );
+	const { validity: formValidity } = useFormValidity( normalizedFormData, fields, form );
+
+	// Whether the organization is required changes with the .fr registrant type,
+	// but useFormValidity only re-runs a field's validators when that field's
+	// value changes, so its `required` result would outlive the registrant type
+	// change that toggles it. The cross-field rule below enforces it instead.
+	const validity = useMemo( () => {
+		if ( ! formValidity?.organization?.required ) {
+			return formValidity;
+		}
+		const organizationValidity = { ...formValidity.organization };
+		delete organizationValidity.required;
+		return { ...formValidity, organization: organizationValidity };
+	}, [ formValidity ] );
+	const isFormValid = isValidityValid( validity );
 
 	// A whole-form validation can invalidate a field (e.g. postal code) whose own
 	// validator DataForm won't re-run after another field (e.g. country) changes.

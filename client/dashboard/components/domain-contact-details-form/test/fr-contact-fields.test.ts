@@ -291,6 +291,16 @@ describe( 'validateFrOrganization', () => {
 		).toBeNull();
 	} );
 
+	it( 'requires an organization name on an organization registrant', () => {
+		expect(
+			validateFrOrganization( {
+				optOutTransferLock: false,
+				organization: ' ',
+				extra: { fr: { registrantType: 'organization' } },
+			} )
+		).toEqual( expect.any( String ) );
+	} );
+
 	it( 'accepts an organization name while no registrant type is selected', () => {
 		expect(
 			validateFrOrganization( {

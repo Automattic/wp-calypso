@@ -121,7 +121,8 @@ export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
 	countryCode: string,
-	asyncValidator: AsyncValidator
+	asyncValidator: AsyncValidator,
+	isOrganizationRequired = false
 ): Field< DomainContactDetails >[] => {
 	return [
 		{
@@ -147,6 +148,7 @@ export const getContactFormFields = (
 			label: __( 'Organization' ),
 			type: 'text',
 			isValid: {
+				required: isOrganizationRequired,
 				custom: createFieldAsyncValidator( 'organization', asyncValidator ),
 			},
 		},

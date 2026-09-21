@@ -124,6 +124,83 @@ describe( '<ContactForm>', () => {
 		);
 	} );
 
+	test( 'requires an organization name once the .fr registrant becomes an organization', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const registrantType = screen.getByRole( 'combobox', { name: "Who's this domain for?" } );
+
+		await user.selectOptions( registrantType, 'organization' );
+
+		expect( await screen.findByRole( 'textbox', { name: 'Organization' } ) ).toBeVisible();
+		expect(
+			await screen.findByText( /Enter the name of the company or organization/ )
+		).toBeVisible();
+		expect( save ).toBeDisabled();
+
+		await user.type( screen.getByRole( 'textbox', { name: 'Organization' } ), 'Acme' );
+
+		await waitFor(
+			() => {
+				expect(
+					screen.queryByText( /Enter the name of the company or organization/ )
+				).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	test( 'lifts the .fr organization requirement once the registrant becomes an individual', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const registrantType = screen.getByRole( 'combobox', { name: "Who's this domain for?" } );
+
+		// Typing and clearing the organization while it is required records a
+		// `required` failure against it, which must not outlive the requirement.
+		await user.selectOptions( registrantType, 'organization' );
+		const organization = await screen.findByRole( 'textbox', { name: 'Organization' } );
+		await user.type( organization, 'Acme' );
+		await user.clear( organization );
+		await user.selectOptions( registrantType, 'individual' );
+		// Back where it started, the form is no longer dirty; edit something else.
+		await user.type( screen.getByRole( 'textbox', { name: 'First name' } ), 'x' );
+
+		expect(
+			await screen.findByRole( 'textbox', { name: 'Organization (Optional)' } )
+		).toBeVisible();
+		await waitFor(
+			() => {
+				expect(
+					screen.queryByText( /Enter the name of the company or organization/ )
+				).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
 	// Regression test for DOMENG-1172: the registry rejects address lines shorter
 	// than two characters, so the form must catch them before submission.
 	test( 'blocks saving when a required address line is a single character', async () => {
