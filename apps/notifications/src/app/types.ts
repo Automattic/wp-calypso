@@ -78,6 +78,7 @@ export type Block = {
 	type?: 'post' | 'comment' | 'user';
 	nest_level?: number;
 	edit_comment_link?: string;
+	moderate_comments_link?: string;
 };
 
 export type BlockWithSignature = {

@@ -41,7 +41,11 @@ export type AgencyCapability =
 	| 'a4a_remove_managed_sites';
 
 export type AgencyPartnerDirectorySlug =
-	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
+	| 'wordpress'
+	| 'jetpack'
+	| 'woocommerce'
+	| 'pressable'
+	| 'vip';
 
 export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
 
@@ -164,12 +168,35 @@ export interface Agency {
 			pressable_id?: number;
 			/** Null for a regular Pressable plan not bought through the A4A marketplace. */
 			a4a_id?: string | null;
-			usage?: null | {
-				start_date?: string;
-				end_date?: string;
-			};
+			usage?: null | AgencyPressableUsage;
+			titan_usage?: null | AgencyPressableTitanUsage;
 		};
 	};
+	notifications?: AgencyNotification[];
+}
+
+export interface AgencyPressableUsage {
+	storage_gb?: number;
+	visits_count?: number;
+	sites_count?: number;
+	start_date?: string;
+	end_date?: string;
+}
+
+export interface AgencyPressableTitanOrder {
+	domain: string;
+	status: string;
+	billable_inboxes: number;
+	trial_end_at: string | null;
+}
+
+export interface AgencyPressableTitanUsage {
+	orders?: AgencyPressableTitanOrder[];
+}
+
+export interface AgencyNotification {
+	timestamp: number;
+	reference: string;
 }
 
 /**

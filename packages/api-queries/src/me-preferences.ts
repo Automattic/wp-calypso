@@ -37,6 +37,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-marketplace-term-pricing': 'yearly',
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
+	'pressable-limit-notification-dismissed': 0,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -62,6 +63,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
 	'a4a-marketplace-referral-guide-seen': 'a4agde',
 	'a4a-marketplace-term-pricing': 'a4aterm',
+	'pressable-limit-notification-dismissed': 'prslim',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
@@ -109,9 +111,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 			return fetchedValue === undefined
 				? defaultValues[ preferenceName ]
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
-					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
-					// the query is used in the component.
-					( fetchedValue as Required< UserPreferences >[ P ] );
+				  // as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
+				  // the query is used in the component.
+				  ( fetchedValue as Required< UserPreferences >[ P ] );
 		},
 	} );
 

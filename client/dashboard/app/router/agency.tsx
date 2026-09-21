@@ -54,6 +54,10 @@ import { __ } from '@wordpress/i18n';
 import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
+import {
+	mayBeEligibleForPressableExpansionOffer,
+	pressableOfferLicensesQuery,
+} from '../../agency/overview/use-pressable-offer-eligibility';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
@@ -272,7 +276,11 @@ export const marketplaceHostingRoute = createRoute( {
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
-				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				mayBeEligibleForPressableExpansionOffer( agency ) &&
+					queryClient
+						.ensureQueryData( pressableOfferLicensesQuery( agency.id ) )
+						.catch( () => undefined ),
 			] );
 		}
 	},
@@ -479,7 +487,7 @@ export const marketplaceRoute = createRoute( {
 		const destination = agencySupports
 			? marketplaceSections.find( ( section ) =>
 					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
-				)?.route
+			  )?.route
 			: undefined;
 
 		if ( ! destination ) {
@@ -1106,8 +1114,9 @@ export const agencySitePerformanceBackendRoute = createRoute( {
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
-		await import( '../../sites/performance/backend/timeframe' );
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
+		'../../sites/performance/backend/timeframe'
+	);
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
@@ -1198,8 +1207,9 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } =
-			await import( '../../sites/performance/backend/timeframe' );
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
+			'../../sites/performance/backend/timeframe'
+		);
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
 			siteApmDetailQuery( site.ID, { method, route, windowSec } )
