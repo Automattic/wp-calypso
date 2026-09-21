@@ -17,12 +17,17 @@ import {
 import PageViewTracker from '../../stats-page-view-tracker';
 import PageLoading from '../shared/page-loading';
 import canManageStatsSettings from './can-manage-stats-settings';
+import reloadPage from './reload-page';
+import { showSavedNoticeAfterReload, takeSavedNoticeRequest } from './saved-notice-after-reload';
 import './style.scss';
 
 type RoleField = 'roles' | 'count_roles';
 
 // Shared by the success and error notices, so each save replaces the last notice instead of stacking.
 const SAVE_NOTICE_ID = 'stats-settings-save';
+
+const savedNotice = () =>
+	successNotice( translate( 'Settings saved.' ), { id: SAVE_NOTICE_ID, duration: 5000 } );
 
 type SettingsCardProps = {
 	title: ReactNode;
@@ -52,6 +57,12 @@ function StatsSettingsPage() {
 	const { mutate, isPending: isSaving } = useStatsSettingsMutation( siteId );
 
 	useEffect( () => {
+		if ( takeSavedNoticeRequest() ) {
+			dispatch( savedNotice() );
+		}
+	}, [ dispatch ] );
+
+	useEffect( () => {
 		if ( siteSlug && ! canManage ) {
 			page.redirect( `/stats/day/${ siteSlug }` );
 		}
@@ -63,13 +74,15 @@ function StatsSettingsPage() {
 
 	const save = ( values: Partial< StatsSettings > ) =>
 		mutate( values, {
-			onSuccess: () =>
-				dispatch(
-					successNotice( translate( 'Settings saved.' ), {
-						id: SAVE_NOTICE_ID,
-						duration: 5000,
-					} )
-				),
+			onSuccess: () => {
+				// The server draws the admin bar, so its chart changes only on a page load.
+				if ( 'admin_bar' in values ) {
+					showSavedNoticeAfterReload();
+					reloadPage();
+					return;
+				}
+				dispatch( savedNotice() );
+			},
 			onError: () =>
 				dispatch(
 					errorNotice( translate( 'Your Stats settings could not be saved.' ), {
