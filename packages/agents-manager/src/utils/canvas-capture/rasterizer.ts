@@ -22,7 +22,7 @@
  * Internals are exported for their tests only; `rasterizeCanvas` is the entry point.
  */
 
-import type { CanvasCaptureContext, CanvasRasterizer, FilePart } from './capture';
+import type { CanvasCaptureContext, CanvasRasterizer } from './capture';
 
 // Bounds the encoded size and the model's per-image token cost, which scale with
 // output pixels rather than with page complexity.
@@ -237,6 +237,20 @@ export const pinViewportPositionedElements = (
 };
 
 /**
+ * The elements of the given blocks, in the order asked; a block not in the
+ * canvas is skipped.
+ * @param canvasDocument The canvas document.
+ * @param clientIds      The blocks to look up.
+ * @returns The elements found.
+ */
+const findBlockElements = ( canvasDocument: Document, clientIds: string[] ): Element[] =>
+	clientIds.flatMap( ( clientId ) => {
+		const element = canvasDocument.querySelector( `[data-block="${ clientId }"]` );
+
+		return element ? [ element ] : [];
+	} );
+
+/**
  * The full laid-out size of the canvas document.
  *
  * The embedded copy has to be given these dimensions rather than the crop's, or
@@ -276,10 +290,8 @@ const getEditedSpan = (
 	clientIds: string[]
 ): { top: number; bottom: number; count: number } | null => {
 	const scrollY = canvasWindow.scrollY || 0;
-	const boxes = clientIds
-		.map( ( clientId ) => canvasDocument.querySelector( `[data-block="${ clientId }"]` ) )
-		.filter( Boolean )
-		.map( ( element ) => ( element as Element ).getBoundingClientRect() )
+	const boxes = findBlockElements( canvasDocument, clientIds )
+		.map( ( element ) => element.getBoundingClientRect() )
 		// A block scrolled out of view still has a box; a block with no layout
 		// (display:none, or detached) does not, and framing on it would show an
 		// arbitrary part of the page.
@@ -952,13 +964,11 @@ const settle = ( milliseconds: number ) =>
  * @returns Whether marks are expected.
  */
 const expectsInk = ( canvasDocument: Document, clientIds: string[] ): boolean => {
-	const roots: ( Element | null )[] = clientIds.length
-		? clientIds
-				.map( ( clientId ) => canvasDocument.querySelector( `[data-block="${ clientId }"]` ) )
-				.filter( Boolean )
+	const roots = clientIds.length
+		? findBlockElements( canvasDocument, clientIds )
 		: [ canvasDocument.body ];
 
-	return roots.some( ( root ) => ( ( root as Element )?.textContent || '' ).trim().length > 0 );
+	return roots.some( ( root ) => ( root.textContent || '' ).trim().length > 0 );
 };
 
 /**
@@ -993,9 +1003,7 @@ const measurePage = (
 	canvasWindow: Window,
 	clientIds: string[]
 ): string => {
-	const measured = clientIds
-		.map( ( clientId ) => canvasDocument.querySelector( `[data-block="${ clientId }"]` ) )
-		.filter( Boolean ) as Element[];
+	const measured = findBlockElements( canvasDocument, clientIds );
 
 	const blocks = Array.from( canvasDocument.querySelectorAll( '[data-block]' ) );
 	const step = Math.max( 1, Math.ceil( blocks.length / MOTION_SAMPLE_LIMIT ) );
@@ -1449,9 +1457,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		documentSize,
 		clientIds,
 		wholePage,
-		resolvedBlocks: clientIds.filter( ( clientId ) =>
-			canvasDocument.querySelector( `[data-block="${ clientId }"]` )
-		).length,
+		resolvedBlocks: findBlockElements( canvasDocument, clientIds ).length,
 		scroll: { x: canvasWindow.scrollX, y: canvasWindow.scrollY },
 		cssBytes: styleText.length,
 	};
@@ -1516,5 +1522,5 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			// conclude the page's photographs are missing or broken.
 			metadata: { imagesArePlaceholders: true, fullPage: wholePage, framed: rect.framed },
 		},
-	] as FilePart[];
+	];
 };

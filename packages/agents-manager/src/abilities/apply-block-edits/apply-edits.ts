@@ -299,15 +299,15 @@ async function followReplacedChildren(
 		: before.map( ( { clientId } ) => ( { clientId } ) );
 
 	for ( const [ index, child ] of listed.entries() ) {
+		const childId = child.clientId;
 		const block = created[ index ];
-		const previous =
-			child.clientId && before.find( ( { clientId } ) => clientId === resolve( child.clientId! ) );
+		const previous = childId && before.find( ( { clientId } ) => clientId === resolve( childId ) );
 
-		if ( ! child.clientId || ! block || ! previous ) {
+		if ( ! childId || ! block || ! previous ) {
 			continue;
 		}
 
-		onReplaced( child.clientId, block.clientId );
+		onReplaced( childId, block.clientId );
 		await syncCoverWithImage(
 			block.clientId,
 			previous,
