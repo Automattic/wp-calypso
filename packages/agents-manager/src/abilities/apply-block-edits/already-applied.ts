@@ -15,7 +15,7 @@ import type { EditorBlock } from '../../utils/editor-blocks';
  * key, at any depth. `null` asks for the value to go, so an absent one
  * already satisfies it.
  */
-export function valueAlreadyMatches( current: unknown, requested: unknown ): boolean {
+function valueAlreadyMatches( current: unknown, requested: unknown ): boolean {
 	if ( requested === undefined ) {
 		return true;
 	}
