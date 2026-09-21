@@ -229,7 +229,7 @@ describe( 'NoteList loading state', () => {
 	it( 'flags a comment awaiting approval in its row', () => {
 		const store = initStore();
 		const pending = {
-			...makeNote( 800, 'Pending comment' ),
+			...makeNote( 800, 'Unapproved comment' ),
 			body: [ { text: 'Nice post', actions: { 'approve-comment': false } } ],
 		};
 		const approved = {
@@ -241,11 +241,11 @@ describe( 'NoteList loading state', () => {
 
 		renderTab( store, 'all' as FilterName );
 
-		const pendingRow = screen.getByText( 'Pending comment' ).closest( '[role="article"]' );
-		expect( pendingRow ).toHaveTextContent( 'Pending approval' );
+		const pendingRow = screen.getByText( 'Unapproved comment' ).closest( '[role="article"]' );
+		expect( pendingRow ).toHaveTextContent( 'Pending' );
 		expect(
 			screen.getByText( 'Approved comment' ).closest( '[role="article"]' )
-		).not.toHaveTextContent( 'Pending approval' );
+		).not.toHaveTextContent( 'Pending' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {

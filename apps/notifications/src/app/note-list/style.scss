@@ -1,3 +1,5 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
@@ -31,18 +33,50 @@
 		text-overflow: ellipsis;
 	}
 
-	// Pending-approval strip: a band across the top of the row. It renders inside
-	// the title cell, so it's positioned against the row wrapper instead.
-	div[role="article"]:has(.wpnc-pending-approval-badge) .dataviews-view-list__item-wrapper {
-		padding-top: 48px;
+	.wpnc__title-row {
+		display: flex;
+		// Keeps the chip on the subject's first line when the subject wraps.
+		align-items: flex-start;
+		gap: 8px;
 	}
 
-	.wpnc-pending-approval-badge {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		padding: 8px 16px;
+	.wpnc__title-row .wpnc__subject {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.wpnc__pending-chip {
+		display: inline-flex;
+		flex-shrink: 0;
+		align-items: center;
+		gap: 4px;
+		padding: 0 8px;
+		border-radius: 16px;
+		background-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 20px;
+		white-space: nowrap;
+		color: var(--wpds-color-foreground-content-warning, #2e1900);
+
+		svg {
+			fill: var(--wpds-color-foreground-content-warning-weak, #926300);
+		}
+
+		// The WPDS warning surface has no dark counterpart. Tint the dark surface
+		// the way the Dashboard's own warning notices do.
+		@include ui-mixins.when-dark-theme {
+			background-color: color-mix(
+				in srgb,
+				var(--dashboard__background-color-warning, #d47608) 8%,
+				var(--dashboard-surface__background-color, #2a2a2a)
+			);
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
+
+			svg {
+				fill: var(--dashboard__foreground-color-warning, #f5c15c);
+			}
+		}
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

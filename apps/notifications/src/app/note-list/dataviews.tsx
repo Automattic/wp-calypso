@@ -7,6 +7,7 @@ import {
 	comment,
 	info,
 	lockOutline,
+	pending,
 	plus,
 	store,
 	thumbsUp,
@@ -18,7 +19,6 @@ import { getActions } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
 import { splitSubject } from './simplified-subject';
@@ -101,12 +101,18 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 	);
 };
 
+const PendingChip = () => (
+	<span className="wpnc__pending-chip">
+		<Icon icon={ pending } size={ 16 } />
+		{ __( 'Pending' ) }
+	</span>
+);
+
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
-		<>
-			{ isUnapproved && <PendingApprovalBadge note={ note } showManageLink={ false } /> }
+		<div className="wpnc__title-row">
 			<div
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
@@ -115,7 +121,8 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={ { __html: subject } }
 			/>
-		</>
+			{ isUnapproved && <PendingChip /> }
+		</div>
 	);
 };
 

@@ -9,15 +9,9 @@ import './pending-approval-badge.scss';
 
 interface PendingApprovalBadgeProps {
 	note: Note;
-	// Off in the note list, where the whole row is one button and a nested link
-	// would be unreachable.
-	showManageLink?: boolean;
 }
 
-const PendingApprovalBadge = ( {
-	note,
-	showManageLink = true,
-}: PendingApprovalBadgeProps ): JSX.Element => {
+const PendingApprovalBadge = ( { note }: PendingApprovalBadgeProps ): JSX.Element => {
 	const translate = useTranslate();
 	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
 
@@ -25,7 +19,7 @@ const PendingApprovalBadge = ( {
 		<div className="wpnc-pending-approval-badge">
 			<Icon icon={ pending } size={ 20 } />
 			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending approval' ) }</span>
-			{ showManageLink && commentsUrl && (
+			{ commentsUrl && (
 				<ExternalLink className="wpnc-pending-approval-badge__link" href={ commentsUrl }>
 					{ translate( 'Manage comments' ) }
 				</ExternalLink>
