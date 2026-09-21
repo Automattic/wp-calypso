@@ -1,7 +1,7 @@
-import { Purchase } from 'calypso/lib/purchases/types';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors/get-by-purchase-id';
+import { getRawByPurchaseId } from 'calypso/state/purchases/selectors/get-raw-by-purchase-id';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 import getSelectedSiteId from './get-selected-site-id';
+import type { Purchase } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -13,5 +13,5 @@ export default function getSelectedPurchase( state: AppState ): Purchase | null 
 	if ( ! currentPlan?.id ) {
 		return null;
 	}
-	return getByPurchaseId( state, currentPlan.id );
+	return getRawByPurchaseId( state, currentPlan.id );
 }

@@ -1,6 +1,6 @@
 import { AddOns } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import { getSelectedPurchase } from 'calypso/state/ui/selectors';
 
 export const useStorageAddOnAvailable = ( siteId?: number | null ) => {

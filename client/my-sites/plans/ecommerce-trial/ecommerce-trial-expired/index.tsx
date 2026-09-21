@@ -12,7 +12,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
 import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -24,13 +24,15 @@ const ECommerceTrialExpired = (): JSX.Element => {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID ?? null;
 	const siteSlug = selectedSite?.slug ?? null;
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const sitePurchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const purchase = useSelector( getSelectedPurchase );
 
 	const nonECommerceTrialPurchases = useMemo(
 		() =>
-			sitePurchases.filter( ( purchase ) => purchase.productSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY ),
+			sitePurchases.filter(
+				( purchase ) => purchase.product_slug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
+			),
 		[ sitePurchases ]
 	);
 
@@ -76,8 +78,8 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		[ page, recordTracksEvent, settingsDeleteSiteUrl ]
 	);
 
-	const isWooExpressTrial = purchase?.isWooExpressTrial;
-	const isEntrepreneurTrial = ! purchase?.isWooExpressTrial;
+	const isWooExpressTrial = purchase?.is_woo_express_trial;
+	const isEntrepreneurTrial = ! purchase?.is_woo_express_trial;
 
 	return (
 		<>
