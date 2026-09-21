@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getTld } from '../helpers';
 import { DomainSearchContext, useDomainSearchContextValue } from '../page/context';
+import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
@@ -96,7 +97,7 @@ const StoryDomainSearch = ( { query }: { query: string } ) => {
 		cart,
 		query: currentQuery,
 		config: { showNamePulseSearch: true },
-		events: { onQueryChange: setCurrentQuery },
+		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
 
 	return (
@@ -128,7 +129,7 @@ const StoryDomainSearch = ( { query }: { query: string } ) => {
 				} ) }
 			>
 				<div className="domain-search" style={ { padding: '2rem 1rem' } }>
-					<NamePulseResults />
+					{ currentQuery ? <NamePulseResults /> : <InitialState /> }
 				</div>
 			</DomainSearchContext.Provider>
 		</QueryClientProvider>
@@ -145,3 +146,7 @@ export default meta;
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
+
+// Starts on the initial state so the swap to the results page can be checked
+// for layout shifts.
+export const EmptyQuery = () => <StoryDomainSearch query="" />;
