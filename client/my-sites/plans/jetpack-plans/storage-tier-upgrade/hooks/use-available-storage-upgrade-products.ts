@@ -9,7 +9,7 @@ import useGetStorageUpgradeProducts from './use-get-storage-upgrade-products';
 const useAvailableStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {
 	const purchasedStorageSlugs = useSelector( ( state ) =>
 		getPurchasedStorageSubscriptions( state, siteId )
-	).map( ( { productSlug } ) => productSlug );
+	).map( ( purchase ) => purchase.product_slug );
 	const getStorageUpgradeProducts = useGetStorageUpgradeProducts();
 
 	// This function specifically targets products that haven't been purchased

@@ -1446,6 +1446,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						intent={ intent }
+						currentPurchase={ currentPurchase }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

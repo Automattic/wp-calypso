@@ -49,6 +49,14 @@ describe( 'NamePulseSearchInput', () => {
 		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'marks the search bar so the Name Pulse styles can place the icon on the right', () => {
+		const { input } = renderInput();
+
+		expect( input.closest( '.domain-search__search-bar' ) ).toHaveClass(
+			'name-pulse-search-input'
+		);
+	} );
+
 	it( 'focuses the input on mount', () => {
 		const { input } = renderInput();
 
