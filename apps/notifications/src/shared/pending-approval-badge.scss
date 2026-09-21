@@ -21,26 +21,31 @@
 	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
-// In the new app the warning reads as one rule running down the strip and on
-// into the comment.
+// In the new app the pending mark reads as one rule running down the strip and
+// on into the comment.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
 	// The body stack's gap would break the rule in two, so it moves inside the
 	// comment as padding: the rule runs unbroken, the text keeps its distance.
 	.wpnc__pending-approval-section {
 		margin-block-end: -$grid-unit-10;
 		box-shadow: none;
-		border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
+		border-inline-start: 3px solid var(--wpds-color-stroke-surface-info, #a9c6e7);
 	}
 
+	// The info surface stays pale in both themes, so the base rule's dark
+	// treatment is outranked rather than repeated here.
 	.wpnc-pending-approval-badge {
-		background-color: var(--wpds-color-background-surface-warning, #fde6be);
+		background-color: var(--wpds-color-background-surface-info, #deebfa);
 
-		@include dark-warning-surface;
+		.wpnc-pending-approval-badge__text,
+		.wpnc-pending-approval-badge__link {
+			color: var(--wpds-color-foreground-content-info, #001b4f);
+		}
 	}
 
 	.wpnc__body .wpnc__body-content {
 		padding-block-start: $grid-unit-10;
-		box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+		box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-info, #a9c6e7);
 	}
 }
 

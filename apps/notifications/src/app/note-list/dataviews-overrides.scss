@@ -116,11 +116,11 @@
 		}
 	}
 
-	// A pending comment keeps its warning color when open, so the bar matches its
-	// icon badge and its Pending badge rather than switching to the theme accent.
+	// A pending comment keeps its own color when open, so the bar matches its icon
+	// badge and its Pending badge rather than switching to the theme accent.
 	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
 		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+			box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-info, #a9c6e7);
 		}
 	}
 
