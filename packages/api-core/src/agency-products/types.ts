@@ -3,6 +3,15 @@ export interface AgencyProductTierPrice {
 	price: number;
 }
 
+/** Plan limits the Pressable products carry; only the fields the dashboard reads. */
+export interface AgencyProductMetadata {
+	sites: number;
+	visits: number;
+	storage: number;
+	php_worker_count: number;
+	category: string;
+}
+
 export interface AgencyProduct {
 	name: string;
 	slug: string;
@@ -19,6 +28,7 @@ export interface AgencyProduct {
 	yearly_introductory_price?: number;
 	tier_monthly_prices?: AgencyProductTierPrice[];
 	tier_yearly_prices?: AgencyProductTierPrice[];
+	metadata?: AgencyProductMetadata;
 	/** Not in the API response — added client-side from the parent family. */
 	family_slug: string;
 }

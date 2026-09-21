@@ -13,7 +13,10 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { TextBlur } from '../../../components/text-blur';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
+import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { getCheckoutUrl } from './lib/checkout-url';
 import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
@@ -55,13 +58,13 @@ export default function CartMenu( {
 	// Owned WordPress.com sites raise the volume tier, so the total matches the
 	// Hosting page wherever the cart is shown.
 	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
-
-	const getLineTotal = ( product: AgencyProduct, quantity: number ) => {
-		if ( product.family_slug === WPCOM_HOSTING_FAMILY_SLUG ) {
-			return getWpcomTieredPrice( product, quantity, term, ownedWpcomSites ).discountedCost;
-		}
-		return getProductPriceInfo( product, term ).price * quantity;
-	};
+	// Pressable's introductory price only applies to agencies without a plan,
+	// so the cart checks for one itself and matches the Hosting page everywhere.
+	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
+	const applyPressableIntroductoryPrice =
+		isReferralMode ||
+		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
+			'agency';
 
 	const lines = items
 		.map( ( item ) => {
@@ -69,8 +72,13 @@ export default function CartMenu( {
 			if ( ! product ) {
 				return null;
 			}
-			const priceInfo = getProductPriceInfo( product, term );
-			const subtotal = getLineTotal( product, item.quantity );
+			const applyIntroductoryPrice =
+				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
+			const priceInfo = getProductPriceInfo( product, term, { applyIntroductoryPrice } );
+			const subtotal =
+				product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
+					? getWpcomTieredPrice( product, item.quantity, term, ownedWpcomSites ).discountedCost
+					: priceInfo.price * item.quantity;
 			return {
 				item,
 				product,

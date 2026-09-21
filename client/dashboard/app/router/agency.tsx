@@ -51,6 +51,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
@@ -269,7 +270,10 @@ export const marketplaceHostingRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+			] );
 		}
 	},
 } );
@@ -358,7 +362,11 @@ export const marketplaceProductsRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
-			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The cart prices Pressable plans by whether the agency owns one.
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>

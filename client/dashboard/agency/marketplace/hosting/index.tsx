@@ -25,9 +25,12 @@ import CartMenu from '../products/cart-menu';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
+import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableSection from './pressable-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -61,9 +64,8 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the Pressable and VIP sections land.
-const PLACEHOLDERS: Record< Exclude< HostingSection, 'wpcom' >, string > = {
-	pressable: 'Pressable hosting content will appear here.',
+// Placeholder content until the VIP section lands.
+const PLACEHOLDERS: Record< Exclude< HostingSection, 'wpcom' | 'pressable' >, string > = {
 	vip: 'WordPress VIP hosting content will appear here.',
 };
 
@@ -90,6 +92,18 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
 
 	const wpcomPlan = useMemo( () => getWpcomPlan( allProducts ?? [] ), [ allProducts ] );
+
+	const {
+		plan: agencyPressablePlan,
+		products: pressableProducts,
+		ownership: pressableOwnership,
+		isReady: isPressableReady,
+	} = useAgencyPressablePlan();
+	const effectivePressableOwnership = getEffectivePressableOwnership(
+		pressableOwnership,
+		agencyPressablePlan,
+		isReferralMode
+	);
 
 	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
@@ -120,24 +134,39 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	};
 
 	const renderSection = ( brand: HostingSection ) => {
-		if ( brand !== 'wpcom' ) {
-			return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+		if ( brand === 'wpcom' ) {
+			if ( ! wpcomPlan ) {
+				return null;
+			}
+			return (
+				<WpcomSection
+					plan={ wpcomPlan }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					ownedSites={ ownedWpcomSites }
+					isOwnedSitesReady={ isOwnedSitesReady }
+					isAgencyApproved={ agencyApproved }
+					availableDevSites={ devLicenses?.available }
+					onAddToCart={ addToCart }
+				/>
+			);
 		}
-		if ( ! wpcomPlan ) {
-			return null;
+		if ( brand === 'pressable' ) {
+			if ( ! isPressableReady ) {
+				return null;
+			}
+			return (
+				<PressableSection
+					products={ pressableProducts }
+					existingPlan={ agencyPressablePlan }
+					ownership={ effectivePressableOwnership }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					onAddToCart={ addToCart }
+				/>
+			);
 		}
-		return (
-			<WpcomSection
-				plan={ wpcomPlan }
-				term={ termPricing }
-				isReferralMode={ isReferralMode }
-				ownedSites={ ownedWpcomSites }
-				isOwnedSitesReady={ isOwnedSitesReady }
-				isAgencyApproved={ agencyApproved }
-				availableDevSites={ devLicenses?.available }
-				onAddToCart={ addToCart }
-			/>
-		);
+		return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
 	};
 
 	return (
