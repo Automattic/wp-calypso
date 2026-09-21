@@ -19,7 +19,7 @@ function mockAgency() {
 		.reply( 200, [ { id: 7 } ] );
 }
 
-function mockRemoval( status: number, body: unknown = { success: true } ) {
+function mockRemoval( status: number, body: Record< string, unknown > = { success: true } ) {
 	return nock( `${ API }:443` ).delete( '/wpcom/v2/agency/7/sites/42' ).reply( status, body );
 }
 
@@ -46,6 +46,19 @@ describe( '<RemoveSiteModal>', () => {
 	test( 'stays open when the removal fails', async () => {
 		mockAgency();
 		const removal = mockRemoval( 403, { message: 'You are not allowed to do that.' } );
+		const closeModal = jest.fn();
+
+		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
+		await userEvent.click( await findEnabledRemoveButton() );
+
+		await waitFor( () => expect( removal.isDone() ).toBe( true ) );
+		expect( closeModal ).not.toHaveBeenCalled();
+		expect( await findEnabledRemoveButton() ).toBeVisible();
+	} );
+
+	test( 'stays open when the removal is declined with a 200', async () => {
+		mockAgency();
+		const removal = mockRemoval( 200, { success: false } );
 		const closeModal = jest.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );

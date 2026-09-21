@@ -12,7 +12,12 @@ import { useCallback, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { agencySitesRoute, hasAnyCapability } from '../../app/router/agency';
+import {
+	agencySitesRoute,
+	hasAnyCapability,
+	isRouteAllowedByCapabilities,
+	marketplaceRoute,
+} from '../../app/router/agency';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -117,11 +122,12 @@ export default function AgencySites() {
 	const [ activeModal, setActiveModal ] = useState< 'menu' | AddNewSiteAction | null >( null );
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const canRemoveSites = hasAnyCapability(
-		agency?.user?.capabilities ?? [],
-		'a4a_remove_managed_sites'
-	);
-	const actions = useAgencyActions( { canRemoveSites } );
+	const capabilities = agency?.user?.capabilities ?? [];
+	const canRemoveSites = hasAnyCapability( capabilities, 'a4a_remove_managed_sites' );
+	// Issuing a license navigates to the Marketplace, so read the requirement off
+	// that route rather than restating its capability list here.
+	const canIssueLicenses = isRouteAllowedByCapabilities( marketplaceRoute, capabilities );
+	const actions = useAgencyActions( { canIssueLicenses, canRemoveSites } );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'agency-sites',

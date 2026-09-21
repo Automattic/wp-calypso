@@ -54,8 +54,21 @@ export default function RemoveSiteModal( {
 
 		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_confirm' );
 
+		const notifyFailure = ( message?: string ) =>
+			createErrorNotice( message || __( 'Failed to remove the site. Please try again.' ), {
+				type: 'snackbar',
+			} );
+
 		removeSite.mutate( agencySiteId, {
-			onSuccess: () => {
+			onSuccess: ( { success } ) => {
+				// The endpoint answers 200 with `success: false` when it declines the
+				// removal, so leave the modal open rather than reporting a removal
+				// that didn't happen.
+				if ( ! success ) {
+					notifyFailure();
+					return;
+				}
+
 				// Invalidating here rather than in the mutation factory reads whichever
 				// QueryClient is in context, and keeps the delay below out of the
 				// shared data layer.
@@ -72,10 +85,7 @@ export default function RemoveSiteModal( {
 				} );
 				closeModal?.();
 			},
-			onError: ( error: Error ) =>
-				createErrorNotice( error.message || __( 'Failed to remove the site. Please try again.' ), {
-					type: 'snackbar',
-				} ),
+			onError: ( error: Error ) => notifyFailure( error.message ),
 		} );
 	};
 

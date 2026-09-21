@@ -48,5 +48,9 @@ export async function removeAgencySite(
 		method: 'DELETE',
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/sites/${ siteId }`,
+		// The ids are already in the path, but the endpoint has always been called
+		// with them in the body too. Keep sending both until that is confirmed
+		// redundant.
+		body: { siteId, agency_id: agencyId },
 	} );
 }

@@ -3,6 +3,7 @@
  */
 import { getAgencyActions } from '../actions';
 import type { AgencySite } from '@automattic/api-core';
+import type { ActionButton } from '@wordpress/dataviews';
 
 const atomic: AgencySite = {
 	blog_id: 1,
@@ -58,12 +59,16 @@ const ALL_ACTION_IDS = [
 	'remove-site',
 ];
 
-function setup( { canRemoveSites = true }: { canRemoveSites?: boolean } = {} ) {
+function setup( {
+	canIssueLicenses = true,
+	canRemoveSites = true,
+}: { canIssueLicenses?: boolean; canRemoveSites?: boolean } = {} ) {
 	const onOpenSettings = jest.fn();
 	const onPrepareForLaunch = jest.fn();
 	const onViewBackups = jest.fn();
 
 	const actions = getAgencyActions( {
+		canIssueLicenses,
 		canRemoveSites,
 		onIssueLicense: jest.fn(),
 		onOpenSettings,
@@ -81,14 +86,33 @@ function setup( { canRemoveSites = true }: { canRemoveSites?: boolean } = {} ) {
 		return found;
 	};
 
+	// `Action` is a union, and only the button half carries a callback.
+	const buttonAction = ( id: string ): ActionButton< AgencySite > => {
+		const found = action( id );
+		if ( ! ( 'callback' in found ) ) {
+			throw new Error( `Action "${ id }" opens a modal and has no callback` );
+		}
+		return found;
+	};
+
 	// An action without `isEligible` is always available.
 	const isEligible = ( id: string, site: AgencySite ) => action( id ).isEligible?.( site ) ?? true;
 
 	const eligibleIds = ( site: AgencySite ) =>
 		ALL_ACTION_IDS.filter( ( id ) => isEligible( id, site ) );
 
-	return { action, isEligible, eligibleIds, onOpenSettings, onPrepareForLaunch, onViewBackups };
+	return {
+		buttonAction,
+		isEligible,
+		eligibleIds,
+		onOpenSettings,
+		onPrepareForLaunch,
+		onViewBackups,
+	};
 }
+
+// DataViews hands the callback a registry it doesn't need here.
+const NO_CONTEXT = { registry: undefined };
 
 describe( 'getAgencyActions eligibility', () => {
 	test( 'offers the full management set on an Atomic site', () => {
@@ -131,6 +155,8 @@ describe( 'getAgencyActions eligibility', () => {
 		expect( isEligible( 'remove-site', devSite ) ).toBe( false );
 	} );
 
+	// Classic hides every action on these sites. Visiting the public URL doesn't
+	// depend on the Jetpack connection, so it stays offered here.
 	test.each( [
 		[ 'a migrating site', migrating ],
 		[ 'a Simple site', simple ],
@@ -155,32 +181,40 @@ describe( 'getAgencyActions eligibility', () => {
 		expect( isEligible( 'remove-site', atomic ) ).toBe( false );
 		expect( isEligible( 'remove-site', jetpack ) ).toBe( false );
 	} );
+
+	// Issuing a license goes to the Marketplace, which is capability-gated, so
+	// don't offer a menu item that dead-ends there.
+	test( 'withholds licensing without access to the Marketplace', () => {
+		const { isEligible } = setup( { canIssueLicenses: false } );
+
+		expect( isEligible( 'issue-license', jetpack ) ).toBe( false );
+	} );
 } );
 
 describe( 'getAgencyActions destinations', () => {
 	// Settings and site visibility have agency routes; a clone does not, so only
 	// that one leaves the dashboard.
 	test( 'keeps launch and settings in-app', () => {
-		const { action, onOpenSettings, onPrepareForLaunch } = setup();
+		const { buttonAction, onOpenSettings, onPrepareForLaunch } = setup();
 
-		action( 'prepare-for-launch' ).callback?.( [ devSite ], {} );
+		buttonAction( 'prepare-for-launch' ).callback( [ devSite ], NO_CONTEXT );
 		expect( onPrepareForLaunch ).toHaveBeenCalledWith( devSite );
 
-		action( 'settings' ).callback?.( [ atomic ], {} );
+		buttonAction( 'settings' ).callback( [ atomic ], NO_CONTEXT );
 		expect( onOpenSettings ).toHaveBeenCalledWith( atomic );
 	} );
 
 	test( 'sends each copy action to the right destination', () => {
 		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-		const { action, onViewBackups } = setup();
+		const { buttonAction, onViewBackups } = setup();
 
-		action( 'clone-site' ).callback?.( [ atomic ], {} );
+		buttonAction( 'clone-site' ).callback( [ atomic ], NO_CONTEXT );
 		expect( open ).toHaveBeenCalledWith(
 			expect.stringContaining( '/backup/atomic.example.com/clone' ),
 			'_blank'
 		);
 
-		action( 'clone-site-backups' ).callback?.( [ jetpack ], {} );
+		buttonAction( 'clone-site-backups' ).callback( [ jetpack ], NO_CONTEXT );
 		expect( onViewBackups ).toHaveBeenCalledWith( jetpack );
 
 		open.mockRestore();

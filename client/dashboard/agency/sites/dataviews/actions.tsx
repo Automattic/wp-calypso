@@ -27,6 +27,7 @@ import type { Action } from '@wordpress/dataviews';
 const RemoveSiteModal = lazy( () => import( '../remove-site-modal' ) );
 
 export function getAgencyActions( {
+	canIssueLicenses,
 	canRemoveSites,
 	onIssueLicense,
 	onOpenSettings,
@@ -35,6 +36,7 @@ export function getAgencyActions( {
 	onViewBackups,
 	recordTracksEvent,
 }: {
+	canIssueLicenses: boolean;
 	canRemoveSites: boolean;
 	onIssueLicense: () => void;
 	onOpenSettings: ( site: AgencySite ) => void;
@@ -126,7 +128,8 @@ export function getAgencyActions( {
 				track( 'issue-license' );
 				onIssueLicense();
 			},
-			isEligible: ( site: AgencySite ) => isManageable( site ) && ! isAtomicSite( site ),
+			isEligible: ( site: AgencySite ) =>
+				canIssueLicenses && isManageable( site ) && ! isAtomicSite( site ),
 		},
 		{
 			id: 'view-activity',
@@ -161,7 +164,6 @@ export function getAgencyActions( {
 			id: 'remove-site',
 			icon: trash,
 			label: __( 'Remove site' ),
-			isDestructive: true,
 			modalHeader: __( 'Remove site' ),
 			isEligible: ( site: AgencySite ) =>
 				canRemoveSites && canActOnSite( site ) && ! isDevSite( site ),
@@ -174,7 +176,13 @@ export function getAgencyActions( {
 	];
 }
 
-export function useAgencyActions( { canRemoveSites }: { canRemoveSites: boolean } ) {
+export function useAgencyActions( {
+	canIssueLicenses,
+	canRemoveSites,
+}: {
+	canIssueLicenses: boolean;
+	canRemoveSites: boolean;
+} ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -213,6 +221,7 @@ export function useAgencyActions( { canRemoveSites }: { canRemoveSites: boolean 
 	return useMemo(
 		() =>
 			getAgencyActions( {
+				canIssueLicenses,
 				canRemoveSites,
 				onIssueLicense,
 				onOpenSettings,
@@ -222,6 +231,7 @@ export function useAgencyActions( { canRemoveSites }: { canRemoveSites: boolean 
 				recordTracksEvent,
 			} ),
 		[
+			canIssueLicenses,
 			canRemoveSites,
 			onIssueLicense,
 			onOpenSettings,
