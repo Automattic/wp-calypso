@@ -1,6 +1,6 @@
 // Playwright-driven runs are served the wordpress.com bot challenge in place of the login page.
-// `wp-e2e-tests` is the user agent marker the edge allowlists, as sent by Calypso's web E2E suite
-// (test/e2e/playwright.config.ts).
+// `wp-e2e-tests` is the user agent marker the edge allowlists, as sent by Calypso's web E2E suite:
+// https://github.com/Automattic/wp-calypso/blob/8c4ad61bfd879fa808cc3084b89350ea62119060/test/e2e/playwright.config.ts#L46-L48
 const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 /**
