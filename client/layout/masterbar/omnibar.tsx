@@ -1,7 +1,6 @@
 import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import useShouldLoadAgentsManager from 'calypso/dashboard/app/agents-manager/use-should-load-agents-manager';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from 'calypso/dashboard/app/context';
 import { omnibarEvents, useOmnibarEvent } from 'calypso/dashboard/app/omnibar/events';
@@ -74,8 +73,6 @@ export default function Omnibar( {
 	useOmnibarBridge();
 
 	const sectionName = useSelector( getSectionName );
-	const showAiChat = useShouldLoadAgentsManager( currentRoute );
-
 	const config: AppConfig = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
 		name: 'WordPress.com',
@@ -98,7 +95,7 @@ export default function Omnibar( {
 							cartManagerClient={ cartManagerClient }
 							sectionGroup={ sectionGroup }
 							sectionName={ sectionName ?? undefined }
-							showAiChat={ showAiChat }
+							currentRoute={ currentRoute }
 						/>
 					</div>
 					<CommandPalette />

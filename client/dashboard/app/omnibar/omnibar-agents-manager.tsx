@@ -1,6 +1,7 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
+import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { useAuth } from '../auth';
 
 const AgentsManager = lazy(
@@ -17,8 +18,9 @@ export default function OmnibarAgentsManager( { pathname }: { pathname: string }
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: !! siteId,
 	} );
+	const shouldLoad = useShouldLoadAgentsManager( pathname, siteId );
 
-	if ( ! siteId || ! site ) {
+	if ( ! shouldLoad || ! siteId || ! site ) {
 		return null;
 	}
 

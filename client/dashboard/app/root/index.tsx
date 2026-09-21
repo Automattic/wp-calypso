@@ -16,7 +16,6 @@ import { PageViewTracker } from '../../components/page-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
-import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { bumpStat } from '../analytics';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
@@ -127,11 +126,9 @@ function Root() {
 			isInitialLoad: ! state.resolvedLocation,
 		} ),
 	} );
-	const shouldLoadAgentsManager = useShouldLoadAgentsManager( pathname );
-
 	useEffect( () => {
-		omnibarEvents.agentsManagerAvailability.emit( shouldLoadAgentsManager );
-	}, [ shouldLoadAgentsManager ] );
+		omnibarEvents.agentsManagerRoute.emit( pathname );
+	}, [ pathname ] );
 
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';
@@ -213,7 +210,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <OmnibarHelpCenter /> }
-			{ shouldLoadAgentsManager && <OmnibarAgentsManager pathname={ pathname } /> }
+			<OmnibarAgentsManager pathname={ pathname } />
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />

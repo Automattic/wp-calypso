@@ -151,8 +151,8 @@ const Omnibar = ( props ) => (
 	/>
 );
 
-function CalypsoAgentsManagerLoader( { sectionName, currentRoute } ) {
-	const shouldLoad = useShouldLoadAgentsManager( currentRoute );
+function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
+	const shouldLoad = useShouldLoadAgentsManager( currentRoute, siteId );
 
 	if ( ! shouldLoad ) {
 		return null;
@@ -432,6 +432,7 @@ class Layout extends Component {
 				<CalypsoAgentsManagerLoader
 					sectionName={ this.props.sectionName }
 					currentRoute={ this.props.currentRoute }
+					siteId={ this.props.siteId }
 				/>
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }

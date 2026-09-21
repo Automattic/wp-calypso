@@ -19,7 +19,7 @@ function createOmnibarEvent< T = void >() {
 }
 
 export const omnibarEvents = {
-	agentsManagerAvailability: createOmnibarEvent< boolean >(),
+	agentsManagerRoute: createOmnibarEvent< string >(),
 	mobileMenu: createOmnibarEvent(),
 	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
 	notifications: createOmnibarEvent(),
