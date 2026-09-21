@@ -5,6 +5,7 @@ import {
 	fetchAgencySitesWithPlugins,
 	provisionAgencyDevSite,
 	provisionAgencySite,
+	removeAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -100,6 +101,24 @@ export const provisionAgencyDevSiteMutation = ( agencyId: number ) =>
 		onSuccess: () => {
 			invalidateAgencyLicenses( agencyId );
 			queryClient.invalidateQueries( { queryKey: agencyPendingSitesQuery( agencyId ).queryKey } );
+		},
+	} );
+
+/**
+ * Removes a site from the agency's dashboard.
+ *
+ * Callers invalidate the sites list themselves: A4A runs on Calypso's
+ * QueryClient rather than the api-queries singleton, so invalidating here would
+ * hit the wrong cache.
+ */
+export const agencySiteRemoveMutation = ( agencyId?: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-site-remove' },
+		mutationFn: ( siteId: number ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return removeAgencySite( agencyId, siteId );
 		},
 	} );
 

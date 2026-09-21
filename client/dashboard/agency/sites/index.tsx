@@ -12,7 +12,7 @@ import { useCallback, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { agencySitesRoute } from '../../app/router/agency';
+import { agencySitesRoute, hasAnyCapability } from '../../app/router/agency';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -21,7 +21,7 @@ import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configu
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
-import { useAgencyFields, getAgencyActions } from './dataviews';
+import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import type { AddNewSiteAction } from './add-new-site/types';
@@ -116,6 +116,13 @@ export default function AgencySites() {
 	const currentSearchParams = agencySitesRoute.useSearch();
 	const [ activeModal, setActiveModal ] = useState< 'menu' | AddNewSiteAction | null >( null );
 
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const canRemoveSites = hasAnyCapability(
+		agency?.user?.capabilities ?? [],
+		'a4a_remove_managed_sites'
+	);
+	const actions = useAgencyActions( { canRemoveSites } );
+
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'agency-sites',
 		defaultView: DEFAULT_VIEW,
@@ -195,7 +202,7 @@ export default function AgencySites() {
 					getItemId={ ( item ) => item.blog_id.toString() }
 					data={ sites }
 					fields={ fields }
-					actions={ getAgencyActions( recordTracksEvent ) }
+					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }

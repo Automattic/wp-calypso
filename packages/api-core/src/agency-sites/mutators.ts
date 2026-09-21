@@ -35,3 +35,18 @@ export async function provisionAgencyDevSite(
 		body: params,
 	} );
 }
+
+/**
+ * Drops a site from the agency's dashboard. The site itself and any licenses
+ * attached to it are left alone.
+ */
+export async function removeAgencySite(
+	agencyId: number,
+	siteId: number
+): Promise< { success: boolean } > {
+	return wpcom.req.post( {
+		method: 'DELETE',
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites/${ siteId }`,
+	} );
+}
