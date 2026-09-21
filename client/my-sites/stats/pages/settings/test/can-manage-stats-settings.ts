@@ -9,7 +9,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 const siteId = 123;
 
-const makeState = ( { statsAdminVersion = '0.37.0', canManageOptions = true } = {} ) => ( {
+const makeState = ( { hasStatsSettings = true, canManageOptions = true } = {} ) => ( {
 	currentUser: {
 		capabilities: { [ siteId ]: { manage_options: canManageOptions } },
 	},
@@ -18,7 +18,7 @@ const makeState = ( { statsAdminVersion = '0.37.0', canManageOptions = true } = 
 			[ siteId ]: {
 				ID: siteId,
 				jetpack: true,
-				options: { stats_admin_version: statsAdminVersion },
+				options: hasStatsSettings ? { has_stats_settings: true } : {},
 			},
 		},
 	},
@@ -39,8 +39,8 @@ describe( 'canManageStatsSettings', () => {
 		expect( canManageStatsSettings( makeState(), siteId ) ).toBe( true );
 	} );
 
-	it( 'hides the settings from a site whose Stats predates them', () => {
-		expect( canManageStatsSettings( makeState( { statsAdminVersion: '0.36.0' } ), siteId ) ).toBe(
+	it( 'hides the settings from a site whose stats-admin does not send has_stats_settings', () => {
+		expect( canManageStatsSettings( makeState( { hasStatsSettings: false } ), siteId ) ).toBe(
 			false
 		);
 	} );
