@@ -1,4 +1,5 @@
 import {
+	Button,
 	SelectControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -7,23 +8,18 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, useState, type CSSProperties } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { learnRoute } from '../../../app/router/agency';
 import { DataViews } from '../../../components/dataviews';
-import { getResourceColorSlot, getResourceTags, topResources } from './resource-presentation';
+import { getResourceTags, topResources } from './resource-presentation';
 import ResourcePreview from './resource-preview';
 import ResourceProductLogo from './resource-product-logo';
 import ResourceTags from './resource-tags';
 import ResourceThumbnail from './resource-thumbnail';
 import { sampleResources } from './sample-resources';
-import TemporaryDesignSwitch, {
-	type CardPalette,
-	type CardColorBy,
-	type CardIntensity,
-	type CardLogoPlacement,
-} from './temporary-design-switch';
 import useResourceCoverHeight from './use-resource-cover-height';
+import useResourceLoadMore from './use-resource-load-more';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './sample-resource-grid.scss';
@@ -44,40 +40,27 @@ const initialView: View = {
 };
 
 const createFields = (
-	onFilter: ( field: string, value: string ) => void,
-	design: 'original' | 'typographic',
-	colorBy: CardColorBy
+	onFilter: ( field: string, value: string ) => void
 ): Field< Resource >[] => [
 	{
 		id: 'title',
 		label: __( 'Title' ),
 		getValue: ( { item } ) => item.title,
-		render: ( { item } ) =>
-			design === 'typographic' ? (
-				<div
-					className="resource-title-cover"
-					data-product={ item.product }
-					data-color-slot={ getResourceColorSlot( item, colorBy ) }
-				>
-					<div className="resource-title-cover-label">
-						<span>{ item.format }</span>
-						<ResourceThumbnail compact format={ item.format } resourceId={ item.id } />
-					</div>
-					<span className="resource-title-cover-heading">{ item.title }</span>
-					<div className="resource-title-cover-brand">
-						<ResourceProductLogo product={ item.product } />
-					</div>
+		render: ( { item } ) => (
+			<div className="resource-title-cover" data-product={ item.product }>
+				<div className="resource-title-cover-label">
+					<span>{ item.format }</span>
+					{ topResources.includes( item.id ) && (
+						<span className="resource-title-cover-featured">{ __( 'Top resource' ) }</span>
+					) }
+					<ResourceThumbnail format={ item.format } />
 				</div>
-			) : (
-				<VStack spacing={ 3 }>
-					<ResourceThumbnail
-						imageUrl={ item.imageUrl }
-						format={ item.format }
-						resourceId={ item.id }
-					/>
-					<span className="resource-card-title">{ item.title }</span>
-				</VStack>
-			),
+				<span className="resource-title-cover-heading">{ item.title }</span>
+				<div className="resource-title-cover-brand">
+					<ResourceProductLogo product={ item.product } />
+				</div>
+			</div>
+		),
 		enableGlobalSearch: true,
 	},
 	{
@@ -89,7 +72,7 @@ const createFields = (
 				<Text className="resource-description">{ item.description }</Text>
 				<ResourceTags
 					onFilter={ onFilter }
-					tags={ getResourceTags( item, design === 'original' ) }
+					tags={ getResourceTags( item, false ).filter( ( tag ) => tag.field !== 'featured' ) }
 				/>
 			</VStack>
 		),
@@ -143,11 +126,16 @@ const createFields = (
 export default function SampleResourceGrid() {
 	const [ view, setView ] = useState< View >( initialView );
 	const [ stage, setStage ] = useState( 'All' );
-	const { resource: resourceId, designTools } = learnRoute.useSearch();
+	const { resource: resourceId } = learnRoute.useSearch();
 	const navigate = learnRoute.useNavigate();
 	const [ origin, setOrigin ] = useState< DOMRect | null >( null );
 	const selectedResource = sampleResources.find( ( item ) => item.id === resourceId );
 	const applyTagFilter = useCallback( ( field: string, value: string ) => {
+		if ( field === 'stage' ) {
+			setStage( value );
+			setView( ( current ) => ( { ...current, page: 1 } ) );
+			return;
+		}
 		setView( ( current ) => ( {
 			...current,
 			page: 1,
@@ -157,44 +145,8 @@ export default function SampleResourceGrid() {
 			],
 		} ) );
 	}, [] );
-	const [ design, setDesign ] = useState< 'original' | 'typographic' >( 'typographic' );
-	const [ colorBy, setColorBy ] = useState< CardColorBy >( 'product' );
-	const [ palettes, setPalettes ] = useState< Record< CardColorBy, CardPalette > >( {
-		product: 'product-brand',
-		type: 'ink-paper',
-		single: 'ink-paper',
-	} );
-	const selectedPalette = palettes[ colorBy ];
-	const palette =
-		colorBy === 'type' && ( selectedPalette === 'product-brand' || selectedPalette === 'a4a-brand' )
-			? 'ink-paper'
-			: selectedPalette;
-	const [ singleColor, setSingleColor ] = useState( '#dcdcde' );
-	const colorChannels = [ 1, 3, 5 ].map( ( offset ) => {
-		const channel = parseInt( singleColor.slice( offset, offset + 2 ), 16 ) / 255;
-		return channel <= 0.04045 ? channel / 12.92 : ( ( channel + 0.055 ) / 1.055 ) ** 2.4;
-	} );
-	const luminance =
-		colorChannels[ 0 ] * 0.2126 + colorChannels[ 1 ] * 0.7152 + colorChannels[ 2 ] * 0.0722;
-	const singleInk = luminance > 0.179 ? '#000000' : '#ffffff';
-	const [ intensity, setIntensity ] = useState< CardIntensity >( 'vibrant' );
-	const [ logoPlacement, setLogoPlacement ] = useState< CardLogoPlacement >( 'signature' );
-	const libraryRef = useResourceCoverHeight( design, logoPlacement );
-	const fields = useMemo(
-		() => createFields( applyTagFilter, design, colorBy ),
-		[ applyTagFilter, design, colorBy ]
-	);
-	const { data, paginationInfo } = useMemo(
-		() =>
-			filterSortAndPaginate(
-				stage === 'All'
-					? sampleResources
-					: sampleResources.filter( ( item ) => item.stage === stage ),
-				view,
-				fields
-			),
-		[ view, stage, fields ]
-	);
+	const libraryRef = useResourceCoverHeight();
+	const fields = useMemo( () => createFields( applyTagFilter ), [ applyTagFilter ] );
 
 	const navigationResources = useMemo(
 		() =>
@@ -207,22 +159,32 @@ export default function SampleResourceGrid() {
 			).data,
 		[ stage, view, fields ]
 	);
+	const queryKey = JSON.stringify( [ stage, view.search, view.filters, view.sort ] );
+	const { visibleCount, hasMore, loadMore, sentinelRef } = useResourceLoadMore(
+		navigationResources.length,
+		queryKey,
+		!! selectedResource
+	);
+	const data = useMemo(
+		() => navigationResources.slice( 0, visibleCount ),
+		[ navigationResources, visibleCount ]
+	);
+	const pendingFocus = useRef< number | null >( null );
+	useEffect( () => {
+		if ( pendingFocus.current !== null ) {
+			libraryRef.current
+				?.querySelectorAll< HTMLElement >( '[role="gridcell"]' )
+				[ pendingFocus.current ]?.focus( { preventScroll: true } );
+			pendingFocus.current = null;
+		}
+	}, [ data, libraryRef ] );
+
 	const resourceIndex = navigationResources.findIndex( ( item ) => item.id === resourceId );
 
 	return (
 		<div
 			ref={ libraryRef }
-			className="sample-resource-library resource-style-scope"
-			data-card-design={ design }
-			data-card-logo={ logoPlacement }
-			data-card-palette={ colorBy === 'single' ? 'single' : palette }
-			style={
-				{
-					'--resource-single-paper': singleColor,
-					'--resource-single-ink': singleInk,
-				} as CSSProperties
-			}
-			data-card-intensity={ intensity }
+			className="sample-resource-library"
 			onKeyDownCapture={ ( event ) => {
 				const target = event.target;
 				if (
@@ -236,30 +198,12 @@ export default function SampleResourceGrid() {
 				}
 			} }
 		>
-			{ designTools && (
-				<TemporaryDesignSwitch
-					value={ design }
-					onChange={ setDesign }
-					colorBy={ colorBy }
-					onColorByChange={ setColorBy }
-					palette={ palette }
-					onPaletteChange={ ( next ) =>
-						setPalettes( ( current ) => ( { ...current, [ colorBy ]: next } ) )
-					}
-					singleColor={ singleColor }
-					onSingleColorChange={ setSingleColor }
-					intensity={ intensity }
-					onIntensityChange={ setIntensity }
-					logoPlacement={ logoPlacement }
-					onLogoPlacementChange={ setLogoPlacement }
-				/>
-			) }
 			<DataViews< Resource >
 				data={ data }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
-				paginationInfo={ paginationInfo }
+				paginationInfo={ { totalItems: navigationResources.length, totalPages: 1 } }
 				defaultLayouts={ { grid: { showMedia: false } } }
 				getItemId={ ( item ) => item.id }
 				searchLabel={ __( 'Search resources' ) }
@@ -277,16 +221,7 @@ export default function SampleResourceGrid() {
 							event.preventDefault();
 							const card = event.currentTarget.closest( '[role="gridcell"]' );
 							setOrigin( card?.getBoundingClientRect() ?? null );
-							if ( ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
-								card?.animate(
-									[
-										{ transform: 'scale(1)' },
-										{ transform: 'scale(1.035)' },
-										{ transform: 'scale(1)' },
-									],
-									{ duration: 120, easing: 'ease-out' }
-								);
-							}
+
 							void navigate( {
 								search: ( previous: ReturnType< typeof learnRoute.useSearch > ) => ( {
 									...previous,
@@ -351,7 +286,30 @@ export default function SampleResourceGrid() {
 					<WPDataViews.FiltersToggled className="dataviews-filters__container" />
 				) }
 				<DataViews.Layout />
-				<DataViews.Pagination />
+				{ navigationResources.length > 0 && (
+					<VStack className="resource-load-more" spacing={ 3 } alignment="center">
+						<div ref={ sentinelRef } aria-hidden="true" />
+						<Text role="status" aria-live="polite" aria-atomic="true">
+							{ sprintf(
+								/* translators: %1$d: visible resources, %2$d: total matching resources. */
+								__( 'Showing %1$d of %2$d resources' ),
+								visibleCount,
+								navigationResources.length
+							) }
+						</Text>
+						{ hasMore && (
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									pendingFocus.current = visibleCount;
+									loadMore();
+								} }
+							>
+								{ __( 'Load more' ) }
+							</Button>
+						) }
+					</VStack>
+				) }
 			</DataViews>
 			{ selectedResource && (
 				<ResourcePreview

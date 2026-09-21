@@ -16,38 +16,7 @@
 }
 
 .resource-thumbnail {
-	inline-size: 100%;
-	block-size: 144px;
-	object-fit: cover;
-	border-radius: 4px;
-}
-
-.resource-thumbnail-fallback {
 	--resource-animation-duration: 2.4s;
-	--resource-ink: var( --wpds-color-foreground-content-info );
-	color: color-mix(
-		in srgb,
-		var( --resource-ink ) 85%,
-		var( --wpds-color-foreground-content-neutral )
-	);
-	--resource-thumbnail-surface: color-mix(
-		in srgb,
-		currentColor 16%,
-		var( --wpds-color-background-surface-neutral-strong )
-	);
-	background: var( --resource-thumbnail-surface );
-
-	&[data-palette='1'] {
-		--resource-ink: var( --wpds-color-foreground-content-success );
-	}
-
-	&[data-palette='2'] {
-		--resource-ink: var( --wpds-color-foreground-content-warning );
-	}
-
-	&[data-palette='3'] {
-		--resource-ink: var( --wpds-color-foreground-content-neutral );
-	}
 }
 
 .resource-toolbar {
@@ -134,8 +103,7 @@
 		background: var( --wpds-color-background-surface-neutral-strong );
 	}
 
-	.dataviews-filters__container,
-	.dataviews-pagination {
+	.dataviews-filters__container {
 		padding-inline: 0;
 	}
 
@@ -148,19 +116,37 @@
 		padding-block: 0 4px;
 	}
 
-	.resource-thumbnail {
-		border-radius: 4px 4px 0 0;
-	}
-
-	.resource-card-title {
-		padding-inline: 16px;
-	}
-
 	.resource-card-details {
+		padding-block-start: 12px;
 		flex: 1;
 		min-inline-size: 0;
 		padding-inline: 16px;
 		padding-block-end: 16px;
+	}
+}
+
+@media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
+	.sample-resource-library .dataviews-layout__container {
+		overflow: visible;
+	}
+
+	.sample-resource-library .dataviews-view-grid__row__gridcell {
+		transform-origin: center;
+		transition:
+			transform 280ms cubic-bezier( 0.2, 1.4, 0.4, 1 ),
+			box-shadow 180ms ease-out;
+
+		&:nth-child( even ):hover {
+			transform: translateY( -3px ) rotate( 0.5deg ) scale( 1.018 );
+		}
+
+		&:hover {
+			position: relative;
+			z-index: 3;
+			transform: translateY( -3px ) rotate( -0.5deg ) scale( 1.018 );
+			box-shadow: 0 8px 20px
+				color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 12%, transparent );
+		}
 	}
 }
 
@@ -199,31 +185,6 @@
 			outline: 2px solid var( --wpds-color-stroke-focus );
 			outline-offset: -2px;
 		}
-	}
-}
-
-.resource-photo-frame {
-	overflow: hidden;
-
-	img.resource-thumbnail {
-		display: block;
-		block-size: 100%;
-		border-radius: 0;
-	}
-}
-
-@media ( prefers-reduced-motion: no-preference ) {
-	.dataviews-view-grid__card:is( :hover, :focus-within ) .resource-photo-frame img {
-		animation: resource-pan-zoom 7s ease-in-out infinite alternate;
-	}
-}
-
-@keyframes resource-pan-zoom {
-	from {
-		transform: scale( 1 );
-	}
-	to {
-		transform: scale( 1.08 ) translate( 1%, -1% );
 	}
 }
 
@@ -965,7 +926,6 @@
 	--resource-brand-vip-paper: #d8a45f;
 	--resource-brand-pressable-paper: #dd3a03;
 	--resource-brand-a4a-paper: #{brand.$studio-gray-100};
-	--resource-brand-white: #{brand.$studio-white};
 }
 .resource-title-cover {
 	--cover-ink: #{brand.$studio-black};
@@ -979,8 +939,7 @@
 	min-block-size: var( --resource-cover-height, 184px );
 	padding: 18px 20px;
 	color: var( --cover-ink );
-	--resource-cover-surface: var( --cover-paper );
-	background: var( --resource-cover-surface );
+	background: var( --cover-paper );
 	border-start-start-radius: 4px;
 	border-start-end-radius: 4px;
 
@@ -1044,58 +1003,9 @@
 	}
 }
 
-// Temporary palettes: assign each swatch by product or resource type.
-@each $palette,
-	$swatches
-		in (
-			'product-brand': (
-				( 1, var( --resource-brand-vip-paper ), #13191e ),
-				( 2, var( --resource-brand-pressable-paper ), #000 ),
-				( 3, var( --resource-brand-woo-paper ), #fff ),
-				( 4, var( --resource-brand-wp-paper ), #fff ),
-				( 5, var( --resource-brand-jetpack-paper ), #fff ),
-				( 6, var( --resource-brand-a4a-paper ), #fff ),
-				( 7, var( --resource-brand-vip-paper ), #13191e ),
-			),
-			'a4a-brand': (
-				( 1, #0387ff, #000 ),
-				( 2, #0240e4, #fff ),
-				( 3, #72b3ff, #000 ),
-				( 4, #0260c8, #fff ),
-				( 5, #0387ff, #000 ),
-				( 6, #0387ff, #000 ),
-				( 7, #72b3ff, #000 ),
-			),
-			'ink-paper': (
-				( 1, #e9dfcc, #252d2a ),
-				( 2, #284b43, #fff ),
-				( 3, #c6d1b0, #252d2a ),
-				( 4, #713f4c, #fff ),
-				( 5, #ddd0bb, #252d2a ),
-				( 6, #293e50, #fff ),
-				( 7, #d8ac78, #252d2a ),
-			)
-		)
-{
-	.resource-style-scope[data-card-palette='#{$palette}'] .resource-title-cover {
-		@each $slot, $paper, $ink in $swatches {
-			&[data-color-slot='#{$slot}'] {
-				--cover-paper: #{$paper};
-				--cover-ink: #{$ink};
-			}
-		}
-	}
-}
-.resource-style-scope[data-card-palette='single'] .resource-title-cover {
-	--cover-paper: var( --resource-single-paper );
-	--cover-ink: var( --resource-single-ink );
-}
-.resource-style-scope[data-card-intensity='subdued'] .resource-title-cover {
-	color: #{brand.$studio-black};
-	--resource-cover-surface: color-mix( in srgb, var( --cover-paper ) 22%, #{brand.$studio-white} );
-}
-
 .resource-title-cover-label {
+	flex-direction: column;
+	gap: 6px;
 	min-block-size: 34px;
 	padding-inline-end: 70px;
 	display: flex;
@@ -1115,6 +1025,18 @@
 		transform: rotate( -8deg );
 	}
 }
+.resource-title-cover-featured {
+	padding: 2px 6px;
+	background: var( --cover-ink );
+	color: var( --cover-paper );
+	border: 1px solid var( --cover-ink );
+	border-radius: 4px;
+	font-size: 11px;
+	line-height: 1.3;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
 .resource-title-cover-heading {
 	margin-block-start: auto;
 	display: block;
@@ -1124,9 +1046,6 @@
 	letter-spacing: -0.035em;
 	text-wrap: balance;
 	overflow-wrap: anywhere;
-}
-.sample-resource-library[data-card-design='typographic'] .resource-card-details {
-	padding-block-start: 12px;
 }
 
 .resource-product-logo {
@@ -1143,40 +1062,9 @@
 .resource-title-cover-brand {
 	margin-block-start: 0;
 	flex-shrink: 0;
+	padding-block-start: 12px;
+	border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
 }
-.sample-resource-library[data-card-logo='none'] .resource-title-cover-brand {
-	display: none;
-}
-.sample-resource-library[data-card-logo='header'] .resource-title-cover {
-	.resource-title-cover-brand {
-		order: -1;
-		margin-block-start: 0;
-		padding-inline-end: 56px;
-	}
-	.resource-title-cover-label {
-		min-block-size: 0;
-		padding-inline-end: 0;
-	}
-	.resource-title-cover-heading {
-		margin-block-start: auto;
-	}
-}
-.sample-resource-library[data-card-logo='signature'] .resource-title-cover {
-	.resource-title-cover-brand {
-		padding-block-start: 12px;
-		border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
-	}
-}
-.sample-resource-library[data-card-logo='strip'] .resource-title-cover {
-	.resource-title-cover-brand {
-		margin-inline: -20px;
-		margin-block-end: -18px;
-		padding: 12px 20px;
-		background: color-mix( in srgb, currentColor 8%, transparent );
-		border-block-start: 1px solid color-mix( in srgb, currentColor 20%, transparent );
-	}
-}
-
 .resource-preview-heading-scope {
 	flex-shrink: 0;
 	max-block-size: 50dvh;
@@ -1288,4 +1176,8 @@
 			justify-content: flex-start;
 		}
 	}
+}
+
+.resource-load-more {
+	padding-block: 24px;
 }

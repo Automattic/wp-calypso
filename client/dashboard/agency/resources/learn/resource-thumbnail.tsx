@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 
 function VideoIllustration() {
 	const id = useId();
@@ -143,40 +143,11 @@ const illustrations = {
 	),
 };
 
-export default function ResourceThumbnail( {
-	imageUrl,
-	format,
-	resourceId,
-	compact = false,
-}: {
-	imageUrl?: string;
-	format: string;
-	resourceId: string;
-	compact?: boolean;
-} ) {
-	const [ failedUrl, setFailedUrl ] = useState< string >();
-	if ( imageUrl && imageUrl !== failedUrl ) {
-		return (
-			<div className="resource-thumbnail resource-photo-frame">
-				<img
-					className="resource-thumbnail"
-					src={ imageUrl }
-					width={ 112 }
-					height={ 72 }
-					alt=""
-					loading="lazy"
-					onError={ () => setFailedUrl( imageUrl ) }
-				/>
-			</div>
-		);
-	}
-	const palette =
-		Array.from( resourceId ).reduce( ( sum, char ) => sum + char.charCodeAt( 0 ), 0 ) % 4;
+export default function ResourceThumbnail( { format }: { format: string } ) {
 	return (
 		<svg
-			className="resource-thumbnail resource-thumbnail-fallback"
-			data-palette={ palette }
-			viewBox={ compact ? '84 44 56 56' : '0 0 224 144' }
+			className="resource-thumbnail"
+			viewBox="84 44 56 56"
 			fill="none"
 			stroke="currentColor"
 			strokeWidth="2"

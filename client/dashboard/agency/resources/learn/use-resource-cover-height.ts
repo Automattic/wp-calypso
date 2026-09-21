@@ -1,12 +1,12 @@
 import { useLayoutEffect, useRef } from 'react';
 
 /** Keep the title covers aligned without imposing a text-clipping fixed height. */
-export default function useResourceCoverHeight( design: string, logoPlacement: string ) {
+export default function useResourceCoverHeight() {
 	const ref = useRef< HTMLDivElement >( null );
 
 	useLayoutEffect( () => {
 		const library = ref.current;
-		if ( ! library || design !== 'typographic' ) {
+		if ( ! library ) {
 			return;
 		}
 		let frame = 0;
@@ -48,7 +48,7 @@ export default function useResourceCoverHeight( design: string, logoPlacement: s
 			document.fonts.removeEventListener( 'loadingdone', schedule );
 			library.style.removeProperty( '--resource-cover-height' );
 		};
-	}, [ design, logoPlacement ] );
+	}, [] );
 
 	return ref;
 }
