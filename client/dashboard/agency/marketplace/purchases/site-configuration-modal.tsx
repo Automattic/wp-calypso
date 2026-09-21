@@ -42,6 +42,8 @@ const DOMAIN_SUFFIX = '.wpcomstaging.com';
 const HELP_CENTER_URL = 'https://wordpress.com/support/help-support-options/#how-to-contact-us';
 const HOSTING_FEATURES_URL =
 	'https://developer.wordpress.com/docs/developer-tools/web-server-settings/';
+const DEV_LICENSES_URL =
+	'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting';
 
 type SiteConfigurationFormData = {
 	php_version: string;
@@ -153,6 +155,39 @@ function ClientAccessField( {
 			checked={ data.allow_client_access }
 			onChange={ ( value: boolean ) => onChange( { [ field.id ]: value } ) }
 		/>
+	);
+}
+
+/**
+ * A development site has no client-access choice to make: clients stay locked
+ * out until it launches. The checkbox above is replaced by classic's
+ * explanation of that.
+ */
+function DevSiteClientAccess() {
+	return (
+		<Text variant="muted" as="p">
+			{ createInterpolateElement(
+				__(
+					'Clients can’t access the <help>WordPress.com Help Center</help> or <hosting>hosting features</hosting> on development sites. Once the site is launched, enable access in Site Settings. <learn>Learn more</learn>'
+				),
+				{
+					help: (
+						<Button
+							variant="link"
+							href={ localizeUrl( HELP_CENTER_URL ) }
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					hosting: (
+						<Button variant="link" href={ HOSTING_FEATURES_URL } target="_blank" rel="noreferrer" />
+					),
+					learn: (
+						<Button variant="link" href={ DEV_LICENSES_URL } target="_blank" rel="noreferrer" />
+					),
+				}
+			) }
+		</Text>
 	);
 }
 
@@ -299,6 +334,7 @@ function SiteConfigurationForm( {
 						setFormData( ( current ) => ( { ...current, ...edits } ) )
 					}
 				/>
+				{ isDevSite && <DevSiteClientAccess /> }
 				<ButtonStack justify="flex-end">
 					<Button
 						__next40pxDefaultSize
