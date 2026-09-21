@@ -50,7 +50,7 @@ function getFields( {
 								label: state.name,
 								value: state.code,
 							} ) ),
-					  ]
+						]
 					: undefined,
 		},
 		{

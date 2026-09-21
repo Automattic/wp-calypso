@@ -98,7 +98,7 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 							</Button>
 						),
 					}
-			  )
+				)
 			: '';
 	}
 

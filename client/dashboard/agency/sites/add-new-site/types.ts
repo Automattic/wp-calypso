@@ -3,10 +3,7 @@
  * dev-site modals are ported separately.
  */
 export type AddNewSiteAction =
-	| 'import-from-wpcom'
-	| 'a4a-connection'
-	| 'jetpack-connection'
-	| 'dev-site-configurations';
+	'import-from-wpcom' | 'a4a-connection' | 'jetpack-connection' | 'dev-site-configurations';
 
 /** The actions handled by ConnectSiteModal: remotely installing a plugin on an existing site. */
 export type ConnectSiteAction = Extract<

@@ -114,9 +114,9 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 		<Text>
 			{ subscription.billing_interval_unit === 'year'
 				? /* translators: %s is a price, e.g. $47.95 */
-				  sprintf( __( '%s/year' ), formatted )
+					sprintf( __( '%s/year' ), formatted )
 				: /* translators: %s is a price, e.g. $47.95 */
-				  sprintf( __( '%s/month' ), formatted ) }
+					sprintf( __( '%s/month' ), formatted ) }
 		</Text>
 	);
 }

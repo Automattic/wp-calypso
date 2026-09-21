@@ -66,10 +66,10 @@ export default function PressableUsageLimitNotice( {
 			{ exceeded
 				? __(
 						'Your Pressable plan has exceeded its allocated limits. Consider upgrading your plan to avoid additional fees.'
-				  )
+					)
 				: __(
 						'Your Pressable plan is close to exceeding its allocated limits. Consider upgrading your plan to avoid additional fees.'
-				  ) }
+					) }
 		</Notice>
 	);
 }

@@ -30,7 +30,7 @@ export default function DevSiteCard( {
 	const blockedReason = ! isAgencyApproved
 		? __(
 				'Your agency is not yet approved. Please wait for approval before creating a development site.'
-		  )
+			)
 		: undefined;
 
 	return (

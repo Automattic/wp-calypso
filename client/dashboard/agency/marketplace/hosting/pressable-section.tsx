@@ -241,7 +241,7 @@ export default function PressableSection( {
 	const priceInfo = selectedProduct
 		? getProductPriceInfo( selectedProduct, term, {
 				applyIntroductoryPrice: isReferralMode || ownership !== 'agency',
-		  } )
+			} )
 		: undefined;
 	const hasIntroductoryDiscount = !! priceInfo && priceInfo.regularPrice !== undefined;
 
@@ -491,7 +491,7 @@ export default function PressableSection( {
 											__next40pxDefaultSize
 											label={ __( 'Select your plan' ) }
 											hideLabelFromVision
-											value={ isCustomPlan ? CUSTOM_PLAN_OPTION : selectedSlug ?? '' }
+											value={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
 											options={ [
 												...tabOptions.map( ( plan, index ) => {
 													const product = catalog.find(

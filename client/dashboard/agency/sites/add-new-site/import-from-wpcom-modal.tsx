@@ -309,7 +309,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 									/* translators: %d is the number of sites selected. */
 									_n( 'Add %d site', 'Add %d sites', selection.length ),
 									selection.length
-							  )
+								)
 							: __( 'Add sites' ) }
 					</Button>
 				</ButtonStack>

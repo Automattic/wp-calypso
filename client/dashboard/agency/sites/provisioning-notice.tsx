@@ -126,10 +126,10 @@ export default function ProvisioningSiteNotices() {
 												</ExternalLink>
 											),
 										}
-								  )
+									)
 								: __(
 										'We are creating your new WordPress.com site and will show it here once it is ready, which usually takes a few minutes.'
-								  ) }
+									) }
 						</span>
 					</Notice>
 				);

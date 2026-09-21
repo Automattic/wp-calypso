@@ -30,7 +30,7 @@ export default function CurrentPlanPanel() {
 
 	const planName = isA4APlan
 		? getSubtitleForDisplay( planPurchase )
-		: planDetails?.product_name_short ?? '';
+		: ( planDetails?.product_name_short ?? '' );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 
 	const isOwner = planDetails?.user_is_owner;
