@@ -80,11 +80,11 @@ const renderTypedSearch = ( query: string ) => {
 	return { ...rendered, availability, suggestions };
 };
 
-const advance = ( ms: number ) => {
-	act( () => {
+// Async so the availability batch, which flushes on a microtask, goes out.
+const advance = ( ms: number ) =>
+	act( async () => {
 		jest.advanceTimersByTime( ms );
 	} );
-};
 
 describe( 'useNamePulseSearch', () => {
 	beforeEach( () => {
@@ -154,10 +154,10 @@ describe( 'useNamePulseSearch', () => {
 			NamePulseDomainStatus.WAITING
 		);
 
-		advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
+		await advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
 		expect( availability ).not.toHaveBeenCalled();
 
-		advance( 1 );
+		await advance( 1 );
 		expect( availability ).toHaveBeenCalledTimes( 1 );
 		expect( availability.mock.calls[ 0 ][ 0 ] ).toContain( 'abc.com' );
 		expect( availability.mock.calls[ 0 ][ 0 ] ).not.toContain( 'ab.com' );
@@ -168,6 +168,32 @@ describe( 'useNamePulseSearch', () => {
 			)
 		);
 		expect( availability ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'serves a name that leaves the grid and comes back from the cache: no second request and never WAITING', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, availability } = renderTypedSearch( 'test' );
+		const statusOf = ( name: string ) =>
+			[ ...result.current.topResults, ...result.current.exactList ].find(
+				( row ) => row.domain_name === name
+			)?.status;
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+		await waitFor( () => expect( statusOf( 'test.com' ) ).toBe( NamePulseDomainStatus.AVAILABLE ) );
+		expect( availability ).toHaveBeenCalledTimes( 1 );
+
+		rerender( { q: 'tests' } );
+		expect( statusOf( 'test.com' ) ).toBeUndefined();
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+		expect( availability ).toHaveBeenCalledTimes( 2 );
+
+		rerender( { q: 'test' } );
+		expect( statusOf( 'test.com' ) ).toBe( NamePulseDomainStatus.AVAILABLE );
+		expect( statusOf( 'test.blog' ) ).toBe( NamePulseDomainStatus.AVAILABLE );
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+		expect( availability ).toHaveBeenCalledTimes( 2 );
+		expect( statusOf( 'test.com' ) ).toBe( NamePulseDomainStatus.AVAILABLE );
 	} );
 
 	it( 'reports the keyword section as loading while typing and fetches once for the settled query', async () => {
@@ -182,10 +208,10 @@ describe( 'useNamePulseSearch', () => {
 		expect( result.current.isLoadingKeyword ).toBe( true );
 		expect( result.current.keywordResults ).toHaveLength( 0 );
 
-		advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
+		await advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
 		expect( suggestions ).not.toHaveBeenCalled();
 
-		advance( 1 );
+		await advance( 1 );
 		expect( suggestions ).toHaveBeenCalledTimes( 1 );
 
 		await waitFor( () =>
