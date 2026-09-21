@@ -449,7 +449,8 @@ const DomainSearchUI = (
 			hideBack={ hideBack }
 			backUrl={ backUrl }
 			backLabelText={ backLabelText }
-			isWideLayout
+			isWideLayout={ ! config.showNamePulseSearch }
+			isFullLayout={ config.showNamePulseSearch }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
