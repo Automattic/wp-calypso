@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { sanitizeDomainInput } from '../helpers';
+import './search-input.scss';
 
 export const NamePulseSearchInput = () => {
 	const { __ } = useI18n();
@@ -26,7 +27,7 @@ export const NamePulseSearchInput = () => {
 	}, [ query ] );
 
 	return (
-		<div className="domain-search__search-bar">
+		<div className="domain-search__search-bar name-pulse-search-input">
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
