@@ -87,13 +87,24 @@ export function resolveClientId( id: string ): string {
 	return Object.hasOwn( map, id ) ? map[ id ] : id;
 }
 
-/** Points a short id at the block that replaced the one it stood for. */
-export function repointShortId( shortId: string, clientId: string ): void {
+/**
+ * Points the short ids that stood for a block at the one that replaced it:
+ * `id` is a short id, or the clientId the agent's ids resolved to.
+ */
+export function repointBlockId( id: string, clientId: string ): void {
 	const map = getClientIdMap();
 
-	if ( Object.hasOwn( map, shortId ) ) {
-		map[ shortId ] = clientId;
+	if ( Object.hasOwn( map, id ) ) {
+		map[ id ] = clientId;
+
+		return;
 	}
+
+	Object.keys( map )
+		.filter( ( shortId ) => map[ shortId ] === id )
+		.forEach( ( shortId ) => {
+			map[ shortId ] = clientId;
+		} );
 }
 
 /**

@@ -164,13 +164,23 @@ it( 'takes the hero header over the plain one, and leaves out a part with no blo
 	] );
 } );
 
-// The post editor with the template hidden: no section root, no template parts.
+// No section root, as in the post editor: no regions, whatever the page holds.
 it( 'sends the blocks as they are without a section root', () => {
 	withEditor( {
-		blocks: [ block( 'intro', 'core/paragraph' ), block( 'gallery', 'core/gallery' ) ],
+		blocks: [
+			block( 'wrapper', 'core/group', {}, [
+				templatePart( 'header', 'header' ),
+				block( 'intro', 'core/paragraph' ),
+			] ),
+			block( 'gallery', 'core/gallery' ),
+		],
+		controlled: { header: [ block( 'logo', 'core/site-logo' ) ] },
 	} );
 
-	expect( pageOutline() ).toEqual( [ [ 's:intro' ], [ 's:gallery' ] ] );
+	expect( pageOutline() ).toEqual( [
+		[ 's:wrapper', [ 's:header', [ 's:logo' ] ], [ 's:intro' ] ],
+		[ 's:gallery' ],
+	] );
 } );
 
 describe( 'a template part inside a wrapper', () => {

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { repointShortId, resolveClientId } from '../../utils/block-ids';
+import { repointBlockId, resolveClientId } from '../../utils/block-ids';
 import { getBlockingMove } from '../../utils/canvas-binding';
 import { captureCanvas } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
@@ -31,6 +31,7 @@ import {
 	haveBlocksChanged,
 } from './validation-details';
 import type { BlockEdits, ChangeType } from './types';
+import type { MenuId } from '../../utils/navigation-menu';
 import type { AbilityResult } from '../types';
 
 interface ApplyBlockEditsInput extends RawBlockEdits {
@@ -90,7 +91,7 @@ function createResolver( reverseMap: unknown ): Resolver {
 		},
 		onReplaced: ( requestedId, clientId ) => {
 			replaced.set( requestedId, clientId );
-			repointShortId( requestedId, clientId );
+			repointBlockId( requestedId, clientId );
 		},
 	};
 }
@@ -191,11 +192,12 @@ async function applyEditsAction(
 
 			// Snapshotted as the first write reaches it, so a batch that fails
 			// earlier keeps no undo for a menu it never changed.
+			const capturedMenus: MenuId[] = [];
 			const beforeWrite = async ( clientId: string ) => {
 				const menuId = getMenuIdAround( clientId );
 
-				if ( menuId ) {
-					await recorder.captureMenu( menuId );
+				if ( menuId && ( await recorder.captureMenu( menuId ) ) ) {
+					capturedMenus.push( menuId );
 				}
 			};
 			let recoveredTargetIds: Set< string >;
@@ -220,7 +222,12 @@ async function applyEditsAction(
 				}
 			} catch ( error ) {
 				// Returned rather than thrown: the writes that landed are in place,
-				// and the checkpoint is the only way back past them.
+				// and the checkpoint is the only way back past them. A menu captured
+				// for a write that never landed would offer an undo of nothing.
+				if ( ! level.hasWritten() ) {
+					capturedMenus.forEach( ( menuId ) => recorder.discardMenu( menuId ) );
+				}
+
 				closeBlockWrites();
 
 				return failedResult( error );

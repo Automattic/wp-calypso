@@ -182,6 +182,24 @@ describe( 'getValidationDetails', () => {
 		}
 	);
 
+	it( 'counts an edit deep in a tree once, not once per ancestor', () => {
+		const tree = ( content: string ) =>
+			block( 'group', 'core/group', {}, [
+				block( 'column', 'core/column', {}, [ paragraph( content ) ] ),
+			] );
+		const details = validate(
+			edits( { updates: [ contentUpdate( 'After' ) ] } ),
+			page( [ tree( 'Before' ) ] ),
+			page( [ tree( 'After' ) ] )
+		);
+
+		expect( details.appliedOperations ).toEqual( {
+			addedCount: 0,
+			removedCount: 0,
+			modifiedCount: 1,
+		} );
+	} );
+
 	it( 'tells a removed delete target from one still present and one that never existed', () => {
 		const gone = block( 'gone', 'core/paragraph' );
 		const stuck = block( 'stuck', 'core/button' );

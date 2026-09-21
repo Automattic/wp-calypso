@@ -5,10 +5,9 @@
 
 import { getBlock, getBlocks } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
+import { sameJson } from '../../utils/same-json';
 import type { BlockData, BlockEdits, ResolveClientId } from './types';
 import type { EditorBlock } from '../../utils/editor-blocks';
-
-const sameJson = ( a: unknown, b: unknown ): boolean => JSON.stringify( a ) === JSON.stringify( b );
 
 /**
  * Whether `current` already holds what `requested` asks for: every requested

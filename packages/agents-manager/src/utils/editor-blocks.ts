@@ -144,9 +144,11 @@ export function getSectionRootClientId(): string | undefined {
 	}
 }
 
+export const POST_CONTENT_BLOCK = 'core/post-content';
+
 /** The first `core/post-content` block, at any depth. */
 export const findPostContentClientId = (): string | undefined =>
-	getBlocksByName( 'core/post-content' )[ 0 ];
+	getBlocksByName( POST_CONTENT_BLOCK )[ 0 ];
 
 /**
  * Where the page's blocks live, or `null` while the editor is still loading.

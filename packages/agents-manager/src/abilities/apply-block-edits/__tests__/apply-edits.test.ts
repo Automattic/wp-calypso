@@ -6,6 +6,7 @@ jest.mock( '../../../utils/editor-blocks', () => ( {
 	getBlockRootClientId: jest.fn(),
 	getBlocks: jest.fn(),
 	insertBlock: jest.fn(),
+	POST_CONTENT_BLOCK: 'core/post-content',
 	removeBlock: jest.fn(),
 	replaceBlock: jest.fn(),
 	replaceInnerBlocks: jest.fn(),
