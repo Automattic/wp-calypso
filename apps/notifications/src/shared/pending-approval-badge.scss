@@ -12,22 +12,23 @@
 	}
 }
 
-// Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
-// wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
+// Both renderers nest the strip this way, so this reaches the new app too; it
+// overrides the bar below. Left as-is to avoid regressing the old widget.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
 	margin: 0;
 	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
-// In the new app the bar runs the height of the note, so the comment drops its
-// quote bar and the strip carries the same surface as the list badge.
+// In the new app a rule beside the strip is the only warning mark, so the strip
+// drops its tint and the comment its quote bar.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
-	box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+	.wpnc__pending-approval-section {
+		box-shadow: none;
+		border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
+	}
 
 	.wpnc-pending-approval-badge {
-		background-color: var(--wpds-color-background-surface-warning, #fde6be);
-
-		@include dark-warning-surface;
+		background-color: transparent;
 	}
 
 	.wpnc__body .wpnc__body-content {
