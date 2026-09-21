@@ -54,10 +54,3 @@ function isEditorEntryVisible(): boolean {
 export function isEditorAiEntryEnabled(): boolean {
 	return isEditorEntryVisible();
 }
-
-/**
- * Whether the editor toolbar Help Center "?" menu should show.
- */
-export function isEditorHelpMenuEnabled(): boolean {
-	return isEditorEntryVisible();
-}

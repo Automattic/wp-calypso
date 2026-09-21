@@ -19,13 +19,11 @@ function setOmnibarActive( active: boolean ) {
 // re-run those tests against a fresh snapshot.
 let isAdminBarInEditor: () => boolean;
 let isEditorAiEntryEnabled: () => boolean;
-let isEditorHelpMenuEnabled: () => boolean;
 let mockIsEditorPage: jest.Mock;
 
 beforeEach( async () => {
 	jest.resetModules();
-	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } =
-		await import( '../editor-entry-points' ) );
+	( { isAdminBarInEditor, isEditorAiEntryEnabled } = await import( '../editor-entry-points' ) );
 	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;
 } );
 
@@ -114,44 +112,5 @@ describe( 'isEditorAiEntryEnabled', () => {
 		setDesktop( true );
 		setOmnibarActive( true );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
-	} );
-} );
-
-describe( 'isEditorHelpMenuEnabled', () => {
-	function setDesktop( matches: boolean ) {
-		window.matchMedia = jest
-			.fn()
-			.mockReturnValue( { matches } ) as unknown as typeof window.matchMedia;
-	}
-
-	afterEach( () => {
-		mockIsEditorPage.mockReset();
-		delete ( window as TestWindow ).__experimentalAdminBarInEditor;
-		window.matchMedia = originalMatchMedia;
-	} );
-
-	it( 'returns true on an editor page on desktop', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		setDesktop( true );
-		expect( isEditorHelpMenuEnabled() ).toBe( true );
-	} );
-
-	it( 'returns false outside an editor page', () => {
-		mockIsEditorPage.mockReturnValue( false );
-		setDesktop( true );
-		expect( isEditorHelpMenuEnabled() ).toBe( false );
-	} );
-
-	it( 'returns false on mobile', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		setDesktop( false );
-		expect( isEditorHelpMenuEnabled() ).toBe( false );
-	} );
-
-	it( 'returns false when the omnibar experiment is active', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		setDesktop( true );
-		setOmnibarActive( true );
-		expect( isEditorHelpMenuEnabled() ).toBe( false );
 	} );
 } );

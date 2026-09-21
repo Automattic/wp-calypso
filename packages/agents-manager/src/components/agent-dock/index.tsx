@@ -33,7 +33,6 @@ import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../u
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
-import EditorHelpCenterButton from '../editor-help-center-button';
 import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
@@ -489,7 +488,6 @@ export default function AgentDock( {
 
 	return (
 		<>
-			<EditorHelpCenterButton onClose={ handleClose } onOpenChat={ openChat } />
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
 			{ isChatVisible &&
 				createAgentPortal(
