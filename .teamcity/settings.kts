@@ -62,7 +62,6 @@ project {
 	buildType(BuildCacheSeedPreviewImage)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
-	buildType(SmartBuildLauncher)
 	template(CalypsoE2ETestsBuildTemplate)
 
 	params {
@@ -772,55 +771,6 @@ object CheckCodeStyle : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
-		}
-	}
-})
-
-object SmartBuildLauncher : BuildType({
-	name = "Smart Build Launcher"
-	description = "Launches TeamCity builds based on which files were modified in VCS."
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Install and build dependencies"
-			scriptContent = """
-				$yarn_install_cmd
-				yarn workspace @automattic/dependency-finder build
-			"""
-		}
-		bashNodeScript {
-			name = "Launch relevant builds"
-			scriptContent = """
-				node ./packages/dependency-finder/dist/esm/index.js
-			"""
 		}
 	}
 })
