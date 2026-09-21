@@ -51,6 +51,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
@@ -265,6 +266,9 @@ export const marketplaceHostingRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
 		}
 	},
@@ -351,6 +355,9 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 		if ( agency?.id ) {
+			// The cart total counts the owned WordPress.com sites; warm that
+			// query without holding the page on every license the agency has.
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
 		}
 	},
