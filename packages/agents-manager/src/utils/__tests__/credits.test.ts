@@ -8,6 +8,8 @@ import {
 	isCreditsLow,
 } from '../credits';
 
+const mockLocale = { slug: 'en' as string | undefined };
+jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: () => mockLocale.slug } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
@@ -90,5 +92,20 @@ describe( 'formatCreditsDetail', () => {
 				total: 15000,
 			} )
 		).toBe( '10,800 of 15,000 credits' );
+	} );
+
+	it( 'formats the figures in the interface locale, not the browser one', () => {
+		const pool = {
+			id: 'plan' as const,
+			label: 'Monthly plan',
+			percent: 72,
+			remaining: 10800,
+			total: 15000,
+		};
+		mockLocale.slug = 'de';
+		expect( formatCreditsDetail( pool ) ).toBe( '10.800 of 15.000 credits' );
+		mockLocale.slug = 'not a locale';
+		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
+		mockLocale.slug = 'en';
 	} );
 } );

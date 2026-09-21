@@ -1,4 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
+import { getLocaleSlug } from 'i18n-calypso';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
@@ -78,6 +79,17 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 	);
 }
 
+// The interface locale, not the browser's, so the figures match the
+// translated sentence around them.
+function formatCredits( value: number ): string {
+	const locale = getLocaleSlug() ?? 'en';
+	try {
+		return value.toLocaleString( locale );
+	} catch {
+		return value.toLocaleString( 'en' );
+	}
+}
+
 export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 	if ( pool.remaining === undefined || pool.total === undefined ) {
 		return undefined;
@@ -86,7 +98,7 @@ export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 	return sprintf(
 		/* translators: 1: credits remaining, 2: credits in the pool */
 		__( '%1$s of %2$s credits', __i18n_text_domain__ ),
-		pool.remaining.toLocaleString(),
-		pool.total.toLocaleString()
+		formatCredits( pool.remaining ),
+		formatCredits( pool.total )
 	);
 }

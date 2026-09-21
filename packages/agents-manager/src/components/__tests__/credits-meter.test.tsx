@@ -65,6 +65,7 @@ jest.mock( '@wordpress/components', () => ( {
 		</div>
 	),
 } ) );
+jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
