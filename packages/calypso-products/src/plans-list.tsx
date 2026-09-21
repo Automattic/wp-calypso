@@ -585,13 +585,13 @@ const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
 		} ),
 		oldCopy: i18n.translate( '/month, billed every three years' ),
 	} ) as TranslateResult;
-const WPComGetMonthlyBillingTimeframe = (): TranslateResult =>
+const WPComGetYearlyBillingTimeframe = (): TranslateResult =>
 	i18n.fixMe( {
-		text: 'per month, billed monthly, excl. taxes',
-		newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
+		text: 'per month, billed yearly, excl. taxes',
+		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
 			comment: 'Excl. Taxes is short for excluding taxes',
 		} ),
-		oldCopy: i18n.translate( 'per month, billed monthly' ),
+		oldCopy: i18n.translate( 'per month, billed yearly' ),
 	} ) as TranslateResult;
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
@@ -606,15 +606,14 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
-	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
-} );
-
-// Jetpack and P2+ share getMonthlyTimeframe above; only WordPress.com plans
-// carry the tax note, so they get their own timeframe rather than changing the
-// string under the other products.
-const getWPComMonthlyTimeframe = (): BillingTerm => ( {
-	term: TERM_MONTHLY,
-	getBillingTimeFrame: WPComGetMonthlyBillingTimeframe,
+	getBillingTimeFrame: () =>
+		i18n.fixMe( {
+			text: 'per month, billed monthly, excl. taxes',
+			newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
+				comment: 'Excl. Taxes is short for excluding taxes',
+			} ),
+			oldCopy: i18n.translate( 'per month, billed monthly' ),
+		} ) as TranslateResult,
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
@@ -3143,7 +3142,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_PERSONAL_MONTHLY ]: {
 		...getPlanPersonalDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 1019,
 		getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
 	},
@@ -3182,7 +3181,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_PREMIUM_MONTHLY ]: {
 		...getPlanPremiumDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 1013,
 		getStoreSlug: () => PLAN_PREMIUM_MONTHLY,
 	},
@@ -3213,7 +3212,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_BUSINESS_MONTHLY ]: {
 		...getPlanBusinessDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
 	},
@@ -3252,7 +3251,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_A4A_BUSINESS_MONTHLY ]: {
 		...getPlanA4ABusinessDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 3301,
 		getStoreSlug: () => PLAN_A4A_BUSINESS_MONTHLY,
 	},
@@ -3275,7 +3274,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
 		...getPlanEcommerceDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
 	},
@@ -3298,7 +3297,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		type: TYPE_WOOEXPRESS_MEDIUM,
 		getBillingTimeFrame: () => translate( 'per month' ),
 		getProductId: () => 1053,
@@ -3316,7 +3315,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
 		...getPlanWooExpressSmallDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		type: TYPE_WOOEXPRESS_SMALL,
 		getBillingTimeFrame: () => translate( 'per month' ),
 		getProductId: () => 1054,
@@ -3354,7 +3353,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ]: {
 		...getPlanFreeDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		type: isEnabled( 'ciab/allow-domain-features' ) ? TYPE_WOO_HOSTED_FREE_TRIAL : TYPE_FREE,
 		getTitle: () => 'Free Trial',
 		getPlanTagline: () => "Get a taste of the world's most popular eCommerce software.",
@@ -3369,7 +3368,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOO_HOSTED_BASIC_MONTHLY ]: {
 		...getPlanWooHostedBasicDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_BASIC,
 		getProductId: () => 4001,
 		getStoreSlug: () => PLAN_WOO_HOSTED_BASIC_MONTHLY,
@@ -3385,7 +3384,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOO_HOSTED_PRO_MONTHLY ]: {
 		...getPlanWooHostedProDetails(),
-		...getWPComMonthlyTimeframe(),
+		...getMonthlyTimeframe(),
 		type: TYPE_WOO_HOSTED_PRO,
 		getProductId: () => 4003,
 		getStoreSlug: () => PLAN_WOO_HOSTED_PRO_MONTHLY,
@@ -3976,7 +3975,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetYearlyBillingTimeframe,
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -4008,7 +4007,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	term: TERM_ANNUALLY,
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetYearlyBillingTimeframe,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
