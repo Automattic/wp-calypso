@@ -80,19 +80,25 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 		invalidMessage = __( 'Sorry, that address is taken.' );
 		// The validity message is plain text, so the clickable suggestion stays in the help.
 		help = alternative
-			? createInterpolateElement( __( 'How about <suggestion />?' ), {
-					suggestion: (
-						<Button
-							variant="link"
-							onClick={ () => {
-								recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
-								siteAddress.setAddress( alternative );
-							} }
-						>
-							{ alternative }
-						</Button>
+			? createInterpolateElement(
+					__(
+						/* translators: <suggestion /> is a free site address close to the one that was taken, e.g. example2 */
+						'How about <suggestion />?'
 					),
-				} )
+					{
+						suggestion: (
+							<Button
+								variant="link"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
+									siteAddress.setAddress( alternative );
+								} }
+							>
+								{ alternative }
+							</Button>
+						),
+					}
+				)
 			: '';
 	}
 
@@ -231,17 +237,15 @@ function SiteConfigurationForm( {
 			{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
 			{
 				onSuccess: () => {
-					// The sites page reports on it from here; the site itself takes
-					// a few minutes to answer.
+					// The sites page reports on it from here.
 					trackProvisioningSite( pendingSiteId );
-					// The next site gets its own address rather than the one just claimed.
+					// The next site gets its own address, not the one just claimed.
 					siteAddress.refreshSuggestion();
 					closeModal?.();
 					navigate( { to: '/sites' } );
 				},
-				// The address is checked before submit but only claimed by the
-				// provision itself, so anything that failed may have failed on the
-				// name. Re-check it so the field can say so.
+				// The address is only claimed by the provision itself, so a failure
+				// may have been about the name. Re-check it so the field can say so.
 				onError: () => siteAddress.revalidate(),
 			}
 		);

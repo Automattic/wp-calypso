@@ -116,6 +116,7 @@ export default function ProvisioningSiteNotices() {
 							{ site
 								? createInterpolateElement(
 										__(
+											/* translators: <address /> is the address of the site that was created, e.g. example.wpcomstaging.com */
 											'<address /> is now ready. It may take a few minutes to appear in the list below.'
 										),
 										{
