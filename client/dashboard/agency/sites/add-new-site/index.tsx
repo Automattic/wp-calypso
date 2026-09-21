@@ -79,7 +79,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	// Licenses already paid for are set up from Purchases, filtered down to the
 	// ones with no site yet.
 	const wpcomPendingLicensesProps = useLinkProps( {
-		to: '/marketplace/purchases',
+		to: '/purchases',
 		search: { status: 'unassigned', search: 'WordPress.com' },
 		onClick: () => recordNavigation( 'wpcom' ),
 	} );

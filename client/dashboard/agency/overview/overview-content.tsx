@@ -26,6 +26,7 @@ export interface AgencyOverviewLinks {
 	partnerDirectory: string;
 	contactSupport: string;
 	aiMcp: string;
+	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -136,6 +137,7 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					aiMcpHref={ links.aiMcp }
+					pressableHostingHref={ links.pressableHosting }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

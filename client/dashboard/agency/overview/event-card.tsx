@@ -10,9 +10,9 @@ import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 import {
 	FEATURED_EVENT,
-	PRESSABLE_EXPANSION_OFFER_EVENT,
-	PRESSABLE_INTRO_OFFER_EVENT,
 	getAiMcpAnnouncement,
+	getPressableExpansionOfferEvent,
+	getPressableIntroOfferEvent,
 } from './events';
 import NewTabLabel from './new-tab-label';
 import type { FeaturedEvent } from './events';
@@ -22,6 +22,7 @@ interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
 	aiMcpHref: string;
+	pressableHostingHref: string;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -94,13 +95,16 @@ export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	aiMcpHref,
+	pressableHostingHref,
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
 	const events = [
 		FEATURED_EVENT,
-		isEligibleForPressableIntroOffer ? PRESSABLE_INTRO_OFFER_EVENT : null,
-		isEligibleForPressableExpansionOffer ? PRESSABLE_EXPANSION_OFFER_EVENT : null,
+		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
+		isEligibleForPressableExpansionOffer
+			? getPressableExpansionOfferEvent( pressableHostingHref )
+			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
 	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
 

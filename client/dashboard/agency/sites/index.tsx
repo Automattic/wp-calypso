@@ -105,12 +105,7 @@ function NeedsSetupDescription( { count }: { count: number } ) {
 		),
 		{
 			count: <>{ count }</>,
-			link: (
-				<Link
-					to="/marketplace/purchases"
-					search={ { status: 'unassigned', search: 'WordPress.com' } }
-				/>
-			),
+			link: <Link to="/purchases" search={ { status: 'unassigned', search: 'WordPress.com' } } />,
 		}
 	);
 }

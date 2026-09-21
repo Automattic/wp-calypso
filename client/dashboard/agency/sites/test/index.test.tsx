@@ -174,7 +174,7 @@ describe( '<AgencySites>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Set them up in Purchases' } ) ).toHaveAttribute(
 			'href',
-			'/marketplace/purchases?status=unassigned&search=WordPress.com'
+			'/purchases?status=unassigned&search=WordPress.com'
 		);
 	} );
 

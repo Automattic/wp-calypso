@@ -23,6 +23,7 @@ const agencySupports: AgencySupports = {
 	plugins: true,
 	team: true,
 	earn: true,
+	billing: true,
 };
 
 // The default test config has `supports.agency: false`, which short-circuits
@@ -59,11 +60,37 @@ async function renderSidebar( capabilities: string[], amplifyAllowed = true ) {
 }
 
 describe( '<AgencySidebar>', () => {
-	test( 'shows every menu item when the user holds every capability', async () => {
+	test( 'shows every group when the user holds every capability', async () => {
 		await renderSidebar( [
 			'a4a_read_managed_sites',
 			'a4a_read_users',
 			'a4a_read_agency_tier',
+			'a4a_read_partner_directory',
+			'a4a_read_marketplace',
+			'a4a_read_exclusive_offers',
+			'a4a_jetpack_licensing',
+			'a4a_read_learn',
+			'a4a_read_referrals',
+			'a4a_read_migrations',
+			'a4a_read_amplify',
+		] );
+
+		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
+		for ( const name of [ 'Hosting', 'Products', 'Purchases', 'Exclusive offers' ] ) {
+			expect( screen.getByRole( 'link', { name } ) ).toBeVisible();
+		}
+	} );
+
+	test( 'links every screen at its flat path', async () => {
+		await renderSidebar( [
+			'a4a_read_managed_sites',
+			'a4a_read_users',
+			'a4a_read_agency_tier',
+			'a4a_read_partner_directory',
 			'a4a_read_marketplace',
 			'a4a_read_exclusive_offers',
 			'a4a_jetpack_licensing',
@@ -72,43 +99,74 @@ describe( '<AgencySidebar>', () => {
 			'a4a_read_migrations',
 		] );
 
-		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Team' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Resources' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
+		const expected: Record< string, string > = {
+			Sites: '/sites',
+			'Dev tools': '/dev-tools',
+			Migrations: '/migrations',
+			Library: '/library',
+			'Partner Directories': '/partner-directory',
+			'Agency tier': '/tiers',
+			Referrals: '/referrals',
+			WooPayments: '/woopayments',
+			'Payout settings': '/payout-settings',
+			Team: '/agency/team',
+			'AI and MCP': '/agency/ai',
+		};
+		for ( const [ name, href ] of Object.entries( expected ) ) {
+			expect( screen.getByRole( 'link', { name } ) ).toHaveAttribute( 'href', href );
+		}
+	} );
+
+	test( 'opens Plugins and Billing outside the dashboard', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites', 'a4a_jetpack_licensing' ] );
+
+		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /\/plugins$/ )
+		);
+		expect( screen.getByRole( 'link', { name: /^Billing/ } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /\/me\/billing$/ )
+		);
 	} );
 
 	test( 'hides menu items the user lacks the capability for', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
+		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Team' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Agency' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /^Billing/ } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Marketplace' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Resources' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Grow' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Earn' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Agency' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'leaves only Home when the user holds no capabilities', async () => {
 		await renderSidebar( [] );
 
 		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Sites' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: /^Plugins/ } ) ).not.toBeInTheDocument();
+		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps the Earn menu but drops the sub-items the user cannot reach', async () => {
 		await renderSidebar( [ 'a4a_read_migrations' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Migrations' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'lists Migrations under Clients', async () => {
+		await renderSidebar( [ 'a4a_read_migrations' ] );
+
+		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Migrations' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps the Marketplace menu but drops the sub-items the user cannot reach', async () => {
@@ -133,36 +191,41 @@ describe( '<AgencySidebar>', () => {
 	// Partner Directory is gated by both an agency flag
 	// (`partner_directory.allowed`) and a capability. `mockAgency` always
 	// reports the flag on, so these cases isolate the capability gate.
-	test( 'shows Partner Directory when the user holds the partner directory capability', async () => {
+	test( 'shows Partner Directories under Grow when the user holds the capability', async () => {
 		await renderSidebar( [ 'a4a_read_partner_directory' ] );
 
-		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Partner Directories' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Tiers' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Agency tier' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'hides Partner Directory when the user lacks the partner directory capability', async () => {
+	test( 'hides Partner Directories when the user lacks the capability', async () => {
 		await renderSidebar( [ 'a4a_read_agency_tier' ] );
 
-		expect( screen.getByRole( 'link', { name: 'Tiers' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Agency tier' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Partner Directories' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows MCP when the user holds the learn capability', async () => {
+	test( 'shows Library, Dev tools and AI and MCP when the user holds the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_learn' ] );
 
+		expect( screen.getByRole( 'link', { name: 'Library' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Dev tools' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'AI and MCP' } ) ).toBeVisible();
 	} );
 
-	test( 'hides MCP when the user lacks the learn capability', async () => {
+	test( 'hides Library, Dev tools and AI and MCP when the user lacks the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
+		expect( screen.queryByRole( 'link', { name: 'Library' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Dev tools' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows Amplify as an external link when the agency and the user have access', async () => {
+	test( 'shows Amplify under Clients as an external link when the agency and the user have access', async () => {
 		await renderSidebar( [ 'a4a_read_amplify' ] );
 
+		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
 		const amplify = screen.getByRole( 'link', { name: /Amplify/ } );
 		expect( amplify ).toBeVisible();
 		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
@@ -179,17 +242,5 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_amplify' ], false );
 
 		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows Developer tools when the user holds the learn capability', async () => {
-		await renderSidebar( [ 'a4a_read_learn' ] );
-
-		expect( screen.getByRole( 'link', { name: 'Developer tools' } ) ).toBeVisible();
-	} );
-
-	test( 'hides Developer tools when the user lacks the learn capability', async () => {
-		await renderSidebar( [ 'a4a_read_managed_sites' ] );
-
-		expect( screen.queryByRole( 'link', { name: 'Developer tools' } ) ).not.toBeInTheDocument();
 	} );
 } );
