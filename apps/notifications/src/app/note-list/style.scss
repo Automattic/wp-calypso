@@ -70,9 +70,8 @@
 		}
 
 		&.is-unapproved {
-			color: $white;
-			background: var(--wpds-color-stroke-surface-warning-strong, #926300);
-			border-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
+			color: var(--wpds-color-foreground-content-warning, #2e1900);
+			background: var(--wpds-color-background-surface-warning, #fde6be);
 		}
 	}
 }

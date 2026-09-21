@@ -1,5 +1,17 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+// The WPDS warning surface has no dark counterpart. Tint the dark surface the
+// way the Dashboard's own warning notices do.
+@mixin dark-warning-surface {
+	@include ui-mixins.when-dark-theme {
+		background-color: color-mix(
+			in srgb,
+			var(--dashboard__background-color-warning, #d47608) 8%,
+			var(--dashboard-surface__background-color, #2a2a2a)
+		);
+	}
+}
+
 // Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
 // wraps `.wpnc__body`). Left untouched to avoid regressing the old widget.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
@@ -7,13 +19,15 @@
 	box-shadow: inset 3px 0 0 var(--color-warning);
 }
 
-// In the new app the bar runs the height of the note, so nothing inside repeats
-// the warning color: the strip drops its tint and the comment its quote bar.
+// In the new app the bar runs the height of the note, so the comment drops its
+// quote bar and the strip carries the same surface as the list badge.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
-	box-shadow: inset 3px 0 0 var(--color-warning);
+	box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
 
 	.wpnc-pending-approval-badge {
-		background-color: transparent;
+		background-color: var(--wpds-color-background-surface-warning, #fde6be);
+
+		@include dark-warning-surface;
 	}
 
 	.wpnc__body .wpnc__body-content {
@@ -36,15 +50,7 @@
 	font-size: 13px;
 	color: var(--color-text);
 
-	// The WPDS warning surface has no dark counterpart. Tint the dark surface the
-	// way the Dashboard's own warning notices do.
-	@include ui-mixins.when-dark-theme {
-		background-color: color-mix(
-			in srgb,
-			var(--dashboard__background-color-warning, #d47608) 8%,
-			var(--dashboard-surface__background-color, #2a2a2a)
-		);
-	}
+	@include dark-warning-surface;
 
 	svg {
 		fill: var(--wpds-color-foreground-content-warning-weak, #926300);
