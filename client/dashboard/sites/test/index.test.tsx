@@ -132,9 +132,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'shows the two-step-required notice when a listed site requires it and the user has no two-step', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/settings' )
-			.reply( 200, { two_step_enabled: false } );
 		mockSitesEndpoint( [
 			{
 				...mockSites[ 0 ],
@@ -148,6 +145,7 @@ describe( '<Sites>', () => {
 		render( <Sites />, {
 			user: {
 				site_count: mockSites.length,
+				two_step_enabled: false,
 			} as User,
 			config: configWithMeSupport,
 		} );
@@ -157,9 +155,6 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'hides the two-step-required notice when the user already has two-step', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/settings' )
-			.reply( 200, { two_step_enabled: true } );
 		mockSitesEndpoint( [
 			{
 				...mockSites[ 0 ],
@@ -172,6 +167,7 @@ describe( '<Sites>', () => {
 		render( <Sites />, {
 			user: {
 				site_count: 1,
+				two_step_enabled: true,
 			} as User,
 			config: configWithMeSupport,
 		} );

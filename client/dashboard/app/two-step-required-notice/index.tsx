@@ -1,11 +1,10 @@
 import { JetpackModules } from '@automattic/api-core';
-import { userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Notice } from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { hasJetpackModule } from '../../utils/site-features';
+import { useAuth } from '../auth';
 import type { Site } from '@automattic/api-core';
 
 /**
@@ -23,10 +22,13 @@ export function getSitesRequiringTwoStep( sites: Site[] ) {
  * Whether the two-step-required notice is eligible to show. Read at the call site so the
  * notice never decides its own visibility inside the arbiter.
  * See client/dashboard/sites/AGENTS.md.
+ *
+ * `two_step_enabled` rides on the authenticated user, so eligibility costs no request. It is
+ * absent until wpcom deploys the field; the notice stays hidden rather than guessing.
  */
 export function useShouldShowTwoStepRequiredNotice( sites: Site[] ) {
-	const { data: userSettings } = useQuery( userSettingsQuery() );
-	if ( ! userSettings || userSettings.two_step_enabled ) {
+	const { user } = useAuth();
+	if ( user.two_step_enabled !== false ) {
 		return false;
 	}
 	return getSitesRequiringTwoStep( sites ).length > 0;
