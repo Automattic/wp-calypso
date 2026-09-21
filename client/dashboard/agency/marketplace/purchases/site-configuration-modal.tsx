@@ -2,6 +2,7 @@ import { getDataCenterOptions } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyPendingSitesQuery,
+	provisionAgencyDevSiteMutation,
 	provisionAgencySiteMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -11,6 +12,7 @@ import {
 	Button,
 	CheckboxControl,
 	ExternalLink,
+	Modal,
 	Spinner,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -24,6 +26,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import SuffixInputControl from '../../../components/input-control/suffix-input-control';
+import Notice from '../../../components/notice';
 import { trackProvisioningSite } from '../../sites/provisioning-sites';
 import { useSiteAddress } from './use-site-address';
 import type { SiteAddress } from './use-site-address';
@@ -157,15 +160,20 @@ function SiteConfigurationForm( {
 	agencyId,
 	pendingSiteId,
 	closeModal,
+	onCreatingChange,
 }: {
 	agencyId: number;
-	pendingSiteId: number;
+	/** Absent for a development site, which has no paid site to provision. */
+	pendingSiteId?: number;
 	closeModal?: () => void;
+	/** Lets a surrounding modal hold itself open until the site is created. */
+	onCreatingChange?: ( isCreating: boolean ) => void;
 } ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const siteAddress = useSiteAddress( agencyId );
 	const { phpVersions, recommendedValue } = getPHPVersions();
+	const isDevSite = pendingSiteId === undefined;
 
 	const [ formData, setFormData ] = useState< SiteConfigurationFormData >( {
 		php_version: recommendedValue,
@@ -173,15 +181,26 @@ function SiteConfigurationForm( {
 		allow_client_access: true,
 	} );
 
-	const mutation = useMutation(
-		withSnackbar( provisionAgencySiteMutation( agencyId ), {
-			success: __( 'Site creation started.' ),
-			// The server explains itself here — an address claimed since we checked
-			// it, a blocked account, an unverified email — and a generic message
-			// would leave the agency with nothing to act on.
-			error: { source: 'server' },
-		} )
+	const snackbar = {
+		success: __( 'Site creation started.' ),
+		// The server explains itself here — an address claimed since we checked
+		// it, a blocked account, an unverified email — and a generic message
+		// would leave the agency with nothing to act on.
+		error: { source: 'server' } as const,
+	};
+	// Both are instantiated because hooks cannot be called conditionally; only
+	// the one matching this modal's flavour is ever submitted.
+	const provisionSite = useMutation(
+		withSnackbar( provisionAgencySiteMutation( agencyId ), snackbar )
 	);
+	const provisionDevSite = useMutation(
+		withSnackbar( provisionAgencyDevSiteMutation( agencyId ), snackbar )
+	);
+	const isCreating = provisionSite.isPending || provisionDevSite.isPending;
+
+	useEffect( () => {
+		onCreatingChange?.( isCreating );
+	}, [ isCreating, onCreatingChange ] );
 
 	const fields: Field< SiteConfigurationFormData >[] = [
 		{
@@ -219,7 +238,9 @@ function SiteConfigurationForm( {
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'php_version', 'primary_data_center', 'allow_client_access' ],
+		fields: isDevSite
+			? [ 'php_version', 'primary_data_center' ]
+			: [ 'php_version', 'primary_data_center', 'allow_client_access' ],
 	};
 
 	const handleSubmit = ( event: React.FormEvent ) => {
@@ -228,27 +249,42 @@ function SiteConfigurationForm( {
 		const configuration = {
 			php_version: formData.php_version,
 			primary_data_center: formData.primary_data_center || undefined,
-			is_fully_managed_agency_site: ! formData.allow_client_access,
+			// A development site is always fully managed; the checkbox that decides
+			// this for a paid site is not offered for one.
+			is_fully_managed_agency_site: isDevSite || ! formData.allow_client_access,
 		};
 
-		recordTracksEvent( 'calypso_a4a_create_site_config_submit', configuration );
+		recordTracksEvent( 'calypso_a4a_create_site_config_submit', {
+			...configuration,
+			is_dev_site: isDevSite,
+		} );
 
-		mutation.mutate(
-			{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
-			{
-				onSuccess: () => {
-					// The sites page reports on it from here.
-					trackProvisioningSite( pendingSiteId );
-					// The next site gets its own address, not the one just claimed.
-					siteAddress.refreshSuggestion();
-					closeModal?.();
-					navigate( { to: '/sites' } );
-				},
-				// The address is only claimed by the provision itself, so a failure
-				// may have been about the name. Re-check it so the field can say so.
-				onError: () => siteAddress.revalidate(),
-			}
-		);
+		const onCreated = ( siteId: number ) => {
+			// The sites page reports on it from here.
+			trackProvisioningSite( siteId );
+			// The next site gets its own address, not the one just claimed.
+			siteAddress.refreshSuggestion();
+			closeModal?.();
+			navigate( { to: '/sites' } );
+		};
+
+		// The address is only claimed by the provision itself, so a failure may
+		// have been about the name. Re-check it so the field can say so.
+		const onError = () => siteAddress.revalidate();
+
+		if ( pendingSiteId === undefined ) {
+			// A development site has no pending record to provision, so the
+			// response is the only place its id comes from.
+			provisionDevSite.mutate(
+				{ ...configuration, site_name: siteAddress.address },
+				{ onSuccess: ( { site } ) => onCreated( site.id ), onError }
+			);
+		} else {
+			provisionSite.mutate(
+				{ ...configuration, id: pendingSiteId, site_name: siteAddress.address },
+				{ onSuccess: () => onCreated( pendingSiteId ), onError }
+			);
+		}
 	};
 
 	return (
@@ -267,7 +303,7 @@ function SiteConfigurationForm( {
 					<Button
 						__next40pxDefaultSize
 						variant="tertiary"
-						disabled={ mutation.isPending }
+						disabled={ isCreating }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_a4a_create_site_config_close' );
 							closeModal?.();
@@ -279,8 +315,8 @@ function SiteConfigurationForm( {
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						isBusy={ mutation.isPending }
-						disabled={ ! siteAddress.isReady || mutation.isPending }
+						isBusy={ isCreating }
+						disabled={ ! siteAddress.isReady || isCreating }
 					>
 						{ __( 'Create site' ) }
 					</Button>
@@ -346,5 +382,51 @@ export default function SiteConfigurationModal( {
 			pendingSiteId={ pendingSite.id }
 			closeModal={ closeModal }
 		/>
+	);
+}
+
+/**
+ * Creating a free development site. It is opened straight from a CTA rather
+ * than a DataViews action, so unlike the license modal above it brings its own
+ * `<Modal>`, and there is no pending site to look up first.
+ */
+export function DevSiteConfigurationModal( { closeModal }: { closeModal: () => void } ) {
+	const { recordTracksEvent } = useAnalytics();
+	const { data: agency, isLoading } = useQuery( activeAgencyQuery() );
+	const [ isCreating, setIsCreating ] = useState( false );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_a4a_create_site_config' );
+	}, [ recordTracksEvent ] );
+
+	return (
+		<Modal
+			title={ __( 'Configure your new site' ) }
+			size="medium"
+			onRequestClose={ closeModal }
+			// Closing mid-creation unmounts the observer, so the site lands
+			// server-side and nothing redirects, tracks it or says how it went.
+			isDismissible={ ! isCreating }
+			shouldCloseOnEsc={ ! isCreating }
+			shouldCloseOnClickOutside={ ! isCreating }
+		>
+			{ isLoading && (
+				<VStack spacing={ 4 } alignment="center">
+					<Spinner />
+				</VStack>
+			) }
+			{ ! isLoading && ! agency?.id && (
+				<Notice variant="error">
+					{ __( 'We couldn’t load your agency details. Please refresh the page and try again.' ) }
+				</Notice>
+			) }
+			{ ! isLoading && !! agency?.id && (
+				<SiteConfigurationForm
+					agencyId={ agency.id }
+					closeModal={ closeModal }
+					onCreatingChange={ setIsCreating }
+				/>
+			) }
+		</Modal>
 	);
 }

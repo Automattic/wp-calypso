@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { getProvisioningSiteIds, untrackProvisioningSite } from '../../../sites/provisioning-sites';
-import SiteConfigurationModal from '../site-configuration-modal';
+import SiteConfigurationModal, { DevSiteConfigurationModal } from '../site-configuration-modal';
 import type { JetpackLicense } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
@@ -33,12 +33,16 @@ const license: JetpackLicense = {
 	referral: null,
 };
 
-function mockPendingSites( sites: unknown[] ) {
+function mockAgency() {
 	nock( API )
 		.persist()
 		.get( '/wpcom/v2/agency' )
 		.query( true )
 		.reply( 200, [ { id: 1 } ] );
+}
+
+function mockPendingSites( sites: unknown[] ) {
+	mockAgency();
 	nock( API ).persist().get( '/wpcom/v2/agency/1/sites/pending' ).reply( 200, sites );
 }
 
@@ -309,5 +313,52 @@ describe( '<SiteConfigurationModal>', () => {
 		).toBeVisible();
 		await waitFor( () => expect( input ).toBeInvalid() );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+	} );
+} );
+
+describe( '<DevSiteConfigurationModal>', () => {
+	afterEach( () => {
+		nock.cleanAll();
+		getProvisioningSiteIds().forEach( untrackProvisioningSite );
+	} );
+
+	test( 'creates a development site at the suggested address', async () => {
+		mockAgency();
+		mockAddressSuggestion( 'ramblingthoughts' );
+		const closeModal = jest.fn();
+		render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
+		const user = userEvent.setup();
+
+		await waitForSuggestedAddress();
+
+		const scope = nock( API )
+			.post( '/wpcom/v2/agency/1/sites/provision-dev-site', ( body ) => {
+				expect( body ).toEqual(
+					expect.objectContaining( {
+						site_name: 'ramblingthoughts',
+						php_version: expect.any( String ),
+						// Clients stay locked out until a development site launches, so
+						// the choice the paid flow offers is not offered here.
+						is_fully_managed_agency_site: true,
+					} )
+				);
+				// There is no pending site to provision against.
+				expect( body.id ).toBeUndefined();
+				return true;
+			} )
+			.reply( 200, {
+				site: {
+					id: 42,
+					title: 'Rambling Thoughts',
+					url: 'http://ramblingthoughts.wpcomstaging.com',
+				},
+			} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Create site' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( closeModal ).toHaveBeenCalled();
+		// The response is the only place a development site's id comes from.
+		await waitFor( () => expect( getProvisioningSiteIds() ).toEqual( [ 42 ] ) );
 	} );
 } );

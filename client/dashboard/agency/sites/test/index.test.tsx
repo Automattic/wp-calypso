@@ -44,6 +44,17 @@ function mockEndpoints() {
 		.get( '/wpcom/v2/jetpack-licensing/dev-licenses' )
 		.query( true )
 		.reply( 200, { licenses: [], available: 5 } );
+
+	// Seed the address the site configuration modal opens with.
+	nock( BASE )
+		.persist()
+		.get( '/wpcom/v2/site-suggestions' )
+		.reply( 200, { suggestions: [ { title: 'Rambling Thoughts' } ] } );
+	nock( BASE )
+		.persist()
+		.get( '/rest/v1.1/domains/suggestions' )
+		.query( true )
+		.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
 }
 
 const addNewSiteButton = () => screen.findByRole( 'button', { name: 'Add new site' } );
@@ -91,6 +102,18 @@ describe( '<AgencySites>', () => {
 			'calypso_dashboard_agency_sites_new_site_action_click_item',
 			{ action: 'jetpack-connection' }
 		);
+	} );
+
+	test( 'opens the development site configuration from the menu', async () => {
+		render( <AgencySites /> );
+
+		await userEvent.click( await addNewSiteButton() );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Create a site now' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Configure your new site' } )
+		).toBeVisible();
+		expect( await screen.findByLabelText( 'Site address' ) ).toBeVisible();
 	} );
 
 	test( 'closes the menu once an entry is chosen', async () => {

@@ -11,6 +11,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
@@ -129,10 +130,11 @@ export default function AgencySites() {
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
-					{ /* The dev-site modal is ported separately, so that action closes
-					     the menu without opening anything yet. */ }
 					<AddNewSite onSelectAction={ setActiveModal } />
 				</Modal>
+			) }
+			{ activeModal === 'dev-site-configurations' && (
+				<DevSiteConfigurationModal closeModal={ closeModal } />
 			) }
 			{ ( activeModal === 'a4a-connection' || activeModal === 'jetpack-connection' ) && (
 				<ConnectSiteModal action={ activeModal } onClose={ closeModal } />
