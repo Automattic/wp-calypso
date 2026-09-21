@@ -18,20 +18,26 @@ export const NamePulseResults = () => {
 		layout,
 		exactList,
 		keywordResults,
+		creativeResults,
 		topResults,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,
+		isLoadingTop,
 		isLoadingKeyword,
+		isLoadingCreative,
 		revealExact,
 		updateResult,
 	} = useNamePulseSearch( query );
+	// Only the exact-match grid needs the TLD list, so its failure takes down
+	// Top results with it but leaves the suggestion sections alone.
+	const hasTldsError = layout.exactGrid.show && isTldsError;
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
 			<VStack spacing={ 6 } key={ query }>
-				{ layout.exactGrid.show && isTldsError && (
+				{ hasTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }
 						<Button variant="link" onClick={ () => refetchTlds() }>
@@ -39,43 +45,53 @@ export const NamePulseResults = () => {
 						</Button>
 					</DomainSearchNotice>
 				) }
-				{ layout.exactGrid.show && ! isTldsError && (
-					<>
-						<NamePulseResultsSection
-							id="top"
-							title={ __( 'Top results' ) }
-							results={ topResults }
-							isLoading={ isLoadingTlds }
-							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-							onUpdate={ updateResult }
-						/>
-						<NamePulseResultsSection
-							id="exact"
-							title={
-								isLoadingTlds
-									? undefined
-									: sprintf(
-											// translators: %(name)s is the domain name the user searched for, without the TLD.
-											__( 'Exact match for “%(name)s”' ),
-											{ name: layout.baseName }
-										)
-							}
-							results={ exactList }
-							isLoading={ isLoadingTlds }
-							showMoreLabel={ __( 'Show more exact matches' ) }
-							onReveal={ revealExact }
-							onUpdate={ updateResult }
-						/>
-					</>
+				{ layout.top.show && ! hasTldsError && (
+					<NamePulseResultsSection
+						id="top"
+						title={ __( 'Top results' ) }
+						results={ topResults }
+						isLoading={ isLoadingTop }
+						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
+						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
+						onUpdate={ updateResult }
+					/>
+				) }
+				{ layout.exactGrid.show && ! hasTldsError && (
+					<NamePulseResultsSection
+						id="exact"
+						title={
+							isLoadingTlds
+								? undefined
+								: sprintf(
+										// translators: %(name)s is the domain name the user searched for, without the TLD.
+										__( 'Exact match for “%(name)s”' ),
+										{ name: layout.baseName }
+									)
+						}
+						results={ exactList }
+						isLoading={ isLoadingTlds }
+						showMoreLabel={ __( 'Show more exact matches' ) }
+						onReveal={ revealExact }
+						onUpdate={ updateResult }
+					/>
 				) }
 				{ layout.suggestions.show && (
 					<NamePulseResultsSection
 						id="suggestions"
-						title={ __( 'More suggestions' ) }
+						title={ __( 'Related matches' ) }
 						results={ keywordResults }
 						isLoading={ isLoadingKeyword }
-						showMoreLabel={ __( 'Show more suggestions' ) }
+						showMoreLabel={ __( 'Show more related matches' ) }
+						onUpdate={ updateResult }
+					/>
+				) }
+				{ layout.creative.show && (
+					<NamePulseResultsSection
+						id="creative"
+						title={ __( 'Creative matches' ) }
+						results={ creativeResults }
+						isLoading={ isLoadingCreative }
+						showMoreLabel={ __( 'Show more creative matches' ) }
 						onUpdate={ updateResult }
 					/>
 				) }

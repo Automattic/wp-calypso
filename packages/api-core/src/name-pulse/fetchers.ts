@@ -6,9 +6,11 @@ import type {
 } from './types';
 
 /**
- * Only `verisign` and `domainsbot` are honoured; `donuts` is filtered out server-side.
+ * One provider per mode, matching leandomainsearch.com. `donuts` is filtered
+ * out server-side, so naming it has no effect.
  */
-const PROVIDERS = 'verisign,domainsbot';
+const KEYWORD_PROVIDERS = 'domainsbot';
+const AI_PROVIDERS = 'verisign';
 
 /**
  * Provider errors ride along in `errors[]`; only when every provider fails does
@@ -17,6 +19,7 @@ const PROVIDERS = 'verisign,domainsbot';
 export async function fetchNamePulseSuggestions( {
 	query,
 	use_ai = false,
+	timeout,
 }: NamePulseSuggestionsQuery ): Promise< NamePulseSuggestionsResponse > {
 	const response: Partial< NamePulseSuggestionsResponse > = await wpcom.req.get(
 		{
@@ -27,7 +30,8 @@ export async function fetchNamePulseSuggestions( {
 			query,
 			use_ai: use_ai ? 1 : 0,
 			allow_premium: 'true',
-			providers: PROVIDERS,
+			providers: use_ai ? AI_PROVIDERS : KEYWORD_PROVIDERS,
+			...( timeout ? { timeout } : {} ),
 		}
 	);
 

@@ -4,6 +4,7 @@ import type {
 	NamePulseAvailabilityEntry,
 	NamePulseAvailabilityResponse,
 	NamePulseSuggestion,
+	NamePulseSuggestionsQuery,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
 
@@ -108,11 +109,19 @@ export const NAME_PULSE_SUGGESTIONS_FIXTURE: NamePulseSuggestion[] = [
 	{ domain_name: 'frozentreats.com', relevance: 0.6, currency_code: 'USD', raw_price: 24 },
 ];
 
+export const NAME_PULSE_AI_SUGGESTIONS_FIXTURE: NamePulseSuggestion[] = [
+	{ domain_name: 'thedailyscoop.blog', relevance: 0.92, currency_code: 'USD', raw_price: 22 },
+	{ domain_name: 'brainfreeze.club', relevance: 0.88, currency_code: 'USD', raw_price: 14 },
+	{ domain_name: 'coldcomfort.cafe', relevance: 0.84, currency_code: 'USD', raw_price: 32 },
+	// Also in the keyword fixture: the two lists overlap in practice.
+	{ domain_name: 'scoops.blog', relevance: 0.8, currency_code: 'USD', raw_price: 22 },
+];
+
 export const withNamePulseQueries = (
 	contextValue: DomainSearchContextType,
 	fetchers: {
 		availability: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
-		suggestions: () => Promise< NamePulseSuggestionsResponse >;
+		suggestions: ( params: NamePulseSuggestionsQuery ) => Promise< NamePulseSuggestionsResponse >;
 		tlds: () => Promise< string[] >;
 		domainAvailability: ( domainName: string ) => Promise< DomainAvailability >;
 	}
@@ -126,7 +135,7 @@ export const withNamePulseQueries = (
 		} ),
 		namePulseSuggestions: ( params ) => ( {
 			...contextValue.queries.namePulseSuggestions( params ),
-			queryFn: fetchers.suggestions,
+			queryFn: () => fetchers.suggestions( params ),
 		} ),
 		namePulseTlds: () => ( {
 			...contextValue.queries.namePulseTlds(),

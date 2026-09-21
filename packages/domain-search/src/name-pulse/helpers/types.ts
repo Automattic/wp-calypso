@@ -10,7 +10,7 @@ export enum NamePulseDomainStatus {
 	UNKNOWN = 3,
 }
 
-export type NamePulseSource = 'exact' | 'keyword';
+export type NamePulseSource = 'exact' | 'keyword' | 'ai';
 
 export interface NamePulseDomainResult {
 	domain_name: string;

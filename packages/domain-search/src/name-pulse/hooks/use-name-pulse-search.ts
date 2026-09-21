@@ -6,9 +6,11 @@ import {
 	calculateTopTlds,
 	excludeDomains,
 	generateExactMatches,
+	getAiTopResults,
 	getResultsLayout,
 	getTopResults,
 	mergeResultUpdate,
+	NAME_PULSE_AI_TIMEOUT_MS,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NamePulseDomainStatus,
@@ -45,6 +47,46 @@ const toSuggestionResults = (
 			...pickPricing( suggestion ),
 			source,
 		} ) );
+};
+
+/**
+ * One suggestions request, mapped to rows and re-merged with any real-time
+ * verdict a row has collected since.
+ */
+const useNamePulseSuggestions = ( {
+	query,
+	enabled,
+	source,
+	verdicts,
+}: {
+	query: string;
+	enabled: boolean;
+	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
+	verdicts: Map< string, NamePulseDomainUpdate >;
+} ) => {
+	const { queries } = useDomainSearch();
+	const useAi = source === 'ai';
+	const { data, isPending } = useQuery( {
+		...queries.namePulseSuggestions( {
+			query: enabled ? sanitizeKeywordInput( query ) : '',
+			use_ai: useAi,
+			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
+		} ),
+		enabled,
+	} );
+
+	const results = useMemo( () => {
+		if ( ! enabled ) {
+			return EMPTY_RESULTS;
+		}
+
+		return toSuggestionResults( data?.suggestions, source ).map( ( row ) => {
+			const verdict = verdicts.get( row.domain_name );
+			return verdict ? mergeResultUpdate( row, verdict ) : row;
+		} );
+	}, [ enabled, data, source, verdicts ] );
+
+	return { results, isLoading: enabled && isPending };
 };
 
 /**
@@ -125,36 +167,35 @@ export const useNamePulseSearch = ( query: string ) => {
 		);
 	}, [ showExactGrid, baseName, initialCheckCount, tlds, checkDomains ] );
 
-	const keywordEnabled = layout.suggestions.show;
-	const keywordQueryResult = useQuery( {
-		...queries.namePulseSuggestions( {
-			query: keywordEnabled ? sanitizeKeywordInput( query ) : '',
-			use_ai: false,
-		} ),
-		enabled: keywordEnabled,
+	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
+		query,
+		enabled: layout.suggestions.show,
+		source: 'keyword',
+		verdicts: keywordVerdicts,
 	} );
-
-	const rawKeywordResults = useMemo( () => {
-		if ( ! keywordEnabled ) {
-			return EMPTY_RESULTS;
-		}
-
-		return toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' ).map( ( row ) => {
-			const verdict = keywordVerdicts.get( row.domain_name );
-			return verdict ? mergeResultUpdate( row, verdict ) : row;
-		} );
-	}, [ keywordEnabled, keywordQueryResult.data, keywordVerdicts ] );
-
-	const isLoadingKeyword = keywordEnabled && keywordQueryResult.isPending;
+	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
+		query,
+		enabled: layout.creative.show,
+		source: 'ai',
+		verdicts: keywordVerdicts,
+	} );
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
 
-	const topResults = useMemo(
-		() => getTopResults( rawExactList, topTlds ),
-		[ rawExactList, topTlds ]
-	);
+	const isAiMode = layout.creative.show;
+	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
+	const topResults = useMemo( () => {
+		if ( ! isAiMode ) {
+			return getTopResults( rawExactList, topTlds );
+		}
+
+		// Both lists compete for the same three slots, so featuring the faster
+		// one's picks would swap every card once the other lands. The section
+		// stays on skeletons until it can pick from the full pool.
+		return isLoadingTop ? EMPTY_RESULTS : getAiTopResults( rawKeywordResults, rawCreativeResults );
+	}, [ isAiMode, isLoadingTop, rawKeywordResults, rawCreativeResults, rawExactList, topTlds ] );
 
 	// Top results backfill from rows that were not in the initial batch (for
 	// example after that batch failed); make sure whatever is featured gets
@@ -180,6 +221,10 @@ export const useNamePulseSearch = ( query: string ) => {
 		() => excludeDomains( rawKeywordResults, topResults, exactList ),
 		[ rawKeywordResults, topResults, exactList ]
 	);
+	const creativeResults = useMemo(
+		() => excludeDomains( rawCreativeResults, topResults, exactList, keywordResults ),
+		[ rawCreativeResults, topResults, exactList, keywordResults ]
+	);
 
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => {
@@ -196,11 +241,14 @@ export const useNamePulseSearch = ( query: string ) => {
 		layout,
 		exactList,
 		keywordResults,
+		creativeResults,
 		topResults,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,
+		isLoadingTop,
 		isLoadingKeyword,
+		isLoadingCreative,
 		revealExact,
 		updateResult,
 	};
