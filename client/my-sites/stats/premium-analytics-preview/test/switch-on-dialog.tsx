@@ -59,7 +59,7 @@ describe( 'SwitchOnDialog', () => {
 		renderDialog();
 
 		expect(
-			screen.getByRole( 'dialog', { name: 'Switch on the new Traffic tab?' } )
+			screen.getByRole( 'dialog', { name: 'Switch on the new Traffic and Insights tabs?' } )
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect(
@@ -117,7 +117,7 @@ describe( 'SwitchOnDialog', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
-			'We couldn’t switch on the new Traffic tab.'
+			'We couldn’t switch on the new Traffic and Insights tabs.'
 		);
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_menu_enable_failed',

@@ -103,7 +103,7 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 	return (
 		<Modal
 			className="stats-premium-analytics-preview-dialog"
-			title={ translate( 'Switch on the new Traffic tab?' ) }
+			title={ translate( 'Switch on the new Traffic and Insights tabs?' ) }
 			onRequestClose={ cancel }
 			// Nothing to walk away from halfway through a write that is about to change the answer.
 			isDismissible={ ! isBusy }
@@ -124,7 +124,7 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 			{ hasFailed && (
 				<p className="stats-premium-analytics-preview-dialog__error" role="alert">
 					{ translate(
-						'We couldn’t switch on the new Traffic tab. Please try again — if it keeps happening, {{link}}get in touch with support{{/link}}.',
+						'We couldn’t switch on the new Traffic and Insights tabs. Please try again — if it keeps happening, {{link}}get in touch with support{{/link}}.',
 						{
 							components: {
 								link: (
