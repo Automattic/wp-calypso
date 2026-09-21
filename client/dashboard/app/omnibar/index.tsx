@@ -3,6 +3,7 @@ import { queryClient } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { hydrateRoot } from 'react-dom/client';
+import { shouldLoadAgentsManager } from '../agents-manager/use-should-load-agents-manager';
 import { AnalyticsProvider } from '../analytics';
 import { AppProvider } from '../context';
 import { shoppingCartManagerClient } from '../shopping-cart';
@@ -30,6 +31,7 @@ export default function loadOmnibar( config: AppConfig ) {
 						user={ window.currentUser }
 						cartManagerClient={ shoppingCartManagerClient }
 						sectionName="dashboard"
+						showAiChat={ shouldLoadAgentsManager( window.location.pathname ) }
 					/>
 				</AnalyticsProvider>
 			</QueryClientProvider>

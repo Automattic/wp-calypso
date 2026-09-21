@@ -16,6 +16,8 @@ import { PageViewTracker } from '../../components/page-view-tracker';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
+import DashboardAgentsManager from '../agents-manager';
+import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { bumpStat } from '../analytics';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
@@ -25,7 +27,7 @@ import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
-import { useOmnibarEvent } from '../omnibar/events';
+import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
@@ -113,10 +115,11 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
+			pathname: state.location.pathname,
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -124,6 +127,11 @@ function Root() {
 			isInitialLoad: ! state.resolvedLocation,
 		} ),
 	} );
+	const shouldLoadAgentsManager = useShouldLoadAgentsManager( pathname );
+
+	useEffect( () => {
+		omnibarEvents.agentsManagerAvailability.emit( shouldLoadAgentsManager );
+	}, [ shouldLoadAgentsManager ] );
 
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';
@@ -205,6 +213,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <OmnibarHelpCenter /> }
+			{ shouldLoadAgentsManager && <DashboardAgentsManager pathname={ pathname } /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />

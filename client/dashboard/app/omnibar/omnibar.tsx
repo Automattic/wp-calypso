@@ -13,9 +13,9 @@ import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
-import { omnibarEvents } from './events';
+import { omnibarEvents, useOmnibarEvent } from './events';
 import { OmnibarHomeIcon } from './home';
-import { createAiChatNodeBuilder, ensureAiChatNode } from './plugin-ai-chat';
+import { buildAiChatPluginNode } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
@@ -91,7 +91,7 @@ function ConnectedOmnibar( {
 	user,
 	sectionGroup,
 	sectionName,
-	showAiChat,
+	showAiChat: initialShowAiChat,
 }: {
 	user?: User;
 	sectionGroup?: string;
@@ -101,9 +101,14 @@ function ConnectedOmnibar( {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
+	const [ showAiChat, setShowAiChat ] = useState( initialShowAiChat );
 	useEffect( () => {
 		setHydrated( true );
 	}, [] );
+	useEffect( () => {
+		setShowAiChat( initialShowAiChat );
+	}, [ initialShowAiChat ] );
+	useOmnibarEvent( 'agentsManagerAvailability', setShowAiChat );
 
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -132,17 +137,14 @@ function ConnectedOmnibar( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
-			...( supports.help || showAiChat
-				? { 'agents-manager-ai-chat': createAiChatNodeBuilder( sectionName ) }
-				: {} ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser, sectionName, showAiChat, supports.help ]
+		[ authUser ]
 	);
 
 	const adminBarNodes = useMemo(
-		() => ensureAiChatNode( siteNodes ?? dashboardNodes ?? [], showAiChat ),
-		[ siteNodes, dashboardNodes, showAiChat ]
+		() => siteNodes ?? dashboardNodes ?? [],
+		[ siteNodes, dashboardNodes ]
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
@@ -187,6 +189,11 @@ function ConnectedOmnibar( {
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const { node: launchSiteNode, panel: launchSitePanel } = useLaunchSitePlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
+	const aiChatPluginNode = buildAiChatPluginNode( {
+		enabled: showAiChat,
+		sectionName,
+		adminBarNodes,
+	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
@@ -200,8 +207,8 @@ function ConnectedOmnibar( {
 				...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
 				...( supports.reader ? [ readerPluginNode ] : [] ),
 				...( supports.help ? [ helpCenterPluginNode ] : [] ),
-				// The AI chat button, plus any other node a builder claimed above.
 				...( baseOmnibarNodes.plugins ?? [] ),
+				...( aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
 				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
 			]
 		: [];

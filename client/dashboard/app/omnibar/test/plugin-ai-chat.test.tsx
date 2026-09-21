@@ -8,7 +8,7 @@ import {
 	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
 import { render, screen } from '@testing-library/react';
-import { createAiChatNodeBuilder, ensureAiChatNode } from '../plugin-ai-chat';
+import { buildAiChatPluginNode } from '../plugin-ai-chat';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
@@ -37,10 +37,10 @@ const AI_CHAT_NODE: AdminBarNode = {
 	},
 };
 
-const buildAiChatNode = ( sectionName?: string ) =>
-	createAiChatNodeBuilder( sectionName )( AI_CHAT_NODE );
+const buildAiChatNode = ( sectionName?: string, adminBarNodes = [ AI_CHAT_NODE ] ) =>
+	buildAiChatPluginNode( { enabled: true, sectionName, adminBarNodes } )!;
 
-describe( 'createAiChatNodeBuilder', () => {
+describe( 'buildAiChatPluginNode', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsChatVisible.mockReturnValue( false );
@@ -71,6 +71,25 @@ describe( 'createAiChatNodeBuilder', () => {
 		expect( buildAiChatNode( 'sites' ).className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
 	} );
 
+	it( 'uses the standard Agent presentation without a backend node', () => {
+		const node = buildAiChatNode( 'dashboard', [] );
+		const { container } = render( node.icon as React.ReactElement );
+
+		expect( node.label ).toBe( 'Agent' );
+		expect( node.tooltip ).toBe( 'Agent' );
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+	} );
+
+	it( 'returns no node when Agents Manager is disabled', () => {
+		expect(
+			buildAiChatPluginNode( {
+				enabled: false,
+				sectionName: 'dashboard',
+				adminBarNodes: [ AI_CHAT_NODE ],
+			} )
+		).toBeUndefined();
+	} );
+
 	it( 'records the masterbar event with the section and opens the chat on click', () => {
 		buildAiChatNode( 'sites' ).onClick?.( {} as React.MouseEvent );
 
@@ -93,31 +112,5 @@ describe( 'createAiChatNodeBuilder', () => {
 		);
 		expect( closeAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
-	} );
-} );
-
-describe( 'ensureAiChatNode', () => {
-	it( 'adds the standard Agent node when enabled and missing', () => {
-		const nodes = ensureAiChatNode( [], true );
-
-		expect( nodes ).toContainEqual(
-			expect.objectContaining( {
-				id: 'agents-manager-ai-chat',
-				parent: 'top-secondary',
-				meta: { menu_title: 'Agent', icon: 'sparkle' },
-			} )
-		);
-	} );
-
-	it( 'preserves the backend Agent node when present', () => {
-		const nodes = [ AI_CHAT_NODE ];
-
-		expect( ensureAiChatNode( nodes, true ) ).toBe( nodes );
-	} );
-
-	it( 'does not add the Agent node when disabled', () => {
-		const nodes: AdminBarNode[] = [];
-
-		expect( ensureAiChatNode( nodes, false ) ).toBe( nodes );
 	} );
 } );
