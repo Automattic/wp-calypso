@@ -91,16 +91,22 @@ export const getFooterColorway = (
 const FooterStack = ( {
 	column,
 	open,
+	onToggle,
 	showLegalSlot = true,
 	additionalCompanyLinks,
 }: {
 	column: FooterColumn;
 	open: boolean;
+	onToggle?: ( open: boolean ) => void;
 	showLegalSlot?: boolean;
 	additionalCompanyLinks?: React.ReactNode;
 } ) => (
 	<div className="lp-grid__column-span-4 lp-grid__column-span-1@L">
-		<details className="lp-footer-stack" open={ open }>
+		<details
+			className="lp-footer-stack"
+			open={ open }
+			onToggle={ ( event ) => onToggle?.( ( event.currentTarget as HTMLDetailsElement ).open ) }
+		>
 			<summary>
 				<div className="lp-footer-stack__summary lp-color-primary">
 					<div className="lp-footer-stack__summary__content lp-bold">{ column.title }</div>
@@ -348,6 +354,8 @@ export const PureUniversalNavbarFooter = ( {
 	collapseStacks = false,
 	showCaliforniaNotice = false,
 }: PureFooterProps ) => {
+	// Which column is expanded on small screens; the twin's stacks.js allows one at a time.
+	const [ openStack, setOpenStack ] = useState< string | null >( null );
 	const columns = getFooterColumns( {
 		localizeUrl,
 		locale,
@@ -371,8 +379,10 @@ export const PureUniversalNavbarFooter = ( {
 		automatticBarColorwayClass = 'is-style-text-white-background-gray-100';
 	}
 
+	const Wrapper = colorway ? 'footer' : 'div';
+
 	return (
-		<div
+		<Wrapper
 			className={ [
 				'wpcom-global-nav-footer',
 				colorway && 'wpcom-global-nav-footer--2026',
@@ -396,7 +406,19 @@ export const PureUniversalNavbarFooter = ( {
 								<FooterStack
 									key={ column.id }
 									column={ column }
-									open={ ! collapseStacks }
+									open={ ! collapseStacks || openStack === column.id }
+									onToggle={ ( open ) => {
+										if ( ! collapseStacks ) {
+											return;
+										}
+										// A stack closing because another opened must not clear the new one.
+										setOpenStack( ( current ) => {
+											if ( open ) {
+												return column.id;
+											}
+											return current === column.id ? null : current;
+										} );
+									} }
 									showLegalSlot={ ! colorway }
 									additionalCompanyLinks={ additionalCompanyLinks }
 								/>
@@ -589,7 +611,7 @@ export const PureUniversalNavbarFooter = ( {
 					) }
 				</div>
 			</section>
-		</div>
+		</Wrapper>
 	);
 };
 
