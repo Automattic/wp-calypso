@@ -38,10 +38,10 @@ export function useStageSentences( isPluginInstall = true ): Record< InstallStag
 					{
 						components: { strong: <strong /> },
 					}
-				)
+			  )
 			: translate( '{{strong}}Finishing up{{/strong}}. We’re making sure your site is ready.', {
 					components: { strong: <strong /> },
-				} ),
+			  } ),
 	};
 }
 
@@ -54,13 +54,28 @@ export function useStalledCopy( isPluginInstall = true ) {
 	return isPluginInstall
 		? translate(
 				'This is taking longer than it should. Your site is ready — your plugin may still finish installing on its own.'
-			)
+		  )
 		: translate( 'This is taking longer than it should. Your site is ready to use.' );
 }
 
 export function useStalledActionLabel( isPluginInstall = true ) {
 	const translate = useTranslate();
 	return isPluginInstall ? translate( 'Go to your plugins' ) : translate( 'Go to your site' );
+}
+
+/**
+ * The transfer has outrun the wait's deadline but is still running, so the site is not ready yet:
+ * say what is true, and make leaving an option rather than the failure it used to be.
+ */
+export function useDeadlineCopy( isPluginInstall = true ) {
+	const translate = useTranslate();
+	return isPluginInstall
+		? translate(
+				'This is taking longer than usual, but nothing is broken — your plugin is still being installed. You can close this page and check back in a few minutes.'
+		  )
+		: translate(
+				'This is taking longer than usual, but nothing is broken — your site is still being set up. You can close this page and check back in a few minutes.'
+		  );
 }
 
 export function useOverrunCopy() {

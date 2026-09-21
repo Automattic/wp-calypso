@@ -19,6 +19,14 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 const POST_TRANSFER_TIMEOUT_MS = 1000 * 180;
 const MAX_FEATURE_FETCH_FAILURES = 5;
 
+const TRANSFER_TIMEOUT_MS = 1000 * 300;
+const POLL_MS = 3000;
+
+// A caller that handles the deadline itself keeps the wait alive past it: the transfer is still
+// running server-side and usually lands, so polling slows down and only this far later cap ends it.
+const TRANSFER_GRACE_TIMEOUT_MS = 1000 * 60 * 15;
+const GRACE_POLL_MS = 10000;
+
 export interface FailureInfo {
 	type: string;
 	code: number | string;
@@ -66,18 +74,24 @@ export const useWaitForAtomic = ( {
 
 	const waitForTransfer = async ( {
 		onTransferStatusChange,
+		onDeadlineExceeded,
 	}: {
 		// The transfer's own `created_at` comes along so callers can time the wait from when the
 		// transfer actually began rather than from when this UI mounted.
 		onTransferStatusChange?: ( status: string | null, createdAt?: string ) => void;
+		// Passing this turns the deadline from an ending into a signal: the caller is telling the
+		// customer the transfer is running long, and this wait keeps watching it instead of failing.
+		onDeadlineExceeded?: () => void;
 	} = {} ) => {
 		const startTime = new Date().getTime();
-		const totalTimeout = 1000 * 300;
-		const maxFinishTime = startTime + totalTimeout;
+		const maxFinishTime = startTime + TRANSFER_TIMEOUT_MS;
+		const maxGraceFinishTime =
+			startTime + ( onDeadlineExceeded ? TRANSFER_GRACE_TIMEOUT_MS : TRANSFER_TIMEOUT_MS );
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
+		let isPastDeadline = false;
 
 		while ( true ) {
-			await wait( 3000 );
+			await wait( isPastDeadline ? GRACE_POLL_MS : POLL_MS );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
 			const transferStatus = transfer?.status ?? null;
@@ -103,11 +117,27 @@ export const useWaitForAtomic = ( {
 				throw new Error( getTransferFailureMessage( 'reverted' ) );
 			}
 
-			if ( maxFinishTime < new Date().getTime() ) {
+			if ( ! isPastDeadline && maxFinishTime < new Date().getTime() ) {
+				isPastDeadline = true;
+				// Reported at the same point either way, so the existing signal stays comparable.
 				handleTransferFailure?.( {
 					type: 'transfer_timeout',
 					error: 'transfer took too long',
 					code: 'transfer_timeout',
+				} );
+
+				if ( ! onDeadlineExceeded ) {
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
+				}
+
+				onDeadlineExceeded();
+			}
+
+			if ( maxGraceFinishTime < new Date().getTime() ) {
+				handleTransferFailure?.( {
+					type: 'transfer_grace_timeout',
+					error: 'transfer never finished, even past the deadline',
+					code: 'transfer_grace_timeout',
 				} );
 				throw new Error( getTransferFailureMessage( 'timeout' ) );
 			}

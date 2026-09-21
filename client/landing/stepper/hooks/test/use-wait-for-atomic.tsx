@@ -92,6 +92,100 @@ describe( 'useWaitForAtomic', () => {
 				'2026-08-12 13:11:10'
 			);
 		} );
+
+		it( 'fails at the deadline when the caller has no way to handle it', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2026-08-12 13:11:10',
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer();
+			promise.catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 310_000 );
+
+			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
+			expect( failures ).toEqual( [
+				expect.objectContaining( { type: 'transfer_timeout', code: 'transfer_timeout' } ),
+			] );
+		} );
+
+		it( 'keeps watching past the deadline and resolves when the transfer lands late', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2026-08-12 13:11:10',
+			} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
+			await jest.advanceTimersByTimeAsync( 310_000 );
+
+			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
+			expect( failures ).toEqual( [
+				expect.objectContaining( { type: 'transfer_timeout', code: 'transfer_timeout' } ),
+			] );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'completed',
+				created_at: '2026-08-12 13:11:10',
+			} );
+			await jest.advanceTimersByTimeAsync( 11_000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'gives up at the grace cap when the transfer never lands', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2026-08-12 13:11:10',
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 920_000 );
+
+			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
+			expect( failures ).toEqual( [
+				expect.objectContaining( { type: 'transfer_timeout' } ),
+				expect.objectContaining( {
+					type: 'transfer_grace_timeout',
+					code: 'transfer_grace_timeout',
+				} ),
+			] );
+		} );
+
+		it( 'still fails immediately on a transfer error while past the deadline', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2026-08-12 13:11:10',
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 310_000 );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'error',
+				created_at: '2026-08-12 13:11:10',
+			} );
+			await jest.advanceTimersByTimeAsync( 11_000 );
+
+			await expect( promise ).rejects.toThrow( /something went wrong/i );
+			expect( failures ).toEqual( [
+				expect.objectContaining( { type: 'transfer_timeout' } ),
+				expect.objectContaining( { type: 'transfer' } ),
+			] );
+		} );
 	} );
 
 	describe( 'waitForFeature', () => {
