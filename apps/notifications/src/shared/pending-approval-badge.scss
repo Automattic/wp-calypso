@@ -1,5 +1,7 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import '@wordpress/base-styles/variables';
+
 // The WPDS warning surface has no dark counterpart. Tint the dark surface the
 // way the Dashboard's own warning notices do.
 @mixin dark-warning-surface {
@@ -22,7 +24,9 @@
 // In the new app the warning reads as two aligned rules, down the strip and down
 // the comment, so the strip carries no tint of its own.
 .wpnc-app .wpnc__note.wpnc__comment-unapproved {
+	// Cancels the body VStack's gap so the strip's rule meets the comment's.
 	.wpnc__pending-approval-section {
+		margin-block-end: -$grid-unit-10;
 		box-shadow: none;
 		border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
 	}
