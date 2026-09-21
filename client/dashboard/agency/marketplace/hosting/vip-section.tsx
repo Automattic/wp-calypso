@@ -89,10 +89,10 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 												'Successfully refer your client to WordPress VIP and you’ll earn up to a %d%% one-time commission'
 											),
 											VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE
-									  )
+										)
 									: __(
 											'Combine the ease of WordPress with enterprise-grade security and scalability.'
-									  )
+										)
 							}
 							decoration={ <BrandMark src={ vipDescriptor } /> }
 						/>
@@ -155,9 +155,9 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 							<CardDivider />
 							<Text variant="muted">
 								{ createInterpolateElement(
-									/* translators: <percentage /> is the commission percentage, e.g. 20%. */
+									/* translators: <percentage/> is the commission percentage, e.g. 20%. */
 									__(
-										'Earn up to a <percentage /> one-time commission on client referrals to WordPress VIP. <a>Full Terms</a>'
+										'Earn up to a <percentage/> one-time commission on client referrals to WordPress VIP. <a>Full Terms</a>'
 									),
 									{
 										percentage: (
