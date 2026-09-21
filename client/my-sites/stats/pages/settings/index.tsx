@@ -48,7 +48,8 @@ function StatsSettingsPage() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const canManage = useSelector( ( state ) => canManageStatsSettings( state, siteId ) );
 	const { data, isError } = useStatsSettingsQuery( canManage ? siteId : null );
-	const { mutate } = useStatsSettingsMutation( siteId );
+	// One save at a time: overlapping saves can finish out of order and keep an older role list.
+	const { mutate, isPending: isSaving } = useStatsSettingsMutation( siteId );
 
 	useEffect( () => {
 		if ( siteSlug && ! canManage ) {
@@ -94,7 +95,7 @@ function StatsSettingsPage() {
 					key={ slug }
 					label={ name }
 					checked={ isLockedOn || data.settings[ field ].includes( slug ) }
-					disabled={ isLockedOn }
+					disabled={ isLockedOn || isSaving }
 					onChange={ ( isOn ) => toggleRole( field, slug, isOn ) }
 				/>
 			);
@@ -125,6 +126,7 @@ function StatsSettingsPage() {
 									__nextHasNoMarginBottom
 									label={ translate( 'Put a chart showing 48 hours of views in the admin bar' ) }
 									checked={ data.settings.admin_bar }
+									disabled={ isSaving }
 									onChange={ ( isOn ) => save( { admin_bar: isOn } ) }
 								/>
 							</SettingsCard>
@@ -149,6 +151,7 @@ function StatsSettingsPage() {
 									__nextHasNoMarginBottom
 									label={ translate( 'Show post views for this site.' ) }
 									checked={ data.settings.wpcom_reader_views_enabled }
+									disabled={ isSaving }
 									onChange={ ( isOn ) => save( { wpcom_reader_views_enabled: isOn } ) }
 								/>
 							</SettingsCard>
