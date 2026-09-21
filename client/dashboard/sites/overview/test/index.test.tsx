@@ -9,7 +9,7 @@ import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
 import type { AppConfig } from '../../../app/context';
-import type { Site } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 
 // Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
 // resolves to the given variation through its normal code path — no module or network mocking.
@@ -420,9 +420,6 @@ describe( '<SiteOverview>', () => {
 				me: { billing: { monetizeSubscriptions: true }, security: { sshKey: true }, apps: true },
 			},
 		};
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/settings' )
-			.reply( 200, { two_step_enabled: false } );
 		mockSite( {
 			...site,
 			jetpack: true,
@@ -430,7 +427,10 @@ describe( '<SiteOverview>', () => {
 			options: { ...site.options, jetpack_sso_require_two_step: true },
 		} as Site );
 
-		render( <SiteOverview siteSlug={ site.slug } />, { config: configWithMeSupport } );
+		render( <SiteOverview siteSlug={ site.slug } />, {
+			config: configWithMeSupport,
+			user: { ID: 1, two_step_enabled: false } as User,
+		} );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 
 		expect(

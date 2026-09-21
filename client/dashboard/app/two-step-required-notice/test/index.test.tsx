@@ -1,14 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
-import nock from 'nock';
+import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import TwoStepRequiredNotice, {
 	getSitesRequiringTwoStep,
 	useShouldShowTwoStepRequiredNotice,
 } from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 
 function makeSite( {
 	ID = 1,
@@ -30,10 +29,8 @@ function makeSite( {
 	} as unknown as Site;
 }
 
-function mockUserSettings( { twoStepEnabled }: { twoStepEnabled: boolean } ) {
-	return nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/settings' )
-		.reply( 200, { two_step_enabled: twoStepEnabled } );
+function accountUser( { twoStepEnabled }: { twoStepEnabled?: boolean } = {} ) {
+	return { ID: 1, two_step_enabled: twoStepEnabled } as User;
 }
 
 // The hook is exercised through a probe component so it runs inside the same providers
@@ -59,25 +56,31 @@ describe( 'getSitesRequiringTwoStep', () => {
 
 describe( 'useShouldShowTwoStepRequiredNotice', () => {
 	test( 'is true when the user has no two-step and a site requires it', async () => {
-		mockUserSettings( { twoStepEnabled: false } );
-		render( <HookProbe sites={ [ makeSite() ] } /> );
+		render( <HookProbe sites={ [ makeSite() ] } />, {
+			user: accountUser( { twoStepEnabled: false } ),
+		} );
 
 		expect( await screen.findByText( 'should show' ) ).toBeVisible();
 	} );
 
 	test( 'is false when the user already has two-step', async () => {
-		const scope = mockUserSettings( { twoStepEnabled: true } );
-		render( <HookProbe sites={ [ makeSite() ] } /> );
+		render( <HookProbe sites={ [ makeSite() ] } />, {
+			user: accountUser( { twoStepEnabled: true } ),
+		} );
 
 		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
-		// The result must not flip once the settings land.
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		expect( screen.getByText( 'should not show' ) ).toBeVisible();
 	} );
 
 	test( 'is false when no site requires two-step', async () => {
-		mockUserSettings( { twoStepEnabled: false } );
-		render( <HookProbe sites={ [ makeSite( { requiresTwoStep: false } ) ] } /> );
+		render( <HookProbe sites={ [ makeSite( { requiresTwoStep: false } ) ] } />, {
+			user: accountUser( { twoStepEnabled: false } ),
+		} );
+
+		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
+	} );
+
+	test( 'is false when the field is absent, as it is before wpcom deploys', async () => {
+		render( <HookProbe sites={ [ makeSite() ] } />, { user: accountUser() } );
 
 		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
 	} );
