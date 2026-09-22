@@ -16,6 +16,7 @@ export async function updateUserSettings(
 		'advertising_targeting_opt_out',
 		'display_name',
 		'description',
+		'is_dev_account',
 		'password',
 		'tracks_opt_out',
 		'user_URL',

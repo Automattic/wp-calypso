@@ -2,23 +2,23 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
-import { useDispatch } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useHandleClickLink } from '../use-handle-click-link';
+import { useRecordTracksEventWithUserIsDevAccount } from '../use-record-tracks-event-with-user-is-dev-account';
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn(),
+jest.mock( '../use-record-tracks-event-with-user-is-dev-account', () => ( {
+	useRecordTracksEventWithUserIsDevAccount: jest.fn(),
 } ) );
 
 describe( 'useHandleClickLink', () => {
+	let mockRecordTracksEventWithUserIsDevAccount;
+
 	const tracksHandle = 'calypso_me_developer_learn_more';
 
 	beforeAll( () => {
-		useDispatch.mockReturnValue( jest.fn() );
+		mockRecordTracksEventWithUserIsDevAccount = jest.fn();
+		useRecordTracksEventWithUserIsDevAccount.mockReturnValue(
+			mockRecordTracksEventWithUserIsDevAccount
+		);
 	} );
 
 	describe( 'ensure track events report correct property', () => {
@@ -29,7 +29,7 @@ describe( 'useHandleClickLink', () => {
 
 			act( () => result.current( event ) );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( tracksHandle, {
+			expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
 				feature: elementId,
 			} );
 		} );
@@ -41,7 +41,7 @@ describe( 'useHandleClickLink', () => {
 
 			act( () => result.current( event ) );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( tracksHandle, {
+			expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
 				feature: href,
 			} );
 		} );
