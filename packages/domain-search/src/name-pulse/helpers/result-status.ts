@@ -5,10 +5,9 @@ import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
  * What the per-domain cache holds: a final status with its pricing. WAITING
  * and UNKNOWN never enter the cache; they are query states, not data.
  */
-export interface NamePulseVerdict extends NamePulsePricing {
+export interface NamePulseVerdict
+	extends NamePulsePricing, Pick< NamePulseDomainResult, 'is_realtime' > {
 	status: NamePulseDomainStatus.AVAILABLE | NamePulseDomainStatus.TAKEN;
-	/** Set once a real-time check has run; bulk zone-file results never overwrite it. */
-	is_realtime?: boolean;
 }
 
 /**

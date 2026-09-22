@@ -21,17 +21,24 @@ export const namePulseVerdictQueryKey = ( domainName: string ) =>
 	[ 'name-pulse-domain', domainName ] as const;
 
 /**
- * Real-time checks write here; the bulk batches land through the query itself.
+ * Real-time checks and bulk batches both write here. Returns what the cache
+ * holds afterwards, which may be an earlier real-time verdict.
  */
 export const setNamePulseVerdict = (
 	queryClient: QueryClient,
 	domainName: string,
 	verdict: NamePulseVerdict
-) =>
-	queryClient.setQueryData< NamePulseVerdict >(
-		namePulseVerdictQueryKey( domainName ),
-		( existing ) => mergeNamePulseVerdict( existing, verdict )
+): NamePulseVerdict => {
+	const queryKey = namePulseVerdictQueryKey( domainName );
+	const merged = mergeNamePulseVerdict(
+		queryClient.getQueryData< NamePulseVerdict >( queryKey ),
+		verdict
 	);
+
+	queryClient.setQueryData( queryKey, merged );
+
+	return merged;
+};
 
 /**
  * Unavailable entries carry no pricing. A missing or malformed entry has no
@@ -58,32 +65,29 @@ interface Waiter {
 
 /**
  * Collects the names react-query asks for in one tick and checks them in
- * parallel batches. A batch that outlives `NAME_PULSE_SKELETON_TIMEOUT_MS`
- * rejects its names (they read as UNKNOWN); a late response still lands in
- * the cache through `onLateVerdict`.
+ * parallel batches. Every verdict goes through `commit`, so a batch that
+ * outlives `NAME_PULSE_SKELETON_TIMEOUT_MS` has its names rejected (they read
+ * as UNKNOWN) and still lands in the cache when it arrives.
  */
 class NamePulseAvailabilityBatcher {
 	private queue = new Map< string, Waiter >();
-	private isFlushScheduled = false;
 
 	constructor(
 		private fetchBatch: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >,
-		private onLateVerdict: ( domainName: string, verdict: NamePulseVerdict ) => void
+		private commit: ( domainName: string, verdict: NamePulseVerdict ) => NamePulseVerdict
 	) {}
 
 	load( domainName: string ) {
 		return new Promise< NamePulseVerdict >( ( resolve, reject ) => {
-			this.queue.set( domainName, { resolve, reject } );
-
-			if ( ! this.isFlushScheduled ) {
-				this.isFlushScheduled = true;
+			if ( this.queue.size === 0 ) {
 				Promise.resolve().then( () => this.flush() );
 			}
+
+			this.queue.set( domainName, { resolve, reject } );
 		} );
 	}
 
 	private flush() {
-		this.isFlushScheduled = false;
 		const waiters = this.queue;
 		this.queue = new Map();
 		const names = Array.from( waiters.keys() );
@@ -94,9 +98,7 @@ class NamePulseAvailabilityBatcher {
 	}
 
 	private send( batch: string[], waiters: Map< string, Waiter > ) {
-		let hasTimedOut = false;
 		const timer = setTimeout( () => {
-			hasTimedOut = true;
 			batch.forEach( ( name ) =>
 				waiters.get( name )?.reject( new Error( 'Availability check timed out.' ) )
 			);
@@ -109,12 +111,8 @@ class NamePulseAvailabilityBatcher {
 				for ( const name of batch ) {
 					const verdict = toVerdict( data[ name ] );
 
-					if ( hasTimedOut ) {
-						if ( verdict ) {
-							this.onLateVerdict( name, verdict );
-						}
-					} else if ( verdict ) {
-						waiters.get( name )?.resolve( verdict );
+					if ( verdict ) {
+						waiters.get( name )?.resolve( this.commit( name, verdict ) );
 					} else {
 						waiters.get( name )?.reject( new Error( `No availability entry for ${ name }.` ) );
 					}
@@ -122,10 +120,7 @@ class NamePulseAvailabilityBatcher {
 			},
 			( error: Error ) => {
 				clearTimeout( timer );
-
-				if ( ! hasTimedOut ) {
-					batch.forEach( ( name ) => waiters.get( name )?.reject( error ) );
-				}
+				batch.forEach( ( name ) => waiters.get( name )?.reject( error ) );
 			}
 		);
 	}
@@ -147,12 +142,10 @@ export const useNamePulseVerdicts = (
 	const fetchBatch = useEvent( ( batch: string[] ) =>
 		queryClient.fetchQuery( queries.namePulseAvailability( batch ) )
 	);
-	const onLateVerdict = useEvent( ( domainName: string, verdict: NamePulseVerdict ) =>
+	const commit = useEvent( ( domainName: string, verdict: NamePulseVerdict ) =>
 		setNamePulseVerdict( queryClient, domainName, verdict )
 	);
-	const [ batcher ] = useState(
-		() => new NamePulseAvailabilityBatcher( fetchBatch, onLateVerdict )
-	);
+	const [ batcher ] = useState( () => new NamePulseAvailabilityBatcher( fetchBatch, commit ) );
 
 	// `combine` output is structurally shared, so the states only change when a
 	// verdict does. It must close over the names: react-query memoises it on the
@@ -169,20 +162,11 @@ export const useNamePulseVerdicts = (
 	);
 
 	return useQueries( {
-		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- the batcher and client are stable; the name is the key
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- the batcher is stable; the name is the key
 		queries: domainNames.map( ( domainName ) => ( {
 			queryKey: namePulseVerdictQueryKey( domainName ),
-			queryFn: () =>
-				batcher
-					.load( domainName )
-					.then( ( verdict ) =>
-						mergeNamePulseVerdict(
-							queryClient.getQueryData< NamePulseVerdict >(
-								namePulseVerdictQueryKey( domainName )
-							),
-							verdict
-						)
-					),
+			queryFn: () => batcher.load( domainName ),
+			notifyOnChangeProps: [ 'data', 'isError' ],
 			enabled,
 			staleTime: NAME_PULSE_VERDICT_TTL_MS,
 			gcTime: NAME_PULSE_VERDICT_TTL_MS,

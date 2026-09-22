@@ -22,7 +22,6 @@ import { useNamePulseVerdicts } from './use-name-pulse-verdicts';
 import type { NamePulseSuggestion } from '@automattic/api-core';
 
 const EMPTY_RESULTS: NamePulseDomainResult[] = [];
-const EMPTY_NAMES: string[] = [];
 
 /**
  * Suggestions come back pre-filtered for availability by the providers, so they
@@ -85,7 +84,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	// Names asked for beyond the initial slice ("Show more", top-results
 	// backfill). Kept across searches; only the ones the current grid lists count.
-	const [ requestedNames, setRequestedNames ] = useState< string[] >( EMPTY_NAMES );
+	const [ requestedNames, setRequestedNames ] = useState< string[] >( [] );
 	const requestNames = useCallback( ( domainNames: string[] ) => {
 		setRequestedNames( ( prev ) => {
 			const missing = domainNames.filter( ( name ) => ! prev.includes( name ) );
@@ -95,16 +94,11 @@ export const useNamePulseSearch = ( query: string ) => {
 	}, [] );
 
 	const checkedNames = useMemo( () => {
-		const inGrid = new Set( exactRows.map( ( row ) => row.domain_name ) );
-		const names = new Set(
-			exactRows.slice( 0, initialCheckCount ).map( ( row ) => row.domain_name )
-		);
+		const requested = new Set( requestedNames );
 
-		requestedNames
-			.filter( ( name ) => inGrid.has( name ) )
-			.forEach( ( name ) => names.add( name ) );
-
-		return Array.from( names );
+		return exactRows
+			.filter( ( row, index ) => index < initialCheckCount || requested.has( row.domain_name ) )
+			.map( ( row ) => row.domain_name );
 	}, [ exactRows, initialCheckCount, requestedNames ] );
 
 	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled );
@@ -126,12 +120,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	// after that batch failed); make sure whatever is featured gets checked.
 	useEffect( () => {
 		const unchecked = topResults
-			.filter(
-				( result ) =>
-					result.status === NamePulseDomainStatus.WAITING &&
-					! checkedNames.includes( result.domain_name )
-			)
-			.map( ( result ) => result.domain_name );
+			.map( ( result ) => result.domain_name )
+			.filter( ( name ) => ! checkedNames.includes( name ) );
 
 		if ( unchecked.length > 0 ) {
 			requestNames( unchecked );

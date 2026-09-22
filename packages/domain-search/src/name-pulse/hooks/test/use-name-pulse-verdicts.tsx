@@ -53,17 +53,6 @@ const Wrapper = ( {
 	);
 };
 
-const deferred = < T, >() => {
-	let resolve!: ( value: T ) => void;
-	let reject!: ( error: Error ) => void;
-	const promise = new Promise< T >( ( res, rej ) => {
-		resolve = res;
-		reject = rej;
-	} );
-
-	return { promise, resolve, reject };
-};
-
 const renderVerdicts = (
 	names: string[],
 	availability: Availability = async ( domainNames ) =>
@@ -99,7 +88,7 @@ describe( 'useNamePulseVerdicts', () => {
 			{ length: NAME_PULSE_AVAILABILITY_BATCH_SIZE + 4 },
 			( _, i ) => `test${ i }.com`
 		);
-		const large = deferred< NamePulseAvailabilityResponse >();
+		const large = Promise.withResolvers< NamePulseAvailabilityResponse >();
 		const { result, fetcher } = renderVerdicts( names, ( domainNames ) =>
 			domainNames.length === NAME_PULSE_AVAILABILITY_BATCH_SIZE
 				? large.promise
@@ -162,7 +151,7 @@ describe( 'useNamePulseVerdicts', () => {
 
 	it( 'marks a batch UNKNOWN when no response arrives within the timeout, and a late response still lands', async () => {
 		jest.useFakeTimers();
-		const late = deferred< NamePulseAvailabilityResponse >();
+		const late = Promise.withResolvers< NamePulseAvailabilityResponse >();
 		const { result } = renderVerdicts( [ 'test.com' ], () => late.promise );
 
 		await flushBatches();
@@ -221,7 +210,7 @@ describe( 'useNamePulseVerdicts', () => {
 	} );
 
 	it( 'never lets a bulk verdict overwrite a real-time one, whether it lands before or after it', async () => {
-		const bulk = deferred< NamePulseAvailabilityResponse >();
+		const bulk = Promise.withResolvers< NamePulseAvailabilityResponse >();
 		const { result } = renderVerdicts( [ 'test.com' ], () => bulk.promise );
 		const realtime = { status: NamePulseDomainStatus.TAKEN, is_realtime: true } as const;
 
