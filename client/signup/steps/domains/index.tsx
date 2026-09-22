@@ -320,7 +320,7 @@ const DomainSearchUI = (
 		return {
 			BeforeResults: () => {
 				if (
-					isDomainOnlyFlow ||
+					( isDomainOnlyFlow && ! config.showNamePulseSearch ) ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -343,7 +343,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow, config.showNamePulseSearch ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
