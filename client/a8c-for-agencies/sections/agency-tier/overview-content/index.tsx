@@ -1,6 +1,5 @@
 import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback } from 'react';
-import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_PURCHASES_LINK,
@@ -21,13 +20,15 @@ import type { AgencyTierType, TierBenefitLinks } from 'calypso/dashboard/agency/
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 import type { ComponentProps } from 'react';
 
+const CONTACT_SUPPORT_URL = '#contact-support';
+
 const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-sites': A4A_SITES_LINK,
 	'create-client-reports': A4A_REPORTS_LINK,
 	'manage-purchases': A4A_PURCHASES_LINK,
 	'make-client-referral': A4A_REFERRALS_DASHBOARD,
 	'add-woopayments-to-store': A4A_WOOPAYMENTS_LINK,
-	'contact-support': CONTACT_URL_HASH_FRAGMENT,
+	'contact-support': CONTACT_SUPPORT_URL,
 	'manage-profile': A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 };
 

@@ -153,12 +153,12 @@ export default function DownloadBadges( {
 
 	const openModal = () => {
 		setIsModalOpen( true );
-		recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_open' );
+		recordTracksEvent( 'calypso_a4a_agency_tier_badges_download_modal_open' );
 	};
 
 	const closeModal = () => {
 		setIsModalOpen( false );
-		recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_close' );
+		recordTracksEvent( 'calypso_a4a_agency_tier_badges_download_modal_close' );
 	};
 
 	return (
@@ -229,7 +229,7 @@ export default function DownloadBadges( {
 										showTooltip={ false }
 										onClick={ () =>
 											recordTracksEvent(
-												'calypso_a8c_agency_tier_badges_download_modal_download_click',
+												'calypso_a4a_agency_tier_badges_download_modal_download_click',
 												{ product: badge.product, agency_tier: currentAgencyTierId }
 											)
 										}

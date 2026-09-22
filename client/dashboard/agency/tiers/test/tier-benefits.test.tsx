@@ -81,7 +81,7 @@ describe( '<TierBenefits>', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'button', { name: 'Badges here' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Badges here' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Manage your profile' } ) ).toHaveAttribute(
 			'href',
 			'/agency/partner-directory'

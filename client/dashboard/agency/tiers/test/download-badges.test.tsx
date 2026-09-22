@@ -53,7 +53,7 @@ describe( '<DownloadBadges>', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Download your badges' } ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a8c_agency_tier_badges_download_modal_open'
+			'calypso_a4a_agency_tier_badges_download_modal_open'
 		);
 
 		const dialog = screen.getByRole( 'dialog', { name: 'Download your agency badges' } );
@@ -69,14 +69,14 @@ describe( '<DownloadBadges>', () => {
 
 		await userEvent.click( link );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a8c_agency_tier_badges_download_modal_download_click',
+			'calypso_a4a_agency_tier_badges_download_modal_download_click',
 			{ product: 'pressable', agency_tier: 'pro-agency-partner' }
 		);
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a8c_agency_tier_badges_download_modal_close'
+			'calypso_a4a_agency_tier_badges_download_modal_close'
 		);
 	} );
 
