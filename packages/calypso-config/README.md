@@ -74,6 +74,23 @@ server. For this case, you can use the
 [`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.
 
+## Reading a key that may be missing
+
+`config( key )` throws a `ReferenceError` in development, and logs a console error in the browser,
+when the key is not in the config data. For a key that only some environments print, use
+`optionalConfig( key )`: it returns `undefined` for a missing key, and the same value as
+`config( key )` for a key that is there.
+
+```js
+import { optionalConfig } from '@automattic/calypso-config';
+
+// Odyssey Stats prints `jetpack_version`; Calypso does not.
+const jetpackVersion = optionalConfig( 'jetpack_version' );
+```
+
+Odyssey Stats replaces this module with its own config API (`apps/odyssey-stats/src/lib/config-api.ts`),
+which exports a function of the same name, so a change to `optionalConfig()` belongs in both.
+
 ## Testing for calypso.live environment
 
 We often need to enable or disable certain features not only based on the Calypso environment
