@@ -20,22 +20,40 @@ describe( 'detectFqdn', () => {
 
 	it( 'rejects a bare TLD and a TLD that is not in the list', () => {
 		expect( detectFqdn( 'co.uk', TLDS ).isFqdn ).toBe( false );
+		expect( detectFqdn( '.com', TLDS ).baseName ).toBe( '' );
+		expect( detectFqdn( 'com', TLDS ).baseName ).toBe( 'com' );
 		expect( detectFqdn( 'coffee.notatld', TLDS ).isFqdn ).toBe( false );
 	} );
 
-	it( 'reports an unrecognised ending and falls back to the label before it', () => {
+	it( 'joins the labels of input with an unrecognised ending into one name', () => {
 		expect( detectFqdn( 'icecream.d', TLDS ) ).toEqual( {
 			isFqdn: false,
-			baseName: 'icecream',
+			baseName: 'icecreamd',
 			tld: '',
 			fullDomain: '',
-			issue: { type: 'unknown-tld', ending: 'd' },
+			unknownEnding: 'd',
+		} );
+		expect( detectFqdn( 'icecream.co.u', TLDS ) ).toMatchObject( {
+			baseName: 'icecreamcou',
+			unknownEnding: 'u',
 		} );
 	} );
 
 	it( 'judges no ending before the TLD list has arrived', () => {
-		expect( detectFqdn( 'icecream.d', [] ).issue ).toBeUndefined();
-		expect( detectFqdn( 'icecream.net', [] ).issue ).toBeUndefined();
+		expect( detectFqdn( 'icecream.d', [] ).unknownEnding ).toBeUndefined();
+		expect( detectFqdn( 'icecream.net', [] ).unknownEnding ).toBeUndefined();
+	} );
+
+	it( 'ignores empty labels and characters a domain cannot hold', () => {
+		expect( detectFqdn( 'coffee.com.', TLDS ) ).toMatchObject( { fullDomain: 'coffee.com' } );
+		expect( detectFqdn( 'coffee..com', TLDS ) ).toMatchObject( { fullDomain: 'coffee.com' } );
+		expect( detectFqdn( 'ice_cream.com', TLDS ) ).toMatchObject( { fullDomain: 'icecream.com' } );
+		expect( detectFqdn( 'coffee.', TLDS ) ).toEqual( {
+			isFqdn: false,
+			baseName: 'coffee',
+			tld: '',
+			fullDomain: '',
+		} );
 	} );
 
 	it( 'searches the root domain of a subdomain', () => {
@@ -44,7 +62,11 @@ describe( 'detectFqdn', () => {
 			baseName: 'icecream',
 			tld: 'com',
 			fullDomain: 'icecream.com',
-			issue: { type: 'subdomain', rootDomain: 'icecream.com' },
+			subdomain: 'shop',
+		} );
+		expect( detectFqdn( 'a.shop.icecream.co.uk', TLDS ) ).toMatchObject( {
+			fullDomain: 'icecream.co.uk',
+			subdomain: 'a.shop',
 		} );
 	} );
 
@@ -54,7 +76,7 @@ describe( 'detectFqdn', () => {
 			baseName: 'mysite',
 			tld: '',
 			fullDomain: '',
-			issue: { type: 'free-subdomain' },
+			isFreeSubdomain: true,
 		} );
 	} );
 
@@ -62,7 +84,7 @@ describe( 'detectFqdn', () => {
 		expect( detectFqdn( 'mysite.tech.blog', TLDS ) ).toMatchObject( {
 			isFqdn: false,
 			baseName: 'mysite',
-			issue: { type: 'free-subdomain' },
+			isFreeSubdomain: true,
 		} );
 	} );
 
@@ -75,8 +97,18 @@ describe( 'detectFqdn', () => {
 		} );
 	} );
 
-	it( 'leaves a plain FQDN and a plain name free of issues', () => {
-		expect( detectFqdn( 'coffee.co.uk', TLDS ).issue ).toBeUndefined();
-		expect( detectFqdn( 'coffee', TLDS ).issue ).toBeUndefined();
+	it( 'leaves a plain FQDN and a plain name without details', () => {
+		expect( detectFqdn( 'coffee.co.uk', TLDS ) ).toEqual( {
+			isFqdn: true,
+			baseName: 'coffee',
+			tld: 'co.uk',
+			fullDomain: 'coffee.co.uk',
+		} );
+		expect( detectFqdn( 'coffee', TLDS ) ).toEqual( {
+			isFqdn: false,
+			baseName: 'coffee',
+			tld: '',
+			fullDomain: '',
+		} );
 	} );
 } );

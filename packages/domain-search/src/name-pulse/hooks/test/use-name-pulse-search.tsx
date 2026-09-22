@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
+import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
@@ -17,6 +18,7 @@ import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
 import { NAME_PULSE_QUERY_SETTLE_MS, NamePulseDomainStatus } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
 import type {
+	DomainAvailability,
 	NamePulseAvailabilityResponse,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
@@ -41,10 +43,12 @@ const renderSearch = ( query: string ) =>
 const FetcherSearch = ( {
 	availability,
 	suggestions,
+	domainAvailability,
 	children,
 }: {
 	availability: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
 	suggestions: () => Promise< NamePulseSuggestionsResponse >;
+	domainAvailability: ( domainName: string ) => Promise< DomainAvailability >;
 	children: React.ReactNode;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
@@ -59,7 +63,7 @@ const FetcherSearch = ( {
 					availability,
 					suggestions,
 					tlds: async () => NAME_PULSE_TLDS_FIXTURE,
-					domainAvailability: () => Promise.reject( new Error( 'not used' ) ),
+					domainAvailability,
 				} ) }
 			>
 				{ children }
@@ -76,16 +80,23 @@ const renderTypedSearch = ( query: string ) => {
 		suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE,
 		errors: [],
 	} ) );
+	const domainAvailability = jest.fn( async ( domainName: string ) =>
+		buildAvailability( { domain_name: domainName } )
+	);
 	const rendered = renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
 		initialProps: { q: query },
 		wrapper: ( { children } ) => (
-			<FetcherSearch availability={ availability } suggestions={ suggestions }>
+			<FetcherSearch
+				availability={ availability }
+				suggestions={ suggestions }
+				domainAvailability={ domainAvailability }
+			>
 				{ children }
 			</FetcherSearch>
 		),
 	} );
 
-	return { ...rendered, availability, suggestions };
+	return { ...rendered, availability, suggestions, domainAvailability };
 };
 
 const advance = ( ms: number ) => {
@@ -205,6 +216,24 @@ describe( 'useNamePulseSearch', () => {
 		expect( suggestions ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'waits for the query to settle before checking a typed domain or showing a notice', () => {
+		jest.useFakeTimers();
+		const { result, rerender, domainAvailability } = renderTypedSearch( 'icecream' );
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		rerender( { q: 'icecream.c' } );
+		rerender( { q: 'icecream.co' } );
+		rerender( { q: 'icecream.com' } );
+
+		expect( result.current.notice ).toBeNull();
+		expect( domainAvailability ).not.toHaveBeenCalled();
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+
+		expect( domainAvailability ).toHaveBeenCalledTimes( 1 );
+		expect( domainAvailability ).toHaveBeenCalledWith( 'icecream.com' );
+	} );
+
 	it( 'reports a typed domain that is registered elsewhere', async () => {
 		stubBulkAvailability();
 		nock( API )
@@ -234,7 +263,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice?.message ).toBe(
-				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
+				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
 			)
 		);
 		await waitFor( () =>

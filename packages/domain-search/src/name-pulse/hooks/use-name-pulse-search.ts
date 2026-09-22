@@ -169,15 +169,16 @@ export const useNamePulseSearch = ( query: string ) => {
 	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
 	// The bulk check is zone-file based: it says a domain is taken, not why.
-	const typedDomain = layout.fqdn?.fullDomain ?? '';
+	// Both wait for the query to settle, so half-typed input is not checked or flagged.
+	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
 	const { data: typedDomainAvailability } = useQuery( {
 		...queries.domainAvailability( typedDomain ),
 		enabled: Boolean( typedDomain ),
 	} );
 
 	const notice = useMemo(
-		() => getNamePulseNotice( layout, typedDomainAvailability ),
-		[ layout, typedDomainAvailability ]
+		() => ( isSettled ? getNamePulseNotice( layout, typedDomainAvailability ) : null ),
+		[ isSettled, layout, typedDomainAvailability ]
 	);
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows

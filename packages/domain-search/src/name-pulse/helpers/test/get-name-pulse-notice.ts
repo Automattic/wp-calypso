@@ -27,7 +27,7 @@ describe( 'getNamePulseNotice', () => {
 			status: 'warning',
 			dismissible: true,
 			message:
-				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.',
+				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.',
 		} );
 	} );
 
@@ -47,6 +47,10 @@ describe( 'getNamePulseNotice', () => {
 			message:
 				'That’s a free WordPress.com subdomain, not a domain you can register. Showing results for “mysite” instead.',
 		} );
+	} );
+
+	it( 'stays silent when nothing is left to search', () => {
+		expect( getNamePulseNotice( layoutFor( 'x.tech.blog' ) ) ).toBeNull();
 	} );
 
 	it( 'offers a transfer for a domain registered elsewhere', () => {

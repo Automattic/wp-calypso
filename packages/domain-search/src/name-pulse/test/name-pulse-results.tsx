@@ -276,17 +276,17 @@ describe( 'NamePulseResults', () => {
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'explains an unrecognised ending and still lists the name without it', async () => {
+	it( 'explains an unrecognised ending and lists the joined name', async () => {
 		render( <NamePulseTestSearch query="icecream.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
+			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
 		);
 		expect(
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
+			screen.getByRole( 'heading', { name: 'Exact match for “icecreamd”' } )
 		).toBeInTheDocument();
 	} );
 
@@ -299,7 +299,7 @@ describe( 'NamePulseResults', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
 		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
-		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
 	} );
 
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {

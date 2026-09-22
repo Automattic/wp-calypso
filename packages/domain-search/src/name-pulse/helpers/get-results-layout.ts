@@ -1,14 +1,13 @@
-import { detectFqdn, type FqdnIssue } from './detect-fqdn';
+import { detectFqdn, type FqdnDetails } from './detect-fqdn';
 import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from './sanitize';
 
 export type NamePulseMode = 'empty' | 'fqdn' | 'single' | 'keyword' | 'ai';
 
-export interface NamePulseResultsLayout {
+export interface NamePulseResultsLayout extends FqdnDetails {
 	mode: NamePulseMode;
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
-	issue?: FqdnIssue;
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
 }
@@ -66,7 +65,9 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 		baseName,
 		wordCount,
 		...( fqdn ? { fqdn } : {} ),
-		...( detection?.issue ? { issue: detection.issue } : {} ),
+		...( detection?.subdomain ? { subdomain: detection.subdomain } : {} ),
+		...( detection?.unknownEnding ? { unknownEnding: detection.unknownEnding } : {} ),
+		...( detection?.isFreeSubdomain ? { isFreeSubdomain: detection.isFreeSubdomain } : {} ),
 		...SECTIONS_BY_MODE[ mode ],
 	};
 }

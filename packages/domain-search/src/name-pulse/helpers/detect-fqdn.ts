@@ -1,15 +1,6 @@
-import { getTld } from '../../helpers/get-tld';
 import { isFreeSubdomainQuery } from '../../helpers/is-free-subdomain-query';
 import wpcomMultiLevelTlds from '../../helpers/wpcom-multi-level-tlds.json';
 import { sanitizeDomainInput } from './sanitize';
-
-/**
- * Why the input was not taken at face value. The search still runs on `baseName`.
- */
-export type FqdnIssue =
-	| { type: 'unknown-tld'; ending: string }
-	| { type: 'subdomain'; rootDomain: string }
-	| { type: 'free-subdomain' };
 
 export interface FqdnDetection {
 	isFqdn: boolean;
@@ -19,70 +10,79 @@ export interface FqdnDetection {
 	baseName: string;
 	tld: string;
 	fullDomain: string;
-	issue?: FqdnIssue;
+	/** Labels dropped in front of the registrable domain: `shop` in `shop.icecream.com`. */
+	subdomain?: string;
+	/** Last label of input with no known ending; it is joined into `baseName`. */
+	unknownEnding?: string;
+	/** `mysite.wordpress.com` or a free `.blog` subdomain; `baseName` is its label. */
+	isFreeSubdomain?: true;
 }
 
-const notFqdn = ( baseName: string, issue?: FqdnIssue ): FqdnDetection => ( {
+export type FqdnDetails = Pick< FqdnDetection, 'subdomain' | 'unknownEnding' | 'isFreeSubdomain' >;
+
+const notFqdn = ( baseName: string, details: FqdnDetails = {} ): FqdnDetection => ( {
 	isFqdn: false,
 	baseName,
 	tld: '',
 	fullDomain: '',
-	...( issue ? { issue } : {} ),
+	...details,
 } );
 
+const MAX_TLD_LABELS = Math.max( ...wpcomMultiLevelTlds.map( ( tld ) => tld.split( '.' ).length ) );
+
 /**
- * Multi-level TLDs are matched against the wpcom list first (so `coffee.co.uk`
- * is `co.uk`, not `uk`), then single-level ones against `tlds`. Must run on
- * the raw input, before `sanitizeDomainInput` strips the dots. Input that is not
- * a registrable domain still yields a base name: `icecream.d` gives `icecream`.
+ * Splits on dots and sanitizes each label, so stray characters and empty labels
+ * (`coffee..com`, `coffee.com.`) do not matter. The longest known ending wins, so
+ * `coffee.co.uk` is `co.uk`, not `uk`. With no known ending the labels are joined
+ * into one name: `icecream.d` gives `icecreamd`.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
 export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetection {
-	const lowercased = input.toLowerCase().trim();
+	const labels = input.toLowerCase().split( '.' ).map( sanitizeDomainInput ).filter( Boolean );
 
-	if ( ! lowercased.includes( '.' ) ) {
-		return notFqdn( sanitizeDomainInput( lowercased ) );
-	}
+	const domain = labels.join( '.' );
+	const isKnownTld = ( tld: string ) => tlds.includes( tld ) || wpcomMultiLevelTlds.includes( tld );
 
-	const labels = lowercased.split( '.' );
-
-	// Before the TLD check: a free subdomain looks like any other subdomain.
-	if ( isFreeSubdomainQuery( lowercased ) ) {
-		return notFqdn( sanitizeDomainInput( labels[ 0 ] ), { type: 'free-subdomain' } );
-	}
-
-	const tld = getTld( lowercased );
-
-	if ( ! tlds.includes( tld ) && ! wpcomMultiLevelTlds.includes( tld ) ) {
-		// An empty list means it has not arrived yet, not that no ending is valid.
-		const issue: FqdnIssue | undefined =
-			tlds.length > 0 ? { type: 'unknown-tld', ending: labels[ labels.length - 1 ] } : undefined;
-
-		return notFqdn( sanitizeDomainInput( labels[ labels.length - 2 ] ), issue );
-	}
-
-	// `getTld` matches the whole input when it *is* a TLD ("co.uk"), which
-	// leaves no label to register.
-	if ( tld === lowercased ) {
+	// A bare ending (".com", "co.uk") leaves no label to register.
+	if ( input.includes( '.' ) && isKnownTld( domain ) ) {
 		return notFqdn( '' );
 	}
 
-	const remainder = lowercased.slice( 0, -( tld.length + 1 ) ).split( '.' );
-	const baseName = sanitizeDomainInput( remainder[ remainder.length - 1 ] );
-
-	if ( baseName.length < 2 ) {
-		return notFqdn( baseName );
+	if ( labels.length < 2 ) {
+		return notFqdn( labels[ 0 ] ?? '' );
 	}
 
-	const fullDomain = `${ baseName }.${ tld }`;
-	const issue: FqdnIssue | undefined =
-		remainder.length > 1 ? { type: 'subdomain', rootDomain: fullDomain } : undefined;
+	// Before the ending check: a free subdomain looks like any other subdomain.
+	if ( isFreeSubdomainQuery( domain ) ) {
+		return notFqdn( labels[ labels.length - 3 ], { isFreeSubdomain: true } );
+	}
 
-	return {
-		isFqdn: true,
-		baseName,
-		tld,
-		fullDomain,
-		...( issue ? { issue } : {} ),
-	};
+	for ( let size = Math.min( MAX_TLD_LABELS, labels.length - 1 ); size > 0; size-- ) {
+		const tld = labels.slice( -size ).join( '.' );
+
+		if ( ! isKnownTld( tld ) ) {
+			continue;
+		}
+
+		const baseName = labels[ labels.length - size - 1 ];
+		const subdomain = labels.slice( 0, -size - 1 ).join( '.' );
+
+		if ( baseName.length < 2 ) {
+			return notFqdn( baseName );
+		}
+
+		return {
+			isFqdn: true,
+			baseName,
+			tld,
+			fullDomain: `${ baseName }.${ tld }`,
+			...( subdomain ? { subdomain } : {} ),
+		};
+	}
+
+	// An empty list means it has not arrived yet, not that no ending is valid.
+	return notFqdn(
+		labels.join( '' ),
+		tlds.length > 0 ? { unknownEnding: labels[ labels.length - 1 ] } : {}
+	);
 }

@@ -86,21 +86,25 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 }
 
 function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | null {
-	if ( ! layout.issue ) {
+	if ( layout.mode === 'empty' ) {
 		return null;
 	}
 
-	if ( layout.issue.type === 'unknown-tld' ) {
+	if ( layout.unknownEnding ) {
 		return {
 			status: 'warning',
 			dismissible: true,
-			message: __(
-				'We don’t recognise that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
+			message: sprintf(
+				// translators: %(ending)s is the domain ending the user typed, such as "d". %(name)s is the name searched instead.
+				__(
+					'We don’t recognize .%(ending)s, so we’re showing results for “%(name)s”. Try .com or .blog instead.'
+				),
+				{ ending: layout.unknownEnding, name: layout.baseName }
 			),
 		};
 	}
 
-	if ( layout.issue.type === 'subdomain' ) {
+	if ( layout.subdomain && layout.fqdn ) {
 		return {
 			status: 'warning',
 			dismissible: true,
@@ -109,22 +113,26 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 				__(
 					'Domains are registered without a subdomain. Showing results for “%(domain)s” instead.'
 				),
-				{ domain: layout.issue.rootDomain }
+				{ domain: layout.fqdn.fullDomain }
 			),
 		};
 	}
 
-	return {
-		status: 'warning',
-		dismissible: true,
-		message: sprintf(
-			// translators: %(name)s is the name searched instead of the free subdomain.
-			__(
-				'That’s a free WordPress.com subdomain, not a domain you can register. Showing results for “%(name)s” instead.'
+	if ( layout.isFreeSubdomain ) {
+		return {
+			status: 'warning',
+			dismissible: true,
+			message: sprintf(
+				// translators: %(name)s is the name searched instead of the free subdomain.
+				__(
+					'That’s a free WordPress.com subdomain, not a domain you can register. Showing results for “%(name)s” instead.'
+				),
+				{ name: layout.baseName }
 			),
-			{ name: layout.baseName }
-		),
-	};
+		};
+	}
+
+	return null;
 }
 
 /**

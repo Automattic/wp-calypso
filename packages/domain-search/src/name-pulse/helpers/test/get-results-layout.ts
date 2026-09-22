@@ -69,12 +69,12 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
-	it( 'searches the label before an unrecognised ending and reports it', () => {
+	it( 'joins input with an unrecognised ending into one name and reports it', () => {
 		expect( getResultsLayout( 'icecream.d', TLDS ) ).toEqual( {
 			mode: 'single',
-			baseName: 'icecream',
+			baseName: 'icecreamd',
 			wordCount: 1,
-			issue: { type: 'unknown-tld', ending: 'd' },
+			unknownEnding: 'd',
 			exactGrid: { show: true },
 			suggestions: { show: false },
 		} );
@@ -86,7 +86,7 @@ describe( 'getResultsLayout', () => {
 			baseName: 'icecream',
 			wordCount: 1,
 			fqdn: { baseName: 'icecream', tld: 'com', fullDomain: 'icecream.com' },
-			issue: { type: 'subdomain', rootDomain: 'icecream.com' },
+			subdomain: 'shop',
 			exactGrid: { show: true },
 			suggestions: { show: false },
 		} );
@@ -97,7 +97,7 @@ describe( 'getResultsLayout', () => {
 			mode: 'single',
 			baseName: 'mysite',
 			wordCount: 1,
-			issue: { type: 'free-subdomain' },
+			isFreeSubdomain: true,
 			exactGrid: { show: true },
 			suggestions: { show: false },
 		} );
