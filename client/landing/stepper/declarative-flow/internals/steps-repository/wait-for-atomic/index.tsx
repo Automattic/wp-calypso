@@ -41,12 +41,15 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			code: failureInfo.code,
 			error: failureInfo.error,
 			intent: getIntent(),
+			recoverable: !! failureInfo.recoverable,
 		} );
 
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: failureInfo.error,
-			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			// A wait that carried on is not a production error, whatever the event is called.
+			severity:
+				config( 'env_id' ) === 'production' && ! failureInfo.recoverable ? 'error' : 'debug',
 			blog_id: siteId,
 			properties: {
 				env: config( 'env_id' ),
@@ -54,6 +57,7 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 				action: failureInfo.type,
 				site: site?.URL,
 				code: failureInfo.code,
+				recoverable: !! failureInfo.recoverable,
 			},
 		} );
 	};
