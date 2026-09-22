@@ -83,6 +83,7 @@ describe( 'useSetupCustomActions', () => {
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
 		takeActionOrigin( 'open' );
+		takeActionOrigin( 'close' );
 		takeActionOrigin( 'send' );
 		mockContext = {
 			getTabSessionId: jest.fn( () => 'session-123' ),
@@ -283,6 +284,20 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( false );
 
 		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks a close a host asked for, but not one that changes nothing', () => {
+		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+		expect( takeActionOrigin( 'close' ) ).toBe( 'host' );
+
+		mockSelectState = { ...mockSelectState, isOpen: false };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+		expect( takeActionOrigin( 'close' ) ).toBe( 'user' );
 	} );
 
 	it( 'removes its actions from the global on unmount', () => {
