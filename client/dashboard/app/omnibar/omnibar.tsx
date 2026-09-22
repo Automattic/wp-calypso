@@ -8,7 +8,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAppContext } from '../context';
@@ -27,7 +27,7 @@ import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
-import { useOmnibarUser } from './use-omnibar-user';
+import { useOmnibarUser } from './user';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
@@ -91,7 +91,12 @@ function ConnectedOmnibar( {
 } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
-	const { hydrated, authUser } = useOmnibarUser( user );
+	const [ hydrated, setHydrated ] = useState( false );
+	useEffect( () => {
+		setHydrated( true );
+	}, [] );
+
+	const authUser = useOmnibarUser( { user, enabled: hydrated } );
 
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {

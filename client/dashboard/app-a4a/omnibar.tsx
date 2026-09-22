@@ -1,7 +1,7 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { Omnibar } from '@automattic/omnibar';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { omnibarEvents } from '../app/omnibar/events';
 import { InitialOmnibar } from '../app/omnibar/omnibar';
@@ -12,7 +12,7 @@ import {
 	trackOmnibarNodes,
 	useRecordOmnibarNodeClick,
 } from '../app/omnibar/tracking';
-import { useOmnibarUser } from '../app/omnibar/use-omnibar-user';
+import { useOmnibarUser } from '../app/omnibar/user';
 import { wpcomLink } from '../utils/link';
 import { A4AOmnibarHomeIcon } from './omnibar-home-icon';
 import type { User } from '@automattic/api-core';
@@ -59,7 +59,14 @@ function buildUserNode( user: User ): OmnibarNode {
 export default function A4AOmnibar( { user }: { user?: User } ) {
 	const { supports, mainRoute } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
-	const { hydrated, authUser } = useOmnibarUser( user );
+	// The server renders `InitialOmnibar`, so the first client render must match
+	// it; the full bar only replaces it once mounted.
+	const [ hydrated, setHydrated ] = useState( false );
+	useEffect( () => {
+		setHydrated( true );
+	}, [] );
+
+	const authUser = useOmnibarUser( { user, enabled: hydrated } );
 	const helpCenterNode = useHelpCenterPlugin( { sectionName: 'dashboard', adminBarNodes: [] } );
 
 	const nodes = useMemo< OmnibarNodes >(
