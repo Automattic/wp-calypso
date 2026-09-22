@@ -298,8 +298,13 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 						isAnnotated: false,
 					} );
 
-					// Show notice from backend if present and well-formed
-					if ( input?.notice != null && isValidNoticePayload( input.notice ) ) {
+					// Show notice from backend if present and well-formed, unless the chat
+					// panel already shows the credits notice.
+					if (
+						input?.notice != null &&
+						isValidNoticePayload( input.notice ) &&
+						! storeSelectors.getIsAiCreditsNoticeShown()
+					) {
 						const notice = input.notice;
 						addNotice(
 							notice.message,

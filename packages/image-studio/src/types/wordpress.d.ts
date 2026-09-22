@@ -50,6 +50,7 @@ export interface CurriedImageStudioSelectors {
 	getImageStudioOriginalImageUrl: () => string | null;
 	getImageStudioCurrentImageUrl: () => string | null;
 	getImageStudioAiProcessing: () => boolean;
+	getIsAiCreditsNoticeShown: () => boolean;
 	getIsAnnotationMode: () => boolean;
 	getImageStudioTransitioning: () => boolean;
 	getAnnotationCanvasRef: () => import( '../store' ).AnnotationCanvasRef | null;

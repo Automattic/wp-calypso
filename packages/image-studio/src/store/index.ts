@@ -102,6 +102,9 @@ export interface ImageStudioState {
 	navigationHasMorePages: boolean;
 	// Persisted state for whether the Image Info sidebar should be open by default
 	isSidebarOpen: boolean;
+	// True while the chat panel shows the AI credits notice, so the canvas
+	// ability can skip the backend's own low-credits banner.
+	isAiCreditsNoticeShown: boolean;
 	// Selected style preset for image generation (only used in Generate mode)
 	selectedStyle: string | null;
 	// Selected aspect ratio preset for image generation (only used in Generate mode)
@@ -246,6 +249,11 @@ type SetIsSidebarOpenAction = {
 	payload: boolean;
 };
 
+type SetIsAiCreditsNoticeShownAction = {
+	type: 'SET_IS_AI_CREDITS_NOTICE_SHOWN';
+	payload: boolean;
+};
+
 type SetSelectedStyleAction = {
 	type: 'SET_SELECTED_STYLE';
 	payload: string | null;
@@ -297,6 +305,7 @@ type ImageStudioAction =
 	| NavigateToAttachmentAction
 	| SetNavigationPaginationAction
 	| SetIsSidebarOpenAction
+	| SetIsAiCreditsNoticeShownAction
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
@@ -365,6 +374,7 @@ const initialState: ImageStudioState = {
 	navigationCurrentPage: 1,
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
+	isAiCreditsNoticeShown: false,
 	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
@@ -633,6 +643,12 @@ const reducer = (
 				isSidebarOpen: action.payload,
 			};
 
+		case 'SET_IS_AI_CREDITS_NOTICE_SHOWN':
+			return {
+				...state,
+				isAiCreditsNoticeShown: action.payload,
+			};
+
 		case 'SET_SELECTED_STYLE':
 			return {
 				...state,
@@ -735,6 +751,7 @@ export interface ImageStudioActions {
 		hasMorePages: boolean
 	) => Promise< SetNavigationPaginationAction >;
 	setIsSidebarOpen: ( isOpen: boolean ) => Promise< SetIsSidebarOpenAction >;
+	setIsAiCreditsNoticeShown: ( isShown: boolean ) => Promise< SetIsAiCreditsNoticeShownAction >;
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
@@ -938,6 +955,13 @@ const actions = {
 		};
 	},
 
+	setIsAiCreditsNoticeShown( isShown: boolean ): SetIsAiCreditsNoticeShownAction {
+		return {
+			type: 'SET_IS_AI_CREDITS_NOTICE_SHOWN',
+			payload: isShown,
+		};
+	},
+
 	setSelectedStyle( style: string | null ): SetSelectedStyleAction {
 		return {
 			type: 'SET_SELECTED_STYLE',
@@ -1006,6 +1030,7 @@ export interface ImageStudioSelectors {
 	getNextAttachmentId: ( state: ImageStudioState ) => number | null;
 	getPreviousAttachmentId: ( state: ImageStudioState ) => number | null;
 	getIsSidebarOpen: ( state: ImageStudioState ) => boolean;
+	getIsAiCreditsNoticeShown: ( state: ImageStudioState ) => boolean;
 	getNavigationCurrentPage: ( state: ImageStudioState ) => number;
 	getNavigationHasMorePages: ( state: ImageStudioState ) => boolean;
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
@@ -1165,6 +1190,10 @@ const selectors = {
 
 	getIsSidebarOpen( state: ImageStudioState ): boolean {
 		return state.isSidebarOpen;
+	},
+
+	getIsAiCreditsNoticeShown( state: ImageStudioState ): boolean {
+		return state.isAiCreditsNoticeShown;
 	},
 
 	getNavigationCurrentPage( state: ImageStudioState ): number {

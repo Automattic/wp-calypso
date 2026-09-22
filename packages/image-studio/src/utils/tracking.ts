@@ -560,24 +560,41 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
+/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
+
 /**
  * Tracks when the limit-reached upgrade notice is shown
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * @param options         - Tracking options
+ * @param options.mode    - 'edit' or 'generate'
+ * @param options.trigger - What showed the notice
  */
-export function trackImageStudioUpgradeNoticeShown( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode } );
+export function trackImageStudioUpgradeNoticeShown( {
+	mode,
+	trigger,
+}: {
+	mode: ImageStudioMode;
+	trigger: UpgradeNoticeTrigger;
+} ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode, trigger } );
 }
 
 /**
  * Tracks a click on the upgrade notice action. Also fires the product-wide
  * `jetpack_ai_upgrade_button` event so this surface appears in the same
  * funnel as every other Jetpack AI upgrade button.
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * @param options         - Tracking options
+ * @param options.mode    - 'edit' or 'generate'
+ * @param options.trigger - What showed the notice
  */
-export function trackImageStudioUpgradeNoticeClick( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode } );
+export function trackImageStudioUpgradeNoticeClick( {
+	mode,
+	trigger,
+}: {
+	mode: ImageStudioMode;
+	trigger: UpgradeNoticeTrigger;
+} ): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode, trigger } );
 	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
 		placement: 'image-studio-limit-notice',
 	} );

@@ -737,6 +737,20 @@ describe( 'Image Studio Store', () => {
 			} );
 		} );
 
+		describe( 'SET_IS_AI_CREDITS_NOTICE_SHOWN', () => {
+			it( 'records whether the chat is showing the credits notice', () => {
+				const state = reducer( getInitialState(), actions.setIsAiCreditsNoticeShown( true ) );
+
+				expect( state.isAiCreditsNoticeShown ).toBe( true );
+			} );
+
+			it( 'clears on the next open', () => {
+				const shown = { ...getInitialState(), isAiCreditsNoticeShown: true };
+
+				expect( reducer( shown, actions.openImageStudio() ).isAiCreditsNoticeShown ).toBe( false );
+			} );
+		} );
+
 		describe( 'RESET_CANVAS_HISTORY', () => {
 			it( 'resets canvas editing history', () => {
 				const previousState: ImageStudioState = {
@@ -1059,6 +1073,11 @@ describe( 'Image Studio Store', () => {
 		it( 'getIsSidebarOpen', () => {
 			const state: ImageStudioState = { ...getInitialState(), isSidebarOpen: true };
 			expect( selectors.getIsSidebarOpen( state ) ).toBe( true );
+		} );
+
+		it( 'getIsAiCreditsNoticeShown', () => {
+			const state: ImageStudioState = { ...getInitialState(), isAiCreditsNoticeShown: true };
+			expect( selectors.getIsAiCreditsNoticeShown( state ) ).toBe( true );
 		} );
 
 		it( 'getNavigationCurrentPage', () => {
