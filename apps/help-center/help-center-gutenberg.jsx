@@ -161,6 +161,11 @@ function HelpCenterContent() {
 		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
 	}
 
+	// Host-resolved ExPlat variations, keyed by experiment name.
+	if ( helpCenterData?.experimentVariations ) {
+		customProps.experimentVariations = helpCenterData.experimentVariations;
+	}
+
 	return (
 		<>
 			{ showHelpIcon &&
