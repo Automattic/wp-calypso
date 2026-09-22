@@ -21,6 +21,7 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
+import { getDashboardOmnibarHomeIcon } from 'calypso/dashboard/app/omnibar/home-icon';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
@@ -122,10 +123,12 @@ class Document extends Component {
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
+				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
+				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
 		let headTitle = head.title;
-		let headFaviconUrl;
+		// Hostname overrides only reach the request's client data, not the base config.
+		let headFaviconUrl = clientData?.favicon_url;
 		let isWCCOM = false;
 
 		// To customize the page title and favicon for Gravatar-related login pages.
@@ -159,6 +162,7 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					faviconBrand={ clientData?.favicon_brand }
 					allowZoom={ isDashboardSection }
 					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
@@ -188,7 +192,7 @@ class Document extends Component {
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ isDashboardOmnibarPage && (
 						<div id="wpcom-omnibar">
-							<InitialOmnibar user={ user } />
+							<InitialOmnibar user={ user } homeIcon={ getDashboardOmnibarHomeIcon( dashboard ) } />
 						</div>
 					) }
 					{ renderedLayout ? (
