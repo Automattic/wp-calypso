@@ -121,7 +121,7 @@ describe( '<PointToWpcomNotice>', () => {
 		const dialog = await openDialog( user );
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Continue' } ) );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_domains_point_to_wpcom', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_management_point_to_wpcom', {
 			domain_name: domainName,
 		} );
 
@@ -130,7 +130,7 @@ describe( '<PointToWpcomNotice>', () => {
 		} );
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_dashboard_domains_point_to_wpcom_success',
+				'calypso_domain_management_point_to_wpcom_success',
 				{ domain_name: domainName }
 			);
 		} );
@@ -203,7 +203,7 @@ describe( '<PointToWpcomNotice>', () => {
 		} );
 		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_dashboard_domains_point_to_wpcom_error',
+				'calypso_domain_management_point_to_wpcom_error',
 				expect.objectContaining( { domain_name: domainName } )
 			);
 		} );

@@ -37,18 +37,18 @@ export default function PointToWpcomNotice( { domain }: { domain: Domain } ) {
 
 	const onConfirm = () => {
 		setIsDialogOpen( false );
-		recordTracksEvent( 'calypso_dashboard_domains_point_to_wpcom', {
+		recordTracksEvent( 'calypso_domain_management_point_to_wpcom', {
 			domain_name: domainName,
 		} );
 
 		pointToWpcom.mutate( undefined, {
 			onSuccess: () => {
-				recordTracksEvent( 'calypso_dashboard_domains_point_to_wpcom_success', {
+				recordTracksEvent( 'calypso_domain_management_point_to_wpcom_success', {
 					domain_name: domainName,
 				} );
 			},
 			onError: ( error ) => {
-				recordTracksEvent( 'calypso_dashboard_domains_point_to_wpcom_error', {
+				recordTracksEvent( 'calypso_domain_management_point_to_wpcom_error', {
 					domain_name: domainName,
 					error_message: error.message,
 				} );
