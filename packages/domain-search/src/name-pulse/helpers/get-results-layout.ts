@@ -1,9 +1,9 @@
-import { detectFqdn } from './detect-fqdn';
+import { detectFqdn, type FqdnDetails } from './detect-fqdn';
 import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from './sanitize';
 
 export type NamePulseMode = 'empty' | 'fqdn' | 'single' | 'keyword' | 'ai';
 
-export interface NamePulseResultsLayout {
+export interface NamePulseResultsLayout extends FqdnDetails {
 	mode: NamePulseMode;
 	baseName: string;
 	wordCount: number;
@@ -84,9 +84,9 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;
-	const baseName = fqdn
-		? fqdn.baseName
-		: sanitizeDomainInput( isMultiWord ? sanitizeKeywordInput( trimmed ) : trimmed );
+	const baseName = detection
+		? detection.baseName
+		: sanitizeDomainInput( sanitizeKeywordInput( trimmed ) );
 	const wordCount = isMultiWord ? getWordCount( trimmed ) : Number( baseName.length > 0 );
 	const mode = getMode( baseName, wordCount, Boolean( fqdn ) );
 
@@ -95,6 +95,9 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 		baseName,
 		wordCount,
 		...( fqdn ? { fqdn } : {} ),
+		...( detection?.subdomain ? { subdomain: detection.subdomain } : {} ),
+		...( detection?.unknownEnding ? { unknownEnding: detection.unknownEnding } : {} ),
+		...( detection?.isFreeSubdomain ? { isFreeSubdomain: detection.isFreeSubdomain } : {} ),
 		...SECTIONS_BY_MODE[ mode ],
 	};
 }

@@ -8,6 +8,7 @@ import {
 	excludeDomains,
 	generateExactMatches,
 	getAiTopResults,
+	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
 	NAME_PULSE_AI_TIMEOUT_MS,
@@ -209,6 +210,19 @@ export const useNamePulseSearch = ( query: string ) => {
 		}
 	}, [ isAiMode, topResults, checkedNames, requestNames ] );
 
+	// The bulk check is zone-file based: it says a domain is taken, not why.
+	// Both wait for the query to settle, so half-typed input is not checked or flagged.
+	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
+	const { data: typedDomainAvailability } = useQuery( {
+		...queries.domainAvailability( typedDomain ),
+		enabled: Boolean( typedDomain ),
+	} );
+
+	const notice = useMemo(
+		() => ( isSettled ? getNamePulseNotice( layout, typedDomainAvailability ) : null ),
+		[ isSettled, layout, typedDomainAvailability ]
+	);
+
 	// Each section drops domains already listed above it. Full lists are compared,
 	// not only the visible rows, so expanding a section never makes rows vanish
 	// from the one below.
@@ -232,6 +246,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		creativeResults,

@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
+import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
@@ -13,9 +14,15 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const { query, slots } = useDomainSearch();
+	const {
+		query,
+		slots,
+		events,
+		config: { allowsUsingOwnDomain },
+	} = useDomainSearch();
 	const {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		creativeResults,
@@ -37,6 +44,12 @@ export const NamePulseResults = () => {
 			<NamePulseSearchInput />
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
+				{ notice && ! isTldsError && (
+					<NamePulseSearchNotice
+						notice={ notice }
+						onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
+					/>
+				) }
 				{ hasTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }
