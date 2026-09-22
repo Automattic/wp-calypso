@@ -3,13 +3,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getActions } from '../../panel/helpers/notes';
+import { getActions, getCommentsUrl, getReferenceId } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { p, zipWithSignature } from '../../panel/templates/functions';
-import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
@@ -20,6 +19,21 @@ import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
+
+const PendingApprovalStrip = ( { note }: { note: Note } ) => {
+	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
+
+	return (
+		<div className="wpnc__pending-approval-strip">
+			<span className="wpnc__pending-approval-strip-text">{ __( 'Pending approval' ) }</span>
+			{ commentsUrl && (
+				<ExternalLink className="wpnc__pending-approval-strip-link" href={ commentsUrl }>
+					{ __( 'Manage comments' ) }
+				</ExternalLink>
+			) }
+		</div>
+	);
+};
 
 const ReplyBlock = ( { note }: { note: Note } ) => {
 	const [ replyURL, setReplyURL ] = useState< string >( '' );
@@ -147,7 +161,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
-					<PendingApprovalBadge note={ note } />
+					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
 			<div className="wpnc__body-content">{ body }</div>

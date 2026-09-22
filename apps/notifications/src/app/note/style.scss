@@ -367,6 +367,64 @@
 	}
 }
 
+// The WPDS warning surface has no dark counterpart. Tint the dark surface the
+// way the Dashboard's own warning notices do.
+@mixin dark-warning-surface {
+	@include ui-mixins.when-dark-theme {
+		background-color: color-mix(
+			in srgb,
+			var(--dashboard__background-color-warning, #d47608) 8%,
+			var(--dashboard-surface__background-color, #2a2a2a)
+		);
+	}
+}
+
+// The warning reads as one rule running down the strip and on into the comment.
+// The body stack's gap would break the rule in two, so it moves inside the
+// comment as padding: the rule runs unbroken, the text keeps its distance.
+.wpnc-app .wpnc__note .wpnc__body .wpnc__pending-approval-section {
+	margin: 0 0 (-$grid-unit-10);
+	box-shadow: none;
+	border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
+}
+
+.wpnc-app .wpnc__note.wpnc__comment-unapproved {
+	.wpnc__body .wpnc__body-content {
+		padding-block-start: $grid-unit-10;
+		box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+	}
+}
+
+// Scoped to the app root to outrank the legacy panel's `.wpnc__main div` reset.
+.wpnc-app .wpnc__pending-approval-strip {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 12px;
+	background-color: var(--wpds-color-background-surface-warning, #fde6be);
+	font-size: 12px;
+	color: var(--color-text);
+
+	@include dark-warning-surface;
+
+	.wpnc__pending-approval-strip-text,
+	.wpnc__pending-approval-strip-link {
+		font-weight: 500;
+		color: var(--wpds-color-foreground-content-warning, #2e1900);
+
+		// The WPDS warning foreground is near-black, unreadable on the dark
+		// surface; use the lighter warning foreground instead.
+		@include ui-mixins.when-dark-theme {
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
+	}
+
+	.wpnc__pending-approval-strip-link {
+		margin-inline-start: auto;
+		white-space: nowrap;
+	}
+}
+
 // Dark mode: the detail-pane literals above (quote bars/text, dividers) ship
 // light-mode values that don't adapt. Point their tokens at dashboard colors —
 // readable muted quote text (passes AA on the overlay panel), a neutral quote

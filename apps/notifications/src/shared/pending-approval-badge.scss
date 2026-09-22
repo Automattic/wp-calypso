@@ -1,53 +1,16 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
-@import '@wordpress/base-styles/variables';
-
-// The WPDS warning surface has no dark counterpart. Tint the dark surface the
-// way the Dashboard's own warning notices do.
-@mixin dark-warning-surface {
-	@include ui-mixins.when-dark-theme {
-		background-color: color-mix(
-			in srgb,
-			var(--dashboard__background-color-warning, #d47608) 8%,
-			var(--dashboard-surface__background-color, #2a2a2a)
-		);
-	}
-}
-
-// Both renderers nest the strip this way, so this reaches the new app too; it
-// overrides the bar below. Left as-is to avoid regressing the old widget.
+// Legacy standalone panel (rendered under `.wpnc__main`, where `.wpnc__note`
+// wraps `.wpnc__body`). The new app overrides this in its own note styles.
 .wpnc__note .wpnc__body .wpnc__pending-approval-section {
-	margin: 0;
-	box-shadow: inset 3px 0 0 var(--color-warning);
+	// Lines up with the comment below: same indent, same rule width.
+	margin: 0 0 0 14px;
+	box-shadow: inset 4px 0 0 var(--color-warning);
 }
 
-// In the new app the warning reads as one rule running down the strip and on
-// into the comment.
-.wpnc-app .wpnc__note.wpnc__comment-unapproved {
-	// The body stack's gap would break the rule in two, so it moves inside the
-	// comment as padding: the rule runs unbroken, the text keeps its distance.
-	.wpnc__pending-approval-section {
-		margin-block-end: -$grid-unit-10;
-		box-shadow: none;
-		border-inline-start: 3px solid var(--wpds-color-stroke-surface-warning, #e1bc7c);
-	}
-
-	.wpnc-pending-approval-badge {
-		background-color: var(--wpds-color-background-surface-warning, #fde6be);
-
-		@include dark-warning-surface;
-	}
-
-	.wpnc__body .wpnc__body-content {
-		padding-block-start: $grid-unit-10;
-		box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
-	}
-}
-
-// The new app runs the strip smaller than the legacy panel.
-.wpnc-app .wpnc-pending-approval-badge {
-	gap: 6px;
-	font-size: 12px;
+// The panel's reset (`.wpnc__main div`) outranks a single class.
+.wpnc__main .wpnc-pending-approval-badge {
+	padding: 12px;
 }
 
 .wpnc-pending-approval-badge {
@@ -55,18 +18,25 @@
 	align-items: center;
 	gap: 8px;
 	padding: 12px;
-	background-color: var(--wpds-color-background-surface-warning-weak, #fef7eb);
+	background-color: color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent);
 	font-size: 13px;
 	color: var(--color-text);
 
-	@include dark-warning-surface;
+	svg {
+		fill: var(--color-warning, #f0b849);
+		flex-shrink: 0;
+
+		@include ui-mixins.when-dark-theme {
+			fill: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
+	}
 
 	.wpnc-pending-approval-badge__text {
 		font-weight: 500;
-		color: var(--wpds-color-foreground-content-warning, #2e1900);
+		color: var(--color-warning-80, #614200);
 
-		// The WPDS warning foreground is near-black, unreadable on the dark
-		// surface; use the lighter warning foreground instead.
+		// The `-80` warning shade is too dark to read in dark mode; use the
+		// lighter warning foreground instead.
 		@include ui-mixins.when-dark-theme {
 			color: var(--dashboard__foreground-color-warning, #f5c15c);
 		}
@@ -74,12 +44,21 @@
 
 	.wpnc-pending-approval-badge__link {
 		margin-inline-start: auto;
-		color: var(--wpds-color-foreground-content-warning, #2e1900);
+		color: var(--color-warning-80, #614200);
+		text-decoration: none;
 		font-weight: 500;
+		// Keep the link visibly lighter than the label while still meeting the
+		// WCAG AA 4.5:1 contrast minimum in both light and dark modes.
+		opacity: 0.8;
 		white-space: nowrap;
 
 		@include ui-mixins.when-dark-theme {
 			color: var(--dashboard__foreground-color-warning, #f5c15c);
+		}
+
+		&:hover {
+			text-decoration: underline;
+			opacity: 1;
 		}
 	}
 }
