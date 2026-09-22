@@ -50,17 +50,41 @@ describe( 'SearchBar#Input', () => {
 
 		await user.type( screen.getByRole( 'searchbox' ), '2' );
 
-		// A new cart object rebuilds the context value, and with it `setQuery`,
-		// before the debounce delay has elapsed.
+		// New `cart` and `events` objects rebuild the context value, and with it
+		// `setQuery`, before the debounce delay has elapsed.
 		rerender(
 			<TestDomainSearch query="test" events={ { onQueryChange } } cart={ buildCart() }>
 				<Input />
 			</TestDomainSearch>
 		);
 
+		expect( onQueryChange ).not.toHaveBeenCalled();
+
 		await waitFor( () => {
 			expect( onQueryChange ).toHaveBeenCalledWith( 'test2' );
 		} );
+	} );
+
+	it( 'does not dispatch a query that was cleared before the delay', async () => {
+		const user = userEvent.setup();
+
+		const onQueryChange = jest.fn();
+
+		render(
+			<TestDomainSearch query="test" events={ { onQueryChange } }>
+				<Input />
+			</TestDomainSearch>
+		);
+
+		await user.type( screen.getByRole( 'searchbox' ), '2' );
+		await user.click( screen.getByRole( 'button', { name: 'Reset search' } ) );
+		await user.type( screen.getByRole( 'searchbox' ), '{Enter}' );
+
+		expect( onQueryChange ).not.toHaveBeenCalled();
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+		expect( onQueryChange ).not.toHaveBeenCalled();
 	} );
 
 	it( 'dispatches the query immediately when Enter is pressed', async () => {
@@ -77,6 +101,11 @@ describe( 'SearchBar#Input', () => {
 		await user.type( screen.getByRole( 'searchbox' ), '2{Enter}' );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test2' );
+
+		// The flush clears the timer rather than firing a second time after it.
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+		expect( onQueryChange ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'clears the query when the clear button is clicked and dispatches the onQueryClear event', async () => {

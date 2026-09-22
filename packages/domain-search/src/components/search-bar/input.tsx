@@ -33,6 +33,7 @@ export const Input = () => {
 				if ( trimmedValue ) {
 					debouncedPropagateQuery( trimmedValue );
 				} else {
+					debouncedPropagateQuery.cancel();
 					events.onQueryClear();
 				}
 			} }
