@@ -5,6 +5,7 @@ import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { DateRange } from '../lib/date-ranges';
 import { deriveSeriesColors } from '../lib/series-colors';
@@ -61,7 +62,9 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		const toPoints = ( attribute: 'views' | 'visitors' ) =>
 			chartData
 				.map( ( record: { data: VisitRecord } ) => ( {
-					date: new Date( record.data.period ),
+					// Periods are bare dates ("2026-09-20"), which `new Date()` reads as UTC
+					// midnight: behind UTC that lands each point on the previous evening.
+					date: parseLocalDate( record.data.period ),
 					value: record.data[ attribute ] ?? 0,
 				} ) )
 				.filter( ( point: { date: Date } ) => ! isNaN( point.date.getTime() ) );
