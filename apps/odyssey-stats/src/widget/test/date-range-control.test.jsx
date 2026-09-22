@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { DropdownMenu } from '@wordpress/components';
 import { render } from '@testing-library/react';
+import { DropdownMenu } from '@wordpress/components';
 import DateRangeControl from '../date-range-control';
 
 jest.mock( '@wordpress/components', () => ( {
