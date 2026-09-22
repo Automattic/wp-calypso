@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import Snackbars from '../../../../app/snackbars';
@@ -24,22 +24,25 @@ function mockCountries() {
 		} );
 }
 
+// Typing every field keystroke by keystroke is too slow for CI, so the text
+// fields get their value in one change event each.
+function fillText( name: string, value: string ) {
+	fireEvent.change( screen.getByRole( 'textbox', { name } ), { target: { value } } );
+}
+
 async function fillSharedFields( user: ReturnType< typeof userEvent.setup > ) {
-	await user.type( screen.getByRole( 'textbox', { name: 'Company name' } ), 'Acme' );
-	await user.type( screen.getByRole( 'textbox', { name: 'Company address' } ), '1 Main St' );
+	fillText( 'Company name', 'Acme' );
+	fillText( 'Company address', '1 Main St' );
 	await user.click( screen.getByRole( 'combobox', { name: 'Country' } ) );
 	await user.click( await screen.findByRole( 'option', { name: 'France' } ) );
-	await user.type( screen.getByRole( 'textbox', { name: 'City' } ), 'Paris' );
-	await user.type( screen.getByRole( 'textbox', { name: 'ZIP/Postal code' } ), '75001' );
-	await user.type( screen.getByRole( 'textbox', { name: 'First name' } ), 'Ada' );
-	await user.type( screen.getByRole( 'textbox', { name: 'Last name' } ), 'Lovelace' );
-	await user.type( screen.getByRole( 'textbox', { name: 'Title' } ), 'CTO' );
-	await user.type( screen.getByRole( 'textbox', { name: 'Email' } ), 'ada@example.com' );
-	await user.type( screen.getByRole( 'textbox', { name: 'Website' } ), 'example.com' );
-	await user.type(
-		screen.getByRole( 'textbox', { name: 'Tell us more about this opportunity' } ),
-		'A big site.'
-	);
+	fillText( 'City', 'Paris' );
+	fillText( 'ZIP/Postal code', '75001' );
+	fillText( 'First name', 'Ada' );
+	fillText( 'Last name', 'Lovelace' );
+	fillText( 'Title', 'CTO' );
+	fillText( 'Email', 'ada@example.com' );
+	fillText( 'Website', 'example.com' );
+	fillText( 'Tell us more about this opportunity', 'A big site.' );
 }
 
 const sharedPayload = {
@@ -77,7 +80,7 @@ describe( '<ReferHostingForm>', () => {
 				onSubmitted={ onSubmitted }
 			/>
 		);
-		await user.type( screen.getByRole( 'textbox', { name: 'Email' } ), 'not-an-email' );
+		fillText( 'Email', 'not-an-email' );
 		await user.click( screen.getByRole( 'button', { name: 'Submit VIP referral' } ) );
 
 		expect( await screen.findByText( 'Please enter your company name' ) ).toBeVisible();
@@ -154,7 +157,7 @@ describe( '<ReferHostingForm>', () => {
 
 		// The message is also announced in the a11y live region, so read the snackbar itself.
 		expect(
-			await screen.findByText( 'An error occurred while submitting your request.', {
+			await screen.findByText( 'Failed to submit referral.', {
 				selector: '.components-snackbar__content',
 			} )
 		).toBeInTheDocument();

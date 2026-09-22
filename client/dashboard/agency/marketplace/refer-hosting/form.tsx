@@ -52,8 +52,8 @@ const required =
 		item[ key ].trim() === '' ? message : null;
 
 const getSnackbarMessages = () => ( {
-	success: __( 'Your request has been submitted successfully.' ),
-	error: __( 'An error occurred while submitting your request.' ),
+	success: __( 'Referral submitted.' ),
+	error: __( 'Failed to submit referral.' ),
 } );
 
 export default function ReferHostingForm( {

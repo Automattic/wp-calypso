@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -59,21 +59,22 @@ describe( '<ReferHosting>', () => {
 
 		const { recordTracksEvent } = render( <ReferHosting type="premium" /> );
 
-		await user.type( await screen.findByRole( 'textbox', { name: 'Company name' } ), 'Acme' );
-		await user.type( screen.getByRole( 'textbox', { name: 'Company address' } ), '1 Main St' );
+		// One change event per text field keeps the test well inside CI's timeout.
+		const fillText = ( name: string, value: string ) =>
+			fireEvent.change( screen.getByRole( 'textbox', { name } ), { target: { value } } );
+		await screen.findByRole( 'textbox', { name: 'Company name' } );
+		fillText( 'Company name', 'Acme' );
+		fillText( 'Company address', '1 Main St' );
 		await user.click( screen.getByRole( 'combobox', { name: 'Country' } ) );
 		await user.click( await screen.findByRole( 'option', { name: 'France' } ) );
-		await user.type( screen.getByRole( 'textbox', { name: 'City' } ), 'Paris' );
-		await user.type( screen.getByRole( 'textbox', { name: 'ZIP/Postal code' } ), '75001' );
-		await user.type( screen.getByRole( 'textbox', { name: 'First name' } ), 'Ada' );
-		await user.type( screen.getByRole( 'textbox', { name: 'Last name' } ), 'Lovelace' );
-		await user.type( screen.getByRole( 'textbox', { name: 'Title' } ), 'CTO' );
-		await user.type( screen.getByRole( 'textbox', { name: 'Email' } ), 'ada@example.com' );
-		await user.type( screen.getByRole( 'textbox', { name: 'Website' } ), 'example.com' );
-		await user.type(
-			screen.getByRole( 'textbox', { name: 'Tell us more about this opportunity' } ),
-			'A big site.'
-		);
+		fillText( 'City', 'Paris' );
+		fillText( 'ZIP/Postal code', '75001' );
+		fillText( 'First name', 'Ada' );
+		fillText( 'Last name', 'Lovelace' );
+		fillText( 'Title', 'CTO' );
+		fillText( 'Email', 'ada@example.com' );
+		fillText( 'Website', 'example.com' );
+		fillText( 'Tell us more about this opportunity', 'A big site.' );
 		await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
 
 		expect(

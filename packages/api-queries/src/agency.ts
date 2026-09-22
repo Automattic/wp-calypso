@@ -168,14 +168,14 @@ export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
 
 export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'agcy-vip-partner-opportunity' },
+		meta: { statId: 'agcy-vip-opp-submit' },
 		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
 			submitAgencyVipPartnerOpportunity( agencyId, referral ),
 	} );
 
 export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'agcy-pressable-premium-referral' },
+		meta: { statId: 'agcy-press-prem-submit' },
 		mutationFn: ( referral: AgencyHostingReferral ) =>
 			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
 	} );
