@@ -37,8 +37,8 @@ describe( 'openHelpCenterChat', () => {
 	} );
 
 	it( 'sends a default message, and leaves out a site and session it does not have', () => {
-		jest.mocked( getAgentsManagerInlineData ).mockReturnValue( undefined );
-		jest.mocked( getActiveSessionId ).mockReturnValue( '' );
+		jest.mocked( getAgentsManagerInlineData ).mockReturnValueOnce( undefined );
+		jest.mocked( getActiveSessionId ).mockReturnValueOnce( '' );
 
 		openHelpCenterChat();
 
