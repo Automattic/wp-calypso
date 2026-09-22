@@ -754,6 +754,8 @@ describe( 'getTitleForDisplay', () => {
 } );
 
 describe( 'getDelayedDowngradeRenewalPriceText', () => {
+	const translated = () => true;
+
 	test( 'names the downgraded renewal price when a downgrade is pending', () => {
 		expect(
 			getDelayedDowngradeRenewalPriceText(
@@ -761,7 +763,8 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 					currency_code: 'USD',
 					is_delayed_downgrade_pending: true,
 					delayed_downgrade_price_integer: 9600,
-				} )
+				} ),
+				translated
 			)
 		).toBe( 'Because of your scheduled downgrade, your next renewal will be $96.' );
 	} );
@@ -773,7 +776,8 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 					currency_code: 'USD',
 					is_delayed_downgrade_pending: false,
 					delayed_downgrade_price_integer: 9600,
-				} )
+				} ),
+				translated
 			)
 		).toBeNull();
 	} );
@@ -784,11 +788,28 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 				makePurchase( {
 					is_delayed_downgrade_pending: true,
 					delayed_downgrade_price_integer: null,
-				} )
+				} ),
+				translated
 			)
 		).toBeNull();
 		expect(
-			getDelayedDowngradeRenewalPriceText( makePurchase( { is_delayed_downgrade_pending: true } ) )
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( { is_delayed_downgrade_pending: true } ),
+				translated
+			)
+		).toBeNull();
+	} );
+
+	test( 'returns null when the sentence is not translated yet', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: 9600,
+				} ),
+				() => false
+			)
 		).toBeNull();
 	} );
 } );

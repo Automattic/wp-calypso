@@ -1118,6 +1118,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const isCentennial = isCentennialPurchase( purchase );
 	// Email plans are billed per mailbox; show the per-mailbox renewal price.
 	if ( isEmailPlanManagementEnabled( purchase ) && ! purchase.is_trial_plan ) {
@@ -1170,7 +1171,8 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			} )
 		: '';
 	// The offer text describes the current plan, which won't renew if a downgrade is scheduled.
-	const renewalNote = getDelayedDowngradeRenewalPriceText( purchase ) ?? offerText;
+	const renewalNote =
+		getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation ) ?? offerText;
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -1586,6 +1588,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 export default function PurchaseSettings() {
 	const { user } = useAuth();
+	const hasEnTranslation = useHasEnTranslation();
 	const { supports } = useAppContext();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
@@ -1632,7 +1635,9 @@ export default function PurchaseSettings() {
 			return __( 'Paid until' );
 		}
 		if ( displayRenewDate ) {
-			return purchase.is_delayed_downgrade_pending ? __( 'Downgrades and renews' ) : __( 'Renews' );
+			return purchase.is_delayed_downgrade_pending && hasEnTranslation( 'Downgrades and renews' )
+				? __( 'Downgrades and renews' )
+				: __( 'Renews' );
 		}
 		if ( isOneTimePurchase( purchase ) ) {
 			return __( 'Renewal status' );

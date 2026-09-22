@@ -1,6 +1,7 @@
 import { EmailProvider } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -134,7 +135,8 @@ export function ManageEmailPlanActionItem( { purchase }: { purchase: Purchase } 
 }
 
 export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
-	const downgradeText = getDelayedDowngradeRenewalPriceText( purchase );
+	const hasEnTranslation = useHasEnTranslation();
+	const downgradeText = getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation );
 	const periodText = isMonthlyEmailProduct( purchase )
 		? __( 'Per mailbox/month. Excludes taxes.' )
 		: __( 'Per mailbox/year. Excludes taxes.' );

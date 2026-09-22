@@ -953,12 +953,23 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 /**
  * Sentence naming what the next renewal will actually charge when a delayed
  * downgrade is scheduled, since the purchase's own renewal price is still the
- * current plan's. Returns null when there is no downgrade price to show.
+ * current plan's. Returns null when there is no downgrade price to show, or
+ * when the sentence isn't translated into the user's language yet.
  */
-export function getDelayedDowngradeRenewalPriceText( purchase: Purchase ): string | null {
+export function getDelayedDowngradeRenewalPriceText(
+	purchase: Purchase,
+	hasEnTranslation: ( single: string ) => boolean
+): string | null {
 	if (
 		! purchase.is_delayed_downgrade_pending ||
 		purchase.delayed_downgrade_price_integer == null
+	) {
+		return null;
+	}
+	if (
+		! hasEnTranslation(
+			'Because of your scheduled downgrade, your next renewal will be %(price)s.'
+		)
 	) {
 		return null;
 	}
