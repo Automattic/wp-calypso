@@ -44,9 +44,6 @@ if ( process.platform === 'linux' ) {
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
 const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
-// The E2E user agent marker should keep the edge from serving a bot challenge in place of the
-// login page. If one is served anyway, that page loads cleanly, so the login selectors simply time
-// out and report a missing button rather than the real cause. Detect it up front and say so.
 const BOT_CHALLENGE_MARKERS = [
 	'Confirm you are human',
 	'Checking your browser',
