@@ -1,5 +1,6 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useSearchParams } from 'react-router-dom';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -8,6 +9,7 @@ import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import {
 	createRevertedTransferWatcher,
 	getTransferFailureMessage,
+	isForwardTransferStatus,
 	transferStates,
 } from '../utils/atomic-transfer-outcome';
 import { useSiteData } from './use-site-data';
@@ -19,10 +21,25 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 const POST_TRANSFER_TIMEOUT_MS = 1000 * 180;
 const MAX_FEATURE_FETCH_FAILURES = 5;
 
+const TRANSFER_TIMEOUT_MS = 1000 * 300;
+const POLL_MS = 3000;
+
+// A caller that handles the deadline itself keeps the wait alive past it: the transfer is still
+// running server-side and usually lands, so polling slows down and only this far later cap ends it.
+const TRANSFER_GRACE_TIMEOUT_MS = 1000 * 60 * 15;
+const GRACE_POLL_MS = 10000;
+
+// The cap is measured from the transfer, so a wait that starts on an already-doomed transfer would
+// otherwise fail on its first poll. This floor buys a few polls: long enough to read the screen and
+// for a completion seconds away to land, short enough that reloading cannot keep postponing the cap.
+const MIN_OBSERVATION_MS = 30000;
+
 export interface FailureInfo {
 	type: string;
 	code: number | string;
 	error: string;
+	// The wait carried on afterwards, so this is a slow transfer being reported, not a dead one.
+	recoverable?: boolean;
 }
 
 interface UseWaitForAtomicProps {
@@ -66,22 +83,45 @@ export const useWaitForAtomic = ( {
 
 	const waitForTransfer = async ( {
 		onTransferStatusChange,
+		onDeadlineExceeded,
 	}: {
 		// The transfer's own `created_at` comes along so callers can time the wait from when the
 		// transfer actually began rather than from when this UI mounted.
 		onTransferStatusChange?: ( status: string | null, createdAt?: string ) => void;
+		// Passing this turns the deadline from an ending into a signal: the caller is telling the
+		// customer the transfer is running long, and this wait keeps watching it instead of failing.
+		onDeadlineExceeded?: () => void;
 	} = {} ) => {
 		const startTime = new Date().getTime();
-		const totalTimeout = 1000 * 300;
-		const maxFinishTime = startTime + totalTimeout;
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
+		let isPastDeadline = false;
+		// Both clocks belong to the transfer, not to this component, so a reload does not restart a
+		// wait that is already minutes old. Only a transfer still in flight anchors them, and only
+		// for a caller that recovers, so an old in-flight transfer cannot hard-fail another caller.
+		// A stuck old forward transfer remains indistinguishable until a different transfer id appears.
+		let deadlineAnchor = startTime;
+		let deadlineAnchorTransferId: number | undefined;
 
 		while ( true ) {
-			await wait( 3000 );
+			await wait( isPastDeadline ? GRACE_POLL_MS : POLL_MS );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
 			const transferStatus = transfer?.status ?? null;
 			onTransferStatusChange?.( transferStatus, transfer?.created_at );
+			if (
+				onDeadlineExceeded &&
+				isForwardTransferStatus( transferStatus ) &&
+				transfer?.created_at &&
+				transfer.atomic_transfer_id !== undefined &&
+				transfer.atomic_transfer_id !== deadlineAnchorTransferId
+			) {
+				const createdAt = parseTransferCreatedAt( transfer.created_at );
+				if ( ! Number.isNaN( createdAt ) ) {
+					deadlineAnchor = Math.min( createdAt, startTime );
+					deadlineAnchorTransferId = transfer.atomic_transfer_id;
+				}
+			}
+
 			const transferError = getSiteLatestAtomicTransferError( siteId );
 			const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
@@ -103,17 +143,41 @@ export const useWaitForAtomic = ( {
 				throw new Error( getTransferFailureMessage( 'reverted' ) );
 			}
 
-			if ( maxFinishTime < new Date().getTime() ) {
+			// Checked before the clocks below: fresh server state saying the transfer landed beats a
+			// client deadline that happened to pass on the same poll.
+			if ( transferStatus === transferStates.COMPLETED ) {
+				break;
+			}
+
+			if ( ! isPastDeadline && deadlineAnchor + TRANSFER_TIMEOUT_MS < new Date().getTime() ) {
+				isPastDeadline = true;
+				// Same event at the same point, so the existing signal stays comparable; `recoverable`
+				// is what separates a slow transfer from one this wait gave up on.
 				handleTransferFailure?.( {
 					type: 'transfer_timeout',
 					error: 'transfer took too long',
 					code: 'transfer_timeout',
+					recoverable: !! onDeadlineExceeded,
 				} );
-				throw new Error( getTransferFailureMessage( 'timeout' ) );
+
+				if ( ! onDeadlineExceeded ) {
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
+				}
+
+				onDeadlineExceeded();
 			}
 
-			if ( transferStatus === transferStates.COMPLETED ) {
-				break;
+			const maxGraceFinishTime = onDeadlineExceeded
+				? Math.max( deadlineAnchor + TRANSFER_GRACE_TIMEOUT_MS, startTime + MIN_OBSERVATION_MS )
+				: deadlineAnchor + TRANSFER_TIMEOUT_MS;
+
+			if ( maxGraceFinishTime < new Date().getTime() ) {
+				handleTransferFailure?.( {
+					type: 'transfer_grace_timeout',
+					error: 'transfer never finished, even past the deadline',
+					code: 'transfer_grace_timeout',
+				} );
+				throw new Error( getTransferFailureMessage( 'timeout' ) );
 			}
 		}
 	};
