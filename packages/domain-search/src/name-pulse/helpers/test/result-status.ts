@@ -1,8 +1,9 @@
 import {
-	mergeResultUpdate,
-	needsAvailabilityCheck,
+	applyNamePulseVerdict,
+	mergeNamePulseVerdict,
 	NamePulseDomainStatus,
 	type NamePulseDomainResult,
+	type NamePulseVerdict,
 } from '..';
 
 const row = ( overrides: Partial< NamePulseDomainResult > = {} ): NamePulseDomainResult => ( {
@@ -13,31 +14,31 @@ const row = ( overrides: Partial< NamePulseDomainResult > = {} ): NamePulseDomai
 	...overrides,
 } );
 
-describe( 'needsAvailabilityCheck', () => {
-	it( 'is true for WAITING and UNKNOWN only', () => {
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.WAITING ) ).toBe( true );
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.UNKNOWN ) ).toBe( true );
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.AVAILABLE ) ).toBe( false );
-		expect( needsAvailabilityCheck( NamePulseDomainStatus.TAKEN ) ).toBe( false );
+describe( 'mergeNamePulseVerdict', () => {
+	it( 'never lets a bulk verdict overwrite a real-time one', () => {
+		const realtime: NamePulseVerdict = { status: NamePulseDomainStatus.TAKEN, is_realtime: true };
+		const bulk: NamePulseVerdict = { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' };
+
+		expect( mergeNamePulseVerdict( realtime, bulk ) ).toBe( realtime );
+		expect( mergeNamePulseVerdict( bulk, realtime ) ).toBe( realtime );
+		expect( mergeNamePulseVerdict( undefined, bulk ) ).toBe( bulk );
 	} );
 } );
 
-describe( 'mergeResultUpdate', () => {
-	it( 'never lets a bulk verdict overwrite a real-time one, nor a late UNKNOWN overwrite a verdict', () => {
-		const realtime = row( { status: NamePulseDomainStatus.TAKEN, is_realtime: true } );
-		const verdict = row( { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' } );
+describe( 'applyNamePulseVerdict', () => {
+	it( 'keeps the row WAITING without an entry, marks a failed check UNKNOWN and spreads a verdict', () => {
+		const waiting = row();
 
+		expect( applyNamePulseVerdict( waiting, undefined ) ).toBe( waiting );
+		expect( applyNamePulseVerdict( waiting, { isUnknown: false } ) ).toBe( waiting );
+		expect( applyNamePulseVerdict( waiting, { isUnknown: true } ).status ).toBe(
+			NamePulseDomainStatus.UNKNOWN
+		);
 		expect(
-			mergeResultUpdate( realtime, {
-				domain_name: 'test.com',
-				status: NamePulseDomainStatus.AVAILABLE,
+			applyNamePulseVerdict( waiting, {
+				verdict: { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' },
+				isUnknown: false,
 			} )
-		).toBe( realtime );
-		expect(
-			mergeResultUpdate( verdict, {
-				domain_name: 'test.com',
-				status: NamePulseDomainStatus.UNKNOWN,
-			} )
-		).toBe( verdict );
+		).toEqual( row( { status: NamePulseDomainStatus.AVAILABLE, cost: '$22.00' } ) );
 	} );
 } );

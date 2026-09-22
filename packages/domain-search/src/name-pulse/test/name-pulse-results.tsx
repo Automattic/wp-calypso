@@ -451,8 +451,10 @@ describe( 'NamePulseResults', () => {
 		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
+		// The row takes its slot as soon as the TLD order is known, a tick before its verdict
+		// arrives, so wait for the CTA rather than the row.
 		await user.click(
-			within( rowFor( 'icecream.blog' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
 		);
 
 		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {
