@@ -3,8 +3,10 @@
  */
 import { renderHook } from '@testing-library/react';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { useWaitForAtomic, type FailureInfo } from '../use-wait-for-atomic';
 
+let mockSearchParams = 'feature=sftp';
 const mockReduxDispatch = jest.fn();
 const mockRequestLatestAtomicTransfer = jest.fn();
 const mockGetSiteLatestAtomicTransfer = jest.fn();
@@ -21,7 +23,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 jest.mock( 'react-router-dom', () => ( {
-	useSearchParams: () => [ new URLSearchParams( 'feature=sftp' ) ],
+	useSearchParams: () => [ new URLSearchParams( mockSearchParams ) ],
 } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'site-store' } ) );
 jest.mock( '../use-site-data', () => ( { useSiteData: () => ( { siteId: 123 } ) } ) );
@@ -54,6 +56,7 @@ const startedNow = () => new Date().toISOString().replace( 'T', ' ' ).slice( 0, 
 
 describe( 'useWaitForAtomic', () => {
 	beforeEach( () => {
+		mockSearchParams = 'feature=sftp';
 		jest.useFakeTimers();
 		mockReduxDispatch.mockReset();
 		mockRequestLatestAtomicTransfer.mockReset();
@@ -63,6 +66,57 @@ describe( 'useWaitForAtomic', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+	} );
+
+	describe( 'waitForInitiateTransfer', () => {
+		const inFlightTransfer = () => ( {
+			atomic_transfer_id: 1,
+			status: 'active',
+			created_at: new Date( Date.now() - 60_000 ).toISOString().replace( 'T', ' ' ).slice( 0, 19 ),
+		} );
+
+		it( 'resumes a transfer already in flight instead of starting a second one', async () => {
+			mockSearchParams = 'feature=sftp&initiate_transfer_context=hosting';
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( inFlightTransfer() );
+
+			const { result } = renderWaitForAtomic();
+			await result.current.waitForInitiateTransfer();
+
+			expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+		} );
+
+		it( 'initiates when the site’s latest transfer is an old one', async () => {
+			mockSearchParams = 'feature=sftp&initiate_transfer_context=hosting';
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2025-04-11 08:03:58',
+			} );
+
+			const { result } = renderWaitForAtomic();
+			await result.current.waitForInitiateTransfer();
+
+			expect( initiateThemeTransfer ).toHaveBeenCalled();
+		} );
+
+		it( 'initiates when the site has never transferred', async () => {
+			mockSearchParams = 'feature=sftp&initiate_transfer_context=hosting';
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( undefined );
+
+			const { result } = renderWaitForAtomic();
+			await result.current.waitForInitiateTransfer();
+
+			expect( initiateThemeTransfer ).toHaveBeenCalled();
+		} );
+
+		it( 'always initiates for a plugin, which needs a transfer of its own', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( inFlightTransfer() );
+
+			const { result } = renderWaitForAtomic();
+			await result.current.waitForInitiateTransfer( 'woocommerce' );
+
+			expect( initiateThemeTransfer ).toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'waitForTransfer', () => {

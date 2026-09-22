@@ -64,9 +64,30 @@ export const useWaitForAtomic = ( {
 		[]
 	);
 
+	// A transfer this wait could still be about: in flight, and young enough that it cannot be the
+	// stale latest transfer the endpoint hands back for a site that transferred long ago.
+	const hasTransferAlreadyInFlight = async () => {
+		await requestLatestAtomicTransfer( siteId );
+		const transfer = getSiteLatestAtomicTransfer( siteId );
+
+		if ( ! isForwardTransferStatus( transfer?.status ) || ! transfer?.created_at ) {
+			return false;
+		}
+
+		const createdAt = parseTransferCreatedAt( transfer.created_at );
+		return ! Number.isNaN( createdAt ) && Date.now() - createdAt < TRANSFER_GRACE_TIMEOUT_MS;
+	};
+
 	const waitForInitiateTransfer = async ( plugin?: string | null ) => {
 		const initiateTransferContext = searchParams.get( 'initiate_transfer_context' );
 		if ( ! initiateTransferContext && ! plugin ) {
+			return;
+		}
+
+		// A reload arrives here with the context still in the URL and a transfer already running;
+		// starting a second one abandons the first. A plugin has to ride along with a transfer of
+		// its own, so that case always initiates.
+		if ( ! plugin && ( await hasTransferAlreadyInFlight() ) ) {
 			return;
 		}
 
