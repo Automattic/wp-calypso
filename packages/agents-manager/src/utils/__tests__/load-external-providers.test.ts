@@ -8,6 +8,7 @@ import { captureCanvasAbility } from '../../abilities/capture-canvas';
 import { editEntityRecordAbility } from '../../abilities/edit-entity-record';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
+import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
@@ -280,6 +281,7 @@ describe( 'loadExternalProviders', () => {
 				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -322,6 +324,7 @@ describe( 'loadExternalProviders', () => {
 				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -383,6 +386,7 @@ describe( 'loadExternalProviders', () => {
 				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -935,6 +939,7 @@ describe( 'loadExternalProviders', () => {
 				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,

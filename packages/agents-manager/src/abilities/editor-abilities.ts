@@ -25,6 +25,7 @@ import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
+import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
@@ -40,6 +41,7 @@ export const EDITOR_ABILITIES: Ability[] = [
 	captureCanvasAbility,
 	editEntityRecordAbility,
 	editorNavigateAbility,
+	openHelpCenterAbility,
 	restoreCheckpointAbility,
 	setSiteLogoAbility,
 	showComponentAbility,
