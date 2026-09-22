@@ -116,7 +116,18 @@ export const useNamePulseSearch = ( query: string ) => {
 		isError: isTldsError,
 		refetch: refetchTlds,
 	} = useQuery( queries.namePulseTlds() );
-	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
+	// Sections mount as the user types, but AI mode (the exact grid collapsing and
+	// Top results switching source) follows the settled query, so crossing the
+	// four-word boundary mid-word does not flash the grid away and back.
+	const isAiMode = useMemo(
+		() => getResultsLayout( settledQuery, tlds ?? [] ).mode === 'ai',
+		[ settledQuery, tlds ]
+	);
+	const layout = useMemo( () => {
+		const typed = getResultsLayout( query, tlds ?? [] );
+
+		return { ...typed, exactGrid: { show: typed.top.show && ! isAiMode } };
+	}, [ query, tlds, isAiMode ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
@@ -209,7 +220,6 @@ export const useNamePulseSearch = ( query: string ) => {
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo( () => Array.from( exactResults.values() ), [ exactResults ] );
 
-	const isAiMode = layout.creative.show;
 	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
 	const topResults = useMemo( () => {
 		if ( ! isAiMode ) {

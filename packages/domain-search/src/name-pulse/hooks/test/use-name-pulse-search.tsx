@@ -9,15 +9,21 @@ import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/
 import { buildCart } from '../../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
 } from '../../../test-helpers/factories/name-pulse';
 import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
-import { NAME_PULSE_QUERY_SETTLE_MS, NamePulseDomainStatus } from '../../helpers';
+import {
+	NAME_PULSE_AI_TIMEOUT_MS,
+	NAME_PULSE_QUERY_SETTLE_MS,
+	NamePulseDomainStatus,
+} from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
 import type {
 	NamePulseAvailabilityResponse,
+	NamePulseSuggestionsQuery,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
 
@@ -36,7 +42,7 @@ const FetcherSearch = ( {
 	children,
 }: {
 	availability: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
-	suggestions: () => Promise< NamePulseSuggestionsResponse >;
+	suggestions: ( params: NamePulseSuggestionsQuery ) => Promise< NamePulseSuggestionsResponse >;
 	children: React.ReactNode;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
@@ -64,8 +70,8 @@ const renderTypedSearch = ( query: string ) => {
 	const availability = jest.fn( async ( domainNames: string[] ) =>
 		buildNamePulseAvailabilityResponse( domainNames )
 	);
-	const suggestions = jest.fn( async () => ( {
-		suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE,
+	const suggestions = jest.fn( async ( params: NamePulseSuggestionsQuery ) => ( {
+		suggestions: params.use_ai ? NAME_PULSE_AI_SUGGESTIONS_FIXTURE : NAME_PULSE_SUGGESTIONS_FIXTURE,
 		errors: [],
 	} ) );
 	const rendered = renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
@@ -195,5 +201,54 @@ describe( 'useNamePulseSearch', () => {
 		);
 		expect( result.current.isLoadingKeyword ).toBe( false );
 		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'mounts Creative matches on the fourth word but collapses the exact grid only once the query settles', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, availability, suggestions } = renderTypedSearch( 'a blog about' );
+		const exactStatus = ( name: string ) =>
+			[ ...result.current.topResults, ...result.current.exactList ].find(
+				( row ) => row.domain_name === name
+			)?.status;
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		await waitFor( () =>
+			expect( exactStatus( 'ablogabout.com' ) ).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
+		await waitFor( () => expect( result.current.isLoadingKeyword ).toBe( false ) );
+		expect( result.current.layout.exactGrid.show ).toBe( true );
+		expect( result.current.layout.creative.show ).toBe( false );
+
+		rerender( { q: 'a blog about icecream' } );
+		expect( result.current.layout.creative.show ).toBe( true );
+		expect( result.current.isLoadingCreative ).toBe( true );
+		expect( result.current.layout.exactGrid.show ).toBe( true );
+		expect( suggestions ).not.toHaveBeenCalledWith( expect.objectContaining( { use_ai: true } ) );
+
+		const checksBeforeSettle = availability.mock.calls.length;
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		expect( result.current.layout.exactGrid.show ).toBe( false );
+		expect( result.current.exactList ).toHaveLength( 0 );
+		expect( suggestions ).toHaveBeenCalledWith( {
+			query: 'a blog about icecream',
+			use_ai: true,
+			timeout: NAME_PULSE_AI_TIMEOUT_MS,
+		} );
+
+		await waitFor( () => expect( result.current.isLoadingTop ).toBe( false ) );
+		expect( result.current.topResults ).toHaveLength( 3 );
+		expect( result.current.creativeResults.length ).toBeGreaterThan( 0 );
+		// The collapsed grid's rows for the four-word name are never checked.
+		expect( availability ).toHaveBeenCalledTimes( checksBeforeSettle );
+
+		rerender( { q: 'a blog about' } );
+		expect( result.current.layout.creative.show ).toBe( false );
+		expect( result.current.layout.exactGrid.show ).toBe( false );
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS );
+		expect( result.current.layout.exactGrid.show ).toBe( true );
+		await waitFor( () =>
+			expect( exactStatus( 'ablogabout.com' ) ).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
 	} );
 } );
