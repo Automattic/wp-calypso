@@ -307,6 +307,7 @@ const DomainSearchUI = (
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			showNamePulseSearch,
+			searchUiVersion: showNamePulseSearch ? ( 'i4_v1' as const ) : ( 'legacy_v1' as const ),
 		};
 	}, [
 		flowName,

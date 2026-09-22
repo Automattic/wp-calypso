@@ -754,7 +754,10 @@ describe( 'FeaturedSearchResultsItem', () => {
 					...suggestion,
 					position: 0,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'unknown',
 				},
+				'featured',
 				'recommended'
 			);
 		} );

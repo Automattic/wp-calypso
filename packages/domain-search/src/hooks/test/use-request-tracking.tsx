@@ -54,7 +54,9 @@ describe( 'useRequestTracking', () => {
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'prefilled' },
-			suggestions: [ buildSuggestion( { domain_name: 'prefilled.com' } ) ],
+			suggestions: [
+				buildSuggestion( { domain_name: 'prefilled.com', result_set_id: 'result-set-1' } ),
+			],
 		} );
 
 		const { rerender } = renderUseRequestTracking(
@@ -68,7 +70,13 @@ describe( 'useRequestTracking', () => {
 		expect( onSuggestionsReceive ).toHaveBeenCalledWith(
 			'prefilled',
 			[ 'prefilled.com' ],
-			expect.any( Number )
+			expect.any( Number ),
+			{
+				searchId: onSearch.mock.calls[ 0 ][ 1 ],
+				resultSetId: 'result-set-1',
+				resultCountFeatured: 1,
+				resultCountList: 0,
+			}
 		);
 
 		// Re-rendering with the same response does not fire it again.

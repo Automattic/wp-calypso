@@ -58,6 +58,7 @@ export default function DomainSearch() {
 			skippable: false,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain: true,
+			searchUiVersion: 'legacy_v1' as const,
 		};
 	}, [ tldQuery ] );
 

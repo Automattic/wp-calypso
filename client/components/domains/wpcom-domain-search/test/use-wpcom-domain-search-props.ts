@@ -1436,7 +1436,8 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
 			'analytics-section',
 			null,
-			'flow-name'
+			'flow-name',
+			undefined
 		);
 	} );
 

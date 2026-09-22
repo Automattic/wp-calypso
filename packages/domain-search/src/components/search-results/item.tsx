@@ -23,7 +23,7 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	const suggestion = useSuggestion( domainName );
 
 	const triggerSuggestionRenderEvent = useEvent( () => {
-		events.onSuggestionRender( suggestion );
+		events.onSuggestionRender( suggestion, 'list' );
 	} );
 
 	useEffect( () => {

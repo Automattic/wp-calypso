@@ -5,7 +5,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import type { SearchTrigger } from '@automattic/domain-search';
+import type { ResultGroup, SearchTrigger, SearchUiVersion } from '@automattic/domain-search';
 
 export const recordDomainSearchStepSubmit = (
 	suggestion: FreeDomainSuggestion | { domain_name: string },
@@ -41,7 +41,8 @@ export const recordDomainSearchStepSubmit = (
 export const recordUseYourDomainButtonClick = (
 	section: string,
 	source: string | null,
-	flowName: string
+	flowName: string,
+	searchUiVersion?: SearchUiVersion
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
@@ -49,6 +50,7 @@ export const recordUseYourDomainButtonClick = (
 			section,
 			source,
 			flow_name: flowName,
+			search_ui_version: searchUiVersion,
 		} )
 	);
 
@@ -74,7 +76,9 @@ export const recordSearchFormSubmit = (
 	vendor: string | undefined,
 	flowName: string,
 	searchId: string,
-	trigger: SearchTrigger
+	trigger: SearchTrigger,
+	queryShape: 'fqdn' | 'keyword',
+	searchUiVersion?: SearchUiVersion
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -92,13 +96,23 @@ export const recordSearchFormSubmit = (
 			flow_name: flowName,
 			search_id: searchId,
 			trigger,
+			query_shape: queryShape,
+			search_ui_version: searchUiVersion,
 		} )
 	);
 
-export const recordSearchFormView = ( section: string, flowName: string ) =>
+export const recordSearchFormView = (
+	section: string,
+	flowName: string,
+	searchUiVersion?: SearchUiVersion
+) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Landed on Search' ),
-		recordTracksEvent( 'calypso_domain_search_pageview', { section, flow_name: flowName } )
+		recordTracksEvent( 'calypso_domain_search_pageview', {
+			section,
+			flow_name: flowName,
+			search_ui_version: searchUiVersion,
+		} )
 	);
 
 export const recordSearchResultsReceive = (
@@ -106,7 +120,14 @@ export const recordSearchResultsReceive = (
 	suggestions: string[],
 	responseTimeInMs: number,
 	analyticsSection: string,
-	flowName: string
+	flowName: string,
+	details: {
+		searchId: string;
+		resultSetId: string | null;
+		resultCountFeatured: number;
+		resultCountList: number;
+		searchUiVersion?: SearchUiVersion;
+	}
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Receive Results', 'Response Time', responseTimeInMs ),
@@ -117,6 +138,11 @@ export const recordSearchResultsReceive = (
 			result_count: suggestions.length,
 			flow_name: flowName,
 			section: analyticsSection,
+			search_id: details.searchId,
+			result_set_id: details.resultSetId,
+			result_count_featured: details.resultCountFeatured,
+			result_count_list: details.resultCountList,
+			search_ui_version: details.searchUiVersion,
 		} )
 	);
 
@@ -228,7 +254,9 @@ export function recordShowMoreResults(
 	searchQuery: string,
 	pageNumber: number,
 	section: string,
-	flowName: string
+	flowName: string,
+	resultGroup: ResultGroup,
+	searchUiVersion?: SearchUiVersion
 ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
@@ -237,6 +265,8 @@ export function recordShowMoreResults(
 			page_number: pageNumber,
 			section,
 			flow_name: flowName,
+			result_group: resultGroup,
+			search_ui_version: searchUiVersion,
 		} )
 	);
 }
