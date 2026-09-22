@@ -34,10 +34,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 	const translate = useTranslate();
 	const { unit, quantity } = range;
 
-	// The chart follows the colour WordPress publishes for the current user's admin
-	// scheme, so it changes with their profile rather than being pinned to one palette.
-	// Read from `body`, not the hook's default `:root`: the scheme stylesheet sets the
-	// variable on `body.admin-color-*`, while `:root` only carries wp-admin's default blue.
+	// The chart follows the user's admin colour scheme. Read from `body`: the scheme sets
+	// the variable there, while `:root` only carries wp-admin's default blue.
 	const primaryColor = useCssVariable( '--wp-admin-theme-color', document.body );
 	const [ viewsColor, visitorsColor ] = deriveSeriesColors( primaryColor );
 
@@ -88,8 +86,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 
 	return (
 		<div className="stats-widget-minichart">
-			{ /* Hidden once a range comes back empty: a pair of zeros would read as "no
-			   traffic" rather than "no stats yet", which is what the notice below says. */ }
+			{ /* Hidden for an empty range, where zeros would read as "no traffic". */ }
 			{ ( isLoading || ! isEmpty ) && (
 				<div className="stats-widget-metrics">
 					<div className="stats-widget-metric">
@@ -133,11 +130,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 				</div>
 			) }
 
-			{ /* A fixed box while loading and for the chart, so the card does not resize
-			   when one replaces the other. It also gives the responsive chart a definite
-			   parent to measure, which is what stops it growing without bound. The empty
-			   notice has nothing to measure and would only leave a gap below it, so it
-			   sizes to its content. */ }
+			{ /* A fixed height while loading and for the chart, so the card doesn't resize
+			   between them; the empty notice sizes to its content. */ }
 			<div
 				// Only the 7-day range labels every day, so only there does the last date
 				// land on the chart's right edge and need ending at its tick.
@@ -148,9 +142,6 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			>
 				{ isLoading && <StatsModulePlaceholder isLoading /> }
 				{ ! isLoading && isEmpty && (
-					// The Notice Jetpack's current screens use (VideoPress, Backup, Boost), from
-					// the WordPress design system. Its styles ship inside its JS with token
-					// fallbacks, so it renders the same whether or not wp-admin defines them.
 					<Notice.Root intent="info" className="stats-widget-empty-notice">
 						<Notice.Description>
 							{ translate( 'We are collecting traffic data for your site' ) }

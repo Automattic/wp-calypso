@@ -1,6 +1,5 @@
 import { LineChart } from '@automattic/charts';
-// The package ships its layout as CSS modules; without this the chart's flex stack
-// collapses to zero width and nothing renders.
+// Without the package's own styles the chart collapses to zero width.
 import '@automattic/charts/style.css';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
@@ -18,13 +17,8 @@ interface OverviewChartProps {
 }
 
 /**
- * The chart itself, split into its own chunk.
- *
- * `@automattic/charts` is not externalized, so it brings visx with it — around
- * 157KB gzipped, which would more than double the widget chunk that every wp-admin
- * dashboard view loads. Keeping it behind its own `import()` lets the widget shell,
- * the totals and the lists paint first, the same reason the full Stats page loads
- * its line chart through AsyncLoad.
+ * The Overview line chart, loaded as its own chunk: `@automattic/charts` bundles visx
+ * (~157KB gzipped), so the rest of the widget paints without waiting for it.
  * @param props        Component props.
  * @param props.series The series to plot.
  * @param props.height Chart height in pixels.
@@ -39,22 +33,17 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 		curveType="monotone"
 		margin={ { left: 32, top: 8, bottom: 20, right: 8 } }
 		options={ {
-			// Anchor the scale at zero. Left to itself it fits the domain to the data,
-			// so a range whose values never approach zero reads as far more dramatic
-			// than the numbers warrant.
+			// Start at zero, so ranges that never approach it don't look more dramatic
+			// than they are.
 			yScale: { type: 'linear', zero: true },
 			axis: {
-				// The class lets the stylesheet right-align the last date, which would otherwise
-				// be centred on the chart's right edge and cropped.
+				// The class lets mini-chart.scss right-align the last date on the 7-day chart.
 				x: {
 					axisClassName: 'stats-widget-chart__x-axis',
 					tickFormat: ( value: number ) => moment( value ).format( 'MMM D' ),
 				},
-				// Compact ticks: "12K" rather than "12,000". At the widget's width the full
-				// form overflows the left margin and is clipped by the wrapper, and it
-				// matches how the totals above are formatted. Zero is left unlabelled, since
-				// the grid line marks it; blanked here because the package's axis options
-				// do not type visx's `hideZero`.
+				// Compact ticks ("12K"), which fit the left margin and match the totals. Zero is
+				// blanked since the grid line marks it; the package doesn't type visx's `hideZero`.
 				y: {
 					orientation: 'left',
 					tickFormat: ( value: number ) => ( value === 0 ? '' : formatNumberCompact( value ) ),

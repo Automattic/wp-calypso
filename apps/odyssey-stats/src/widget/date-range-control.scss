@@ -1,39 +1,29 @@
-// Trigger styling after Premium Analytics' shared `menu-trigger` mixin (jetpack
-// `premium-analytics/packages/ui/src/styles/_menu-trigger.scss`): wp-components' Button
-// restated in WPDS tokens so the menu trigger reads like a form field. The fallbacks
-// are the tokens' own values, since wp-admin does not always define them.
-//
-// `@wordpress/components` is externalized, so the Button these rules override is the
-// one the running WordPress ships, not the copy in `node_modules`.
+// Follows Premium Analytics' `menu-trigger` mixin (jetpack
+// `premium-analytics/packages/ui/src/styles/_menu-trigger.scss`), restyling wp-components'
+// Button as a form field. It is the Button WordPress ships, not the one in `node_modules`.
 .stats-widget-date-range {
-	// The toggle is an inline-flex button; in a block wrapper it would sit on a text
-	// baseline and add a descender's worth of height to the header.
+	// Flex, so the inline-flex button doesn't sit on a text baseline.
 	display: flex;
 
 	.stats-widget-date-range__toggle {
-		// The section header is built around 32px (`$section-header-content-height`),
-		// where Premium Analytics' controls use the 40px `size-lg`.
+		// 32px to fit the section header; Premium Analytics uses 40px.
 		height: var(--wpds-dimension-size-md, 32px);
-		// Declared whole: the shipped Button carries `border: 0`, so a bare
-		// `border-color` would paint nothing.
+		// In full, since the Button sets `border: 0`.
 		border: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
 		border-radius: var(--wpds-border-radius-sm, 2px);
 		color: var(--wpds-color-foreground-interactive-neutral, #1e1e1e);
 		font-size: var(--wpds-typography-font-size-md, 13px);
-		// The Button asks for an emphasis weight; a select trigger takes the weight of
-		// the text around it.
 		font-weight: inherit;
 		white-space: nowrap;
 
-		// wp-components tints the label with the admin accent on hover and while open;
-		// a field darkens its stroke instead and leaves the contents alone.
+		// Darken the stroke rather than tinting the label, as a field does.
 		&:hover:not(:disabled, [aria-disabled="true"]),
 		&[aria-expanded="true"] {
 			border-color: var(--wpds-color-stroke-interactive-neutral-active, #6e6e6e);
 			color: var(--wpds-color-foreground-interactive-neutral, #1e1e1e);
 		}
 
-		// The shipped Button draws focus as an accent shadow; fields draw an outset ring.
+		// An outset ring instead of the Button's focus shadow.
 		&:focus:not(:active) {
 			outline: var(--wpds-border-width-focus, 1.5px) solid var(--wpds-color-stroke-focus, var(--wp-admin-theme-color, #3858e9));
 			outline-offset: var(--wpds-border-width-focus, 1.5px);

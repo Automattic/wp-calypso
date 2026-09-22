@@ -8,7 +8,7 @@ import './widget-section.scss';
 interface WidgetSectionProps {
 	/** Names the section. Rendered as the heading beneath the widget's own postbox title. */
 	title: string;
-	/** Optional control shown opposite the title, such as the date range select. */
+	/** Optional control shown opposite the title, such as the date range dropdown. */
 	action?: ReactNode;
 	/** Optional icon shown before the title. */
 	icon?: ComponentProps< typeof Icon >[ 'icon' ];
@@ -17,18 +17,10 @@ interface WidgetSectionProps {
 }
 
 /**
- * The frame every section of the widget shares: card chrome, a title, and an optional
- * control opposite it.
+ * The frame every widget section shares: a card with a title and an optional control.
  *
- * Built on `Card` rather than bespoke markup because `@wordpress/components` is
- * externalized here — the primitives come from wp-admin's own copy, so they cost no
- * bundle weight and age with WordPress instead of drifting from it.
- *
- * Deliberately has no `footer` slot. Two of the three sections end in a link, but they
- * are not the same thing: Site protection's belongs to the section, while Highlights'
- * "See more" changes with the selected tab and so belongs to the tab's content. A shared
- * slot would fit one and quietly mislead on the other, so trailing content stays with
- * the children.
+ * There is no footer slot: Highlights' "See more" changes with the selected tab, so
+ * trailing links stay with each section's children.
  */
 const WidgetSection: FunctionComponent< WidgetSectionProps > = ( {
 	title,

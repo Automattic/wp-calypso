@@ -17,13 +17,10 @@
 	overflow: hidden;
 }
 
-// wp-components draws focus rings with `--wpds-color-stroke-focus`, falling back to the
-// admin theme colour only when that token is missing. WordPress 7.1 always loads it
-// (`design-tokens.css`, a dependency of `wp-components`) as a fixed blue on `:root`, and
-// the admin colour schemes set only `--wp-admin-theme-color`, on `body` — so under any
-// scheme but the default the rings stayed blue. Pointing the token back at the scheme
-// colour here fixes it for the widget, and for the date range menu, which WordPress
-// renders outside the widget in its popover container.
+// wp-components draws focus rings with `--wpds-color-stroke-focus`, which WordPress 7.1
+// defines as a fixed blue on `:root`; admin colour schemes only set
+// `--wp-admin-theme-color`. Map one to the other for the widget and for the date range
+// menu, which renders outside it in the popover container.
 .stats-widget-content,
 .stats-widget-date-range__popover {
 	--wpds-color-stroke-focus: var(--wp-admin-theme-color, #3858e9);
@@ -38,10 +35,9 @@
 	// not load the main app's stylesheet.
 	@include stats-interactive-colors;
 
-	// None of the widget's links sit in running text, so they drop the underline the way
-	// core's own dashboard widgets do (`#dashboard-widgets li a`, `.community-events-footer a`).
-	// It returns on hover and keyboard focus so the links still respond. The Highlights rows
-	// handle their own hover, underlining only the title.
+	// No link here sits in running text, so they drop the underline as core's dashboard
+	// widgets do, bringing it back on hover and focus. Highlights rows underline only
+	// their title.
 	a {
 		text-decoration: none;
 
@@ -55,12 +51,8 @@
 .stats-widget-wrapper {
 	display: flex;
 	flex-direction: column;
-	// Matches the wrapper padding, so the space between cards and around the stack reads as one rhythm.
 	gap: var(--wpds-dimension-gap-sm, 8px);
 	padding: var(--wpds-dimension-padding-sm, 8px);
-	// The ground the cards sit on. `--color-surface-backdrop` is the semantic token for
-	// exactly that and resolves to #f6f7f7, so it tracks the colour scheme instead of
-	// pinning a grey.
 	background-color: var(--color-surface-backdrop);
 }
 
@@ -70,18 +62,15 @@
 	align-items: center;
 	padding: var(--wpds-dimension-padding-sm, 8px);
 
-	// Left as plain wp-admin links, like "See more" and "Anti-spam insights". Flex only so
-	// the logo link sizes to the logo: as an inline SVG it sat on the text baseline, and
-	// the room kept below it for descenders pushed it off centre in the row.
+	// Flex so the logo link is only as tall as the logo; as an inline SVG it sat on the
+	// text baseline, with room for descenders below it.
 	a {
 		display: flex;
 		align-items: center;
 	}
 }
 
-// A container query rather than a media query: what decides whether the metrics fit is the
-// widget's own width, and the widget is as narrow in a two-column desktop dashboard as it
-// is on a phone.
+// The widget's own width decides whether the metrics fit, not the viewport's.
 @container (max-width: #{$stats-widget-stack-width}) {
 	@include stats-widget-single-column-view;
 }

@@ -19,13 +19,9 @@ interface DateRangeControlProps {
 }
 
 /**
- * The widget's date range picker.
- *
- * Follows Premium Analytics' `DateComparisonDropdown` (jetpack
- * `premium-analytics/packages/ui/src/date-comparison-dropdown`): a `DropdownMenu` whose
- * trigger shows the current range with a chevron, opening radio items with a check on the
- * selected one. A menu rather than `SelectControl`, whose options open in the browser's
- * native popup — on macOS a system menu that matches nothing else in wp-admin.
+ * The widget's date range picker. Follows Premium Analytics' `DateComparisonDropdown`
+ * (jetpack `premium-analytics/packages/ui/src/date-comparison-dropdown`), rather than a
+ * `SelectControl`, whose options open in the browser's native menu.
  */
 const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, onChange } ) => {
 	const translate = useTranslate();
@@ -45,7 +41,6 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 			icon={ chevronDown }
 			text={ labels[ value ] }
 			label={ translate( 'Date range' ) }
-			// The control sits at the header's right edge, so the menu lines up with it.
 			popoverProps={ { placement: 'bottom-end', className: 'stats-widget-date-range__popover' } }
 			toggleProps={ {
 				className: 'stats-widget-date-range__toggle',

@@ -2,21 +2,18 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 
 .stats-widget-highlights {
 
-	// The tab strip sits straight under the header, so this section drops the shared top
-	// padding. Chained with the section class so it outranks widget-section.scss whichever
-	// stylesheet loads first.
+	// The tabs sit straight under the header. Chained with the section class to outrank
+	// widget-section.scss regardless of load order.
 	&.stats-widget-section .stats-widget-section__body {
 		padding-block-start: 0;
 	}
 
 	.stats-widget-highlights__tabs {
-		// TabPanel's own tab strip; the underline marks the active tab.
 		.components-tab-panel__tabs {
 			border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral, #dbdbdb);
 		}
 
-		// TabPanel has no full-width option, but the strip is a flex row and each tab draws
-		// its own indicator, so growing the tabs equally is enough to split the width.
+		// Full-width tabs; TabPanel has no option for it.
 		.components-tab-panel__tabs-item {
 			flex: 1;
 			justify-content: center;
@@ -24,13 +21,10 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 	}
 
 
-	// Mirrors `Skeleton` from `@wordpress/ui` — same fill token, pulse and forced-colours
-	// border — without bundling that package and its Base UI dependency for a grey box.
-	// The row itself reuses the list and item classes, so it has a real row's geometry
-	// and nothing shifts when the data lands.
+	// Matches `Skeleton` from `@wordpress/ui` (fill, pulse, forced-colours border) without
+	// bundling it. The row reuses the list and item classes, so it has a real row's size.
 	.stats-widget-highlights-card__skeleton .stats-widget-highlights-card__item {
 		align-items: center;
-		// A real row's height is its text line; the bars are shorter than that.
 		min-block-size: var(--wpds-typography-line-height-sm, 20px);
 		box-sizing: content-box;
 	}
@@ -49,12 +43,11 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 			border: var(--wpds-border-width-xs, 1px) solid CanvasText;
 		}
 
-		// Short of the full width, so it reads as a title rather than a rule across the row.
 		&.is-title {
 			inline-size: 60%;
 		}
 
-		// Stands in for a formatted count, as in Premium Analytics' highlights skeleton.
+		// A formatted count's width, as in Premium Analytics' highlights skeleton.
 		&.is-value {
 			flex-shrink: 0;
 			inline-size: 46px;
@@ -73,8 +66,6 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 		}
 	}
 
-	// The empty message. No inline offset: the list text it stands in for sits flush with
-	// the tabs, since the rows' hover padding is pulled back out.
 	.stats-widget-highlights-card__empty {
 		margin: 0;
 		padding-block: var(--wpds-dimension-padding-lg, 16px);
@@ -84,24 +75,20 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 	.stats-widget-highlights-card__list {
 		list-style: none;
 		padding: 0;
-		// Rows carry inline padding for their hover fill; pulling them out by the same
-		// amount keeps the text aligned with the tabs and the "See more" link.
+		// Pulled out by the rows' hover padding, so their text aligns with the tabs.
 		margin: var(--wpds-dimension-gap-sm, 8px) calc(#{$offset-padding-hovering} * -1) 0;
 
-		// wp-admin's common.css gives every `li` a 6px bottom margin; the rows' own
-		// padding already spaces them.
+		// Undo wp-admin's `li` bottom margin.
 		li {
 			margin: 0;
 		}
 	}
 
-	// Title on the left, figure on the right, on one line.
 	.stats-widget-highlights-card__item {
 		display: flex;
 		align-items: baseline;
 		gap: var(--wpds-dimension-gap-lg, 16px);
-		// 6px sits between the 4px and 8px tokens; it gives each row the 32px of a
-		// compact control around its 20px line.
+		// 6px has no token; it makes each row 32px tall around its 20px line.
 		padding: 6px $offset-padding-hovering;
 		border-radius: var(--wpds-border-radius-md, 4px);
 		font-size: var(--wpds-typography-font-size-md, 13px);
@@ -163,7 +150,6 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 		color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
 	}
 
-	// A plain wp-admin link, like Site protection's footer link.
 	.stats-widget-highlights-card__view-all {
 		margin-block-start: var(--wpds-dimension-gap-sm, 8px);
 	}
