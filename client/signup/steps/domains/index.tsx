@@ -319,7 +319,6 @@ const DomainSearchUI = (
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				// The i4 design puts the promo on the Name Pulse results page.
 				if (
 					( isDomainOnlyFlow && ! config.showNamePulseSearch ) ||
 					isDomainForGravatarFlow( flowName ) ||
