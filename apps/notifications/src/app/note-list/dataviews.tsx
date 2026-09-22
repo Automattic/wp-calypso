@@ -1,4 +1,4 @@
-import { Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -101,7 +101,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
-		<div className="wpnc__title-row">
+		<HStack className="wpnc__title-row" alignment="topLeft">
 			<div
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
@@ -115,7 +115,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 					{ __( 'Pending' ) }
 				</Badge>
 			) }
-		</div>
+		</HStack>
 	);
 };
 

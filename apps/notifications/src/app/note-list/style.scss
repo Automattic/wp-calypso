@@ -26,16 +26,8 @@
 		text-overflow: ellipsis;
 	}
 
-	.wpnc__title-row {
-		display: flex;
-		// Keeps the badge on the subject's first line when the subject wraps.
-		align-items: flex-start;
-		gap: 8px;
-	}
-
 	.wpnc__title-row .wpnc__subject {
 		flex: 1;
-		min-width: 0;
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {
