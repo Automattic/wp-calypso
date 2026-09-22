@@ -44,9 +44,9 @@ if ( process.platform === 'linux' ) {
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
 const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
-// Datacenter IPs are liable to be served a bot challenge instead of the login page. That page loads
-// cleanly, so the login selectors simply time out and report a missing button rather than the real
-// cause. Detect it up front and say so.
+// The E2E user agent marker should keep the edge from serving a bot challenge in place of the
+// login page. If one is served anyway, that page loads cleanly, so the login selectors simply time
+// out and report a missing button rather than the real cause. Detect it up front and say so.
 const BOT_CHALLENGE_MARKERS = [
 	'Confirm you are human',
 	'Checking your browser',
@@ -67,9 +67,10 @@ async function assertLoadedExpectedPage( window ) {
 	if ( challenge ) {
 		throw new Error(
 			`Expected the desktop login page but got a bot challenge ("${ challenge }") at ${ url }.\n` +
-				'The CI runner is being challenged instead of served the login page. This is an ' +
-				'infrastructure issue: allow the runner egress IPs, or point WP_DESKTOP_BASE_URL at an ' +
-				'environment exempt from bot protection.'
+				'The runner is being challenged instead of served the login page. This is unexpected: ' +
+				'the suite sets WP_DESKTOP_E2E so the app marks its user agent with `wp-e2e-tests`, ' +
+				'which the edge allowlists. Has that user agent customization changed, or are there ' +
+				'new human-verification rules in the backend?'
 		);
 	}
 
