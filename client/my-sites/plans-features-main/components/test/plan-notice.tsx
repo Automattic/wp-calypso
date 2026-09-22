@@ -13,27 +13,22 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import { useMarketingMessage } from 'calypso/components/marketing-message/use-marketing-message';
 import { getDiscountByName } from 'calypso/lib/discounts';
-import { Purchase } from 'calypso/lib/purchases/types';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors/get-raw-site-purchases';
 import {
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
 } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import type { Purchase } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	isProPlan: jest.fn(),
 	isStarterPlan: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getByPurchaseId: jest.fn(),
-	hasPurchasedDomain: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isCurrentUserCurrentPlanOwner: jest.fn(),
@@ -60,8 +55,8 @@ jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
 jest.mock( '@automattic/calypso-config' );
-jest.mock( 'calypso/state/purchases/selectors/get-site-purchases', () => ( {
-	getSitePurchases: jest.fn(),
+jest.mock( 'calypso/state/purchases/selectors/get-raw-site-purchases', () => ( {
+	getRawSitePurchases: jest.fn(),
 } ) );
 jest.mock( 'calypso/components/data/query-site-purchases', () => {
 	return function MockQuerySitePurchases() {
@@ -94,10 +89,7 @@ describe( '<PlanNotice /> Tests', () => {
 		jest.mocked( isRequestingSitePlans ).mockReturnValue( true );
 		jest.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
 		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 100, source: 'plan' } );
-		jest.mocked( getByPurchaseId ).mockReturnValue( {
-			isInAppPurchase: false,
-		} as Purchase );
-		jest.mocked( getSitePurchases ).mockReturnValue( [] );
+		jest.mocked( getRawSitePurchases ).mockReturnValue( [] );
 		jest.mocked( isProPlan ).mockReturnValue( false );
 	} );
 
@@ -199,11 +191,9 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
-		jest.mocked( getByPurchaseId ).mockReturnValue( {
-			isInAppPurchase: true,
-		} as Purchase );
 		renderWithProvider(
 			<PlanNotice
+				currentPurchase={ { is_iap_purchase: true } as Purchase }
 				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
@@ -219,9 +209,9 @@ describe( '<PlanNotice /> Tests', () => {
 		jest
 			.mocked( useUpgradeCreditsNoticeData )
 			.mockReturnValue( { credits: 4600, source: 'domain' } );
-		jest.mocked( getSitePurchases ).mockReturnValue( [
+		jest.mocked( getRawSitePurchases ).mockReturnValue( [
 			{
-				productSlug: 'premium_theme',
+				product_slug: 'premium_theme',
 			},
 		] as unknown as Purchase[] );
 

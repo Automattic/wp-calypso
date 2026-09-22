@@ -13,7 +13,7 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const { query } = useDomainSearch();
+	const { query, slots } = useDomainSearch();
 	const {
 		layout,
 		exactList,
@@ -30,6 +30,7 @@ export const NamePulseResults = () => {
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">

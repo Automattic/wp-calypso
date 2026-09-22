@@ -782,10 +782,11 @@ export function PurchaseItemStatus( {
 		return translate( 'Included with Plan' );
 	}
 
-	if (
-		( isPurchaseOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-		! isDomainTransfer( purchase )
-	) {
+	if ( isPurchaseOneTimePurchase( purchase ) && ! isDomainTransfer( purchase ) ) {
+		return translate( 'One-time purchase' );
+	}
+
+	if ( isAkismetFreeProduct( purchase ) && ! isDomainTransfer( purchase ) ) {
 		return translate( 'Never Expires' );
 	}
 
