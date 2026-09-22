@@ -97,7 +97,10 @@ export const provisionAgencyDevSiteMutation = ( agencyId: number ) =>
 		meta: { statId: 'agcy-dev-site-provision' },
 		mutationFn: ( params: ProvisionAgencyDevSiteParams ) =>
 			provisionAgencyDevSite( agencyId, params ),
-		onSuccess: () => invalidateAgencyLicenses( agencyId ),
+		onSuccess: () => {
+			invalidateAgencyLicenses( agencyId );
+			queryClient.invalidateQueries( { queryKey: agencyPendingSitesQuery( agencyId ).queryKey } );
+		},
 	} );
 
 /**
