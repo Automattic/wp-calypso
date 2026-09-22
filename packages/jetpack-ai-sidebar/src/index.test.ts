@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, renderHook } from '@testing-library/react';
 import React from 'react';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
@@ -60,6 +60,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
+const mockCanUser = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -100,9 +101,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
+			const react = jest.requireActual< typeof import('react') >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -120,7 +121,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
+	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -182,6 +183,9 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
+			if ( store === 'core' ) {
+				return { canUser: mockCanUser };
+			}
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
@@ -1443,8 +1447,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
-			button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
@@ -1660,8 +1664,8 @@ describe( 'Proofread', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
-			button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
@@ -2468,6 +2472,8 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
+		mockCanUser.mockReturnValue( true );
+		mockImageStudioActions = null;
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
 			clearSuggestions: () => undefined,
@@ -2483,8 +2489,67 @@ describe( 'useSuggestions', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		mockImageStudioActions = null;
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Image Studio suggestions when upload permission is %s',
+		( canUpload ) => {
+			installAiEditorialReviewData();
+			mockCanUser.mockReturnValue( canUpload );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+
+			const { result } = renderHook( () => useSuggestions() );
+
+			expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+				'generate-alt-text',
+			] );
+		}
+	);
+
+	it.each( [
+		[ { id: 42 }, [ 'generate-alt-text', 'generate-image', 'edit-image' ] ],
+		[ {}, [ 'generate-alt-text', 'generate-image' ] ],
+	] )( 'shows permitted Image Studio suggestions for image attributes %j', ( attributes, ids ) => {
+		installAiEditorialReviewData();
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes };
+
+		const { result } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( ids );
+		expect( mockCanUser ).toHaveBeenCalledWith( 'create', 'media' );
+	} );
+
+	it( 'updates Image Studio suggestions when upload permission changes', () => {
+		installAiEditorialReviewData();
+		mockCanUser.mockReturnValue( undefined );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+		const { result, rerender } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
+
+		mockCanUser.mockReturnValue( true );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+			'generate-image',
+			'edit-image',
+		] );
+
+		mockCanUser.mockReturnValue( false );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
 	} );
 
 	it( 'shows only block-specific suggestions when a block is selected', () => {

@@ -157,9 +157,8 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
  * we cannot read.
  */
 function isPostContentEmpty(): boolean {
-	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.(
-		'core/editor'
-	)?.isEditedPostEmpty;
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
+		?.isEditedPostEmpty;
 	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
 }
 
@@ -847,7 +846,8 @@ function hasAbilitiesApi(): boolean {
 }
 
 function getAbilitiesExecuteAbility():
-	( ( name: string, args: unknown ) => Promise< any > ) | null {
+	| ( ( name: string, args: unknown ) => Promise< any > )
+	| null {
 	try {
 		const executeAbility = ( window as any ).wp?.abilities?.executeAbility;
 		return typeof executeAbility === 'function' ? executeAbility : null;
@@ -967,7 +967,7 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 					success: false,
 					message,
 					error,
-				} )
+			  } )
 			: result?.agentMessage;
 		return {
 			...result,
@@ -1017,7 +1017,7 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 				success: true,
 				message,
 				outcome,
-			} )
+		  } )
 		: result.agentMessage;
 
 	return {
@@ -1061,7 +1061,7 @@ export const toolProvider = {
 							...UPDATE_BLOCK_CONTENT_ABILITY,
 							callback: handleUpdateBlockContentForChat,
 						},
-					]
+				  ]
 				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
@@ -1362,7 +1362,7 @@ type BlockSuggestion = {
 	id: string;
 	label: string;
 	prompt: string;
-	condition: ( block: any ) => boolean;
+	condition: ( block: any, canUploadFiles: boolean ) => boolean;
 	options?: SuggestionOption[];
 	// Runs on click instead of sending the prompt. AgentUI submits the prompt
 	// only when this resolves true, so returning false keeps the chat untouched.
@@ -1527,15 +1527,19 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		label: __( 'Generate image', __i18n_text_domain__ ),
 		// Empty prompt — opening Image Studio replaces sending anything to the agent.
 		prompt: '',
-		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
+		condition: ( block: any, canUploadFiles ) =>
+			block?.name === 'core/image' && canUploadFiles && isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
 	},
 	{
 		id: 'edit-image',
 		label: __( 'Edit image', __i18n_text_domain__ ),
 		prompt: '',
-		condition: ( block: any ) =>
-			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
+		condition: ( block: any, canUploadFiles ) =>
+			block?.name === 'core/image' &&
+			!! block?.attributes?.id &&
+			canUploadFiles &&
+			isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
 	},
 ];
@@ -1589,7 +1593,7 @@ export function useSuggestions( maxSuggestions?: number ): {
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
 			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
-				? ( getSelectedOrRememberedBlock()?.clientId ?? null )
+				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
 
 			if ( typeof value === 'string' && SAVED_POST_PROMPTS.has( value ) ) {
@@ -1637,11 +1641,15 @@ export function useSuggestions( maxSuggestions?: number ): {
 	}, [] );
 
 	const editorContext = useSelect( ( select ) => {
+		const core = select( 'core' ) as {
+			canUser?: ( action: string, resource: string ) => boolean | undefined;
+		};
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
 		const editor = select( 'core/editor' ) as {
 			getCurrentPostType?: () => string | undefined;
 		};
 		return {
+			canUploadFiles: core?.canUser?.( 'create', 'media' ) === true,
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postType: editor?.getCurrentPostType?.(),
 		};
@@ -1658,9 +1666,11 @@ export function useSuggestions( maxSuggestions?: number ): {
 	const applicable = useMemo(
 		() =>
 			selectedBlock && blockTransformationsEnabled
-				? BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+				? BLOCK_SUGGESTIONS.filter( ( suggestion ) =>
+						suggestion.condition( selectedBlock, editorContext.canUploadFiles )
+				  )
 				: [],
-		[ blockTransformationsEnabled, selectedBlock ]
+		[ blockTransformationsEnabled, selectedBlock, editorContext.canUploadFiles ]
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>
