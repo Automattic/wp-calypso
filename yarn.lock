@@ -2057,6 +2057,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.2"
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/components": "npm:^37.0.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     "@wordpress/icons": "npm:^13.3.0"

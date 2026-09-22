@@ -80,6 +80,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 						views: formatNumber( item.views ),
 					},
 				} ) }
+				{ isItemLink && isItemLinkExternal && ` ${ translate( '(opens in a new tab)' ) }` }
 			</span>
 		</>
 	);

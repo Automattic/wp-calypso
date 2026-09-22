@@ -39,4 +39,11 @@ describe( 'OverviewChart axes', () => {
 		expect( y.tickFormat( 0 ) ).toBe( '' );
 		expect( y.tickFormat( 1200 ) ).toBe( '1.2K' );
 	} );
+
+	it( 'leaves fractional values unlabelled, since views are whole', () => {
+		const { y } = renderAxes();
+		expect( y.tickFormat( 0.5 ) ).toBe( '' );
+		expect( y.tickFormat( 2.5 ) ).toBe( '' );
+		expect( y.tickFormat( 3 ) ).toBe( '3' );
+	} );
 } );

@@ -40,7 +40,12 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 			className="stats-widget-date-range"
 			icon={ chevronDown }
 			text={ labels[ value ] }
-			label={ translate( 'Date range' ) }
+			// Includes the visible text, so speech control can act on what it reads.
+			label={
+				translate( 'Date range: %(range)s', {
+					args: { range: labels[ value ] },
+				} ) as string
+			}
 			popoverProps={ { placement: 'bottom-end', className: 'stats-widget-date-range__popover' } }
 			toggleProps={ {
 				className: 'stats-widget-date-range__toggle',

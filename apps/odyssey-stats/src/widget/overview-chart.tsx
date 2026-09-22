@@ -48,10 +48,13 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 						moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
 				},
 				// Compact ticks ("12K"), which fit the left margin and match the totals. Zero is
-				// blanked since the grid line marks it; the package doesn't type visx's `hideZero`.
+				// blanked since the grid line marks it, and so are the fractional ticks a quiet
+				// site gets, since views and visitors are whole. Blanked rather than through
+				// visx's `hideZero`, which the package doesn't type.
 				y: {
 					orientation: 'left',
-					tickFormat: ( value: number ) => ( value === 0 ? '' : formatNumberCompact( value ) ),
+					tickFormat: ( value: number ) =>
+						0 === value || ! Number.isInteger( value ) ? '' : formatNumberCompact( value ),
 				},
 			},
 		} }

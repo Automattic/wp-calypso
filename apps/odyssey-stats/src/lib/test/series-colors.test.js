@@ -53,9 +53,11 @@ describe( 'deriveSeriesColors', () => {
 		} );
 	} );
 
-	it( 'should return nothing for an unparseable primary, so callers can fall back', () => {
+	it( "should fall back to wp-admin's default for an unparseable primary", () => {
+		const fallback = deriveSeriesColors( '#3858e9' );
+
 		[ '', 'nope', '#12', 'rgb(1,2,3)' ].forEach( ( bad ) => {
-			expect( deriveSeriesColors( bad ) ).toEqual( [] );
+			expect( deriveSeriesColors( bad ) ).toEqual( fallback );
 		} );
 	} );
 } );

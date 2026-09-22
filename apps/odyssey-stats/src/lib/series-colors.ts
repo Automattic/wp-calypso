@@ -127,19 +127,20 @@ function relativeLuminance( rgb: Rgb ): number {
 	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
+/** wp-admin's own default, for the moment before the scheme's colour has been read. */
+const DEFAULT_PRIMARY = '#3858e9';
+
 /**
  * Derive the two chart series colours from a single primary.
  *
  * Returns the primary unchanged as the first series, and a hue-rotated,
- * luminance-matched companion as the second. An unparseable primary yields a single
- * entry, letting the caller fall back to the chart library's own theme.
+ * luminance-matched companion as the second. An unparseable primary — including the
+ * empty string the colour is until the page has been read — falls back to wp-admin's
+ * default, so the chart and its colour keys always have a colour.
  * @param primary The admin colour scheme's primary, as a hex string.
  */
 export function deriveSeriesColors( primary: string ): string[] {
-	const rgb = hexToRgb( primary );
-	if ( ! rgb ) {
-		return [];
-	}
+	const rgb = hexToRgb( primary ) ?? ( hexToRgb( DEFAULT_PRIMARY ) as Rgb );
 
 	const [ hue, saturation ] = rgbToHsl( rgb );
 	const target = relativeLuminance( rgb );
