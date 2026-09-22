@@ -86,14 +86,14 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 export const canSendEmptyBlogName = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
-			[
-				ONBOARDING_FLOW,
-				'onboarding-pm',
-				FREE_FLOW,
-				SITE_MIGRATION_FLOW,
-				WITH_THEME_FLOW,
-				'with-plugin',
-			].includes( flowName )
+		[
+			ONBOARDING_FLOW,
+			'onboarding-pm',
+			FREE_FLOW,
+			SITE_MIGRATION_FLOW,
+			WITH_THEME_FLOW,
+			'with-plugin',
+		].includes( flowName )
 	);
 };
 
