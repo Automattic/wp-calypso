@@ -16,6 +16,11 @@ export const NAME_PULSE_PAGE_SIZE = 12;
 export const NAME_PULSE_AVAILABILITY_BATCH_SIZE = 36;
 
 /**
+ * Pause after the last keystroke before the availability and suggestion requests go out.
+ */
+export const NAME_PULSE_QUERY_SETTLE_MS = 300;
+
+/**
  * Exact-match rows checked as soon as a query settles. Single-word searches
  * check a full batch; multi-word searches check the first page plus a buffer.
  */
@@ -26,3 +31,8 @@ export const NAME_PULSE_INITIAL_CHECK_MULTI_WORD = 24;
  * How long skeleton slots and "checking" rows wait for a response before giving up.
  */
 export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;
+
+/**
+ * How long a cached availability verdict is trusted, and kept once no row reads it.
+ */
+export const NAME_PULSE_VERDICT_TTL_MS = 5 * 60 * 1000;

@@ -159,6 +159,9 @@ export function useSetupCustomActions( {
 			if ( shouldOpen && ( ! isOpen || isMinimized ) ) {
 				markActionOrigin( 'open', 'host' );
 			}
+			if ( ! shouldOpen && isOpen ) {
+				markActionOrigin( 'close', 'host' );
+			}
 
 			// Open state is unchanged; nothing more to persist.
 			if ( shouldOpen === isOpen ) {

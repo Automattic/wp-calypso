@@ -54,6 +54,10 @@ import { __ } from '@wordpress/i18n';
 import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
+import {
+	mayBeEligibleForPressableExpansionOffer,
+	pressableOfferLicensesQuery,
+} from '../../agency/overview/use-pressable-offer-eligibility';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
@@ -272,7 +276,11 @@ export const marketplaceHostingRoute = createRoute( {
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
-				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				mayBeEligibleForPressableExpansionOffer( agency ) &&
+					queryClient
+						.ensureQueryData( pressableOfferLicensesQuery( agency.id ) )
+						.catch( () => undefined ),
 			] );
 		}
 	},

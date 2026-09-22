@@ -636,7 +636,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				{ isWpComPremiumPlan( currentPlanSlug )
+				{ isWpComPremiumPlan( currentPlanSlug ?? '' )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
 			</CheckoutSummaryFeaturesListItem>

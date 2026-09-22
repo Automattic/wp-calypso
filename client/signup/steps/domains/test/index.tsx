@@ -195,4 +195,18 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 			clearedWith: 'clearQuery',
 		} );
 	} );
+
+	it( 'lifts the domain-only exclusion on the free-first-year promo', () => {
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).not.toBeNull();
+	} );
+
+	it( 'keeps the promo hidden on the classic domain-only results page', () => {
+		isEnabledSpy.mockImplementation( () => false );
+
+		renderStep();
+
+		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).toBeNull();
+	} );
 } );

@@ -13,7 +13,7 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const { query } = useDomainSearch();
+	const { query, slots } = useDomainSearch();
 	const {
 		layout,
 		exactList,
@@ -24,12 +24,12 @@ export const NamePulseResults = () => {
 		refetchTlds,
 		isLoadingKeyword,
 		revealExact,
-		updateResult,
 	} = useNamePulseSearch( query );
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">
@@ -48,7 +48,6 @@ export const NamePulseResults = () => {
 							isLoading={ isLoadingTlds }
 							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
 							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-							onUpdate={ updateResult }
 						/>
 						<NamePulseResultsSection
 							id="exact"
@@ -65,7 +64,6 @@ export const NamePulseResults = () => {
 							isLoading={ isLoadingTlds }
 							showMoreLabel={ __( 'Show more exact matches' ) }
 							onReveal={ revealExact }
-							onUpdate={ updateResult }
 						/>
 					</>
 				) }
@@ -76,7 +74,6 @@ export const NamePulseResults = () => {
 						results={ keywordResults }
 						isLoading={ isLoadingKeyword }
 						showMoreLabel={ __( 'Show more suggestions' ) }
-						onUpdate={ updateResult }
 					/>
 				) }
 			</VStack>

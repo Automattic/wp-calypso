@@ -559,6 +559,11 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Select conversation' ) );
 
 		expect( getSessionId( undefined, 'site-1' ) ).toBe( 'conversation-session-id' );
+		// Recorded after the session is saved, so it carries the resumed session's id.
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_history_conversation_selected',
+			{ is_zendesk: false }
+		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
 	} );
 
@@ -776,6 +781,53 @@ describe( 'AgentDock', () => {
 				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
 				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
 			] );
+		} );
+	} );
+
+	describe( 'chat closed tracking', () => {
+		const chatClosedCalls = () =>
+			mockRecordAgentsManagerTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_closed'
+			);
+
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		it( 'records a close with the layout and who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockLayoutIsDocked = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			rerender( dock() );
+			markActionOrigin( 'close', 'host' );
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'does not record a close when the chat is only minimized', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [] );
 		} );
 	} );
 } );

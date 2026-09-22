@@ -628,6 +628,11 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regenerate says the reply was not good enough: the clearest
+				// quality signal the chat has after a thumbs down.
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_action_regenerate', {
+					...( message?.id ? { message_id: message.id } : {} ),
+				} );
 				setIsRegenerating( true );
 				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
 				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;

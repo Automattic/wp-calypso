@@ -4,12 +4,22 @@
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
-	// Figma spec is 1248px, wider than the classic results page's content width.
-	max-width: 78rem;
-
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;
 	}
+}
+
+// Figma spec is 1248px, wider than the classic results page's content width.
+// Override the variable rather than `max-width` so the mini cart, which
+// renders inside the results element, lines up with the results above it.
+// The initial state shares it so the search bar does not jump on the first query.
+.domain-search--results.domain-search--name-pulse,
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	--domain-search-content-max-width: 78rem;
+}
+
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
 }
 
 .name-pulse-grid {
@@ -122,6 +132,12 @@
 		}
 	}
 
+	// The error CTA is `aria-disabled` so it stays hoverable for its tooltip; the
+	// attribute has to be matched to beat the faded disabled color.
+	&__cart--error.components-button.is-primary[aria-disabled='true'] {
+		color: $white;
+	}
+
 	&__skeleton {
 		display: inline-block;
 		width: 3.75rem;
@@ -133,11 +149,6 @@
 		&--name {
 			width: 9.5rem;
 		}
-	}
-
-	&__error {
-		flex-basis: 100%;
-		color: $alert-red;
 	}
 }
 
