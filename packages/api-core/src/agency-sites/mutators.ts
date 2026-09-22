@@ -40,11 +40,8 @@ export async function provisionAgencyDevSite(
  * Drops a site from the agency's dashboard. The site itself and any licenses
  * attached to it are left alone.
  */
-export async function removeAgencySite(
-	agencyId: number,
-	siteId: number
-): Promise< { success: boolean } > {
-	return wpcom.req.post( {
+export async function removeAgencySite( agencyId: number, siteId: number ): Promise< boolean > {
+	const response: boolean | { success?: boolean } = await wpcom.req.post( {
 		method: 'DELETE',
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/sites/${ siteId }`,
@@ -53,4 +50,9 @@ export async function removeAgencySite(
 		// redundant.
 		body: { siteId, agency_id: agencyId },
 	} );
+
+	// The endpoint answers with a bare `true`. Older callers typed it as
+	// `{ success }` without ever reading it, so accept both rather than reporting
+	// a removal that did happen as a failure.
+	return typeof response === 'boolean' ? response : !! response?.success;
 }

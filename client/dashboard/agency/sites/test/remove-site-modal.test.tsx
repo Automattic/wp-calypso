@@ -19,8 +19,12 @@ function mockAgency() {
 		.reply( 200, [ { id: 7 } ] );
 }
 
-function mockRemoval( status: number, body: Record< string, unknown > = { success: true } ) {
-	return nock( `${ API }:443` ).delete( '/wpcom/v2/agency/7/sites/42' ).reply( status, body );
+// The endpoint answers a bare `true` on success, not `{ success: true }`, which
+// nock won't take as a reply body — so serialize it the way the wire does.
+function mockRemoval( status: number, body: unknown = true ) {
+	return nock( `${ API }:443` )
+		.delete( '/wpcom/v2/agency/7/sites/42' )
+		.reply( status, JSON.stringify( body ), { 'content-type': 'application/json' } );
 }
 
 // The button waits for the active agency, whose id the request path needs.
@@ -39,8 +43,25 @@ describe( '<RemoveSiteModal>', () => {
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
 		await userEvent.click( await findEnabledRemoveButton() );
 
-		await waitFor( () => expect( closeModal ).toHaveBeenCalled() );
+		await waitFor( () => expect( closeModal ).toHaveBeenCalled(), { timeout: 5000 } );
 		expect( removal.isDone() ).toBe( true );
+	} );
+
+	// The sites list takes a moment to drop the site, and closing before it has
+	// leaves the removed row on screen.
+	test( 'stays open until the sites list has been refreshed', async () => {
+		mockAgency();
+		mockRemoval( 200 );
+		const closeModal = jest.fn();
+
+		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
+		const button = await findEnabledRemoveButton();
+		await userEvent.click( button );
+
+		await waitFor( () => expect( button ).toBeDisabled() );
+		expect( closeModal ).not.toHaveBeenCalled();
+
+		await waitFor( () => expect( closeModal ).toHaveBeenCalled(), { timeout: 5000 } );
 	} );
 
 	test( 'stays open when the removal fails', async () => {
@@ -58,7 +79,7 @@ describe( '<RemoveSiteModal>', () => {
 
 	test( 'stays open when the removal is declined with a 200', async () => {
 		mockAgency();
-		const removal = mockRemoval( 200, { success: false } );
+		const removal = mockRemoval( 200, false );
 		const closeModal = jest.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
