@@ -56,12 +56,12 @@ const toSuggestionResults = (
  * section holds its skeletons.
  */
 const useNamePulseSuggestions = ( {
-	settledQuery,
+	suggestionsQuery,
 	isSettled,
 	show,
 	source,
 }: {
-	settledQuery: string;
+	suggestionsQuery: string;
 	isSettled: boolean;
 	show: boolean;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
@@ -71,7 +71,7 @@ const useNamePulseSuggestions = ( {
 	const active = show && isSettled;
 	const { data, isPending } = useQuery( {
 		...queries.namePulseSuggestions( {
-			query: active ? sanitizeKeywordInput( settledQuery ) : '',
+			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
 			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
 		} ),
@@ -118,10 +118,16 @@ export const useNamePulseSearch = ( query: string ) => {
 	// Sections mount as the user types, but AI mode (the exact grid collapsing and
 	// Top results switching source) follows the settled query, so crossing the
 	// four-word boundary mid-word does not flash the grid away and back.
-	const isAiMode = useMemo(
-		() => getResultsLayout( settledQuery, tlds ?? [] ).mode === 'ai',
+	const settledLayout = useMemo(
+		() => getResultsLayout( settledQuery, tlds ?? [] ),
 		[ settledQuery, tlds ]
 	);
+	const isAiMode = settledLayout.mode === 'ai';
+
+	// A one-word search suggests around its name, so the ending of a typed domain
+	// is left out. Several words are passed on as they were typed.
+	const suggestionsQuery =
+		settledLayout.wordCount > 1 ? sanitizeKeywordInput( settledQuery ) : settledLayout.baseName;
 	const layout = useMemo( () => {
 		const typed = getResultsLayout( query, tlds ?? [] );
 
@@ -169,13 +175,13 @@ export const useNamePulseSearch = ( query: string ) => {
 	);
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
-		settledQuery,
+		suggestionsQuery,
 		isSettled,
 		show: layout.suggestions.show,
 		source: 'keyword',
 	} );
 	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
-		settledQuery,
+		suggestionsQuery,
 		isSettled,
 		show: layout.creative.show,
 		source: 'ai',

@@ -139,7 +139,6 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -264,6 +263,15 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 	} );
 
+	it( 'renders Related matches for a one-word query', async () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+
+		await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+	} );
+
 	it( 'renders Related matches for a multi-word query', async () => {
 		render( <NamePulseTestSearch query="ice cream" /> );
 
@@ -366,7 +374,7 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'explains an unrecognised ending and lists the joined name', async () => {

@@ -226,7 +226,7 @@ describe( 'useNamePulseSearch', () => {
 		jest.useFakeTimers();
 		const { result, rerender, suggestions } = renderTypedSearch( 'ice' );
 
-		expect( result.current.isLoadingKeyword ).toBe( false );
+		await waitFor( () => expect( suggestions ).toHaveBeenCalledTimes( 1 ) );
 
 		rerender( { q: 'ice c' } );
 		rerender( { q: 'ice cr' } );
@@ -235,10 +235,10 @@ describe( 'useNamePulseSearch', () => {
 		expect( result.current.keywordResults ).toHaveLength( 0 );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
-		expect( suggestions ).not.toHaveBeenCalled();
+		expect( suggestions ).toHaveBeenCalledTimes( 1 );
 
 		await advance( 1 );
-		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+		expect( suggestions ).toHaveBeenCalledTimes( 2 );
 
 		await waitFor( () =>
 			expect( result.current.keywordResults.map( ( row ) => row.domain_name ) ).toContain(
@@ -246,7 +246,19 @@ describe( 'useNamePulseSearch', () => {
 			)
 		);
 		expect( result.current.isLoadingKeyword ).toBe( false );
-		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+		expect( suggestions ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'asks for related matches without the ending of a typed domain', async () => {
+		jest.useFakeTimers();
+		const { result, suggestions } = renderTypedSearch( 'icecream.com' );
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+
+		expect( result.current.layout.suggestions.show ).toBe( true );
+		expect( suggestions ).toHaveBeenCalledWith(
+			expect.objectContaining( { query: 'icecream', use_ai: false } )
+		);
 	} );
 
 	it( 'mounts Creative matches on the fourth word but collapses the exact grid only once the query settles', async () => {
