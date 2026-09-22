@@ -8,6 +8,7 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { useState } from 'react';
+import { ErrorBoundary } from '../../components/error-boundary';
 import { Stat } from '../../components/stat';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { getStorageAlertLevel } from '../../utils/site-storage';
@@ -17,7 +18,13 @@ import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function SiteStorageStat( { site }: { site: Site } ) {
+function StorageStatUnavailable() {
+	/* translators: shown in place of a storage figure that failed to load */
+	const metric = __( 'Information unavailable' );
+	return <Stat density="high" strapline={ __( 'Storage' ) } metric={ metric } />;
+}
+
+function SiteStorageStatInner( { site }: { site: Site } ) {
 	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
@@ -75,5 +82,17 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 				</>
 			) }
 		</VStack>
+	);
+}
+
+export default function SiteStorageStat( { site }: { site: Site } ) {
+	return (
+		<ErrorBoundary
+			key={ site.ID }
+			fallback={ <StorageStatUnavailable /> }
+			sentryTags={ { feature: 'site-storage-stat' } }
+		>
+			<SiteStorageStatInner site={ site } />
+		</ErrorBoundary>
 	);
 }
