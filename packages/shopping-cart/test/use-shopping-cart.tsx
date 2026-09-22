@@ -1,4 +1,5 @@
 import {
+	act,
 	screen,
 	render,
 	waitFor,
@@ -6,10 +7,15 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { getEmptyResponseCart } from '../src/empty-carts';
-import { useShoppingCart } from '../src/index';
+import {
+	useShoppingCart,
+	ShoppingCartProvider,
+	createShoppingCartManagerClient,
+} from '../src/index';
 import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
 import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
+import type { CartKey, RequestCart, ResponseCart } from '../src/types';
 
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -861,6 +867,131 @@ describe( 'useShoppingCart', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 			} );
+		} );
+	} );
+
+	describe( 'when the cart key changes while mounted', () => {
+		const cartKeyA = 1;
+		const cartKeyB = 2;
+		const cartKeyC = 3;
+
+		const getCartForKey = async ( cartKey: CartKey ): Promise< ResponseCart > => {
+			if ( cartKey === cartKeyA ) {
+				return { ...emptyResponseCart, cart_key: cartKey, products: [ planOne ] };
+			}
+			return { ...emptyResponseCart, cart_key: cartKey };
+		};
+
+		const setCartForKey = async (
+			cartKey: CartKey,
+			cart: RequestCart
+		): Promise< ResponseCart > => {
+			return {
+				...emptyResponseCart,
+				cart_key: cartKey,
+				products: cart.products.map( ( product ) =>
+					product.product_id === planTwo.product_id ? planTwo : planOne
+				),
+			};
+		};
+
+		const CartDisplay = ( { cartKey }: { cartKey: CartKey | undefined } ) => {
+			const { responseCart, addProductsToCart } = useShoppingCart( cartKey );
+			return (
+				<div>
+					<span data-testid="cart-key">{ String( responseCart.cart_key ) }</span>
+					<span data-testid="product-count">{ responseCart.products.length }</span>
+					<button onClick={ () => addProductsToCart( [ planTwo ] ).catch( () => {} ) }>Add</button>
+				</div>
+			);
+		};
+
+		function renderWithClient( cartKey: CartKey | undefined, setCartOverride = setCartForKey ) {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: getCartForKey,
+				setCart: setCartOverride,
+			} );
+			const wrap = ( key: CartKey | undefined ) => (
+				<ShoppingCartProvider
+					managerClient={ managerClient }
+					options={ { defaultCartKey: undefined } }
+				>
+					<CartDisplay cartKey={ key } />
+				</ShoppingCartProvider>
+			);
+			const { rerender } = render( wrap( cartKey ) );
+			return { managerClient, rerender: ( key: CartKey | undefined ) => rerender( wrap( key ) ) };
+		}
+
+		it( 'returns the new cart immediately when it was already loaded', async () => {
+			const { managerClient, rerender } = renderWithClient( cartKeyA );
+			await act( () => managerClient.forCartKey( cartKeyB ).fetchInitialCart() );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyA ) );
+			} );
+
+			rerender( cartKeyB );
+
+			expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyB ) );
+			expect( screen.getByTestId( 'product-count' ) ).toHaveTextContent( '0' );
+		} );
+
+		it( 'updates the product count when switching to an empty loaded cart', async () => {
+			const { managerClient, rerender } = renderWithClient( cartKeyA );
+			await act( () => managerClient.forCartKey( cartKeyC ).fetchInitialCart() );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-count' ) ).toHaveTextContent( '1' );
+			} );
+
+			rerender( cartKeyC );
+
+			expect( screen.getByTestId( 'product-count' ) ).toHaveTextContent( '0' );
+		} );
+
+		it( 'sends mutations to the new cart after the key changes', async () => {
+			const setCartSpy = jest.fn( setCartForKey );
+			const { managerClient, rerender } = renderWithClient( cartKeyA, setCartSpy );
+			await act( () => managerClient.forCartKey( cartKeyB ).fetchInitialCart() );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyA ) );
+			} );
+
+			rerender( cartKeyB );
+			fireEvent.click( screen.getByText( 'Add' ) );
+
+			await waitFor( () => {
+				expect( setCartSpy ).toHaveBeenCalled();
+			} );
+			expect( setCartSpy.mock.calls.every( ( [ key ] ) => key === cartKeyB ) ).toBe( true );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-count' ) ).toHaveTextContent( '1' );
+			} );
+		} );
+
+		it( 'never shows the old cart when switching to a cart that has not been fetched', async () => {
+			const { rerender } = renderWithClient( cartKeyA );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyA ) );
+			} );
+
+			rerender( cartKeyB );
+
+			expect( screen.getByTestId( 'cart-key' ) ).not.toHaveTextContent( String( cartKeyA ) );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyB ) );
+			} );
+		} );
+
+		it( 'falls back to the placeholder cart when the key becomes undefined', async () => {
+			const { rerender } = renderWithClient( cartKeyA );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( String( cartKeyA ) );
+			} );
+
+			rerender( undefined );
+
+			expect( screen.getByTestId( 'cart-key' ) ).toHaveTextContent( emptyResponseCart.cart_key );
+			expect( screen.getByTestId( 'product-count' ) ).toHaveTextContent( '0' );
 		} );
 	} );
 } );
