@@ -10,8 +10,9 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
-import { a4aLink } from '../../../utils/link';
+import RouterLinkButton from '../../../components/router-link-button';
 import { useScheduleCall } from '../../tiers/use-schedule-call';
+import { getMarketplaceReferHostingRoute } from '../paths';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { CheckGrid } from './content-sections';
 
@@ -52,19 +53,20 @@ export default function PressablePremiumSection() {
 					{ __( 'For mission critical sites that demand extra attention and resources.' ) }
 				</Text>
 				<ButtonStack justify="flex-start" expanded={ false } wrap>
-					{ /* TODO: The referral form is still the classic page. */ }
-					<Button
-						variant="primary"
-						__next40pxDefaultSize
-						href={
-							isReferralMode
-								? a4aLink( '/marketplace/hosting/refer-pressable-premium-plan' )
-								: undefined
-						}
-						onClick={ onReferNowClick }
-					>
-						{ __( 'Refer now and get rewarded' ) }
-					</Button>
+					{ isReferralMode ? (
+						<RouterLinkButton
+							variant="primary"
+							__next40pxDefaultSize
+							to={ getMarketplaceReferHostingRoute( 'premium' ) }
+							onClick={ onReferNowClick }
+						>
+							{ __( 'Refer now and get rewarded' ) }
+						</RouterLinkButton>
+					) : (
+						<Button variant="primary" __next40pxDefaultSize onClick={ onReferNowClick }>
+							{ __( 'Refer now and get rewarded' ) }
+						</Button>
+					) }
 					<Button
 						variant="secondary"
 						__next40pxDefaultSize

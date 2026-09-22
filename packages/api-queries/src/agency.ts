@@ -9,13 +9,17 @@ import {
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
+	submitAgencyPressablePremiumPlanReferral,
+	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyHostingReferral,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyVipPartnerOpportunity,
 	McpSettings,
 	McpSettingsUpdate,
 } from '@automattic/api-core';
@@ -160,6 +164,20 @@ export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-logo-upload' },
 		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
+	} );
+
+export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-vip-partner-opportunity' },
+		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
+			submitAgencyVipPartnerOpportunity( agencyId, referral ),
+	} );
+
+export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pressable-premium-referral' },
+		mutationFn: ( referral: AgencyHostingReferral ) =>
+			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>
