@@ -3,7 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { cart as cartIcon } from '@wordpress/icons';
+import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -219,28 +219,36 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isAvailable && (
-					<>
-						{ ! showPremiumBadge && <Price result={ result } /> }
+				{ isAvailable && ! showPremiumBadge && <Price result={ result } /> }
+				{ error && (
+					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
-							className="name-pulse-row__cart"
-							icon={ cartIcon }
-							label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
-							variant={ inCart ? 'primary' : undefined }
+							className="name-pulse-row__cart name-pulse-row__cart--error"
+							icon={ cautionFilled }
+							label={ error.message }
+							showTooltip={ false }
+							isDestructive
+							variant="primary"
 							size="compact"
-							isBusy={ isPending }
-							disabled={ isPending }
-							aria-pressed={ inCart }
-							onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+							disabled
+							accessibleWhenDisabled
 						/>
-					</>
+					</Tooltip>
+				) }
+				{ isAvailable && ! error && (
+					<Button
+						className="name-pulse-row__cart"
+						icon={ cartIcon }
+						label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
+						variant={ inCart ? 'primary' : undefined }
+						size="compact"
+						isBusy={ isPending }
+						disabled={ isPending }
+						aria-pressed={ inCart }
+						onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+					/>
 				) }
 			</span>
-			{ error && (
-				<Text className="name-pulse-row__error" variant="muted" size={ 12 }>
-					{ error.message }
-				</Text>
-			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

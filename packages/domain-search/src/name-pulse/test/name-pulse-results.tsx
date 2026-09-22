@@ -294,7 +294,14 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( rowFor( 'creamyice.com' ) ).findByText( 'Unavailable' )
 		).toBeInTheDocument();
-		expect( within( rowFor( 'creamyice.com' ) ).queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect(
+			within( rowFor( 'creamyice.com' ) ).getByRole( 'button', {
+				name: 'Sorry, this domain is no longer available.',
+			} )
+		).toHaveAttribute( 'aria-disabled', 'true' );
+		expect(
+			within( rowFor( 'creamyice.com' ) ).queryByRole( 'button', { name: 'Add to cart' } )
+		).not.toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).queryByText( '$24' ) ).not.toBeInTheDocument();
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
 
@@ -309,5 +316,46 @@ describe( 'NamePulseResults', () => {
 			)
 		);
 		expect( cart.onAddItem ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps a top result in its slot when the real-time check finds it taken', async () => {
+		const user = userEvent.setup();
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status:
+							domainName === 'icecream.blog'
+								? DomainAvailabilityStatus.NOT_AVAILABLE
+								: DomainAvailabilityStatus.AVAILABLE,
+						cost: '$24.00',
+						raw_price: 24,
+					} )
+				}
+			/>
+		);
+
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
+		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
+
+		await user.click(
+			within( rowFor( 'icecream.blog' ) ).getByRole( 'button', { name: 'Add to cart' } )
+		);
+
+		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {
+			name: 'Sorry, this domain is no longer available.',
+		} );
+		expect( errorCTA ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( within( rowFor( 'icecream.blog' ) ).getByText( 'Unavailable' ) ).toBeInTheDocument();
+		expect( domainsIn( 'top' ) ).toEqual( topDomains );
+
+		await user.click( errorCTA );
+
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 } );

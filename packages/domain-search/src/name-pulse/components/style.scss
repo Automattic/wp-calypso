@@ -132,6 +132,12 @@
 		}
 	}
 
+	// The error CTA is `aria-disabled` so it stays hoverable for its tooltip; the
+	// attribute has to be matched to beat the faded disabled color.
+	&__cart--error.components-button.is-primary[aria-disabled='true'] {
+		color: $white;
+	}
+
 	&__skeleton {
 		display: inline-block;
 		width: 3.75rem;
@@ -143,11 +149,6 @@
 		&--name {
 			width: 9.5rem;
 		}
-	}
-
-	&__error {
-		flex-basis: 100%;
-		color: $alert-red;
 	}
 }
 
