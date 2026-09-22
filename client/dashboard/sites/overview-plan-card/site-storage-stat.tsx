@@ -18,10 +18,6 @@ import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-/**
- * Stands in for the storage stat when its data can't be read — storage is
- * unreadable for some users, e.g. non-owner admins of Jetpack sites.
- */
 function StorageStatUnavailable() {
 	/* translators: shown in place of a storage figure that failed to load */
 	const metric = __( 'Information unavailable' );
@@ -92,6 +88,7 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 export default function SiteStorageStat( { site }: { site: Site } ) {
 	return (
 		<ErrorBoundary
+			key={ site.ID }
 			fallback={ <StorageStatUnavailable /> }
 			sentryTags={ { feature: 'site-storage-stat' } }
 		>

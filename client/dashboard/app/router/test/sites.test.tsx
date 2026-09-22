@@ -38,5 +38,5 @@ test( 'loads the site overview when the user cannot read media storage', async (
 
 	await expect(
 		loader( { params: { siteSlug: site.slug }, preload: false } )
-	).resolves.not.toThrow();
+	).resolves.toBeUndefined();
 } );
