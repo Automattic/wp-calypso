@@ -62,13 +62,6 @@
 	// exactly that and resolves to #f6f7f7, so it tracks the colour scheme instead of
 	// pinning a grey.
 	background-color: var(--color-surface-backdrop);
-
-	// Chained with the section's own class so it outranks the shared body padding in
-	// widget-section.scss regardless of which stylesheet loads first.
-	.stats-widget-section.stats-widget-overview .stats-widget-section__body,
-	.stats-widget-section.stats-widget-modules .stats-widget-section__body {
-		padding-block-start: var(--wpds-dimension-padding-sm, 8px);
-	}
 }
 
 .stats-widget-footer {

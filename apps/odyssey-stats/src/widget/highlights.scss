@@ -2,6 +2,13 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 
 .stats-widget-highlights {
 
+	// The tab strip sits straight under the header, so this section drops the shared top
+	// padding. Chained with the section class so it outranks widget-section.scss whichever
+	// stylesheet loads first.
+	&.stats-widget-section .stats-widget-section__body {
+		padding-block-start: 0;
+	}
+
 	.stats-widget-highlights__tabs {
 		// TabPanel's own tab strip; the underline marks the active tab.
 		.components-tab-panel__tabs {

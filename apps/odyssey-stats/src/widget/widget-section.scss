@@ -16,7 +16,7 @@ $section-header-content-height: var(--wpds-dimension-size-md, 32px);
 	// a token. Overriding here keeps the intent visible; our two classes outrank the
 	// component's single emotion class, so no !important is needed.
 	.stats-widget-section__body {
-		padding: 0 var(--wpds-dimension-padding-md, 12px) var(--wpds-dimension-padding-md, 12px);
+		padding: var(--wpds-dimension-padding-sm, 8px) var(--wpds-dimension-padding-md, 12px) var(--wpds-dimension-padding-md, 12px);
 	}
 
 	// Icon and title travel together on the left; CardHeader pushes the action right.

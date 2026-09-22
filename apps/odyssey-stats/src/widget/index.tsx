@@ -101,7 +101,6 @@ export function init() {
 						<WidgetSection
 							title={ translate( 'Overview' ) }
 							icon={ trendingUp }
-							className="stats-widget-overview"
 							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
 						>
 							<MiniChart
