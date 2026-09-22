@@ -31,7 +31,7 @@ export const mergeNamePulseVerdict = (
 
 /**
  * A premium name is only offered when its TLD is one we can sell premiums on;
- * the rest read as taken rather than carrying a price we cannot honour.
+ * the rest read as taken rather than carrying a price we cannot honor.
  */
 export const isNamePulseAvailable = ( availability: DomainAvailability ): boolean => {
 	if ( availability.status === DomainAvailabilityStatus.AVAILABLE ) {

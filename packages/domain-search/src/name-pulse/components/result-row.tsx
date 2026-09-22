@@ -122,11 +122,10 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	const isPremiumPriceUnknown = needsPremiumPrice && ! realtimeVerdict;
-	// A failed check leaves the row on its badge alone rather than on a skeleton
-	// for good.
-	const isPremiumPricePending = isPremiumPriceUnknown && ! isPremiumPriceError;
-	const showPremiumBadge = isAvailable && !! isPremium;
+	// A failed check leaves the row on its badge alone: no price, and no skeleton
+	// waiting for one that is not coming.
+	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
+	const showPremiumBadge = isAvailable && isPremium;
 	const showSaleBadge = isAvailable && hasSalePrice( row );
 	// A badge eats into the name column's width, so it gets a tighter label
 	// truncation budget than a row with the space to spare.
@@ -224,14 +223,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isPremiumPricePending && (
+				{ isPremiumPriceMissing && ! isPremiumPriceError && (
 					<span
 						className="name-pulse-row__skeleton"
 						role="img"
 						aria-label={ __( 'Checking price…' ) }
 					/>
 				) }
-				{ isAvailable && ! isPremiumPriceUnknown && <Price result={ row } /> }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button

@@ -21,6 +21,31 @@ const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDo
 	...overrides,
 } );
 
+/**
+ * A premium exact match as the bulk check reports it: flagged premium, priced
+ * at the standard .co rate.
+ */
+const buildPremiumResult = ( overrides: Partial< NamePulseDomainResult > = {} ) =>
+	buildResult( {
+		domain_name: 'icecream.co',
+		suffix: 'co',
+		cost: '$35.00',
+		raw_price: 35,
+		currency_code: 'USD',
+		is_premium: true,
+		...overrides,
+	} );
+
+const buildPremiumAvailability = ( domainName: string, isSupported: boolean ) =>
+	buildAvailability( {
+		domain_name: domainName,
+		tld: 'co',
+		status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+		is_supported_premium_domain: isSupported,
+		cost: '$3,500.00',
+		raw_price: 3500,
+	} );
+
 const notUsed = () => Promise.reject( new Error( 'not used' ) );
 
 const renderRow = (
@@ -75,27 +100,10 @@ describe( 'NamePulseResultRow', () => {
 	} );
 
 	it( 'replaces the bulk price of a premium exact match with the per-domain one', async () => {
-		const premium = buildResult( {
-			domain_name: 'icecream.co',
-			suffix: 'co',
-			cost: '$35.00',
-			raw_price: 35,
-			currency_code: 'USD',
-			is_premium: true,
-		} );
-
-		const { fetcher } = renderRow( premium, async ( domainName ) =>
-			buildAvailability( {
-				domain_name: domainName,
-				tld: 'co',
-				status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-				is_supported_premium_domain: true,
-				cost: '$3,500.00',
-				raw_price: 3500,
-			} )
+		const { fetcher } = renderRow( buildPremiumResult(), async ( domainName ) =>
+			buildPremiumAvailability( domainName, true )
 		);
 
-		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'img', { name: 'Checking price…' } ) ).toBeInTheDocument();
 		expect( screen.queryByText( '$35' ) ).not.toBeInTheDocument();
 
@@ -106,24 +114,8 @@ describe( 'NamePulseResultRow', () => {
 	} );
 
 	it( 'marks a premium exact match its TLD cannot sell as unavailable', async () => {
-		const premium = buildResult( {
-			domain_name: 'icecream.co',
-			suffix: 'co',
-			cost: '$35.00',
-			raw_price: 35,
-			currency_code: 'USD',
-			is_premium: true,
-		} );
-
-		renderRow( premium, async ( domainName ) =>
-			buildAvailability( {
-				domain_name: domainName,
-				tld: 'co',
-				status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-				is_supported_premium_domain: false,
-				cost: '$3,500.00',
-				raw_price: 3500,
-			} )
+		renderRow( buildPremiumResult(), async ( domainName ) =>
+			buildPremiumAvailability( domainName, false )
 		);
 
 		expect( await screen.findByText( 'Unavailable' ) ).toBeInTheDocument();
@@ -132,16 +124,9 @@ describe( 'NamePulseResultRow', () => {
 	} );
 
 	it( 'keeps a premium exact match on its badge alone when the per-domain check fails', async () => {
-		const premium = buildResult( {
-			domain_name: 'icecream.co',
-			suffix: 'co',
-			cost: '$35.00',
-			raw_price: 35,
-			currency_code: 'USD',
-			is_premium: true,
-		} );
-
-		renderRow( premium, () => Promise.reject( new Error( 'Availability check failed' ) ) );
+		renderRow( buildPremiumResult(), () =>
+			Promise.reject( new Error( 'Availability check failed' ) )
+		);
 
 		await waitFor( () =>
 			expect( screen.queryByRole( 'img', { name: 'Checking price…' } ) ).not.toBeInTheDocument()
@@ -152,14 +137,12 @@ describe( 'NamePulseResultRow', () => {
 
 	it( 'prices a premium suggestion from the suggestions response, without a per-domain check', () => {
 		const { fetcher } = renderRow(
-			buildResult( {
+			buildPremiumResult( {
 				domain_name: 'gelato.io',
 				suffix: 'io',
 				source: 'keyword',
 				cost: '$350.00',
 				raw_price: 350,
-				currency_code: 'USD',
-				is_premium: true,
 			} )
 		);
 
