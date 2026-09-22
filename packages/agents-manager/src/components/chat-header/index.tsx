@@ -32,17 +32,6 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 
 	return (
 		<div className="agents-manager-chat-header">
-			{ isInternalOnly && (
-				<span
-					className="agents-manager-chat-header__internal-only"
-					title={ __(
-						'The current screen only has WordPress Agent enabled for internal use.',
-						__i18n_text_domain__
-					) }
-				>
-					{ __( 'A8C Only', __i18n_text_domain__ ) }
-				</span>
-			) }
 			{ onBack && (
 				<Button
 					className="agents-manager-chat-header__back-btn"
@@ -58,6 +47,17 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 				<div className="agents-manager-chat-header__title" title={ title }>
 					{ title }
 				</div>
+			) }
+			{ isInternalOnly && (
+				<span
+					className="agents-manager-chat-header__internal-only"
+					title={ __(
+						'The current screen only has WordPress Agent enabled for internal use.',
+						__i18n_text_domain__
+					) }
+				>
+					{ __( 'A8C Only', __i18n_text_domain__ ) }
+				</span>
 			) }
 			<div className="agents-manager-chat-header__actions">
 				{ showMinimize && (

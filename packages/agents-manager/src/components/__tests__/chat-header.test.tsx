@@ -67,10 +67,16 @@ function installMasterbarTrigger() {
 	document.body.appendChild( el );
 }
 
-function renderChatHeader( title?: string, isDocked = false ) {
+function renderChatHeader( title?: string, isDocked = false, onBack?: () => void ) {
 	return render(
 		<MemoryRouter>
-			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } isDocked={ isDocked } />
+			<ChatHeader
+				onClose={ jest.fn() }
+				options={ [] }
+				title={ title }
+				onBack={ onBack }
+				isDocked={ isDocked }
+			/>
 		</MemoryRouter>
 	);
 }
@@ -106,6 +112,20 @@ describe( 'ChatHeader', () => {
 			'title',
 			'The current screen only has WordPress Agent enabled for internal use.'
 		);
+	} );
+
+	it( 'places the internal-only pill after the back button and title', () => {
+		mockIsInternalOnly = true;
+
+		const { container } = renderChatHeader( 'Chat history', false, jest.fn() );
+		const header = container.querySelector( '.agents-manager-chat-header' );
+
+		expect( Array.from( header?.children ?? [] ).map( ( child ) => child.className ) ).toEqual( [
+			'agents-manager-chat-header__back-btn',
+			'agents-manager-chat-header__title',
+			'agents-manager-chat-header__internal-only',
+			'agents-manager-chat-header__actions',
+		] );
 	} );
 
 	it( 'hides the internal-only pill on generally available screens', () => {

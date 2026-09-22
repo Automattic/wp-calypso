@@ -96,12 +96,13 @@ describe( 'EscalationButton', () => {
 		} );
 	} );
 
-	it( 'only loads Zendesk conversations for the Woo AI provider', () => {
+	it( 'hides the Zendesk handoff outside the Woo AI provider', () => {
 		mockZendeskSmoochIntegrationKey = undefined;
 
 		render( <EscalationButton messageId="message-1" /> );
 
 		expect( mockUseGetZendeskConversations ).toHaveBeenCalledWith( false );
+		expect( screen.queryByText( 'Switch to Happiness Engineer' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues an existing Zendesk conversation for the active AI chat', () => {

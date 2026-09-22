@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useWooZendeskConversations from '../../hooks/use-woo-zendesk-conversations';
 import { getConversationBotId } from '../../utils/conversation-bot-id';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import type { ZendeskConversation } from '../../types';
 import './style.scss';
 
@@ -107,12 +108,13 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const tabSessionId = getTabSessionId();
 	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
+	const isWooAi = isWooAiProvider( zendeskSmoochIntegrationKey );
 
-	const { conversations, isLoading } = useWooZendeskConversations( !! tabSessionId );
+	const { conversations, isLoading } = useWooZendeskConversations( isWooAi && !! tabSessionId );
 	const existingConversation = useMemo(
 		() => findConversationByChatSessionId( conversations, tabSessionId ),
 		[ conversations, tabSessionId ]
@@ -120,6 +122,10 @@ export function EscalationButton( { messageId }: { messageId: string } ) {
 	const existingConversationStartedAt = existingConversation
 		? getConversationStartedAt( existingConversation )
 		: undefined;
+
+	if ( ! isWooAi ) {
+		return null;
+	}
 
 	return (
 		<SummaryButton
