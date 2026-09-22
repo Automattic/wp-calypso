@@ -148,7 +148,11 @@ function toDelete( value: unknown ): string {
 export function normalizeEdits( raw: RawBlockEdits ): BlockEdits {
 	const updates = toList( raw.updates, 'Updates must be an array' );
 	const inserts = toList( raw.inserts, 'Insertions must be an array' );
-	const deletes = toList( raw.deletes, 'Deletions must be an array of clientIds' );
+	// A single delete may arrive bare, as `deletes: 'id'`.
+	const deletes = toList(
+		typeof raw.deletes === 'string' ? [ raw.deletes ] : raw.deletes,
+		'Deletions must be an array of clientIds'
+	);
 
 	if (
 		raw.updates == null &&

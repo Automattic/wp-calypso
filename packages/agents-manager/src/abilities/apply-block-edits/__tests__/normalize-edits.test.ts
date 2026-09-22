@@ -13,11 +13,6 @@ describe( 'normalizeEdits', () => {
 		[ 'a string where updates should be', { updates: 'para' }, 'Updates must be an array' ],
 		[ 'a number where inserts should be', { inserts: 1 }, 'Insertions must be an array' ],
 		[
-			'a string where deletes should be',
-			{ deletes: 'para' },
-			'Deletions must be an array of clientIds',
-		],
-		[
 			'nothing at all',
 			{ summary: '' },
 			'Response must contain updates, insertions, deletions, custom CSS, or a summary message',
@@ -123,11 +118,12 @@ describe( 'normalizeEdits', () => {
 		} );
 	} );
 
-	it( 'unwraps a delete sent as `{ clientId }`', () => {
+	it( 'unwraps a delete sent as `{ clientId }`, or a single one sent bare', () => {
 		expect( normalizeEdits( { deletes: [ { clientId: 'gone' }, 'also' ] } ).deletes ).toEqual( [
 			'gone',
 			'also',
 		] );
+		expect( normalizeEdits( { deletes: 'gone' } ).deletes ).toEqual( [ 'gone' ] );
 	} );
 
 	// A reorder lists existing children by id alone, and an existing block may be
