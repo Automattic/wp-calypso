@@ -49,11 +49,12 @@
 		inline-size: 100%;
 		overflow: hidden;
 
-		// The last date is centred on its tick like the others, which puts half of it past
-		// the chart's right edge. Ending it at the tick keeps it whole. CSS rather than a
-		// `tickLabelProps` override, which the chart package's axis options do not expose;
-		// the property outranks the attribute visx sets.
-		.stats-widget-chart__x-axis .visx-axis-tick:last-of-type text {
+		// When the last date sits on the chart's right edge (see `has-edge-label` in
+		// mini-chart.tsx), centring it on its tick like the others puts half of it past the
+		// edge. Ending it at the tick keeps it whole. CSS rather than a `tickLabelProps`
+		// override, which the chart package's axis options do not expose; the property
+		// outranks the attribute visx sets.
+		&.has-edge-label .stats-widget-chart__x-axis .visx-axis-tick:last-of-type text {
 			text-anchor: end;
 		}
 

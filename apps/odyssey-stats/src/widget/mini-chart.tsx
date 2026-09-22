@@ -1,4 +1,5 @@
 import { Notice } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
@@ -7,7 +8,7 @@ import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility'
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { DateRange } from '../lib/date-ranges';
+import { DATE_RANGE_LAST_7_DAYS, DateRange } from '../lib/date-ranges';
 import { deriveSeriesColors } from '../lib/series-colors';
 import MetricValue from './metric-value';
 
@@ -138,7 +139,11 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			   notice has nothing to measure and would only leave a gap below it, so it
 			   sizes to its content. */ }
 			<div
-				className="stats-widget-chart"
+				// Only the 7-day range labels every day, so only there does the last date
+				// land on the chart's right edge and need ending at its tick.
+				className={ clsx( 'stats-widget-chart', {
+					'has-edge-label': range.id === DATE_RANGE_LAST_7_DAYS,
+				} ) }
 				style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
 			>
 				{ isLoading && <StatsModulePlaceholder isLoading /> }
