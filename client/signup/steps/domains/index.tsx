@@ -72,6 +72,7 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
@@ -88,15 +89,16 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -271,6 +273,8 @@ const DomainSearchUI = (
 		siteSlug,
 		setQuery,
 		clearQuery,
+		resetQuery,
+		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,
 		goToStep,
@@ -302,9 +306,15 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
-			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {

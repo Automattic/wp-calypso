@@ -9,6 +9,13 @@ export interface MigrationCommissionSite {
 	tags: AgencySiteTag[];
 	incentive_status: string;
 	incentive_rejection_reason?: string;
+	features?: {
+		wpcom_atomic?: {
+			// `active` once a WordPress.com site is ready to use.
+			state?: string;
+			blog_id?: number;
+		};
+	};
 }
 
 /**

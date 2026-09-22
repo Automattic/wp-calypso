@@ -4,12 +4,22 @@
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
-	// Figma spec is 1248px, wider than the classic results page's content width.
-	max-width: 78rem;
-
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;
 	}
+}
+
+// Figma spec is 1248px, wider than the classic results page's content width.
+// Override the variable rather than `max-width` so the mini cart, which
+// renders inside the results element, lines up with the results above it.
+// The initial state shares it so the search bar does not jump on the first query.
+.domain-search--results.domain-search--name-pulse,
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	--domain-search-content-max-width: 78rem;
+}
+
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
 }
 
 .name-pulse-grid {

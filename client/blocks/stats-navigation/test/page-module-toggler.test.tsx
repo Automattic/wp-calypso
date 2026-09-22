@@ -140,14 +140,19 @@ describe( 'PageModuleToggler', () => {
 				{ ...defaultProps }
 				moduleToggles={ {} }
 				menuItems={ [
-					{ key: 'preview', label: 'Try the new Traffic tab', icon: <svg />, onSelect },
+					{
+						key: 'preview',
+						label: 'Try the new Traffic and Insights tabs',
+						icon: <svg />,
+						onSelect,
+					},
 				] }
 			/>
 		);
 
 		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		const item = screen.getByRole( 'button', { name: 'Try the new Traffic tab' } );
+		const item = screen.getByRole( 'button', { name: 'Try the new Traffic and Insights tabs' } );
 		expect( item.closest( '.page-modules-settings-menu' ) ).not.toBeNull();
 		expect( getToggle( 'Authors' ) ).toBeChecked();
 
@@ -155,7 +160,7 @@ describe( 'PageModuleToggler', () => {
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
 		expect(
-			screen.queryByRole( 'button', { name: 'Try the new Traffic tab' } )
+			screen.queryByRole( 'button', { name: 'Try the new Traffic and Insights tabs' } )
 		).not.toBeInTheDocument();
 		// Whatever the action opens returns focus here once it closes.
 		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
@@ -171,7 +176,7 @@ describe( 'PageModuleToggler', () => {
 				menuItems={ [
 					{
 						key: 'preview',
-						label: 'Try the new Traffic tab',
+						label: 'Try the new Traffic and Insights tabs',
 						description: 'Clearer charts, and widgets you can move and resize.',
 						icon: <svg />,
 						onSelect: jest.fn(),
@@ -182,7 +187,7 @@ describe( 'PageModuleToggler', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		const item = screen.getByRole( 'button', { name: 'Try the new Traffic tab' } );
+		const item = screen.getByRole( 'button', { name: 'Try the new Traffic and Insights tabs' } );
 		expect( item ).toHaveAccessibleDescription(
 			'Clearer charts, and widgets you can move and resize.'
 		);

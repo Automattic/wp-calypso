@@ -48,7 +48,7 @@ export const agencyDevLicensesQuery = ( agencyId: number ) =>
 		queryFn: () => fetchAgencyDevLicenses( agencyId ),
 	} );
 
-function invalidateAgencyLicenses( agencyId: number | undefined ) {
+export function invalidateAgencyLicenses( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
 	} );
