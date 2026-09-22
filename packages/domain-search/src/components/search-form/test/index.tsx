@@ -94,59 +94,6 @@ describe( 'SearchForm', () => {
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
 	} );
 
-	it( 'fires onSubmitButtonClick with the button method when the button is clicked', async () => {
-		const user = userEvent.setup();
-		const onSubmitButtonClick = jest.fn();
-
-		render(
-			<TestDomainSearch events={ { onSubmitButtonClick } }>
-				<SearchForm />
-			</TestDomainSearch>
-		);
-
-		await user.type( screen.getByRole( 'searchbox' ), 'test' );
-		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
-
-		expect( onSubmitButtonClick ).toHaveBeenCalledTimes( 1 );
-		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'test', 'button' );
-	} );
-
-	it( 'fires onSubmitButtonClick with the enter method when submitted via the Enter key', async () => {
-		const user = userEvent.setup();
-		const onSubmitButtonClick = jest.fn();
-
-		render(
-			<TestDomainSearch events={ { onSubmitButtonClick } }>
-				<SearchForm />
-			</TestDomainSearch>
-		);
-
-		await user.type( screen.getByRole( 'searchbox' ), 'test{enter}' );
-
-		expect( onSubmitButtonClick ).toHaveBeenCalledTimes( 1 );
-		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'test', 'enter' );
-	} );
-
-	it( 'does not fire onSubmitButtonClick for a hint link search', async () => {
-		const user = userEvent.setup();
-		const onSubmitButtonClick = jest.fn();
-		const onQueryChange = jest.fn();
-
-		render(
-			<TestDomainSearch events={ { onSubmitButtonClick, onQueryChange } }>
-				<SearchForm />
-			</TestDomainSearch>
-		);
-
-		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
-		onSubmitButtonClick.mockClear();
-
-		await user.click( screen.getByRole( 'button', { name: 'studio' } ) );
-
-		expect( onQueryChange ).toHaveBeenCalledWith( 'studio' );
-		expect( onSubmitButtonClick ).not.toHaveBeenCalled();
-	} );
-
 	it( 'renders the icon-only submit inside a field wrapper on mobile', async () => {
 		mockUseViewportMatch.mockReturnValue( true );
 		const user = userEvent.setup();

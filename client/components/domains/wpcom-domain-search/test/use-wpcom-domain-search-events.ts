@@ -59,7 +59,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			'prefilled'
 		);
 
-		result.current.onSearch( 'my domain', 'search-2', 'submit_enter' );
+		result.current.onSearch( 'my domain', 'search-2', 'submit' );
 
 		expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 2 );
 		expect( recordSearchFormSubmit ).toHaveBeenLastCalledWith(
@@ -70,7 +70,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			'vendor',
 			'flow-name',
 			'search-2',
-			'submit_enter'
+			'submit'
 		);
 	} );
 

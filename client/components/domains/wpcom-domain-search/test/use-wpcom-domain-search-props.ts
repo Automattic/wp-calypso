@@ -1453,15 +1453,14 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		result.current.events.onSubmitButtonClick( 'my-domain.com', 'enter' );
+		result.current.events.onSubmitButtonClick( 'my-domain.com' );
 
-		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com', 'enter' );
+		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com' );
 
 		expect( recordSearchFormSubmitButtonClick ).toHaveBeenCalledWith(
 			'my-domain.com',
 			'analytics-section',
-			'flow-name',
-			'enter'
+			'flow-name'
 		);
 	} );
 } );
