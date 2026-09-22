@@ -159,6 +159,7 @@ describe( 'abilities facade', () => {
 
 		// A migrated ability is handed back; one with no provider copy stays on.
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
+		expect( amOnlyNames ).not.toContain( 'big-sky/open-help-center' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
 		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
 			...ALL_SURFACE_ABILITY_NAMES,
