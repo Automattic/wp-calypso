@@ -44,7 +44,7 @@ describe( 'toFetchOptions', () => {
 		}
 	} );
 
-	it( 'reads the first value of a multi-select status filter', () => {
+	it( 'reads a status filter persisted while the field was multi-select', () => {
 		const view: View = {
 			...DEFAULT_VIEW,
 			filters: [ { field: 'status', operator: 'isAny', value: [ 'unassigned' ] } ],

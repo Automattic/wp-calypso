@@ -49,8 +49,8 @@ const SORTABLE_FIELDS = [
 ];
 
 export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
-	// The field is multi-select, so the filter carries an array; the endpoint
-	// takes one status. A view persisted before that still holds a bare string.
+	// The endpoint takes one status, so the field is single-select. A view
+	// persisted while it was multi-select still holds an array.
 	const rawStatus = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
 	const status = Array.isArray( rawStatus ) ? rawStatus[ 0 ] : rawStatus;
 	const sortField = SORTABLE_FIELDS.find( ( field ) => field === view.sort?.field );
@@ -178,7 +178,7 @@ export function getLicenseFields( {
 				value,
 				label: statusLabels[ value ],
 			} ) ),
-			filterBy: { operators: [ 'isAny' ] },
+			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => getLicenseStatus( item ),
 			render: ( { item } ) => {
 				const status = getLicenseDisplayStatus( item );
