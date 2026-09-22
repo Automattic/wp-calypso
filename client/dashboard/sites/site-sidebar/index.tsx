@@ -112,9 +112,6 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						{ __( 'Domains' ) }
 					</SidebarMenuItem>
 				) }
-				{ siteTypeSupports.emails && (
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/emails` }>{ __( 'Emails' ) }</SidebarMenuItem>
-				) }
 			</SidebarMenu>
 		);
 	}

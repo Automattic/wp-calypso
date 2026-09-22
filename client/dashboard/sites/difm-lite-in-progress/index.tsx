@@ -1,4 +1,4 @@
-import { WPCOM_DIFM_LITE } from '@automattic/api-core';
+import { DomainSubtype, WPCOM_DIFM_LITE } from '@automattic/api-core';
 import {
 	siteDifmWebsiteContentQuery,
 	siteDomainsQuery,
@@ -11,6 +11,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { addDays, isPast } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { chooseDomainRoute, chooseEmailSolutionRoute, emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -18,16 +19,36 @@ import RouterLinkButton from '../../components/router-link-button';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import { wpcomLink } from '../../utils/link';
-import type { Site } from '@automattic/api-core';
+import type { Domain, Site } from '@automattic/api-core';
+
+function getEmailLinkProps( domain: Domain | undefined, hasEmailWithUs: boolean ) {
+	if ( ! domain ) {
+		return { to: chooseDomainRoute.fullPath };
+	}
+
+	if ( hasEmailWithUs ) {
+		return { to: emailsRoute.fullPath, search: { domainName: domain.domain } };
+	}
+
+	return { to: chooseEmailSolutionRoute.fullPath, params: { domain: domain.domain } };
+}
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: primaryDomain } = useSuspenseQuery( {
+	const { data: emailDomain } = useSuspenseQuery( {
 		...siteDomainsQuery( site.ID ),
-		select: ( data ) => data.find( ( domain ) => domain.primary_domain ),
+		select: ( data ) => {
+			const emailCapableDomains = data.filter(
+				( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+			);
+			return (
+				emailCapableDomains.find( ( domain ) => domain.primary_domain ) ?? emailCapableDomains[ 0 ]
+			);
+		},
 	} );
+
 	const hasEmailWithUs =
-		primaryDomain && ( hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain ) );
+		!! emailDomain && ( hasGSuiteWithUs( emailDomain ) || hasTitanMailWithUs( emailDomain ) );
 
 	const recordEmailClick = () => {
 		recordTracksEvent(
@@ -35,7 +56,7 @@ function WebsiteContentSubmitted( { site }: { site: Site } ) {
 				? 'calypso_dashboard_difm_lite_in_progress_email_manage'
 				: 'calypso_dashboard_difm_lite_in_progress_email_cta',
 			{
-				domain: primaryDomain?.domain,
+				domain: emailDomain?.domain,
 			}
 		);
 	};
@@ -63,7 +84,7 @@ function WebsiteContentSubmitted( { site }: { site: Site } ) {
 				<RouterLinkButton
 					variant="secondary"
 					onClick={ recordEmailClick }
-					to={ `/sites/${ site.slug }/emails` }
+					{ ...getEmailLinkProps( emailDomain, hasEmailWithUs ) }
 				>
 					{ hasEmailWithUs ? __( 'Manage email' ) : __( 'Add email' ) }
 				</RouterLinkButton>

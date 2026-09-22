@@ -77,6 +77,11 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 				: undefined,
 			nexusConnectionType: extra.in?.nexus_connection_type,
 		},
+		es: {
+			registrantEntityType: extra.es?.registrant_entity_type,
+			registrantIdentificationNumber: extra.es?.registrant_identification_number,
+			adminIdentificationNumber: extra.es?.admin_identification_number,
+		},
 	};
 }
 

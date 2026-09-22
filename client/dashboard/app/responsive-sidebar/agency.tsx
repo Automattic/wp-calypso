@@ -20,6 +20,7 @@ import {
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
+	devToolsRoute,
 	earnMigrationsRoute,
 	earnPayoutSettingsRoute,
 	earnReferralsRoute,
@@ -61,6 +62,7 @@ export default function AgencySidebar() {
 	const canAccessAmplify =
 		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
 		hasAnyCapability( capabilities, 'a4a_read_amplify' );
+	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
 	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
 
 	return (
@@ -109,13 +111,16 @@ export default function AgencySidebar() {
 					) ) }
 				</SidebarExpandableMenuItem>
 			) }
-			{ ( canAccessLearn || canAccessMcp ) && (
+			{ ( canAccessLearn || canAccessMcp || canAccessDevTools ) && (
 				<SidebarExpandableMenuItem label={ __( 'Resources' ) } icon={ pages } to="/resources">
 					{ canAccessLearn && (
 						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
 					) }
 					{ canAccessMcp && (
 						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'AI and MCP' ) }</SidebarMenuItem>
+					) }
+					{ canAccessDevTools && (
+						<SidebarMenuItem to="/resources/dev-tools">{ __( 'Developer tools' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

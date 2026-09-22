@@ -1,0 +1,50 @@
+.feature-loss-confirmation-modal {
+	--color-accent: var(--studio-wordpress-blue-50);
+	--color-accent-60: var(--studio-wordpress-blue-60);
+
+	/*
+	 * An intentional override of the framework default (has-size-medium, 560px): 600 keeps the title
+	 * on one line in English, Dutch, Indonesian, Russian and CJK. The Romance locales need ~725px --
+	 * French is the longest at ~633px of text -- so they wrap, which text-wrap: balance below makes
+	 * read as two even lines rather than a stranded word.
+	 */
+	max-width: 600px;
+
+	.components-modal__header-heading {
+		// Spread the title across its lines rather than leaving one word stranded, if it does wrap.
+		text-wrap: balance;
+	}
+
+	&__description {
+		margin-bottom: 8px;
+		// Avoids a single-word last line.
+		text-wrap: pretty;
+	}
+
+	&__feature-list {
+		list-style: none;
+		margin: 0 0 16px;
+	}
+
+	&__feature-item {
+		margin-bottom: 4px;
+
+		// A dash rather than a bullet, so the list reads as a plain enumeration.
+		&::before {
+			content: "–";
+			margin-right: 8px;
+		}
+	}
+
+	&__support-link {
+		margin-bottom: 0;
+		text-wrap: pretty;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+		margin-top: 24px;
+	}
+}

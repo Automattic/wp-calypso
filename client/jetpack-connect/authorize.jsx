@@ -31,6 +31,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { formatPluginNames } from 'calypso/lib/login';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -1346,6 +1347,37 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	renderWooBrandHeaderDescription( siteName ) {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+		const pluginName =
+			wooDna.getServiceName() || formatPluginNames( this.props.authQuery.plugin_name, translate );
+		const components = {
+			siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
+			doc: wooDna.getServiceHelpUrl() ? (
+				<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
+			) : (
+				<a
+					href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+					target="_blank"
+					rel="noreferrer"
+				/>
+			),
+		};
+
+		if ( ! pluginName ) {
+			return translate(
+				'To access all of the features and functionality of the extensions you’ve chosen, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+				{ args: { siteName }, components }
+			);
+		}
+
+		return translate(
+			'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+			{ args: { pluginName, siteName }, components }
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
@@ -1437,27 +1469,7 @@ export class JetpackAuthorize extends Component {
 						{ ! ( isUnifiedConnection || isFromMyJetpack ) && this.isWooJPC() && (
 							<BrandHeader
 								title={ translate( 'Connect your account' ) }
-								description={ translate(
-									'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
-									{
-										args: {
-											pluginName: wooDna.getServiceName() || wooDna.getPluginName(),
-											siteName,
-										},
-										components: {
-											siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
-											doc: wooDna.getServiceHelpUrl() ? (
-												<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
-											) : (
-												<a
-													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
-										},
-									}
-								) }
+								description={ this.renderWooBrandHeaderDescription( siteName ) }
 							/>
 						) }
 						{ ! ( isUnifiedConnection || isFromMyJetpack ) && ! this.isWooJPC() && (

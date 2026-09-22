@@ -22,6 +22,17 @@ const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_BOTS = 10000;
 const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
 
+const formatCause = ( cause ) => {
+	if ( ! cause ) {
+		return undefined;
+	}
+	// Undici surfaces connection failures as AggregateError when every attempt fails.
+	if ( cause instanceof AggregateError ) {
+		return cause.errors.map( String ).join( '; ' );
+	}
+	return String( cause );
+};
+
 function getQueryOptions( { path, lang } ) {
 	const props = {
 		path,
@@ -87,7 +98,8 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 		await store.dispatch( wporgFetchPluginData( pluginSlug, locale ) );
 		data = getWporgPluginSelector( store.getState(), pluginSlug );
 		if ( data?.error ) {
-			throw new Error( data.error );
+			// Rethrow the original error so its url/cause survive to the error log.
+			throw data.error instanceof Error ? data.error : new Error( data.error );
 		}
 	}
 
@@ -110,7 +122,12 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 const getPrefetchedMarketplaceProduct = ( queryClient, pluginSlug ) =>
 	queryClient.getQueryData( getWPCOMPluginQueryParams( pluginSlug ).queryKey );
 
-const prefetchTimebox = ( prefetchPromises, context ) => {
+const prefetchTimebox = ( prefetches, context ) => {
+	const pending = new Set( prefetches.map( ( { name } ) => name ) );
+	const prefetchPromises = prefetches.map( ( { name, promise } ) =>
+		promise.finally( () => pending.delete( name ) )
+	);
+
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
 
@@ -135,6 +152,13 @@ const prefetchTimebox = ( prefetchPromises, context ) => {
 		context.res.req.logger.error( {
 			feature: 'calypso_ssr',
 			message: err?.message,
+			extra: {
+				// Network-layer errors carry the request URL (see wpcom-xhr-request,
+				// lib/wporg); wporg HTTP errors expose it on err.response.url.
+				prefetchUrl: err?.url ?? err?.response?.url,
+				prefetchCause: formatCause( err?.cause ),
+				pendingPrefetches: [ ...pending ],
+			},
 		} );
 
 		return err;
@@ -154,10 +178,10 @@ export async function fetchPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( queryClient, store ),
-			prefetchPaidPlugins( queryClient, options ),
-			prefetchPopularPlugins( queryClient, options ),
-			prefetchFeaturedPlugins( queryClient, options ),
+			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
+			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
+			{ name: 'popular-plugins', promise: prefetchPopularPlugins( queryClient, options ) },
+			{ name: 'featured-plugins', promise: prefetchFeaturedPlugins( queryClient ) },
 		],
 		context
 	);
@@ -186,9 +210,9 @@ export async function fetchCategoryPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( queryClient, store ),
-			prefetchPaidPlugins( queryClient, options ),
-			prefetchCategoryPlugins( queryClient, options ),
+			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
+			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
+			{ name: 'category-plugins', promise: prefetchCategoryPlugins( queryClient, options ) },
 		],
 		context
 	);
@@ -249,10 +273,13 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
-			prefetchProductList( queryClient, store ).then( () =>
-				prefetchPlugin( queryClient, store, options )
-			),
+			{
+				// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
+				name: `plugin:${ pluginSlug }`,
+				promise: prefetchProductList( queryClient, store ).then( () =>
+					prefetchPlugin( queryClient, store, options )
+				),
+			},
 		],
 		context
 	);

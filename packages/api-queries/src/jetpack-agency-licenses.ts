@@ -1,5 +1,6 @@
 import {
 	assignJetpackLicenseToSite,
+	fetchAgencyDevLicenses,
 	fetchJetpackLicenseCounts,
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
@@ -41,7 +42,13 @@ export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
 		queryFn: () => fetchJetpackLicenseCounts( agencyId ),
 	} );
 
-function invalidateAgencyLicenses( agencyId: number | undefined ) {
+export const agencyDevLicensesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev-licenses' ],
+		queryFn: () => fetchAgencyDevLicenses( agencyId ),
+	} );
+
+export function invalidateAgencyLicenses( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
 	} );

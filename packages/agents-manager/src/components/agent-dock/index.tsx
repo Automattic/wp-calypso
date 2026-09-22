@@ -260,11 +260,20 @@ export default function AgentDock( {
 			if ( isReaderChat ) {
 				return;
 			}
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_history_conversation_selected', {
+				is_zendesk: true,
+			} );
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			if ( conversation.session_id ) {
 				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
 			}
+			// After the session is saved, so the event carries the resumed
+			// conversation's `ai_session_id` beside this tab's `tab_id`. It is the
+			// only marker that a session went quiet and was picked up again.
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_history_conversation_selected', {
+				is_zendesk: false,
+			} );
 
 			handleAbort();
 			navigate( '/chat' );
@@ -417,6 +426,23 @@ export default function AgentDock( {
 			} );
 		}
 	}, [ chatIsOpen ] );
+
+	// The unified counterpart of Big Sky's two close events (`sidebar_close_click`
+	// docked, `dock_back_button_click` floating), so a close stays visible once
+	// those names stop firing. Watches the persisted state, not `chatIsOpen`:
+	// minimizing hides the chat without closing it and has its own event.
+	// `trigger` says who closed it, as on `chat_opened`.
+	const wasPersistedOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasPersistedOpen = wasPersistedOpenRef.current;
+		wasPersistedOpenRef.current = isPersistedOpen;
+		if ( ! isPersistedOpen && wasPersistedOpen === true ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_closed', {
+				docked: isDocked,
+				trigger: takeActionOrigin( 'close' ),
+			} );
+		}
+	}, [ isPersistedOpen, isDocked ] );
 
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
