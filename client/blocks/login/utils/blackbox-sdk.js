@@ -3,15 +3,27 @@ import { loadScript } from '@automattic/load-script';
 
 let loadPromise = null;
 
-export function getBlackboxApiKey() {
+// Account creation collects under its own client so its thresholds stay
+// independent of login. Logged-out checkout creates the account.
+const SIGNUP_FEATURES = new Set( [ 'blackbox-signup', 'blackbox-userless-checkout' ] );
+
+/**
+ * Public key for a Blackbox surface.
+ * @param {string} [feature] Feature flag for the surface. Signup surfaces use `blackbox_signup_api_key`.
+ * @returns {string|undefined} Configured public key.
+ */
+export function getBlackboxApiKey( feature ) {
+	const configKey = SIGNUP_FEATURES.has( feature ) ? 'blackbox_signup_api_key' : 'blackbox_api_key';
+	const configApiKey = config( configKey );
+
 	if ( process.env.NODE_ENV === 'development' ) {
 		// Guarded require so the dev-only override module is dead-code
 		// eliminated from production bundles.
 		const { resolveBlackboxApiKey } = require( 'calypso/lib/blackbox-helper/api-key' );
-		return resolveBlackboxApiKey( config( 'blackbox_api_key' ) );
+		return resolveBlackboxApiKey( configApiKey );
 	}
 
-	return config( 'blackbox_api_key' );
+	return configApiKey;
 }
 
 /**
@@ -20,14 +32,15 @@ export function getBlackboxApiKey() {
  * Subsequent calls return the same Promise — the script is only injected once.
  *
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
+ * A later surface updates the live key via configure(); this only stamps the first load.
+ * @param {string} [apiKey] Public key stamped on the script tag. Defaults to the login key.
  * @returns {Promise<void>}
  */
-export function loadBlackboxSdk() {
+export function loadBlackboxSdk( apiKey = getBlackboxApiKey() ) {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
 
-	const apiKey = getBlackboxApiKey();
 	if ( ! config.isEnabled( 'blackbox' ) || ! apiKey ) {
 		return Promise.resolve();
 	}

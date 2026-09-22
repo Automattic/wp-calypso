@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -9,7 +10,7 @@ import { stringifyBody } from 'calypso/state/login/utils';
 
 function isBlackboxUserlessCheckoutEnabled() {
 	return (
-		!! config( 'blackbox_api_key' ) &&
+		!! getBlackboxApiKey( 'blackbox-userless-checkout' ) &&
 		config.isEnabled( 'blackbox' ) &&
 		config.isEnabled( 'blackbox-userless-checkout' )
 	);
@@ -99,7 +100,7 @@ export async function createAccount( {
 
 	const blogName = newSiteParams?.blog_name;
 	const blackboxSessionId = isBlackboxUserlessCheckoutEnabled()
-		? await getBlackboxSessionId()
+		? await getBlackboxSessionId( getBlackboxApiKey( 'blackbox-userless-checkout' ) )
 		: undefined;
 
 	try {

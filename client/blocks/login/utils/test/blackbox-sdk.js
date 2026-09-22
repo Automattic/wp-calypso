@@ -5,7 +5,10 @@
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn( ( key ) => {
 		if ( key === 'blackbox_api_key' ) {
-			return 'test-api-key';
+			return 'login-key';
+		}
+		if ( key === 'blackbox_signup_api_key' ) {
+			return 'signup-key';
 		}
 		if ( key === 'blackbox_url' ) {
 			return 'https://blackbox-api.wp.com/v.js';
@@ -40,7 +43,35 @@ describe( 'blackbox-sdk', () => {
 		expect( loadScript ).toHaveBeenCalledWith(
 			'https://blackbox-api.wp.com/v.js',
 			expect.any( Function ),
-			expect.objectContaining( { 'data-apikey': 'test-api-key' } )
+			expect.objectContaining( { 'data-apikey': 'login-key' } )
+		);
+	} );
+
+	test( 'getBlackboxApiKey uses the signup key for signup surfaces', () => {
+		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+
+		expect( getBlackboxApiKey( 'blackbox-signup' ) ).toBe( 'signup-key' );
+		expect( getBlackboxApiKey( 'blackbox-userless-checkout' ) ).toBe( 'signup-key' );
+	} );
+
+	test( 'getBlackboxApiKey uses the login key for other surfaces', () => {
+		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+
+		expect( getBlackboxApiKey() ).toBe( 'login-key' );
+		expect( getBlackboxApiKey( 'blackbox-login' ) ).toBe( 'login-key' );
+		expect( getBlackboxApiKey( 'blackbox-lost-password' ) ).toBe( 'login-key' );
+	} );
+
+	test( 'loadBlackboxSdk injects the api key it was given', async () => {
+		const { loadScript } = require( '@automattic/load-script' );
+		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+
+		await loadBlackboxSdk( 'signup-key' );
+
+		expect( loadScript ).toHaveBeenCalledWith(
+			'https://blackbox-api.wp.com/v.js',
+			expect.any( Function ),
+			expect.objectContaining( { 'data-apikey': 'signup-key' } )
 		);
 	} );
 

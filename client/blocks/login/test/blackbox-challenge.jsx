@@ -19,7 +19,11 @@ function renderChallenge( state, onSubmitBlockedChange = jest.fn() ) {
 	} );
 
 	const { container } = render(
-		<BlackboxChallenge enabled onSubmitBlockedChange={ onSubmitBlockedChange } />
+		<BlackboxChallenge
+			enabled
+			apiKey="signup-key"
+			onSubmitBlockedChange={ onSubmitBlockedChange }
+		/>
 	);
 
 	return container.querySelector( '.login__form-blackbox-challenge' );
@@ -33,6 +37,9 @@ describe( 'BlackboxChallenge', () => {
 	test( 'spaces the container while the widget occupies space', () => {
 		expect( renderChallenge( { hasChallengeContent: true } ) ).toHaveClass(
 			'has-visible-challenge'
+		);
+		expect( useBlackbox ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: true, apiKey: 'signup-key' } )
 		);
 	} );
 

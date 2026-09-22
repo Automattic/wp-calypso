@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useCallback, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -18,8 +19,9 @@ export interface BlackboxProtection {
 interface UseBlackboxProtectionOptions {
 	/**
 	 * Feature flag gating Blackbox for this surface. Form is only protected when
-	 * this flag is enabled and a `blackbox_api_key` is configured. When disabled,
-	 * `getSessionId` is a no-op so no SDK load/collect happens.
+	 * this flag is enabled and that surface's public key is configured. Signup
+	 * surfaces use `blackbox_signup_api_key`; other surfaces use `blackbox_api_key`.
+	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
 	/**
@@ -39,11 +41,9 @@ export function useBlackboxProtection( {
 	feature,
 	suspended,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
+	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
-		! suspended &&
-		!! config( 'blackbox_api_key' ) &&
-		config.isEnabled( 'blackbox' ) &&
-		config.isEnabled( feature );
+		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
 
 	// Re-block during render when a suspended surface re-enables: the challenge
@@ -59,12 +59,18 @@ export function useBlackboxProtection( {
 		setIsSubmitBlocked( isBlocked );
 	}, [] );
 
+	const getSessionId = useCallback( () => getBlackboxSessionId( apiKey ), [ apiKey ] );
+
 	return {
 		isSubmitBlocked,
 		challenge: (
-			<BlackboxChallenge enabled={ enabled } onSubmitBlockedChange={ handleSubmitBlockedChange } />
+			<BlackboxChallenge
+				enabled={ enabled }
+				apiKey={ apiKey }
+				onSubmitBlockedChange={ handleSubmitBlockedChange }
+			/>
 		),
-		getSessionId: enabled ? getBlackboxSessionId : noopGetSessionId,
+		getSessionId: enabled ? getSessionId : noopGetSessionId,
 		reset: () => {
 			try {
 				window.Blackbox?.reset?.();

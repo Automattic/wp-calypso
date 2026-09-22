@@ -29,6 +29,14 @@ describe( 'getBlackboxSessionId', () => {
 		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 
+	test( 'loads the SDK with the api key it was given', async () => {
+		window.Blackbox = { collect: jest.fn( () => Promise.resolve( 'abc123' ) ) };
+
+		await getBlackboxSessionId( 'signup-key' );
+
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'signup-key' );
+	} );
+
 	test( 'returns session id when collect resolves a string', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( 'abc123' ) ) };
 		await expect( getBlackboxSessionId() ).resolves.toBe( 'abc123' );
