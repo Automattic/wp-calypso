@@ -1,4 +1,3 @@
-import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
 	Popover,
@@ -13,6 +12,7 @@ import './style.scss';
 
 type SelfOnlyNudgeProps = {
 	anchor: HTMLElement | null;
+	isNarrow: boolean;
 	onDismiss: () => void;
 };
 
@@ -21,8 +21,7 @@ type SelfOnlyNudgeProps = {
  * the site. Waits to be acknowledged rather than closing itself, so it can't vanish before it has
  * been read.
  */
-const SelfOnlyNudge = ( { anchor, onDismiss }: SelfOnlyNudgeProps ) => {
-	const isNarrow = useBreakpoint( '<660px' );
+const SelfOnlyNudge = ( { anchor, isNarrow, onDismiss }: SelfOnlyNudgeProps ) => {
 	const isRtl = useRtl();
 
 	const handleDismiss = useCallback( () => {
@@ -47,9 +46,9 @@ const SelfOnlyNudge = ( { anchor, onDismiss }: SelfOnlyNudgeProps ) => {
 			onClose={ handleDismiss }
 			onFocusOutside={ onDismiss }
 			role="status"
-			className="self-only-nudge"
+			className="subscribers-self-only-nudge"
 		>
-			<VStack alignment="topLeft" spacing={ 3 }>
+			<VStack className="subscribers-self-only-nudge__body" alignment="topLeft" spacing={ 3 }>
 				<Heading level={ 3 } size={ 16 }>
 					{ translate( 'Every newsletter starts at one' ) }
 				</Heading>

@@ -1,5 +1,5 @@
-.self-only-nudge .components-popover__content {
+.subscribers-self-only-nudge__body {
 	inline-size: 280px;
-	max-inline-size: calc(100vw - 32px);
-	padding: 16px;
+	max-inline-size: calc( 100vw - var( --wpds-dimension-padding-2xl, 24px ) * 2 );
+	padding: var( --wpds-dimension-padding-lg, 16px );
 }

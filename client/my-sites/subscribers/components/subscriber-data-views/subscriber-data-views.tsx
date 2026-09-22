@@ -340,15 +340,21 @@ export default function SubscriberDataViews( {
 
 	const hasLaunchpad = isSimple || isAtomic;
 	const EmptyComponent = hasLaunchpad ? SubscriberLaunchpad : JetpackEmptyListView;
-	const isSelfOnly = grandTotal === 1 && isOwnerSubscribed;
 	// Simple and Atomic sites keep the launchpad checklist when the owner is the only subscriber.
 	// Everywhere else the owner's own row is shown, with a nudge towards "Add subscribers".
 	const shouldShowLaunchpad =
-		! isLoading && ! searchTerm && ( ! grandTotal || ( hasLaunchpad && isSelfOnly ) );
+		! isLoading &&
+		! searchTerm &&
+		( ! grandTotal || ( hasLaunchpad && grandTotal === 1 && isOwnerSubscribed ) );
+	// Uses the list total rather than /counts so the nudge can't drift from the rows on screen.
+	const isUnfiltered = filters.every( ( filter ) => filter === SubscribersFilterBy.All );
 	const showSelfOnlyNudge =
 		! hasLaunchpad &&
 		! isLoading &&
-		isSelfOnly &&
+		! searchTerm &&
+		isUnfiltered &&
+		total === 1 &&
+		isOwnerSubscribed &&
 		! isNudgeDismissed &&
 		! selectedSubscriber &&
 		! isUnverified &&
@@ -774,7 +780,11 @@ export default function SubscriberDataViews( {
 								} }
 							/>
 							{ showSelfOnlyNudge && (
-								<SelfOnlyNudge anchor={ addButtonAnchor } onDismiss={ dismissNudge } />
+								<SelfOnlyNudge
+									anchor={ addButtonAnchor }
+									isNarrow={ isMobile }
+									onDismiss={ dismissNudge }
+								/>
 							) }
 							<SubscribersHeaderPopover
 								siteId={ siteId }
