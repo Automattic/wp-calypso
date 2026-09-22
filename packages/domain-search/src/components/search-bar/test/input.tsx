@@ -77,4 +77,30 @@ describe( 'SearchBar#Input', () => {
 			expect( onQueryChange ).toHaveBeenCalledWith( 'test2' );
 		} );
 	} );
+
+	it( 'drops the pending typed value when the query changes externally', async () => {
+		const user = userEvent.setup();
+
+		const onQueryChange = jest.fn();
+
+		const renderSearch = ( query: string ) => (
+			<TestDomainSearch query={ query } events={ { onQueryChange } }>
+				<Input />
+			</TestDomainSearch>
+		);
+
+		const { rerender } = render( renderSearch( 'test' ) );
+
+		await user.type( screen.getByRole( 'searchbox' ), '2' );
+
+		// e.g. the free-subdomain suggestion calling setQuery before the debounce fires
+		rerender( renderSearch( 'other' ) );
+
+		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'other' );
+
+		// Outlast the input's 300 ms debounce.
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+		expect( onQueryChange ).not.toHaveBeenCalled();
+	} );
 } );
