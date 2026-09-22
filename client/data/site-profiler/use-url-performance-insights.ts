@@ -4,7 +4,7 @@ import { UrlPerformanceInsightsQueryResponse } from './types';
 
 export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) => {
 	return useQuery< UrlPerformanceInsightsQueryResponse >( {
-		queryKey: [ 'url', 'performance', url, hash ],
+		queryKey: [ 'url', 'performance-insights', url, hash ],
 		queryFn: () =>
 			wp.req.get(
 				{
