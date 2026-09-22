@@ -65,6 +65,7 @@ function setup( {
 }: { canIssueLicenses?: boolean; canRemoveSites?: boolean } = {} ) {
 	const onOpenSettings = jest.fn();
 	const onPrepareForLaunch = jest.fn();
+	const onSetUpSite = jest.fn();
 	const onViewBackups = jest.fn();
 
 	const actions = getAgencyActions( {
@@ -73,6 +74,7 @@ function setup( {
 		onIssueLicense: jest.fn(),
 		onOpenSettings,
 		onPrepareForLaunch,
+		onSetUpSite,
 		onViewActivity: jest.fn(),
 		onViewBackups,
 		recordTracksEvent: jest.fn(),
@@ -107,6 +109,7 @@ function setup( {
 		eligibleIds,
 		onOpenSettings,
 		onPrepareForLaunch,
+		onSetUpSite,
 		onViewBackups,
 	};
 }
@@ -175,6 +178,14 @@ describe( 'getAgencyActions eligibility', () => {
 		expect( eligibleIds( urlOnly ) ).toEqual( [ 'site', 'remove-site' ] );
 	} );
 
+	// The removal endpoint keys off `a4a_site_id`, so offering it on a site that
+	// has none opens a modal that can only say no.
+	test( 'withholds removal while a site is still being set up', () => {
+		const { isEligible } = setup();
+
+		expect( isEligible( 'remove-site', { ...atomic, a4a_site_id: undefined } ) ).toBe( false );
+	} );
+
 	test( 'withholds removal without the capability', () => {
 		const { isEligible } = setup( { canRemoveSites: false } );
 
@@ -194,14 +205,22 @@ describe( 'getAgencyActions eligibility', () => {
 describe( 'getAgencyActions destinations', () => {
 	// Settings and site visibility have agency routes; a clone does not, so only
 	// that one leaves the dashboard.
-	test( 'keeps launch and settings in-app', () => {
-		const { buttonAction, onOpenSettings, onPrepareForLaunch } = setup();
+	test( 'keeps launch, settings and setup in-app', () => {
+		const { buttonAction, onOpenSettings, onPrepareForLaunch, onSetUpSite } = setup();
 
 		buttonAction( 'prepare-for-launch' ).callback( [ devSite ], NO_CONTEXT );
 		expect( onPrepareForLaunch ).toHaveBeenCalledWith( devSite );
 
 		buttonAction( 'settings' ).callback( [ atomic ], NO_CONTEXT );
 		expect( onOpenSettings ).toHaveBeenCalledWith( atomic );
+
+		// The dashboard has its own overview for the site, so this no longer
+		// leaves for WordPress.com.
+		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		buttonAction( 'set-up-site' ).callback( [ atomic ], NO_CONTEXT );
+		expect( onSetUpSite ).toHaveBeenCalledWith( atomic );
+		expect( open ).not.toHaveBeenCalled();
+		open.mockRestore();
 	} );
 
 	test( 'sends each copy action to the right destination', () => {

@@ -6,9 +6,10 @@ import { useAnalytics } from '../../../app/analytics';
 import {
 	agencySiteActivityRoute,
 	agencySiteBackupsRoute,
+	agencySiteRoute,
 	agencySiteSettingsRoute,
 	agencySiteSettingsSiteVisibilityRoute,
-	marketplaceRoute,
+	marketplaceProductsRoute,
 } from '../../../app/router/agency';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
@@ -32,6 +33,7 @@ export function getAgencyActions( {
 	onIssueLicense,
 	onOpenSettings,
 	onPrepareForLaunch,
+	onSetUpSite,
 	onViewActivity,
 	onViewBackups,
 	recordTracksEvent,
@@ -41,6 +43,7 @@ export function getAgencyActions( {
 	onIssueLicense: () => void;
 	onOpenSettings: ( site: AgencySite ) => void;
 	onPrepareForLaunch: ( site: AgencySite ) => void;
+	onSetUpSite: ( site: AgencySite ) => void;
 	onViewActivity: ( site: AgencySite ) => void;
 	onViewBackups: ( site: AgencySite ) => void;
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ];
@@ -96,10 +99,11 @@ export function getAgencyActions( {
 		},
 		{
 			id: 'set-up-site',
-			icon: external,
 			label: __( 'Set up site' ),
-			callback: ( sites: AgencySite[] ) =>
-				openWpcom( 'set-up-site', `/overview/${ sites[ 0 ].blog_id }` ),
+			callback: ( sites: AgencySite[] ) => {
+				track( 'set-up-site' );
+				onSetUpSite( sites[ 0 ] );
+			},
 			isEligible: isManageableAtomic,
 		},
 		{
@@ -164,9 +168,10 @@ export function getAgencyActions( {
 			id: 'remove-site',
 			icon: trash,
 			label: __( 'Remove site' ),
-			modalHeader: __( 'Remove site' ),
+			// Removal keys off the agency's own site id, which a site still being
+			// set up has not been given yet.
 			isEligible: ( site: AgencySite ) =>
-				canRemoveSites && canActOnSite( site ) && ! isDevSite( site ),
+				canRemoveSites && canActOnSite( site ) && ! isDevSite( site ) && !! site.a4a_site_id,
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
 					<RemoveSiteModal site={ items[ 0 ] } closeModal={ closeModal } />
@@ -186,8 +191,10 @@ export function useAgencyActions( {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
+	// Issuing a license happens in Products; the `/marketplace` redirect lands on
+	// Hosting, which is a dead end for this action.
 	const onIssueLicense = useCallback(
-		() => navigate( { to: marketplaceRoute.fullPath } ),
+		() => navigate( { to: marketplaceProductsRoute.fullPath } ),
 		[ navigate ]
 	);
 
@@ -203,6 +210,12 @@ export function useAgencyActions( {
 				to: agencySiteSettingsSiteVisibilityRoute.fullPath,
 				params: { siteSlug: site.url },
 			} ),
+		[ navigate ]
+	);
+
+	const onSetUpSite = useCallback(
+		( site: AgencySite ) =>
+			navigate( { to: agencySiteRoute.fullPath, params: { siteSlug: site.url } } ),
 		[ navigate ]
 	);
 
@@ -226,6 +239,7 @@ export function useAgencyActions( {
 				onIssueLicense,
 				onOpenSettings,
 				onPrepareForLaunch,
+				onSetUpSite,
 				onViewActivity,
 				onViewBackups,
 				recordTracksEvent,
@@ -236,6 +250,7 @@ export function useAgencyActions( {
 			onIssueLicense,
 			onOpenSettings,
 			onPrepareForLaunch,
+			onSetUpSite,
 			onViewActivity,
 			onViewBackups,
 			recordTracksEvent,
