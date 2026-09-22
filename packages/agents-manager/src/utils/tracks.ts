@@ -135,6 +135,16 @@ function getBigSkyPageProps(): TracksProps {
 }
 
 /**
+ * A self-hosted site's own usage-tracking opt-in, passed in by the host. The
+ * WordPress.com consent cookies `calypso-analytics` checks are never set on a
+ * store's domain, so without this a merchant who opted out would still be
+ * recorded by the chat while the store's own events stay silent.
+ */
+function isTrackingAllowed(): boolean {
+	return getAgentsManagerInlineData()?.isTrackingAllowed !== false;
+}
+
+/**
  * Records an event under Big Sky's exact name and props so the existing Big Sky
  * dashboards keep working, then mirrors chat and feedback events under the
  * unified name.
@@ -143,6 +153,9 @@ export function recordBigSkyTracksEvent(
 	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
+	if ( ! isTrackingAllowed() ) {
+		return;
+	}
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
 		return; // Big Sky parity events are editor-only; never on reader-chat.
 	}
@@ -255,6 +268,9 @@ export function recordAgentsManagerTracksEvent(
 	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
+	if ( ! isTrackingAllowed() ) {
+		return;
+	}
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
 }
 

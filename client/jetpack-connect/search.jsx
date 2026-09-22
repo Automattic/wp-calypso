@@ -12,9 +12,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSiteByUrl, isRequestingSites } from 'calypso/state/sites/selectors';
 import { ALREADY_CONNECTED } from './connection-notice-types';
 import { IS_DOT_COM_GET_SEARCH } from './constants';
+import ExistingSearchNotice from './existing-search-notice';
 import { FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import jetpackConnection from './jetpack-connection';
@@ -155,6 +156,11 @@ export class SearchPurchase extends Component {
 		return (
 			<Card className="jetpack-connect__site-url-input-container">
 				{ this.props.renderNotices() }
+				<ExistingSearchNotice
+					site={ this.props.getSiteByUrl( this.state.currentUrl ) }
+					siteUrl={ this.state.currentUrl }
+					product={ product }
+				/>
 
 				<SiteUrlInput
 					url={ this.state.shownUrl }
@@ -202,6 +208,8 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			getSiteByUrl: ( url ) => getSiteByUrl( state, url ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,

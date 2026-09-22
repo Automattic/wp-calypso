@@ -86,6 +86,15 @@
 		border-radius: 4px;
 	}
 
+	.odie-attachment-preview-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+	}
+
 	.odie-attachment-send-button {
 		border-radius: 50%;
 		box-sizing: border-box;

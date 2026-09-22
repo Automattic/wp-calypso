@@ -13,6 +13,7 @@ import {
 	NAME_PULSE_AI_TIMEOUT_MS,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
+	NAME_PULSE_QUERY_SETTLE_MS,
 	NamePulseDomainStatus,
 	needsAvailabilityCheck,
 	pickPricing,
@@ -50,33 +51,37 @@ const toSuggestionResults = (
 };
 
 /**
- * One suggestions request, mapped to rows and re-merged with any real-time
- * verdict a row has collected since.
+ * One suggestions request for the settled query, mapped to rows and re-merged
+ * with any real-time verdict a row has collected since. Reports loading while
+ * the query is still being typed so the section holds its skeletons.
  */
 const useNamePulseSuggestions = ( {
-	query,
-	enabled,
+	settledQuery,
+	isSettled,
+	show,
 	source,
 	verdicts,
 }: {
-	query: string;
-	enabled: boolean;
+	settledQuery: string;
+	isSettled: boolean;
+	show: boolean;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 	verdicts: Map< string, NamePulseDomainUpdate >;
 } ) => {
 	const { queries } = useDomainSearch();
 	const useAi = source === 'ai';
+	const active = show && isSettled;
 	const { data, isPending } = useQuery( {
 		...queries.namePulseSuggestions( {
-			query: enabled ? sanitizeKeywordInput( query ) : '',
+			query: active ? sanitizeKeywordInput( settledQuery ) : '',
 			use_ai: useAi,
 			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
 		} ),
-		enabled,
+		enabled: active,
 	} );
 
 	const results = useMemo( () => {
-		if ( ! enabled ) {
+		if ( ! active ) {
 			return EMPTY_RESULTS;
 		}
 
@@ -84,18 +89,27 @@ const useNamePulseSuggestions = ( {
 			const verdict = verdicts.get( row.domain_name );
 			return verdict ? mergeResultUpdate( row, verdict ) : row;
 		} );
-	}, [ enabled, data, source, verdicts ] );
+	}, [ active, data, source, verdicts ] );
 
-	return { results, isLoading: enabled && isPending };
+	return { results, isLoading: show && ( ! isSettled || isPending ) };
 };
 
 /**
- * Expects an already-settled query (the search form debounces keystrokes). Rows
- * keep their previous status when a new search still lists them. Until the TLD
- * list arrives the input is treated as a plain name and no rows are generated.
+ * Rows regenerate on every keystroke; availability and suggestion requests wait
+ * for the query to settle. Rows keep their status when a new search still lists
+ * them. Until the TLD list arrives no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
 	const { queries } = useDomainSearch();
+	const [ settledQuery, setSettledQuery ] = useState( query );
+	const isSettled = query === settledQuery;
+
+	useEffect( () => {
+		const timer = setTimeout( () => setSettledQuery( query ), NAME_PULSE_QUERY_SETTLE_MS );
+
+		return () => clearTimeout( timer );
+	}, [ query ] );
+
 	const {
 		data: tlds,
 		isPending: isPendingTlds,
@@ -143,39 +157,50 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const { checkDomains } = useNamePulseAvailability( updateResult );
 
-	useEffect( () => {
-		if ( ! showExactGrid || ! tlds ) {
-			setExactResults( new Map() );
-			return;
-		}
+	const exactRows = useMemo(
+		() => ( showExactGrid && tlds ? generateExactMatches( baseName, tlds ) : EMPTY_RESULTS ),
+		[ showExactGrid, baseName, tlds ]
+	);
 
-		const rows = generateExactMatches( baseName, tlds );
+	useEffect( () => {
 		const previous = exactResultsRef.current;
 
 		setExactResults(
-			new Map( rows.map( ( row ) => [ row.domain_name, previous.get( row.domain_name ) ?? row ] ) )
+			new Map(
+				exactRows.map( ( row ) => [ row.domain_name, previous.get( row.domain_name ) ?? row ] )
+			)
 		);
+	}, [ exactRows ] );
+
+	useEffect( () => {
+		if ( ! isSettled ) {
+			return;
+		}
+
+		const known = exactResultsRef.current;
 
 		checkDomains(
-			rows
+			exactRows
 				.slice( 0, initialCheckCount )
 				.map( ( row ) => row.domain_name )
 				.filter( ( name ) => {
-					const known = previous.get( name );
-					return ! known || needsAvailabilityCheck( known.status );
+					const row = known.get( name );
+					return ! row || needsAvailabilityCheck( row.status );
 				} )
 		);
-	}, [ showExactGrid, baseName, initialCheckCount, tlds, checkDomains ] );
+	}, [ isSettled, exactRows, initialCheckCount, checkDomains ] );
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
-		query,
-		enabled: layout.suggestions.show,
+		settledQuery,
+		isSettled,
+		show: layout.suggestions.show,
 		source: 'keyword',
 		verdicts: keywordVerdicts,
 	} );
 	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
-		query,
-		enabled: layout.creative.show,
+		settledQuery,
+		isSettled,
+		show: layout.creative.show,
 		source: 'ai',
 		verdicts: keywordVerdicts,
 	} );
@@ -201,6 +226,10 @@ export const useNamePulseSearch = ( query: string ) => {
 	// example after that batch failed); make sure whatever is featured gets
 	// checked. In-flight names are skipped by `checkDomains`.
 	useEffect( () => {
+		if ( ! isSettled ) {
+			return;
+		}
+
 		const waiting = topResults
 			.filter( ( result ) => result.status === NamePulseDomainStatus.WAITING )
 			.map( ( result ) => result.domain_name );
@@ -208,7 +237,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		if ( waiting.length > 0 ) {
 			checkDomains( waiting );
 		}
-	}, [ topResults, checkDomains ] );
+	}, [ isSettled, topResults, checkDomains ] );
 
 	// Each section drops domains already listed above it. Full lists are compared,
 	// not only the visible rows, so expanding a section never makes rows vanish
