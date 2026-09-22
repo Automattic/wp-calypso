@@ -6,24 +6,30 @@ const EMPTY: NamePulseResultsLayout = {
 	mode: 'empty',
 	baseName: '',
 	wordCount: 0,
+	top: { show: false },
 	exactGrid: { show: false },
 	suggestions: { show: false },
+	creative: { show: false },
 };
 
 const SINGLE: NamePulseResultsLayout = {
 	mode: 'single',
 	baseName: 'coffee',
 	wordCount: 1,
+	top: { show: true },
 	exactGrid: { show: true },
 	suggestions: { show: false },
+	creative: { show: false },
 };
 
 const KEYWORD: NamePulseResultsLayout = {
 	mode: 'keyword',
 	baseName: 'coffeeshop',
 	wordCount: 2,
+	top: { show: true },
 	exactGrid: { show: true },
 	suggestions: { show: true },
+	creative: { show: false },
 };
 
 describe( 'getResultsLayout', () => {
@@ -40,8 +46,10 @@ describe( 'getResultsLayout', () => {
 			baseName: 'coffee',
 			wordCount: 1,
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
+			top: { show: true },
 			exactGrid: { show: true },
 			suggestions: { show: false },
+			creative: { show: false },
 		} );
 	} );
 
@@ -59,13 +67,15 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
-	it( 'keeps the exact grid and suggestions for four or more words', () => {
+	it( 'drops the exact grid and adds creative matches for four or more words', () => {
 		expect( getResultsLayout( 'a blog about coffee', TLDS ) ).toEqual( {
 			mode: 'ai',
 			baseName: 'ablogaboutcoffee',
 			wordCount: 4,
-			exactGrid: { show: true },
+			top: { show: true },
+			exactGrid: { show: false },
 			suggestions: { show: true },
+			creative: { show: true },
 		} );
 	} );
 
@@ -75,8 +85,10 @@ describe( 'getResultsLayout', () => {
 			baseName: 'icecreamd',
 			wordCount: 1,
 			unknownEnding: 'd',
+			top: { show: true },
 			exactGrid: { show: true },
 			suggestions: { show: false },
+			creative: { show: false },
 		} );
 	} );
 
@@ -87,8 +99,10 @@ describe( 'getResultsLayout', () => {
 			wordCount: 1,
 			fqdn: { baseName: 'icecream', tld: 'com', fullDomain: 'icecream.com' },
 			subdomain: 'shop',
+			top: { show: true },
 			exactGrid: { show: true },
 			suggestions: { show: false },
+			creative: { show: false },
 		} );
 	} );
 
@@ -98,8 +112,10 @@ describe( 'getResultsLayout', () => {
 			baseName: 'mysite',
 			wordCount: 1,
 			isFreeSubdomain: true,
+			top: { show: true },
 			exactGrid: { show: true },
 			suggestions: { show: false },
+			creative: { show: false },
 		} );
 	} );
 

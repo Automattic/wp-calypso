@@ -8,22 +8,52 @@ export interface NamePulseResultsLayout extends FqdnDetails {
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
+	top: { show: boolean };
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
+	creative: { show: boolean };
 }
 
-type NamePulseSections = Pick< NamePulseResultsLayout, 'exactGrid' | 'suggestions' >;
+type NamePulseSections = Pick<
+	NamePulseResultsLayout,
+	'top' | 'exactGrid' | 'suggestions' | 'creative'
+>;
 
 const AI_MODE_MIN_WORDS = 4;
 
-// The fqdn and ai rows are placeholders that keep the exact-match behaviour
-// until those modes are built.
+// The fqdn row is a placeholder that keeps the exact-match behaviour until that
+// mode is built.
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
-	empty: { exactGrid: { show: false }, suggestions: { show: false } },
-	fqdn: { exactGrid: { show: true }, suggestions: { show: false } },
-	single: { exactGrid: { show: true }, suggestions: { show: false } },
-	keyword: { exactGrid: { show: true }, suggestions: { show: true } },
-	ai: { exactGrid: { show: true }, suggestions: { show: true } },
+	empty: {
+		top: { show: false },
+		exactGrid: { show: false },
+		suggestions: { show: false },
+		creative: { show: false },
+	},
+	fqdn: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: false },
+		creative: { show: false },
+	},
+	single: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: false },
+		creative: { show: false },
+	},
+	keyword: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: true },
+		creative: { show: false },
+	},
+	ai: {
+		top: { show: true },
+		exactGrid: { show: false },
+		suggestions: { show: true },
+		creative: { show: true },
+	},
 };
 
 function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePulseMode {
