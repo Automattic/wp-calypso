@@ -5,7 +5,7 @@ import { setUpActionsForTasks } from '../setup-actions';
 import type { LaunchpadTaskActionsProps } from '../types';
 
 jest.mock( '@automattic/viewport', () => ( { isMobile: jest.fn( () => false ) } ) );
-jest.mock( '@automattic/data-stores', () => ( { updateLaunchpadSettings: jest.fn() } ) );
+jest.mock( '../use-launchpad', () => ( { updateLaunchpadSettings: jest.fn() } ) );
 
 const runDriveTraffic = ( calypso_path: string ) => {
 	const props: LaunchpadTaskActionsProps = {

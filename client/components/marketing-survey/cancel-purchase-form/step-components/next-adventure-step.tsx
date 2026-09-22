@@ -112,7 +112,7 @@ export default function NextAdventureStep( props: Props ) {
 			? translate( 'Thanks for your feedback' )
 			: translate( 'One last thing', {
 					context: 'This is the last step before cancelling the plan.',
-			  } );
+				} );
 		subHeaderText = undefined;
 	}
 

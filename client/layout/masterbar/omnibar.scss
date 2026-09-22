@@ -18,7 +18,12 @@ body:has( .omnibar:not( .is-support-session ) ) {
 		--color-masterbar-submenu-hover-text,
 		var( --color-masterbar-highlight )
 	);
+	--omnibar-icon-color: var( --color-masterbar-icon );
 	--omnibar-avatar-ring-color: var( --color-masterbar-border );
+	--omnibar-avatar-background: var(
+		--color-masterbar-avatar-background,
+		var( --color-masterbar-border )
+	);
 	--omnibar-secondary-group-background: var( --color-masterbar-submenu-group-background );
 }
 

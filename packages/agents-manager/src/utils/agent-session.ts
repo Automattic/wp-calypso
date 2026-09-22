@@ -8,15 +8,19 @@
  * The user belongs in the key because `sessionStorage` survives a logout and
  * login in the same tab: without it, the next account resumes the previous
  * account's conversation.
+ *
+ * Storage is per origin, so a same-tab navigation to another origin carries
+ * the session in the URL instead (see `session-handoff.ts`).
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { generateUUID } from './generate-uuid';
+import { getResolvedAgentId } from './resolved-agent-id';
 
 /** Base storage key; `getTabSessionKey` scopes it per agent, site and user. */
 const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
 /** Scope placeholders for a chat with no selected site, or no logged-in user. */
-const NO_SITE = 'no-site';
+export const NO_SITE = 'no-site';
 const NO_USER = 'no-user';
 
 let activeSiteKey = NO_SITE;
@@ -67,6 +71,15 @@ export function getSessionId(
 		console.error( '[agent-session] Error loading session ID:', error );
 		return '';
 	}
+}
+
+/**
+ * The active session ID for non-React callers (ability callbacks, the Tracks
+ * wrapper) — read under the agent scope the Provider publishes, so the answer
+ * matches the mounted chat's on every surface, Dolly included.
+ */
+export function getActiveSessionId(): string {
+	return getSessionId( getResolvedAgentId() );
 }
 
 /**

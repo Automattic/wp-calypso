@@ -24,6 +24,18 @@ export const uploadMethod = keyedReducer( 'siteId', ( state = null, action ) => 
 	return state;
 } );
 
+export const uploadFile = keyedReducer( 'siteId', ( state = null, action ) => {
+	switch ( action.type ) {
+		case PLUGIN_UPLOAD:
+			return action.file;
+		case PLUGIN_UPLOAD_COMPLETE:
+		case PLUGIN_UPLOAD_CLEAR:
+			return null;
+	}
+
+	return state;
+} );
+
 export const uploadedPluginId = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGIN_UPLOAD:
@@ -105,6 +117,7 @@ export const inProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
 
 export default combineReducers( {
 	uploadedPluginId,
+	uploadFile,
 	uploadMethod,
 	uploadError,
 	progressPercent,

@@ -585,13 +585,13 @@ class SignupForm extends Component {
 		return this.props.displayUsernameInput;
 	}
 
-	handlePasswordlessSubmit = ( passwordLessData ) => {
+	handlePasswordlessSubmit = ( passwordLessData, afterSubmit ) => {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
 			}
-			this.props.submitForm( this.state.form, passwordLessData );
+			this.props.submitForm( this.state.form, passwordLessData, undefined, afterSubmit );
 		} );
 	};
 
@@ -740,12 +740,12 @@ class SignupForm extends Component {
 					inputPlaceholder: this.props.translate( 'Enter your email address' ),
 					submitButtonLabel: this.props.translate( 'Continue' ),
 					submitButtonLoadingLabel: this.props.translate( 'Continue' ),
-			  }
+				}
 			: {
 					inputPlaceholder: null,
 					submitButtonLabel: this.props.translate( 'Continue' ),
 					submitButtonLoadingLabel: <Spinner />,
-			  };
+				};
 
 		return (
 			<div

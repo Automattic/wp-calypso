@@ -1,6 +1,10 @@
-import { THROTTLE_IDS, readActiveThrottles, throttleEnvVar } from '@automattic/calypso-e2e';
+import {
+	THROTTLE_IDS,
+	readActiveThrottles,
+	throttleEnvVar,
+	withDeadline,
+} from '@automattic/calypso-e2e';
 import { test as setup } from '@playwright/test';
-import { withDeadline } from '../lib/with-deadline';
 import type { ThrottleId } from '@automattic/calypso-e2e';
 
 /**

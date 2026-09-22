@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -9,6 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -135,7 +135,7 @@ export default function AmplifyScoreCard() {
 						<Text as="code" variant="muted" size={ 12 }>
 							{ SAMPLE_URL }
 						</Text>
-						<Badge intent="success">{ __( 'Audit complete' ) }</Badge>
+						<Badge intent="stable">{ __( 'Audit complete' ) }</Badge>
 					</HStack>
 
 					<ToggleGroupControl

@@ -208,6 +208,63 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'hides the Remove button when is_manageable_by_user is false and auto-renew is OFF', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: false,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Remove plan/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /will be removed immediately/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the Cancel button when is_manageable_by_user is false and auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders a Remove button for a domain connection bundled with a plan, even though auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )

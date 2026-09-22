@@ -22,15 +22,6 @@ type GrowthCardLinks = Pick<
 	'tiers' | 'sites' | 'referrals' | 'woopayments' | 'marketplace' | 'partnerDirectory'
 >;
 
-// The marketplace destination differs per host (products on the classic app,
-// exclusive offers on the dashboard), so either capability unlocks those rows.
-// TODO: drop 'a4a_read_exclusive_offers' once the MSD dashboard has a real
-// marketplace screen and its overview links there instead of exclusive offers.
-const MARKETPLACE_CAPABILITIES: AgencyCapability[] = [
-	'a4a_read_marketplace',
-	'a4a_read_exclusive_offers',
-];
-
 interface GrowthItem {
 	id: string;
 	icon: JSX.Element;
@@ -82,7 +73,7 @@ function getPendingContent( links: GrowthCardLinks ): GrowthContent {
 				description: __( 'Browse 60+ products you’ll be able to resell' ),
 				actionLabel: __( 'Explore' ),
 				href: links.marketplace,
-				requiredCapability: MARKETPLACE_CAPABILITIES,
+				requiredCapability: 'a4a_read_marketplace',
 			},
 		],
 	};
@@ -107,7 +98,7 @@ function getGrowTowardItems( links: GrowthCardLinks ): GrowthItem[] {
 			description: __( 'Get exclusive wholesale agency discounts on products & hosting.' ),
 			actionLabel: __( 'Browse' ),
 			href: links.marketplace,
-			requiredCapability: MARKETPLACE_CAPABILITIES,
+			requiredCapability: 'a4a_read_marketplace',
 		},
 		{
 			id: 'set-up-woopayments',
@@ -143,7 +134,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $5,000 */
 			__(
-				'Reach %s IAR to become a Pro Partner and unlock free agency hosting, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
+				'Reach %s IAR to become a Pro Partner and unlock qualified leads, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
 				stripZeros: true,
@@ -188,7 +179,7 @@ function getPremierContent(
 						actionLabel: __( 'Review sites' ),
 						href: links.sites,
 						requiredCapability: 'a4a_read_managed_sites',
-				  }
+					}
 				: {
 						id: 'partner-directory',
 						icon: globe,
@@ -199,7 +190,7 @@ function getPremierContent(
 						actionLabel: __( 'Set up listing' ),
 						href: links.partnerDirectory,
 						requiredCapability: 'a4a_read_partner_directory',
-				  },
+					},
 			{
 				id: 'set-up-woopayments',
 				icon: payment,

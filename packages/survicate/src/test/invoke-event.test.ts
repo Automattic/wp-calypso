@@ -4,12 +4,20 @@
 
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
+	subscribe: jest.fn( () => jest.fn() ),
 } ) );
 
-import { select } from '@wordpress/data';
-import { invokeSurvicateEvent } from '../invoke-event';
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { select, subscribe } from '@wordpress/data';
+import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
 
 const mockSelect = select as jest.Mock;
+const mockSubscribe = subscribe as unknown as jest.Mock;
+const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -24,6 +32,7 @@ describe( 'invokeSurvicateEvent', () => {
 	afterEach( () => {
 		window._sva = undefined;
 		mockSelect.mockReset();
+		mockRecordTracksEvent.mockReset();
 	} );
 
 	test( 'should call invokeEvent immediately when SDK is ready', () => {
@@ -96,6 +105,49 @@ describe( 'invokeSurvicateEvent', () => {
 		expect( invokeEvent ).not.toHaveBeenCalled();
 	} );
 
+	test( 'should suppress the event and close the survey when a modal is open', () => {
+		const invokeEvent = jest.fn();
+		const closeSurvey = jest.fn();
+		window._sva = { invokeEvent, closeSurvey };
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'modal',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
+
+		modal.remove();
+	} );
+
+	test( 'should suppress a deferred event when a modal is open at SurvicateReady time', () => {
+		const invokeEvent = jest.fn();
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		modal.remove();
+	} );
+
 	test( 'should fall back gracefully when Help Center store is unavailable', () => {
 		const invokeEvent = jest.fn();
 		window._sva = { invokeEvent };
@@ -105,5 +157,71 @@ describe( 'invokeSurvicateEvent', () => {
 		} );
 		invokeSurvicateEvent( 'testEvent' );
 		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+} );
+
+describe( 'observeHelpCenter', () => {
+	afterEach( () => {
+		mockSelect.mockReset();
+		mockSubscribe.mockClear();
+	} );
+
+	function setHelpCenterShown( open: boolean ) {
+		mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
+	}
+
+	function notifyStore() {
+		mockSubscribe.mock.calls.at( -1 )?.[ 0 ]?.();
+	}
+
+	test( 'should fire onOpen when the Help Center opens', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		setHelpCenterShown( true );
+		notifyStore();
+
+		expect( onOpen ).toHaveBeenCalledTimes( 1 );
+		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should fire onClose when the Help Center closes', () => {
+		setHelpCenterShown( true );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		setHelpCenterShown( false );
+		notifyStore();
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+		expect( onOpen ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not fire when the state has not changed', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		notifyStore();
+		notifyStore();
+
+		expect( onOpen ).not.toHaveBeenCalled();
+		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should fire each transition only once until the state flips again', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		observeHelpCenter( onOpen, jest.fn() );
+
+		setHelpCenterShown( true );
+		notifyStore();
+		notifyStore();
+
+		expect( onOpen ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

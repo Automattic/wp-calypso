@@ -5,27 +5,24 @@
  * application), so they load as an async chunk and only on editor pages.
  * Chats everywhere else (Reader, wp-admin list screens, Calypso) never fetch
  * the chunk, keeping their bundles small. The `?am_abilities=0` testing
- * switch skips the load too, flipping the whole flow back to the provider
- * copies.
+ * switch hands the migrated editor abilities back to the provider copies;
+ * abilities with no provider copy stay on.
  */
 
-import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
+import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 
-type EditorAbilitiesModule = typeof import('./editor-abilities');
+type EditorAbilitiesModule = typeof import( './editor-abilities' );
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
 
-// TODO (ability-migration): Drop the `?am_abilities=0` checks in this file —
-// the load gate below, the owned-ability list, and the checkpoint context —
-// with the switch itself. See `utils/is-am-abilities-disabled.ts`.
 function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
-	if ( ! editorAbilitiesPromise && isEditorPage() && ! isAmAbilitiesDisabled() ) {
+	if ( ! editorAbilitiesPromise && isEditorPage() ) {
 		editorAbilitiesPromise = import(
 			/* webpackChunkName: "am-editor-abilities" */ './editor-abilities'
 		).then(
@@ -56,17 +53,13 @@ function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
 }
 
 // All-surface abilities stay in the main bundle and run on every surface —
-// none yet; `wp-admin-navigate` lands here when it migrates (AI-1082). Only
-// the editor stack earns the lazy chunk.
-const ALL_SURFACE_ABILITIES: Ability[] = [];
+// only the editor stack earns the lazy chunk.
+const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
 
 // A failed chunk load (already logged and set up to retry above) degrades to
-// "AM owns nothing" — tool calls then fall through to the provider copies.
+// the all-surface list — editor tool calls then fall through to the provider
+// copies.
 async function getOwnedAbilities(): Promise< Ability[] > {
-	if ( isAmAbilitiesDisabled() ) {
-		return [];
-	}
-
 	let editorAbilities: Ability[] = [];
 	try {
 		const module = loadEditorAbilities();
@@ -111,14 +104,8 @@ export async function registerAmAbilities(): Promise< void > {
  * AM's checkpoints for the merged `availableCheckpoints` context — a sync
  * view because the `ContextProvider` contract is sync. Empty until the
  * editor abilities finish loading: with no ability executions there are no
- * checkpoints, so reading is never a reason to load them. Empty again under
- * `?am_abilities=0`, so the agent is never offered ids that AM no longer
- * restores.
+ * checkpoints, so reading is never a reason to load them.
  */
 export function getAmCheckpointContext(): CheckpointContextItem[] {
-	if ( isAmAbilitiesDisabled() || ! loadedEditorAbilities ) {
-		return [];
-	}
-
-	return loadedEditorAbilities.getAvailableCheckpoints();
+	return loadedEditorAbilities?.getAvailableCheckpoints() ?? [];
 }

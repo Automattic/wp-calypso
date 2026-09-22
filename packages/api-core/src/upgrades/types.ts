@@ -265,6 +265,14 @@ export interface Purchase {
 	is_removable: boolean;
 
 	/**
+	 * True if the customer can refund, cancel or remove this purchase themselves.
+	 *
+	 * Set per product, not per user. Support can still act on the purchase.
+	 * Optional in the response, so read it through `isManageableByUser()`.
+	 */
+	is_manageable_by_user?: boolean;
+
+	/**
 	 * True if this subscription has refundable receipts.
 	 *
 	 * If this is true, it means that it's possible the subscription could
@@ -595,6 +603,26 @@ export interface Purchase {
 	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
 	 */
 	is_plan_term_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded instantly, right now,
+	 * rather than having the change scheduled for its next renewal.
+	 *
+	 * When this is true, `POST /wpcom/v2/upgrades/$purchase_id/cancel` with
+	 * `{ type: 'downgrade', to_product_id }` will be accepted and will provision
+	 * the lower plan immediately.
+	 *
+	 * This is not the same question as `is_refundable`, and must not be derived
+	 * from it. In particular it is true for a refundable receipt worth nothing
+	 * (a comped plan, a 100%-off coupon, or a purchase paid entirely with
+	 * credits) — the instant downgrade is still valid, it just issues no refund.
+	 * For whether any money would come back, check `total_refund_amount`.
+	 *
+	 * It is also true for a renewal that is still within its own refund window,
+	 * not only for an initial purchase, so it is unrelated to
+	 * `is_within_initial_refund_window`.
+	 */
+	is_instant_downgrade_available: boolean;
 
 	/**
 	 * True if deactivating this subscription will cause the site to be reverted

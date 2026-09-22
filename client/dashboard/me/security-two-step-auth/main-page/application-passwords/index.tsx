@@ -13,7 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
-import { useLocale } from '../../../../app/locale';
+import { useIntlLocale } from '../../../../app/locale';
 import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
 import { SectionHeader } from '../../../../components/section-header';
@@ -27,7 +27,7 @@ const ApplicationPasswordsList = ( {
 	item: TwoStepAuthApplicationPassword;
 	onRemove: () => void;
 } ) => {
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const { recordTracksEvent } = useAnalytics();
 

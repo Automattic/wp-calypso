@@ -26,10 +26,19 @@ function getWporgLocaleCode( currentUserLocale ) {
 }
 
 async function getRequest( url, query ) {
-	const response = await fetch( `${ url }?${ stringifyQs( query ) }`, {
-		method: 'GET',
-		headers: { Accept: 'application/json' },
-	} );
+	const requestUrl = query ? `${ url }?${ stringifyQs( query ) }` : url;
+
+	let response;
+	try {
+		response = await fetch( requestUrl, {
+			method: 'GET',
+			headers: { Accept: 'application/json' },
+		} );
+	} catch ( error ) {
+		// Network errors ("TypeError: fetch failed") don't say what they were fetching.
+		error.url = requestUrl;
+		throw error;
+	}
 
 	if ( response.ok ) {
 		return await response.json();

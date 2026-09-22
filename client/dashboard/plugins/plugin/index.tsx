@@ -69,8 +69,9 @@ export function PluginTabs( {
 	);
 	// While the site data is still loading the count isn't known yet, so blur the
 	// label into a skeleton instead of asserting a misleading "Installed on 0 sites".
-	const installedTabTitle =
-		isLoading && installedCount === 0 ? <TextBlur>{ installedLabel }</TextBlur> : installedLabel;
+	const installedTabTitle = (
+		<TextBlur isBlurred={ isLoading && installedCount === 0 }>{ installedLabel }</TextBlur>
+	);
 
 	return (
 		<Tabs

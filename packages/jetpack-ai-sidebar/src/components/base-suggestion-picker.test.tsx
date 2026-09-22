@@ -19,6 +19,15 @@ describe( 'BaseSuggestionPicker', () => {
 		expect( screen.getByText( 'Second option' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders nothing when there are no options', () => {
+		// Mirrors the alt-text picker: an empty list means there is nothing to
+		// choose, so no intro renders either.
+		const { container } = render(
+			<BaseSuggestionPicker intro="Pick one:" options={ [] } onApply={ jest.fn() } />
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	it( 'calls onApply with the clicked value', () => {
 		const onApply = jest.fn();
 		const onResponseAction = jest.fn();

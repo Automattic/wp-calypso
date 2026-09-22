@@ -111,17 +111,7 @@ To set environment variables for the extension, such as `CALYPSO_BASE_URL`:
 
 ### Save authentication cookies
 
-The `prime-logins` setup project logs in as a list of accounts before the main test suite runs and saves their cookies to be re-used until expiry (typically 3 days). Every project except `authentication` waits for it, so the specs read those cookies instead of logging in themselves.
-
-By default it primes the list in [`setup/prime-logins.setup.ts`](../setup/prime-logins.setup.ts). To prime a different set, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
-
-```bash
-export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
-```
-
-Either list is primed alongside the account the current environment variables select, the one behind the `accountGivenByEnvironment` fixture.
-
-Set it to an empty value to skip priming altogether; whatever needs an account then logs in when it first runs.
+Authentication cookies are cached per account under `COOKIES_PATH`. The first worker that needs an account logs in while holding that account’s lock and writes the cookie file; other workers wait for the lock, then reuse that file. There is no separate priming step.
 
 ### Use the mobile viewport
 

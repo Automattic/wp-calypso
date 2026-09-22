@@ -14,6 +14,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 ): OmnibarNodes {
 	const omnibarNodes: OmnibarNodes = {};
 	const siteActionNodes: OmnibarNode[] = [];
+	const pluginNodes: OmnibarNode[] = [];
 
 	const nodeMap = new Map< string, OmnibarNode >();
 	for ( const node of adminBarNodes ) {
@@ -134,6 +135,11 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		const builder = builders?.[ node.id ];
 		if ( builder ) {
 			Object.assign( omnibarNode, builder( node ) );
+
+			// The tree walk skips `top-secondary`, so a builder is what surfaces those nodes.
+			if ( node.parent === 'top-secondary' ) {
+				pluginNodes.push( omnibarNode );
+			}
 		}
 
 		nodeMap.set( node.id, omnibarNode );
@@ -141,6 +147,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 
 	if ( siteActionNodes.length > 0 ) {
 		omnibarNodes.siteActions = siteActionNodes;
+	}
+
+	if ( pluginNodes.length > 0 ) {
+		omnibarNodes.plugins = pluginNodes;
 	}
 
 	for ( const node of adminBarNodes ) {

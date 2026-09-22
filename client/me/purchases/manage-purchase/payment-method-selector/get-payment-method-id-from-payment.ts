@@ -1,4 +1,4 @@
-import type { PurchasePayment } from 'calypso/lib/purchases/types';
+import type { PurchasePayment } from '@automattic/api-core';
 
 // Return an ID as used in the payment method list in PaymentMethodSelector
 export default function getPaymentMethodIdFromPayment(

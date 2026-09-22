@@ -1,4 +1,6 @@
-import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
+import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -19,32 +21,45 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ , variant ] = useSiteLaunchGatingVariant();
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+
+	const launchUrl = addQueryArgs( '/start/launch-site', { siteSlug: site?.slug } );
+
+	// A free site can never qualify (needs a paid plan), so skip the bridge and
+	// redirect instantly. Unknown plans fall through and settle in the bridge.
+	const isFreePlan = site?.plan?.is_free ?? false;
 
 	const handleTaskClick = ( task: Task ) => {
 		if ( task.id !== 'site_launched' ) {
 			return;
 		}
 
-		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
-		// The other branches are scaffolding for future experiments; see
-		// useSiteLaunchGatingVariant().
-		switch ( variant ) {
-			case 'semi_gated_site_launch':
-			case null:
-			default: {
-				window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
-				return false;
-			}
+		// Hand off to the pre-launch bridge, which confirms for qualifying sites.
+		if ( isFreePlan ) {
+			window.location.assign( launchUrl );
+			return false;
 		}
+
+		setIsLaunchModalOpen( true );
+		return false;
 	};
 
 	return (
-		<CustomerHomeLaunchpad
-			checklistSlug={ props.checklistSlug ?? checklistSlug }
-			onTaskClick={ handleTaskClick }
-			onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
-		/>
+		<>
+			<CustomerHomeLaunchpad
+				checklistSlug={ props.checklistSlug ?? checklistSlug }
+				onTaskClick={ handleTaskClick }
+				onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
+			/>
+			{ ! isFreePlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
+			) }
+		</>
 	);
 };
 

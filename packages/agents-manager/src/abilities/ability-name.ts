@@ -1,7 +1,13 @@
 import type { Ability } from './types';
 
-// The agent routes tool calls with `/` → `__` and `-` → `_`.
-const normalizeAbilityName = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
+/**
+ * The agent routes tool calls with `/` → `__` and `-` → `_`, so an ability
+ * registered as `big-sky/apply-block-edits` is invoked as
+ * `big_sky__apply_block_edits`. Anything matching an ability by name — execution,
+ * ownership checks, the canvas guard — has to normalize both sides.
+ */
+export const normalizeAbilityName = ( name: string ) =>
+	name.replace( /\//g, '__' ).replace( /-/g, '_' );
 
 /**
  * Finds an ability by its raw or agent-normalized name — the one matching

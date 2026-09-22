@@ -1,13 +1,14 @@
-import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, select } from '@wordpress/data';
+import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
+import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
+import { getToolCallIdFromConversationHistory } from './tool-call-history';
 
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
- * execute as plain callbacks, so no hook wiring is needed. Only the
- * global-styles domain (`color`/`font`/`button` keys) restores today; the
- * block, page, and navigation domains land with their abilities. Until then,
+ * execute as plain callbacks, so no hook wiring is needed. The global-styles
+ * (`color`/`font`/`button`) and site-logo domains restore today; the block,
+ * page, and navigation domains land with their abilities. Until then,
  * checkpoints for those domains live in Big Sky's store and restore through
  * the `provider-checkpoints` bridge.
  *
@@ -23,9 +24,14 @@ export const checkpointKeys = {
 	COLOR: 'color',
 	FONT: 'font',
 	BUTTON: 'button',
+	LOGO: 'logo',
 } as const;
 
-const THEME_KEYS: string[] = [ checkpointKeys.COLOR, checkpointKeys.FONT, checkpointKeys.BUTTON ];
+export const THEME_CHECKPOINT_KEYS: string[] = [
+	checkpointKeys.COLOR,
+	checkpointKeys.FONT,
+	checkpointKeys.BUTTON,
+];
 
 export const RESTORE_CHECKPOINT_TOOL_ID = 'big_sky__restore_checkpoint';
 
@@ -38,16 +44,12 @@ export interface CheckpointMetadata {
 	restoredCheckpointToolId?: string;
 }
 
-type GlobalStylesSnapshot = {
-	settings: Record< string, unknown >;
-	styles: Record< string, unknown >;
-};
-
 export interface CheckpointRecord extends CheckpointMetadata {
 	id: string;
 	checkpointKeys: string[];
 	createdAt: number;
-	themeBeforeUpdate?: GlobalStylesSnapshot;
+	themeBeforeUpdate?: Required< GlobalStylesRecord >;
+	logoBeforeUpdate?: SiteLogo;
 }
 
 const records = new Map< string, CheckpointRecord >();
@@ -56,55 +58,19 @@ const records = new Map< string, CheckpointRecord >();
 // live edited record, and non-serializable values must not survive into them.
 const deepClone = < T >( value: T ): T => JSON.parse( JSON.stringify( value ) );
 
-type CoreSelect = {
-	__experimentalGetCurrentGlobalStylesId?: () => string | undefined;
-	getEditedEntityRecord: (
-		kind: string,
-		name: string,
-		id: string
-	) => { settings?: Record< string, unknown >; styles?: Record< string, unknown > } | undefined;
-};
+function captureThemeSnapshot(): Required< GlobalStylesRecord > | undefined {
+	const globalStyles = getEditedGlobalStyles();
 
-type CoreDispatch = {
-	editEntityRecord: (
-		kind: string,
-		name: string,
-		id: string,
-		edits: Record< string, unknown >,
-		options: { undoIgnore: boolean }
-	) => void;
-};
-
-// `select`/`dispatch` return `undefined` on surfaces where the `core-data`
-// store is not registered — every access stays optional.
-const getGlobalStylesId = () =>
-	( select( coreStore ) as CoreSelect | undefined )?.__experimentalGetCurrentGlobalStylesId?.();
-
-function captureThemeSnapshot(): GlobalStylesSnapshot | undefined {
-	const globalStylesId = getGlobalStylesId();
-	if ( ! globalStylesId ) {
-		return undefined;
-	}
-
-	const globalStyles = ( select( coreStore ) as CoreSelect | undefined )?.getEditedEntityRecord(
-		'root',
-		'globalStyles',
-		globalStylesId
-	);
-	if ( ! globalStyles ) {
-		return undefined;
-	}
-
-	return deepClone( {
-		settings: globalStyles.settings || {},
-		styles: globalStyles.styles || {},
-	} );
+	return globalStyles && deepClone( globalStyles.record );
 }
 
 // Throws instead of no-opping when the snapshot or target is missing — a
 // silent skip would let the agent report an undo that never happened.
 function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
-	const restoresTheme = checkpoint.checkpointKeys.some( ( key ) => THEME_KEYS.includes( key ) );
+	const restoresTheme = checkpoint.checkpointKeys.some( ( key ) =>
+		THEME_CHECKPOINT_KEYS.includes( key )
+	);
+
 	if ( ! restoresTheme ) {
 		return;
 	}
@@ -113,23 +79,25 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 		throw new Error( 'Checkpoint has no global-styles snapshot to restore.' );
 	}
 
-	const globalStylesId = getGlobalStylesId();
-	if ( ! globalStylesId ) {
+	const globalStyles = getEditedGlobalStyles();
+
+	if ( ! globalStyles ) {
 		throw new Error( 'Global styles are unavailable to restore into.' );
 	}
 
-	const coreDispatch = dispatch( coreStore ) as CoreDispatch | undefined;
-	if ( ! coreDispatch ) {
-		throw new Error( 'Global styles are unavailable to restore into.' );
+	editGlobalStyles( globalStyles.id, checkpoint.themeBeforeUpdate );
+}
+
+function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.LOGO ) ) {
+		return;
 	}
 
-	coreDispatch.editEntityRecord(
-		'root',
-		'globalStyles',
-		globalStylesId,
-		checkpoint.themeBeforeUpdate,
-		{ undoIgnore: true }
-	);
+	if ( checkpoint.logoBeforeUpdate === undefined ) {
+		throw new Error( 'Checkpoint has no site-logo snapshot to restore.' );
+	}
+
+	setSiteLogo( checkpoint.logoBeforeUpdate );
 }
 
 /**
@@ -146,6 +114,7 @@ export function setCheckpoint(
 	}
 
 	const themeBeforeUpdate = captureThemeSnapshot();
+	const logoBeforeUpdate = keys.includes( checkpointKeys.LOGO ) ? getSiteLogo() : undefined;
 
 	records.set( id, {
 		...metadata,
@@ -153,6 +122,7 @@ export function setCheckpoint(
 		checkpointKeys: keys,
 		createdAt: Date.now(),
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
+		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
 	} );
 }
 
@@ -166,6 +136,46 @@ export function getCheckpoint( id: string ): CheckpointRecord | undefined {
 
 export function clearCheckpoint( id: string ): void {
 	records.delete( id );
+}
+
+/**
+ * Runs an ability's write under a checkpoint keyed by its tool call, so
+ * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
+ * repeat must not overwrite the pre-change state — and a write that throws or
+ * rejects drops its checkpoint, so no undo is offered for a change that never
+ * happened. Without a call id the write runs uncheckpointed.
+ */
+export async function withCheckpoint< T >(
+	{
+		toolId,
+		toolCallId,
+		keys,
+		summary,
+	}: {
+		toolId: string;
+		/** The client's id for this call; read from the conversation history when absent. */
+		toolCallId?: string;
+		keys: string[];
+		summary: string;
+	},
+	write: () => T | Promise< T >
+): Promise< T > {
+	const callId = toolCallId ?? getToolCallIdFromConversationHistory( toolId );
+	const checkpointId = callId && ! hasCheckpoint( callId ) ? callId : null;
+
+	if ( checkpointId ) {
+		setCheckpoint( checkpointId, keys, { toolId, summary } );
+	}
+
+	try {
+		return await write();
+	} catch ( error ) {
+		if ( checkpointId ) {
+			clearCheckpoint( checkpointId );
+		}
+
+		throw error;
+	}
 }
 
 /** Returns all checkpoints, oldest first. */
@@ -183,15 +193,16 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 	}
 
 	restoreThemeSnapshot( checkpoint );
+	restoreLogoSnapshot( checkpoint );
 }
 
-export type CheckpointContextItem = CheckpointMetadata & {
+export interface CheckpointContextItem extends CheckpointMetadata {
 	checkpointId: string;
 	checkpointIndex: number;
 	checkpointKeys: string[];
 	createdAt: number;
 	isLatestForTool?: boolean;
-};
+}
 
 /**
  * The AM-held checkpoints advertised to the agent via the client context for
@@ -207,13 +218,15 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 		}
 	} );
 
-	// The snapshot stays out of the model-facing list.
-	return checkpoints.map( ( { id, themeBeforeUpdate: _snapshot, ...checkpoint }, index ) => ( {
-		...checkpoint,
-		checkpointId: id,
-		checkpointIndex: index,
-		...( checkpoint.toolId && {
-			isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
-		} ),
-	} ) );
+	// Snapshots stay out of the model-facing list.
+	return checkpoints.map(
+		( { id, themeBeforeUpdate: _theme, logoBeforeUpdate: _logo, ...checkpoint }, index ) => ( {
+			...checkpoint,
+			checkpointId: id,
+			checkpointIndex: index,
+			...( checkpoint.toolId && {
+				isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
+			} ),
+		} )
+	);
 }

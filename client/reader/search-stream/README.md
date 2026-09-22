@@ -1,8 +1,10 @@
 # Search Stream
 
-A post stream that shows posts from a search
+The post stream behind the Reader's Search tab at `/discover/search`: the search
+input, the query suggestions, the relevance/date sort control, and the results.
 
 ## Props
 
-- `query`: a string representing the query
-- see `reader/following-stream` for more
+- `query`: the search term
+- `sort`: `relevance` (default) or `date`
+- see `reader/stream` for the rest

@@ -156,9 +156,9 @@ function StopSubscriptionButton( {
 	const navigate = useNavigate();
 	const title = isProduct
 		? // translators: %s is the product title
-		  sprintf( __( 'Remove %s product' ), subscription.title )
+			sprintf( __( 'Remove %s product' ), subscription.title )
 		: // translators: %s is the product title
-		  sprintf( __( 'Stop %s subscription' ), subscription.title );
+			sprintf( __( 'Stop %s subscription' ), subscription.title );
 	return (
 		<ActionList.ActionItem
 			title={ title }

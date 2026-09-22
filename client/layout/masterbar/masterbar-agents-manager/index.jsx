@@ -20,7 +20,7 @@ import './style.scss';
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { site, siteContextSource } = useHelpCenterSite();
+	const { siteId, siteContextSource } = useHelpCenterSite();
 
 	const agentsManagerVisible = useDateStoreSelect(
 		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
@@ -38,7 +38,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 					is_assignment_loaded: true,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 	};
@@ -67,7 +67,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 						section: sectionName,
 					},
 					siteContextSource,
-					site?.ID
+					siteId
 				)
 			);
 			return closeAgentsManagerChat();
@@ -86,7 +86,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 					destination,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 	};

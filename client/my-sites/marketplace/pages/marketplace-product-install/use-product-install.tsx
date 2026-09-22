@@ -4,12 +4,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
-import { isRevertedTransferStatus } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
+import {
+	isRevertedTransferStatus,
+	transferStates as atomicTransferStates,
+} from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	transferCompleteStates,
+	transferSettledStates,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -19,10 +27,15 @@ import {
 	getStatusForPlugin,
 	isPluginActive,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import {
+	PLUGIN_INSTALLATION_ERROR,
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+} from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadFile from 'calypso/state/selectors/get-plugin-upload-file';
 import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -64,6 +77,9 @@ const TRANSFER_ATTEMPT_KEY_PREFIX = 'marketplace-product-install-transfer';
 type TransferAttempt = {
 	initiatedAt: number;
 	previousTransferId: number | null;
+	// Whether the transfer lookup had answered by the time this attempt started. Without it, a null
+	// `previousTransferId` cannot tell "the site had no transfer" from "we never found out".
+	lookupSettled: boolean;
 };
 
 const getTransferAttemptKey = ( siteId: number, pluginSlug: string ) =>
@@ -76,10 +92,14 @@ const readTransferAttempt = ( key: string ): TransferAttempt | null => {
 
 	try {
 		const value = JSON.parse( window.sessionStorage.getItem( key ) ?? 'null' );
-		return Number.isFinite( value?.initiatedAt ) &&
-			( Number.isFinite( value.previousTransferId ) || value.previousTransferId === null )
-			? value
-			: null;
+		if (
+			! Number.isFinite( value?.initiatedAt ) ||
+			! ( Number.isFinite( value.previousTransferId ) || value.previousTransferId === null )
+		) {
+			return null;
+		}
+		// A marker from before this field existed is read as an unresolved lookup, the stricter rule.
+		return { ...value, lookupSettled: value.lookupSettled === true };
 	} catch {
 		return null;
 	}
@@ -126,10 +146,26 @@ export type ProductInstallError =
 	| { type: 'non-installable-plan' }
 	| { type: 'no-direct-access-upload' }
 	| { type: 'theme-direct-install' }
+	| {
+			type: 'plugin-exists';
+			pluginSlug: string;
+			installedVersion?: string;
+			uploadedVersion?: string;
+	  }
 	| { type: 'rejected-upload'; reason: 'exists' | 'malicious' | 'too-big' }
 	| { type: 'transfer-failed' }
 	| { type: 'timeout' }
+	| { type: 'activation-timeout' }
 	| { type: 'generic' };
+
+export type InstallErrorTrackingProps = {
+	error_type: string | null;
+	flow: string;
+	product_slug: string | null;
+	site_id: number | null;
+	current_step: number;
+	install_strategy: string;
+};
 
 export function useProductInstall( {
 	pluginSlug = '',
@@ -165,6 +201,8 @@ export function useProductInstall( {
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
+	const uploadErrorPluginSlug = pluginUploadError?.plugin_slug;
+	const pluginUploadFile = useSelector( ( state ) => getPluginUploadFile( state, siteId ) );
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
 	// through an install this page dispatched, so the recovery poll is what watches for it — and
@@ -186,6 +224,9 @@ export function useProductInstall( {
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, installedPluginSlug )
 	);
+	const existingPlugin = useSelector( ( state ) =>
+		uploadErrorPluginSlug ? getPluginOnSite( state, siteId, uploadErrorPluginSlug ) : undefined
+	);
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, installedPluginSlug )
 	);
@@ -198,11 +239,18 @@ export function useProductInstall( {
 		key: '',
 		attempt: null,
 	} );
+	// A transfer outcome outlives the poll that reported it, so it is latched rather than derived.
+	// Both belong to the attempt below and are cleared with it — a different product must not
+	// inherit the previous one's completion.
+	const durableTransferCompletedRef = useRef( false );
+	const durableTransferFailedRef = useRef( false );
 	if ( transferAttemptRef.current.key !== transferAttemptKey ) {
 		transferAttemptRef.current = {
 			key: transferAttemptKey,
 			attempt: readTransferAttempt( transferAttemptKey ),
 		};
+		durableTransferCompletedRef.current = false;
+		durableTransferFailedRef.current = false;
 	}
 	const persistedTransferAttempt = transferAttemptRef.current.attempt;
 	const transferAttemptAge = persistedTransferAttempt
@@ -218,22 +266,59 @@ export function useProductInstall( {
 				return false;
 			}
 
-			const createdAt = Date.parse( candidate.created_at );
+			const createdAt = parseTransferCreatedAt( candidate.created_at );
 			const age = Date.now() - createdAt;
+			// Our own transfer is created after we ask for it, so clock skew is the only thing that can
+			// date it before this attempt. The grace for that is safe to give except when the lookup
+			// had not answered yet: a null `previousTransferId` then hides a transfer that already
+			// existed, and the grace would adopt it as ours.
+			const isPriorTransferUnknown =
+				persistedTransferAttempt.previousTransferId === null &&
+				! persistedTransferAttempt.lookupSettled;
+			const minimumCreatedAt = isPriorTransferUnknown
+				? persistedTransferAttempt.initiatedAt
+				: persistedTransferAttempt.initiatedAt - TRANSFER_ATTEMPT_CLOCK_SKEW_MS;
 			return (
 				! Number.isNaN( createdAt ) &&
 				age >= -TRANSFER_ATTEMPT_CLOCK_SKEW_MS &&
 				age <= ADOPTABLE_TRANSFER_AGE_MS &&
 				candidate.atomic_transfer_id !== persistedTransferAttempt.previousTransferId &&
-				createdAt >= persistedTransferAttempt.initiatedAt - TRANSFER_ATTEMPT_CLOCK_SKEW_MS
+				createdAt >= minimumCreatedAt
 			);
 		},
 		[ hasCurrentTransferAttempt, persistedTransferAttempt ]
 	);
 
+	// Statuses are keyed by the plugin id the dispatches carry (e.g. 'akismet/akismet'), not by
+	// the route slug — and the upload flow has no route slug at all.
 	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, pluginSlug )
+		getStatusForPlugin( state, siteId, installedPlugin?.id ?? wporgPlugin?.id ?? pluginSlug )
 	);
+
+	// Only an in-progress → error transition counts: the plugins slice outlives the page, so a
+	// record (or `error` field) left by an earlier attempt must not condemn a fresh one. The
+	// component survives SPA navigation, so an identity change resets the latch and makes the new
+	// product's current status the baseline.
+	const [ installFailureSeen, setInstallFailureSeen ] = useState( false );
+	const previousInstallStatusRef = useRef< string | undefined >( undefined );
+	const hasSucceededRef = useRef( false );
+	const installIdentity = `${ siteId }:${ pluginSlug }:${ themeSlug }`;
+	const installIdentityRef = useRef( installIdentity );
+	const observedInstallStatus = pluginInstallStatus?.status;
+	if ( installIdentityRef.current !== installIdentity ) {
+		installIdentityRef.current = installIdentity;
+		hasSucceededRef.current = false;
+		if ( installFailureSeen ) {
+			setInstallFailureSeen( false );
+		}
+	} else if (
+		observedInstallStatus === PLUGIN_INSTALLATION_ERROR &&
+		previousInstallStatusRef.current === PLUGIN_INSTALLATION_IN_PROGRESS &&
+		! installFailureSeen
+	) {
+		setInstallFailureSeen( true );
+	}
+	previousInstallStatusRef.current = observedInstallStatus;
 
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
@@ -248,8 +333,8 @@ export function useProductInstall( {
 	const marketplaceInstallationInProgress = isPluginUploadFlow
 		? isInstallationPending
 		: isInstallationPending &&
-		  !! productSlugInstalled &&
-		  [ pluginSlug, themeSlug ].includes( productSlugInstalled );
+			!! productSlugInstalled &&
+			[ pluginSlug, themeSlug ].includes( productSlugInstalled );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
 	const isAtomic = useSelector( ( state ) =>
@@ -304,6 +389,14 @@ export function useProductInstall( {
 		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
 			return { type: 'theme-direct-install' };
 		}
+		if ( isPluginUploadFlow && pluginExists && uploadErrorPluginSlug && pluginUploadFile ) {
+			return {
+				type: 'plugin-exists',
+				pluginSlug: uploadErrorPluginSlug,
+				installedVersion: existingPlugin?.version,
+				uploadedVersion: pluginUploadError?.plugin_version,
+			};
+		}
 		if ( pluginExists ) {
 			return { type: 'rejected-upload', reason: 'exists' };
 		}
@@ -315,7 +408,7 @@ export function useProductInstall( {
 		}
 		if (
 			pluginUploadError ||
-			pluginInstallStatus?.error ||
+			installFailureSeen ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return { type: 'generic' };
@@ -341,6 +434,9 @@ export function useProductInstall( {
 		transfer,
 		isTransferFresh,
 		isTransferLookupComplete,
+		isTransferLookupNotFound,
+		transferStatus: polledTransferStatus,
+		transferStartedAt,
 	} = useInstallDeadline( {
 		siteId,
 		enabled: !! siteId && ! preflightError && ! isUploadStillSending,
@@ -349,12 +445,34 @@ export function useProductInstall( {
 	const latestTransfer = isTransferFresh ? transfer : undefined;
 	const transferBelongsToAttempt = !! latestTransfer && isTransferFromAttempt( latestTransfer );
 	const transferInFlight = transferBelongsToAttempt && ! isSettled( latestTransfer.status );
-	const durableTransferCompleted =
-		transferBelongsToAttempt && latestTransfer.status === 'completed';
-	const durableTransferFailed =
+	if ( transferBelongsToAttempt && latestTransfer.status === atomicTransferStates.COMPLETED ) {
+		durableTransferCompletedRef.current = true;
+	}
+	if (
 		transferBelongsToAttempt &&
-		( latestTransfer.status === 'error' || isRevertedTransferStatus( latestTransfer.status ) );
+		( latestTransfer.status === atomicTransferStates.ERROR ||
+			isRevertedTransferStatus( latestTransfer.status ) )
+	) {
+		durableTransferFailedRef.current = true;
+	}
+	const durableTransferCompleted = durableTransferCompletedRef.current;
+	const durableTransferFailed = durableTransferFailedRef.current;
 	const transferHasFailed = hasTransferFailed || durableTransferFailed;
+	const transferTimedOut = ! durableTransferCompleted && ( hasTimedOut || hasTransferTimedOut );
+
+	// The product is on the site and switched on: the wait is over. Latched, because an install does
+	// not un-succeed (the plugin list briefly reads empty while the redirect resolves); reset by the
+	// identity block above so the next product's wait arms from scratch.
+	hasSucceededRef.current =
+		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
+	const hasSucceeded = hasSucceededRef.current;
+
+	// A completed transfer ends the transfer deadline, not the wait: activation still has to land.
+	// Restart the deadline for that phase so every wait ends in a verdict.
+	const activationTimedOut = useDelayedCondition(
+		durableTransferCompleted && ! preflightError && ! transferHasFailed && ! hasSucceeded,
+		INSTALL_DEADLINE_MS
+	);
 	const transferLookupGraceElapsed = useDelayedCondition(
 		installStrategy === 'atomic-transfer' &&
 			!! pluginSlug &&
@@ -401,7 +519,7 @@ export function useProductInstall( {
 			return;
 		}
 
-		if ( transferHasFailed || hasTimedOut || hasTransferTimedOut ) {
+		if ( transferHasFailed || transferTimedOut ) {
 			return;
 		}
 
@@ -410,7 +528,24 @@ export function useProductInstall( {
 		}
 
 		// A persisted attempt must be resolved by a successful lookup before any install path starts.
-		if ( pluginSlug && hasCurrentTransferAttempt && ! isTransferFresh ) {
+		if (
+			pluginSlug &&
+			hasCurrentTransferAttempt &&
+			! isTransferFresh &&
+			! isTransferLookupNotFound
+		) {
+			return;
+		}
+
+		// A latest non-settled transfer means the site is already moving toward Atomic. Its identity
+		// cannot be safely attributed after a marker expires, so never start another one on this site.
+		if (
+			installStrategy === 'atomic-transfer' &&
+			pluginSlug &&
+			isTransferFresh &&
+			!! latestTransfer &&
+			! isSettled( latestTransfer.status )
+		) {
 			return;
 		}
 
@@ -438,6 +573,7 @@ export function useProductInstall( {
 			const attempt = {
 				initiatedAt: Date.now(),
 				previousTransferId: latestTransfer?.atomic_transfer_id ?? null,
+				lookupSettled: isTransferFresh || isTransferLookupNotFound,
 			};
 			transferAttemptRef.current = { key: transferAttemptKey, attempt };
 			writeTransferAttempt( transferAttemptKey, attempt );
@@ -463,8 +599,10 @@ export function useProductInstall( {
 		transferHasFailed,
 		hasTimedOut,
 		hasTransferTimedOut,
+		transferTimedOut,
 		hasCurrentTransferAttempt,
 		isTransferFresh,
+		isTransferLookupNotFound,
 		isTransferLookupComplete,
 		transferLookupGraceElapsed,
 		transferAttemptKey,
@@ -475,7 +613,7 @@ export function useProductInstall( {
 		if (
 			atomicFlow &&
 			currentStep === 1 &&
-			( transferStates.COMPLETE === automatedTransferStatus || durableTransferCompleted )
+			( transferCompleteStates.includes( automatedTransferStatus ) || durableTransferCompleted )
 		) {
 			setCurrentStep( 2 );
 		}
@@ -509,27 +647,39 @@ export function useProductInstall( {
 		siteId,
 	] );
 
+	// The path that runs a transfer. Known from the strategy before the install effect flips
+	// `atomicFlow`, so the wait UI and its telemetry agree from the first render; latched on
+	// `atomicFlow` afterwards, because once the transfer completes the site reads as Atomic and the
+	// strategy becomes 'in-place' while this wait is still finishing.
+	const isTransferWait =
+		atomicFlow || ( installStrategy === 'atomic-transfer' && ! themeSlug && ! isPluginUploadFlow );
+
+	// The Redux slice only ever hears `start` and `complete` on this path (the theme-transfer poller's
+	// reducer drops everything in between), so the staged wait reads the fine-grained status from the
+	// deadline hook's own poll and falls back to Redux only before that poll has seen our transfer.
+	//
+	// Unlike the poll, Redux's status is not tied to a particular transfer: it outlives the wait that
+	// produced it. A settled value borrowed here would therefore describe someone else's transfer —
+	// and the staged wait never moves backwards, so a stale `complete` would pin it at "finishing"
+	// for the whole of the next one. Only borrow a status that still describes a transfer in flight;
+	// once ours settles, the page's own step carries the stage.
+	const resolvedTransferStatus =
+		polledTransferStatus ??
+		( transferSettledStates.includes( automatedTransferStatus ) ? null : automatedTransferStatus );
+
 	// Which error screen to show, in priority order, or null for none. The presentational mapping
 	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
 	let error: ProductInstallError | null = preflightError;
 	if ( ! error && transferHasFailed ) {
 		error = { type: 'transfer-failed' };
 	}
-	if ( ! error && ( hasTimedOut || hasTransferTimedOut ) ) {
+	if ( ! error && transferTimedOut ) {
 		error = { type: 'timeout' };
 	}
+	if ( ! error && activationTimedOut ) {
+		error = { type: 'activation-timeout' };
+	}
 
-	// The product is on the site and switched on: the wait is over, whatever the redirect below does
-	// next. Retiring it here rather than on unmount is what separates a finished install from a
-	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
-	//
-	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
-	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
-	// one that lives for a second.
-	const hasSucceededRef = useRef( false );
-	hasSucceededRef.current =
-		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
-	const hasSucceeded = hasSucceededRef.current;
 	const transferAttemptEnded =
 		hasSucceeded || ( !! error && error.type !== 'non-installable-plan' );
 	useEffect( () => {
@@ -566,8 +716,10 @@ export function useProductInstall( {
 		let outcome = null;
 		if ( transferHasFailed ) {
 			outcome = 'transfer_failed';
-		} else if ( hasTimedOut || hasTransferTimedOut ) {
+		} else if ( transferTimedOut ) {
 			outcome = 'timeout';
+		} else if ( activationTimedOut ) {
+			outcome = 'activation_timeout';
 		}
 		if ( ! outcome || reportedOutcomeRef.current === outcome ) {
 			return;
@@ -588,6 +740,8 @@ export function useProductInstall( {
 	}, [
 		hasTimedOut,
 		hasTransferTimedOut,
+		transferTimedOut,
+		activationTimedOut,
 		transferHasFailed,
 		themeSlug,
 		installStrategy,
@@ -597,6 +751,37 @@ export function useProductInstall( {
 		siteId,
 		currentStep,
 	] );
+
+	// Covers every error screen, preflight errors included — those never arm the wait, so the
+	// heartbeat and wait_ended above cannot see them. Thin on purpose: wait_ended already carries
+	// the diagnostics for failures that ended a wait.
+	const errorTrackingProps: InstallErrorTrackingProps = useMemo(
+		() => ( {
+			error_type: error?.type ?? null,
+			flow: installFlowName( { themeSlug, isPluginUploadFlow } ),
+			product_slug: pluginSlug || themeSlug || null,
+			site_id: siteId,
+			current_step: currentStep,
+			install_strategy: installStrategy,
+		} ),
+		[ error?.type, themeSlug, isPluginUploadFlow, pluginSlug, siteId, currentStep, installStrategy ]
+	);
+
+	// Keyed by the product too, not just the error type: this component survives an SPA navigation
+	// from one install to the next, and two installs that both end in `timeout` are two impressions.
+	const reportedErrorViewRef = useRef< string | null >( null );
+	useEffect( () => {
+		const errorType = errorTrackingProps.error_type;
+		if ( ! errorType ) {
+			return;
+		}
+		const reportKey = `${ installIdentity }:${ errorType }`;
+		if ( reportedErrorViewRef.current === reportKey ) {
+			return;
+		}
+		reportedErrorViewRef.current = reportKey;
+		recordTracksEvent( 'calypso_marketplace_install_error_view', errorTrackingProps );
+	}, [ errorTrackingProps, installIdentity ] );
 
 	useThankYouRedirect( {
 		siteId,
@@ -633,10 +818,15 @@ export function useProductInstall( {
 
 	return {
 		siteId,
+		selectedSiteSlug,
 		currentStep,
 		steps,
 		additionalSteps,
 		error,
+		errorTrackingProps,
+		isTransferWait,
+		transferStatus: resolvedTransferStatus,
+		transferStartedAt,
 		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};
 }

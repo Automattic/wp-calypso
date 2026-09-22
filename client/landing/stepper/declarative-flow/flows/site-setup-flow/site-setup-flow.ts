@@ -273,7 +273,7 @@ const siteSetupFlow: Flow = {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from, ref: entryPoint },
-								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								'/setup/site-migration/' + STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 							)
 						);
 					}
@@ -469,7 +469,7 @@ const siteSetupFlow: Flow = {
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			redirect( '/' );
+			redirect( '/home' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
@@ -477,7 +477,7 @@ const siteSetupFlow: Flow = {
 		}
 
 		if ( fetchingSiteError ) {
-			redirect( '/' );
+			redirect( '/home' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: fetchingSiteError.message,

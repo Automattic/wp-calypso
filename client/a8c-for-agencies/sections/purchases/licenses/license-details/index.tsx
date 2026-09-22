@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
@@ -198,7 +198,7 @@ export default function LicenseDetails( {
 				<div className="license-details__subscription-row">
 					{ subscriptionBadgeLabel && (
 						<Badge
-							intent={ subscription?.status === 'inactive' ? 'success' : 'info' }
+							intent={ subscription?.status === 'inactive' ? 'stable' : 'informational' }
 							className="license-details__subscription-badge"
 						>
 							{ subscriptionBadgeLabel }

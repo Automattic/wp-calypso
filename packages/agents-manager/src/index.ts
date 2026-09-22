@@ -7,6 +7,9 @@ export { AGENTS_MANAGER_STORE } from './stores';
 // Utility for agents manager inline data
 export { getAgentsManagerInlineData } from './utils/get-agents-manager-inline-data';
 
+// Tracks wrapper, so entry points outside the package attach the unified base props
+export { recordAgentsManagerTracksEvent } from './utils/tracks';
+
 // Host-facing controls for the chat dock, for entry points outside it
 export {
 	closeAgentsManagerChat,
@@ -27,6 +30,8 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
+export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
 
 // Feedback exports
 export {

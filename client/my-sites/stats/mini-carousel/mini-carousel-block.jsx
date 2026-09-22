@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -50,11 +50,15 @@ const MiniCarouselBlock = ( {
 				/>
 				<p className="mini-carousel-block__content-text">{ contentText }</p>
 			</div>
-			<Button primary onClick={ onClick }>
+			<Button variant="primary" __next40pxDefaultSize onClick={ onClick }>
 				{ ctaText }
 			</Button>
 			{ dismissEvent && (
-				<Button onClick={ onDismiss } className="mini-carousel-block__close-button">
+				<Button
+					onClick={ onDismiss }
+					__next40pxDefaultSize
+					className="mini-carousel-block__close-button"
+				>
 					{ dismissText ? dismissText : translate( 'Hide this' ) }
 					<Icon
 						className="mini-carousel-block__close-button-icon"

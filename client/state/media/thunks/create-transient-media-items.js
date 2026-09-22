@@ -1,5 +1,5 @@
 import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
-import { createMediaItem, setMediaItemErrors } from 'calypso/state/media/actions';
+import { createMediaItem } from 'calypso/state/media/actions';
 import { getTransientDate, getBaseTime } from 'calypso/state/media/utils/transient-date';
 
 /**
@@ -28,11 +28,7 @@ export function createTransientMediaItems( files, site ) {
 				transientMedia.ID = file.ID;
 			}
 
-			const { ID: siteId } = site;
-
-			const errors = validateMediaItem( site, transientMedia );
-			if ( errors?.length ) {
-				dispatch( setMediaItemErrors( siteId, transientMedia.ID, errors ) );
+			if ( validateMediaItem( site, transientMedia )?.length ) {
 				return;
 			}
 

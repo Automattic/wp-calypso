@@ -70,11 +70,11 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
 		expect( purchasedPremiumThemes.length ).toBe( 1 );
 		expect( purchasedPremiumThemes[ 0 ] ).toMatchObject( {
-			id: 3,
-			productName: 'premium theme',
-			productSlug: 'premium_theme',
-			productType: 'theme',
-			userId: targetUserId,
+			ID: 3,
+			product_name: 'premium theme',
+			product_slug: 'premium_theme',
+			product_type: 'theme',
+			user_id: targetUserId,
 		} );
 	} );
 } );

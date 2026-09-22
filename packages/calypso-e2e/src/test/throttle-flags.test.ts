@@ -1,17 +1,28 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import * as teamcity from '../lib/teamcity';
 import {
+	activeThrottleForUrl,
 	debugThrottle,
 	detectThrottle,
 	flagsInLog,
 	flushThrottleWrites,
 	formatThrottleLine,
+	handleActiveThrottles,
 	raiseFlag,
 	readActiveThrottles,
+	recordResponseThrottle,
 	recordThrottle,
-	resetRaisedThrottles,
+	registerThrottleActionHandler,
+	resetThrottleState,
+	THROTTLE_ACTION_ENV_VARS,
+	THROTTLE_IDS,
+	THROTTLED_PATH_PATTERN,
+	throttleAction,
+	throttleActionMessage,
 	throttleEnvVar,
+	throttleRefusalBody,
 	throttleTag,
+	validateThrottleActions,
 } from '../lib/throttle-flags';
 import type { ThrottleId } from '../lib/throttle-flags';
 
@@ -72,8 +83,132 @@ beforeEach( () => {
 	warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 	for ( const id of [ 'SIGNUP', 'DOMAIN_SUGGESTIONS', 'DOMAIN_AVAILABILITY' ] ) {
 		delete process.env[ `THROTTLE_${ id }_EXPIRATION` ];
+		delete process.env[ `E2E_THROTTLE_${ id }_ACTION` ];
 	}
-	resetRaisedThrottles();
+	resetThrottleState();
+} );
+
+describe( 'throttle actions', () => {
+	test( 'maps each throttle to its public action variable', () => {
+		expect( THROTTLE_ACTION_ENV_VARS ).toEqual( {
+			signup: 'E2E_THROTTLE_SIGNUP_ACTION',
+			'domain-suggestions': 'E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION',
+			'domain-availability': 'E2E_THROTTLE_DOMAIN_AVAILABILITY_ACTION',
+		} );
+	} );
+
+	test( 'defaults to skip and accepts an explicit action', () => {
+		expect( throttleAction( 'signup' ) ).toBe( 'skip' );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'fail';
+		expect( throttleAction( 'signup' ) ).toBe( 'fail' );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
+		expect( throttleAction( 'signup' ) ).toBe( 'noop' );
+	} );
+
+	test( 'startup validation rejects any value outside exact lowercase actions', () => {
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'FAIL';
+		expect( validateThrottleActions ).toThrow(
+			'Invalid E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION value: FAIL. Expected skip, fail, or noop.'
+		);
+	} );
+
+	test( 'does nothing for clear and expired signals', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW - 1 );
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'uses the registered handler for an active throttle', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		handleActiveThrottles( [ 'signup' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'skip', [ 'signup' ] );
+	} );
+
+	test( 'states the ban and leaves the caller alone without a runner handler', () => {
+		// No handler is a `beforeAll` or a setup project, where there is no one test
+		// to skip. Applying nothing here is what keeps the policy per test.
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		warn.mockClear();
+		expect( () => handleActiveThrottles( [ 'signup' ], NOW ) ).not.toThrow();
+		expect( warn.mock.calls[ 0 ]?.[ 0 ] ).toContain( 'signup is throttled' );
+	} );
+
+	test( 'names every selected throttle, and says so when the action is fail', () => {
+		const clean = { errors: [] };
+		expect( throttleActionMessage( 'skip', [ 'signup', 'domain-suggestions' ], clean ) ).toBe(
+			'WordPress.com throttle active: signup, domain-suggestions.'
+		);
+		expect( throttleActionMessage( 'fail', [ 'signup' ], clean ) ).toBe(
+			'WordPress.com throttle active: signup. E2E throttle action is fail.'
+		);
+	} );
+
+	test( 'has nothing to say to a test that stopped for a reason of its own', () => {
+		// The handler runs from fixture teardown too, so it meets tests that
+		// already failed or skipped. `expectedStatus` covers the moment between
+		// `skip` marking it and the status settling.
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [ new Error( 'own' ) ] } )
+		).toBeNull();
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [], status: 'skipped' } )
+		).toBeNull();
+		expect(
+			throttleActionMessage( 'fail', [ 'signup' ], { errors: [], expectedStatus: 'skipped' } )
+		).toBeNull();
+	} );
+
+	test( 'gives fail precedence across active throttles', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'fail';
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'fail', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'does nothing for a noop action, even when the ban is active', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
+		handleActiveThrottles( [ 'signup' ] );
+		unregister();
+		expect( handler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'leaves a noop throttle out of the action on the ones that are not', () => {
+		const handler = jest.fn();
+		const unregister = registerThrottleActionHandler( handler );
+		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
+		process.env.E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION = 'fail';
+		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
+		unregister();
+		expect( handler ).toHaveBeenCalledWith( 'fail', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'names the banned endpoint a URL is bound for, and only while it is banned', () => {
+		const suggestions = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=foo';
+		expect( activeThrottleForUrl( suggestions, NOW ) ).toBeNull();
+
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
+		expect( activeThrottleForUrl( suggestions, NOW ) ).toBe( 'domain-suggestions' );
+		// A ban on one endpoint is no reason to refuse another.
+		expect(
+			activeThrottleForUrl( 'https://public-api.wordpress.com/rest/v1.1/sites/new', NOW )
+		).toBeNull();
+		expect( activeThrottleForUrl( suggestions, NOW + 2 ) ).toBeNull();
+	} );
 } );
 
 afterEach( () => {
@@ -539,11 +674,34 @@ describe( 'readActiveThrottles', () => {
 
 	test( 'a build tagged for more than one throttle has its log read once', async () => {
 		fetchBuildsByTag.mockResolvedValue( [ taggedBuild( 11 ) ] );
-		fetchBuildLog.mockResolvedValue( states( 'signup', 1_600_000 ) );
+		fetchBuildLog.mockResolvedValue(
+			[ states( 'signup', 1_600_000 ), states( 'domain-availability', 1_700_000 ) ].join( '\n' )
+		);
 
-		await readActiveThrottles();
-
+		expect( await readActiveThrottles() ).toEqual( {
+			signup: 1_600_000,
+			'domain-suggestions': null,
+			'domain-availability': 1_700_000,
+		} );
 		expect( fetchBuildLog ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'a throttle each on two builds is two throttles, not one', async () => {
+		fetchBuildsByTag.mockImplementation( async ( tag ) => {
+			if ( tag === 'throttle-signup' ) {
+				return [ taggedBuild( 11 ) ];
+			}
+			return tag === 'throttle-domain-suggestions' ? [ taggedBuild( 22 ) ] : null;
+		} );
+		fetchBuildLog.mockImplementation( async ( buildId ) =>
+			buildId === 11 ? states( 'signup', 1_600_000 ) : states( 'domain-suggestions', 1_700_000 )
+		);
+
+		expect( await readActiveThrottles() ).toEqual( {
+			signup: 1_600_000,
+			'domain-suggestions': 1_700_000,
+			'domain-availability': null,
+		} );
 	} );
 
 	test( 'one silent build does not throw away what another wrote', async () => {
@@ -602,6 +760,25 @@ describe( 'detectThrottle', () => {
 		expect(
 			detectThrottle( { url: users, status: 403, body: '{"error":"throttled"}' } )
 		).toBeNull();
+	} );
+
+	test( 'the suite’s own refusal is not a ban', () => {
+		// The route answers a banned endpoint with this instead of making the
+		// request, and the listener reads it back like any other response. Detect it
+		// and the flag is raised from our own answer, for as long as the build runs.
+		const urls: Record< ThrottleId, string > = {
+			signup: 'https://public-api.wordpress.com/rest/v1.1/sites/new',
+			'domain-suggestions':
+				'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x',
+			'domain-availability':
+				'https://public-api.wordpress.com/rest/v1.1/domains/x.com/is-available',
+		};
+		THROTTLE_IDS.forEach( ( id ) => {
+			expect( detectThrottle( throttleRefusalBody( id ), urls[ id ] ) ).toBeNull();
+			expect(
+				detectThrottle( { url: urls[ id ], status: 429, body: throttleRefusalBody( id ) } )
+			).toBeNull();
+		} );
 	} );
 
 	test( 'an endpoint the payload does not name is taken from the caller', () => {
@@ -691,5 +868,77 @@ describe( 'detectThrottle', () => {
 		);
 
 		expect( published() ).toEqual( [ expect.stringContaining( 'duration=600000' ) ] );
+	} );
+
+	test( 'recording returns the throttle it detected', async () => {
+		await expect(
+			recordThrottle(
+				{ error: 'domain_suggestions_throttled' },
+				'https://public-api.wordpress.com/rest/v1.1/domains/suggestions'
+			)
+		).resolves.toBe( 'domain-suggestions' );
+		await expect( recordThrottle( { success: true } ) ).resolves.toBeNull();
+	} );
+} );
+
+describe( 'recording a response', () => {
+	const SUGGESTIONS = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x';
+
+	/** A response whose body arrives, or never does. */
+	function response( status: number, body: string | Promise< string > ) {
+		return {
+			url: () => SUGGESTIONS,
+			status: () => status,
+			text: async () => body,
+		};
+	}
+
+	test( 'a refusal is recorded, and an enveloped one with it', async () => {
+		await expect(
+			recordResponseThrottle( response( 403, '{"error":"domain_suggestions_throttled"}' ) )
+		).resolves.toBe( 'domain-suggestions' );
+		await expect(
+			recordResponseThrottle( response( 200, '{"error":"domain_suggestions_throttled"}' ) )
+		).resolves.toBe( 'domain-suggestions' );
+	} );
+
+	test( 'a successful search is never read', async () => {
+		const text = jest.fn( async () => '{"suggestions":["error"]}' );
+		await expect(
+			recordResponseThrottle( { url: () => SUGGESTIONS, status: () => 200, text } )
+		).resolves.toBeNull();
+	} );
+
+	test( 'a body that never arrives leaves the caller its own timeout', async () => {
+		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
+		try {
+			const recording = recordResponseThrottle(
+				response( 429, new Promise< string >( () => {} ) )
+			);
+			await jest.advanceTimersByTimeAsync( 2 * 1000 );
+			await expect( recording ).resolves.toBeNull();
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+} );
+
+describe( 'the endpoint pattern', () => {
+	// What a route matcher is built from, so it has to match what detection does.
+	test.each( [
+		'https://public-api.wordpress.com/rest/v1.1/sites/new',
+		'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=x',
+		'https://public-api.wordpress.com/rest/v1.3/domains/example.com/is-available',
+	] )( 'matches %s', ( url ) => {
+		expect( THROTTLED_PATH_PATTERN.test( url ) ).toBe( true );
+	} );
+
+	test( 'leaves every other endpoint alone', () => {
+		expect(
+			THROTTLED_PATH_PATTERN.test( 'https://public-api.wordpress.com/rest/v1.1/sites/newsletter' )
+		).toBe( false );
+		expect( THROTTLED_PATH_PATTERN.test( 'https://public-api.wordpress.com/rest/v1.1/me' ) ).toBe(
+			false
+		);
 	} );
 } );

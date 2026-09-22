@@ -112,10 +112,10 @@ export default function HostingActivationButton( {
 						className="hosting__activating-warnings"
 						onDismiss={ () => setShowEligibility( false ) }
 						onProceed={ handleTransfer }
-						backUrl={ redirectUrl }
 						showDataCenterPicker
 						standaloneProceed
-						currentContext="hosting-features"
+						context="hosting-features"
+						inModal
 						atomicTransferAction="hosting-features"
 						path={ path }
 					/>

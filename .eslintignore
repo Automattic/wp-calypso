@@ -38,3 +38,6 @@ packages/calypso-color-schemes/root-only
 /client/server/bundler/assets.json
 /cached-requests.json
 /yarn-json-output.json
+
+# Agenttic downloaded translation files
+packages/agenttic-ui/languages/*.jed.json

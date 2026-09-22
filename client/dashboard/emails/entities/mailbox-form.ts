@@ -138,11 +138,11 @@ class MailboxForm< T extends MailboxProvider > {
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
 					recoveryEmail: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
-			  }
+				}
 			: {
 					...commonFields,
 					alternative_email: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
-			  };
+				};
 	}
 
 	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {

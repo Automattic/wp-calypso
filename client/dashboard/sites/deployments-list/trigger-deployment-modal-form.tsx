@@ -11,9 +11,9 @@ import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
-import { getDeploymentTypeFromPath } from '../../../sites/deployments/deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
 import { ButtonStack } from '../../components/button-stack';
+import { getDeploymentTypeFromPath } from '../settings-repositories/deployment-tracks';
 
 interface TriggerDeploymentModalFormProps {
 	deployments: CodeDeploymentData[];

@@ -13,12 +13,12 @@ import { useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import Switcher from '../../components/switcher';
 import SwitcherContent from '../../components/switcher/switcher-content';
-import { Text } from '../../components/text';
 import AddNewSite from '../../sites/add-new-site';
 import { canManageSite } from '../../sites/features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import useBuildCurrentRouteLink from '../hooks/use-build-current-route-link';
 import { useOmnibarEvent } from './events';
@@ -45,6 +45,7 @@ const searchableFields = [
 
 export default function OmnibarSiteSwitcher() {
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
@@ -99,6 +100,11 @@ export default function OmnibarSiteSwitcher() {
 				renderContent={ ( { onClose } ) => (
 					<SwitcherContent< Site >
 						items={ sites }
+						loading={ {
+							itemCount: user.visible_site_count,
+							hasMedia: true,
+							hasDescription: true,
+						} }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
@@ -111,16 +117,8 @@ export default function OmnibarSiteSwitcher() {
 						renderItem={ ( { item } ) => (
 							<Switcher.Item
 								media={ <SiteIcon site={ item } size={ 32 } /> }
-								title={
-									<Text weight={ 500 } truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-										{ getSiteDisplayName( item ) }
-									</Text>
-								}
-								description={
-									<Text variant="muted" truncate numberOfLines={ 1 }>
-										{ getSiteDisplayUrl( item ) }
-									</Text>
-								}
+								title={ getSiteDisplayName( item ) }
+								description={ getSiteDisplayUrl( item ) }
 							/>
 						) }
 						onClose={ onClose }

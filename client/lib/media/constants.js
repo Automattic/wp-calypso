@@ -16,21 +16,6 @@ export const ValidationErrors = {
 	SERVICE_AUTH_FAILED: 'SERVICE_AUTH_FAILED',
 };
 
-export const ThumbnailSizeDimensions = {
-	thumbnail: {
-		width: 150,
-		height: 150,
-	},
-	medium: {
-		width: 300,
-		height: 300,
-	},
-	large: {
-		width: 1024,
-		height: 1024,
-	},
-};
-
 export const VideoPressFileTypes = [
 	'ogv',
 	'mp4',
@@ -42,17 +27,6 @@ export const VideoPressFileTypes = [
 	'3gp',
 	'3g2',
 ];
-
-export const GalleryColumnedTypes = [ 'default', 'circle', 'square' ];
-export const GallerySizeableTypes = [ 'default' ];
-export const GalleryDefaultAttrs = {
-	items: [],
-	type: 'default',
-	columns: 3,
-	orderBy: 'menu_order',
-	link: '',
-	size: 'thumbnail',
-};
 
 /**
  * Dictionary of common file extensions mapped to respective mime type.
@@ -191,14 +165,3 @@ export const MimeTypes = {
 	numbers: 'application/vnd.apple.numbers',
 	pages: 'application/vnd.apple.pages',
 };
-
-export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
-export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
-
-/**
- * Scale choices are 12, 8, 6, 4, and 3 items per row, with some horizontal
- * padding between items
- * @type {Array}
- */
-export const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];
-export const SCALE_TOUCH_GRID = 0.323;

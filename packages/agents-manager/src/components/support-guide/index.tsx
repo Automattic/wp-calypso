@@ -1,15 +1,13 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FROM_CHAT } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
@@ -39,12 +37,7 @@ export default function SupportGuide( {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
-	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
-		useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
@@ -64,12 +57,7 @@ export default function SupportGuide( {
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
-			defaultSize={ floatingSize ?? undefined }
-			onResizeEnd={ setFloatingSize }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }

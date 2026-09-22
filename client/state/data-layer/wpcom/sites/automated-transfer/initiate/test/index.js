@@ -53,7 +53,7 @@ describe( 'initiateTransferWithPluginZip', () => {
 	test( 'should dispatch a tracks call', () => {
 		const result = initiateTransferWithPluginZip( { siteId, pluginZip: 'foo' } );
 		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
+			recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', {
 				context: 'plugin_upload',
 			} )
 		);
@@ -69,7 +69,7 @@ describe( 'receiveResponse', () => {
 	test( 'should dispatch a tracks call', () => {
 		const result = receiveResponse( { siteId }, INITIATE_SUCCESS_RESPONSE );
 		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
+			recordTracksEvent( 'calypso_automated_transfer_initiate_success', {
 				context: 'plugin_upload',
 			} )
 		);
@@ -83,7 +83,7 @@ describe( 'receiveResponse', () => {
 	test( 'should dispatch a tracks call on unsuccessful initiation', () => {
 		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
 		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+			recordTracksEvent( 'calypso_automated_transfer_initiate_failure', {
 				context: 'plugin_upload',
 				error: 'api_success_false',
 			} )
@@ -105,7 +105,7 @@ describe( 'receiveError', () => {
 	test( 'should dispatch a tracks call', () => {
 		const result = receiveError( { siteId }, ERROR_RESPONSE );
 		expect( result[ 0 ] ).toEqual(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+			recordTracksEvent( 'calypso_automated_transfer_initiate_failure', {
 				context: 'plugin_upload',
 				error: 'invalid_input',
 			} )

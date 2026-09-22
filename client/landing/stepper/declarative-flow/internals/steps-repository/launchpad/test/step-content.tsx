@@ -104,8 +104,8 @@ jest.mock( 'react-router-dom', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...( jest.requireActual( '@automattic/data-stores' ) as object ),
+jest.mock( '@automattic/launchpad/src/use-launchpad', () => ( {
+	...( jest.requireActual( '@automattic/launchpad/src/use-launchpad' ) as object ),
 	useLaunchpad: ( siteSlug, siteIntentOption ): LaunchpadResponse => {
 		let checklist = [];
 

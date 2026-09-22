@@ -2,8 +2,24 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { takeActionOrigin } from '../../utils/action-origin';
+import { getExternalContextEntries } from '../../utils/external-context';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
+
+jest.mock( '../../utils/tracks', () => ( {
+	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent: jest.fn(),
+	recordBigSkyTracksEvent: jest.fn(),
+} ) );
+
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+	typeof recordBigSkyTracksEvent
+>;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+	typeof recordAgentsManagerTracksEvent
+>;
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
@@ -18,6 +34,7 @@ let mockSelectState: {
 	isOpen: boolean;
 	isDocked: boolean;
 	isMinimized?: boolean;
+	isChatVisible?: boolean;
 	floatingPosition: string;
 } = {
 	hasLoaded: true,
@@ -65,6 +82,8 @@ describe( 'useSetupCustomActions', () => {
 		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockContext = {
 			getTabSessionId: jest.fn( () => 'session-123' ),
 			resumeChat: jest.fn(),
@@ -114,8 +133,39 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
+		expect( snapshot?.recordBigSkyTracksEvent ).toBeInstanceOf( Function );
 		expect( snapshot?.resumeChat ).toBe( mockContext.resumeChat );
 		expect( snapshot?.isReady ).toBe( true );
+	} );
+
+	it( 'relays full-name bridge Tracks calls unchanged', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.recordBigSkyTracksEvent?.(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
+	} );
+
+	it( 'drops malformed bridge Tracks event names', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		const record = window.__agentsManagerActions?.recordBigSkyTracksEvent as unknown as (
+			eventName: unknown
+		) => void;
+		record( 'split_screen_guide_click' );
+		record( 'jetpack_big_sky_' );
+		record( '' );
+		record( 123 );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {
@@ -139,6 +189,65 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 
+	it( 'marks an open asked for through the bridge as host-triggered', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
+	} );
+
+	it( 'does not mark an open that changes nothing', () => {
+		mockSelectState = { ...mockSelectState, isOpen: true };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'user' );
+	} );
+
+	it( 'records a context hand-off from a host', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/intelligence',
+			type: 'intelligence-tool',
+			source: 'WooCommerce AI',
+			delivery: 'conversation',
+		} );
+
+		expect( getExternalContextEntries().map( ( entry ) => entry.id ) ).toEqual( [
+			'woocommerce-ai/intelligence',
+		] );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'intelligence_tool', delivery: 'conversation' }
+		);
+	} );
+
+	it( 'normalises a missing delivery to Tracks form', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/page',
+			source: 'WooCommerce AI',
+			type: 'external-context',
+		} );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'external_context', delivery: 'next_message' }
+		);
+	} );
+
+	it( 'records nothing for a context entry without an id', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( { id: '' } );
+
+		expect( mockRecordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+	} );
+
 	it( 'expands a minimized chat with a single save: un-minimize, no redundant open', () => {
 		mockSelectState = {
 			hasLoaded: true,
@@ -154,6 +263,7 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
 		// Open is unchanged, so no second (racing) save.
 		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
 	} );
 
 	it( 'opens a closed chat without a redundant minimized save', () => {
@@ -238,19 +348,23 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( '`isChatVisible` is true only when open and not minimized', () => {
+	it( '`isChatVisible` reports the chat visibility from the store', () => {
 		mockSelectState = {
 			hasLoaded: true,
 			isOpen: true,
 			isDocked: false,
 			isMinimized: false,
+			isChatVisible: true,
 			floatingPosition: '',
 		};
+
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
 
-		mockSelectState = { ...mockSelectState, isMinimized: true };
+		mockSelectState = { ...mockSelectState, isChatVisible: false };
 		rerender();
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
 	} );
 
@@ -259,6 +373,12 @@ describe( 'useSetupCustomActions', () => {
 		renderHook( () => useSetupCustomActions( baseProps ) );
 
 		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
+	} );
+
+	it( 'exposes the tab id the chat events carry via `getTabId`', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getTabId?.() ).toBe( 'fake-uuid' );
 	} );
 } );
 

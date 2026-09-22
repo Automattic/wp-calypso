@@ -64,7 +64,9 @@ export default function ExcerptPicker( {
 	const options = Array.isArray( excerpts )
 		? excerpts
 				.map( ( option ) => option?.excerpt )
-				.filter( ( excerpt ): excerpt is string => typeof excerpt === 'string' )
+				.filter(
+					( excerpt ): excerpt is string => typeof excerpt === 'string' && excerpt.trim() !== ''
+				)
 		: [];
 
 	return (

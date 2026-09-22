@@ -18,15 +18,16 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
-	// that do not send the ui block yet.
+	// that do not send the ui block yet. Keep these IDs aligned with the server
+	// so React preserves each progress row when the first response arrives.
 	const steps = useMemo(
 		() => [
-			{ id: 'preparing', label: translate( 'Preparing your site' ) },
-			{ id: 'designing', label: translate( 'Choosing your design' ) },
-			{ id: 'building', label: translate( 'Building your pages' ) },
+			{ id: 'prepare', label: translate( 'Preparing your site' ) },
+			{ id: 'design', label: translate( 'Creating your design' ) },
+			{ id: 'pages', label: translate( 'Building your pages' ) },
 			{ id: 'images', label: translate( 'Adding your images' ) },
-			{ id: 'polishing', label: translate( 'Polishing your site' ) },
-			{ id: 'publishing', label: translate( 'Publishing your site' ) },
+			{ id: 'polish', label: translate( 'Polishing your site' ) },
+			{ id: 'publish', label: translate( 'Doing final checks' ) },
 		],
 		[ translate ]
 	);

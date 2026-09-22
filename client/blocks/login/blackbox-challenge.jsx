@@ -19,23 +19,19 @@ export default function BlackboxChallenge( { enabled, onSubmitBlockedChange } ) 
 	} );
 
 	useIsomorphicLayoutEffect( () => {
-		onSubmitBlockedChange( isChallengeActive || isLoading || hasChallengeContent );
-	}, [ isChallengeActive, isLoading, hasChallengeContent, onSubmitBlockedChange ] );
+		onSubmitBlockedChange( isChallengeActive || isLoading );
+	}, [ isChallengeActive, isLoading, onSubmitBlockedChange ] );
 
 	if ( ! enabled ) {
 		return null;
 	}
 
-	// The container always renders while enabled so the challenge has a mount
-	// point, but it only takes up space once a challenge is actually showing.
-	// Flag that state so the stylesheet reserves spacing only then.
-	const isChallengeVisible = isChallengeActive || hasChallengeContent;
-
+	// The container is a permanent mount point; only a rendered widget takes space.
 	return (
 		<div
 			ref={ containerRef }
 			className={ clsx( 'login__form-blackbox-challenge', {
-				'has-visible-challenge': isChallengeVisible,
+				'has-visible-challenge': hasChallengeContent,
 			} ) }
 		/>
 	);

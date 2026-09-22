@@ -41,7 +41,7 @@ export const useFCCARestrictions = () => {
 		return (
 			isFCCACountry() &&
 			// We should still allow the user to see the current plan.
-			! isReplaceablePlan( sitePlan?.productSlug ) &&
+			! isReplaceablePlan( sitePlan?.productSlug ?? '' ) &&
 			( ! newPlanSlug || isReplaceablePlan( newPlanSlug ) )
 		);
 	};

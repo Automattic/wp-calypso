@@ -84,7 +84,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
 	}
 
 	const data = fromApi( latestDownloadableBackup );
-	return data?.error ?? false
+	return ( data?.error ?? false )
 		? rewindBackupUpdateError( siteId, data.downloadId, data )
 		: updateRewindBackupProgress( siteId, data.downloadId, data );
 };

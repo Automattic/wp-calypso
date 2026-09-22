@@ -754,7 +754,7 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 					FEATURE_WORDPRESS_STUDIO_SYNC,
 					FEATURE_WP_UPDATES,
 				],
-		  } as const )
+			} as const )
 		: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ];
 
 	// For experiment variants, replace AI Assistant with expanded AI features
@@ -784,7 +784,7 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 					FEATURE_PAYMENT_BUTTONS_JP,
 					FEATURE_PAYPAL_JP,
 				],
-		  } as const )
+			} as const )
 		: featureGroups[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ];
 
 	// For experiment variants, add FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS before FEATURE_STYLE_CUSTOMIZATION
@@ -799,7 +799,7 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 					FEATURE_STYLE_CUSTOMIZATION,
 					FEATURE_PREMIUM_THEMES,
 				],
-		  } as const )
+			} as const )
 		: featureGroups[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ];
 
 	// For experiment variants, add FEATURE_BUILT_IN_SITE_ASSISTANT after FEATURE_SMART_REDIRECTS
@@ -826,7 +826,7 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 					// AI features for plan differentiators experiment
 					FEATURE_AI_WRITER_DESIGNER,
 				],
-		  } as const )
+			} as const )
 		: featureGroups[ FEATURE_GROUP_ESSENTIAL_FEATURES ];
 
 	return {

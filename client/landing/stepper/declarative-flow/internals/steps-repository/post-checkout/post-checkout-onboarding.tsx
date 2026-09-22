@@ -1,5 +1,4 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
 	isBusiness,
@@ -21,7 +20,7 @@ import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plu
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
+import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer-status-query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
@@ -62,7 +61,6 @@ const PostCheckoutOnboarding: StepType< {
 	} );
 
 	const showBigSkyChoice =
-		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
 		!! site?.plan &&
 		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );

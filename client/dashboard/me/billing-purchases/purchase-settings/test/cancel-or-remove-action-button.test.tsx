@@ -111,6 +111,37 @@ describe( '<CancelOrRemoveActionButton />', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
+	test( 'hides Remove when is_manageable_by_user is false and auto-renew is off', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					is_manageable_by_user: false,
+					is_auto_renew_enabled: false,
+				} ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'hides Cancel when is_manageable_by_user is false and auto-renew is on', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton purchase={ makePurchase( { is_manageable_by_user: false } ) } />
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'shows Cancel when is_manageable_by_user is true', () => {
+		render(
+			<CancelOrRemoveActionButton purchase={ makePurchase( { is_manageable_by_user: true } ) } />
+		);
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+	} );
+
+	test( 'shows Cancel when the purchase has no is_manageable_by_user field', () => {
+		render( <CancelOrRemoveActionButton purchase={ makePurchase() } /> );
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+	} );
+
 	test( 'renders nothing for a non-refundable domain transfer with auto-renew on', () => {
 		const { container } = render(
 			<CancelOrRemoveActionButton

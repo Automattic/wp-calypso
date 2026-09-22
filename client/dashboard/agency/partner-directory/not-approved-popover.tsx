@@ -14,6 +14,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { CardBody } from '../../components/card';
+import LinkButton from './link-button';
 import type { UserPreferences } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -24,6 +25,7 @@ interface Props {
 	showOnLoad: boolean;
 	expertiseUrl: string;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	shouldUseRouterLink?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export default function NotApprovedPopover( {
 	showOnLoad,
 	expertiseUrl,
 	recordTracksEvent,
+	shouldUseRouterLink,
 }: Props ) {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
@@ -134,7 +137,7 @@ export default function NotApprovedPopover( {
 								) }
 							</Text>
 							<HStack spacing={ 3 } justify="flex-start">
-								<Button
+								<LinkButton
 									variant="primary"
 									size="compact"
 									href={ expertiseUrl }
@@ -143,9 +146,10 @@ export default function NotApprovedPopover( {
 											'calypso_a4a_partner_directory_dashboard_update_expertise_click'
 										)
 									}
+									shouldUseRouterLink={ shouldUseRouterLink }
 								>
 									{ __( 'Update my expertise' ) }
-								</Button>
+								</LinkButton>
 								{ ! popoverDismissed && (
 									<Button
 										variant="secondary"

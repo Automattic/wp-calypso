@@ -7,15 +7,15 @@ import SummaryButton from './index';
 // Define field options for the controls.
 const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 	'Three Badges': [
-		{ text: 'Active', intent: 'success' },
-		{ text: 'Auto-renew on', intent: 'info' },
-		{ text: 'Primary', intent: 'default' },
+		{ text: 'Active', intent: 'stable' },
+		{ text: 'Auto-renew on', intent: 'informational' },
+		{ text: 'Primary', intent: 'draft' },
 	],
 	'Two Badges': [
-		{ text: 'Needs attention', intent: 'warning' },
-		{ text: 'Auto-renew off', intent: 'error' },
+		{ text: 'Needs attention', intent: 'medium' },
+		{ text: 'Auto-renew off', intent: 'high' },
 	],
-	'One Badge': [ { text: 'Coming soon', intent: 'info' } ],
+	'One Badge': [ { text: 'Coming soon', intent: 'informational' } ],
 	'No Badges': [],
 };
 

@@ -19,7 +19,7 @@ const getJetpackCredentialsUpdateError = (
 	state: any,
 	siteId: number | null
 ): UpdateError | null => {
-	return null !== siteId ? state?.jetpack?.credentials?.errors?.[ siteId ] ?? null : null;
+	return null !== siteId ? ( state?.jetpack?.credentials?.errors?.[ siteId ] ?? null ) : null;
 };
 
 export default getJetpackCredentialsUpdateError;

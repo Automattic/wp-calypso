@@ -10,7 +10,10 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 		translations = {
 			'Add new site': __( 'Add new store', ciabDomain ),
 			'Anyone can view your site.': __( 'Anyone can view your store.', ciabDomain ),
-			'Bring your site to WordPress.com.': __( 'Bring your store to WordPress.com.', ciabDomain ),
+			'Move a site from another host to WordPress.com.': __(
+				'Move a store from another host to WordPress.com.',
+				ciabDomain
+			),
 			'Choose between a visual grid view and a more compact table view of your sites.': __(
 				'Choose between a visual grid view and a more compact table view of your stores.',
 				ciabDomain
@@ -23,7 +26,7 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 			'Edit site ↗': __( 'Edit store ↗', ciabDomain ),
 			'Import site ↗': __( 'Import store ↗', ciabDomain ),
 			'Leave site': __( 'Leave store', ciabDomain ),
-			'Migrate site': __( 'Migrate store', ciabDomain ),
+			'Migrate another site': __( 'Migrate another store', ciabDomain ),
 			Site: __( 'Store', ciabDomain ),
 			Sites: __( 'Stores', ciabDomain ),
 			Public: __( 'Live', ciabDomain ),

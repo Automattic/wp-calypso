@@ -47,6 +47,7 @@ import ProgressBar from './progress-bar';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import MissingCredentials from './steps/missing-credentials';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 
@@ -477,6 +478,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					gridicon="notice"
 					title={ restoreWarning }
 					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ hasSelectedTables }
 				/>
 				<>
 					{ backupCurrentlyInProgress && (

@@ -15,13 +15,12 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
 	getSitePlan,
@@ -70,7 +69,7 @@ export const useStoreItemInfo = ( {
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const purchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 	const isMultisite = useSelector(
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
@@ -187,12 +186,10 @@ export const useStoreItemInfo = ( {
 			const isSuperseded = getIsSuperseded( item );
 
 			// If item is a plan feature, use the plan purchase object.
-			const purchase =
-				isPlanFeature || isSuperseded
-					? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
-					: getPurchaseByProductSlug( purchases, item.productSlug );
+			const purchasedSlug =
+				isPlanFeature || isSuperseded ? sitePlan?.product_slug || '' : item.productSlug;
 
-			return purchase;
+			return purchases.find( ( purchase ) => purchase.product_slug === purchasedSlug );
 		},
 		[ getIsPlanFeature, getIsSuperseded, purchases, sitePlan?.product_slug ]
 	);
@@ -254,7 +251,7 @@ export const useStoreItemInfo = ( {
 				// "Manage plan/Subscription" URL (`/me/purchases/:site/:productId`) - handled by getCheckoutURL.
 				if ( getIsOwned( item ) || getIsIncludedInPlan( item ) ) {
 					recordTracksEvent( 'calypso_pricing_manage_owned_product_click', {
-						productSlug: item.productSlug,
+						product_slug: item.productSlug,
 					} );
 					return;
 				}
@@ -272,7 +269,7 @@ export const useStoreItemInfo = ( {
 
 			if ( item.type === 'item-type-plan' ) {
 				recordTracksEvent( 'calypso_pricing_purchase_bundle_click', {
-					productSlug: item.productSlug,
+					product_slug: item.productSlug,
 				} );
 				return;
 			}

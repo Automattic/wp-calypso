@@ -1,10 +1,11 @@
 import { Locator, Page } from 'playwright';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
 	continueButton: 'button:text("Continue")',
-	connectDomainButton: 'button span:text("Connect your site address")',
-	transferDomainButton: 'button span:text("Transfer your domain")',
+	connectDomainButton: 'button span:text("Connect your domain name to this site")',
+	transferDomainButton: 'button span:text("Transfer your domain name to WordPress.com")',
 };
 
 /**
@@ -95,6 +96,7 @@ export class UseADomainIOwnPage {
 	 * @param domainName Domain name to fill in the input
 	 */
 	async fillUseDomainIOwnInput( domainName: string ): Promise< void > {
+		handleActiveThrottles( [ 'domain-availability' ] );
 		const searchAndPressEnter = async () => {
 			const input = this.getContainer().locator( '.use-my-domain__domain-input input' );
 			await input.fill( domainName );
@@ -112,10 +114,15 @@ export class UseADomainIOwnPage {
 				`Encountered error while trying to check availability of domain.\nOriginal error: ${ errorText }`
 			);
 		}
+
+		const throttle = await recordResponseThrottle( response );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
+		}
 	}
 
 	/**
-	 * Click on the "Transfer your domain" option in the "Transfer or Connect" page
+	 * Click on the "Transfer your domain name to WordPress.com" option in the "Transfer or Connect" page
 	 */
 	async selectTransferYourDomain(): Promise< void > {
 		const button = this.getContainer()

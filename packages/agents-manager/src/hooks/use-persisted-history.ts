@@ -56,6 +56,7 @@ type PersistCallback = ( historyData: StoredHistory ) => void;
 class MemoryHistory {
 	private entries: Location[] = [];
 	private index: number = -1;
+	private lastAction: Action = Action.Pop;
 	private listeners: ( ( event: HistoryEvent ) => void )[] = [];
 	private onPersist?: PersistCallback;
 
@@ -81,13 +82,7 @@ class MemoryHistory {
 	}
 
 	get action(): Action {
-		if ( this.index === 0 ) {
-			return Action.Pop;
-		}
-		if ( this.index === this.entries.length - 1 ) {
-			return Action.Push;
-		}
-		return Action.Replace;
+		return this.lastAction;
 	}
 
 	get location(): Location {
@@ -158,6 +153,7 @@ class MemoryHistory {
 	}
 
 	private notifyListeners( action: Action ) {
+		this.lastAction = action;
 		const event = { action, location: this.location };
 		this.listeners.forEach( ( listener ) => listener( event ) );
 

@@ -228,6 +228,7 @@ html.touch #wpnc-panel {
 			// `.wpnc-app` ancestor outranks the app's `.is-open` transform.
 			.wpnc-app .wpnc-app__detail-pane {
 				transform: none;
+				visibility: visible;
 			}
 		}
 

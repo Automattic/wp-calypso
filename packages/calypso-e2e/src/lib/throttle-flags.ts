@@ -1,8 +1,20 @@
 import { appendOwnBuildLog, fetchBuildLog, fetchBuildsByTag, tagOwnBuild } from './teamcity';
+import { withDeadline } from './with-deadline';
 import type { TaggedBuild } from './teamcity';
 
 export const THROTTLE_IDS = [ 'signup', 'domain-suggestions', 'domain-availability' ] as const;
 export type ThrottleId = ( typeof THROTTLE_IDS )[ number ];
+export type ThrottleAction = 'skip' | 'fail' | 'noop';
+
+export const THROTTLE_ACTION_ENV_VARS = {
+	signup: 'E2E_THROTTLE_SIGNUP_ACTION',
+	'domain-suggestions': 'E2E_THROTTLE_DOMAIN_SUGGESTIONS_ACTION',
+	'domain-availability': 'E2E_THROTTLE_DOMAIN_AVAILABILITY_ACTION',
+} as const satisfies Record< ThrottleId, string >;
+
+export type ThrottleActionHandler = ( action: ThrottleAction, ids: readonly ThrottleId[] ) => void;
+
+let actionHandler: ThrottleActionHandler | null = null;
 
 export interface ThrottleFlag {
 	id: ThrottleId;
@@ -37,16 +49,60 @@ export function mayBeThrottled( url: string ): boolean {
 }
 
 /**
- * How long each ban lasts. The answer is not asked how long it lasts: it says so
- * only sometimes, in a translated sentence, and these are the numbers wpcom
- * enforces from an Automattic IP, which is where CI runs. `signup` bans for 10
- * minutes there; `domain-suggestions` for one; `is-available` states nothing at
- * all and its limiter counts over a sliding hour.
+ * The same endpoints as one pattern, for a caller that has to hand the match to
+ * something else rather than run it. Playwright collapses a route matched by a
+ * function to `**\/*` and routes every request in the context through Node; a
+ * regular expression stops at these three.
+ */
+export const THROTTLED_PATH_PATTERN = new RegExp(
+	Object.values( THROTTLED_PATHS )
+		.map( ( path ) => path.source )
+		.join( '|' ),
+	'i'
+);
+
+/**
+ * The banned endpoint a URL is bound for, or null for one bound for none. For a
+ * caller that stops the request rather than reading the refusal: a call the ban
+ * is going to refuse anyway is one the limiter should never have to count.
+ */
+export function activeThrottleForUrl( url: string, nowMs: number = Date.now() ): ThrottleId | null {
+	return (
+		THROTTLE_IDS.find(
+			( id ) => THROTTLED_PATHS[ id ].test( url ) && activeThrottle( id, nowMs )
+		) ?? null
+	);
+}
+
+/**
+ * What the suite answers a request to a banned endpoint with, in place of making
+ * it. Lives beside detection because detection is the constraint on it: a body
+ * that reads as a ban would raise the flag from our own refusal, and go on
+ * raising it for as long as the tests run.
+ */
+export function throttleRefusalBody( id: ThrottleId ): string {
+	return JSON.stringify( {
+		error: 'e2e_throttle_blocked',
+		message:
+			`The E2E suite refused this request: a ${ id } ban is in force, and the request ` +
+			'never reached WordPress.com. If this call is on the success path of a test, guard ' +
+			'that test with handleActiveThrottles.',
+	} );
+}
+
+/**
+ * How long each ban lasts. A refusal cannot be asked: it names a length only
+ * sometimes, in a translated sentence. These are the windows the limiters
+ * themselves apply to a request from an Automattic IP, which is where CI runs,
+ * not lengths guessed from what a refusal looked like.
  */
 const BAN_DURATIONS: Record< ThrottleId, number > = {
 	signup: 600_000,
 	'domain-suggestions': 60_000,
-	'domain-availability': 3_600_000,
+	// One of the ten windows the hour-long sliding limiter counts a request in,
+	// not the hour: the count comes down a window at a time, and a refusal is not
+	// counted, so being refused again costs nothing but the call that asked.
+	'domain-availability': 360_000,
 };
 
 /**
@@ -120,15 +176,52 @@ const tagging = new Map< ThrottleId, Promise< void > >();
 const reportedHere = new Map< ThrottleId, number >();
 
 /**
- * Forgets what this worker has raised. For tests: a worker never needs this.
+ * Forgets what this worker has raised and whatever handler was installed. For
+ * tests: a worker never needs this. A case that throws mid-policy would
+ * otherwise leave its handler registered for the rest of the file.
  */
-export function resetRaisedThrottles(): void {
+export function resetThrottleState(): void {
+	actionHandler = null;
 	raisedHere.clear();
 	tagSettled.clear();
 	tagAttempts.clear();
 	tagging.clear();
 	reportedHere.clear();
 	publishing.clear();
+}
+
+/**
+ * Installs the runner-specific operation used to skip or fail the current test.
+ */
+export function registerThrottleActionHandler( handler: ThrottleActionHandler ): () => void {
+	actionHandler = handler;
+	return () => {
+		if ( actionHandler === handler ) {
+			actionHandler = null;
+		}
+	};
+}
+
+/**
+ * The configured action for an active throttle. An unset value defaults to skip.
+ */
+export function throttleAction( id: ThrottleId ): ThrottleAction {
+	const variable = THROTTLE_ACTION_ENV_VARS[ id ];
+	const value = process.env[ variable ];
+	if ( ! value ) {
+		return 'skip';
+	}
+	if ( value === 'skip' || value === 'fail' || value === 'noop' ) {
+		return value;
+	}
+	throw new Error( `Invalid ${ variable } value: ${ value }. Expected skip, fail, or noop.` );
+}
+
+/**
+ * Validates every action at startup, before Playwright starts collecting tests.
+ */
+export function validateThrottleActions(): void {
+	THROTTLE_IDS.forEach( throttleAction );
 }
 
 /**
@@ -322,16 +415,56 @@ async function tagOnce( id: ThrottleId ): Promise< void > {
 }
 
 /**
- * Records a throttle if this response or error signals one. Never throws.
+ * Records a throttle if this response or error signals one, and returns its id.
+ * Never throws and never waits for the build publication it starts.
  *
  * The endpoint is given separately by callers whose payload does not carry it:
  * what a bare `throttled` code means depends on which endpoint answered with it.
  */
-export async function recordThrottle( responseOrError: unknown, url?: string ): Promise< void > {
+export async function recordThrottle(
+	responseOrError: unknown,
+	url?: string
+): Promise< ThrottleId | null > {
 	const id = detectThrottle( responseOrError, url );
 	if ( id ) {
-		await raiseFlag( id );
+		void raiseFlag( id );
 	}
+	return id;
+}
+
+/**
+ * How long a body has to arrive. `waitForResponse` and the context listener both
+ * hand over a response whose headers are in and whose body may still be in
+ * flight, and Playwright puts no timeout on reading one: an unbounded read holds
+ * the caller until the test times out. A body that slow says nothing about a ban.
+ */
+const BODY_TIMEOUT = 2 * 1000;
+
+/**
+ * A response as detection reads it.
+ */
+export interface ThrottleResponse {
+	url(): string;
+	status(): number;
+	text(): Promise< string >;
+}
+
+/**
+ * Records a throttle from a response, and returns its id.
+ *
+ * A plain success is never handed to detection: an enveloped success carries no
+ * error key, and a domain search result can hold anything a caller typed —
+ * including our own tokens.
+ */
+export async function recordResponseThrottle(
+	response: ThrottleResponse
+): Promise< ThrottleId | null > {
+	const status = response.status();
+	const body = await withDeadline( response.text(), BODY_TIMEOUT ).catch( () => '' );
+	if ( status < 400 && ! /"error"\s*:/.test( body ) ) {
+		return null;
+	}
+	return recordThrottle( { url: response.url(), status, body } );
 }
 
 /**
@@ -360,6 +493,83 @@ function activeThrottle(
 }
 
 /**
+ * Applies the configured policy when any of the given throttles is in force.
+ * A failing policy wins when a group contains both actions.
+ *
+ * No handler means no test to skip or fail: the fixture that registers one runs
+ * per test, and Playwright leaves it out of `beforeAll` and `afterAll`. A ban met
+ * there is stated in the log and nothing more, so the tests that go on to touch
+ * the banned endpoint each take the policy for themselves rather than the whole
+ * describe block taking it for tests that never reach one.
+ */
+export function handleActiveThrottles(
+	ids: Iterable< ThrottleId >,
+	nowMs: number = Date.now()
+): void {
+	const active = [ ...new Set( ids ) ].filter( ( id ) => activeThrottle( id, nowMs ) );
+	if ( ! active.length ) {
+		return;
+	}
+
+	// Once per worker per ban, and the only place a build states how long it has
+	// left: the tag and the line say what a peer reads, not what this log shows.
+	active.forEach( ( id ) => debugThrottle( id, nowMs ) );
+
+	// A `noop` answers the ban with nothing: it never skips or fails, so it is
+	// left out of the action and the caller is not told to stop.
+	const acting = active.filter( ( id ) => throttleAction( id ) !== 'noop' );
+	if ( ! acting.length ) {
+		return;
+	}
+	const action = acting.some( ( id ) => throttleAction( id ) === 'fail' ) ? 'fail' : 'skip';
+	const selected = acting.filter( ( id ) => throttleAction( id ) === action );
+	// Optional: a `beforeAll` has no handler, and skipping there would take down
+	// every test in the block, including the ones that never reach the endpoint.
+	actionHandler?.( action, selected );
+}
+
+/**
+ * How much of a test's outcome the policy needs to know about. Playwright's
+ * `TestInfo` satisfies it; the fields are named here so the decision can be
+ * tested without a runner.
+ */
+export interface ThrottleTestState {
+	errors: readonly unknown[];
+	status?: string;
+	expectedStatus?: string;
+}
+
+/**
+ * What the policy has to say to a test in this state, or null when it has
+ * nothing to say to it.
+ *
+ * A test that already failed or skipped for a reason of its own keeps it: the
+ * handler runs from fixture teardown too, so it meets tests that stopped on
+ * their own account, and stating a ban there would append a skip reason the test
+ * never earned, or turn its skip into a failure outright. The runner's own state
+ * rather than a flag set by the handler: Playwright marks `expectedStatus`
+ * before `skip` throws, so a caller that swallows the throw cannot silence the
+ * policy for the rest of the test.
+ *
+ * A test that passed is not one of those states: `status` reads `passed` from
+ * the start, so nothing here can tell a call made by the test from one made by
+ * an `afterEach` cleaning up after it, and a ban met there would take a green
+ * test down. What keeps that from happening is where the policy is applied —
+ * every call site sits on a path the test has already failed on — not this.
+ */
+export function throttleActionMessage(
+	action: ThrottleAction,
+	ids: readonly ThrottleId[],
+	state: ThrottleTestState
+): string | null {
+	if ( state.errors.length || state.status === 'skipped' || state.expectedStatus === 'skipped' ) {
+		return null;
+	}
+	const message = `WordPress.com throttle active: ${ ids.join( ', ' ) }.`;
+	return action === 'skip' ? message : `${ message } E2E throttle action is fail.`;
+}
+
+/**
  * Rounds a span to whatever unit reads plainly in a log line.
  */
 function approximately( ms: number ): string {
@@ -374,9 +584,8 @@ function approximately( ms: number ): string {
 /**
  * Reports that a call is about to run into a throttle we already know about.
  *
- * Reporting only: the call goes ahead. What a build does about a known throttle
- * — skip, fail, wait — is a later decision, and until it is taken the log is
- * where it shows. The line is deliberately not one `EVERY_LINE` matches, so a
+ * Reporting only: `handleActiveThrottles` calls this before it decides what to
+ * do about the ban. The line is deliberately not one `EVERY_LINE` matches, so a
  * build cannot re-report a peer's ban as its own.
  *
  * Said once per worker per ban: a build runs hundreds of specs, and the line
@@ -573,10 +782,9 @@ function detectThrottleId( text: string ): ThrottleId | null {
 	if ( THROTTLED_PATHS[ 'domain-suggestions' ].test( text ) ) {
 		return 'domain-suggestions';
 	}
-	// `/users/new` wraps a Blackbox block in this same code, and that refuses one
-	// attempt rather than banning the address, so the code alone settles it only
-	// on `/sites/new`, where nothing else raises it. Little is lost: the ban is on
-	// the address, not the endpoint, and a run inside one reaches `/sites/new`
-	// too, every time it makes a site.
+	// `/users/new` answers in this same code, but never for a ban: the signup
+	// throttle exempts the addresses our tests sign up with, so what is left there
+	// is a Blackbox block, which refuses one attempt rather than banning anything.
+	// `/sites/new` gets no such exemption, so the code settles it there.
 	return THROTTLED_PATHS.signup.test( text ) ? 'signup' : null;
 }

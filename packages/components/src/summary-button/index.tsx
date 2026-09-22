@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import React, { forwardRef } from 'react';
 import { SummaryButtonProps } from './types';
@@ -27,7 +27,7 @@ function BadgeList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 			className="summary-button-badge-list"
 		>
 			{ badges?.map( ( badge ) => (
-				<Badge key={ badge.text } intent={ badge.intent }>
+				<Badge key={ badge.text } intent={ badge.intent ?? 'draft' }>
 					{ badge.text }
 				</Badge>
 			) ) }

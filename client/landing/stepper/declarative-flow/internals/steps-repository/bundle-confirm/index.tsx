@@ -17,7 +17,10 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
+import {
+	eligibilityHolds as eligibilityHoldsConstants,
+	type EligibilityHold,
+} from 'calypso/state/automated-transfer/constants';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
@@ -54,7 +57,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-const TRANSFERRING_NOT_BLOCKERS = [
+const TRANSFERRING_NOT_BLOCKERS: EligibilityHold[] = [
 	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // Plans are upgraded in the install flow.
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];

@@ -6,10 +6,8 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Icon, Notice, Spinner } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { Button, Notice, Spinner } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { send } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -63,10 +61,7 @@ export default function WordPressAgentTelegram( {
 	const authUrl = config( 'dolly_telegram_auth_url' ) as unknown as string | undefined;
 	const requestAccess = config( 'dolly_telegram_request_access' ) as unknown as 'write' | undefined;
 	const configuredSize = config( 'dolly_telegram_widget_size' ) as unknown as
-		| 'large'
-		| 'medium'
-		| 'small'
-		| undefined;
+		'large' | 'medium' | 'small' | undefined;
 	const showUserpic = Boolean(
 		config( 'dolly_telegram_show_userpic' ) as unknown as boolean | undefined
 	);
@@ -97,7 +92,7 @@ export default function WordPressAgentTelegram( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to Telegram?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {
@@ -227,10 +222,15 @@ export default function WordPressAgentTelegram( {
 							) }
 						/>
 						<div className="wordpress-agent-connection__actions">
-							<Button variant="secondary" onClick={ () => setPairingDismissed( true ) }>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								onClick={ () => setPairingDismissed( true ) }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								onClick={ connectViaToken }
 								isBusy={ tokenMutation.isPending }
@@ -272,20 +272,13 @@ export default function WordPressAgentTelegram( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Telegram' ) }
-						description={
-							isConnected
-								? createInterpolateElement(
-										__( 'Your account is <connected>connected</connected>.' ),
-										{ connected: <strong /> }
-								  )
-								: __( 'Connect your WordPress.com account to use WordPress Agent in Telegram.' )
-						}
-						decoration={ <Icon icon={ send } size={ 24 } /> }
+						description={ __( 'Message your agent from Telegram for quick updates on the go.' ) }
 					/>
 					<div className="wordpress-agent-telegram__action">
 						{ ! isStatusReady && <Spinner /> }
 						{ isStatusReady && isConnected && (
 							<Button
+								__next40pxDefaultSize
 								variant="secondary"
 								isDestructive
 								onClick={ disconnect }

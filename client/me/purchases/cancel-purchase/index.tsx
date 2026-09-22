@@ -48,6 +48,7 @@ import {
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
+	isManageableByUser,
 	type CancelIntent,
 	type DisplayVariant,
 } from 'calypso/dashboard/utils/purchase';
@@ -298,6 +299,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// cancel here. The CTA is hidden on the manage-purchase page; this also
 		// turns away anyone arriving from a stale link.
 		if ( purchase.is_host_managed ) {
+			return false;
+		}
+
+		// Only support can cancel or remove these. The buttons are hidden on the
+		// manage-purchase page, so this catches direct links, including the
+		// remove-and-refund one inside this flow.
+		if ( ! isManageableByUser( purchase ) ) {
 			return false;
 		}
 
@@ -894,7 +902,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				? ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 						this.props.siteSlug,
 						newPurchase.ID
-				  ) + '?downgraded=true'
+					) + '?downgraded=true'
 				: null;
 
 			if ( targetUrl ) {
@@ -1300,9 +1308,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
 					needsAtomicRevertConfirmation={ Boolean(
 						! isSplitCancelRemoveEnabled &&
-							isPlan( purchase ) &&
-							atomicTransfer?.created_at &&
-							! purchase.is_refundable
+						isPlan( purchase ) &&
+						atomicTransfer?.created_at &&
+						! purchase.is_refundable
 					) }
 					isLoading={ this.state.isLoading }
 					additionalChanges={ siteWarnings }

@@ -15,6 +15,7 @@ import {
 	getProviderCheckpoints,
 } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import { errorResult, successResult } from '../ability-result';
 import type { CheckpointMetadata } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
@@ -39,31 +40,13 @@ function getReciprocalRequestIntentType(
 	return requestIntentType;
 }
 
-function errorResult(
-	message: string,
-	error: string,
-	details?: Record< string, unknown >
-): AbilityResult {
-	return {
-		result: { success: false, message, error, ...( details && { details } ) },
-		returnToAgent: true,
-	};
-}
-
-function restoredResult( summary: string, checkpointId: string ): AbilityResult {
-	return {
-		result: { success: true, message: summary, details: { checkpointId } },
-		returnToAgent: true,
-	};
-}
-
 function restoreFailedResult( error: unknown, checkpointId: string ): AbilityResult {
 	// eslint-disable-next-line no-console
 	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
 
 	return errorResult(
-		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
 		error instanceof Error ? error.message : String( error ),
+		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
 		{ checkpointId }
 	);
 }
@@ -142,9 +125,8 @@ async function restoreProviderCheckpoint(
 			} );
 
 			// Capture the navigation snapshots before the restore mutates them.
-			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach(
-				( navigationId ) =>
-					providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
+			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach( ( navigationId ) =>
+				providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
 			);
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -172,7 +154,7 @@ async function restoreProviderCheckpoint(
 		clearStaleReciprocals( restoreToolCallId, reciprocalRequestIntentType, providerCheckpoints );
 	}
 
-	return restoredResult( summary, checkpointId );
+	return successResult( summary, { checkpointId } );
 }
 
 /**
@@ -185,18 +167,18 @@ export async function restoreCheckpointCallback(
 
 	if ( ! isEditorPage() ) {
 		return errorResult(
-			__( 'I can only restore checkpoints from the editor.', __i18n_text_domain__ ),
-			'Not an editor page.'
+			'Not an editor page.',
+			__( 'I can only restore checkpoints from the editor.', __i18n_text_domain__ )
 		);
 	}
 
 	if ( ! checkpointId ) {
 		return errorResult(
+			'Missing checkpointId.',
 			__(
 				'I could not restore the checkpoint because no checkpoint ID was provided.',
 				__i18n_text_domain__
-			),
-			'Missing checkpointId.'
+			)
 		);
 	}
 
@@ -211,8 +193,8 @@ export async function restoreCheckpointCallback(
 		}
 
 		return errorResult(
-			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			`Checkpoint not found: ${ checkpointId }`,
+			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			{ checkpointId }
 		);
 	}
@@ -255,5 +237,5 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	return restoredResult( summary, checkpointId );
+	return successResult( summary, { checkpointId } );
 }

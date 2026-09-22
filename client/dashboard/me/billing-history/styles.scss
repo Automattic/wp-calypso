@@ -43,8 +43,29 @@
 	width: 100%;
 }
 
-.receipt-text-control {
+.receipt-billing-details-input {
 	width: 100%;
+}
+
+.receipt-billing-details-printable {
+	display: none;
+}
+
+@media print {
+	// Nothing was entered, so the label and description are just noise on paper.
+	.receipt-billing-details.is-empty {
+		display: none;
+	}
+
+	.receipt-billing-details-input,
+	.receipt-billing-details-description {
+		display: none;
+	}
+
+	.receipt-billing-details-printable {
+		display: block;
+		white-space: pre-wrap;
+	}
 }
 
 .receipt-table {

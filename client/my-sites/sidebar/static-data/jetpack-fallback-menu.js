@@ -169,15 +169,8 @@ export default function jetpackMenu( { siteDomain, hasUnifiedImporter } ) {
 			slug: 'tools-php',
 			title: translate( 'Tools' ),
 			type: 'menu-item',
-			url: `/marketing/tools/${ siteDomain }`,
+			url: `/earn/${ siteDomain }`,
 			children: [
-				{
-					parent: 'tools.php',
-					slug: 'tools-marketing',
-					title: translate( 'Marketing' ),
-					type: 'submenu-item',
-					url: `/marketing/tools/${ siteDomain }`,
-				},
 				{
 					parent: 'tools.php',
 					slug: 'tools-earn',

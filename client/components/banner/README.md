@@ -44,6 +44,7 @@ function render() {
 | Name                         | Type                   | Default | Description                                                                                                                                          |
 | ---------------------------- | ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `callToAction`               | `string`               | null    | Shows a CTA text.                                                                                                                                    |
+| `children`                   | `node`                 | null    | Rendered inside the banner body, so it is dismissed along with the banner.                                                                           |
 | `className`                  | `string`               | null    | Any additional CSS classes.                                                                                                                          |
 | `compact`                    | `bool`                 | false   | Display a compact version of the banner.                                                                                                             |
 | `description`                | `string`               | null    | The banner description.                                                                                                                              |

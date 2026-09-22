@@ -29,6 +29,7 @@ import JetpackSocialAdvancedPricingDisclaimer, {
 	showJetpackSocialAdvancedPricingDisclaimer,
 } from './jetpack-social-advanced-pricing-disclaimer';
 import RefundPolicies from './refund-policies';
+import { hasStudioCodeAiCredits } from './studio-code-ai-credits-guidelines';
 import { PlanTerms100Year, DomainTerms100Year } from './terms-100-year';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
@@ -101,6 +102,7 @@ export default function CheckoutTerms( {
 			</div>
 
 			<TermsOfService
+				hasStudioCodeAiCredits={ hasStudioCodeAiCredits( cart ) }
 				hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }

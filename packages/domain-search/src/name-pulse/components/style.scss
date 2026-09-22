@@ -1,0 +1,177 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+
+// `.domain-search--results` reserves space for a fixed mobile search form;
+// here the form is in flow.
+.domain-search--results.domain-search--name-pulse {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		padding-block-start: 0;
+	}
+}
+
+// Figma spec is 1248px, wider than the classic results page's content width.
+// Override the variable rather than `max-width` so the mini cart, which
+// renders inside the results element, lines up with the results above it.
+// The initial state shares it so the search bar does not jump on the first query.
+.domain-search--results.domain-search--name-pulse,
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	--domain-search-content-max-width: 78rem;
+}
+
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
+}
+
+.name-pulse-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	border: 1px solid $gray-200;
+	border-radius: 8px;
+	overflow: hidden;
+	gap: 1px;
+
+	@media ( max-width: #{ $break-medium - 1px } ) {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+
+	// Each cell paints the 1px divider around itself, so an empty cell at the
+	// end of the last row stays blank instead of showing a filled background.
+	> [role='listitem'] {
+		background: $white;
+		box-shadow: 0 0 0 1px $gray-100;
+		min-width: 0;
+	}
+}
+
+.name-pulse-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	min-height: 4rem;
+	padding: 0.75rem 1rem;
+	box-sizing: border-box;
+	flex-wrap: wrap;
+
+	&__name {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+		// A zero basis (rather than `auto`) keeps this item's full-content width
+		// out of the row's wrap calculation, so it shrinks/truncates in place
+		// instead of pushing `&__status` onto a second line.
+		flex: 1 1 0%;
+
+		.domain-suggestion-badge {
+			flex-shrink: 0;
+			height: 20px;
+			padding-inline: 6px;
+			border-radius: 4px;
+			font-size: 11px;
+		}
+	}
+
+	&__domain {
+		display: flex;
+		min-width: 0;
+
+		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
+		// never loses space to the label and is never cut off.
+		> :first-child {
+			min-width: 0;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		> :last-child {
+			flex-shrink: 0;
+		}
+
+		// The Text component sets `text-wrap: pretty` on itself, which lets it
+		// wrap independently of the `white-space: nowrap` above.
+		.components-text {
+			text-wrap: nowrap;
+		}
+	}
+
+	&__status {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex: 0 0 auto;
+		min-height: 2rem;
+	}
+
+	&__price {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		line-height: 1.3;
+	}
+
+	&__price-line {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.125rem;
+	}
+
+	&__cart.components-button {
+		color: $gray-900;
+		border: 1px solid var( --domain-search-border-color );
+		border-radius: 4px;
+
+		&.is-primary {
+			border-color: transparent;
+			color: $white;
+		}
+	}
+
+	// The error CTA is `aria-disabled` so it stays hoverable for its tooltip; the
+	// attribute has to be matched to beat the faded disabled color.
+	&__cart--error.components-button.is-primary[aria-disabled='true'] {
+		color: $white;
+	}
+
+	&__skeleton {
+		display: inline-block;
+		width: 3.75rem;
+		height: 0.375rem;
+		border-radius: 4px;
+		background: linear-gradient( 90deg, #ddd, #eee 49.5%, rgba( 238, 238, 238, 0.5 ) );
+		animation: name-pulse-skeleton 1.2s ease-in-out infinite;
+
+		&--name {
+			width: 9.5rem;
+		}
+	}
+}
+
+.name-pulse-section__more {
+	text-align: center;
+
+	.components-button.is-link {
+		text-decoration: none;
+		font-weight: 500;
+
+		&:focus:not( :focus-visible ) {
+			box-shadow: none;
+			outline: none;
+		}
+	}
+}
+
+@keyframes name-pulse-skeleton {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}

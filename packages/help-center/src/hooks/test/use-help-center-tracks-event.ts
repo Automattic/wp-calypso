@@ -20,6 +20,13 @@ describe( 'getHelpCenterTracksProperties', () => {
 		} );
 	} );
 
+	test( 'falls back to the primary site', () => {
+		expect( getHelpCenterTracksProperties( {}, { siteId: 0, primarySiteId: 33 } ) ).toEqual( {
+			blog_id: 33,
+			site_context_source: 'primary_site',
+		} );
+	} );
+
 	test( 'reports no site when the Help Center has none', () => {
 		expect( getHelpCenterTracksProperties( {}, {} ) ).toEqual( { site_context_source: 'none' } );
 	} );

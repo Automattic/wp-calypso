@@ -68,11 +68,13 @@ See `src/hooks/custom-actions/README.md` for details.
 
 The host page URL can carry these query parameters:
 
-| Parameter | Description                                                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
-| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
-| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+| Parameter       | Description                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
+| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                                                        |
+| `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
+| `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
+| `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
 
 ## API Reference
 
@@ -105,7 +107,7 @@ function MyComponent() {
 }
 ```
 
-Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component.
+Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`, `getAgentsManagerChatRoute`) and `recordAgentsManagerTracksEvent` are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 
 ### Exported Types
 
@@ -135,27 +137,10 @@ interface ToolProvider {
 
 ### Ability Interface
 
-Based on the WordPress Abilities API:
+`Ability` is re-exported from `@wordpress/abilities`, which owns the authoritative shape (`name`, `label`, `description`, `category`, schemas, callbacks, and `meta`):
 
 ```tsx
-interface Ability {
-	name: string;
-	label: string;
-	description: string;
-	category: string;
-	input_schema?: Record< string, any >;
-	output_schema?: Record< string, any >;
-	callback?: ( input: any ) => any | Promise< any >;
-	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
-	meta?: {
-		annotations?: {
-			readonly?: boolean | null;
-			destructive?: boolean | null;
-			idempotent?: boolean | null;
-		};
-		[ key: string ]: any;
-	};
-}
+import type { Ability } from '@automattic/agents-manager';
 ```
 
 ### ContextProvider Interface
@@ -169,7 +154,7 @@ interface ClientContextType {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'ciab-admin' | 'calypso' | string;
+	environment: 'wp-admin' | 'calypso' | string; // full union in `src/extension-types.ts`
 	contextEntries?: ContextEntry[];
 	[ key: string ]: any;
 }

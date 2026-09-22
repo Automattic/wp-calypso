@@ -41,11 +41,7 @@ export type AgencyCapability =
 	| 'a4a_remove_managed_sites';
 
 export type AgencyPartnerDirectorySlug =
-	| 'wordpress'
-	| 'jetpack'
-	| 'woocommerce'
-	| 'pressable'
-	| 'vip';
+	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
 
 export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
 
@@ -92,6 +88,38 @@ export interface AgencyProfile {
 }
 
 /**
+ * Body of PUT /wpcom/v2/agency/$agencyId/profile.
+ */
+export interface AgencyProfileUpdate {
+	profile_company_name: string;
+	profile_company_email: string;
+	profile_company_website: string;
+	profile_company_bio_description: string;
+	profile_company_logo_url: string;
+	profile_company_landing_page_url: string;
+	profile_company_country: string;
+	profile_listing_is_global: boolean;
+	profile_listing_is_available: boolean;
+	profile_listing_industries: string[];
+	profile_listing_languages_spoken: string[];
+	profile_listing_services: string[];
+	profile_listing_products: string[];
+	profile_budget_budget_lower_range: string;
+}
+
+/**
+ * Response from POST /wpcom/v2/agency/$agencyId/media.
+ */
+export interface AgencyMediaUpload {
+	asset_type: string;
+	attachment_id: number;
+	url: string;
+	mime: string;
+	width: number;
+	height: number;
+}
+
+/**
  * Body of PUT /wpcom/v2/agency/$agencyId/profile/application.
  */
 export interface AgencyPartnerDirectoryApplicationUpdate {
@@ -115,9 +143,6 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
-	mcp?: {
-		allowed: boolean;
-	};
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
 	profile?: AgencyProfile;
@@ -125,19 +150,49 @@ export interface Agency {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];
 	};
+	amplify?: {
+		allowed: boolean;
+	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
 		capabilities: string[];
+		role?: 'a4a_administrator' | 'a4a_manager';
 	};
 	third_party?: null | {
 		pressable?: null | {
-			usage?: null | {
-				start_date?: string;
-				end_date?: string;
-			};
+			pressable_id?: number;
+			/** Null for a regular Pressable plan not bought through the A4A marketplace. */
+			a4a_id?: string | null;
+			usage?: null | AgencyPressableUsage;
+			titan_usage?: null | AgencyPressableTitanUsage;
 		};
 	};
+	notifications?: AgencyNotification[];
+}
+
+export interface AgencyPressableUsage {
+	storage_gb?: number;
+	visits_count?: number;
+	sites_count?: number;
+	start_date?: string;
+	end_date?: string;
+}
+
+export interface AgencyPressableTitanOrder {
+	domain: string;
+	status: string;
+	billable_inboxes: number;
+	trial_end_at: string | null;
+}
+
+export interface AgencyPressableTitanUsage {
+	orders?: AgencyPressableTitanOrder[];
+}
+
+export interface AgencyNotification {
+	timestamp: number;
+	reference: string;
 }
 
 /**
@@ -152,6 +207,12 @@ export interface McpAvailableAbility {
 	description: string;
 	category: string;
 	enabled: boolean;
+	/**
+	 * Whether the ability only reads data. Write abilities are flagged with an
+	 * explicit `false`; abilities from a response predating the flag omit it and
+	 * are treated as read-only.
+	 */
+	readonly?: boolean;
 }
 
 export interface McpAvailableCategory {

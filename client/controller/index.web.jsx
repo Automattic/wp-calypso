@@ -20,6 +20,7 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -85,6 +86,7 @@ export const ProviderWrappedLayout = ( {
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
+				onRouteCommit={ recordUnifiedAdminPageView }
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
@@ -236,11 +238,18 @@ function buildLoginParameters( context, state ) {
 	// original URL, to ensure the login form is pre-filled with the
 	// correct email address and built with the correct language (when
 	// either of those are requested).
-	const login_email = getImmediateLoginEmail( state );
+	//
+	// Read the query before the state. `setupRoutes()` registers this
+	// middleware ahead of the `ROUTE_SET` catch-all that copies these
+	// values into the store, so on the request that arrives from an
+	// immediate login link the store is still empty. The state is the
+	// fallback for later navigations, where the immediate login
+	// parameters have already been stripped from the URL.
+	const login_email = context.query?.login_email || getImmediateLoginEmail( state );
 	if ( login_email ) {
 		loginParameters.emailAddress = login_email;
 	}
-	const login_locale = getImmediateLoginLocale( state );
+	const login_locale = context.query?.login_locale || getImmediateLoginLocale( state );
 	if ( login_locale ) {
 		loginParameters.locale = login_locale;
 	}

@@ -332,7 +332,7 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+			await test.step( 'Then I land on the post-checkout "Let’s design your site" screen', async function () {
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout. This test re-enters the domain flow next, so just
 				// confirm checkout routed here rather than clicking through.
@@ -586,7 +586,7 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+			await test.step( 'Then I land on the post-checkout "Let’s design your site" screen', async function () {
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout. This test re-enters the domain flow next, so just
 				// confirm checkout routed here rather than clicking through.

@@ -23,7 +23,10 @@ function LaunchRocketIcon() {
 
 const NO_SITE = { ID: 0, slug: '', name: '' } as Site;
 
-export function useLaunchSitePlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
+export function useLaunchSitePlugin( { site }: { site?: Site } ): {
+	node?: OmnibarNode;
+	panel?: React.ReactNode;
+} {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -35,30 +38,31 @@ export function useLaunchSitePlugin( { site }: { site?: Site } ): OmnibarNode | 
 	const launchSite = site ?? NO_SITE;
 	const siteOverviewUrl = `/sites/${ launchSite.slug }`;
 
-	const { isLoading, isExperimentLoading, isDisabled, isBusy, href, onClick } = useSiteLaunch(
-		launchSite,
-		{
+	const { isLoading, isExperimentLoading, isDisabled, isBusy, href, onClick, modal } =
+		useSiteLaunch( launchSite, {
 			tracksContext: 'omnibar',
 			backTo: siteOverviewUrl,
 			postLaunchUrl: dashboardLinkWithBackport( siteOverviewUrl ),
 			domainsOptions: { ...queries.domainsQuery(), enabled: isLaunchable },
 			recordTracksEvent,
-		}
-	);
+		} );
 
 	if ( ! isLaunchable ) {
-		return undefined;
+		return {};
 	}
 
 	const disabled = isLoading || isExperimentLoading || isDisabled || isBusy;
 
 	return {
-		id: 'launch-site',
-		title: __( 'Launch site' ),
-		icon: <LaunchRocketIcon />,
-		className: 'omnibar__launch-site color-scheme is-global',
-		disabled,
-		href,
-		onClick,
+		node: {
+			id: 'launch-site',
+			title: __( 'Launch site' ),
+			icon: <LaunchRocketIcon />,
+			className: 'omnibar__launch-site color-scheme is-global',
+			disabled,
+			href,
+			onClick,
+		},
+		panel: modal,
 	};
 }

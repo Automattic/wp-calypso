@@ -7,6 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 /**
  * Internal dependencies
  */
@@ -29,7 +30,12 @@ export function makeReauthLayout( context, next ) {
 	// Wrap the simple layout in necessary context providers using JSX
 	context.layout = (
 		<CalypsoI18nProvider i18n={ i18n }>
-			<RouteProvider currentSection={ section } currentRoute={ pathname } currentQuery={ query }>
+			<RouteProvider
+				currentSection={ section }
+				currentRoute={ pathname }
+				currentQuery={ query }
+				onRouteCommit={ recordUnifiedAdminPageView }
+			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
 						<MomentProvider>

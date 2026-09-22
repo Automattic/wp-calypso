@@ -81,23 +81,35 @@ export class LoginPage {
 	}
 
 	/**
-	 * Fills the username input.
+	 * Fills an input on the login form, waiting out the disabled state first.
+	 *
+	 * The form renders its inputs disabled until Calypso mounts, and disables
+	 * them again while it checks the submitted username. Both windows are
+	 * normally a few milliseconds, but a cold app can hold one open for longer
+	 * than the default action timeout, and `fill` would spend that budget
+	 * retrying instead of waiting.
 	 */
-	async fillUsername( value: string ): Promise< Locator > {
-		const locator = await this.page.locator( 'input[name="usernameOrEmail"]' );
+	private async fillInput( selector: string, value: string ): Promise< Locator > {
+		await this.page.waitForSelector( `${ selector }:not([disabled])`, { timeout: 30 * 1000 } );
+
+		const locator = this.page.locator( selector );
 		await locator.fill( value );
 
 		return locator;
 	}
 
 	/**
+	 * Fills the username input.
+	 */
+	async fillUsername( value: string ): Promise< Locator > {
+		return this.fillInput( 'input[name="usernameOrEmail"]', value );
+	}
+
+	/**
 	 * Fills the password input.
 	 */
 	async fillPassword( value: string ): Promise< Locator > {
-		const locator = await this.page.locator( 'input#password' );
-		await locator.fill( value );
-
-		return locator;
+		return this.fillInput( 'input#password', value );
 	}
 
 	/**

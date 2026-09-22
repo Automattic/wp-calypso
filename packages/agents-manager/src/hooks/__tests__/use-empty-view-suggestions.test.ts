@@ -8,6 +8,7 @@ let mockContext = {
 	currentRoute: undefined as string | undefined,
 };
 let mockCurrentPostType: string | undefined;
+let mockIsEditedPostEmpty = false;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: (
@@ -72,6 +73,7 @@ function mockCoreStoreReady( isReady: boolean ) {
 			if ( storeName === 'core/editor' ) {
 				return {
 					getCurrentPostType: () => mockCurrentPostType,
+					isEditedPostEmpty: () => mockIsEditedPostEmpty,
 				};
 			}
 
@@ -98,6 +100,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			currentRoute: undefined,
 		};
 		mockCurrentPostType = undefined;
+		mockIsEditedPostEmpty = false;
 		mockCoreStoreReady( true );
 	} );
 
@@ -361,5 +364,38 @@ describe( 'hideTopLevelDescriptions', () => {
 		expect( hideTopLevelDescriptions( [ siteEditorSuggestion ] ) ).toEqual( [
 			siteEditorSuggestion,
 		] );
+	} );
+} );
+
+describe( 'useEmptyViewSuggestions post content changes', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockContext = { sectionName: 'gutenberg', currentRoute: undefined };
+		mockCurrentPostType = 'post';
+		mockIsEditedPostEmpty = true;
+		mockCoreStoreReady( true );
+	} );
+
+	afterEach( () => {
+		delete ( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData;
+		mockIsEditedPostEmpty = false;
+	} );
+
+	// The list is cached in state, so it has to be rebuilt when emptiness flips.
+	it( 'refreshes the suggestions when the post gains content', async () => {
+		const getEmptyViewSuggestions = jest.fn( () => [
+			{ ...jetpackSuggestion, disabled: mockIsEditedPostEmpty },
+		] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( true ) );
+
+		mockIsEditedPostEmpty = false;
+		mockCoreStoreReady( true );
+		rerender();
+
+		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( false ) );
 	} );
 } );

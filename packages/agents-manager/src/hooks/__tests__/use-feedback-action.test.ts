@@ -210,9 +210,12 @@ describe( 'useFeedbackAction', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_up', {
-				message_id: 'msg-1',
-			} );
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_response_action_thumbs_up',
+				{
+					message_id: 'msg-1',
+				}
+			);
 		} );
 
 		it( 'does not show feedback input', async () => {
@@ -247,9 +250,12 @@ describe( 'useFeedbackAction', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_down', {
-				message_id: 'msg-1',
-			} );
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_response_action_thumbs_down',
+				{
+					message_id: 'msg-1',
+				}
+			);
 		} );
 
 		it( 'shows feedback input', async () => {
@@ -346,7 +352,7 @@ describe( 'useFeedbackAction', () => {
 			} );
 
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-				'response_feedback_submitted',
+				'calypso_agents_manager_response_feedback_submitted',
 				{
 					message_id: 'msg-1',
 				}

@@ -54,14 +54,14 @@ const initiateAtomicTransfer = ( action ) =>
 	);
 
 const receiveResponse = ( action, transfer ) => [
-	recordTracksEvent( 'calypso_atomic_transfer_inititate_success', {
+	recordTracksEvent( 'calypso_atomic_transfer_initiate_success', {
 		context: 'atomic_transfer',
 	} ),
 	setLatestAtomicTransfer( action.siteId, transfer ),
 ];
 
 const receiveError = ( action, error ) => [
-	recordTracksEvent( 'calypso_atomic_transfer_inititate_failure', {
+	recordTracksEvent( 'calypso_atomic_transfer_initiate_failure', {
 		context: 'atomic_transfer',
 		error: error.error,
 	} ),

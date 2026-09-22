@@ -160,7 +160,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 					cost: lowestPlanDisplayCost as string,
 					periodicity: monthlyLabel,
 				},
-		  } )
+			} )
 		: null;
 
 	let planText;

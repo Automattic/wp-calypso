@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
@@ -57,13 +57,13 @@ export function SubscriptionPrice( {
 
 	return interval === 'year'
 		? /* translators: %(total)s is the price of the subscription per year */
-		  translate( '%(total)s/yr', {
+			translate( '%(total)s/yr', {
 				args: { total: formatted },
-		  } )
+			} )
 		: /* translators: %(total)s is the price of the subscription per month */
-		  translate( '%(total)s/mo', {
+			translate( '%(total)s/mo', {
 				args: { total: formatted },
-		  } );
+			} );
 }
 
 export function SubscriptionStatus( {

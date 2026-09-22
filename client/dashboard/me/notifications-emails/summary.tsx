@@ -14,9 +14,7 @@ export const NotificationsEmailsSummary = ( { density }: { density?: Density } )
 
 	const badges = useMemo(
 		() =>
-			isAllWpcomEmailsDisabled
-				? [ { text: __( 'All emails are paused' ), intent: 'warning' } ]
-				: [],
+			isAllWpcomEmailsDisabled ? [ { text: __( 'All emails are paused' ), intent: 'medium' } ] : [],
 		[ isAllWpcomEmailsDisabled ]
 	) as SummaryButtonBadgeProps[];
 

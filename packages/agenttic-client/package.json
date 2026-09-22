@@ -1,0 +1,90 @@
+{
+	"name": "@automattic/agenttic-client",
+	"version": "0.1.90",
+	"type": "module",
+	"description": "A TypeScript client library for connection to the Automattic agent framework.",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./mocks": {
+			"types": "./dist/mocks/index.d.ts",
+			"import": "./dist/mocks/index.js"
+		},
+		"./agents-api": {
+			"types": "./dist/agents-api/index.d.ts",
+			"import": "./dist/agents-api/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"!dist/tsconfig.tsbuildinfo"
+	],
+	"scripts": {
+		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
+		"dev": "vite build --watch",
+		"clean": "rm -rf dist",
+		"type-check": "tsc --noEmit",
+		"lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
+		"lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --fix",
+		"test": "vitest run",
+		"prepublishOnly": "yarn run build"
+	},
+	"keywords": [
+		"agent2agent",
+		"agenttic",
+		"client",
+		"typescript",
+		"ai",
+		"agent",
+		"protocol"
+	],
+	"author": "Automattic Inc.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-client"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"devDependencies": {
+		"@types/react-dom": "^18.0.0 || ^19.0.0",
+		"@wordpress/api-fetch": "^7.0.0",
+		"autoprefixer": "^10.4.0",
+		"postcss": "^8.4.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"typescript": "^5.0.0",
+		"unified": "^11.0.5",
+		"vite": "^5.0.0",
+		"vite-plugin-lib-inject-css": "^2.2.2",
+		"vitest": "^1.0.0"
+	},
+	"dependencies": {
+		"@types/react": "^18.0.0 || ^19.0.0"
+	},
+	"optionalDependencies": {
+		"marked": "^16.2.1"
+	},
+	"peerDependencies": {
+		"@wordpress/api-fetch": "^6.0.0 || ^7.0.0",
+		"react": "^18.0.0 || ^19.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@wordpress/api-fetch": {
+			"optional": true
+		}
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

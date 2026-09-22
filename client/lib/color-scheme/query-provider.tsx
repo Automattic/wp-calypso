@@ -17,7 +17,7 @@ export function ColorSchemeProvider( {
 	children: ReactNode;
 	enabled?: boolean;
 } ) {
-	const { data: savedColorScheme, isError } = useQuery( {
+	const { data: savedColorScheme, isFetched } = useQuery( {
 		...userPreferenceQuery( PREFERENCE_KEY ),
 		enabled,
 	} );
@@ -25,7 +25,7 @@ export function ColorSchemeProvider( {
 		userPreferenceOptimisticMutation( PREFERENCE_KEY )
 	);
 	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
-	const isReady = savedColorScheme !== undefined || isError;
+	const isReady = savedColorScheme !== undefined || isFetched;
 
 	const setColorScheme = useCallback(
 		( scheme: ColorScheme, options?: { onSuccess?: () => void } ) => {

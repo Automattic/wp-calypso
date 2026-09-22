@@ -79,9 +79,11 @@ describe( '<WordPressAgentSlack />', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Disconnect' } ) );
 
 		await waitFor( () => expect( disconnectRequest.isDone() ).toBe( true ) );
-		expect(
-			await screen.findByText( 'You have not connected WordPress Agent to a Slack workspace yet.' )
-		).toBeVisible();
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'heading', { name: CONNECTION.team_name } )
+			).not.toBeInTheDocument()
+		);
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_wordpress_agent_slack_disconnect' );
 	} );
 
@@ -109,9 +111,7 @@ describe( '<WordPressAgentSlack />', () => {
 				selector: '.components-notice__content',
 			} )
 		).toBeVisible();
-		expect(
-			screen.getByRole( 'button', { name: 'Install to a new Slack instance' } )
-		).toBeVisible();
-		expect( container.querySelector( '.dashboard-section-header__decoration img' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add to Slack' } ) ).toBeVisible();
+		expect( container.querySelector( '.wordpress-agent-slack__install-button img' ) ).toBeVisible();
 	} );
 } );

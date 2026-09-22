@@ -17,7 +17,6 @@ type PostThumbnail = {
 
 type Post = {
 	date: string | null;
-	dont_email_post_to_subs: boolean | null;
 	title: string;
 	type: string | null;
 	like_count: number | null;

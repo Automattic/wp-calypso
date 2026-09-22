@@ -21,6 +21,7 @@ import {
 	type InfiniteData,
 	type QueryClient,
 } from '@tanstack/react-query';
+import { seenCountQueryOptions } from './read-seen-posts';
 
 // The /read/following/mine endpoint paginates by walking raw subscription rows
 // with offset = (page - 1) * limit, and caps `limit` at 100 server-side
@@ -31,7 +32,6 @@ import {
 // offset) will paginate incorrectly.
 const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
-const STALE_TIME = 60 * 60 * 1000;
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
 export type SiteSubscriptionsInfiniteData = InfiniteData< SiteSubscriptionsPage, number >;
@@ -61,8 +61,9 @@ export const siteSubscriptionsQuery = () =>
 			// empty — while later offset windows still hold valid rows. We must
 			// therefore decide whether another page exists from the offset we have
 			// covered, not from how many items the last page happened to return.
-			const totalCount = allPages.find( ( page ) => typeof page.totalCount === 'number' )
-				?.totalCount;
+			const totalCount = allPages.find(
+				( page ) => typeof page.totalCount === 'number'
+			)?.totalCount;
 
 			if ( typeof totalCount === 'number' ) {
 				const requestedRows = allPages.length * ITEMS_PER_PAGE;
@@ -73,8 +74,8 @@ export const siteSubscriptionsQuery = () =>
 			// empty page.
 			return lastPage.subscriptions.length === 0 ? undefined : allPages.length + 1;
 		},
-		staleTime: STALE_TIME,
 		meta: { persist: true },
+		...seenCountQueryOptions,
 	} );
 
 export const getSiteSubscriptionsFromData = (
@@ -93,14 +94,6 @@ export const getSiteSubscriptionsCountFromData = (
 
 	return Math.max( totalCount, followingCount );
 };
-
-export const getSiteSubscriptionByBlogIdFromData = (
-	data: SiteSubscriptionsInfiniteData | undefined,
-	blogId: number | string
-): SiteSubscriptionItem | undefined =>
-	getSiteSubscriptionsFromData( data ).find(
-		( subscription ) => Number( subscription.blog_ID ) === Number( blogId )
-	);
 
 export const getSiteSubscriptionByFeedIdFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
@@ -433,10 +426,7 @@ type SiteSubscriptionDeliveryMutationContext = {
 };
 
 type SiteSubscriptionDeliveryPatchKind =
-	| 'post-email'
-	| 'comment-email'
-	| 'email-frequency'
-	| 'notification';
+	'post-email' | 'comment-email' | 'email-frequency' | 'notification';
 
 /**
  * Patch the unseen_count of a subscription in the site subscriptions query data.

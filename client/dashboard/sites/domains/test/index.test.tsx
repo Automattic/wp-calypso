@@ -3,10 +3,13 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
+
+let mockSearchParams: { action?: string } = {};
 
 jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
@@ -15,6 +18,11 @@ jest.mock( '../../../app/router/sites', () => {
 		siteRoute: {
 			useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ),
 			fullPath: '/sites/$siteSlug',
+		},
+		siteDomainsRoute: {
+			...actual.siteDomainsRoute,
+			useSearch: () => mockSearchParams,
+			fullPath: '/sites/$siteSlug/domains',
 		},
 	};
 } );
@@ -31,6 +39,24 @@ const site = {
 	site_owner: OWNER_USER_ID,
 } as unknown as Site;
 
+const defaultAddressDomain = {
+	domain: 'test-site.wordpress.com',
+	blog_id: SITE_ID,
+	blog_name: 'Test Site',
+	site_slug: 'test-site.wordpress.com',
+	subtype: { id: 'default_address', label: 'Default Address' },
+	domain_status: { id: 'active', label: 'Active', type: 'success' },
+	auto_renewing: false,
+	current_user_is_owner: true,
+	is_domain_only_site: false,
+	expiry: null,
+	expired: false,
+	primary_domain: false,
+	can_set_as_primary: false,
+	subscription_id: null,
+	tags: [],
+};
+
 const domain = {
 	domain: 'test-site.com',
 	blog_id: SITE_ID,
@@ -46,6 +72,16 @@ const domain = {
 	primary_domain: true,
 	can_set_as_primary: false,
 	subscription_id: null,
+	tags: [],
+};
+
+const primaryCandidateDomain = {
+	...domain,
+	domain: 'candidate.com',
+	subtype: { id: 'domain_connection', label: 'Domain Connection' },
+	domain_status: { id: 'active', label: 'Active', type: 'success' },
+	primary_domain: false,
+	can_set_as_primary: true,
 };
 
 const ownerUser = {
@@ -64,7 +100,13 @@ const nonOwnerUser = {
 	meta: { data: { flags: { active_flags: [] } } },
 } as unknown as User;
 
-function mockApis() {
+function mockApis( {
+	domains = [ domain, defaultAddressDomain ],
+	ssl,
+}: {
+	domains?: unknown[];
+	ssl?: { domain: string; certificate_provisioned: boolean };
+} = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
@@ -73,7 +115,7 @@ function mockApis() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
 		.query( true )
-		.reply( 200, { domains: [ domain ] } );
+		.reply( 200, { domains } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ SITE_ID }/domains/redirect` )
@@ -84,10 +126,25 @@ function mockApis() {
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
 		.reply( 200, { calypso_preferences: {} } );
+
+	if ( ssl ) {
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/domains/ssl/${ ssl.domain }` )
+			.query( true )
+			.reply( 200, {
+				data: {
+					certificate_provisioned: ssl.certificate_provisioned,
+					is_newly_registered: false,
+					is_expired: false,
+				},
+			} )
+			.persist();
+	}
 }
 
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
+		mockSearchParams = {};
 		mockApis();
 	} );
 
@@ -109,5 +166,57 @@ describe( '<SiteDomains>', () => {
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
+	} );
+
+	test( 'opens the change site address modal when deep linked', async () => {
+		mockSearchParams = { action: 'change-site-address' };
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'does not open a modal without the deep link', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain ],
+			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByText( 'SSL pending' );
+
+		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
+		await user.click( actionsButtons[ 0 ] );
+
+		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows "Make primary site address" action once SSL is active', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain ],
+			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByText( 'SSL active' );
+
+		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
+		await user.click( actionsButtons[ 0 ] );
+
+		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
 	} );
 } );

@@ -70,6 +70,7 @@ class InviteAcceptLoggedOut extends Component {
 			enhancedUserData.signup_flow_name = 'p2';
 		}
 
+		let submitError;
 		this.props
 			.createAccount( enhancedUserData, invite )
 			.then( ( response ) => {
@@ -78,11 +79,12 @@ class InviteAcceptLoggedOut extends Component {
 				this.setState( { bearerToken, userData } );
 			} )
 			.catch( ( error ) => {
+				submitError = error;
 				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
 			} )
-			.finally( afterSubmitCallback );
+			.finally( () => afterSubmitCallback( submitError ) );
 	};
 
 	handleSocialResponse = ( service, access_token, id_token = null, socialUserData = {} ) => {

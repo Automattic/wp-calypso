@@ -38,7 +38,6 @@ object ToSAcceptanceTracking : BuildType({
 		param("TEST_GROUP", "@legal")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-		param("env.AUTHENTICATE_ACCOUNTS", "")
 	}
 
 	steps {

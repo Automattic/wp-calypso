@@ -1,11 +1,16 @@
 import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
-import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
+import {
+	formatDateCell,
+	getDateTimeLabel,
+	toRequestTypeIntent,
+	toSeverityIntent,
+} from '../../logs/utils';
 import {
 	VALUES_CACHED,
 	VALUES_RENDERER,
@@ -42,9 +47,6 @@ const getLabelRenderer = ( renderer: string ) => {
 	}
 };
 
-const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
-	severity.split( ' ' )[ 0 ].toLowerCase();
-
 export function useFields( {
 	logType,
 	timezoneString,
@@ -79,9 +81,7 @@ export function useFields( {
 					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
 					getValue: ( { item }: { item: PHPLog } ) => item.severity,
 					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
-						<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
-							{ item.severity }
-						</Badge>
+						<Badge intent={ toSeverityIntent( item.severity ) }>{ item.severity }</Badge>
 					),
 					filterBy: { operators: [ 'isAny' as Operator ] },
 				},
@@ -161,9 +161,7 @@ export function useFields( {
 				elements: VALUES_REQUEST_TYPE.map( ( t ) => ( { value: t, label: t } ) ),
 				getValue: ( { item }: { item: ServerLog } ) => item.request_type,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
-					<Badge intent="default" className={ `badge--${ item.request_type }` }>
-						{ item.request_type }
-					</Badge>
+					<Badge intent={ toRequestTypeIntent( item.request_type ) }>{ item.request_type }</Badge>
 				),
 				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
@@ -246,6 +244,9 @@ export function useFields( {
 				label: __( 'User agent' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_user_agent,
+				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
+					<span className="site-logs-wrap">{ String( item.http_user_agent ) }</span>
+				),
 				filterBy: { operators: [] as Operator[] },
 			},
 			{

@@ -119,7 +119,7 @@ const ActivationModal = ( {
 				theme_preview: 'true',
 				...styleVariationParam,
 				...localeParam,
-		  } )
+			} )
 		: null;
 
 	// `demo_uri` can land a tick after the canonical theme is first cached, so

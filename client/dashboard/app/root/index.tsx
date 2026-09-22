@@ -32,7 +32,6 @@ import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
-import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -56,8 +55,6 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const isOptInWelcomeModalEnabled =
-		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
@@ -218,9 +215,6 @@ function Root() {
 			) }
 			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
 				<AccountRecoveryInterstitial />
-			) }
-			{ resurrectedModalState === 'ineligible' && isOptInWelcomeModalEnabled && (
-				<OptInWelcomeModal />
 			) }
 			<PageViewTracker />
 			<MutationErrorTracker />

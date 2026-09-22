@@ -16,6 +16,12 @@ interface SitePlan {
 	product_name_en: string;
 	expired: boolean;
 	is_free: boolean;
+
+	/**
+	 * Whether the current user owns the plan's subscription, which is not the
+	 * same as owning the site: only the subscriber can renew it.
+	 */
+	user_is_owner?: boolean;
 	license_key?: string;
 	billing_period?: 'Yearly' | 'Monthly';
 	features: {
@@ -94,6 +100,8 @@ export interface Site {
 	feed_URL: string;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
+	/** Connected to an agency through the Automattic for Agencies client plugin. */
+	is_a4a_client?: boolean;
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;

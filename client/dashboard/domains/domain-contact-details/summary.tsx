@@ -13,9 +13,9 @@ export default function DomainContactDetailsSettingsSummary( {
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	if ( domain.private_domain ) {
-		badges.push( { text: __( 'Privacy protection on' ), intent: 'success' as const } );
+		badges.push( { text: __( 'Privacy protection on' ), intent: 'stable' as const } );
 	} else {
-		badges.push( { text: __( 'Privacy protection off' ), intent: undefined } );
+		badges.push( { text: __( 'Privacy protection off' ), intent: 'draft' as const } );
 	}
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {

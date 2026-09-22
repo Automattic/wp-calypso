@@ -16,10 +16,10 @@ describe( 'useShowOnboardingProgress', () => {
 		mockViewport.mockReset();
 	} );
 
-	it( 'hides on desktop onboarding while the indicator is disabled', () => {
+	it( 'shows on desktop onboarding', () => {
 		mockViewport.mockReturnValue( true );
 		const { result } = renderHook( () => useShowOnboardingProgress( true ) );
-		expect( result.current ).toBe( false );
+		expect( result.current ).toBe( true );
 	} );
 
 	it( 'hides when not onboarding flow', () => {

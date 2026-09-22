@@ -1,5 +1,6 @@
 import { fetchAtomicTransfer, setAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import { atomicTransfer } from 'calypso/state/atomic-transfer/reducer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
@@ -30,18 +31,15 @@ const transfer = ( status, atomicTransferId = 1 ) => ( {
 const timedOut = ( transferData = {} ) =>
 	setAtomicTransfer( siteId, { ...transferData, status: transferStates.CLIENT_TIMEOUT } );
 
-// The handlers read the transfer back out of the store, so the fake one applies what they dispatch
-// the same way the reducer does.
+// The handlers read the transfer back out of the store, so the fake one runs the real reducer.
 const createStore = () => {
 	const state = { atomicTransfer: {} };
 	const getState = () => state;
 	const dispatch = jest.fn( ( action ) => {
-		if ( action?.type === setAtomicTransfer( siteId, {} ).type ) {
-			state.atomicTransfer[ action.siteId ] = {
-				...state.atomicTransfer[ action.siteId ],
-				...action.transfer,
-			};
-		}
+		state.atomicTransfer[ action.siteId ] = atomicTransfer(
+			state.atomicTransfer[ action.siteId ],
+			action
+		);
 
 		return action;
 	} );
@@ -49,9 +47,12 @@ const createStore = () => {
 	return { dispatch, getState };
 };
 
-// Every response follows a request, so tests arm the deadline the way production arms it.
-const startWait = ( { dispatch, getState } ) =>
+// Every response follows a request, so tests arm the deadline the way production arms it, and
+// dispatch the request action so the reducer clears a stale timeout the same way it does live.
+const startWait = ( { dispatch, getState } ) => {
+	dispatch( fetchAtomicTransfer( siteId ) );
 	requestTransfer( { siteId } )[ 1 ]( dispatch, getState );
+};
 
 const receive = ( store, transferData ) =>
 	receiveTransfer( { siteId }, transferData )( store.dispatch, store.getState );
@@ -105,16 +106,29 @@ describe( 'requestTransfer', () => {
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
 
-	test( 'should not start a new deadline once the wait has timed out', () => {
+	test( 'should arm a fresh deadline for a new request after a timeout', () => {
 		const store = createStore();
 
-		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		store.dispatch( timedOut() );
 		store.dispatch.mockClear();
 		startWait( store );
 		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 
-		expect( store.dispatch ).not.toHaveBeenCalled();
+		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
+	} );
+
+	test( 'should accept a response for the same transfer after a new request', () => {
+		const store = createStore();
+		const response = transfer( transferStates.ACTIVE );
+
+		store.dispatch( timedOut( response ) );
+		store.dispatch.mockClear();
+		startWait( store );
+		receive( store, response );
+
+		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, response ) );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 } );
 
@@ -254,6 +268,7 @@ describe( 'onTransferError', () => {
 			const store = createStore();
 
 			startWait( store );
+			store.dispatch.mockClear();
 			fail( store, error );
 			jest.advanceTimersByTime( POLL_INTERVAL_MS );
 
@@ -278,6 +293,22 @@ describe( 'onTransferError', () => {
 		fail( store, missingRecord );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
+	} );
+
+	test( 'should not revive a timed-out wait when a missing-record error arrives late', () => {
+		const store = createStore();
+		const missingRecord = { status: 400, error: 'no_transfer_record' };
+
+		store.dispatch( timedOut() );
+		store.dispatch.mockClear();
+
+		fail( store, missingRecord );
+		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+
+		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
+		expect( store.getState().atomicTransfer[ siteId ].status ).toBe(
+			transferStates.CLIENT_TIMEOUT
+		);
 	} );
 
 	test( 'should poll again after a server error', () => {

@@ -21,8 +21,8 @@ export default function SubscriptionGiftingSettingsSummary( {
 	}
 
 	const badges = settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-		: [ { text: __( 'Disabled' ) } ];
+		? [ { text: __( 'Enabled' ), intent: 'stable' as const } ]
+		: [ { text: __( 'Disabled' ), intent: 'draft' as const } ];
 
 	return (
 		<RouterLinkSummaryButton

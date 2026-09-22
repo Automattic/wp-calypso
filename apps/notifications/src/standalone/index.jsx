@@ -47,7 +47,7 @@ const ACTION_HANDLERS = {
 						action: 'render',
 						num_new: newNoteCount,
 						latest_type: latestType,
-				  } )
+					} )
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],

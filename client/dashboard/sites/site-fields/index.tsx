@@ -6,7 +6,6 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -15,7 +14,8 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
@@ -30,23 +30,18 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
-import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
+import { PlanExpiryStatus } from './plan-expiry-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
 import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
-}
-
-function LoadingIndicator( { label }: { label: string } ) {
-	return <TextBlur>{ label }</TextBlur>;
 }
 
 function getSiteManagementUrl( site: Site ) {
@@ -104,21 +99,21 @@ export function NameRenderer( {
 	const renderBadge = () => {
 		switch ( badge ) {
 			case 'redirect':
-				return <Badge>{ __( 'Redirect' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
-				return <Badge>{ __( 'Staging' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Staging' ) }</Badge>;
 			case 'trial':
-				return <Badge>{ __( 'Trial' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Trial' ) }</Badge>;
 			case 'p2':
-				return <Badge>{ __( 'P2' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
+				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
 			default:
 				return null;
 		}
@@ -213,9 +208,10 @@ export function AsyncEngagementStat( {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100" />;
+		if ( isPending ) {
+			return '100';
 		}
 
 		if ( ! isEligible ) {
@@ -225,7 +221,11 @@ export function AsyncEngagementStat( {
 		return stats?.currentData[ type ];
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function EngagementStat( { value }: { value: number | null } ) {
@@ -245,9 +245,10 @@ export function LastBackup( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="Unknown" />;
+		if ( isPending ) {
+			return 'Unknown';
 		}
 
 		if ( ! isEligible ) {
@@ -261,7 +262,11 @@ export function LastBackup( { site }: { site?: Site } ) {
 		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function Uptime( { site }: { site?: Site } ) {
@@ -273,9 +278,10 @@ export function Uptime( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! isEligible ) {
@@ -285,7 +291,11 @@ export function Uptime( { site }: { site?: Site } ) {
 		return uptime ? `${ uptime }%` : <IneligibleIndicator />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
@@ -304,7 +314,11 @@ export function PHPVersion( { site }: { site: Site } ) {
 		return <IneligibleIndicator />;
 	}
 
-	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isLoading }>{ isLoading ? 'X.Y' : data }</TextBlur>
+		</span>
+	);
 }
 
 export function MediaStorage( { site }: { site?: Site } ) {
@@ -318,9 +332,10 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! mediaStorage ) {
@@ -331,7 +346,11 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
@@ -367,35 +386,6 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const isTrial = isSitePlanTrial( site );
-
-	return (
-		<>
-			<ComponentViewTracker
-				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
-				properties={ { product_slug: site.plan?.product_slug, source } }
-			/>
-			<ExternalLink
-				href={
-					isTrial
-						? getSitePlanUpgradeUrl( site )
-						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
-				}
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
-						product_slug: site.plan?.product_slug,
-						source,
-					} );
-				} }
-			>
-				{ isTrial ? __( 'Upgrade' ) : __( 'Renew plan' ) }
-			</ExternalLink>
-		</>
-	);
-}
-
 export function Visibility( {
 	siteSlug,
 	visibility,
@@ -418,16 +408,14 @@ export function Visibility( {
 }
 
 export function Plan( {
-	nag,
+	site,
 	isSelfHostedJetpackConnected,
 	isJetpack,
-	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Site };
+	site: Site;
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
-	isOwner?: boolean;
 	value: string;
 } ) {
 	if ( isSelfHostedJetpackConnected ) {
@@ -442,20 +430,10 @@ export function Plan( {
 		);
 	}
 
-	if ( nag.isExpired ) {
-		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">
-					{ sprintf(
-						/* translators: %s: plan name */
-						__( '%s-expired' ),
-						value
-					) }
-				</Text>
-				{ isOwner && <PlanRenewNag site={ nag.site } source="plan" /> }
-			</VStack>
-		);
-	}
-
-	return value;
+	return (
+		<VStack spacing={ 1 }>
+			<span>{ value }</span>
+			<PlanExpiryStatus site={ site } />
+		</VStack>
+	);
 }

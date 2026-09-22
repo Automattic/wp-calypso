@@ -1,3 +1,4 @@
+import { DNS_RECORD_TYPES } from '@automattic/api-core';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -82,17 +83,7 @@ export default function DNSRecordForm( {
 			id: 'type',
 			label: __( 'Type' ),
 			Edit: 'select',
-			elements: [
-				{ label: 'A', value: 'A' },
-				{ label: 'AAAA', value: 'AAAA' },
-				{ label: 'ALIAS', value: 'ALIAS' },
-				{ label: 'CAA', value: 'CAA' },
-				{ label: 'CNAME', value: 'CNAME' },
-				{ label: 'MX', value: 'MX' },
-				{ label: 'NS', value: 'NS' },
-				{ label: 'SRV', value: 'SRV' },
-				{ label: 'TXT', value: 'TXT' },
-			],
+			elements: DNS_RECORD_TYPES.map( ( type ) => ( { label: type, value: type } ) ),
 			description: config.description,
 		},
 	];

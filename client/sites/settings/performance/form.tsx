@@ -118,7 +118,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 						a: <a href={ '/sites/settings/site/' + siteSlug + '#site-privacy-settings' } />,
 					},
 				}
-		  );
+			);
 
 	return (
 		<HostingCard
@@ -204,7 +204,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 														comment: 'Edge cache is a type of CDN that stores generated HTML pages',
 														textOnly: true,
 													}
-											  )
+												)
 											: ''
 									}
 								>
@@ -255,7 +255,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 							isObjectCacheClearRateLimited
 								? translate(
 										'You cleared the object cache recently. Please wait a minute and try again.'
-								  )
+									)
 								: ''
 						}
 					>

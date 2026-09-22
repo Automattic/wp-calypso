@@ -198,7 +198,7 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 				hasBackupError
 					? translate( 'Fix {{strong}}Backup{{/strong}} connection to see your backup storage', {
 							components,
-					  } )
+						} )
 					: addBackupText
 			}
 			// If the backup is not enabled, we want to allow the user to click on the card

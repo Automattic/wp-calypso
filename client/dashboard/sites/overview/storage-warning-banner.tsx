@@ -50,12 +50,12 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					isDismissible: true,
 					title: __( 'Your site is low on storage' ),
 					onClose: () => updateDismissed( new Date().toISOString() ),
-			  }
+				}
 			: {
 					variant: 'error' as const,
 					isDismissible: false,
 					title: __( 'Your site is out of storage' ),
-			  };
+				};
 
 	const upsellId =
 		alertLevel === 'warning'

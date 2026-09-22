@@ -46,9 +46,10 @@ const giveUp = ( siteId, dispatch, transfer = {} ) => {
 	dispatch( setAtomicTransfer( siteId, { ...transfer, status: transferStates.CLIENT_TIMEOUT } ) );
 };
 
-// Two consumers poll the same site, and a response can arrive after we stopped waiting, so every
-// entry point asks the store first: a wait that already ended in a timeout must not revive the
-// progress bar. A response carrying a different transfer means a new wait, which may proceed.
+// Two consumers poll the same site, and a response can arrive after we stopped waiting, so
+// responses and errors ask the store first: a late answer for a wait that already timed out
+// must not revive the progress bar. A response carrying a different transfer, or a new request,
+// means a new wait — the reducer drops the client-only verdict on request, so requests skip this.
 const gaveUp = ( getState, siteId, transferId ) => {
 	const stored = getAtomicTransfer( getState(), siteId );
 
@@ -74,8 +75,8 @@ export const requestTransfer = ( action ) => [
 	// Responses are the only other thing that ends a wait, so a request that never answers — a
 	// stalled connection, a frozen tab — would wait forever without this. One timer per wait: a
 	// second request joins the deadline already running instead of opening a new one.
-	( dispatch, getState ) => {
-		if ( waits.get( action.siteId )?.deadlineTimerId || gaveUp( getState, action.siteId ) ) {
+	( dispatch ) => {
+		if ( waits.get( action.siteId )?.deadlineTimerId ) {
 			return;
 		}
 
@@ -133,7 +134,7 @@ export const onTransferError =
 			// never started, and waiting on it is what traps the user.
 			if ( isMissingRecord && attempts < MISSING_RECORD_ATTEMPTS ) {
 				waits.set( siteId, { ...waits.get( siteId ), missingRecordAttempts: attempts } );
-				schedulePoll( siteId, dispatch );
+				keepWaiting( siteId, dispatch, getState );
 				return;
 			}
 

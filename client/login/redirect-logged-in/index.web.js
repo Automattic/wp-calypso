@@ -54,8 +54,10 @@ export default function redirectLoggedIn( context, next ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
-		if ( ! url || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
-			url = '/';
+		// Bare root, with or without a query or hash, means "my dashboard".
+		const isBareRoot = url === '/' || url?.startsWith( '/?' ) || url?.startsWith( '/#' );
+		if ( ! url || isBareRoot || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
+			url = '/home';
 		}
 		window.location = url;
 		return;

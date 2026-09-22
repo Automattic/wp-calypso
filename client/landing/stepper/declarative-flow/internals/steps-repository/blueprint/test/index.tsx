@@ -77,6 +77,37 @@ describe( 'BlueprintStep', () => {
 		} );
 	} );
 
+	it( 'keeps the wow funnel when the blueprint has an archive', async () => {
+		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
+		let searchAtSubmit = '';
+		const submit = jest.fn( () => {
+			searchAtSubmit = currentSearch;
+		} );
+
+		render( '/blueprint?blueprint=961&wow_funnel=blueprint&dest=site-spec', submit );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		expect( checkBlueprintExists ).toHaveBeenCalledWith( '961' );
+		expect( searchAtSubmit ).toContain( 'wow_funnel=blueprint' );
+		expect( searchAtSubmit ).toContain( 'dest=site-spec' );
+	} );
+
+	it( 'strips the wow funnel and dest when the archive is missing', async () => {
+		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
+		let searchAtSubmit = '';
+		const submit = jest.fn( () => {
+			searchAtSubmit = currentSearch;
+		} );
+
+		render( '/blueprint?blueprint=961&wow_funnel=blueprint&dest=site-spec', submit );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		// Leaving the funnel on would build an Atomic site with nothing to import onto it, and
+		// leaving dest on would hand over to a site-spec waiting for an import that never runs.
+		expect( searchAtSubmit ).not.toContain( 'wow_funnel' );
+		expect( searchAtSubmit ).not.toContain( 'dest' );
+	} );
+
 	it( 'does not look up an archive without build_dest=wow', async () => {
 		const submit = jest.fn();
 

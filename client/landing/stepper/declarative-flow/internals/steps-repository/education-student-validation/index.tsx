@@ -14,6 +14,7 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useQuery } from '../../../../hooks/use-query';
 import { EduBackdrop } from './edu-backdrop';
 import { EduProgramLogo } from './edu-program-logo';
 import { useValidateEducationStudentCode } from './hooks/use-validate-education-student-code';
@@ -55,7 +56,8 @@ const EducationStudentValidation: StepType< {
 	};
 } > = function EducationStudentValidation( { navigation, flow } ) {
 	const { __ } = useI18n();
-	const [ code, setCode ] = useState( '' );
+	const codeFromUrl = useQuery().get( 'code' )?.trim() ?? '';
+	const [ code, setCode ] = useState( codeFromUrl );
 	const [ error, setError ] = useState< ValidationError | null >( null );
 	const { mutateAsync: validateCode, isPending } = useValidateEducationStudentCode();
 

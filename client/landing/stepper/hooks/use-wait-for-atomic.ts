@@ -15,6 +15,10 @@ import type { SiteSelect, SiteDetails } from '@automattic/data-stores';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
+// The transfer itself is bounded below (300s); these bound the shorter phases that run after it.
+const POST_TRANSFER_TIMEOUT_MS = 1000 * 180;
+const MAX_FEATURE_FETCH_FAILURES = 5;
+
 export interface FailureInfo {
 	type: string;
 	code: number | string;
@@ -60,7 +64,13 @@ export const useWaitForAtomic = ( {
 		);
 	};
 
-	const waitForTransfer = async () => {
+	const waitForTransfer = async ( {
+		onTransferStatusChange,
+	}: {
+		// The transfer's own `created_at` comes along so callers can time the wait from when the
+		// transfer actually began rather than from when this UI mounted.
+		onTransferStatusChange?: ( status: string | null, createdAt?: string ) => void;
+	} = {} ) => {
 		const startTime = new Date().getTime();
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
@@ -70,8 +80,9 @@ export const useWaitForAtomic = ( {
 			await wait( 3000 );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
+			const transferStatus = transfer?.status ?? null;
+			onTransferStatusChange?.( transferStatus, transfer?.created_at );
 			const transferError = getSiteLatestAtomicTransferError( siteId );
-			const transferStatus = transfer?.status;
 			const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
 			if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
@@ -113,6 +124,9 @@ export const useWaitForAtomic = ( {
 			return;
 		}
 
+		const maxFinishTime = new Date().getTime() + POST_TRANSFER_TIMEOUT_MS;
+		let consecutiveFetchFailures = 0;
+
 		while ( true ) {
 			const siteFeatures = await reduxDispatch< Promise< { active: string[] } > >(
 				fetchSiteFeatures( siteId )
@@ -121,11 +135,34 @@ export const useWaitForAtomic = ( {
 				break;
 			}
 
+			// fetchSiteFeatures swallows request errors and resolves undefined, so a run of them
+			// means the endpoint is failing, not that the feature is still activating.
+			consecutiveFetchFailures = siteFeatures ? 0 : consecutiveFetchFailures + 1;
+			if ( consecutiveFetchFailures >= MAX_FEATURE_FETCH_FAILURES ) {
+				handleTransferFailure?.( {
+					type: 'feature_fetch',
+					error: `fetching site features kept failing while waiting for ${ feature }`,
+					code: 'feature_fetch_failed',
+				} );
+				throw new Error( getTransferFailureMessage( 'error' ) );
+			}
+
+			if ( maxFinishTime < new Date().getTime() ) {
+				handleTransferFailure?.( {
+					type: 'feature_timeout',
+					error: `feature ${ feature } did not activate in time`,
+					code: 'feature_timeout',
+				} );
+				throw new Error( getTransferFailureMessage( 'timeout' ) );
+			}
+
 			await wait( 1000 );
 		}
 	};
 
 	const waitForLatestSiteData = async () => {
+		const maxFinishTime = new Date().getTime() + POST_TRANSFER_TIMEOUT_MS;
+
 		while ( true ) {
 			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
 			if (
@@ -133,6 +170,15 @@ export const useWaitForAtomic = ( {
 				requestedSite?.capabilities?.manage_options
 			) {
 				break;
+			}
+
+			if ( maxFinishTime < new Date().getTime() ) {
+				handleTransferFailure?.( {
+					type: 'site_data_timeout',
+					error: 'site data did not reflect the transfer in time',
+					code: 'site_data_timeout',
+				} );
+				throw new Error( getTransferFailureMessage( 'timeout' ) );
 			}
 
 			await wait( 1000 );

@@ -67,7 +67,7 @@ export const useSetUpMailbox = () => {
 							// Translators: %(error)s is the error message.
 							__( 'The mailbox setup failed: %(error)s' ),
 							{ error: error.message }
-					  )
+						)
 					: __( 'The mailbox setup failed.' ),
 				{ type: 'snackbar' }
 			);

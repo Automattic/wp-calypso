@@ -11,7 +11,6 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -36,6 +35,7 @@ import {
 	seen,
 	termDescription,
 } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -81,37 +81,37 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
@@ -123,17 +123,17 @@ const features = [
 ];
 
 const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
-const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'info' as const };
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informational' as const };
 
 function UpgradeRequiredBadge() {
 	return (
 		<Tooltip text={ upgradeRequiredText } placement="top">
-			<Badge intent="info">{ upgradeRequiredBadge.text }</Badge>
+			<Badge intent={ upgradeRequiredBadge.intent }>{ upgradeRequiredBadge.text }</Badge>
 		</Tooltip>
 	);
 }
 
-const TELEGRAM_CONNECTION_PATH = '/me/preferences/mcp';
+const TELEGRAM_CONNECTION_PATH = '/me/agent';
 
 function EmailAssistantCard( {
 	site,
@@ -239,6 +239,7 @@ function EmailAssistantCard( {
 							/>
 							<HStack justify="flex-start">
 								<Button
+									__next40pxDefaultSize
 									variant="secondary"
 									href={ vCardHref }
 									download={ vCardFileName }
@@ -247,6 +248,7 @@ function EmailAssistantCard( {
 									{ __( 'Add to contacts' ) }
 								</Button>
 								<Button
+									__next40pxDefaultSize
 									variant="secondary"
 									isBusy={ emailAddressMutation.isPending }
 									disabled={ isEmailAddressActionDisabled }
@@ -287,7 +289,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const siteAccountAbilities = siteContextToolIds.size
 		? Object.fromEntries(
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
-		  )
+			)
 		: accountAbilities;
 	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 	const availableTools = (
@@ -300,8 +302,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
-		? { text: __( 'All enabled' ), intent: 'success' as const }
-		: { text: __( 'Disabled' ) };
+		? { text: __( 'All enabled' ), intent: 'stable' as const }
+		: { text: __( 'Disabled' ), intent: 'draft' as const };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation(
@@ -361,7 +363,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
 				}
-		  )
+			)
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {

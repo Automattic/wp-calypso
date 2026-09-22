@@ -1,13 +1,14 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import { envVariables } from '@automattic/calypso-e2e';
+import { envVariables, validateThrottleActions } from '@automattic/calypso-e2e';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 
 // Reads every supported variable so an unsupported value fails here, before the suite starts,
 // instead of mid-spec on its first read.
 envVariables.validate();
+validateThrottleActions();
 
 /**
  * Creates a use config object with custom options.
@@ -121,20 +122,8 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
-			name: 'prime-logins',
-			testMatch: /prime-logins\.setup\.ts/,
-			testDir: './setup',
-			// Borrows the `chrome` context so the login carries the e2e user agent suffix the
-			// backend expects. The cookies it leaves are per account, not per device, so the
-			// mobile project reuses them too.
-			use: withCustomOptions( {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-			} ),
-		},
-		{
 			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -143,7 +132,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'mobile',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -153,8 +142,6 @@ export default defineConfig( {
 		},
 		{
 			name: 'authentication',
-			// No 'prime-logins': these specs exercise the login flow itself, so warming
-			// the cookie cache would only add wall clock.
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			retries: 0,
 			testDir: './specs/authentication',

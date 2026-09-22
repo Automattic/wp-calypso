@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
-import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
@@ -33,15 +33,14 @@ const hasBadge = ( body: NoteObject[ 'body' ] ) =>
 
 const getClasses = ( {
 	note,
-	isApproved,
+	isPendingApproval,
 	isRead,
 }: {
 	note: NoteObject;
-	isApproved: boolean;
+	isPendingApproval: boolean;
 	isRead: boolean;
 } ) => {
 	let hasCommentReply = false;
-	let hasUnapprovedComment = false;
 	if ( 'comment' === note.type ) {
 		const noteBody = note.body;
 		const noteActions = getActions( note );
@@ -49,11 +48,6 @@ const getClasses = ( {
 			/* Check if note has a reply to another comment */
 			if ( noteBody[ 1 ] && noteBody[ 1 ].nest_level && noteBody[ 1 ].nest_level > 0 ) {
 				hasCommentReply = true;
-			}
-
-			/* Check if note has unapproved comment */
-			if ( 'approve-comment' in noteActions && ! isApproved ) {
-				hasUnapprovedComment = true;
 			}
 		}
 	}
@@ -63,7 +57,7 @@ const getClasses = ( {
 		read: isRead,
 		unread: ! isRead,
 		wpnc__badge: hasBadge( note.body ),
-		'wpnc__comment-unapproved': hasUnapprovedComment,
+		'wpnc__comment-unapproved': isPendingApproval,
 	} );
 };
 
@@ -84,7 +78,9 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
 
-	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
+	const isPendingApproval = useSelector(
+		( state ) => !! note && getIsNotePendingApproval( state, note )
+	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
 
 	useEffect( () => {
@@ -149,9 +145,13 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
-					<NoteSummary note={ note } />
-					<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
-					<div className={ getClasses( { note, isApproved, isRead } ) }>
+					{ !! note.header?.length && (
+						<>
+							<NoteSummary header={ note.header } url={ note.url } />
+							<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
+						</>
+					) }
+					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>
 				</VStack>

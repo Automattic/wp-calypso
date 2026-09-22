@@ -52,6 +52,8 @@ export type HelpCenterThunkProps = {
 
 export interface HelpCenterOptions {
 	hideBackButton?: boolean;
+	launcherContext?: string;
+	loggedOutBotSlug?: string;
 }
 
 export type LoggedOutOdieChat = {

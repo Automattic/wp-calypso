@@ -19,17 +19,21 @@ export interface HeaderProps {
 }
 
 export interface FooterProps {
-	onLanguageChange?: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn?: boolean;
 	currentRoute?: string;
+	/** Enables the 2026 footer preview in the requested colorway. */
+	colorway?: 'dark' | 'white';
+	/** Whether geolocation identifies a visitor in California. */
+	showCaliforniaNotice?: boolean;
+	/** Opt-out link: legacy Company column or the redesigned legal row. */
 	additionalCompanyLinks?: React.ReactNode;
 }
 export interface PureFooterProps extends FooterProps {
 	localizeUrl?: ReturnType< typeof useLocalizeUrl >;
 	locale?: string;
-	isEnglishLocale?: boolean;
 	automatticBranding?: ReturnType< typeof getAutomatticBrandingNoun >;
-	languageOptions?: LanguageOptions;
+	/** Render the link columns as collapsed tap-to-expand stacks (small screens). */
+	collapseStacks?: boolean;
 }
 
 export interface MenuItemProps {
@@ -56,5 +60,3 @@ export interface ClickableItemProps extends MenuItemProps {
 	/** Fires when the item's link gains keyboard focus (2026 nav dropdown dismissal parity). */
 	onItemFocus?: () => void;
 }
-
-export type LanguageOptions = Record< string, string >;

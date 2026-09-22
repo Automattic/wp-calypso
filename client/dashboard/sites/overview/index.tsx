@@ -92,6 +92,7 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 
 	return (
 		<>
+			<PlanCard site={ site } />
 			{ ( () => {
 				const showVisibilityCard = ! site.is_wpcom_flex;
 				return (
@@ -116,7 +117,6 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 				} )() }
 				<ScanCard site={ site } />
 			</Grid>
-			<PlanCard site={ site } />
 		</>
 	);
 }
@@ -258,7 +258,7 @@ function SiteOverview( {
 			notices={
 				<SitesNoticeArbiter>
 					{ site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
+						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } site={ site } />
 					) }
 					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }

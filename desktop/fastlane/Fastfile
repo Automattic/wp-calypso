@@ -100,7 +100,6 @@ platform :mac do
 
     dmg_paths.each do |path|
       notarize(
-        bundle_id: 'com.automattic.wordpress',
         package: path,
         api_key: api_key,
         print_log: true

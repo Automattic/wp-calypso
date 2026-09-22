@@ -18,16 +18,11 @@
 	}
 
 	svg {
-		width: 28px;
-		height: 28px;
-
-		@media ( min-width: 782px ) {
-			width: 15px;
-			height: 15px;
-		}
+		width: 15px;
+		height: 15px;
 	}
 
-	@media ( max-width: 480px ) {
+	@media ( max-width: 781px ) {
 		display: none;
 	}
 }
