@@ -242,7 +242,9 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 
 			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-			queryClient.prefetchQuery( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
+				// Error gets logged at ErrorBoundary.
+			} ),
 		] );
 	},
 } ).lazy( () =>

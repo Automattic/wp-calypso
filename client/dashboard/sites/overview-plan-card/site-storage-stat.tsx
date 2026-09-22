@@ -1,5 +1,5 @@
 import { siteMediaStorageQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -8,6 +8,7 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { useState } from 'react';
+import { ErrorBoundary } from '../../components/error-boundary';
 import { Stat } from '../../components/stat';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { getStorageAlertLevel } from '../../utils/site-storage';
@@ -17,13 +18,19 @@ import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function SiteStorageStat( { site }: { site: Site } ) {
-	const { data: mediaStorage, isLoading } = useQuery( siteMediaStorageQuery( site.ID ) );
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
+/**
+ * Stands in for the storage stat when its data can't be read — storage is
+ * unreadable for some users, e.g. non-owner admins of Jetpack sites.
+ */
+function StorageStatUnavailable() {
+	/* translators: shown in place of a storage figure that failed to load */
+	const metric = __( 'Information unavailable' );
+	return <Stat density="high" strapline={ __( 'Storage' ) } metric={ metric } />;
+}
 
-	if ( ! mediaStorage ) {
-		return isLoading ? <Stat density="high" strapline={ __( 'Storage' ) } isLoading /> : null;
-	}
+function SiteStorageStatInner( { site }: { site: Site } ) {
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const storageUsagePercent = Math.round(
 		( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
@@ -79,5 +86,16 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 				</>
 			) }
 		</VStack>
+	);
+}
+
+export default function SiteStorageStat( { site }: { site: Site } ) {
+	return (
+		<ErrorBoundary
+			fallback={ <StorageStatUnavailable /> }
+			sentryTags={ { feature: 'site-storage-stat' } }
+		>
+			<SiteStorageStatInner site={ site } />
+		</ErrorBoundary>
 	);
 }

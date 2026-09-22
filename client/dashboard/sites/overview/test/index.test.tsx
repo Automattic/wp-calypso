@@ -201,9 +201,8 @@ describe( '<SiteOverview>', () => {
 
 		const planCard = await getCard( 'Business' );
 		expect( planCard ).toBeVisible();
-		await waitFor( () =>
-			expect( within( planCard ).queryByText( 'Storage' ) ).not.toBeInTheDocument()
-		);
+		expect( await within( planCard ).findByText( 'Information unavailable' ) ).toBeVisible();
+		expect( within( planCard ).getByText( 'Bandwidth' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with free plan', async () => {
