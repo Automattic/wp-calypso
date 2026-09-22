@@ -8,6 +8,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
 import { usePersistentView } from '../use-persistent-view';
+import type { QueryParamFilterField } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -200,6 +201,33 @@ describe( 'usePersistentView', () => {
 			await waitFor( () => {
 				expect( result.current.view.filters ).toEqual( [
 					{ field: 'domainName', operator: 'isAny', value: [ 'example.com' ], isLocked: true },
+				] );
+			} );
+		} );
+
+		it( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'status', operator: 'is', value: 'unassigned' },
 				] );
 			} );
 		} );
