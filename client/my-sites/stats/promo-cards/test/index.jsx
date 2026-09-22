@@ -2,36 +2,48 @@
  * @jest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { usePromoteWidget } from 'calypso/lib/promote-post';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PromoCards from '../';
 
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+let mockValues = {};
 jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn();
-	mockConfig.isEnabled = jest.fn();
-	return mockConfig;
+	// Like a development build, `config()` throws for a key the site did not print.
+	const mockConfig = ( key ) => {
+		if ( key in mockValues ) {
+			return mockValues[ key ];
+		}
+		throw new ReferenceError( `Could not find config value for key '${ key }'` );
+	};
+	mockConfig.isEnabled = () => false;
+	return { __esModule: true, default: mockConfig, optionalConfig: ( key ) => mockValues[ key ] };
 } );
-jest.mock( '@automattic/calypso-router', () => ( { current: '/stats/day/example.com' } ) );
+jest.mock( '@automattic/calypso-router', () => ( { current: '' } ) );
 jest.mock( '@automattic/components', () => ( {
 	DotPager: ( { children } ) => <div>{ children }</div>,
 } ) );
-jest.mock( 'calypso/blocks/promo-card-block', () => () => null );
+jest.mock( 'calypso/blocks/promo-card-block', () => ( { productSlug } ) => (
+	<div>{ productSlug } promo</div>
+) );
 jest.mock( 'calypso/components/app-promo-card', () => ( {
 	AppPromoCard: () => <div>Jetpack app promo</div>,
 } ) );
 jest.mock( 'calypso/lib/promote-post', () => ( {
 	PromoteWidgetStatus: { ENABLED: 'enabled' },
-	usePromoteWidget: () => 'disabled',
+	usePromoteWidget: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => () => false );
-jest.mock( 'calypso/state/sites/selectors', () => ( { isJetpackSite: () => true } ) );
+jest.mock( 'calypso/state/sites/selectors', () => ( { isJetpackSite: jest.fn() } ) );
 jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 1 } ) );
 
-// Odyssey's production config returns `undefined` for a key the site did not print.
-const mockOdysseyConfig = ( values ) => config.mockImplementation( ( key ) => values[ key ] );
+const mockConfigValues = ( values ) => {
+	mockValues = values;
+};
 
 const renderPromoCards = ( { isOdysseyStats = true, pageSlug = 'traffic' } = {} ) =>
 	render(
@@ -40,13 +52,18 @@ const renderPromoCards = ( { isOdysseyStats = true, pageSlug = 'traffic' } = {} 
 		</Provider>
 	);
 
-describe( 'PromoCards Jetpack app promo', () => {
-	beforeEach( () => jest.clearAllMocks() );
+describe( 'PromoCards', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		page.current = '/stats/day/example.com';
+		usePromoteWidget.mockReturnValue( 'disabled' );
+		isJetpackSite.mockReturnValue( true );
+	} );
 
 	it.each( [ 'traffic', 'annual-insights', 'ads' ] )(
-		'hides the promo and its view event on the %s page when the standalone Stats plugin runs without Jetpack',
+		'hides the Jetpack app promo and its view event on the %s page when the standalone Stats plugin runs without Jetpack',
 		( pageSlug ) => {
-			mockOdysseyConfig( { jetpack_version: '' } );
+			mockConfigValues( { jetpack_version: '' } );
 
 			const { container } = renderPromoCards( { pageSlug } );
 
@@ -58,8 +75,8 @@ describe( 'PromoCards Jetpack app promo', () => {
 	it.each( [
 		[ 'the Jetpack plugin is active', { jetpack_version: '15.0' } ],
 		[ 'a Jetpack release older than the key omits it', {} ],
-	] )( 'shows the promo in Odyssey when %s', ( _, values ) => {
-		mockOdysseyConfig( values );
+	] )( 'shows the Jetpack app promo in Odyssey when %s', ( _, values ) => {
+		mockConfigValues( values );
 
 		renderPromoCards();
 
@@ -70,13 +87,18 @@ describe( 'PromoCards Jetpack app promo', () => {
 		);
 	} );
 
-	it( 'shows the promo in Calypso without reading the Odyssey-only jetpack_version key, which throws there', () => {
-		config.mockImplementation( ( key ) => {
-			throw new ReferenceError( `Could not find config value for key '${ key }'` );
-		} );
+	it( 'keeps the Blaze, Yoast and Jetpack app promos, in that order, on the Calypso annual stats page', () => {
+		mockConfigValues( {} );
+		page.current = '/stats/annualstats/example.com';
+		usePromoteWidget.mockReturnValue( 'enabled' );
+		isJetpackSite.mockReturnValue( false );
 
 		renderPromoCards( { isOdysseyStats: false } );
 
-		expect( screen.getByText( 'Jetpack app promo' ) ).toBeVisible();
+		expect( screen.getAllByText( / promo$/ ).map( ( card ) => card.textContent ) ).toEqual( [
+			'blaze promo',
+			'wordpress-seo-premium promo',
+			'Jetpack app promo',
+		] );
 	} );
 } );

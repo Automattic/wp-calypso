@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import { optionalConfig } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
@@ -43,8 +43,8 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
 		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
-	// The Jetpack app needs the Jetpack plugin. The standalone Jetpack Stats plugin prints an empty `jetpack_version` when Jetpack is not active; Jetpack releases older than that key omit it.
-	const showAppPromo = ! isOdysseyStats || config( 'jetpack_version' ) !== '';
+	// The Jetpack app needs the Jetpack plugin. The standalone Jetpack Stats plugin prints an empty `jetpack_version` when Jetpack is not active; Calypso and Jetpack releases older than that key omit it.
+	const showAppPromo = optionalConfig( 'jetpack_version' ) !== '';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
