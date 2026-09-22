@@ -1,3 +1,4 @@
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
@@ -15,13 +16,17 @@ import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '@automattic/api-core';
+import type { Site, SiteContextualPlan } from '@automattic/api-core';
 
 /**
  * Returns true if the site requires a plan upgrade.
+ *
+ * The billing period is read from the plans endpoint rather than `site.plan.billing_period`
+ * because the sites list endpoint omits that field. A site seeded from the list would
+ * otherwise flip from "no upgrade needed" to "upgrade needed" once the full site loads.
  */
-const requiresPlanUpgrade = ( site: Site ) => {
-	return site.plan?.is_free || site.plan?.billing_period === 'Monthly';
+const requiresPlanUpgrade = ( site: Site, sitePlan: SiteContextualPlan ) => {
+	return !! site.plan?.is_free || sitePlan.interval === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
 };
 
 const useDomainSuggestion = ( site: Site ) => {
@@ -45,12 +50,14 @@ const DomainUpsellCardContent = ( {
 	description,
 	upsellCTAButtonText,
 	upsellId,
+	isPlanUpgradeRequired,
 }: {
 	site: Site;
 	title: string;
 	description: string;
 	upsellCTAButtonText: string;
 	upsellId: string;
+	isPlanUpgradeRequired: boolean;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
@@ -81,7 +88,7 @@ const DomainUpsellCardContent = ( {
 			}
 		}
 
-		if ( requiresPlanUpgrade( site ) ) {
+		if ( isPlanUpgradeRequired ) {
 			window.location.href = wpcomLink(
 				getDomainAndPlanUpsellUrl( {
 					siteSlug: site.slug,
@@ -112,7 +119,9 @@ const DomainUpsellCardContent = ( {
 			title={ title }
 			titleAs="h2"
 			description={
-				<Text variant="muted">
+				// Remount when the string changes: page translators reparent the interpolated
+				// text nodes, so React can't safely reconcile a differently shaped string.
+				<Text key={ description } variant="muted">
 					{ createInterpolateElement( description, {
 						domain: (
 							<TextBlur isBlurred={ ! suggestedDomain }>
@@ -159,6 +168,8 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		return null;
 	}
 
+	const isPlanUpgradeRequired = requiresPlanUpgrade( site, sitePlan );
+
 	if ( sitePlan.has_domain_credit ) {
 		return (
 			<DomainUpsellCardContent
@@ -169,11 +180,12 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				) }
 				upsellId="site-overview-claim-this-domain"
 				upsellCTAButtonText={ __( 'Claim this domain' ) }
+				isPlanUpgradeRequired={ isPlanUpgradeRequired }
 			/>
 		);
 	}
 
-	if ( requiresPlanUpgrade( site ) ) {
+	if ( isPlanUpgradeRequired ) {
 		return (
 			<DomainUpsellCardContent
 				site={ site }
@@ -183,6 +195,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
+				isPlanUpgradeRequired={ isPlanUpgradeRequired }
 			/>
 		);
 	}
@@ -200,6 +213,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 			) }
 			upsellId="site-overview-get-this-domain"
 			upsellCTAButtonText={ __( 'Get this domain' ) }
+			isPlanUpgradeRequired={ isPlanUpgradeRequired }
 		/>
 	);
 };

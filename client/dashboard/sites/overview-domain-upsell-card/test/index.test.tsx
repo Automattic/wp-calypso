@@ -78,6 +78,26 @@ beforeEach( () => {
 } );
 
 describe( 'DomainUpsellCard', () => {
+	test( 'treats a monthly plan as needing an upgrade even when the site object lacks a billing period', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false, interval: 31 } ],
+		} );
+
+		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: false } } as Site } /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Choose a plan' } ) ).toBeVisible();
+	} );
+
+	test( 'offers the domain directly on an annual plan without domain credit', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false, interval: 365 } ],
+		} );
+
+		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: false } } as Site } /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Get this domain' } ) ).toBeVisible();
+	} );
+
 	test( 'shows an error notice when the shopping cart chunk fails to load', async () => {
 		const user = userEvent.setup();
 		mockShoppingCartImportError = new Error( 'Loading chunk failed' );
