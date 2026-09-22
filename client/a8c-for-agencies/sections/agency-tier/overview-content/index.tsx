@@ -1,5 +1,14 @@
 import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback } from 'react';
+import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import {
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PURCHASES_LINK,
+	A4A_REFERRALS_DASHBOARD,
+	A4A_SITES_LINK,
+	A4A_WOOPAYMENTS_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
 import Divider from 'calypso/dashboard/components/divider';
@@ -8,9 +17,19 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
 import DownloadBadges from '../download-badges';
 import InfluencedRevenue from './influenced-revenue';
-import type { AgencyTierType } from 'calypso/dashboard/agency/tiers/types';
+import type { AgencyTierType, TierBenefitLinks } from 'calypso/dashboard/agency/tiers/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 import type { ComponentProps } from 'react';
+
+const BENEFIT_LINKS: TierBenefitLinks = {
+	'manage-sites': A4A_SITES_LINK,
+	'create-client-reports': A4A_REPORTS_LINK,
+	'manage-purchases': A4A_PURCHASES_LINK,
+	'make-client-referral': A4A_REFERRALS_DASHBOARD,
+	'add-woopayments-to-store': A4A_WOOPAYMENTS_LINK,
+	'contact-support': CONTACT_URL_HASH_FRAGMENT,
+	'manage-profile': A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+};
 
 export default function AgencyTierOverviewContent( {
 	currentAgencyTierId,
@@ -52,6 +71,8 @@ export default function AgencyTierOverviewContent( {
 				recordTracksEvent={ recordTracks }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isLoading }
+				links={ BENEFIT_LINKS }
+				shouldUseRouterLink={ false }
 				renderDownloadBadges={ ( buttonProps: ComponentProps< typeof Button > ) => (
 					<DownloadBadges buttonProps={ { ...buttonProps, icon: null } } />
 				) }
