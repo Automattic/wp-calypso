@@ -1515,7 +1515,13 @@ const PlansFeaturesMain = ( {
 					isOpen={ !! pendingFeatureLossUpgrade }
 					currentPlanSlug={ sitePlanSlug }
 					targetPlanSlug={ pendingFeatureLossUpgrade?.planSlug }
-					currentPlanName={ sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ?? '' }
+					currentPlanName={
+						// The modal opens off the data-store currentPlan query, which can resolve before
+						// the legacy sitePlansData request behind productName; fall back to the slug's
+						// title so the copy never reads "on an older  plan".
+						sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ??
+						( sitePlanSlug ? String( getPlan( sitePlanSlug )?.getTitle() ?? '' ) : '' )
+					}
 					targetPlanName={
 						// getTitle() is a TranslateResult, which is a ReactNode as far as the built package
 						// types are concerned; plan titles are plain strings at runtime, so coerce rather
