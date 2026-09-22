@@ -21,6 +21,8 @@ export interface CreditsStatus {
 	/** Overall remaining share, 0–100; drives the ring and tooltip. */
 	percent: number;
 	pools: CreditsPool[];
+	/** Exact balance when supplied by the server; display rounding never drives gating. */
+	remaining?: number;
 }
 
 /** Free-plan balance at or below this reads as low. */
@@ -35,7 +37,7 @@ export function clampPercent( percent: number ): number {
 }
 
 export function isCreditsExhausted( status: CreditsStatus ): boolean {
-	return clampPercent( status.percent ) === 0;
+	return status.remaining !== undefined ? status.remaining === 0 : status.percent === 0;
 }
 
 export function isCreditsLow(
@@ -63,6 +65,11 @@ export function getCreditsTone(
 /** Tooltip and screen-reader sentence for the ring. */
 export function getCreditsLabel( status: CreditsStatus ): string {
 	const percent = clampPercent( status.percent );
+	if ( status.percent > 0 && status.percent < 1 ) {
+		return status.plan === 'paid'
+			? __( 'Less than 1% of site credits left', __i18n_text_domain__ )
+			: __( 'Less than 1% of free credits left', __i18n_text_domain__ );
+	}
 
 	if ( status.plan === 'paid' ) {
 		// The aggregate across the plan and top-up pools, hence "site credits"
@@ -79,6 +86,17 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 		__( '%d%% of free credits left', __i18n_text_domain__ ),
 		percent
 	);
+}
+
+/** Preserve a positive fractional balance in the pool's displayed percentage. */
+export function formatCreditsPercent( percent: number ): string {
+	return percent > 0 && percent < 1
+		? __( '<1%', __i18n_text_domain__ )
+		: sprintf(
+				/* translators: %d: percentage of credits remaining. */
+				__( '%d%%', __i18n_text_domain__ ),
+				clampPercent( percent )
+			);
 }
 
 // The interface locale, not the browser's, so the figures match the

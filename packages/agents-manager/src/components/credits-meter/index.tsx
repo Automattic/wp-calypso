@@ -4,7 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import {
 	type CreditsPool,
 	type CreditsStatus,
-	clampPercent,
+	formatCreditsPercent,
 	formatCreditsDetail,
 	getCreditsLabel,
 	getCreditsTone,
@@ -18,12 +18,12 @@ interface Props {
 	onToggle: ( willOpen: boolean ) => void;
 	/** Single CTA: Upgrade on free plans, Add credits on paid ones. */
 	onAction?: () => void;
-	/** Full balance and purchases page. The link renders regardless; it goes nowhere until the page exists. */
+	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
 }
 
 function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boolean } ) {
-	const percent = clampPercent( pool.percent );
+	const percent = formatCreditsPercent( pool.percent );
 	const detail = formatCreditsDetail( pool );
 	return (
 		<div
@@ -32,15 +32,15 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 			aria-label={
 				pool.dateLabel
 					? sprintf(
-							/* translators: 1: pool name, 2: percentage left, 3: reset or expiry date */
-							__( '%1$s, %2$d%% left, %3$s', __i18n_text_domain__ ),
+							/* translators: 1: pool name, 2: formatted percentage left, 3: reset or expiry date */
+							__( '%1$s, %2$s left, %3$s', __i18n_text_domain__ ),
 							pool.label,
 							percent,
 							pool.dateLabel
 						)
 					: sprintf(
-							/* translators: 1: pool name, 2: percentage left */
-							__( '%1$s, %2$d%% left', __i18n_text_domain__ ),
+							/* translators: 1: pool name, 2: formatted percentage left */
+							__( '%1$s, %2$s left', __i18n_text_domain__ ),
 							pool.label,
 							percent
 						)
@@ -60,21 +60,17 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 				>
 					{ isExhausted
 						? sprintf(
-								/* translators: %d: percentage of credits left */
-								__( '%d%% left', __i18n_text_domain__ ),
+								/* translators: %s: formatted percentage of credits left */
+								__( '%s left', __i18n_text_domain__ ),
 								percent
 							)
-						: sprintf(
-								/* translators: %d: percentage of credits left */
-								__( '%d%%', __i18n_text_domain__ ),
-								percent
-							) }
+						: percent }
 				</span>
 			</div>
 			<div className="agents-manager-credits-meter__bar" aria-hidden="true">
 				<div
 					className="agents-manager-credits-meter__bar-fill"
-					style={ { width: `${ percent }%` } }
+					style={ { width: `${ Math.min( 100, Math.max( 0, pool.percent ) ) }%` } }
 				/>
 			</div>
 			{ detail && <div className="agents-manager-credits-meter__pool-detail">{ detail }</div> }
@@ -125,14 +121,16 @@ export default function CreditsMeter( { status, isOpen, onToggle, onAction, mana
 						<span className="agents-manager-credits-meter__title">
 							{ __( 'Site credits', __i18n_text_domain__ ) }
 						</span>
-						<Button
-							className="agents-manager-credits-meter__manage"
-							variant="link"
-							href={ manageUrl }
-							target={ manageUrl ? '_blank' : undefined }
-						>
-							{ __( 'Manage', __i18n_text_domain__ ) }
-						</Button>
+						{ manageUrl && (
+							<Button
+								className="agents-manager-credits-meter__manage"
+								variant="link"
+								href={ manageUrl }
+								target="_blank"
+							>
+								{ __( 'Manage', __i18n_text_domain__ ) }
+							</Button>
+						) }
 					</div>
 					{ status.pools.map( ( pool ) => (
 						<PoolRow key={ pool.id } pool={ pool } isExhausted={ isFree && isExhausted } />

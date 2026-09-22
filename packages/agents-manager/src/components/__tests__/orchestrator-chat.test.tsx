@@ -415,8 +415,15 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
+const mockCreditsVisibility = jest.fn();
 jest.mock( '../../hooks/use-credits', () => ( {
-	useCredits: () => ( { beforeSubmit: () => mockCreditsBeforeSubmit() !== false } ),
+	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+		mockCreditsVisibility( isOpen );
+		return {
+			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
+			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+		};
+	},
 } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
@@ -711,6 +718,17 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, true ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+		[ 'closed dock', { isOpen: false, isDocked: true, isCompactMode: true }, false ],
+	] as const )( 'loads credits only for a visible %s composer', ( _name, options, visible ) => {
+		render( chat( options ) );
+		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {

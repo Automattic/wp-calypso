@@ -7,6 +7,25 @@ import type { ToolProvider } from './types/index';
 const mockFetch = vi.fn();
 vi.stubGlobal( 'fetch', mockFetch );
 
+// Allowance_Resolver + ai-agent.php at WPCOM 1db1db571509.
+const allowanceSnapshot = {
+	schema_version: 1,
+	policy_id: 'wpcom-site-monthly-v1',
+	cost_version: 'provider-cost-v1',
+	accounting_mode: 'provider_cost',
+	reason: 'wpcom_site_plan',
+	eligible: true,
+	preview: true,
+	enforcement: 'site_allowance',
+	blog_id: 123,
+	credits_limit: 2500,
+	credits_used: 50,
+	credits_remaining: 2450,
+	exhausted: false,
+	blocked: false,
+	resets_at: '2026-10-01T00:00:00Z',
+};
+
 describe( 'Client', () => {
 	beforeEach( () => {
 		mockFetch.mockClear();
@@ -14,6 +33,163 @@ describe( 'Client', () => {
 
 	afterEach( () => {
 		vi.restoreAllMocks();
+	} );
+
+	it.each( [ 'send', 'continue' ] )(
+		'preserves credit metadata on synchronous %s responses',
+		async ( method ) => {
+			const aiCredits = allowanceSnapshot;
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				json: async () => ( {
+					jsonrpc: '2.0',
+					id: 'request',
+					result: {
+						id: 'task',
+						status: { state: 'completed' },
+						ai_credits: aiCredits,
+					},
+				} ),
+			} );
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agent',
+			} );
+			const result =
+				method === 'send'
+					? await client.sendMessage( { message: createTextMessage( 'hello' ) } )
+					: await client.continueTask( 'task', 'continue' );
+			expect( result.aiCredits ).toEqual( aiCredits );
+		}
+	);
+
+	it.each( [ 'send', 'continue', 'wait' ] )(
+		'preserves rejected allowance metadata and errors on %s',
+		async ( method ) => {
+			const aiCredits = {
+				...allowanceSnapshot,
+				credits_used: 2500,
+				credits_remaining: 0,
+				exhausted: true,
+				blocked: true,
+			};
+			const errorMessage = 'This site has used its AI allowance for this month.';
+			const payload = {
+				jsonrpc: '2.0',
+				id: 'request',
+				error: { code: -32000, message: errorMessage },
+				result: {
+					id: 'task',
+					status: {
+						state: 'failed',
+						message: {
+							kind: 'message',
+							role: 'system',
+							messageId: 'failure',
+							parts: [
+								{ type: 'text', text: errorMessage },
+								{ type: 'data', data: { code: 'ai_credit_allowance_exhausted' } },
+							],
+						},
+					},
+					ai_credits: aiCredits,
+				},
+			};
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				json: async () => payload,
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							new TextEncoder().encode( `data: ${ JSON.stringify( payload ) }\n\n` )
+						);
+						controller.close();
+					},
+				} ),
+			} );
+			const client = createClient( { agentId: 'test-agent' } );
+			let result;
+			if ( method === 'send' ) {
+				result = client.sendMessage( { message: createTextMessage( 'hello' ) } );
+			} else if ( method === 'continue' ) {
+				result = client.continueTask( 'task', 'continue' );
+			} else {
+				result = sendMessageAndWait( client, { message: createTextMessage( 'hello' ) } );
+			}
+			await expect( result ).rejects.toMatchObject( {
+				message:
+					method === 'wait'
+						? `Streaming error: ${ errorMessage }`
+						: `Protocol request error: ${ errorMessage }`,
+				aiCredits,
+			} );
+		}
+	);
+
+	it( 'preserves an unreadable allowance error without manufacturing metadata', async () => {
+		const errorMessage = 'We could not check the AI allowance for this site. Please try again.';
+		const payload = {
+			jsonrpc: '2.0',
+			error: { code: -32000, message: errorMessage },
+			result: {
+				id: 'task',
+				status: {
+					state: 'failed',
+					message: {
+						kind: 'message',
+						role: 'system',
+						messageId: 'failure',
+						parts: [
+							{ type: 'text', text: errorMessage },
+							{ type: 'data', data: { code: 'ai_credit_allowance_unavailable' } },
+						],
+					},
+				},
+			},
+		};
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			body: new ReadableStream( {
+				start( controller ) {
+					controller.enqueue(
+						new TextEncoder().encode( `data: ${ JSON.stringify( payload ) }\n\n` )
+					);
+					controller.close();
+				},
+			} ),
+		} );
+		await expect(
+			sendMessageAndWait( createClient( { agentId: 'test-agent' } ), {
+				message: createTextMessage( 'hello' ),
+			} )
+		).rejects.toEqual( new Error( `Streaming error: ${ errorMessage }` ) );
+	} );
+
+	it( 'keeps the successful snapshot in the wait helper', async () => {
+		const payload = {
+			jsonrpc: '2.0',
+			result: { id: 'task', status: { state: 'completed' }, ai_credits: allowanceSnapshot },
+		};
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			body: new ReadableStream( {
+				start( controller ) {
+					controller.enqueue(
+						new TextEncoder().encode( `data: ${ JSON.stringify( payload ) }\n\n` )
+					);
+					controller.close();
+				},
+			} ),
+		} );
+		await expect(
+			sendMessageAndWait( createClient( { agentId: 'test-agent' } ), {
+				message: createTextMessage( 'hello' ),
+			} )
+		).resolves.toMatchObject( { aiCredits: allowanceSnapshot } );
 	} );
 
 	describe( 'Message ID behavior', () => {
@@ -139,6 +315,228 @@ describe( 'Client', () => {
 			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
 			expect( result.final ).toBe( true );
 			expect( result.text ).toBe( 'Done after tool call.' );
+		} );
+
+		it( 'preserves AI credits on a synthetic final agent message', async () => {
+			const aiCredits = {
+				policy_id: 'wpcom-site-monthly-v1',
+				blog_id: 123,
+				preview: true,
+				credits_limit: 10_000,
+				credits_used: 1_700,
+				credits_remaining: 8_300,
+				blocked: false,
+				exhausted: false,
+			};
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'apply-edit',
+							name: 'Apply edit',
+							description: 'Apply an editor change',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+				async executeTool() {
+					return {
+						result: { success: true },
+						returnToAgent: false,
+						agentMessage: 'The edit was applied.',
+					};
+				},
+			};
+
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const inputRequiredEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-apply-edit',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-apply-edit',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'resp-apply-edit',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-apply-edit',
+													toolId: 'apply-edit',
+													arguments: {},
+												},
+											},
+										],
+									},
+									final: true,
+								},
+								ai_credits: aiCredits,
+							},
+						} );
+
+						controller.enqueue( encoder.encode( `data: ${ inputRequiredEvent }\n\n` ) );
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Apply this edit' ),
+			} ) ) {
+				updates.push( update );
+			}
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( updates.at( -1 ) ).toMatchObject( {
+				final: true,
+				text: 'The edit was applied.',
+				aiCredits,
+			} );
+		} );
+
+		describe.each( [
+			{ continuation: 'first', additionalTool: false },
+			{ continuation: 'additional', additionalTool: true },
+		] )( '$continuation tool continuation', ( { additionalTool } ) => {
+			it.each( [
+				{ state: 'failed', protocolError: true },
+				{ state: 'canceled', protocolError: true },
+				{ state: 'failed', protocolError: false },
+				{ state: 'canceled', protocolError: false },
+			] )(
+				'preserves $state credits with protocol error $protocolError',
+				async ( { state, protocolError } ) => {
+					const aiCredits = {
+						policy_id: 'wpcom-site-monthly-v1',
+						blog_id: 123,
+						preview: true,
+						credits_limit: 15_000,
+						credits_used: 3_000,
+						credits_remaining: 12_000,
+						blocked: false,
+						exhausted: false,
+					};
+					const executeTool = vi.fn( async () => ( {
+						result: { success: true },
+						returnToAgent: true,
+					} ) );
+					const toolProvider: ToolProvider = {
+						async getAvailableTools() {
+							return [
+								{
+									id: 'test-tool',
+									name: 'Test Tool',
+									description: 'A test tool',
+									input_schema: { type: 'object', properties: {} },
+								},
+							];
+						},
+						executeTool,
+					};
+					const toolEvent = ( toolCallId: string, taskState: string ) => ( {
+						jsonrpc: '2.0',
+						result: {
+							type: 'TaskStatusUpdateEvent',
+							taskId: 'task-with-credits',
+							status: {
+								state: taskState,
+								final: true,
+								message: {
+									messageId: toolCallId,
+									role: 'agent',
+									kind: 'message',
+									parts: [
+										{
+											type: 'data',
+											data: { toolCallId, toolId: 'test-tool', arguments: {} },
+										},
+									],
+								},
+							},
+						},
+					} );
+					const events = [
+						toolEvent( 'first-call', 'input-required' ),
+						...( additionalTool ? [ toolEvent( 'additional-call', 'completed' ) ] : [] ),
+						{
+							jsonrpc: '2.0',
+							...( protocolError && { error: { code: -32000, message: 'Agent request failed' } } ),
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-with-credits',
+								status: {
+									state,
+									final: true,
+									message: {
+										messageId: 'terminal-response',
+										role: 'agent',
+										kind: 'message',
+										parts: [ { type: 'text', text: 'Agent request ended' } ],
+									},
+								},
+								ai_credits: aiCredits,
+							},
+						},
+					];
+					for ( const event of events ) {
+						mockFetch.mockResolvedValueOnce( {
+							ok: true,
+							status: 200,
+							headers: new Headers( { 'content-type': 'text/event-stream' } ),
+							body: new ReadableStream( {
+								start( controller ) {
+									controller.enqueue(
+										new TextEncoder().encode( `data: ${ JSON.stringify( event ) }\n\n` )
+									);
+									controller.close();
+								},
+							} ),
+						} );
+					}
+
+					const client = createClient( { agentId: 'test-agent', toolProvider } );
+					const updates = [];
+					let thrown: unknown;
+					try {
+						for await ( const update of client.sendMessageStream( {
+							message: createTextMessage( 'Use the test tool' ),
+						} ) ) {
+							updates.push( update );
+						}
+					} catch ( error ) {
+						thrown = error;
+					}
+
+					expect( mockFetch ).toHaveBeenCalledTimes( additionalTool ? 3 : 2 );
+					expect( executeTool ).toHaveBeenCalledTimes( additionalTool ? 2 : 1 );
+					expect( updates.filter( ( update ) => update.final ) ).toEqual( [
+						expect.objectContaining( { status: expect.objectContaining( { state } ), aiCredits } ),
+					] );
+					expect( thrown ).toEqual(
+						protocolError ? new Error( 'Streaming error: Agent request failed' ) : undefined
+					);
+				}
+			);
 		} );
 
 		it( 'preserves final input-required events when an advertised tool has no executable handler', async () => {

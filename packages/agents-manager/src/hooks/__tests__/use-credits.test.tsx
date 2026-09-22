@@ -4,6 +4,15 @@
 import { act, renderHook } from '@testing-library/react';
 import { useCredits } from '../use-credits';
 
+let mockIsProcessing = false;
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		useAgentChat: () => ( { isProcessing: mockIsProcessing } ),
+	} ),
+	{ virtual: true }
+);
+
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
@@ -24,7 +33,15 @@ function seed( search: string ) {
 
 function renderCredits( enabled = true ) {
 	return renderHook(
-		( { isProcessing }: { isProcessing: boolean } ) => useCredits( { enabled, isProcessing } ),
+		( { isProcessing }: { isProcessing: boolean } ) => {
+			mockIsProcessing = isProcessing;
+			return useCredits( {
+				enabled,
+				agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
+				siteKey: 'no-site',
+				isOpen: true,
+			} );
+		},
 		{
 			initialProps: { isProcessing: false },
 		}

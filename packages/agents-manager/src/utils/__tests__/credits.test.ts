@@ -52,7 +52,8 @@ describe( 'credit states', () => {
 
 	it( 'reads exhausted at zero for any plan', () => {
 		expect( isCreditsExhausted( free( 0 ) ) ).toBe( true );
-		expect( isCreditsExhausted( free( 0.4 ) ) ).toBe( true );
+		expect( isCreditsExhausted( free( 0.4 ) ) ).toBe( false );
+		expect( isCreditsExhausted( { ...paid( 0 ), remaining: 1 } ) ).toBe( false );
 		expect( isCreditsExhausted( paid( 0 ) ) ).toBe( true );
 		expect( isCreditsExhausted( free( 1 ) ) ).toBe( false );
 	} );
@@ -75,6 +76,7 @@ describe( 'getCreditsLabel', () => {
 	it( 'names the pool by plan', () => {
 		expect( getCreditsLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
 		expect( getCreditsLabel( paid( 72 ) ) ).toBe( '72% of site credits left' );
+		expect( getCreditsLabel( paid( 0.04 ) ) ).toBe( 'Less than 1% of site credits left' );
 	} );
 } );
 

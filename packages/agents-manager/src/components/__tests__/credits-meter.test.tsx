@@ -119,9 +119,39 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
 		expect( screen.getByText( '10,800 of 15,000 credits' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Top-ups' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Manage' } ) ).not.toHaveAttribute( 'href' );
+		expect( screen.queryByRole( 'button', { name: 'Manage' } ) ).not.toBeInTheDocument();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Add credits' } ) );
 		expect( onAction ).toHaveBeenCalled();
+	} );
+
+	it( 'renders real fractional allowance details without inventing purchase or manage actions', () => {
+		const status: CreditsStatus = {
+			plan: 'paid',
+			percent: 0.04,
+			remaining: 1,
+			pools: [
+				{
+					id: 'plan',
+					label: 'Monthly plan',
+					percent: 0.04,
+					remaining: 1,
+					total: 2500,
+					dateLabel: 'Resets Oct 1 (UTC)',
+				},
+			],
+		};
+		render( <CreditsMeter status={ status } isOpen onToggle={ () => {} } /> );
+		expect(
+			screen.getByRole( 'button', { name: 'Less than 1% of site credits left' } )
+		).toBeInTheDocument();
+		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
+		expect( screen.getByText( '1 of 2,500 credits' ) ).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'group', { name: 'Monthly plan, <1% left, Resets Oct 1 (UTC)' } )
+		).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add credits' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Manage' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Top-ups' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the out-of-credits message and Upgrade on an exhausted free plan', () => {

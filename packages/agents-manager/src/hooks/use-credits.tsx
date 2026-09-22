@@ -1,6 +1,9 @@
+import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
+import { API_BASE_URL } from '../constants';
+import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
 	buildMockCreditsStatus,
@@ -8,6 +11,17 @@ import {
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../utils/credits';
+import {
+	buildLiveCreditsStatus,
+	getLiveCreditSiteId,
+	parseCreditSnapshot,
+} from '../utils/live-credits';
+import type { CreditSnapshot } from '../utils/live-credits';
+import type {
+	TaskUpdate,
+	UseAgentChatConfig,
+	UseAgentChatReturn,
+} from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 
 interface MockCreditsSeed {
@@ -19,7 +33,7 @@ interface MockCreditsSeed {
 const MOCK_COST_PER_MESSAGE = 5;
 
 /**
- * Mock source until the backend snapshot lands: `?am_credits=55&am_plan=free`
+ * Isolated demo source for contexts without live site credits: `?am_credits=55&am_plan=free`
  * seeds the balance. Read once when the chat mounts, so the editor's router
  * dropping the parameter doesn't flip the state mid-session.
  */
@@ -42,12 +56,15 @@ function readMockSeed(): MockCreditsSeed | null {
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
-	/** The agent request state; the mock spends when a request finishes. */
-	isProcessing: boolean;
+	agentConfig: UseAgentChatConfig;
+	siteKey: string;
+	userId?: number;
+	isOpen: boolean;
 }
 
 interface UseCreditsResult {
-	/** Ring + popover for the composer's trailing slot; undefined when credits don't apply. */
+	chat: UseAgentChatReturn;
+	/** Ring + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Low (free, one-time, dismissible) or exhausted (persistent) notice. */
 	notice?: NoticeConfig;
@@ -56,33 +73,214 @@ interface UseCreditsResult {
 }
 
 /**
- * Implements the credits meter mechanism: balance state, the ring in the
- * composer, low/exhausted notices, submit gating at zero, and the upsell
- * popover. One hook so the pieces stay together when the mock source is
- * replaced by the backend snapshot.
+ * Loads balances independently of prompts and keeps reads and terminal updates
+ * scoped to the current site visit. The chat is composed here so refreshes can
+ * avoid reading usage while a task is still running.
  */
-export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseCreditsResult {
+export function useCredits( {
+	enabled,
+	agentConfig,
+	siteKey,
+	userId,
+	isOpen,
+}: UseCreditsOptions ): UseCreditsResult {
+	const isMockEnabled = enabled && siteKey === NO_SITE;
+	const siteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	const scopeIdentity = JSON.stringify( [ siteKey, userId, agentConfig.agentId, enabled ] );
+	const scope = useMemo(
+		() => ( { identity: scopeIdentity, siteId, active: true, validTerminalRevision: 0 } ),
+		[ scopeIdentity, siteId ]
+	);
+	const currentScope = useRef( scope );
+	currentScope.current = scope;
+	const balanceRequest = useRef< AbortController | undefined >( undefined );
+	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
-
-	// Spend once a request has actually run, not on the submit attempt: sends
-	// dropped before dispatch (upload failure, re-entry) never touch the agent's
-	// processing state, so they cost nothing. The real snapshot arrives the
-	// same way, on the terminal response.
-	const wasProcessingRef = useRef( isProcessing );
-	useEffect( () => {
-		if ( wasProcessingRef.current && ! isProcessing && enabled && seed ) {
-			setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
+	const invalidateBalance = useCallback( () => {
+		if ( currentScope.current === scope && scope.active ) {
+			setBalance( undefined );
+			setIsPopoverOpen( false );
 		}
-		wasProcessingRef.current = isProcessing;
-	}, [ isProcessing, enabled, seed ] );
-
-	const status = useMemo(
-		() => ( enabled && seed ? buildMockCreditsStatus( seed.plan, percent ) : undefined ),
-		[ enabled, seed, percent ]
+	}, [ scope ] );
+	const observeTaskUpdate = useCallback(
+		( update: TaskUpdate ) => {
+			if (
+				! scope.active ||
+				currentScope.current !== scope ||
+				! scope.siteId ||
+				update.final === false ||
+				! ( update.final || [ 'completed', 'failed', 'canceled' ].includes( update.status.state ) )
+			) {
+				return;
+			}
+			balanceRequest.current?.abort();
+			balanceRequest.current = undefined;
+			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
+			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
+				scope.validTerminalRevision++;
+				setBalance( { scope, snapshot } );
+			} else {
+				invalidateBalance();
+			}
+		},
+		[ scope, invalidateBalance ]
 	);
+	const chatConfig = useMemo(
+		() => ( {
+			...agentConfig,
+			onTaskUpdate: async ( update: TaskUpdate ) => {
+				observeTaskUpdate( update );
+				await agentConfig.onTaskUpdate?.( update );
+			},
+		} ),
+		[ agentConfig, observeTaskUpdate ]
+	);
+	const chat = useAgentChat( chatConfig );
+	const { isProcessing } = chat;
+	const processingRef = useRef( isProcessing );
+	processingRef.current = isProcessing;
+	const { authProvider } = agentConfig;
+	const refreshBalance = useCallback( async () => {
+		if (
+			! isOpen ||
+			! scope.siteId ||
+			! authProvider ||
+			! scope.active ||
+			currentScope.current !== scope ||
+			processingRef.current ||
+			balanceRequest.current
+		) {
+			return;
+		}
+		const controller = new AbortController();
+		balanceRequest.current = controller;
+		const revision = scope.validTerminalRevision;
+		const isCurrent = () =>
+			! controller.signal.aborted &&
+			scope.active &&
+			currentScope.current === scope &&
+			scope.validTerminalRevision === revision &&
+			! processingRef.current;
+		try {
+			const headers = await authProvider();
+			if ( ! isCurrent() ) {
+				return;
+			}
+			const response = await fetch(
+				`${ API_BASE_URL }/wpcom/v2/sites/${ scope.siteId }/ai/credits`,
+				{ method: 'GET', headers, signal: controller.signal, cache: 'no-store' }
+			);
+			const data = response.ok ? await response.json() : undefined;
+			if ( ! isCurrent() ) {
+				return;
+			}
+			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
+			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
+				setBalance( { scope, snapshot } );
+			} else {
+				invalidateBalance();
+			}
+		} catch {
+			if ( isCurrent() ) {
+				invalidateBalance();
+			}
+		} finally {
+			if ( balanceRequest.current === controller ) {
+				balanceRequest.current = undefined;
+			}
+		}
+	}, [ scope, authProvider, isOpen, invalidateBalance ] );
+	useEffect( () => {
+		scope.active = true;
+		return () => {
+			scope.active = false;
+		};
+	}, [ scope ] );
+	useEffect( () => {
+		if ( ! isOpen || ! scope.siteId ) {
+			return;
+		}
+		void refreshBalance();
+		const onFocus = () => {
+			if ( document.visibilityState !== 'hidden' ) {
+				void refreshBalance();
+			}
+		};
+		window.addEventListener( 'focus', onFocus );
+		window.addEventListener( 'online', onFocus );
+		document.addEventListener( 'visibilitychange', onFocus );
+		return () => {
+			balanceRequest.current?.abort();
+			balanceRequest.current = undefined;
+			window.removeEventListener( 'focus', onFocus );
+			window.removeEventListener( 'online', onFocus );
+			document.removeEventListener( 'visibilitychange', onFocus );
+		};
+	}, [ scope, isOpen, refreshBalance ] );
+	useEffect( () => {
+		if ( isProcessing ) {
+			balanceRequest.current?.abort();
+			balanceRequest.current = undefined;
+		}
+	}, [ isProcessing ] );
+	const snapshot = balance?.scope === scope ? balance.snapshot : undefined;
+	useEffect( () => {
+		if ( ! snapshot ) {
+			return;
+		}
+		let timer: ReturnType< typeof setTimeout >;
+		const expire = () => {
+			const delay = Date.parse( snapshot.resets_at ) - Date.now();
+			if ( delay <= 0 ) {
+				invalidateBalance();
+				void refreshBalance();
+			} else {
+				timer = setTimeout( expire, Math.min( delay, 2147483647 ) );
+			}
+		};
+		expire();
+		return () => clearTimeout( timer );
+	}, [ snapshot, invalidateBalance, refreshBalance ] );
+
+	const wasProcessingRef = useRef( {
+		scope,
+		isProcessing,
+		validTerminalRevision: scope.validTerminalRevision,
+	} );
+	useEffect( () => {
+		const previous = wasProcessingRef.current;
+		if ( previous.scope === scope && previous.isProcessing && ! isProcessing && enabled ) {
+			if ( scope.siteId ) {
+				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
+					invalidateBalance();
+					void refreshBalance();
+				}
+			} else if ( isMockEnabled && seed ) {
+				setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
+			}
+		}
+		wasProcessingRef.current = {
+			scope,
+			isProcessing,
+			validTerminalRevision:
+				previous.scope === scope && previous.isProcessing && isProcessing
+					? previous.validTerminalRevision
+					: scope.validTerminalRevision,
+		};
+	}, [ isProcessing, enabled, isMockEnabled, seed, scope, invalidateBalance, refreshBalance ] );
+
+	const status = useMemo( () => {
+		if ( ! enabled ) {
+			return undefined;
+		}
+		if ( siteId ) {
+			return snapshot ? buildLiveCreditsStatus( snapshot ) : undefined;
+		}
+		return isMockEnabled && seed ? buildMockCreditsStatus( seed.plan, percent ) : undefined;
+	}, [ enabled, siteId, snapshot, isMockEnabled, seed, percent ] );
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
@@ -96,16 +294,15 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 		if ( ! status ) {
 			return undefined;
 		}
-
 		return (
 			<CreditsMeter
 				status={ status }
 				isOpen={ isPopoverOpen }
 				onToggle={ setIsPopoverOpen }
-				onAction={ handleAction }
+				onAction={ siteId ? undefined : handleAction }
 			/>
 		);
-	}, [ status, isPopoverOpen, handleAction ] );
+	}, [ status, isPopoverOpen, handleAction, siteId ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( ! status || status.plan !== 'free' ) {
@@ -138,9 +335,13 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 		return undefined;
 	}, [ status, isExhausted, isLow, isLowNoticeDismissed, handleAction ] );
 
-	// At zero, on any plan, the popover opens instead of running (Upgrade on
-	// free, Add credits on paid); the mock spends otherwise.
+	// A known zero opens the existing details without discarding the draft.
 	const beforeSubmit = useCallback( () => {
+		if ( snapshot && Date.parse( snapshot.resets_at ) <= Date.now() ) {
+			invalidateBalance();
+			void refreshBalance();
+			return true;
+		}
 		if ( ! status ) {
 			return true;
 		}
@@ -151,10 +352,10 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 		}
 
 		return true;
-	}, [ status, isExhausted ] );
+	}, [ status, isExhausted, snapshot, invalidateBalance, refreshBalance ] );
 
 	return useMemo(
-		() => ( { trailingActions, notice, beforeSubmit } ),
-		[ trailingActions, notice, beforeSubmit ]
+		() => ( { chat, trailingActions, notice, beforeSubmit } ),
+		[ chat, trailingActions, notice, beforeSubmit ]
 	);
 }
