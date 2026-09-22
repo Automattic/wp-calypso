@@ -6,23 +6,27 @@
  * capabilities — the menu already reflects all of that. `$=` keeps My Jetpack's own
  * item from matching its deep links, such as `page=my-jetpack#/add-videopress`.
  */
-const MENU_LINK_SELECTORS = [
-	'#adminmenu a[href$="page=my-jetpack"]',
-	'#adminmenu a[href*="page=jetpack#/settings"]',
+const MENU_DESTINATIONS = [
+	{ destination: 'my_jetpack', selector: '#adminmenu a[href$="page=my-jetpack"]' },
+	{ destination: 'settings', selector: '#adminmenu a[href*="page=jetpack#/settings"]' },
 ];
 
 /**
  * Resolve where "Explore more" should go: My Jetpack, then Jetpack's Settings, and
  * `fallbackUrl` when the Jetpack menu is absent altogether (as on Simple sites).
+ * `destination` names the choice, for Tracks.
  * @param fallbackUrl Destination when neither menu item is on the page.
  */
-export default function getExploreMoreUrl( fallbackUrl: string ): string {
-	for ( const selector of MENU_LINK_SELECTORS ) {
+export default function getExploreMoreUrl( fallbackUrl: string ): {
+	url: string;
+	destination: string;
+} {
+	for ( const { destination, selector } of MENU_DESTINATIONS ) {
 		const link = document.querySelector< HTMLAnchorElement >( selector );
 		if ( link?.href ) {
-			return link.href;
+			return { url: link.href, destination };
 		}
 	}
 
-	return fallbackUrl;
+	return { url: fallbackUrl, destination: 'stats' };
 }

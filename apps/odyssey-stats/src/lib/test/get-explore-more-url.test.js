@@ -22,16 +22,22 @@ describe( 'getExploreMoreUrl', () => {
 			'admin.php?page=jetpack#/settings',
 			'admin.php?page=my-jetpack',
 		] );
-		expect( getExploreMoreUrl( FALLBACK ) ).toMatch( /admin\.php\?page=my-jetpack$/ );
+		expect( getExploreMoreUrl( FALLBACK ) ).toEqual( {
+			url: expect.stringMatching( /admin\.php\?page=my-jetpack$/ ),
+			destination: 'my_jetpack',
+		} );
 	} );
 
 	it( 'falls back to Jetpack Settings when My Jetpack is missing', () => {
 		renderMenu( [ 'admin.php?page=jetpack-social', 'admin.php?page=jetpack#/settings' ] );
-		expect( getExploreMoreUrl( FALLBACK ) ).toMatch( /admin\.php\?page=jetpack#\/settings$/ );
+		expect( getExploreMoreUrl( FALLBACK ) ).toEqual( {
+			url: expect.stringMatching( /admin\.php\?page=jetpack#\/settings$/ ),
+			destination: 'settings',
+		} );
 	} );
 
 	it( 'falls back to the given URL when there is no Jetpack menu', () => {
 		renderMenu( [ 'index.php', 'edit.php' ] );
-		expect( getExploreMoreUrl( FALLBACK ) ).toBe( FALLBACK );
+		expect( getExploreMoreUrl( FALLBACK ) ).toEqual( { url: FALLBACK, destination: 'stats' } );
 	} );
 } );

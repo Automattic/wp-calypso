@@ -22,6 +22,7 @@ import DateRangeControl from './date-range-control';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import recordWidgetEvent from './record-widget-event';
 import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
 
@@ -67,7 +68,7 @@ export function init() {
 
 	const statsBaseUrl = getSiteStatsBaseUrl();
 	const adminBaseUrl = getSiteAdminUrl( currentSiteId );
-	const exploreMoreUrl = getExploreMoreUrl( `${ statsBaseUrl }/stats/day/${ currentSiteId }` );
+	const exploreMore = getExploreMoreUrl( `${ statsBaseUrl }/stats/day/${ currentSiteId }` );
 
 	const queryClient = new QueryClient();
 
@@ -88,6 +89,9 @@ export function init() {
 			const range = getDateRange( rangeId );
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
+				if ( nextRangeId !== rangeId ) {
+					recordWidgetEvent( 'date_range_changed', { range: nextRangeId } );
+				}
 				setRangeId( nextRangeId );
 				storeRangeId( currentSiteId, nextRangeId );
 			};
@@ -125,7 +129,16 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ exploreMoreUrl }>{ translate( 'Explore more' ) }</a>
+							<a
+								href={ exploreMore.url }
+								onClick={ () =>
+									recordWidgetEvent( 'explore_more_clicked', {
+										destination: exploreMore.destination,
+									} )
+								}
+							>
+								{ translate( 'Explore more' ) }
+							</a>
 						</div>
 					</div>
 				</div>
