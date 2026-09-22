@@ -48,6 +48,10 @@ const renderWaitForAtomic = () => {
 	return { result, failures };
 };
 
+// A transfer that began as this wait did, which is what the created_at-anchored clocks expect. A
+// fixed date would read as an ancient transfer and trip them on the first poll.
+const startedNow = () => new Date().toISOString().replace( 'T', ' ' ).slice( 0, 19 );
+
 describe( 'useWaitForAtomic', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
@@ -109,13 +113,14 @@ describe( 'useWaitForAtomic', () => {
 			expect( failures ).toEqual( [
 				expect.objectContaining( { type: 'transfer_timeout', code: 'transfer_timeout' } ),
 			] );
+			expect( failures[ 0 ].recoverable ).toBeFalsy();
 		} );
 
 		it( 'keeps watching past the deadline and resolves when the transfer lands late', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'active',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 			const onDeadlineExceeded = jest.fn();
 
@@ -131,7 +136,7 @@ describe( 'useWaitForAtomic', () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'completed',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 			await jest.advanceTimersByTimeAsync( 11_000 );
 
@@ -163,7 +168,7 @@ describe( 'useWaitForAtomic', () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'active',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
@@ -175,7 +180,7 @@ describe( 'useWaitForAtomic', () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'completed',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 			await jest.advanceTimersByTimeAsync( 30_000 );
 
@@ -189,7 +194,7 @@ describe( 'useWaitForAtomic', () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'active',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
@@ -207,11 +212,67 @@ describe( 'useWaitForAtomic', () => {
 			] );
 		} );
 
+		it( 'caps from the transfer, giving a re-entered wait a look before it gives up', async () => {
+			// A reload onto a transfer that is already past the cap.
+			const startedTwentyMinutesAgo = new Date( Date.now() - 20 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: startedTwentyMinutesAgo,
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+
+			// The wait is still up while it takes its own look at the transfer.
+			await jest.advanceTimersByTimeAsync( 20_000 );
+			expect( failures ).not.toContainEqual(
+				expect.objectContaining( { type: 'transfer_grace_timeout' } )
+			);
+
+			// It does not get another fifteen minutes, though.
+			await jest.advanceTimersByTimeAsync( 20_000 );
+			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
+			expect( failures ).toContainEqual(
+				expect.objectContaining( { type: 'transfer_grace_timeout' } )
+			);
+		} );
+
+		it( 'takes a late completion over the cap a reload arrived after', async () => {
+			const startedTwentyMinutesAgo = new Date( Date.now() - 20 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: startedTwentyMinutesAgo,
+			} );
+
+			const { result } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'completed',
+				created_at: startedTwentyMinutesAgo,
+			} );
+			await jest.advanceTimersByTimeAsync( 11_000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+		} );
+
 		it( 'still fails immediately on a transfer error while past the deadline', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'active',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
@@ -222,7 +283,7 @@ describe( 'useWaitForAtomic', () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'error',
-				created_at: '2026-08-12 13:11:10',
+				created_at: startedNow(),
 			} );
 			await jest.advanceTimersByTimeAsync( 11_000 );
 

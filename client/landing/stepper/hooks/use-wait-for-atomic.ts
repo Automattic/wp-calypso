@@ -29,6 +29,11 @@ const POLL_MS = 3000;
 const TRANSFER_GRACE_TIMEOUT_MS = 1000 * 60 * 15;
 const GRACE_POLL_MS = 10000;
 
+// The cap is measured from the transfer, so a wait that starts on an already-doomed transfer would
+// otherwise fail on its first poll. This floor buys a few polls: long enough to read the screen and
+// for a completion seconds away to land, short enough that reloading cannot keep postponing the cap.
+const MIN_OBSERVATION_MS = 30000;
+
 export interface FailureInfo {
 	type: string;
 	code: number | string;
@@ -96,15 +101,11 @@ export const useWaitForAtomic = ( {
 		onDeadlineExceeded?: () => void;
 	} = {} ) => {
 		const startTime = new Date().getTime();
-		// The cap stays on this wait's own clock: it ends the wait, and a reload should not be able
-		// to land on the failure screen before having watched the transfer at all.
-		const maxGraceFinishTime =
-			startTime + ( onDeadlineExceeded ? TRANSFER_GRACE_TIMEOUT_MS : TRANSFER_TIMEOUT_MS );
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
 		let isPastDeadline = false;
-		// The deadline belongs to the transfer, not to this component, so a reload does not restart
-		// a wait that is already minutes old. Only a transfer still in flight anchors it, and only
-		// for a caller that recovers: an old in-flight transfer must not hard-fail on the first poll.
+		// Both clocks belong to the transfer, not to this component, so a reload does not restart a
+		// wait that is already minutes old. Only a transfer still in flight anchors them, and only
+		// for a caller that recovers, so an old in-flight transfer cannot hard-fail another caller.
 		let deadlineAnchor = startTime;
 		let isDeadlineAnchored = ! onDeadlineExceeded;
 
@@ -166,6 +167,10 @@ export const useWaitForAtomic = ( {
 
 				onDeadlineExceeded();
 			}
+
+			const maxGraceFinishTime = onDeadlineExceeded
+				? Math.max( deadlineAnchor + TRANSFER_GRACE_TIMEOUT_MS, startTime + MIN_OBSERVATION_MS )
+				: deadlineAnchor + TRANSFER_TIMEOUT_MS;
 
 			if ( maxGraceFinishTime < new Date().getTime() ) {
 				handleTransferFailure?.( {
