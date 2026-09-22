@@ -93,7 +93,7 @@ describe( 'Stepper unified admin page views', () => {
 		jest.clearAllMocks();
 		jest.isolateModules( () => {
 			const { recordStepperPageView: record } = jest.requireActual<
-				typeof import('../../../analytics/record-page-view')
+				typeof import( '../../../analytics/record-page-view' )
 			>( '../../../analytics/record-page-view' );
 			jest.mocked( recordStepperPageView ).mockImplementation( record );
 		} );

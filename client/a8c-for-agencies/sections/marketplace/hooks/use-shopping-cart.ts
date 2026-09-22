@@ -103,12 +103,12 @@ export default function useShoppingCart() {
 									product.slug === slug &&
 									( ! isPressablePhpMemoryAddon( product ) ||
 										getPressableMemoryTarget( product ) === cachedPressableMemoryTarget )
-						  )
+							)
 						: data.find(
 								( product ) =>
 									product.slug === slug &&
 									product.supported_bundles.some( ( bundle ) => bundle.quantity === quantity )
-						  );
+							);
 
 				if ( match ) {
 					loadedItems.push( { ...match, quantity, licenseId, siteUrls, site_domain } );

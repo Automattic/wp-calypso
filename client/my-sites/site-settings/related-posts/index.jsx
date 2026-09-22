@@ -75,7 +75,7 @@ export const RelatedPostsSetting = ( {
 											? localizeUrl( 'https://jetpack.com/support/related-posts/' )
 											: localizeUrl(
 													'https://wordpress.com/support/related-posts/#add-a-related-posts-block'
-											  )
+												)
 									}
 									target="_blank"
 									rel="noopener noreferrer"

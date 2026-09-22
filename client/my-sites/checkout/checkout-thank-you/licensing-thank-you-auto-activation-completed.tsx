@@ -47,7 +47,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 						productName: hasProductInfo ? ( productName as string ) : 'subscription',
 						celebrationEmoji: String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */,
 					},
-			  } )
+				} )
 			: translate( 'Your subscription will be activated soon' );
 	}, [ subscriptionTransferSucceeded, translate, productName, hasProductInfo ] );
 

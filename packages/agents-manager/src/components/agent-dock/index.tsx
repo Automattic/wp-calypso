@@ -25,6 +25,7 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
@@ -399,14 +400,20 @@ export default function AgentDock( {
 
 	// Recorded here rather than from the entry buttons: the dock only renders once
 	// the providers have loaded, so `provider_ids` is always set. `restored` marks
-	// a chat that was already open when the page loaded.
+	// a chat that was already open when the page loaded; `trigger` says who
+	// opened it otherwise (the merchant, or a host through the actions bridge).
 	const wasChatOpenRef = useRef< boolean | null >( null );
 	useEffect( () => {
 		const wasChatOpen = wasChatOpenRef.current;
 		wasChatOpenRef.current = chatIsOpen;
 		if ( chatIsOpen && wasChatOpen !== true ) {
+			const restored = wasChatOpen === null;
+			// Always take, even on restore: a leftover host mark must not
+			// label the next merchant open.
+			const origin = takeActionOrigin( 'open' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
-				restored: wasChatOpen === null,
+				restored,
+				trigger: restored ? 'restored' : origin,
 			} );
 		}
 	}, [ chatIsOpen ] );

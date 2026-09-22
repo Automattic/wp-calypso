@@ -76,7 +76,7 @@ export const useWPCOMDomainSearchCart = ( {
 		const domainItems = flowAllowsMultipleDomainsInCart
 			? responseCart.products.filter(
 					( product ) => isDomainProduct( product ) || isDomainTransfer( product )
-			  )
+				)
 			: [];
 		const isPlanInCart =
 			responseCart.products.find( ( product ) => isPlan( product ) ) !== undefined;

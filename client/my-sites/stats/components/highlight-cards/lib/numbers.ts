@@ -6,7 +6,7 @@ export function formatNumber( number: number | null, isShortened = true, showSig
 				notation: 'compact',
 				maximumFractionDigits: 1,
 				...( showSign && { signDisplay: 'exceptZero' } ),
-		  }
+			}
 		: { notation: 'standard', ...( showSign && { signDisplay: 'exceptZero' } ) };
 
 	return number !== null ? formatNumberI18n( number, { numberFormatOptions } ) : '-';

@@ -86,10 +86,10 @@ export const queueRequest =
 					return nextError
 						? failures.forEach( ( handler ) =>
 								dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
-						  )
+							)
 						: successes.forEach( ( handler ) =>
 								dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
-						  );
+							);
 				},
 			].filter( Boolean )
 		);

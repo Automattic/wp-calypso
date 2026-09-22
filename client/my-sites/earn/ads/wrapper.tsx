@@ -285,7 +285,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 								? {
 										url: learnMoreUrl,
 										onClick: () => trackNudge( 'calypso_upgrade_nudge_learn_more_click' ),
-								  }
+									}
 								: null
 						}
 					/>

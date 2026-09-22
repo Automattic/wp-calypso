@@ -206,7 +206,7 @@ export function TitanPlanGrid( {
 					targetTier: tier,
 					targetProduct: productForTier( tier ),
 					interval,
-			  } )
+				} )
 			: undefined;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when

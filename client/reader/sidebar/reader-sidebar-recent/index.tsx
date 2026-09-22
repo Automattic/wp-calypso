@@ -9,7 +9,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
 import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
@@ -34,7 +34,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
 	const feedsInfo = useSubscribedFeedsInfo();
-	const isSeenEnabled = useIsSeenPostsUiEnabled();
+	const isSeenEnabled = useSeenPostsPreferenceEnabled();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();

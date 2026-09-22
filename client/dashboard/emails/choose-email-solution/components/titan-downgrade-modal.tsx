@@ -70,13 +70,13 @@ export function TitanDowngradeModal( {
 						currentPlanName,
 						targetPlanName,
 						refundText
-				  )
+					)
 				: sprintf(
 						/* translators: %1$s is the current email plan name, %2$s the plan being switched to. */
 						__( 'Your plan will change from %1$s to %2$s right away.' ),
 						currentPlanName,
 						targetPlanName
-				  );
+					);
 		}
 
 		return renewalDate
@@ -88,7 +88,7 @@ export function TitanDowngradeModal( {
 					currentPlanName,
 					targetPlanName,
 					renewalDate
-			  )
+				)
 			: sprintf(
 					/* translators: %1$s is the current email plan name, %2$s the plan being switched to. */
 					__(
@@ -96,7 +96,7 @@ export function TitanDowngradeModal( {
 					),
 					currentPlanName,
 					targetPlanName
-			  );
+				);
 	} )();
 
 	// The delayed flow bills the new plan at renewal, so the server refuses it
@@ -112,7 +112,7 @@ export function TitanDowngradeModal( {
 					{
 						link: <Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId } } />,
 					}
-			  )
+				)
 			: null;
 
 	const confirmLabel =
@@ -121,7 +121,7 @@ export function TitanDowngradeModal( {
 					/* translators: %s is a refunded amount, e.g. "$18". */
 					__( 'Change plan and refund %s' ),
 					refundText
-			  )
+				)
 			: __( 'Change plan' );
 
 	return (

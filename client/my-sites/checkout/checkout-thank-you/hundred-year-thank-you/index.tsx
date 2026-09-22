@@ -250,12 +250,12 @@ export default function HundredYearThankYou( {
 					args: {
 						domain: displayDomain,
 					},
-			  } )
+				} )
 			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
 					args: {
 						domain: displayDomain,
 					},
-			  } );
+				} );
 	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
 		args: {
 			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',

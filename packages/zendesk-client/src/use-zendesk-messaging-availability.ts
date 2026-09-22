@@ -28,12 +28,12 @@ export function useZendeskMessagingAvailability( group: MessagingGroup, enabled 
 						apiNamespace: 'wpcom/v2',
 						query: wpcomParams.toString(),
 						method: 'GET',
-				  } )
+					} )
 				: apiFetch< MessagingAvailability >( {
 						path: addQueryArgs( '/help-center/support-status/messaging', params ),
 						method: 'GET',
 						global: true,
-				  } as APIFetchOptions );
+					} as APIFetchOptions );
 		},
 		staleTime: 60 * 1000, // 1 minute
 		meta: {

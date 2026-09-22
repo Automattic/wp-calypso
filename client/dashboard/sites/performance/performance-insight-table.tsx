@@ -34,7 +34,7 @@ const getValueType = (
 	item: PerformanceMetricAuditDetailsItem
 ) =>
 	heading.subItemsHeading && item.__isSubItem
-		? heading.subItemsHeading.valueType ?? heading.valueType
+		? ( heading.subItemsHeading.valueType ?? heading.valueType )
 		: heading.valueType;
 
 const renderNode = (
@@ -138,7 +138,7 @@ const PerformanceInsightTable = ( {
 					entity: item.entity,
 					__isSubItem: true,
 				} ) ),
-		  ] )
+			] )
 		: items.map( ( item, i ) => ( { ...item, id: `${ i }` } ) );
 
 	// Without explicit widths DataViews shrinks every column to its content and hands all the

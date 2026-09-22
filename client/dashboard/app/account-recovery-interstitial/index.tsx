@@ -81,9 +81,8 @@ export default function AccountRecoveryInterstitial() {
 	const { recordTracksEvent } = useAnalytics();
 	const titleId = useId();
 
-	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } = useQuery(
-		accountRecoveryQuery()
-	);
+	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } =
+		useQuery( accountRecoveryQuery() );
 	const { data: userSettings, isSuccess: isUserSettingsLoaded } = useQuery( userSettingsQuery() );
 	const { data: snoozeUntilPersisted, isSuccess: isSnoozeLoaded } = useQuery(
 		userPreferenceQuery( 'account-recovery-interstitial-snoozed-until' )
@@ -205,7 +204,7 @@ export default function AccountRecoveryInterstitial() {
 					// translators: %d is the number of days until the reminder reappears.
 					_n( 'Remind me in %d day', 'Remind me in %d days', snoozeDays ),
 					snoozeDays
-			  );
+				);
 
 	return (
 		<Modal

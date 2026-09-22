@@ -19,7 +19,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 
 let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
 } ) );
 

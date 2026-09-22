@@ -102,14 +102,13 @@ jest.mock( '@automattic/onboarding', () => ( {
 describe( 'onboarding flow side effects', () => {
 	const navigate = jest.fn();
 	const renderSideEffect = ( currentStepSlug: string | null ) =>
-		renderHook(
-			() =>
-				// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
-				onboarding.useSideEffect?.call(
-					onboarding,
-					currentStepSlug as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
-					navigate
-				)
+		renderHook( () =>
+			// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useSideEffect?.call(
+				onboarding,
+				currentStepSlug as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
+				navigate
+			)
 		);
 
 	beforeEach( () => {
@@ -231,14 +230,13 @@ describe( 'onboarding flow plan preselection', () => {
 	const enterFlowAt = ( search: string, currentStepSlug: string | null ) => {
 		window.history.replaceState( {}, '', `/setup/onboarding${ search }` );
 
-		renderHook(
-			() =>
-				// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
-				onboarding.useSideEffect?.call(
-					onboarding,
-					currentStepSlug as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
-					jest.fn()
-				)
+		renderHook( () =>
+			// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useSideEffect?.call(
+				onboarding,
+				currentStepSlug as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
+				jest.fn()
+			)
 		);
 	};
 
@@ -307,8 +305,8 @@ describe( 'onboarding flow tracks event props', () => {
 	it( 'returns a stable object across renders', () => {
 		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'plan=personal-bundle' ) );
 
-		const { result, rerender } = renderHook(
-			() => onboarding.useTracksEventProps?.call( onboarding )
+		const { result, rerender } = renderHook( () =>
+			onboarding.useTracksEventProps?.call( onboarding )
 		);
 		const first = result.current;
 		rerender();
@@ -324,14 +322,13 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 	const enterFlowAt = ( search: string ) => {
 		window.history.replaceState( {}, '', `/setup/onboarding${ search }` );
 
-		renderHook(
-			() =>
-				// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
-				onboarding.useSideEffect?.call(
-					onboarding,
-					'' as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
-					jest.fn()
-				)
+		renderHook( () =>
+			// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useSideEffect?.call(
+				onboarding,
+				'' as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
+				jest.fn()
+			)
 		);
 	};
 

@@ -25,7 +25,7 @@ export const BackButton = ( {
 		? decorateButtonWithTracksEventRecording( backButtonProps, {
 				tracksEventName: 'calypso_signup_previous_step_button_click',
 				stepContext,
-		  } )
+			} )
 		: backButtonProps;
 
 	return <Button { ...buttonProps } />;

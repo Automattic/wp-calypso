@@ -902,7 +902,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				? ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 						this.props.siteSlug,
 						newPurchase.ID
-				  ) + '?downgraded=true'
+					) + '?downgraded=true'
 				: null;
 
 			if ( targetUrl ) {
@@ -1308,9 +1308,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
 					needsAtomicRevertConfirmation={ Boolean(
 						! isSplitCancelRemoveEnabled &&
-							isPlan( purchase ) &&
-							atomicTransfer?.created_at &&
-							! purchase.is_refundable
+						isPlan( purchase ) &&
+						atomicTransfer?.created_at &&
+						! purchase.is_refundable
 					) }
 					isLoading={ this.state.isLoading }
 					additionalChanges={ siteWarnings }

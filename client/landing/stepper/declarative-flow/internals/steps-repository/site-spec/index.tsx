@@ -135,8 +135,10 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
 	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
-	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
-	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const atomicProvisionSpecId = shouldProvisionAtomicSite
+		? ( queryParams.get( 'spec_id' ) ?? '' )
+		: '';
+	const buildWowSpecId = shouldBuildWow ? ( queryParams.get( 'spec_id' ) ?? '' ) : '';
 	const buildWowSiteIdentifier = getBuildWowSiteIdentifier( {
 		siteSlug: queryParams.get( 'siteSlug' ),
 		siteId: queryParams.get( 'siteId' ),
@@ -470,11 +472,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 								dest: wowFunnelDest,
 								siteIdentifier: blueprintArchiveSiteIdentifier,
 								adminUrl,
-						  } )
+							} )
 						: getSiteEditorUrl(
 								adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
 								{ canvasEdit: applied }
-						  );
+							);
 
 					logBlueprintArchiveEvent( 'redirect_site_editor', {
 						site_identifier: blueprintArchiveSiteIdentifier,

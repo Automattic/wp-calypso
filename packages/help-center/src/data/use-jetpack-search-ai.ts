@@ -37,13 +37,13 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 						path: `/sites/${ config.siteId }/jetpack-search/ai/search`,
 						apiNamespace: 'wpcom/v2',
 						query: `query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
-				  } )
+					} )
 				: apiFetch( {
 						global: true,
 						path: `/help-center/jetpack-search/ai/search?site=${
 							config.siteId
 						}&query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
-				  } as APIFetchOptions ),
+					} as APIFetchOptions ),
 		refetchOnWindowFocus: false,
 		enabled: config.enabled && !! config.query,
 		retry: false,

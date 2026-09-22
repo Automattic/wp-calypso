@@ -50,7 +50,7 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 	const performanceUrl = [ 'development', 'dashboard-development', 'wpcalypso' ].includes(
 		config( 'env_id' )
 	)
-		? url ?? currentPage?.link
+		? ( url ?? currentPage?.link )
 		: currentPage?.link;
 
 	const {

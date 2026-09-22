@@ -189,7 +189,7 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 					'invite-role': invite.role,
 					'invite-site-title': invite.site.title || invite.site.URL,
 				} )
-		  )
+			)
 		: '/sites';
 	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;

@@ -50,7 +50,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats, isOverLimit }: StatsNotice
 						p: <p />,
 					},
 				}
-		  )
+			)
 		: translate(
 				'{{p}}Your site is receiving more attention and is close to the monthly view limit provided by your current plan. Consider increasing your tier limit to avoid potential service disruptions.{{/p}}',
 				{
@@ -58,7 +58,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats, isOverLimit }: StatsNotice
 						p: <p />,
 					},
 				}
-		  );
+			);
 
 	if ( noticeDismissed ) {
 		return null;

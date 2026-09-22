@@ -148,9 +148,9 @@ export const siteHasFeature = (
 ): boolean => {
 	return Boolean(
 		siteId &&
-			( select( STORE_KEY ) as unknown as SiteSelect )
-				.getSite( siteId )
-				?.plan?.features.active.includes( featureKey )
+		( select( STORE_KEY ) as unknown as SiteSelect )
+			.getSite( siteId )
+			?.plan?.features.active.includes( featureKey )
 	);
 };
 

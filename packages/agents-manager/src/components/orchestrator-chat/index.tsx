@@ -41,6 +41,7 @@ import { useNavigationContinuation } from '../../hooks/use-navigation-continuati
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -1243,9 +1244,19 @@ export default function OrchestratorChat( {
 	// programmatic submit) lands before the `isUploadingImages` state does.
 	const isUploadingRef = useRef( false );
 
+	// The prompts on screen, so a send can be told apart from a typed one:
+	// Agenttic submits a clicked suggestion before the click handler runs.
+	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
+
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
 			submitDispatchedRef.current = false;
+			// Taken before the drop below, so a dropped send never labels the next one.
+			const origin = takeActionOrigin( 'send' );
+			const source =
+				origin === 'composer' && suggestionPromptsRef.current.has( message )
+					? 'suggestion'
+					: origin;
 
 			// The composer is committed while a batch uploads — drop re-entrant
 			// sends (suggestion clicks, programmatic submits) instead of
@@ -1260,6 +1271,7 @@ export default function OrchestratorChat( {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
+				source,
 			} );
 
 			let imageData;
@@ -1399,7 +1411,23 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useRegisterCustomActions( { setChatInput, submitChatMessage } );
+	const submitChatMessageFromHost = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			// Only the bridge wrapper marks: the composer, suggestion chips, and
+			// context-card submit buttons go through `submitChatMessage` unmarked.
+			markActionOrigin( 'send', 'host' );
+			await submitChatMessage( submittedMessage );
+		},
+		[ inputValue, submitChatMessage ]
+	);
+
+	useRegisterCustomActions( { setChatInput, submitChatMessage: submitChatMessageFromHost } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -1626,7 +1654,7 @@ export default function OrchestratorChat( {
 							...message,
 							...( traceId && { traceId } ),
 							...( shouldDisableCheckpointMessage && { disabled: true } ),
-					  }
+						}
 					: message;
 
 			const directActions = [
@@ -1734,6 +1762,9 @@ export default function OrchestratorChat( {
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	}
+	suggestionPromptsRef.current = new Set(
+		displayedEmptyViewSuggestions.map( ( s ) => s.prompt ?? s.label )
+	);
 
 	const { onSuggestionsRendered: handleSuggestionsRendered, renderedSuggestionsRef } =
 		useSuggestionsRenderedTracking( {
@@ -1745,7 +1776,7 @@ export default function OrchestratorChat( {
 	const handleSuggestionClick = useCallback(
 		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const value =
-				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+				typeof suggestion === 'string' ? suggestion : ( suggestion.prompt ?? suggestion.label );
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;

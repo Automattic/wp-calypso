@@ -57,11 +57,11 @@ export const getOdieForwardToZendeskMessage = ( userHasRecentOpenConversation: b
 		? __(
 				'We noticed you have an ongoing conversation. Would you like to continue it?',
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				'Would you like to continue your conversation with a support agent?',
 				__i18n_text_domain__
-		  );
+			);
 
 export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	if ( botSlug === 'ciab-workflow-support_chat' ) {
@@ -147,11 +147,11 @@ export const getOdieTransferMessages = (
 				? __(
 						'A Happiness Engineer will reply as soon as they are available, either here or by email.',
 						__i18n_text_domain__
-				  )
+					)
 				: __(
 						"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
 						__i18n_text_domain__
-				  ),
+					),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -171,11 +171,11 @@ export const getOdieTransferMessages = (
 				? __(
 						'They can see this conversation, so please add any other details that may help.',
 						__i18n_text_domain__
-				  )
+					)
 				: __(
 						'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
 						__i18n_text_domain__
-				  ),
+					),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -203,11 +203,11 @@ export const getOdieEmailFallbackMessageContent = ( isChatRestricted = false ): 
 		? __(
 				"I'm sorry, our human chat support is unavailable, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				"I'm sorry, our human chat support is down for maintenance, but I'm here and ready to assist.",
 				__i18n_text_domain__
-		  );
+			);
 
 	const followUp = __( 'What can I help you with?', __i18n_text_domain__ );
 	return `${ unavailableMessage } \n\n ${ followUp }`;
@@ -296,11 +296,11 @@ const getOdieIntroMessage = (
 		? __(
 				"I'm your personal Support Assistant. I can help with any questions about your site or account.",
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				"I'm your personal AI assistant. I can help with any questions about your site or account.",
 				__i18n_text_domain__
-		  );
+			);
 };
 
 export const getOdieInitialMessage = (

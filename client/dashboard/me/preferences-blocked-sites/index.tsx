@@ -23,7 +23,7 @@ export default function PreferencesBlockedSites( { density }: { density?: Densit
 						),
 						intent: 'informational' as const,
 					},
-			  ];
+				];
 
 	return (
 		<RouterLinkSummaryButton

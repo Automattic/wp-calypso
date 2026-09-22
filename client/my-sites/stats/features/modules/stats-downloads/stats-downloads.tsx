@@ -110,7 +110,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 							? {
 									url: summaryUrl,
 									label: translate( 'View more' ),
-							  }
+								}
 							: undefined
 					}
 				/>

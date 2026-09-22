@@ -63,11 +63,11 @@ export default function SignupExistingAccountNotice() {
 				? translate(
 						'We found a WordPress.com account with the email %(email)s. Log in below, or {{a}}sign up with a different email{{/a}}.',
 						{ args: { email }, components }
-				  )
+					)
 				: translate(
 						'We found a WordPress.com account with that email address. Log in below, or {{a}}sign up with a different email{{/a}}.',
 						{ components }
-				  ) }
+					) }
 		</Notice>
 	);
 }

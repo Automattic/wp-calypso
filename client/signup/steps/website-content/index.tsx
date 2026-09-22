@@ -272,10 +272,10 @@ export default function WrapperWebsiteContent(
 	const descriptionText = data?.isStoreFlow
 		? translate(
 				'Provide content for your website build. You can add products later with the WordPress editor.'
-		  )
+			)
 		: translate(
 				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
-		  );
+			);
 
 	const subHeaderText = (
 		<>

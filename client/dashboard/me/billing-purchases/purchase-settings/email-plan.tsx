@@ -72,9 +72,9 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 	);
 	const description = isMonthlyEmailProduct( purchase )
 		? /* translators: %s is a per-mailbox monthly price, e.g. "$3.50". */
-		  sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
+			sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
 		: /* translators: %s is a per-mailbox yearly price, e.g. "$42". */
-		  sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
+			sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
 
 	return (
 		<ActionList.ActionItem
@@ -170,14 +170,14 @@ export function EmailPlanMailboxCard( { purchase }: { purchase: Purchase } ) {
 					// translators: %d is a number of mailboxes.
 					_n( '%d mailbox', '%d mailboxes', count ),
 					count
-			  );
+				);
 
 	return (
 		<OverviewCard
 			icon={ envelope }
 			title={ _n( 'Mailbox', 'Mailboxes', count ) }
 			heading={ heading }
-			description={ count === 1 && firstMailbox ? undefined : purchase.meta ?? undefined }
+			description={ count === 1 && firstMailbox ? undefined : ( purchase.meta ?? undefined ) }
 			link="/emails"
 			isLoading={ isLoading }
 		/>

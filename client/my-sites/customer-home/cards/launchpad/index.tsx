@@ -9,8 +9,10 @@ import { useMyHomeCardLaunchpad } from './use-my-home-card-launchpad';
 import './style.scss';
 import type { EventHandlers } from '@automattic/launchpad';
 
-interface CustomerHomeLaunchpadProps
-	extends Pick< EventHandlers, 'onSiteLaunched' | 'onTaskClick' > {
+interface CustomerHomeLaunchpadProps extends Pick<
+	EventHandlers,
+	'onSiteLaunched' | 'onTaskClick'
+> {
 	checklistSlug: string;
 }
 

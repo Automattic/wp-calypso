@@ -143,7 +143,7 @@ export const useSteps = ( {
 				? undefined
 				: () => {
 						setCurrentStep( index );
-				  };
+					};
 
 		let navigationAction = undefined;
 		const navigationButtonVariant = step.action ? 'secondary' : 'primary';

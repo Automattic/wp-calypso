@@ -516,23 +516,23 @@ function ExpiredRenewNotice( {
 			'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
 		)
 			? // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
-			  __(
+				__(
 					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
-			  )
+				)
 			: // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
-			  __(
+				__(
 					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.'
-			  );
+				);
 
 	return (
 		<Notice variant="error">
 			{ createInterpolateElement(
 				sprintf( messageText, {
 					purchaseName: currentPurchase.is_domain
-						? currentPurchase.meta ?? ''
+						? ( currentPurchase.meta ?? '' )
 						: currentPurchase.product_name,
 					includedPurchaseName: includedPurchase.is_domain
-						? includedPurchase.meta ?? ''
+						? ( includedPurchase.meta ?? '' )
 						: includedPurchase.product_name,
 				} ),
 				{
@@ -622,7 +622,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY
 			? __( 'Commerce' )
 			: // translators: Business is a plan name
-			  __( 'Business' );
+				__( 'Business' );
 	const noticeText = daysToExpiry
 		? sprintf(
 				// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
@@ -635,7 +635,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 					expiry: String( daysToExpiry ),
 					productType: productType as string,
 				}
-		  )
+			)
 		: sprintf(
 				// translators: %productType is the type of product (e.g. ecommerce)
 				__(
@@ -644,7 +644,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				{
 					productType,
 				}
-		  );
+			);
 
 	return (
 		<Notice
@@ -683,9 +683,9 @@ function shouldShowCardExpiringNotice( purchase: Purchase ): boolean {
 export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 	return Boolean(
 		! isIncludedWithPlan( purchase ) &&
-			purchase.payment_card_id &&
-			creditCardExpiresBeforeSubscription( purchase ) &&
-			isCloseToExpiration( purchase )
+		purchase.payment_card_id &&
+		creditCardExpiresBeforeSubscription( purchase ) &&
+		isCloseToExpiration( purchase )
 	);
 }
 
@@ -707,14 +707,14 @@ function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 					'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
 				),
 				cardDetails
-		  )
+			)
 		: sprintf(
 				// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 				__(
 					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
 				),
 				cardDetails
-		  );
+			);
 
 	return (
 		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>

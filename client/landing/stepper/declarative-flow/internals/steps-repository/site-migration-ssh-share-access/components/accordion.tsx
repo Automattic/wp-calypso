@@ -58,7 +58,10 @@ export const AccordionStep: FC< AccordionStepProps > = ( { step, index } ) => {
 				</div>
 				{ isClickable && (
 					<div className="migration-site-ssh__accordion-chevron">
-						<Icon icon={ step.expandable?.isOpen ?? false ? chevronUp : chevronDown } size={ 24 } />
+						<Icon
+							icon={ ( step.expandable?.isOpen ?? false ) ? chevronUp : chevronDown }
+							size={ 24 }
+						/>
 					</div>
 				) }
 			</button>

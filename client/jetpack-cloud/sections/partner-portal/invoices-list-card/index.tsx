@@ -11,7 +11,16 @@ import type { Invoice } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
-function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUrl }: Invoice ) {
+function InvoicesListCard( {
+	id,
+	number,
+	created,
+	dueDate,
+	status,
+	total,
+	currency,
+	pdfUrl,
+}: Invoice ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dueDateMoment = moment( dueDate );
@@ -55,6 +64,11 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 		<InvoicesListRow>
 			<div>{ number }</div>
 			<div>
+				<span className="invoices-list-card__date-label">{ translate( 'Issued' ) }</span>
+				<FormattedDate date={ moment.unix( created ) } format="ll" />
+			</div>
+			<div>
+				<span className="invoices-list-card__date-label">{ translate( 'Due Date' ) }</span>
 				{ dueDate && <FormattedDate date={ moment( dueDate ) } format="ll" /> }
 				{ ! dueDate && <Gridicon icon="minus" /> }
 			</div>

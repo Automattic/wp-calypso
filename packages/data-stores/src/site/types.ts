@@ -36,9 +36,7 @@ export interface NewSiteErrorCreateBlog {
 }
 
 export type NewSiteResponse =
-	| NewSiteSuccessResponse
-	| NewSiteErrorResponse
-	| NewSiteErrorCreateBlog;
+	NewSiteSuccessResponse | NewSiteErrorResponse | NewSiteErrorCreateBlog;
 
 export enum Visibility {
 	PublicIndexed = 1,

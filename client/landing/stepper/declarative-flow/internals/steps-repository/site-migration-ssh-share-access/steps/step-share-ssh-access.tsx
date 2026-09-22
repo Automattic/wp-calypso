@@ -304,10 +304,10 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 												{
 													args: { hostName: hostDisplayName },
 												}
-										  )
+											)
 										: translate(
 												'Copy and paste your SSH key in your hosting account. Then come back to start your migration.'
-										  ) }
+											) }
 								</p>
 							</div>
 						) }
