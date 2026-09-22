@@ -1,4 +1,4 @@
-import { useDebounce, useEvent } from '@wordpress/compose';
+import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
@@ -11,16 +11,14 @@ export const Input = () => {
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 
-	useEffect( () => {
-		setLocalQuery( query );
-	}, [ query ] );
+	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
 
-	// `useDebounce` cancels the pending call whenever the callback identity
-	// changes, and the context rebuilds `setQuery` on every cart update. Give
-	// it a stable callback so a cart response landing mid-delay doesn't drop
-	// the typed query.
-	const propagateQuery = useEvent( setQuery );
-	const debouncedPropagateQuery = useDebounce( propagateQuery, DELAY_TIMEOUT );
+	// An external query change (e.g. a suggestion click) supersedes whatever
+	// was typed but not yet propagated.
+	useEffect( () => {
+		debouncedPropagateQuery.cancel();
+		setLocalQuery( query );
+	}, [ query, debouncedPropagateQuery ] );
 
 	return (
 		<DomainSearchControls.Input

@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { buildCart } from '../../../test-helpers/factories/cart';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { Input } from '../input';
 
@@ -42,27 +41,51 @@ describe( 'SearchBar#Input', () => {
 
 		const onQueryChange = jest.fn();
 
-		const { rerender } = render(
-			<TestDomainSearch query="test" events={ { onQueryChange } } cart={ buildCart() }>
+		const renderSearch = () => (
+			<TestDomainSearch query="test" events={ { onQueryChange } }>
 				<Input />
 			</TestDomainSearch>
 		);
+
+		const { rerender } = render( renderSearch() );
 
 		await user.type( screen.getByRole( 'searchbox' ), '2' );
 
-		// New `cart` and `events` objects rebuild the context value, and with it
-		// `setQuery`, before the debounce delay has elapsed.
-		rerender(
-			<TestDomainSearch query="test" events={ { onQueryChange } } cart={ buildCart() }>
-				<Input />
-			</TestDomainSearch>
-		);
+		// The renderer hands the context new `events` and `cart` objects on every
+		// render, as Calypso does, so the rerender rebuilds the context value
+		// before the debounce delay has elapsed.
+		rerender( renderSearch() );
 
 		expect( onQueryChange ).not.toHaveBeenCalled();
 
 		await waitFor( () => {
 			expect( onQueryChange ).toHaveBeenCalledWith( 'test2' );
 		} );
+	} );
+
+	it( 'drops the pending typed value when the query changes externally', async () => {
+		const user = userEvent.setup();
+
+		const onQueryChange = jest.fn();
+
+		const renderSearch = ( query: string ) => (
+			<TestDomainSearch query={ query } events={ { onQueryChange } }>
+				<Input />
+			</TestDomainSearch>
+		);
+
+		const { rerender } = render( renderSearch( 'test' ) );
+
+		await user.type( screen.getByRole( 'searchbox' ), '2' );
+
+		// e.g. a suggestion click calling setQuery before the delay has elapsed.
+		rerender( renderSearch( 'other' ) );
+
+		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'other' );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+
+		expect( onQueryChange ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not dispatch a query that was cleared before the delay', async () => {
