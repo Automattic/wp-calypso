@@ -107,9 +107,9 @@ export const provisionAgencyDevSiteMutation = ( agencyId: number ) =>
 /**
  * Removes a site from the agency's dashboard.
  *
- * Callers invalidate the sites list themselves: A4A runs on Calypso's
- * QueryClient rather than the api-queries singleton, so invalidating here would
- * hit the wrong cache.
+ * Callers refresh the sites list themselves: the backend takes a moment to drop
+ * the site from it, so the refresh is a delayed pair rather than a single
+ * invalidation, and the modal holds itself open until it has run.
  */
 export const agencySiteRemoveMutation = ( agencyId?: number ) =>
 	mutationOptions( {
