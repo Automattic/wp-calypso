@@ -3,12 +3,12 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import DiscoverNewBlogs from '../index';
-import type { OonRec } from '../types';
+import type { ReadNewBlogsRec } from '@automattic/api-core';
 
 // Mock the card: it hydrates through the Reader post store and needs
 // redux / react-query / a real post.
-jest.mock( '../card', () => ( props: { rec: OonRec; onDismiss: () => void } ) => (
-	<li data-testid="oon-card">
+jest.mock( '../card', () => ( props: { rec: ReadNewBlogsRec; onDismiss: () => void } ) => (
+	<li data-testid="new-blog-card">
 		<span>{ `Post ${ props.rec.postId }` }</span>
 		<button onClick={ props.onDismiss }>dismiss</button>
 	</li>
@@ -28,9 +28,9 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-const makeRec = ( n: number ): OonRec => ( { blogId: n, postId: n * 10, score: 1 / n } );
+const makeRec = ( n: number ): ReadNewBlogsRec => ( { blogId: n, postId: n * 10, score: 1 / n } );
 
-const renderModule = ( recs: OonRec[], overrides = {} ) => {
+const renderModule = ( recs: ReadNewBlogsRec[], overrides = {} ) => {
 	const props = { recs, dismissBlog: jest.fn(), hide: jest.fn(), ...overrides };
 	return { ...render( <DiscoverNewBlogs { ...props } /> ), props };
 };
@@ -53,7 +53,7 @@ describe( 'DiscoverNewBlogs', () => {
 	it( 'shows a fixed maximum of 3 cards', () => {
 		const many = Array.from( { length: 20 }, ( _, i ) => makeRec( i + 1 ) );
 		renderModule( many );
-		expect( screen.getAllByTestId( 'oon-card' ) ).toHaveLength( 3 );
+		expect( screen.getAllByTestId( 'new-blog-card' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'dismisses by blog when a card X is clicked', () => {
@@ -68,7 +68,7 @@ describe( 'DiscoverNewBlogs', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'More like this' } ) );
 		expect( screen.queryByText( 'Post 10' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Post 40' ) ).toBeVisible();
-		expect( screen.getAllByTestId( 'oon-card' ) ).toHaveLength( 2 );
+		expect( screen.getAllByTestId( 'new-blog-card' ) ).toHaveLength( 2 );
 		expect( screen.queryByRole( 'button', { name: 'More like this' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -84,7 +84,7 @@ describe( 'DiscoverNewBlogs', () => {
 		rerender(
 			<DiscoverNewBlogs recs={ recs.slice( 0, 3 ) } dismissBlog={ jest.fn() } hide={ jest.fn() } />
 		);
-		expect( screen.getAllByTestId( 'oon-card' ) ).toHaveLength( 3 );
+		expect( screen.getAllByTestId( 'new-blog-card' ) ).toHaveLength( 3 );
 		expect( screen.getByText( 'Post 10' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'More like this' } ) ).not.toBeInTheDocument();
 	} );

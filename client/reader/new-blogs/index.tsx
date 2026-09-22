@@ -1,38 +1,26 @@
 /**
- * "Discover new blogs" — bounded in-feed module in the Reader's Recent feed
- * (READ-542), following the design on the Reader Content Discovery
- * Experiment project and the placement agreed in the issue thread.
+ * "Discover new blogs" — bounded, feature-flagged block in the Reader's Recent
+ * feed (READ-542). Shows a fixed 3 recommendations with a per-card
+ * "not interested" X, a "More like this" pager and a "Hide" link.
  *
- * PRD constraints enforced here / by the caller:
- *   - Bounded + clearly labelled; a single block in the Recent stream (via
- *     Stream's `inStreamBlock`) in the third spot, after two recent posts.
- *   - Fixed at 3 posts (no selector — keeps the data comparable).
- *   - One lightweight control per item: the X = "not interested", which hides
- *     the card immediately and keeps that blog's posts from coming back.
- *   - "Hide" dismisses the whole module.
- *   - "More like this" pages to the next 3 recs (count stays fixed).
- *   - Cold-start users (no snapshot row) see nothing — the caller doesn't
- *     mount the block at all.
- *   - Serve-time public/deleted check: server-side in the endpoint (READ-542
- *     layer 2) and re-checked here by hydrating each post through the Reader
- *     post store — an error post never renders.
+ * The caller owns the data and the flag: it renders nothing when `recs` is
+ * empty, so cold-start users never see an empty state.
  *
- * Gate this behind `isEnabled( 'reader/discover-new-blogs' )` at
- * the mount site.
+ * See client/reader/new-blogs/README.md.
  */
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import OonRecCard from './card';
-import type { UseOonRecsResult } from './use-oon-recs';
+import NewBlogCard from './card';
+import type { UseNewBlogsResult } from './use-new-blogs';
 import './style.scss';
 
-/** Fixed number of cards, per the READ-542 answers. */
-export const DISPLAY_LIMIT = 3;
+/** Fixed number of cards, per the READ-542 answers (no selector: keeps the A/B data comparable). */
+const DISPLAY_LIMIT = 3;
 
-type Props = Pick< UseOonRecsResult, 'recs' | 'dismissBlog' | 'hide' >;
+type Props = Pick< UseNewBlogsResult, 'recs' | 'dismissBlog' | 'hide' >;
 
 export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 	const translate = useTranslate();
@@ -100,7 +88,7 @@ export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 
 			<ul className="reader-discover-new-blogs__list">
 				{ visible.map( ( rec ) => (
-					<OonRecCard
+					<NewBlogCard
 						key={ `${ rec.blogId }-${ rec.postId }` }
 						rec={ rec }
 						onDismiss={ () => handleDismiss( rec.blogId, rec.postId ) }

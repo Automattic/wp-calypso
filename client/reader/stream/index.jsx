@@ -138,7 +138,7 @@ class ReaderStream extends Component {
 		restoreScroll: PropTypes.bool,
 		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
-		// A caller-rendered block inserted once into the list, after `inStreamBlockPosition` posts.
+		// A caller-rendered block inserted once into the list, after `inStreamBlockPosition` posts (default 0).
 		inStreamBlock: PropTypes.node,
 		inStreamBlockPosition: PropTypes.number,
 		showFollowInHeader: PropTypes.bool,
@@ -916,7 +916,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 			);
 
 			return hasInStreamBlock
-				? injectCustomBlock( withPrompts, props.inStreamBlockPosition ?? 3 )
+				? injectCustomBlock( withPrompts, props.inStreamBlockPosition ?? 0 )
 				: withPrompts;
 		}, [
 			followsCount,

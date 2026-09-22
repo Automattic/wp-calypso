@@ -100,6 +100,7 @@ export * from './read-feeds';
 export * from './read-follows';
 export * from './read-list-items';
 export * from './read-lists';
+export * from './read-new-blogs';
 export * from './read-organizations';
 export * from './read-post';
 export * from './read-profile-settings';

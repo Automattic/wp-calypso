@@ -7,7 +7,7 @@ import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import DiscoverNewBlogs from 'calypso/reader/new-blogs';
-import { useOonRecs } from 'calypso/reader/new-blogs/use-oon-recs';
+import { useNewBlogs } from 'calypso/reader/new-blogs/use-new-blogs';
 import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
@@ -56,14 +56,11 @@ function FollowingStream( { ...props } ) {
 	// "Discover new blogs" (READ-542): one bounded block in the Recent feed,
 	// in the third spot (after two recent posts), per the READ-542 thread. Only
 	// on the "all subscriptions" feed, never on a single site's feed, and not
-	// mounted at all for cold-start users or once the user hides it.
-	const { recs, isColdStart, isHidden, dismissBlog, hide } = useOonRecs();
+	// mounted at all while loading, for cold-start users, or once hidden —
+	// all of which leave `recs` empty.
+	const { recs, isHidden, dismissBlog, hide } = useNewBlogs();
 	const showNewBlogs =
-		isEnabled( 'reader/discover-new-blogs' ) &&
-		! props.feedId &&
-		! isColdStart &&
-		! isHidden &&
-		recs.length > 0;
+		isEnabled( 'reader/discover-new-blogs' ) && ! props.feedId && ! isHidden && recs.length > 0;
 	// Memoised so the stream only rebuilds its item list when the recs change.
 	const newBlogsBlock = useMemo(
 		() =>

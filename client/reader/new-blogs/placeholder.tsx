@@ -1,10 +1,10 @@
 /**
- * Same shape as OonRecCard, shown while a rec's post is being hydrated so the
+ * Same shape as NewBlogCard, shown while a rec's post is being hydrated so the
  * block keeps its height and the feed below doesn't jump. Follows the Reader
  * placeholder pattern (recommended-sites/placeholder, stream/post-placeholder):
  * real layout, `is-placeholder` classes, `placeholder()` mixin for the pulse.
  */
-export default function OonRecCardPlaceholder() {
+export default function NewBlogCardPlaceholder() {
 	return (
 		<li className="reader-discover-new-blogs__card is-placeholder" aria-hidden="true">
 			<div className="reader-discover-new-blogs__card-head">

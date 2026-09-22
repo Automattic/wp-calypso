@@ -20,20 +20,20 @@ import { usePost } from 'calypso/reader/data/post';
 import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER_NEW_BLOGS } from 'calypso/reader/follow-sources';
-import { getSiteName } from 'calypso/reader/get-helpers';
+import { getSiteName, type ReaderPost } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
 import { showSelectedPost } from 'calypso/reader/utils';
-import OonRecCardPlaceholder from './placeholder';
-import type { OonRec } from './types';
+import NewBlogCardPlaceholder from './placeholder';
+import type { ReadNewBlogsRec } from '@automattic/api-core';
 
 interface Props {
-	rec: OonRec;
+	rec: ReadNewBlogsRec;
 	onDismiss: () => void;
 	onOpen: () => void;
 	onFollowToggle: ( isFollowing: boolean ) => void;
 }
 
-export default function OonRecCard( { rec, onDismiss, onOpen, onFollowToggle }: Props ) {
+export default function NewBlogCard( { rec, onDismiss, onOpen, onFollowToggle }: Props ) {
 	const translate = useTranslate();
 	const postKey = { blogId: rec.blogId, postId: rec.postId };
 	const { data: post, isLoading } = usePost( postKey );
@@ -46,7 +46,7 @@ export default function OonRecCard( { rec, onDismiss, onOpen, onFollowToggle }: 
 
 	// Keep the block's height while the post hydrates so the feed doesn't jump.
 	if ( ! post && isLoading ) {
-		return <OonRecCardPlaceholder />;
+		return <NewBlogCardPlaceholder />;
 	}
 
 	// Failed the serve-time guard (deleted / private / 404): render nothing.
@@ -54,7 +54,7 @@ export default function OonRecCard( { rec, onDismiss, onOpen, onFollowToggle }: 
 		return null;
 	}
 
-	const siteName = getSiteName( { site, feed, post: post as never } ) ?? '';
+	const siteName = getSiteName( { site, feed, post: post as Partial< ReaderPost > } ) ?? '';
 	const siteUrl = ( post.feed_URL || post.site_URL || site?.URL || '' ) as string;
 	const siteIcon = feed?.site_icon ?? feed?.image ?? site?.icon?.img;
 	const streamUrl = getStreamUrl( feedId, siteId );
