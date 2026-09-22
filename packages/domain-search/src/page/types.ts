@@ -76,15 +76,12 @@ export interface DomainSearchCart {
  */
 export type SearchTrigger =
 	| 'prefilled'
-	| 'submit_button'
-	| 'submit_enter'
+	| 'submit'
 	| 'input_change'
 	| 'results_input'
 	| 'filter_apply'
 	| 'filter_reset'
 	| 'hint_link';
-
-export type SubmitMethod = 'enter' | 'button';
 
 export interface DomainSearchEvents {
 	onContinue: () => void;
@@ -95,7 +92,7 @@ export interface DomainSearchEvents {
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( domainName: string ) => void;
-	onSubmitButtonClick: ( query: string, submitMethod: SubmitMethod ) => void;
+	onSubmitButtonClick: ( query: string ) => void;
 	onQueryChange: ( query: string ) => void;
 	/**
 	 * A logical search settled: fired once per accepted suggestions response.
