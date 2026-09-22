@@ -138,12 +138,12 @@ describe( 'NamePulseResults', () => {
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] );
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
-			'icecream.org',
 			'icecream.net',
 			'icecream.art',
 			'icecream.info',
+			'icecream.shop',
 		] );
 	} );
 
@@ -369,11 +369,11 @@ describe( 'NamePulseResults', () => {
 			/>
 		);
 
-		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.org' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
 		await user.click(
-			within( rowFor( 'icecream.blog' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
 		);
 
 		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {

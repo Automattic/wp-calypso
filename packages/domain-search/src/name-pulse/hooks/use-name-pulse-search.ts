@@ -4,7 +4,6 @@ import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
 import {
 	applyNamePulseVerdict,
-	calculateTopTlds,
 	excludeDomains,
 	generateExactMatches,
 	getResultsLayout,
@@ -74,7 +73,6 @@ export const useNamePulseSearch = ( query: string ) => {
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
-	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
 	const isLoadingTlds = isPendingTlds && showExactGrid;
 
 	const exactRows = useMemo(
@@ -111,10 +109,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ exactRows, exactVerdicts ]
 	);
 
-	const topResults = useMemo(
-		() => getTopResults( rawExactList, topTlds ),
-		[ rawExactList, topTlds ]
-	);
+	const topResults = useMemo( () => getTopResults( rawExactList ), [ rawExactList ] );
 
 	// Top results backfill from rows outside the initial slice (for example
 	// after that batch failed); make sure whatever is featured gets checked.
