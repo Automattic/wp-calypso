@@ -9,8 +9,8 @@ jest.mock( '@automattic/charts', () => ( {
 	LineChart: jest.fn( () => null ),
 } ) );
 
-const renderAxes = () => {
-	render( <OverviewChart series={ [] } height={ 160 } /> );
+const renderAxes = ( unit = 'day' ) => {
+	render( <OverviewChart series={ [] } height={ 160 } unit={ unit } /> );
 	return LineChart.mock.calls[ 0 ][ 0 ].options.axis;
 };
 
@@ -22,6 +22,11 @@ describe( 'OverviewChart axes', () => {
 	it( 'labels dates as a short month and day', () => {
 		const { x } = renderAxes();
 		expect( x.tickFormat( new Date( 2026, 8, 20 ).getTime() ) ).toBe( 'Sep 20' );
+	} );
+
+	it( 'labels monthly points by month alone', () => {
+		const { x } = renderAxes( 'month' );
+		expect( x.tickFormat( new Date( 2026, 8, 1 ).getTime() ) ).toBe( 'Sep' );
 	} );
 
 	it( 'gives the x axis the class the edge-label rule targets', () => {

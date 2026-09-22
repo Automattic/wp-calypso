@@ -56,6 +56,12 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		activateProduct().catch( () => setDisabled( false ) );
 	};
 
+	// Nothing worth showing: the figure is unknown and the viewer cannot act on it, so a
+	// zero would read as a real count.
+	if ( isError && ! canManageModule ) {
+		return null;
+	}
+
 	return (
 		<div
 			className={ clsx( 'stats-widget-module', 'stats-widget-metric', className ) }
@@ -64,7 +70,6 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 			<div className="stats-widget-metric__title">{ title }</div>
 			{ ( isLoading || ! isError || ! canManageModule ) && (
 				// Zero while loading, so it counts up once the figure lands, as in Overview.
-				// An error leaves `value` as whatever the query threw, so it shows nothing.
 				<MetricValue
 					value={ ! isLoading && Number.isFinite( value ) ? value : 0 }
 					describe={ describe }
@@ -190,13 +195,28 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 	const translate = useTranslate();
 	const isWPAdminAndNotSimpleSite = config.isEnabled( 'is_running_in_jetpack_site' );
+	const canManageModules = canCurrentUser( siteId, 'manage_options' );
+
+	// Both cards query through these keys too, so this reads their cached state rather
+	// than fetching again.
+	const { isError: isProtectError } = useModuleDataQuery( 'protect' );
+	const { isError: isAkismetError } = useModuleDataQuery( 'akismet' );
 
 	// Akismet and Protect modules are not available on Simple sites.
 	if ( ! isWPAdminAndNotSimpleSite ) {
 		return null;
 	}
 
+	// A card hides itself when its figure failed and the viewer cannot act on it; with
+	// both hidden the section would be an empty card.
+	const hasProtect = ! isProtectError || canManageModules;
+	const hasAkismet = ! isAkismetError || canManageModules;
+	if ( ! hasProtect && ! hasAkismet ) {
+		return null;
+	}
+
 	// Doubles as the Akismet key configuration page, which is where its spam figures live.
+	// It needs the same capability as the module itself, so it travels with the card.
 	const akismetUrl = adminBaseUrl + 'admin.php?page=akismet-key-config';
 
 	return (
@@ -213,9 +233,11 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 					manageUrl={ akismetUrl }
 				/>
 			</div>
-			<div className="stats-widget-modules__footer">
-				<a href={ akismetUrl }>{ translate( 'Anti-spam insights' ) }</a>
-			</div>
+			{ hasAkismet && (
+				<div className="stats-widget-modules__footer">
+					<a href={ akismetUrl }>{ translate( 'Anti-spam insights' ) }</a>
+				</div>
+			) }
 		</WidgetSection>
 	);
 }

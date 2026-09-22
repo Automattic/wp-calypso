@@ -4,6 +4,7 @@ import '@automattic/charts/style.css';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
+import { Unit } from '../typings';
 
 export interface ChartSeries {
 	label: string;
@@ -14,6 +15,8 @@ export interface ChartSeries {
 interface OverviewChartProps {
 	series: ChartSeries[];
 	height: number;
+	/** The range's bucket, so monthly points are labelled by month rather than by date. */
+	unit: Unit;
 }
 
 /**
@@ -22,8 +25,9 @@ interface OverviewChartProps {
  * @param props        Component props.
  * @param props.series The series to plot.
  * @param props.height Chart height in pixels.
+ * @param props.unit   The range's bucket.
  */
-const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, height } ) => (
+const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, height, unit } ) => (
 	<LineChart
 		data={ series }
 		withTooltips
@@ -40,7 +44,8 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 				// The class lets mini-chart.scss right-align the last date on the 7-day chart.
 				x: {
 					axisClassName: 'stats-widget-chart__x-axis',
-					tickFormat: ( value: number ) => moment( value ).format( 'MMM D' ),
+					tickFormat: ( value: number ) =>
+						moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
 				},
 				// Compact ticks ("12K"), which fit the left margin and match the totals. Zero is
 				// blanked since the grid line marks it; the package doesn't type visx's `hideZero`.

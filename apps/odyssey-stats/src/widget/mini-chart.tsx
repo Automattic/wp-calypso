@@ -155,7 +155,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 				) }
 				{ ! isLoading && ! isEmpty && (
 					<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
-						<OverviewChart series={ series } height={ CHART_HEIGHT } />
+						<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 					</Suspense>
 				) }
 			</div>
