@@ -382,6 +382,10 @@ function isFeaturedImageSuggestionAvailable(
 	if ( ! isImageStudioAvailable() ) {
 		return false;
 	}
+	const blockEditor = ( window as any ).wp?.data?.select?.( 'core/block-editor' );
+	if ( ! blockEditor?.getSettings?.().mediaUpload ) {
+		return false;
+	}
 	return currentPostTypeSupportsFeaturedImage( currentPostType );
 }
 

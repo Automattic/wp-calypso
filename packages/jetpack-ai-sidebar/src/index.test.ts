@@ -280,6 +280,7 @@ interface PostTypeMockOptions {
 	isPostEmpty?: boolean;
 	/** Drops the selector, as an editor predating it would. */
 	omitIsEditedPostEmpty?: boolean;
+	mediaUpload?: unknown;
 }
 
 function installPostTypeMock(
@@ -325,6 +326,9 @@ function installPostTypeMock(
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
+						getSettings: () => ( {
+							mediaUpload: 'mediaUpload' in options ? options.mediaUpload : jest.fn(),
+						} ),
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
@@ -2248,7 +2252,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
-	it( 'shows Generate Featured Image when Image Studio is available', () => {
+	it( 'shows Generate Featured Image when Image Studio and uploads are available', () => {
 		installPostTypeMock( 'post' );
 		mockImageStudioActions = { openImageStudio: jest.fn() };
 
@@ -2259,6 +2263,33 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( chip?.label ).toBe( 'Generate featured image' );
 		expect( chip?.prompt ).toBe( '' );
 		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Generate Featured Image when mediaUpload is %s',
+		( mediaUpload ) => {
+			installPostTypeMock( 'post', 123, { mediaUpload } );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+
+			const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+			expect( ids ).not.toContain( 'generate-featured-image' );
+		}
+	);
+
+	it( 'checks upload permission each time featured image suggestions are requested', () => {
+		const options: PostTypeMockOptions = { mediaUpload: undefined };
+		installPostTypeMock( 'post', 123, options );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const ids = () => getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids() ).not.toContain( 'generate-featured-image' );
+
+		options.mediaUpload = jest.fn();
+		expect( ids() ).toContain( 'generate-featured-image' );
+
+		options.mediaUpload = false;
+		expect( ids() ).not.toContain( 'generate-featured-image' );
 	} );
 
 	it( 'hides Generate Featured Image when Image Studio is not available', () => {
