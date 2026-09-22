@@ -84,15 +84,18 @@ const BADGE_FILES: Record<
 	},
 	vip: {
 		'vip-pro-agency-partner': {
-			name: __( 'Pro Agency Partner' ),
+			name: __( 'WordPress VIP Pro Agency Partner' ),
 			href: `${ VIP_UPLOADS_URL }/2026/01/agency_tier_vip_vip_pro_partner.zip`,
 		},
 		'premier-partner': {
-			name: __( 'Premier Agency Partner' ),
+			name: __( 'WordPress VIP Premier Agency Partner' ),
 			href: `${ VIP_UPLOADS_URL }/2026/01/agency_tier_vip_premier_partner.zip`,
 		},
 	},
 };
+
+// The widest logo (the VIP wordmark), so every badge name lines up.
+const LOGO_SLOT_WIDTH = 38;
 
 const BADGE_ICONS: Record< AgencyPartnerDirectorySlug, ReactNode > = {
 	wordpress: <img src={ wordpressLogo } alt="" width={ 24 } height={ 24 } />,
@@ -200,7 +203,16 @@ export default function DownloadBadges( {
 									style={ { minHeight: '50px' } }
 								>
 									<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-										{ BADGE_ICONS[ badge.product ] }
+										<span
+											style={ {
+												display: 'inline-flex',
+												justifyContent: 'center',
+												flexShrink: 0,
+												width: `${ LOGO_SLOT_WIDTH }px`,
+											} }
+										>
+											{ BADGE_ICONS[ badge.product ] }
+										</span>
 										<Text size={ 15 } lineHeight="24px">
 											{ badge.name }
 										</Text>

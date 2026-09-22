@@ -17,11 +17,11 @@ describe( 'getBadgeDownloads', () => {
 
 	test( 'adds the VIP badge for the VIP Pro and Premier tiers', () => {
 		expect( getBadgeDownloads( [], 'vip-pro-agency-partner' ) ).toEqual( [
-			expect.objectContaining( { product: 'vip', name: 'Pro Agency Partner' } ),
+			expect.objectContaining( { product: 'vip', name: 'WordPress VIP Pro Agency Partner' } ),
 		] );
 		expect( getBadgeDownloads( [ 'woocommerce' ], 'premier-partner' ) ).toEqual( [
 			expect.objectContaining( { product: 'woocommerce', name: 'Woo Premier Agency Partner' } ),
-			expect.objectContaining( { product: 'vip', name: 'Premier Agency Partner' } ),
+			expect.objectContaining( { product: 'vip', name: 'WordPress VIP Premier Agency Partner' } ),
 		] );
 	} );
 
@@ -78,5 +78,21 @@ describe( '<DownloadBadges>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a8c_agency_tier_badges_download_modal_close'
 		);
+	} );
+
+	test( 'names the VIP badge so it stands apart from the WordPress.com one', async () => {
+		render(
+			<DownloadBadges directories={ [ 'wordpress' ] } currentAgencyTierId="premier-partner" />
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Download your badges' } ) );
+
+		expect(
+			screen.getByRole( 'link', { name: 'Download WordPress VIP Premier Agency Partner badges' } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'link', { name: 'Download WordPress.com Premier Agency Partner badges' } )
+		).toBeVisible();
+		expect( screen.getByText( 'WordPress VIP Premier Agency Partner' ) ).toBeVisible();
 	} );
 } );

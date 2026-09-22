@@ -99,4 +99,28 @@ describe( '<TierBenefits>', () => {
 
 		expect( screen.queryByText( 'Download your badges' ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'renders plain links for hosts without the dashboard router', async () => {
+		const recordTracksEvent = jest.fn();
+		render(
+			<TierBenefits
+				currentAgencyTierId="emerging-partner"
+				onScheduleCall={ jest.fn() }
+				recordTracksEvent={ recordTracksEvent }
+				links={ { 'manage-sites': '/sites' } }
+				shouldUseRouterLink={ false }
+			/>
+		);
+
+		const link = screen.getByRole( 'link', { name: 'Manage sites' } );
+		expect( link ).toHaveAttribute( 'href', '/sites' );
+
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await userEvent.click( link );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_agency_tier_benefits_action_click',
+			{ agency_tier: 'emerging-partner', action_id: 'manage-sites' }
+		);
+	} );
 } );
