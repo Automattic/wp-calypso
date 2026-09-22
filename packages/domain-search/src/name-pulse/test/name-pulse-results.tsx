@@ -465,8 +465,9 @@ describe( 'NamePulseResults', () => {
 		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
+		// Cards render as soon as the name is known; the button waits for the verdict.
 		await user.click(
-			within( rowFor( 'icecream.blog' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
 		);
 
 		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {
