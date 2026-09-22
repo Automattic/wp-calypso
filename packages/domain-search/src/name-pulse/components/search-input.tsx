@@ -38,7 +38,7 @@ export const NamePulseSearchInput = () => {
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
-						setQuery( trimmedValue );
+						setQuery( trimmedValue, 'input_change' );
 					} else {
 						events.onQueryClear();
 					}

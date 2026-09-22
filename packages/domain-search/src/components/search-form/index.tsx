@@ -31,6 +31,9 @@ export const SearchForm = () => {
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	// Enter in the input triggers the form's implicit submission; the keydown is
+	// the only reliable way to tell it apart from a button click.
+	const submittedWithEnter = useRef( false );
 
 	// autoFocus races the stepper's route-transition animation; focus
 	// in an effect lands reliably after the commit phase.
@@ -41,7 +44,11 @@ export const SearchForm = () => {
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		setQuery( localQuery );
+		const submitMethod = submittedWithEnter.current ? 'enter' : 'button';
+		submittedWithEnter.current = false;
+
+		onSubmitButtonClick( localQuery, submitMethod );
+		setQuery( localQuery, submitMethod === 'enter' ? 'submit_enter' : 'submit_button' );
 
 		if ( localQuery === '' ) {
 			setShowSearchHint( true );
@@ -53,6 +60,9 @@ export const SearchForm = () => {
 		value: localQuery,
 		onChange: ( value: string ) => setLocalQuery( value.trim() ),
 		onReset: () => setLocalQuery( '' ),
+		onKeyDown: ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+			submittedWithEnter.current = event.key === 'Enter';
+		},
 		placeholder,
 	};
 
@@ -62,15 +72,12 @@ export const SearchForm = () => {
 				{ isMobileViewport ? (
 					<div className="domain-search__search-form-field">
 						<DomainSearchControls.Input { ...inputProps } />
-						<DomainSearchControls.Submit
-							iconOnly
-							onClick={ () => onSubmitButtonClick( localQuery ) }
-						/>
+						<DomainSearchControls.Submit iconOnly />
 					</div>
 				) : (
 					<HStack alignment="flex-start" spacing={ 4 }>
 						<DomainSearchControls.Input { ...inputProps } />
-						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
+						<DomainSearchControls.Submit />
 					</HStack>
 				) }
 				{ showSearchHint && (
@@ -83,14 +90,14 @@ export const SearchForm = () => {
 								studioLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'studio' ) }
+										onClick={ () => setQuery( 'studio', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),
 								coffeeLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'coffee' ) }
+										onClick={ () => setQuery( 'coffee', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),

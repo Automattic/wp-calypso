@@ -4,13 +4,14 @@ import { useEffect, useRef } from 'react';
 import { useDomainSearch } from '../page/context';
 
 export const useRequestTracking = () => {
-	const { query, events, queries } = useDomainSearch();
+	const { query, searchId, searchTrigger, events, queries } = useDomainSearch();
 	const lastQueryChangeTime = useRef( 0 );
 
 	const {
 		data: suggestions = [],
 		isLoading: isLoadingSuggestions,
 		isPending: isPendingSuggestions,
+		isSuccess: isSuccessSuggestions,
 	} = useQuery( queries.domainSuggestions( query ) );
 
 	const { data: availabilityData, isLoading: isLoadingQueryAvailability } = useQuery(
@@ -35,6 +36,18 @@ export const useRequestTracking = () => {
 			triggerSuggestionsReceiveEvent();
 		}
 	}, [ triggerSuggestionsReceiveEvent, isLoadingSuggestions, isPendingSuggestions ] );
+
+	const triggerSearchEvent = useEvent( () => {
+		events.onSearch( query, searchId, searchTrigger );
+	} );
+
+	// One search event per accepted response: a superseded request never
+	// reaches success for its search id, and errors are not searches.
+	useEffect( () => {
+		if ( isSuccessSuggestions ) {
+			triggerSearchEvent();
+		}
+	}, [ triggerSearchEvent, isSuccessSuggestions, searchId ] );
 
 	const triggerQueryAvailabilityCheckEvent = useEvent( () => {
 		const availabilityCheckResponseTime = Date.now() - lastQueryChangeTime.current;

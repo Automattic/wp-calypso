@@ -1,8 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
-import { useDebounce } from '@wordpress/compose';
-import { type ComponentProps, useCallback, useMemo, useRef } from 'react';
+import { type ComponentProps, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import {
@@ -42,38 +41,33 @@ export const useWPCOMDomainSearchEvents = ( {
 	const searchCount = useRef( 0 );
 	const lastSearchTime = useRef( Date.now() );
 
-	const triggerDomainSearchEvent = useCallback(
-		( query: string ) => {
-			searchCount.current++;
-			const timeDiffFromLastSearchInSeconds = Math.floor(
-				( Date.now() - lastSearchTime.current ) / 1000
-			);
-			lastSearchTime.current = Date.now();
-
-			dispatch(
-				recordSearchFormSubmit(
-					query,
-					analyticsSection,
-					searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
-					searchCount.current,
-					vendor,
-					flowName
-				)
-			);
-		},
-		[ vendor, flowName, analyticsSection, dispatch ]
-	);
-
-	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10_000 );
-
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			onPageView: () => {
 				dispatch( recordSearchFormView( analyticsSection, flowName ) );
 			},
-			onQueryChange: ( query ) => {
+			onQueryChange: () => {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
-				debouncedDomainSearchEvent( query );
+			},
+			onSearch: ( query, searchId, trigger ) => {
+				searchCount.current++;
+				const timeDiffFromLastSearchInSeconds = Math.floor(
+					( Date.now() - lastSearchTime.current ) / 1000
+				);
+				lastSearchTime.current = Date.now();
+
+				dispatch(
+					recordSearchFormSubmit(
+						query,
+						analyticsSection,
+						searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
+						searchCount.current,
+						vendor,
+						flowName,
+						searchId,
+						trigger
+					)
+				);
 			},
 			onSkip: ( suggestion ) => {
 				if ( suggestion ) {
@@ -89,7 +83,7 @@ export const useWPCOMDomainSearchEvents = ( {
 						)
 					);
 					// We only offer free WPCOM subdomains during signup
-					dispatch( recordDomainSearchStepSubmit( suggestion, analyticsSection ) );
+					dispatch( recordDomainSearchStepSubmit( suggestion, analyticsSection, flowName ) );
 				} else {
 					// Skipped by clicking on "Choose a domain later"
 					const tracksProperties = {
@@ -117,8 +111,10 @@ export const useWPCOMDomainSearchEvents = ( {
 			onExternalDomainClick: () => {
 				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
 			},
-			onSubmitButtonClick: ( query ) => {
-				dispatch( recordSearchFormSubmitButtonClick( query, analyticsSection, flowName ) );
+			onSubmitButtonClick: ( query, submitMethod ) => {
+				dispatch(
+					recordSearchFormSubmitButtonClick( query, analyticsSection, flowName, submitMethod )
+				);
 			},
 			onQueryAvailabilityCheck: ( status, domainName, responseTime ) => {
 				dispatch(
@@ -152,11 +148,9 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onFilterApplied: ( filter ) => {
-				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersSubmit( filter, analyticsSection, flowName ) );
 			},
 			onFilterReset: ( filter, keysToReset ) => {
-				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
 			onShowMoreResults: ( pageNumber ) => {
@@ -193,6 +187,8 @@ export const useWPCOMDomainSearchEvents = ( {
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,
+					flow_name: flowName,
+					section: analyticsSection,
 				} );
 			},
 			onSuggestionNotFound: ( domainName ) => {
@@ -229,6 +225,8 @@ export const useWPCOMDomainSearchEvents = ( {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
+					flow_name: flowName,
+					section: analyticsSection,
 				} );
 			},
 			onBundleAddToCart: ( bundle, placement ) => {
@@ -236,10 +234,12 @@ export const useWPCOMDomainSearchEvents = ( {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
+					flow_name: flowName,
+					section: analyticsSection,
 				} );
 			},
 		};
-	}, [ flowName, vendor, query, debouncedDomainSearchEvent, analyticsSection, dispatch ] );
+	}, [ flowName, vendor, query, analyticsSection, dispatch ] );
 
 	return events;
 };

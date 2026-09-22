@@ -906,7 +906,8 @@ describe( 'useWPCOMDomainSearchProps', () => {
 
 		expect( recordDomainSearchStepSubmit ).toHaveBeenCalledWith(
 			{ domain_name: 'my-domain.com' },
-			'analytics-section'
+			'analytics-section',
+			'flow-name'
 		);
 	} );
 
@@ -1452,14 +1453,15 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		result.current.events.onSubmitButtonClick( 'my-domain.com' );
+		result.current.events.onSubmitButtonClick( 'my-domain.com', 'enter' );
 
-		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com' );
+		expect( onSubmitButtonClick ).toHaveBeenCalledWith( 'my-domain.com', 'enter' );
 
 		expect( recordSearchFormSubmitButtonClick ).toHaveBeenCalledWith(
 			'my-domain.com',
 			'analytics-section',
-			'flow-name'
+			'flow-name',
+			'enter'
 		);
 	} );
 } );
