@@ -1,21 +1,20 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal, DomainSuggestionBadge } from '../../ui';
 import {
+	isNamePulseAvailable,
 	NamePulseDomainStatus,
-	pickPricing,
+	toNamePulseRealtimeVerdict,
 	type NamePulseDomainResult,
-	type NamePulseVerdict,
 } from '../helpers';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import type { DomainAvailability } from '@automattic/api-core';
@@ -24,22 +23,6 @@ interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
 }
-
-const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
-	status === DomainAvailabilityStatus.AVAILABLE ||
-	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
-
-const toRealtimeVerdict = ( availability: DomainAvailability ): NamePulseVerdict => {
-	const available = isAvailableStatus( availability.status );
-
-	return {
-		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
-		...pickPricing( availability ),
-		cost: available ? availability.cost : undefined,
-		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		is_realtime: true,
-	};
-};
 
 const formatPrice = ( amount: number, currencyCode: string ) =>
 	formatCurrency( amount, currencyCode, { stripZeros: true } );
@@ -101,23 +84,50 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
 
-	const {
-		domain_name: domainName,
-		suffix,
-		status,
-		is_premium: isPremium,
-		is_realtime: isRealtime,
-	} = result;
+	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
+
+	// The bulk check prices a premium name at its TLD's standard rate, so the row
+	// asks for a per-domain check rather than quoting a price we cannot honor.
+	// Suggestions are priced by the registry already, so they render straight away.
+	const needsPremiumPrice =
+		result.status === NamePulseDomainStatus.AVAILABLE &&
+		!! result.is_premium &&
+		! result.is_realtime &&
+		source === 'exact';
+
+	// The key is shared with the pre-cart check, so clicking the row afterwards
+	// costs no second request.
+	const { data: realtimeAvailability, isError: isPremiumPriceError } = useQuery( {
+		...queries.domainAvailability( domainName ),
+		enabled: needsPremiumPrice,
+	} );
+
+	const realtimeVerdict = useMemo(
+		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
+		[ realtimeAvailability ]
+	);
+
+	// Every other row listing this name reads the verdict from the shared cache.
+	useEffect( () => {
+		if ( realtimeVerdict ) {
+			setNamePulseVerdict( queryClient, domainName, realtimeVerdict );
+		}
+	}, [ realtimeVerdict, domainName, queryClient ] );
+
+	const row = realtimeVerdict ? { ...result, ...realtimeVerdict } : result;
+	const { status, is_premium: isPremium } = row;
 
 	const isWaiting = status === NamePulseDomainStatus.WAITING;
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	// Bulk results carry no premium pricing; the badge stands in for the price
-	// until the real-time check on click fills it in.
-	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
-	const showSaleBadge = isAvailable && hasSalePrice( result );
+	const isPremiumPriceUnknown = needsPremiumPrice && ! realtimeVerdict;
+	// A failed check leaves the row on its badge alone rather than on a skeleton
+	// for good.
+	const isPremiumPricePending = isPremiumPriceUnknown && ! isPremiumPriceError;
+	const showPremiumBadge = isAvailable && !! isPremium;
+	const showSaleBadge = isAvailable && hasSalePrice( row );
 	// A badge eats into the name column's width, so it gets a tighter label
 	// truncation budget than a row with the space to spare.
 	const labelTruncateLimit = showSaleBadge || showPremiumBadge ? 12 : 20;
@@ -145,9 +155,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
 			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			setNamePulseVerdict( queryClient, domainName, toRealtimeVerdict( availability ) );
+			setNamePulseVerdict( queryClient, domainName, toNamePulseRealtimeVerdict( availability ) );
 
-			if ( ! isAvailableStatus( availability.status ) ) {
+			if ( ! isNamePulseAvailable( availability ) ) {
 				throw new Error( __( 'Sorry, this domain is no longer available.' ) );
 			}
 
@@ -214,7 +224,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isAvailable && ! showPremiumBadge && <Price result={ result } /> }
+				{ isPremiumPricePending && (
+					<span
+						className="name-pulse-row__skeleton"
+						role="img"
+						aria-label={ __( 'Checking price…' ) }
+					/>
+				) }
+				{ isAvailable && ! isPremiumPriceUnknown && <Price result={ row } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button

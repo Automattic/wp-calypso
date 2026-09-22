@@ -12,6 +12,7 @@ import { buildCart } from '../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
 	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
+	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
@@ -41,13 +42,21 @@ const NamePulseTestSearch = ( {
 		errors: [],
 	} ),
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
-	domainAvailability = async ( domainName ) =>
-		buildAvailability( {
+	domainAvailability = async ( domainName ) => {
+		// Only this check knows a premium name's registry price; the bulk one
+		// quotes the standard TLD rate.
+		const isPremium = !! NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ]?.is_premium;
+
+		return buildAvailability( {
 			domain_name: domainName,
-			status: DomainAvailabilityStatus.AVAILABLE,
-			cost: '$24.00',
-			raw_price: 24,
-		} ),
+			status: isPremium
+				? DomainAvailabilityStatus.AVAILABLE_PREMIUM
+				: DomainAvailabilityStatus.AVAILABLE,
+			...( isPremium ? { is_supported_premium_domain: true } : {} ),
+			cost: isPremium ? '$3,500.00' : '$24.00',
+			raw_price: isPremium ? 3500 : 24,
+		} );
+	},
 	events,
 }: {
 	query: string;
@@ -215,8 +224,9 @@ describe( 'NamePulseResults', () => {
 		);
 
 		const premium = await findRow( 'icecream.co' );
-		expect( await within( premium ).findByText( 'Premium' ) ).toBeInTheDocument();
-		expect( within( premium ).queryByText( '/year' ) ).not.toBeInTheDocument();
+		expect( await within( premium ).findByText( '$3,500' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( '/year' ) ).toBeInTheDocument();
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
 		const sale = await findRow( 'icecream.site' );
