@@ -109,19 +109,25 @@ export class DomainSearchComponent {
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
 		const deadline = Date.now() + SEARCH_BUDGET;
+		let lastAttemptError: unknown;
 
 		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
 		// closure three times, so the search as a whole has to be bounded too: one
 		// that outlives the 120s test timeout reports that timeout instead of its
 		// own error - or the throttle the error stands for. Playwright reads a zero
 		// timeout as "wait forever", so a spent budget ends the search rather than
-		// reaching one.
+		// reaching one. The attempt that spent the budget is the one that says what
+		// went wrong, so its error is kept in the message.
 		const within = ( cap: number ): number => {
 			const left = deadline - Date.now();
 
 			if ( left <= 0 ) {
+				const lastAttempt =
+					lastAttemptError === undefined
+						? ''
+						: ` Last attempt failed with: ${ formatError( lastAttemptError ) }`;
 				throw new Error(
-					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.`
+					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.${ lastAttempt }`
 				);
 			}
 
@@ -151,15 +157,22 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
+			try {
+				await searchDomainAttempt( page );
+			} catch ( error ) {
+				lastAttemptError = error;
+				throw error;
+			}
+		}
+
+		/**
+		 * One attempt at the search, retried by `searchDomainClosure`.
+		 *
+		 * @param {Page} page Page object.
+		 */
+		async function searchDomainAttempt( page: Page ): Promise< void > {
 			const searchbox = page.getByRole( 'searchbox' );
 			const firstListitem = container.getByRole( 'listitem' ).first();
-
-			// Site flows pre-fill the searchbox and search for that value on
-			// mount. Typing before that first list renders drops the typed
-			// query: the input keeps the text but no request is made for it.
-			if ( ( await searchbox.inputValue() ) !== '' ) {
-				await firstListitem.waitFor( { timeout: within( 30 * 1000 ) } ).catch( () => {} );
-			}
 
 			const searchAndPressEnter = async () => {
 				await searchbox.fill( keyword );
