@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getActions, getCommentsUrl, getReferenceId } from '../../panel/helpers/notes';
+import { getActions, getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -21,7 +21,7 @@ const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
 
 const PendingApprovalStrip = ( { note }: { note: Note } ) => {
-	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
+	const commentsUrl = getModerateCommentsLink( note );
 
 	return (
 		<div className="wpnc__pending-approval-strip">
