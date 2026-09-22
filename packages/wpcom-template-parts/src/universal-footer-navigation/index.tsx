@@ -23,7 +23,7 @@ import {
 	XIconSvg,
 	YoutubeIconSvg,
 } from './svgs';
-import { getFooterColumns } from './taxonomy';
+import { getFooterColumns, getFooterColumns2026 } from './taxonomy';
 import type { FooterProps, PureFooterProps } from '../types';
 import type { FooterColumn } from './taxonomy';
 
@@ -356,18 +356,12 @@ export const PureUniversalNavbarFooter = ( {
 }: PureFooterProps ) => {
 	// Which column is expanded on small screens; the twin's stacks.js allows one at a time.
 	const [ openStack, setOpenStack ] = useState< string | null >( null );
-	const columns = getFooterColumns( {
+	// The redesign has its own link list; legal moved to the bottom bar.
+	const columns = ( colorway ? getFooterColumns2026 : getFooterColumns )( {
 		localizeUrl,
 		locale,
 		isLoggedIn,
 	} );
-	if ( colorway ) {
-		columns.forEach( ( column ) => {
-			column.links = column.links.filter(
-				( link ) => ! [ 'tos', 'privacy', 'ccpa-privacy' ].includes( link.slug )
-			);
-		} );
-	}
 	const sectionColorwayClass =
 		colorway === 'white'
 			? 'is-style-text-gray-100-background-white'

@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
+	useDeadlineCopy,
 	useOverrunCopy,
 	useStageSentences,
 	useStageTitles,
@@ -25,6 +26,7 @@ export default function TransferWaitCard( {
 	transferStatus,
 	fallbackStep = 0,
 	startedAt,
+	hasTimedOut = false,
 	isPluginInstall = true,
 	siteSlug,
 	productSlug,
@@ -32,6 +34,7 @@ export default function TransferWaitCard( {
 	transferStatus: string | null;
 	fallbackStep?: number;
 	startedAt?: number | null;
+	hasTimedOut?: boolean;
 	isPluginInstall?: boolean;
 	siteSlug?: string | null;
 	productSlug?: string;
@@ -41,12 +44,14 @@ export default function TransferWaitCard( {
 		transferStatus,
 		fallbackStep,
 		startedAt,
+		hasTimedOut,
 	} );
 	const stageKey = INSTALL_STAGES[ stage ].key;
 	const stageTitles = useStageTitles();
 	const sentences = useStageSentences( isPluginInstall );
 	const overrunCopy = useOverrunCopy();
 	const stalledCopy = useStalledCopy( isPluginInstall );
+	const deadlineCopy = useDeadlineCopy( isPluginInstall );
 	const stalledActionLabel = useStalledActionLabel( isPluginInstall );
 	const heading = isPluginInstall
 		? translate( 'Setting up your plugin' )
@@ -67,9 +72,17 @@ export default function TransferWaitCard( {
 		reportedStalledRef.current = true;
 		recordTracksEvent( 'calypso_transfer_wait_stalled', {
 			wait_type: waitType,
+			reason: hasTimedOut ? 'deadline' : 'finishing',
 			...( productSlug ? { product_slug: productSlug } : {} ),
 		} );
-	}, [ isStalled, waitType, productSlug ] );
+	}, [ isStalled, waitType, productSlug, hasTimedOut ] );
+
+	// A wait past its deadline is still running, so it says so; a stalled one has a finished transfer
+	// behind it and can say the site is ready.
+	let waitNotice = overrunCopy;
+	if ( isStalled ) {
+		waitNotice = hasTimedOut ? deadlineCopy : stalledCopy;
+	}
 
 	const showEscape = isStalled && !! siteSlug;
 
@@ -82,7 +95,7 @@ export default function TransferWaitCard( {
 				</p>
 				{ ( isStalled || isOverrun ) && (
 					<p className="transfer-wait__overrun" role="status">
-						{ isStalled ? stalledCopy : overrunCopy }
+						{ waitNotice }
 					</p>
 				) }
 			</div>
@@ -100,6 +113,7 @@ export default function TransferWaitCard( {
 						onClick={ () =>
 							recordTracksEvent( 'calypso_transfer_wait_stalled_click', {
 								wait_type: waitType,
+								reason: hasTimedOut ? 'deadline' : 'finishing',
 								...( productSlug ? { product_slug: productSlug } : {} ),
 								stage_seconds: Math.round( stageElapsedRef.current ),
 							} )

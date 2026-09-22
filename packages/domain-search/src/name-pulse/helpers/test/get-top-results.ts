@@ -1,4 +1,10 @@
-import { getTopResults, NamePulseDomainStatus, type NamePulseDomainResult } from '..';
+import {
+	getAiTopResults,
+	getTopResults,
+	NamePulseDomainStatus,
+	type NamePulseDomainResult,
+	type NamePulseSource,
+} from '..';
 
 const row = (
 	domain_name: string,
@@ -9,6 +15,13 @@ const row = (
 	status,
 	source: 'exact',
 } );
+
+const suggestion = (
+	domain_name: string,
+	raw_price: number,
+	source: NamePulseSource = 'keyword',
+	status: NamePulseDomainStatus = NamePulseDomainStatus.AVAILABLE
+): NamePulseDomainResult => ( { ...row( domain_name, status ), raw_price, source } );
 
 describe( 'getTopResults', () => {
 	it( 'features at most three rows, in list order, that are available or waiting', () => {
@@ -40,5 +53,44 @@ describe( 'getTopResults', () => {
 			'test.com',
 			'test.org',
 		] );
+	} );
+} );
+
+describe( 'getAiTopResults', () => {
+	it( 'features the three cheapest available suggestions, ties broken by name', () => {
+		const keyword = [
+			suggestion( 'zebra.blog', 12 ),
+			suggestion( 'taken.com', 8, 'keyword', NamePulseDomainStatus.TAKEN ),
+			suggestion( 'apple.blog', 12 ),
+			suggestion( 'pricey.com', 40 ),
+		];
+		const creative = [
+			suggestion( 'cheapest.dev', 4, 'ai' ),
+			suggestion( 'middling.app', 20, 'ai' ),
+		];
+
+		expect( getAiTopResults( keyword, creative ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'cheapest.dev',
+			'apple.blog',
+			'zebra.blog',
+		] );
+	} );
+
+	it( 'keeps the first copy of a domain both lists return', () => {
+		const shared = getAiTopResults(
+			[ suggestion( 'scoops.blog', 22 ) ],
+			[ suggestion( 'scoops.blog', 22, 'ai' ) ]
+		);
+
+		expect( shared ).toHaveLength( 1 );
+		expect( shared[ 0 ].source ).toBe( 'keyword' );
+	} );
+
+	it( 'sorts rows with no price last', () => {
+		expect(
+			getAiTopResults( [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ).map(
+				( r ) => r.domain_name
+			)
+		).toEqual( [ 'priced.com', 'unpriced.com' ] );
 	} );
 } );

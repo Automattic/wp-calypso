@@ -6,8 +6,11 @@ import {
 	applyNamePulseVerdict,
 	excludeDomains,
 	generateExactMatches,
+	getAiTopResults,
+	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
+	NAME_PULSE_AI_TIMEOUT_MS,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NAME_PULSE_QUERY_SETTLE_MS,
@@ -46,6 +49,49 @@ const toSuggestionResults = (
 };
 
 /**
+ * One suggestions request for the settled query. Its rows are never
+ * bulk-checked, but they read the verdict cache so a real-time verdict on click
+ * reaches them. Reports loading while the query is still being typed so the
+ * section holds its skeletons.
+ */
+const useNamePulseSuggestions = ( {
+	settledQuery,
+	isSettled,
+	show,
+	source,
+}: {
+	settledQuery: string;
+	isSettled: boolean;
+	show: boolean;
+	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
+} ) => {
+	const { queries } = useDomainSearch();
+	const useAi = source === 'ai';
+	const active = show && isSettled;
+	const { data, isPending } = useQuery( {
+		...queries.namePulseSuggestions( {
+			query: active ? sanitizeKeywordInput( settledQuery ) : '',
+			use_ai: useAi,
+			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
+		} ),
+		enabled: active,
+	} );
+
+	const rows = useMemo(
+		() => ( active ? toSuggestionResults( data?.suggestions, source ) : EMPTY_RESULTS ),
+		[ active, data, source ]
+	);
+	const names = useMemo( () => rows.map( ( row ) => row.domain_name ), [ rows ] );
+	const verdicts = useNamePulseVerdicts( names, false );
+	const results = useMemo(
+		() => rows.map( ( row ) => applyNamePulseVerdict( row, verdicts[ row.domain_name ] ) ),
+		[ rows, verdicts ]
+	);
+
+	return { results, isLoading: show && ( ! isSettled || isPending ) };
+};
+
+/**
  * Rows regenerate on every keystroke; availability and suggestion requests wait
  * for the query to settle. Every row reads its status from the per-domain
  * verdict cache, so a name that leaves the grid and comes back keeps its
@@ -68,7 +114,18 @@ export const useNamePulseSearch = ( query: string ) => {
 		isError: isTldsError,
 		refetch: refetchTlds,
 	} = useQuery( queries.namePulseTlds() );
-	const layout = useMemo( () => getResultsLayout( query, tlds ?? [] ), [ query, tlds ] );
+	// Sections mount as the user types, but AI mode (the exact grid collapsing and
+	// Top results switching source) follows the settled query, so crossing the
+	// four-word boundary mid-word does not flash the grid away and back.
+	const isAiMode = useMemo(
+		() => getResultsLayout( settledQuery, tlds ?? [] ).mode === 'ai',
+		[ settledQuery, tlds ]
+	);
+	const layout = useMemo( () => {
+		const typed = getResultsLayout( query, tlds ?? [] );
+
+		return { ...typed, exactGrid: { show: typed.top.show && ! isAiMode } };
+	}, [ query, tlds, isAiMode ] );
 	const { baseName, wordCount } = layout;
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
@@ -109,11 +166,39 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ exactRows, exactVerdicts ]
 	);
 
-	const topResults = useMemo( () => getTopResults( rawExactList ), [ rawExactList ] );
+	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
+		settledQuery,
+		isSettled,
+		show: layout.suggestions.show,
+		source: 'keyword',
+	} );
+	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
+		settledQuery,
+		isSettled,
+		show: layout.creative.show,
+		source: 'ai',
+	} );
+
+	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
+	const topResults = useMemo( () => {
+		if ( ! isAiMode ) {
+			return getTopResults( rawExactList );
+		}
+
+		// Both lists compete for the same three slots, so featuring the faster
+		// one's picks would swap every card once the other lands. The section
+		// stays on skeletons until it can pick from the full pool.
+		return isLoadingTop ? EMPTY_RESULTS : getAiTopResults( rawKeywordResults, rawCreativeResults );
+	}, [ isAiMode, isLoadingTop, rawKeywordResults, rawCreativeResults, rawExactList ] );
 
 	// Top results backfill from rows outside the initial slice (for example
 	// after that batch failed); make sure whatever is featured gets checked.
+	// AI-mode picks are suggestions, which are never bulk-checked.
 	useEffect( () => {
+		if ( isAiMode ) {
+			return;
+		}
+
 		const unchecked = topResults
 			.map( ( result ) => result.domain_name )
 			.filter( ( name ) => ! checkedNames.includes( name ) );
@@ -121,42 +206,20 @@ export const useNamePulseSearch = ( query: string ) => {
 		if ( unchecked.length > 0 ) {
 			requestNames( unchecked );
 		}
-	}, [ topResults, checkedNames, requestNames ] );
+	}, [ isAiMode, topResults, checkedNames, requestNames ] );
 
-	const keywordEnabled = layout.suggestions.show;
-	const keywordActive = keywordEnabled && isSettled;
-	const keywordQueryResult = useQuery( {
-		...queries.namePulseSuggestions( {
-			query: keywordActive ? sanitizeKeywordInput( settledQuery ) : '',
-			use_ai: false,
-		} ),
-		enabled: keywordActive,
+	// The bulk check is zone-file based: it says a domain is taken, not why.
+	// Both wait for the query to settle, so half-typed input is not checked or flagged.
+	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
+	const { data: typedDomainAvailability } = useQuery( {
+		...queries.domainAvailability( typedDomain ),
+		enabled: Boolean( typedDomain ),
 	} );
 
-	const suggestionRows = useMemo(
-		() =>
-			keywordActive
-				? toSuggestionResults( keywordQueryResult.data?.suggestions, 'keyword' )
-				: EMPTY_RESULTS,
-		[ keywordActive, keywordQueryResult.data ]
+	const notice = useMemo(
+		() => ( isSettled ? getNamePulseNotice( layout, typedDomainAvailability ) : null ),
+		[ isSettled, layout, typedDomainAvailability ]
 	);
-
-	// Keyword rows are never bulk-checked, but they read the same cache so a
-	// real-time verdict on click reaches them too.
-	const keywordNames = useMemo(
-		() => suggestionRows.map( ( row ) => row.domain_name ),
-		[ suggestionRows ]
-	);
-	const keywordVerdicts = useNamePulseVerdicts( keywordNames, false );
-	const rawKeywordResults = useMemo(
-		() =>
-			suggestionRows.map( ( row ) =>
-				applyNamePulseVerdict( row, keywordVerdicts[ row.domain_name ] )
-			),
-		[ suggestionRows, keywordVerdicts ]
-	);
-
-	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
 	// Each section drops domains already listed above it. Full lists are compared,
 	// not only the visible rows, so expanding a section never makes rows vanish
@@ -169,6 +232,10 @@ export const useNamePulseSearch = ( query: string ) => {
 		() => excludeDomains( rawKeywordResults, topResults, exactList ),
 		[ rawKeywordResults, topResults, exactList ]
 	);
+	const creativeResults = useMemo(
+		() => excludeDomains( rawCreativeResults, topResults, exactList, keywordResults ),
+		[ rawCreativeResults, topResults, exactList, keywordResults ]
+	);
 
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
@@ -177,13 +244,17 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
+		creativeResults,
 		topResults,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,
+		isLoadingTop,
 		isLoadingKeyword,
+		isLoadingCreative,
 		revealExact,
 	};
 };
