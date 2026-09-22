@@ -229,6 +229,45 @@ describe( 'useWaitForAtomic', () => {
 			expect( failures ).toEqual( [] );
 		} );
 
+		it( 'anchors a reload during the switch-over to the original transfer start', async () => {
+			// `relocating_switcheroo` is the last forward step, and a reload can land on it.
+			const startedSixMinutesAgo = new Date( Date.now() - 6 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'relocating_switcheroo',
+				created_at: startedSixMinutesAgo,
+			} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result } = renderWaitForAtomic();
+			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not let the revert pipeline of a previous transfer anchor the clock', async () => {
+			const revertedLongAgo = new Date( Date.now() - 6 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'cleanup',
+				created_at: revertedLongAgo,
+			} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result } = renderWaitForAtomic();
+			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
+		} );
+
 		it( 'lets a completed transfer win over the cap it crossed on the same poll', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,

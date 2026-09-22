@@ -26,6 +26,22 @@ const REVERTED_TRANSFER_STATUSES: string[] = [
 	transferStates.RELOCATING_REVERT,
 ];
 
+// The statuses that mean this endpoint's transfer is still moving forward, `relocating_switcheroo`
+// included: it is the switch-over, the last forward step, and wpcom's own `is_wpcom_atomic()` reads
+// it alongside `completed`. Deliberately not `calypso/state/automated-transfer`'s `transferInProgress`,
+// which answers for a different, narrower vocabulary — it has no `relocating_switcheroo` and carries
+// a `start` this endpoint never returns. The revert pipeline below belongs to a previous transfer.
+const FORWARD_TRANSFER_STATUSES: string[] = [
+	transferStates.PENDING,
+	transferStates.ACTIVE,
+	transferStates.PROVISIONED,
+	transferStates.RELOCATING_SWITCHEROO,
+];
+
+export function isForwardTransferStatus( status?: string | null ): boolean {
+	return !! status && FORWARD_TRANSFER_STATUSES.includes( status );
+}
+
 export function isRevertedTransferStatus( status?: string ): boolean {
 	return !! status && REVERTED_TRANSFER_STATUSES.includes( status );
 }

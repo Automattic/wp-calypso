@@ -3,13 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { transferInProgress } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import {
 	createRevertedTransferWatcher,
 	getTransferFailureMessage,
+	isForwardTransferStatus,
 	transferStates,
 } from '../utils/atomic-transfer-outcome';
 import { useSiteData } from './use-site-data';
@@ -41,10 +41,6 @@ export interface FailureInfo {
 	// The wait carried on afterwards, so this is a slow transfer being reported, not a dead one.
 	recoverable?: boolean;
 }
-
-// Keep this narrow: revert-pipeline statuses also look non-final, but belong to the prior transfer.
-const isTransferInFlight = ( status: string | null ) =>
-	transferInProgress.some( ( inProgressStatus ) => inProgressStatus === status );
 
 interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
@@ -114,7 +110,7 @@ export const useWaitForAtomic = ( {
 			onTransferStatusChange?.( transferStatus, transfer?.created_at );
 			if (
 				onDeadlineExceeded &&
-				isTransferInFlight( transferStatus ) &&
+				isForwardTransferStatus( transferStatus ) &&
 				transfer?.created_at &&
 				transfer.atomic_transfer_id !== undefined &&
 				transfer.atomic_transfer_id !== deadlineAnchorTransferId
