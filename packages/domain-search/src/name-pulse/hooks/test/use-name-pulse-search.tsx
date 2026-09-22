@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
+import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
@@ -17,12 +18,21 @@ import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
 import { NAME_PULSE_QUERY_SETTLE_MS, NamePulseDomainStatus } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
 import type {
+	DomainAvailability,
 	NamePulseAvailabilityResponse,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
+
+const stubBulkAvailability = () =>
+	nock( API )
+		.persist()
+		.post( AVAILABILITY_PATH )
+		.reply( 200, ( _uri, body: { domain_names: string[] } ) =>
+			Object.fromEntries( body.domain_names.map( ( name ) => [ name, { is_available: true } ] ) )
+		);
 
 const renderSearch = ( query: string ) =>
 	renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
@@ -33,10 +43,12 @@ const renderSearch = ( query: string ) =>
 const FetcherSearch = ( {
 	availability,
 	suggestions,
+	domainAvailability,
 	children,
 }: {
 	availability: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
 	suggestions: () => Promise< NamePulseSuggestionsResponse >;
+	domainAvailability: ( domainName: string ) => Promise< DomainAvailability >;
 	children: React.ReactNode;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
@@ -51,7 +63,7 @@ const FetcherSearch = ( {
 					availability,
 					suggestions,
 					tlds: async () => NAME_PULSE_TLDS_FIXTURE,
-					domainAvailability: () => Promise.reject( new Error( 'not used' ) ),
+					domainAvailability,
 				} ) }
 			>
 				{ children }
@@ -68,16 +80,23 @@ const renderTypedSearch = ( query: string ) => {
 		suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE,
 		errors: [],
 	} ) );
+	const domainAvailability = jest.fn( async ( domainName: string ) =>
+		buildAvailability( { domain_name: domainName } )
+	);
 	const rendered = renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
 		initialProps: { q: query },
 		wrapper: ( { children } ) => (
-			<FetcherSearch availability={ availability } suggestions={ suggestions }>
+			<FetcherSearch
+				availability={ availability }
+				suggestions={ suggestions }
+				domainAvailability={ domainAvailability }
+			>
 				{ children }
 			</FetcherSearch>
 		),
 	} );
 
-	return { ...rendered, availability, suggestions };
+	return { ...rendered, availability, suggestions, domainAvailability };
 };
 
 // Async so the availability batch, which flushes on a microtask, goes out.
@@ -222,5 +241,61 @@ describe( 'useNamePulseSearch', () => {
 		);
 		expect( result.current.isLoadingKeyword ).toBe( false );
 		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'waits for the query to settle before checking a typed domain or showing a notice', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, domainAvailability } = renderTypedSearch( 'icecream' );
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+		rerender( { q: 'icecream.c' } );
+		rerender( { q: 'icecream.co' } );
+		rerender( { q: 'icecream.com' } );
+
+		expect( result.current.notice ).toBeNull();
+		expect( domainAvailability ).not.toHaveBeenCalled();
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+
+		expect( domainAvailability ).toHaveBeenCalledTimes( 1 );
+		expect( domainAvailability ).toHaveBeenCalledWith( 'icecream.com' );
+	} );
+
+	it( 'reports a typed domain that is registered elsewhere', async () => {
+		stubBulkAvailability();
+		nock( API )
+			.get( '/rest/v1.3/domains/icecream.com/is-available' )
+			.query( true )
+			.reply( 200, { status: 'transferrable', domain_name: 'icecream.com', tld: 'com' } );
+
+		const { result } = renderSearch( 'icecream.com' );
+
+		await waitFor( () =>
+			expect( result.current.notice ).toEqual( {
+				status: 'neutral',
+				message: 'This domain is already registered.',
+				transferDomain: 'icecream.com',
+			} )
+		);
+	} );
+
+	it( 'explains an unrecognised ending without a real-time check', async () => {
+		stubBulkAvailability();
+		const realTimeCheck = nock( API )
+			.get( /is-available/ )
+			.query( true )
+			.reply( 200, {} );
+
+		const { result } = renderSearch( 'icecream.d' );
+
+		await waitFor( () =>
+			expect( result.current.notice?.message ).toBe(
+				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+			)
+		);
+		await waitFor( () =>
+			expect( result.current.topResults[ 0 ].status ).toBe( NamePulseDomainStatus.AVAILABLE )
+		);
+		expect( realTimeCheck.isDone() ).toBe( false );
 	} );
 } );

@@ -17,7 +17,7 @@ import {
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
-import type { DomainSearchCart, DomainSearchProps } from '../../page/types';
+import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
 import type { DomainAvailability, NamePulseAvailabilityResponse } from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
@@ -34,6 +34,7 @@ const NamePulseTestSearch = ( {
 			cost: '$24.00',
 			raw_price: 24,
 		} ),
+	events,
 }: {
 	query: string;
 	slots?: DomainSearchProps[ 'slots' ];
@@ -42,12 +43,14 @@ const NamePulseTestSearch = ( {
 	availability?: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
 	tldsResponse?: () => Promise< string[] >;
 	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
+	events?: Partial< DomainSearchEvents >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query,
+		events,
 		slots,
-		config: { showNamePulseSearch: true },
+		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true },
 	} );
 
 	return (
@@ -86,6 +89,12 @@ const findRow = async ( domainName: string ) => {
 
 const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
+
+const findNotice = async () => {
+	await waitFor( () => expect( document.querySelector( '.name-pulse-notice' ) ).not.toBeNull() );
+
+	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
+};
 
 const domainsIn = ( id: string ) =>
 	sectionRows( id ).map( ( item ) =>
@@ -265,6 +274,76 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'explains an unrecognised ending and lists the joined name', async () => {
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+		);
+		expect(
+			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', { name: 'Exact match for “icecreamd”' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'lets the reader dismiss the notice about how their query was read', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
+	} );
+
+	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
+		const user = userEvent.setup();
+		const onExternalDomainClick = jest.fn();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				events={ { onExternalDomainClick } }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+						tld: 'net',
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+
+		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
+		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
+
+		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
+	} );
+
+	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( { domain_name: domainName, status: DomainAvailabilityStatus.MAPPED } )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent(
+			'This domain is already connected to a WordPress.com site.'
+		);
+		expect( screen.queryByRole( 'button', { name: 'Transfer it here.' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the BeforeResults slot between the search input and the results', () => {

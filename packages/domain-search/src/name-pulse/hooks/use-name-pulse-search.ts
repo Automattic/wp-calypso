@@ -7,6 +7,7 @@ import {
 	calculateTopTlds,
 	excludeDomains,
 	generateExactMatches,
+	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
@@ -163,6 +164,19 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const isLoadingKeyword = keywordEnabled && ( ! isSettled || keywordQueryResult.isPending );
 
+	// The bulk check is zone-file based: it says a domain is taken, not why.
+	// Both wait for the query to settle, so half-typed input is not checked or flagged.
+	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
+	const { data: typedDomainAvailability } = useQuery( {
+		...queries.domainAvailability( typedDomain ),
+		enabled: Boolean( typedDomain ),
+	} );
+
+	const notice = useMemo(
+		() => ( isSettled ? getNamePulseNotice( layout, typedDomainAvailability ) : null ),
+		[ isSettled, layout, typedDomainAvailability ]
+	);
+
 	// Each section drops domains already listed above it. Full lists are compared,
 	// not only the visible rows, so expanding a section never makes rows vanish
 	// from the one below.
@@ -182,6 +196,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		topResults,

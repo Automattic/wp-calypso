@@ -175,3 +175,72 @@
 		opacity: 0.4;
 	}
 }
+
+// Hex fallbacks mirror how `@wordpress/components` references the same tokens.
+.name-pulse-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 4px;
+	padding: var( --wpds-dimension-padding-md, 12px );
+	border: 1px solid;
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	font-size: 13px;
+	line-height: 20px;
+	letter-spacing: -0.078px;
+
+	&--warning {
+		background: var( --wpds-color-background-surface-warning-weak, #fff7e1 );
+		border-color: var( --wpds-color-stroke-surface-warning, #e1bc7c );
+		color: var( --wpds-color-foreground-content-warning, #2e1900 );
+	}
+
+	&--neutral {
+		background: var( --wpds-color-background-surface-neutral-weak, #f4f4f4 );
+		border-color: var( --wpds-color-stroke-surface-neutral, #dbdbdb );
+		color: var( --wpds-color-foreground-content-neutral, #1e1e1e );
+	}
+
+	&--error {
+		background: var( --wpds-color-background-surface-error-weak, #fff6f5 );
+		border-color: var( --wpds-color-stroke-surface-error, #dab1aa );
+		color: var( --wpds-color-foreground-content-error, #470000 );
+	}
+
+	&__message {
+		flex: 1 0 0;
+		min-width: 0;
+		margin: 0;
+		padding-block: 2px;
+		overflow-wrap: anywhere;
+	}
+
+	&__action {
+		margin: 0;
+		padding-block: 2px;
+		padding-inline-start: 4px;
+
+		.components-button.is-link {
+			color: inherit;
+			font-size: inherit;
+			line-height: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	&__dismiss.components-button {
+		flex-shrink: 0;
+		color: inherit;
+	}
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		flex-wrap: wrap;
+
+		&__message {
+			flex-basis: 100%;
+		}
+
+		&__action {
+			padding-inline-start: 0;
+		}
+	}
+}
