@@ -268,6 +268,41 @@ describe( 'useWaitForAtomic', () => {
 			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
 		} );
 
+		it( 'keeps waiting while a previous transfer finishes reverting', async () => {
+			// The old transfer is still the latest one, working through the lossless-revert pipeline.
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'renaming',
+				created_at: startedNow(),
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'reverted',
+				created_at: startedNow(),
+			} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			expect( failures ).not.toContainEqual(
+				expect.objectContaining( { type: 'transfer_reverted' } )
+			);
+
+			// Ours turns up and the wait finishes on it.
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 2,
+				status: 'completed',
+				created_at: startedNow(),
+			} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+		} );
+
 		it( 'lets a completed transfer win over the cap it crossed on the same poll', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,

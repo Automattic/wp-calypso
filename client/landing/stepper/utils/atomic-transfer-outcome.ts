@@ -54,11 +54,12 @@ interface PolledTransfer {
 /**
  * Reports a revert of the transfer being waited on, and only that.
  *
- * The endpoint returns the site's latest transfer, not the one we asked about,
- * so a revert is only ours once we have watched that same transfer id in flight.
- * Early in a wait the latest transfer can still be an older, long-reverted one —
- * re-upgrading after a downgrade is an ordinary path, and failing on that would
- * break a healthy wait.
+ * The endpoint returns the site's latest transfer, not the one we asked about, so a revert is only
+ * ours once we have watched that same transfer id moving forward. Ownership comes from a forward
+ * status alone: the lossless-revert pipeline (`renaming`, `exporting`, `importing`, `cleanup`) also
+ * looks non-final, but it is a previous transfer tidying up — and a site that was Atomic before is
+ * exactly the case these waits are slowest for. Early in a wait the latest transfer can still be an
+ * older one, and failing on that would break a healthy wait.
  *
  * Known gap: a transfer already reverted before our first poll is indistinguishable
  * from stale history without a transfer id to correlate against, so it falls
@@ -76,12 +77,16 @@ export function createRevertedTransferWatcher() {
 
 		const transferId = transfer.atomic_transfer_id;
 
-		if ( ! isRevertedTransferStatus( transfer.status ) ) {
+		if ( isForwardTransferStatus( transfer.status ) ) {
 			transferSeenInFlight = transferId;
 			return false;
 		}
 
-		return transferId === transferSeenInFlight;
+		if ( isRevertedTransferStatus( transfer.status ) ) {
+			return transferId === transferSeenInFlight;
+		}
+
+		return false;
 	};
 }
 
