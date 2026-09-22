@@ -63,6 +63,7 @@ import {
 import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import {
 	getOrchestratorErrorMessage,
@@ -333,7 +334,8 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, currentUser, zendeskSmoochIntegrationKey } =
+		useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -1638,6 +1640,7 @@ export default function OrchestratorChat( {
 			getChatComponent,
 			currentPostId,
 			isProcessing,
+			canEscalateToHuman: isWooAiProvider( zendeskSmoochIntegrationKey ),
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1716,6 +1719,7 @@ export default function OrchestratorChat( {
 		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
 		transformMessages,
+		zendeskSmoochIntegrationKey,
 	] );
 
 	// Notify parent when has-messages state changes.
