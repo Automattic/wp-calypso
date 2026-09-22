@@ -13,7 +13,16 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => 123,
 	getSelectedSiteSlug: () => 'example.com',
 } ) );
-jest.mock( '../can-manage-stats-settings', () => ( { __esModule: true, default: () => true } ) );
+const mockRedirect = jest.fn();
+jest.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: { redirect: ( ...args: unknown[] ) => mockRedirect( ...args ) },
+} ) );
+let mockCanManage = true;
+jest.mock( '../can-manage-stats-settings', () => ( {
+	__esModule: true,
+	default: () => mockCanManage,
+} ) );
 jest.mock( 'calypso/blocks/stats-navigation', () => () => null );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 jest.mock( '../../../stats-page-view-tracker', () => () => null );
@@ -39,16 +48,13 @@ jest.mock( '../../../hooks/use-stats-settings', () => ( {
 	useStatsSettingsMutation: () => ( { mutate: mockSave } ),
 } ) );
 
-const section = ( heading: string ) =>
-	within(
-		screen
-			.getByRole( 'heading', { name: heading } )
-			.closest( '.stats-settings__section' ) as HTMLElement
-	);
+const section = ( heading: string ) => within( screen.getByRole( 'group', { name: heading } ) );
 
 describe( 'StatsSettingsPage', () => {
 	beforeEach( () => {
 		mockSave.mockClear();
+		mockRedirect.mockClear();
+		mockCanManage = true;
 		mockSettings = {
 			admin_bar: true,
 			roles: [ 'administrator' ],
@@ -84,5 +90,13 @@ describe( 'StatsSettingsPage', () => {
 
 		expect( toggle ).toBeChecked();
 		expect( toggle ).toBeDisabled();
+	} );
+
+	it( 'sends a user who cannot manage the settings to the Traffic page', () => {
+		mockCanManage = false;
+
+		render( <StatsSettingsPage /> );
+
+		expect( mockRedirect ).toHaveBeenCalledWith( '/stats/day/example.com' );
 	} );
 } );

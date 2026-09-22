@@ -4,7 +4,7 @@ import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import type { AppState } from 'calypso/types';
 
 /**
- * Whether the current user can open the Stats settings: an administrator, in the wp-admin dashboard of a site whose stats-admin sends `has_stats_settings`.
+ * Whether the current user can open the Stats settings: an administrator, on a Jetpack or Atomic site whose stats-admin sends `has_stats_settings`.
  * @param state Global state tree.
  * @param siteId Site to check.
  */

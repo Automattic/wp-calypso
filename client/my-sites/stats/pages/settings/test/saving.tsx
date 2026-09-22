@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import StatsSettingsPage from '..';
 import reloadPage from '../reload-page';
@@ -28,6 +28,10 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteSlug: () => 'example.com',
 } ) );
 jest.mock( '../reload-page', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../../hooks/default-query-params', () => ( {
+	__esModule: true,
+	default: () => ( { retry: false } ),
+} ) );
 jest.mock( '../can-manage-stats-settings', () => ( { __esModule: true, default: () => true } ) );
 jest.mock( 'calypso/blocks/stats-navigation', () => () => null );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
@@ -55,7 +59,10 @@ const SAVED_NOTICE = expect.objectContaining( {
 	notice: expect.objectContaining( { text: 'Settings saved.' } ),
 } );
 
-const renderPage = async () => {
+const LOAD_ERROR = 'Your Stats settings could not be loaded. Reload the page to try again.';
+const SETTINGS_REQUEST = { apiNamespace: 'wpcom/v2', path: '/sites/123/jetpack-stats/settings' };
+
+const mountPage = () => {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
 	} );
@@ -64,8 +71,13 @@ const renderPage = async () => {
 			<StatsSettingsPage />
 		</QueryClientProvider>
 	);
-	await screen.findByRole( 'heading', { name: 'Logged-in views' } );
-	return result;
+	return { ...result, queryClient };
+};
+
+const renderPage = async () => {
+	const mounted = mountPage();
+	await screen.findByRole( 'group', { name: 'Logged-in views' } );
+	return mounted;
 };
 
 const adminBarToggle = () =>
@@ -80,11 +92,7 @@ const saveAdminBarAndReload = async () => {
 };
 
 const countedViewsToggle = ( role: string ) =>
-	within(
-		screen
-			.getByRole( 'heading', { name: 'Logged-in views' } )
-			.closest( '.stats-settings__section' ) as HTMLElement
-	).getByLabelText( role );
+	within( screen.getByRole( 'group', { name: 'Logged-in views' } ) ).getByLabelText( role );
 
 describe( 'StatsSettingsPage saving', () => {
 	beforeEach( () => {
@@ -168,5 +176,88 @@ describe( 'StatsSettingsPage saving', () => {
 		await renderPage();
 
 		expect( mockDispatch ).not.toHaveBeenCalledWith( SAVED_NOTICE );
+	} );
+
+	it( 'keeps every toggle disabled after an admin bar save while the page reloads', async () => {
+		mockPost.mockResolvedValue( settingsResponse );
+		const { queryClient } = await renderPage();
+
+		await userEvent.click( adminBarToggle() );
+		await waitFor( () => expect( reloadPage ).toHaveBeenCalled() );
+		await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
+
+		expect( screen.getByLabelText( 'Show post views for this site.' ) ).toBeDisabled();
+	} );
+
+	it( 'shows the reason the site gives when it refuses a save', async () => {
+		mockPost.mockRejectedValue(
+			Object.assign( new Error( 'Unknown role `ghost` in `roles`.' ), {
+				code: 'jetpack_stats_invalid_role',
+			} )
+		);
+		await renderPage();
+
+		await userEvent.click( countedViewsToggle( 'Editor' ) );
+
+		await waitFor( () =>
+			expect( mockDispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					notice: expect.objectContaining( {
+						status: 'is-error',
+						text: 'Your Stats settings could not be saved: Unknown role `ghost` in `roles`.',
+					} ),
+				} )
+			)
+		);
+	} );
+
+	it( 'shows the load error when the settings cannot be read', async () => {
+		mockGet.mockReset().mockRejectedValue( new Error( 'down' ) );
+
+		mountPage();
+
+		expect( await screen.findByText( LOAD_ERROR ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps the form without a load error when a later read of the settings fails', async () => {
+		const { queryClient } = await renderPage();
+		mockGet.mockRejectedValue( new Error( 'down' ) );
+
+		await act( () => queryClient.refetchQueries() );
+		// Query observers hear about the failed read on a later timer tick.
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) ) );
+
+		expect( queryClient.getQueryCache().getAll()[ 0 ].state.status ).toBe( 'error' );
+		expect( screen.queryByText( LOAD_ERROR ) ).not.toBeInTheDocument();
+		expect( adminBarToggle() ).toBeInTheDocument();
+	} );
+
+	it( 'ignores a saved notice request older than 30 seconds', async () => {
+		await saveAdminBarAndReload();
+		const later = jest.spyOn( Date, 'now' ).mockReturnValue( Date.now() + 31 * 1000 );
+		mockDispatch.mockReset();
+
+		try {
+			await renderPage();
+
+			expect( mockDispatch ).not.toHaveBeenCalledWith( SAVED_NOTICE );
+		} finally {
+			later.mockRestore();
+		}
+	} );
+
+	it( 'reads and saves the settings through the site settings route', async () => {
+		mockPost.mockResolvedValue( settingsResponse );
+		await renderPage();
+
+		await userEvent.click( screen.getByLabelText( 'Show post views for this site.' ) );
+
+		await waitFor( () =>
+			expect( mockPost ).toHaveBeenCalledWith( {
+				...SETTINGS_REQUEST,
+				body: { wpcom_reader_views_enabled: false },
+			} )
+		);
+		expect( mockGet ).toHaveBeenCalledWith( SETTINGS_REQUEST );
 	} );
 } );

@@ -161,3 +161,4 @@ Object.defineProperty( wordads, 'label', { get: () => translate( 'Ads' ) } );
 Object.defineProperty( googleMyBusiness, 'label', {
 	get: () => translate( 'Google Business Profile' ),
 } );
+Object.defineProperty( settings, 'label', { get: () => translate( 'Settings' ) } );
