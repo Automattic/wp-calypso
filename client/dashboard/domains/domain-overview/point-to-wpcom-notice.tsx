@@ -15,7 +15,13 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 
-export default function PointToWpcomNotice( { domain }: { domain: Domain } ) {
+export default function PointToWpcomNotice( {
+	domain,
+	isDisabled,
+}: {
+	domain: Domain;
+	isDisabled?: boolean;
+} ) {
 	const { domain: domainName, current_user_is_owner, owner } = domain;
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
@@ -66,7 +72,7 @@ export default function PointToWpcomNotice( { domain }: { domain: Domain } ) {
 						<Button
 							variant="primary"
 							onClick={ () => setIsDialogOpen( true ) }
-							disabled={ pointToWpcom.isPending }
+							disabled={ isDisabled || pointToWpcom.isPending }
 							isBusy={ pointToWpcom.isPending }
 						>
 							{ __( 'Point to WordPress.com' ) }
