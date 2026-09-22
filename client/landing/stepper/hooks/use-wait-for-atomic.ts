@@ -3,13 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { transferInProgress } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import {
 	createRevertedTransferWatcher,
 	getTransferFailureMessage,
-	isRevertedTransferStatus,
 	transferStates,
 } from '../utils/atomic-transfer-outcome';
 import { useSiteData } from './use-site-data';
@@ -37,13 +37,9 @@ export interface FailureInfo {
 	recoverable?: boolean;
 }
 
-// A transfer the server is still working on, as opposed to one that ended (well or badly) and to
-// the stale latest transfer the endpoint can hand back before ours exists.
+// Keep this narrow: revert-pipeline statuses also look non-final, but belong to the prior transfer.
 const isTransferInFlight = ( status: string | null ) =>
-	!! status &&
-	status !== transferStates.COMPLETED &&
-	status !== transferStates.ERROR &&
-	! isRevertedTransferStatus( status );
+	transferInProgress.some( ( inProgressStatus ) => inProgressStatus === status );
 
 interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
@@ -105,8 +101,9 @@ export const useWaitForAtomic = ( {
 		// The deadline belongs to the transfer, not to this component, so a reload does not restart
 		// a wait that is already minutes old. Only a transfer still in flight anchors it, and only
 		// for a caller that recovers: an old in-flight transfer must not hard-fail on the first poll.
+		// A stuck old forward transfer remains indistinguishable until a different transfer id appears.
 		let deadlineAnchor = startTime;
-		let isDeadlineAnchored = ! onDeadlineExceeded;
+		let deadlineAnchorTransferId: number | undefined;
 
 		while ( true ) {
 			await wait( isPastDeadline ? GRACE_POLL_MS : POLL_MS );
@@ -114,11 +111,17 @@ export const useWaitForAtomic = ( {
 			const transfer = getSiteLatestAtomicTransfer( siteId );
 			const transferStatus = transfer?.status ?? null;
 			onTransferStatusChange?.( transferStatus, transfer?.created_at );
-			if ( ! isDeadlineAnchored && isTransferInFlight( transferStatus ) && transfer?.created_at ) {
+			if (
+				onDeadlineExceeded &&
+				isTransferInFlight( transferStatus ) &&
+				transfer?.created_at &&
+				transfer.atomic_transfer_id !== undefined &&
+				transfer.atomic_transfer_id !== deadlineAnchorTransferId
+			) {
 				const createdAt = parseTransferCreatedAt( transfer.created_at );
 				if ( ! Number.isNaN( createdAt ) ) {
 					deadlineAnchor = Math.min( createdAt, startTime );
-					isDeadlineAnchored = true;
+					deadlineAnchorTransferId = transfer.atomic_transfer_id;
 				}
 			}
 
