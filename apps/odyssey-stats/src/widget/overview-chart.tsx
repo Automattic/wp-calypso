@@ -44,13 +44,20 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 			// than the numbers warrant.
 			yScale: { type: 'linear', zero: true },
 			axis: {
-				x: { tickFormat: ( value: number ) => moment( value ).format( 'MMM D' ) },
+				// The class lets the stylesheet right-align the last date, which would otherwise
+				// be centred on the chart's right edge and cropped.
+				x: {
+					axisClassName: 'stats-widget-chart__x-axis',
+					tickFormat: ( value: number ) => moment( value ).format( 'MMM D' ),
+				},
 				// Compact ticks: "12K" rather than "12,000". At the widget's width the full
 				// form overflows the left margin and is clipped by the wrapper, and it
-				// matches how the totals above are formatted.
+				// matches how the totals above are formatted. Zero is left unlabelled, since
+				// the grid line marks it; blanked here because the package's axis options
+				// do not type visx's `hideZero`.
 				y: {
 					orientation: 'left',
-					tickFormat: ( value: number ) => formatNumberCompact( value ),
+					tickFormat: ( value: number ) => ( value === 0 ? '' : formatNumberCompact( value ) ),
 				},
 			},
 		} }
