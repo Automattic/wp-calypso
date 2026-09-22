@@ -943,7 +943,7 @@ $x-nav-2026-item-padding-x: 8px;
 // the ::before pill rather than the padded element.
 $x-nav-2026-cta-padding-x: 23px;
 $x-dropdown-2026-link-font-size: 18px;
-$x-dropdown-2026-link-line-height: 38px;
+$x-dropdown-2026-link-line-height: 34px;
 $x-dropdown-2026-column-max-width: 220px;
 $x-dropdown-2026-column-gap: 100px;
 $x-dropdown-2026-subtitle-font-size: 12px;
@@ -1437,8 +1437,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		grid-auto-rows: min-content;
 		align-items: start;
 		justify-content: start;
-		column-gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
-		row-gap: 12px;
+		column-gap: min( $x-dropdown-2026-column-gap, 8vw );
+		row-gap: 32px;
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
@@ -1477,8 +1477,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		// Separates the title from the first link below it.
-		padding-bottom: 12px;
+		// 33px line box trimmed to the design's 26px title row, plus its 10px gap to the first link.
+		padding-bottom: 3px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
