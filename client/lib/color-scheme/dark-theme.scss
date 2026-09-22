@@ -172,9 +172,9 @@ This mixin generates alias variables for a color palette. For example, the
 
 @mixin color-scheme-dark-theme-primary-button {
 	.components-button.is-primary:not( .is-destructive ) {
-		--wp-components-color-accent: #{$studio-blue-50};
-		--wp-components-color-accent-darker-10: #{$studio-blue-60};
-		--wp-components-color-accent-darker-20: #{$studio-blue-70};
+		--wp-components-color-accent: var( --dashboard-button-primary__background-color, #{$studio-blue-50} );
+		--wp-components-color-accent-darker-10: var( --dashboard-button-primary-hover__background-color, #{$studio-blue-60} );
+		--wp-components-color-accent-darker-20: var( --dashboard-button-primary-active__background-color, #{$studio-blue-70} );
 		--wp-components-color-accent-disabled: color-mix(
 			in srgb,
 			var( --wp-components-color-accent ) 35%,

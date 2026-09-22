@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
 import { ColorSchemeProvider } from './query-provider';
+import type { ColorScheme } from './shared';
 import type { ComponentType, ReactNode } from 'react';
 
-type ColorSchemeProviderComponent = ComponentType< { children: ReactNode; enabled?: boolean } >;
+type ColorSchemeProviderComponent = ComponentType< {
+	children: ReactNode;
+	enabled?: boolean;
+	defaultColorScheme?: ColorScheme;
+} >;
 
 function BodyClass( { className }: { className: string } ) {
 	useEffect( () => {
@@ -25,10 +30,12 @@ export function withColorScheme(
 	{
 		bodyClass,
 		enabled = true,
+		defaultColorScheme,
 		Provider = ColorSchemeProvider,
 	}: {
 		bodyClass?: string;
 		enabled?: boolean;
+		defaultColorScheme?: ColorScheme;
 		Provider?: ColorSchemeProviderComponent;
 	} = {}
 ) {
@@ -37,7 +44,7 @@ export function withColorScheme(
 	// gates its document side effects on `enabled`, and the body class is only
 	// mounted while enabled.
 	return (
-		<Provider enabled={ enabled }>
+		<Provider enabled={ enabled } defaultColorScheme={ defaultColorScheme }>
 			{ enabled && bodyClass && <BodyClass className={ bodyClass } /> }
 			{ children }
 		</Provider>

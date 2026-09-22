@@ -13,6 +13,7 @@ import type {
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
+import type { ColorScheme } from 'calypso/lib/color-scheme';
 
 export type AgencySupports = {
 	overview: boolean;
@@ -54,6 +55,8 @@ export type SiteOverviewSupports = {
 
 export type AppConfig = {
 	name: string;
+	theme?: 'neutral';
+	defaultColorScheme?: ColorScheme;
 	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
@@ -77,6 +80,7 @@ export type AppConfig = {
 		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
+		sidebarAppearance?: boolean;
 	};
 	posthog?: {
 		apiKey: string;

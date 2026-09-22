@@ -5,9 +5,6 @@
  */
 
 :root {
-	// Theme
-	// TODO: Add A4A theme variables
-
 	// Layout
 	--dashboard__background-color: #fcfcfc;
 	--dashboard__background-color-success: #3ca758;
@@ -37,4 +34,12 @@
 
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};
+}
+
+// Content pairs stay independent from interaction colors and retain their identity in both modes.
+:root[data-dashboard-theme='neutral'] {
+	--a4a-content-bold__background-color: #0240e4;
+	--a4a-content-bold__color: #{$white};
+	--a4a-content-soft__background-color: #72b3ff;
+	--a4a-content-soft__color: #{$gray-900};
 }

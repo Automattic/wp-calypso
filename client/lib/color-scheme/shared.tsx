@@ -12,7 +12,11 @@ export function isColorScheme( value: unknown ): value is ColorScheme {
 
 export interface ColorSchemeContextType {
 	colorScheme: ColorScheme;
-	setColorScheme: ( scheme: ColorScheme, options?: { onSuccess?: () => void } ) => void;
+	isSaving?: boolean;
+	setColorScheme: (
+		scheme: ColorScheme,
+		options?: { onSuccess?: () => void; onError?: () => void }
+	) => void;
 }
 
 const ColorSchemeContext = createContext< ColorSchemeContextType | undefined >( undefined );
@@ -80,6 +84,7 @@ export function ColorSchemeContextProvider( {
 	isReady,
 	restoreOnUnmount = false,
 	setColorScheme,
+	isSaving = false,
 	waitForReady,
 }: {
 	children: ReactNode;
@@ -88,6 +93,7 @@ export function ColorSchemeContextProvider( {
 	isReady: boolean;
 	restoreOnUnmount?: boolean;
 	setColorScheme: ColorSchemeContextType[ 'setColorScheme' ];
+	isSaving?: boolean;
 	waitForReady: boolean;
 } ) {
 	useDocumentColorScheme( colorScheme, enabled && isReady, restoreOnUnmount );
@@ -100,7 +106,7 @@ export function ColorSchemeContextProvider( {
 	}
 
 	return (
-		<ColorSchemeContext.Provider value={ { colorScheme, setColorScheme } }>
+		<ColorSchemeContext.Provider value={ { colorScheme, setColorScheme, isSaving } }>
 			{ children }
 		</ColorSchemeContext.Provider>
 	);
