@@ -31,3 +31,8 @@ export const NAME_PULSE_INITIAL_CHECK_MULTI_WORD = 24;
  * How long skeleton slots and "checking" rows wait for a response before giving up.
  */
 export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;
+
+/**
+ * How long a cached availability verdict is trusted, and kept once no row reads it.
+ */
+export const NAME_PULSE_VERDICT_TTL_MS = 5 * 60 * 1000;

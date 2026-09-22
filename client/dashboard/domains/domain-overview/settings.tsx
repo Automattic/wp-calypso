@@ -5,6 +5,7 @@ import {
 	DomainDiagnostics,
 	type DomainMappingStatus,
 } from '@automattic/api-core';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
@@ -88,9 +89,11 @@ export default function DomainOverviewSettings( {
 	 * I simplified the condition heere because the original code seemed to have a logical redundancy.
 	 * see: https://github.com/Automattic/wp-calypso/blob/b1c63880294fcf63f95518a3c42779236f56f5b2/client/my-sites/domains/domain-management/settings/index.tsx#L515
 	 */
+	// `current_user_can_manage` is always false in a support session. The link is still shown so
+	// that support can copy its URL for the user; the route itself blocks editing in that case.
 	if (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		domain.current_user_can_manage &&
+		( domain.current_user_can_manage || isSupportSession() ) &&
 		! domain.pending_transfer &&
 		! domain.expired
 	) {

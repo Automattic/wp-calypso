@@ -29,5 +29,3 @@ export interface NamePulseDomainResult {
 	is_realtime?: boolean;
 	source: NamePulseSource;
 }
-
-export type NamePulseDomainUpdate = Partial< NamePulseDomainResult > & { domain_name: string };

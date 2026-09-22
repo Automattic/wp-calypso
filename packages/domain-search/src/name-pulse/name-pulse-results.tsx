@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
+import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
@@ -13,9 +14,15 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const { query } = useDomainSearch();
+	const {
+		query,
+		slots,
+		events,
+		config: { allowsUsingOwnDomain },
+	} = useDomainSearch();
 	const {
 		layout,
+		notice,
 		exactList,
 		keywordResults,
 		topResults,
@@ -24,13 +31,19 @@ export const NamePulseResults = () => {
 		refetchTlds,
 		isLoadingKeyword,
 		revealExact,
-		updateResult,
 	} = useNamePulseSearch( query );
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
+				{ notice && ! isTldsError && (
+					<NamePulseSearchNotice
+						notice={ notice }
+						onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
+					/>
+				) }
 				{ layout.exactGrid.show && isTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }
@@ -48,7 +61,6 @@ export const NamePulseResults = () => {
 							isLoading={ isLoadingTlds }
 							maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
 							skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-							onUpdate={ updateResult }
 						/>
 						<NamePulseResultsSection
 							id="exact"
@@ -65,7 +77,6 @@ export const NamePulseResults = () => {
 							isLoading={ isLoadingTlds }
 							showMoreLabel={ __( 'Show more exact matches' ) }
 							onReveal={ revealExact }
-							onUpdate={ updateResult }
 						/>
 					</>
 				) }
@@ -76,7 +87,6 @@ export const NamePulseResults = () => {
 						results={ keywordResults }
 						isLoading={ isLoadingKeyword }
 						showMoreLabel={ __( 'Show more suggestions' ) }
-						onUpdate={ updateResult }
 					/>
 				) }
 			</VStack>

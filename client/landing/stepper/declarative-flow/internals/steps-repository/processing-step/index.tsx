@@ -45,9 +45,11 @@ import './style.scss';
 function SiteTransferWait( {
 	transferStatus,
 	startedAt,
+	hasTimedOut,
 }: {
 	transferStatus: string | null;
 	startedAt: number | null;
+	hasTimedOut: boolean;
 } ) {
 	const { siteSlug } = useSiteData();
 
@@ -55,6 +57,7 @@ function SiteTransferWait( {
 		<TransferWaitCard
 			transferStatus={ transferStatus }
 			startedAt={ startedAt }
+			hasTimedOut={ hasTimedOut }
 			isPluginInstall={ false }
 			siteSlug={ siteSlug }
 		/>
@@ -149,6 +152,10 @@ const ProcessingStep: StepType< {
 	);
 	const transferStartedAt = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
+		[]
+	);
+	const transferTimedOut = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferTimedOut(),
 		[]
 	);
 
@@ -292,7 +299,11 @@ const ProcessingStep: StepType< {
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
 				{ isTransferringHostedSiteCreationFlow( flow ) ? (
-					<SiteTransferWait transferStatus={ transferStatus } startedAt={ transferStartedAt } />
+					<SiteTransferWait
+						transferStatus={ transferStatus }
+						startedAt={ transferStartedAt }
+						hasTimedOut={ transferTimedOut }
+					/>
 				) : (
 					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
 				) }

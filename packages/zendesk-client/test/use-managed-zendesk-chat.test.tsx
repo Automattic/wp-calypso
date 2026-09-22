@@ -3,7 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Smooch from 'smooch';
 import { fetchMessagingAuth } from '../src/use-authenticate-zendesk-messaging';
@@ -104,14 +104,26 @@ const smooch = Smooch as unknown as {
 	createConversation: jest.Mock;
 	getConversationById: jest.Mock;
 	loadConversation: jest.Mock;
+	on: jest.Mock;
+	off: jest.Mock;
 };
 
 type SmoochInitOptions = { delegate: { onInvalidAuth: () => Promise< string > } };
+
+/** The listener currently registered for `eventName`, i.e. the most recent registration. */
+function getSmoochListener( eventName: string ) {
+	const listener = smooch.on.mock.calls
+		.filter( ( [ registeredEvent ] ) => registeredEvent === eventName )
+		.at( -1 )?.[ 1 ];
+	expect( listener ).toBeDefined();
+	return listener as () => void;
+}
 
 function renderUseManagedZendeskChat( {
 	conversationId,
 	conversationTags = [],
 	conversationTicketFields,
+	siteId,
 	startedFromAiChatId,
 	startedFromChatSessionId,
 	startedFromMessageId,
@@ -122,6 +134,7 @@ function renderUseManagedZendeskChat( {
 		string | number,
 		string | number | boolean | null | undefined
 	>;
+	siteId?: number;
 	startedFromAiChatId?: number;
 	startedFromChatSessionId?: string;
 	startedFromMessageId?: string;
@@ -144,8 +157,14 @@ function renderUseManagedZendeskChat( {
 	};
 
 	return renderHook(
-		() => useManagedZendeskChat( { conversationTags, conversationTicketFields } ),
+		( { currentSiteId }: { currentSiteId?: number } ) =>
+			useManagedZendeskChat( {
+				conversationTags,
+				conversationTicketFields,
+				siteId: currentSiteId,
+			} ),
 		{
+			initialProps: { currentSiteId: siteId },
 			wrapper: ( { children } ) => (
 				<QueryClientProvider client={ queryClient }>
 					<MemoryRouter initialEntries={ [ initialEntry ] }>{ children }</MemoryRouter>
@@ -354,6 +373,118 @@ describe( 'useManagedZendeskChat', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_auth_error', {
 				site_context_source: 'none',
 			} );
+		} );
+	} );
+
+	it( 'adds the support site to connection lifecycle events', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+
+		await act( async () => {
+			disconnectedListener();
+			connectedListener();
+			await Promise.resolve();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_connected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
+	it( 'marks lifecycle events as site-less when no support site is provided', async () => {
+		const { result } = renderUseManagedZendeskChat( { conversationId: 'conversation-1' } );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+
+		act( () => disconnectedListener() );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			site_context_source: 'none',
+		} );
+	} );
+
+	it( 'does not re-register listeners when the connection status changes', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const disconnectedListener = getSmoochListener( 'disconnected' );
+		const connectedListener = getSmoochListener( 'connected' );
+		const registrationCount = smooch.on.mock.calls.length;
+		const removalCount = smooch.off.mock.calls.length;
+
+		await act( async () => {
+			disconnectedListener();
+			await Promise.resolve();
+		} );
+
+		expect( getSmoochListener( 'disconnected' ) ).toBe( disconnectedListener );
+		expect( getSmoochListener( 'connected' ) ).toBe( connectedListener );
+		expect( smooch.on ).toHaveBeenCalledTimes( registrationCount );
+		expect( smooch.off ).toHaveBeenCalledTimes( removalCount );
+	} );
+
+	it( 'records a recovered connection after a disconnect', async () => {
+		const { result } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		const connectedListener = getSmoochListener( 'connected' );
+
+		// A 'connected' event on page load, with no preceding disconnect, is not a recovery.
+		await act( async () => {
+			connectedListener();
+			await Promise.resolve();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_smooch_messenger_connected',
+			expect.anything()
+		);
+
+		await act( async () => {
+			getSmoochListener( 'disconnected' )();
+			connectedListener();
+			await Promise.resolve();
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_connected', {
+			blog_id: 123,
+			site_context_source: 'chat_site',
+		} );
+	} );
+
+	it( 'uses the current support site after it changes', async () => {
+		const { result, rerender } = renderUseManagedZendeskChat( {
+			conversationId: 'conversation-1',
+			siteId: 123,
+		} );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+		rerender( { currentSiteId: 456 } );
+
+		await act( async () => {
+			getSmoochListener( 'disconnected' )();
+			await Promise.resolve();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_smooch_messenger_disconnected', {
+			blog_id: 456,
+			site_context_source: 'chat_site',
 		} );
 	} );
 } );

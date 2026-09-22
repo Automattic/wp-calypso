@@ -394,7 +394,7 @@ export type Plan = BillingTerm & {
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
 	getRecommendedFor?: () => Array< JetpackTag >;
-	getTagline?: () => TranslateResult;
+	getTagline?: ( siteFeatures?: string[] ) => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
 	/**
 	 * Features that are included as part of this plan.

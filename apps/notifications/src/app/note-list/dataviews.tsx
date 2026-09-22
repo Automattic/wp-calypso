@@ -1,4 +1,4 @@
-import { Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -12,9 +12,11 @@ import {
 	thumbsUp,
 	update,
 } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
@@ -76,13 +78,44 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
+const useIsUnapproved = ( note: Note ) =>
+	useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
+
 const NoteBadge = ( { note }: { note: Note } ) => {
 	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
+	const isUnapproved = useIsUnapproved( note );
 
 	return (
-		<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! isRead } ) }>
+		<span
+			className={ clsx( 'wpnc__gridicon', {
+				'is-unread': ! isRead,
+				'is-unapproved': isUnapproved,
+			} ) }
+		>
 			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
 		</span>
+	);
+};
+
+const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
+	const isUnapproved = useIsUnapproved( note );
+
+	return (
+		<HStack alignment="topLeft">
+			<div
+				className={ clsx( 'wpnc__subject', {
+					// Marks the open note's row for the active highlight (see CSS).
+					'is-active': ( note as Note & { isActive?: boolean } ).isActive,
+				} ) }
+				/* eslint-disable-next-line react/no-danger */
+				dangerouslySetInnerHTML={ { __html: subject } }
+			/>
+			{ isUnapproved && (
+				<Badge className="wpnc__pending-badge" intent="medium">
+					{ __( 'Pending' ) }
+				</Badge>
+			) }
+		</HStack>
 	);
 };
 
@@ -103,14 +136,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div
-					className={ clsx( 'wpnc__subject', {
-						// Marks the open note's row for the active highlight (see CSS).
-						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-					} ) }
-					/* eslint-disable-next-line react/no-danger */
-					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-				/>
+				<NoteSubject note={ item } subject={ field.getValue( { item } ) } />
 			),
 		},
 		{

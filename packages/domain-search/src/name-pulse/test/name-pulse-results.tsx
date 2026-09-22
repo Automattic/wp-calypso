@@ -17,11 +17,12 @@ import {
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
-import type { DomainSearchCart } from '../../page/types';
+import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
 import type { DomainAvailability, NamePulseAvailabilityResponse } from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
 	query,
+	slots,
 	cart = buildCart(),
 	availabilityRequests = [],
 	availability = async ( domainNames ) => buildNamePulseAvailabilityResponse( domainNames ),
@@ -33,18 +34,23 @@ const NamePulseTestSearch = ( {
 			cost: '$24.00',
 			raw_price: 24,
 		} ),
+	events,
 }: {
 	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	availability?: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
 	tldsResponse?: () => Promise< string[] >;
 	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
+	events?: Partial< DomainSearchEvents >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query,
-		config: { showNamePulseSearch: true },
+		events,
+		slots,
+		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true },
 	} );
 
 	return (
@@ -83,6 +89,12 @@ const findRow = async ( domainName: string ) => {
 
 const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
+
+const findNotice = async () => {
+	await waitFor( () => expect( document.querySelector( '.name-pulse-notice' ) ).not.toBeNull() );
+
+	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
+};
 
 const domainsIn = ( id: string ) =>
 	sectionRows( id ).map( ( item ) =>
@@ -264,6 +276,102 @@ describe( 'NamePulseResults', () => {
 		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'explains an unrecognised ending and lists the joined name', async () => {
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+		);
+		expect(
+			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', { name: 'Exact match for “icecreamd”' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'lets the reader dismiss the notice about how their query was read', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
+	} );
+
+	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
+		const user = userEvent.setup();
+		const onExternalDomainClick = jest.fn();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				events={ { onExternalDomainClick } }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+						tld: 'net',
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+
+		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
+		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
+
+		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
+	} );
+
+	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( { domain_name: domainName, status: DomainAvailabilityStatus.MAPPED } )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent(
+			'This domain is already connected to a WordPress.com site.'
+		);
+		expect( screen.queryByRole( 'button', { name: 'Transfer it here.' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the BeforeResults slot between the search input and the results', () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const banner = screen.getByText( 'Before Results' );
+		const searchInput = document.querySelector( '.domain-search__search-bar' ) as HTMLElement;
+		const firstSection = screen.getByRole( 'heading', { name: 'Top results' } );
+
+		expect(
+			searchInput.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			banner.compareDocumentPosition( firstSection ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'is not rendered when no BeforeResults slot is passed', () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.queryByText( 'Before Results' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'runs the real-time check on add to cart: a taken verdict flips the row, an available one adds it', async () => {
 		const user = userEvent.setup();
 		const cart = buildCart();
@@ -294,7 +402,14 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( rowFor( 'creamyice.com' ) ).findByText( 'Unavailable' )
 		).toBeInTheDocument();
-		expect( within( rowFor( 'creamyice.com' ) ).queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect(
+			within( rowFor( 'creamyice.com' ) ).getByRole( 'button', {
+				name: 'Sorry, this domain is no longer available.',
+			} )
+		).toHaveAttribute( 'aria-disabled', 'true' );
+		expect(
+			within( rowFor( 'creamyice.com' ) ).queryByRole( 'button', { name: 'Add to cart' } )
+		).not.toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).queryByText( '$24' ) ).not.toBeInTheDocument();
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
 
@@ -309,5 +424,48 @@ describe( 'NamePulseResults', () => {
 			)
 		);
 		expect( cart.onAddItem ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps a top result in its slot when the real-time check finds it taken', async () => {
+		const user = userEvent.setup();
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status:
+							domainName === 'icecream.blog'
+								? DomainAvailabilityStatus.NOT_AVAILABLE
+								: DomainAvailabilityStatus.AVAILABLE,
+						cost: '$24.00',
+						raw_price: 24,
+					} )
+				}
+			/>
+		);
+
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
+		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
+
+		// The row takes its slot as soon as the TLD order is known, a tick before its verdict
+		// arrives, so wait for the CTA rather than the row.
+		await user.click(
+			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
+		);
+
+		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {
+			name: 'Sorry, this domain is no longer available.',
+		} );
+		expect( errorCTA ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( within( rowFor( 'icecream.blog' ) ).getByText( 'Unavailable' ) ).toBeInTheDocument();
+		expect( domainsIn( 'top' ) ).toEqual( topDomains );
+
+		await user.click( errorCTA );
+
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 } );

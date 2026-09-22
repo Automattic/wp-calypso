@@ -69,6 +69,40 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
+	it( 'joins input with an unrecognised ending into one name and reports it', () => {
+		expect( getResultsLayout( 'icecream.d', TLDS ) ).toEqual( {
+			mode: 'single',
+			baseName: 'icecreamd',
+			wordCount: 1,
+			unknownEnding: 'd',
+			exactGrid: { show: true },
+			suggestions: { show: false },
+		} );
+	} );
+
+	it( 'searches the root domain of a subdomain and reports it', () => {
+		expect( getResultsLayout( 'shop.icecream.com', TLDS ) ).toEqual( {
+			mode: 'fqdn',
+			baseName: 'icecream',
+			wordCount: 1,
+			fqdn: { baseName: 'icecream', tld: 'com', fullDomain: 'icecream.com' },
+			subdomain: 'shop',
+			exactGrid: { show: true },
+			suggestions: { show: false },
+		} );
+	} );
+
+	it( 'searches the label of a free subdomain and reports it', () => {
+		expect( getResultsLayout( 'mysite.wordpress.com', TLDS ) ).toEqual( {
+			mode: 'single',
+			baseName: 'mysite',
+			wordCount: 1,
+			isFreeSubdomain: true,
+			exactGrid: { show: true },
+			suggestions: { show: false },
+		} );
+	} );
+
 	it( 'treats a base name shorter than two characters as empty', () => {
 		expect( getResultsLayout( 'a', TLDS ) ).toEqual( { ...EMPTY, baseName: 'a', wordCount: 1 } );
 		expect( getResultsLayout( '!a!', TLDS ) ).toEqual( { ...EMPTY, baseName: 'a', wordCount: 1 } );

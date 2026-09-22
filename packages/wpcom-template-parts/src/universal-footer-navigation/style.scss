@@ -1419,4 +1419,20 @@
 		width: 20px;
 		height: 20px;
 	}
+	/* External-link arrow per the design: a 12px regular-weight ↗ beside the 14px label,
+	   not the vendored bold, scaled glyph. */
+	:is( .lp-link-chevron-external.lp-link-chevron-external )::after,
+	:is( .lp-link-chevron-external.lp-link-chevron-external:hover )::after,
+	:is( .lp-link-chevron-external.lp-link-chevron-external:active )::after,
+	:is( a:hover .lp-link-chevron-external.lp-link-chevron-external )::after,
+	:is( a:active .lp-link-chevron-external.lp-link-chevron-external )::after {
+		font-size: 12px;
+		font-weight: 400;
+		position: relative;
+		margin-right: 0;
+		top: -2px;
+		left: 2px;
+		transform: none;
+	}
+
 }
