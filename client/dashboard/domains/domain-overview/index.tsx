@@ -128,7 +128,7 @@ export default function DomainOverview() {
 				}
 			>
 				<PendingRegistrationNotice domain={ domain } />
-				<PointToWpcomNotice domain={ domain } />
+				<PointToWpcomNotice domain={ domain } isDisabled={ isTldInMaintenance( domain ) } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
 				) }
