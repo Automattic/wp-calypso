@@ -56,8 +56,8 @@
 	display: flex;
 	flex-direction: column;
 	// Matches the wrapper padding, so the space between cards and around the stack reads as one rhythm.
-	gap: 8px;
-	padding: 8px;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+	padding: var(--wpds-dimension-padding-sm, 8px);
 	// The ground the cards sit on. `--color-surface-backdrop` is the semantic token for
 	// exactly that and resolves to #f6f7f7, so it tracks the colour scheme instead of
 	// pinning a grey.
@@ -67,7 +67,7 @@
 	// widget-section.scss regardless of which stylesheet loads first.
 	.stats-widget-section.stats-widget-overview .stats-widget-section__body,
 	.stats-widget-section.stats-widget-modules .stats-widget-section__body {
-		padding-block-start: 8px;
+		padding-block-start: var(--wpds-dimension-padding-sm, 8px);
 	}
 }
 

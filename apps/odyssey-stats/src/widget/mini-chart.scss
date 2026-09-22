@@ -6,20 +6,20 @@
 	.stats-widget-metric__title {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: var(--wpds-dimension-gap-sm, 8px);
 	}
 
 	// Totals carry the series colour, so they double as the chart's legend.
 	.stats-widget-metrics {
-		margin-block-end: 16px;
+		margin-block-end: var(--wpds-dimension-gap-lg, 16px);
 	}
 
 	// Matches the line weight the chart draws, so the pairing reads as the same series.
 	.stats-widget-metric__swatch {
 		display: inline-block;
-		inline-size: 16px;
+		inline-size: var(--wpds-dimension-size-2xs, 16px);
 		block-size: 2px;
-		border-radius: 2px;
+		border-radius: var(--wpds-border-radius-sm, 2px);
 	}
 
 

@@ -7,12 +7,12 @@ $jp-gray: #dcdcde;
 .stats-widget-modules {
 
 	.stats-widget-modules__footer {
-		margin-block-start: 16px;
+		margin-block-start: var(--wpds-dimension-gap-lg, 16px);
 	}
 }
 
 .stats-widget-module__info {
-	margin-top: 16px;
+	margin-top: var(--wpds-dimension-gap-lg, 16px);
 
 	a {
 		font-size: var(--wpds-typography-font-size-md, 13px);

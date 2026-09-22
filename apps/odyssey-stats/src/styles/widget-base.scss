@@ -17,7 +17,7 @@ $stats-widget-stack-width: 360px;
 	// the widget is already a single column, so this is all the narrow view needs.
 	.stats-widget-metrics {
 		flex-direction: column;
-		gap: 16px;
+		gap: var(--wpds-dimension-gap-lg, 16px);
 	}
 
 	// Stacked, the equal-share split applies to the cross axis and would stretch each

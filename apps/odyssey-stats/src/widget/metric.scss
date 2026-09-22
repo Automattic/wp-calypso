@@ -9,7 +9,7 @@
 // the formatted numbers happen to be.
 .stats-widget-metrics {
 	display: flex;
-	gap: 32px;
+	gap: var(--wpds-dimension-gap-2xl, 32px);
 }
 
 .stats-widget-metric {
@@ -25,9 +25,9 @@
 }
 
 .stats-widget-metric__value {
-	margin-top: 4px;
+	margin-top: var(--wpds-dimension-gap-xs, 4px);
 	font-family: $font-sf-pro-display;
-	font-weight: 400;
+	font-weight: var(--wpds-typography-font-weight-default, 400);
 	font-size: $font-headline-small;
 	line-height: 1;
 	letter-spacing: -0.02em;

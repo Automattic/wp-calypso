@@ -5,7 +5,7 @@
 // and only with motion allowed, since without a transition nothing ends the growing state.
 @media not (prefers-reduced-motion) {
 	.stats-widget-grow-height.is-growing {
-		clip-path: inset(0 -16px);
+		clip-path: inset(0 calc(var(--wpds-dimension-padding-sm, 8px) * -1));
 		transition: height var(--wpds-motion-duration-lg, 300ms) var(--wpds-motion-easing-subtle, cubic-bezier(0.15, 0, 0.15, 1));
 	}
 }

@@ -1,11 +1,11 @@
-$offset-padding-hovering: 8px;
+$offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 
 .stats-widget-highlights {
 
 	.stats-widget-highlights__tabs {
 		// TabPanel's own tab strip; the underline marks the active tab.
 		.components-tab-panel__tabs {
-			border-bottom: 1px solid var(--color-neutral-5);
+			border-bottom: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral, #dbdbdb);
 		}
 
 		// TabPanel has no full-width option, but the strip is a flex row and each tab draws
@@ -39,7 +39,7 @@ $offset-padding-hovering: 8px;
 		}
 
 		@media (forced-colors: active) {
-			border: 1px solid CanvasText;
+			border: var(--wpds-border-width-xs, 1px) solid CanvasText;
 		}
 
 		// Short of the full width, so it reads as a title rather than a rule across the row.
@@ -71,7 +71,7 @@ $offset-padding-hovering: 8px;
 	.stats-widget-highlights-card__empty {
 		margin: 0;
 		padding-block: var(--wpds-dimension-padding-lg, 16px);
-		color: var(--studio-gray-40);
+		color: var(--wpds-color-foreground-content-neutral-weak, #707070);
 	}
 
 	.stats-widget-highlights-card__list {
@@ -79,7 +79,7 @@ $offset-padding-hovering: 8px;
 		padding: 0;
 		// Rows carry inline padding for their hover fill; pulling them out by the same
 		// amount keeps the text aligned with the tabs and the "See more" link.
-		margin: 8px (-$offset-padding-hovering) 0;
+		margin: var(--wpds-dimension-gap-sm, 8px) calc(#{$offset-padding-hovering} * -1) 0;
 
 		// wp-admin's common.css gives every `li` a 6px bottom margin; the rows' own
 		// padding already spaces them.
@@ -92,9 +92,11 @@ $offset-padding-hovering: 8px;
 	.stats-widget-highlights-card__item {
 		display: flex;
 		align-items: baseline;
-		gap: 16px;
+		gap: var(--wpds-dimension-gap-lg, 16px);
+		// 6px sits between the 4px and 8px tokens; it gives each row the 32px of a
+		// compact control around its 20px line.
 		padding: 6px $offset-padding-hovering;
-		border-radius: 4px;
+		border-radius: var(--wpds-border-radius-md, 4px);
 		font-size: var(--wpds-typography-font-size-md, 13px);
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 		color: inherit;
@@ -104,7 +106,7 @@ $offset-padding-hovering: 8px;
 	a.stats-widget-highlights-card__item {
 		&:hover,
 		&:focus-visible {
-			background-color: var(--studio-gray-0);
+			background-color: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
 
 			.stats-widget-highlights-card__title-text {
 				text-decoration: underline;
@@ -121,14 +123,14 @@ $offset-padding-hovering: 8px;
 		}
 
 		&:focus-visible {
-			box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) var(--wp-admin-theme-color, var(--color-accent));
+			box-shadow: 0 0 0 var(--wpds-border-width-focus, 2px) var(--wpds-color-stroke-focus, var(--wp-admin-theme-color, #3858e9));
 		}
 	}
 
 	.stats-widget-highlights-card__title {
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		gap: var(--wpds-dimension-gap-xs, 4px);
 		flex: 1;
 		min-width: 0;
 		font-weight: var(--wpds-typography-font-weight-default, 400);
