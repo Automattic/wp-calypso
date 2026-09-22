@@ -757,6 +757,7 @@ function setUpCSP( req, res, next ) {
 			'https://accounts.google.com/',
 			'https://www.googletagmanager.com', // Google Tag Manager iframes
 			'https://jetpack.com',
+			'https://pressable.com', // A4A resource library webpage previews
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'*.wordpress.com', // User WordPress.com sites (site previews, embeds)
 			// Payment provider iframes (secure card input elements)
@@ -1157,9 +1158,9 @@ function wpcomPages( app ) {
 				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
-				if (
-					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
-				) {
+				if ( ! (
+					Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' )
+				) ) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 

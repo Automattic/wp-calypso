@@ -11,10 +11,9 @@ import { Badge } from '@wordpress/ui';
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { getResourceTags } from './resource-presentation';
 import ResourceProductLogo from './resource-product-logo';
+import ResourceWebpagePreview from './resource-webpage-preview';
 import { sampleDocuments } from './sample-documents';
-import type { sampleResources } from './sample-resources';
-
-type Resource = ( typeof sampleResources )[ number ];
+import type { LibraryResource } from './types';
 
 export default function ResourcePreview( {
 	resource,
@@ -26,10 +25,10 @@ export default function ResourcePreview( {
 	onClose,
 	onFilter,
 }: {
-	resource: Resource;
+	resource: LibraryResource;
 	origin: DOMRect | null;
-	previousResource?: Resource;
-	nextResource?: Resource;
+	previousResource?: LibraryResource;
+	nextResource?: LibraryResource;
 	onPrevious?: () => void;
 	onNext?: () => void;
 	onClose: () => void;
@@ -43,8 +42,9 @@ export default function ResourcePreview( {
 	}, [ resource.id ] );
 	const [ page, setPage ] = useState( 0 );
 	useEffect( () => setPage( 0 ), [ resource.id ] );
-	const document = sampleDocuments[ resource.id ];
+	const document = resource.format === 'PDF' ? sampleDocuments[ resource.id ] : undefined;
 	const pages = document?.pages ?? [];
+	const isWebpage = resource.format === 'Webpage';
 	const isVideo = resource.format === 'Video';
 	const documentUrl = isVideo ? resource.url : document?.url;
 	const contentRef = useRef< HTMLDivElement >( null );
@@ -57,7 +57,7 @@ export default function ResourcePreview( {
 		const transform = origin
 			? `translate(${ origin.x + origin.width / 2 - bounds.x - bounds.width / 2 }px, ${
 					origin.y + origin.height / 2 - bounds.y - bounds.height / 2
-			  }px) scale(${ origin.width / bounds.width }, ${ origin.height / bounds.height })`
+				}px) scale(${ origin.width / bounds.width }, ${ origin.height / bounds.height })`
 			: 'scale(0.96)';
 		const animation = frame.animate(
 			[
@@ -138,40 +138,52 @@ export default function ResourcePreview( {
 								justify="start"
 								expanded={ false }
 							>
-								<Button
-									variant="primary"
-									size="compact"
-									href={ documentUrl }
-									download={ `${ resource.title }.${ isVideo ? 'mp4' : 'pdf' }` }
-									onClick={ async (
-										event: MouseEvent< HTMLAnchorElement | HTMLButtonElement >
-									) => {
-										if ( ! isVideo ) {
-											return;
-										}
-										event.preventDefault();
-										setDownloadError( '' );
-										try {
-											// Cross-origin video links ignore the download attribute.
-											const response = await fetch( resource.url );
-											if ( ! response.ok ) {
-												throw new Error( 'Download failed' );
+								{ isWebpage ? (
+									<Button
+										variant="primary"
+										size="compact"
+										href={ resource.url }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ __( 'Open in new tab' ) }
+									</Button>
+								) : (
+									<Button
+										variant="primary"
+										size="compact"
+										href={ documentUrl }
+										download={ `${ resource.title }.${ isVideo ? 'mp4' : 'pdf' }` }
+										onClick={ async (
+											event: MouseEvent< HTMLAnchorElement | HTMLButtonElement >
+										) => {
+											if ( ! isVideo ) {
+												return;
 											}
-											const url = URL.createObjectURL( await response.blob() );
-											const anchor = window.document.createElement( 'a' );
-											anchor.href = url;
-											anchor.download = `${ resource.title }.mp4`;
-											window.document.body.appendChild( anchor );
-											anchor.click();
-											anchor.remove();
-											window.setTimeout( () => URL.revokeObjectURL( url ), 1000 );
-										} catch {
-											setDownloadError( __( 'Download failed. Please try again.' ) );
-										}
-									} }
-								>
-									{ __( 'Download' ) }
-								</Button>
+											event.preventDefault();
+											setDownloadError( '' );
+											try {
+												// Cross-origin video links ignore the download attribute.
+												const response = await fetch( resource.url );
+												if ( ! response.ok ) {
+													throw new Error( 'Download failed' );
+												}
+												const url = URL.createObjectURL( await response.blob() );
+												const anchor = window.document.createElement( 'a' );
+												anchor.href = url;
+												anchor.download = `${ resource.title }.mp4`;
+												window.document.body.appendChild( anchor );
+												anchor.click();
+												anchor.remove();
+												window.setTimeout( () => URL.revokeObjectURL( url ), 1000 );
+											} catch {
+												setDownloadError( __( 'Download failed. Please try again.' ) );
+											}
+										} }
+									>
+										{ __( 'Download' ) }
+									</Button>
+								) }
 								<Button
 									variant="tertiary"
 									label={ copyState || __( 'Copy link' ) }
@@ -222,7 +234,14 @@ export default function ResourcePreview( {
 					{ copyState }
 				</span>
 				<div className="resource-preview-media" key={ resource.id }>
-					{ isVideo ? (
+					{ isWebpage && (
+						<ResourceWebpagePreview
+							key={ resource.url }
+							url={ resource.url }
+							title={ resource.title }
+						/>
+					) }
+					{ isVideo && (
 						// The sample clip has no speech requiring captions.
 						// eslint-disable-next-line jsx-a11y/media-has-caption
 						<video
@@ -232,7 +251,8 @@ export default function ResourcePreview( {
 							src={ resource.url }
 							aria-label={ resource.title }
 						/>
-					) : (
+					) }
+					{ resource.format === 'PDF' && (
 						<div className="resource-pdf-viewer">
 							<div className="resource-pdf-page" key={ `${ resource.id }-${ page }` }>
 								<img src={ pages[ page ] } alt={ `${ resource.title }, ${ page + 1 }` } />
@@ -260,44 +280,46 @@ export default function ResourcePreview( {
 					) }
 				</div>
 
-				<HStack className="resource-preview-navigation" spacing={ 3 }>
-					<Button
-						size="compact"
-						icon={ chevronLeft }
-						aria-label={ __( 'Previous resource' ) }
-						disabled={ ! onPrevious }
-						onClick={ onPrevious }
-					>
-						<span className="resource-preview-neighbor">
-							<span className="resource-preview-neighbor-meta">
-								{ __( 'Previous' ) }
-								{ previousResource && <span>{ ` · ${ previousResource.format }` }</span> }
-							</span>
-							<span className="resource-preview-neighbor-title">
-								{ previousResource?.title ?? __( 'First resource' ) }
-							</span>
-						</span>
-					</Button>
-
-					<Button
-						size="compact"
-						icon={ chevronRight }
-						aria-label={ __( 'Next resource' ) }
-						iconPosition="right"
-						disabled={ ! onNext }
-						onClick={ onNext }
-					>
-						<span className="resource-preview-neighbor">
-							<span className="resource-preview-neighbor-meta">
-								{ __( 'Next' ) }
-								{ nextResource && <span>{ ` · ${ nextResource.format }` }</span> }
-							</span>
-							<span className="resource-preview-neighbor-title">
-								{ nextResource?.title ?? __( 'Last resource' ) }
-							</span>
-						</span>
-					</Button>
-				</HStack>
+				{ ( previousResource || nextResource ) && (
+					<HStack className="resource-preview-navigation" spacing={ 3 }>
+						{ previousResource && (
+							<Button
+								size="compact"
+								icon={ chevronLeft }
+								aria-label={ __( 'Previous resource' ) }
+								onClick={ onPrevious }
+							>
+								<span className="resource-preview-neighbor">
+									<span className="resource-preview-neighbor-meta">
+										{ __( 'Previous' ) }
+										<span>{ ` · ${ previousResource.contentType }` }</span>
+									</span>
+									<span className="resource-preview-neighbor-title">
+										{ previousResource.title }
+									</span>
+								</span>
+							</Button>
+						) }
+						{ nextResource && (
+							<Button
+								className="resource-preview-next"
+								size="compact"
+								icon={ chevronRight }
+								aria-label={ __( 'Next resource' ) }
+								iconPosition="right"
+								onClick={ onNext }
+							>
+								<span className="resource-preview-neighbor">
+									<span className="resource-preview-neighbor-meta">
+										{ __( 'Next' ) }
+										<span>{ ` · ${ nextResource.contentType }` }</span>
+									</span>
+									<span className="resource-preview-neighbor-title">{ nextResource.title }</span>
+								</span>
+							</Button>
+						) }
+					</HStack>
+				) }
 			</div>
 		</Modal>
 	);

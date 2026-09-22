@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import type { ResourceContentType } from './types';
 
 function VideoIllustration() {
 	const id = useId();
@@ -143,7 +144,7 @@ const illustrations = {
 	),
 };
 
-export default function ResourceThumbnail( { format }: { format: string } ) {
+export default function ResourceThumbnail( { contentType }: { contentType: ResourceContentType } ) {
 	return (
 		<svg
 			className="resource-thumbnail"
@@ -157,9 +158,7 @@ export default function ResourceThumbnail( { format }: { format: string } ) {
 			focusable="false"
 		>
 			<g transform="translate(56 36)">
-				<g className="resource-fallback-icon">
-					{ illustrations[ format as keyof typeof illustrations ] ?? illustrations.Guide }
-				</g>
+				<g className="resource-fallback-icon">{ illustrations[ contentType ] }</g>
 			</g>
 		</svg>
 	);

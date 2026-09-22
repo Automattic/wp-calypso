@@ -13,7 +13,9 @@ export default function useResourceCoverHeight() {
 		let active = true;
 		const measure = () => {
 			library.style.removeProperty( '--resource-cover-height' );
-			const covers = library.querySelectorAll< HTMLElement >( '.resource-title-cover' );
+			const covers = library.querySelectorAll< HTMLElement >(
+				'.dataviews-view-grid .resource-title-cover'
+			);
 			const height = Math.max( 0, ...Array.from( covers, ( cover ) => cover.offsetHeight ) );
 			if ( height ) {
 				library.style.setProperty( '--resource-cover-height', `${ Math.ceil( height ) }px` );

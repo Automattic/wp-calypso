@@ -9,22 +9,22 @@ import {
 } from '@wordpress/components';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { closeSmall, Icon } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { learnRoute } from '../../../app/router/agency';
 import { DataViews } from '../../../components/dataviews';
+import ResourceCover from './resource-cover';
 import { getResourceTags, topResources } from './resource-presentation';
 import ResourcePreview from './resource-preview';
-import ResourceProductLogo from './resource-product-logo';
+import ResourceRecommendations from './resource-recommendations';
 import ResourceTags from './resource-tags';
-import ResourceThumbnail from './resource-thumbnail';
-import { sampleResources } from './sample-resources';
+import { sampleRecommendationIds, sampleResources } from './sample-resources';
 import useResourceCoverHeight from './use-resource-cover-height';
 import useResourceLoadMore from './use-resource-load-more';
+import type { LibraryResource } from './types';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './sample-resource-grid.scss';
-
-type Resource = ( typeof sampleResources )[ number ];
 
 const initialView: View = {
 	type: 'grid',
@@ -39,27 +39,20 @@ const initialView: View = {
 	filters: [],
 };
 
+const recommendedResources = sampleResources.filter( ( item ) =>
+	sampleRecommendationIds.includes( item.id )
+);
+
 const createFields = (
-	onFilter: ( field: string, value: string ) => void
-): Field< Resource >[] => [
+	onFilter: ( field: string, value: string ) => void,
+	onlyTopResources: boolean
+): Field< LibraryResource >[] => [
 	{
 		id: 'title',
 		label: __( 'Title' ),
 		getValue: ( { item } ) => item.title,
 		render: ( { item } ) => (
-			<div className="resource-title-cover" data-product={ item.product }>
-				<div className="resource-title-cover-label">
-					<span>{ item.format }</span>
-					{ topResources.includes( item.id ) && (
-						<span className="resource-title-cover-featured">{ __( 'Top resource' ) }</span>
-					) }
-					<ResourceThumbnail format={ item.format } />
-				</div>
-				<span className="resource-title-cover-heading">{ item.title }</span>
-				<div className="resource-title-cover-brand">
-					<ResourceProductLogo product={ item.product } />
-				</div>
-			</div>
+			<ResourceCover resource={ item } featured={ topResources.includes( item.id ) } />
 		),
 		enableGlobalSearch: true,
 	},
@@ -80,11 +73,12 @@ const createFields = (
 	},
 	{
 		id: 'featured',
-		label: __( 'Highlight' ),
+		label: __( 'Top resources' ),
 		type: 'text',
 		getValue: ( { item } ) => ( topResources.includes( item.id ) ? __( 'Top resource' ) : '' ),
 		elements: [ { value: __( 'Top resource' ), label: __( 'Top resource' ) } ],
-		filterBy: { operators: [ 'is' ] },
+		// A fixed-value filter needs no value picker once applied.
+		filterBy: onlyTopResources ? false : { operators: [ 'is' ] },
 	},
 	{
 		id: 'product',
@@ -111,14 +105,26 @@ const createFields = (
 	},
 
 	{
-		id: 'format',
+		id: 'contentType',
 		label: __( 'Content type' ),
 		type: 'text',
-		getValue: ( { item } ) => item.format,
+		getValue: ( { item } ) => item.contentType,
 		enableGlobalSearch: true,
-		elements: Array.from( new Set( sampleResources.map( ( item ) => item.format ) ) ).map(
+		elements: Array.from( new Set( sampleResources.map( ( item ) => item.contentType ) ) ).map(
 			( value ) => ( { value, label: value } )
 		),
+		filterBy: { operators: [ 'is', 'isAny' ] },
+	},
+	{
+		id: 'format',
+		label: __( 'Format' ),
+		type: 'text',
+		getValue: ( { item } ) => item.format,
+		elements: [
+			{ value: 'PDF', label: __( 'PDF' ) },
+			{ value: 'Video', label: __( 'Video' ) },
+			{ value: 'Webpage', label: __( 'Webpage' ) },
+		],
 		filterBy: { operators: [ 'is', 'isAny' ] },
 	},
 ];
@@ -126,10 +132,12 @@ const createFields = (
 export default function SampleResourceGrid() {
 	const [ view, setView ] = useState< View >( initialView );
 	const [ stage, setStage ] = useState( 'All' );
+	const [ previewFromRecommendations, setPreviewFromRecommendations ] = useState( false );
 	const { resource: resourceId } = learnRoute.useSearch();
 	const navigate = learnRoute.useNavigate();
 	const [ origin, setOrigin ] = useState< DOMRect | null >( null );
 	const selectedResource = sampleResources.find( ( item ) => item.id === resourceId );
+	const onlyTopResources = view.filters?.some( ( filter ) => filter.field === 'featured' ) ?? false;
 	const applyTagFilter = useCallback( ( field: string, value: string ) => {
 		if ( field === 'stage' ) {
 			setStage( value );
@@ -146,18 +154,23 @@ export default function SampleResourceGrid() {
 		} ) );
 	}, [] );
 	const libraryRef = useResourceCoverHeight();
-	const fields = useMemo( () => createFields( applyTagFilter ), [ applyTagFilter ] );
+	const fields = useMemo(
+		() => createFields( applyTagFilter, onlyTopResources ),
+		[ applyTagFilter, onlyTopResources ]
+	);
 
-	const navigationResources = useMemo(
+	const filteredResources = useMemo(
 		() =>
 			filterSortAndPaginate(
-				stage === 'All'
-					? sampleResources
-					: sampleResources.filter( ( item ) => item.stage === stage ),
+				sampleResources,
 				{ ...view, page: 1, perPage: sampleResources.length },
 				fields
 			).data,
-		[ stage, view, fields ]
+		[ view, fields ]
+	);
+	const navigationResources = useMemo(
+		() => filteredResources.filter( ( item ) => stage === 'All' || item.stage === stage ),
+		[ filteredResources, stage ]
 	);
 	const queryKey = JSON.stringify( [ stage, view.search, view.filters, view.sort ] );
 	const { visibleCount, hasMore, loadMore, sentinelRef } = useResourceLoadMore(
@@ -179,7 +192,8 @@ export default function SampleResourceGrid() {
 		}
 	}, [ data, libraryRef ] );
 
-	const resourceIndex = navigationResources.findIndex( ( item ) => item.id === resourceId );
+	const previewResources = previewFromRecommendations ? recommendedResources : navigationResources;
+	const resourceIndex = previewResources.findIndex( ( item ) => item.id === resourceId );
 
 	return (
 		<div
@@ -198,11 +212,33 @@ export default function SampleResourceGrid() {
 				}
 			} }
 		>
-			<DataViews< Resource >
+			<ResourceRecommendations
+				reason={ __( 'Because you have Pressable sites' ) }
+				resources={ recommendedResources }
+				onOpen={ ( item, bounds ) => {
+					setPreviewFromRecommendations( true );
+					setOrigin( bounds );
+					void navigate( {
+						search: ( previous: ReturnType< typeof learnRoute.useSearch > ) => ( {
+							...previous,
+							resource: item.id,
+						} ),
+						resetScroll: false,
+					} );
+				} }
+			/>
+			<DataViews< LibraryResource >
 				data={ data }
 				fields={ fields }
 				view={ view }
-				onChangeView={ setView }
+				onChangeView={ ( nextView ) =>
+					setView( {
+						...nextView,
+						filters: nextView.filters?.map( ( filter ) =>
+							filter.field === 'featured' ? { ...filter, value: __( 'Top resource' ) } : filter
+						),
+					} )
+				}
 				paginationInfo={ { totalItems: navigationResources.length, totalPages: 1 } }
 				defaultLayouts={ { grid: { showMedia: false } } }
 				getItemId={ ( item ) => item.id }
@@ -219,6 +255,7 @@ export default function SampleResourceGrid() {
 								return;
 							}
 							event.preventDefault();
+							setPreviewFromRecommendations( false );
 							const card = event.currentTarget.closest( '[role="gridcell"]' );
 							setOrigin( card?.getBoundingClientRect() ?? null );
 
@@ -273,15 +310,70 @@ export default function SampleResourceGrid() {
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
 							>
-								{ [ 'All', 'Learn', 'Sell', 'Manage', 'Grow' ].map( ( value ) => (
-									<ToggleGroupControlOption key={ value } value={ value } label={ value } />
+								{ [
+									{
+										value: 'All',
+										label: __( 'All' ),
+										tooltip: __( 'Resources for every stage.' ),
+									},
+									{
+										value: 'Learn',
+										label: __( 'Learn' ),
+										tooltip: __( 'Get to know our products.' ),
+									},
+									{
+										value: 'Sell',
+										label: __( 'Sell' ),
+										tooltip: __( 'Prepare for client conversations.' ),
+									},
+									{
+										value: 'Manage',
+										label: __( 'Manage' ),
+										tooltip: __( 'Deliver and support client projects.' ),
+									},
+									{
+										value: 'Grow',
+										label: __( 'Grow' ),
+										tooltip: __( 'Build your agency and partnerships.' ),
+									},
+								].map( ( { value, label, tooltip } ) => (
+									<ToggleGroupControlOption
+										key={ value }
+										value={ value }
+										label={ label }
+										aria-label={ tooltip }
+										showTooltip
+									/>
 								) ) }
 							</ToggleGroupControl>
 						</div>
 					</HStack>
 				</HStack>
 				{ view.filters?.length ? (
-					<WPDataViews.Filters className="dataviews-filters__container" />
+					<HStack className="dataviews-filters__container" spacing={ 2 } justify="flex-start" wrap>
+						{ onlyTopResources && (
+							<div className="dataviews-filters__summary-chip-container">
+								<span className="dataviews-filters__summary-chip has-reset has-values is-not-clickable">
+									{ __( 'Top resources' ) }
+								</span>
+								<button
+									type="button"
+									className="dataviews-filters__summary-chip-remove has-values"
+									aria-label={ __( 'Remove Top resources filter' ) }
+									onClick={ () =>
+										setView( ( current ) => ( {
+											...current,
+											page: 1,
+											filters: current.filters?.filter( ( filter ) => filter.field !== 'featured' ),
+										} ) )
+									}
+								>
+									<Icon icon={ closeSmall } />
+								</button>
+							</div>
+						) }
+						<WPDataViews.Filters />
+					</HStack>
 				) : (
 					<WPDataViews.FiltersToggled className="dataviews-filters__container" />
 				) }
@@ -327,34 +419,34 @@ export default function SampleResourceGrid() {
 						} );
 					} }
 					origin={ origin }
-					previousResource={ navigationResources[ resourceIndex - 1 ] }
-					nextResource={ navigationResources[ resourceIndex + 1 ] }
+					previousResource={ previewResources[ resourceIndex - 1 ] }
+					nextResource={ resourceIndex >= 0 ? previewResources[ resourceIndex + 1 ] : undefined }
 					onPrevious={
 						resourceIndex > 0
 							? () => {
 									void navigate( {
 										search: ( previous: ReturnType< typeof learnRoute.useSearch > ) => ( {
 											...previous,
-											resource: navigationResources[ resourceIndex - 1 ].id,
+											resource: previewResources[ resourceIndex - 1 ].id,
 										} ),
 										replace: true,
 										resetScroll: false,
 									} );
-							  }
+								}
 							: undefined
 					}
 					onNext={
-						resourceIndex >= 0 && resourceIndex < navigationResources.length - 1
+						resourceIndex >= 0 && resourceIndex < previewResources.length - 1
 							? () => {
 									void navigate( {
 										search: ( previous: ReturnType< typeof learnRoute.useSearch > ) => ( {
 											...previous,
-											resource: navigationResources[ resourceIndex + 1 ].id,
+											resource: previewResources[ resourceIndex + 1 ].id,
 										} ),
 										replace: true,
 										resetScroll: false,
 									} );
-							  }
+								}
 							: undefined
 					}
 					onClose={ () => {
