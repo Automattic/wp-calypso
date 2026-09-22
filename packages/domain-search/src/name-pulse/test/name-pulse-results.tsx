@@ -17,11 +17,12 @@ import {
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
 import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
-import type { DomainSearchCart, DomainSearchEvents } from '../../page/types';
+import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
 import type { DomainAvailability, NamePulseAvailabilityResponse } from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
 	query,
+	slots,
 	cart = buildCart(),
 	availabilityRequests = [],
 	availability = async ( domainNames ) => buildNamePulseAvailabilityResponse( domainNames ),
@@ -36,6 +37,7 @@ const NamePulseTestSearch = ( {
 	events,
 }: {
 	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	availability?: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
@@ -47,6 +49,7 @@ const NamePulseTestSearch = ( {
 		cart,
 		query,
 		events,
+		slots,
 		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true },
 	} );
 
@@ -341,6 +344,32 @@ describe( 'NamePulseResults', () => {
 		);
 		expect( screen.queryByRole( 'button', { name: 'Transfer it here.' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the BeforeResults slot between the search input and the results', () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const banner = screen.getByText( 'Before Results' );
+		const searchInput = document.querySelector( '.domain-search__search-bar' ) as HTMLElement;
+		const firstSection = screen.getByRole( 'heading', { name: 'Top results' } );
+
+		expect(
+			searchInput.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			banner.compareDocumentPosition( firstSection ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'is not rendered when no BeforeResults slot is passed', () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.queryByText( 'Before Results' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'runs the real-time check on add to cart: a taken verdict flips the row, an available one adds it', async () => {

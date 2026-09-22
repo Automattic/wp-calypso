@@ -101,12 +101,12 @@ export function getNav2026Menus( {
 					],
 				},
 				{
-					title: __( 'Enterprise', __i18n_text_domain__ ),
+					title: __( 'Enterprise hosting', __i18n_text_domain__ ),
 					columnGroup: 'hosting',
 					columnIndex: 1,
 					items: [
 						{
-							label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+							label: __( 'WordPress VIP', __i18n_text_domain__ ),
 							url: 'https://wpvip.com/',
 							isExternal: true,
 						},

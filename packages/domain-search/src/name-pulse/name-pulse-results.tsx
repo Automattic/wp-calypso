@@ -16,6 +16,7 @@ export const NamePulseResults = () => {
 	const { __ } = useI18n();
 	const {
 		query,
+		slots,
 		events,
 		config: { allowsUsingOwnDomain },
 	} = useDomainSearch();
@@ -36,6 +37,7 @@ export const NamePulseResults = () => {
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
 				{ notice && ! isTldsError && (
 					<NamePulseSearchNotice
