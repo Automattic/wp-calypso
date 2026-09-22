@@ -37,3 +37,8 @@ export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;
  * skeletons do. Keyword suggestions use the endpoint's own default.
  */
 export const NAME_PULSE_AI_TIMEOUT_MS = 10000;
+
+/**
+ * How long a cached availability verdict is trusted, and kept once no row reads it.
+ */
+export const NAME_PULSE_VERDICT_TTL_MS = 5 * 60 * 1000;

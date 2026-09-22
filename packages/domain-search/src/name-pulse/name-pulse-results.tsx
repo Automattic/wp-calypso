@@ -27,7 +27,6 @@ export const NamePulseResults = () => {
 		isLoadingKeyword,
 		isLoadingCreative,
 		revealExact,
-		updateResult,
 	} = useNamePulseSearch( query );
 	// Only the exact-match grid needs the TLD list, so its failure takes down
 	// Top results with it but leaves the suggestion sections alone.
@@ -54,7 +53,6 @@ export const NamePulseResults = () => {
 						isLoading={ isLoadingTop }
 						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
 						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
-						onUpdate={ updateResult }
 					/>
 				) }
 				{ layout.exactGrid.show && ! hasTldsError && (
@@ -73,7 +71,6 @@ export const NamePulseResults = () => {
 						isLoading={ isLoadingTlds }
 						showMoreLabel={ __( 'Show more exact matches' ) }
 						onReveal={ revealExact }
-						onUpdate={ updateResult }
 					/>
 				) }
 				{ layout.suggestions.show && (
@@ -83,7 +80,6 @@ export const NamePulseResults = () => {
 						results={ keywordResults }
 						isLoading={ isLoadingKeyword }
 						showMoreLabel={ __( 'Show more related matches' ) }
-						onUpdate={ updateResult }
 					/>
 				) }
 				{ layout.creative.show && (
@@ -93,7 +89,6 @@ export const NamePulseResults = () => {
 						results={ creativeResults }
 						isLoading={ isLoadingCreative }
 						showMoreLabel={ __( 'Show more creative matches' ) }
-						onUpdate={ updateResult }
 					/>
 				) }
 			</VStack>
