@@ -164,6 +164,71 @@ describe( 'useWaitForAtomic', () => {
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'does not anchor a new wait to an old transfer reverting in the background', async () => {
+			const startedSixMinutesAgo = new Date( Date.now() - 6 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'renaming',
+					created_at: startedSixMinutesAgo,
+				} )
+				.mockReturnValue( {
+					atomic_transfer_id: 2,
+					status: 'completed',
+					created_at: startedSixMinutesAgo,
+				} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
+			await jest.advanceTimersByTimeAsync( 6000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
+			expect( failures ).toEqual( [] );
+		} );
+
+		it( 're-anchors the deadline when a different in-flight transfer appears', async () => {
+			const startedFourMinutesAgo = new Date( Date.now() - 4 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			const newTransferStartedAt = new Date().toISOString().replace( 'T', ' ' ).slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'active',
+					created_at: startedFourMinutesAgo,
+				} )
+				.mockReturnValue( {
+					atomic_transfer_id: 2,
+					status: 'active',
+					created_at: newTransferStartedAt,
+				} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
+			await jest.advanceTimersByTimeAsync( 70_000 );
+
+			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
+			expect( failures ).toEqual( [] );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 2,
+				status: 'completed',
+				created_at: newTransferStartedAt,
+			} );
+			await jest.advanceTimersByTimeAsync( 3000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
+			expect( failures ).toEqual( [] );
+		} );
+
 		it( 'lets a completed transfer win over the cap it crossed on the same poll', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
