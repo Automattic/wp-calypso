@@ -65,6 +65,8 @@ describe( 'DomainSuggestionCTA', () => {
 					...suggestion,
 					position: 0,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'available',
 				} );
 
 				expect( onAddDomainToCart ).toHaveBeenCalledWith(
@@ -140,6 +142,8 @@ describe( 'DomainSuggestionCTA', () => {
 					...availabilitySuggestion,
 					position: 0,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'available',
 				} );
 
 				expect( onAddDomainToCart ).toHaveBeenCalledWith(
@@ -313,6 +317,8 @@ describe( 'DomainSuggestionCTA', () => {
 					...suggestion,
 					position: 0,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'available',
 				} );
 			} );
 		} );
@@ -376,6 +382,8 @@ describe( 'DomainSuggestionCTA', () => {
 					...suggestion,
 					position: 0,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'available',
 				} );
 
 				expect( onDomainAddAvailabilityPreCheck ).toHaveBeenCalledTimes( 1 );

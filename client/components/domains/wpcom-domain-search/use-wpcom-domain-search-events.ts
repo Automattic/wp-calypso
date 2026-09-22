@@ -1,6 +1,6 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
-import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
-import { DomainSearch, getTld } from '@automattic/domain-search';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { DomainSearch, getTld, isFqdnQuery } from '@automattic/domain-search';
 import { type ComponentProps, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
@@ -23,31 +23,30 @@ import {
 	recordFiltersSubmit,
 	recordShowMoreResults,
 } from './analytics';
+import type { SearchUiVersion } from '@automattic/domain-search';
 
 export const useWPCOMDomainSearchEvents = ( {
 	vendor,
 	flowName,
 	analyticsSection,
 	query,
+	searchUiVersion,
 }: {
 	flowName: string;
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
+	searchUiVersion?: SearchUiVersion;
 } ) => {
 	const dispatch = useDispatch();
 
-	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 	const searchCount = useRef( 0 );
 	const lastSearchTime = useRef( Date.now() );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			onPageView: () => {
-				dispatch( recordSearchFormView( analyticsSection, flowName ) );
-			},
-			onQueryChange: () => {
-				railcarId.current = getNewRailcarId( 'domain-suggestion' );
+				dispatch( recordSearchFormView( analyticsSection, flowName, searchUiVersion ) );
 			},
 			onSearch: ( query, searchId, trigger ) => {
 				searchCount.current++;
@@ -65,7 +64,9 @@ export const useWPCOMDomainSearchEvents = ( {
 						vendor,
 						flowName,
 						searchId,
-						trigger
+						trigger,
+						isFqdnQuery( query ) ? 'fqdn' : 'keyword',
+						searchUiVersion
 					)
 				);
 			},
@@ -109,7 +110,9 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onExternalDomainClick: () => {
-				dispatch( recordUseYourDomainButtonClick( analyticsSection, null, flowName ) );
+				dispatch(
+					recordUseYourDomainButtonClick( analyticsSection, null, flowName, searchUiVersion )
+				);
 			},
 			onSubmitButtonClick: ( query ) => {
 				dispatch( recordSearchFormSubmitButtonClick( query, analyticsSection, flowName ) );
@@ -152,14 +155,33 @@ export const useWPCOMDomainSearchEvents = ( {
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
 			onShowMoreResults: ( pageNumber ) => {
-				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
-			},
-			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
 				dispatch(
-					recordSearchResultsReceive( query, suggestions, responseTime, analyticsSection, flowName )
+					recordShowMoreResults(
+						query ?? '',
+						pageNumber,
+						analyticsSection,
+						flowName,
+						'list',
+						searchUiVersion
+					)
 				);
 			},
-			onSuggestionRender: ( suggestion, reason ) => {
+			onSuggestionsReceive: ( query, suggestions, responseTime, details ) => {
+				dispatch(
+					recordSearchResultsReceive(
+						query,
+						suggestions,
+						responseTime,
+						analyticsSection,
+						flowName,
+						{
+							...details,
+							searchUiVersion,
+						}
+					)
+				);
+			},
+			onSuggestionRender: ( suggestion, resultGroup, reason ) => {
 				let resultSuffix = '';
 				if ( reason === 'recommended' ) {
 					resultSuffix = '#recommended';
@@ -170,18 +192,23 @@ export const useWPCOMDomainSearchEvents = ( {
 				recordTracksEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
-					railcar: `${ railcarId.current }-${ suggestion.position }`,
+					railcar: suggestion.railcar,
 					fetch_algo: `/domains/search/${ vendor }/${ analyticsSection }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
 					fetch_query: query,
 					domain_type: suggestion.is_premium ? 'premium' : 'standard',
 					tld: getTld( suggestion.domain_name ),
+					result_set_id: suggestion.result_set_id ?? null,
+					result_group: resultGroup,
+					is_ai_generated: false,
+					availability_at_render: suggestion.availability_at_render,
+					search_ui_version: searchUiVersion,
 				} );
 			},
 			onSuggestionInteract: ( suggestion ) => {
 				recordTracksEvent( 'calypso_traintracks_interact', {
-					railcar: `${ railcarId.current }-${ suggestion.position }`,
+					railcar: suggestion.railcar,
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,
@@ -223,6 +250,7 @@ export const useWPCOMDomainSearchEvents = ( {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
+					result_group: 'bundle',
 					flow_name: flowName,
 					section: analyticsSection,
 				} );
@@ -237,7 +265,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				} );
 			},
 		};
-	}, [ flowName, vendor, query, analyticsSection, dispatch ] );
+	}, [ flowName, vendor, query, analyticsSection, searchUiVersion, dispatch ] );
 
 	return events;
 };

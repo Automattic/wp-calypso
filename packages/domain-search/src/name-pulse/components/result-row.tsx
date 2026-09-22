@@ -101,7 +101,7 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 
 export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { cart, events, queries } = useDomainSearch();
+	const { cart, events, queries, searchId } = useDomainSearch();
 	const queryClient = useQueryClient();
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
@@ -161,6 +161,8 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 					...suggestion,
 					position,
 					price_rule: DomainPriceRule.PRICE,
+					railcar: `domain-suggestion-${ searchId }-${ position }`,
+					availability_at_render: 'available',
 				} );
 				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
 				return { addedToCart: false };

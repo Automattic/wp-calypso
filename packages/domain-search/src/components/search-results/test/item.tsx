@@ -280,11 +280,16 @@ describe( 'SearchResultsItem', () => {
 		);
 
 		await waitFor( () => {
-			expect( onSuggestionRender ).toHaveBeenCalledWith( {
-				...suggestion,
-				position: 0,
-				price_rule: DomainPriceRule.PRICE,
-			} );
+			expect( onSuggestionRender ).toHaveBeenCalledWith(
+				{
+					...suggestion,
+					position: 0,
+					price_rule: DomainPriceRule.PRICE,
+					railcar: expect.stringMatching( /-0$/ ),
+					availability_at_render: 'unknown',
+				},
+				'list'
+			);
 		} );
 	} );
 } );

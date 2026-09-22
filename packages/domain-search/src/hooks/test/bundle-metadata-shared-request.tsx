@@ -3,10 +3,10 @@
  */
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import qs from 'qs';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
+	matchesQueryIgnoringContext,
 	mockGetBundleMetadataQuery,
 	mockGetSuggestionsQuery,
 } from '../../test-helpers/queries/suggestions';
@@ -52,20 +52,17 @@ describe( 'bundle metadata shared request', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query(
-				qs.stringify(
-					{
-						include_wordpressdotcom: false,
-						include_dotblogsubdomain: false,
-						only_wordpressdotcom: false,
-						quantity: 30,
-						vendor: 'variation2_front',
-						exact_sld_matches_only: false,
-						include_internal_move_eligible: false,
-						query: 'flowers.com',
-						with_bundles: 1,
-					},
-					{ arrayFormat: 'brackets' }
-				)
+				matchesQueryIgnoringContext( {
+					include_wordpressdotcom: false,
+					include_dotblogsubdomain: false,
+					only_wordpressdotcom: false,
+					quantity: 30,
+					vendor: 'variation2_front',
+					exact_sld_matches_only: false,
+					include_internal_move_eligible: false,
+					query: 'flowers.com',
+					with_bundles: 1,
+				} )
 			)
 			.reply( 200, () => {
 				withBundlesCallCount++;

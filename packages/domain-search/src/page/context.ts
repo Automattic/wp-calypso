@@ -87,6 +87,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
 		showNamePulseSearch: false,
+		searchUiVersion: 'legacy_v1',
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -165,6 +166,12 @@ export const useDomainSearchContextValue = ( {
 			? normalizedConfig.allowedTlds
 			: undefined;
 
+		const requestContext = {
+			flow_name: normalizedConfig.flowName,
+			section: normalizedConfig.analyticsSection,
+			search_id: search.id,
+		};
+
 		// One params object for the plain suggestions request and the wrapped
 		// with_bundles request: the backend anchors a bare-term bundle on its own
 		// suggestion list (DOMAINS-2238), so both requests must see the same list.
@@ -175,6 +182,7 @@ export const useDomainSearchContextValue = ( {
 			exact_sld_matches_only: filter.exactSldMatchesOnly,
 			include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
 			site_slug: currentSiteUrl,
+			...requestContext,
 		};
 
 		return {
@@ -214,7 +222,7 @@ export const useDomainSearchContextValue = ( {
 					refetchOnWindowFocus: false,
 				} ),
 				bundleForDomain: ( fqdn ) => ( {
-					...bundleForDomainQuery( fqdn ),
+					...bundleForDomainQuery( fqdn, requestContext ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,

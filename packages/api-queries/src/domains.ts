@@ -15,6 +15,7 @@ import {
 	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
+	type DomainSuggestionRequestContext,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -84,10 +85,13 @@ export const bundleTriggersQuery = (
 	select: selectBundleTriggers,
 } );
 
-export const bundleForDomainQuery = ( fqdn: string ) =>
+// The context is deliberately left out of the key: a trigger FQDN is fetched
+// once per cart-add and reused across searches (see useInlineBundles).
+export const bundleForDomainQuery = ( fqdn: string, context?: DomainSuggestionRequestContext ) =>
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
 	queryOptions( {
 		queryKey: [ 'bundle-for-domain', fqdn ],
-		queryFn: () => fetchBundleForDomain( fqdn ),
+		queryFn: () => fetchBundleForDomain( fqdn, context ),
 		meta: { persist: false },
 	} );
 

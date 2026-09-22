@@ -83,6 +83,26 @@ export type SearchTrigger =
 	| 'filter_reset'
 	| 'hint_link';
 
+export type SearchUiVersion = 'legacy_v1' | 'i4_v1';
+
+/**
+ * The result group a row is rendered in. Legacy UI: `featured`, `list`,
+ * `free_subdomain`, `bundle`. Name Pulse UI: `exact`, `top`, `related`,
+ * `creative`, `more_suggestions`. `search_ui_version` disambiguates.
+ */
+export type ResultGroup =
+	| 'featured'
+	| 'list'
+	| 'free_subdomain'
+	| 'bundle'
+	| 'exact'
+	| 'top'
+	| 'related'
+	| 'creative'
+	| 'more_suggestions';
+
+export type AvailabilityAtRender = 'available' | 'unavailable' | 'unknown';
+
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
@@ -119,9 +139,20 @@ export interface DomainSearchEvents {
 	onFilterApplied: ( filter: FilterState ) => void;
 	onFilterReset: ( filter: FilterState, keysToReset: string[] ) => void;
 	onShowMoreResults: ( pageNumber: number ) => void;
-	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
+	onSuggestionsReceive: (
+		query: string,
+		suggestions: string[],
+		responseTime: number,
+		details: {
+			searchId: string;
+			resultSetId: string | null;
+			resultCountFeatured: number;
+			resultCountList: number;
+		}
+	) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
+		resultGroup: ResultGroup,
 		reason?: FeaturedSuggestionReason
 	) => void;
 	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
@@ -179,6 +210,11 @@ export interface DomainSearchConfig {
 	showBundleSuggestions: boolean;
 	/** Set from the `domain-search/name-pulse` flag by the signup domain-only step. */
 	showNamePulseSearch: boolean;
+	/** Which search UI is rendered; stamped on the analytics events. */
+	searchUiVersion: SearchUiVersion;
+	/** Analytics context passed to the suggestions and bundle endpoints. */
+	flowName?: string;
+	analyticsSection?: string;
 }
 
 export interface DomainSearchProps {

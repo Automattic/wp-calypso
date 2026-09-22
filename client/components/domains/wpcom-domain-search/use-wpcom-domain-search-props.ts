@@ -94,6 +94,8 @@ export const useWPCOMDomainSearchProps = ( {
 
 		return {
 			...externalConfig,
+			flowName,
+			analyticsSection,
 			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
 			priceRules: {
 				...externalConfig?.priceRules,
@@ -104,13 +106,21 @@ export const useWPCOMDomainSearchProps = ( {
 				freeForFirstYearTlds,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, freeDomainName, freeForFirstYearTlds, flowName ] );
+	}, [
+		externalConfig,
+		isNextDomainFree,
+		freeDomainName,
+		freeForFirstYearTlds,
+		flowName,
+		analyticsSection,
+	] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,
 		flowName,
 		analyticsSection,
 		query: query,
+		searchUiVersion: config.searchUiVersion,
 	} );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
