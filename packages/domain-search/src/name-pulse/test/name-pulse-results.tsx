@@ -465,7 +465,8 @@ describe( 'NamePulseResults', () => {
 		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
-		// Cards render as soon as the name is known; the button waits for the verdict.
+		// The row takes its slot as soon as the TLD order is known, a tick before its verdict
+		// arrives, so wait for the CTA rather than the row.
 		await user.click(
 			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
 		);
