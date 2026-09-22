@@ -21,7 +21,7 @@ export default function PointToWpcomNotice( { domain }: { domain: Domain } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const pointToWpcom = useMutation(
 		withSnackbar( domainPointToWpcomMutation( domainName ), {
-			success: __( 'Domain is pointing to WordPress.com' ),
+			success: __( 'Domain pointed to WordPress.com.' ),
 			error: { source: 'server' },
 		} )
 	);
@@ -105,9 +105,9 @@ export default function PointToWpcomNotice( { domain }: { domain: Domain } ) {
 						description={ __( 'When you point your domain to WordPress.com, we will:' ) }
 					/>
 					<ul>
-						<li>{ __( 'Change your name servers to use the WordPress.com defaults,' ) }</li>
-						<li>{ __( 'Reset to default A records, and' ) }</li>
-						<li>{ __( "Set the default 'www' CNAME records" ) }</li>
+						<li>{ __( 'Change your name servers to use the WordPress.com defaults.' ) }</li>
+						<li>{ __( 'Reset to default A records.' ) }</li>
+						<li>{ __( 'Set the default ‘www’ CNAME records.' ) }</li>
 					</ul>
 					<Text as="p">
 						{ __( 'Please note that these changes may take some time to apply.' ) }
