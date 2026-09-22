@@ -101,7 +101,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
-		<HStack className="wpnc__title-row" alignment="topLeft">
+		<HStack alignment="topLeft">
 			<div
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
