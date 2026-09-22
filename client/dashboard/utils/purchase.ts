@@ -11,7 +11,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
@@ -949,3 +949,27 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
+
+/**
+ * Sentence naming what the next renewal will actually charge when a delayed
+ * downgrade is scheduled, since the purchase's own renewal price is still the
+ * current plan's. Returns null when there is no downgrade price to show.
+ */
+export function getDelayedDowngradeRenewalPriceText( purchase: Purchase ): string | null {
+	if (
+		! purchase.is_delayed_downgrade_pending ||
+		purchase.delayed_downgrade_price_integer == null
+	) {
+		return null;
+	}
+	return sprintf(
+		/* translators: %(price)s is a monetary amount, e.g. $20 */
+		__( 'Because of your scheduled downgrade, your next renewal will be %(price)s.' ),
+		{
+			price: formatCurrency( purchase.delayed_downgrade_price_integer, purchase.currency_code, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} ),
+		}
+	);
+}

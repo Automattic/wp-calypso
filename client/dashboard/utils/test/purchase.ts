@@ -5,6 +5,7 @@
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
+	getDelayedDowngradeRenewalPriceText,
 	getDisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
@@ -749,5 +750,45 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Extra Storage 50 GB' );
+	} );
+} );
+
+describe( 'getDelayedDowngradeRenewalPriceText', () => {
+	test( 'names the downgraded renewal price when a downgrade is pending', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: 9600,
+				} )
+			)
+		).toBe( 'Because of your scheduled downgrade, your next renewal will be $96.' );
+	} );
+
+	test( 'returns null when no downgrade is pending', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					currency_code: 'USD',
+					is_delayed_downgrade_pending: false,
+					delayed_downgrade_price_integer: 9600,
+				} )
+			)
+		).toBeNull();
+	} );
+
+	test( 'returns null when the downgrade price is unavailable', () => {
+		expect(
+			getDelayedDowngradeRenewalPriceText(
+				makePurchase( {
+					is_delayed_downgrade_pending: true,
+					delayed_downgrade_price_integer: null,
+				} )
+			)
+		).toBeNull();
+		expect(
+			getDelayedDowngradeRenewalPriceText( makePurchase( { is_delayed_downgrade_pending: true } ) )
+		).toBeNull();
 	} );
 } );

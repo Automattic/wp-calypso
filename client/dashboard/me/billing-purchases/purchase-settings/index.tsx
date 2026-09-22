@@ -107,6 +107,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
+	getDelayedDowngradeRenewalPriceText,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -1168,6 +1169,8 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				} ),
 			} )
 		: '';
+	// The offer text describes the current plan, which won't renew if a downgrade is scheduled.
+	const renewalNote = getDelayedDowngradeRenewalPriceText( purchase ) ?? offerText;
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -1176,7 +1179,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				isSmallestUnit: true,
 			} ) }
 			description={
-				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + renewalNote
 			}
 		/>
 	);

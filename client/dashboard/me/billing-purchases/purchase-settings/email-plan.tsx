@@ -14,7 +14,7 @@ import OverviewCard from '../../../components/overview-card';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../../emails/types';
 import { isMonthlyEmailProduct } from '../../../emails/utils/is-monthly-email-product';
 import { getTitanTierFromSlug, isHighestTitanTier } from '../../../emails/utils/titan-tiers';
-import { isTitanMail } from '../../../utils/purchase';
+import { getDelayedDowngradeRenewalPriceText, isTitanMail } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -134,6 +134,10 @@ export function ManageEmailPlanActionItem( { purchase }: { purchase: Purchase } 
 }
 
 export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
+	const downgradeText = getDelayedDowngradeRenewalPriceText( purchase );
+	const periodText = isMonthlyEmailProduct( purchase )
+		? __( 'Per mailbox/month. Excludes taxes.' )
+		: __( 'Per mailbox/year. Excludes taxes.' );
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -141,11 +145,7 @@ export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( getPerMailboxPriceInteger( purchase ), purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={
-				isMonthlyEmailProduct( purchase )
-					? __( 'Per mailbox/month. Excludes taxes.' )
-					: __( 'Per mailbox/year. Excludes taxes.' )
-			}
+			description={ downgradeText ? periodText + ' ' + downgradeText : periodText }
 		/>
 	);
 }
