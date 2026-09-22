@@ -182,10 +182,8 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 		return null;
 	}
 
-	// Only the Jetpack plugin registers the REST routes these cards read.
-	const jetpackVersion =
-		optionalConfig( 'intial_state' )?.sites?.items?.[ siteId ]?.options?.jetpack_version;
-	if ( ! jetpackVersion ) {
+	// Only the Jetpack plugin registers the REST routes these cards read. The standalone Stats plugin prints an empty `jetpack_version` when Jetpack is not active; stats-admin releases older than that key ship only with the Jetpack plugin.
+	if ( optionalConfig( 'jetpack_version' ) === '' ) {
 		return null;
 	}
 

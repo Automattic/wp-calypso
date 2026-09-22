@@ -22,14 +22,10 @@ jest.mock( '../../lib/selectors/can-current-user', () => () => true );
 const SITE_ID = 123;
 
 /**
- * @param {Object} siteOptions Site options, as served inside `intial_state`.
+ * @param {Object} values Config values, as printed by stats-admin.
  */
-function mockSiteOptions( siteOptions ) {
-	optionalConfig.mockImplementation( ( key ) =>
-		key === 'intial_state'
-			? { sites: { items: { [ SITE_ID ]: { options: siteOptions } } } }
-			: undefined
-	);
+function mockConfigValues( values ) {
+	optionalConfig.mockImplementation( ( key ) => values[ key ] );
 }
 
 function renderModules() {
@@ -40,13 +36,16 @@ describe( 'Modules', () => {
 	afterEach( () => optionalConfig.mockReset() );
 
 	it( 'hides the cards on a site without the Jetpack plugin, whose routes they would 404 on', () => {
-		mockSiteOptions( { jetpack_version: '' } );
+		mockConfigValues( { jetpack_version: '' } );
 		const { container } = renderModules();
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'shows the cards on a site with the Jetpack plugin', () => {
-		mockSiteOptions( { jetpack_version: '15.1' } );
+	it.each( [
+		[ 'the Jetpack plugin is active', { jetpack_version: '15.1' } ],
+		[ 'a stats-admin release older than the key omits it', {} ],
+	] )( 'shows the cards when %s', ( _, values ) => {
+		mockConfigValues( values );
 		renderModules();
 		expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
