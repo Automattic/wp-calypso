@@ -70,6 +70,22 @@ export interface DomainSearchCart {
 	hasItem: ( domainName: string ) => boolean;
 }
 
+/**
+ * How a logical search started. `input_change` is the search-as-you-type settle
+ * and only occurs on the Name Pulse UI; the legacy UI never emits it.
+ */
+export type SearchTrigger =
+	| 'prefilled'
+	| 'submit_button'
+	| 'submit_enter'
+	| 'input_change'
+	| 'results_input'
+	| 'filter_apply'
+	| 'filter_reset'
+	| 'hint_link';
+
+export type SubmitMethod = 'enter' | 'button';
+
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
@@ -79,8 +95,13 @@ export interface DomainSearchEvents {
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( domainName: string ) => void;
-	onSubmitButtonClick: ( query: string ) => void;
+	onSubmitButtonClick: ( query: string, submitMethod: SubmitMethod ) => void;
 	onQueryChange: ( query: string ) => void;
+	/**
+	 * A logical search settled: fired once per accepted suggestions response.
+	 * Superseded responses and errors do not fire it.
+	 */
+	onSearch: ( query: string, searchId: string, trigger: SearchTrigger ) => void;
 	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
@@ -186,7 +207,10 @@ export interface DomainSearchContextType extends Omit<
 	closeFullCart: () => void;
 	openFullCart: () => void;
 	query: string;
-	setQuery: ( query: string ) => void;
+	setQuery: ( query: string, trigger: SearchTrigger ) => void;
+	/** Client-minted id of the current logical search, regenerated with each new search. */
+	searchId: string;
+	searchTrigger: SearchTrigger;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;

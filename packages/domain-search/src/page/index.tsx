@@ -12,6 +12,7 @@ import { type DomainSearchProps } from './types';
 import './style.scss';
 
 export { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from './constants';
+export type { SearchTrigger, SubmitMethod } from './types';
 
 export const DomainSearch = ( props: DomainSearchProps ) => {
 	const contextValue = useDomainSearchContextValue( props );

@@ -13,7 +13,7 @@ import {
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
-import { type DomainSearchProps, type DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType, type SearchTrigger } from './types';
 
 const noop = () => {};
 
@@ -29,6 +29,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 		onSubmitButtonClick: noop,
 		onQueryChange: noop,
+		onSearch: noop,
 		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
@@ -72,6 +73,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	openFullCart: () => {},
 	query: '',
 	setQuery: () => {},
+	searchId: '',
+	searchTrigger: 'prefilled',
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
@@ -124,6 +127,16 @@ export const useDomainSearchContextValue = ( {
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ filter, setFilter ] = useState( DEFAULT_FILTER );
+	// One id per logical search. The initial one covers a prefilled query; every
+	// setQuery / filter change mints a new one so each search is its own request.
+	const [ search, setSearch ] = useState< { id: string; trigger: SearchTrigger } >( () => ( {
+		id: crypto.randomUUID(),
+		trigger: 'prefilled',
+	} ) );
+
+	const startSearch = useCallback( ( trigger: SearchTrigger ) => {
+		setSearch( { id: crypto.randomUUID(), trigger } );
+	}, [] );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -249,7 +262,7 @@ export const useDomainSearchContextValue = ( {
 			closeFullCart,
 			openFullCart,
 			query: externalQuery ?? '',
-			setQuery: ( query ) => {
+			setQuery: ( query, trigger ) => {
 				const normalizedQuery = query
 					.trim()
 					.toLowerCase()
@@ -257,17 +270,22 @@ export const useDomainSearchContextValue = ( {
 					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
 
 				if ( normalizedQuery ) {
+					startSearch( trigger );
 					normalizedEvents.onQueryChange( normalizedQuery );
 				}
 			},
+			searchId: search.id,
+			searchTrigger: search.trigger,
 			slots,
 			currentSiteUrl,
 			filter,
 			setFilter: ( filter ) => {
+				startSearch( 'filter_apply' );
 				setFilter( filter );
 				normalizedEvents.onFilterApplied( filter );
 			},
 			resetFilter: () => {
+				startSearch( 'filter_reset' );
 				setFilter( DEFAULT_FILTER );
 				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
 			},
@@ -285,5 +303,7 @@ export const useDomainSearchContextValue = ( {
 		normalizedConfig,
 		filter,
 		setFilter,
+		search,
+		startSearch,
 	] );
 };

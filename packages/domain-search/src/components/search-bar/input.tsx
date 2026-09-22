@@ -1,6 +1,6 @@
 import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 
@@ -15,7 +15,11 @@ export const Input = () => {
 		setLocalQuery( query );
 	}, [ query ] );
 
-	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
+	const propagateQuery = useCallback(
+		( value: string ) => setQuery( value, 'results_input' ),
+		[ setQuery ]
+	);
+	const debouncedPropagateQuery = useDebounce( propagateQuery, DELAY_TIMEOUT );
 
 	return (
 		<DomainSearchControls.Input

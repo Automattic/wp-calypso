@@ -5,10 +5,12 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import type { SearchTrigger, SubmitMethod } from '@automattic/domain-search';
 
 export const recordDomainSearchStepSubmit = (
 	suggestion: FreeDomainSuggestion | { domain_name: string },
-	section: string
+	section: string,
+	flowName: string
 ) => {
 	let domainType = 'domain_reg';
 	if ( 'is_free' in suggestion ) {
@@ -21,6 +23,7 @@ export const recordDomainSearchStepSubmit = (
 	const tracksObjects: Record< string, string > = {
 		domain_name: suggestion.domain_name,
 		section,
+		flow_name: flowName,
 		type: domainType,
 	};
 
@@ -52,7 +55,8 @@ export const recordUseYourDomainButtonClick = (
 export const recordSearchFormSubmitButtonClick = (
 	query: string,
 	section: string,
-	flowName: string
+	flowName: string,
+	submitMethod: SubmitMethod
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Search domains" Button' ),
@@ -60,6 +64,7 @@ export const recordSearchFormSubmitButtonClick = (
 			search_query: query,
 			section,
 			flow_name: flowName,
+			submit_method: submitMethod,
 		} )
 	);
 
@@ -69,7 +74,9 @@ export const recordSearchFormSubmit = (
 	timeDiffFromLastSearch: number,
 	count: number,
 	vendor: string | undefined,
-	flowName: string
+	flowName: string,
+	searchId: string,
+	trigger: SearchTrigger
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -85,6 +92,8 @@ export const recordSearchFormSubmit = (
 			search_vendor: vendor,
 			section,
 			flow_name: flowName,
+			search_id: searchId,
+			trigger,
 		} )
 	);
 

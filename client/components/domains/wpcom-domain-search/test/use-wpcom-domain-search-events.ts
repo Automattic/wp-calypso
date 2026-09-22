@@ -38,26 +38,87 @@ const defaultProps = {
 };
 
 describe( 'useWPCOMDomainSearchEvents', () => {
-	it( 'debounces calypso_domain_search by 10 seconds', () => {
-		jest.useFakeTimers();
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
 
+	it( 'records calypso_domain_search once per accepted response with the search id and trigger', () => {
 		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchEvents( defaultProps ) );
 
-		result.current.onQueryChange( 'my-domain.com' );
-		expect( recordSearchFormSubmit ).not.toHaveBeenCalled();
+		result.current.onSearch( 'my-domain.com', 'search-1', 'prefilled' );
 
-		jest.advanceTimersByTime( 10_000 );
-
+		expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 		expect( recordSearchFormSubmit ).toHaveBeenCalledWith(
 			'my-domain.com',
 			'analytics-section',
 			0,
 			1,
 			'vendor',
-			'flow-name'
+			'flow-name',
+			'search-1',
+			'prefilled'
 		);
 
-		jest.useRealTimers();
+		result.current.onSearch( 'my domain', 'search-2', 'submit_enter' );
+
+		expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 2 );
+		expect( recordSearchFormSubmit ).toHaveBeenLastCalledWith(
+			'my domain',
+			'analytics-section',
+			expect.any( Number ),
+			2,
+			'vendor',
+			'flow-name',
+			'search-2',
+			'submit_enter'
+		);
+	} );
+
+	it( 'does not record calypso_domain_search when the query changes', () => {
+		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchEvents( defaultProps ) );
+
+		result.current.onQueryChange( 'my-domain.com' );
+
+		expect( recordSearchFormSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stamps flow_name and section on the interact and bundle events', () => {
+		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchEvents( defaultProps ) );
+		const bundle = {
+			bundle_group_id: 'group-1',
+			domains: [ { domain: 'my-domain.com' }, { domain: 'my-domain.net' } ],
+		};
+
+		result.current.onSuggestionInteract( {
+			domain_name: 'my-domain.com',
+			position: 0,
+			vendor: 'wpcom',
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_traintracks_interact',
+			expect.objectContaining( { flow_name: 'flow-name', section: 'analytics-section' } )
+		);
+
+		result.current.onBundleShown( bundle, 'inline' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_shown', {
+			domain_bundle_group_id: 'group-1',
+			domain_count: 2,
+			placement: 'inline',
+			flow_name: 'flow-name',
+			section: 'analytics-section',
+		} );
+
+		result.current.onBundleAddToCart( bundle, 'card' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_accepted', {
+			domain_bundle_group_id: 'group-1',
+			domain_count: 2,
+			placement: 'card',
+			flow_name: 'flow-name',
+			section: 'analytics-section',
+		} );
 	} );
 
 	it( 'registers a new railcar id when the query changes', () => {
