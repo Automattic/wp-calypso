@@ -156,14 +156,13 @@ function ProductsList() {
 		return {
 			currentProduct,
 			currentAnnualProduct,
-			isReadOnly: Boolean( currentProduct?.is_read_only || currentAnnualProduct?.is_read_only ),
 		};
 	}
 
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const { currentProduct, currentAnnualProduct, isReadOnly } = getProductPair( productId );
-			if ( ! currentProduct || currentProduct.tier || isReadOnly ) {
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
 				return;
 			}
 			setShowAddEditDialog( true );
@@ -178,8 +177,8 @@ function ProductsList() {
 
 	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const { currentProduct, currentAnnualProduct, isReadOnly } = getProductPair( productId );
-			if ( ! currentProduct || isReadOnly ) {
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
 				return;
 			}
 			setShowDeleteDialog( true );
@@ -356,16 +355,18 @@ function ProductsList() {
 											<Badge type="info">{ translate( 'Donation' ) }</Badge>
 										</div>
 									) }
-									{ isReadOnly && (
-										<div className="memberships__products-product-read-only">
-											<Tooltip text={ __( 'Managed on the owning site.' ) }>
-												<Badge type="info" tabIndex={ 0 }>
-													{ __( 'Read-only' ) }
-												</Badge>
-											</Tooltip>
-										</div>
-									) }
 								</div>
+								{ isReadOnly && (
+									<Tooltip text={ __( 'Managed on the owning site.' ) }>
+										<Badge
+											type="info"
+											className="memberships__products-product-read-only"
+											tabIndex={ 0 }
+										>
+											{ __( 'Read-only' ) }
+										</Badge>
+									</Tooltip>
+								) }
 								{ ! isReadOnly &&
 									currentProduct &&
 									currentProduct.ID &&

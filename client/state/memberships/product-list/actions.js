@@ -14,6 +14,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/memberships/init';
 
+// Memberships endpoints can return HTTP 200 with an error in the response body.
 const getProductError = ( response ) => {
 	const error = ( response.body ?? response ).error;
 	return error ? new Error( error ) : null;

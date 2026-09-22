@@ -441,15 +441,9 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-left: -5px;
 }
 .memberships__products-product-read-only {
-	margin-block-start: 8px;
-
-	.badge {
-		border-radius: 4px;
-		padding-inline: 8px;
-		font-size: $font-body-extra-small;
-		white-space: nowrap;
-		cursor: help;
-	}
+	flex-shrink: 0;
+	margin-inline-start: 8px;
+	cursor: help;
 }
 .memberships__coupons-coupon-badge {
 	float: left;
