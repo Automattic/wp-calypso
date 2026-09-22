@@ -2,12 +2,24 @@
  * @jest-environment jsdom
  */
 import { namePulseTldsQuery } from '@automattic/api-queries';
-import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { NAME_PULSE_TLDS_FIXTURE } from '../../../test-helpers/factories/name-pulse';
+import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
+import { buildCart } from '../../../test-helpers/factories/cart';
+import {
+	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_SUGGESTIONS_FIXTURE,
+	NAME_PULSE_TLDS_FIXTURE,
+	withNamePulseQueries,
+} from '../../../test-helpers/factories/name-pulse';
 import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
-import { NamePulseDomainStatus } from '../../helpers';
+import { NAME_PULSE_QUERY_SETTLE_MS, NamePulseDomainStatus } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
+import type {
+	NamePulseAvailabilityResponse,
+	NamePulseSuggestionsResponse,
+} from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
@@ -18,6 +30,62 @@ const renderSearch = ( query: string ) =>
 		wrapper: ( { children } ) => <TestDomainSearch>{ children }</TestDomainSearch>,
 	} );
 
+const FetcherSearch = ( {
+	availability,
+	suggestions,
+	children,
+}: {
+	availability: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
+	suggestions: () => Promise< NamePulseSuggestionsResponse >;
+	children: React.ReactNode;
+} ) => {
+	const contextValue = useDomainSearchContextValue( {
+		cart: buildCart(),
+		config: { showNamePulseSearch: true },
+	} );
+
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<DomainSearchContext.Provider
+				value={ withNamePulseQueries( contextValue, {
+					availability,
+					suggestions,
+					tlds: async () => NAME_PULSE_TLDS_FIXTURE,
+					domainAvailability: () => Promise.reject( new Error( 'not used' ) ),
+				} ) }
+			>
+				{ children }
+			</DomainSearchContext.Provider>
+		</QueryClientProvider>
+	);
+};
+
+const renderTypedSearch = ( query: string ) => {
+	const availability = jest.fn( async ( domainNames: string[] ) =>
+		buildNamePulseAvailabilityResponse( domainNames )
+	);
+	const suggestions = jest.fn( async () => ( {
+		suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE,
+		errors: [],
+	} ) );
+	const rendered = renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
+		initialProps: { q: query },
+		wrapper: ( { children } ) => (
+			<FetcherSearch availability={ availability } suggestions={ suggestions }>
+				{ children }
+			</FetcherSearch>
+		),
+	} );
+
+	return { ...rendered, availability, suggestions };
+};
+
+const advance = ( ms: number ) => {
+	act( () => {
+		jest.advanceTimersByTime( ms );
+	} );
+};
+
 describe( 'useNamePulseSearch', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
@@ -25,7 +93,10 @@ describe( 'useNamePulseSearch', () => {
 		queryClient.setQueryData( namePulseTldsQuery().queryKey, NAME_PULSE_TLDS_FIXTURE );
 	} );
 
-	afterEach( () => nock.cleanAll() );
+	afterEach( () => {
+		nock.cleanAll();
+		jest.useRealTimers();
+	} );
 
 	it( 'keeps the status of a row a refined query still lists and only requests the new rows', async () => {
 		const requests: string[][] = [];
@@ -64,5 +135,65 @@ describe( 'useNamePulseSearch', () => {
 		await waitFor( () =>
 			expect( statusOf( 'testcom.blog' ) ).toBe( NamePulseDomainStatus.AVAILABLE )
 		);
+	} );
+
+	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, availability } = renderTypedSearch( 'a' );
+		const rows = () => [ ...result.current.topResults, ...result.current.exactList ];
+
+		expect( rows() ).toHaveLength( 0 );
+
+		rerender( { q: 'ab' } );
+		expect( result.current.layout.baseName ).toBe( 'ab' );
+		expect( rows().map( ( row ) => row.status ) ).toContain( NamePulseDomainStatus.WAITING );
+
+		rerender( { q: 'abc' } );
+		expect( result.current.layout.baseName ).toBe( 'abc' );
+		expect( rows().find( ( row ) => row.domain_name === 'abc.com' )?.status ).toBe(
+			NamePulseDomainStatus.WAITING
+		);
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
+		expect( availability ).not.toHaveBeenCalled();
+
+		advance( 1 );
+		expect( availability ).toHaveBeenCalledTimes( 1 );
+		expect( availability.mock.calls[ 0 ][ 0 ] ).toContain( 'abc.com' );
+		expect( availability.mock.calls[ 0 ][ 0 ] ).not.toContain( 'ab.com' );
+
+		await waitFor( () =>
+			expect( rows().find( ( row ) => row.domain_name === 'abc.com' )?.status ).toBe(
+				NamePulseDomainStatus.AVAILABLE
+			)
+		);
+		expect( availability ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports the keyword section as loading while typing and fetches once for the settled query', async () => {
+		jest.useFakeTimers();
+		const { result, rerender, suggestions } = renderTypedSearch( 'ice' );
+
+		expect( result.current.isLoadingKeyword ).toBe( false );
+
+		rerender( { q: 'ice c' } );
+		rerender( { q: 'ice cr' } );
+		rerender( { q: 'ice cream' } );
+		expect( result.current.isLoadingKeyword ).toBe( true );
+		expect( result.current.keywordResults ).toHaveLength( 0 );
+
+		advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
+		expect( suggestions ).not.toHaveBeenCalled();
+
+		advance( 1 );
+		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+
+		await waitFor( () =>
+			expect( result.current.keywordResults.map( ( row ) => row.domain_name ) ).toContain(
+				'creamyice.com'
+			)
+		);
+		expect( result.current.isLoadingKeyword ).toBe( false );
+		expect( suggestions ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

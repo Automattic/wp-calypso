@@ -31,11 +31,8 @@ export const omnibarEvents = {
 
 export type OmnibarEvents = typeof omnibarEvents;
 
-type EventPayload< K extends keyof OmnibarEvents > = Parameters<
-	OmnibarEvents[ K ][ 'emit' ]
-> extends [ infer P ]
-	? P
-	: void;
+type EventPayload< K extends keyof OmnibarEvents > =
+	Parameters< OmnibarEvents[ K ][ 'emit' ] > extends [ infer P ] ? P : void;
 
 /**
  * Subscribe to an omnibar event. The callback fires whenever the named event

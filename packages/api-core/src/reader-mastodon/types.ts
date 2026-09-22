@@ -131,9 +131,7 @@ export interface MastodonThreadBlockedNode {
 }
 
 export type MastodonThreadNode =
-	| MastodonThreadPostNode
-	| MastodonThreadNotFoundNode
-	| MastodonThreadBlockedNode;
+	MastodonThreadPostNode | MastodonThreadNotFoundNode | MastodonThreadBlockedNode;
 
 export interface MastodonThreadResponse {
 	thread: MastodonThreadNode;
@@ -203,9 +201,7 @@ export type MastodonAuthorFeedPage = MastodonTimelinePage;
 // across protocols. Mastodon's wire shape is two booleans on the same
 // endpoint (exclude_replies, only_media); the fetcher does the mapping.
 export type MastodonAuthorFeedFilter =
-	| 'posts_no_replies'
-	| 'posts_with_replies'
-	| 'posts_with_media';
+	'posts_no_replies' | 'posts_with_replies' | 'posts_with_media';
 
 // Filter values that map to Mastodon's GET /api/v1/timelines/tag/:hashtag
 // query params. Values mirror the UI tab slugs 1:1 so the slug ↔ filter
@@ -468,13 +464,7 @@ export interface MastodonAccountSummariesPage {
  * `protocol_type` for the label.
  */
 export type MastodonNotificationCanonicalType =
-	| 'like'
-	| 'repost'
-	| 'follow'
-	| 'mention'
-	| 'reply'
-	| 'quote'
-	| 'other';
+	'like' | 'repost' | 'follow' | 'mention' | 'reply' | 'quote' | 'other';
 
 export interface MastodonNotificationActor {
 	handle: string;

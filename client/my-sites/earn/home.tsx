@@ -181,7 +181,7 @@ const Home = () => {
 						trackCtaButton( 'simple-payments' );
 						window.location.href = localizeUrl( ctaURL );
 					},
-			  }
+				}
 			: {
 					text: translate( 'Upgrade' ),
 					isPrimary: true,
@@ -205,7 +205,7 @@ const Home = () => {
 						 */
 						page( url );
 					},
-			  };
+				};
 		const title = translate( 'Collect PayPal payments' );
 		const body = translate(
 			'Accept credit and debit card payments via PayPal for physical products, services, donations, tips, or memberships.'
@@ -249,10 +249,10 @@ const Home = () => {
 				{ hasConnectedAccount
 					? translate(
 							'Let visitors pay for digital goods and services or make quick, pre-set donations by inserting the Payment Button block.'
-					  )
+						)
 					: translate(
 							'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
-					  ) }
+						) }
 			</>
 		);
 
@@ -411,7 +411,7 @@ const Home = () => {
 						onPeerReferralCtaClick();
 					},
 					disabled: isPeerReferralCtaDisabled,
-			  }
+				}
 			: {
 					text: translate( 'Upgrade' ),
 					isPrimary: true,
@@ -438,7 +438,7 @@ const Home = () => {
 						}
 						page( url );
 					},
-			  };
+				};
 
 		if ( peerReferralLink && isEligible ) {
 			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
@@ -455,7 +455,7 @@ const Home = () => {
 		const eligibleBody = peerReferralLink
 			? translate(
 					'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
-			  )
+				)
 			: translate(
 					'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
 					{
@@ -469,7 +469,7 @@ const Home = () => {
 							),
 						},
 					}
-			  );
+				);
 		return {
 			title: translate( 'Refer a friend' ),
 			body: isEligible ? eligibleBody : notEligibleBody,
@@ -497,7 +497,7 @@ const Home = () => {
 								`${ earnPath }/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }`
 							);
 						},
-				  }
+					}
 				: {
 						text: translate( 'Upgrade' ),
 						isPrimary: true,
@@ -521,7 +521,7 @@ const Home = () => {
 							 */
 							page( url );
 						},
-				  };
+					};
 
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
 

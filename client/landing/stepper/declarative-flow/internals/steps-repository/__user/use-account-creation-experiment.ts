@@ -5,9 +5,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useExperiment } from 'calypso/lib/explat';
 
 type AccountCreationExperimentVariant =
-	| 'control'
-	| 'treatment_email_slider_webp'
-	| 'treatment_email_bottom_slider_webp';
+	'control' | 'treatment_email_slider_webp' | 'treatment_email_bottom_slider_webp';
 
 type AccountCreationExperimentResult = {
 	isLoading: boolean;
@@ -45,7 +43,7 @@ function useAccountCreationExperiment( {
 	// and force control on sub-960 px viewports as a render-time guard against any
 	// post-assignment viewport change.
 	const variationName = (
-		isLoading || ! isLargeViewport ? 'control' : assignment?.variationName ?? 'control'
+		isLoading || ! isLargeViewport ? 'control' : ( assignment?.variationName ?? 'control' )
 	) as AccountCreationExperimentVariant;
 
 	return {

@@ -269,7 +269,7 @@ export function getFields( {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
 						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
@@ -461,10 +461,10 @@ export function getFields( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return ! mightStillAutoRenew( item )
 					? // Do not return the card number when the payment method isn't in
-					  // use, since it won't be displayed; sorting it alongside active
-					  // purchases that have the same card would look wrong.
-					  'expired'
-					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
+						// use, since it won't be displayed; sorting it alongside active
+						// purchases that have the same card would look wrong.
+						'expired'
+					: ( item.payment_details ?? item.payment_card_type ?? 'no-payment-method' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;

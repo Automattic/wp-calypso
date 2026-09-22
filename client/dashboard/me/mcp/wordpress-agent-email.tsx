@@ -4,13 +4,7 @@ import {
 	sitePostByEmailSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	Button,
-	Notice,
-	Spinner,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -23,6 +17,7 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import {
 	getAgentEmailAddress,
 	getAgentEmailVCardDataUrl,
@@ -38,6 +33,7 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 function ViewPlansButton( { site }: { site: Site } ) {
 	return (
 		<RouterLinkButton
+			__next40pxDefaultSize
 			variant="primary"
 			to={ sitePlansRoute.fullPath }
 			params={ { siteSlug: site.slug } }
@@ -107,10 +103,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Email isn’t available for this site' ) }
-					description={ __(
-						'Upgrade this site’s plan to enable a WordPress Agent email address.'
-					) }
+					title={ __( 'Agent email isn’t available on this site’s current plan.' ) }
 				/>
 				<ViewPlansButton site={ site } />
 			</CardBody>
@@ -122,10 +115,10 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Not connected on this site' ) }
-					description={ __( 'Enable a private address for emailing this site’s WordPress Agent.' ) }
+					title={ __( 'Turn on the email address for this site’s AI agent.' ) }
 				/>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					onClick={ enableEmail }
 					isBusy={ emailMutation.isPending }
@@ -140,14 +133,9 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 	return (
 		<CardBody>
 			<VStack spacing={ 4 }>
-				<SectionHeader
-					level={ 3 }
-					title={ __( 'Connected' ) }
-					description={ __( 'This email address is ready to use.' ) }
-				/>
 				<div className="wordpress-agent-email__address-row">
 					<ClipboardInputControl
-						label={ __( 'AI agent email address' ) }
+						label={ __( 'Agent email' ) }
 						value={ agentEmailAddress }
 						readOnly
 						onCopy={ () => {
@@ -157,6 +145,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 						} }
 					/>
 					<Button
+						__next40pxDefaultSize
 						variant="secondary"
 						href={ vCardHref }
 						download={ vCardFileName }
@@ -169,19 +158,11 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 						{ __( 'Add to contacts' ) }
 					</Button>
 				</div>
-				<div className="wordpress-agent-email__footer">
-					<Text
-						as="p"
-						variant="muted"
-						size="13px"
-						lineHeight="20px"
-						className="wordpress-agent-email__sender"
-					>
-						{ createInterpolateElement( __( 'Only responds to email from <email />.' ), {
-							email: <strong>{ user.email }</strong>,
-						} ) }
-					</Text>
-				</div>
+				<Text as="p" variant="muted" className="wordpress-agent-email__sender">
+					{ createInterpolateElement( __( 'Your agent only replies to <email />.' ), {
+						email: <strong>{ user.email }</strong>,
+					} ) }
+				</Text>
 			</VStack>
 		</CardBody>
 	);
@@ -220,7 +201,7 @@ export default function WordPressAgentEmail() {
 						level={ 3 }
 						title={ __( 'Email' ) }
 						description={ __(
-							'Email WordPress Agent through a private address unique to each site.'
+							'Send your agent instructions, questions, or content to publish. Each site’s agent has a unique, private email address.'
 						) }
 					/>
 					<PreferencesLoginSiteDropdown

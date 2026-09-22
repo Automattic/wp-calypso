@@ -1,9 +1,5 @@
 export type DirectoryApplicationType =
-	| 'wordpress'
-	| 'jetpack'
-	| 'woocommerce'
-	| 'pressable'
-	| 'vip';
+	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
 
 export interface AgencyDetails {
 	name: string;

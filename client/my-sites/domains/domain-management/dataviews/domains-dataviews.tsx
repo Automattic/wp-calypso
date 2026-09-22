@@ -98,7 +98,7 @@ export const DomainsDataViews = ( {
 			? addQueryArgs(
 					queryParams,
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
-			  )
+				)
 			: '';
 
 		if ( ! domainManagementLink ) {

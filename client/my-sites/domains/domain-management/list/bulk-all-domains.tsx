@@ -536,7 +536,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					allDomainsList
 					sidebarMode={ props.sidebarMode }
 				/>,
-		  ]
+			]
 		: [];
 
 	const Element = isDomainsDataViewsEnabled ? DomainsDataViewsRenderer : DomainsTableRenderer;

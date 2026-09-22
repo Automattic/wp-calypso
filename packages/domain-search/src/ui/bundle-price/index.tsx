@@ -43,7 +43,7 @@ export const BundlePrice = ( {
 					{ price: renewalPrice }
 				),
 				{ span: <span style={ { whiteSpace: 'nowrap' } } /> }
-		  )
+			)
 		: null;
 
 	return (

@@ -50,7 +50,7 @@ const CompactPost = ( props ) => {
 					expandCard( { postKey, post, site } );
 					setHasExcerpt( false ); // Render compact post without excerpt
 					setShowExcerpt( false ); // Set showExcerpt to false to prevent excerpt from reappearing
-			  }
+				}
 			: null;
 
 	const postOptions = (

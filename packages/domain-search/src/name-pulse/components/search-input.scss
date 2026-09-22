@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/breakpoints';
+
+// The page swaps InitialState for NamePulseResults on the first query, so this
+// input is remounted under a different ancestor whose rules disagree (the
+// classic initial state even hides the prefix on mobile). Every rule here wins
+// over both ancestors so the two renders are pixel-identical and nothing shifts.
+.domain-search__search-bar.name-pulse-search-input {
+	.domain-search-controls__input .components-input-control__container {
+		// The container's inset box-shadow draws the visible border, so the
+		// radius needs to live here too.
+		border-radius: var( --domain-search-input-border-radius );
+
+		input.components-input-control__input {
+			padding-left: 1rem;
+		}
+
+		// SearchControl puts the magnifier in the prefix; the design wants it at
+		// the end, after the reset button.
+		.components-input-control__prefix {
+			display: block;
+			order: 1;
+
+			> div {
+				padding-inline: 0.25rem 1rem;
+			}
+		}
+
+		.components-input-control__suffix > div {
+			padding-inline-end: 0;
+		}
+	}
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		.domain-search-controls__input
+			.components-input-control__container
+			input.components-input-control__input {
+			font-size: 1rem;
+		}
+	}
+}

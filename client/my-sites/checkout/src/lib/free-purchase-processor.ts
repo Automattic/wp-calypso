@@ -39,13 +39,13 @@ export default async function freePurchaseProcessor(
 				country: contactDetails?.countryCode?.value ?? '',
 				postalCode: getPostalCode( contactDetails ),
 				subdivisionCode: contactDetails?.state?.value,
-		  }
+			}
 		: {
 				// This data is intentionally empty so we do not charge taxes for free
 				// purchases that are not using credits.
 				country: '',
 				postalCode: '',
-		  };
+			};
 
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{

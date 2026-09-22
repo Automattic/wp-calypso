@@ -8,7 +8,7 @@ const joinAnalytics = ( analytics, action ) =>
 		? ( dispatch ) => {
 				dispatch( analytics );
 				dispatch( action );
-		  }
+			}
 		: {
 				...action,
 				...{
@@ -17,7 +17,7 @@ const joinAnalytics = ( analytics, action ) =>
 						analytics: mergedMetaData( analytics, action ),
 					},
 				},
-		  };
+			};
 
 export function withAnalytics( analytics, action ) {
 	if ( typeof action === 'undefined' ) {

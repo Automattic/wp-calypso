@@ -163,8 +163,8 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 
 		expect(
-			getAllByRole( 'status' ).some(
-				( region ) => region.textContent?.includes( 'Building the pages' )
+			getAllByRole( 'status' ).some( ( region ) =>
+				region.textContent?.includes( 'Building the pages' )
 			)
 		).toBe( false );
 	} );

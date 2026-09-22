@@ -527,13 +527,10 @@ describe( 'TimelinePanel in-app click destinations', () => {
 		await screen.findAllByRole( 'link' );
 		const quoteLink = screen
 			.getAllByRole( 'link' )
-			.find(
-				( a ) =>
-					a
-						.getAttribute( 'href' )
-						?.includes(
-							'/reader/atmosphere/7/thread/did:plc:def234567defghi234567jkl/3kdefghijklmn'
-						)
+			.find( ( a ) =>
+				a
+					.getAttribute( 'href' )
+					?.includes( '/reader/atmosphere/7/thread/did:plc:def234567defghi234567jkl/3kdefghijklmn' )
 			);
 		expect( quoteLink ).toHaveAttribute(
 			'href',

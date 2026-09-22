@@ -79,7 +79,7 @@ const StudentPlansPage = ( {
 							priceDescription,
 						},
 					}
-			  )
+				)
 			: null;
 
 	return (

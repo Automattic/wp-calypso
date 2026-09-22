@@ -153,6 +153,11 @@
 	// the global masterbar.
 	--color-sidebar-submenu-background: var(--color-surface-backdrop);
 	--color-sidebar-text: var(--color-text);
+	// Without this, a selected site picks up the dark masterbar theme value and renders as a
+	// solid blue block that swallows the site title and domain.
+	--color-sidebar-menu-selected-background: var(--color-surface-backdrop);
+	--color-sidebar-menu-selected-text: var(--color-text);
+
 	min-width: 240px;
 
 	.site-selector {
@@ -160,8 +165,16 @@
 		max-height: 220px;
 		// The long-content-fade mixin applied further below fades to --color-surface, but for
 		// the highlighted item we need to ensure that matches the background.
-		.site.is-highlighted {
+		.site.is-highlighted,
+		.site.is-selected {
 			--color-surface: var(--color-sidebar-submenu-background);
+		}
+
+		.site.is-selected {
+			.site__title,
+			.site__domain {
+				color: var(--color-text);
+			}
 		}
 	}
 

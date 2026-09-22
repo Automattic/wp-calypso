@@ -216,7 +216,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 							loggedOutSession?.sessionId || '',
 							loggedOutSession?.botSlug || ''
 						),
-				  ]
+					]
 				: [] ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )

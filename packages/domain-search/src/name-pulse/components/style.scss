@@ -9,11 +9,24 @@
 	}
 }
 
+// Figma spec is 1248px, wider than the classic results page's content width.
+// Override the variable rather than `max-width` so the mini cart, which
+// renders inside the results element, lines up with the results above it.
+// The initial state shares it so the search bar does not jump on the first query.
+.domain-search--results.domain-search--name-pulse,
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	--domain-search-content-max-width: 78rem;
+}
+
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
+}
+
 .name-pulse-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
-	border: 1px solid var( --domain-search-border-color );
-	border-radius: 4px;
+	border: 1px solid $gray-200;
+	border-radius: 8px;
 	overflow: hidden;
 	gap: 1px;
 
@@ -28,8 +41,8 @@
 	// Each cell paints the 1px divider around itself, so an empty cell at the
 	// end of the last row stays blank instead of showing a filled background.
 	> [role='listitem'] {
-		background: var( --domain-search-background-color );
-		box-shadow: 0 0 0 1px var( --domain-search-border-color );
+		background: $white;
+		box-shadow: 0 0 0 1px $gray-100;
 		min-width: 0;
 	}
 }
@@ -39,7 +52,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 0.75rem;
-	min-height: 3.5rem;
+	min-height: 4rem;
 	padding: 0.75rem 1rem;
 	box-sizing: border-box;
 	flex-wrap: wrap;
@@ -49,20 +62,41 @@
 		align-items: center;
 		gap: 0.5rem;
 		min-width: 0;
-		flex: 1 1 auto;
+		// A zero basis (rather than `auto`) keeps this item's full-content width
+		// out of the row's wrap calculation, so it shrinks/truncates in place
+		// instead of pushing `&__status` onto a second line.
+		flex: 1 1 0%;
 
 		.domain-suggestion-badge {
 			flex-shrink: 0;
+			height: 20px;
+			padding-inline: 6px;
+			border-radius: 4px;
+			font-size: 11px;
 		}
 	}
 
 	&__domain {
-		display: inline-flex;
-		align-items: baseline;
+		display: flex;
 		min-width: 0;
 
+		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
+		// never loses space to the label and is never cut off.
 		> :first-child {
 			min-width: 0;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		> :last-child {
+			flex-shrink: 0;
+		}
+
+		// The Text component sets `text-wrap: pretty` on itself, which lets it
+		// wrap independently of the `white-space: nowrap` above.
+		.components-text {
+			text-wrap: nowrap;
 		}
 	}
 
@@ -100,14 +134,14 @@
 
 	&__skeleton {
 		display: inline-block;
-		width: 4rem;
-		height: 0.5rem;
+		width: 3.75rem;
+		height: 0.375rem;
 		border-radius: 4px;
-		background: var( --color-neutral-10 );
+		background: linear-gradient( 90deg, #ddd, #eee 49.5%, rgba( 238, 238, 238, 0.5 ) );
 		animation: name-pulse-skeleton 1.2s ease-in-out infinite;
 
 		&--name {
-			width: 8rem;
+			width: 9.5rem;
 		}
 	}
 
@@ -123,6 +157,11 @@
 	.components-button.is-link {
 		text-decoration: none;
 		font-weight: 500;
+
+		&:focus:not( :focus-visible ) {
+			box-shadow: none;
+			outline: none;
+		}
 	}
 }
 

@@ -339,7 +339,7 @@ export function CustomizeProvider( {
 					const message = draftRef.current.saveError
 						? ( translate(
 								'Some changes could not be saved. Exit and discard unsaved changes?'
-						  ) as string )
+							) as string )
 						: ( translate( 'Exit and discard unsaved changes?' ) as string );
 					// eslint-disable-next-line no-alert
 					if ( ! window.confirm( message ) ) {

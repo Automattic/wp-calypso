@@ -16,6 +16,11 @@ export const NAME_PULSE_PAGE_SIZE = 12;
 export const NAME_PULSE_AVAILABILITY_BATCH_SIZE = 36;
 
 /**
+ * Pause after the last keystroke before the availability and suggestion requests go out.
+ */
+export const NAME_PULSE_QUERY_SETTLE_MS = 300;
+
+/**
  * Exact-match rows checked as soon as a query settles. Single-word searches
  * check a full batch; multi-word searches check the first page plus a buffer.
  */

@@ -178,7 +178,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 			? {
 					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
 					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
-			  }
+				}
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
 
 	const disabledMatcher = ( () => {

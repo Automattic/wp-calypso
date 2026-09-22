@@ -1155,7 +1155,7 @@ Route.prototype.middleware = function ( fn ) {
 				const pattern = Array.isArray( this.path )
 					? this.path.find( ( candidate ) =>
 							new Route( candidate, null, this.page ).match( ctx.path, {} )
-					  )
+						)
 					: this.path;
 
 				ctx.currentRoutePattern = pattern?.toString();

@@ -40,11 +40,11 @@ const fetchArticlesAPI = async (
 		? ( ( await wpcomRequest( {
 				path: `/help/search?${ queryString }`,
 				apiNamespace: 'wpcom/v2',
-		  } ) ) as HelpSearchResult[] )
+			} ) ) as HelpSearchResult[] )
 		: await apiFetch< HelpSearchResult[] >( {
 				global: true,
 				path: `/help-center/search?${ queryString }`,
-		  } as { path: string; global: boolean } );
+			} as { path: string; global: boolean } );
 
 	const results = Array.isArray( searchResults ) ? searchResults : [];
 

@@ -364,7 +364,7 @@ function getSignupAction( {
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
-				  } )
+					} )
 				: translate( 'Get %(plan)s ⋅ %(priceString)s', {
 						args: {
 							plan: planTitle ?? '',
@@ -372,7 +372,7 @@ function getSignupAction( {
 						},
 						comment:
 							'%(plan)s is the name of the plan and %(priceString)s is the full price including the currency. Eg: Get Premium ⋅ $10',
-				  } ),
+					} ),
 			undefined,
 			translate( 'Get %(plan)s plan %(priceString)s', {
 				args: {
@@ -620,13 +620,13 @@ function getLoggedInPlansAction( {
 						components: {
 							span: <span className="plan-features-2023-grid__actions-signup-plan-text" />,
 						},
-				  } )
+					} )
 				: translate( 'Upgrade ⋅ %(priceString)s', {
 						context: 'verb',
 						args: { priceString: priceString ?? '' },
 						comment:
 							'%(priceString)s is the full price including the currency. Eg: Get Upgrade ⋅ $10',
-				  } ),
+					} ),
 			'primary',
 			translate( 'Upgrade to %(plan)s plan, %(priceString)s', {
 				context: 'verb',

@@ -523,7 +523,7 @@ const PlansFeaturesMain = ( {
 						? `${ managePurchase(
 								siteSlug,
 								currentPlanPurchaseId
-						  ) }?delayed_downgrade_scheduled=true`
+							) }?delayed_downgrade_scheduled=true`
 						: `/plans/${ siteSlug }?delayed_downgrade_scheduled=true`;
 				},
 				onError: ( error: Error ) => {
@@ -791,7 +791,7 @@ const PlansFeaturesMain = ( {
 	const isDelayedDowngradePending =
 		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
 	const delayedDowngradeToProductSlug = isDelayedDowngradePending
-		? currentPurchase?.delayed_downgrade_to_product_slug ?? null
+		? ( currentPurchase?.delayed_downgrade_to_product_slug ?? null )
 		: null;
 
 	// When a delayed downgrade is scheduled, the current plan's CTA renews the
@@ -965,7 +965,7 @@ const PlansFeaturesMain = ( {
 							...gridPlan,
 							planTitle: translate( 'Agencies' ),
 							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
-					  }
+						}
 					: gridPlan
 			);
 		},
@@ -1243,9 +1243,9 @@ const PlansFeaturesMain = ( {
 
 	const isLoadingGridPlans = Boolean(
 		! intent ||
-			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
-			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+		! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
+		! gridPlansForFeaturesGrid ||
+		! gridPlansForComparisonGrid
 	);
 
 	const isPlansGridReady =
@@ -1434,7 +1434,7 @@ const PlansFeaturesMain = ( {
 						currentPlanPurchaseId
 							? dashboardLink(
 									`/me/billing/purchases/${ currentPlanPurchaseId }/payment-method/change`
-							  )
+								)
 							: undefined
 					}
 					onClose={ closeDowngradeModal }
@@ -1446,6 +1446,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						intent={ intent }
+						currentPurchase={ currentPurchase }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

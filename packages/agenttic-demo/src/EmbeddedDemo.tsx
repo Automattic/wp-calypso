@@ -124,7 +124,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { current
 								order: 2,
 								onClick: onRegenerate,
 							},
-					  ]
+						]
 					: [];
 			},
 		} );

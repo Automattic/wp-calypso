@@ -159,16 +159,15 @@ export function useBasePersistentView( {
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const newTransientFilterFields = transientFilterFields.filter(
-				( field ) =>
-					newView.filters?.some(
-						( filter ) =>
-							filter.field === field &&
-							fastDeepEqual(
-								filter.value,
-								getTransientFilter( field, queryParams[ field ], lockQueryParamFilters ).value
-							)
-					)
+			const newTransientFilterFields = transientFilterFields.filter( ( field ) =>
+				newView.filters?.some(
+					( filter ) =>
+						filter.field === field &&
+						fastDeepEqual(
+							filter.value,
+							getTransientFilter( field, queryParams[ field ], lockQueryParamFilters ).value
+						)
+				)
 			);
 
 			if ( queryParams ) {

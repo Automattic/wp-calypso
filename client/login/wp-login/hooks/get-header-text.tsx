@@ -209,7 +209,7 @@ export function getHeaderText( {
 							},
 						} ),
 						oldCopy: translate( 'Log in to WordPress.com' ),
-				  } ) as TranslateResult )
+					} ) as TranslateResult )
 				: translate( 'Log in to WordPress.com' );
 		}
 	}

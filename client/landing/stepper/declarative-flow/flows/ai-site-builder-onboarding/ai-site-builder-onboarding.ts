@@ -263,7 +263,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 								prompt,
 								source,
 								specId,
-						  } );
+							} );
 
 					// On checkout exit we must not drop the user into the AI builder (the
 					// success destination) before they've paid. Send them back into

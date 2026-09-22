@@ -17,12 +17,7 @@ type DateInputsProps = {
 	toStyle?: React.CSSProperties;
 	stack?: boolean;
 	justify?:
-		| 'flex-start'
-		| 'flex-end'
-		| 'center'
-		| 'space-between'
-		| 'space-around'
-		| 'space-evenly';
+		'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
 	containerStyle?: React.CSSProperties;
 	onFromFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
 	onToFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;

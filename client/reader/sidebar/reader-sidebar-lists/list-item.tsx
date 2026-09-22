@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import { getListStreamKey } from 'calypso/reader/list/controller';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -28,7 +28,7 @@ const ReaderSidebarListsListItem = ( {
 }: ReaderSidebarListsListItemProps ) => {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const isSeenEnabled = useIsSeenPostsUiEnabled();
+	const isSeenEnabled = useSeenPostsPreferenceEnabled();
 	const currentUser = useSelector( getCurrentUser );
 	const itemRef = useRef< HTMLLIElement >( null );
 
