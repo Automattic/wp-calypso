@@ -397,9 +397,6 @@
 
 // Scoped to the app root to outrank the legacy panel's `.wpnc__main div` reset.
 .wpnc-app .wpnc__pending-approval-strip {
-	display: flex;
-	align-items: center;
-	gap: 6px;
 	padding: 12px;
 	background-color: var(--wpds-color-background-surface-warning, #fde6be);
 	font-size: 12px;
@@ -420,7 +417,6 @@
 	}
 
 	.wpnc__pending-approval-strip-link {
-		margin-inline-start: auto;
 		white-space: nowrap;
 	}
 }

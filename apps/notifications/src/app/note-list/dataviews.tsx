@@ -15,9 +15,8 @@ import {
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-import { getActions } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
-import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
@@ -79,11 +78,8 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 const simplify = ( item: Note, layoutStyle: LayoutStyle ) =>
 	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
-const useIsUnapproved = ( note: Note ) => {
-	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
-
-	return note.type === 'comment' && 'approve-comment' in getActions( note ) && ! isApproved;
-};
+const useIsUnapproved = ( note: Note ) =>
+	useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
 
 const NoteBadge = ( { note }: { note: Note } ) => {
 	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );

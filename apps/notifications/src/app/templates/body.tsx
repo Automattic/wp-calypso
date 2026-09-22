@@ -1,13 +1,18 @@
-import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	CardFooter,
+	ExternalLink,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getActions, getModerateCommentsLink } from '../../panel/helpers/notes';
+import { getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
-import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import { p, zipWithSignature } from '../../panel/templates/functions';
 import NoteActions from './actions';
 import Comment from './block-comment';
@@ -24,14 +29,14 @@ const PendingApprovalStrip = ( { note }: { note: Note } ) => {
 	const commentsUrl = getModerateCommentsLink( note );
 
 	return (
-		<div className="wpnc__pending-approval-strip">
+		<HStack className="wpnc__pending-approval-strip" spacing={ 1.5 } justify="space-between">
 			<span className="wpnc__pending-approval-strip-text">{ __( 'Pending approval' ) }</span>
 			{ commentsUrl && (
 				<ExternalLink className="wpnc__pending-approval-strip-link" href={ commentsUrl }>
 					{ __( 'Manage comments' ) }
 				</ExternalLink>
 			) }
-		</div>
+		</HStack>
 	);
 };
 
@@ -114,13 +119,9 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 
 export const NoteBody = ( { note }: { note: Note } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
-	const actions = getActions( note );
-	const hasAction = ( types: string | string[] ) => {
-		const typeArray = Array.isArray( types ) ? types : [ types ];
-		return typeArray.some( ( type ) => actions.hasOwnProperty( type ) );
-	};
-	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
+	const showPendingApprovalBadge = useSelector( ( state ) =>
+		getIsNotePendingApproval( state, note )
+	);
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
