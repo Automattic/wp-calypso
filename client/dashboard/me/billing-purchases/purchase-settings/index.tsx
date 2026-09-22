@@ -1632,7 +1632,7 @@ export default function PurchaseSettings() {
 			return __( 'Paid until' );
 		}
 		if ( displayRenewDate ) {
-			return __( 'Renews' );
+			return purchase.is_delayed_downgrade_pending ? __( 'Downgrades and renews' ) : __( 'Renews' );
 		}
 		if ( isOneTimePurchase( purchase ) ) {
 			return __( 'Renewal status' );
