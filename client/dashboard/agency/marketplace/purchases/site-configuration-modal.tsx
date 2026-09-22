@@ -445,7 +445,10 @@ export function DevSiteConfigurationModal( { closeModal }: { closeModal: () => v
 		<Modal
 			title={ __( 'Configure your new site' ) }
 			size="medium"
-			onRequestClose={ closeModal }
+			onRequestClose={ () => {
+				recordTracksEvent( 'calypso_a4a_create_site_config_close' );
+				closeModal();
+			} }
 			// Closing mid-creation unmounts the observer, so the site lands
 			// server-side and nothing redirects, tracks it or says how it went.
 			isDismissible={ ! isCreating }

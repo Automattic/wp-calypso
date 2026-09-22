@@ -397,6 +397,35 @@ describe( '<DevSiteConfigurationModal>', () => {
 		await waitFor( () => expect( closeModal ).toHaveBeenCalled() );
 	} );
 
+	// Cancel records the close event itself; the X, Esc and a click outside all
+	// route through onRequestClose, which has to record it too.
+	test( 'records the close event however the modal is dismissed', async () => {
+		mockAgency();
+		mockAddressSuggestion( 'ramblingthoughts' );
+		const closeModal = jest.fn();
+		const { recordTracksEvent } = render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
+		const user = userEvent.setup();
+		const closeEvents = () =>
+			jest
+				.mocked( recordTracksEvent )
+				.mock.calls.filter( ( [ name ] ) => name === 'calypso_a4a_create_site_config_close' );
+
+		await waitForSuggestedAddress();
+
+		// Escape is handled on the modal overlay, so it only counts from inside.
+		screen.getByRole( 'button', { name: 'Cancel' } ).focus();
+		await user.keyboard( '{Escape}' );
+		await waitFor( () => expect( closeEvents() ).toHaveLength( 1 ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		await waitFor( () => expect( closeEvents() ).toHaveLength( 2 ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+		expect( closeEvents() ).toHaveLength( 3 );
+
+		expect( closeModal ).toHaveBeenCalledTimes( 3 );
+	} );
+
 	// Same as the paid flow: the address is only claimed by the creation itself,
 	// so a failure there has to send it back for a check.
 	test( 're-checks the suggested address when creating the site rejects it', async () => {
