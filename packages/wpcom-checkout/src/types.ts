@@ -269,6 +269,7 @@ type DomainContactDetailsErrorsExtra = {
 	uk?: UkDomainContactExtraDetailsErrors | null;
 	fr?: FrDomainContactExtraDetailsErrors | null;
 	in?: InDomainContactExtraDetailsErrors | null;
+	es?: EsDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
@@ -293,6 +294,12 @@ export type FrDomainContactExtraDetailsErrors = {
 export type InDomainContactExtraDetailsErrors = {
 	nexusDeclaration?: string | TranslateResult;
 	nexusConnectionType?: string | TranslateResult;
+};
+
+export type EsDomainContactExtraDetailsErrors = {
+	registrantEntityType?: string | TranslateResult;
+	registrantIdentificationNumber?: string | TranslateResult;
+	adminIdentificationNumber?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -424,6 +431,11 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	in?: {
 		nexusDeclaration?: T;
 		nexusConnectionType?: T;
+	};
+	es?: {
+		registrantEntityType?: T;
+		registrantIdentificationNumber?: T;
+		adminIdentificationNumber?: T;
 	};
 };
 
@@ -597,6 +609,11 @@ export type DomainContactValidationRequestExtraFields = {
 		nexus_declaration?: boolean;
 		nexus_connection_type?: string;
 	};
+	es?: {
+		registrant_entity_type?: string;
+		registrant_identification_number?: string;
+		admin_identification_number?: string;
+	};
 	is_for_business?: boolean;
 };
 
@@ -619,6 +636,11 @@ export type ContactValidationResponseMessagesExtra = {
 	in?: {
 		nexus_declaration?: string[];
 		nexus_connection_type?: string[];
+	};
+	es?: {
+		registrant_entity_type?: string[];
+		registrant_identification_number?: string[];
+		admin_identification_number?: string[];
 	};
 	is_for_business?: boolean;
 };
