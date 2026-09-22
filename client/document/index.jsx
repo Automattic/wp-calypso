@@ -21,9 +21,9 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import { getDashboardOmnibarHomeIcon } from 'calypso/dashboard/app/omnibar/home-icon';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
@@ -192,7 +192,10 @@ class Document extends Component {
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ isDashboardOmnibarPage && (
 						<div id="wpcom-omnibar">
-							<InitialOmnibar user={ user } homeIcon={ getDashboardOmnibarHomeIcon( dashboard ) } />
+							<InitialOmnibar
+								user={ user }
+								homeIcon={ dashboard === 'a4a' ? <A4AOmnibarHomeIcon /> : undefined }
+							/>
 						</div>
 					) }
 					{ renderedLayout ? (
