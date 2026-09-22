@@ -1,19 +1,18 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import {
 	isJetpackSearch,
 	isJetpackSearchFree,
 	planHasJetpackSearch,
 } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import Notice from 'calypso/components/notice';
-import { isExpiredOrRemoved } from 'calypso/lib/purchases';
 import { urlToSlug } from 'calypso/lib/url';
+import { isExpiredOrRemoved } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getPurchases } from 'calypso/state/purchases/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { RawSiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 
 interface Site {
@@ -73,8 +72,8 @@ function getExistingSearchSource(
 					! isExpiredOrRemoved( purchase )
 			)
 			.map( ( purchase ) => ( {
-				slug: purchase.productSlug,
-				owned: !! userId && purchase.userId === userId,
+				slug: purchase.product_slug,
+				owned: !! userId && purchase.user_id === userId,
 			} ) ),
 	];
 	if ( subscriptions.some( ( { slug, owned } ) => owned && slug === routeProduct ) ) {
@@ -91,15 +90,10 @@ function getExistingSearchSource(
 export default function ExistingSearchNotice( { site, siteUrl, product }: Props ) {
 	const translate = useTranslate();
 	const purchasesSiteId = siteUrl && isHostedOnWpcom( site ) ? site?.ID : null;
-	useQuerySitePurchases( purchasesSiteId );
-	const allPurchases: Purchase[] = useSelector( getPurchases );
-	const purchases = useMemo(
-		() =>
-			purchasesSiteId
-				? allPurchases.filter( ( purchase ) => purchase.siteId === purchasesSiteId )
-				: [],
-		[ allPurchases, purchasesSiteId ]
-	);
+	const { data: purchases = [] } = useQuery( {
+		...sitePurchasesQuery( purchasesSiteId ?? 0 ),
+		enabled: !! purchasesSiteId,
+	} );
 	const userId = useSelector( getCurrentUserId );
 	const source = siteUrl && site && getExistingSearchSource( site, purchases, userId, product );
 
