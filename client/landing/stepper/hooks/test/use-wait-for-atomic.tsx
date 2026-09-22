@@ -139,6 +139,52 @@ describe( 'useWaitForAtomic', () => {
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'times the deadline from the transfer, not from when this wait started', async () => {
+			// The wait re-enters (a reload) on a transfer that is already past the deadline.
+			const startedSixMinutesAgo = new Date( Date.now() - 6 * 60 * 1000 )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: startedSixMinutesAgo,
+			} );
+			const onDeadlineExceeded = jest.fn();
+
+			const { result } = renderWaitForAtomic();
+			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
+			await jest.advanceTimersByTimeAsync( 4000 );
+
+			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'lets a completed transfer win over the cap it crossed on the same poll', async () => {
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'active',
+				created_at: '2026-08-12 13:11:10',
+			} );
+
+			const { result, failures } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			promise.catch( () => {} );
+			// Stop just short of the cap, then let the next poll bring the completion.
+			await jest.advanceTimersByTimeAsync( 890_000 );
+
+			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
+				atomic_transfer_id: 1,
+				status: 'completed',
+				created_at: '2026-08-12 13:11:10',
+			} );
+			await jest.advanceTimersByTimeAsync( 30_000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+			expect( failures ).not.toContainEqual(
+				expect.objectContaining( { type: 'transfer_grace_timeout' } )
+			);
+		} );
+
 		it( 'gives up at the grace cap when the transfer never lands', async () => {
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,

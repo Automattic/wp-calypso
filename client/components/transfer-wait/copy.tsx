@@ -64,17 +64,17 @@ export function useStalledActionLabel( isPluginInstall = true ) {
 }
 
 /**
- * The transfer has outrun the wait's deadline but is still running, so the site is not ready yet:
- * say what is true, and make leaving an option rather than the failure it used to be.
+ * The transfer has outrun the wait's deadline but is still running. All we know is that it has not
+ * ended, so the copy says only that, and makes leaving an option rather than the failure it was.
  */
 export function useDeadlineCopy( isPluginInstall = true ) {
 	const translate = useTranslate();
 	return isPluginInstall
 		? translate(
-				'This is taking longer than usual, but nothing is broken — your plugin is still being installed. You can close this page and check back in a few minutes.'
+				'This is taking longer than usual. Your plugin is still being installed — you can close this page and check back in a few minutes.'
 			)
 		: translate(
-				'This is taking longer than usual, but nothing is broken — your site is still being set up. You can close this page and check back in a few minutes.'
+				'This is taking longer than usual. Your site is still being set up — you can close this page and check back in a few minutes.'
 			);
 }
 
