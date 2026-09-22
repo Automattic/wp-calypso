@@ -431,6 +431,7 @@ export default function AgentDock( {
 	// docked, `dock_back_button_click` floating), so a close stays visible once
 	// those names stop firing. Watches the persisted state, not `chatIsOpen`:
 	// minimizing hides the chat without closing it and has its own event.
+	// `trigger` says who closed it, as on `chat_opened`.
 	const wasPersistedOpenRef = useRef< boolean | null >( null );
 	useEffect( () => {
 		const wasPersistedOpen = wasPersistedOpenRef.current;
@@ -438,6 +439,7 @@ export default function AgentDock( {
 		if ( ! isPersistedOpen && wasPersistedOpen === true ) {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_closed', {
 				docked: isDocked,
+				trigger: takeActionOrigin( 'close' ),
 			} );
 		}
 	}, [ isPersistedOpen, isDocked ] );

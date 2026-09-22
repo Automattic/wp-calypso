@@ -796,4 +796,51 @@ describe( 'AgentDock', () => {
 			] );
 		} );
 	} );
+
+	describe( 'chat closed tracking', () => {
+		const chatClosedCalls = () =>
+			mockRecordAgentsManagerTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_closed'
+			);
+
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		it( 'records a close with the layout and who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockLayoutIsDocked = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			rerender( dock() );
+			markActionOrigin( 'close', 'host' );
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'does not record a close when the chat is only minimized', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [] );
+		} );
+	} );
 } );
