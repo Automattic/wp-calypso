@@ -69,6 +69,19 @@ export function getBlueprintArchiveSiteIdentifier( {
 	return null;
 }
 
+/**
+ * `build=custom-theme` on a blueprint CTA forks the run after checkout: the blueprint is a
+ * plugins-only one, so instead of applying the spec to the restored site the confirmed spec goes
+ * to the build-wow generator, which replaces the blueprint's stock theme with a generated one.
+ * Everything before checkout is the ordinary blueprint onboarding.
+ */
+export const BLUEPRINT_BUILD_QUERY_PARAM = 'build';
+export const BLUEPRINT_BUILD_CUSTOM_THEME = 'custom-theme';
+
+export function isBlueprintCustomThemeBuild( queryParams: URLSearchParams ): boolean {
+	return queryParams.get( BLUEPRINT_BUILD_QUERY_PARAM ) === BLUEPRINT_BUILD_CUSTOM_THEME;
+}
+
 export function getBlueprintArchiveSiteSpecUrl( {
 	siteSlug,
 	siteId,
@@ -76,6 +89,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref,
 	source,
 	wowFunnel,
+	customThemeBuild,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -83,6 +97,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref?: string | null;
 	source?: string | null;
 	wowFunnel?: string | null;
+	customThemeBuild?: boolean;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
 		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
@@ -95,6 +110,9 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		// "do not start one" guard off this param, so it has to survive into the URL — without
 		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
 		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
+		...( customThemeBuild
+			? { [ BLUEPRINT_BUILD_QUERY_PARAM ]: BLUEPRINT_BUILD_CUSTOM_THEME }
+			: {} ),
 	} );
 }
 
