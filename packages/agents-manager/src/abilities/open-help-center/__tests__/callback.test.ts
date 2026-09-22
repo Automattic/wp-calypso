@@ -22,6 +22,17 @@ describe( 'openHelpCenterCallback', () => {
 		} );
 	} );
 
+	it( 'keeps the message when only the summary is missing', async () => {
+		const result = await openHelpCenterCallback( { message: 'I need a person.' } );
+
+		expect( result.result.message ).toBe(
+			'Click the button below to open the Help Center and talk to a human.'
+		);
+		expect( parseAgentMessage( result.agentMessage ).data.props ).toEqual( {
+			message: 'I need a person.',
+		} );
+	} );
+
 	// The wire carries whatever the model sent; only strings with content count.
 	it.each( [
 		[ 'no input', undefined ],
