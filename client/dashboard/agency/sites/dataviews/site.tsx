@@ -34,7 +34,8 @@ export function getSiteNameField(
 		id: 'name',
 		label: __( 'Site' ),
 		enableHiding: false,
-		enableSorting: true,
+		// The agency endpoint only sorts by URL.
+		enableSorting: false,
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
 		render: ( { item } ) => (
