@@ -1325,7 +1325,7 @@ const agencySiteSettingsIndexRoute = createRoute( {
 	)
 );
 
-const agencySiteSettingsSiteVisibilityRoute = createRoute( {
+export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsGeneralDotcomSiteVisibility' },
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
