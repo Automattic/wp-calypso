@@ -160,12 +160,28 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled );
 
+	// The bulk check is zone-file based: it says a domain is taken, not why.
+	// Both wait for the query to settle, so half-typed input is not checked or flagged.
+	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
+	const { data: typedDomainAvailability, isPending: isCheckingTypedDomain } = useQuery( {
+		...queries.domainAvailability( typedDomain ),
+		enabled: Boolean( typedDomain ),
+	} );
+
+	// Its row waits on that verdict rather than quoting a bulk price and a cart
+	// button the notice is about to contradict.
+	const uncheckedTypedDomain = isCheckingTypedDomain ? typedDomain : '';
+
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo(
 		() =>
-			exactRows.map( ( row ) => applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] ) ),
-		[ exactRows, exactVerdicts ]
+			exactRows.map( ( row ) =>
+				row.domain_name === uncheckedTypedDomain
+					? { ...row, status: NamePulseDomainStatus.WAITING }
+					: applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] )
+			),
+		[ exactRows, exactVerdicts, uncheckedTypedDomain ]
 	);
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
@@ -209,14 +225,6 @@ export const useNamePulseSearch = ( query: string ) => {
 			requestNames( unchecked );
 		}
 	}, [ isAiMode, topResults, checkedNames, requestNames ] );
-
-	// The bulk check is zone-file based: it says a domain is taken, not why.
-	// Both wait for the query to settle, so half-typed input is not checked or flagged.
-	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability } = useQuery( {
-		...queries.domainAvailability( typedDomain ),
-		enabled: Boolean( typedDomain ),
-	} );
 
 	const notice = useMemo(
 		() => ( isSettled ? getNamePulseNotice( layout, typedDomainAvailability ) : null ),

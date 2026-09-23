@@ -96,16 +96,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		! result.is_realtime &&
 		source === 'exact';
 
-	// The key is shared with the pre-cart check, so clicking the row afterwards
-	// costs no second request.
+	// The key is shared with the pre-cart check and the typed-domain notice, so
+	// clicking the row afterwards costs no second request, and even while disabled
+	// the query reports whatever verdict those two already fetched for the name.
 	const { data: realtimeAvailability, isError: isPremiumPriceError } = useQuery( {
 		...queries.domainAvailability( domainName ),
 		enabled: needsPremiumPrice,
 	} );
 
-	// A disabled query still reports whatever the shared key already holds, so a row
-	// picks up the check the typed-domain notice ran for its name. That verdict is
-	// the accurate one, and the row would otherwise contradict the notice.
 	const realtimeVerdict = useMemo(
 		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
 		[ realtimeAvailability ]
