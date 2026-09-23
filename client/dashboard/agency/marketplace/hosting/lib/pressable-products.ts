@@ -51,7 +51,7 @@ export function getEffectivePressableOwnership(
 	return ownership === 'regular' ? 'none' : ownership;
 }
 
-const matchesProduct = ( license: JetpackLicense, product: AgencyProduct | undefined ) =>
+export const matchesProduct = ( license: JetpackLicense, product: AgencyProduct | undefined ) =>
 	!! product &&
 	( license.product_id === product.product_id ||
 		license.product_id === product.monthly_product_id ||
