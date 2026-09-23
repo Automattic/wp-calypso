@@ -2,7 +2,7 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl, Button, Spinner } from '@wordpress/components';
+import { ToggleControl, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -82,13 +82,6 @@ function SiteLogsDataViews( {
 	// not persisted, so it lives here rather than in the persisted view.
 	const [ startPosition, setStartPosition ] = useState( 1 );
 
-	// Infinite scroll is how this screen works, not a user preference, so force it
-	// on rather than inheriting it from a view persisted before it existed.
-	const view = useMemo(
-		() => ( { ...persistedView, infiniteScrollEnabled: true, startPosition } ),
-		[ persistedView, startPosition ]
-	);
-
 	// We want to parse 'from' and 'to' from the URL.
 	const parseUrlSeconds = useMemo( () => {
 		const searchParams = new URLSearchParams( search );
@@ -162,6 +155,19 @@ function SiteLogsDataViews( {
 		hasNextPage,
 		isLoading: isLoadingLogQuery,
 	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+
+	// Infinite scroll is how this screen works, not a user preference, so force it
+	// on rather than inheriting it from a view persisted before it existed. It waits
+	// for the first page: DataViews binds its scroll listener when infinite scroll
+	// turns on, and the container it listens to only exists once there are rows.
+	const view = useMemo(
+		() => ( {
+			...persistedView,
+			infiniteScrollEnabled: ! isLoadingLogQuery,
+			startPosition,
+		} ),
+		[ persistedView, isLoadingLogQuery, startPosition ]
+	);
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -376,24 +382,12 @@ function SiteLogsDataViews( {
 		/>
 	);
 
-	// DataViews binds its infinite-scroll listener to the scroll container in an
-	// effect that gives up when the container isn't there yet, and never retries.
-	// The container only renders once DataViews has rows, so mounting it mid-fetch
-	// permanently loses the listener. Wait for the first page instead.
-	if ( isLoadingLogQuery ) {
-		return (
-			<div className="site-logs-loading">
-				<Spinner />
-			</div>
-		);
-	}
-
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingLogQuery || isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -409,7 +403,7 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingLogQuery || isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
