@@ -56,6 +56,14 @@ function mockCountryRegions() {
 		.persist();
 }
 
+// The save is a PUT, and `agencyProfileMutation` throws unless the response
+// carries the saved profile back.
+function mockSave() {
+	nock( API )
+		.put( '/wpcom/v2/agency/123/profile' )
+		.reply( 200, { id: 123, name: 'Test Agency', profile: makeProfile() } );
+}
+
 beforeAll( () => {
 	// jsdom doesn't implement scrollIntoView, which the form calls when
 	// validation fails on the fields above the fold.
@@ -116,5 +124,49 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 
 		await waitFor( () => expect( onSubmitSuccess ).toHaveBeenCalled() );
 		expect( scope.isDone() ).toBe( true );
+	} );
+
+	test( 'asks how the application went before returning to the Partner Directory', async () => {
+		mockAgency( makeProfile() );
+		mockCountryRegions();
+		nock( API )
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {},
+			} )
+			.persist();
+		mockSave();
+
+		render( <AgencyPartnerDirectoryDetails /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
+
+		expect( await screen.findByText( 'Details successfully added!' ) ).toBeVisible();
+	} );
+
+	test( 'returns straight to the Partner Directory for a partner who already answered', async () => {
+		mockAgency( makeProfile() );
+		mockCountryRegions();
+		nock( API )
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'a4a-feedback': {
+						'partner-directory-details-added': { lastSkippedAt: 1757000000000 },
+					},
+				},
+			} )
+			.persist();
+		mockSave();
+
+		render( <AgencyPartnerDirectoryDetails /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
+
+		await waitFor( () =>
+			expect( screen.queryByText( 'Details successfully added!' ) ).not.toBeInTheDocument()
+		);
 	} );
 } );
