@@ -25,6 +25,8 @@ import type { TermPricing } from '../use-term-pricing';
 import type { ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
 
+import './cart-menu.scss';
+
 interface Props {
 	items: ShoppingCartItem[];
 	products: AgencyProduct[];
@@ -110,7 +112,7 @@ export default function CartMenu( {
 			variant="primary"
 			__next40pxDefaultSize
 			href={ checkoutUrl }
-			disabled={ lines.length === 0 || ! isAgencyApproved || ! isTotalReady }
+			disabled={ ! isAgencyApproved || ! isTotalReady }
 			onClick={ () => {
 				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
@@ -234,18 +236,18 @@ export default function CartMenu( {
 									</Text>
 								</HStack>
 							) }
-						</>
-					) }
-					{ isAgencyApproved ? (
-						checkoutButton
-					) : (
-						<Tooltip
-							text={ __(
-								'Your agency is not yet approved. Please wait for approval before making a purchase.'
+							{ isAgencyApproved ? (
+								checkoutButton
+							) : (
+								<Tooltip
+									text={ __(
+										'Your agency is not yet approved. Please wait for approval before making a purchase.'
+									) }
+								>
+									<span>{ checkoutButton }</span>
+								</Tooltip>
 							) }
-						>
-							<span>{ checkoutButton }</span>
-						</Tooltip>
+						</>
 					) }
 				</VStack>
 			) }
