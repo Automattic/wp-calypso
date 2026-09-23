@@ -53,6 +53,9 @@ jest.mock(
 					excludeList: [],
 					totalItems: 0,
 				} ),
+				getNode: () => undefined,
+				setNodeCheckState: jest.fn(),
+				addChildNodes: jest.fn(),
 			},
 			locale: 'en',
 			notices: {
@@ -135,6 +138,21 @@ const mockBackupEntries = [
 		name: 'rewind__backup_complete_full',
 		is_rewindable: true,
 	},
+	// An aggregated row: several activities bundled into one entry. It has a restore point but
+	// no `object.backup_period`, which only backup-complete entries carry.
+	{
+		activity_id: '6',
+		rewind_id: '1758967800.1234',
+		summary: 'Zeta images uploaded',
+		content: { text: 'Three images were uploaded' },
+		published: '2025-09-27T10:00:00Z',
+		name: 'attachment__uploaded',
+		is_rewindable: true,
+		streams: [
+			{ activity_id: '6a', rewind_id: '1758967800.1234' },
+			{ activity_id: '6b', rewind_id: '1758967800.1234' },
+		],
+	},
 ] as unknown as ActivityLogEntry[];
 
 const summaryTestCases: ReadonlyArray< readonly [ string, string ] > = [
@@ -142,12 +160,14 @@ const summaryTestCases: ReadonlyArray< readonly [ string, string ] > = [
 	[ 'rewind-456', 'Third backup completed successfully' ],
 ];
 
+const mockSearchParams: Record< string, unknown > = {};
+
 jest.mock( '../../../app/router/sites', () => ( {
 	siteRoute: {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},
 	siteBackupsRoute: {
-		useSearch: () => ( {} ),
+		useSearch: () => mockSearchParams,
 	},
 } ) );
 
@@ -187,8 +207,24 @@ function renderBackupsListPage( {
 		.query( true )
 		.reply( 200, { calypso_preferences: {} } );
 
+	nock( API_BASE )
+		.persist()
+		.post( `/wpcom/v2/sites/${ mockSiteId }/rewind/backup/ls` )
+		.reply( 200, {
+			ok: true,
+			contents: {
+				wordpress: { type: 'wordpress', label: 'WordPress', has_children: false },
+				plugins: { type: 'dir', label: 'Plugins', has_children: true },
+				wp_options: { type: 'table', label: 'wp_options', has_children: false, row_count: 3 },
+			},
+		} );
+
 	return render( <BackupsListPage /> );
 }
+
+afterEach( () => {
+	Object.keys( mockSearchParams ).forEach( ( key ) => delete mockSearchParams[ key ] );
+} );
 
 test.each( summaryTestCases )(
 	'renders the details section correctly for rewindId %s',
@@ -201,3 +237,28 @@ test.each( summaryTestCases )(
 		} );
 	}
 );
+
+test( 'renders the file browser for an aggregated entry, which has no backup period', async () => {
+	mockRouterParams.rewindId = '1758967800.1234';
+	renderBackupsListPage();
+
+	await waitFor( () => {
+		expect( screen.getAllByText( 'Zeta images uploaded' ) ).toHaveLength( 2 );
+	} );
+
+	expect( await screen.findByText( 'WordPress' ) ).toBeVisible();
+	expect( await screen.findByText( 'wp_options' ) ).toBeVisible();
+	expect( screen.getByText( /files selected/ ) ).toBeVisible();
+} );
+
+test( 'selects the matching entry from the search results rather than the newest one', async () => {
+	mockRouterParams.rewindId = '';
+	mockSearchParams.search = 'Third backup';
+	renderBackupsListPage();
+
+	await waitFor( () => {
+		expect( screen.getAllByText( 'Third backup completed successfully' ) ).toHaveLength( 2 );
+	} );
+
+	expect( screen.queryByText( 'Zeta images uploaded' ) ).not.toBeInTheDocument();
+} );
