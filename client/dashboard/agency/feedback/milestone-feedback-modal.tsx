@@ -9,7 +9,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { getFeedbackCopy, type FeedbackCopyArgs } from './copy';
 import { useMilestoneFeedback } from './use-milestone-feedback';
@@ -32,6 +32,7 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 	const [ rating, setRating ] = useState< FeedbackRating >( 'good' );
 	const [ comments, setComments ] = useState( '' );
 	const [ suggestions, setSuggestions ] = useState< string[] >( [] );
+	const suggestionLabelId = useId();
 
 	const { title, description, suggestion } = getFeedbackCopy( type, args );
 
@@ -55,7 +56,14 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 		);
 
 	return (
-		<Modal title={ title } onRequestClose={ close } size="medium">
+		<Modal
+			title={ title }
+			onRequestClose={ close }
+			size="medium"
+			isDismissible={ ! isSubmitting }
+			shouldCloseOnEsc={ ! isSubmitting }
+			shouldCloseOnClickOutside={ false }
+		>
 			<VStack spacing={ 6 }>
 				<Text>{ description }</Text>
 				<ToggleGroupControl
@@ -80,8 +88,8 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 					) ) }
 				</ToggleGroupControl>
 				{ suggestion && (
-					<VStack spacing={ 2 } as="fieldset">
-						<Text as="legend">{ suggestion.label }</Text>
+					<VStack spacing={ 2 } role="group" aria-labelledby={ suggestionLabelId }>
+						<Text id={ suggestionLabelId }>{ suggestion.label }</Text>
 						{ suggestion.options.map( ( option ) => (
 							<CheckboxControl
 								key={ option.value }
