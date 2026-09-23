@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { agencyPendingSitesQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -23,7 +25,11 @@ const mockSites = [
 	},
 ] as AgencySite[];
 
-function mockEndpoints() {
+function pendingSite( id: number, state: string, licenseKey = 'wpcom-hosting-business_abc' ) {
+	return { id, features: { wpcom_atomic: { license_key: licenseKey, state } } };
+}
+
+function mockEndpoints( pendingSites: unknown[] = [] ) {
 	nock( BASE )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )
@@ -42,8 +48,10 @@ function mockEndpoints() {
 		.query( true )
 		.reply( 200, { sites: mockSites, total: mockSites.length, perPage: 50, totalPages: 1 } );
 
-	// Only requested once the Add new site modal opens.
-	nock( BASE ).persist().get( `/wpcom/v2/agency/${ AGENCY_ID }/sites/pending` ).reply( 200, [] );
+	nock( BASE )
+		.persist()
+		.get( `/wpcom/v2/agency/${ AGENCY_ID }/sites/pending` )
+		.reply( 200, pendingSites );
 
 	nock( BASE )
 		.persist()
@@ -66,17 +74,17 @@ function mockEndpoints() {
 const addNewSiteButton = () => screen.findByRole( 'button', { name: 'Add new site' } );
 
 describe( '<AgencySites>', () => {
-	beforeEach( mockEndpoints );
-
-	afterEach( () => nock.cleanAll() );
-
 	test( 'offers a way to add a new site', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		expect( await addNewSiteButton() ).toBeVisible();
 	} );
 
 	test( 'opens the add-new-site menu in a dialog', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -87,6 +95,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'reports opening the add-new-site menu', async () => {
+		mockEndpoints();
+
 		const { recordTracksEvent } = render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -97,6 +107,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'reports the entry chosen inside the menu', async () => {
+		mockEndpoints();
+
 		const { recordTracksEvent } = render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -111,6 +123,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'marks a development site in the list', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		const devRow = await screen.findByRole( 'row', { name: /Second/ } );
@@ -121,6 +135,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'opens the development site configuration from the menu', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -133,6 +149,8 @@ describe( '<AgencySites>', () => {
 	} );
 
 	test( 'closes the menu once an entry is chosen', async () => {
+		mockEndpoints();
+
 		render( <AgencySites /> );
 
 		await userEvent.click( await addNewSiteButton() );
@@ -141,5 +159,51 @@ describe( '<AgencySites>', () => {
 		);
 
 		expect( screen.queryByRole( 'dialog', { name: 'Add new site' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'points licenses waiting to be set up at the unassigned Purchases filter', async () => {
+		mockEndpoints( [
+			pendingSite( 7, 'pending' ),
+			pendingSite( 8, 'pending', 'wpcom-hosting-x_def' ),
+		] );
+
+		render( <AgencySites /> );
+
+		expect(
+			await screen.findByText( /2 WordPress\.com licenses are ready to set up/ )
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Set them up in Purchases' } ) ).toHaveAttribute(
+			'href',
+			'/marketplace/purchases?status=unassigned&search=WordPress.com'
+		);
+	} );
+
+	// The header counts on every /sites load, so it must not take the route down
+	// when the endpoint answers with something other than the expected list.
+	test( 'survives a response that is not a list of pending sites', async () => {
+		mockEndpoints( { error: 'unauthorized' } as unknown as unknown[] );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+
+		render( <AgencySites />, { queryClient } );
+
+		// Assert against the cache rather than the screen: the header renders
+		// before the payload lands, so waiting on it would pass either way.
+		await waitFor( () =>
+			expect( queryClient.getQueryData( agencyPendingSitesQuery( AGENCY_ID ).queryKey ) ).toEqual( {
+				error: 'unauthorized',
+			} )
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.queryByText( /ready to set up/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'says nothing when every license already has its site', async () => {
+		mockEndpoints( [ pendingSite( 7, 'provisioning' ) ] );
+
+		render( <AgencySites /> );
+
+		await screen.findByRole( 'heading', { name: 'Sites' } );
+		expect( screen.queryByText( /ready to set up/ ) ).not.toBeInTheDocument();
 	} );
 } );
