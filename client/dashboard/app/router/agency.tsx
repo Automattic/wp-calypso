@@ -607,6 +607,36 @@ const mcpConnectRoute = createRoute( {
 	)
 );
 
+const resourcesSections = [
+	{ route: learnRoute, supports: 'learn' },
+	{ route: mcpRoute, supports: 'mcp' },
+	{ route: devToolsRoute, supports: 'devTools' },
+] as const;
+
+// `/resources` – no screen of its own; sends the user to the first Resources
+// section the app supports.
+export const resourcesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	getParentRoute: () => agencyRoute,
+	path: 'resources',
+	beforeLoad: ( { cause, context } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agencySupports = context.config.supports.agency;
+		const destination = resourcesSections.find(
+			( section ) => agencySupports && agencySupports[ section.supports ]
+		)?.route;
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
+
 // `/sites` – agency-managed sites
 export const agencySitesRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
@@ -1945,6 +1975,7 @@ export const createAgencyRoutes = () => [
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
+		resourcesRoute,
 		learnRoute,
 		devToolsRoute,
 		mcpRoute.addChildren( [

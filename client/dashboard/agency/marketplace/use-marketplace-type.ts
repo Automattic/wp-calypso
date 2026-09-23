@@ -2,7 +2,8 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 export type MarketplaceType = 'regular' | 'referral';
 
-// Shared with the classic A4A marketplace so the selected mode carries over between dashboards.
+// Same key as the classic A4A marketplace. The two dashboards run on different origins,
+// so the stored mode does not carry over between them.
 const SESSION_STORAGE_KEY = 'marketplace-type';
 
 const listeners = new Set< () => void >();

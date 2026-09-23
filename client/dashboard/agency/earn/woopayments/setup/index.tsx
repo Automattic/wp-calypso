@@ -26,8 +26,8 @@ export default function EarnWooPaymentsSetup() {
 	const onInstallClick = async () => {
 		recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
 			status: isInstalled ? 'installed' : 'not_installed',
-			woocommerceStatus,
-			woocommercePaymentsStatus,
+			woocommerce_status: woocommerceStatus,
+			woocommerce_payments_status: woocommercePaymentsStatus,
 		} );
 
 		if ( isInstalled || isWooPaymentsActive ) {
