@@ -3,7 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { cart as cartIcon } from '@wordpress/icons';
+import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -15,29 +15,24 @@ import {
 	NamePulseDomainStatus,
 	pickPricing,
 	type NamePulseDomainResult,
-	type NamePulseDomainUpdate,
+	type NamePulseVerdict,
 } from '../helpers';
+import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import type { DomainAvailability } from '@automattic/api-core';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
-	/** Receives the real-time verdict so every copy of the row reflects it. */
-	onUpdate?: ( update: NamePulseDomainUpdate ) => void;
 }
 
 const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
 	status === DomainAvailabilityStatus.AVAILABLE ||
 	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
 
-const toRealtimeUpdate = (
-	domainName: string,
-	availability: DomainAvailability
-): NamePulseDomainUpdate => {
+const toRealtimeVerdict = ( availability: DomainAvailability ): NamePulseVerdict => {
 	const available = isAvailableStatus( availability.status );
 
 	return {
-		domain_name: domainName,
 		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
 		...pickPricing( availability ),
 		cost: available ? availability.cost : undefined,
@@ -99,7 +94,7 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 	);
 };
 
-export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseResultRowProps ) => {
+export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
@@ -143,14 +138,14 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 			}
 
 			// Bulk results are zone-file based and approximate; the real-time check runs
-			// before anything reaches the cart.
+			// before anything reaches the cart, and every row listing the name reads it.
 			const availability = await queryClient.ensureQueryData(
 				queries.domainAvailability( domainName )
 			);
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
 			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			onUpdate?.( toRealtimeUpdate( domainName, availability ) );
+			setNamePulseVerdict( queryClient, domainName, toRealtimeVerdict( availability ) );
 
 			if ( ! isAvailableStatus( availability.status ) ) {
 				throw new Error( __( 'Sorry, this domain is no longer available.' ) );
@@ -219,28 +214,36 @@ export const NamePulseResultRow = ( { result, position, onUpdate }: NamePulseRes
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isAvailable && (
-					<>
-						{ ! showPremiumBadge && <Price result={ result } /> }
+				{ isAvailable && ! showPremiumBadge && <Price result={ result } /> }
+				{ error && (
+					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
-							className="name-pulse-row__cart"
-							icon={ cartIcon }
-							label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
-							variant={ inCart ? 'primary' : undefined }
+							className="name-pulse-row__cart name-pulse-row__cart--error"
+							icon={ cautionFilled }
+							label={ error.message }
+							showTooltip={ false }
+							isDestructive
+							variant="primary"
 							size="compact"
-							isBusy={ isPending }
-							disabled={ isPending }
-							aria-pressed={ inCart }
-							onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+							disabled
+							accessibleWhenDisabled
 						/>
-					</>
+					</Tooltip>
+				) }
+				{ isAvailable && ! error && (
+					<Button
+						className="name-pulse-row__cart"
+						icon={ cartIcon }
+						label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
+						variant={ inCart ? 'primary' : undefined }
+						size="compact"
+						isBusy={ isPending }
+						disabled={ isPending }
+						aria-pressed={ inCart }
+						onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+					/>
 				) }
 			</span>
-			{ error && (
-				<Text className="name-pulse-row__error" variant="muted" size={ 12 }>
-					{ error.message }
-				</Text>
-			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

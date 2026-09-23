@@ -200,7 +200,12 @@ describe( 'RecommendedPostsWithPosts', () => {
 
 		fireEvent.click( screen.getAllByTitle( 'Dismiss this recommendation' )[ 0 ] );
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( successNotice ).toHaveBeenCalledWith( "We won't recommend this site to you again.", {
+				duration: 5000,
+			} )
+		);
+		expect( nock.isDone() ).toBe( true );
 		expect( recordTrackForPost ).toHaveBeenCalledWith(
 			'calypso_reader_recommended_post_dismissed',
 			expect.objectContaining( { ID: 1, site_ID: 100 } ),
@@ -210,9 +215,6 @@ describe( 'RecommendedPostsWithPosts', () => {
 			}
 		);
 		expect( recordAction ).toHaveBeenCalledWith( 'in_stream_rec_dismiss' );
-		expect( successNotice ).toHaveBeenCalledWith( "We won't recommend this site to you again.", {
-			duration: 5000,
-		} );
 		expect( store.dispatch ).toHaveBeenCalledWith( {
 			type: 'SUCCESS_NOTICE',
 			text: "We won't recommend this site to you again.",

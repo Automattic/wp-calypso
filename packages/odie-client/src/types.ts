@@ -137,6 +137,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'

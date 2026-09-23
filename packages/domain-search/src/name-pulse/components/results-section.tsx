@@ -8,7 +8,6 @@ import {
 	NAME_PULSE_PAGE_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
 	type NamePulseDomainResult,
-	type NamePulseDomainUpdate,
 } from '../helpers';
 import { NamePulseResultRow, NamePulseResultRowSkeleton } from './result-row';
 
@@ -24,7 +23,6 @@ interface NamePulseResultsSectionProps {
 	showMoreLabel?: string;
 	/** Rows revealed by "Show more", so the caller can check their availability. */
 	onReveal?: ( rows: NamePulseDomainResult[] ) => void;
-	onUpdate?: ( update: NamePulseDomainUpdate ) => void;
 }
 
 export const NamePulseResultsSection = ( {
@@ -36,7 +34,6 @@ export const NamePulseResultsSection = ( {
 	skeletonCount = NAME_PULSE_PAGE_SIZE,
 	showMoreLabel,
 	onReveal,
-	onUpdate,
 }: NamePulseResultsSectionProps ) => {
 	const [ visibleCount, setVisibleCount ] = useState( NAME_PULSE_PAGE_SIZE );
 	const [ skeletonsTimedOut, setSkeletonsTimedOut ] = useState( false );
@@ -76,7 +73,7 @@ export const NamePulseResultsSection = ( {
 			<div className="name-pulse-grid" role="list">
 				{ visible.map( ( result, index ) => (
 					<div role="listitem" key={ result.domain_name }>
-						<NamePulseResultRow result={ result } position={ index } onUpdate={ onUpdate } />
+						<NamePulseResultRow result={ result } position={ index } />
 					</div>
 				) ) }
 				{ Array.from( { length: skeletons }, ( _, index ) => (

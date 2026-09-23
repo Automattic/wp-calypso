@@ -216,7 +216,7 @@ function renderRenewsOrExpiresOnLabel( {
 	}
 
 	if ( isPurchaseOneTimePurchase( purchase ) ) {
-		return translate( 'Renews on' );
+		return translate( 'Renewal Status' );
 	}
 
 	return null;
@@ -257,7 +257,7 @@ function renderRenewsOrExpiresOn( {
 	}
 
 	if ( isPurchaseOneTimePurchase( purchase ) ) {
-		return <>{ translate( 'Never Expires' ) }</>;
+		return <>{ translate( 'One-time purchase' ) }</>;
 	}
 	return null;
 }

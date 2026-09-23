@@ -1424,6 +1424,7 @@ export const basicExpectedDomainDetails = {
 	email: undefined,
 	extra: {
 		ca: null,
+		es: null,
 		fr: null,
 		in: null,
 		uk: null,

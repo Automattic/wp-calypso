@@ -13,11 +13,12 @@ jest.mock( '../blackbox-sdk', () => ( {
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 
-function TestComponent( { enabled = true } ) {
+function TestComponent( { enabled = true, apiKey = 'test-api-key' } ) {
 	const containerRef = useRef( null );
 	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( {
 		containerRef,
 		enabled,
+		apiKey,
 	} );
 
 	return (
@@ -67,6 +68,17 @@ describe( 'useBlackbox', () => {
 		jest.useRealTimers();
 		delete window.Blackbox;
 		delete window.ResizeObserver;
+	} );
+
+	test( 'loads and configures Blackbox with the given api key', async () => {
+		render( <TestComponent apiKey="signup-key" /> );
+
+		await act( async () => {} );
+
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'signup-key' );
+		expect( window.Blackbox.configure ).toHaveBeenCalledWith(
+			expect.objectContaining( { apiKey: 'signup-key' } )
+		);
 	} );
 
 	test( 'keeps Blackbox loading until configure has had time to settle', async () => {

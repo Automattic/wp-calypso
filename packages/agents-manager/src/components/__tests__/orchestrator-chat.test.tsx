@@ -1531,6 +1531,32 @@ describe( 'OrchestratorChat', () => {
 
 		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
 		expect( agentticRegenerate ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			expect.anything()
+		);
+	} );
+
+	it( 'records a regeneration when credits allow it', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( true );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( agentticRegenerate ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			{ message_id: 'agent-1' }
+		);
 	} );
 
 	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
