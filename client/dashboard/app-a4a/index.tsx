@@ -21,7 +21,7 @@ const hasNeutralTheme = isEnabled( 'dashboard/a4a-neutral-theme' );
 boot( {
 	name: 'A4A',
 	theme: hasNeutralTheme ? 'neutral' : undefined,
-	defaultColorScheme: 'system',
+	colorScheme: 'system',
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
@@ -59,7 +59,6 @@ boot( {
 		},
 		colorScheme: hasNeutralTheme,
 		darkMode: hasNeutralTheme,
-		sidebarAppearance: hasNeutralTheme,
 	},
 	optIn: false,
 	components: {},

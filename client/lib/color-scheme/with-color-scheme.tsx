@@ -6,7 +6,7 @@ import type { ComponentType, ReactNode } from 'react';
 type ColorSchemeProviderComponent = ComponentType< {
 	children: ReactNode;
 	enabled?: boolean;
-	defaultColorScheme?: ColorScheme;
+	colorScheme?: ColorScheme;
 } >;
 
 function BodyClass( { className }: { className: string } ) {
@@ -30,12 +30,12 @@ export function withColorScheme(
 	{
 		bodyClass,
 		enabled = true,
-		defaultColorScheme,
+		colorScheme,
 		Provider = ColorSchemeProvider,
 	}: {
 		bodyClass?: string;
 		enabled?: boolean;
-		defaultColorScheme?: ColorScheme;
+		colorScheme?: ColorScheme;
 		Provider?: ColorSchemeProviderComponent;
 	} = {}
 ) {
@@ -44,7 +44,7 @@ export function withColorScheme(
 	// gates its document side effects on `enabled`, and the body class is only
 	// mounted while enabled.
 	return (
-		<Provider enabled={ enabled } defaultColorScheme={ defaultColorScheme }>
+		<Provider enabled={ enabled } colorScheme={ colorScheme }>
 			{ enabled && bodyClass && <BodyClass className={ bodyClass } /> }
 			{ children }
 		</Provider>

@@ -14,13 +14,12 @@ import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import AgencySidebar from './agency';
 import AgencyClientSidebar from './agency-client';
-import SidebarAppearance from './appearance';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
 
 export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnabled?: boolean } ) {
-	const { Logo, name, supports } = useAppContext();
+	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const sidebarRef = useRef< HTMLDivElement >( null );
 	const navigatorRef = useRef< HTMLDivElement >( null );
@@ -62,9 +61,6 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
-			{ supports.sidebarAppearance && supports.colorScheme && supports.darkMode && (
-				<SidebarAppearance />
-			) }
 		</div>
 	);
 }

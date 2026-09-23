@@ -56,7 +56,7 @@ export type SiteOverviewSupports = {
 export type AppConfig = {
 	name: string;
 	theme?: 'neutral';
-	defaultColorScheme?: ColorScheme;
+	colorScheme?: ColorScheme;
 	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
@@ -80,7 +80,6 @@ export type AppConfig = {
 		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
-		sidebarAppearance?: boolean;
 	};
 	posthog?: {
 		apiKey: string;

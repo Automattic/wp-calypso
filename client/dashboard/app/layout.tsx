@@ -93,7 +93,7 @@ function Layout( { config }: { config: AppConfig } ) {
 							<GlobalChartsProvider theme={ dashboardChartTheme }>
 								{ withColorScheme( <RouterProvider router={ router } context={ { config } } />, {
 									enabled: config.supports.colorScheme,
-									defaultColorScheme: config.defaultColorScheme,
+									colorScheme: config.colorScheme,
 								} ) }
 							</GlobalChartsProvider>
 						</AnalyticsProviderWithClient>

@@ -1,4 +1,4 @@
-import { rawUserPreferencesQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
+import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import {
@@ -7,41 +7,40 @@ import {
 	PREFERENCE_KEY,
 	isColorScheme,
 } from './shared';
-import type { ColorScheme, ColorSchemeContextType } from './shared';
+import type { ColorScheme } from './shared';
 import type { ReactNode } from 'react';
 
 export function ColorSchemeProvider( {
 	children,
 	enabled = true,
-	defaultColorScheme = DEFAULT_SCHEME,
+	colorScheme: fixedColorScheme,
 }: {
 	children: ReactNode;
 	enabled?: boolean;
-	defaultColorScheme?: ColorScheme;
+	colorScheme?: ColorScheme;
 } ) {
 	const { data: savedColorScheme, isFetched } = useQuery( {
-		...rawUserPreferencesQuery(),
-		select: ( preferences ) => preferences[ PREFERENCE_KEY ],
-		enabled,
+		...userPreferenceQuery( PREFERENCE_KEY ),
+		enabled: enabled && ! fixedColorScheme,
 	} );
 	const { mutate: saveColorScheme, isPending } = useMutation(
 		userPreferenceOptimisticMutation( PREFERENCE_KEY )
 	);
-	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : defaultColorScheme;
-	const isReady = savedColorScheme !== undefined || isFetched;
+	const colorScheme =
+		fixedColorScheme ?? ( isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME );
+	const isReady = fixedColorScheme !== undefined || savedColorScheme !== undefined || isFetched;
 
-	const setColorScheme = useCallback< ColorSchemeContextType[ 'setColorScheme' ] >(
-		( scheme, options ) => {
-			if ( ! isColorScheme( scheme ) || scheme === colorScheme || isPending ) {
+	const setColorScheme = useCallback(
+		( scheme: ColorScheme, options?: { onSuccess?: () => void } ) => {
+			if ( fixedColorScheme || ! isColorScheme( scheme ) || scheme === colorScheme || isPending ) {
 				return;
 			}
 
 			saveColorScheme( scheme, {
 				onSuccess: options?.onSuccess,
-				onError: options?.onError,
 			} );
 		},
-		[ colorScheme, isPending, saveColorScheme ]
+		[ colorScheme, fixedColorScheme, isPending, saveColorScheme ]
 	);
 
 	return (
@@ -50,7 +49,6 @@ export function ColorSchemeProvider( {
 			enabled={ enabled }
 			isReady={ isReady }
 			setColorScheme={ setColorScheme }
-			isSaving={ isPending }
 			waitForReady
 		>
 			{ children }

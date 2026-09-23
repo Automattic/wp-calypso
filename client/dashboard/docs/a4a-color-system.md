@@ -1,10 +1,10 @@
 # A4A neutral color system
 
-Status: proof of concept for design review. The A4A development build and light/dark overview have been verified; full release verification remains pending.
+Status: proof of concept for design review. The initial PoC build and light/dark overview were verified. The system-only revision has focused provider coverage; fresh visual and full release verification remain pending.
 
 ## Activation and ownership
 
-The A4A entry evaluates `dashboard/a4a-neutral-theme`. Development enables it; stage, horizon, and production leave it disabled. The flag enables the neutral palette, existing color-scheme provider, dark-mode support, and a sidebar Appearance dialog together. Other Dashboard variants retain their configuration.
+The A4A entry evaluates `dashboard/a4a-neutral-theme`. Development enables it; stage, horizon, and production leave it disabled. The flag enables the neutral palette and existing dark-mode support together. A4A supplies a fixed `system` color scheme to the shared provider. Other Dashboard variants retain their configuration.
 
 `AppConfig.theme: 'neutral'` causes `boot()` to set `data-dashboard-theme="neutral"` on the document root before initializing the omnibar. This is independent from `data-theme="light|dark|system"`, owned by the existing color-scheme provider. Shared components use theme roles and capability flags rather than branching on the app name.
 
@@ -70,34 +70,30 @@ Always consume both halves of a pair on editorial surfaces. Do not alias the adm
 
 These pairs establish the content contract; this change does not redesign resource covers or apply decorative backgrounds indiscriminately. Select the first real content applications with design review. Additional hues require confirmation against the brand source.
 
-## Appearance behavior
+## System-driven mode
 
-The sidebar dialog is inside the Dashboard provider tree. Mobile access depends on the responsive sidebar trigger in the omnibar; this needs end-to-end verification with the complete shell. It does not depend on `/me` routes or the separate omnibar React root. The reusable `AppearanceControl` also replaces the existing control on WordPress.com’s appearance preferences page.
+A4A sets `AppConfig.colorScheme: 'system'`. The existing provider applies `data-theme="system"`, and the existing `prefers-color-scheme: dark` media query switches the palette automatically, including OS changes while the page is open.
 
-- Light and Dark are explicit modes. System saves `system` and follows the operating system through the existing media query, including live changes.
-- The account preference remains `hosting-dashboard-color-scheme`. A4A defaults to system when no valid saved preference is available; explicit saved choices take precedence. Other surfaces retain their existing default. The provider reads the raw preference so a query-level light fallback cannot mask an unset preference. No separate local-storage preference is added.
-- The description discloses that the preference affects other supported surfaces.
-- The existing optimistic mutation updates the UI immediately and restores the previous cached preference after failure. The control displays a retryable error and disables choices while a save is pending.
-- Successful explicit changes emit the existing `calypso_dashboard_color_scheme_change` event. Sidebar changes use `source: sidebar_appearance`; the preferences page retains `source: preferences_appearance`. Failed saves and OS-driven changes do not emit this event.
+The provider's optional fixed `colorScheme` bypasses its account-preference query and prevents writes through its setter. A saved WordPress.com Light/Dark choice cannot override A4A's system mode, and opening A4A does not change that saved choice. The fixed scheme is ready immediately, without waiting for preferences to load. Other consumers omit the override and retain their existing preference behavior and default.
 
-The shared provider now exposes optional `isSaving` and an optional setter `onError` callback. Existing consumers and the classic provider keep their defaults.
+There is no A4A mode control, preference mutation, or mode-change analytics. The WordPress.com preferences page is unchanged.
 
 ## Rollback
 
-Disable `dashboard/a4a-neutral-theme` in the target configuration and reload the entry. The palette marker, A4A appearance capability, and color-scheme capability are removed together. Boot clears an old mode attribute for configurations without color-scheme support. The user's saved preference is retained for other supported surfaces and future re-enablement. This flag is not a live configuration subscription: already-open documents need a reload.
+Disable `dashboard/a4a-neutral-theme` in the target configuration and reload the entry. The palette marker and A4A color-scheme capability are removed together. Boot clears an old mode attribute for configurations without color-scheme support. The user's saved preference is retained for other supported surfaces and future re-enablement. This flag is not a live configuration subscription: already-open documents need a reload.
 
 ## Verification still required
 
-Focused tests cover opening the sidebar dialog, saving the account preference, success analytics, failed-save rollback, retry, the System default, and honoring explicit saved choices. The shared provider failure test also asserts the error callback and document theme rollback. Desktop light/dark screenshots and keyboard focus were checked in the local A4A preview. The overview and Appearance dialog were also inspected in Hebrew with RTL styles using a temporary local locale fixture, removed after verification. Navigation alignment, dialog control order, wrapping, and mixed-direction domain text were checked; the System label currently falls back to English.
+Focused provider tests cover fixed System mode with no cached preference and with cached Light/Dark preferences, immediate rendering, and no preference reads or writes. Existing provider tests retain coverage of preference-driven surfaces. The initial PoC's desktop light/dark palette, keyboard focus, narrow overview, and Hebrew RTL overview were inspected locally; fresh visual verification of the system-only revision is pending.
 
 Before any rollout:
 
 1. Repeat the affected checks and Dashboard build after changes; record current validation in the PR. Keep full-client typechecking separate from the running preview.
-2. Inspect the running A4A hostname in light, dark, and System, including an OS-mode change while open. Check initial loading, refresh, missing/invalid preferences, preference-read failure, failed saves, and flag-off rollback.
+2. Inspect the running A4A hostname with the OS in both light and dark modes, including an OS-mode change while open. Confirm existing account choices do not override A4A or change after visiting it. Check initial loading, refresh, and flag-off rollback.
 3. Verify overview, sites, clients, purchases/products, resources, agency-client pages, and shared site-detail routes enabled in the release. Exercise tables, selected rows, tabs, forms, all control states, destructive actions, notices, charts, tooltips, dialogs and popovers.
 4. Verify both omnibars, support-session treatment, launch-site actions, notification panels and portaled menus. Check that theme changes reach each React root.
-5. Check keyboard focus, essential boundaries, text/icon contrast, disabled and loading states, forced colors, zoom, print, and mobile. Verify LTR and a representative RTL locale, including navigation and dialog controls.
-6. Compare WordPress.com, CIAB, classic A4A and classic dark-mode surfaces against their baselines. Shared fallback edits and the extracted appearance control need regression coverage.
+5. Check keyboard focus, essential boundaries, text/icon contrast, disabled and loading states, forced colors, zoom, print, and mobile. Verify LTR and a representative RTL locale, including navigation.
+6. Compare WordPress.com, CIAB, classic A4A and classic dark-mode surfaces against their baselines. Shared fallback edits and the fixed color-scheme provider option need regression coverage.
 7. Confirm monochrome shell branding and real content treatments with design review. Complete a route/token exception inventory before enabling remote environments.
 
 The local OAuth preview did not render an omnibar, so its mobile navigation trigger and language switcher were unavailable. The overview itself was inspected at a 390px viewport. Existing light icon tiles and artwork also need a separate content-design pass.

@@ -37,15 +37,3 @@
 .dashboard-responsive-sidebar__logo {
 	padding: $grid-unit-30 $grid-unit-30 0;
 }
-
-.dashboard-responsive-sidebar__appearance {
-	flex-shrink: 0;
-	margin-block-start: auto;
-	padding: $grid-unit-10 $grid-unit-20 $grid-unit-20;
-
-	.components-button {
-		inline-size: 100%;
-		justify-content: flex-start;
-		color: var( --dashboard-menu-item__color );
-	}
-}
