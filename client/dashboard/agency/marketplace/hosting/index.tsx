@@ -14,7 +14,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -22,7 +22,7 @@ import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../paths';
 import CartMenu from '../products/cart-menu';
-import { useShoppingCart } from '../products/use-shopping-cart';
+import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
@@ -104,7 +104,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	);
 
 	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
-	const [ isCartOpen, setIsCartOpen ] = useState( false );
+	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 
 	// A hosting plan replaces the plan of the same family already in the cart.
 	const addToCart = ( plan: AgencyProduct, quantity: number ) => {

@@ -51,7 +51,7 @@ import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
-import { parseCartEntries, useShoppingCart } from './use-shopping-cart';
+import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
 import type { CategoryTileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem } from './lib/product-groups';
@@ -126,6 +126,7 @@ export default function MarketplaceProducts() {
 		replaceItems,
 		clearCart,
 	} = useShoppingCart();
+	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -409,6 +410,8 @@ export default function MarketplaceProducts() {
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ isAgencyApproved( agency ) }
+								open={ isCartOpen }
+								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }
 								onCheckout={ clearCart }
 							/>

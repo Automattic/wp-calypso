@@ -9,9 +9,11 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { getQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
+import RouterLinkButton from '../../../components/router-link-button';
 import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -19,6 +21,9 @@ import type { View, Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
+
+// Dashboard routes navigate in-app; classic and third-party URLs are absolute.
+const isDashboardPath = ( url: string ) => url.startsWith( '/' );
 
 const initialView: View = {
 	type: 'list',
@@ -83,15 +88,26 @@ function PartnerOfferCard( {
 							gap: '16px',
 						} }
 					>
-						{ /* TODO: non-external URLs are classic A4A marketplace paths that 404 until the dashboard Marketplace exists. */ }
-						<Button
-							variant="secondary"
-							href={ item.cta.url }
-							target={ item.cta.external ? '_blank' : undefined }
-							onClick={ handleCTAClick }
-						>
-							{ item.cta.label }
-						</Button>
+						{ isDashboardPath( item.cta.url ) ? (
+							<RouterLinkButton
+								variant="secondary"
+								to={ item.cta.url.split( '?' )[ 0 ] }
+								search={ getQueryArgs( item.cta.url ) }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</RouterLinkButton>
+						) : (
+							<Button
+								variant="secondary"
+								href={ item.cta.url }
+								target={ item.cta.external ? '_blank' : undefined }
+								rel={ item.cta.external ? 'noopener noreferrer' : undefined }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</Button>
+						) }
 						<Button
 							variant="link"
 							href={ item.termsUrl ?? VIEW_TERMS_URL }

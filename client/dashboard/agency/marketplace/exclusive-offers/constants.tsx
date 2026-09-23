@@ -1,6 +1,7 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { a4aLink } from '../../../utils/link';
 import AvalaraLogo from './images/avalara.svg';
 import JetpackLogo from './images/jetpack-descriptor.svg';
 import PressableLogo from './images/pressable-descriptor.svg';
@@ -19,12 +20,15 @@ const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
 const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
 const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = '/marketplace/hosting/wpcom';
 const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = '/marketplace/hosting/pressable';
-const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK =
-	'/marketplace/hosting/refer-pressable-premium-plan';
-const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK =
-	'/marketplace/hosting/refer-enterprise-hosting';
+// The two refer forms still live in the classic dashboard.
+const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK = a4aLink(
+	'/marketplace/hosting/refer-pressable-premium-plan'
+);
+const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK = a4aLink(
+	'/marketplace/hosting/refer-enterprise-hosting'
+);
 const A4A_MARKETPLACE_PRODUCTS_LINK = '/marketplace/products';
-const A4A_WOOPAYMENTS_OVERVIEW_LINK = '/woopayments/overview';
+const A4A_WOOPAYMENTS_LINK = '/earn/woopayments';
 
 export const filterOptions = {
 	offerTypes: [
@@ -253,7 +257,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Earn with WooPayments' ),
-			url: A4A_WOOPAYMENTS_OVERVIEW_LINK,
+			url: A4A_WOOPAYMENTS_LINK,
 		},
 	},
 ];
