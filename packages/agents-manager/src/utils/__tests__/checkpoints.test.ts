@@ -33,22 +33,17 @@ async function loadCheckpoints() {
 			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
 	);
 	const editEntityRecord = jest.fn();
-	const saveSpecifiedEntityEdits = jest.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
 	} );
-	dispatch.mockReturnValue( {
-		editEntityRecord,
-		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
-	} );
+	dispatch.mockReturnValue( { editEntityRecord } );
 	const checkpoints = await import( '../checkpoints' );
 	return {
 		...checkpoints,
 		getGlobalStylesId,
 		getEditedEntityRecord,
 		editEntityRecord,
-		saveSpecifiedEntityEdits,
 	};
 }
 
@@ -720,14 +715,9 @@ describe( 'restore by domain', () => {
 		);
 	} );
 
-	it( 'puts the site title and metadata back, and saves each', async () => {
-		const {
-			setCheckpoint,
-			restoreCheckpoint,
-			getEditedEntityRecord,
-			editEntityRecord,
-			saveSpecifiedEntityEdits,
-		} = await loadCheckpoints();
+	it( 'puts the site title and metadata back as pending edits', async () => {
+		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord, editEntityRecord } =
+			await loadCheckpoints();
 		getEditedEntityRecord.mockReturnValue( {
 			title: 'Old',
 			big_sky_site_metadata: '{"personality":"calm"}',
@@ -757,10 +747,6 @@ describe( 'restore by domain', () => {
 			{ big_sky_site_metadata: JSON.stringify( { personality: 'calm' } ) },
 			{ undoIgnore: true }
 		);
-		expect( saveSpecifiedEntityEdits.mock.calls.map( ( call ) => call[ 3 ] ) ).toEqual( [
-			[ 'title' ],
-			[ 'big_sky_site_metadata' ],
-		] );
 	} );
 } );
 
