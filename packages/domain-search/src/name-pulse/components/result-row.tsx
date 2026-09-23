@@ -103,15 +103,12 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		enabled: needsPremiumPrice,
 	} );
 
-	// A disabled query still reports whatever the shared key already holds, and the
-	// typed-domain notice warms it for a name nobody clicked. Only the row that
-	// asked for the check may turn it into a real-time verdict.
+	// A disabled query still reports whatever the shared key already holds, so a row
+	// picks up the check the typed-domain notice ran for its name. That verdict is
+	// the accurate one, and the row would otherwise contradict the notice.
 	const realtimeVerdict = useMemo(
-		() =>
-			needsPremiumPrice && realtimeAvailability
-				? toNamePulseRealtimeVerdict( realtimeAvailability )
-				: undefined,
-		[ needsPremiumPrice, realtimeAvailability ]
+		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
+		[ realtimeAvailability ]
 	);
 
 	// Every other row listing this name reads the verdict from the shared cache.
@@ -161,7 +158,10 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
 			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			setNamePulseVerdict( queryClient, domainName, toNamePulseRealtimeVerdict( availability ) );
+			setNamePulseVerdict( queryClient, domainName, {
+				...toNamePulseRealtimeVerdict( availability ),
+				is_cart_check: true,
+			} );
 
 			if ( ! isNamePulseAvailable( availability ) ) {
 				throw new Error( __( 'Sorry, this domain is no longer available.' ) );

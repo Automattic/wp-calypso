@@ -424,7 +424,12 @@ describe( 'NamePulseResults', () => {
 		);
 
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
-		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+
+		// The bulk check offers the name; only the per-domain check behind the notice
+		// knows it is registered, and the row must not contradict it.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByText( 'Unavailable' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
 
 		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
 		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
