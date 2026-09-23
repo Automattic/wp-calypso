@@ -32,11 +32,11 @@ export function getBlackboxApiKey( feature ) {
  * Subsequent calls return the same Promise — the script is only injected once.
  *
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
- * A later surface updates the live key via configure(); this only stamps the first load.
- * @param {string} [apiKey] Public key stamped on the script tag. Defaults to the login key.
+ * The script loads once, and this key is what auto-init collects with.
+ * @param {string} apiKey Public key stamped on the script tag.
  * @returns {Promise<void>}
  */
-export function loadBlackboxSdk( apiKey = getBlackboxApiKey() ) {
+export function loadBlackboxSdk( apiKey ) {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}

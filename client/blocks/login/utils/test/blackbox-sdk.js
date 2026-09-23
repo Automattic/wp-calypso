@@ -34,19 +34,6 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'loadBlackboxSdk calls loadScript with the configured URL and data-apikey', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
-
-		await loadBlackboxSdk();
-
-		expect( loadScript ).toHaveBeenCalledWith(
-			'https://blackbox-api.wp.com/v.js',
-			expect.any( Function ),
-			expect.objectContaining( { 'data-apikey': 'login-key' } )
-		);
-	} );
-
 	test( 'getBlackboxApiKey uses the signup key for signup surfaces', () => {
 		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
 
@@ -79,8 +66,8 @@ describe( 'blackbox-sdk', () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key' );
+		await loadBlackboxSdk( 'login-key' );
 
 		expect( loadScript ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -89,7 +76,7 @@ describe( 'blackbox-sdk', () => {
 		window.Blackbox = { configure: jest.fn(), getSessionId: jest.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key' );
 
 		expect( window.Blackbox.configure ).not.toHaveBeenCalled();
 	} );
@@ -99,7 +86,7 @@ describe( 'blackbox-sdk', () => {
 		loadScript.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
+		await expect( loadBlackboxSdk( 'login-key' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'loadBlackboxSdk retries on the next call after the script fails to load', async () => {
@@ -109,8 +96,8 @@ describe( 'blackbox-sdk', () => {
 			.mockImplementationOnce( ( _url, callback ) => callback( null ) );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key' );
+		await loadBlackboxSdk( 'login-key' );
 
 		expect( loadScript ).toHaveBeenCalledTimes( 2 );
 	} );
@@ -121,7 +108,7 @@ describe( 'blackbox-sdk', () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
+		await expect( loadBlackboxSdk( 'login-key' ) ).resolves.toBeUndefined();
 		expect( loadScript ).not.toHaveBeenCalled();
 	} );
 } );

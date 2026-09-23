@@ -15,7 +15,7 @@ import { waitForChallengeSettled } from 'calypso/blocks/login/utils/challenge-ga
  *
  * Blackbox returns BlackboxError instead of throwing, so the typeof check
  * filters those out. The try/catch is defense-in-depth.
- * @param {string} [apiKey] Public key for this collect. Defaults to the login key.
+ * @param {string} apiKey Public key for this collect.
  * @returns {Promise<string|undefined>} Session ID, or undefined on any failure.
  */
 export async function getBlackboxSessionId( apiKey ) {

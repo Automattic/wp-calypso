@@ -23,9 +23,9 @@ describe( 'getBlackboxSessionId', () => {
 	test( 'awaits loadBlackboxSdk before calling collect', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( { sessionId: 'sid' } ) ) };
 
-		await getBlackboxSessionId();
+		await getBlackboxSessionId( 'login-key' );
 
-		expect( loadBlackboxSdk ).toHaveBeenCalled();
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'login-key' );
 		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 
@@ -39,28 +39,28 @@ describe( 'getBlackboxSessionId', () => {
 
 	test( 'returns session id when collect resolves a string', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( 'abc123' ) ) };
-		await expect( getBlackboxSessionId() ).resolves.toBe( 'abc123' );
+		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'abc123' );
 	} );
 
 	test( 'returns session id when collect resolves { sessionId }', async () => {
 		window.Blackbox = {
 			collect: jest.fn( () => Promise.resolve( { sessionId: 'def456' } ) ),
 		};
-		await expect( getBlackboxSessionId() ).resolves.toBe( 'def456' );
+		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'def456' );
 	} );
 
 	test( 'returns undefined when Blackbox is not loaded', async () => {
-		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'returns undefined when collect is not a function', async () => {
 		window.Blackbox = {};
-		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'returns undefined when collect throws', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.reject( new Error( 'boom' ) ) ) };
-		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'withholds the session until a challenge raised by its own collect settles', async () => {
@@ -72,7 +72,7 @@ describe( 'getBlackboxSessionId', () => {
 		};
 
 		let sessionId;
-		const pending = getBlackboxSessionId().then( ( id ) => {
+		const pending = getBlackboxSessionId( 'login-key' ).then( ( id ) => {
 			sessionId = id;
 		} );
 
