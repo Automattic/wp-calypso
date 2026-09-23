@@ -34,8 +34,7 @@ What's in that array depends on which `Query*Purchases` components have mounted.
 
 Classic and Dashboard (`client/dashboard/me/billing-purchases/`) both use the raw
 `Purchase` type from `@automattic/api-core` (snake_case fields, e.g. `purchase.site_slug`;
-expiry values `'auto-renewing'`, `'manual-renew'`). The older camelCase `Purchase` from
-`calypso/lib/purchases/types` is deprecated — don't introduce new uses of it.
+expiry values `'auto-renewing'`, `'manual-renew'`).
 
 ## Architectural Decisions
 

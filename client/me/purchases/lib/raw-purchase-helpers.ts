@@ -52,10 +52,9 @@ import type { TranslateResult } from 'i18n-calypso';
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
 /**
- * Raw-`Purchase` ports of the `calypso/lib/purchases` helpers used by the legacy
- * `client/me/purchases` pages, and the marketing-survey cancellation dialogs they
- * render, while they migrate off the data-stores assembler (SHILL-2256). These
- * read the snake_case `Purchase` from `@automattic/api-core` directly.
+ * Purchase helpers used by the legacy `client/me/purchases` pages and the
+ * marketing-survey cancellation dialogs they render. These read the snake_case
+ * `Purchase` from `@automattic/api-core` directly.
  *
  * This module is intentionally local and not exported from any shared package:
  * several of these helpers have historically misleading names and should not be
