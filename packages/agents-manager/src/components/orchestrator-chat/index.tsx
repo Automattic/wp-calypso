@@ -34,6 +34,7 @@ import useCheckpointAction, {
 } from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { useCredits } from '../../hooks/use-credits';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
@@ -619,6 +620,11 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, isRegenerating ] );
 
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+
+	// Reader chat is a public blog frontend with no site credits to meter.
+	const credits = useCredits( { enabled: ! isReaderChat, isProcessing } );
+
 	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
 	// false`), so retention must not resurrect the old picker as a stale copy.
@@ -630,6 +636,11 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regeneration is a new agent request, so it takes the same
+				// credits gate as a send.
+				if ( ! credits.beforeSubmit() ) {
+					return;
+				}
 				// A regenerate says the reply was not good enough: the clearest
 				// quality signal the chat has after a thumbs down.
 				recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_action_regenerate', {
@@ -654,7 +665,7 @@ export default function OrchestratorChat( {
 				}
 			};
 		},
-		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler, credits.beforeSubmit ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -731,7 +742,6 @@ export default function OrchestratorChat( {
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
@@ -1407,6 +1417,15 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// Composer sends are gated by Agenttic before reaching `onSubmitWithImages`;
+			// context cards and the host bridge arrive here instead, so gate them too.
+			// A blocked send consumes any origin the bridge marked for it, so it
+			// can't label the next successful send.
+			if ( ! credits.beforeSubmit() ) {
+				takeActionOrigin( 'send' );
+				return;
+			}
+
 			await onSubmitWithImages( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
@@ -1416,7 +1435,7 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
 	const submitChatMessageFromHost = useCallback(
@@ -1443,6 +1462,12 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// A send blocked on credits keeps the card, so it can be retried once
+			// credits are back; the gate opens the popover itself.
+			if ( action.type === 'submit' && ! credits.beforeSubmit() ) {
+				return;
+			}
+
 			// Remove the card immediately so the user gets instant collapse feedback.
 			// For 'submit' actions the linked context entry stays until the request
 			// is sent — `consumeNextMessageExternalContextEntries` runs after the
@@ -1456,7 +1481,7 @@ export default function OrchestratorChat( {
 
 			setChatInput( action.prompt );
 		},
-		[ setChatInput, submitChatMessage ]
+		[ setChatInput, submitChatMessage, credits.beforeSubmit ]
 	);
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
@@ -1869,6 +1894,9 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
+			notice={ credits.notice }
+			trailingActions={ credits.trailingActions }
+			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

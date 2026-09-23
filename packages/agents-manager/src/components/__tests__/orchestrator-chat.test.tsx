@@ -413,6 +413,11 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+// Returns `undefined` after a mock reset, which the wrapper reads as allowed.
+const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
+jest.mock( '../../hooks/use-credits', () => ( {
+	useCredits: () => ( { beforeSubmit: () => mockCreditsBeforeSubmit() !== false } ),
+} ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -1447,6 +1452,67 @@ describe( 'OrchestratorChat', () => {
 				expect.objectContaining( { source: 'composer' } )
 			);
 		} );
+	} );
+
+	it( 'gates a context-card submit on credits and keeps the card for a retry', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await act( async () => {} );
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'gates a host submit through the actions bridge on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+
+		// The blocked host send must not leave its origin pending for the
+		// composer send that follows.
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'gates a regeneration on credits', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( agentticRegenerate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
