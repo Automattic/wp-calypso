@@ -306,7 +306,7 @@ export default function GrowthCard( {
 
 				return (
 					<Fragment key={ item.id }>
-						{ index > 0 && <CardDivider style={ { borderColor: 'var(--color-gray-100)' } } /> }
+						{ index > 0 && <CardDivider /> }
 						<CardBody>
 							<IconListItem
 								title={ item.title }

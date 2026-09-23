@@ -34,6 +34,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"dark-mode": true,
+		"dashboard/a4a-neutral-theme": false,
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,

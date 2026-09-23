@@ -27,6 +27,15 @@ function boot( config: AppConfig ) {
 		return;
 	}
 
+	if ( config.theme ) {
+		document.documentElement.dataset.dashboardTheme = config.theme;
+	} else {
+		delete document.documentElement.dataset.dashboardTheme;
+	}
+	if ( ! config.supports.colorScheme ) {
+		delete document.documentElement.dataset.theme;
+	}
+
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
 	loadPreferencesHelper();

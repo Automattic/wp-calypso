@@ -22,6 +22,10 @@
 	}
 }
 
+:root[data-dashboard-theme='neutral'] {
+	@include dashboard-neutral-theme;
+}
+
 html,
 body,
 #wpcom {

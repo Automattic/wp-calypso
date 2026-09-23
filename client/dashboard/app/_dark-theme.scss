@@ -1,4 +1,5 @@
 @import 'calypso/lib/color-scheme/dark-theme';
+@import './neutral-theme';
 
 /* Links */
 @mixin dashboard-dark-theme-links {
@@ -100,7 +101,7 @@
 		&.is-info {
 			background-color: color-mix(
 				in srgb,
-				var( --wp-admin-theme-color ) 8%,
+				var( --dashboard-notice-info__color, var( --wp-admin-theme-color ) ) 8%,
 				var( --dashboard-surface__background-color )
 			);
 		}
@@ -500,4 +501,8 @@
 	@include dashboard-dark-theme-site-launch-modal;
 	@include color-scheme-dark-theme-spinner;
 	@include color-scheme-dark-theme-summary-button;
+
+	&[data-dashboard-theme='neutral'] {
+		@include dashboard-neutral-theme-dark;
+	}
 }

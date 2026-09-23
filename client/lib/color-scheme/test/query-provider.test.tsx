@@ -18,6 +18,7 @@ const surfaceBodyClasses = [ 'is-reader-dark-mode', 'is-themes-dark-mode' ];
 
 const mockUpdatePreference = jest.fn();
 const mockOnSaveSuccess = jest.fn();
+const mockOnSaveError = jest.fn();
 const mockChildMount = jest.fn();
 
 function mockGetPreferences(
@@ -79,6 +80,7 @@ function CurrentScheme() {
 				onClick={ () =>
 					setColorScheme( 'dark', {
 						onSuccess: () => mockOnSaveSuccess( 'dark', colorScheme ),
+						onError: mockOnSaveError,
 					} )
 				}
 				type="button"
@@ -92,10 +94,10 @@ function CurrentScheme() {
 	);
 }
 
-function renderColorSchemeProvider() {
+function renderColorSchemeProvider( defaultColorScheme?: ColorScheme ) {
 	return render(
 		<QueryClientProvider client={ queryClient }>
-			<ColorSchemeProvider>
+			<ColorSchemeProvider defaultColorScheme={ defaultColorScheme }>
 				<CurrentScheme />
 			</ColorSchemeProvider>
 		</QueryClientProvider>
@@ -121,6 +123,7 @@ beforeEach( () => {
 	} );
 	mockUpdatePreference.mockClear();
 	mockOnSaveSuccess.mockClear();
+	mockOnSaveError.mockClear();
 	mockChildMount.mockClear();
 	nock.cleanAll();
 	document.documentElement.removeAttribute( 'data-theme' );
@@ -144,6 +147,22 @@ test( 'defaults to light when no server preference is available', async () => {
 		expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
 	} );
 } );
+
+test.each( [ undefined, 'invalid', 'light', 'dark', 'system' ] )(
+	'uses the system default only without a valid saved preference (%s)',
+	async ( savedScheme ) => {
+		mockGetPreferences( savedScheme === undefined ? {} : { [ PREFERENCE_KEY ]: savedScheme } );
+		renderColorSchemeProvider( 'system' );
+		const expectedScheme =
+			savedScheme === undefined || savedScheme === 'invalid' ? 'system' : savedScheme;
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( expectedScheme );
+			expect( document.documentElement.dataset.theme ).toBe( expectedScheme );
+		} );
+		expect( mockUpdatePreference ).not.toHaveBeenCalled();
+	}
+);
 
 test( 'defaults to light when the loaded server preference is invalid', async () => {
 	mockGetPreferences( { [ PREFERENCE_KEY ]: 'blue' } );
@@ -325,7 +344,7 @@ test( 'runs the success callback after saving a user-initiated color scheme chan
 	} );
 } );
 
-test( 'does not run the success callback after a failed color scheme change', async () => {
+test( 'reports a failed save after rolling back the color scheme', async () => {
 	const user = userEvent.setup();
 	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
 	mockUpdateColorScheme( 'dark', { status: 500 } );
@@ -337,7 +356,9 @@ test( 'does not run the success callback after a failed color scheme change', as
 	await user.click( screen.getByRole( 'button', { name: 'Dark' } ) );
 
 	await waitFor( () => {
+		expect( mockOnSaveError ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'light' );
+		expect( document.documentElement.dataset.theme ).toBe( 'light' );
 		expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
 	} );
 } );

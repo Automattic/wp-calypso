@@ -6,6 +6,7 @@ import {
 	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
+import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
 import { Logo } from './logo';
 import A4AOmnibar from './omnibar';
@@ -16,8 +17,12 @@ import type {
 } from '@automattic/api-core';
 import './style.scss';
 
+const hasNeutralTheme = isEnabled( 'dashboard/a4a-neutral-theme' );
+
 boot( {
 	name: 'A4A',
+	theme: hasNeutralTheme ? 'neutral' : undefined,
+	defaultColorScheme: 'system',
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
@@ -53,8 +58,9 @@ boot( {
 		siteOverview: {
 			preview: false,
 		},
-		colorScheme: false,
-		darkMode: false,
+		colorScheme: hasNeutralTheme,
+		darkMode: hasNeutralTheme,
+		sidebarAppearance: hasNeutralTheme,
 	},
 	optIn: false,
 	components: {
