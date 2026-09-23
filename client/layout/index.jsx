@@ -315,7 +315,6 @@ class Layout extends Component {
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;
 		} else if (
-			config.isEnabled( 'dashboard/omnibar-radical' ) &&
 			this.props.sectionName !== 'checkout' &&
 			this.props.sectionName !== 'checkout-pending'
 		) {

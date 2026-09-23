@@ -34,7 +34,6 @@
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
-		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
