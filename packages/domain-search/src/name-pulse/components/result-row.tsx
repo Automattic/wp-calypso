@@ -103,9 +103,15 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		enabled: needsPremiumPrice,
 	} );
 
+	// A disabled query still reports whatever the shared key already holds, and the
+	// typed-domain notice warms it for a name nobody clicked. Only the row that
+	// asked for the check may turn it into a real-time verdict.
 	const realtimeVerdict = useMemo(
-		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
-		[ realtimeAvailability ]
+		() =>
+			needsPremiumPrice && realtimeAvailability
+				? toNamePulseRealtimeVerdict( realtimeAvailability )
+				: undefined,
+		[ needsPremiumPrice, realtimeAvailability ]
 	);
 
 	// Every other row listing this name reads the verdict from the shared cache.

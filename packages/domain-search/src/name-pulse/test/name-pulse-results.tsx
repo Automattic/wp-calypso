@@ -432,6 +432,31 @@ describe( 'NamePulseResults', () => {
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
 	} );
 
+	it( 'keeps a typed domain that is taken out of Top results, leaving it in the grid', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.com"
+				availability={ async ( domainNames ) => ( {
+					...buildNamePulseAvailabilityResponse( domainNames ),
+					...( domainNames.includes( 'icecream.com' )
+						? { 'icecream.com': { is_available: false } }
+						: {} ),
+				} ) }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( await findRow( 'icecream.com' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.app', 'icecream.dev' ] );
+		expect( domainsIn( 'exact' ) ).toContain( 'icecream.com' );
+	} );
+
 	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {
 		render(
 			<NamePulseTestSearch
