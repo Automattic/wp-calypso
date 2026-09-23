@@ -5,14 +5,10 @@ import {
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalVStack as VStack,
-	privateApis,
 } from '@wordpress/components';
 import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
@@ -29,12 +25,6 @@ import {
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { ValidatedInputControl } = unlock( privateApis );
 
 // The supported-countries list repeats popular countries and includes an empty-code
 // separator; the combobox keys options by code, so dedupe to avoid duplicate React keys.
@@ -129,42 +119,23 @@ function PhoneNumberField( {
 }
 
 /**
- * Organization field control.
+ * Notice shown below the organization field.
  *
- * DataForm renders a field description inside a `<p>`, which can't hold a
- * Notice, so the notice is rendered below the input here instead.
+ * It is a separate read-only field because DataForm renders a field description
+ * inside a `<p>`, which can't hold a Notice.
  */
-function OrganizationField( {
-	field,
-	data,
-	onChange,
-	hideLabelFromVision,
-	markWhenOptional,
-	validity,
-}: DataFormControlProps< DomainContactDetails > ) {
-	const { id, label, getValue } = field;
-
+function OrganizationNotice() {
 	return (
-		<VStack spacing={ 2 }>
-			<ValidatedInputControl
-				markWhenOptional={ markWhenOptional }
-				customValidity={ validity?.custom }
-				label={ label }
-				hideLabelFromVision={ hideLabelFromVision }
-				value={ getValue( { item: data } ) ?? '' }
-				onChange={ ( value: string | undefined ) => onChange( { [ id ]: value ?? '' } ) }
-			/>
-			<Notice variant="warning">
-				{ createInterpolateElement(
-					__(
-						'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using <link>privacy protection</link>.'
-					),
-					{
-						link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
-					}
-				) }
-			</Notice>
-		</VStack>
+		<Notice variant="warning">
+			{ createInterpolateElement(
+				__(
+					'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using <link>privacy protection</link>.'
+				),
+				{
+					link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				}
+			) }
+		</Notice>
 	);
 }
 
@@ -197,10 +168,17 @@ export const getContactFormFields = (
 			id: 'organization',
 			label: __( 'Organization' ),
 			type: 'text',
-			Edit: OrganizationField,
 			isValid: {
 				custom: createFieldAsyncValidator( 'organization', asyncValidator ),
 			},
+		},
+		{
+			id: 'organizationNotice',
+			label: __( 'Organization notice' ),
+			// DataForm skips a field without an Edit control, even a read-only one.
+			type: 'text',
+			readOnly: true,
+			render: OrganizationNotice,
 		},
 		{
 			id: 'email',
