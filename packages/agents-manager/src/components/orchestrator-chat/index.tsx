@@ -1416,12 +1416,25 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
+	const isProcessingRef = useRef( isProcessing );
+	const idleWaitersRef = useRef< Array< () => void > >( [] );
+	useEffect( () => {
+		isProcessingRef.current = isProcessing;
+		if ( ! isProcessing ) {
+			idleWaitersRef.current.splice( 0 ).forEach( ( resolve ) => resolve() );
+		}
+	}, [ isProcessing ] );
+
 	const submitChatMessageFromHost = useCallback(
 		async ( message?: string ) => {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
 
 			if ( ! submittedMessage.trim() ) {
 				return;
+			}
+
+			while ( isProcessingRef.current ) {
+				await new Promise< void >( ( resolve ) => idleWaitersRef.current.push( resolve ) );
 			}
 
 			// Only the bridge wrapper marks: the composer, suggestion chips, and
