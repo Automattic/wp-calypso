@@ -20,7 +20,7 @@ const adminIdLabel = 'Contact person identification number (NIF or NIE)';
 const noticeText = /Red.es requires the administrative and technical contact/;
 const agreementLabel = /I have read and agree to the/;
 const agreementLinkText = 'Red.es terms and conditions';
-const agreementUrl = 'http://www.dominios.es/dominios/en/todo-lo-que-necesitas-saber';
+const agreementUrl = 'https://example.com/red-es-terms-and-conditions';
 
 describe( 'es-form', () => {
 	test( 'renders the entity type select and the registrant ID for empty details', () => {

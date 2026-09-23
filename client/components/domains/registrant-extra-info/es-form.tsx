@@ -19,7 +19,8 @@ import './style.scss';
 
 const INDIVIDUAL_ENTITY_TYPE = '1';
 
-const redEsAgreementUrl = 'http://www.dominios.es/dominios/en/todo-lo-que-necesitas-saber';
+// TODO: replace with the Red.es agreement URL once it is known.
+const redEsAgreementUrl = 'https://example.com/red-es-terms-and-conditions';
 const defaultValues = {
 	redEsAgreementAccepted: false,
 };
