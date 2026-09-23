@@ -123,6 +123,8 @@ interface AgentsManagerActions {
 	getSessionId: () => string;
 	/** The `tab_id` the chat's Tracks events carry, so a host's events can join on it. */
 	getTabId?: () => string;
+	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
+	getTurnId?: () => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.

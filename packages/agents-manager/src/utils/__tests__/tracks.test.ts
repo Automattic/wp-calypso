@@ -253,6 +253,39 @@ describe( 'tracks wrappers', () => {
 		);
 	} );
 
+	describe( 'turn id', () => {
+		beforeEach( () => {
+			sessionStorage.setItem( 'agents-manager-turn-id', 'turn-1' );
+		} );
+
+		afterEach( () => {
+			sessionStorage.removeItem( 'agents-manager-turn-id' );
+		} );
+
+		it.each( [
+			'ability_completed',
+			'chat_response_completed',
+			'chat_response_stopped',
+			'chat_error',
+		] )( 'puts the turn on %s', ( suffix ) => {
+			recordAgentsManagerTracksEvent( `calypso_agents_manager_${ suffix }` );
+			expect( lastEventProps().turn_id ).toBe( 'turn-1' );
+		} );
+
+		it( 'puts the turn on the unified send, not on the Big Sky one', () => {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+
+			const [ bigSky, unified ] = mockRecordTracksEvent.mock.calls.map( ( [ , props ] ) => props );
+			expect( bigSky ).not.toHaveProperty( 'turn_id' );
+			expect( unified.turn_id ).toBe( 'turn-1' );
+		} );
+
+		it( 'keeps it off events that are not part of a turn', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+			expect( lastEventProps() ).not.toHaveProperty( 'turn_id' );
+		} );
+	} );
+
 	describe( 'recordAgentsManagerTracksEvent', () => {
 		it( 'injects the shared base-prop set', () => {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );

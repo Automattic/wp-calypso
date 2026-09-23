@@ -23,6 +23,7 @@ import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
 import { getTabId } from './tab-id';
+import { getTurnId } from './turn-id';
 
 type TracksProps = Record< string, unknown >;
 
@@ -42,6 +43,18 @@ const MIRRORED_BIG_SKY_SUFFIXES = new Set< string >( [
 	'chat_response_action',
 	'response_action_thumbs_up',
 	'response_action_thumbs_down',
+] );
+
+/**
+ * The events that belong to one turn carry its `turn_id`, so a send can be paired
+ * with its own reply. Any other event would only carry whichever turn came last.
+ */
+const TURN_EVENTS = new Set< string >( [
+	'calypso_agents_manager_chat_input_send_message',
+	'calypso_agents_manager_ability_completed',
+	'calypso_agents_manager_chat_response_completed',
+	'calypso_agents_manager_chat_response_stopped',
+	'calypso_agents_manager_chat_error',
 ] );
 
 type EditorSelectStore =
@@ -271,7 +284,12 @@ export function recordAgentsManagerTracksEvent(
 	if ( ! isTrackingAllowed() ) {
 		return;
 	}
-	recordTracksEvent( eventName, { ...getAgentsManagerBaseProps(), ...props } );
+	const turnId = TURN_EVENTS.has( eventName ) ? getTurnId() : '';
+	recordTracksEvent( eventName, {
+		...getAgentsManagerBaseProps(),
+		...( turnId ? { turn_id: turnId } : {} ),
+		...props,
+	} );
 }
 
 /**
