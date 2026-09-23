@@ -32,6 +32,7 @@
 
 - **Agents Manager** (`apps/agents-manager`) — build/deploy layer that bundles `packages/agents-manager` into webpack entry points served from `widgets.wp.com`.
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
+- **Survicate** (`apps/survicate`) — build/deploy layer that bundles `packages/survicate` into the single script wp-admin loads from `widgets.wp.com`. No logic of its own.
 
 ## Development
 
