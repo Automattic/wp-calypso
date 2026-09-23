@@ -279,7 +279,7 @@ export default function MarketplaceProducts() {
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_products_overview_input_search', {
-				searchQuery: nextView.search,
+				search_query: nextView.search,
 			} );
 		}
 		if ( nextView.filters !== view.filters ) {
