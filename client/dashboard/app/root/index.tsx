@@ -25,7 +25,7 @@ import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
-import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
@@ -126,9 +126,6 @@ function Root() {
 			isInitialLoad: ! state.resolvedLocation,
 		} ),
 	} );
-	useEffect( () => {
-		omnibarEvents.agentsManagerRoute.emit( pathname );
-	}, [ pathname ] );
 
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';

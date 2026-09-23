@@ -1,5 +1,6 @@
 import {
 	dashboardAdminBarQuery,
+	omnibarAgentsManagerEnabledQuery,
 	omnibarSiteIdQuery,
 	siteAdminBarQuery,
 	siteByIdQuery,
@@ -11,10 +12,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
-import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
-import { omnibarEvents, useOmnibarEvent } from './events';
+import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { buildAiChatPluginNode } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
@@ -68,22 +68,15 @@ export default function OmnibarContainer( {
 	cartManagerClient,
 	sectionGroup,
 	sectionName,
-	currentRoute,
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
 	sectionGroup?: string;
 	sectionName?: string;
-	currentRoute?: string;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar
-				user={ user }
-				sectionGroup={ sectionGroup }
-				sectionName={ sectionName }
-				currentRoute={ currentRoute }
-			/>
+			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
 		</ShoppingCartProvider>
 	);
 }
@@ -92,31 +85,24 @@ function ConnectedOmnibar( {
 	user,
 	sectionGroup,
 	sectionName,
-	currentRoute: initialCurrentRoute,
 }: {
 	user?: User;
 	sectionGroup?: string;
 	sectionName?: string;
-	currentRoute?: string;
 } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
-	const [ currentRoute, setCurrentRoute ] = useState( initialCurrentRoute );
 	useEffect( () => {
 		setHydrated( true );
 	}, [] );
-	useEffect( () => {
-		setCurrentRoute( initialCurrentRoute );
-	}, [ initialCurrentRoute ] );
-	useOmnibarEvent( 'agentsManagerRoute', setCurrentRoute );
 
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
 	} );
-	const { routeIsEnabled: showAiChat } = useShouldLoadAgentsManager( currentRoute, siteId );
+	const { data: showAiChat = false } = useQuery( omnibarAgentsManagerEnabledQuery() );
 
 	const { data: { nodes: dashboardNodes } = {} } = useQuery( dashboardAdminBarQuery() );
 	const { data: { nodes: siteNodes } = {} } = useQuery( {

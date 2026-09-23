@@ -64,7 +64,6 @@ function useOmnibarBridge() {
 export default function Omnibar( {
 	sectionGroup,
 	loadHelpCenterIcon,
-	currentRoute,
 }: {
 	sectionGroup?: string;
 	loadHelpCenterIcon?: boolean;
@@ -95,7 +94,6 @@ export default function Omnibar( {
 							cartManagerClient={ cartManagerClient }
 							sectionGroup={ sectionGroup }
 							sectionName={ sectionName ?? undefined }
-							currentRoute={ currentRoute }
 						/>
 					</div>
 					<CommandPalette />
