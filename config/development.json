@@ -204,6 +204,7 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"site-spec": true,
+		"site-spec/build-wow-dsl": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": false,
 		"stats/archive-breakdown": true,

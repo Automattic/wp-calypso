@@ -11,7 +11,7 @@ const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
  * instead: a typo in the URL then means "whatever the deploy runs" rather than
  * a build request that fails outright.
  */
-const BUILD_WOW_GRAPHS = [ 'html-first', 'legacy' ] as const;
+const BUILD_WOW_GRAPHS = [ 'blocks-first', 'dsl' ] as const;
 export type BuildWowGraph = ( typeof BUILD_WOW_GRAPHS )[ number ];
 
 export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph | undefined {
@@ -76,12 +76,14 @@ export function getBuildWowSiteSpecUrl( {
 	ref,
 	source,
 	prompt,
+	graph,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
 	prompt?: string | null;
+	graph?: BuildWowGraph;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: '1',
@@ -90,6 +92,7 @@ export function getBuildWowSiteSpecUrl( {
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
 		...( prompt ? { prompt } : {} ),
+		...( graph ? { graph } : {} ),
 	} );
 }
 

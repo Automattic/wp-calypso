@@ -307,6 +307,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const specConfirmStartTime = Date.now();
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
+			const graph = getBuildWowGraph( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
@@ -314,11 +315,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite(
-					buildWowSiteIdentifier,
-					specId,
-					getBuildWowGraph( queryParams )
-				);
+				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -364,6 +361,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					editorUrl: destination,
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
+					...( graph ? { graph } : {} ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
