@@ -25,6 +25,25 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 		onPageView();
 	}, [ onPageView ] );
 
+	// Mount only: later searches are reported by the action that starts them. Check for cached
+	// data, not the fetch status, since the results page has already started any request by now.
+	const onMountSearch = useEvent( () => {
+		const { query, queries, events } = contextValue;
+
+		if ( ! query ) {
+			return;
+		}
+
+		const cachedSuggestions = queryClient.getQueryData(
+			queries.domainSuggestions( query ).queryKey
+		);
+		events.onSearchStart( query, cachedSuggestions !== undefined ? 'cached' : 'prefilled' );
+	} );
+
+	useEffect( () => {
+		onMountSearch();
+	}, [ onMountSearch ] );
+
 	const getContent = () => {
 		if ( ! contextValue.query ) {
 			return <InitialState />;
