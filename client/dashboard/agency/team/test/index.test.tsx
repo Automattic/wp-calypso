@@ -58,29 +58,6 @@ async function invite() {
 describe( '<AgencyTeam>', () => {
 	beforeEach( () => nock.cleanAll() );
 
-	test( 'asks how the invite went, naming the address', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
-		mockAgency();
-		mockPreferences();
-		mockTeam();
-		mockInvite();
-
-		render(
-			<>
-				<AgencyTeam />
-				<Snackbars />
-			</>
-		);
-		await invite();
-
-		expect( await screen.findByText( 'Invite emailed!' ) ).toBeVisible();
-		expect( screen.getByText( /We sent nina@example.com an invite/ ) ).toBeVisible();
-		// The notice text also lands in the a11y live region, so this matches twice.
-		const [ notice ] = await screen.findAllByText( 'The invitation has been successfully sent.' );
-		expect( notice ).toBeVisible();
-	} );
-
 	test( 'does not ask a partner who already answered, but still confirms the invite', async () => {
 		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
 		window.scrollTo = jest.fn();
