@@ -906,7 +906,8 @@ describe( 'useWPCOMDomainSearchProps', () => {
 
 		expect( recordDomainSearchStepSubmit ).toHaveBeenCalledWith(
 			{ domain_name: 'my-domain.com' },
-			'analytics-section'
+			'analytics-section',
+			'flow-name'
 		);
 	} );
 

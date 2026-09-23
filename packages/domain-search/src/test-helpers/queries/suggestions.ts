@@ -10,9 +10,12 @@ import type {
 export const mockGetSuggestionsQuery = ( {
 	params: rawParams,
 	suggestions,
+	delayMs,
 }: {
 	params: Partial< DomainSuggestionQuery >;
 	suggestions: DomainSuggestion[] | Error;
+	/** Response delay in ms, to make one request settle after another. */
+	delayMs?: number;
 } ) => {
 	const params = {
 		include_wordpressdotcom: false,
@@ -28,6 +31,10 @@ export const mockGetSuggestionsQuery = ( {
 	const request = nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
 		.query( qs.stringify( params, { arrayFormat: 'brackets' } ) );
+
+	if ( delayMs ) {
+		request.delay( delayMs );
+	}
 
 	if ( suggestions instanceof Error ) {
 		return request.replyWithError( suggestions );

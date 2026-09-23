@@ -63,10 +63,12 @@ export const useWPCOMDomainSearchProps = ( {
 	const onContinueWithStepSubmissionTracking = useCallback(
 		( items: ResponseCartProduct[] ) => {
 			const firstItem = items[ 0 ];
-			dispatch( recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection ) );
+			dispatch(
+				recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection, flowName )
+			);
 			externalOnContinue( items );
 		},
-		[ dispatch, analyticsSection, externalOnContinue ]
+		[ dispatch, analyticsSection, flowName, externalOnContinue ]
 	);
 
 	const { cart, isNextDomainFree, freeDomainName, freeForFirstYearTlds, onContinue } =
