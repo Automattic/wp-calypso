@@ -99,6 +99,7 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const onOpenHosting = jest.fn();
+	const onLicenseAssigned = jest.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
@@ -106,6 +107,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		onCopyKey: () => {},
 		onDownload: () => {},
 		onOpenHosting,
+		onLicenseAssigned,
 		recordTracksEvent: () => {},
 	} );
 	const run = ( id: string, item: JetpackLicense ) => {
@@ -122,7 +124,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		}
 		return action.isEligible( item );
 	};
-	return { isEligible, run, onOpenHosting };
+	return { isEligible, run, onOpenHosting, onLicenseAssigned };
 }
 
 const SITE_ACTIONS = [
