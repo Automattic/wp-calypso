@@ -1,6 +1,7 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import RouterLinkButton from '../../components/router-link-button';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -67,7 +68,33 @@ export default function AgencySites() {
 	} );
 
 	const sites = data?.sites ?? [];
-	const totalItems = data?.total ?? 0;
+	// Mock for the Slack thread on unprovisioned WordPress.com licenses:
+	// ?setup=N shows the pointer under the header, ?empty=1 shows it with no
+	// sites at all. Sites does not own provisioning, it points at Purchases.
+	const shotParams = new URLSearchParams( window.location.search );
+	const setupCount = Number( shotParams.get( 'setup' ) ?? 0 );
+	const simulateEmpty = shotParams.has( 'empty' );
+	const setupLink = (
+		<RouterLinkButton variant="link" to="/marketplace/purchases">
+			{ __( 'Set them up in Purchases' ) }
+		</RouterLinkButton>
+	);
+	const setupLine =
+		setupCount > 0 ? (
+			<>
+				{ sprintf(
+					/* translators: %d is a number of licenses */
+					_n(
+						'%d WordPress.com license is ready to set up.',
+						'%d WordPress.com licenses are ready to set up.',
+						setupCount
+					),
+					setupCount
+				) }{ ' ' }
+				{ setupLink }
+			</>
+		) : undefined;
+	const totalItems = simulateEmpty ? 0 : data?.total ?? 0;
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
@@ -80,12 +107,12 @@ export default function AgencySites() {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Sites' ) } /> }>
+		<PageLayout header={ <PageHeader title={ __( 'Sites' ) } description={ setupLine } /> }>
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >
 					getItemId={ ( item ) => item.blog_id.toString() }
-					data={ sites }
+					data={ simulateEmpty ? [] : sites }
 					fields={ getAgencyFields( view.type, ( site ) =>
 						recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } )
 					) }
@@ -106,8 +133,25 @@ export default function AgencySites() {
 							/>
 						) : (
 							<DataViewsEmptyStateLayout
-								title={ __( 'No sites' ) }
-								description={ __( 'No agency-managed sites were found.' ) }
+								title={ setupCount > 0 ? __( 'No sites yet' ) : __( 'No sites' ) }
+								description={
+									setupCount > 0 ? (
+										<>
+											{ sprintf(
+												/* translators: %d is a number of licenses */
+												_n(
+													'You have %d WordPress.com license ready to set up. It will show up here once it is a site.',
+													'You have %d WordPress.com licenses ready to set up. They will show up here once they are sites.',
+													setupCount
+												),
+												setupCount
+											) }{ ' ' }
+											{ setupLink }
+										</>
+									) : (
+										__( 'No agency-managed sites were found.' )
+									)
+								}
 							/>
 						)
 					}

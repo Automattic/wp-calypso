@@ -28,6 +28,8 @@ export default function OrderSummary( {
 }: OrderSummaryProps ) {
 	const price = brand === 'wpcom' ? getTieredPrice( wpcomHosting, quantity, term ) : null;
 	const hasDiscount = !! price && price.discountPercent > 0;
+	// A4AD-199: Main strikes the regular price beside the tier price; ?summary=row shows the discount on its own row.
+	const strikeStyle = new URLSearchParams( window.location.search ).get( 'summary' ) !== 'row';
 
 	return (
 		<Card className="marketplace-hosting__summary">
@@ -47,9 +49,22 @@ export default function OrderSummary( {
 										quantity
 									) }
 								</Text>
-								<Text>{ formatUSD( price.actualCost ) }</Text>
+								{ /* A4AD-199, brought in for review. ?summary=strike is Yashwin's
+								   cart line (#114207): the tier total with the base total struck
+								   through and no reason. Default is the prototype's line: base
+								   total here, then a named "Volume discount (X%)" row below. */ }
+								{ strikeStyle && hasDiscount ? (
+									<Text>
+										<span>{ formatUSD( price.discountedCost ) }</span>{ ' ' }
+										<Text as="s" variant="muted">
+											{ formatUSD( price.actualCost ) }
+										</Text>
+									</Text>
+								) : (
+									<Text>{ formatUSD( price.actualCost ) }</Text>
+								) }
 							</HStack>
-							{ hasDiscount && (
+							{ hasDiscount && ! strikeStyle && (
 								<HStack justify="space-between">
 									<Text variant="muted">
 										{ sprintf(

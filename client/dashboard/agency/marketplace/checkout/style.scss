@@ -1,0 +1,175 @@
+/* Option A: Main's WordPress.com checkout, same structure, in the dashboard's
+   own colours: the primary button is the standard MSD primary, the green is
+   the studio green the dashboard already uses for success states. */
+.marketplace-checkout__dotcom {
+	--checkout-green: var( --studio-green-50, #008a20 );
+	--checkout-border: var( --wp-components-color-gray-300, #dcdcde );
+	--checkout-muted: var( --wp-components-color-gray-700, #646970 );
+	padding-block: 24px 40px;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.marketplace-checkout__step-check {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 50%;
+	background: var(--checkout-green);
+	color: #fff;
+	flex: none;
+}
+
+.marketplace-checkout__step-body {
+	padding-inline-start: 52px;
+}
+
+.marketplace-checkout__term {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	inline-size: 100%;
+	block-size: 64px;
+	padding: 0 12px 0 20px;
+	background: #fff;
+	border: 1px solid var(--checkout-border);
+	border-radius: 3px;
+	font: inherit;
+	font-size: 16px;
+	color: inherit;
+	cursor: pointer;
+	text-align: start;
+
+	> span:first-child {
+		flex: 1;
+	}
+
+	svg {
+		color: var(--checkout-muted);
+	}
+}
+
+.marketplace-checkout__term-price {
+	color: var(--checkout-muted);
+}
+
+.marketplace-checkout__card-brand {
+	display: inline-flex;
+	inline-size: 32px;
+	block-size: 20px;
+	align-items: center;
+
+	i {
+		display: block;
+		inline-size: 18px;
+		block-size: 18px;
+		border-radius: 50%;
+		background: #eb001b;
+
+		+ i {
+			margin-inline-start: -8px;
+			background: #f79e1b;
+			opacity: 0.9;
+		}
+	}
+}
+
+.marketplace-checkout__summary {
+	position: sticky;
+	inset-block-start: 24px;
+}
+
+.marketplace-checkout__summary-check {
+	color: var(--checkout-green);
+}
+
+.marketplace-checkout__complete.components-button.is-primary {
+	justify-content: center;
+}
+
+.marketplace-checkout__seal-icon {
+	color: var(--checkout-muted);
+	flex: none;
+}
+
+.marketplace-checkout__footer {
+	display: block;
+	margin-block-start: 48px;
+}
+
+/* Direction D: the same checkout as a wordpress.com page. Shell copied from
+   client/layout/masterbar/checkout.tsx for checkoutType 'a4a': 72px white
+   masthead, Automattic wordmark, "Secure checkout" at 12px. */
+.marketplace-checkout__dotcom-page {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	overflow: auto;
+	background: #fff;
+
+	main {
+		max-inline-size: 1040px;
+		margin: 0 auto;
+		padding: 0 24px;
+	}
+}
+
+.marketplace-checkout__masthead {
+	display: flex;
+	align-items: center;
+	gap: 1em;
+	block-size: 72px;
+	padding-inline: 1.5em;
+	background: #fff;
+	color: #2c3338;
+	font-size: 12px;
+}
+
+.marketplace-checkout__form {
+	max-inline-size: 480px;
+}
+
+/* Referral form */
+.marketplace-checkout__field--error .components-base-control__help {
+	color: var( --wp-components-color-foreground-error, #cc1818 );
+}
+
+.marketplace-checkout__logo-preview {
+	max-inline-size: 200px;
+	max-block-size: 80px;
+	object-fit: contain;
+}
+
+/* Email preview: a mail client's header strip, then the message body. */
+.marketplace-checkout__email-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-block-end: 16px;
+	margin-block-end: 16px;
+	border-block-end: 1px solid var( --wp-components-color-gray-300, #dcdcde );
+}
+
+.marketplace-checkout__email-body {
+	padding: 32px;
+	border: 1px solid var( --wp-components-color-gray-300, #dcdcde );
+	border-radius: 8px;
+}
+
+.marketplace-checkout__email-logo {
+	max-inline-size: 200px;
+	max-block-size: 64px;
+	object-fit: contain;
+	align-self: flex-start;
+}
+
+.marketplace-checkout__email-message {
+	margin: 0;
+	padding-inline-start: 16px;
+	border-inline-start: 3px solid var( --wp-components-color-gray-300, #dcdcde );
+	white-space: pre-wrap;
+}

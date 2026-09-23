@@ -297,6 +297,25 @@ export const marketplacePurchasesRoute = createRoute( {
 	)
 );
 
+// `/marketplace/checkout` – A4AD-186 prototype: checkout directions for review
+export const marketplaceCheckoutRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Checkout' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/checkout',
+} ).lazy( () =>
+	import( '../../agency/marketplace/checkout' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-checkout' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -1069,6 +1088,7 @@ export const createAgencyRoutes = () => [
 		marketplaceHostingRoute,
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,
+		marketplaceCheckoutRoute,
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [

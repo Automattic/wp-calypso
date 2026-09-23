@@ -23,6 +23,14 @@ export interface CatalogProduct {
 	productId: number;
 	monthly: number | null;
 	yearly: number | null;
+	/**
+	 * A4AD-199: Main's struck-through "actual cost" is a volume tier price, and
+	 * only WordPress.com sites and Pressable plans have tiers. Extensions never
+	 * discount, so the Products cart never shows a strike. Kept optional here
+	 * only so the cart line can render one if a tiered line ever lands in it.
+	 */
+	regularMonthly?: number;
+	regularYearly?: number;
 	description: string;
 	categories: string[];
 	vendorName: string;
@@ -1688,11 +1696,11 @@ export const KIND_LABEL: Record< ProductKind, string > = {
 /** Main's featured list, in its order ("hardcoded until we understand how we want to pick featured products"). */
 export const FEATURED_SLUGS = [
 	'woocommerce-woopayments',
-	'woocommerce-constellation',
-	'woocommerce-dynamic-pricing',
-	'woocommerce-rental-products',
-	'woocommerce-smart-coupons',
-	'woocommerce-variation-swatches-and-photos',
+	'woocommerce-composite-products',
+	'woocommerce-table-rate-shipping',
+	'woocommerce-gift-cards',
+	'woocommerce-points-and-rewards',
+	'woocommerce-shipment-tracking',
 ];
 
 /** Main's custom featured card for WooPayments (title + description verbatim). */
@@ -1702,6 +1710,61 @@ export const WOOPAYMENTS_CARD = {
 	description:
 		"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share on transactions from your clients' sites within Automattic for Agencies.",
 };
+
+/**
+ * A4AD-190 options. WooPayments only has a custom card because its price is 0,
+ * so a normal card would read "Free", which is wrong. Each option answers
+ * "which product is this?" differently. Switch with ?woo= on the Products page.
+ *
+ *   banner            i3 as published: banner titled "Revenue share available"
+ *   named             banner, titled with the product, offer moved into the copy
+ *   card              no custom treatment, a normal grid card priced "Revenue share"
+ *   lead    (default) the row, "WooPayments: Earn revenue share", lockup on the storefront. Chosen.
+ */
+export type WooPaymentsVariant = 'banner' | 'named' | 'namedlogo' | 'card' | 'lead' | 'brand';
+
+export const WOOPAYMENTS_VARIANTS: Record<
+	WooPaymentsVariant,
+	{ title: string; description: string }
+> = {
+	banner: {
+		title: WOOPAYMENTS_CARD.title,
+		description: WOOPAYMENTS_CARD.description,
+	},
+	named: {
+		title: 'WooPayments',
+		description:
+			"Earn revenue share on transactions from your clients' sites within Automattic for Agencies. Accept credit/debit cards and local payment options with no setup or monthly fees.",
+	},
+	card: {
+		title: 'WooPayments',
+		description: WOOPAYMENTS_CARD.description,
+	},
+	// Product name first, so it reads as a catalog entry with a qualifier
+	// rather than a promo line, and the name lands in scanning position.
+	lead: {
+		title: 'WooPayments: Earn revenue share',
+		description: WOOPAYMENTS_CARD.description,
+	},
+	// Main's treatment today: an ordinary card slot, filled with WooCommerce
+	// purple so the different economics read as a different object.
+	brand: {
+		title: 'WooPayments',
+		description: WOOPAYMENTS_CARD.description,
+	},
+	// The banner, led by the lockup rather than a text title.
+	namedlogo: {
+		title: 'WooPayments',
+		description: WOOPAYMENTS_CARD.description,
+	},
+};
+
+/**
+ * Revenue share is a price fact, so it rides in the price line's note slot
+ * where every other card carries its billing cadence, rather than borrowing
+ * the price's own typography.
+ */
+export const WOOPAYMENTS_PRICE_NOTE = 'earn revenue share';
 
 /** Main strips the vendor prefix from card titles. */
 export function shortTitle( product: CatalogProduct ): string {

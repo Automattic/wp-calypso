@@ -1,6 +1,7 @@
 import {
 	Button,
 	SelectControl,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -11,11 +12,13 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import { Stat } from '../../../components/stat';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
+import { ButtonStack } from '../../../components/button-stack';
 import { CheckGrid } from './content-sections';
 import {
 	brandBlurb,
 	tabLineMark,
 	pressablePlans,
+	usesSignatureCatalog,
 	PRESSABLE_OVERAGES,
 	formatUSD,
 	formatCompactNumber,
@@ -23,15 +26,29 @@ import {
 import OptionCards from './option-cards';
 import type { PressablePlan } from './mock-data';
 
+export type TitanOrder = {
+	domain: string;
+	status: 'active' | 'cancelled';
+	billable_inboxes: number;
+	trial_end_at: string | null;
+};
+
 export type PressableUsage = {
 	sites: number;
 	visits: number;
 	storageGB: number;
+	titanOrders?: TitanOrder[];
 };
 
 export const PRESSABLE_CUSTOM_SLUG = 'pressable-custom';
 
-type PlanCategory = 'standard' | 'enterprise' | 'custom';
+export type PlanCategory =
+	| 'standard'
+	| 'enterprise'
+	| 'custom'
+	| 'signature'
+	| 'signature-high'
+	| 'premium';
 
 const PLAN_TYPE_OPTIONS: { value: PlanCategory; label: string; description: string }[] = [
 	{
@@ -55,6 +72,157 @@ const PLAN_TYPE_OPTIONS: { value: PlanCategory; label: string; description: stri
 	},
 ];
 
+// Yashwin's three plan types from trunk (client/dashboard/agency/marketplace/
+// hosting/lib/pressable-plans.ts, getPlanCategoryTabs), copied. Custom is not
+// a type there: it is the last option of the plan dropdown.
+const SIGNATURE_TYPE_OPTIONS: { value: PlanCategory; label: string; description: string }[] = [
+	{
+		value: 'signature',
+		label: __( 'Signature plans 1–10' ),
+		description: __(
+			'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
+		),
+	},
+	{
+		value: 'signature-high',
+		label: __( 'Signature plans 11–17' ),
+		description: __( 'For large portfolios of 200 to 500 WordPress installs.' ),
+	},
+	{
+		value: 'premium',
+		label: __( 'Premium plans' ),
+		description: __(
+			'Dedicated resources for one high-traffic site, from 150K to 10M visits per month.'
+		),
+	},
+];
+
+// Premium plans are sold through referral only. With referral mode off, Main
+// replaces the plan form with this pitch (client/a8c-for-agencies/sections/
+// marketplace/hosting-overview/hosting-content/premier-agency-hosting/
+// pressable-plan-section/premium-plan-section.tsx) and hides the price rail;
+// Yashwin carried it over as-is (pressable-premium-section.tsx). Copy and the
+// US$350 starting price are Main's. ?premium=gate keeps the form and moves the
+// referral ask into the rail instead (see PremiumGateRail).
+export const PREMIUM_COMMISSION = 20;
+const PREMIUM_FROM = 350;
+const PREMIUM_FEATURES = [
+	__( 'Support up to millions of visits per month' ),
+	__( 'Starting at 10 base PHP Workers (5 vCPUs) per site' ),
+	__( '512MB for each PHP worker/process' ),
+	__( 'Vertical scaling with bursting to 100+ cores' ),
+	__( 'Custom storage with add-on capabilities' ),
+	__( 'Geo-redundant HA cloud' ),
+	__( 'AMD EPYC Milan CPUs (64 core/128 thread)' ),
+	__( 'Enterprise-level caching solutions' ),
+	__( 'Smart plugin update schedules' ),
+	__( 'Health & performance reports' ),
+	__( 'Hourly & daily automated backups' ),
+	__( 'Robust REST-based API, plus Git integration' ),
+];
+
+export function premiumTreatment(): 'pitch' | 'gate' {
+	return new URLSearchParams( window.location.search ).get( 'premium' ) === 'gate'
+		? 'gate'
+		: 'pitch';
+}
+
+function PremiumPitch( { onReferNow }: { onReferNow: () => void } ) {
+	return (
+		<VStack spacing={ 5 }>
+			<VStack spacing={ 3 }>
+				<Heading level={ 4 } size={ 16 }>
+					{ sprintf(
+						/* translators: %d is the commission percentage. */
+						__( 'Earn %d%% on Premium Plan Referrals' ),
+						PREMIUM_COMMISSION
+					) }
+				</Heading>
+				<Text variant="muted">
+					{ __( 'For mission critical sites that demand extra attention and resources.' ) }
+				</Text>
+				<ButtonStack justify="flex-start" expanded={ false } wrap>
+					<Button variant="primary" __next40pxDefaultSize onClick={ onReferNow }>
+						{ __( 'Refer now and get rewarded' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						__next40pxDefaultSize
+						href="https://pressable.com/contact/"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Buying for your agency? Talk to us ↗' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+			<VStack spacing={ 3 }>
+				<VStack spacing={ 1 }>
+					<Heading level={ 4 } size={ 13 }>
+						{ sprintf(
+							/* translators: %1$s is the starting price, %2$d the commission percentage. */
+							__( 'Premium plans from %1$s per month. Get %2$d%% commission when you refer.' ),
+							formatUSD( PREMIUM_FROM ).replace( '.00', '' ),
+							PREMIUM_COMMISSION
+						) }
+					</Heading>
+					<Text variant="muted">{ __( 'per site, when billed monthly' ) }</Text>
+				</VStack>
+				<CheckGrid items={ PREMIUM_FEATURES } />
+			</VStack>
+		</VStack>
+	);
+}
+
+// ?premium=gate: the plan form stays (Premium 1-11, specs), and the rail says
+// why there is no Add to cart. Rendered from hosting/index.tsx in the rail.
+export function PremiumGateRail( {
+	plan,
+	onReferNow,
+}: {
+	plan?: PressablePlan;
+	onReferNow: () => void;
+} ) {
+	return (
+		<Card>
+			<CardHeader>
+				<SectionHeader level={ 3 } title={ __( 'Currently selected' ) } />
+			</CardHeader>
+			<CardBody>
+				<VStack spacing={ 4 } alignment="flex-start">
+					<Text weight={ 500 }>
+						{ sprintf(
+							/* translators: %s: plan name */
+							__( 'Pressable %s' ),
+							plan?.name ?? __( 'Premium' )
+						) }
+					</Text>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %d is the commission percentage. */
+							__(
+								'Premium plans are sold through referrals. Refer this plan to a client and earn %d%% commission on every payment.'
+							),
+							PREMIUM_COMMISSION
+						) }
+					</Text>
+					<Button variant="primary" __next40pxDefaultSize onClick={ onReferNow }>
+						{ __( 'Turn on referral mode' ) }
+					</Button>
+					<Button
+						variant="link"
+						href="https://pressable.com/contact/"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Buying for your agency? Talk to us ↗' ) }
+					</Button>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 function planOptionLabel( plan: PressablePlan ) {
 	const installs = sprintf(
 		/* translators: %d: number of WordPress installs */
@@ -71,8 +239,16 @@ function planOptionLabel( plan: PressablePlan ) {
 	);
 }
 
-function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: PressablePlan } ) {
-	if ( category === 'custom' ) {
+function PlanSpecs( {
+	category,
+	plan,
+	isCustom = false,
+}: {
+	category: PlanCategory;
+	plan?: PressablePlan;
+	isCustom?: boolean;
+} ) {
+	if ( category === 'custom' || isCustom ) {
 		return (
 			<VStack spacing={ 3 }>
 				<Heading level={ 3 } size={ 13 }>
@@ -144,7 +320,113 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 	);
 }
 
-function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: PressableUsage } ) {
+// A4AD-205. Titan Email is Pressable's email add-on; an agency buys inboxes per
+// domain, in Pressable. Main shows a "Titan Email" block in the usage card
+// (client/a8c-for-agencies/components/pressable-usage-details) only when the
+// agency has active inboxes: total count, "$3.50 per inbox monthly" typed into
+// the code (the products API has no Titan product), then one row per domain
+// with a plan label, a trial badge and its end date. Yashwin carried that block
+// into MSD under the usage stats (#114263). Three treatments, ?titan=:
+//   stack  Yashwin's block, as built: divider, "Titan Email" + add-on badge,
+//          inbox count and price, one row per domain.            (default)
+//   stat   Inboxes as a fourth usage stat in the card's own grammar, domains
+//          as its description. No price: the card reports usage, and a USD
+//          number the API cannot localise does not belong on it.
+//   card   Its own "Titan Email" card under the plan card, one row per
+//          domain with the trial as a status, and Manage in Pressable.
+//   rail   The plan card and the Titan card from "card", moved into the
+//          right column under Currently selected, so what you own sits
+//          beside what you are buying and the main column is only the
+//          purchase form. Rendered from hosting/index.tsx.
+// Sept 23: Noam chose the card (C) as the default and the rail (D) as the
+// open alternative; stack and stat were dropped.
+export function getTitanTreatment(): 'card' | 'rail' {
+	return new URLSearchParams( window.location.search ).get( 'titan' ) === 'rail' ? 'rail' : 'card';
+}
+
+export function activeTitanOrders( usage?: PressableUsage ) {
+	return ( usage?.titanOrders ?? [] ).filter( ( o ) => o.status === 'active' );
+}
+
+function formatTrialEnd( iso: string ) {
+	return new Intl.DateTimeFormat( 'en-US', {
+		month: 'long',
+		day: 'numeric',
+		timeZone: 'UTC',
+	} ).format( new Date( iso ) );
+}
+
+function inboxCount( n: number ) {
+	return sprintf(
+		/* translators: %d is a number of email inboxes. */
+		_n( '%d inbox', '%d inboxes', n ),
+		n
+	);
+}
+
+// card: Titan Email as its own card, the way each hosting product gets its
+// own card on this page. Rows are domains; the trial is a status, not a
+// sentence. Pricing and adding inboxes happen in Pressable, so the action
+// goes there.
+export function TitanCard( { orders }: { orders: TitanOrder[] } ) {
+	if ( orders.length === 0 ) {
+		return null;
+	}
+	const total = orders.reduce( ( sum, o ) => sum + o.billable_inboxes, 0 );
+	return (
+		<Card>
+			<CardHeader>
+				<SectionHeader
+					className="marketplace-hosting__card-header"
+					level={ 3 }
+					title={ __( 'Titan Email' ) }
+					description={ sprintf(
+						/* translators: 1: "N inboxes", 2: "across N domains" */
+						__( '%1$s %2$s' ),
+						inboxCount( total ),
+						sprintf(
+							/* translators: %d is a number of domains. */
+							_n( 'across %d domain', 'across %d domains', orders.length ),
+							orders.length
+						)
+					) }
+				/>
+			</CardHeader>
+			<CardBody>
+				<VStack spacing={ 3 }>
+					{ orders.map( ( order, index ) => (
+						<VStack key={ order.domain } spacing={ 3 }>
+							{ index > 0 && <CardDivider /> }
+							<HStack justify="space-between" alignment="center">
+								<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+									<Text weight={ 500 }>{ order.domain }</Text>
+									{ order.trial_end_at && (
+										<Text variant="muted">
+											{ sprintf(
+												/* translators: %s is a date. */
+												__( 'Trial ends %s' ),
+												formatTrialEnd( order.trial_end_at )
+											) }
+										</Text>
+									) }
+								</HStack>
+								<Text variant="muted">{ inboxCount( order.billable_inboxes ) }</Text>
+							</HStack>
+						</VStack>
+					) ) }
+					<CardDivider />
+					<div>
+						<Button variant="link" href="https://my.pressable.com" target="_blank" rel="noreferrer">
+							{ __( 'Manage in Pressable ↗' ) }
+						</Button>
+					</div>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+export function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: PressableUsage } ) {
 	const sitesPercent = Math.round( ( usage.sites / plan.install ) * 100 );
 	const visitsPercent = Math.round( ( usage.visits / plan.visits ) * 100 );
 	const storagePercent = Math.round( ( usage.storageGB / plan.storage ) * 100 );
@@ -159,11 +441,6 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 						__( 'Your Pressable %s plan' ),
 						plan.name
 					) }
-					actions={
-						<Button variant="link" href="https://my.pressable.com" target="_blank" rel="noreferrer">
-							{ __( 'Manage in Pressable ↗' ) }
-						</Button>
-					}
 				/>
 			</CardHeader>
 			<CardBody>
@@ -210,6 +487,12 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 						progressLabel={ `${ storagePercent }%` }
 						progressColor={ storagePercent > 80 ? 'alert-yellow' : undefined }
 					/>
+					<CardDivider />
+					<div>
+						<Button variant="link" href="https://my.pressable.com" target="_blank" rel="noreferrer">
+							{ __( 'Manage in Pressable ↗' ) }
+						</Button>
+					</div>
 				</VStack>
 			</CardBody>
 		</Card>
@@ -221,16 +504,36 @@ export default function PressableContent( {
 	onPlanChange,
 	currentPlan,
 	usage,
+	isReferralMode = false,
+	onReferNow,
+	onCategoryChange,
 }: {
 	planSlug: string;
 	onPlanChange: ( slug: string ) => void;
 	currentPlan?: PressablePlan;
 	usage?: PressableUsage;
+	isReferralMode?: boolean;
+	onReferNow?: () => void;
+	onCategoryChange?: ( category: PlanCategory ) => void;
 } ) {
-	const [ category, setCategory ] = useState< PlanCategory >( 'standard' );
+	const signature = usesSignatureCatalog();
+	const [ category, setCategoryState ] = useState< PlanCategory >( () => {
+		if ( ! signature ) {
+			return 'standard';
+		}
+		return currentPlan?.category === 'signature-high' ? 'signature-high' : 'signature';
+	} );
+	const setCategory = ( next: PlanCategory ) => {
+		setCategoryState( next );
+		onCategoryChange?.( next );
+	};
 
 	const categoryPlans = pressablePlans.filter( ( p ) => p.category === category );
 	const plan = pressablePlans.find( ( p ) => p.slug === planSlug );
+	const isCustomSlug = planSlug === PRESSABLE_CUSTOM_SLUG;
+	const showPremiumPitch =
+		category === 'premium' && ! isReferralMode && premiumTreatment() === 'pitch';
+	const referNow = onReferNow ?? ( () => {} );
 
 	const handleCategoryChange = ( next: PlanCategory ) => {
 		setCategory( next );
@@ -246,7 +549,12 @@ export default function PressableContent( {
 
 	return (
 		<>
-			{ currentPlan && usage && <CurrentPlanCard plan={ currentPlan } usage={ usage } /> }
+			{ currentPlan && usage && getTitanTreatment() !== 'rail' && (
+				<CurrentPlanCard plan={ currentPlan } usage={ usage } />
+			) }
+			{ currentPlan && usage && getTitanTreatment() === 'card' && (
+				<TitanCard orders={ activeTitanOrders( usage ) } />
+			) }
 			<Card>
 				<CardHeader>
 					<SectionHeader
@@ -266,12 +574,12 @@ export default function PressableContent( {
 								</Heading>
 								<OptionCards
 									label={ __( 'Plan type' ) }
-									options={ PLAN_TYPE_OPTIONS }
+									options={ signature ? SIGNATURE_TYPE_OPTIONS : PLAN_TYPE_OPTIONS }
 									selected={ category }
 									onSelect={ ( value ) => handleCategoryChange( value as PlanCategory ) }
 								/>
 							</VStack>
-							{ category !== 'custom' && (
+							{ category !== 'custom' && ! showPremiumPitch && (
 								<VStack spacing={ 3 }>
 									<Heading level={ 3 } size={ 13 }>
 										{ __( 'Select your plan' ) }
@@ -282,17 +590,29 @@ export default function PressableContent( {
 										label={ __( 'Select your plan' ) }
 										hideLabelFromVision
 										value={ planSlug }
-										options={ categoryPlans.map( ( p ) => ( {
-											label:
-												p.slug === currentPlan?.slug
-													? sprintf(
-															/* translators: %s: plan name and specs */
-															__( '%s (current plan)' ),
-															planOptionLabel( p )
-													  )
-													: planOptionLabel( p ),
-											value: p.slug,
-										} ) ) }
+										options={ [
+											...categoryPlans.map( ( p ) => ( {
+												label:
+													p.slug === currentPlan?.slug
+														? sprintf(
+																/* translators: %s: plan name and specs */
+																__( '%s (current plan)' ),
+																planOptionLabel( p )
+														  )
+														: planOptionLabel( p ),
+												value: p.slug,
+											} ) ),
+											// Main and trunk put Custom at the end of the largest tier's
+											// list, not as a type of its own.
+											...( category === 'signature-high'
+												? [
+														{
+															label: __( 'Custom · more than 500 installs or 10M visits' ),
+															value: PRESSABLE_CUSTOM_SLUG,
+														},
+												  ]
+												: [] ),
+										] }
 										onChange={ onPlanChange }
 									/>
 								</VStack>
@@ -301,7 +621,11 @@ export default function PressableContent( {
 
 						<CardDivider />
 
-						<PlanSpecs category={ category } plan={ plan } />
+						{ showPremiumPitch ? (
+							<PremiumPitch onReferNow={ referNow } />
+						) : (
+							<PlanSpecs category={ category } plan={ plan } isCustom={ isCustomSlug } />
+						) }
 					</VStack>
 				</CardBody>
 			</Card>

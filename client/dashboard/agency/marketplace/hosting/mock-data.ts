@@ -73,7 +73,7 @@ export interface PressablePlan {
 	visits: number;
 	storage: number;
 	worker: number;
-	category: 'standard' | 'enterprise';
+	category: 'standard' | 'enterprise' | 'signature' | 'signature-high' | 'premium';
 	yearly_price?: number;
 	monthly_price?: number;
 }
@@ -180,10 +180,29 @@ export const mockOwnership = {
 	},
 	pressable: {
 		planSlug: 'pressable-advanced',
+		// The same tier in the Signature catalog (5 installs, 75K visits, 35GB).
+		signaturePlanSlug: 'pressable-signature-3',
 		usage: {
 			sites: 4,
 			visits: 62000,
 			storageGB: 28,
+			// agency.third_party.pressable.titan_usage.orders, the shape Main reads
+			// (client/state/a8c-for-agencies/types.ts, TitanOrder). Only active
+			// orders count; one is on a trial so that state is shown too.
+			titanOrders: [
+				{
+					domain: 'northwindstudio.com',
+					status: 'active',
+					billable_inboxes: 5,
+					trial_end_at: null,
+				},
+				{
+					domain: 'harborbakery.co',
+					status: 'active',
+					billable_inboxes: 2,
+					trial_end_at: '2026-10-03T00:00:00Z',
+				},
+			],
 		},
 	},
 };
@@ -254,7 +273,273 @@ export const pressableEnterprisePlans: PressablePlan[] = [
 	},
 ];
 
+// The catalog agencies buy today (Main: client/a8c-for-agencies/sections/
+// marketplace/pressable-overview/lib/get-pressable-plan.ts, "Pressable
+// Signature Plans 2025-06"). Same tiers as the legacy Build/Growth/Business/
+// Enterprise ladder above, renamed Signature 1-17; Premium 1-11 are single-site
+// plans sold through referral only. Prices come from the products API by slug,
+// like every other Pressable plan here.
+export const pressableSignaturePlans: PressablePlan[] = [
+	{
+		slug: 'pressable-signature-1',
+		name: 'Signature 1',
+		install: 1,
+		visits: 30000,
+		storage: 20,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-2',
+		name: 'Signature 2',
+		install: 3,
+		visits: 50000,
+		storage: 30,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-3',
+		name: 'Signature 3',
+		install: 5,
+		visits: 75000,
+		storage: 35,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-4',
+		name: 'Signature 4',
+		install: 10,
+		visits: 150000,
+		storage: 50,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-5',
+		name: 'Signature 5',
+		install: 20,
+		visits: 400000,
+		storage: 80,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-6',
+		name: 'Signature 6',
+		install: 50,
+		visits: 1000000,
+		storage: 200,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-7',
+		name: 'Signature 7',
+		install: 80,
+		visits: 1600000,
+		storage: 275,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-8',
+		name: 'Signature 8',
+		install: 100,
+		visits: 2000000,
+		storage: 325,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-9',
+		name: 'Signature 9',
+		install: 120,
+		visits: 2400000,
+		storage: 375,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-10',
+		name: 'Signature 10',
+		install: 150,
+		visits: 3000000,
+		storage: 450,
+		worker: 10,
+		category: 'signature',
+	},
+	{
+		slug: 'pressable-signature-11',
+		name: 'Signature 11',
+		install: 200,
+		visits: 4000000,
+		storage: 500,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-12',
+		name: 'Signature 12',
+		install: 250,
+		visits: 5000000,
+		storage: 550,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-13',
+		name: 'Signature 13',
+		install: 300,
+		visits: 6000000,
+		storage: 600,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-14',
+		name: 'Signature 14',
+		install: 350,
+		visits: 7000000,
+		storage: 700,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-15',
+		name: 'Signature 15',
+		install: 400,
+		visits: 8000000,
+		storage: 800,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-16',
+		name: 'Signature 16',
+		install: 450,
+		visits: 9000000,
+		storage: 900,
+		worker: 10,
+		category: 'signature-high',
+	},
+	{
+		slug: 'pressable-signature-17',
+		name: 'Signature 17',
+		install: 500,
+		visits: 10000000,
+		storage: 1000,
+		worker: 10,
+		category: 'signature-high',
+	},
+];
+
+export const pressablePremiumPlans: PressablePlan[] = [
+	{
+		slug: 'pressable-premium-1',
+		name: 'Premium 1',
+		install: 1,
+		visits: 150000,
+		storage: 30,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-2',
+		name: 'Premium 2',
+		install: 1,
+		visits: 250000,
+		storage: 40,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-3',
+		name: 'Premium 3',
+		install: 1,
+		visits: 350000,
+		storage: 50,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-4',
+		name: 'Premium 4',
+		install: 1,
+		visits: 500000,
+		storage: 60,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-5',
+		name: 'Premium 5',
+		install: 1,
+		visits: 750000,
+		storage: 70,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-6',
+		name: 'Premium 6',
+		install: 1,
+		visits: 1000000,
+		storage: 80,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-7',
+		name: 'Premium 7',
+		install: 1,
+		visits: 2000000,
+		storage: 90,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-8',
+		name: 'Premium 8',
+		install: 1,
+		visits: 3000000,
+		storage: 100,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-9',
+		name: 'Premium 9',
+		install: 1,
+		visits: 5000000,
+		storage: 125,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-10',
+		name: 'Premium 10',
+		install: 1,
+		visits: 7000000,
+		storage: 150,
+		worker: 10,
+		category: 'premium',
+	},
+	{
+		slug: 'pressable-premium-11',
+		name: 'Premium 11',
+		install: 1,
+		visits: 10000000,
+		storage: 175,
+		worker: 10,
+		category: 'premium',
+	},
+];
+
 export const pressablePlans: PressablePlan[] = [
+	...pressableSignaturePlans,
+	...pressablePremiumPlans,
 	...pressableStandardPlans,
 	...pressableEnterprisePlans,
 ];
@@ -518,4 +803,17 @@ export function formatCompactNumber( value: number ): string {
 		notation: 'compact',
 		maximumFractionDigits: 1,
 	} );
+}
+
+// The picker shows the catalog agencies buy today (Signature 1-10, Signature
+// 11-17, Premium), as Yashwin built it on trunk. ?plans=legacy keeps the old
+// Standard / Enterprise / Custom picker for reference only.
+export function usesSignatureCatalog() {
+	return new URLSearchParams( window.location.search ).get( 'plans' ) !== 'legacy';
+}
+
+export function ownedPressableSlug() {
+	return usesSignatureCatalog()
+		? mockOwnership.pressable.signaturePlanSlug
+		: mockOwnership.pressable.planSlug;
 }

@@ -23,6 +23,10 @@ export default function AssignLicenseModal( {
 	onCancel: () => void;
 } ) {
 	const [ selected, setSelected ] = useState< AgencySite | null >( null );
+	// A4AD-204: Yashwin shipped a radio in each row (the prototype's pattern).
+	// ?assign=select is the alternative: DataViews' own row selection held to
+	// one row, so the table's checkbox column does the picking.
+	const useSelection = new URLSearchParams( window.location.search ).get( 'assign' ) === 'select';
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
@@ -40,19 +44,22 @@ export default function AssignLicenseModal( {
 				id: 'site',
 				label: __( 'Site' ),
 				getValue: ( { item } ) => item.url,
-				render: ( { item } ) => (
-					<RadioControl
-						selected={ selected?.blogId === item.blogId ? String( item.blogId ) : '' }
-						options={ [ { label: item.url, value: String( item.blogId ) } ] }
-						onChange={ () => setSelected( item ) }
-					/>
-				),
+				render: ( { item } ) =>
+					useSelection ? (
+						<Text>{ item.url }</Text>
+					) : (
+						<RadioControl
+							selected={ selected?.blogId === item.blogId ? String( item.blogId ) : '' }
+							options={ [ { label: item.url, value: String( item.blogId ) } ] }
+							onChange={ () => setSelected( item ) }
+						/>
+					),
 				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ selected ]
+		[ selected, useSelection ]
 	);
 
 	const { data, paginationInfo } = useMemo(
@@ -79,6 +86,19 @@ export default function AssignLicenseModal( {
 				view={ view }
 				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
+				selection={ useSelection && selected ? [ String( selected.blogId ) ] : [] }
+				onChangeSelection={ ( ids ) => {
+					if ( ! useSelection ) {
+						return;
+					}
+					const last = ids[ ids.length - 1 ];
+					setSelected( sites.find( ( site ) => String( site.blogId ) === last ) ?? null );
+				} }
+				actions={
+					useSelection
+						? [ { id: 'assign', label: __( 'Assign' ), supportsBulk: true, callback: () => {} } ]
+						: undefined
+				}
 			/>
 
 			<HStack justify="flex-end" spacing={ 3 }>

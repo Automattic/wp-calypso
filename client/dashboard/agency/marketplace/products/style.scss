@@ -11,6 +11,12 @@
 .marketplace-products__cart {
 	min-width: 360px;
 	padding: 8px;
+
+	/* The VStack stretches the checkout button to the full width; Button does not
+	   centre its label on its own, so the text sat at the left edge. */
+	.components-button.is-primary {
+		justify-content: center;
+	}
 }
 
 /* Section marks: the round badge is the left cap of the descriptor lockups,
@@ -110,6 +116,31 @@
 	object-fit: contain;
 }
 
+/* A4AD-190: the WooPayments lockup, above the plain title on the card and in
+   place of the title on the banner. Contained, never cropped. */
+.marketplace-products__card-brandmark {
+	block-size: 18px;
+	inline-size: auto;
+	max-inline-size: 150px;
+	object-fit: contain;
+	object-position: left;
+	align-self: flex-start;
+}
+
+/* On the purple fill the purple lockup disappears, so knock it out to white
+   rather than sitting it on a chip. */
+.marketplace-products__card-brandmark.is-inverted {
+	filter: brightness( 0 ) invert( 1 );
+}
+
+.marketplace-products__callout-lockup {
+	block-size: 22px;
+	inline-size: auto;
+	max-inline-size: 180px;
+	object-fit: contain;
+	object-position: left;
+	display: block;
+}
 
 /* DataViews paints its own white surface; on the gray page it read as a
    slab, so the search/filter chrome sits directly on the page. */
@@ -187,4 +218,128 @@
 
 .marketplace-products__modal-vendor {
 	font-size: 12px;
+}
+
+// A4AD-190, option: Main's purple treatment, in an ordinary card slot.
+// Mirrors .product-card.is-woopayments in the classic dashboard
+// ($woocommerce-purple-50 fill, inverted text).
+.marketplace-products__card--brand {
+	$brand-purple: #720eec;
+
+	background: $brand-purple;
+	border-color: $brand-purple;
+
+	.components-card__body {
+		background: transparent;
+		color: #fff;
+	}
+
+	// Inherit the inverted colour rather than forcing white on every node, so
+	// the badge below can opt back out.
+	p,
+	span,
+	div {
+		color: inherit;
+	}
+
+	// The brand mark is purple, so it needs a chip to stay visible. Size the
+	// chip from the box, not the image, so the logo is never cropped by it.
+	.marketplace-products__card-logo {
+		background: #fff;
+		border-radius: 4px;
+		padding: 4px;
+		box-sizing: content-box;
+		object-fit: contain;
+	}
+
+	// The badge is the only thing saying what kind of product this is. Badge
+	// ships a hashed CSS-module class, so match on the stable suffix. White on
+	// a washed purple fill was the lowest-contrast element on the page.
+	[class*='__badge'],
+	[class*='__badge'] * {
+		background: #fff;
+		color: $brand-purple;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: inset 0 0 0 1px #fff;
+		color: #fff;
+	}
+
+	.components-button.is-link {
+		color: #fff;
+		text-decoration: underline;
+	}
+}
+
+/* A4AD-194: the tag row wraps, since three tags rarely fit one card column. */
+.marketplace-products__card-tags {
+	flex-wrap: wrap;
+	row-gap: 4px;
+}
+
+/* A4AD-190: ?woo=compare, the deck's options slide in code, as a bento. The
+   two card treatments two-up at card width; the banner spans beneath them,
+   because it is a full-row treatment and half a column would misread it.
+   Gray panel = passed; pale blue = the chosen direction. */
+.marketplace-opts {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	gap: 40px;
+	max-inline-size: 1200px;
+	align-items: stretch;
+}
+
+.marketplace-opt {
+	background: #f1f1f1;
+	border-radius: 16px;
+	padding: 40px;
+	display: flex;
+	flex-direction: column;
+}
+
+.marketplace-opt--wide {
+	grid-column: 1 / -1;
+}
+
+/* A4A's pale blue marks the direction that won. */
+.marketplace-opt--chosen {
+	background: #e3f0ff;
+}
+
+/* Cards sit at the width they really have in the grid, centred on the panel.
+   The banner fills its row. */
+.marketplace-opt__stage {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-block-end: 32px;
+}
+
+.marketplace-opt__stage > * {
+	inline-size: 304px;
+}
+
+.marketplace-opt--wide .marketplace-opt__stage > * {
+	inline-size: 100%;
+}
+
+.marketplace-opt__caption {
+	margin: 0;
+	font-size: 15px;
+	line-height: 1.45;
+	color: #50575e;
+	max-inline-size: 560px;
+}
+
+.marketplace-opt__caption b {
+	font-weight: 600;
+	color: #101517;
+}
+
+@media ( max-width: 900px ) {
+	.marketplace-opts {
+		grid-template-columns: 1fr;
+	}
 }

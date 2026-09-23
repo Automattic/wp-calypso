@@ -31,7 +31,7 @@ import {
 } from '@wordpress/icons';
 import { SVG, Path } from '@wordpress/primitives';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
 import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-3.jpg';
@@ -42,6 +42,8 @@ import { Card, CardBody } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import BillingTermToggle from '../billing-term-toggle';
+import { stashCheckout } from '../checkout';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
@@ -62,10 +64,20 @@ import {
 	HOSTING_REFERRAL_COMMISSION_RATE,
 	getTieredPrice,
 	mockOwnership,
+	ownedPressableSlug,
+	usesSignatureCatalog,
 	pressablePlans,
 	wpcomHosting,
 } from './mock-data';
-import PressableContent from './pressable-content';
+import PressableContent, {
+	CurrentPlanCard,
+	PremiumGateRail,
+	TitanCard,
+	activeTitanOrders,
+	getTitanTreatment,
+	premiumTreatment,
+} from './pressable-content';
+import type { PlanCategory } from './pressable-content';
 import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
 import YourPlan from './your-plan';
@@ -158,6 +170,8 @@ interface CartItem {
 	family: 'wpcom-hosting' | 'pressable-hosting';
 	label: string;
 	total: number | null;
+	/** A4AD-199: the base total before the volume tier, only when a tier applied. */
+	actual?: number;
 	/** Estimated referral commission; only set when the item was added in referral mode. */
 	commission?: number;
 }
@@ -716,18 +730,24 @@ function CartDropdown( {
 	onRemove,
 	open,
 	onToggle,
+	isReferralMode = false,
 }: {
 	items: CartItem[];
 	term: 'monthly' | 'yearly';
 	onRemove: ( id: string ) => void;
 	open: boolean;
 	onToggle: ( willOpen: boolean ) => void;
+	isReferralMode?: boolean;
 } ) {
 	const total = items.reduce( ( sum, item ) => sum + ( item.total ?? 0 ), 0 );
 	const totalCommission = items.reduce( ( sum, item ) => sum + ( item.commission ?? 0 ), 0 );
 
+	// A4AD-199: Main strikes the regular price beside the tier price; ?summary=row shows the discount on its own row.
+	const strikeStyle = new URLSearchParams( window.location.search ).get( 'summary' ) !== 'row';
+	const checkoutVariant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'a';
 	return (
 		<Dropdown
+			focusOnMount={ false }
 			open={ open }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
@@ -747,15 +767,49 @@ function CartDropdown( {
 					</Heading>
 					{ items.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
 					{ items.map( ( item ) => (
-						<HStack key={ item.id } justify="space-between" spacing={ 4 }>
-							<Text>{ item.label }</Text>
-							<HStack spacing={ 3 } justify="flex-end" expanded={ false }>
-								<Text>{ item.total !== null ? formatUSD( item.total ) : '—' }</Text>
-								<Button variant="link" isDestructive onClick={ () => onRemove( item.id ) }>
-									{ __( 'Remove' ) }
-								</Button>
+						<VStack key={ item.id } spacing={ 1 }>
+							<HStack justify="space-between" spacing={ 4 }>
+								<Text>{ item.label }</Text>
+								<HStack
+									spacing={ 3 }
+									justify="flex-end"
+									expanded={ false }
+									style={ { flex: 'none' } }
+								>
+									<Text>
+										{ item.total !== null ? formatUSD( item.total ) : '—' }
+										{ strikeStyle && item.actual !== undefined && (
+											<>
+												{ ' ' }
+												<Text as="s" variant="muted" size={ 12 }>
+													{ formatUSD( item.actual ) }
+												</Text>
+											</>
+										) }
+									</Text>
+									<Button variant="link" isDestructive onClick={ () => onRemove( item.id ) }>
+										{ __( 'Remove' ) }
+									</Button>
+								</HStack>
 							</HStack>
-						</HStack>
+							{ /* A4AD-199, for review. A volume tier applied: default is a named
+							   row, the order summary's pattern. ?summary=strike is Yashwin's
+							   bare strike on the price above instead. */ }
+							{ item.actual !== undefined && item.total !== null && ! strikeStyle && (
+								<HStack justify="space-between" spacing={ 4 }>
+									<Text variant="muted" size={ 12 }>
+										{ sprintf(
+											/* translators: %d: discount percentage */
+											__( 'Volume discount (%d%%)' ),
+											Math.round( ( 1 - item.total / item.actual ) * 100 )
+										) }
+									</Text>
+									<Text variant="muted" size={ 12 }>
+										{ `−${ formatUSD( item.actual - item.total ) }` }
+									</Text>
+								</HStack>
+							) }
+						</VStack>
 					) ) }
 					{ items.length > 0 && (
 						<>
@@ -777,7 +831,22 @@ function CartDropdown( {
 									</Text>
 								</HStack>
 							) }
-							<Button variant="primary" __next40pxDefaultSize>
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									stashCheckout( {
+										items: items.map( ( i ) => ( {
+											label: i.label,
+											total: i.total ?? 0,
+											commission: i.commission,
+										} ) ),
+										term,
+										referral: isReferralMode,
+									} );
+									window.location.assign( '/marketplace/checkout' + window.location.search );
+								} }
+							>
 								{ __( 'Proceed to checkout' ) }
 							</Button>
 						</>
@@ -817,14 +886,15 @@ export default function MarketplaceHosting() {
 		}
 	};
 	const [ quantity, setQuantity ] = useState( 3 );
+	// Which plan type the Pressable picker is on; Premium with referral mode
+	// off changes what the rail shows (see PremiumGateRail / PremiumPitch).
+	const [ pressableCategory, setPressableCategory ] = useState< PlanCategory >( 'standard' );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( () => {
 		if ( ! new URLSearchParams( window.location.search ).has( 'existing' ) ) {
-			return 'pressable-build';
+			return usesSignatureCatalog() ? 'pressable-signature-1' : 'pressable-build';
 		}
-		const currentIndex = pressablePlans.findIndex(
-			( p ) => p.slug === mockOwnership.pressable.planSlug
-		);
-		return pressablePlans[ currentIndex + 1 ]?.slug ?? mockOwnership.pressable.planSlug;
+		const currentIndex = pressablePlans.findIndex( ( p ) => p.slug === ownedPressableSlug() );
+		return pressablePlans[ currentIndex + 1 ]?.slug ?? ownedPressableSlug();
 	} );
 
 	// The old comparison/quiz modal stays reachable behind ?guide for reference.
@@ -858,7 +928,7 @@ export default function MarketplaceHosting() {
 	const isExistingCustomer = new URLSearchParams( window.location.search ).has( 'existing' );
 	const ownedSites = isExistingCustomer ? mockOwnership.wpcom.ownedSites : 0;
 	const pressableCurrentPlan = isExistingCustomer
-		? pressablePlans.find( ( p ) => p.slug === mockOwnership.pressable.planSlug )
+		? pressablePlans.find( ( p ) => p.slug === ownedPressableSlug() )
 		: undefined;
 	const pressableUsage = isExistingCustomer ? mockOwnership.pressable.usage : undefined;
 
@@ -894,7 +964,24 @@ export default function MarketplaceHosting() {
 				monthly_price: pressableApi?.monthly_price ?? pressablePlanData.monthly_price,
 		  }
 		: undefined;
-	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
+	// The cart is page state, and "Proceed to checkout" is a full page load, so
+	// coming back (breadcrumb, browser back) used to mount an empty cart. It is
+	// kept in sessionStorage for the tab so it survives the round trip.
+	const [ cartItems, setCartItems ] = useState< CartItem[] >( () => {
+		try {
+			const raw = window.sessionStorage.getItem( 'a4a-proto-cart-hosting' );
+			return raw ? ( JSON.parse( raw ) as CartItem[] ) : [];
+		} catch {
+			return [];
+		}
+	} );
+	useEffect( () => {
+		try {
+			window.sessionStorage.setItem( 'a4a-proto-cart-hosting', JSON.stringify( cartItems ) );
+		} catch {
+			// prototype only
+		}
+	}, [ cartItems ] );
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
 
 	// Referral items carry the estimated commission Main shows in its mini cart.
@@ -924,14 +1011,7 @@ export default function MarketplaceHosting() {
 					actions={
 						<div className="marketplace-hosting__header-actions">
 							{ termPlacement === 'header' && (
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ term === 'yearly' }
-									/* The saving goes in the parentheses the day pricing has one: today every
-	   yearly price is exactly twelve months, so the label stays honest. */
-									label={ __( 'Billed annually' ) }
-									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
-								/>
+								<BillingTermToggle term={ term } onChange={ setTerm } />
 							) }
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 								<ToggleControl
@@ -948,6 +1028,7 @@ export default function MarketplaceHosting() {
 								/>
 							</HStack>
 							<CartDropdown
+								isReferralMode={ isReferralMode }
 								items={ cartItems }
 								term={ term }
 								onRemove={ removeFromCart }
@@ -1006,6 +1087,10 @@ export default function MarketplaceHosting() {
 									wpQuantity
 								),
 								total: getTieredPrice( wpcomProduct, wpQuantity, term, wpOwned ).discountedCost,
+								actual:
+									getTieredPrice( wpcomProduct, wpQuantity, term, wpOwned ).discountPercent > 0
+										? getTieredPrice( wpcomProduct, wpQuantity, term, wpOwned ).actualCost
+										: undefined,
 							} );
 						} else if ( brand === 'pressable' ) {
 							addToCart( {
@@ -1071,16 +1156,7 @@ export default function MarketplaceHosting() {
 						{ __( 'Not sure? Help me choose' ) }
 					</Button>
 				) }
-				{ termPlacement === 'tabs' && (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						checked={ term === 'yearly' }
-						/* The saving goes in the parentheses the day pricing has one: today every
-	   yearly price is exactly twelve months, so the label stays honest. */
-						label={ __( 'Billed annually' ) }
-						onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
-					/>
-				) }
+				{ termPlacement === 'tabs' && <BillingTermToggle term={ term } onChange={ setTerm } /> }
 			</div>
 			{ selectedBrand === 'wpcom' && (
 				<div className="marketplace-hosting__layout">
@@ -1127,6 +1203,16 @@ export default function MarketplaceHosting() {
 											term,
 											effectiveOwnedSites
 										).discountedCost,
+										actual:
+											getTieredPrice( wpcomProduct, effectiveQuantity, term, effectiveOwnedSites )
+												.discountPercent > 0
+												? getTieredPrice(
+														wpcomProduct,
+														effectiveQuantity,
+														term,
+														effectiveOwnedSites
+												  ).actualCost
+												: undefined,
 									} )
 								}
 							/>
@@ -1143,6 +1229,9 @@ export default function MarketplaceHosting() {
 								onPlanChange={ setPressablePlanSlug }
 								currentPlan={ effectivePressableCurrentPlan }
 								usage={ effectivePressableUsage }
+								isReferralMode={ isReferralMode }
+								onReferNow={ () => handleReferralToggle( true ) }
+								onCategoryChange={ setPressableCategory }
 							/>
 							<ScheduleDemoBanner />
 						</VStack>
@@ -1156,30 +1245,52 @@ export default function MarketplaceHosting() {
 					</VStack>
 					<div className="marketplace-hosting__rail">
 						<VStack spacing={ 4 }>
-							<YourPlan
-								brand="pressable"
-								term={ term }
-								quantity={ 1 }
-								plan={ pressablePlan }
-								currentPlan={ effectivePressableCurrentPlan }
-								isReferralMode={ isReferralMode }
-								onTermChange={ termInRail ? setTerm : undefined }
-								onAddToCart={ () =>
-									addToCart( {
-										id: 'pressable-hosting',
-										family: 'pressable-hosting',
-										label: sprintf(
-											/* translators: %s: plan name */
-											__( 'Pressable %s' ),
-											pressablePlan?.name ?? ''
-										),
-										total:
-											( term === 'yearly'
-												? pressablePlan?.yearly_price
-												: pressablePlan?.monthly_price ) ?? null,
-									} )
-								}
-							/>
+							{ pressableCategory === 'premium' && ! isReferralMode ? (
+								premiumTreatment() === 'gate' && (
+									<PremiumGateRail
+										plan={ pressablePlan }
+										onReferNow={ () => handleReferralToggle( true ) }
+									/>
+								)
+							) : (
+								<YourPlan
+									brand="pressable"
+									term={ term }
+									quantity={ 1 }
+									plan={ pressablePlan }
+									currentPlan={ effectivePressableCurrentPlan }
+									isReferralMode={ isReferralMode }
+									onTermChange={ termInRail ? setTerm : undefined }
+									onAddToCart={ () =>
+										addToCart( {
+											id: 'pressable-hosting',
+											family: 'pressable-hosting',
+											label: sprintf(
+												/* translators: %s: plan name */
+												__( 'Pressable %s' ),
+												pressablePlan?.name ?? ''
+											),
+											total:
+												( term === 'yearly'
+													? pressablePlan?.yearly_price
+													: pressablePlan?.monthly_price ) ?? null,
+										} )
+									}
+								/>
+							) }
+							{ /* A4AD-205 treatment D (?titan=rail): the owned plan and its
+							   Titan Email inboxes sit under what is being bought. */ }
+							{ getTitanTreatment() === 'rail' &&
+								effectivePressableCurrentPlan &&
+								effectivePressableUsage && (
+									<>
+										<CurrentPlanCard
+											plan={ effectivePressableCurrentPlan }
+											usage={ effectivePressableUsage }
+										/>
+										<TitanCard orders={ activeTitanOrders( effectivePressableUsage ) } />
+									</>
+								) }
 						</VStack>
 					</div>
 				</div>

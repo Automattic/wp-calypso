@@ -14,6 +14,7 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import NewReferralNotice from './new-referral-notice';
 import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
@@ -56,7 +57,12 @@ export default function EarnReferrals() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
+			notices={
+				<>
+					<NewReferralNotice />
+					<MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } />
+				</>
+			}
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />

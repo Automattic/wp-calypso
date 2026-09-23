@@ -1,10 +1,14 @@
 import {
+	Button,
 	Icon,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
+	chevronLeft,
+	chevronRight,
 	commentAuthorName,
 	currencyDollar,
 	lock,
@@ -18,6 +22,7 @@ import {
 	trendingUp,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
@@ -50,11 +55,69 @@ export default function CategoryTiles( {
 	selected: string | null;
 	onSelect: ( category: string | null ) => void;
 } ) {
+	// A4AD-191: prev/next arrows in the section header, the way a scroll row
+	// carries its controls elsewhere in the dashboard. The row still scrolls
+	// by touch and trackpad; the arrows page it by most of the visible width
+	// and disable at either end, so they double as the "there is more" hint
+	// the gradient fade was carrying alone.
+	const rowRef = useRef< HTMLDivElement >( null );
+	const [ canScroll, setCanScroll ] = useState( { back: false, forward: false } );
+
+	useEffect( () => {
+		const row = rowRef.current;
+		if ( ! row ) {
+			return;
+		}
+		const update = () => {
+			const max = row.scrollWidth - row.clientWidth;
+			setCanScroll( { back: row.scrollLeft > 1, forward: row.scrollLeft < max - 1 } );
+		};
+		update();
+		row.addEventListener( 'scroll', update, { passive: true } );
+		const observer = new ResizeObserver( update );
+		observer.observe( row );
+		return () => {
+			row.removeEventListener( 'scroll', update );
+			observer.disconnect();
+		};
+	}, [] );
+
+	const page = ( direction: 1 | -1 ) => {
+		const row = rowRef.current;
+		if ( row ) {
+			row.scrollBy( { left: direction * row.clientWidth * 0.8, behavior: 'smooth' } );
+		}
+	};
+
 	return (
 		<VStack spacing={ 4 } className="marketplace-products__categories">
-			<SectionHeader level={ 2 } title={ __( 'Shop products by category' ) } />
+			<SectionHeader
+				level={ 2 }
+				title={ __( 'Shop products by category' ) }
+				actions={
+					<HStack spacing={ 1 } expanded={ false }>
+						<Button
+							icon={ chevronLeft }
+							label={ __( 'Previous categories' ) }
+							size="compact"
+							variant="tertiary"
+							disabled={ ! canScroll.back }
+							onClick={ () => page( -1 ) }
+						/>
+						<Button
+							icon={ chevronRight }
+							label={ __( 'Next categories' ) }
+							size="compact"
+							variant="tertiary"
+							disabled={ ! canScroll.forward }
+							onClick={ () => page( 1 ) }
+						/>
+					</HStack>
+				}
+			/>
 			<div className="marketplace-products__tiles-wrap">
 				<div
+					ref={ rowRef }
 					className="marketplace-products__tiles"
 					role="group"
 					aria-label={ __( 'Product categories' ) }
