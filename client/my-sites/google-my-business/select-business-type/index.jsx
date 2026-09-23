@@ -37,7 +37,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/marketing/tools/${ this.props.siteSlug }` );
+		page.back( `/home/${ this.props.siteSlug }` );
 	};
 
 	handleConnect = ( keyringConnection ) => {

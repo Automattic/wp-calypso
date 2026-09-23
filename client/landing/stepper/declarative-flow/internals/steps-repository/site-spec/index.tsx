@@ -1,8 +1,6 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -15,6 +13,7 @@ import {
 	getBlueprintArchiveSiteIdentifier,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
+	isBlueprintCustomThemeBuild,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
@@ -23,7 +22,6 @@ import {
 import {
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
-	isBuildWowEnabled,
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from 'calypso/landing/stepper/utils/build-wow';
@@ -136,15 +134,12 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite =
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
-	const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
-	const { data: isAutomattician, isLoading: isLoadingAutomattician } = useReactQuery( {
-		...isAutomatticianQuery(),
-		enabled: buildWowRequested,
-	} );
-	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
-	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
-	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
+	const atomicProvisionSpecId = shouldProvisionAtomicSite
+		? ( queryParams.get( 'spec_id' ) ?? '' )
+		: '';
+	const buildWowSpecId = shouldBuildWow ? ( queryParams.get( 'spec_id' ) ?? '' ) : '';
 	const buildWowSiteIdentifier = getBuildWowSiteIdentifier( {
 		siteSlug: queryParams.get( 'siteSlug' ),
 		siteId: queryParams.get( 'siteId' ),
@@ -162,6 +157,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 	const isWowFunnelRun = !! wowFunnelSlug;
 	const blueprintArchiveSlug = queryParams.get( 'blueprint_slug' ) ?? '';
+	// build=custom-theme: a plugins-only blueprint. The site is built the blueprint way, then the
+	// confirmed spec goes to the build-wow generator instead of being applied to the restored site.
+	const isCustomThemeBuild = shouldImportBlueprint && isBlueprintCustomThemeBuild( queryParams );
 	const blueprintArchiveSiteIdentifier = getBlueprintArchiveSiteIdentifier( {
 		siteSlug: queryParams.get( 'siteSlug' ),
 		siteId: queryParams.get( 'siteId' ),
@@ -454,6 +452,44 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
 					}
 
+					// The custom-theme fork: the restore only put the blueprint's plugins in place, so
+					// the spec is not applied to it — it goes to the generator, which builds the
+					// theme and pages over the blueprint's stock theme. Only once the restore is
+					// done, for the same reason as the apply below. The build's own progress screen
+					// takes over from here, so this hands back its URL rather than the editor's.
+					if ( isCustomThemeBuild ) {
+						if ( ! specId ) {
+							throw new Error( 'Missing confirmed Site Spec ID.' );
+						}
+
+						const response = await requestBuildWowSite(
+							blueprintArchiveSiteIdentifier,
+							specId,
+							getBuildWowGraph( queryParams ),
+							blueprintArchiveSlug
+						);
+						if ( ! response.site_editor_url ) {
+							throw new Error( 'Build-wow response is missing the Site Editor URL.' );
+						}
+
+						logBlueprintArchiveEvent( 'redirect_site_generation', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							build_status: response.build?.status,
+						} );
+
+						const ref = queryParams.get( 'ref' );
+						return {
+							redirectTo: addQueryArgs( '/setup/ai-site-builder-spec/site-generation', {
+								build_wow: '1',
+								...( response.blog_id ? { siteId: response.blog_id } : {} ),
+								siteSlug: blueprintArchiveSiteIdentifier,
+								specId,
+								editorUrl: response.site_editor_url,
+								...( ref ? { ref } : {} ),
+							} ),
+						};
+					}
+
 					// Only once the restore is done: it replaces the site's options
 					// wholesale, so a spec applied earlier would be overwritten.
 					// Never blocks the hand-off — applyBlueprintSpec() resolves either way.
@@ -478,11 +514,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 								dest: wowFunnelDest,
 								siteIdentifier: blueprintArchiveSiteIdentifier,
 								adminUrl,
-						  } )
+							} )
 						: getSiteEditorUrl(
 								adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
 								{ canvasEdit: applied }
-						  );
+							);
 
 					logBlueprintArchiveEvent( 'redirect_site_editor', {
 						site_identifier: blueprintArchiveSiteIdentifier,
@@ -511,6 +547,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			blueprintArchiveSlug,
 			wowFunnelSlug,
 			wowFunnelDest,
+			isCustomThemeBuild,
+			queryParams,
 			setPendingAction,
 		]
 	);
@@ -555,10 +593,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSiteIdentifier,
 	] );
 
-	if ( buildWowRequested && isLoadingAutomattician ) {
-		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
-	}
-
 	let siteSpecStep = <SiteSpecContainer />;
 	if ( activeFlow === 'build-wow' && ( buildWowSpecId || isBuildWowMissingSite ) ) {
 		// A spec carried from entry is confirmed on arrival and leaves this page on its own,
@@ -587,8 +621,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
+				// A custom-theme build keeps the blueprint out of the interview: a blueprint-aware
+				// agent asks only the blueprint's questions, and the generator needs the full
+				// design brief.
 				siteSpecConfig={ getBlueprintSiteSpecConfig( {
-					blueprintId: blueprintArchiveSlug,
+					blueprintId: isCustomThemeBuild ? undefined : blueprintArchiveSlug,
 				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>

@@ -56,7 +56,7 @@ function ReaderSubscriptionListItem( {
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = site?.icon?.img;
-	const feedIcon = feed ? feed.site_icon ?? feed.image : null;
+	const feedIcon = feed ? ( feed.site_icon ?? feed.image ) : null;
 	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );

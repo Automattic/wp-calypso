@@ -190,7 +190,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 			} );
 
-			it( 'stays on the legacy site editor for a plan without Atomic even with the swap enabled', async () => {
+			it( 'stays on the legacy site editor for a plan without Atomic', async () => {
 				await runProcessingSubmit();
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
@@ -252,32 +252,29 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
 			} );
 
-			it.each( [
-				'personal-bundle',
-				'value_bundle',
-				'business-bundle-monthly',
-				'ecommerce-bundle-2y',
-			] )( 'is used for the %s plan', async ( productSlug ) => {
-				setPlan( productSlug );
+			it.each( [ 'value_bundle', 'business-bundle-monthly' ] )(
+				'is used for the %s plan',
+				async ( productSlug ) => {
+					setPlan( productSlug );
 
-				await runProcessingSubmit();
+					await runProcessingSubmit();
 
-				expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
-					'/setup/ai-site-builder-spec/site-spec'
-				);
-			} );
+					expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+						'/setup/ai-site-builder-spec/site-spec'
+					);
+				}
+			);
 
-			it( 'is not used when the swap flag is off', async () => {
-				isEnabled.mockImplementation(
-					( flag: string ) => flag !== 'calypso/ai-site-builder-build-wow'
-				);
+			it.each( [ 'personal-bundle', 'ecommerce-bundle-2y' ] )(
+				'is not used for the %s plan',
+				async ( productSlug ) => {
+					setPlan( productSlug );
 
-				await runProcessingSubmit();
+					await runProcessingSubmit();
 
-				expect( isEnabled ).toHaveBeenCalledWith( 'calypso/ai-site-builder-build-wow' );
-				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
-				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
-			} );
+					expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				}
+			);
 
 			it( 'is not used when the site-spec feature is off', async () => {
 				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
@@ -285,6 +282,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				await runProcessingSubmit();
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 			} );
 		} );
 	} );

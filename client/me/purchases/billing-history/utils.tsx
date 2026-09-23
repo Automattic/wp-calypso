@@ -145,7 +145,7 @@ export function TransactionAmount( {
 				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
-		  } )
+			} )
 		: translate( '(includes %(taxAmount)s tax)', {
 				args: {
 					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
@@ -154,7 +154,7 @@ export function TransactionAmount( {
 					} ),
 				},
 				comment: 'taxAmount is a localized price, like $12.34',
-		  } );
+			} );
 
 	return (
 		<Fragment>

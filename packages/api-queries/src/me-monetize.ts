@@ -65,9 +65,8 @@ export const monetizeSubscriptionStop = ( subscriptionId: string ) => {
 		mutationFn: () => requestSubscriptionStop( subscriptionId ),
 		onSuccess: ( response: MonetizeSubscriptionStopResponse ) => {
 			// We can remove the subscription from the list of subscriptions
-			queryClient.setQueryData(
-				monetizeSubscriptionsQuery().queryKey,
-				( oldList ) => oldList?.filter( ( s ) => s.ID !== subscriptionId )
+			queryClient.setQueryData( monetizeSubscriptionsQuery().queryKey, ( oldList ) =>
+				oldList?.filter( ( s ) => s.ID !== subscriptionId )
 			);
 
 			queryClient.invalidateQueries( {

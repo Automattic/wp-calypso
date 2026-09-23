@@ -4,9 +4,9 @@ import { Button } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { mightStillAutoRenew } from 'calypso/lib/purchases';
+import { mightStillAutoRenew } from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
@@ -28,10 +28,9 @@ const PaymentMethodDeleteDialog = ( {
 }: Props ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const associatedSubscriptions = purchases?.filter(
+	const associatedSubscriptions = purchases.filter(
 		( purchase: Purchase ) =>
-			purchase.payment?.storedDetailsId === card.stored_details_id &&
-			mightStillAutoRenew( purchase )
+			purchase.stored_details_id === card.stored_details_id && mightStillAutoRenew( purchase )
 	);
 
 	const handleClose = () => {
@@ -80,16 +79,16 @@ const PaymentMethodDeleteDialog = ( {
 							</thead>
 							<tbody>
 								{ associatedSubscriptions.map( ( purchase: Purchase ) => (
-									<tr key={ purchase.id }>
+									<tr key={ purchase.ID }>
 										<td className="payment-method-delete-dialog__affected-subscription-details-product">
-											<strong>{ purchase.productName }</strong>
+											<strong>{ purchase.product_name }</strong>
 											<span className="payment-method-delete-dialog__affected-subscription-domain">
 												{ purchase.meta || purchase.domain }
 											</span>
 										</td>
 										<td className="payment-method-delete-dialog__affected-subscription-details-renew-date fixed">
-											{ purchase.renewDate
-												? moment( purchase.renewDate ).format( 'll' )
+											{ purchase.renew_date
+												? moment( purchase.renew_date ).format( 'll' )
 												: translate( 'Pending renewal' ) }
 										</td>
 									</tr>

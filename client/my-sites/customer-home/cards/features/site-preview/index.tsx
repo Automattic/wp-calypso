@@ -80,7 +80,7 @@ const SitePreview = ( {
 	const editSiteURL = selectedSite
 		? addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
 				canvas: 'edit',
-		  } )
+			} )
 		: '#';
 
 	const domains = customDomains.map( createSiteDomainObject );

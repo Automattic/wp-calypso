@@ -137,7 +137,7 @@ export class DomainProductPrice extends Component {
 							? null
 							: this.props.translate( '%(cost)s/year', {
 									args: { cost: this.props.price },
-							  } ) }
+								} ) }
 					</del>
 				</div>
 			</div>

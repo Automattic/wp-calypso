@@ -73,6 +73,7 @@ export interface DomainSummary {
 	expired: boolean;
 	primary_domain: boolean;
 	can_set_as_primary: boolean;
+	set_primary_domain_pending: boolean;
 	domain_status: {
 		id: DomainStatus;
 		label: string;

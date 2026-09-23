@@ -66,14 +66,18 @@ describe( '<WordPressAgentTelegram />', () => {
 
 		render( <WordPressAgentTelegram />, { user: USER } );
 
-		expect( await screen.findByText( 'Chat with WordPress Agent on Telegram.' ) ).toBeVisible();
+		expect(
+			await screen.findByText( 'Message your agent from Telegram for quick updates on the go.' )
+		).toBeVisible();
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Disconnect' } ) );
 
 		await waitFor( () => expect( disconnectRequest.isDone() ).toBe( true ) );
 		await waitFor( () => {
 			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument();
 		} );
-		expect( screen.getByText( 'Chat with WordPress Agent on Telegram.' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'Message your agent from Telegram for quick updates on the go.' )
+		).toBeVisible();
 	} );
 
 	test( 'connects from a Telegram token callback', async () => {

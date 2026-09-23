@@ -128,7 +128,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 									domain: includedDomainPurchase.meta,
 								},
 							}
-					  )
+						)
 					: translate(
 							'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
 							{
@@ -136,7 +136,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 									domain: includedDomainPurchase.meta,
 								},
 							}
-					  ) }
+						) }
 			</p>
 			{ planPurchase.is_refundable && includedDomainPurchase.cost_to_unbundle_display && (
 				<p>

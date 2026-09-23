@@ -274,11 +274,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
 	},
 
-	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
-		slug: 'site-migration-import-or-migrate',
-		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
-	},
-
 	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT: {
 		slug: 'other-platform-detected',
 		asyncComponent: () =>

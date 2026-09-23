@@ -80,7 +80,7 @@ export const loggedOutOdieChats: Reducer< LoggedOutOdieChats | undefined, HelpCe
 				? {
 						...state,
 						[ action.session.botSlug ]: action.session,
-				  }
+					}
 				: undefined;
 	}
 	return state;

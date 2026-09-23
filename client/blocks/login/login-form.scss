@@ -48,6 +48,12 @@ form {
 		flex-direction: column;
 		justify-content: center;
 		gap: 2rem; // Should match OneLoginLayout styles.
+
+		// A notice carries its own bottom margin, which does not collapse with
+		// the flex gap. Zero it so the gap alone sets the spacing.
+		> .calypso-notice {
+			margin-bottom: 0;
+		}
 	}
 
 	form {

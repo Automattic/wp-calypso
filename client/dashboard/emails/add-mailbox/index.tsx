@@ -89,8 +89,8 @@ const AddProfessionalEmail = () => {
 					? 'calypso_dashboard_emails_add_mailbox_validation_failure'
 					: 'calypso_dashboard_emails_setup_mailbox_validation_failure',
 				{
-					domainName,
-					mailboxCount: mailboxEntities.length,
+					domain_name: domainName,
+					mailbox_count: mailboxEntities.length,
 					provider,
 					reason: validated ? 'user_cannot_add_email' : 'validation_failed',
 				}
@@ -103,7 +103,7 @@ const AddProfessionalEmail = () => {
 							// Translators: %(errors)s is a list of errors separated by commas.
 							__( 'You cannot add emails to this domain: %(errors)s.' ),
 							{ errors: Object.values( errors ).join( ', ' ) }
-					  )
+						)
 					: __( 'You cannot add emails to this domain.' );
 				createErrorNotice( message, { type: 'snackbar' } );
 			}
@@ -125,8 +125,8 @@ const AddProfessionalEmail = () => {
 
 	const removeForm = ( index: number ) => {
 		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
-			domainName,
-			mailboxCount: mailboxEntities.length,
+			domain_name: domainName,
+			mailbox_count: mailboxEntities.length,
 			provider,
 		} );
 
@@ -172,8 +172,8 @@ const AddProfessionalEmail = () => {
 										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'
 										: 'calypso_dashboard_emails_setup_mailbox_back_to_emails_click',
 									{
-										domainName,
-										mailboxCount: mailboxEntities.length,
+										domain_name: domainName,
+										mailbox_count: mailboxEntities.length,
 										provider,
 									}
 								);
@@ -225,8 +225,8 @@ const AddProfessionalEmail = () => {
 									recordTracksEvent(
 										'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
 										{
-											domainName,
-											mailboxCount: mailboxEntities.length,
+											domain_name: domainName,
+											mailbox_count: mailboxEntities.length,
 											provider,
 										}
 									);
@@ -249,7 +249,7 @@ const AddProfessionalEmail = () => {
 									recordTracksEvent(
 										'calypso_dashboard_emails_setup_mailbox_complete_setup_click',
 										{
-											domainName,
+											domain_name: domainName,
 										}
 									);
 								} }

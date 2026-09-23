@@ -3,7 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
-import { fetchLaunchpad } from '@automattic/data-stores';
+import { fetchLaunchpad } from '@automattic/launchpad';
 import { QueryClient } from '@tanstack/react-query';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
@@ -18,8 +18,8 @@ jest.mock( 'calypso/lib/landing-page', () => ( {
 	getLoggedInLandingPage: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+jest.mock( '@automattic/launchpad', () => ( {
+	...jest.requireActual( '@automattic/launchpad' ),
 	fetchLaunchpad: jest.fn(),
 } ) );
 

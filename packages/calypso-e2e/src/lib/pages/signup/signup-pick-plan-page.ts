@@ -168,6 +168,26 @@ export class SignupPickPlanPage {
 	}
 
 	/**
+	 * Clicks the "start with a free plan" link and waits for navigation.
+	 *
+	 * Intended for flows where the free plan is de-emphasized and a free subdomain is
+	 * used, so no upsell modal is shown.
+	 *
+	 * @param {RegExp} redirectUrl Optional URL pattern to wait for after clicking.
+	 * @returns {Promise<void>}
+	 */
+	async startWithFreePlan( redirectUrl?: RegExp ): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		redirectUrl ??= new RegExp( '.*/home/.*' );
+
+		await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.plansPage.clickStartWithFreePlan(),
+		] );
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger.
 	 *
 	 * Use this when you need to inspect or assert modal content before committing to a plan.
@@ -177,16 +197,6 @@ export class SignupPickPlanPage {
 	async openEscapeHatch(): Promise< void > {
 		await this.page.waitForURL( plansPageUrl );
 		await this.plansPage.openEscapeHatch();
-	}
-
-	/**
-	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
-	 *
-	 * @param {string} domainName The domain name that will be shown to visitors.
-	 * @returns {Promise<void>}
-	 */
-	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
-		await this.plansPage.validateNoCustomDomainWarning( domainName );
 	}
 
 	/**

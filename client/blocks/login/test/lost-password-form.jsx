@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { screen, render, waitFor } from '@testing-library/react';
+import { act, screen, render, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 
@@ -16,14 +17,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = require( 'react' );
-	// Stand-in widget that reports "not blocking" so an enabled form stays submittable.
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
-	};
-} );
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -42,6 +36,7 @@ describe( 'LostPasswordForm', () => {
 		config.enable( 'blackbox-lost-password' );
 		getBlackboxSessionId.mockClear();
 		getBlackboxSessionId.mockResolvedValue( undefined );
+		MockBlackboxChallenge.blocked = false;
 		delete window.Blackbox;
 	} );
 
@@ -323,5 +318,44 @@ describe( 'LostPasswordForm', () => {
 		await waitFor( () => {
 			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
 		} );
+	} );
+
+	test( 'sends no request when Enter submits while a challenge is blocking', async () => {
+		MockBlackboxChallenge.blocked = true;
+		getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		fireEvent.submit(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ).closest( 'form' )
+		);
+
+		await waitFor( () => expect( getBlackboxSessionId ).not.toHaveBeenCalled() );
+		expect( mockFetch ).not.toHaveBeenCalled();
+	} );
+
+	test( 'stops the submit button spinning when a challenge appears mid-submit', async () => {
+		getBlackboxSessionId.mockReturnValue( new Promise( () => {} ) );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Reset my password/i } ) );
+
+		const submitButton = screen.getByRole( 'button', { name: /Reset my password/i } );
+		expect( submitButton ).toHaveClass( 'is-busy' );
+
+		act( () => MockBlackboxChallenge.setBlocked( true ) );
+
+		expect( submitButton ).not.toHaveClass( 'is-busy' );
+		expect( submitButton ).toBeDisabled();
 	} );
 } );

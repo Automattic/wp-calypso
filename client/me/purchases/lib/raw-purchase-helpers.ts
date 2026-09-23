@@ -210,7 +210,7 @@ export function mightStillAutoRenew( purchase: Purchase ): boolean {
 }
 
 export function getPartnerName( purchase: Purchase ): string | null {
-	return isPartnerPurchase( purchase ) ? purchase.partner_name ?? null : null;
+	return isPartnerPurchase( purchase ) ? ( purchase.partner_name ?? null ) : null;
 }
 
 export function canEditPaymentDetails( purchase: Purchase ): boolean {
@@ -349,6 +349,16 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	}
 
 	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
+}
+
+export function shouldRenderExpiringCreditCard( purchase: Purchase ): boolean {
+	return (
+		! isExpiredOrRemoved( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isPurchaseOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
 }
 
 export function showCreditCardExpiringWarning( purchase: Purchase ): boolean {

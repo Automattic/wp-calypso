@@ -52,10 +52,14 @@ export function useInstallProgress( {
 	transferStatus,
 	fallbackStep = 0,
 	startedAt,
+	hasTimedOut = false,
 }: {
 	transferStatus: string | null;
 	fallbackStep?: number;
 	startedAt?: number | null;
+	// The caller's own deadline has passed with the transfer still in flight. It never reaches the
+	// finishing stage in that case, so the stage-based rule below would never offer a way out.
+	hasTimedOut?: boolean;
 } ) {
 	const reportedStage = getInstallStage( { transferStatus, fallbackStep } );
 
@@ -97,7 +101,7 @@ export function useInstallProgress( {
 		stage === 0 ? elapsed : Math.max( 0, ( now - stageStartedAt.current ) / 1000 );
 
 	const isOverrun = stageElapsed > INSTALL_STAGES[ stage ].expectedSeconds * OVERRUN_FACTOR;
-	const isStalled = stage === FINISHING_STAGE && stageElapsed > STALLED_SECONDS;
+	const isStalled = hasTimedOut || ( stage === FINISHING_STAGE && stageElapsed > STALLED_SECONDS );
 
 	const getStageProgress = ( index: number ): number => {
 		if ( index < stage ) {

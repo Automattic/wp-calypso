@@ -89,7 +89,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 							! isAgencyApproved
 								? translate(
 										'Your agency is not yet approved. Please wait for approval before making a purchase.'
-								  )
+									)
 								: undefined
 						}
 					>

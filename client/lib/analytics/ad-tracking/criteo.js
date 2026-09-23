@@ -59,32 +59,6 @@ export function recordPlansViewInCriteo() {
 }
 
 /**
- * Records that a user viewed the checkout page
- * @param {Object} cart - cart as `ResponseCart` object
- * @returns {void}
- */
-export function recordViewCheckoutInCriteo( cart ) {
-	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
-		return;
-	}
-
-	if ( cart.is_signup ) {
-		return;
-	}
-
-	// Note that unlike `recordOrderInCriteo` above, this doesn't include the order id
-	const params = [
-		'viewBasket',
-		{
-			currency: cart.currency,
-			item: cartToCriteoItems( cart ),
-		},
-	];
-	debug( 'recordViewCheckoutInCriteo:', params );
-	recordInCriteo( ...params );
-}
-
-/**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  * @param {Object} cart - cart as `ResponseCart` object
  * @returns {Array} - An array of items to include in the Criteo tracking call

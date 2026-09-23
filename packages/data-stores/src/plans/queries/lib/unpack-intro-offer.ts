@@ -23,13 +23,13 @@ const unpackIntroOffer = (
 		'expiry' in plan
 			? Boolean(
 					plan.expiry &&
-						plan.introductory_offer_end_date &&
-						new Date( plan.expiry ) > new Date( plan.introductory_offer_end_date )
-			  )
+					plan.introductory_offer_end_date &&
+					new Date( plan.expiry ) > new Date( plan.introductory_offer_end_date )
+				)
 			: Boolean(
 					plan.introductory_offer_end_date &&
-						new Date() > new Date( plan.introductory_offer_end_date )
-			  );
+					new Date() > new Date( plan.introductory_offer_end_date )
+				);
 
 	return {
 		formattedPrice: plan.introductory_offer_formatted_price as string,
@@ -46,7 +46,7 @@ const unpackIntroOffer = (
 								plan.introductory_offer_raw_price_integer /
 								( plan.introductory_offer_interval_count * 12 )
 							).toFixed( 2 )
-					  )
+						)
 					: plan.introductory_offer_raw_price_integer,
 			full: plan.introductory_offer_raw_price_integer,
 		},

@@ -14,6 +14,7 @@
  */
 
 import { normalizeAbilityName } from '../abilities/ability-name';
+import { PAGE_PATH } from '../abilities/editor-navigate/page-path';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -60,10 +61,6 @@ const POLICED_ABILITIES = new Set( [ ...CANVAS_BOUND_ABILITIES, ...CANVAS_MOVING
 
 const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
 
-// The editor path `editor-navigate` accepts, matching the shape Big Sky validates
-// before it will navigate: `/page/123`, with either slash optional.
-const EDITOR_PAGE_PATH = /^\/?page\/(\d+)\/?$/;
-
 /**
  * The canvas a navigation ability is heading for.
  *
@@ -85,8 +82,9 @@ function resolveNavigationTarget( normalizedName: string, args: unknown ): strin
 		return null;
 	}
 
-	// Always a page: the path shape admits nothing else.
-	return buildCanvasKey( 'page', EDITOR_PAGE_PATH.exec( path )?.[ 1 ] );
+	// Only a page path names a canvas; `all-pages` matches nothing here, so
+	// the binding is dropped rather than moved.
+	return buildCanvasKey( 'page', PAGE_PATH.exec( path )?.[ 1 ] );
 }
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {

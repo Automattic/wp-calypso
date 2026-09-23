@@ -20,6 +20,9 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 	}
 };
 
+// `reloadAndRetry` runs the search closure three times, inside a 120s test.
+const SEARCH_BUDGET = 60 * 1000;
+
 const normalizeText = ( value?: string | null ): string =>
 	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -105,6 +108,41 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
+		const deadline = Date.now() + SEARCH_BUDGET;
+
+		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
+		// closure three times, so the search as a whole has to be bounded too: one
+		// that outlives the 120s test timeout reports that timeout instead of its
+		// own error - or the throttle the error stands for. Playwright reads a zero
+		// timeout as "wait forever", so a spent budget ends the search rather than
+		// reaching one.
+		const within = ( cap: number ): number => {
+			const left = deadline - Date.now();
+
+			if ( left <= 0 ) {
+				throw new Error(
+					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.`
+				);
+			}
+
+			return Math.min( cap, left );
+		};
+
+		const normalizedKeyword = keyword.trim().toLowerCase();
+		// Suggestion titles are domain names, so compare on the second-level
+		// label only, letters and digits, so `coffee shop` matches
+		// `coffeeshop.com` and `e2e-flow-testing` matches `e2eflowtesting.blog`.
+		const keywordLabel = normalizedKeyword.split( '.' )[ 0 ].replace( /[^a-z0-9]/g, '' );
+		const titleMatchesKeyword = ( title: string | null ) =>
+			!! title &&
+			title
+				.toLowerCase()
+				.replace( /[^a-z0-9]/g, '' )
+				.includes( keywordLabel );
+		const isKeywordSuggestionsResponse = ( response: Response ) =>
+			/suggestions\?/.test( response.url() ) &&
+			new URL( response.url() ).searchParams.get( 'query' )?.trim().toLowerCase() ===
+				normalizedKeyword;
 
 		/**
 		 *
@@ -113,26 +151,28 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
-			// Capture the first suggestion's title before searching. If
-			// suggestions are already visible (e.g. pre-populated from the
-			// site slug), this lets us detect when React re-renders the list
-			// with new results after the API response arrives.
+			const searchbox = page.getByRole( 'searchbox' );
 			const firstListitem = container.getByRole( 'listitem' ).first();
-			let previousTitle: string | null = null;
-			if ( ( await firstListitem.count() ) > 0 ) {
-				previousTitle = await firstListitem.getAttribute( 'title' );
+
+			// Site flows pre-fill the searchbox and search for that value on
+			// mount. Typing before that first list renders drops the typed
+			// query: the input keeps the text but no request is made for it.
+			if ( ( await searchbox.inputValue() ) !== '' ) {
+				await firstListitem.waitFor( { timeout: within( 30 * 1000 ) } ).catch( () => {} );
 			}
 
 			const searchAndPressEnter = async () => {
-				await page.getByRole( 'searchbox' ).fill( keyword );
-				await page.getByRole( 'searchbox' ).press( 'Enter' );
+				await searchbox.fill( keyword );
+				await searchbox.press( 'Enter' );
 			};
 
 			const [ response ] = await Promise.all( [
-				// The domain lookup service is external and regularly exceeds the
-				// 10s default timeout under load; give it a longer budget instead
-				// of burning reloadAndRetry attempts on a slow-but-healthy service.
-				page.waitForResponse( /suggestions\?/, { timeout: 30 * 1000 } ),
+				// Match the request for this keyword, not the pre-fill request
+				// that can still be in flight. The domain lookup service is
+				// external and regularly exceeds the 10s default timeout under
+				// load; give it a longer budget instead of burning reloadAndRetry
+				// attempts on a slow-but-healthy service.
+				page.waitForResponse( isKeywordSuggestionsResponse, { timeout: within( 30 * 1000 ) } ),
 				searchAndPressEnter(),
 			] );
 
@@ -145,20 +185,21 @@ export class DomainSearchComponent {
 
 			await recordResponseThrottle( response );
 
-			// Wait for the DOM to reflect the new search results. The API
-			// response resolves before React re-renders the suggestion list
-			// (TanStack Query keeps isLoading false on refetch while prior
-			// data is cached), so without this guard selectFirstSuggestion
-			// can read a stale title from the previous search.
-			if ( previousTitle ) {
-				for ( let attempt = 0; attempt < 50; attempt++ ) {
-					const current = await firstListitem.getAttribute( 'title' );
-					if ( current !== previousTitle ) {
-						break;
-					}
-					await page.waitForTimeout( 200 );
+			// The response resolves before React re-renders the list, and a
+			// pre-fill response can land after it. Wait until the first row is
+			// a suggestion for this keyword, so selectFirstSuggestion never reads
+			// a row from another search.
+			let firstTitle: string | null = null;
+			for ( let attempt = 0; attempt < 50; attempt++ ) {
+				firstTitle = await firstListitem.getAttribute( 'title' );
+				if ( titleMatchesKeyword( firstTitle ) ) {
+					return;
 				}
+				await page.waitForTimeout( within( 200 ) );
 			}
+			throw new Error(
+				`Domain suggestions did not update for "${ keyword }": first suggestion is "${ firstTitle }".`
+			);
 		}
 
 		// Outside the retry: `reloadAndRetry` swallows the closure's error on every

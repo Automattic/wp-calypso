@@ -17,7 +17,10 @@ const agencySupports: AgencySupports = {
 	exclusiveOffers: true,
 	learn: true,
 	mcp: true,
+	amplify: true,
+	devTools: true,
 	sites: true,
+	plugins: true,
 	team: true,
 	earn: true,
 };
@@ -29,7 +32,7 @@ const config = {
 	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, agency: agencySupports },
 };
 
-function mockAgency( capabilities: string[] ) {
+function mockAgency( capabilities: string[], amplifyAllowed = true ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/wpcom/v2/agency' )
@@ -37,13 +40,14 @@ function mockAgency( capabilities: string[] ) {
 			{
 				id: 1,
 				partner_directory: { allowed: true, directories: [] },
+				amplify: { allowed: amplifyAllowed },
 				user: { capabilities },
 			},
 		] );
 }
 
-async function renderSidebar( capabilities: string[] ) {
-	mockAgency( capabilities );
+async function renderSidebar( capabilities: string[], amplifyAllowed = true ) {
+	mockAgency( capabilities, amplifyAllowed );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -69,6 +73,7 @@ describe( '<AgencySidebar>', () => {
 		] );
 
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Team' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
@@ -80,6 +85,7 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
 		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Plugins/ } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Team' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Agency' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Marketplace' } ) ).not.toBeInTheDocument();
@@ -92,13 +98,13 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /^Plugins/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps the Earn menu but drops the sub-items the user cannot reach', async () => {
 		await renderSidebar( [ 'a4a_read_migrations' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Overview' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Migrations' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
@@ -152,5 +158,38 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
 		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Amplify as an external link when the agency and the user have access', async () => {
+		await renderSidebar( [ 'a4a_read_amplify' ] );
+
+		const amplify = screen.getByRole( 'link', { name: /Amplify/ } );
+		expect( amplify ).toBeVisible();
+		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
+		expect( amplify ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	test( 'hides Amplify when the user lacks the amplify capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides Amplify when the agency is not allowed to use it', async () => {
+		await renderSidebar( [ 'a4a_read_amplify' ], false );
+
+		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Developer tools when the user holds the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_learn' ] );
+
+		expect( screen.getByRole( 'link', { name: 'Developer tools' } ) ).toBeVisible();
+	} );
+
+	test( 'hides Developer tools when the user lacks the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: 'Developer tools' } ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
@@ -187,6 +188,10 @@ const LayoutLoggedOut = ( {
 		[ 'themes', 'theme' ].includes( sectionName ) &&
 		isEnabled( 'themes/showcase-modern' ) &&
 		! isLoggedIn;
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -336,7 +341,11 @@ const LayoutLoggedOut = ( {
 
 				{ [ 'plugins' ].includes( sectionName ) && (
 					<>
-						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+						<GlobalFooter
+							currentRoute={ currentRoute }
+							isLoggedIn={ isLoggedIn }
+							colorway={ footerColorway }
+						/>
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
 							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
@@ -345,7 +354,11 @@ const LayoutLoggedOut = ( {
 				) }
 
 				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) && (
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+					<GlobalFooter
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+						colorway={ footerColorway }
+					/>
 				) }
 
 				{ ! isLoggedIn &&

@@ -116,11 +116,13 @@ export default function GroupedEmptyView( {
 					/>
 				</button>
 				<div id={ writingSuggestionListId } hidden={ ! isWritingExpanded }>
+					{ /* `visible` keeps the collapsed chips out of what Agenttic reports as rendered. */ }
 					<Suggestions
 						className="agents-manager-writing-suggestions__list"
 						layout="vertical"
 						translateY={ 0 }
 						suggestions={ writingSuggestions }
+						visible={ isWritingExpanded }
 						onSubmit={ handleSuggestionClick }
 					/>
 				</div>

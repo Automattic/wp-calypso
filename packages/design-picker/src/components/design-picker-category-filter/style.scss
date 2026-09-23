@@ -98,32 +98,6 @@
 		font-weight: 500;
 	}
 
-	.design-picker__tier-filter {
-		height: 40px; // match button height
-		margin-bottom: 6px;
-	}
-
-	.design-picker__design-your-own-button {
-		flex-shrink: 0;
-		margin-bottom: 6px;
-	}
-
-	.design-picker__design-with-ai {
-		display: none;
-		margin-bottom: 0;
-		padding-top: 6px; // vertically align with filters
-		padding-bottom: 6px;
-		
-		@include break-large {
-			display: block;
-		}
-	}
-
-	.design-picker__design-your-own-button-without-categories {
-		margin-left: auto;
-		margin-top: -60px;
-	}
-
 	.design-picker__category-filter.responsive-toolbar-group__dropdown {
 		width: 100%;
 		padding-bottom: 0;

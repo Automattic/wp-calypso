@@ -99,10 +99,12 @@ export function getFields(
 	visibleFields: string[] = WIDE_FIELDS,
 	locale: string,
 	sites: Site[] = [],
-	siteFilter?: number
+	siteFilter?: number,
+	canFilterBySite: boolean = true
 ): Fields< Receipt > {
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 
 	return [
 		{
@@ -121,7 +123,7 @@ export function getFields(
 							operators: [ 'isAny' as Operator ],
 							...( siteFilter && { isPrimary: true } ),
 						},
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Receipt } ) => {
 				return getReceiptSiteIds( item );
@@ -374,7 +376,7 @@ function renderServiceNameDescription( receipt: Receipt ) {
 				__( '%1$s (%2$d requests/month)' ),
 				label.replace( /\s*\(.*$/, '' ).trim(),
 				500 * parseInt( String( receiptItem.licensed_quantity ) )
-		  )
+			)
 		: label;
 
 	return (
@@ -467,12 +469,12 @@ function renderReceiptAmount( receipt: Receipt, taxName?: string ) {
 				/* translators: taxAmount is a localized price like $12.34, taxName is a tax name like VAT or GST */
 				__( '(includes %(taxAmount)s %(taxName)s)' ),
 				{ taxAmount, taxName }
-		  )
+			)
 		: sprintf(
 				/* translators: %s is a localized price, like $12.34 */
 				__( '(includes %s tax)' ),
 				taxAmount
-		  );
+			);
 
 	return (
 		<VStack spacing={ 1 }>

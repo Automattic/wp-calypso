@@ -157,12 +157,6 @@ export function generateAdminSections(
 			icon: 'money',
 		},
 		{
-			title: __( 'Learn how to market my site', __i18n_text_domain__ ),
-			link: `/marketing/tools/${ siteSlug }`,
-			synonyms: [ 'marketing', 'brand', 'logo', 'seo', 'tools', 'traffic' ],
-			icon: 'speaker',
-		},
-		{
 			title: __( "Manage my site's users" ),
 			description: __( 'Invite new users and edit existing ones.', __i18n_text_domain__ ),
 			link: `/people/team/${ siteSlug }`,

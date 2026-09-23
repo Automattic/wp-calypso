@@ -1,7 +1,7 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
+import type { Purchase } from '@automattic/api-core';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 type StoredCardEndpointResponse = unknown;
 
@@ -180,7 +180,7 @@ function getParamsForApi( {
 		paygate_token: cardToken,
 		...( useForAllSubscriptions === true ? { use_for_existing: true } : {} ),
 		...( useForAllSubscriptions === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
-		...( purchase ? { purchaseId: purchase.id } : {} ),
+		...( purchase ? { purchaseId: purchase.ID } : {} ),
 		...( eventSource ? { event_source: eventSource } : {} ),
 		postal_code: postalCode ?? '',
 		country_code: countryCode,

@@ -55,7 +55,7 @@ function StatsLineChart( {
 					month: 'short',
 					day: 'numeric',
 				} );
-		  };
+			};
 
 	const formatValue = ( value: number ) => {
 		return value < 100_000

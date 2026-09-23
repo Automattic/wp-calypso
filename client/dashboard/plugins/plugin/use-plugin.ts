@@ -69,9 +69,8 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
-	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
-		marketplacePluginsQuery()
-	);
+	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } =
+		useQuery( marketplacePluginsQuery() );
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery( {
 		...wpOrgPluginQuery( pluginSlug, locale ),
@@ -82,7 +81,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		queries: hasPluginSlug
 			? Object.keys( sitesPlugins?.sites || {} ).map( ( id ) =>
 					sitePluginQuery( Number( id ), pluginSlug )
-			  )
+				)
 			: [],
 	} );
 	const isLoadingSitePlugins = sitePluginQueryResults.some( ( query ) => query.isLoading );
@@ -183,12 +182,12 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 	return {
 		isLoading: hasPluginSlug
 			? isLoadingSitesPlugins ||
-			  isLoadingSites ||
-			  isLoadingWpOrgPlugin ||
-			  isLoadingMarketplacePlugins ||
-			  isLoadingSitePlugins
+				isLoadingSites ||
+				isLoadingWpOrgPlugin ||
+				isLoadingMarketplacePlugins ||
+				isLoadingSitePlugins
 			: // Report loading while the slug is pending so DataViews doesn't latch an empty state.
-			  isLoadingSitesPlugins || isLoadingSites,
+				isLoadingSitesPlugins || isLoadingSites,
 		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,

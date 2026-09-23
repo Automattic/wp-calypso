@@ -52,7 +52,7 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 				const filtered = options?.exclude?.siteIds?.includes( id )
 					? existing.filter(
 							( s ) => s.timestamp !== proposed.timestamp || s.frequency !== proposed.frequency
-					  )
+						)
 					: existing;
 				const err = validateTimeSlot( proposed, filtered );
 				// Record only the first non-empty error as the representative message.
@@ -75,7 +75,7 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 										( set ) =>
 											JSON.stringify( [ ...set ].sort() ) !==
 											JSON.stringify( [ ...plugins ].sort() )
-								  )
+									)
 								: existingSets;
 							const err = validatePlugins( plugins, filteredSets );
 							// Same approach as time collisions: capture the first error message only,
@@ -84,7 +84,7 @@ export function useScheduleCollisions( inputs?: Partial< Inputs >, options?: Opt
 								pluginError = err;
 							}
 							return Boolean( err );
-					  } );
+						} );
 
 			return {
 				isLoading,

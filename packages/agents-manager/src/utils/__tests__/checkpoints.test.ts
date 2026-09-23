@@ -1,4 +1,7 @@
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+jest.mock( '../tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: jest.fn( () => 'call-1' ),
+} ) );
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 	dispatch: jest.fn(),
@@ -316,7 +319,7 @@ describe( 'restoreCheckpoint', () => {
 		jest.requireMock( '@wordpress/data' ).dispatch.mockReturnValue( undefined );
 
 		await expect( restoreCheckpoint( 'toolu_1' ) ).rejects.toThrow(
-			'Global styles are unavailable to restore into.'
+			'Global styles are unavailable to edit.'
 		);
 	} );
 
@@ -335,5 +338,94 @@ describe( 'restoreCheckpoint', () => {
 			'Global styles are unavailable to restore into.'
 		);
 		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'withCheckpoint', () => {
+	const LOGO_WRITE = { toolId: 'big_sky__set_site_logo', keys: [ 'logo' ], summary: 'Logo set.' };
+
+	it( 'snapshots under the tool call id before writing, and returns the write', async () => {
+		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+		let checkpointsAtWrite = 0;
+
+		const result = await withCheckpoint( LOGO_WRITE, () => {
+			checkpointsAtWrite = getCheckpoints().length;
+			return 'written';
+		} );
+
+		expect( result ).toBe( 'written' );
+		expect( checkpointsAtWrite ).toBe( 1 );
+		expect( getCheckpoints() ).toEqual( [
+			expect.objectContaining( {
+				id: 'call-1',
+				checkpointKeys: [ 'logo' ],
+				toolId: 'big_sky__set_site_logo',
+				summary: 'Logo set.',
+				logoBeforeUpdate: SITE_RECORD.site_logo,
+			} ),
+		] );
+	} );
+
+	it( 'keys the snapshot by the call id it is given, without reading the history', async () => {
+		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( { ...LOGO_WRITE, toolCallId: 'call-2' }, () => {} );
+
+		expect( hasCheckpoint( 'call-2' ) ).toBe( true );
+		expect(
+			jest.requireMock( '../tool-call-history' ).getToolCallIdFromConversationHistory
+		).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the first snapshot when the same call writes again', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+
+		await withCheckpoint( LOGO_WRITE, () => {} );
+		getEditedEntityRecord.mockReturnValue( { site_logo: 99 } );
+		await withCheckpoint( LOGO_WRITE, () => {} );
+
+		expect( getCheckpoint( 'call-1' )?.logoBeforeUpdate ).toBe( SITE_RECORD.site_logo );
+	} );
+
+	it( 'writes without a checkpoint when the tool call id is unknown', async () => {
+		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+		jest
+			.requireMock( '../tool-call-history' )
+			.getToolCallIdFromConversationHistory.mockReturnValueOnce( null );
+		const write = jest.fn();
+
+		await withCheckpoint( LOGO_WRITE, write );
+
+		expect( write ).toHaveBeenCalled();
+		expect( getCheckpoints() ).toEqual( [] );
+	} );
+
+	it.each( [
+		[
+			'throws',
+			() => {
+				throw new Error( 'The site record is unavailable to edit.' );
+			},
+		],
+		[ 'rejects', () => Promise.reject( new Error( 'The site record is unavailable to edit.' ) ) ],
+	] )( 'drops the checkpoint and rethrows when the write %s', async ( _case, write ) => {
+		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+
+		await expect( withCheckpoint( LOGO_WRITE, write ) ).rejects.toThrow(
+			'The site record is unavailable to edit.'
+		);
+		expect( hasCheckpoint( 'call-1' ) ).toBe( false );
+	} );
+
+	it( 'keeps the first snapshot when a repeat write throws', async () => {
+		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		await withCheckpoint( LOGO_WRITE, () => {} );
+
+		await expect(
+			withCheckpoint( LOGO_WRITE, () => {
+				throw new Error( 'The site record is unavailable to edit.' );
+			} )
+		).rejects.toThrow();
+		expect( hasCheckpoint( 'call-1' ) ).toBe( true );
 	} );
 } );

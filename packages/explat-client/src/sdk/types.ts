@@ -1,11 +1,7 @@
 export type Range = [ number, number ];
 
 export type FeatureValue =
-	| string
-	| number
-	| boolean
-	| FeatureValue[]
-	| { [ key: string ]: FeatureValue };
+	string | number | boolean | FeatureValue[] | { [ key: string ]: FeatureValue };
 
 /**
  * Widen literal primitive types to their base type so caller defaults like
@@ -16,20 +12,17 @@ export type FeatureValue =
 export type WidenPrimitives< T > = T extends boolean
 	? boolean
 	: T extends number
-	? number
-	: T extends string
-	? string
-	: T;
+		? number
+		: T extends string
+			? string
+			: T;
 
 export type ValueType = 'string' | 'boolean' | 'number' | 'json';
 
 // Identity slots are explicit per system. There is no generic "user_id" —
 // hashing, dedupe, and Tracks writes need an unambiguous owner.
 export type IdentityAttribute =
-	| 'anon_id'
-	| 'wpcom_user_id'
-	| 'dayone_user_id'
-	| 'pocketcasts_user_id';
+	'anon_id' | 'wpcom_user_id' | 'dayone_user_id' | 'pocketcasts_user_id';
 
 export type ConditionField = IdentityAttribute | 'country' | 'language';
 

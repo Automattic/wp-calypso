@@ -14,9 +14,7 @@ export type DomainsTableBulkSelectionStatus = 'no-domains' | 'some-domains' | 'a
 interface BaseDomainsTableColumn {
 	name: string;
 	label:
-		| string
-		| ( ( count: number, isBulkSelection: boolean, showCount?: boolean ) => string )
-		| null;
+		string | ( ( count: number, isBulkSelection: boolean, showCount?: boolean ) => string ) | null;
 	sortFunctions?: Array<
 		( first: DomainData, second: DomainData, sortOrder: number, sites?: SiteDetails[] ) => number
 	>;
@@ -132,7 +130,7 @@ export const DomainsTableHeader = ( {
 												isBulkSelection ? selectedDomainsCount : domainCount,
 												isBulkSelection,
 												canSelectAnyDomains
-										  )
+											)
 										: column?.label ) }
 								{ column?.name === 'status' && domainsRequiringAttention && (
 									<span className="list-status-cell__bubble">{ domainsRequiringAttention }</span>

@@ -151,7 +151,7 @@ export default function StatsUpsell( {
 												),
 											},
 										}
-								  ) }
+									) }
 						</div>
 						<div className="stats-upsell__features">
 							{ getMainFeatures().map( ( feature, index ) => (
@@ -172,7 +172,7 @@ export default function StatsUpsell( {
 									? translate( 'Upgrade plan' )
 									: translate( 'Upgrade to %(planName)s', {
 											args: { planName: plan.productNameShort },
-									  } ) }
+										} ) }
 							</Button>
 							<Button
 								variant="secondary"

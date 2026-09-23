@@ -21,11 +21,11 @@ export function PatternPreviewPlaceholder( { className, title }: PatternPreviewP
 		? translate( 'Copy pattern', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } )
+			} )
 		: translate( 'Copy', {
 				comment: 'Button label for copying a pattern',
 				textOnly: true,
-		  } );
+			} );
 
 	return (
 		<div

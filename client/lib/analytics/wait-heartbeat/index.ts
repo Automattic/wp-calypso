@@ -7,10 +7,7 @@ import { useInterval } from 'calypso/lib/interval';
  * common, so this is what lets one query compare them.
  */
 export type WaitSurface =
-	| 'marketplace_install'
-	| 'checkout_thank_you_transfer'
-	| 'stepper_processing'
-	| 'theme_upload';
+	'marketplace_install' | 'checkout_thank_you_transfer' | 'stepper_processing' | 'theme_upload';
 
 /** Why a beat fired. A browser that throttles hidden tabs produces only the visibility ones. */
 type BeatTrigger = 'interval' | 'visibility';

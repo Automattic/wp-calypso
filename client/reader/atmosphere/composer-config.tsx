@@ -226,7 +226,7 @@ function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams 
 							root: { uri: mode.replyTo.root.uri, cid: mode.replyTo.root.cid ?? '' },
 							parent: { uri: mode.replyTo.parent.uri, cid: mode.replyTo.parent.cid ?? '' },
 						},
-				  }
+					}
 				: {} ),
 		};
 	}

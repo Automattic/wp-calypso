@@ -1,7 +1,6 @@
 import {
 	getAliasedSiteSubscriptionFeedUrl,
 	getIsSubscribedFromData,
-	getSiteSubscriptionByBlogIdFromData,
 	getSiteSubscriptionByFeedIdFromData,
 	getSubscribedSitesFromData,
 	getOrganizationSiteSubscriptionsFromData,
@@ -85,16 +84,4 @@ export const useSubscribedFeedsInfo = () => {
 	const sites = useSubscribedSites();
 
 	return getFeedsInfo( sites );
-};
-
-export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
-	const { data } = useSiteSubscriptions();
-	const feedFollow = hasId( feedId )
-		? getSiteSubscriptionByFeedIdFromData( data, feedId )
-		: undefined;
-	const follow =
-		feedFollow ??
-		( hasId( blogId ) ? getSiteSubscriptionByBlogIdFromData( data, blogId ) : undefined );
-
-	return !! follow?.organization_id;
 };

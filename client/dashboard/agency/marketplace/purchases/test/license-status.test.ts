@@ -1,0 +1,230 @@
+import {
+	getLicenseDisplayStatus,
+	getLicenseProductName,
+	getLicenseStatus,
+	getLicenseTags,
+	isAutoRenewDisabled,
+	isBundleParent,
+	isChildLicense,
+	isJetpackCrmLicense,
+	isLicenseStatus,
+	isPartnerLicense,
+	isPressableAddonLicense,
+	isPressableLicense,
+	isRecentlyTransferred,
+	isWpcomHostingLicense,
+} from '../license-status';
+import type { JetpackLicense } from '@automattic/api-core';
+
+const baseLicense: JetpackLicense = {
+	license_id: 1,
+	license_key: 'jetpack-backup-t1_abc',
+	product_id: 1,
+	product: 'Jetpack VaultPress Backup',
+	user_id: null,
+	username: null,
+	blog_id: null,
+	siteurl: null,
+	has_downloads: false,
+	issued_at: '2026-01-01 00:00:00',
+	attached_at: null,
+	revoked_at: null,
+	owner_type: 'jetpack_partner_key',
+	quantity: null,
+	parent_license_id: null,
+	meta: null,
+	referral: null,
+};
+
+const license = ( overrides: Partial< JetpackLicense > = {} ): JetpackLicense => ( {
+	...baseLicense,
+	...overrides,
+} );
+
+describe( 'getLicenseStatus', () => {
+	it( 'is unassigned when the license has no site', () => {
+		expect( getLicenseStatus( license() ) ).toBe( 'unassigned' );
+	} );
+
+	it( 'is assigned when the license is attached to a site', () => {
+		expect( getLicenseStatus( license( { attached_at: '2026-01-02 00:00:00' } ) ) ).toBe(
+			'assigned'
+		);
+	} );
+
+	it( 'is revoked even when the license was previously attached', () => {
+		expect(
+			getLicenseStatus(
+				license( { attached_at: '2026-01-02 00:00:00', revoked_at: '2026-01-03 00:00:00' } )
+			)
+		).toBe( 'revoked' );
+	} );
+} );
+
+describe( 'getLicenseDisplayStatus', () => {
+	it( 'shows no assignment status for Pressable add-ons and bundle parents', () => {
+		const addon = license( { license_key: 'pressable-addon-storage_x' } );
+		const bundle = license( { quantity: 5 } );
+		expect( getLicenseDisplayStatus( addon ) ).toBeNull();
+		expect( getLicenseDisplayStatus( bundle ) ).toBeNull();
+	} );
+
+	it( 'still shows revoked for them', () => {
+		const revoked = { revoked_at: '2026-01-03 00:00:00' };
+		expect(
+			getLicenseDisplayStatus( license( { license_key: 'pressable-addon-storage_x', ...revoked } ) )
+		).toBe( 'revoked' );
+		expect( getLicenseDisplayStatus( license( { quantity: 5, ...revoked } ) ) ).toBe( 'revoked' );
+	} );
+
+	it( 'matches the real status for every other license', () => {
+		expect( getLicenseDisplayStatus( license() ) ).toBe( 'unassigned' );
+		expect( getLicenseDisplayStatus( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe(
+			'unassigned'
+		);
+		expect( getLicenseDisplayStatus( license( { attached_at: '2026-01-02 00:00:00' } ) ) ).toBe(
+			'assigned'
+		);
+	} );
+} );
+
+describe( 'isLicenseStatus', () => {
+	it( 'accepts only the known statuses', () => {
+		expect( isLicenseStatus( 'revoked' ) ).toBe( true );
+		expect( isLicenseStatus( 'constructor' ) ).toBe( false );
+		expect( isLicenseStatus( 'active' ) ).toBe( false );
+		expect( isLicenseStatus( undefined ) ).toBe( false );
+		expect( isLicenseStatus( [ 'revoked' ] ) ).toBe( false );
+	} );
+} );
+
+describe( 'license key helpers', () => {
+	it( 'detects bundle parents by quantity', () => {
+		expect( isBundleParent( license( { quantity: 5 } ) ) ).toBe( true );
+		expect( isBundleParent( license( { quantity: 1 } ) ) ).toBe( true );
+		expect( isBundleParent( license( { quantity: 0 } ) ) ).toBe( false );
+		expect( isBundleParent( license() ) ).toBe( false );
+	} );
+
+	it( 'treats user-owned licenses as standard rather than partner licenses', () => {
+		expect( isPartnerLicense( license() ) ).toBe( true );
+		expect( isPartnerLicense( license( { owner_type: null } ) ) ).toBe( true );
+		expect( isPartnerLicense( license( { owner_type: 'user' } ) ) ).toBe( false );
+	} );
+
+	it( 'detects WordPress.com hosting licenses', () => {
+		expect( isWpcomHostingLicense( license( { license_key: 'wpcom-hosting-business_x' } ) ) ).toBe(
+			true
+		);
+		expect( isWpcomHostingLicense( license() ) ).toBe( false );
+	} );
+
+	it( 'detects Pressable licenses and add-ons', () => {
+		expect( isPressableLicense( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe( true );
+		expect( isPressableLicense( license( { license_key: 'jetpack-pressable_x' } ) ) ).toBe( true );
+		expect( isPressableLicense( license( { license_key: 'pressable-addon-storage_x' } ) ) ).toBe(
+			true
+		);
+		expect( isPressableLicense( license() ) ).toBe( false );
+
+		expect(
+			isPressableAddonLicense( license( { license_key: 'pressable-addon-storage_x' } ) )
+		).toBe( true );
+		expect( isPressableAddonLicense( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe(
+			false
+		);
+	} );
+} );
+
+describe( 'getLicenseProductName', () => {
+	it( 'lists every WordPress.com plan under one name, like the classic list', () => {
+		expect(
+			getLicenseProductName(
+				license( { license_key: 'wpcom-hosting-business_x', product: 'WordPress.com Business' } )
+			)
+		).toBe( 'WordPress.com Site' );
+		expect(
+			getLicenseProductName(
+				license( { license_key: 'wpcom-hosting-commerce_x', product: 'WordPress.com Commerce' } )
+			)
+		).toBe( 'WordPress.com Site' );
+	} );
+
+	it( 'leaves other products alone', () => {
+		expect( getLicenseProductName( license() ) ).toBe( 'Jetpack VaultPress Backup' );
+	} );
+} );
+
+describe( 'subscription and bundle helpers', () => {
+	it( 'detects Jetpack CRM products, including Complete', () => {
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-crm_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-complete_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license() ) ).toBe( false );
+	} );
+
+	it( 'flags an active subscription with auto-renew turned off', () => {
+		const subscription = {
+			id: 'sub_1',
+			product_name: 'Hosting',
+			purchase_price: 10,
+			purchase_currency: 'USD',
+			billing_interval_unit: 'month',
+			status: 'active',
+			expiry: null,
+			is_auto_renew_enabled: false,
+			is_refundable: false,
+		};
+		expect( isAutoRenewDisabled( license( { subscription } ) ) ).toBe( true );
+		expect(
+			isAutoRenewDisabled(
+				license( { subscription: { ...subscription, is_auto_renew_enabled: true } } )
+			)
+		).toBe( false );
+		expect(
+			isAutoRenewDisabled( license( { subscription: { ...subscription, status: 'cancelled' } } ) )
+		).toBe( false );
+		expect( isAutoRenewDisabled( license() ) ).toBe( false );
+	} );
+
+	it( 'detects child licenses of a bundle', () => {
+		expect( isChildLicense( license( { parent_license_id: 7 } ) ) ).toBe( true );
+		expect( isChildLicense( license() ) ).toBe( false );
+	} );
+} );
+
+describe( 'getLicenseTags', () => {
+	it( 'returns no tags for a plain license', () => {
+		expect( getLicenseTags( license() ) ).toEqual( [] );
+	} );
+
+	it( 'tags referral and development licenses', () => {
+		expect(
+			getLicenseTags( license( { referral: { id: 1 }, meta: { a4a_is_dev_site: '1' } } ) )
+		).toEqual( [ 'Referral', 'Development' ] );
+	} );
+} );
+
+describe( 'isRecentlyTransferred', () => {
+	const daysAgo = ( days: number ) => {
+		const date = new Date();
+		date.setDate( date.getDate() - days );
+		return date.toISOString();
+	};
+
+	it( 'is true for a while after the old subscription ended', () => {
+		expect(
+			isRecentlyTransferred(
+				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 10 ) } } )
+			)
+		).toBe( true );
+	} );
+
+	it( 'is false once that window has passed, or when nothing was transferred', () => {
+		expect(
+			isRecentlyTransferred(
+				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 100 ) } } )
+			)
+		).toBe( false );
+		expect( isRecentlyTransferred( license() ) ).toBe( false );
+	} );
+} );

@@ -51,10 +51,10 @@ const ConversationsIntro = ( { isInternal = false } ) => {
 									a: <ExternalLink href="http://wp.me/p5PDj3-44u" />,
 								},
 							}
-					  )
+						)
 					: translate(
 							`WordPress posts you've written, followed, or commented on will appear here when they have new comments. Posts with the most recent comments appear on top.`
-					  ) }
+						) }
 			</NoticeBanner>
 		</>
 	);

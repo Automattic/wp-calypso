@@ -42,7 +42,9 @@ export interface AgentUIContextValue {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
-	reportSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+	// What a mounted Suggestions instance renders: `[]` while hidden, `null` on unmount.
+	// The container unions every instance and dedups before calling onSuggestionsRendered.
+	reportSuggestionsRendered?: ( instanceId: string, shown: Suggestion[] | null ) => void;
 
 	// Notice
 	notice?: NoticeConfig;

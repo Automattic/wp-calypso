@@ -305,12 +305,12 @@ const SiteSetupList = ( {
 										useAccordionLayout && isCurrent && showAccordionSelectedTask
 											? () => {
 													setShowAccordionSelectedTask( false );
-											  }
+												}
 											: () => {
 													setShowAccordionSelectedTask( true );
 													setTaskIsManuallySelected( true );
 													setCurrentTaskId( task.id );
-											  }
+												}
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>

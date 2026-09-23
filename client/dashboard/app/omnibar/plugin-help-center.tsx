@@ -22,6 +22,7 @@ import './plugin-help-center.scss';
 type RecordTracksEvent = AnalyticsClient[ 'recordTracksEvent' ];
 
 const AGENTS_MANAGER_NODE_ID = 'agents-manager';
+const HELP_CENTER_NODE_ID = 'help-center';
 const SECONDARY_GROUP_NODE_ID = 'agents-manager-menu-panel-links';
 
 function handleMenuClick(
@@ -88,34 +89,32 @@ function buildAgentsManagerMenuNodes(
 ): OmnibarNode[] {
 	return adminBarNodes
 		.filter( ( node ) => node.group && node.parent === AGENTS_MANAGER_NODE_ID )
-		.map(
-			( group ): OmnibarNode => ( {
-				id: group.id,
-				group: true,
-				// Not keyed on `ab-sub-secondary`: wp-admin marks both groups with it, Calypso shades one.
-				...( group.id === SECONDARY_GROUP_NODE_ID ? { variant: 'secondary' as const } : {} ),
-				children: adminBarNodes
-					.filter( ( node ) => node.parent === group.id && ( node.meta?.route || node.href ) )
-					.map( ( node ): OmnibarNode => {
-						const route = node.meta?.route;
-						const destination = route ?? localizeUrl( node.href );
+		.map( ( group ): OmnibarNode => ( {
+			id: group.id,
+			group: true,
+			// Not keyed on `ab-sub-secondary`: wp-admin marks both groups with it, Calypso shades one.
+			...( group.id === SECONDARY_GROUP_NODE_ID ? { variant: 'secondary' as const } : {} ),
+			children: adminBarNodes
+				.filter( ( node ) => node.parent === group.id && ( node.meta?.route || node.href ) )
+				.map( ( node ): OmnibarNode => {
+					const route = node.meta?.route;
+					const destination = route ?? localizeUrl( node.href );
 
-						return {
-							id: node.id,
-							title: node.meta?.menu_title,
-							icon: adminBarIcon( node.meta?.icon, 'omnibar__help-menu-icon' ),
-							onClick: () =>
-								handleMenuClick(
-									recordTracksEvent,
-									destination,
-									omnibarSiteId,
-									sectionName,
-									! route
-								),
-						};
-					} ),
-			} )
-		);
+					return {
+						id: node.id,
+						title: node.meta?.menu_title,
+						icon: adminBarIcon( node.meta?.icon, 'omnibar__help-menu-icon' ),
+						onClick: () =>
+							handleMenuClick(
+								recordTracksEvent,
+								destination,
+								omnibarSiteId,
+								sectionName,
+								! route
+							),
+					};
+				} ),
+		} ) );
 }
 
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
@@ -177,10 +176,19 @@ export function useHelpCenterPlugin( {
 		};
 	}
 
+	// Older backends send no node; the client-side defaults cover them.
+	// `menu_title` arrives only when the entry point shows a label.
+	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
+	const menuTitle = helpCenterNode?.meta?.menu_title || undefined;
+
 	return {
-		id: 'help-center',
+		id: HELP_CENTER_NODE_ID,
 		label: __( 'Help' ),
-		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
+		title: menuTitle,
+		tooltip: menuTitle,
+		icon: (
+			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
+		),
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

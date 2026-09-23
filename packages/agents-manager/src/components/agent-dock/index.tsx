@@ -8,23 +8,31 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup, cog, columns, comment, drawerRight, heading } from '@wordpress/icons';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+	Navigate,
+	NavigationType,
+	Route,
+	Routes,
+	useLocation,
+	useNavigate,
+	useNavigationType,
+} from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
-import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
-import EditorHelpCenterButton from '../editor-help-center-button';
 import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
@@ -101,7 +109,7 @@ export default function AgentDock( {
 	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	const navigationType = useNavigationType();
 
 	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
 	const agentId = agentConfig!.agentId;
@@ -193,15 +201,14 @@ export default function AgentDock( {
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	// `/zendesk` also needs the unified agent.
-	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
-	// `/support-guides` (the list) also needs the unified agent. Registered even
+	const showZendeskChat = ! isReaderChat && isWooAiProvider();
+	// `/support-guides` (the list) is registered even
 	// without an entry button: unregistering it mid-session (Site Editor
 	// navigation) would yank the route from under a user viewing it, and the
 	// wildcard redirect would reset their chat.
-	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat;
+	const showSupportGuides = ! isReaderChat;
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
-	// so unlike the list it doesn't need the unified agent.
+	// so unlike the list it can open directly from a chat link.
 	const showSupportGuide = ! isReaderChat;
 	// `/history` matches the chat header's history button.
 	const showChatHistory = ! isReaderChat;
@@ -250,11 +257,20 @@ export default function AgentDock( {
 			if ( isReaderChat ) {
 				return;
 			}
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_history_conversation_selected', {
+				is_zendesk: true,
+			} );
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			if ( conversation.session_id ) {
 				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
 			}
+			// After the session is saved, so the event carries the resumed
+			// conversation's `ai_session_id` beside this tab's `tab_id`. It is the
+			// only marker that a session went quiet and was picked up again.
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_history_conversation_selected', {
+				is_zendesk: false,
+			} );
 
 			handleAbort();
 			navigate( '/chat' );
@@ -267,7 +283,7 @@ export default function AgentDock( {
 		const inlineData = getAgentsManagerInlineData();
 		const siteDomain = inlineData?.site?.domain;
 
-		// Every item fires the unified AM event; items whose Big Sky event
+		// Every item fires the shared AM event; items whose Big Sky event
 		// is already live also dual-fire it so those dashboards keep working.
 		const recordMoreOptionsClick = ( menuItem: string ) =>
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_more_options_click', {
@@ -388,6 +404,43 @@ export default function AgentDock( {
 	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
+	// Recorded here rather than from the entry buttons: the dock only renders once
+	// the providers have loaded, so `provider_ids` is always set. `restored` marks
+	// a chat that was already open when the page loaded; `trigger` says who
+	// opened it otherwise (the merchant, or a host through the actions bridge).
+	const wasChatOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasChatOpen = wasChatOpenRef.current;
+		wasChatOpenRef.current = chatIsOpen;
+		if ( chatIsOpen && wasChatOpen !== true ) {
+			const restored = wasChatOpen === null;
+			// Always take, even on restore: a leftover host mark must not
+			// label the next merchant open.
+			const origin = takeActionOrigin( 'open' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened', {
+				restored,
+				trigger: restored ? 'restored' : origin,
+			} );
+		}
+	}, [ chatIsOpen ] );
+
+	// The unified counterpart of Big Sky's two close events (`sidebar_close_click`
+	// docked, `dock_back_button_click` floating), so a close stays visible once
+	// those names stop firing. Watches the persisted state, not `chatIsOpen`:
+	// minimizing hides the chat without closing it and has its own event.
+	// `trigger` says who closed it, as on `chat_opened`.
+	const wasPersistedOpenRef = useRef< boolean | null >( null );
+	useEffect( () => {
+		const wasPersistedOpen = wasPersistedOpenRef.current;
+		wasPersistedOpenRef.current = isPersistedOpen;
+		if ( ! isPersistedOpen && wasPersistedOpen === true ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_closed', {
+				docked: isDocked,
+				trigger: takeActionOrigin( 'close' ),
+			} );
+		}
+	}, [ isPersistedOpen, isDocked ] );
+
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }
@@ -460,7 +513,6 @@ export default function AgentDock( {
 
 	return (
 		<>
-			<EditorHelpCenterButton onClose={ handleClose } onOpenChat={ openChat } />
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
 			{ isChatVisible &&
 				createAgentPortal(
@@ -473,7 +525,13 @@ export default function AgentDock( {
 						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
 							path="*"
-							element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> }
+							element={
+								<Navigate
+									to="/chat"
+									state={ navigationType === NavigationType.Push ? { isNewChat: true } : undefined }
+									replace
+								/>
+							}
 						/>
 					</Routes>
 				) }

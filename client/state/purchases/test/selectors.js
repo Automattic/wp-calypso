@@ -3,6 +3,9 @@ import {
 	getByPurchaseId,
 	getIncludedDomainPurchase,
 	getPurchases,
+	getRawByPurchaseId,
+	getRawSitePurchases,
+	getRawUserPurchases,
 	getSitePurchases,
 	isFetchingSitePurchases,
 	isFetchingUserPurchases,
@@ -139,6 +142,66 @@ describe( 'selectors', () => {
 			expect( result ).toHaveLength( 2 );
 			expect( result[ 0 ].siteId ).toBe( 1234 );
 			expect( result[ 1 ].siteId ).toBe( 1234 );
+		} );
+	} );
+
+	describe( 'raw selectors', () => {
+		// The Redux fetch thunks store the response body untouched, so ids can still
+		// arrive as numeric strings; the raw selectors have to match them anyway.
+		const state = {
+			currentUser: { id: 123 },
+			purchases: {
+				data: [
+					{ ID: '81414', blog_id: '1234', user_id: '123' },
+					{ ID: '82867', blog_id: '1234', user_id: '456' },
+					{ ID: '105103', blog_id: '123', user_id: '123' },
+				],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		};
+
+		describe( 'getRawSitePurchases', () => {
+			test( 'should return the snake_case purchases of a specific site', () => {
+				const result = getRawSitePurchases( state, 1234 );
+
+				expect( result ).toHaveLength( 2 );
+				expect( result.map( ( purchase ) => purchase.ID ) ).toEqual( [ 81414, 82867 ] );
+				expect( result[ 0 ].blog_id ).toBe( 1234 );
+			} );
+		} );
+
+		describe( 'getRawUserPurchases', () => {
+			test( 'should return the snake_case purchases of the current user', () => {
+				const result = getRawUserPurchases( state );
+
+				expect( result.map( ( purchase ) => purchase.ID ) ).toEqual( [ 81414, 105103 ] );
+			} );
+
+			test( 'should return null until the user purchases have loaded', () => {
+				expect(
+					getRawUserPurchases( {
+						...state,
+						purchases: { ...state.purchases, hasLoadedUserPurchasesFromServer: false },
+					} )
+				).toBeNull();
+			} );
+		} );
+
+		describe( 'getRawByPurchaseId', () => {
+			test( 'should return a snake_case purchase by its id', () => {
+				expect( getRawByPurchaseId( state, 82867 ) ).toMatchObject( {
+					ID: 82867,
+					blog_id: 1234,
+				} );
+			} );
+
+			test( 'should return undefined when no purchase matches', () => {
+				expect( getRawByPurchaseId( state, 999 ) ).toBeUndefined();
+			} );
 		} );
 	} );
 

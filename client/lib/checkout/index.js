@@ -1,2 +1,2 @@
 export { getCreditCardType } from './validation';
-export { maskField, unmaskField } from './masking';
+export { maskField } from './masking';

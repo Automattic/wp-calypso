@@ -3,7 +3,6 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { pollUntil, PollTimeoutError } from './poll-until';
 
-export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
 /**
@@ -49,13 +48,6 @@ type BigSkyPluginStatus = {
 	remote_option_ready?: boolean;
 };
 
-export function isBuildWowEnabled(
-	queryParams: URLSearchParams,
-	isAutomattician = false
-): boolean {
-	return isAutomattician && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
-}
-
 export function getBuildWowSiteIdentifier( {
 	siteSlug,
 	siteId,
@@ -92,7 +84,7 @@ export function getBuildWowSiteSpecUrl( {
 	prompt?: string | null;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
-		build_wow: BUILD_WOW_QUERY_VALUE,
+		build_wow: '1',
 		...( siteSlug ? { siteSlug } : {} ),
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
@@ -111,7 +103,8 @@ export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean
 export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
-	graph?: BuildWowGraph
+	graph?: BuildWowGraph,
+	blueprintId?: string
 ): Promise< BuildWowResponse > {
 	return wpcom.req.post(
 		{
@@ -124,6 +117,9 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
+			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
+			// the server otherwise refuses as somebody's established site.
+			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
 		}
 	);
 }

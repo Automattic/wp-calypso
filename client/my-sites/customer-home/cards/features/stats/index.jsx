@@ -70,7 +70,7 @@ export const StatsV2 = ( {
 					'No stats to display yet. Publish or share a post to get some traffic to your site.'
 				),
 				4
-		  );
+			);
 	const renderChart = ! isSiteUnlaunched && ! isLoading && views > 0;
 
 	return (

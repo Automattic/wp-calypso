@@ -93,7 +93,7 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 									( [ , value ] ) => value !== null
 								)
 							),
-					  }
+						}
 					: ability.meta,
 			} ) ) as AgenticAbility[];
 		},
@@ -139,7 +139,7 @@ async function createWrappedContextProvider(
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-				  }
+					}
 				: pluginContext;
 
 			const externalEntries = getExternalContextEntries();
@@ -200,8 +200,8 @@ async function createDefaultContextProvider(
 			// and `siteUrl` here so the orchestrator knows which post the
 			// reader is viewing without every host wiring its own provider.
 			const hostData = isReaderChatAgent( agentId )
-				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-						.agentsManagerData ?? {}
+				? ( ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {} )
 				: {};
 			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
 			const siteEditorActions = getSiteEditorActions();

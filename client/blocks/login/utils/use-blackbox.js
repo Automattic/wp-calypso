@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getBlackboxApiKey, loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { setChallengeRunning } from 'calypso/blocks/login/utils/challenge-gate';
 
 // Give the SDK a short window to synchronously or near-synchronously start a challenge
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
@@ -17,9 +18,10 @@ let hasConfiguredOnce = false;
  * @param {Object}  options
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
  * @param {boolean} options.enabled Whether Blackbox is active for this surface.
+ * @param {string}  [options.apiKey] Public key for this surface.
  * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
-export function useBlackbox( { containerRef, enabled } ) {
+export function useBlackbox( { containerRef, enabled, apiKey } ) {
 	const isEnabled = enabled;
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
@@ -46,11 +48,16 @@ export function useBlackbox( { containerRef, enabled } ) {
 	}, [ containerRef, isEnabled ] );
 
 	useEffect( () => {
-		if ( ! isEnabled ) {
+		const syncChallengeState = ( active ) => {
+			setChallengeRunning( active );
+			setIsChallengeActive( active );
+		};
+
+		if ( ! isEnabled || ! apiKey ) {
 			// Covers the surface being suspended after a challenge appeared: drop
 			// all blocking state so the form isn't wedged when it re-enables.
 			setIsLoading( false );
-			setIsChallengeActive( false );
+			syncChallengeState( false );
 			setHasChallengeContent( false );
 			return;
 		}
@@ -80,7 +87,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 			}
 		};
 
-		loadBlackboxSdk().then( () => {
+		loadBlackboxSdk( apiKey ).then( () => {
 			if ( cancelled ) {
 				return;
 			}
@@ -92,7 +99,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 
 			try {
 				window.Blackbox.configure( {
-					apiKey: getBlackboxApiKey(),
+					apiKey,
 					challengeContainer: containerRef.current,
 					// Fill the login form column so the challenge lines up with the
 					// input above and the full-width Continue button below.
@@ -105,14 +112,14 @@ export function useBlackbox( { containerRef, enabled } ) {
 					onError: ( error ) => {
 						if ( ! cancelled && error?.method === 'challenge' ) {
 							stopLoading();
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;
 							stopLoading();
-							setIsChallengeActive( true );
+							syncChallengeState( true );
 						}
 					},
 					onChallengeComplete: () => {
@@ -120,7 +127,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 					onChallengeFailure: () => {
@@ -128,7 +135,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 				} );
@@ -151,8 +158,9 @@ export function useBlackbox( { containerRef, enabled } ) {
 		return () => {
 			cancelled = true;
 			clearPendingTimeouts();
+			setChallengeRunning( false );
 		};
-	}, [ containerRef, isEnabled ] );
+	}, [ apiKey, containerRef, isEnabled ] );
 
 	return { isChallengeActive, isLoading, hasChallengeContent };
 }

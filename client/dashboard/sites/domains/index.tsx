@@ -1,7 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
@@ -18,8 +17,10 @@ import {
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
+	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
 	DEFAULT_LAYOUTS,
@@ -36,6 +37,7 @@ function getDomainId( domain: DomainSummary ) {
 }
 
 function SiteDomains() {
+	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
@@ -58,7 +60,7 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, sites: [ site ] } );
+	const actions = useActions( { user, sites: [ site ], domains: siteDomains } );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
@@ -76,7 +78,11 @@ function SiteDomains() {
 		queryParams: searchParams,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( siteDomains, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
+		siteDomains,
+		view,
+		fields
+	);
 
 	// Hide actions column when no domain has eligible actions.
 	const hasEligibleActions = siteDomains.some( ( item ) =>
@@ -91,6 +97,12 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
+						{ ! hasRedirect && pendingDomain && (
+							<PendingPrimaryDomainNotice
+								domainName={ pendingDomain.domain }
+								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
+							/>
+						) }
 						{ ! hasRedirect && ! pendingDomain && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }

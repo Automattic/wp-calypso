@@ -12,7 +12,7 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
-import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
+import { useIsSeenVisible } from 'calypso/reader/data/seen-posts';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -42,7 +42,7 @@ class ReaderPostCard extends Component {
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		teams: PropTypes.array,
-		isSeenEnabled: PropTypes.bool,
+		isSeenVisible: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -179,7 +179,7 @@ class ReaderPostCard extends Component {
 			'is-photo': isPostPhoto,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-seen': this.props.isSeenEnabled && post?.is_seen,
+			'is-seen': this.props.isSeenVisible,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
 		} );
@@ -323,7 +323,7 @@ export default function ReaderPostCardContainer( props ) {
 	const { data: fetchedFeed } = useFeedQuery( feedId );
 	const feed = props.feed ?? fetchedFeed;
 	const blogId = props.postKey?.blogId ?? props.post?.site_ID ?? feed?.blog_ID;
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
+	const isSeenVisible = useIsSeenVisible( { feedId, blogId, post: props.post } );
 
-	return <ConnectedReaderPostCard { ...props } feed={ feed } isSeenEnabled={ isSeenEnabled } />;
+	return <ConnectedReaderPostCard { ...props } feed={ feed } isSeenVisible={ isSeenVisible } />;
 }

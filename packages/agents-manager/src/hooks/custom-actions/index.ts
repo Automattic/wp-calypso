@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { markActionOrigin } from '../../utils/action-origin';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -11,8 +12,10 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import { getTabId } from '../../utils/tab-id';
 import {
 	BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
@@ -32,6 +35,37 @@ function recordGuardedBigSkyTracksEvent(
 	}
 
 	recordBigSkyTracksEvent( eventName, props );
+}
+
+/** Tracks values are lowercase with underscores; hosts pass free text like "WooCommerce AI". */
+function toTracksValue( value: unknown ): string {
+	const normalized =
+		typeof value === 'string'
+			? value
+					.trim()
+					.toLowerCase()
+					.replace( /[^a-z0-9]+/g, '_' )
+					.replace( /^_|_$/g, '' )
+			: '';
+	return normalized || 'none';
+}
+
+/**
+ * Bridge-facing context publisher: records that a host handed the chat
+ * something to talk about, so the hand-off is a step in the journey.
+ */
+function publishExternalContextEntry(
+	entry: Parameters< typeof setExternalContextEntry >[ 0 ]
+): void {
+	setExternalContextEntry( entry );
+	if ( ! entry?.id ) {
+		return;
+	}
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_context_published', {
+		source: toTracksValue( entry.source ),
+		type: toTracksValue( entry.type ),
+		delivery: toTracksValue( entry.delivery || 'next-message' ),
+	} );
 }
 
 /**
@@ -116,6 +150,17 @@ export function useSetupCustomActions( {
 			// concurrent one and clobber it.
 			if ( shouldOpen && isMinimized ) {
 				setIsMinimized( false );
+			}
+
+			// Mark any host call that will make the chat visible, including an
+			// un-minimize: `isOpen` stays true there, but the dock still records
+			// `chat_opened` because `chatIsOpen` flips, and that event must not
+			// fall through to `trigger=user`.
+			if ( shouldOpen && ( ! isOpen || isMinimized ) ) {
+				markActionOrigin( 'open', 'host' );
+			}
+			if ( ! shouldOpen && isOpen ) {
+				markActionOrigin( 'close', 'host' );
 			}
 
 			// Open state is unchanged; nothing more to persist.
@@ -234,13 +279,14 @@ export function useSetupCustomActions( {
 		isChatVisible: getIsChatVisible,
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
+		getTabId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
-		setContextEntry: setExternalContextEntry,
+		setContextEntry: publishExternalContextEntry,
 		removeContextEntry: removeExternalContextEntry,
 		setContextCard: setExternalContextCard,
 		removeContextCard: removeExternalContextCard,
@@ -253,7 +299,7 @@ export function useSetupCustomActions( {
 		broadcastsAgentActivity: true,
 	} );
 
-	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.
+	// Hosts listen for `agents-manager-ready` to invoke actions without polling.
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 	}, [] );

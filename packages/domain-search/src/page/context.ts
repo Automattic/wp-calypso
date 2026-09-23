@@ -6,7 +6,11 @@ import {
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
+import { useEvent } from '@wordpress/compose';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
@@ -53,6 +57,9 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		bundleSuggestion: ( query: string ) => bundleSuggestionQuery( query ),
 		bundleTriggers: ( query: string ) => bundleTriggersQuery( query ),
 		bundleForDomain: ( fqdn: string ) => bundleForDomainQuery( fqdn ),
+		namePulseSuggestions: ( params ) => namePulseSuggestionsQuery( params ),
+		namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
+		namePulseTlds: () => namePulseTldsQuery(),
 	},
 	cart: {
 		items: [],
@@ -77,6 +84,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		allowedTlds: [],
 		numberOfDomainsResultsPerPage: 10,
 		showBundleSuggestions: false,
+		showNamePulseSearch: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -140,10 +148,38 @@ export const useDomainSearchContextValue = ( {
 		};
 	}, [ config ] );
 
+	// The search input debounces setQuery, and useDebounce cancels the pending
+	// call whenever the callback identity changes. Consumers rebuild `events`
+	// and `cart` on every render, so a setQuery recreated with the memo below
+	// would drop the query typed just before an unrelated re-render.
+	const setQuery = useEvent( ( query: string ) => {
+		const normalizedQuery = query
+			.trim()
+			.toLowerCase()
+			.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+			.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+		if ( normalizedQuery ) {
+			normalizedEvents.onQueryChange( normalizedQuery );
+		}
+	} );
+
 	return useMemo( () => {
 		const allowedTlds = normalizedConfig.allowedTlds?.length
 			? normalizedConfig.allowedTlds
 			: undefined;
+
+		// One params object for the plain suggestions request and the wrapped
+		// with_bundles request: the backend anchors a bare-term bundle on its own
+		// suggestion list (DOMAINS-2238), so both requests must see the same list.
+		const suggestionParams = {
+			quantity: 30,
+			vendor: normalizedConfig.vendor,
+			tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
+			exact_sld_matches_only: filter.exactSldMatchesOnly,
+			include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
+			site_slug: currentSiteUrl,
+		};
 
 		return {
 			...DEFAULT_CONTEXT_VALUE,
@@ -151,14 +187,7 @@ export const useDomainSearchContextValue = ( {
 			config: normalizedConfig,
 			queries: {
 				domainSuggestions: ( query ) => ( {
-					...domainSuggestionsQuery( query, {
-						quantity: 30,
-						vendor: normalizedConfig.vendor,
-						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
-						exact_sld_matches_only: filter.exactSldMatchesOnly,
-						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
-						site_slug: currentSiteUrl,
-					} ),
+					...domainSuggestionsQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -175,14 +204,14 @@ export const useDomainSearchContextValue = ( {
 					refetchOnWindowFocus: false,
 				} ),
 				bundleSuggestion: ( query ) => ( {
-					...bundleSuggestionQuery( query ),
+					...bundleSuggestionQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
 				bundleTriggers: ( query ) => ( {
-					...bundleTriggersQuery( query ),
+					...bundleTriggersQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -206,6 +235,17 @@ export const useDomainSearchContextValue = ( {
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
+				namePulseSuggestions: ( params ) => ( {
+					...namePulseSuggestionsQuery( params ),
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
+				namePulseAvailability: ( domainNames ) => namePulseAvailabilityQuery( domainNames ),
+				namePulseTlds: () => ( {
+					...namePulseTldsQuery(),
+					refetchOnMount: false,
+					refetchOnWindowFocus: false,
+				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
 					select: ( data ) => {
@@ -226,17 +266,7 @@ export const useDomainSearchContextValue = ( {
 			closeFullCart,
 			openFullCart,
 			query: externalQuery ?? '',
-			setQuery: ( query ) => {
-				const normalizedQuery = query
-					.trim()
-					.toLowerCase()
-					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
-					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
-
-				if ( normalizedQuery ) {
-					normalizedEvents.onQueryChange( normalizedQuery );
-				}
-			},
+			setQuery,
 			slots,
 			currentSiteUrl,
 			filter,
@@ -254,6 +284,7 @@ export const useDomainSearchContextValue = ( {
 		closeFullCart,
 		openFullCart,
 		externalQuery,
+		setQuery,
 		cart,
 		normalizedEvents,
 		slots,

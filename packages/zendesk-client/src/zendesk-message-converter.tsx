@@ -81,6 +81,9 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 				);
 			}
 			break;
+		case 'file-placeholder':
+			messageContent = `📎 ${ message.altText || __( 'Attachment', __i18n_text_domain__ ) }`;
+			break;
 		default:
 			// We don't support it yet return generic message.
 			messageContent = __( 'Message content not supported', __i18n_text_domain__ );

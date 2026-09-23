@@ -29,14 +29,14 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 					uri: item.reply_parent.uri,
 					cid: item.reply_parent.cid,
 					author: { handle: item.reply_parent.author.handle },
-			  }
+				}
 			: null,
 		reply_root: item.reply_root
 			? {
 					uri: item.reply_root.uri,
 					cid: item.reply_root.cid,
 					author: { handle: item.reply_root.author.handle },
-			  }
+				}
 			: null,
 		reason: item.reason
 			? {
@@ -46,7 +46,7 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 						handle: item.reason.by.handle,
 						display_name: item.reason.by.display_name,
 					},
-			  }
+				}
 			: null,
 		counts: item.counts,
 		viewer: item.viewer,

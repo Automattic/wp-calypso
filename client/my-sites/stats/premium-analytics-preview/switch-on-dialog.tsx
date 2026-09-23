@@ -10,19 +10,19 @@ import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
 	premiumAnalyticsStatusQueryKey,
 } from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
-import { trackPremiumAnalyticsPreviewEvent } from './track-event';
+import { NAVIGATION_DELAY, trackPremiumAnalyticsPreviewEvent } from './track-event';
 
 import './style.scss';
 
 type SwitchOnDialogProps = {
 	siteId: number | null;
-	/** The new Traffic tab, where the reader lands once the write succeeds. */
+	/** The new Traffic and Insights tabs, where the reader lands once the write succeeds. */
 	dashboardUrl: string;
 	onClose: () => void;
 };
 
 /**
- * Confirms switching the new Traffic tab on from the modules menu, then takes the reader there.
+ * Confirms switching the preview on from the modules menu, then takes the reader there.
  *
  * Opened from a menu, the invitation has none of the banner's framing, so this dialog carries
  * it: what the reader gets, and that they are about to leave the page. The dashboard only exists
@@ -32,8 +32,6 @@ type SwitchOnDialogProps = {
  * @param props.dashboardUrl Where to go once it is on.
  * @param props.onClose Called when the reader leaves without switching on.
  */
-// Long enough for the Tracks beacon to leave before the page does; the Stats notices use the same.
-const NAVIGATION_DELAY = 250;
 
 export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: SwitchOnDialogProps ) {
 	const translate = useTranslate();
@@ -105,7 +103,7 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 	return (
 		<Modal
 			className="stats-premium-analytics-preview-dialog"
-			title={ translate( 'Switch on the new Traffic tab?' ) }
+			title={ translate( 'Switch on the new Traffic and Insights tabs?' ) }
 			onRequestClose={ cancel }
 			// Nothing to walk away from halfway through a write that is about to change the answer.
 			isDismissible={ ! isBusy }
@@ -126,7 +124,7 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 			{ hasFailed && (
 				<p className="stats-premium-analytics-preview-dialog__error" role="alert">
 					{ translate(
-						'We couldn’t switch on the new Traffic tab. Please try again — if it keeps happening, {{link}}get in touch with support{{/link}}.',
+						'We couldn’t switch on the new Traffic and Insights tabs. Please try again — if it keeps happening, {{link}}get in touch with support{{/link}}.',
 						{
 							components: {
 								link: (

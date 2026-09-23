@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../../app/hooks/use-date-range';
 import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-timezone';
-import { useLocale } from '../../../app/locale';
+import { useIntlLocale } from '../../../app/locale';
 import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -21,7 +21,7 @@ export default function AgencySiteActivity() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { gmtOffset, timezoneString } = useSiteTimezoneWithJetpackFallback( site );
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const searchParams = agencySiteActivityRoute.useSearch();
 
 	// Activity has no auto-refresh, but the shared DataViews props require this state.

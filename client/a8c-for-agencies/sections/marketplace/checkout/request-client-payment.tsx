@@ -27,8 +27,8 @@ import {
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
+import { useUploadLogo } from 'calypso/a8c-for-agencies/data/partner-directory/use-upload-logo';
 import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-utils';
-import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -101,7 +101,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const { onClearCart } = useShoppingCart();
 
 	const onEmailChange = ( value: string ) => {
-		setEmail( value );
+		setEmail( value.trim() );
 		if ( validationError.email ) {
 			setValidationError( { email: undefined } );
 		}
@@ -315,11 +315,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 										[ NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY ]: email,
 										[ NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY ]: referral.checkout_url,
 										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
-								  } )
+									} )
 								: addQueryArgs( A4A_FEEDBACK_LINK, {
 										args: { email },
 										type: FeedbackType.ReferralCompleted,
-								  } )
+									} )
 						);
 						setEmail( '' );
 						setMessage( '' );
@@ -341,7 +341,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 													),
 												},
 											}
-									  )
+										)
 									: error.message
 							)
 						);

@@ -132,6 +132,44 @@ describe( '<BillingHistory>', () => {
 			expect( siteField.filterBy ).toBe( false );
 		} );
 
+		test( 'does not offer a site filter when the host scopes the screen to one site', () => {
+			const fields = getFields(
+				[ receiptForSiteA ],
+				[],
+				[ 'date', 'service' ],
+				LOCALE,
+				[ siteA, siteB ],
+				siteA.ID,
+				false
+			);
+			const siteField = fields.find( ( field ) => field.id === 'site' )!;
+
+			expect( siteField.filterBy ).toBe( false );
+		} );
+
+		test( 'a hidden site filter still applies to the data', () => {
+			const fields = getFields(
+				[ receiptForSiteA, receiptForSiteB ],
+				[],
+				[ 'date', 'service' ],
+				LOCALE,
+				[ siteA, siteB ],
+				siteA.ID,
+				false
+			);
+
+			const { data } = filterSortAndPaginate(
+				[ receiptForSiteA, receiptForSiteB ],
+				{
+					type: 'table',
+					filters: [ { field: 'site', operator: 'isAny', value: [ '1' ] } ],
+				},
+				fields
+			);
+
+			expect( data ).toEqual( [ receiptForSiteA ] );
+		} );
+
 		test( 'filtering by site only keeps receipts with a matching line item', () => {
 			const fields = getFields(
 				[ receiptForSiteA, receiptForSiteB ],

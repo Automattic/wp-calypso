@@ -101,7 +101,7 @@ export default function DomainOnly( {
 												},
 											}
 										),
-								  ]
+									]
 								: undefined
 						}
 						href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }

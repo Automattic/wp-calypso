@@ -107,6 +107,15 @@ function showAppWindow() {
 		}, 10 );
 	} );
 
+	// The window's own webContents renders the title bar, so Electron gives it the keyboard
+	// every time the window is activated. Hand it to the content view instead, otherwise the
+	// user cannot type anywhere until the app restarts. See DOTAPP-7.
+	mainWindow.on( 'focus', function () {
+		if ( ! mainView.webContents.isDestroyed() ) {
+			mainView.webContents.focus();
+		}
+	} );
+
 	SessionManager.init( mainWindow );
 
 	mainView.webContents.on( 'did-finish-load', function () {
