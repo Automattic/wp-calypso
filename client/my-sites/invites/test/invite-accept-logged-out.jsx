@@ -166,3 +166,38 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
 	} );
 } );
+
+describe( 'InviteAcceptLoggedOut footer links', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetCiabConfigFromGarden.mockReturnValue( null );
+	} );
+
+	test( 'renders the log-in link for users who already have an account', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut invite={ buildInvite() } />
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Already have a WordPress.com account?' ) ).toBeVisible();
+		expect( screen.queryByText( 'Follow by email subscription only.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the email-only subscription link for follower invites with an activation key', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut
+					invite={ { ...buildInvite(), role: 'follower', activationKey: 'abc123' } }
+				/>
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Already have a WordPress.com account?' ) ).toBeVisible();
+		expect( screen.getByText( 'Follow by email subscription only.' ) ).toBeVisible();
+	} );
+} );
