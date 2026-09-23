@@ -17,8 +17,8 @@ function suggestionsFor( query: string ): Response {
 }
 
 /**
- * A page whose network carries the given responses, and whose first row reads
- * the given titles in turn.
+ * A page whose searchbox is pre-filled as a site flow leaves it, whose network
+ * carries the given responses, and whose first row reads the given titles in turn.
  *
  * `waitForResponse` answers with the first carried response that satisfies the
  * predicate, and times out straight away when none does. The last title stands
@@ -32,6 +32,7 @@ function searchPage( {
 	titles?: string[];
 } ) {
 	const searchbox = {
+		inputValue: jest.fn( async () => SITE_SLUG ),
 		fill: jest.fn( async () => undefined ),
 		press: jest.fn( async () => undefined ),
 	};
@@ -90,7 +91,9 @@ afterEach( () => {
 } );
 
 describe( 'DomainSearchComponent.search', () => {
-	test( 'types the keyword without waiting for a pre-filled search to render', async () => {
+	test( 'types the keyword without waiting for the pre-filled search to render', async () => {
+		// The typed query used to be dropped while the pre-filled list was loading,
+		// so the search waited for it. The domain search no longer drops it.
 		const { page, listitem, searchbox } = searchPage( {
 			responses: [ suggestionsFor( KEYWORD ) ],
 			titles: [ `${ KEYWORD }.com` ],
@@ -152,6 +155,26 @@ describe( 'DomainSearchComponent.search', () => {
 
 		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
 			`Search for "${ KEYWORD }" exceeded its 60s budget. Last attempt failed with: Timeout 30000ms exceeded.`
+		);
+		expect( reload ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	test( 'names the row the list is stuck on when the budget runs out waiting for it', async () => {
+		const { page, listitem, clock, reload } = searchPage( {
+			responses: [ suggestionsFor( KEYWORD ) ],
+			titles: [ `${ SITE_SLUG }.blog` ],
+		} );
+		const start = Date.now();
+		jest.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
+		// Each read of the list costs most of the budget, so the first attempt
+		// runs out of it between reads rather than between attempts.
+		listitem.getAttribute.mockImplementation( async () => {
+			clock.elapsed += 59 * 1000;
+			return `${ SITE_SLUG }.blog`;
+		} );
+
+		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
+			`Search for "${ KEYWORD }" exceeded its 60s budget. Last attempt failed with: Domain suggestions did not update for "${ KEYWORD }": first suggestion is "${ SITE_SLUG }.blog".`
 		);
 		expect( reload ).toHaveBeenCalledTimes( 2 );
 	} );

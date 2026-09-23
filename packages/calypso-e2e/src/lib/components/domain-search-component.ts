@@ -23,6 +23,9 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 // `reloadAndRetry` runs the search closure three times, inside a 120s test.
 const SEARCH_BUDGET = 60 * 1000;
 
+/** Thrown when a search spends its budget, carrying the last attempt's error. */
+class SearchBudgetError extends Error {}
+
 const normalizeText = ( value?: string | null ): string =>
 	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -126,7 +129,7 @@ export class DomainSearchComponent {
 					lastAttemptError === undefined
 						? ''
 						: ` Last attempt failed with: ${ formatError( lastAttemptError ) }`;
-				throw new Error(
+				throw new SearchBudgetError(
 					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.${ lastAttempt }`
 				);
 			}
@@ -160,7 +163,11 @@ export class DomainSearchComponent {
 			try {
 				await searchDomainAttempt( page );
 			} catch ( error ) {
-				lastAttemptError = error;
+				// A budget error already carries the last attempt's error; recording
+				// it too would nest one budget message inside the next.
+				if ( ! ( error instanceof SearchBudgetError ) ) {
+					lastAttemptError = error;
+				}
 				throw error;
 			}
 		}
@@ -207,6 +214,11 @@ export class DomainSearchComponent {
 				firstTitle = await firstListitem.getAttribute( 'title' );
 				if ( titleMatchesKeyword( firstTitle ) ) {
 					return;
+				}
+				// Out of budget, the row the list is stuck on is the finding; the
+				// next attempt reports it along with the budget.
+				if ( Date.now() >= deadline ) {
+					break;
 				}
 				await page.waitForTimeout( within( 200 ) );
 			}
