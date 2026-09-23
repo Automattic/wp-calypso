@@ -57,18 +57,23 @@
 	box-sizing: border-box;
 	flex-wrap: wrap;
 
-	// The badges sit under the name rather than beside it, so the name keeps the
-	// full column width instead of truncating to make room for them.
 	&__name {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.25rem;
+		align-items: center;
+		gap: 0.5rem;
 		min-width: 0;
 		// A zero basis (rather than `auto`) keeps this item's full-content width
 		// out of the row's wrap calculation, so it shrinks/truncates in place
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
+
+		// A Sale and a Premium badge together leave the name only a few
+		// characters, so the pair drops under it.
+		&--stacked {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
 	}
 
 	&__badges {

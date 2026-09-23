@@ -24,13 +24,6 @@ interface NamePulseResultRowProps {
 	position: number;
 }
 
-/**
- * `ellipsizeMode="middle"` truncates by character count, so the name needs a
- * budget of its own on top of the CSS ellipsis. Badges sit on their own line,
- * leaving the full column width to the name.
- */
-const LABEL_TRUNCATE_LIMIT = 20;
-
 const formatPrice = ( amount: number, currencyCode: string ) =>
 	formatCurrency( amount, currencyCode, { stripZeros: true } );
 
@@ -134,6 +127,10 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
 	const showSaleBadge = isAvailable && hasSalePrice( row );
+	// One badge still fits beside the name; two leave it only a few characters,
+	// so the pair moves under it and the name keeps the full column width.
+	const stackBadges = showSaleBadge && showPremiumBadge;
+	const labelTruncateLimit = ( showSaleBadge || showPremiumBadge ) && ! stackBadges ? 12 : 20;
 	const inCart = cart.hasItem( domainName );
 
 	const {
@@ -197,7 +194,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span className="name-pulse-row__name">
+			<span
+				className={ clsx( 'name-pulse-row__name', stackBadges && 'name-pulse-row__name--stacked' ) }
+			>
 				<Tooltip text={ domainName }>
 					<span className="name-pulse-row__domain">
 						<Text
@@ -205,7 +204,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 							variant="muted"
 							truncate
 							ellipsizeMode="middle"
-							limit={ LABEL_TRUNCATE_LIMIT }
+							limit={ labelTruncateLimit }
 						>
 							{ label }
 						</Text>
