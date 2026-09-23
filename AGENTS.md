@@ -11,7 +11,7 @@
 - **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
   - client/my-sites — per-site management; deprecated in favor of the Dashboard client
   - client/my-sites/checkout — checkout flow
-  - client/me/purchases — purchase management
+  - client/me/purchases — redirects to the Dashboard billing screens, plus purchase helpers shared by other sections
   - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
   - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
   - Shared infra: client/components, client/state, client/lib, client/layout
