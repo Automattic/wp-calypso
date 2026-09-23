@@ -334,7 +334,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 						params: { purchaseId: purchase.ID },
 					} ).href
 				}
-				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls() ) }
+				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls( purchase ) ) }
 				locale={ locale }
 				surface="dashboard-purchase-settings"
 				recordTracksEvent={ recordTracksEvent }
@@ -585,7 +585,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 
 			window.location.href =
-				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) ) ?? '';
 			return;
 		}
 
