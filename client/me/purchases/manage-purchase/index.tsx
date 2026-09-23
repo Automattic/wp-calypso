@@ -349,11 +349,6 @@ class ManagePurchase extends Component<
 	 * both the ones below and the ownership and lock checks in the JSX that
 	 * renders this. It copied this control rather than the nav item because the
 	 * purchase list link is prominent in the same way this one is.
-	 *
-	 * The conditions are repeated rather than shared because this page reads the
-	 * raw `@automattic/api-core` purchase while the list still reads the
-	 * camelCase `@automattic/data-stores` one (SHILL-2256), so each side needs
-	 * different field names.
 	 */
 	renderRenewButton() {
 		const { purchase, translate } = this.props;

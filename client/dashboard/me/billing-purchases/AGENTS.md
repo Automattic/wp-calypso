@@ -37,11 +37,9 @@ via router loaders in `client/dashboard/app/router/me.tsx`.
 
 ### Architecture Context
 
-Dashboard uses `Purchase` from `@automattic/api-core` (snake_case fields, e.g.,
-`purchase.site_slug`). Expiry values: `'auto-renewing'`, `'manual-renew'`. Classic
-(`client/me/purchases/`) uses a different `Purchase` type from
-`calypso/lib/purchases/types` (camelCase, different string values) — never copy
-logic between the two without converting field names and values.
+Dashboard and Classic (`client/me/purchases/`) both use `Purchase` from
+`@automattic/api-core` (snake_case fields, e.g., `purchase.site_slug`). Expiry
+values: `'auto-renewing'`, `'manual-renew'`.
 
 Query key prefix for purchases is `'upgrades'` (NOT `'purchases'` — historical).
 Receipts use `'receipt'`, payment methods use `'me'`. Wrong prefix silently breaks
