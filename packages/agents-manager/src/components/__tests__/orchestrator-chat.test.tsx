@@ -3861,22 +3861,6 @@ describe( 'OrchestratorChat', () => {
 			expect( addMessage ).not.toHaveBeenCalled();
 		} );
 
-		it( 'aborts for unified chat as well as the orchestrator', () => {
-			// The canvas abilities are migrating into AM, which serves them on
-			// unified-chat surfaces. Gating on the orchestrator alone would leave this
-			// switched off exactly where those abilities are heading.
-			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
-			const { abortCurrentRequest } = mockUseAgentChat();
-
-			render( chat() );
-			bindToOpenCanvas();
-
-			openPage( CONTACT_PAGE );
-
-			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
-		} );
-
 		it( 'never aborts on a surface with no editor', () => {
 			// The same dock serves support guides, Reader and the editor, so this
 			// effect runs everywhere AM runs. On a surface with no `core/editor` — a

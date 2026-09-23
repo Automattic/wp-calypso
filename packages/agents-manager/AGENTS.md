@@ -1,6 +1,6 @@
 # Agents Manager Package
 
-`@automattic/agents-manager` is the shared component library for WordPress.com's unified AI agent experience. It runs in Calypso, Simple sites, and Atomic sites — all from the same source.
+`@automattic/agents-manager` is the shared component library for WordPress.com's AI agent experience. It runs in Calypso, Simple sites, and Atomic sites — all from the same source.
 
 ## Cross-Repo Boundaries
 

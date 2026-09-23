@@ -1,54 +1,48 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
-import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { useRouterState } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import {
+	omnibarAgentsManagerEnabledQuery,
+	omnibarSiteIdQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { lazy, Suspense, useEffect } from 'react';
+import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { useAuth } from '../auth';
 
-const AsyncAgentsManager = lazy(
+const AgentsManager = lazy(
 	() =>
 		import(
 			/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
 		)
 );
 
-/**
- * Renders the unified Big Sky chat experience when the current user has opted
- * into "Enable the unified AI chat experience in Help Center" on
- * /wp-admin/profile.php. The eligibility check goes through the same
- * `/wpcom/v2/agents-manager/state` endpoint used elsewhere in Calypso, so the
- * toggle stays consistent across /wp-admin, wordpress.com, and MSD.
- *
- * When not eligible, this renders nothing and the legacy `OmnibarHelpCenter`
- * handles the chat surface. When eligible, the legacy help center suppresses
- * itself inside `@automattic/help-center`, so only Big Sky is visible.
- */
-export default function OmnibarAgentsManager() {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+export default function OmnibarAgentsManager( { pathname }: { pathname: string } ) {
 	const { user } = useAuth();
-	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	const queryClient = useQueryClient();
+	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
-		...siteByIdQuery( omnibarSiteId ?? 0 ),
-		enabled: !! omnibarSiteId,
+		...siteByIdQuery( siteId ?? 0 ),
+		enabled: !! siteId,
 	} );
-	const isSiteSpecific = useRouterState( {
-		select: ( state ) =>
-			state.matches.some( ( match ) => !! ( match.params as { siteSlug?: string } )?.siteSlug ),
-	} );
+	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( pathname, siteId );
 
-	if ( ! shouldUseUnifiedAgent ) {
+	useEffect( () => {
+		queryClient.cancelQueries( { queryKey: omnibarAgentsManagerEnabledQuery().queryKey } );
+		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, routeIsEnabled );
+	}, [ queryClient, routeIsEnabled ] );
+
+	if ( ! routeIsEnabled || ! siteId || ! site ) {
 		return null;
 	}
 
-	const agentsManagerSite = site ? { ID: site.ID, domain: site.slug } : null;
-
 	return (
 		<Suspense fallback={ null }>
-			<AsyncAgentsManager
+			<AgentsManager
 				currentUser={ user }
 				sectionName="dashboard"
-				site={ agentsManagerSite }
-				currentSiteId={ isSiteSpecific ? site?.ID : undefined }
+				site={ { ID: site.ID, domain: site.slug, URL: site.URL } }
+				currentSiteId={ siteId }
+				currentRoute={ pathname }
+				isInternalOnly={ isInternalOnly }
 			/>
 		</Suspense>
 	);
