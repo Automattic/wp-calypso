@@ -174,6 +174,7 @@ jest.mock( '../support-guides', () => ( {
 import AgentDock from '../agent-dock';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import { getSessionId } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
@@ -217,6 +218,7 @@ function useWpAdminAgent() {
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
 		takeActionOrigin( 'send' );
 		mockHasAdminBar = false;
@@ -364,7 +366,7 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockContext.zendeskSmoochIntegrationKey = 'woo';
+		setLoadedProviderIds( [ 'woocommerce-ai' ] );
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 

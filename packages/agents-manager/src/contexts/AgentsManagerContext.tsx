@@ -7,6 +7,7 @@ import {
 } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
+import { getWooZendeskIntegrationKey } from '../utils/is-woo-ai-provider';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -98,6 +99,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
+	const zendeskSmoochIntegrationKey = getWooZendeskIntegrationKey(
+		value.zendeskSmoochIntegrationKey
+	);
 
 	const navigate = useNavigate();
 
@@ -126,6 +130,7 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				...defaultContext,
 				...value,
 				isLoggedIn,
+				zendeskSmoochIntegrationKey,
 				agentConfig,
 				setAgentConfig,
 				getTabSessionId,

@@ -84,8 +84,7 @@ export default function AgentDock( {
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { agentConfig, siteKey, currentUser, zendeskSmoochIntegrationKey } =
-		useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -202,7 +201,7 @@ export default function AgentDock( {
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	const showZendeskChat = ! isReaderChat && isWooAiProvider( zendeskSmoochIntegrationKey );
+	const showZendeskChat = ! isReaderChat && isWooAiProvider();
 	// `/support-guides` (the list) is registered even
 	// without an entry button: unregistering it mid-session (Site Editor
 	// navigation) would yank the route from under a user viewing it, and the

@@ -334,8 +334,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser, zendeskSmoochIntegrationKey } =
-		useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -1640,7 +1639,7 @@ export default function OrchestratorChat( {
 			getChatComponent,
 			currentPostId,
 			isProcessing,
-			canEscalateToHuman: isWooAiProvider( zendeskSmoochIntegrationKey ),
+			canEscalateToHuman: isWooAiProvider(),
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1719,7 +1718,6 @@ export default function OrchestratorChat( {
 		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
 		transformMessages,
-		zendeskSmoochIntegrationKey,
 	] );
 
 	// Notify parent when has-messages state changes.

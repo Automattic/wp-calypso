@@ -108,11 +108,11 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getTabSessionId, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const tabSessionId = getTabSessionId();
 	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
-	const isWooAi = isWooAiProvider( zendeskSmoochIntegrationKey );
+	const isWooAi = isWooAiProvider();
 
 	const { conversations, isLoading } = useWooZendeskConversations( isWooAi && !! tabSessionId );
 	const existingConversation = useMemo(

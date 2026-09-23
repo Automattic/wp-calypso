@@ -9,7 +9,7 @@ export default function useWooZendeskConversations( enabled = true ) {
 	const { site, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 
 	return useGetZendeskConversations(
-		enabled && isWooAiProvider( zendeskSmoochIntegrationKey ),
+		enabled && isWooAiProvider(),
 		zendeskSmoochIntegrationKey,
 		site?.ID
 	);
