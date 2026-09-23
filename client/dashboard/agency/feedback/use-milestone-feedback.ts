@@ -5,9 +5,7 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -18,13 +16,17 @@ const SURVEY_ID_PREFIX = 'a4a-feedback-';
 
 export function useMilestoneFeedback( type: FeedbackType ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: answered, isLoading: isLoadingPreference } = useQuery(
 		userPreferenceQuery( PREFERENCE )
 	);
 	const { mutate: fileSurvey, isPending: isSubmitting } = useMutation(
-		a4aFeedbackSurveyMutation()
+		withSnackbar( a4aFeedbackSurveyMutation(), {
+			success: __(
+				'Thanks! Our team will use your feedback to help prioritize improvements to Automattic for Agencies.'
+			),
+			error: __( 'Failed to send your feedback. Please try again.' ),
+		} )
 	);
 	// On the mutation, not the mutate() call: the modal unmounts before the
 	// write settles, and per-call callbacks are dropped on unmount.
@@ -82,30 +84,12 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 					onSuccess: () => {
 						// Only now: a failed survey must not spend the one chance to ask.
 						remember( 'lastSubmittedAt' );
-						createSuccessNotice(
-							__(
-								'Thanks! Our team will use your feedback to help prioritize improvements to Automattic for Agencies.'
-							),
-							{ type: 'snackbar' }
-						);
 						onSuccess();
 					},
-					onError: () =>
-						createErrorNotice( __( 'Failed to send your feedback. Please try again.' ), {
-							type: 'snackbar',
-						} ),
 				}
 			);
 		},
-		[
-			agencyId,
-			createErrorNotice,
-			createSuccessNotice,
-			fileSurvey,
-			recordTracksEvent,
-			remember,
-			type,
-		]
+		[ agencyId, fileSurvey, recordTracksEvent, remember, type ]
 	);
 
 	const skip = useCallback( () => {
