@@ -7,6 +7,7 @@ import nock from 'nock';
 import { render } from '../../../test-utils';
 import AgencyPartnerDirectoryDetails from '../details';
 import PartnerDirectoryDetailsContent from '../details/details-content';
+import { PARTNER_DIRECTORY_ROUTE } from '../paths';
 import type { AgencyProfile } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
@@ -138,11 +139,15 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 			.persist();
 		mockSave();
 
-		render( <AgencyPartnerDirectoryDetails /> );
+		const { router } = render( <AgencyPartnerDirectoryDetails /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
 
 		expect( await screen.findByText( 'Details successfully added!' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Skip' } ) );
+
+		await waitFor( () => expect( router.state.location.pathname ).toBe( PARTNER_DIRECTORY_ROUTE ) );
 	} );
 
 	test( 'returns straight to the Partner Directory for a partner who already answered', async () => {
@@ -161,12 +166,13 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 			.persist();
 		mockSave();
 
-		render( <AgencyPartnerDirectoryDetails /> );
+		const { router } = render( <AgencyPartnerDirectoryDetails /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
 
 		await waitFor( () =>
 			expect( screen.queryByText( 'Details successfully added!' ) ).not.toBeInTheDocument()
 		);
+		await waitFor( () => expect( router.state.location.pathname ).toBe( PARTNER_DIRECTORY_ROUTE ) );
 	} );
 } );

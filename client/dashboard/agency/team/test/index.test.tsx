@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import AgencyTeam from '../index';
 
@@ -54,34 +55,54 @@ async function invite() {
 	return user;
 }
 
-describe( '<AgencyTeam> milestone feedback', () => {
+describe( '<AgencyTeam>', () => {
 	beforeEach( () => nock.cleanAll() );
 
 	test( 'asks how the invite went, naming the address', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences();
 		mockTeam();
 		mockInvite();
 
-		render( <AgencyTeam /> );
+		render(
+			<>
+				<AgencyTeam />
+				<Snackbars />
+			</>
+		);
 		await invite();
 
 		expect( await screen.findByText( 'Invite emailed!' ) ).toBeVisible();
 		expect( screen.getByText( /We sent nina@example.com an invite/ ) ).toBeVisible();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText( 'The invitation has been successfully sent.' );
+		expect( notice ).toBeVisible();
 	} );
 
-	test( 'does not ask a partner who already answered', async () => {
+	test( 'does not ask a partner who already answered, but still confirms the invite', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences( true );
 		mockTeam();
 		mockInvite();
 
-		render( <AgencyTeam /> );
+		render(
+			<>
+				<AgencyTeam />
+				<Snackbars />
+			</>
+		);
 		await invite();
 
 		await waitFor( () =>
 			expect( screen.queryByRole( 'button', { name: 'Send invite' } ) ).not.toBeInTheDocument()
 		);
 		expect( screen.queryByText( 'Invite emailed!' ) ).not.toBeInTheDocument();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText( 'The invitation has been successfully sent.' );
+		expect( notice ).toBeVisible();
 	} );
 } );
