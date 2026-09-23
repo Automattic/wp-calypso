@@ -167,8 +167,12 @@ separate from DOM detection on purpose: the Help Center is a side panel without
 - `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
   `aria-modal` excludes generic `role="dialog"` widgets), native `dialog[open]`,
   `.components-modal__screen-overlay` (older WP `Modal` versions), and
-  `.components-popover:not(.components-tooltip)` (WP `Popover`; `Tooltip` reuses
-  the popover class and must not suppress surveys on every hover).
+  `.components-popover:not(.components-tooltip):not(.block-editor-block-popover)`
+  (WP `Popover`; `Tooltip` reuses the popover class and must not suppress surveys
+  on every hover, and the block editor's `BlockPopover` chrome — block toolbar,
+  in-between inserter, drop zone — mounts and unmounts as the user types or
+  selects blocks, so counting it would pause and `retarget()` Survicate
+  constantly in the editors that wp-admin surveys target).
 - **Self-exclusion is load-bearing**: the Survicate widget itself renders
   `role="dialog"`/`aria-modal="true"` elements inside
   `<div id="survicate-box" class="survicate-box-<type>">` (verified in
