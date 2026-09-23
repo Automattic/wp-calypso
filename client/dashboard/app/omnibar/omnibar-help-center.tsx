@@ -3,15 +3,18 @@ import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
-import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
-import { useHelpCenterExtraProps } from '../help-center/use-help-center-extra-props';
 import type HelpCenterApp from '../help-center/help-center-app';
 import type { Site } from '@automattic/api-core';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
 type HelpCenterSite = NonNullable< React.ComponentProps< typeof HelpCenterApp >[ 'site' ] >;
+
+export type OmnibarHelpCenterProps = Pick<
+	React.ComponentProps< typeof HelpCenterApp >,
+	'product' | 'newInteractionsBotSlug' | 'agency'
+>;
 
 // The dashboard has no `launchpad_screen` option, so the launchpad features it
 // gates simply stay off.
@@ -53,11 +56,9 @@ function hasHelpCenterQueryParam() {
  * store. Unmounting it on close would tear down the Zendesk Smooch iframe
  * mid-request and surface errors in the console.
  */
-export default function OmnibarHelpCenter() {
+export default function OmnibarHelpCenter( props: OmnibarHelpCenterProps ) {
 	const { user } = useAuth();
-	const { helpCenter } = useAppContext();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
-	const helpCenterExtraProps = useHelpCenterExtraProps( helpCenter?.product );
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -89,8 +90,7 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
-				product={ helpCenter?.product }
-				{ ...helpCenterExtraProps }
+				{ ...props }
 			/>
 		</Suspense>
 	);

@@ -13,7 +13,6 @@ import type {
 	FetchDashboardSiteFiltersParams,
 	User,
 } from '@automattic/api-core';
-import type { HelpCenterProduct } from '@automattic/help-center';
 import type { PostHogOverrides } from '@automattic/posthog';
 
 export type AgencySupports = {
@@ -84,9 +83,6 @@ export type AppConfig = {
 		apiKey: string;
 		overrides?: PostHogOverrides;
 	};
-	helpCenter?: {
-		product: HelpCenterProduct;
-	};
 	optIn: boolean;
 	components: {
 		sites?: () => Promise< { default: React.FC } >;
@@ -94,6 +90,8 @@ export type AppConfig = {
 		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
 		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
 		omnibar?: React.FC< { user?: User } >;
+		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
+		helpCenter?: React.FC;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
