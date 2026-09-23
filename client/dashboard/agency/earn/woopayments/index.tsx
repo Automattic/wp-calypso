@@ -60,6 +60,7 @@ export default function EarnWooPayments() {
 						excludedSiteIds={ excludedSiteIds }
 						recordTracksEvent={ recordTracksEvent }
 						onSelectSite={ navigateToSiteSetup }
+						shouldUseRouterLink
 					/>
 				) : undefined
 			}

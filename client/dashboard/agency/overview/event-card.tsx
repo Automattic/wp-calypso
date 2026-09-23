@@ -7,6 +7,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import {
 	FEATURED_EVENT,
@@ -61,16 +62,12 @@ function SingleEventCard( {
 						) ) }
 					</VStack>
 					<ButtonStack justify="flex-start" wrap>
-						{ ctas.map( ( cta ) => (
-							<Button
-								key={ cta.id }
-								size="compact"
-								variant={ cta.variant ?? 'secondary' }
-								style={ isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined }
-								href={ cta.url }
-								target={ cta.isExternal ? '_blank' : undefined }
-								rel={ cta.isExternal ? 'noreferrer' : undefined }
-								onClick={ () => {
+						{ ctas.map( ( cta ) => {
+							const buttonProps = {
+								size: 'compact' as const,
+								variant: cta.variant ?? ( 'secondary' as const ),
+								style: isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined,
+								onClick: () => {
 									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
 										event_id: id,
 										cta_id: cta.id,
@@ -78,11 +75,28 @@ function SingleEventCard( {
 									if ( cta.legacyTrackEventName ) {
 										recordTracksEvent?.( cta.legacyTrackEventName );
 									}
-								} }
-							>
-								{ cta.isExternal ? <NewTabLabel>{ cta.label }</NewTabLabel> : cta.label }
-							</Button>
-						) ) }
+								},
+							};
+							// Dashboard paths navigate in-app; external URLs open a new tab.
+							if ( ! cta.isExternal && cta.url.startsWith( '/' ) ) {
+								return (
+									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ cta.url }>
+										{ cta.label }
+									</RouterLinkButton>
+								);
+							}
+							return (
+								<Button
+									key={ cta.id }
+									{ ...buttonProps }
+									href={ cta.url }
+									target={ cta.isExternal ? '_blank' : undefined }
+									rel={ cta.isExternal ? 'noreferrer' : undefined }
+								>
+									{ cta.isExternal ? <NewTabLabel>{ cta.label }</NewTabLabel> : cta.label }
+								</Button>
+							);
+						} ) }
 					</ButtonStack>
 				</VStack>
 			</CardBody>
