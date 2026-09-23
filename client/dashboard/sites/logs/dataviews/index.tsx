@@ -1,8 +1,8 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl, Button } from '@wordpress/components';
+import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -61,7 +61,6 @@ function SiteLogsDataViews( {
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
-	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
@@ -158,10 +157,16 @@ function SiteLogsDataViews( {
 		data,
 		isFetching,
 		isFetchingNextPage,
+		isPlaceholderData,
 		fetchNextPage,
 		hasNextPage,
 		isLoading: isLoadingLogQuery,
-	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+	} = useInfiniteQuery( {
+		...siteLogsInfiniteQuery( site.ID, params ),
+		// Show the rows already loaded while the next request runs, so a filter, a
+		// sort or an auto-refresh tick never leaves the page without any.
+		placeholderData: keepPreviousData,
+	} );
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -209,8 +214,8 @@ function SiteLogsDataViews( {
 				cancelAnimationFrame( rafIdRef.current );
 			}
 		};
-		// Re-runs once the first page arrives: rows replace the loading state and the
-		// wrapper moves, and bounding it is what makes the table scroll.
+		// Re-runs once the first page arrives: the wrapper doesn't exist while the
+		// loading placeholder shows, and bounding it is what makes the table scroll.
 	}, [ logType, handleResize, isLoadingLogQuery ] );
 
 	const phpLogs = useMemo< PhpLogWithId[] >( () => {
@@ -293,11 +298,6 @@ function SiteLogsDataViews( {
 		window.history.replaceState( null, '', url.pathname + url.search );
 
 		if ( datasetChanged ) {
-			// Clear prior infinite data for old sort/filter so we don't show an empty state.
-			queryClient.removeQueries( {
-				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
-				exact: false,
-			} );
 			setStartPosition( 1 );
 			updateView( { ...next, page: 1 } );
 			return;
@@ -376,12 +376,25 @@ function SiteLogsDataViews( {
 		/>
 	);
 
+	// DataViews binds its infinite-scroll listener to the scroll container in an
+	// effect that gives up when the container isn't there yet, and never retries.
+	// The container only renders once DataViews has rows, so mounting it mid-fetch
+	// permanently loses the listener. Wait for the first page instead.
+	if ( isLoadingLogQuery ) {
+		return (
+			<div className="site-logs-loading">
+				<Spinner />
+			</div>
+		);
+	}
+
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isLoadingLogQuery || isFetchingNextPage }
+					isLoading={ isFetchingNextPage }
+					isPlaceholderData={ isPlaceholderData }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -397,7 +410,8 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isLoadingLogQuery || isFetchingNextPage }
+					isLoading={ isFetchingNextPage }
+					isPlaceholderData={ isPlaceholderData }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
