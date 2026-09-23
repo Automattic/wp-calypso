@@ -8,27 +8,20 @@ import { useAuth } from '../auth';
 import type { Site } from '@automattic/api-core';
 
 /**
- * Sites the user can't open in WP Admin without two-step authentication on their account.
- * The setting only has an effect while the SSO module is active.
+ * Sites the user can't open in WP Admin without two-step authentication on their account,
+ * or none when the account already has it. The site setting only has an effect while the
+ * SSO module is active. Read at the call site so the notice never decides its own
+ * visibility inside the arbiter. See client/dashboard/sites/AGENTS.md.
  */
-export function getSitesRequiringTwoStep( sites: Site[] ) {
+export function useSitesRequiringTwoStep( sites: Site[] ) {
+	const { user } = useAuth();
+	if ( user.two_step_enabled !== false ) {
+		return [];
+	}
 	return sites.filter(
 		( site ) =>
 			!! site.options?.jetpack_sso_require_two_step && hasJetpackModule( site, JetpackModules.SSO )
 	);
-}
-
-/**
- * Whether the two-step-required notice is eligible to show. Read at the call site so the
- * notice never decides its own visibility inside the arbiter.
- * See client/dashboard/sites/AGENTS.md.
- */
-export function useShouldShowTwoStepRequiredNotice( sites: Site[] ) {
-	const { user } = useAuth();
-	if ( user.two_step_enabled !== false ) {
-		return false;
-	}
-	return getSitesRequiringTwoStep( sites ).length > 0;
 }
 
 export default function TwoStepRequiredNotice( { sites }: { sites: Site[] } ) {

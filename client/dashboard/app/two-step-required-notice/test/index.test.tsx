@@ -3,10 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
-import TwoStepRequiredNotice, {
-	getSitesRequiringTwoStep,
-	useShouldShowTwoStepRequiredNotice,
-} from '../index';
+import TwoStepRequiredNotice, { useSitesRequiringTwoStep } from '../index';
 import type { Site, User } from '@automattic/api-core';
 
 function makeSite( {
@@ -36,53 +33,40 @@ function accountUser( { twoStepEnabled }: { twoStepEnabled?: boolean } = {} ) {
 // The hook is exercised through a probe component so it runs inside the same providers
 // the notice has on the sites pages.
 function HookProbe( { sites }: { sites: Site[] } ) {
-	const shouldShow = useShouldShowTwoStepRequiredNotice( sites );
-	return <div>{ shouldShow ? 'should show' : 'should not show' }</div>;
+	const requiring = useSitesRequiringTwoStep( sites );
+	return <div>{ requiring.map( ( site ) => site.ID ).join( ',' ) || 'none' }</div>;
 }
 
-describe( 'getSitesRequiringTwoStep', () => {
-	test( 'keeps sites that require two-step and have SSO active', () => {
-		const required = makeSite( { ID: 1 } );
-		expect(
-			getSitesRequiringTwoStep( [
-				required,
-				makeSite( { ID: 2, requiresTwoStep: false } ),
-				makeSite( { ID: 3, jetpackModules: [ 'stats' ] } ),
-				makeSite( { ID: 4, jetpackModules: null } ),
-			] )
-		).toEqual( [ required ] );
-	} );
-} );
+describe( 'useSitesRequiringTwoStep', () => {
+	test( 'keeps sites that require two-step and have SSO active when the user has no two-step', async () => {
+		render(
+			<HookProbe
+				sites={ [
+					makeSite( { ID: 1 } ),
+					makeSite( { ID: 2, requiresTwoStep: false } ),
+					makeSite( { ID: 3, jetpackModules: [ 'stats' ] } ),
+					makeSite( { ID: 4, jetpackModules: null } ),
+					makeSite( { ID: 5 } ),
+				] }
+			/>,
+			{ user: accountUser( { twoStepEnabled: false } ) }
+		);
 
-describe( 'useShouldShowTwoStepRequiredNotice', () => {
-	test( 'is true when the user has no two-step and a site requires it', async () => {
-		render( <HookProbe sites={ [ makeSite() ] } />, {
-			user: accountUser( { twoStepEnabled: false } ),
-		} );
-
-		expect( await screen.findByText( 'should show' ) ).toBeVisible();
+		expect( await screen.findByText( '1,5' ) ).toBeVisible();
 	} );
 
-	test( 'is false when the user already has two-step', async () => {
+	test( 'is empty when the user already has two-step', async () => {
 		render( <HookProbe sites={ [ makeSite() ] } />, {
 			user: accountUser( { twoStepEnabled: true } ),
 		} );
 
-		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
+		expect( await screen.findByText( 'none' ) ).toBeVisible();
 	} );
 
-	test( 'is false when no site requires two-step', async () => {
-		render( <HookProbe sites={ [ makeSite( { requiresTwoStep: false } ) ] } />, {
-			user: accountUser( { twoStepEnabled: false } ),
-		} );
-
-		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
-	} );
-
-	test( 'is false when the field is absent, as it is before wpcom deploys', async () => {
+	test( 'is empty when the field is absent, as it is before wpcom deploys', async () => {
 		render( <HookProbe sites={ [ makeSite() ] } />, { user: accountUser() } );
 
-		expect( await screen.findByText( 'should not show' ) ).toBeVisible();
+		expect( await screen.findByText( 'none' ) ).toBeVisible();
 	} );
 } );
 
