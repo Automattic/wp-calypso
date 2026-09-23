@@ -140,7 +140,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 
 		if ( offerBuildWow ) {
-			submitGenerateTheme();
+			submitGenerateTheme( 'blocks-first' );
 			return;
 		}
 
