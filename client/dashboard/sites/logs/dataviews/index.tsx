@@ -2,7 +2,7 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl, Button, Spinner } from '@wordpress/components';
+import { ToggleControl, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -209,8 +209,8 @@ function SiteLogsDataViews( {
 				cancelAnimationFrame( rafIdRef.current );
 			}
 		};
-		// Re-runs once the first page arrives: the wrapper doesn't exist while the
-		// loading placeholder shows, and bounding it is what makes the table scroll.
+		// Re-runs once the first page arrives: rows replace the loading state and the
+		// wrapper moves, and bounding it is what makes the table scroll.
 	}, [ logType, handleResize, isLoadingLogQuery ] );
 
 	const phpLogs = useMemo< PhpLogWithId[] >( () => {
@@ -376,24 +376,12 @@ function SiteLogsDataViews( {
 		/>
 	);
 
-	// DataViews binds its infinite-scroll listener to the scroll container in an
-	// effect that gives up when the container isn't there yet, and never retries.
-	// The container only renders once DataViews has rows, so mounting it mid-fetch
-	// permanently loses the listener. Wait for the first page instead.
-	if ( isLoadingLogQuery ) {
-		return (
-			<div className="site-logs-loading">
-				<Spinner />
-			</div>
-		);
-	}
-
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingLogQuery || isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -409,7 +397,7 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingLogQuery || isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
