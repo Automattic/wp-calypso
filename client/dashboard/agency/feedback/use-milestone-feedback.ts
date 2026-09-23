@@ -30,7 +30,11 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 	const agencyId = agency?.id;
 	const entry = answered?.[ type ];
 	const shouldAsk =
-		!! agencyId && ! isLoadingPreference && ! entry?.lastSubmittedAt && ! entry?.lastSkippedAt;
+		!! agencyId &&
+		! isLoadingPreference &&
+		answered !== undefined &&
+		! entry?.lastSubmittedAt &&
+		! entry?.lastSkippedAt;
 
 	const remember = useCallback(
 		( field: 'lastSubmittedAt' | 'lastSkippedAt' ) =>
