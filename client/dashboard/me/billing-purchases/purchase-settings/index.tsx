@@ -76,6 +76,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -247,6 +248,11 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
+	// Jetpack Cloud has no domain or email management of its own.
+	if ( isJetpackCloud() ) {
+		return null;
+	}
+
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -1358,7 +1364,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
 					),
 					{
-						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+						a: (
+							<a
+								href={ wpcomLink(
+									domainManagementEdit( purchase.site_slug, domain.domain, null )
+								) }
+							/>
+						),
 					}
 				) }
 			</Text>
@@ -1377,10 +1389,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					{
 						a: (
 							<a
-								href={ domainUseMyDomain(
-									purchase.site_slug,
-									purchase.meta,
-									useMyDomainInputMode.startPendingTransfer
+								href={ wpcomLink(
+									domainUseMyDomain(
+										purchase.site_slug,
+										purchase.meta,
+										useMyDomainInputMode.startPendingTransfer
+									)
 								) }
 							/>
 						),
