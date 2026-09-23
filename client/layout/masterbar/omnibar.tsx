@@ -67,7 +67,6 @@ export default function Omnibar( {
 }: {
 	sectionGroup?: string;
 	loadHelpCenterIcon?: boolean;
-	currentRoute?: string;
 } ) {
 	useOmnibarBridge();
 
