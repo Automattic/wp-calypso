@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useRef, useState } from 
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
 import { ComplianceDisclosure, DefaultComplianceDisclosure } from './chat/ComplianceDisclosure';
 import { SourcesCard } from './sources';
-import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
+import type { AgentUIProps, Message, NoticeConfig, SubmitSource, Suggestion } from '../types';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	inputValue: string;
@@ -11,7 +11,7 @@ interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	files: File[];
 	setFiles: ( files: File[] ) => void;
 	fileInputRef: React.RefObject< HTMLInputElement | null >;
-	submit: ( message?: string ) => Promise< void >;
+	submit: ( message?: string, source?: SubmitSource, onAccepted?: () => void ) => Promise< void >;
 }
 
 const EmbeddedAgentUIContext = createContext< EmbeddedAgentUIContextValue | null >( null );
@@ -182,13 +182,16 @@ export function EmbeddedAgentUISuggestions( {
 						key={ suggestion.id }
 						type="button"
 						onClick={ async () => {
-							onSelect?.( value );
-							onSuggestionClick?.( suggestion, suggestions );
-							clearSuggestions?.();
+							const selectSuggestion = () => {
+								onSelect?.( value );
+								onSuggestionClick?.( suggestion, suggestions );
+								clearSuggestions?.();
+							};
 							if ( suggestion.autoSubmit ) {
-								await submit( value );
+								await submit( value, 'suggestion', selectSuggestion );
 								return;
 							}
+							selectSuggestion();
 							setInputValue( value );
 						} }
 					>
@@ -390,11 +393,15 @@ export function EmbeddedAgentUIContainer( {
 	const setInputValue = props.onInputChange ?? setUncontrolledInputValue;
 
 	const submit = useCallback(
-		async ( explicitMessage?: string ) => {
+		async ( explicitMessage?: string, source: SubmitSource = 'input', onAccepted?: () => void ) => {
 			const message = ( explicitMessage ?? inputValue ).trim();
 			if ( ! message || props.isProcessing ) {
 				return;
 			}
+			if ( props.beforeSubmit?.( message, source ) === false ) {
+				return;
+			}
+			onAccepted?.();
 			setInputValue( '' );
 			setFiles( [] );
 			await props.onSubmit( message, props.allowAttachments ? files : undefined );
