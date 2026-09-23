@@ -280,13 +280,11 @@ function SiteLogsDataViews( {
 		// Compare what the request will actually ask for, not the view: picking a field
 		// from the filter menu adds it with no value yet, and dropping the loaded pages
 		// for that would swap the table for a spinner and close the menu being opened.
+		const nextFilter = toFilterParams( { view: { ...next, filters: sourceFilters }, logType } );
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			! fastDeepEqual(
-				toFilterParams( { view: { ...next, filters: sourceFilters }, logType } ),
-				filter
-			);
+			! fastDeepEqual( nextFilter, filter );
 
 		const url = new URL( window.location.href );
 		// Always keep canonical time range params
