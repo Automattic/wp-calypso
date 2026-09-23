@@ -10,8 +10,12 @@ import type { Filter, Operator, View } from '@wordpress/dataviews';
 /**
  * A field to build a transient filter for, optionally with the operator its
  * DataViews field declares.
+ *
+ * Operators taking a tuple or an object rather than a value are excluded: a
+ * query param carries a single string.
  */
-export type QueryParamFilterField = string | { field: string; operator: Operator };
+export type QueryParamFilterField =
+	string | { field: string; operator: Exclude< Operator, 'between' | 'inThePast' | 'over' > };
 
 function getFilterFieldName( filterField: QueryParamFilterField ): string {
 	return typeof filterField === 'string' ? filterField : filterField.field;
