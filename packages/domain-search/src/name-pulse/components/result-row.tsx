@@ -24,6 +24,13 @@ interface NamePulseResultRowProps {
 	position: number;
 }
 
+/**
+ * `ellipsizeMode="middle"` truncates by character count, so the name needs a
+ * budget of its own on top of the CSS ellipsis. Badges sit on their own line,
+ * leaving the full column width to the name.
+ */
+const LABEL_TRUNCATE_LIMIT = 20;
+
 const formatPrice = ( amount: number, currencyCode: string ) =>
 	formatCurrency( amount, currencyCode, { stripZeros: true } );
 
@@ -127,9 +134,6 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
 	const showSaleBadge = isAvailable && hasSalePrice( row );
-	// A badge eats into the name column's width, so it gets a tighter label
-	// truncation budget than a row with the space to spare.
-	const labelTruncateLimit = showSaleBadge || showPremiumBadge ? 12 : 20;
 	const inCart = cart.hasItem( domainName );
 
 	const {
@@ -201,7 +205,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 							variant="muted"
 							truncate
 							ellipsizeMode="middle"
-							limit={ labelTruncateLimit }
+							limit={ LABEL_TRUNCATE_LIMIT }
 						>
 							{ label }
 						</Text>
@@ -210,11 +214,15 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						</Text>
 					</span>
 				</Tooltip>
-				{ showSaleBadge && (
-					<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
-				) }
-				{ showPremiumBadge && (
-					<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+				{ ( showSaleBadge || showPremiumBadge ) && (
+					<span className="name-pulse-row__badges">
+						{ showSaleBadge && (
+							<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
+						) }
+						{ showPremiumBadge && (
+							<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+						) }
+					</span>
 				) }
 			</span>
 			<span className="name-pulse-row__status">

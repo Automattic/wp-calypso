@@ -57,15 +57,25 @@
 	box-sizing: border-box;
 	flex-wrap: wrap;
 
+	// The badges sit under the name rather than beside it, so the name keeps the
+	// full column width instead of truncating to make room for them.
 	&__name {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
 		min-width: 0;
 		// A zero basis (rather than `auto`) keeps this item's full-content width
 		// out of the row's wrap calculation, so it shrinks/truncates in place
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
+	}
+
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		max-width: 100%;
 
 		.domain-suggestion-badge {
 			flex-shrink: 0;
@@ -79,6 +89,7 @@
 	&__domain {
 		display: flex;
 		min-width: 0;
+		max-width: 100%;
 
 		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
 		// never loses space to the label and is never cut off.
