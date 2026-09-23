@@ -131,9 +131,6 @@ export const STYLE_OPTIONS: StyleOption[] = [
 	},
 ];
 
-// The prior Informative / Promotional video styles collapse into one
-// "Cinematic" preset — they were the same generation chain with cosmetically
-// different prompt templates, which never read as meaningfully distinct.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
