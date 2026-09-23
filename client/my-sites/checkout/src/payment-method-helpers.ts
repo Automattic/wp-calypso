@@ -99,9 +99,11 @@ export async function createAccount( {
 	}
 
 	const blogName = newSiteParams?.blog_name;
-	const blackboxSessionId = isBlackboxUserlessCheckoutEnabled()
-		? await getBlackboxSessionId( getBlackboxApiKey( 'blackbox-userless-checkout' ) )
-		: undefined;
+	const blackboxApiKey = getBlackboxApiKey( 'blackbox-userless-checkout' );
+	const blackboxSessionId =
+		blackboxApiKey && isBlackboxUserlessCheckoutEnabled()
+			? await getBlackboxSessionId( blackboxApiKey )
+			: undefined;
 
 	try {
 		const response = await wp.req.post( '/users/new', {

@@ -59,7 +59,10 @@ export function useBlackboxProtection( {
 		setIsSubmitBlocked( isBlocked );
 	}, [] );
 
-	const getSessionId = useCallback( () => getBlackboxSessionId( apiKey ), [ apiKey ] );
+	const getSessionId = useCallback(
+		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
+		[ apiKey ]
+	);
 
 	return {
 		isSubmitBlocked,
