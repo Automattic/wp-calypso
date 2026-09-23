@@ -5,6 +5,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { useBlueprintSuggestedPlans } from 'calypso/landing/stepper/hooks/use-blueprint-suggested-plans';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -18,6 +19,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import UnifiedPlansStep from './unified-plans-step';
 import {
+	getBlueprintPlanHideProps,
 	getIntervalType,
 	getPlansIntent,
 	getVisualSplitPlansIntent,
@@ -137,6 +139,14 @@ const PlansStepAdaptor: StepType< {
 
 	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
+
+	// A blueprint import narrows the grid to the plans the blueprint suggests
+	// (the library's "Blueprint Plans" box). The identifier rides along in the
+	// query from the `blueprint` step through login to here.
+	const blueprintIdentifier = useQuery().get( 'blueprint' );
+	const { suggestedPlans: blueprintSuggestedPlans, isLoading: isLoadingBlueprintPlans } =
+		useBlueprintSuggestedPlans( blueprintIdentifier );
+	const blueprintHideProps = getBlueprintPlanHideProps( blueprintSuggestedPlans );
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( defaultInterval );
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
@@ -198,17 +208,30 @@ const PlansStepAdaptor: StepType< {
 		}
 	}, [ isDowngradeFlow, planInterval, currentPlanIntervalType ] );
 
-	if ( isLoadingSelectedTheme ) {
+	// Hold the grid until the blueprint's suggestions are known, so it never
+	// flashes plans the blueprint is about to hide.
+	if ( isLoadingSelectedTheme || isLoadingBlueprintPlans ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	return (
 		<UnifiedPlansStep
-			hideFreePlan={ hideFreePlanOverride || hideFreePlan || isDowngradeFlow }
+			hideFreePlan={
+				hideFreePlanOverride || hideFreePlan || isDowngradeFlow || blueprintHideProps.hideFreePlan
+			}
 			hideEnterprisePlan={ hideEnterprisePlanOverride || isDowngradeFlow }
-			hidePersonalPlan={ hidePersonalPlanOverride || themeHideProps.hidePersonalPlan }
-			hidePremiumPlan={ hidePremiumPlanOverride || themeHideProps.hidePremiumPlan }
-			hideEcommercePlan={ hideEcommercePlanOverride }
+			hidePersonalPlan={
+				hidePersonalPlanOverride ||
+				themeHideProps.hidePersonalPlan ||
+				blueprintHideProps.hidePersonalPlan
+			}
+			hidePremiumPlan={
+				hidePremiumPlanOverride ||
+				themeHideProps.hidePremiumPlan ||
+				blueprintHideProps.hidePremiumPlan
+			}
+			hideBusinessPlan={ blueprintHideProps.hideBusinessPlan }
+			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
 			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
