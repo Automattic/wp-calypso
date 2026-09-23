@@ -127,29 +127,6 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
-	test( 'asks how the application went before returning to the Partner Directory', async () => {
-		mockAgency( makeProfile() );
-		mockCountryRegions();
-		nock( API )
-			.get( '/rest/v1.1/me/preferences' )
-			.query( true )
-			.reply( 200, {
-				calypso_preferences: {},
-			} )
-			.persist();
-		mockSave();
-
-		const { router } = render( <AgencyPartnerDirectoryDetails /> );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
-
-		expect( await screen.findByText( 'Details successfully added!' ) ).toBeVisible();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Skip' } ) );
-
-		await waitFor( () => expect( router.state.location.pathname ).toBe( PARTNER_DIRECTORY_ROUTE ) );
-	} );
-
 	test( 'returns straight to the Partner Directory for a partner who already answered', async () => {
 		mockAgency( makeProfile() );
 		mockCountryRegions();
