@@ -10,6 +10,7 @@ import {
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
+	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
@@ -19,6 +20,14 @@ import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+/**
+ * Patches the cached current user. Bootstrapped sessions never refetch `/me`, so a flow that
+ * changes a field the dashboard reads off the user has to write it back here.
+ */
+export function updateCurrentUser( queryClient: QueryClient, changes: Partial< User > ) {
+	queryClient.setQueryData< User >( AUTH_QUERY_KEY, ( user ) => user && { ...user, ...changes } );
+}
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
