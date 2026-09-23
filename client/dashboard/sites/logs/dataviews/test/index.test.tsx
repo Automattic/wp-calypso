@@ -239,7 +239,6 @@ describe( 'SiteLogsDataViews', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Status' } ) );
 
-		// Present rather than visible: the option renders before its label does.
 		expect( await screen.findByRole( 'option', { name: '404' } ) ).toBeInTheDocument();
 		expect( requestedQueries ).toHaveLength( requestsBefore );
 	} );
