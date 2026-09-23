@@ -1,5 +1,7 @@
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import titles from 'calypso/me/purchases/titles';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +24,7 @@ export default function SitePurchasesBackport( {
 
 	return (
 		<Main wideLayout className="purchases">
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			<DashboardBackportSitePurchases
 				path={ path }
