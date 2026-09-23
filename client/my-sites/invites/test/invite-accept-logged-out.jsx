@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { login } from 'calypso/lib/paths';
 import InviteAcceptLoggedOut from '../invite-accept-logged-out';
 
 const mockGetCiabConfigFromGarden = jest.fn();
@@ -53,7 +54,7 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {
-	login: () => '/log-in',
+	login: jest.fn( () => '/log-in' ),
 } ) );
 
 jest.mock( 'calypso/lib/route', () => ( {
@@ -249,9 +250,30 @@ describe( 'InviteAcceptLoggedOut footer links', () => {
 
 			await userEvent.click( screen.getByText( 'Already have a WordPress.com account?' ) );
 
+			expect( login ).toHaveBeenCalledWith( {
+				redirectTo: 'https://wordpress.com/accept-invite/abc123',
+			} );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_invite_accept_logged_out_sign_in_link_click'
 			);
+			expect( window.location ).toBe( '/log-in' );
+		} );
+
+		test( 'sends P2 users to the P2 log-in', async () => {
+			const store = mockStore( {} );
+
+			render(
+				<Provider store={ store }>
+					<InviteAcceptLoggedOut invite={ buildInvite( { is_wpforteams_site: true } ) } />
+				</Provider>
+			);
+
+			await userEvent.click( screen.getByText( 'Log in instead' ) );
+
+			expect( login ).toHaveBeenCalledWith( {
+				redirectTo: 'https://wordpress.com/accept-invite/abc123',
+				from: 'p2',
+			} );
 			expect( window.location ).toBe( '/log-in' );
 		} );
 	} );
