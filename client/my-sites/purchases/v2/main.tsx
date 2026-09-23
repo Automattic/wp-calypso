@@ -23,7 +23,7 @@ export default function SitePurchasesBackport( {
 	const siteId = useSelector( getSelectedSiteId );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main fullWidthLayout className="purchases">
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			<DashboardBackportSitePurchases
