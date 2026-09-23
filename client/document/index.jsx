@@ -4,7 +4,6 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
-import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useMemo, Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
@@ -22,7 +21,6 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
@@ -188,20 +186,9 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+					{ isDashboardOmnibarPage && (
 						<div id="wpcom-omnibar">
 							<InitialOmnibar user={ user } />
-						</div>
-					) }
-					{ isDashboardOmnibarPage && ! config.isEnabled( 'dashboard/omnibar-radical' ) && (
-						<div id="wpcom-omnibar">
-							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
-								<InterimOmnibar
-									user={ user || null }
-									site={ null }
-									currentRoute={ this.props.path ?? '/' }
-								/>
-							</I18NContext.Provider>
 						</div>
 					) }
 					{ renderedLayout ? (

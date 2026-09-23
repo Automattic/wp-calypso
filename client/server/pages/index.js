@@ -53,7 +53,6 @@ import {
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import { loadDashboardLocaleData } from 'calypso/server/dashboard-i18n';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -917,7 +916,7 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-		extraMiddleware: [ loadDashboardLocaleData ],
+		extraMiddleware: [],
 	},
 	{
 		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
@@ -925,7 +924,7 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-ciab',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedCiabDashboardHostname,
-		extraMiddleware: [ loadDashboardLocaleData ],
+		extraMiddleware: [],
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
