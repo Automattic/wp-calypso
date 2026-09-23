@@ -17,7 +17,6 @@ import './style.scss';
 const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
 const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
-const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
 // CSS class names
 const OPEN_CLICK_CLASS = 'open-click';
@@ -27,7 +26,6 @@ const LABEL_REVEALED_CLASS = 'is-revealed';
 // Tracking event destinations
 const DESTINATION_CHAT = 'agents-manager-chat';
 const DESTINATION_HISTORY = 'agents-manager-history';
-const DESTINATION_GUIDES = 'agents-manager-support-guides';
 
 interface UseAdminBarIntegrationOptions {
 	openChat: () => void;
@@ -199,12 +197,6 @@ export default function useAdminBarIntegration( {
 				destination: DESTINATION_HISTORY,
 				route: '/history',
 				action: () => navigate( '/history' ),
-			},
-			{
-				id: ADMIN_BAR_GUIDES_ITEM_ID,
-				destination: DESTINATION_GUIDES,
-				route: '/support-guides',
-				action: () => navigate( '/support-guides' ),
 			},
 		];
 

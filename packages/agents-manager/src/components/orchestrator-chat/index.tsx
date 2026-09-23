@@ -63,6 +63,7 @@ import {
 import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import {
 	getOrchestratorErrorMessage,
@@ -73,6 +74,7 @@ import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -1273,6 +1275,7 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			setUploadError( null );
 
+			startTurn();
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
@@ -1638,6 +1641,7 @@ export default function OrchestratorChat( {
 			getChatComponent,
 			currentPostId,
 			isProcessing,
+			canEscalateToHuman: isWooAiProvider(),
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );

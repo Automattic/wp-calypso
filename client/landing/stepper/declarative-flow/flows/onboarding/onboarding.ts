@@ -50,6 +50,7 @@ import {
 	getBuildWowSiteSpecUrl,
 	logBuildWowEvent,
 	requestBuildWowSite,
+	type BuildWowGraph,
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
@@ -608,6 +609,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
 					const prompt = providedDependencies?.prompt as string | undefined;
+					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
@@ -659,6 +661,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteSlug,
 									siteId,
 									ref: refParameter,
+									graph,
 								} )
 							);
 							return;

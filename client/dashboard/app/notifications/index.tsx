@@ -60,16 +60,9 @@ export default function Notifications( {
 		[ layoutStyle, viewSettingsSeen ]
 	);
 
-	// The masterbar remounts the bell when the unseen count changes, detaching any
-	// cached node. Resolve the live bell at measurement time so the popover stays
-	// anchored, falling back to the captured node while it is still connected.
 	const popoverAnchor = useMemo(
 		() => ( {
-			getBoundingClientRect: () =>
-				( anchorEl?.isConnected
-					? anchorEl
-					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
-				)?.getBoundingClientRect() ?? new DOMRect(),
+			getBoundingClientRect: () => anchorEl?.getBoundingClientRect() ?? new DOMRect(),
 		} ),
 		[ anchorEl ]
 	);

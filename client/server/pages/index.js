@@ -916,7 +916,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-		extraMiddleware: [],
 	},
 	{
 		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
@@ -924,7 +923,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-ciab',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedCiabDashboardHostname,
-		extraMiddleware: [],
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -932,7 +930,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-a4a',
 		devEnv: 'a8c-for-agencies-development',
 		isAllowedHostname: isAllowedA4ADashboardHostname,
-		extraMiddleware: [],
 	},
 ];
 
@@ -1351,12 +1348,8 @@ export default function pages() {
 			return;
 		}
 		variant.paths.forEach( ( route ) =>
-			handleSectionPath(
-				variant.definition,
-				route,
-				variant.entrypoint,
-				( req ) => variant.isAllowedHostname( req.hostname ),
-				variant.extraMiddleware
+			handleSectionPath( variant.definition, route, variant.entrypoint, ( req ) =>
+				variant.isAllowedHostname( req.hostname )
 			)
 		);
 	} );
@@ -1430,7 +1423,7 @@ export default function pages() {
 				/.*/,
 				variant.entrypoint,
 				( req ) => variant.isAllowedHostname( req.hostname ),
-				[ setNotFoundStatus, ...variant.extraMiddleware ]
+				setNotFoundStatus
 			)
 		);
 

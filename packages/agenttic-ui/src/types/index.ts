@@ -133,6 +133,11 @@ export interface AgentUIProps {
 	triggerTitle?: string; // Title shown next to the icon in the 'minimized' state (defaults to 'Ask AI')
 	placeholder?: string | string[];
 	notice?: NoticeConfig;
+	// Return false to block a submit. Typed text stays in the input; a blocked
+	// auto-submit suggestion stays in the list and never overwrites the input.
+	beforeSubmit?: ( message: string, source: SubmitSource ) => boolean;
+	leadingActions?: React.ReactNode; // Pinned to the start of the composer's actions row
+	trailingActions?: TrailingActions; // Grouped with the submit button; see TrailingActions
 	onOpen?: () => void;
 	onExpand?: () => void;
 	onClose?: () => void;
@@ -211,6 +216,13 @@ export interface NoticeConfig {
 	onDismiss?: () => void;
 	status?: 'success' | 'warning' | 'error';
 }
+
+export type SubmitSource = 'input' | 'suggestion';
+
+// Content grouped with the composer's submit button. A node renders right
+// before it; a function receives the ready-made submit button and decides the
+// order itself, so it must render `submit` or the composer loses its Send.
+export type TrailingActions = React.ReactNode | ( ( submit: React.ReactNode ) => React.ReactNode );
 
 // UI-specific types for existing components
 export interface ChatProps extends AgentUIProps {

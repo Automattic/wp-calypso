@@ -1,8 +1,3 @@
-/**
- * TLDs preferred for the "Top results" cards, in order.
- */
-export const NAME_PULSE_TOP_RESULTS_TLDS: readonly string[] = [ 'blog', 'com', 'app', 'dev' ];
-
 export const NAME_PULSE_TOP_RESULTS_COUNT = 3;
 
 /**

@@ -148,7 +148,6 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -171,12 +170,12 @@ describe( 'NamePulseResults', () => {
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] );
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
-			'icecream.org',
 			'icecream.net',
 			'icecream.art',
 			'icecream.info',
+			'icecream.shop',
 		] );
 	} );
 
@@ -272,6 +271,15 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( rowFor( unchecked[ 0 ] as string ) ).findByText( '$24' )
 		).toBeInTheDocument();
+	} );
+
+	it( 'renders Related matches for a one-word query', async () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+
+		await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );
 
 	it( 'renders Related matches for a multi-word query', async () => {
@@ -376,7 +384,7 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'explains an unrecognised ending and lists the joined name', async () => {
@@ -403,6 +411,38 @@ describe( 'NamePulseResults', () => {
 
 		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
 		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
+	} );
+
+	it( 'places the notice above the BeforeResults slot', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.d"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const notice = await findNotice();
+		const banner = screen.getByText( 'Before Results' );
+
+		expect(
+			notice.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'brings back a dismissed notice when the query changes', async () => {
+		const user = userEvent.setup();
+
+		const { rerender } = render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+
+		rerender( <NamePulseTestSearch query="sorbet.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+		);
 	} );
 
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
@@ -458,7 +498,7 @@ describe( 'NamePulseResults', () => {
 
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
 		expect( within( await findRow( 'icecream.com' ) ).getByText( 'Unavailable' ) ).toBeVisible();
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.app', 'icecream.dev' ] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.org', 'icecream.net' ] );
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.com' );
 	} );
 
@@ -626,7 +666,7 @@ describe( 'NamePulseResults', () => {
 			/>
 		);
 
-		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.org' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
 		// The row takes its slot as soon as the TLD order is known, a tick before its verdict

@@ -13,7 +13,10 @@
 			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		},
 		"agencies-beta.automattic.com": {
+			"favicon_url": "/calypso/images/favicons/favicon-a4a-prod.ico",
+			"favicon_brand": "a4a",
 			"oauth_client_id": 95932,
+			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
