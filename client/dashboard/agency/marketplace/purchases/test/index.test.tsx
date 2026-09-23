@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import MarketplacePurchases from '../index';
 
@@ -175,6 +176,8 @@ describe( '<MarketplacePurchases>', () => {
 	} );
 
 	test( 'asks how the purchase went after a license is assigned', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences();
 		mockAssignableLicense();
@@ -182,14 +185,26 @@ describe( '<MarketplacePurchases>', () => {
 		mockAssignableSites();
 		mockAssign();
 
-		render( <MarketplacePurchases /> );
+		render(
+			<>
+				<MarketplacePurchases />
+				<Snackbars />
+			</>
+		);
 		await screen.findByText( 'Not assigned' );
 		await assignLicense();
 
 		expect( await screen.findByText( 'Purchase complete!' ) ).toBeVisible();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText(
+			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
+		);
+		expect( notice ).toBeVisible();
 	} );
 
 	test( 'does not ask a partner who already answered', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
 		mockAssignableLicense();
@@ -197,7 +212,12 @@ describe( '<MarketplacePurchases>', () => {
 		mockAssignableSites();
 		mockAssign();
 
-		render( <MarketplacePurchases /> );
+		render(
+			<>
+				<MarketplacePurchases />
+				<Snackbars />
+			</>
+		);
 		await screen.findByText( 'Not assigned' );
 		await assignLicense();
 
@@ -207,5 +227,10 @@ describe( '<MarketplacePurchases>', () => {
 			).not.toBeInTheDocument()
 		);
 		expect( screen.queryByText( 'Purchase complete!' ) ).not.toBeInTheDocument();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText(
+			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
+		);
+		expect( notice ).toBeVisible();
 	} );
 } );
