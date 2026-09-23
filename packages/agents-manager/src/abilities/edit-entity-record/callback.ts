@@ -458,7 +458,7 @@ async function applyCreates(
 
 /** Writes the site metadata and records the new value in the session log. */
 async function editSiteMetadata( changes: Record< string, unknown > ): Promise< void > {
-	const merged = await setSiteMetadata( changes );
+	const merged = setSiteMetadata( changes );
 
 	await logSiteMetadata( merged );
 
@@ -507,7 +507,7 @@ async function applySiteEdit(
 	if ( 'title' in record ) {
 		const siteTitle = flattenTitle( title );
 
-		await setSiteTitle( siteTitle );
+		setSiteTitle( siteTitle );
 		recorder.markWritten( checkpointKeys.SITE_TITLE );
 		metadata.siteTitle = siteTitle;
 		updated( 'title' );

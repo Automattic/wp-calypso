@@ -1,6 +1,6 @@
 import { isRecord } from './is-record';
 import { providerActions, providerSelectors } from './provider-store';
-import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
+import { editSiteFields, getSiteRecord, SITE_RECORD_UNAVAILABLE } from './site-record';
 
 /**
  * Big Sky's site metadata — personality, site location, the title it renders
@@ -49,16 +49,8 @@ export function getSiteMetadata(): SiteMetadata | undefined {
 	return site ? parseMetadata( site[ METADATA_FIELD ] ) : undefined;
 }
 
-/**
- * Merges `changes` into the site metadata and saves it. Agent edits stay out of
- * the editor's undo stack — `restore-checkpoint` is the undo the agent offers.
- *
- * Saved rather than left pending, unlike most editor writes: nothing about this
- * field is visible on screen, so there is no cue telling the user a save is
- * outstanding, and a reload would drop the change the agent already reported
- * done.
- */
-export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMetadata > {
+/** Merges `changes` into the site metadata, pending the user's Save. */
+export function setSiteMetadata( changes: SiteMetadata ): SiteMetadata {
 	const current = getSiteMetadata();
 
 	// Unreadable, not empty — merging onto `{}` would drop every stored key.
@@ -67,14 +59,14 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 	}
 
 	// Big Sky's runtime state, never stored: a change to it would be dropped
-	// at the save and still reported as applied.
+	// at the write and still reported as applied.
 	if ( RUNTIME_KEY in changes ) {
 		throw new Error( `${ RUNTIME_KEY } is Big Sky's runtime state and cannot be set.` );
 	}
 
 	const { [ RUNTIME_KEY ]: _runtime, ...merged } = { ...current, ...changes };
 
-	await replaceSiteMetadata( merged );
+	replaceSiteMetadata( merged );
 
 	return merged;
 }
@@ -108,8 +100,8 @@ function syncProviderMetadata( metadata: SiteMetadata ): void {
 			...metadata,
 		} );
 	} catch {
-		// The record is already saved: a stale Big Sky copy is the lesser harm
-		// than reporting a saved write as failed.
+		// The edit is already applied: a stale Big Sky copy is the lesser harm
+		// than reporting an applied write as failed.
 	}
 }
 
@@ -119,10 +111,10 @@ function syncProviderMetadata( metadata: SiteMetadata ): void {
  * What a checkpoint restore needs: merging a snapshot back would leave behind
  * any key the change introduced, so the undo would be incomplete.
  */
-export async function replaceSiteMetadata( metadata: SiteMetadata ): Promise< void > {
-	const { [ RUNTIME_KEY ]: _runtime, ...persisted } = metadata;
+export function replaceSiteMetadata( metadata: SiteMetadata ): void {
+	const { [ RUNTIME_KEY ]: _runtime, ...stored } = metadata;
 
-	await saveSiteFields( { [ METADATA_FIELD ]: JSON.stringify( persisted ) } );
+	editSiteFields( { [ METADATA_FIELD ]: JSON.stringify( stored ) } );
 
-	syncProviderMetadata( persisted );
+	syncProviderMetadata( stored );
 }

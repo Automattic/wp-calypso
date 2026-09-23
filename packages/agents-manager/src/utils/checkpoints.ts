@@ -131,7 +131,7 @@ function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
 	setSiteLogo( checkpoint.logoBeforeUpdate );
 }
 
-async function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
+function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): void {
 	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.SITE_TITLE ) ) {
 		return;
 	}
@@ -140,10 +140,10 @@ async function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): Promise
 		throw new Error( 'Checkpoint has no site-title snapshot to restore.' );
 	}
 
-	await setSiteTitle( checkpoint.siteTitleBeforeUpdate );
+	setSiteTitle( checkpoint.siteTitleBeforeUpdate );
 }
 
-async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
+function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): void {
 	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.SITE_METADATA ) ) {
 		return;
 	}
@@ -152,7 +152,7 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 		throw new Error( 'Checkpoint has no site-metadata snapshot to restore.' );
 	}
 
-	await replaceSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
+	replaceSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
 }
 
 /**
@@ -619,8 +619,8 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 
 	restoreThemeSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
-	await restoreSiteTitleSnapshot( checkpoint );
-	await restoreSiteMetadataSnapshot( checkpoint );
+	restoreSiteTitleSnapshot( checkpoint );
+	restoreSiteMetadataSnapshot( checkpoint );
 
 	// Titles first: a page deleted since makes `setPageTitle()` throw, and that
 	// has to happen before any menu is rewritten.

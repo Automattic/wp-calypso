@@ -5,7 +5,6 @@ import { dispatch, select } from '@wordpress/data';
 import { getSiteMetadata, replaceSiteMetadata, setSiteMetadata } from '../site-metadata';
 
 const editEntityRecord = jest.fn();
-const saveSpecifiedEntityEdits = jest.fn();
 const setProviderMetadata = jest.fn();
 
 /**
@@ -23,9 +22,7 @@ function withSiteRecord( metadata?: unknown, provider: Record< string, unknown >
 			: { getEditedEntityRecord: () => ( { big_sky_site_metadata: metadata } ) };
 	} );
 	( dispatch as jest.Mock ).mockImplementation( ( storeName: unknown ) =>
-		storeName === 'ai-assembler'
-			? { setSiteMetadata: setProviderMetadata }
-			: { editEntityRecord, __experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits }
+		storeName === 'ai-assembler' ? { setSiteMetadata: setProviderMetadata } : { editEntityRecord }
 	);
 }
 
@@ -60,10 +57,10 @@ describe( 'getSiteMetadata', () => {
 } );
 
 describe( 'setSiteMetadata', () => {
-	it( 'merges onto the stored value instead of replacing it', async () => {
+	it( 'merges onto the stored value instead of replacing it', () => {
 		withSiteRecord( '{"personality":"bold","siteLocation":{"name":"Lisbon"}}' );
 
-		await setSiteMetadata( { personality: 'playful' } );
+		setSiteMetadata( { personality: 'playful' } );
 
 		expect( writtenMetadata() ).toEqual( {
 			personality: 'playful',
@@ -71,44 +68,43 @@ describe( 'setSiteMetadata', () => {
 		} );
 	} );
 
-	it( 'drops the runtime-only mode key, and returns what it stored', async () => {
+	it( 'drops the runtime-only mode key, and returns what it stored', () => {
 		withSiteRecord( '{"mode":"editor","personality":"bold"}' );
 
-		const stored = await setSiteMetadata( { personality: 'playful' } );
+		const stored = setSiteMetadata( { personality: 'playful' } );
 
 		expect( writtenMetadata() ).toEqual( { personality: 'playful' } );
 		expect( stored ).toEqual( { personality: 'playful' } );
 	} );
 
 	// Dropped at the save, a change to it would still be reported as applied.
-	it( 'refuses a change to the runtime-only mode key', async () => {
+	it( 'refuses a change to the runtime-only mode key', () => {
 		withSiteRecord( '{}' );
 
-		await expect( setSiteMetadata( { mode: 'editor' } ) ).rejects.toThrow( 'cannot be set' );
+		expect( () => setSiteMetadata( { mode: 'editor' } ) ).toThrow( 'cannot be set' );
 	} );
 
-	// Saved, not left pending: nothing about this field is on screen, so a
-	// reload would drop it with no cue that a save was outstanding.
-	it( 'saves only its own field', async () => {
+	// Pending, like the user's own edits: the editor's Save persists it.
+	it( 'writes only its own field, as a pending edit', () => {
 		withSiteRecord( '{}' );
 
-		await setSiteMetadata( { personality: 'bold' } );
+		setSiteMetadata( { personality: 'bold' } );
 
-		expect( saveSpecifiedEntityEdits ).toHaveBeenCalledWith(
+		expect( editEntityRecord ).toHaveBeenCalledWith(
 			'root',
 			'site',
 			undefined,
-			[ 'big_sky_site_metadata' ],
-			{ throwOnError: true }
+			{ big_sky_site_metadata: '{"personality":"bold"}' },
+			{ undoIgnore: true }
 		);
 	} );
 
 	// Big Sky rebuilds this field from its own store, so a write it never saw
 	// would be undone by its next one.
-	it( "keeps Big Sky's copy in step", async () => {
+	it( "keeps Big Sky's copy in step", () => {
 		withSiteRecord( '{"personality":"bold"}' );
 
-		await setSiteMetadata( { siteLocation: { name: 'Lisbon' } } );
+		setSiteMetadata( { siteLocation: { name: 'Lisbon' } } );
 
 		expect( setProviderMetadata ).toHaveBeenCalledWith( {
 			personality: 'bold',
@@ -117,10 +113,10 @@ describe( 'setSiteMetadata', () => {
 	} );
 
 	// Merging onto `{}` would silently drop every stored key.
-	it( 'refuses to write when the current value cannot be read', async () => {
+	it( 'refuses to write when the current value cannot be read', () => {
 		withSiteRecord();
 
-		await expect( setSiteMetadata( { personality: 'bold' } ) ).rejects.toThrow( 'unavailable' );
+		expect( () => setSiteMetadata( { personality: 'bold' } ) ).toThrow( 'unavailable' );
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 } );
@@ -128,14 +124,14 @@ describe( 'setSiteMetadata', () => {
 describe( 'replaceSiteMetadata', () => {
 	// Big Sky's reducer merges, so a key this write drops has to be sent as
 	// `undefined` or its next write would bring it back. Its runtime key stays.
-	it( "clears a dropped key from Big Sky's copy", async () => {
+	it( "clears a dropped key from Big Sky's copy", () => {
 		withSiteRecord( '{}', {
 			personality: 'bold',
 			siteLocation: { name: 'Lisbon' },
 			mode: 'editor',
 		} );
 
-		await replaceSiteMetadata( { personality: 'bold' } );
+		replaceSiteMetadata( { personality: 'bold' } );
 
 		expect( setProviderMetadata.mock.calls[ 0 ][ 0 ] ).toStrictEqual( {
 			personality: 'bold',
