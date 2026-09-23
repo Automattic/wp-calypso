@@ -4,7 +4,6 @@ import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
 import {
 	applyNamePulseVerdict,
-	calculateTopTlds,
 	excludeDomains,
 	generateExactMatches,
 	getAiTopResults,
@@ -131,7 +130,6 @@ export const useNamePulseSearch = ( query: string ) => {
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
-	const topTlds = useMemo( () => calculateTopTlds( baseName, tlds ?? [] ), [ baseName, tlds ] );
 	const isLoadingTlds = isPendingTlds && showExactGrid;
 
 	const exactRows = useMemo(
@@ -184,14 +182,14 @@ export const useNamePulseSearch = ( query: string ) => {
 	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
 	const topResults = useMemo( () => {
 		if ( ! isAiMode ) {
-			return getTopResults( rawExactList, topTlds );
+			return getTopResults( rawExactList );
 		}
 
 		// Both lists compete for the same three slots, so featuring the faster
 		// one's picks would swap every card once the other lands. The section
 		// stays on skeletons until it can pick from the full pool.
 		return isLoadingTop ? EMPTY_RESULTS : getAiTopResults( rawKeywordResults, rawCreativeResults );
-	}, [ isAiMode, isLoadingTop, rawKeywordResults, rawCreativeResults, rawExactList, topTlds ] );
+	}, [ isAiMode, isLoadingTop, rawKeywordResults, rawCreativeResults, rawExactList ] );
 
 	// Top results backfill from rows outside the initial slice (for example
 	// after that batch failed); make sure whatever is featured gets checked.

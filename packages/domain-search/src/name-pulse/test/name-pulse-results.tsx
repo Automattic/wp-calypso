@@ -162,12 +162,12 @@ describe( 'NamePulseResults', () => {
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] );
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
-			'icecream.org',
 			'icecream.net',
 			'icecream.art',
 			'icecream.info',
+			'icecream.shop',
 		] );
 	} );
 
@@ -541,7 +541,7 @@ describe( 'NamePulseResults', () => {
 			/>
 		);
 
-		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.app' ];
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.org' ];
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
 
 		// The row takes its slot as soon as the TLD order is known, a tick before its verdict
