@@ -7,6 +7,7 @@ import {
 	fetchMessagingAuth,
 	isTestModeEnvironment,
 	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
 	SMOOCH_INTEGRATION_ID_STAGING,
 	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
@@ -26,13 +27,17 @@ type RecordTracksEvent = ReturnType< typeof useHelpCenterTracksEvent >;
 const initSmooch = async (
 	jwt: string,
 	externalId: string,
+	integrationKey: keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM | null,
 	queryClient: QueryClient,
 	recordTracksEvent: RecordTracksEvent
 ): Promise< void > => {
 	const isTestMode = isTestModeEnvironment();
+	const integrationId = integrationKey
+		? SMOOCH_INTEGRATION_ID_CUSTOM[ integrationKey ]
+		: SMOOCH_INTEGRATION_ID;
 
 	await Smooch.init( {
-		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : integrationId,
 		delegate: {
 			async onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
@@ -109,6 +114,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	}, [] );
 
 	const featureConfig = useFeatureConfig();
+	const { zendeskIntegrationKey } = featureConfig.chat;
 	const allowChat =
 		canConnectToZendesk &&
 		enableAuth &&
@@ -221,7 +227,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				// Read the JWT from the ref so we always use the freshest token without
 				// this effect needing to re-run (and destroy + reinit Smooch) on every
 				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
-				await initSmooch( authJwtRef.current!, authExternalId, queryClient, recordTracksEvent );
+				await initSmooch(
+					authJwtRef.current!,
+					authExternalId,
+					zendeskIntegrationKey,
+					queryClient,
+					recordTracksEvent
+				);
 
 				if ( isCancelled ) {
 					return;
@@ -267,6 +279,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		authIsLoggedIn,
 		hasAuthJwt,
 		authExternalId,
+		zendeskIntegrationKey,
 		setIsChatLoaded,
 		queryClient,
 		recordTracksEvent,

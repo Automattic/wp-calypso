@@ -11,6 +11,8 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: true,
@@ -41,6 +43,8 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: false,
@@ -71,6 +75,8 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 		flowName: 'messaging_flow_commerce_in_a_box',
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: true,
@@ -102,6 +108,9 @@ const wooPreset: HelpCenterFeatureConfig = {
 		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
+		zendeskIntegrationKey: 'woo',
+		// Placeholder until the Zendesk admins confirm the Help Center routing tag.
+		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 	},
 	home: {
 		recentConversations: true,
