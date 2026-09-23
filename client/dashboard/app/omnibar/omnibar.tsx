@@ -12,7 +12,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
@@ -29,6 +28,7 @@ import { buildSiteBadgeNode } from './plugin-site-badges';
 import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
+import { useOmnibarUser } from './user';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
@@ -97,6 +97,8 @@ function ConnectedOmnibar( {
 		setHydrated( true );
 	}, [] );
 
+	const authUser = useOmnibarUser( { user, enabled: hydrated } );
+
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
@@ -108,16 +110,6 @@ function ConnectedOmnibar( {
 	const { data: { nodes: siteNodes } = {} } = useQuery( {
 		...siteAdminBarQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
-	} );
-
-	const { data: authUser } = useQuery( {
-		queryKey: AUTH_QUERY_KEY,
-		queryFn: initializeCurrentUser,
-		initialData: user,
-		enabled: hydrated,
-		staleTime: 30 * 60 * 1000,
-		retry: false,
-		meta: { persist: false },
 	} );
 
 	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
@@ -233,13 +225,19 @@ function ConnectedOmnibar( {
 	);
 }
 
-export function InitialOmnibar( { user }: { user?: User } ) {
+export function InitialOmnibar( {
+	user,
+	homeIcon = <OmnibarHomeIcon />,
+}: {
+	user?: User;
+	homeIcon?: React.ReactElement;
+} ) {
 	return (
 		<Omnibar
 			nodes={ {
 				home: {
 					id: '',
-					icon: <OmnibarHomeIcon />,
+					icon: homeIcon,
 				},
 				user: {
 					id: '',

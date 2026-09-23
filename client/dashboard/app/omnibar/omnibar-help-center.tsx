@@ -43,8 +43,8 @@ function hasHelpCenterQueryParam() {
 }
 
 /**
- * Renders the floating Help Center panel when the omnibar is enabled.
- * The masterbar's help button handles toggling via the shared help center store.
+ * Renders the floating Help Center panel. The omnibar's help button handles
+ * toggling via the shared help center store.
  *
  * Once the panel has been opened for the first time, the inner `HelpCenter`
  * component is kept mounted and manages its own visibility via the help center
