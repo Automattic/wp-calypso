@@ -1,7 +1,17 @@
+@import '@wordpress/base-styles/variables';
 @import 'calypso/dashboard/app/dataforms-overrides.scss';
 @import 'calypso/dashboard/app/dataviews-overrides.scss';
 @import 'calypso/dashboard/app/wp-components-overrides.scss';
 @import 'calypso/dashboard/app-dotcom/style.scss';
+
+// Calypso's body text is 16px, so anything the Dashboard screens leave to
+// inherit, including the popovers and modals they portal into the body, would
+// render larger than it does in the Dashboard.
+.dashboard-backport-site-purchases,
+body:has( .dashboard-backport-site-purchases ) :is( .components-popover, .components-modal__screen-overlay ) {
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+}
 
 .dashboard-backport-site-purchases {
 	// The classic layout already pads the content area, so the page layout only
