@@ -3,7 +3,7 @@ import { ChatFooter } from '../chat/ChatFooter';
 import { ChatHeader } from '../chat/ChatHeader';
 import { Messages } from '../chat/Messages';
 import styles from './ConversationView.module.css';
-import type { Message, NoticeConfig, Suggestion } from '../../types';
+import type { Message, NoticeConfig, Suggestion, TrailingActions } from '../../types';
 import type { ComponentType } from 'react';
 
 interface InputHandlers {
@@ -13,6 +13,8 @@ interface InputHandlers {
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	isProcessing: boolean;
 	onStop?: () => void;
 }
@@ -61,6 +63,8 @@ export function ConversationView( {
 	onKeyDown,
 	textareaRef,
 	placeholder,
+	leadingActions,
+	trailingActions,
 	isProcessing,
 	onStop,
 	fromCompact = false,
@@ -113,6 +117,8 @@ export function ConversationView( {
 				onKeyDown={ onKeyDown }
 				textareaRef={ textareaRef }
 				placeholder={ placeholder }
+				leadingActions={ leadingActions }
+				trailingActions={ trailingActions }
 				isProcessing={ isProcessing }
 				onStop={ onStop }
 				fromCompact={ fromCompact }

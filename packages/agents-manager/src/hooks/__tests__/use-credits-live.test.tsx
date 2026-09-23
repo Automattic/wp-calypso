@@ -5,6 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { useCredits } from '../use-credits';
+import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
 import type { TaskUpdate, UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { ReactElement } from 'react';
@@ -35,7 +36,8 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../../components/credits-meter', () => () => null );
 
 const authProvider = jest.fn();
-const agentConfig: UseAgentChatConfig = {
+const agentConfig: AgentConfig = {
+	authenticationScope: { siteId: 123, userId: 1 },
 	agentId: 'wp-orchestrator',
 	agentUrl: ORCHESTRATOR_AGENT_URL,
 	sessionId: '',
@@ -213,7 +215,11 @@ it( 'ignores an old read after navigating A to B to A', async () => {
 	const view = renderCredits();
 	await flush();
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: 456 } ) ) );
-	view.rerender( { ...defaultOptions, siteKey: '456' } );
+	view.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	} );
 	await flush();
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	view.rerender( defaultOptions );
@@ -352,7 +358,11 @@ it( 'rejects stale callbacks across A to B to A, user and agent changes', async 
 	const view = renderCredits();
 	const oldObserver = mockConfig.onTaskUpdate;
 	await receive( creditSnapshot() );
-	view.rerender( { ...defaultOptions, siteKey: '456' } );
+	view.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	} );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	view.rerender( defaultOptions );
 	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
@@ -500,3 +510,132 @@ it.each( [
 		expect( view.result.current.beforeSubmit() ).toBe( true );
 	}
 );
+
+it.each( [
+	{ siteKey: '456', userId: 1, siteId: 456 },
+	{ siteKey: '123', userId: 2, siteId: 123 },
+] )( 'waits for configuration authentication to match the selected scope %p', async ( next ) => {
+	const oldAuth = deferred< Record< string, string > >();
+	authProvider.mockReturnValueOnce( oldAuth.promise );
+	const view = renderCredits();
+	const oldObserver = mockConfig.onTaskUpdate;
+	const nextOptions = { ...defaultOptions, siteKey: next.siteKey, userId: next.userId };
+	view.rerender( nextOptions );
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	oldAuth.resolve( { Authorization: 'Bearer old-scope' } );
+	await flush();
+	expect( authProvider ).toHaveBeenCalledTimes( 1 );
+	expect( fetchMock ).not.toHaveBeenCalled();
+	const newAuth = jest.fn().mockResolvedValue( { Authorization: 'Bearer new-scope' } );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: next.siteId } ) ) );
+	view.rerender( {
+		...nextOptions,
+		agentConfig: {
+			...agentConfig,
+			authenticationScope: { siteId: next.siteId, userId: next.userId },
+			authProvider: newAuth,
+		},
+	} );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledWith(
+		`https://public-api.wordpress.com/wpcom/v2/sites/${ next.siteId }/ai/credits`,
+		expect.objectContaining( { headers: { Authorization: 'Bearer new-scope' } } )
+	);
+	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+
+it( 'does not reuse B authentication when returning to A before configuration is ready', async () => {
+	fetchMock.mockResolvedValue( response( creditSnapshot() ) );
+	const view = renderCredits();
+	await flush();
+	const originalObserver = mockConfig.onTaskUpdate;
+	view.rerender( { ...defaultOptions, siteKey: '456' } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	const bConfig = {
+		...agentConfig,
+		authenticationScope: { siteId: 456, userId: 1 },
+		authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer B' } ),
+	};
+	view.rerender( { ...defaultOptions, siteKey: '456', agentConfig: bConfig } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+	view.rerender( { ...defaultOptions, agentConfig: bConfig } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+	view.rerender( {
+		...defaultOptions,
+		agentConfig: {
+			...agentConfig,
+			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-A' } ),
+		},
+	} );
+	await flush();
+	await act( async () => originalObserver?.( terminal( exhausted() ) ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	expect( fetchMock ).toHaveBeenLastCalledWith(
+		expect.stringContaining( '/sites/123/' ),
+		expect.objectContaining( { headers: { Authorization: 'Bearer new-A' } } )
+	);
+} );
+
+it.each( [
+	{ siteKey: '456', userId: 1, agentId: 'wp-orchestrator' },
+	{ siteKey: '123', userId: 2, agentId: 'wp-orchestrator' },
+	{ siteKey: '123', userId: 1, agentId: 'other-agent' },
+] )( 'keeps an open popover and its callbacks within their visit %p', async ( next ) => {
+	const view = renderCredits();
+	await receive( creditSnapshot() );
+	const oldToggle = props( view.result.current ).onToggle;
+	act( () => oldToggle( true ) );
+	const config = {
+		...agentConfig,
+		agentId: next.agentId,
+		authenticationScope: { siteId: Number( next.siteKey ), userId: next.userId },
+	};
+	view.rerender( { ...defaultOptions, ...next, agentConfig: config } );
+	await receive( creditSnapshot( { blog_id: Number( next.siteKey ) } ) );
+	const expectedOpen = next.agentId === 'wp-orchestrator' ? false : undefined;
+	expect( props( view.result.current )?.isOpen ).toBe( expectedOpen );
+	act( () => oldToggle( true ) );
+	expect( props( view.result.current )?.isOpen ).toBe( expectedOpen );
+	view.rerender( defaultOptions );
+	await receive( creditSnapshot() );
+	expect( props( view.result.current ).isOpen ).toBe( false );
+} );
+
+it( 'rejects callbacks and pending reads from the previous initialized conversation', async () => {
+	const oldRead = deferred< ReturnType< typeof response > >();
+	fetchMock.mockReturnValueOnce( oldRead.promise );
+	const view = renderCredits();
+	await flush();
+	const oldObserver = mockConfig.onTaskUpdate;
+	const signal = fetchMock.mock.calls[ 0 ][ 1 ].signal;
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( {
+		...defaultOptions,
+		agentConfig: {
+			...agentConfig,
+			sessionId: 'new-conversation',
+			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-agent' } ),
+		},
+	} );
+	await flush();
+	expect( signal.aborted ).toBe( true );
+	oldRead.resolve( response( exhausted() ) );
+	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+
+it( 'accepts the first terminal snapshot after the server assigns the same conversation a session', async () => {
+	const view = renderCredits();
+	const observer = mockConfig.onTaskUpdate;
+	view.rerender( {
+		...defaultOptions,
+		agentConfig: { ...agentConfig, sessionId: 'server-assigned' },
+	} );
+	await act( async () => observer?.( terminal( creditSnapshot() ) ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );

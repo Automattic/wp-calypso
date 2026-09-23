@@ -76,3 +76,22 @@ it.each( [
 ] )( 'rejects wrong-site, unsupported or inconsistent snapshots %p', ( overrides ) => {
 	expect( parseCreditSnapshot( { ...creditSnapshot(), ...overrides }, 123 ) ).toBeUndefined();
 } );
+
+it.each( [ '2026-10-01T00:00:00Z', '2026-10-01T00:00:00+00:00', '2028-02-29T23:59:59+00:00' ] )(
+	'accepts the UTC reset timestamp %s',
+	( resets_at ) => {
+		const snapshot = creditSnapshot( { resets_at } );
+		expect( parseCreditSnapshot( snapshot, 123 ) ).toEqual( snapshot );
+	}
+);
+it.each( [
+	'2026-02-30T00:00:00+00:00',
+	'2026-02-29T00:00:00Z',
+	'2026-10-01T24:00:00+00:00',
+	'2026-10-01T00:00:00+01:00',
+	'2026-10-01T00:00:00-01:00',
+	'2026-10-01T00:00:00',
+	'2026-10-01T00:00:00.123Z',
+] )( 'rejects invalid or unsupported UTC reset timestamp %s', ( resets_at ) => {
+	expect( parseCreditSnapshot( creditSnapshot( { resets_at } ), 123 ) ).toBeUndefined();
+} );

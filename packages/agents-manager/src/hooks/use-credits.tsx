@@ -16,12 +16,9 @@ import {
 	getLiveCreditSiteId,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
+import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
-import type {
-	TaskUpdate,
-	UseAgentChatConfig,
-	UseAgentChatReturn,
-} from '@automattic/agenttic-client';
+import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 
 interface MockCreditsSeed {
@@ -56,7 +53,7 @@ function readMockSeed(): MockCreditsSeed | null {
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
-	agentConfig: UseAgentChatConfig;
+	agentConfig: AgentConfig;
 	siteKey: string;
 	userId?: number;
 	isOpen: boolean;
@@ -85,11 +82,22 @@ export function useCredits( {
 	isOpen,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
-	const siteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	const { authProvider, authenticationScope } = agentConfig;
+	const siteId =
+		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId
+			? requestedSiteId
+			: undefined;
 	const scopeIdentity = JSON.stringify( [ siteKey, userId, agentConfig.agentId, enabled ] );
 	const scope = useMemo(
-		() => ( { identity: scopeIdentity, siteId, active: true, validTerminalRevision: 0 } ),
-		[ scopeIdentity, siteId ]
+		() => ( {
+			identity: scopeIdentity,
+			siteId,
+			authProvider,
+			active: true,
+			validTerminalRevision: 0,
+		} ),
+		[ scopeIdentity, siteId, authProvider ]
 	);
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
@@ -98,13 +106,22 @@ export function useCredits( {
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
-	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const [ popoverScope, setPopoverScope ] = useState< typeof scope >();
+	const isPopoverOpen = popoverScope === scope;
+	const setIsPopoverOpen = useCallback(
+		( open: boolean ) => {
+			if ( currentScope.current === scope && scope.active ) {
+				setPopoverScope( open ? scope : undefined );
+			}
+		},
+		[ scope ]
+	);
 	const invalidateBalance = useCallback( () => {
 		if ( currentScope.current === scope && scope.active ) {
 			setBalance( undefined );
 			setIsPopoverOpen( false );
 		}
-	}, [ scope ] );
+	}, [ scope, setIsPopoverOpen ] );
 	const observeTaskUpdate = useCallback(
 		( update: TaskUpdate ) => {
 			if (
@@ -142,8 +159,8 @@ export function useCredits( {
 	const { isProcessing } = chat;
 	const processingRef = useRef( isProcessing );
 	processingRef.current = isProcessing;
-	const { authProvider } = agentConfig;
 	const refreshBalance = useCallback( async () => {
+		const { authProvider } = scope;
 		if (
 			! isOpen ||
 			! scope.siteId ||
@@ -192,7 +209,7 @@ export function useCredits( {
 				balanceRequest.current = undefined;
 			}
 		}
-	}, [ scope, authProvider, isOpen, invalidateBalance ] );
+	}, [ scope, isOpen, invalidateBalance ] );
 	useEffect( () => {
 		scope.active = true;
 		return () => {
@@ -288,7 +305,7 @@ export function useCredits( {
 	const handleAction = useCallback( () => {
 		// TODO: route to the plan upgrade / add-credits checkout once the CTA destination is decided.
 		setIsPopoverOpen( false );
-	}, [] );
+	}, [ setIsPopoverOpen ] );
 
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
@@ -302,7 +319,7 @@ export function useCredits( {
 				onAction={ siteId ? undefined : handleAction }
 			/>
 		);
-	}, [ status, isPopoverOpen, handleAction, siteId ] );
+	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( ! status || status.plan !== 'free' ) {
@@ -352,7 +369,7 @@ export function useCredits( {
 		}
 
 		return true;
-	}, [ status, isExhausted, snapshot, invalidateBalance, refreshBalance ] );
+	}, [ status, isExhausted, snapshot, invalidateBalance, refreshBalance, setIsPopoverOpen ] );
 
 	return useMemo(
 		() => ( { chat, trailingActions, notice, beforeSubmit } ),

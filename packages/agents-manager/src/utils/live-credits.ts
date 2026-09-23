@@ -26,9 +26,9 @@ export interface CreditSnapshot {
 function isUtcTimestamp( value: unknown ): value is string {
 	return (
 		typeof value === 'string' &&
-		/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test( value ) &&
+		/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|\+00:00)$/.test( value ) &&
 		Number.isFinite( Date.parse( value ) ) &&
-		new Date( value ).toISOString() === value.replace( 'Z', '.000Z' )
+		new Date( value ).toISOString() === value.replace( /(?:Z|\+00:00)$/, '.000Z' )
 	);
 }
 
