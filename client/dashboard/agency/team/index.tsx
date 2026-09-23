@@ -15,6 +15,7 @@ import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { MilestoneFeedbackModal, useMilestoneFeedback } from '../feedback';
 import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
 import { DEFAULT_VIEW } from './dataviews/views';
 import InviteTeamMemberModal from './invite-team-member-modal';
@@ -56,6 +57,8 @@ export default function AgencyTeam() {
 
 	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
 	const [ isInviteOpen, setIsInviteOpen ] = useState( false );
+	const [ invitedLogin, setInvitedLogin ] = useState< string | null >( null );
+	const { shouldAsk: shouldAskAboutInvite } = useMilestoneFeedback( 'team-member-invite-sent' );
 
 	const { mutate: resendInvite } = useMutation(
 		withSnackbar( agencyTeamResendInviteMutation( agencyId ), {
@@ -120,7 +123,23 @@ export default function AgencyTeam() {
 				/>
 			) }
 			{ isInviteOpen && (
-				<InviteTeamMemberModal agencyId={ agencyId } onClose={ () => setIsInviteOpen( false ) } />
+				<InviteTeamMemberModal
+					agencyId={ agencyId }
+					onClose={ () => setIsInviteOpen( false ) }
+					onSent={ ( login ) => {
+						setIsInviteOpen( false );
+						if ( shouldAskAboutInvite ) {
+							setInvitedLogin( login );
+						}
+					} }
+				/>
+			) }
+			{ invitedLogin !== null && (
+				<MilestoneFeedbackModal
+					type="team-member-invite-sent"
+					args={ { email: invitedLogin } }
+					onClose={ () => setInvitedLogin( null ) }
+				/>
 			) }
 		</PageLayout>
 	);
