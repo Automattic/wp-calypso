@@ -2,7 +2,6 @@ import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
 	ExternalLink,
-	__experimentalDivider as Divider,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -18,6 +17,7 @@ import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
 import { a4aLink } from '../../../utils/link';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';

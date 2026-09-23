@@ -5,7 +5,9 @@
 	margin-block-end: 32px;
 
 	hr {
-		border-color: var( --color-border-subtle );
+		border: 0;
+		border-block-end: 1px solid var( --color-border-subtle );
+		margin: 0;
 	}
 }
 

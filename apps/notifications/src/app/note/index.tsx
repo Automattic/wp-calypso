@@ -1,5 +1,4 @@
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
@@ -148,7 +147,13 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					{ !! note.header?.length && (
 						<>
 							<NoteSummary header={ note.header } url={ note.url } />
-							<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
+							<hr
+								style={ {
+									border: 0,
+									borderBlockEnd: '1px solid var( --color-border-subtle, #f0f0f0 )',
+									margin: 0,
+								} }
+							/>
 						</>
 					) }
 					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>

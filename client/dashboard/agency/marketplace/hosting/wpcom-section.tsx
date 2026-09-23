@@ -1,7 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	__experimentalDivider as Divider,
 	Tooltip,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -15,6 +14,7 @@ import clsx from 'clsx';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
