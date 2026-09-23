@@ -685,7 +685,7 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink()
+	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );

@@ -164,7 +164,7 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
+	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
 	return href
 		? {
 				href,
@@ -222,7 +222,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
-		...getPlanChangeReturnUrls(),
+		...getPlanChangeReturnUrls( purchase ),
 		upgradeOnly: true,
 	} );
 	if ( planAction ) {
@@ -622,7 +622,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		} );
 
 	if ( isDotcomPlan( purchase ) ) {
-		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls() );
+		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls( purchase ) );
 		if ( ! action ) {
 			return null;
 		}
