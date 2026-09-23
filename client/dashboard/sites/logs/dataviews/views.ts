@@ -56,7 +56,7 @@ const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType
 			continue;
 		}
 
-		const raw = Array.isArray( filter.value ) ? filter.value : [];
+		const raw = Array.isArray( filter.value ) ? filter.value : [ filter.value ?? '' ];
 		const values = Array.from( new Set( raw.map( String ) ) )
 			.filter( Boolean )
 			.sort();
@@ -74,5 +74,12 @@ export function toFilterParams( { view, logType }: { view: View; logType: LogTyp
 		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
+	return getFilterParamsFromView( view, [
+		'cached',
+		'request_type',
+		'request_url',
+		'status',
+		'renderer',
+		'user_ip',
+	] );
 }

@@ -2,6 +2,7 @@ export * from './constants';
 export * from './detect-fqdn';
 export * from './exclude-domains';
 export * from './generate-exact-matches';
+export * from './get-name-pulse-notice';
 export * from './get-results-layout';
 export * from './get-top-results';
 export * from './pricing';

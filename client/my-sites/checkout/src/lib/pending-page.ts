@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { isAllowedRedirectUrl } from '@automattic/calypso-url';
+import { determineUrlType, isAllowedRedirectUrl, URL_TYPE } from '@automattic/calypso-url';
 import {
 	SUCCESS,
 	ERROR,
@@ -270,8 +270,7 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	// Allow relative paths (but not protocol-relative URLs like //evil.com).
-	if ( url.startsWith( '/' ) && ! url.startsWith( '//' ) ) {
+	if ( determineUrlType( url ) === URL_TYPE.PATH_ABSOLUTE ) {
 		return true;
 	}
 

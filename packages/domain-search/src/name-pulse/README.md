@@ -6,7 +6,7 @@ The Name Pulse results mode for the WordPress.com domain search. `DomainSearch` 
 
 ## Not yet built
 
-FQDN card for a typed `name.tld`, the "Protect your brand" bundle card, the filter button, AI mode ("Creative matches") for four or more words.
+FQDN card for a typed `name.tld`, the "Protect your brand" bundle card, the filter button.
 
 ## Imports
 

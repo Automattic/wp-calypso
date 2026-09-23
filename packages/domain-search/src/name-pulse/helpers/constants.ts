@@ -1,8 +1,3 @@
-/**
- * TLDs preferred for the "Top results" cards, in order.
- */
-export const NAME_PULSE_TOP_RESULTS_TLDS: readonly string[] = [ 'blog', 'com', 'app', 'dev' ];
-
 export const NAME_PULSE_TOP_RESULTS_COUNT = 3;
 
 /**
@@ -31,6 +26,12 @@ export const NAME_PULSE_INITIAL_CHECK_MULTI_WORD = 24;
  * How long skeleton slots and "checking" rows wait for a response before giving up.
  */
 export const NAME_PULSE_SKELETON_TIMEOUT_MS = 10000;
+
+/**
+ * Passed to the suggestions endpoint so it gives up on its providers before the
+ * skeletons do. Keyword suggestions use the endpoint's own default.
+ */
+export const NAME_PULSE_AI_TIMEOUT_MS = 8000;
 
 /**
  * How long a cached availability verdict is trusted, and kept once no row reads it.

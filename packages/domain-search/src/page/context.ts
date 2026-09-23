@@ -10,6 +10,7 @@ import {
 	namePulseSuggestionsQuery,
 	namePulseTldsQuery,
 } from '@automattic/api-queries';
+import { useEvent } from '@wordpress/compose';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
@@ -147,6 +148,22 @@ export const useDomainSearchContextValue = ( {
 		};
 	}, [ config ] );
 
+	// The search input debounces setQuery, and useDebounce cancels the pending
+	// call whenever the callback identity changes. Consumers rebuild `events`
+	// and `cart` on every render, so a setQuery recreated with the memo below
+	// would drop the query typed just before an unrelated re-render.
+	const setQuery = useEvent( ( query: string ) => {
+		const normalizedQuery = query
+			.trim()
+			.toLowerCase()
+			.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+			.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+		if ( normalizedQuery ) {
+			normalizedEvents.onQueryChange( normalizedQuery );
+		}
+	} );
+
 	return useMemo( () => {
 		const allowedTlds = normalizedConfig.allowedTlds?.length
 			? normalizedConfig.allowedTlds
@@ -249,17 +266,7 @@ export const useDomainSearchContextValue = ( {
 			closeFullCart,
 			openFullCart,
 			query: externalQuery ?? '',
-			setQuery: ( query ) => {
-				const normalizedQuery = query
-					.trim()
-					.toLowerCase()
-					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
-					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
-
-				if ( normalizedQuery ) {
-					normalizedEvents.onQueryChange( normalizedQuery );
-				}
-			},
+			setQuery,
 			slots,
 			currentSiteUrl,
 			filter,
@@ -277,6 +284,7 @@ export const useDomainSearchContextValue = ( {
 		closeFullCart,
 		openFullCart,
 		externalQuery,
+		setQuery,
 		cart,
 		normalizedEvents,
 		slots,
