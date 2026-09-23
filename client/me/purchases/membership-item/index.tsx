@@ -1,4 +1,3 @@
-import { CompactCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -133,40 +132,3 @@ export const Icon = ( { subscription }: { subscription: MembershipSubscription }
 
 	return <SiteIcon size={ 36 } />;
 };
-
-export default function MembershipItem( {
-	subscription,
-}: {
-	subscription: MembershipSubscription;
-} ) {
-	const translate = useTranslate();
-
-	return (
-		<CompactCard
-			className="membership-item"
-			key={ subscription.ID }
-			href={ '/me/purchases/other/' + subscription.ID }
-		>
-			<div className="membership-item__wrapper purchases-layout__wrapper">
-				<div className="membership-item__site purchases-layout__site">
-					<Icon subscription={ subscription } />
-				</div>
-
-				<div className="membership-item__information purchase-item__information purchases-layout__information">
-					<div className="membership-item__title purchase-item__title">{ subscription.title }</div>
-					<div className="membership-item__purchase-type purchase-item__purchase-type">
-						<MembershipType subscription={ subscription } />
-					</div>
-				</div>
-
-				<div className="membership-item__status purchase-item__status purchases-layout__status">
-					<MembershipTerms subscription={ subscription } />
-				</div>
-
-				<div className="membership-item__payment-method purchase-item__payment-method purchases-layout__payment-method">
-					{ translate( 'Credit card' ) }
-				</div>
-			</div>
-		</CompactCard>
-	);
-}

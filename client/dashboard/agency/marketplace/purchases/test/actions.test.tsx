@@ -102,6 +102,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
+		isProvisioning: false,
 		onCopyKey: () => {},
 		onDownload: () => {},
 		onOpenHosting,

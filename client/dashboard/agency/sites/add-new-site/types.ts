@@ -1,7 +1,4 @@
-/**
- * The menu entries that open a modal rather than navigating. The import and
- * dev-site modals are ported separately.
- */
+/** The menu entries that open a modal rather than navigating. */
 export type AddNewSiteAction =
 	'import-from-wpcom' | 'a4a-connection' | 'jetpack-connection' | 'dev-site-configurations';
 

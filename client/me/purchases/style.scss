@@ -110,8 +110,7 @@
 	@include placeholder;
 }
 
-.purchase-item__site,
-.membership-item {
+.purchase-item__site {
 	.site-icon {
 		border-radius: 2px;
 	}
@@ -124,8 +123,7 @@
 	}
 }
 
-.purchase-item,
-.membership-item {
+.purchase-item {
 	&:hover {
 		background: var(--color-neutral-0);
 	}

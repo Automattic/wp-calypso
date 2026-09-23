@@ -18,9 +18,10 @@ import spotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
-import { a4aLink } from '../../../utils/link';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
+import { getMarketplaceReferHostingRoute } from '../paths';
 import { BrandMark, CheckList, Testimonials, VipCapabilities } from './content-sections';
 
 const VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE = 20;
@@ -56,18 +57,17 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 		</Button>
 	);
 
-	// TODO: The VIP referral form is still the classic page.
 	const referClientButton = ( variant: 'primary' | 'secondary' ) => (
-		<Button
+		<RouterLinkButton
 			variant={ variant }
 			__next40pxDefaultSize
-			href={ a4aLink( '/marketplace/hosting/refer-enterprise-hosting' ) }
+			to={ getMarketplaceReferHostingRoute( 'enterprise' ) }
 			onClick={ () =>
 				recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_refer_client_click' )
 			}
 		>
 			{ __( 'Refer your client to VIP hosting' ) }
-		</Button>
+		</RouterLinkButton>
 	);
 
 	return (

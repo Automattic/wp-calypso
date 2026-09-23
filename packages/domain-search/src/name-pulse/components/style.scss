@@ -4,12 +4,22 @@
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
 .domain-search--results.domain-search--name-pulse {
-	// Figma spec is 1248px, wider than the classic results page's content width.
-	max-width: 78rem;
-
 	@media ( max-width: #{ $break-small - 1px } ) {
 		padding-block-start: 0;
 	}
+}
+
+// Figma spec is 1248px, wider than the classic results page's content width.
+// Override the variable rather than `max-width` so the mini cart, which
+// renders inside the results element, lines up with the results above it.
+// The initial state shares it so the search bar does not jump on the first query.
+.domain-search--results.domain-search--name-pulse,
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	--domain-search-content-max-width: 78rem;
+}
+
+.domain-search--initial-state:has( .name-pulse-search-input ) {
+	max-width: var( --domain-search-content-max-width );
 }
 
 .name-pulse-grid {
@@ -57,6 +67,21 @@
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
 
+		// A Sale and a Premium badge together leave the name only a few
+		// characters, so the pair drops under it.
+		&--stacked {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+	}
+
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		max-width: 100%;
+
 		.domain-suggestion-badge {
 			flex-shrink: 0;
 			height: 20px;
@@ -69,6 +94,7 @@
 	&__domain {
 		display: flex;
 		min-width: 0;
+		max-width: 100%;
 
 		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
 		// never loses space to the label and is never cut off.
@@ -122,6 +148,12 @@
 		}
 	}
 
+	// The error CTA is `aria-disabled` so it stays hoverable for its tooltip; the
+	// attribute has to be matched to beat the faded disabled color.
+	&__cart--error.components-button.is-primary[aria-disabled='true'] {
+		color: $white;
+	}
+
 	&__skeleton {
 		display: inline-block;
 		width: 3.75rem;
@@ -133,11 +165,6 @@
 		&--name {
 			width: 9.5rem;
 		}
-	}
-
-	&__error {
-		flex-basis: 100%;
-		color: $alert-red;
 	}
 }
 
@@ -162,5 +189,74 @@
 	}
 	50% {
 		opacity: 0.4;
+	}
+}
+
+// Hex fallbacks mirror how `@wordpress/components` references the same tokens.
+.name-pulse-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 4px;
+	padding: var( --wpds-dimension-padding-md, 12px );
+	border: 1px solid;
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	font-size: 13px;
+	line-height: 20px;
+	letter-spacing: -0.078px;
+
+	&--warning {
+		background: var( --wpds-color-background-surface-warning-weak, #fff7e1 );
+		border-color: var( --wpds-color-stroke-surface-warning, #e1bc7c );
+		color: var( --wpds-color-foreground-content-warning, #2e1900 );
+	}
+
+	&--neutral {
+		background: var( --wpds-color-background-surface-neutral-weak, #f4f4f4 );
+		border-color: var( --wpds-color-stroke-surface-neutral, #dbdbdb );
+		color: var( --wpds-color-foreground-content-neutral, #1e1e1e );
+	}
+
+	&--error {
+		background: var( --wpds-color-background-surface-error-weak, #fff6f5 );
+		border-color: var( --wpds-color-stroke-surface-error, #dab1aa );
+		color: var( --wpds-color-foreground-content-error, #470000 );
+	}
+
+	&__message {
+		flex: 1 0 0;
+		min-width: 0;
+		margin: 0;
+		padding-block: 2px;
+		overflow-wrap: anywhere;
+	}
+
+	&__action {
+		margin: 0;
+		padding-block: 2px;
+		padding-inline-start: 4px;
+
+		.components-button.is-link {
+			color: inherit;
+			font-size: inherit;
+			line-height: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	&__dismiss.components-button {
+		flex-shrink: 0;
+		color: inherit;
+	}
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		flex-wrap: wrap;
+
+		&__message {
+			flex-basis: 100%;
+		}
+
+		&__action {
+			padding-inline-start: 0;
+		}
 	}
 }

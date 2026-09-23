@@ -13,11 +13,13 @@ export interface ProgressRingProps {
 	className?: string;
 }
 
+// Geometry keeps the fraction: a sub-1% remainder still draws (as the round
+// cap's dot), and only an actual zero hides the arc. Rounding is for labels.
 export function clampPercent( percent: number ): number {
 	if ( ! Number.isFinite( percent ) ) {
 		return 0;
 	}
-	return Math.min( 100, Math.max( 0, Math.floor( percent ) ) );
+	return Math.min( 100, Math.max( 0, percent ) );
 }
 
 /**

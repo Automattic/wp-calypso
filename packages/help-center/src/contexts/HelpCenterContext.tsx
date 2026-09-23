@@ -117,6 +117,6 @@ export function useFeatureConfig(): HelpCenterFeatureConfig {
 	const { product = 'wpcom' } = useHelpCenterContext();
 
 	return useMemo( () => {
-		return PRODUCT_PRESETS[ product ];
+		return PRODUCT_PRESETS[ product ] ?? PRODUCT_PRESETS.wpcom;
 	}, [ product ] );
 }

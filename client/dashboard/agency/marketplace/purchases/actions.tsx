@@ -23,18 +23,23 @@ import {
 	isWpcomHostingLicense,
 } from './license-status';
 import RevokeLicenseModal from './revoke-license-modal';
+import SiteConfigurationModal from './site-configuration-modal';
 import type { JetpackLicense } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 export function getLicenseActions( {
 	canRevoke,
 	isAgencyOwner,
+	isProvisioning,
 	onCopyKey,
 	onDownload,
 	onOpenHosting,
 	recordTracksEvent,
 }: {
 	canRevoke: boolean;
+	// A site is already being created. Holding the rest back is a UI convention
+	// carried over from the classic dashboard, not something the API enforces.
+	isProvisioning: boolean;
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
 	onDownload: ( license: JetpackLicense ) => void;
@@ -140,9 +145,12 @@ export function getLicenseActions( {
 			id: 'create-site',
 			label: __( 'Create site' ),
 			isEligible: ( item ) => isAssignable( item ) && isWpcomHostingLicense( item ),
-			// The site setup flow still lives in the classic dashboard.
-			// TODO: open the site configuration modal here once it lands in the dashboard (#114251).
-			callback: () => window.location.assign( a4aLink( '/sites/need-setup' ) ),
+			disabled: isProvisioning,
+			modalHeader: __( 'Configure your new site' ),
+			modalSize: 'medium',
+			RenderModal: ( { items, closeModal } ) => (
+				<SiteConfigurationModal license={ items[ 0 ] } closeModal={ closeModal } />
+			),
 		},
 		{
 			id: 'assign-license',
@@ -225,10 +233,12 @@ export function useLicenseActions( {
 	agencyId,
 	canRevoke,
 	isAgencyOwner,
+	isProvisioning,
 }: {
 	agencyId: number;
 	canRevoke: boolean;
 	isAgencyOwner: boolean;
+	isProvisioning: boolean;
 } ): Action< JetpackLicense >[] {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -279,11 +289,20 @@ export function useLicenseActions( {
 			getLicenseActions( {
 				canRevoke,
 				isAgencyOwner,
+				isProvisioning,
 				onCopyKey,
 				onDownload,
 				onOpenHosting,
 				recordTracksEvent,
 			} ),
-		[ canRevoke, isAgencyOwner, onCopyKey, onDownload, onOpenHosting, recordTracksEvent ]
+		[
+			canRevoke,
+			isAgencyOwner,
+			isProvisioning,
+			onCopyKey,
+			onDownload,
+			onOpenHosting,
+			recordTracksEvent,
+		]
 	);
 }

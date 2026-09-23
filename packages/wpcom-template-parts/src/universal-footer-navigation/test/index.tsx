@@ -63,6 +63,12 @@ describe( 'PureUniversalNavbarFooter', () => {
 			footerClass
 		);
 		expect( document.querySelector( '.lp-footer-section' ) ).toHaveClass( sectionClass );
-		expect( document.querySelector( '.lp-footer-section footer' ) ).toHaveClass( sectionClass );
+		expect( document.querySelector( 'footer.wpcom-global-nav-footer--2026' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.lp-footer-bottom' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.lp-footer-legal' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Download our app' } ) ).toHaveAttribute(
+			'href',
+			'https://apps.wordpress.com/get/?campaign=qrcode-apps'
+		);
 	} );
 } );

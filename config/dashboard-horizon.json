@@ -19,6 +19,7 @@
 	"wpcom_url": "https://wpcalypso.wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"calypso/agents-manager-internal": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
@@ -28,7 +29,6 @@
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
-		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,
 		"dashboard/simulate-full-rollout": true,
 		"dashboard/wp-beta-program": true,
