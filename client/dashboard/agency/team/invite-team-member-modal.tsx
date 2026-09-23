@@ -40,8 +40,13 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 					} );
 					onClose();
 				},
-				onError: () =>
-					createErrorNotice( __( 'Failed to send the invitation.' ), { type: 'snackbar' } ),
+				onError: ( error: Error & { code?: string } ) =>
+					createErrorNotice(
+						error.code === 'a4a_user_invite_automattician'
+							? __( 'Automattician accounts cannot be invited as agency team members.' )
+							: error.message || __( 'Failed to send the invitation.' ),
+						{ type: 'snackbar' }
+					),
 			}
 		);
 	};
