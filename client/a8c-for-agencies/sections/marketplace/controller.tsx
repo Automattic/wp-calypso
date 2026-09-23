@@ -20,6 +20,7 @@ import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
 import DownloadProducts from './primary/download-products';
+import PressableTitanCheckout from './primary/pressable-titan-checkout';
 import ProductsOverview from './products-overview';
 import ReferHosting from './refer-hosting';
 import type { MarketplaceType, TermPricingType } from './types';
@@ -162,6 +163,18 @@ export const checkoutContext: Callback = ( context, next ) => {
 	);
 	next();
 };
+
+export const pressableTitanCheckoutContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Pressable Titan Checkout" path={ context.path } />
+			<PressableTitanCheckout />
+		</>
+	);
+	next();
+};
+
 export const assignLicenseContext: Callback = ( context, next ) => {
 	const { page, search } = context.query;
 	const initialPage = parseInt( page ) || 1;

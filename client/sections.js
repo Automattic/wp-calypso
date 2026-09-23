@@ -856,6 +856,7 @@ const sections = [
 			'/marketplace/hosting/pressable',
 			'/marketplace/hosting/wpcom',
 			'/marketplace/checkout',
+			'/marketplace/pressable/titan-checkout',
 			'/marketplace/assign-license',
 			'/marketplace/download-products',
 		],

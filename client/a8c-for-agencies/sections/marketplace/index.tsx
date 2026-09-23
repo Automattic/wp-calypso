@@ -8,6 +8,7 @@ import {
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
 	A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK,
+	A4A_MARKETPLACE_PRESSABLE_TITAN_CHECKOUT_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -20,6 +21,7 @@ import {
 	downloadProductsContext,
 	marketplaceReferEnterpriseHostingContext,
 	marketplaceReferPremiumPlanContext,
+	pressableTitanCheckoutContext,
 } from './controller';
 
 export default function () {
@@ -69,6 +71,13 @@ export default function () {
 		A4A_MARKETPLACE_CHECKOUT_LINK,
 		requireAccessContext,
 		checkoutContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		A4A_MARKETPLACE_PRESSABLE_TITAN_CHECKOUT_LINK,
+		requireAccessContext,
+		pressableTitanCheckoutContext,
 		makeLayout,
 		clientRender
 	);
