@@ -26,6 +26,11 @@ jest.mock( '../can-manage-stats-settings', () => ( {
 jest.mock( 'calypso/blocks/stats-navigation', () => () => null );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 jest.mock( '../../../stats-page-view-tracker', () => () => null );
+const mockTrack = jest.fn();
+jest.mock( '../../../utils', () => ( {
+	...jest.requireActual( '../../../utils' ),
+	trackStatsAnalyticsEvent: ( ...args: unknown[] ) => mockTrack( ...args ),
+} ) );
 jest.mock(
 	'calypso/my-sites/stats/components/stats-main',
 	() =>
@@ -53,6 +58,7 @@ const section = ( heading: string ) => within( screen.getByRole( 'group', { name
 describe( 'StatsSettingsPage', () => {
 	beforeEach( () => {
 		mockSave.mockClear();
+		mockTrack.mockClear();
 		mockRedirect.mockClear();
 		mockCanManage = true;
 		mockSettings = {
@@ -80,6 +86,19 @@ describe( 'StatsSettingsPage', () => {
 		await userEvent.click( section( 'Logged-in views' ).getByLabelText( 'Administrator' ) );
 
 		expect( mockSave ).toHaveBeenCalledWith( { count_roles: [] }, expect.anything() );
+	} );
+
+	it( 'records which role toggle changed and its new state', async () => {
+		render( <StatsSettingsPage /> );
+
+		await userEvent.click( section( 'Stats access' ).getByLabelText( 'Editor' ) );
+
+		expect( mockTrack ).toHaveBeenCalledWith( 'stats_settings_changed', {
+			blog_id: 123,
+			setting: 'roles',
+			enabled: true,
+			role: 'editor',
+		} );
 	} );
 
 	it( 'keeps administrators able to view Stats', () => {
