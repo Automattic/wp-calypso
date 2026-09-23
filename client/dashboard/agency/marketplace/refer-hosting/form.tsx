@@ -51,11 +51,6 @@ const required =
 	( key: keyof ReferHostingFormData, message: string ) => ( item: ReferHostingFormData ) =>
 		item[ key ].trim() === '' ? message : null;
 
-const getSnackbarMessages = () => ( {
-	success: __( 'Referral submitted.' ),
-	error: __( 'Failed to submit referral.' ),
-} );
-
 export default function ReferHostingForm( {
 	agencyId,
 	config,
@@ -70,11 +65,15 @@ export default function ReferHostingForm( {
 	const { countryOptions, statesByCountry } = useCountryOptions();
 	const [ formData, setFormData ] = useState( EMPTY_FORM_DATA );
 
+	const snackbar = {
+		success: __( 'Referral submitted.' ),
+		error: __( 'Failed to submit referral.' ),
+	};
 	const vipReferral = useMutation(
-		withSnackbar( agencyVipPartnerOpportunityMutation( agencyId ), getSnackbarMessages() )
+		withSnackbar( agencyVipPartnerOpportunityMutation( agencyId ), snackbar )
 	);
 	const premiumReferral = useMutation(
-		withSnackbar( agencyPressablePremiumPlanReferralMutation( agencyId ), getSnackbarMessages() )
+		withSnackbar( agencyPressablePremiumPlanReferralMutation( agencyId ), snackbar )
 	);
 	const isPending = vipReferral.isPending || premiumReferral.isPending;
 
@@ -225,39 +224,52 @@ export default function ReferHostingForm( {
 		[ countryOptions, stateOptions ]
 	);
 
-	const companyForm: Form = {
-		layout: { type: 'regular' },
-		fields: [ 'companyName', 'address', 'country', 'state', 'city', 'zip' ],
-	};
-	const contactForm: Form = {
-		layout: { type: 'regular' },
-		fields: [
-			{
-				id: 'name',
-				layout: isNarrow ? undefined : { type: 'row', alignment: 'start' },
-				children: [ 'firstName', 'lastName' ],
-			},
-			'title',
-			'phone',
-			'email',
-			'website',
-		],
-	};
-	const opportunityForm: Form = {
-		layout: { type: 'regular' },
-		fields: [
-			'opportunityDescription',
-			...( config.hasEnterpriseFields ? [ 'leadType', 'isRfp' ] : [] ),
-		],
-	};
-	const { validity, isValid } = useFormValidity( formData, fields, {
-		layout: { type: 'regular' },
-		fields: [
-			...( companyForm.fields ?? [] ),
-			...( contactForm.fields ?? [] ),
-			...( opportunityForm.fields ?? [] ),
-		],
-	} );
+	// Stable form objects: useFormValidity re-validates whenever the form
+	// identity changes.
+	const { hasEnterpriseFields } = config;
+	const { sections, fullForm } = useMemo( () => {
+		const companyForm: Form = {
+			layout: { type: 'regular' },
+			fields: [ 'companyName', 'address', 'country', 'state', 'city', 'zip' ],
+		};
+		const contactForm: Form = {
+			layout: { type: 'regular' },
+			fields: [
+				{
+					id: 'name',
+					layout: isNarrow ? undefined : { type: 'row', alignment: 'start' },
+					children: [ 'firstName', 'lastName' ],
+				},
+				'title',
+				'phone',
+				'email',
+				'website',
+			],
+		};
+		const opportunityForm: Form = {
+			layout: { type: 'regular' },
+			fields: [
+				'opportunityDescription',
+				...( hasEnterpriseFields ? [ 'leadType', 'isRfp' ] : [] ),
+			],
+		};
+		return {
+			sections: [
+				{ id: 'company', title: __( 'Your client’s company information' ), form: companyForm },
+				{ id: 'contact', title: __( 'Your client’s contact information' ), form: contactForm },
+				{ id: 'opportunity', title: __( 'Opportunity information' ), form: opportunityForm },
+			],
+			fullForm: {
+				layout: { type: 'regular' },
+				fields: [
+					...( companyForm.fields ?? [] ),
+					...( contactForm.fields ?? [] ),
+					...( opportunityForm.fields ?? [] ),
+				],
+			} as Form,
+		};
+	}, [ isNarrow, hasEnterpriseFields ] );
+	const { validity, isValid } = useFormValidity( formData, fields, fullForm );
 
 	const handleChange = ( edits: Partial< ReferHostingFormData > ) => {
 		setFormData( ( data ) => ( {
@@ -281,12 +293,6 @@ export default function ReferHostingForm( {
 			premiumReferral.mutate( getHostingReferralPayload( formData ), { onSuccess: onSubmitted } );
 		}
 	};
-
-	const sections = [
-		{ id: 'company', title: __( 'Your client’s company information' ), form: companyForm },
-		{ id: 'contact', title: __( 'Your client’s contact information' ), form: contactForm },
-		{ id: 'opportunity', title: __( 'Opportunity information' ), form: opportunityForm },
-	];
 
 	return (
 		<form onSubmit={ handleSubmit } autoComplete="off">

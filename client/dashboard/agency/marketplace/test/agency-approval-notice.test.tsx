@@ -20,11 +20,14 @@ function mockPreferences( preferences: Record< string, unknown > = {} ) {
 		.reply( 200, { calypso_preferences: preferences } );
 }
 
-function agency( approval_status: Agency[ 'approval_status' ], createdDaysAgo = 1 ) {
+function agency( approval_status: Agency[ 'approval_status' ], createdDaysAgo: number | null = 1 ) {
 	return {
 		id: 1,
 		approval_status,
-		created_at: new Date( Date.now() - createdDaysAgo * 24 * 60 * 60 * 1000 ).toISOString(),
+		created_at:
+			createdDaysAgo === null
+				? undefined
+				: new Date( Date.now() - createdDaysAgo * 24 * 60 * 60 * 1000 ).toISOString(),
 	} as Agency;
 }
 
@@ -74,6 +77,13 @@ describe( '<AgencyApprovalNotice>', () => {
 		await waitFor( () =>
 			expect( screen.queryByText( /Your application has been approved/ ) ).not.toBeInTheDocument()
 		);
+	} );
+
+	test( 'welcomes an approved agency whose creation date is unknown', async () => {
+		mockPreferences();
+		renderNotice( agency( 'approved', null ) );
+
+		expect( await screen.findByText( /Your application has been approved/ ) ).toBeVisible();
 	} );
 
 	test( 'says nothing to an agency approved more than a week ago', async () => {

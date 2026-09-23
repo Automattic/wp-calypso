@@ -38,7 +38,7 @@ export default function ReferHosting( { type }: { type: ReferHostingType } ) {
 					<RouterLinkButton
 						variant="primary"
 						__next40pxDefaultSize
-						to={ getMarketplaceHostingSectionRoute( 'pressable' ) }
+						to={ getMarketplaceHostingSectionRoute( config.backToSection ) }
 						onClick={ () => recordTracksEvent( config.events.backToMarketplace ) }
 					>
 						{ __( 'Back to the marketplace' ) }

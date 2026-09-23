@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { ReferHostingType } from './types';
+import type { HostingSection, ReferHostingType } from '../paths';
 
 /**
  * What differs between the two referral forms: copy, the Enterprise-only
@@ -22,6 +22,7 @@ export function getReferralConfig( type: ReferHostingType ) {
 			premium: __( 'Submit Premium plan referral' ),
 		}[ type ],
 		hasEnterpriseFields: type === 'enterprise',
+		backToSection: { enterprise: 'vip', premium: 'pressable' }[ type ] as HostingSection,
 		events: {
 			formSubmit: {
 				enterprise: 'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit',

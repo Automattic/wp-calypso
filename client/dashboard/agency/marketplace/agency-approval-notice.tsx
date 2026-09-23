@@ -1,4 +1,4 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -19,7 +19,9 @@ const APPROVED_NOTICE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
  */
 export default function AgencyApprovalNotice( { agency }: { agency: Agency | null | undefined } ) {
 	const { data: isDismissed, isFetched } = useQuery( userPreferenceQuery( DISMISS_PREFERENCE ) );
-	const { mutate: saveDismissed } = useMutation( userPreferenceMutation( DISMISS_PREFERENCE ) );
+	const { mutate: saveDismissed } = useMutation(
+		userPreferenceOptimisticMutation( DISMISS_PREFERENCE )
+	);
 
 	const status = agency?.approval_status;
 	if ( ! status || ! isFetched || isDismissed ) {
@@ -51,8 +53,10 @@ export default function AgencyApprovalNotice( { agency }: { agency: Agency | nul
 		);
 	}
 
-	const createdAt = agency?.created_at ? new Date( agency.created_at ).getTime() : 0;
-	if ( createdAt < Date.now() - APPROVED_NOTICE_WINDOW_MS ) {
+	if (
+		agency?.created_at &&
+		new Date( agency.created_at ).getTime() < Date.now() - APPROVED_NOTICE_WINDOW_MS
+	) {
 		return null;
 	}
 
