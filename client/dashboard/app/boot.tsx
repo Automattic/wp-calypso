@@ -19,7 +19,6 @@ import './style.scss';
 // Masterbar CSS loaded statically so it's available for SSR (the component is server-rendered).
 // eslint-disable-next-line no-restricted-imports
 import 'calypso/layout/masterbar/style.scss';
-import './interim-omnibar/style.scss';
 import './omnibar/style.scss';
 import '@automattic/omnibar/style.scss';
 

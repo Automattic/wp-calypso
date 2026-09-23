@@ -55,6 +55,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 
 jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
 	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
+	planSupportsBuildWowDsl: ( slug?: string ) => !! slug && slug !== 'pro-plan',
 } ) );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
@@ -110,7 +111,7 @@ describe( 'SetupYourSiteAIStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
-		isEnabled.mockReturnValue( true );
+		isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec/build-wow-dsl' );
 		setSitePlan( 'business-bundle' );
 		setPlanCartItem( null );
 		( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
@@ -250,6 +251,55 @@ describe( 'SetupYourSiteAIStep', () => {
 			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
 			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
 			expect( screen.getByRole( 'button', { name: 'Create a custom design' } ) ).toBeDisabled();
+		} );
+	} );
+
+	describe( 'with the build-wow DSL feature enabled', () => {
+		beforeEach( () => {
+			isEnabled.mockReturnValue( true );
+		} );
+
+		it( 'renders the DSL card after the custom design card', () => {
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Start with a template',
+				'Create a custom design',
+				'Create a custom design (DSL)',
+			] );
+		} );
+
+		it( 'submits the generate-theme choice on the DSL graph', () => {
+			renderStep();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design (DSL)' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'generate-theme', graph: 'dsl' }
+			);
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'generate-theme',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+				graph: 'dsl',
+			} );
+		} );
+
+		it( 'hides the DSL card on a plan that cannot take it', () => {
+			setSitePlan( 'pro-plan' );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
+		} );
+
+		it( 'hides the DSL card for the Woo hosting solutions ref', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
 		} );
 	} );
 

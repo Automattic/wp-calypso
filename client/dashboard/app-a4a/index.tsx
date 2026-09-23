@@ -8,6 +8,7 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { Logo } from './logo';
+import A4AOmnibar from './omnibar';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -56,7 +57,9 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {},
+	components: {
+		omnibar: A4AOmnibar,
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

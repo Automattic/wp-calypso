@@ -114,6 +114,7 @@ const DomainUpsellCardContent = ( {
 			description={
 				<Text variant="muted">
 					{ createInterpolateElement( description, {
+						planName: <span>{ site.plan?.product_name_short ?? '' }</span>,
 						domain: (
 							<TextBlur isBlurred={ ! suggestedDomain }>
 								{ suggestedDomain ? suggestedDomain.domain_name : search }
@@ -173,7 +174,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( requiresPlanUpgrade( site ) ) {
+	if ( site.plan?.is_free ) {
 		return (
 			<DomainUpsellCardContent
 				site={ site }
@@ -183,6 +184,20 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
+	}
+
+	if ( site.plan?.billing_period === 'Monthly' ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ __(
+					'Switch your <planName /> plan to annual billing to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+				) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Switch to annual billing' ) }
 			/>
 		);
 	}

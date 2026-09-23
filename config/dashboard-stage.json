@@ -13,7 +13,10 @@
 			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		},
 		"agencies-beta.automattic.com": {
+			"favicon_url": "/calypso/images/favicons/favicon-a4a-stage.ico",
+			"favicon_brand": "a4a",
 			"oauth_client_id": 95931,
+			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
@@ -25,6 +28,7 @@
 	"wpcom_url": "https://wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"calypso/agents-manager-internal": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,

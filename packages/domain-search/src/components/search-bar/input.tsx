@@ -11,11 +11,14 @@ export const Input = () => {
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 
-	useEffect( () => {
-		setLocalQuery( query );
-	}, [ query ] );
-
 	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
+
+	// An external query change (e.g. a suggestion click) supersedes whatever
+	// was typed but not yet propagated.
+	useEffect( () => {
+		debouncedPropagateQuery.cancel();
+		setLocalQuery( query );
+	}, [ query, debouncedPropagateQuery ] );
 
 	return (
 		<DomainSearchControls.Input
@@ -28,7 +31,13 @@ export const Input = () => {
 				if ( trimmedValue ) {
 					debouncedPropagateQuery( trimmedValue );
 				} else {
+					debouncedPropagateQuery.cancel();
 					events.onQueryClear();
+				}
+			} }
+			onKeyDown={ ( event ) => {
+				if ( event.key === 'Enter' ) {
+					debouncedPropagateQuery.flush();
 				}
 			} }
 			label={ __( 'Search for a domain' ) }

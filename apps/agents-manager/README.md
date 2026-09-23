@@ -1,6 +1,6 @@
 # Agents Manager
 
-The Agents Manager is the unified AI agent experience for WordPress.com users, providing chat, support guides, and AI-powered tools across multiple environments.
+The Agents Manager provides chat, support guides, and AI-powered tools across multiple environments.
 
 ## Development
 

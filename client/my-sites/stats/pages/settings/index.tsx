@@ -21,6 +21,7 @@ import {
 	type StatsSettingsResponse,
 } from '../../hooks/use-stats-settings';
 import PageViewTracker from '../../stats-page-view-tracker';
+import { trackStatsAnalyticsEvent } from '../../utils';
 import PageLoading from '../shared/page-loading';
 import canManageStatsSettings from './can-manage-stats-settings';
 import reloadPage from './reload-page';
@@ -92,7 +93,11 @@ function StatsSettingsPage() {
 		return null;
 	}
 
-	const save = ( values: Partial< StatsSettings > ) =>
+	const save = (
+		values: Partial< StatsSettings >,
+		change: { setting: keyof StatsSettings; enabled: boolean; role?: string }
+	) => {
+		trackStatsAnalyticsEvent( 'stats_settings_changed', { blog_id: siteId, ...change } );
 		mutate( values, {
 			onSuccess: () => {
 				// The server draws the admin bar, so its chart changes only on a page load.
@@ -118,6 +123,7 @@ function StatsSettingsPage() {
 				);
 			},
 		} );
+	};
 
 	const renderRoleToggles = ( { roles, settings }: StatsSettingsResponse, field: RoleField ) =>
 		roles.map( ( { slug, name } ) => {
@@ -131,9 +137,14 @@ function StatsSettingsPage() {
 					checked={ isLockedOn || current.includes( slug ) }
 					disabled={ isLockedOn || isBusy }
 					onChange={ ( isOn ) =>
-						save( {
-							[ field ]: isOn ? [ ...current, slug ] : current.filter( ( role ) => role !== slug ),
-						} )
+						save(
+							{
+								[ field ]: isOn
+									? [ ...current, slug ]
+									: current.filter( ( role ) => role !== slug ),
+							},
+							{ setting: field, enabled: isOn, role: slug }
+						)
 					}
 				/>
 			);
@@ -165,7 +176,9 @@ function StatsSettingsPage() {
 									label={ translate( 'Put a chart showing 48 hours of views in the admin bar' ) }
 									checked={ data.settings.admin_bar }
 									disabled={ isBusy }
-									onChange={ ( isOn ) => save( { admin_bar: isOn } ) }
+									onChange={ ( isOn ) =>
+										save( { admin_bar: isOn }, { setting: 'admin_bar', enabled: isOn } )
+									}
 								/>
 							</SettingsCard>
 							<SettingsCard
@@ -190,7 +203,12 @@ function StatsSettingsPage() {
 									label={ translate( 'Show post views for this site.' ) }
 									checked={ data.settings.wpcom_reader_views_enabled }
 									disabled={ isBusy }
-									onChange={ ( isOn ) => save( { wpcom_reader_views_enabled: isOn } ) }
+									onChange={ ( isOn ) =>
+										save(
+											{ wpcom_reader_views_enabled: isOn },
+											{ setting: 'wpcom_reader_views_enabled', enabled: isOn }
+										)
+									}
 								/>
 							</SettingsCard>
 						</>

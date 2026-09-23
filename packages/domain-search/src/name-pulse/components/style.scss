@@ -67,6 +67,21 @@
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
 
+		// A Sale and a Premium badge together leave the name only a few
+		// characters, so the pair drops under it.
+		&--stacked {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+	}
+
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		max-width: 100%;
+
 		.domain-suggestion-badge {
 			flex-shrink: 0;
 			height: 20px;
@@ -79,6 +94,7 @@
 	&__domain {
 		display: flex;
 		min-width: 0;
+		max-width: 100%;
 
 		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
 		// never loses space to the label and is never cut off.
