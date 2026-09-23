@@ -57,14 +57,14 @@ function usePressablePlanFeatures( productId: number ): string[] {
 
 function FeatureList( { features }: { features: string[] } ) {
 	return (
-		<VStack spacing={ 1 } as="ul">
+		<HStack role="list" wrap spacing={ 4 } justify="flex-start">
 			{ features.map( ( feature ) => (
-				<HStack key={ feature } as="li" spacing={ 2 } justify="flex-start">
+				<HStack key={ feature } role="listitem" spacing={ 1 } expanded={ false }>
 					<Icon icon={ close } size={ 16 } />
 					<Text>{ feature }</Text>
 				</HStack>
 			) ) }
-		</VStack>
+		</HStack>
 	);
 }
 
