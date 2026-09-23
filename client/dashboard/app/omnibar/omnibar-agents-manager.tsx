@@ -26,6 +26,7 @@ export default function OmnibarAgentsManager( { pathname }: { pathname: string }
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( pathname, siteId );
 
 	useEffect( () => {
+		queryClient.cancelQueries( { queryKey: omnibarAgentsManagerEnabledQuery().queryKey } );
 		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, routeIsEnabled );
 	}, [ queryClient, routeIsEnabled ] );
 

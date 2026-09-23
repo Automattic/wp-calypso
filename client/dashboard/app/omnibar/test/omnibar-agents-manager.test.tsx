@@ -33,8 +33,10 @@ describe( '<OmnibarAgentsManager />', () => {
 		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId );
 		queryClient.setQueryData( siteByIdQuery( siteId ).queryKey, site );
 	} );
+	afterEach( () => jest.restoreAllMocks() );
 
 	it( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
+		const cancelQueries = jest.spyOn( queryClient, 'cancelQueries' );
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: true,
 			isInternalOnly: true,
@@ -48,6 +50,9 @@ describe( '<OmnibarAgentsManager />', () => {
 		await waitFor( () =>
 			expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( true )
 		);
+		expect( cancelQueries ).toHaveBeenCalledWith( {
+			queryKey: omnibarAgentsManagerEnabledQuery().queryKey,
+		} );
 	} );
 
 	it( 'publishes disabled eligibility outside the allowlist', async () => {
