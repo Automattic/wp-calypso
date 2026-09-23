@@ -8,26 +8,58 @@ import { getCalypsoUrl } from '../src';
 
 const configDir = path.resolve( __dirname, '..', '..', '..', 'config' );
 
-// This package can't read the Calypso config because it is used from outside
-// Calypso, so the allowed origins are hardcoded. These tests ensure the
-// hardcoded origins don't get out of sync with the config.
-function getCalypsoConfigHostnames() {
-	// At least for now, getCalypsoUrl() should return URLs for these apps.
-	const otherApps = /^(dashboard|jetpack-cloud|a8c-for-agencies)-/;
+const NON_APP_CONFIGS = [ 'client.json', 'secrets.json', 'empty-secrets.json' ];
 
+// At least for now, getCalypsoUrl() should not return URLs for these apps.
+const OTHER_APP_CONFIGS = /^(dashboard|jetpack-cloud|a8c-for-agencies)-/;
+const DASHBOARD_CONFIGS = /^dashboard-/;
+
+function readConfig( file ) {
+	return JSON.parse( fs.readFileSync( path.join( configDir, file ), 'utf8' ) );
+}
+
+function getAppConfigFiles() {
 	return fs
 		.readdirSync( configDir )
 		.filter(
 			( file ) =>
-				file.endsWith( '.json' ) &&
-				! file.startsWith( '_' ) &&
-				! otherApps.test( file ) &&
-				! [ 'client.json', 'secrets.json', 'empty-secrets.json' ].includes( file )
-		)
-		.map(
-			( file ) => JSON.parse( fs.readFileSync( path.join( configDir, file ), 'utf8' ) ).hostname
-		)
-		.filter( Boolean );
+				file.endsWith( '.json' ) && ! file.startsWith( '_' ) && ! NON_APP_CONFIGS.includes( file )
+		);
+}
+
+function getHostnames( files ) {
+	const hostnames = new Set();
+
+	for ( const file of files ) {
+		const config = readConfig( file );
+
+		for ( const hostname of [ config.hostname, ...( config.hostname_allowlist ?? [] ) ] ) {
+			if ( hostname ) {
+				hostnames.add( hostname );
+			}
+		}
+	}
+
+	return hostnames;
+}
+
+// This package can't read the Calypso config because it is used from outside
+// Calypso, so the allowed origins are hardcoded. These tests ensure the
+// hardcoded origins don't get out of sync with the config.
+//
+// Whether MSD hostnames should count as "Calypso" for `calypso_origin` is still
+// an open question, so Dashboard hostnames are subtracted rather than filtered
+// out by filename: `development.json` allowlists them too, because the Calypso
+// dev server also serves the Dashboard.
+function getCalypsoConfigHostnames() {
+	const files = getAppConfigFiles();
+	const dashboardHostnames = getHostnames(
+		files.filter( ( file ) => DASHBOARD_CONFIGS.test( file ) )
+	);
+
+	return [ ...getHostnames( files.filter( ( file ) => ! OTHER_APP_CONFIGS.test( file ) ) ) ].filter(
+		( hostname ) => ! dashboardHostnames.has( hostname )
+	);
 }
 
 let backupWindow;
@@ -89,7 +121,7 @@ describe( 'getCalypsoUrl', () => {
 		expect( getCalypsoUrl() ).toBe( 'https://calypso.localhost:3000' );
 	} );
 
-	test.each( [ ...new Set( getCalypsoConfigHostnames() ) ] )(
+	test.each( getCalypsoConfigHostnames() )(
 		'it accepts %s, the hostname of a configured Calypso environment',
 		( hostname ) => {
 			mockCaplysoOriginQueryArg( `https://${ hostname }` );
