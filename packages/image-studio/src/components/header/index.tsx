@@ -31,7 +31,7 @@ interface HeaderProps {
 	setActiveToolbarOption: ( toolbarOption: ToolbarOption | null ) => void;
 	activeToolbarOption: ToolbarOption | null;
 	config: ImageStudioConfig;
-	onClassicMediaEditorNavigation?: ( url: string ) => Promise< void >;
+	onClassicMediaEditorNavigation?: ( url: string ) => void;
 	onNavigatePrevious?: () => void;
 	onNavigateNext?: () => void;
 	hasPreviousImage?: boolean;
@@ -58,22 +58,28 @@ export const Header = ( {
 	hasPreviousImage = false,
 	hasNextImage = false,
 }: HeaderProps ) => {
-	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } = useSelect(
-		( select ) => {
-			const selectors = select(
-				imageStudioStore
-			) as unknown as import( '../../types/wordpress' ).CurriedImageStudioSelectors;
-			return {
-				isAiProcessing: selectors.getImageStudioAiProcessing(),
-				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
-				isAnnotationMode: selectors.getIsAnnotationMode(),
-				hasDrafts: selectors.getDraftIds().length > 0,
-			};
-		},
-		[]
-	);
+	const {
+		isAiProcessing,
+		hasUpdatedMetadata,
+		isAnnotationMode,
+		hasDrafts,
+		hasUnsavedChanges,
+		entryPoint,
+	} = useSelect( ( select ) => {
+		const selectors = select(
+			imageStudioStore
+		) as unknown as import( '../../types/wordpress' ).CurriedImageStudioSelectors;
+		return {
+			isAiProcessing: selectors.getImageStudioAiProcessing(),
+			hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
+			isAnnotationMode: selectors.getIsAnnotationMode(),
+			hasDrafts: selectors.getDraftIds().length > 0,
+			hasUnsavedChanges: selectors.getHasUnsavedChanges(),
+			entryPoint: selectors.getEntryPoint(),
+		};
+	}, [] );
 
-	const { setAnnotationMode, addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { setAnnotationMode } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
 	const handleToolbarClick = ( toolbarOption: ToolbarOption ) => {
 		const newActiveOption = toolbarOption === activeToolbarOption ? null : toolbarOption;
@@ -108,12 +114,8 @@ export const Header = ( {
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
 	const isNavDisabled = hasDrafts || hasUpdatedMetadata || isAiProcessing || isSaving;
+	const isMediaLibraryDisabled = hasUnsavedChanges || isAiProcessing || isSaving;
 
-	// Get entry point from store with fallback for navigation
-	const entryPoint = useSelect(
-		( select ) => select( imageStudioStore ).getEntryPoint() as ImageStudioEntryPoint | null,
-		[]
-	);
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
 	// Helper function to get save button text based on entry point
@@ -284,27 +286,23 @@ export const Header = ( {
 										variant="tertiary"
 										icon={ external }
 										className="image-studio-classic-editor-link"
-										label={ __(
-											'Edit this image in the WordPress Media Library',
-											__i18n_text_domain__
-										) }
-										onClick={ async () => {
-											trackImageStudioToolClick( 'media_library' );
-											try {
-												await onClassicMediaEditorNavigation( classicEditorUrl );
-											} catch ( error ) {
-												addNotice(
-													__(
-														'Failed to save changes. Please try again or use the Save button.',
+										label={
+											isMediaLibraryDisabled
+												? __(
+														'Save or discard your changes to edit in the WordPress Media Library',
 														__i18n_text_domain__
-													),
-													'error'
-												);
-												window.console?.error?.(
-													'[Image Studio] Navigation handler error:',
-													error
-												);
-											}
+													)
+												: __(
+														'Edit this image in the WordPress Media Library (opens in a new tab)',
+														__i18n_text_domain__
+													)
+										}
+										showTooltip
+										accessibleWhenDisabled
+										disabled={ isMediaLibraryDisabled }
+										onClick={ () => {
+											trackImageStudioToolClick( 'media_library' );
+											onClassicMediaEditorNavigation( classicEditorUrl );
 										} }
 									>
 										<span className="image-studio-header__button-text">
