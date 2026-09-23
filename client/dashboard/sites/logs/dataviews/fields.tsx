@@ -33,7 +33,7 @@ import './style.scss';
  * takes this input down with it. The stock text control reports every keystroke, so
  * the field would vanish after the first character; hold a draft and commit it once.
  */
-export function LogsFilterTextEdit( {
+function LogsFilterTextEdit( {
 	data,
 	field,
 	onChange,
