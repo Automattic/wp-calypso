@@ -367,6 +367,42 @@ describe( 'usePersistentView', () => {
 				} );
 			} );
 		} );
+
+		it( 'should remove a bare-value transient filter from the current URL query params if no longer in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'status', operator: 'is', value: 'assigned' } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'resetView', () => {
