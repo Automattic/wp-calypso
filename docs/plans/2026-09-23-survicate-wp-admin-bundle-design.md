@@ -1,7 +1,7 @@
 # Survicate: one implementation for Calypso and wp-admin
 
 **Date:** 2026-09-23
-**Status:** Approved design, not yet implemented
+**Status:** Implemented; rollout pending (wp-calypso, wpcom, Jetpack PRs)
 **Implementation plan:** `docs/plans/2026-09-23-survicate-wp-admin-bundle.md`
 
 ## Problem
@@ -54,7 +54,7 @@ jetpack-mu-wpcom class-survicate.php ───────────┘
 
 Mirrors `apps/help-center` with everything React, i18n and CSS removed.
 
-- `survicate.js` — reads `window.wpcomSurvicateConfig`, computes `isMobile` as `window.innerWidth < 480` (the same breakpoint the MSD's `useViewportMatch( 'mobile' )` uses), then `shouldLoadSurvicate` → `loadSurvicateScript( SURVICATE_WORKSPACE_ID )` → `setSurvicateVisitorTraits( traits )`. No `AbortSignal`: in wp-admin the page lifetime is the consumer lifetime.
+- `survicate.js` — reads `window.wpcomSurvicateConfig`, computes `isMobile` as `window.innerWidth <= 480` (the MSD's `useViewportMatch( 'mobile', '<' )` resolves to `(max-width: 480px)`), then `shouldLoadSurvicate` → `loadSurvicateScript( SURVICATE_WORKSPACE_ID )` → `setSurvicateVisitorTraits( traits )`. No `AbortSignal`: in wp-admin the page lifetime is the consumer lifetime.
 - `webpack.config.js` — one entry. `DependencyExtractionWebpackPlugin` externalizes `@wordpress/data` to `wp.data` and writes `survicate.asset.json` with `dependencies` and a content-hash `version`. `injectPolyfill: false`.
 - `package.json` — `teamcity:build-app` so the `CalypsoApps` TeamCity build picks it up; `dev` uses `calypso-apps-builder` with `--remotePath /home/wpcom/public_html/widgets.wp.com/survicate` for sandbox sync.
 - `__tests__/` — jsdom test of the entry against a mocked `@automattic/survicate`.
@@ -85,7 +85,7 @@ Each step is independently revertable, and wp-admin never points at a URL that d
 
 ## Failure modes
 
-- Asset JSON unreachable: nothing enqueued, no error surfaced. Same as help-center.
+- Asset JSON unreachable: nothing enqueued, no error surfaced. The failure is cached for 5 minutes and the fetch times out after 2 seconds, so an unreachable widgets.wp.com never adds a blocking request to every admin page load.
 - Bundle 404: console error only; wp-admin unaffected.
 - Help Center store not registered: `isHelpCenterOpen()` already returns `false`.
 - Two `wp_enqueue_script` calls on one page: `@automattic/load-script` deduplicates the SDK load.
@@ -100,4 +100,3 @@ Each step is independently revertable, and wp-admin never points at a URL that d
 
 - **Support sessions in wp-admin.** `isSupportSession()` reads `sessionStorage.boot_support_user` and `window.isSupportSession`, neither of which exists in wp-admin, so surveys can still reach a Happiness Engineer there. Same as today. Needs a PHP-side signal passed through the config.
 - **Tracks attribution.** `calypso_survicate_survey_suppressed` will now fire from wp-admin with nothing distinguishing it from the MSD. A `host` property is a one-line addition when it becomes useful.
-- **Negative caching.** A failed asset fetch on Atomic is retried on every admin page load. Help-center accepts the same; revisit only if it shows up in logs.

@@ -18,6 +18,8 @@ Nothing to do here: Calypso and the Multi-site Dashboard import the package dire
 2. `cd apps/survicate && yarn dev --sync` — builds on change and rsyncs `dist/` to `/home/wpcom/public_html/widgets.wp.com/survicate`.
 3. Reload any wp-admin page. `localStorage.debug = 'survicate'` in the console shows the package's debug log.
 
+Jetpack caches `survicate.asset.json` in the `wpcom_survicate_asset_json` transient for an hour. Proxied requests get a random script version, so JS changes show up immediately, but a change to the bundle's dependency list only shows up once that transient expires or is deleted.
+
 ### In Atomic sites
 
 Atomic fetches the same URL, so the Simple-site steps apply for JS changes. Because Jetpack reads `survicate.asset.json` over the network from _production_, a change to the bundle's dependency list only takes effect on Atomic after a deploy.

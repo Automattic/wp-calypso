@@ -104,8 +104,9 @@ It already does the job; don't wrap it or read `window.isSupportSession` directl
 Guarded at two layers:
 
 1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
-   injected. This is the real fix: no script, no auto-campaigns, no events. Both
-   consumers (`useSurvicate`, `addSurvicate`) already funnel through it.
+   injected. This is the real fix: no script, no auto-campaigns, no events. Every
+   consumer (`useSurvicate`, `addSurvicate`, the wp-admin bundle) funnels through it,
+   though the check is inert in wp-admin (see below).
 2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, covering
    the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
 
