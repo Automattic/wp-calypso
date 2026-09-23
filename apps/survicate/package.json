@@ -33,5 +33,9 @@
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"webpack": "^5.99.8"
 	},
+	"peerDependencies": {
+		"postcss": "*",
+		"react": "^18.2.0"
+	},
 	"private": true
 }

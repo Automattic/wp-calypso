@@ -2487,6 +2487,9 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     webpack: "npm:^5.99.8"
+  peerDependencies:
+    postcss: "*"
+    react: ^18.2.0
   languageName: unknown
   linkType: soft
 
