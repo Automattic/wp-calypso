@@ -2,6 +2,7 @@ import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpre
 import { useCallback } from 'react';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
+import Divider from 'calypso/dashboard/components/divider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
@@ -45,14 +46,7 @@ export default function AgencyTierOverviewContent( {
 				tierStatus={ tierStatus }
 				recordTracksEvent={ recordTracks }
 			/>
-			<hr
-				style={ {
-					border: 0,
-					borderBlockEnd: '1px solid var(--color-gray-100)',
-					blockSize: 0,
-					margin: '16px 0',
-				} }
-			/>
+			<Divider style={ { color: 'var(--color-gray-100)', margin: '16px 0' } } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }
