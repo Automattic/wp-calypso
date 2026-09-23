@@ -1,60 +1,45 @@
 import {
 	Icon,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 
-export interface OptionCardItem {
+export type OptionCardItem = {
 	value: string;
 	label: string;
 	description: string;
-	disabled?: boolean;
-}
+};
 
-export default function OptionCards( {
-	label,
-	options,
-	selected,
-	onSelect,
-}: {
+type OptionCardsProps = {
 	label: string;
 	options: OptionCardItem[];
 	selected: string;
 	onSelect: ( value: string ) => void;
-} ) {
+};
+
+export default function OptionCards( { label, options, selected, onSelect }: OptionCardsProps ) {
 	return (
-		<div
-			className="dashboard-marketplace-hosting__option-grid"
-			role="radiogroup"
-			aria-label={ label }
-		>
+		<div className="marketplace-hosting__option-grid" role="radiogroup" aria-label={ label }>
 			{ options.map( ( option ) => {
 				const isSelected = option.value === selected;
-				const select = () => {
-					if ( ! option.disabled ) {
-						onSelect( option.value );
-					}
-				};
 				return (
 					<Card
 						key={ option.value }
-						className={ clsx( 'dashboard-marketplace-hosting__option-card', {
+						className={ clsx( 'marketplace-hosting__selector-card', {
 							'is-selected': isSelected,
-							'is-disabled': option.disabled,
 						} ) }
+						onClick={ () => onSelect( option.value ) }
 						role="radio"
 						aria-checked={ isSelected }
-						aria-disabled={ option.disabled }
-						tabIndex={ option.disabled ? -1 : 0 }
-						onClick={ select }
+						tabIndex={ 0 }
 						onKeyDown={ ( event: React.KeyboardEvent ) => {
 							if ( event.key === 'Enter' || event.key === ' ' ) {
 								event.preventDefault();
-								select();
+								onSelect( option.value );
 							}
 						} }
 					>
@@ -62,7 +47,12 @@ export default function OptionCards( {
 							<VStack spacing={ 2 }>
 								<HStack justify="space-between" alignment="center">
 									<Text weight={ 600 }>{ option.label }</Text>
-									<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
+									<Icon
+										icon={ check }
+										className={ clsx( 'marketplace-hosting__selector-check', {
+											'is-hidden': ! isSelected,
+										} ) }
+									/>
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
 							</VStack>

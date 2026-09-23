@@ -1,6 +1,5 @@
 import {
 	Button,
-	SelectControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -8,150 +7,146 @@ import {
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useState } from 'react';
+import woopaymentsLogo from '../exclusive-offers/images/woopayments.svg';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
-import woopaymentsLogo from '../exclusive-offers/images/woopayments.svg';
-import { BRAND_MARKS } from './lib/brand-marks';
-import { getProductBadgeLabels, getProductBrand } from './lib/product-categories';
-import { getProductDescription } from './lib/product-descriptions';
-import { getItemProducts } from './lib/product-groups';
-import { getProductPriceInfo, getTermAvailabilityNote } from './lib/product-pricing';
-import { BACKUP_STORAGE_FAMILY_SLUG, WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
-import { getProductShortTitle } from './lib/product-title';
-import ProductPrice from './product-price';
-import type { TermPricing } from '../use-term-pricing';
-import type { ProductListItem } from './lib/product-groups';
-import type { AgencyProduct } from '@automattic/api-core';
+import { formatUSD } from '../hosting/mock-data';
+import {
+	KIND_LABEL,
+	priceFor,
+	shortTitle,
+	WOOPAYMENTS_CARD,
+	WOOPAYMENTS_PRICE_NOTE,
+} from './mock-data';
+import type { CatalogProduct } from './mock-data';
 
-export const getWooPaymentsCardCopy = () => ( {
-	title: __( 'Revenue share available' ),
-	description: __(
-		'Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share on transactions from your clients’ sites within Automattic for Agencies.'
-	),
-} );
-
-export function getCartActionLabel( isReferralMode: boolean, inCart: boolean ): string {
-	if ( isReferralMode ) {
-		return inCart ? __( 'Added to referral' ) : __( 'Add to referral' );
-	}
-	return inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
-}
-
-interface Props {
-	item: ProductListItem;
-	term: TermPricing;
+export type ProductCardProps = {
+	product: CatalogProduct;
+	term: 'monthly' | 'yearly';
 	isReferralMode: boolean;
-	isInCart: ( slug: string ) => boolean;
-	onToggleCart: ( product: AgencyProduct ) => void;
-	onViewDetails: ( product: AgencyProduct ) => void;
-	onSelectVariant?: ( product: AgencyProduct ) => void;
-}
+	inCart: boolean;
+	onToggleCart: () => void;
+	onDetails: () => void;
+	/** A4AD-190: render WooPayments as an ordinary card rather than a banner. */
+	asOrdinaryCard?: boolean;
+	/** A4AD-190: fill that card with WooCommerce purple, the way Main does today. */
+	branded?: boolean;
+};
 
+// Card = Main's product card in the Exclusive Offers card grammar: badges,
+// title, one-line description, price with its interval, then the CTA and the
+// details link. Main's CTA is primary; here it is secondary so a wall of 74
+// cards doesn't become a wall of blue — the primary is the cart.
 export default function ProductCard( {
-	item,
+	product,
 	term,
 	isReferralMode,
-	isInCart,
+	inCart,
 	onToggleCart,
-	onViewDetails,
-	onSelectVariant,
-}: Props ) {
-	const variants = getItemProducts( item );
-	const [ selectedSlug, setSelectedSlug ] = useState( variants[ 0 ].slug );
-	const product = variants.find( ( variant ) => variant.slug === selectedSlug ) ?? variants[ 0 ];
-
-	const isWooPayments = product.slug === WOOPAYMENTS_PRODUCT_SLUG;
-	const inCart = isInCart( product.slug );
-	const priceInfo = getProductPriceInfo( product, term );
-	const termNote = getTermAvailabilityNote( product, term );
-	const { description } = getProductDescription( product.slug );
-	const wooPaymentsCopy = getWooPaymentsCardCopy();
-	const canViewDetails = product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
+	onDetails,
+	asOrdinaryCard = false,
+	branded = false,
+}: ProductCardProps ) {
+	// A4AD-190: in the 'card' option WooPayments is an ordinary card, so the
+	// custom title and the hidden price only apply to the banner options.
+	const isWooPayments = product.slug === WOOPAYMENTS_CARD.slug && ! asOrdinaryCard;
+	const earnsRevenueShare = product.slug === WOOPAYMENTS_CARD.slug && asOrdinaryCard;
+	const { price, interval, note } = priceFor( product, term );
+	// A4AD-194: Main's hierarchy carries a row of tags under the title rather
+	// than one badge in a header row. With the family mark gone, the header row
+	// left a badge floating against nothing, so the tags move under the title
+	// and the card leads with its name.
+	const tags = product.categories.length
+		? product.categories
+		: [ KIND_LABEL[ product.kind ] ].filter( Boolean );
+	let cta: string = inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
+	if ( isReferralMode ) {
+		cta = inCart ? __( 'Added to referral' ) : __( 'Add to referral' );
+	}
 
 	return (
-		<Card className="dashboard-marketplace-products__card">
-			<CardBody className="dashboard-marketplace-products__card-body">
-				<VStack
-					spacing={ 3 }
-					justify="flex-start"
-					className="dashboard-marketplace-products__card-main"
-				>
-					<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
-						<img
-							src={ isWooPayments ? woopaymentsLogo : BRAND_MARKS[ getProductBrand( product ) ] }
-							alt=""
-							className={
-								isWooPayments
-									? 'dashboard-marketplace-products__card-logo'
-									: 'dashboard-marketplace-products__card-mark'
-							}
-						/>
-						<HStack spacing={ 1 } justify="flex-end" wrap expanded={ false }>
-							{ getProductBadgeLabels( product ).map( ( label ) => (
-								<Badge key={ label }>{ label }</Badge>
-							) ) }
-						</HStack>
-					</HStack>
-					<VStack spacing={ 1 }>
-						<Text weight={ 500 }>
-							{ isWooPayments
-								? wooPaymentsCopy.title
-								: getProductShortTitle( product, variants.length > 1 ) }
+		<Card
+			className={
+				earnsRevenueShare && branded
+					? 'marketplace-products__card marketplace-products__card--brand'
+					: 'marketplace-products__card'
+			}
+		>
+			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+				<VStack spacing={ 3 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+					<VStack spacing={ 2 }>
+						{ /* A4AD-190: the lockup sits above the title, the way Main leads
+						   its card, with the plain product title underneath it. */ }
+						{ earnsRevenueShare && (
+							<img
+								src={ woopaymentsLogo }
+								alt=""
+								className={
+									branded
+										? 'marketplace-products__card-brandmark is-inverted'
+										: 'marketplace-products__card-brandmark'
+								}
+							/>
+						) }
+						<Text size={ 13 } weight={ 500 }>
+							{ isWooPayments || earnsRevenueShare
+								? WOOPAYMENTS_CARD.title
+								: shortTitle( product ) }
 						</Text>
-						<Text variant="muted">
-							{ isWooPayments ? wooPaymentsCopy.description : description }
+						{ /* Tags wrap, because three of them do not fit one column.
+						   WooPayments carries none: the lockup and the offer line are
+						   the whole card, the way Main has it. */ }
+						{ ! earnsRevenueShare && (
+							<HStack
+								spacing={ 1 }
+								justify="flex-start"
+								expanded={ false }
+								className="marketplace-products__card-tags"
+							>
+								{ tags.map( ( tag ) => (
+									<Badge key={ tag } intent="draft">
+										{ tag }
+									</Badge>
+								) ) }
+							</HStack>
+						) }
+						{ /* Price sits above the description, as it does in Main, with the
+						   cadence on its own line under the number. */ }
+						{ ! isWooPayments && ! earnsRevenueShare && (
+							<VStack spacing={ 0 }>
+								<Text weight={ 600 }>{ price === 0 ? __( 'Free' ) : formatUSD( price ) }</Text>
+								{ ( price > 0 || earnsRevenueShare ) && (
+									<Text variant="muted" size={ 12 }>
+										{ earnsRevenueShare
+											? WOOPAYMENTS_PRICE_NOTE
+											: interval.replace( /^\//, 'per ' ) + ', ' + note }
+									</Text>
+								) }
+							</VStack>
+						) }
+						<Text variant="muted" size={ 12 }>
+							{ isWooPayments ? WOOPAYMENTS_CARD.description : product.description }
 						</Text>
 					</VStack>
-					{ variants.length > 1 && (
-						<SelectControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							label={ __( 'Select variant:' ) }
-							value={ product.slug }
-							options={ variants.map( ( variant ) => ( {
-								label: getProductShortTitle( variant ),
-								value: variant.slug,
-							} ) ) }
-							onChange={ ( slug ) => {
-								setSelectedSlug( slug );
-								const next = variants.find( ( variant ) => variant.slug === slug );
-								if ( ! next ) {
-									return;
-								}
-								if ( inCart ) {
-									onToggleCart( product );
-									onToggleCart( next );
-								}
-								onSelectVariant?.( next );
-							} }
-						/>
-					) }
 				</VStack>
-				<VStack spacing={ 3 } className="dashboard-marketplace-products__card-footer">
-					{ ! isWooPayments && (
-						<VStack spacing={ 1 }>
-							<ProductPrice priceInfo={ priceInfo } currency={ product.currency } />
-							{ termNote && (
-								<Text variant="muted" size={ 12 }>
-									{ termNote }
-								</Text>
-							) }
-						</VStack>
-					) }
-					<ButtonStack justify="flex-start">
+				{ /* Price and actions travel together at the card's foot, so short
+				   descriptions leave the gap above the price rather than between it
+				   and the buttons. */ }
+				<VStack spacing={ 3 } style={ { marginTop: '16px' } }>
+					<ButtonStack
+						style={ { alignSelf: 'flex-start', justifyContent: 'flex-start', gap: '16px' } }
+					>
 						<Button
 							variant="secondary"
 							icon={ inCart ? check : undefined }
-							onClick={ () => onToggleCart( product ) }
+							onClick={ onToggleCart }
+							aria-pressed={ inCart }
 						>
-							{ getCartActionLabel( isReferralMode, inCart ) }
+							{ cta }
 						</Button>
-						{ canViewDetails && (
-							<Button variant="link" onClick={ () => onViewDetails( product ) }>
-								{ __( 'View details' ) }
-							</Button>
-						) }
+						<Button variant="link" onClick={ onDetails } style={ { whiteSpace: 'nowrap' } }>
+							{ __( 'View details' ) }
+						</Button>
 					</ButtonStack>
 				</VStack>
 			</CardBody>

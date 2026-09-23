@@ -1,240 +1,215 @@
-import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortDirection,
-	JetpackLicenseSortField,
-} from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
-import {
-	ExternalLink,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
-import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
-import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
-import {
-	LICENSE_STATUS_FILTERS,
-	getLicenseDisplayStatus,
-	getLicenseStatus,
-	getLicenseProductName,
-	getLicenseStatusLabels,
-	getLicenseTags,
-	getSiteHostname,
-	isBundleParent,
-	isLicenseStatus,
-	isPressableLicense,
-	isRecentlyTransferred,
-} from './license-status';
-import LicenseStatusBadge from './status-badge';
-import TransferredBadge from './transferred-badge';
-import type { LicenseStatus } from './license-status';
-import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
-import type { Field, View } from '@wordpress/dataviews';
+import { __experimentalHStack as HStack, ExternalLink } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { globe } from '@wordpress/icons';
+import { formatDate } from '../../../utils/datetime';
+import AssignLicenseModal from './assign-modal';
+import RevokeLicenseModal from './revoke-modal';
+import { PurchasesStatusBadge } from './status-badge';
+import type { AgencyLicense, AgencySite, LicenseStatus } from './mock-data';
+import type { Action, Field, SortDirection, View } from '@wordpress/dataviews';
+
+export type PurchasesActionHandlers = {
+	onNotice: ( message: string ) => void;
+	onAssign: ( licenseId: number, site: AgencySite ) => void;
+	onRevoke: ( licenseId: number ) => void;
+	sites: AgencySite[];
+};
+
+export const STATUS_LABELS: Record< LicenseStatus, string > = {
+	assigned: __( 'Assigned' ),
+	unassigned: __( 'Unassigned' ),
+	revoked: __( 'Revoked' ),
+};
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
-	perPage: DEFAULT_PER_PAGE,
+	perPage: 10,
 	page: 1,
 	titleField: 'product',
-	fields: [ 'status', 'site', 'issued_at', 'cost' ],
-	sort: { field: 'issued_at', direction: 'desc' },
+	showTitle: true,
+	fields: [ 'status', 'site', 'issuedAt', 'cost' ],
+	sort: {
+		field: 'issuedAt',
+		direction: 'desc' as SortDirection,
+	},
+	layout: {
+		density: 'balanced',
+	},
 };
 
-// The endpoint only sorts by these date fields.
-const SORTABLE_FIELDS = [
-	JetpackLicenseSortField.IssuedAt,
-	JetpackLicenseSortField.AttachedAt,
-	JetpackLicenseSortField.RevokedAt,
-];
-
-export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
-	// The endpoint takes one status, so the field is single-select. A view
-	// persisted while it was multi-select still holds an array.
-	const rawStatus = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
-	const status = Array.isArray( rawStatus ) ? rawStatus[ 0 ] : rawStatus;
-	const sortField = SORTABLE_FIELDS.find( ( field ) => field === view.sort?.field );
-
-	return {
-		filter: isLicenseStatus( status )
-			? LICENSE_STATUS_FILTERS[ status ]
-			: JetpackLicenseFilter.NotRevoked,
-		search: view.search || undefined,
-		sortField: sortField ?? SORTABLE_FIELDS[ 0 ],
-		sortDirection:
-			view.sort?.direction === 'asc'
-				? JetpackLicenseSortDirection.Ascending
-				: JetpackLicenseSortDirection.Descending,
-		page: view.page,
-		perPage: view.perPage,
-	};
-}
-
-export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
-
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
-
-function SiteCell( {
-	license,
-	isAgencyOwner,
-	isProvisioning,
-}: {
-	license: JetpackLicense;
-	isAgencyOwner: boolean;
-	isProvisioning: boolean;
-} ) {
-	if ( isPressableLicense( license ) && ! license.revoked_at ) {
-		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
-		) : (
-			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
-		);
-	}
-	if ( isBundleParent( license ) ) {
-		return <Text variant="muted">—</Text>;
-	}
-	if ( ! license.siteurl ) {
-		return (
-			<Text variant="muted">
-				{ isProvisioning ? __( 'Being created…' ) : __( 'Not assigned' ) }
-			</Text>
-		);
+function SiteCell( { license }: { license: AgencyLicense } ) {
+	if ( ! license.siteUrl ) {
+		return <span className="marketplace-purchases__muted">{ __( 'Not assigned' ) }</span>;
 	}
 	return (
-		<ExternalLink href={ license.siteurl }>{ getSiteHostname( license.siteurl ) }</ExternalLink>
-	);
-}
-
-function CostCell( { license }: { license: JetpackLicense } ) {
-	const subscription = license.subscription;
-	const amount = Number( subscription?.purchase_price );
-	if ( ! subscription || ! amount ) {
-		return <Text variant="muted">—</Text>;
-	}
-
-	const formatted = formatCurrency( amount, subscription.purchase_currency );
-	return (
-		<Text>
-			{ subscription.billing_interval_unit === 'year'
-				? /* translators: %s is a price, e.g. $47.95 */
-					sprintf( __( '%s/year' ), formatted )
-				: /* translators: %s is a price, e.g. $47.95 */
-					sprintf( __( '%s/month' ), formatted ) }
-		</Text>
-	);
-}
-
-// TODO: classic shows the referring client's email under the product name. Port
-// it once the `referral` field on JetpackLicense is typed.
-function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
-	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
-	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-			{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
-			{ getLicenseTags( license ).map( ( tag ) => (
-				<Badge key={ tag }>{ tag }</Badge>
-			) ) }
-			{ transferredUntil && isRecentlyTransferred( license ) && (
-				<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
-			) }
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+			<ExternalLink href={ `https://${ license.siteUrl }` }>{ license.siteUrl }</ExternalLink>
 		</HStack>
 	);
 }
 
-export function getLicenseFields( {
-	locale,
-	isAgencyOwner,
-	provisioningLicenseKeys,
-}: {
-	locale: string;
-	isAgencyOwner: boolean;
-	provisioningLicenseKeys: Set< string >;
-} ): Field< JetpackLicense >[] {
-	const statusLabels = getLicenseStatusLabels();
-	const renderDate = ( value: string | null ) => (
-		<Text>{ value ? formatDate( parseDateAsUTC( value ), locale ) : '—' }</Text>
-	);
+function formatIssuedDate( value: string | null, locale: string ): string {
+	if ( ! value ) {
+		return '—';
+	}
+	return formatDate( new Date( value ), locale ) || '—';
+}
 
+export function getFields( { locale }: { locale: string } ): Field< AgencyLicense >[] {
 	return [
 		{
 			id: 'product',
 			label: __( 'Product' ),
 			type: 'text',
-			filterBy: false,
 			enableGlobalSearch: true,
-			enableSorting: false,
+			enableSorting: true,
 			enableHiding: false,
-			getValue: ( { item } ) => getLicenseProductName( item ),
-			render: ( { item } ) => <ProductCell license={ item } locale={ locale } />,
+			getValue: ( { item }: { item: AgencyLicense } ) =>
+				`${ item.product } ${ item.siteUrl ?? '' } ${ item.licenseKey }`,
+			render: ( { item }: { item: AgencyLicense } ) => (
+				<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+					<span className="marketplace-purchases__product-name">{ item.product }</span>
+					{ item.quantity > 1 && (
+						<span className="marketplace-purchases__quantity">×{ item.quantity }</span>
+					) }
+				</HStack>
+			),
 		},
 		{
 			id: 'status',
 			label: __( 'Status' ),
 			type: 'text',
-			enableSorting: false,
+			enableSorting: true,
 			enableHiding: false,
-			elements: ( Object.keys( statusLabels ) as LicenseStatus[] ).map( ( value ) => ( {
+			elements: ( Object.keys( STATUS_LABELS ) as LicenseStatus[] ).map( ( value ) => ( {
 				value,
-				label: statusLabels[ value ],
+				label: STATUS_LABELS[ value ],
 			} ) ),
-			filterBy: { operators: [ 'is' ] },
-			getValue: ( { item } ) => getLicenseStatus( item ),
-			render: ( { item } ) => {
-				const status = getLicenseDisplayStatus( item );
-				return status ? <LicenseStatusBadge status={ status } /> : <Text variant="muted">—</Text>;
-			},
+			filterBy: { operators: [ 'isAny' ] },
+			getValue: ( { item }: { item: AgencyLicense } ) => item.status,
+			render: ( { item }: { item: AgencyLicense } ) => (
+				<PurchasesStatusBadge status={ item.status } />
+			),
 		},
 		{
 			id: 'site',
 			label: __( 'Site' ),
 			type: 'text',
-			filterBy: false,
-			enableSorting: false,
-			getValue: ( { item } ) => item.siteurl ?? '',
-			render: ( { item } ) => (
-				<SiteCell
-					license={ item }
-					isAgencyOwner={ isAgencyOwner }
-					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
-				/>
+			enableGlobalSearch: true,
+			enableSorting: true,
+			getValue: ( { item }: { item: AgencyLicense } ) => item.siteUrl ?? '',
+			render: ( { item }: { item: AgencyLicense } ) => <SiteCell license={ item } />,
+		},
+		{
+			id: 'issuedAt',
+			label: __( 'Issued' ),
+			type: 'datetime',
+			enableSorting: true,
+			getValue: ( { item }: { item: AgencyLicense } ) => item.issuedAt,
+			render: ( { item }: { item: AgencyLicense } ) => (
+				<span>{ formatIssuedDate( item.issuedAt, locale ) }</span>
 			),
 		},
 		{
-			id: 'issued_at',
-			label: __( 'Issued' ),
+			id: 'assignedAt',
+			label: __( 'Assigned' ),
 			type: 'datetime',
-			filterBy: false,
 			enableSorting: true,
-			getValue: ( { item } ) => item.issued_at,
-			render: ( { item } ) => renderDate( item.issued_at ),
-		},
-		{
-			id: 'attached_at',
-			label: __( 'Assigned on' ),
-			type: 'datetime',
-			filterBy: false,
-			enableSorting: true,
-			getValue: ( { item } ) => item.attached_at ?? '',
-			render: ( { item } ) => renderDate( item.attached_at ),
-		},
-		{
-			id: 'revoked_at',
-			label: __( 'Revoked on' ),
-			type: 'datetime',
-			filterBy: false,
-			enableSorting: true,
-			getValue: ( { item } ) => item.revoked_at ?? '',
-			render: ( { item } ) => renderDate( item.revoked_at ),
+			getValue: ( { item }: { item: AgencyLicense } ) => item.attachedAt ?? '',
+			render: ( { item }: { item: AgencyLicense } ) => (
+				<span>{ formatIssuedDate( item.attachedAt, locale ) }</span>
+			),
 		},
 		{
 			id: 'cost',
 			label: __( 'Cost' ),
 			type: 'text',
-			filterBy: false,
-			enableSorting: false,
-			getValue: ( { item } ) => String( item.subscription?.purchase_price ?? '' ),
-			render: ( { item } ) => <CostCell license={ item } />,
+			enableSorting: true,
+			getValue: ( { item }: { item: AgencyLicense } ) => item.subscription?.purchasePrice ?? 0,
+			render: ( { item }: { item: AgencyLicense } ) => {
+				if ( ! item.subscription ) {
+					return <span>—</span>;
+				}
+				const amount = formatCurrency(
+					item.subscription.purchasePrice,
+					item.subscription.purchaseCurrency,
+					{ isSmallestUnit: true }
+				);
+				const suffix =
+					item.subscription.billingIntervalUnit === 'year' ? __( '/year' ) : __( '/month' );
+				return (
+					<span title={ __( 'Mock pricing' ) }>
+						{ amount }
+						<span className="marketplace-purchases__muted">{ suffix }</span>
+					</span>
+				);
+			},
+		},
+	];
+}
+
+export const getItemId = ( license: AgencyLicense ) => String( license.licenseId );
+
+export function getActions( {
+	onNotice,
+	onAssign,
+	onRevoke,
+	sites,
+}: PurchasesActionHandlers ): Action< AgencyLicense >[] {
+	return [
+		{
+			id: 'assign',
+			label: __( 'Assign to site' ),
+			isPrimary: true,
+			icon: globe,
+			isEligible: ( item ) => item.status === 'unassigned',
+			modalHeader: __( 'Which site would you like to assign this license to?' ),
+			RenderModal: ( { items, closeModal } ) => (
+				<AssignLicenseModal
+					sites={ sites }
+					onAssign={ ( site ) => {
+						onAssign( items[ 0 ].licenseId, site );
+						closeModal?.();
+					} }
+					onCancel={ () => closeModal?.() }
+				/>
+			),
+		},
+		{
+			id: 'copy-key',
+			label: __( 'Copy license key' ),
+			callback: ( items ) => {
+				const key = items[ 0 ].licenseKey;
+				if ( typeof navigator !== 'undefined' && navigator.clipboard ) {
+					navigator.clipboard.writeText( key );
+				}
+				onNotice( __( 'License key copied to clipboard.' ) );
+			},
+		},
+		{
+			id: 'download',
+			label: __( 'Download product' ),
+			isEligible: ( item ) => item.hasDownloads && item.status !== 'revoked',
+			callback: () => {
+				onNotice( __( 'Downloads are not available in this prototype.' ) );
+			},
+		},
+		{
+			id: 'revoke',
+			label: __( 'Revoke license' ),
+			isEligible: ( item ) => item.status !== 'revoked',
+			modalHeader: __( 'Revoke license?' ),
+			RenderModal: ( { items, closeModal } ) => (
+				<RevokeLicenseModal
+					license={ items[ 0 ] }
+					onRevoke={ () => {
+						onRevoke( items[ 0 ].licenseId );
+						closeModal?.();
+					} }
+					onCancel={ () => closeModal?.() }
+				/>
+			),
 		},
 	];
 }

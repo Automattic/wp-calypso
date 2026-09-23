@@ -1,0 +1,9 @@
+/* The segmented options size to their label, and never wrap: "Billed monthly"
+   was breaking onto two lines when the toolbar row got tight. */
+.marketplace-billing-segmented {
+	flex: none;
+
+	.components-toggle-group-control-option-base {
+		white-space: nowrap;
+	}
+}

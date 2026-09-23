@@ -307,7 +307,11 @@ export const marketplaceHostingIndexRoute = createRoute( {
 		if ( cause === 'preload' ) {
 			return;
 		}
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( 'pressable' ) } );
+		// Prototype: keep the demo params (?existing, ?titan, ?premium…) across the redirect.
+		throw dashboardRedirect( {
+			to: getMarketplaceHostingSectionRoute( 'pressable' ),
+			search: Object.fromEntries( new URLSearchParams( window.location.search ) ),
+		} );
 	},
 } );
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
@@ -407,6 +411,25 @@ export const marketplacePurchasesRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/checkout` – A4AD-186 prototype: checkout directions for review
+export const marketplaceCheckoutRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Checkout' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/checkout',
+} ).lazy( () =>
+	import( '../../agency/marketplace/checkout' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-checkout' )( {
 			component: d.default,
 		} )
 	)
@@ -1957,6 +1980,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,
+		marketplaceCheckoutRoute,
 		exclusiveOffersRoute,
 		learnRoute,
 		devToolsRoute,
