@@ -11,14 +11,24 @@ import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart } from '../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
-import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
+import {
+	NAME_PULSE_AI_TIMEOUT_MS,
+	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
+	NAME_PULSE_PAGE_SIZE,
+} from '../helpers';
 import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
-import type { DomainAvailability, NamePulseAvailabilityResponse } from '@automattic/api-core';
+import type {
+	DomainAvailability,
+	NamePulseAvailabilityResponse,
+	NamePulseSuggestionsQuery,
+	NamePulseSuggestionsResponse,
+} from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
 	query,
@@ -26,6 +36,10 @@ const NamePulseTestSearch = ( {
 	cart = buildCart(),
 	availabilityRequests = [],
 	availability = async ( domainNames ) => buildNamePulseAvailabilityResponse( domainNames ),
+	suggestions = async ( { use_ai } ) => ( {
+		suggestions: use_ai ? NAME_PULSE_AI_SUGGESTIONS_FIXTURE : NAME_PULSE_SUGGESTIONS_FIXTURE,
+		errors: [],
+	} ),
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
 	domainAvailability = async ( domainName ) =>
 		buildAvailability( {
@@ -41,6 +55,7 @@ const NamePulseTestSearch = ( {
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	availability?: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
+	suggestions?: ( params: NamePulseSuggestionsQuery ) => Promise< NamePulseSuggestionsResponse >;
 	tldsResponse?: () => Promise< string[] >;
 	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
 	events?: Partial< DomainSearchEvents >;
@@ -62,7 +77,7 @@ const NamePulseTestSearch = ( {
 
 						return availability( domainNames );
 					},
-					suggestions: async () => ( { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] } ),
+					suggestions,
 					tlds: tldsResponse,
 					domainAvailability,
 				} ) }
@@ -124,7 +139,7 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -174,7 +189,7 @@ describe( 'NamePulseResults', () => {
 
 		expect( await screen.findByText( 'Couldn’t load domain endings.' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'Top results' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 		expect( availabilityRequests ).toHaveLength( 0 );
 
 		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
@@ -249,10 +264,10 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'renders More suggestions for a multi-word query', async () => {
+	it( 'renders Related matches for a multi-word query', async () => {
 		render( <NamePulseTestSearch query="ice cream" /> );
 
-		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 		expect(
 			await screen.findByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
@@ -261,6 +276,84 @@ describe( 'NamePulseResults', () => {
 		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+	} );
+
+	it( 'drops the exact-match grid and adds Creative matches for a four-word query', async () => {
+		const requested: NamePulseSuggestionsQuery[] = [];
+
+		render(
+			<NamePulseTestSearch
+				query="a blog about icecream"
+				suggestions={ async ( params ) => {
+					requested.push( params );
+
+					return {
+						suggestions: params.use_ai
+							? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+							: NAME_PULSE_SUGGESTIONS_FIXTURE,
+						errors: [],
+					};
+				} }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Creative matches' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 0 );
+
+		expect( requested ).toEqual( [
+			{ query: 'a blog about icecream', use_ai: false },
+			{ query: 'a blog about icecream', use_ai: true, timeout: NAME_PULSE_AI_TIMEOUT_MS },
+		] );
+
+		// Cheapest available across both lists, ties broken by name.
+		expect( domainsIn( 'top' ) ).toEqual( [
+			'brainfreeze.club',
+			'scoops.blog',
+			'thedailyscoop.blog',
+		] );
+		// Featured rows, and the copy the keyword list already showed, are not repeated.
+		expect( domainsIn( 'suggestions' ) ).not.toContain( 'scoops.blog' );
+		expect( domainsIn( 'creative' ) ).toEqual( [ 'coldcomfort.cafe' ] );
+	} );
+
+	it( 'keeps Top results loading until both suggestion lists settle', async () => {
+		let resolveAi: ( response: NamePulseSuggestionsResponse ) => void = () => {};
+
+		render(
+			<NamePulseTestSearch
+				query="a blog about icecream"
+				suggestions={ async ( { use_ai } ) => {
+					if ( ! use_ai ) {
+						return { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] };
+					}
+
+					return new Promise< NamePulseSuggestionsResponse >( ( resolve ) => {
+						resolveAi = resolve;
+					} );
+				} }
+			/>
+		);
+
+		expect( await screen.findByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+
+		await act( async () => {
+			resolveAi( { suggestions: NAME_PULSE_AI_SUGGESTIONS_FIXTURE, errors: [] } );
+		} );
+
+		await waitFor( () => expect( skeletonsIn( 'top' ) ).toBe( 0 ) );
+		expect( domainsIn( 'top' ) ).toEqual( [
+			'brainfreeze.club',
+			'scoops.blog',
+			'thedailyscoop.blog',
+		] );
 	} );
 
 	it( 'renders a typed FQDN as a row of the exact-match grid', async () => {
@@ -273,7 +366,7 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'explains an unrecognised ending and lists the joined name', async () => {

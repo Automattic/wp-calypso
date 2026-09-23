@@ -50,3 +50,25 @@ export function getTopResults(
 
 	return [ ...preferred, ...backfill ].slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
 }
+
+/**
+ * AI mode has no exact matches to feature, so the cheapest available
+ * suggestions stand in; the name breaks ties to keep the order stable.
+ */
+export function getAiTopResults( ...lists: NamePulseDomainResult[][] ): NamePulseDomainResult[] {
+	const byName = new Map< string, NamePulseDomainResult >();
+
+	for ( const result of lists.flat() ) {
+		if ( result.status === NamePulseDomainStatus.AVAILABLE && ! byName.has( result.domain_name ) ) {
+			byName.set( result.domain_name, result );
+		}
+	}
+
+	return Array.from( byName.values() )
+		.sort(
+			( a, b ) =>
+				( a.raw_price ?? Infinity ) - ( b.raw_price ?? Infinity ) ||
+				a.domain_name.localeCompare( b.domain_name )
+		)
+		.slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
+}

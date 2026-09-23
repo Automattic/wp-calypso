@@ -7,6 +7,7 @@ import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
@@ -122,10 +123,15 @@ const StoryDomainSearch = ( {
 							domainNames.filter( ( name ) => ! OMITTED.has( name ) )
 						);
 					},
-					suggestions: async () => {
-						await delay( 1200 );
+					suggestions: async ( { use_ai } ) => {
+						await delay( use_ai ? 2400 : 1200 );
 
-						return { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] };
+						return {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						};
 					},
 					tlds: async () => {
 						await delay( 400 );
@@ -153,6 +159,8 @@ export default meta;
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
+
+export const AiMode = () => <StoryDomainSearch query="a blog about ice cream" />;
 
 // Starts on the initial state so the swap to the results page can be checked
 // for layout shifts.
