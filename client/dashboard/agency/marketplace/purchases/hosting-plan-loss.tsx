@@ -11,14 +11,20 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { a4aLink } from '../../../utils/link';
 import { getPressablePlanInfo } from '../hosting/lib/pressable-plans';
+import { matchesProduct } from '../hosting/lib/pressable-products';
 import { isPressableLicense } from './license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
-function usePressablePlanFeatures( productId: number ): string[] {
+function usePressablePlanFeatures( license: JetpackLicense ): string[] {
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const { data: products } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
-	const product = products?.find( ( item ) => item.product_id === productId );
+	const { data: products, isPending } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
+	const product = products?.find( ( item ) => matchesProduct( license, item ) );
 	const plan = product ? getPressablePlanInfo( product ) : undefined;
+
+	// Otherwise the custom-plan list flashes before the real plan loads.
+	if ( isPending ) {
+		return [];
+	}
 
 	if ( ! plan ) {
 		return [
@@ -68,8 +74,8 @@ function FeatureList( { features }: { features: string[] } ) {
 	);
 }
 
-function PressablePlanLoss( { productId }: { productId: number } ) {
-	return <FeatureList features={ usePressablePlanFeatures( productId ) } />;
+function PressablePlanLoss( { license }: { license: JetpackLicense } ) {
+	return <FeatureList features={ usePressablePlanFeatures( license ) } />;
 }
 
 function WpcomPlanLoss() {
@@ -91,7 +97,7 @@ export default function HostingPlanLoss( { license }: { license: JetpackLicense 
 	return (
 		<VStack spacing={ 2 }>
 			<Text weight={ 500 }>{ __( "When you cancel you'll immediately lose access to" ) }</Text>
-			{ isPressable ? <PressablePlanLoss productId={ license.product_id } /> : <WpcomPlanLoss /> }
+			{ isPressable ? <PressablePlanLoss license={ license } /> : <WpcomPlanLoss /> }
 			<ExternalLink
 				href={ a4aLink(
 					isPressable ? '/marketplace/hosting/pressable' : '/marketplace/hosting/wpcom'

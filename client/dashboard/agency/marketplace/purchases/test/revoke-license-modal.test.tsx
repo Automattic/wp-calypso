@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import RevokeLicenseModal from '../revoke-license-modal';
-import type { Agency, JetpackLicense } from '@automattic/api-core';
+import type { Agency, AgencyProduct, JetpackLicense } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
@@ -48,11 +48,11 @@ function captureSurvey() {
 	return { body, scope };
 }
 
-function renderModal( license: JetpackLicense ) {
+function renderModal( license: JetpackLicense, products: AgencyProduct[] = [] ) {
 	const closeModal = jest.fn();
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as Agency );
-	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, [] );
+	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );
 	render( <RevokeLicenseModal license={ license } closeModal={ closeModal } />, { queryClient } );
 	return { closeModal };
 }
@@ -138,5 +138,32 @@ describe( '<RevokeLicenseModal> churn feedback', () => {
 				meta: { license_type: 'agency' },
 			},
 		} );
+	} );
+
+	test( 'lists the Pressable plan limits for a license bought on the yearly term', async () => {
+		const pressablePlan: AgencyProduct = {
+			name: 'Pressable Signature 1',
+			slug: 'pressable-hosting-signature-1',
+			product_id: 100,
+			monthly_product_id: 100,
+			yearly_product_id: 101,
+			currency: 'USD',
+			metadata: {
+				sites: 5,
+				visits: 50000,
+				storage: 20,
+				php_worker_count: 2,
+				category: 'signature',
+			},
+			family_slug: 'pressable-hosting',
+		};
+		renderModal(
+			{ ...baseLicense, license_key: 'pressable-wp-1_abc', product: 'Pressable', product_id: 101 },
+			[ pressablePlan ]
+		);
+
+		expect( screen.getByText( '5 WordPress installs' ) ).toBeVisible();
+		expect( screen.getByText( '20GB of storage' ) ).toBeVisible();
+		expect( screen.queryByText( 'Custom WordPress installs' ) ).not.toBeInTheDocument();
 	} );
 } );
