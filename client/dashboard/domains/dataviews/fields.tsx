@@ -67,13 +67,16 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
+				// DataViews passes `getValue()` results to `sort()`, not items, despite
+				// what the `Field` type says.
 				sort: ( a, b, direction ) => {
-					if ( a.primary_domain === b.primary_domain ) {
+					const isPrimaryA = Boolean( a );
+					if ( isPrimaryA === Boolean( b ) ) {
 						return 0;
 					}
 
 					const factor = direction === 'asc' ? 1 : -1;
-					return a.primary_domain ? -1 * factor : 1 * factor;
+					return isPrimaryA ? -1 * factor : 1 * factor;
 				},
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
