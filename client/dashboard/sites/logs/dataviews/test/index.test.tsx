@@ -214,7 +214,7 @@ describe( 'SiteLogsDataViews', () => {
 	// Picking a field adds the filter with no value in it, which asks the API for
 	// nothing new. Reloading there would replace the table with its spinner and take
 	// the filter's own menu down with it.
-	test( 'picking a filter from the menu leaves the loaded logs alone', async () => {
+	test( 'picking a filter from the menu makes no new logs request', async () => {
 		mockPreferences();
 		const requestedQueries = mockServerLogs();
 		appQueryClient.clear();
