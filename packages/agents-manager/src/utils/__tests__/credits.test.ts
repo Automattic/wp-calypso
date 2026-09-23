@@ -3,6 +3,7 @@ import {
 	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsDetail,
+	formatPercent,
 	getCreditsLabel,
 	getCreditsTone,
 	isCreditsExhausted,
@@ -34,11 +35,21 @@ const paid = ( percent: number ): CreditsStatus => ( {
 } );
 
 describe( 'clampPercent', () => {
-	it( 'floors and clamps to 0–100', () => {
-		expect( clampPercent( 55.9 ) ).toBe( 55 );
+	it( 'clamps to 0–100 without rounding', () => {
+		expect( clampPercent( 55.9 ) ).toBe( 55.9 );
+		expect( clampPercent( 0.4 ) ).toBe( 0.4 );
 		expect( clampPercent( 140 ) ).toBe( 100 );
 		expect( clampPercent( -3 ) ).toBe( 0 );
 		expect( clampPercent( Number.NaN ) ).toBe( 0 );
+	} );
+} );
+
+describe( 'formatPercent', () => {
+	it( 'floors for labels but keeps a spendable fraction distinct from zero', () => {
+		expect( formatPercent( 55.9 ) ).toBe( '55' );
+		expect( formatPercent( 0.4 ) ).toBe( '<1' );
+		expect( formatPercent( 0 ) ).toBe( '0' );
+		expect( formatPercent( 100 ) ).toBe( '100' );
 	} );
 } );
 
@@ -50,10 +61,10 @@ describe( 'credit states', () => {
 		expect( isCreditsLow( paid( 5 ) ) ).toBe( false );
 	} );
 
-	it( 'reads exhausted at zero for any plan', () => {
+	it( 'reads exhausted only at an exact zero, for any plan', () => {
 		expect( isCreditsExhausted( free( 0 ) ) ).toBe( true );
-		expect( isCreditsExhausted( free( 0.4 ) ) ).toBe( true );
 		expect( isCreditsExhausted( paid( 0 ) ) ).toBe( true );
+		expect( isCreditsExhausted( free( 0.4 ) ) ).toBe( false );
 		expect( isCreditsExhausted( free( 1 ) ) ).toBe( false );
 	} );
 } );
@@ -75,6 +86,7 @@ describe( 'getCreditsLabel', () => {
 	it( 'names the pool by plan', () => {
 		expect( getCreditsLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
 		expect( getCreditsLabel( paid( 72 ) ) ).toBe( '72% of site credits left' );
+		expect( getCreditsLabel( free( 0.4 ) ) ).toBe( '<1% of free credits left' );
 	} );
 } );
 

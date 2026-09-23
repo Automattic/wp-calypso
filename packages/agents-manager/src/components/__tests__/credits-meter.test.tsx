@@ -124,6 +124,20 @@ describe( 'CreditsMeter', () => {
 		expect( onAction ).toHaveBeenCalled();
 	} );
 
+	it( 'labels a spendable fraction as under one percent, not exhausted', () => {
+		const freeFraction: CreditsStatus = {
+			plan: 'free',
+			percent: 0.4,
+			pools: [ { id: 'free', label: 'Free credits', percent: 0.4 } ],
+		};
+		render( <CreditsMeter status={ freeFraction } isOpen onToggle={ () => {} } /> );
+		expect(
+			screen.getByRole( 'button', { name: '<1% of free credits left' } )
+		).toBeInTheDocument();
+		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
+		expect( screen.queryByText( /used all your free credits/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'shows the out-of-credits message and Upgrade on an exhausted free plan', () => {
 		render(
 			<CreditsMeter

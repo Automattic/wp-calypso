@@ -5,6 +5,7 @@ import {
 	type CreditsPlan,
 	buildMockCreditsStatus,
 	clampPercent,
+	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../utils/credits';
@@ -87,6 +88,18 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
 
+	// The popover opens once, on its own, when a reply drains the balance to
+	// zero: sends are blocked from that point, so the user learns before
+	// trying. Seeded at the current state so a chat that mounts already
+	// exhausted stays quiet until they act.
+	const wasExhaustedRef = useRef( isExhausted );
+	useEffect( () => {
+		if ( isExhausted && ! wasExhaustedRef.current ) {
+			setIsPopoverOpen( true );
+		}
+		wasExhaustedRef.current = isExhausted;
+	}, [ isExhausted ] );
+
 	const handleAction = useCallback( () => {
 		// TODO: route to the plan upgrade / add-credits checkout once the CTA destination is decided.
 		setIsPopoverOpen( false );
@@ -125,9 +138,9 @@ export function useCredits( { enabled, isProcessing }: UseCreditsOptions ): UseC
 			return {
 				icon: false,
 				message: sprintf(
-					/* translators: %d: percentage of free credits left */
-					__( '%d%% of free credits left.', __i18n_text_domain__ ),
-					clampPercent( status.percent )
+					/* translators: %s: percentage of free credits left, e.g. "15" or "<1" */
+					__( '%s%% of free credits left.', __i18n_text_domain__ ),
+					formatPercent( status.percent )
 				),
 				action: { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: handleAction },
 				dismissible: true,
