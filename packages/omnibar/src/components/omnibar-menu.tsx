@@ -38,7 +38,9 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 	return (
 		<Menu.Item
 			tabbable
-			render={ node.href ? <a href={ node.href } /> : undefined }
+			render={
+				node.href ? <a href={ node.href } target={ node.target } rel={ node.rel } /> : undefined
+			}
 			onClick={ node.onClick }
 		>
 			<OmnibarNodeContent node={ node } />
@@ -111,11 +113,14 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 			<Button
 				variant="unstyled"
 				className={ menuClassName }
-				render={ isLink ? <a href={ node.href } /> : undefined }
+				render={
+					isLink ? <a href={ node.href } target={ node.target } rel={ node.rel } /> : undefined
+				}
 				nativeButton={ ! isLink }
 				disabled={ node.disabled }
 				onClick={ node.onClick }
 				aria-label={ label }
+				title={ node.tooltip }
 			>
 				<OmnibarNodeContent node={ node } />
 			</Button>
@@ -172,7 +177,12 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 						variant="unstyled"
 						className={ menuClassName }
 						aria-label={ label }
-						render={ node.href ? <a href={ node.href } /> : undefined }
+						title={ node.tooltip }
+						render={
+							node.href ? (
+								<a href={ node.href } target={ node.target } rel={ node.rel } />
+							) : undefined
+						}
 						nativeButton={ ! node.href }
 					>
 						<OmnibarNodeContent node={ node } />

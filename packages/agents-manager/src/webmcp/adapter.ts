@@ -1,5 +1,6 @@
 import { parse } from '@wordpress/blocks';
 import { normalizeAbilityName } from '../abilities/ability-name';
+import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
@@ -84,10 +85,6 @@ type ExecutionContext = {
 	knownBlockClientIds: Set< string >;
 };
 
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
-
 function rememberBlockClientIds( result: unknown, context: ExecutionContext ): void {
 	if (
 		! isRecord( result ) ||
@@ -144,7 +141,7 @@ function prepareApplyBlockEditsInput(
 					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
 					block: toBlockData( block ),
 				} ) );
-		  } )
+			} )
 		: undefined;
 	const reverseMap = Object.fromEntries(
 		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
@@ -210,7 +207,7 @@ function createTool(
 			const preparedInput =
 				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME
 					? prepareApplyBlockEditsInput( input ?? {}, executionContext )
-					: input ?? {};
+					: ( input ?? {} );
 			const result = await toolProvider.executeAbility( ability.name, preparedInput );
 
 			if ( ability.name === GET_BLOCK_TREE_ABILITY_NAME ) {

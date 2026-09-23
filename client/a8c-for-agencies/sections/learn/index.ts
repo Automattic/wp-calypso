@@ -12,10 +12,7 @@ import {
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import {
-	requireAccessContext,
-	requireMcpBetaAccessContext,
-} from 'calypso/a8c-for-agencies/controller';
+import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	agentStudioBriefContext,
@@ -71,18 +68,10 @@ export default function () {
 		page( A4A_BENCHMARKS_LINK, requireAccessContext, benchmarksContext, makeLayout, clientRender );
 	}
 
-	page(
-		A4A_AI_MCP_LINK,
-		requireAccessContext,
-		requireMcpBetaAccessContext,
-		aiMcpOverviewContext,
-		makeLayout,
-		clientRender
-	);
+	page( A4A_AI_MCP_LINK, requireAccessContext, aiMcpOverviewContext, makeLayout, clientRender );
 	page(
 		A4A_AI_MCP_READ_TOOLS_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
 		aiMcpReadToolsContext,
 		makeLayout,
 		clientRender
@@ -90,7 +79,6 @@ export default function () {
 	page(
 		A4A_AI_MCP_WRITE_TOOLS_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
 		aiMcpWriteToolsContext,
 		makeLayout,
 		clientRender
@@ -98,7 +86,6 @@ export default function () {
 	page(
 		A4A_AI_MCP_STARTER_PROMPTS_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
 		aiMcpStarterPromptsContext,
 		makeLayout,
 		clientRender
@@ -106,7 +93,6 @@ export default function () {
 	page(
 		A4A_AI_MCP_CONNECT_LINK,
 		requireAccessContext,
-		requireMcpBetaAccessContext,
 		aiMcpConnectContext,
 		makeLayout,
 		clientRender

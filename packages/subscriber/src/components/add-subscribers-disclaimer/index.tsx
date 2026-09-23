@@ -14,13 +14,13 @@ const AddSubscribersLearnMore: FunctionComponent< Props > = ( { buttonLabel } ) 
 		'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. Spam complaints or high bounce rate from your subscribers may lead to action against your account.'
 	)
 		? /* translators: %s is the CTA button name */
-		  __(
+			__(
 				'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person. Spam complaints or high bounce rate from your subscribers may lead to action against your account.'
-		  )
+			)
 		: /* translators: %s is the CTA button name */
-		  __(
+			__(
 				'By clicking "%s," you represent that you\'ve obtained the appropriate consent to email each person.'
-		  );
+			);
 
 	return <p className="add-subscriber__form--disclaimer">{ sprintf( text, buttonLabel ) }</p>;
 };

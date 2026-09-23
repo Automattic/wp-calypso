@@ -46,7 +46,7 @@ export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 												count: selectedSites.length,
 											},
 											comment: '%(count)s is the number of sites added.',
-									  } )
+										} )
 							)
 						);
 					}, 1000 );
@@ -102,7 +102,7 @@ export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 								},
 								count: selectedSites.length,
 								comment: '%(count)s is the number of sites selected.',
-						  } )
+							} )
 						: translate( 'Add sites' ) }
 				</Button>
 			</div>

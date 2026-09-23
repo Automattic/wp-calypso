@@ -11,6 +11,9 @@ const mockAgentManager = {
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
+let mockIsStoreReady = true;
+let mockAgentDockCatchAll = false;
+let mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 const mockUseAbilitiesSetup = jest.fn();
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
@@ -27,7 +30,7 @@ jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
 
 // Simulate `store` ready so the component renders
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => ( { hasLoaded: true, isOpen: mockIsOpen } ),
+	useSelect: () => ( { hasLoaded: mockIsStoreReady, isOpen: mockIsOpen } ),
 } ) );
 jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
@@ -44,7 +47,7 @@ jest.mock( '../../utils/create-agent-config', () => ( {
 		mockCreateAgentConfig( options ),
 } ) );
 jest.mock( '../../hooks/use-agent-config', () => ( {
-	useAgentConfig: () => ( { agentId: 'wp-orchestrator', isLoading: false } ),
+	useAgentConfig: () => mockAgentConfig,
 } ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
@@ -60,11 +63,11 @@ jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 } ) );
 jest.mock( '../agent-dock', () => {
 	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
-	const { useNavigate } = jest.requireActual( 'react-router-dom' );
+	const { Navigate, Route, Routes, useNavigate } = jest.requireActual( 'react-router-dom' );
 	function MockAgentDock() {
 		const { agentConfig } = useAgentsManagerContext();
 		const navigate = useNavigate();
-		return (
+		const dock = (
 			<>
 				<div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>
 				<button onClick={ () => navigate( '/history' ) }>go-history</button>
@@ -74,6 +77,17 @@ jest.mock( '../agent-dock', () => {
 				</button>
 			</>
 		);
+
+		if ( mockAgentDockCatchAll ) {
+			return (
+				<Routes>
+					<Route path="/chat" element={ dock } />
+					<Route path="*" element={ <Navigate to="/chat" replace /> } />
+				</Routes>
+			);
+		}
+
+		return dock;
 	}
 	return { __esModule: true, default: MockAgentDock };
 } );
@@ -105,6 +119,9 @@ describe( 'AgentSetup', () => {
 		mockAgentManager.hasAgent.mockReturnValue( true );
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
+		mockIsStoreReady = true;
+		mockAgentDockCatchAll = false;
+		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 		sessionStorage.clear();
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
@@ -156,6 +173,139 @@ describe( 'AgentSetup', () => {
 
 		await act( async () => {} );
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'prefers the URL session over the stored session', async () => {
+		mockAgentDockCatchAll = true;
+		document.body.className = 'site-editor-php';
+		saveSessionId( 'stored-session', undefined, '111' );
+		const onPopState = jest.fn();
+		window.addEventListener( 'popstate', onPopState );
+		window.history.replaceState(
+			{ canvas: 'edit' },
+			'',
+			'/?canvas=edit&wp-agent-chat=url-session'
+		);
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( new URLSearchParams( window.location.search ).has( 'wp-agent-chat' ) ).toBe( false );
+		expect( window.location.search ).toBe( '?canvas=edit' );
+		expect( window.history.state ).toEqual( { canvas: 'edit' } );
+		expect( onPopState ).toHaveBeenCalledTimes( 1 );
+		window.removeEventListener( 'popstate', onPopState );
+	} );
+
+	it( 'does not emit popstate outside the Site Editor', async () => {
+		const onPopState = jest.fn();
+		window.addEventListener( 'popstate', onPopState );
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( onPopState ).not.toHaveBeenCalled();
+		window.removeEventListener( 'popstate', onPopState );
+	} );
+
+	it( 'captures the initial session before loading gates resolve', async () => {
+		mockIsStoreReady = false;
+		mockAgentManager.hasAgent.mockReturnValue( false );
+		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: true };
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( mockCreateAgentConfig ).not.toHaveBeenCalled();
+
+		window.history.replaceState( {}, '', '/?canvas=edit' );
+		mockIsStoreReady = true;
+		mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat', isLoading: false };
+		rerender( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					agentId: 'wpcom-workflow-unified_chat',
+					sessionId: 'url-session',
+				} )
+			)
+		);
+		expect( getSessionId( 'wpcom-workflow-unified_chat', '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '?canvas=edit' );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not reuse the initial session for a later new chat', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+
+		fireEvent.click( screen.getByText( 'go-new-chat' ) );
+
+		await waitFor( () => expect( getSessionId( undefined, '111' ) ).toBe( '' ) );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'resumes a session handed off for this site', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '' );
+	} );
+
+	it( 'keeps a session handed off for another site until that site is reached', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=222' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: '' } )
+			)
+		);
+		expect( getSessionId( undefined, '222' ) ).toBe( 'url-session' );
+		mockAgentManager.removeAgent.mockImplementation( () => {
+			mockAgentManager.hasAgent.mockReturnValue( false );
+		} );
+
+		rerender( manager( 222 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'url-session' } )
+		);
+	} );
+
+	it( 'ignores a handed-off session for a surface-bound agent', async () => {
+		mockAgentConfig = { agentId: 'wpcom-workflow-plugin_compass', isLoading: false };
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { sessionId: '' } )
+		);
+		expect( getSessionId( 'wpcom-workflow-plugin_compass', '111' ) ).toBe( '' );
+		expect( window.location.search ).toBe( '' );
 	} );
 
 	it( 'aligns the config with the stored session when leaving the chat view', async () => {

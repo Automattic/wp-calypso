@@ -6,7 +6,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
-import { getSessionId, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
+import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -56,7 +56,7 @@ const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	isLoggedIn: false,
 	site: null,
-	siteKey: 'no-site',
+	siteKey: NO_SITE,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,

@@ -1,5 +1,7 @@
-import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
+import { fetchPayPalConfiguration } from '@automattic/api-core';
+import { PayPalProvider } from '@automattic/calypso-paypal';
 import {
+	PaymentProcessorResponseType,
 	useTogglePaymentMethod,
 	type PaymentMethod,
 	type ProcessPayment,
@@ -16,16 +18,11 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { PayPalLogo } from 'calypso/dashboard/components/paypal-logo';
-import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:paypal-js' );
-
-async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
-	return await wp.req.get( '/me/paypal-configuration' );
-}
 
 export function createPayPal( {
 	hasExistingPayPalPPCPMethods,
@@ -190,8 +187,24 @@ function PayPalSubmitButton( {
 		// handler) to call the transactions endpoint and then eventually
 		// return here to trigger the PayPal popup which happens when this
 		// Promise resolves with the PayPal order ID.
-		const { promise: orderPromise, resolve: resolvePayPalOrderPromise } = deferred< string >();
-		onClick( { resolvePayPalOrderPromise, payPalApprovalPromise } );
+		const {
+			promise: orderPromise,
+			resolve: resolvePayPalOrderPromise,
+			reject: rejectPayPalOrderPromise,
+		} = deferred< string >();
+		onClick( { resolvePayPalOrderPromise, payPalApprovalPromise } )
+			.then( ( response ) => {
+				if ( response.type === PaymentProcessorResponseType.ERROR ) {
+					// PayPal already opened its checkout UI; rejecting createOrder
+					// is how we ask it to close when we never minted an order.
+					rejectPayPalOrderPromise( new Error( response.payload ) );
+					setForceReRender( ( val ) => val + 1 );
+				}
+			} )
+			.catch( ( error ) => {
+				rejectPayPalOrderPromise( error );
+				setForceReRender( ( val ) => val + 1 );
+			} );
 		return orderPromise;
 	};
 

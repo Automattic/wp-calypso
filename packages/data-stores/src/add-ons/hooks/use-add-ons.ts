@@ -48,17 +48,17 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 				const displayCost =
 					product.term === 'month'
 						? /* Translators: %(formattedCost)s: monthly price formatted with currency */
-						  translate( '%(formattedCost)s/month, billed monthly', {
+							translate( '%(formattedCost)s/month, billed monthly', {
 								args: {
 									formattedCost,
 								},
-						  } )
+							} )
 						: /* Translators: %(monthlyCost)s: monthly price formatted with currency */
-						  translate( '%(monthlyCost)s/month, billed yearly', {
+							translate( '%(monthlyCost)s/month, billed yearly', {
 								args: {
 									monthlyCost: formattedCost,
 								},
-						  } );
+							} );
 
 				return {
 					...addOnMeta,

@@ -3,7 +3,7 @@ import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 const SITE_ID = 1234;
 
 describe( 'getRestoreProgress()', () => {
-	test( 'should return null if no progress exists for a site', () => {
+	test( 'should return undefined if no progress exists for a site', () => {
 		const result = getRestoreProgress(
 			{
 				activityLog: {
@@ -12,7 +12,7 @@ describe( 'getRestoreProgress()', () => {
 			},
 			SITE_ID
 		);
-		expect( result ).toBeNull();
+		expect( result ).toBeUndefined();
 	} );
 
 	test( 'should return existing progress for a site', () => {

@@ -95,7 +95,7 @@ export default function EmailVerificationNotification( {
 		? translate( 'Resend email (%(countdown)s)', {
 				args: { countdown: formatCooldown( secondsUntilResend ) },
 				comment: 'countdown to when the verification email can be resent, e.g. 4:59',
-		  } )
+			} )
 		: translate( 'Resend email' );
 
 	return (

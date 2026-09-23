@@ -375,6 +375,36 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
+const transferStatus: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_TRANSFER_STATUS' ) {
+		return action.transferStatus;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const transferStartedAt: Reducer< number | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_TRANSFER_STARTED_AT' ) {
+		return action.transferStartedAt;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const transferTimedOut: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_TRANSFER_TIMED_OUT' ) {
+		return action.transferTimedOut;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return [ ...action.goals ];
@@ -674,6 +704,9 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
+	transferStatus,
+	transferStartedAt,
+	transferTimedOut,
 	goals,
 	hideFreePlan,
 	hidePlansFeatureComparison,

@@ -13,7 +13,7 @@ import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -128,7 +128,12 @@ class InviteAccept extends Component {
 	isMatchEmailError = () => {
 		const { invite } = this.state;
 		const { user } = this.props;
-		return !! ( invite && invite.forceMatchingEmail && user && user.email !== invite.sentTo );
+		return !! (
+			invite &&
+			invite.forceMatchingEmail &&
+			user &&
+			! isSameEmail( user.email, invite.sentTo )
+		);
 	};
 
 	isInvalidInvite = () => {

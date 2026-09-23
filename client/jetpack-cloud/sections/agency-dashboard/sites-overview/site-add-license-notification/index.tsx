@@ -64,13 +64,13 @@ export default function SiteAddLicenseNotification() {
 							comment:
 								'The final separator of a delimited list, such as ", and " in "Backup, Scan, and Boost". Note that the spaces here are important due to the way the final string is constructed.',
 						},
-				  } )
+					} )
 				: translate( ' and ', {
 						args: {
 							comment:
 								'The way that two words are separated, such as " and " in "Backup and Scan". Note that the spaces here are important due to the way the final string is constructed.',
 						},
-				  } );
+					} );
 		const multipleLicensesArgs = {
 			selectedSite,
 			initialLicenseList: initialLicenseList.join( `${ commaCharacter } ` ),
@@ -99,7 +99,7 @@ export default function SiteAddLicenseNotification() {
 								'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Backup, Scan, and Boost" where the initialLicenseList is "Backup, Scan", the conjunction is ", and", and the lastLicenseItem is "Boost". An alternative example is "Backup and Scan", where initialLicenseList is "Backup", conjunction is " and", and lastLienseItem is "Boost".',
 							components,
 						}
-				  )
+					)
 				: translate(
 						'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
 							'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
@@ -108,7 +108,7 @@ export default function SiteAddLicenseNotification() {
 							args: singleLicenseArgs,
 							components,
 						}
-				  );
+					);
 		}
 		// We are not using the same translate method for plural form since we have different arguments.
 		return licenses.length > 1
@@ -121,7 +121,7 @@ export default function SiteAddLicenseNotification() {
 							'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Backup, Scan, and Boost" where the initialLicenseList is "Backup, Scan", the conjunction is ", and", and the lastLicenseItem is "Boost". An alternative example is "Backup and Scan", where initialLicenseList is "Backup", conjunction is " and", and lastLienseItem is "Boost".',
 						components,
 					}
-			  )
+				)
 			: translate(
 					'An error occurred and your {{strong}}%(licenseItem)s{{/strong}} ' +
 						"wasn't assigned to {{em}}%(selectedSite)s{{/em}}.",
@@ -129,7 +129,7 @@ export default function SiteAddLicenseNotification() {
 						args: singleLicenseArgs,
 						components,
 					}
-			  );
+				);
 	}
 
 	return (

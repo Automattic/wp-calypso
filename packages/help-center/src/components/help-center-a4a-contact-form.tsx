@@ -135,14 +135,14 @@ export const HelpCenterA4AContactForm = () => {
 						isValid: {
 							required: true,
 						},
-				  }
+					}
 				: {
 						id: 'site',
 						label: __( 'Related site', __i18n_text_domain__ ),
 						type: 'text' as const,
 						placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
 						isVisible: () => ! isPressableOfferRequest,
-				  },
+					},
 			{
 				id: 'product',
 				label: isMigrationRequest
@@ -168,7 +168,7 @@ export const HelpCenterA4AContactForm = () => {
 								label: __( 'I need help to decide', __i18n_text_domain__ ),
 								value: 'dont-know',
 							},
-					  ]
+						]
 					: [
 							{
 								label: __( 'Choose a product', __i18n_text_domain__ ),
@@ -194,7 +194,7 @@ export const HelpCenterA4AContactForm = () => {
 								label: __( 'Pressable', __i18n_text_domain__ ),
 								value: 'pressable',
 							},
-					  ],
+						],
 				isValid: {
 					required: true,
 				},
@@ -223,7 +223,7 @@ export const HelpCenterA4AContactForm = () => {
 					? __(
 							'Anything we should know about your current site(s) or migration needs?',
 							__i18n_text_domain__
-					  )
+						)
 					: __( 'How can we help?', __i18n_text_domain__ ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
@@ -233,7 +233,7 @@ export const HelpCenterA4AContactForm = () => {
 							? __(
 									"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
 									__i18n_text_domain__
-							  )
+								)
 							: __( 'Add your message here', __i18n_text_domain__ );
 					return (
 						<TextareaControl

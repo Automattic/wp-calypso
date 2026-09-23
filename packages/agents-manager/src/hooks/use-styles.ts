@@ -71,7 +71,7 @@ export default function useStyles() {
 								variationType === 'button'
 									? resetButtonStyles( currentRecord.styles || {}, variation )
 									: currentRecord.styles,
-					  };
+						};
 
 			const merged = {
 				// Big Sky never applies a button variation's `settings`.
@@ -106,15 +106,14 @@ export default function useStyles() {
 						'[AgentsManager] Legacy Easy Site Editor CSS found — font picks may not be visible until it is removed.'
 					);
 
-					// TODO (ability-migration): Delete this dispatch once the removal
-					// dialog ports with `set-styles`. Where Big Sky's app mounts, it
+					// TODO (ability-migration): Delete this dispatch once AM has its own
+					// removal dialog (AM-27). Where Big Sky's app mounts, it
 					// opens Big Sky's existing removal dialog — exactly as before AM
 					// took over pick execution; elsewhere the store is unregistered
 					// and this is a no-op.
 					(
 						dispatch( 'ai-assembler' ) as
-							| { setLegacyCssBlocks?: ( legacyBlocks: typeof blocks ) => void }
-							| undefined
+							{ setLegacyCssBlocks?: ( legacyBlocks: typeof blocks ) => void } | undefined
 					 )?.setLegacyCssBlocks?.( blocks );
 				}
 			}

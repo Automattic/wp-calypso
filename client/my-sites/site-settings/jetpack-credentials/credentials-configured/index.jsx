@@ -82,10 +82,10 @@ class CredentialsConfigured extends Component {
 		const headerText = supportsRealtimeBackup
 			? translate(
 					'Your site is being backed up in real time and regularly scanned for security threats.'
-			  )
+				)
 			: translate(
 					'Your site is being backed up every day and regularly scanned for security threats.'
-			  );
+				);
 
 		const header = (
 			<div className="credentials-configured__info">

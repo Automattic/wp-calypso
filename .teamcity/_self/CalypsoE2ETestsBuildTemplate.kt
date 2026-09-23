@@ -263,6 +263,11 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				if [[ -n "${'$'}CTRF_REPORT" ]]; then
 					echo "Found CTRF report: ${'$'}CTRF_REPORT"
 					aws s3 cp "${'$'}CTRF_REPORT" %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/reports/ctrf/
+					echo "CTRF report uploaded successfully (deprecated)"
+
+					AWS_ACCESS_KEY_ID=%A8C_TEST_REPORTS_S3_ACCESS_KEY% \
+					AWS_SECRET_ACCESS_KEY=%A8C_TEST_REPORTS_S3_SECRET_ACCESS_KEY% \
+						aws s3 cp "${'$'}CTRF_REPORT" %A8C_TEST_REPORTS_S3_ROOT%/reports/ctrf/wp-calypso/
 					echo "CTRF report uploaded successfully"
 				else
 					echo "No CTRF report found, skipping upload"

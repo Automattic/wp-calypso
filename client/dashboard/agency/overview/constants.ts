@@ -21,6 +21,9 @@ export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
 // page exists, like the links in agency/marketplace/exclusive-offers.
 export const MARKETPLACE_HOSTING_PRESSABLE_PATH = '/marketplace/hosting/pressable';
 
+export const AI_MCP_ANNOUNCEMENT_BLOG_POST_URL =
+	'https://automattic.com/for-agencies/blog/our-new-mcp-brings-automattic-for-agencies-into-your-ai-workflow/';
+
 interface TierOverviewContent {
 	description: string;
 	hasPartnerManager: boolean;
@@ -41,7 +44,7 @@ export const TIER_OVERVIEW_CONTENT: Record< AgencyTierType, TierOverviewContent 
 	},
 	'pro-agency-partner': {
 		description: __(
-			'Free agency hosting, a dedicated Partner Manager, priority support, and co-marketing.'
+			'Qualified leads, a dedicated Partner Manager, priority support, and co-marketing.'
 		),
 		hasPartnerManager: true,
 	},

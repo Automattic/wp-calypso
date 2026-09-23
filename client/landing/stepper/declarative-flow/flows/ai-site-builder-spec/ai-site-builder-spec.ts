@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2 } from '../../internals/types';
@@ -31,8 +32,10 @@ function initialize() {
 		return [];
 	}
 
+	// Build-wow builds a site the customer already owns, so it needs a logged-in user and
+	// somewhere to land when the build request fails.
 	if ( shouldBuildWow ) {
-		return [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ];
+		return stepsWithRequiredLogin( [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION, STEPS.ERROR ] );
 	}
 
 	// A blueprint-archive run still has minutes of work to wait on once the spec is confirmed —
@@ -72,6 +75,9 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 			submit: ( submittedStep ) => {
 				switch ( submittedStep.slug ) {
 					case 'site-spec':
+						if ( submittedStep.providedDependencies?.buildWowError ) {
+							return navigate( 'error', undefined, true );
+						}
 						// Replaced, not pushed: the spec is confirmed and its only action taken, so
 						// Back belongs to whatever sent the customer here.
 						return navigate( 'processing', undefined, true );

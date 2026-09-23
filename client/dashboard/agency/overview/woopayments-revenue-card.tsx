@@ -12,7 +12,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Callout } from '../../components/callout';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
-import { TextSkeleton } from '../../components/text-skeleton';
+import { TextBlur } from '../../components/text-blur';
 import OverviewLinkButton from './overview-link-button';
 import StatList from './stat-list';
 import useWooPaymentsStoreCount from './use-woopayments-store-count';
@@ -133,11 +133,9 @@ export default function WooPaymentsRevenueCard( {
 					</Heading>
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
-							{ isLoading ? (
-								<TextSkeleton length={ 6 } />
-							) : (
-								formatCurrency( currentQuarter?.payout ?? 0, 'USD' )
-							) }
+							<TextBlur isBlurred={ isLoading } length={ 6 }>
+								{ formatCurrency( currentQuarter?.payout ?? 0, 'USD' ) }
+							</TextBlur>
 						</Text>
 						<Text intent="success" size={ 12 } lineHeight="16px">
 							{ __( 'estimated this quarter' ) }

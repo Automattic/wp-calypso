@@ -147,32 +147,30 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<>
-			<BaseControl label={ __( 'Select sites to tag' ) }>
-				{ migrationSourceHost && (
-					<Spacer marginY={ 4 }>
-						<Text variant="muted">
-							{ sprintf(
-								/* translators: %s: the hosting provider name */
-								__( 'Make sure you only select sites previously hosted on %s' ),
-								migrationSourceHost
-							) }
-						</Text>
-					</Spacer>
-				) }
-				<DataViews
-					data={ allSites }
-					view={ view }
-					onChangeView={ setView }
-					fields={ fields }
-					search={ false }
-					actions={ [] }
-					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ { table: {} } }
-					isLoading={ isLoading }
-				/>
-			</BaseControl>
-		</>
+		<BaseControl label={ __( 'Select sites to tag' ) }>
+			{ migrationSourceHost && (
+				<Spacer marginY={ 4 }>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s: the hosting provider name */
+							__( 'Make sure you only select sites previously hosted on %s' ),
+							migrationSourceHost
+						) }
+					</Text>
+				</Spacer>
+			) }
+			<DataViews
+				data={ allSites }
+				view={ view }
+				onChangeView={ setView }
+				fields={ fields }
+				search={ false }
+				actions={ [] }
+				getItemId={ ( item ) => `${ item.id }` }
+				paginationInfo={ paginationInfo }
+				defaultLayouts={ { table: {} } }
+				isLoading={ isLoading }
+			/>
+		</BaseControl>
 	);
 }

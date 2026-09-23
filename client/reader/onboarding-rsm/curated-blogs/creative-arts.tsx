@@ -51,14 +51,6 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 47613982,
-			site_ID: 74469258,
-			site_URL: 'https://musicinjection.com.au',
-			site_name: 'Music Injection',
-			feed_URL: 'http://musicinjection.com.au',
-			has_icon: true,
-		},
-		{
 			feed_ID: 270115,
 			site_ID: 4737767,
 			site_URL: 'http://stantonssheetmusic.wordpress.com',

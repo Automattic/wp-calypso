@@ -1,28 +1,93 @@
 /**
  * @jest-environment jsdom
  */
-import { AuthContext } from '../../../app/auth';
+import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
+import userEvent from '@testing-library/user-event';
+import MockDate from 'mockdate';
 import { render as testUtilsRender } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Plan } from '../index';
-import type { User, Site } from '@automattic/api-core';
+import type { Purchase, Site } from '@automattic/api-core';
 
-const userId = 1;
+const NOW = '2026-02-24T12:00:00Z';
+const SITE_ID = 77;
 
-function render( ui: React.ReactElement ) {
-	return testUtilsRender(
-		<AuthContext.Provider
-			value={ { user: { ID: userId } as User, logout: () => Promise.resolve() } }
-		>
-			{ ui }
-		</AuthContext.Provider>
+/**
+ * Noon UTC keeps the calendar-day arithmetic stable regardless of the time zone
+ * the test runner happens to be in.
+ */
+function expiryInDays( days: number ): string {
+	return new Date( Date.UTC( 2026, 1, 24 + days, 12 ) ).toISOString();
+}
+
+function makeSite( plan?: Partial< NonNullable< Site[ 'plan' ] > > ): Site {
+	return {
+		ID: SITE_ID,
+		slug: 'test.wordpress.com',
+		plan: plan && {
+			product_slug: DotcomPlans.BUSINESS,
+			product_name_short: 'Business',
+			expired: false,
+			...plan,
+		},
+	} as Site;
+}
+
+function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
+	return {
+		ID: 1234,
+		blog_id: SITE_ID,
+		product_slug: DotcomPlans.BUSINESS,
+		product_name: 'WordPress.com Business',
+		expiry_date: expiryInDays( 120 ),
+		expiry_status: 'manual-renew',
+		subscription_status: 'active',
+		is_plan: true,
+		is_jetpack_plan_or_product: false,
+		bill_period_days: SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
+		is_auto_renew_enabled: false,
+		is_rechargeable: true,
+		might_still_auto_renew: false,
+		is_past_first_auto_renew_attempt_date: false,
+		is_past_last_auto_renew_attempt_date: false,
+		...overrides,
+	} as Purchase;
+}
+
+function render( ui: React.ReactElement, purchases: Purchase[] = [] ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
+	queryClient.setQueryData( [ 'upgrades' ], purchases );
+
+	return testUtilsRender( ui, { queryClient } );
+}
+
+function renderPlan( { site, purchases }: { site: Site; purchases?: Purchase[] } ) {
+	return render(
+		<Plan
+			site={ site }
+			isJetpack={ false }
+			isSelfHostedJetpackConnected={ false }
+			value={ site.plan?.product_name_short ?? '' }
+		/>,
+		purchases
 	);
 }
+
+beforeEach( () => {
+	MockDate.set( NOW );
+} );
+
+afterEach( () => {
+	MockDate.reset();
+} );
 
 describe( '<Plan>', () => {
 	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {
 		const { container } = render(
-			<Plan isJetpack isSelfHostedJetpackConnected value="Free" nag={ { isExpired: false } } />
+			<Plan site={ makeSite() } isJetpack isSelfHostedJetpackConnected value="Free" />
 		);
 		expect( container.querySelector( 'svg' ) ).toBeInTheDocument();
 		expect( container.textContent ).toBe( 'Free' );
@@ -30,107 +95,191 @@ describe( '<Plan>', () => {
 
 	test( 'for self-hosted, Jetpack-connected sites, inactive Jetpack plugin, it renders dash', () => {
 		const { container } = render(
-			<Plan
-				isJetpack={ false }
-				isSelfHostedJetpackConnected
-				value="Free"
-				nag={ { isExpired: false } }
-			/>
+			<Plan site={ makeSite() } isJetpack={ false } isSelfHostedJetpackConnected value="Free" />
 		);
 		expect( container.textContent ).toBe( '-' );
 	} );
 
 	test( 'for WordPress.com Simple sites, it renders the value prop', () => {
-		const { container } = render(
-			<Plan
-				isJetpack={ false }
-				isSelfHostedJetpackConnected={ false }
-				value="Premium"
-				nag={ { isExpired: false } }
-			/>
-		);
+		const { container } = renderPlan( { site: makeSite( { product_name_short: 'Premium' } ) } );
 		expect( container.textContent ).toBe( 'Premium' );
 	} );
 
 	test( 'for WordPress.com Atomic sites, it renders the plan name', () => {
 		const { container } = render(
-			<Plan
-				isJetpack
-				isSelfHostedJetpackConnected={ false }
-				value="Business"
-				nag={ { isExpired: false } }
-			/>
+			<Plan site={ makeSite() } isJetpack isSelfHostedJetpackConnected={ false } value="Business" />
 		);
 		expect( container.textContent ).toBe( 'Business' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix', () => {
-		const site = {
-			plan: {
-				product_name_short: 'Business',
-				expired: true,
-			},
-		} as Site;
-		const { container } = render(
-			<Plan
-				isJetpack={ false }
-				isSelfHostedJetpackConnected={ false }
-				value="Business"
-				nag={ { isExpired: true, site } }
-			/>
-		);
-		expect( container.textContent ).toBe( 'Business-expired' );
+	test( 'a plan that is renewing normally shows its name alone', () => {
+		const { container } = renderPlan( {
+			site: makeSite( {} ),
+			purchases: [
+				makePurchase( {
+					expiry_status: 'active',
+					is_auto_renew_enabled: true,
+					might_still_auto_renew: true,
+					expiry_date: expiryInDays( 30 ),
+				} ),
+			],
+		} );
+		expect( container.textContent ).toBe( 'Business' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix and a renewal nag for the site owner', () => {
-		const site = {
-			slug: 'test.wordpress.com',
-			site_owner: userId,
-			plan: {
-				product_slug: 'business-bundle',
-				product_name_short: 'Business',
-				expired: true,
-			},
-		} as Site;
-		const { getByText, getByRole } = render(
-			<Plan
-				isJetpack={ false }
-				isSelfHostedJetpackConnected={ false }
-				isOwner
-				value="Business"
-				nag={ { isExpired: true, site } }
-			/>
-		);
-		expect( getByText( 'Business-expired' ) ).toBeInTheDocument();
-		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
+	test( 'a plan approaching expiry counts down the days and links to renewal', () => {
+		const { getByRole } = renderPlan( {
+			site: makeSite( { user_is_owner: true } ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 45 ) } ) ],
+		} );
+
+		const link = getByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Expires in 45 days' );
+		expect( link ).toHaveAttribute( 'href', expect.stringContaining( '/checkout/renew/1234' ) );
+	} );
+
+	test( 'a plan expiring further out than the warning window shows its name alone', () => {
+		const { container } = renderPlan( {
+			site: makeSite( {} ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 120 ) } ) ],
+		} );
+		expect( container.textContent ).toBe( 'Business' );
+	} );
+
+	test( 'a plan somebody else owns shows its name alone while it is only approaching expiry', () => {
+		const { container } = renderPlan( { site: makeSite( { user_is_owner: false } ) } );
+		expect( container.textContent ).toBe( 'Business' );
+	} );
+
+	test( 'an expired plan says so to everyone, without a link for a non-subscriber', () => {
+		const { container, queryByRole } = renderPlan( {
+			site: makeSite( { expired: true, user_is_owner: false } ),
+		} );
+
+		expect( container.textContent ).toBe( 'BusinessPlan expired' );
+		expect( queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'an expired plan links the subscriber to checkout even before the purchase loads', () => {
+		const { getByRole } = renderPlan( {
+			site: makeSite( { expired: true, user_is_owner: true } ),
+		} );
+
+		const link = getByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Plan expired' );
+		expect( link ).toHaveAttribute(
 			'href',
 			wpcomLink( '/checkout/test.wordpress.com/business-bundle' )
 		);
 	} );
 
-	test( 'for Trial sites with expired plan, it renders the plan name with "-expired" suffix and an upgrade nag for the site owner', () => {
-		const site = {
-			slug: 'test.wordpress.com',
-			site_owner: userId,
-			plan: {
-				product_slug: 'ecommerce-trial-bundle-monthly',
+	test( 'an expired plan links the subscriber to its own renewal once the purchase loads', () => {
+		const { getByRole } = renderPlan( {
+			site: makeSite( { expired: true, user_is_owner: true } ),
+			purchases: [
+				makePurchase( {
+					expiry_date: expiryInDays( -3 ),
+					expiry_status: 'expired',
+				} ),
+			],
+		} );
+
+		const link = getByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Plan expired' );
+		expect( link ).toHaveAttribute( 'href', expect.stringContaining( '/checkout/renew/1234' ) );
+	} );
+
+	test( 'records an impression naming the stage, urgency and whose plan it is', () => {
+		const { recordTracksEvent } = renderPlan( {
+			site: makeSite( { user_is_owner: true } ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 45 ) } ) ],
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_renew_nag_impression',
+			{
+				product_slug: 'business-bundle',
+				source: 'plan',
+				surface: 'dashboard-sites-list',
+				state: 'approaching_expiry',
+				urgency: 'warning',
+				is_plan_owner: true,
+				days_remaining: 45,
+			}
+		);
+	} );
+
+	test( 'records an impression for a lapsed plan the reader cannot renew', () => {
+		const { recordTracksEvent } = renderPlan( {
+			site: makeSite( { expired: true, user_is_owner: false } ),
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_renew_nag_impression',
+			expect.objectContaining( { state: 'expired_grace', is_plan_owner: false } )
+		);
+		// No date to count from, so the property is left off rather than guessed.
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_renew_nag_impression',
+			expect.objectContaining( { days_remaining: expect.anything() } )
+		);
+	} );
+
+	test( 'records a click on the renewal link', async () => {
+		const { getByRole, recordTracksEvent } = renderPlan( {
+			site: makeSite( { user_is_owner: true } ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 3 ) } ) ],
+		} );
+
+		await userEvent.click( getByRole( 'link' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_renew_nag_click',
+			expect.objectContaining( {
+				source: 'plan',
+				surface: 'dashboard-sites-list',
+				state: 'approaching_expiry',
+				urgency: 'error',
+				is_plan_owner: true,
+				days_remaining: 3,
+				cta: 'renew',
+			} )
+		);
+	} );
+
+	test( 'tells a click on an expired trial apart from a renewal', async () => {
+		const { getByRole, recordTracksEvent } = renderPlan( {
+			site: makeSite( {
+				product_slug: DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 				product_name_short: 'Trial',
 				expired: true,
-			},
-		} as Site;
-		const { getByText, getByRole } = render(
-			<Plan
-				isJetpack={ false }
-				isSelfHostedJetpackConnected={ false }
-				isOwner
-				value="Trial"
-				nag={ { isExpired: true, site } }
-			/>
+				user_is_owner: true,
+			} ),
+		} );
+
+		await userEvent.click( getByRole( 'link' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_renew_nag_click',
+			expect.objectContaining( { cta: 'upgrade', state: 'expired_grace' } )
 		);
-		expect( getByText( 'Trial-expired' ) ).toBeInTheDocument();
-		expect( getByRole( 'link', { name: /Upgrade/ } ) ).toHaveAttribute(
+	} );
+
+	test( 'an expired trial sends the subscriber to buy a plan instead of renewing one', () => {
+		const { getByRole } = renderPlan( {
+			site: makeSite( {
+				product_slug: DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+				product_name_short: 'Trial',
+				expired: true,
+				user_is_owner: true,
+			} ),
+		} );
+
+		const link = getByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Plan expired' );
+		expect( link ).toHaveAttribute(
 			'href',
-			wpcomLink( '/plans/test.wordpress.com' )
+			expect.stringContaining( '/plans/test.wordpress.com' )
 		);
 	} );
 } );

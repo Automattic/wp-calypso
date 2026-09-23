@@ -1,6 +1,3 @@
-// Mark only (Sep 3 2026, prototype): the "AGENCIES" wordmark sat in the same
-// sightline as the serif page titles and the two type styles fought. The full
-// lockup lives in git history (#113369) if it comes back.
 export function Logo() {
 	return (
 		<svg
@@ -9,8 +6,6 @@ export function Logo() {
 			viewBox="0 0 72.5568 67.4651"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			aria-label="Automattic for Agencies"
-			role="img"
 		>
 			<path
 				d="M36.37 67.4651C14.521 67.4651 0.348686 51.4423 0.348686 34.766V32.6991C0.348686 15.7401 14.521 0 36.37 0C58.219 0 72.5128 15.7401 72.5128 32.6991V34.766C72.5128 51.4423 58.3405 67.4651 36.37 67.4651ZM60.8242 32.8758C60.8242 20.7218 52.1402 9.91042 36.37 9.91042C20.5998 9.91042 12.0547 20.7395 12.0547 32.8758V34.395C12.0547 46.549 20.7388 57.5723 36.37 57.5723C52.0012 57.5723 60.8242 46.549 60.8242 34.395V32.8758Z"

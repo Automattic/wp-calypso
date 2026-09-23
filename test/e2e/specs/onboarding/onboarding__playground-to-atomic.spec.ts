@@ -8,6 +8,8 @@ import {
 import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '../shared';
 
+const PLAYGROUND_NAVIGATION_TIMEOUT = 60 * 1000;
+
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Publish a Playground site to Atomic' ),
 	{ tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ] },
@@ -82,16 +84,26 @@ test.describe(
 					.frameLocator( 'iframe[title="WordPress Playground"]' )
 					.frameLocator( 'iframe[title="The WordPress site"]' );
 				await expect( playground.locator( '#wpadminbar' ) ).toBeVisible( {
-					timeout: 60 * 1000,
+					timeout: PLAYGROUND_NAVIGATION_TIMEOUT,
 				} );
 				await playground.locator( '#wp-admin-bar-site-name' ).hover();
 				await playground.locator( '#wp-admin-bar-dashboard > a' ).click();
-				await playground.getByRole( 'link', { name: 'Settings', exact: true } ).first().click();
+
+				// Every page load inside Playground runs PHP in WebAssembly and can take
+				// longer than the default action timeout, so wait for each navigation.
+				const settingsLink = playground
+					.getByRole( 'link', { name: 'Settings', exact: true } )
+					.first();
+				await expect( settingsLink ).toBeVisible( { timeout: PLAYGROUND_NAVIGATION_TIMEOUT } );
+				await settingsLink.click();
 
 				const siteTitle = playground.getByRole( 'textbox', { name: 'Site Title' } );
+				await expect( siteTitle ).toBeVisible( { timeout: PLAYGROUND_NAVIGATION_TIMEOUT } );
 				await siteTitle.fill( playgroundSiteTitle );
 				await playground.getByRole( 'button', { name: 'Save Changes' } ).click();
-				await expect( playground.getByText( 'Settings saved.' ) ).toBeVisible();
+				await expect( playground.getByText( 'Settings saved.' ) ).toBeVisible( {
+					timeout: PLAYGROUND_NAVIGATION_TIMEOUT,
+				} );
 				await expect( siteTitle ).toHaveValue( playgroundSiteTitle );
 			} );
 

@@ -12,8 +12,8 @@ const EMPTY_RESULT = [] as Array< UTMMetricItem >;
  */
 export function getMetrics( state: AppState, siteId: number, postId?: number ) {
 	const metrics = postId
-		? state?.stats?.utmMetrics?.data?.[ siteId ]?.metricsByPost?.[ postId ] ?? EMPTY_RESULT
-		: state?.stats?.utmMetrics?.data?.[ siteId ]?.metrics ?? EMPTY_RESULT;
+		? ( state?.stats?.utmMetrics?.data?.[ siteId ]?.metricsByPost?.[ postId ] ?? EMPTY_RESULT )
+		: ( state?.stats?.utmMetrics?.data?.[ siteId ]?.metrics ?? EMPTY_RESULT );
 
 	return metrics;
 }

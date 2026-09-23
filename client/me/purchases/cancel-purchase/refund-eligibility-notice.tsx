@@ -21,8 +21,7 @@ interface RefundEligibilityNoticeConfirmedProps extends RefundEligibilityNoticeB
 }
 
 type RefundEligibilityNoticeProps =
-	| RefundEligibilityNoticeRefundEligibilityProps
-	| RefundEligibilityNoticeConfirmedProps;
+	RefundEligibilityNoticeRefundEligibilityProps | RefundEligibilityNoticeConfirmedProps;
 
 const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 	if ( props.mode === 'confirmed' ) {

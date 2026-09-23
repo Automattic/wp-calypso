@@ -3,6 +3,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	setDelayedDowngradeMutation,
+	sitePlanChangeFeaturesQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -11,6 +12,7 @@ import {
 	getPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isPremiumPlan,
 	PLAN_PERSONAL,
 	PLAN_FREE,
 	type PlanSlug,
@@ -44,6 +46,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	hasTailoredFeatureList,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -93,9 +96,10 @@ import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-sit
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import DowngradeConfirmationModal from './components/downgrade-confirmation-modal';
+import FeatureLossConfirmationModal from './components/feature-loss-confirmation-modal';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
@@ -109,6 +113,7 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
 	PlansIntent,
 	DataResponse,
@@ -273,6 +278,16 @@ const PlansFeaturesMain = ( {
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
 		null
 	);
+	/*
+	 * An upgrade waiting for the user to acknowledge that it removes a feature their site uses. The
+	 * click that opened the modal is parked on `resolveFeatureLoss`: calling it with false lets the
+	 * purchase continue, true abandons it. See the feature-loss branch in showModalAndExit().
+	 */
+	const [ pendingFeatureLossUpgrade, setPendingFeatureLossUpgrade ] = useState< {
+		planSlug: PlanSlug;
+		lost: PlanChangeLostFeature[];
+	} | null >( null );
+	const resolveFeatureLoss = useRef< ( ( abandoned: boolean ) => void ) | null >( null );
 	// TODO: Remove temporary eslint disable
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
@@ -291,6 +306,11 @@ const PlansFeaturesMain = ( {
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+	// Undefined until the Jetpack release carrying this option is live, and for a site the store has
+	// not loaded yet. Only an explicit false proves the site has nothing to lose.
+	const isLegacyGatingSite = useSelector( ( state: IAppState ) =>
+		siteId ? getSiteOption( state, siteId, 'is_legacy_gating_site' ) : undefined
+	);
 	const sitePlanSlug = currentPlan?.productSlug;
 	const sitePlansData = useSelector( ( state: IAppState ) =>
 		siteId ? getPlansBySiteId( state, siteId )?.data : null
@@ -522,7 +542,7 @@ const PlansFeaturesMain = ( {
 						? `${ managePurchase(
 								siteSlug,
 								currentPlanPurchaseId
-						  ) }?delayed_downgrade_scheduled=true`
+							) }?delayed_downgrade_scheduled=true`
 						: `/plans/${ siteSlug }?delayed_downgrade_scheduled=true`;
 				},
 				onError: ( error: Error ) => {
@@ -722,6 +742,17 @@ const PlansFeaturesMain = ( {
 		setPendingDowngradePlanSlug( planSlug );
 	};
 
+	const canLoseFeaturesOnUpgradeTo = ( planSlug: PlanSlug ) => {
+		if ( ! sitePlanSlug || false === isLegacyGatingSite ) {
+			return false;
+		}
+
+		return (
+			( isFreePlan( sitePlanSlug ) && isPersonalPlan( planSlug ) ) ||
+			( isPersonalPlan( sitePlanSlug ) && isPremiumPlan( planSlug ) )
+		);
+	};
+
 	// TODO: We should move the modal logic into a data store
 	const showModalAndExit = async ( planSlug: PlanSlug ): Promise< boolean > => {
 		if (
@@ -782,7 +813,73 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
+		/*
+		 * A site still on the pre-2026 feature gating holds the union of the old and new feature sets
+		 * and graduates when it changes plan, so an upgrade can take a feature away. Warn first, and
+		 * only when the site actually uses one of them -- `needs_warning` is the server's verdict on
+		 * that, and is false for the overwhelming majority of upgrades.
+		 *
+		 * Deliberately after resolveModal: that modal can move the user to a different plan, which
+		 * would make this warning about a plan they never buy.
+		 */
+		if ( siteId && ! isInSignup && canLoseFeaturesOnUpgradeTo( planSlug ) ) {
+			const startedAt = Date.now();
+			try {
+				const planChange = await queryClient.ensureQueryData(
+					sitePlanChangeFeaturesQuery( siteId, planSlug )
+				);
+
+				recordTracksEvent( 'calypso_plans_legacy_feature_check', {
+					current_plan: sitePlanSlug,
+					target_plan: planSlug,
+					result: planChange.needs_warning ? 'warned' : 'no_warning',
+					is_legacy_gating_site: planChange.is_legacy_gating_site,
+					lost_features: planChange.lost.map( ( { feature } ) => feature ).join( ',' ),
+					duration_ms: Date.now() - startedAt,
+				} );
+
+				if ( planChange.needs_warning ) {
+					setPendingFeatureLossUpgrade( { planSlug, lost: planChange.lost } );
+
+					// Park the click until the modal answers, then continue or abandon accordingly.
+					return await new Promise< boolean >( ( resolve ) => {
+						resolveFeatureLoss.current = resolve;
+					} );
+				}
+			} catch {
+				// Never block a purchase because the check failed -- but do count it, since a check that
+				// silently fails looks exactly like a site with nothing to lose.
+				recordTracksEvent( 'calypso_plans_legacy_feature_check', {
+					current_plan: sitePlanSlug,
+					target_plan: planSlug,
+					result: 'error',
+					duration_ms: Date.now() - startedAt,
+				} );
+			}
+		}
+
 		return false;
+	};
+
+	const closeFeatureLossModal = ( abandoned: boolean ) => {
+		if ( pendingFeatureLossUpgrade ) {
+			recordTracksEvent(
+				abandoned
+					? 'calypso_plans_legacy_feature_modal_cancel'
+					: 'calypso_plans_legacy_feature_modal_continue',
+				{
+					current_plan: sitePlanSlug,
+					target_plan: pendingFeatureLossUpgrade.planSlug,
+					lost_features: pendingFeatureLossUpgrade.lost
+						.map( ( { feature } ) => feature )
+						.join( ',' ),
+				}
+			);
+		}
+
+		resolveFeatureLoss.current?.( abandoned );
+		resolveFeatureLoss.current = null;
+		setPendingFeatureLossUpgrade( null );
 	};
 
 	const isUpgradeOrDowngradeFlow =
@@ -790,14 +887,14 @@ const PlansFeaturesMain = ( {
 	const isDelayedDowngradePending =
 		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
 	const delayedDowngradeToProductSlug = isDelayedDowngradePending
-		? currentPurchase?.delayed_downgrade_to_product_slug ?? null
+		? ( currentPurchase?.delayed_downgrade_to_product_slug ?? null )
 		: null;
 
 	// When a delayed downgrade is scheduled, the current plan's CTA renews the
 	// existing plan (rather than passively reading "Your plan") so the user is
 	// reminded they can keep their plan instead of letting the downgrade apply.
 	const renewCurrentPlanWithPendingDowngrade = () => {
-		if ( ! siteSlug || ! currentPlanPurchaseId || ! currentPurchase?.product_slug ) {
+		if ( ! currentPlanPurchaseId ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_plan_features_renew_pending_downgrade_click', {
@@ -814,7 +911,7 @@ const PlansFeaturesMain = ( {
 		}
 		window.location.href = addQueryArgs(
 			checkoutQuery,
-			`/checkout/${ currentPurchase.product_slug }/renew/${ currentPlanPurchaseId }/${ siteSlug }`
+			`/checkout/renew/${ currentPlanPurchaseId }`
 		);
 	};
 
@@ -924,6 +1021,31 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
+	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
+	// plans page hides the tiers below the current plan. Fall back to the default
+	// grid, the same way the "View all plans" escape hatch does.
+	useEffect( () => {
+		if (
+			! forceDefaultPlans &&
+			! isInSignup &&
+			! isDisplayingPlansNeededForFeature &&
+			intentFromSiteMeta.intent &&
+			! hideEscapeHatchForIntent( intentFromSiteMeta.intent ) &&
+			intent === intentFromSiteMeta.intent &&
+			gridPlansForFeaturesGridRaw &&
+			gridPlansForFeaturesGridRaw.length <= 1
+		) {
+			setForceDefaultPlans( true );
+		}
+	}, [
+		forceDefaultPlans,
+		isInSignup,
+		isDisplayingPlansNeededForFeature,
+		intent,
+		intentFromSiteMeta.intent,
+		gridPlansForFeaturesGridRaw,
+	] );
+
 	const isIndiaA4A = useIsIndiaA4A();
 
 	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
@@ -939,7 +1061,7 @@ const PlansFeaturesMain = ( {
 							...gridPlan,
 							planTitle: translate( 'Agencies' ),
 							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
-					  }
+						}
 					: gridPlan
 			);
 		},
@@ -1217,9 +1339,9 @@ const PlansFeaturesMain = ( {
 
 	const isLoadingGridPlans = Boolean(
 		! intent ||
-			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
-			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+		! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
+		! gridPlansForFeaturesGrid ||
+		! gridPlansForComparisonGrid
 	);
 
 	const isPlansGridReady =
@@ -1269,7 +1391,10 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
 	} else {
 		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
-			isExperimentVariant,
+			// The row set has to match the feature lists the comparison grid is built from, which a
+			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
+			// titles with a control list.
+			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
@@ -1280,9 +1405,13 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
+	} else if (
+		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
+		! hasTailoredFeatureList( intent )
+	) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
+		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()
@@ -1382,6 +1511,29 @@ const PlansFeaturesMain = ( {
 						onUpgradeClick?.( cartItems );
 					} }
 				/>
+				<FeatureLossConfirmationModal
+					isOpen={ !! pendingFeatureLossUpgrade }
+					currentPlanSlug={ sitePlanSlug }
+					targetPlanSlug={ pendingFeatureLossUpgrade?.planSlug }
+					currentPlanName={
+						// The modal opens off the data-store currentPlan query, which can resolve before
+						// the legacy sitePlansData request behind productName; fall back to the slug's
+						// title so the copy never reads "on an older  plan".
+						sitePlansData?.find( ( plan ) => plan.currentPlan )?.productName ??
+						( sitePlanSlug ? String( getPlan( sitePlanSlug )?.getTitle() ?? '' ) : '' )
+					}
+					targetPlanName={
+						// getTitle() is a TranslateResult, which is a ReactNode as far as the built package
+						// types are concerned; plan titles are plain strings at runtime, so coerce rather
+						// than widen the prop, which is interpolated into translate() args.
+						pendingFeatureLossUpgrade
+							? String( getPlan( pendingFeatureLossUpgrade.planSlug )?.getTitle() ?? '' )
+							: ''
+					}
+					lostFeatures={ pendingFeatureLossUpgrade?.lost ?? [] }
+					onClose={ () => closeFeatureLossModal( true ) }
+					onConfirm={ () => closeFeatureLossModal( false ) }
+				/>
 				<DowngradeConfirmationModal
 					isOpen={ !! pendingDowngradePlanSlug }
 					currentPlanName={ sitePlansData?.find( ( p ) => p.currentPlan )?.productName ?? '' }
@@ -1401,7 +1553,7 @@ const PlansFeaturesMain = ( {
 						currentPlanPurchaseId
 							? dashboardLink(
 									`/me/billing/purchases/${ currentPlanPurchaseId }/payment-method/change`
-							  )
+								)
 							: undefined
 					}
 					onClose={ closeDowngradeModal }
@@ -1413,6 +1565,7 @@ const PlansFeaturesMain = ( {
 						siteId={ siteId }
 						isInSignup={ isInSignup }
 						intent={ intent }
+						currentPurchase={ currentPurchase }
 						{ ...( coupon &&
 							discountEndDate && {
 								discountInformation: {

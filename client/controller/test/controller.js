@@ -174,6 +174,56 @@ describe( 'redirectLoggedOut', () => {
 
 		replaceState.mockRestore();
 	} );
+
+	describe( 'immediate login prefill', () => {
+		const buildImmediateLoginContext = ( { query = {}, immediateLogin = {} } = {} ) => ( {
+			store: mockStore( {
+				currentUser: { id: null },
+				immediateLogin,
+			} ),
+			query,
+			params: {},
+			path: '/me/purchases',
+			pathname: '/me/purchases',
+		} );
+
+		it( 'prefills the email and locale from the query before ROUTE_SET has run', async () => {
+			// `setupRoutes()` registers this middleware ahead of the `ROUTE_SET`
+			// catch-all, so an immediate login link reaches it with an empty store.
+			const context = buildImmediateLoginContext( {
+				query: {
+					immediate_login_attempt: '1',
+					login_email: 'jane@example.com',
+					login_locale: 'fr',
+				},
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+			expect( next ).not.toHaveBeenCalled();
+		} );
+
+		it( 'falls back to the stored values once the query has been stripped', async () => {
+			const context = buildImmediateLoginContext( {
+				immediateLogin: { email: 'jane@example.com', locale: 'fr' },
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+		} );
+
+		it( 'omits both parameters when neither the query nor the store has them', async () => {
+			await redirectLoggedOut( buildImmediateLoginContext(), next );
+
+			expect( window.location ).toBe( '/log-in?redirect_to=%2Fme%2Fpurchases' );
+		} );
+	} );
 } );
 
 describe( 'redirectMyJetpack', () => {

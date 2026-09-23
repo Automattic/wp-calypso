@@ -1,5 +1,4 @@
 import {
-	addAddOnsToCart,
 	addPlanToCart,
 	addWithThemePlanToCart,
 	addWithPluginPlanToCart,
@@ -9,7 +8,6 @@ import {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	createSiteAndAddDIFMToCart,
@@ -18,7 +16,6 @@ import {
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
-	addAddOnsToCart,
 	addPlanToCart,
 	addWithThemePlanToCart,
 	addWithPluginPlanToCart,
@@ -28,7 +25,6 @@ export default generateSteps( {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	createSiteAndAddDIFMToCart,

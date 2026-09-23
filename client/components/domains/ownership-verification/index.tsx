@@ -85,8 +85,8 @@ export default function OwnershipVerification( {
 						error instanceof Error
 							? error.message
 							: error.message ||
-							  error.error ||
-							  __( 'An error occurred while connecting the domain.' );
+								error.error ||
+								__( 'An error occurred while connecting the domain.' );
 					setError( errorMessage );
 				}
 			}

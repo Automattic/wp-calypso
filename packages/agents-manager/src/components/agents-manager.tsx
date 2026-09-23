@@ -13,9 +13,17 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
+import { useSessionHandoffLinks } from '../hooks/use-session-handoff-links';
+import { useUrlSessionHandoff } from '../hooks/use-url-session-handoff';
 import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
+import {
+	clearSessionId,
+	getOrCreateSessionId,
+	getSessionId,
+	NO_SITE,
+	saveSessionId,
+} from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
@@ -23,6 +31,7 @@ import {
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
+import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
 import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -95,6 +104,8 @@ export default function AgentsManager( {
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
+	const urlSessionHandoff = useUrlSessionHandoff();
+
 	// Wait for the store to load so persisted UI state (open/docked/minimized)
 	// is restored before the dock first renders.
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
@@ -110,7 +121,7 @@ export default function AgentsManager( {
 		return null;
 	}
 
-	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
+	const siteKey = currentSiteId ? String( currentSiteId ) : NO_SITE;
 
 	return (
 		<QueryClientProvider client={ queryClient }>
@@ -127,7 +138,7 @@ export default function AgentsManager( {
 						zendeskTicketProductFieldValue,
 					} }
 				>
-					<AgentSetup agentId={ agentId } />
+					<AgentSetup agentId={ agentId } urlSessionHandoff={ urlSessionHandoff } />
 				</AgentsManagerContextProvider>
 			</PersistentRouter>
 		</QueryClientProvider>
@@ -135,8 +146,8 @@ export default function AgentsManager( {
 }
 
 /**
- * Resolve the session to resume from this tab's stored session — the single
- * source of truth; conversation switches save it before navigating here.
+ * Resolve the session to resume from this tab's stored session, which
+ * conversation switches save before navigating here.
  * Reader chat pre-generates one (blog frontends reload on every navigation);
  * other agents get theirs from the server via `onSessionIdChange`.
  * Empty means a new chat.
@@ -157,7 +168,13 @@ function resolveTabSessionId(
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
+function AgentSetup( {
+	agentId: hostAgentId,
+	urlSessionHandoff,
+}: {
+	agentId?: string;
+	urlSessionHandoff: SessionHandoff | null;
+} ): JSX.Element | null {
 	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const userId = currentUser?.ID;
@@ -188,7 +205,20 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	useSessionHandoffLinks( isAgentConfigLoading ? undefined : agentId );
+
+	// A handed-off session is stored under its own site scope and resumed only
+	// when this page is in that scope, as a site switch within one origin would.
+	const handoff = urlSessionHandoff && isHandoffAgent( agentId ) ? urlSessionHandoff : null;
+	const handoffSiteKey = handoff?.siteKey ?? siteKey;
+	const initialSessionId = handoff && handoffSiteKey === siteKey ? handoff.sessionId : '';
+
+	let sessionId: string;
+	if ( initialSessionId && ! agentConfig ) {
+		sessionId = initialSessionId;
+	} else {
+		sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	}
 
 	useWebMcpTools( {
 		toolProvider: loadedProvidersRef.current?.toolProvider,
@@ -202,7 +232,9 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		if ( isAgentConfigLoading ) {
 			return;
 		}
-
+		if ( ! agentConfigRef.current && handoff ) {
+			saveSessionId( handoff.sessionId, agentId, handoffSiteKey, userId );
+		}
 		// A dep change supersedes this run mid-await — a stale initialization
 		// must not navigate or publish its config over the newer run's.
 		let isSuperseded = false;
@@ -318,6 +350,8 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		isAgentConfigLoading,
 		isChatViewShowing,
 		isNewChat,
+		handoff,
+		handoffSiteKey,
 		navigate,
 		sessionId,
 		sectionName,

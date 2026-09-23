@@ -15,7 +15,7 @@ export default function useAddEcommerceTrialMutation(
 				woocommerce_onboarding_profile: {
 					partner: partnerBundle,
 				},
-		  }
+			}
 		: undefined;
 	const mutation = useMutation( {
 		mutationFn: async ( { siteId }: Variables ) => {

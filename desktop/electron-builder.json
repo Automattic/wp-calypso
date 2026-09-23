@@ -59,6 +59,7 @@
 	},
 	"linux": {
 		"target": [ "deb", "tar.gz" ],
+		"icon": "./resource/icon.png",
 		"executableName": "wpcom",
 		"description": "WordPress.com",
 		"synopsis": "WordPress.com Desktop Client",

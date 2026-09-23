@@ -8,7 +8,7 @@ ARG cache_seed_key="(unknown)"
 # Dedicated dependency-install stage.
 # By copying only manifests and the lockfile first, we can cache
 # the slow yarn install and skip it when only source files change.
-FROM node:${node_version}-bullseye-slim AS deps
+FROM node:${node_version}-trixie-slim AS deps
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -99,7 +99,7 @@ COPY --from=cache-build /calypso/.yarn /calypso/.yarn
 # This stage exists only to make the exported cache image easy to smoke-test in
 # CI. It copies the scratch output into a debian-based node image so we can run
 # shell assertions against exactly what the published cache-seed image contains.
-FROM node:${node_version}-bullseye-slim AS cache-seed-debug
+FROM node:${node_version}-trixie-slim AS cache-seed-debug
 
 ARG commit_sha
 ARG cache_seed_key

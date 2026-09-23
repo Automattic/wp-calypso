@@ -28,9 +28,8 @@ let mockIsEditorPage: jest.Mock;
 
 beforeEach( async () => {
 	jest.resetModules();
-	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } = await import(
-		'../editor-entry-points'
-	) );
+	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } =
+		await import( '../editor-entry-points' ) );
 	mockInlineData = ( await import( '../get-agents-manager-inline-data' ) )
 		.getAgentsManagerInlineData as unknown as jest.Mock;
 	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;

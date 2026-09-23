@@ -2,7 +2,6 @@ import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso
 import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
-	PRODUCT_1GB_SPACE,
 	getPlan,
 	TERM_MONTHLY,
 	PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -12,9 +11,7 @@ import {
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Site, AddOns } from '@automattic/data-stores';
-import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
-import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
+import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
@@ -69,7 +66,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
 				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
-		  )
+			)
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -667,29 +664,6 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		lastKnownFlow,
 	} );
 }
-export function addAddOnsToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const slug = siteSlug || dependencies.siteSlug;
-	const { cartItem } = stepProvidedItems;
-
-	const providedDependencies = stepProvidedDependencies || { cartItem };
-	if ( ! cartItem || isEmpty( cartItem ) ) {
-		// the user hans't selected any addons
-		setTimeout( callback, 0 );
-
-		return;
-	}
-
-	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
-}
-
 export function addDomainToCart(
 	callback,
 	dependencies,
@@ -848,7 +822,7 @@ export function createAccount(
 							message: error.message,
 							...emailInError,
 						},
-				  ]
+					]
 				: undefined;
 
 		if ( errors ) {
@@ -961,7 +935,7 @@ export function createAccount(
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-					  }
+						}
 					: null,
 				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
 				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
@@ -1060,36 +1034,6 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	} else if ( flows.excludedSteps.includes( stepName ) ) {
 		flows.resetExcludedStep( stepName );
 		nextProps.removeStep( { stepName } );
-	}
-}
-
-export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep, sitePlanSlug, store } = nextProps;
-	const fulfilledDependencies = [];
-	const cartItem = [];
-
-	const state = store.getState();
-	const selectedStorage = getSignupDependencyStore( state )?.storage ?? null;
-
-	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
-		const selectedAddOn = getAddOn( selectedStorage );
-		cartItem.push( {
-			product_slug: PRODUCT_1GB_SPACE,
-			quantity: selectedAddOn.quantity,
-			volume: 1,
-			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
-		} );
-		recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-			add_on_slug: selectedAddOn.addOnSlug,
-		} );
-	}
-
-	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
-	fulfilledDependencies.push( 'cartItems' );
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-		recordExcludeStepEvent( stepName, sitePlanSlug );
 	}
 }
 

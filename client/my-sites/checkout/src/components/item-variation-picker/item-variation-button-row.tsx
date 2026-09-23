@@ -134,10 +134,10 @@ const ButtonTile = forwardRef(
 		const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 		const variantInfo = fromVariantPriceData( productVariant );
 		const discountPercentage = compareToInfo
-			? calculateDiscountPercentage(
+			? ( calculateDiscountPercentage(
 					getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
 					getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
-			  ) ?? 0
+				) ?? 0 )
 			: 0;
 
 		return (

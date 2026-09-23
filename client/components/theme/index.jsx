@@ -431,6 +431,7 @@ export class Theme extends Component {
 				selectedStyleVariation={ selectedStyleVariation }
 				optionsMenu={ this.renderMoreButton() }
 				isActive={ this.props.active }
+				isThemeRetired={ theme.retired }
 				isLoading={ this.props.loading }
 				isSoftLaunched={ this.props.softLaunched }
 				onClick={ this.setBookmark }

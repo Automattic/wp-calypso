@@ -39,7 +39,7 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-ai-assembler-paid-only';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent( search.get( 'playground' )! );
+				return playgroundPlansIntent();
 			}
 			// WoW funnel: the site is always transferred to Atomic, so only plans that grant
 			// the transfer make sense. Hide the free plan. Kept after the playground check so a

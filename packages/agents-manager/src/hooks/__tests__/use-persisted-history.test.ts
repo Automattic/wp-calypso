@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 import { render, renderHook, act } from '@testing-library/react';
+import { Action, type Location } from 'history';
 import { createElement, useLayoutEffect } from 'react';
 import { usePersistedHistory } from '../use-persisted-history';
-import type { Location } from 'history';
 
 const STORAGE_KEY = 'agents-manager-router-history';
 
@@ -29,6 +29,7 @@ describe( 'usePersistedHistory', () => {
 
 		expect( result.current.history.length ).toBe( 2 );
 		expect( result.current.history.location.pathname ).toBe( '/chat' );
+		expect( result.current.state.action ).toBe( Action.Pop );
 	} );
 
 	it( 'falls back to the default root entry when there is no persisted history', () => {
@@ -93,6 +94,7 @@ describe( 'usePersistedHistory', () => {
 				conversationId: 'conversation-abc',
 			} );
 		} );
+		expect( result.current.state.action ).toBe( Action.Push );
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
 		expect( stored[ 'site-1' ].index ).toBe( 1 );
@@ -113,6 +115,7 @@ describe( 'usePersistedHistory', () => {
 		} );
 
 		expect( result.current.history.location.pathname ).toBe( '/' );
+		expect( result.current.state.action ).toBe( Action.Pop );
 
 		// `back()` at the start of the trail is a no-op.
 		act( () => {
@@ -140,6 +143,7 @@ describe( 'usePersistedHistory', () => {
 
 		expect( result.current.history.length ).toBe( 2 );
 		expect( result.current.history.location.pathname ).toBe( '/zendesk' );
+		expect( result.current.state.action ).toBe( Action.Replace );
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
 		expect( stored[ 'site-1' ].entries[ 1 ].pathname ).toBe( '/zendesk' );

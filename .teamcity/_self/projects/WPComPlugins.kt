@@ -42,7 +42,6 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
-					"content-research-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -114,7 +113,6 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
-		apps/content-research/dist => content-research.zip
 	""".trimIndent()
 
 	steps {

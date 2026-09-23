@@ -43,20 +43,20 @@ function Billing() {
 					decoration={ <Icon icon={ receipt } /> }
 					to={ purchasesRoute.to }
 				/>
+				{ supportsBilling.monetizeSubscriptions ? (
+					<RouterLinkSummaryButton
+						title={ getMonetizeSubscriptionsPageTitle() }
+						description={ __( 'Manage memberships and donations from other WordPress.com sites.' ) }
+						decoration={ <Icon icon={ currencyDollar } /> }
+						to={ monetizeSubscriptionsRoute.to }
+					/>
+				) : null }
 				<RouterLinkSummaryButton
 					title={ __( 'Billing history' ) }
 					description={ __( 'View email receipts for past purchases.' ) }
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
 				/>
-				{ supportsBilling.monetizeSubscriptions ? (
-					<RouterLinkSummaryButton
-						title={ getMonetizeSubscriptionsPageTitle() }
-						description={ __( 'Manage Monetize subscriptions.' ) }
-						decoration={ <Icon icon={ currencyDollar } /> }
-						to={ monetizeSubscriptionsRoute.to }
-					/>
-				) : null }
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage credit cards saved to your account.' ) }

@@ -301,6 +301,20 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
 	} );
 
+	it.each( [
+		'//example.com/home',
+		'/\\example.com/home',
+		'/\t/example.com/home',
+		'\\/example.com',
+	] )( 'returns a generic no-site url for the scheme-relative url %p', ( redirectTo ) => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo,
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
 	it( 'returns a generic url with a site for an absolute url if it is not allowed and there is also a receipt and a site', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

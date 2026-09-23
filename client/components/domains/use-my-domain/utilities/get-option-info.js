@@ -6,6 +6,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getTransferCostText } from './get-transfer-cost-text';
 import {
+	getConnectSupportedTopText,
 	getMappingFreeText,
 	getTransferFreeText,
 	getTransferRestrictionMessage,
@@ -48,6 +49,7 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
+	domainInboundTransferStatusInfo,
 	dashboard,
 	isSignupStep,
 	onConnect,
@@ -202,6 +204,7 @@ export function getOptionInfo( {
 	if ( domainAvailability.MAPPABLE === availability.mappable ) {
 		connectContent = {
 			...optionInfo.connectSupported,
+			topText: getConnectSupportedTopText( domainInboundTransferStatusInfo?.losingRegistrar ),
 			onSelect: onConnect,
 			pricing: mappingPricing,
 		};

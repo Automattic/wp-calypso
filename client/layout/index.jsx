@@ -34,7 +34,6 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import PluginCompassAgentLoader from 'calypso/my-sites/plugins/plugin-compass-agent-loader';
@@ -316,7 +315,6 @@ class Layout extends Component {
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;
 		} else if (
-			config.isEnabled( 'dashboard/omnibar-radical' ) &&
 			this.props.sectionName !== 'checkout' &&
 			this.props.sectionName !== 'checkout-pending'
 		) {
@@ -552,10 +550,7 @@ export default withCurrentRoute(
 			sectionName
 		);
 
-		const noMasterbarForRoute =
-			isJetpackLogin ||
-			currentRoute === '/me/account/closed' ||
-			isReaderTagEmbedPage( window?.location );
+		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
@@ -588,7 +583,7 @@ export default withCurrentRoute(
 					isGlobalSidebarVisible,
 					sidebarIsHidden,
 					sectionName,
-			  } );
+				} );
 		const needsColorScheme =
 			! isE2ETest() &&
 			! sidebarIsHidden &&

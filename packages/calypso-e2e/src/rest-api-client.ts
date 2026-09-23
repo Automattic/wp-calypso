@@ -1603,7 +1603,7 @@ export class RestAPIClient {
 	async deleteAllWidgets( siteID: number ): Promise< void > {
 		const widgets = await this.getAllWidgets( siteID );
 
-		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+		await Promise.all( widgets.map( ( widget ) => this.deleteWidget( siteID, widget.id ) ) );
 	}
 
 	/* Search */

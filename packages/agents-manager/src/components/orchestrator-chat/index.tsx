@@ -40,6 +40,8 @@ import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
+import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -58,10 +60,14 @@ import {
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
+import formatSuggestionIds from '../../utils/format-suggestion-ids';
 import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
+import {
+	getOrchestratorErrorMessage,
+	getOrchestratorErrorType,
+} from '../../utils/orchestrator-error-message';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -153,14 +159,6 @@ function getLatestUserMessageIndex( messages: UIMessage[] ): number {
 	}
 
 	return -1;
-}
-
-/**
- * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
- * `suggestions` / `available_suggestions` tracks-prop format.
- */
-function formatSuggestionIds( suggestions: Suggestion[] ): string {
-	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
 }
 
 /**
@@ -460,6 +458,7 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -510,6 +509,18 @@ export default function OrchestratorChat( {
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
 					streamedMessages.regeneratingMessageId = undefined;
+				}
+
+				// One outcome per agent turn; a stream can repeat its terminal update.
+				if ( isTerminal && ! reportedResponseTaskIdsRef.current.has( update.id ) ) {
+					reportedResponseTaskIdsRef.current.add( update.id );
+					const messageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_completed', {
+						status: [ 'canceled', 'failed' ].includes( update.status.state )
+							? update.status.state
+							: 'completed',
+						...( messageId ? { message_id: messageId } : {} ),
+					} );
 				}
 
 				await onTaskUpdate?.( update );
@@ -617,6 +628,11 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regenerate says the reply was not good enough: the clearest
+				// quality signal the chat has after a thumbs down.
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_action_regenerate', {
+					...( message?.id ? { message_id: message.id } : {} ),
+				} );
 				setIsRegenerating( true );
 				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
 				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
@@ -719,6 +735,16 @@ export default function OrchestratorChat( {
 	const chatError = isReaderChat
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
+
+	// One event per error the chat shows. `error` returns to null between
+	// attempts, so the same failure repeating on a later send counts again.
+	useEffect( () => {
+		if ( error ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+				error_type: getOrchestratorErrorType( error ),
+			} );
+		}
+	}, [ error ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
@@ -1223,9 +1249,19 @@ export default function OrchestratorChat( {
 	// programmatic submit) lands before the `isUploadingImages` state does.
 	const isUploadingRef = useRef( false );
 
+	// The prompts on screen, so a send can be told apart from a typed one:
+	// Agenttic submits a clicked suggestion before the click handler runs.
+	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
+
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
 			submitDispatchedRef.current = false;
+			// Taken before the drop below, so a dropped send never labels the next one.
+			const origin = takeActionOrigin( 'send' );
+			const source =
+				origin === 'composer' && suggestionPromptsRef.current.has( message )
+					? 'suggestion'
+					: origin;
 
 			// The composer is committed while a batch uploads — drop re-entrant
 			// sends (suggestion clicks, programmatic submits) instead of
@@ -1240,6 +1276,7 @@ export default function OrchestratorChat( {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
+				source,
 			} );
 
 			let imageData;
@@ -1350,10 +1387,13 @@ export default function OrchestratorChat( {
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
-		if ( imageUpload?.abortUpload?.() ) {
-			return;
+		const stoppedUpload = imageUpload?.abortUpload?.();
+		if ( ! stoppedUpload ) {
+			abortCurrentRequest();
 		}
-		abortCurrentRequest();
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
+			stopped_during: stoppedUpload ? 'upload' : 'response',
+		} );
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(
@@ -1376,7 +1416,23 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useRegisterCustomActions( { setChatInput, submitChatMessage } );
+	const submitChatMessageFromHost = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			// Only the bridge wrapper marks: the composer, suggestion chips, and
+			// context-card submit buttons go through `submitChatMessage` unmarked.
+			markActionOrigin( 'send', 'host' );
+			await submitChatMessage( submittedMessage );
+		},
+		[ inputValue, submitChatMessage ]
+	);
+
+	useRegisterCustomActions( { setChatInput, submitChatMessage: submitChatMessageFromHost } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -1433,59 +1489,6 @@ export default function OrchestratorChat( {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
 		};
 	}, [] );
-
-	const renderedSuggestionsRef = useRef< Suggestion[] >( [] );
-
-	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			const value =
-				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
-
-			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
-			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
-			// A click routed through Agenttic's own container reports the footer list,
-			// which is empty while the chips live in the empty view.
-			const knownSuggestions = availableSuggestions?.length
-				? availableSuggestions
-				: renderedSuggestionsRef.current;
-			const originalSuggestion =
-				typeof suggestion !== 'string'
-					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
-					: undefined;
-			const optionId =
-				typeof suggestion !== 'string'
-					? getSelectedOptionId( suggestion, originalSuggestion )
-					: undefined;
-			const blockType =
-				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
-					? selectedBlockType
-					: undefined;
-
-			if ( typeof suggestion !== 'string' ) {
-				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
-					suggestion_text: suggestion.prompt || '',
-					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( knownSuggestions ),
-					...( optionId ? { option_id: optionId } : {} ),
-					...( blockType ? { block_type: blockType } : {} ),
-				} );
-			}
-
-			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
-			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
-			// repopulating the composer, which the AgentUI already submitted and cleared.
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: {
-						value,
-						autoSubmit,
-						...( suggestionId ? { suggestionId } : {} ),
-					},
-				} )
-			);
-		},
-		[ contextualSuggestionIds, selectedBlockType ]
-	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides chat action handlers to the external providers' ability setups
@@ -1634,6 +1637,7 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			isProcessing,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1655,7 +1659,7 @@ export default function OrchestratorChat( {
 							...message,
 							...( traceId && { traceId } ),
 							...( shouldDisableCheckpointMessage && { disabled: true } ),
-					  }
+						}
 					: message;
 
 			const directActions = [
@@ -1735,13 +1739,13 @@ export default function OrchestratorChat( {
 	const showProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
-	// Determine which suggestions to show following Big Sky's logic:
-	// - Empty chat: show provider empty-view chips plus dynamic chips.
-	// - Active chat/input: show dynamic suggestions only.
+	// Determine which suggestions to feed Agenttic following Big Sky's logic:
+	// - Empty chat: provider empty-view chips plus dynamic chips.
+	// - Active chat/input: dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( ! suggestionsVisible ) {
-		// Minimized/collapsed: the chat renders no suggestions, so leave the list
-		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		// Minimized/collapsed, or docked with the sidebar closed: the layout hides
+		// the chat, which Agenttic cannot tell, so feed it no chips at all.
 		displayedEmptyViewSuggestions = [];
 	} else if (
 		! isLoadingConversation &&
@@ -1763,56 +1767,80 @@ export default function OrchestratorChat( {
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	}
-	renderedSuggestionsRef.current = displayedEmptyViewSuggestions;
+	suggestionPromptsRef.current = new Set(
+		displayedEmptyViewSuggestions.map( ( s ) => s.prompt ?? s.label )
+	);
 
-	// Track when a set of suggestions is rendered — the dynamic block-context
-	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
-	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids and
-	// block context so the same actions appearing for a different block type are
-	// tracked as a distinct exposure.
-	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
-	const renderedSuggestionsBlockType =
-		selectedBlockType &&
-		displayedEmptyViewSuggestions.length > 0 &&
-		displayedEmptyViewSuggestions.every( ( suggestion ) =>
-			contextualSuggestionIds.has( suggestion.id )
-		)
-			? selectedBlockType
-			: undefined;
-	const lastTrackedSuggestionsRef = useRef< {
-		ids: string;
-		blockType?: string;
-	} | null >( null );
-	useEffect( () => {
-		if ( displayedEmptyViewSuggestions.length === 0 ) {
-			return;
-		}
-		const previous = lastTrackedSuggestionsRef.current;
-		if (
-			previous?.ids === displayedSuggestionIds &&
-			( previous.blockType === renderedSuggestionsBlockType ||
-				// The suggestion store can retain contextual chips for one render after
-				// block deselection. Do not reclassify that exposure as post-level.
-				( previous.blockType && ! renderedSuggestionsBlockType ) )
-		) {
-			return;
-		}
-		recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestions_rendered', {
-			suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
-			...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
+	const { onSuggestionsRendered: handleSuggestionsRendered, renderedSuggestionsRef } =
+		useSuggestionsRenderedTracking( {
+			selectedBlockType,
+			contextualSuggestionIds,
+			hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
 		} );
-		lastTrackedSuggestionsRef.current = {
-			ids: displayedSuggestionIds,
-			blockType: renderedSuggestionsBlockType,
-		};
-		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids and block context.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ displayedSuggestionIds, renderedSuggestionsBlockType ] );
+
+	const handleSuggestionClick = useCallback(
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			const value =
+				typeof suggestion === 'string' ? suggestion : ( suggestion.prompt ?? suggestion.label );
+
+			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			// A click routed through Agenttic's own container reports the footer list,
+			// which is empty while the chips live in the empty view.
+			const renderedSuggestions = renderedSuggestionsRef.current;
+			const knownSuggestions = availableSuggestions?.length
+				? availableSuggestions
+				: renderedSuggestions;
+			const originalSuggestion =
+				typeof suggestion !== 'string'
+					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
+					: undefined;
+			const optionId =
+				typeof suggestion !== 'string'
+					? getSelectedOptionId( suggestion, originalSuggestion )
+					: undefined;
+			const blockType =
+				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
+					? selectedBlockType
+					: undefined;
+
+			if ( typeof suggestion !== 'string' ) {
+				// The empty view hands over its untruncated list; what Agenttic reported as
+				// rendered is what was on screen, so it wins whenever it holds the chip.
+				const shownSuggestions = renderedSuggestions.some(
+					( rendered ) => rendered.id === suggestion.id
+				)
+					? renderedSuggestions
+					: knownSuggestions;
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
+					suggestion_text: suggestion.prompt || '',
+					suggestion_id: suggestion.id || '',
+					available_suggestions: formatSuggestionIds( shownSuggestions ),
+					...( optionId ? { option_id: optionId } : {} ),
+					...( blockType ? { block_type: blockType } : {} ),
+				} );
+			}
+
+			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
+			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
+			// repopulating the composer, which the AgentUI already submitted and cleared.
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value,
+						autoSubmit,
+						...( suggestionId ? { suggestionId } : {} ),
+					},
+				} )
+			);
+		},
+		[ contextualSuggestionIds, renderedSuggestionsRef, selectedBlockType ]
+	);
 
 	return (
 		<AgentChat
 			messages={ displayedMessages }
-			suggestions={ suggestions }
+			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
 			thinkingMessage={
@@ -1828,6 +1856,7 @@ export default function OrchestratorChat( {
 			onExpand={ onExpand }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ handleSuggestionClick }
+			onSuggestionsRendered={ handleSuggestionsRendered }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }

@@ -38,6 +38,7 @@ import {
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
+	isFreeTrialEndingOnExpiryDate,
 	isJetpackHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
@@ -68,8 +69,6 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getPartnerName,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
 	mightStillAutoRenew,
@@ -566,11 +565,7 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if (
-		isWithinIntroductoryOfferPeriod( purchase ) &&
-		isIntroductoryOfferFreeTrial( purchase ) &&
-		! isExpiredOrRemoved( purchase )
-	) {
+	if ( isFreeTrialEndingOnExpiryDate( purchase ) && ! isExpiredOrRemoved( purchase ) ) {
 		if ( isRenewingBeforeExpiration( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
@@ -787,10 +782,11 @@ export function PurchaseItemStatus( {
 		return translate( 'Included with Plan' );
 	}
 
-	if (
-		( isPurchaseOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-		! isDomainTransfer( purchase )
-	) {
+	if ( isPurchaseOneTimePurchase( purchase ) && ! isDomainTransfer( purchase ) ) {
+		return translate( 'One-time purchase' );
+	}
+
+	if ( isAkismetFreeProduct( purchase ) && ! isDomainTransfer( purchase ) ) {
 		return translate( 'Never Expires' );
 	}
 

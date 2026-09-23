@@ -66,10 +66,7 @@ interface Registration {
  * all — so only a code is worth recording.
  */
 export type RegistrationErrorCode =
-	| 'no_connection_state'
-	| 'request_failed'
-	| 'http_error'
-	| 'no_authorize_url';
+	'no_connection_state' | 'request_failed' | 'http_error' | 'no_authorize_url';
 
 interface RegistrationError extends Error {
 	code: RegistrationErrorCode;

@@ -5,6 +5,7 @@ import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
 import { setDiscoverLoggedOutHero } from './components/logged-out-hero';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { getLocalizedRoutes, getSelectedTab } from './routes';
+import { setDiscoverTagNoindex } from './set-discover-tag-noindex';
 
 const discoverSsr = ( context, next ) => {
 	setDiscoverLoggedOutHero( context );
@@ -12,7 +13,7 @@ const discoverSsr = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<DiscoverDocumentHead />
+			<DiscoverDocumentHead noindex={ !! context.query?.selectedTag } />
 			<DiscoverHeaderAndNavigation selectedTab={ selectedTab } />
 			<PostPlaceholder />
 		</>
@@ -23,5 +24,11 @@ const discoverSsr = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	router( getLocalizedRoutes( anyLangParam ), ssrSetupLocale, discoverSsr, makeLayout );
+	router(
+		getLocalizedRoutes( anyLangParam ),
+		ssrSetupLocale,
+		setDiscoverTagNoindex,
+		discoverSsr,
+		makeLayout
+	);
 }

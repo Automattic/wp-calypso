@@ -1,3 +1,4 @@
+import { userPaymentMethodsQueryKey } from '@automattic/api-queries';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckboxControl, Spinner } from '@wordpress/components';
@@ -6,7 +7,6 @@ import { useCallback } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
-import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {
@@ -47,15 +47,16 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 
 			// Invalidate queries made by `useStoredPaymentMethods`.
 			queryClient.invalidateQueries( {
-				queryKey: [ storedPaymentMethodsQueryKey ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
+	const { mutate } = mutation;
 	const toggleIsBackup = useCallback(
 		( isChecked: boolean ) => {
-			mutation.mutate( isChecked );
+			mutate( isChecked );
 		},
-		[ mutation ]
+		[ mutate ]
 	);
 	if ( isLoading ) {
 		return (
@@ -89,7 +90,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 										isJetpackCloud()
 											? localizeUrl(
 													'https://wordpress.com/support/payment/#backup-payment-methods'
-											  )
+												)
 											: null
 									}
 								/>

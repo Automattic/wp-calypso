@@ -69,6 +69,19 @@ export function getBlueprintArchiveSiteIdentifier( {
 	return null;
 }
 
+/**
+ * `build=custom-theme` on a blueprint CTA forks the run after checkout: the blueprint is a
+ * plugins-only one, so instead of applying the spec to the restored site the confirmed spec goes
+ * to the build-wow generator, which replaces the blueprint's stock theme with a generated one.
+ * Everything before checkout is the ordinary blueprint onboarding.
+ */
+export const BLUEPRINT_BUILD_QUERY_PARAM = 'build';
+export const BLUEPRINT_BUILD_CUSTOM_THEME = 'custom-theme';
+
+export function isBlueprintCustomThemeBuild( queryParams: URLSearchParams ): boolean {
+	return queryParams.get( BLUEPRINT_BUILD_QUERY_PARAM ) === BLUEPRINT_BUILD_CUSTOM_THEME;
+}
+
 export function getBlueprintArchiveSiteSpecUrl( {
 	siteSlug,
 	siteId,
@@ -76,6 +89,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref,
 	source,
 	wowFunnel,
+	customThemeBuild,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -83,6 +97,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref?: string | null;
 	source?: string | null;
 	wowFunnel?: string | null;
+	customThemeBuild?: boolean;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
 		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
@@ -95,6 +110,9 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		// "do not start one" guard off this param, so it has to survive into the URL — without
 		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
 		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
+		...( customThemeBuild
+			? { [ BLUEPRINT_BUILD_QUERY_PARAM ]: BLUEPRINT_BUILD_CUSTOM_THEME }
+			: {} ),
 	} );
 }
 
@@ -268,17 +286,37 @@ export async function waitForAtomicTransferComplete(
  * Resolves either way — a failure here costs the user personalization, not
  * their site, so it must never block the hand-off to the editor.
  */
+/**
+ * Result of applying a confirmed spec.
+ *
+ * `adminUrl` is the site's wp-admin base as the server resolved it at apply time. Null when the
+ * apply failed, or when wpcom has not yet deployed the field — callers must fall back rather than
+ * assume it is present.
+ */
+export interface ApplyBlueprintSpecResult {
+	applied: boolean;
+	adminUrl: string | null;
+}
+
+/**
+ * Apply a confirmed site spec, and hand back the admin URL the response already knows.
+ *
+ * The endpoint resolves the site's admin URL as part of its reply, so reading it here saves the
+ * caller a `/sites/<id>` round trip on the hand-off path — the one place the customer is watching a
+ * spinner. It is also necessarily current: admin_url changes when a site goes Atomic, and by the
+ * time a spec is applied the transfer has landed.
+ */
 export async function applyBlueprintSpec(
 	siteIdentifier: string,
 	specId: string,
 	blueprintSlug?: string | null
-): Promise< boolean > {
+): Promise< ApplyBlueprintSpecResult > {
 	if ( ! specId ) {
-		return false;
+		return { applied: false, adminUrl: null };
 	}
 
 	try {
-		await wpcom.req.post(
+		const response = ( await wpcom.req.post(
 			{
 				path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
 				apiNamespace: 'wpcom/v2',
@@ -287,14 +325,19 @@ export async function applyBlueprintSpec(
 				spec_id: specId,
 				...( blueprintSlug ? { blueprint_id: blueprintSlug } : {} ),
 			}
-		);
-		return true;
+		) ) as { admin_url?: string };
+
+		return {
+			applied: true,
+			// Absent on a wpcom that predates the field; the caller fetches it the old way.
+			adminUrl: typeof response?.admin_url === 'string' ? response.admin_url : null,
+		};
 	} catch ( error ) {
 		logBlueprintArchiveEvent( 'apply_spec_error', {
 			site_identifier: siteIdentifier,
 			error: error instanceof Error ? error.message : String( error ),
 		} );
-		return false;
+		return { applied: false, adminUrl: null };
 	}
 }
 

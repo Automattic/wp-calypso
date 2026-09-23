@@ -30,7 +30,7 @@ export default function StoredCreditCardV2( {
 	const secondaryCardCountText = showSecondaryCardCount
 		? translate( 'Secondary Card %(secondaryCardCount)d', {
 				args: { secondaryCardCount },
-		  } )
+			} )
 		: translate( 'Secondary Card' );
 
 	const { isSetAsPrimaryCardPending, setAsPrimaryCard } = useSetAsPrimaryCard();

@@ -82,7 +82,7 @@ const ProfessionalEmailUpsell = ( {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isDomainOnlySite =
-		selectedSite === null ? true : selectedSite?.options?.is_domain_only ?? false;
+		selectedSite === null ? true : ( selectedSite?.options?.is_domain_only ?? false );
 
 	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
 

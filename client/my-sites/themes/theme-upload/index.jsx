@@ -377,7 +377,7 @@ class Upload extends Component {
 
 				{ showEligibility && (
 					<EligibilityWarnings
-						backUrl={ backPath }
+						context="themes"
 						atomicTransferAction="themes"
 						onProceed={ this.onProceedClick }
 					/>

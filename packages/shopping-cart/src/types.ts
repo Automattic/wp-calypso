@@ -759,8 +759,7 @@ export interface ResponseCartProductVariant {
 	price_before_discounts_integer: number;
 	introductory_offer_discount_integer: number;
 	introductory_offer_terms:
-		| Record< string, never >
-		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
+		Record< string, never > | Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 	volume?: number;
 }
 
@@ -987,14 +986,7 @@ export interface ResponseCartGiftDetails {
 }
 
 export type SitelessCheckoutType =
-	| 'domainonly'
-	| 'jetpack'
-	| 'akismet'
-	| 'marketplace'
-	| 'a4a'
-	| 'unified'
-	| 'wpcom'
-	| undefined;
+	'domainonly' | 'jetpack' | 'akismet' | 'marketplace' | 'a4a' | 'unified' | 'wpcom' | undefined;
 
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
@@ -1125,6 +1117,7 @@ export type DomainContactDetailsExtra = {
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
 	in?: InDomainContactExtraDetails | null;
+	es?: EsDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1149,6 +1142,12 @@ export type FrDomainContactExtraDetails = {
 export type InDomainContactExtraDetails = {
 	nexusDeclaration?: boolean;
 	nexusConnectionType?: string;
+};
+
+export type EsDomainContactExtraDetails = {
+	registrantEntityType?: string;
+	registrantIdentificationNumber?: string;
+	adminIdentificationNumber?: string;
 };
 
 export interface TermsOfServiceRecord {

@@ -1,6 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
@@ -14,6 +13,7 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
 	DEFAULT_VIEW,
@@ -45,7 +45,6 @@ function Domains() {
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
-	const actions = useActions( { user, sites } );
 	const searchParams = domainsIndexRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
@@ -61,7 +60,9 @@ function Domains() {
 		},
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+	const actions = useActions( { user, sites, domains } );
+
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
 		view,
 		fields

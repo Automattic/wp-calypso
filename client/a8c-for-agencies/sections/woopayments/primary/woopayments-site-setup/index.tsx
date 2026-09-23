@@ -38,8 +38,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
 				status: isInstalled ? 'installed' : 'not_installed',
-				woocommerceStatus,
-				woocommercePaymentsStatus,
+				woocommerce_status: woocommerceStatus,
+				woocommerce_payments_status: woocommercePaymentsStatus,
 			} )
 		);
 
@@ -117,7 +117,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 									<>
 										<div>
 											{ translate(
-												"Click the button and we'll automatically install and activate the plugin for you. Then we'll launch WP-Admin so you can configure the final steps."
+												'Click the button and we’ll automatically install and activate the plugin for you. Then we’ll launch WP-Admin so you can configure the final steps.'
 											) }
 										</div>
 										{ error ? (

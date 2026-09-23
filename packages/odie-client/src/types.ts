@@ -18,7 +18,6 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -138,6 +137,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'

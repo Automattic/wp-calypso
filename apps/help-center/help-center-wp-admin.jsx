@@ -1,12 +1,10 @@
 /* global helpCenterData */
 import './config';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useCallback, useState } from '@wordpress/element';
+import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
-import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { recordHostTracksEvent } from './tracks';
 
 import './help-center.scss';
@@ -14,8 +12,7 @@ import './help-center.scss';
 const queryClient = new QueryClient();
 
 function AdminHelpCenterContent() {
-	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
-		useDataStoreDispatch( 'automattic/help-center' );
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
 	const { isShown, unreadCount } = useSelect(
 		( select ) => ( {
 			isShown: select( 'automattic/help-center' ).isHelpCenterShown(),
@@ -23,20 +20,14 @@ function AdminHelpCenterContent() {
 		} ),
 		[]
 	);
-	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 
 	// Check for agents-manager-masterbar first, then fall back to help-center
 	const button =
 		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
 		document.getElementById( 'wp-admin-bar-help-center' );
-	const chatSupportButton = document.getElementById( 'wp-admin-bar-help-center-chat-support' );
-	const chatHistoryButton = document.getElementById( 'wp-admin-bar-help-center-chat-history' );
-	const supportGuidesButton = document.getElementById( 'wp-admin-bar-help-center-support-guides' );
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
-	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
-		useMenuPanelExperiment( 'calypso_help_center_menu_popover_increase_exposure', 'menu_popover' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -89,34 +80,8 @@ function AdminHelpCenterContent() {
 		recordHostTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
-
-	const handleMenuPanelClick = () => {
-		trackIconInteraction();
-		// Toggle submenu visibility by toggling the hover class
-		button.classList.toggle( 'open-click' );
-	};
-
-	// Close submenu when clicking outside
-	useEffect( () => {
-		if ( ! isMenuPanelExperimentEnabled ) {
-			return;
-		}
-
-		const handleClickOutside = ( event ) => {
-			if ( ! button.contains( event.target ) && button.classList.contains( 'open-click' ) ) {
-				button.classList.remove( 'open-click' );
-			}
-		};
-
-		document.addEventListener( 'click', handleClickOutside );
-		return () => {
-			document.removeEventListener( 'click', handleClickOutside );
-		};
-	}, [ button, isMenuPanelExperimentEnabled ] );
+	}, [ isShown ] );
 
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
@@ -128,63 +93,7 @@ function AdminHelpCenterContent() {
 		setShowHelpCenter( ! isShown );
 	};
 
-	button.onclick = isMenuPanelExperimentEnabled ? handleMenuPanelClick : handleToggleHelpCenter;
-
-	const handleMenuClick = useCallback(
-		( destination, isExternal = false ) => {
-			recordTracksEvent( `calypso_dashboard_help_center_menu_panel_click`, {
-				section: helpCenterData.sectionName || 'wp-admin',
-				destination,
-			} );
-
-			if ( isExternal ) {
-				return window.open( destination, '_blank', 'noopener,noreferrer' );
-			}
-
-			if ( isShown ) {
-				if ( destination !== helpCenterPage ) {
-					setNavigateToRoute( destination );
-					setHelpCenterPage( destination );
-				} else {
-					recordHostTracksEvent( `calypso_inlinehelp_close`, {
-						location: 'help-center',
-						section: helpCenterData.sectionName || 'wp-admin',
-					} );
-					setShowHelpCenter( false );
-					setHelpCenterPage( null );
-				}
-			} else {
-				setNavigateToRoute( destination );
-				setHelpCenterPage( destination );
-				setShowHelpCenter( true );
-
-				recordHostTracksEvent( `calypso_inlinehelp_show`, {
-					location: 'help-center',
-					section: helpCenterData.sectionName || 'wp-admin',
-					destination,
-				} );
-			}
-		},
-		[ isShown, setNavigateToRoute, setHelpCenterPage, setShowHelpCenter, helpCenterPage ]
-	);
-
-	if ( chatSupportButton ) {
-		chatSupportButton.onclick = () => {
-			handleMenuClick( '/odie' );
-		};
-	}
-
-	if ( chatHistoryButton ) {
-		chatHistoryButton.onclick = () => {
-			handleMenuClick( '/chat-history' );
-		};
-	}
-
-	if ( supportGuidesButton ) {
-		supportGuidesButton.onclick = () => {
-			handleMenuClick( '/support-guides' );
-		};
-	}
+	button.onclick = handleToggleHelpCenter;
 
 	const openSupportLinkInHelpCenter = useCallback(
 		( event ) => {

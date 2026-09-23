@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StrictMode } from '@wordpress/element';
 import FeedbackInput from '../feedback-input';
 
 describe( 'FeedbackInput', () => {
@@ -277,6 +278,235 @@ describe( 'FeedbackInput', () => {
 			await user.type( textarea, 'Some text{Escape}' );
 
 			expect( mockOnCancel ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'inline variant', () => {
+		it( 'renders the plain form without an overlay or dialog by default', () => {
+			const { container } = render(
+				<div>
+					<button>Popover control</button>
+					<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			expect( container.querySelector( '.agents-manager-feedback-overlay' ) ).toBeNull();
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /popover control/i } ) ).not.toHaveAttribute(
+				'inert'
+			);
+		} );
+	} );
+
+	describe( 'dialog behavior', () => {
+		it( 'renders as a dialog that is not modal to the page', () => {
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			const dialog = screen.getByRole( 'dialog', { name: /send feedback/i } );
+			expect( dialog ).not.toHaveAttribute( 'aria-modal' );
+		} );
+
+		it( 'makes the rest of the chat inert while open and restores it on close', () => {
+			const { unmount } = render(
+				<div>
+					<button>Chat control</button>
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			const chatControl = screen.getByRole( 'button', { name: /chat control/i, hidden: true } );
+			expect( chatControl ).toHaveAttribute( 'inert' );
+			expect( screen.getByRole( 'dialog' ) ).not.toHaveAttribute( 'inert' );
+
+			unmount();
+
+			expect( chatControl ).not.toHaveAttribute( 'inert' );
+		} );
+
+		it( 'makes siblings mounted while it is open inert too', async () => {
+			const { container } = render(
+				<div>
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</div>
+			);
+
+			const lateCard = document.createElement( 'div' );
+			lateCard.innerHTML = '<button>Late card</button>';
+			container.firstElementChild!.appendChild( lateCard );
+
+			await waitFor( () => {
+				expect( lateCard ).toHaveAttribute( 'inert' );
+			} );
+		} );
+
+		it( 'marks Escape as handled so the chat does not close on it', async () => {
+			const user = userEvent.setup();
+			const chatListener = jest.fn( ( event: KeyboardEvent ) => event.defaultPrevented );
+			document.addEventListener( 'keydown', chatListener );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.keyboard( '{Escape}' );
+
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+			expect( chatListener ).toHaveReturnedWith( true );
+			document.removeEventListener( 'keydown', chatListener );
+		} );
+
+		it( 'calls onCancel when the backdrop is clicked, but not the dialog itself', async () => {
+			const user = userEvent.setup();
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.click( screen.getByRole( 'dialog' ) );
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+
+			await user.click( container.querySelector( '.agents-manager-feedback-overlay' )! );
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'calls onCancel when Escape is pressed outside the textarea', async () => {
+			const user = userEvent.setup();
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			screen.getByRole( 'button', { name: /cancel/i } ).focus();
+			await user.keyboard( '{Escape}' );
+
+			expect( mockOnCancel ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'ignores Escape and backdrop clicks while a submission is in flight', async () => {
+			const user = userEvent.setup();
+			let resolveSubmit: () => void = () => {};
+			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			await user.keyboard( '{Escape}' );
+			await user.click( container.querySelector( '.agents-manager-feedback-overlay' )! );
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+
+			resolveSubmit();
+			await waitFor( () => {
+				expect( screen.getByRole( 'status' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'still completes a submission after StrictMode replays its effects', async () => {
+			const user = userEvent.setup();
+			render(
+				<StrictMode>
+					<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+				</StrictMode>
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'status' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'moves focus to the dialog while no control inside can take it', async () => {
+			const user = userEvent.setup();
+			mockOnSubmit.mockReturnValue( new Promise< void >( () => {} ) );
+			render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			expect( screen.getByRole( 'dialog' ) ).toHaveFocus();
+		} );
+
+		it( 'does not schedule a close after unmounting mid-submission', async () => {
+			const user = userEvent.setup();
+			let resolveSubmit: () => void = () => {};
+			mockOnSubmit.mockReturnValue( new Promise< void >( ( r ) => ( resolveSubmit = r ) ) );
+			const { unmount } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			await user.type( screen.getByRole( 'textbox' ), 'Some text' );
+			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
+
+			unmount();
+			jest.useFakeTimers();
+			resolveSubmit();
+			await Promise.resolve();
+			jest.advanceTimersByTime( 3000 );
+			jest.useRealTimers();
+
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not dismiss when a press started in the dialog is released over the backdrop', () => {
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+			const overlay = container.querySelector( '.agents-manager-feedback-overlay' )!;
+
+			fireEvent.pointerDown( screen.getByRole( 'textbox' ) );
+			fireEvent.click( overlay );
+
+			expect( mockOnCancel ).not.toHaveBeenCalled();
+		} );
+
+		it( 'marks the overlay as a slot the floating chat does not drag from', () => {
+			const { container } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+
+			expect( container.querySelector( '.agents-manager-feedback-overlay' ) ).toHaveAttribute(
+				'data-slot',
+				'chat-dialog'
+			);
+		} );
+
+		it( 'returns focus to the element that opened it when closed', () => {
+			const opener = document.createElement( 'button' );
+			document.body.appendChild( opener );
+			opener.focus();
+
+			const { unmount } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+			expect( screen.getByRole( 'textbox' ) ).toHaveFocus();
+
+			unmount();
+
+			expect( opener ).toHaveFocus();
+			opener.remove();
+		} );
+
+		it( 'leaves focus alone when the user has already moved on before it closes', () => {
+			const opener = document.createElement( 'button' );
+			const elsewhere = document.createElement( 'button' );
+			document.body.append( opener, elsewhere );
+			opener.focus();
+
+			const { unmount } = render(
+				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
+			);
+			elsewhere.focus();
+
+			unmount();
+
+			expect( elsewhere ).toHaveFocus();
+			opener.remove();
+			elsewhere.remove();
 		} );
 	} );
 

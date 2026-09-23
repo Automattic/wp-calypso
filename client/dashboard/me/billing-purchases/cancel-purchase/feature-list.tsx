@@ -61,7 +61,7 @@ const CancelPurchaseFeatureList = ( {
 		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } ).replace(
 				/ /g,
 				'\u00a0'
-		  )
+			)
 		: '';
 	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	const introCopy =

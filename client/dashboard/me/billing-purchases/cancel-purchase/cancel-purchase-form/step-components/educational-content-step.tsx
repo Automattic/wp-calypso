@@ -207,7 +207,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 											),
 											chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 										}
-								  )
+									)
 								: createInterpolateElement(
 										__(
 											'Read more about domain connection <link>here</link> or <chat>chat with a real person</chat> right now.'
@@ -223,7 +223,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 											),
 											chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 										}
-								  ) }
+									) }
 						</li>
 					</ul>
 				</Content>

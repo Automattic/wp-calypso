@@ -18,13 +18,16 @@ import { domainRoute } from '../../app/router/domains';
 import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { isTldInMaintenance } from '../../utils/domain';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
 import PendingRegistrationNotice from './pending-registration-notice';
+import PointToWpcomNotice from './point-to-wpcom-notice';
 import DomainOverviewSettings from './settings';
 import TransferredDomainDetails from './transferred-domain-details';
 
@@ -104,7 +107,7 @@ export default function DomainOverview() {
 									variant="primary"
 									__next40pxDefaultSize
 									disabled={ isTldInMaintenance( domain ) }
-									href={ getDomainRenewalUrl( domain, purchase ) }
+									href={ getRenewalUrlFromPurchase( purchase ) }
 								>
 									{
 										// translators: price is the price of the domain renewal.
@@ -125,12 +128,14 @@ export default function DomainOverview() {
 				}
 			>
 				<PendingRegistrationNotice domain={ domain } />
+				<PointToWpcomNotice domain={ domain } isDisabled={ isTldInMaintenance( domain ) } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
 				) }
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
+				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />

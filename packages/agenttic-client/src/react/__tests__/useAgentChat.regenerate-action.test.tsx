@@ -10,7 +10,7 @@ import type { Client, Message as ClientMessage, TaskUpdate } from '../../client/
 import type { UIMessage, UseAgentChatReturn } from '../useAgentChat';
 
 vi.mock( '../../client/index', async ( importOriginal ) => {
-	const actual = await importOriginal< typeof import('../../client/index') >();
+	const actual = await importOriginal< typeof import( '../../client/index' ) >();
 
 	return {
 		...actual,
@@ -60,7 +60,7 @@ function HookHarness( { registerActions = false } = {} ): null {
 								label: 'Regenerate',
 								onClick: onRegenerate,
 							},
-					  ]
+						]
 					: [];
 			},
 		} );
@@ -116,8 +116,7 @@ describe( 'useAgentChat regenerate action', () => {
 		} );
 
 		const userMessage = latestHookValue?.messages.find( ( message ) => message.id === 'user-1' ) as
-			| UIMessage
-			| undefined;
+			UIMessage | undefined;
 		const agentMessage = latestHookValue?.messages.find(
 			( message ) => message.id === 'agent-1'
 		) as UIMessage | undefined;

@@ -1,9 +1,4 @@
-import {
-	DomainProductSlugs,
-	DotcomPlans,
-	WooHostedPlans,
-	getPlanNames,
-} from '@automattic/api-core';
+import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
@@ -33,6 +28,7 @@ import {
 	isEligibleForPlanExpiryNotice,
 } from '../../../components/plan-expiry-notice';
 import { formatDate } from '../../../utils/datetime';
+import { getDowngradeTargetProductName } from '../../../utils/downgrade-target-name';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpiredOrRemoved,
@@ -224,9 +220,9 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const planNames = getPlanNames() as Record< string, string | undefined >;
-		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const targetPlanName = getDowngradeTargetProductName(
+			purchase.delayed_downgrade_to_product_slug
+		);
 		// `renew_date` is the next auto-renewal attempt date, which for annual
 		// plans is up to 30 days before expiry. The downgrade takes effect on
 		// that renewal, so it's the accurate date to show the customer.
@@ -376,13 +372,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<>
-				<ExpiredRenewNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ purchaseAttachedTo }
-					refunded={ refunded }
-				/>
-			</>
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
 		);
 	}
 
@@ -522,23 +516,23 @@ function ExpiredRenewNotice( {
 			'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
 		)
 			? // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
-			  __(
+				__(
 					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
-			  )
+				)
 			: // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
-			  __(
+				__(
 					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.'
-			  );
+				);
 
 	return (
 		<Notice variant="error">
 			{ createInterpolateElement(
 				sprintf( messageText, {
 					purchaseName: currentPurchase.is_domain
-						? currentPurchase.meta ?? ''
+						? ( currentPurchase.meta ?? '' )
 						: currentPurchase.product_name,
 					includedPurchaseName: includedPurchase.is_domain
-						? includedPurchase.meta ?? ''
+						? ( includedPurchase.meta ?? '' )
 						: includedPurchase.product_name,
 				} ),
 				{
@@ -628,7 +622,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY
 			? __( 'Commerce' )
 			: // translators: Business is a plan name
-			  __( 'Business' );
+				__( 'Business' );
 	const noticeText = daysToExpiry
 		? sprintf(
 				// translators: %expiry is the number of days remaining on the trial, %productType is the type of product (e.g. ecommerce)
@@ -641,7 +635,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 					expiry: String( daysToExpiry ),
 					productType: productType as string,
 				}
-		  )
+			)
 		: sprintf(
 				// translators: %productType is the type of product (e.g. ecommerce)
 				__(
@@ -650,7 +644,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				{
 					productType,
 				}
-		  );
+			);
 
 	return (
 		<Notice
@@ -689,9 +683,9 @@ function shouldShowCardExpiringNotice( purchase: Purchase ): boolean {
 export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 	return Boolean(
 		! isIncludedWithPlan( purchase ) &&
-			purchase.payment_card_id &&
-			creditCardExpiresBeforeSubscription( purchase ) &&
-			isCloseToExpiration( purchase )
+		purchase.payment_card_id &&
+		creditCardExpiresBeforeSubscription( purchase ) &&
+		isCloseToExpiration( purchase )
 	);
 }
 
@@ -713,14 +707,14 @@ function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 					'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
 				),
 				cardDetails
-		  )
+			)
 		: sprintf(
 				// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 				__(
 					'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please <link>update your payment information</link>.'
 				),
 				cardDetails
-		  );
+			);
 
 	return (
 		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>

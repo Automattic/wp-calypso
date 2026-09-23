@@ -1,3 +1,4 @@
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
@@ -26,7 +27,7 @@ export default function ReauthRequired() {
 					const url = new URL( redirectTo, window.location.origin );
 					if (
 						url.origin === window.location.origin ||
-						redirectTo.startsWith( '/' ) ||
+						determineUrlType( redirectTo ) === URL_TYPE.PATH_ABSOLUTE ||
 						ALLOWED_ORIGINS.includes( url.origin )
 					) {
 						// Use the resolved URL's href to ensure correct navigation for pathnames
