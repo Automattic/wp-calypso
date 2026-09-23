@@ -395,6 +395,14 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( window.__agentsManagerActions?.getTabId?.() ).toBe( 'fake-uuid' );
 	} );
+
+	it( 'exposes the current turn the chat events carry via `getTurnId`', () => {
+		sessionStorage.setItem( 'agents-manager-turn-id', 'turn-1' );
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getTurnId?.() ).toBe( 'turn-1' );
+		sessionStorage.removeItem( 'agents-manager-turn-id' );
+	} );
 } );
 
 describe( 'useRegisterCustomActions', () => {

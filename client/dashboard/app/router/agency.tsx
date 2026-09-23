@@ -54,7 +54,10 @@ import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-
 import { __ } from '@wordpress/i18n';
 import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
-import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
+import {
+	getMarketplaceHostingSectionRoute,
+	MARKETPLACE_HOSTING_REFER_SEGMENTS,
+} from '../../agency/marketplace/paths';
 import {
 	mayBeEligibleForPressableExpansionOffer,
 	pressableOfferLicensesQuery,
@@ -78,7 +81,7 @@ import { getSiteDisplayUrl } from '../../utils/site-url';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
-import type { HostingSection } from '../../agency/marketplace/paths';
+import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
 import type { AgencyCapability, User } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
@@ -313,6 +316,35 @@ export const marketplaceHostingIndexRoute = createRoute( {
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
 export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
 export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
+
+// `/marketplace/hosting/refer-*` – one shared form to refer a client to
+// WordPress VIP or to a Pressable Premium plan, as in the classic dashboard.
+const createReferHostingRoute = ( type: ReferHostingType, title: () => string ) =>
+	createRoute( {
+		head: () => ( {
+			meta: [
+				{
+					title: title(),
+				},
+			],
+		} ),
+		getParentRoute: () => marketplaceHostingRoute,
+		path: MARKETPLACE_HOSTING_REFER_SEGMENTS[ type ],
+		loader: () => queryClient.ensureQueryData( wooCountryRegionsQuery() ),
+	} ).lazy( () =>
+		import( '../../agency/marketplace/refer-hosting' ).then( ( d ) =>
+			createLazyRoute( `marketplace-hosting-refer-${ type }` )( {
+				component: () => <d.default type={ type } />,
+			} )
+		)
+	);
+
+export const marketplaceHostingReferEnterpriseRoute = createReferHostingRoute( 'enterprise', () =>
+	__( 'Refer Enterprise Hosting' )
+);
+export const marketplaceHostingReferPremiumRoute = createReferHostingRoute( 'premium', () =>
+	__( 'Refer Premium Plan' )
+);
 
 // `/agency/partner-directory/details` – the agency's public profile details
 export const agencyPartnerDirectoryDetailsRoute = createRoute( {
@@ -1954,6 +1986,8 @@ export const createAgencyRoutes = () => [
 			marketplaceHostingWpcomRoute,
 			marketplaceHostingPressableRoute,
 			marketplaceHostingVipRoute,
+			marketplaceHostingReferEnterpriseRoute,
+			marketplaceHostingReferPremiumRoute,
 		] ),
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,

@@ -12,11 +12,6 @@ export function getAddNewPaymentMethodPath(): string {
 	return addNewPaymentMethod;
 }
 
-export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
-	const { productType } = purchase;
-	return purchase.isAttachedToHoldingSite && productType === 'akismet';
-}
-
 export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return purchase.isAttachedToHoldingSite && productType === 'saas_plugin';

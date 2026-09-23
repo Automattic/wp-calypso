@@ -1,40 +1,73 @@
 /**
  * @jest-environment jsdom
  */
-
-import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import {
+	omnibarAgentsManagerEnabledQuery,
+	omnibarSiteIdQuery,
+	queryClient,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import { screen, waitFor } from '@testing-library/react';
 import { render } from '../../../test-utils';
+import useShouldLoadAgentsManager from '../../agents-manager/use-should-load-agents-manager';
 import OmnibarAgentsManager from '../omnibar-agents-manager';
+import type { Site } from '@automattic/api-core';
 
+jest.mock( '../../agents-manager/use-should-load-agents-manager' );
 jest.mock( '@automattic/agents-manager', () => ( {
-	...jest.requireActual( '@automattic/agents-manager' ),
 	__esModule: true,
 	default: () => <div role="region" aria-label="Agents Manager" />,
 } ) );
 
-function createQueryClient( unifiedAiChat: boolean ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false } },
-	} );
-	queryClient.setQueryData( [ 'unified-ai-chat' ], unifiedAiChat );
-	return queryClient;
-}
+const mockedUseShouldLoadAgentsManager = jest.mocked( useShouldLoadAgentsManager );
+const siteId = 123;
+const site = {
+	ID: siteId,
+	slug: 'example.wordpress.com',
+	URL: 'https://example.wordpress.com',
+} as Site;
 
 describe( '<OmnibarAgentsManager />', () => {
-	test( 'renders nothing when the user is not eligible for the unified AI chat', () => {
-		const { container } = render( <OmnibarAgentsManager />, {
-			queryClient: createQueryClient( false ),
+	beforeEach( () => {
+		queryClient.clear();
+		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId );
+		queryClient.setQueryData( siteByIdQuery( siteId ).queryKey, site );
+	} );
+	afterEach( () => jest.restoreAllMocks() );
+
+	it( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
+		const cancelQueries = jest.spyOn( queryClient, 'cancelQueries' );
+		mockedUseShouldLoadAgentsManager.mockReturnValue( {
+			routeIsEnabled: true,
+			isInternalOnly: true,
 		} );
 
-		expect( container ).toBeEmptyDOMElement();
-	} );
-
-	test( 'renders the agents-manager when the user is eligible for the unified AI chat', async () => {
-		render( <OmnibarAgentsManager />, {
-			queryClient: createQueryClient( true ),
+		render( <OmnibarAgentsManager pathname="/sites/example.wordpress.com" />, {
+			queryClient,
 		} );
 
 		expect( await screen.findByRole( 'region', { name: 'Agents Manager' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( true )
+		);
+		expect( cancelQueries ).toHaveBeenCalledWith( {
+			queryKey: omnibarAgentsManagerEnabledQuery().queryKey,
+		} );
+	} );
+
+	it( 'publishes disabled eligibility outside the allowlist', async () => {
+		mockedUseShouldLoadAgentsManager.mockReturnValue( {
+			routeIsEnabled: false,
+			isInternalOnly: false,
+		} );
+
+		const { container } = render( <OmnibarAgentsManager pathname="/sites" />, { queryClient } );
+
+		expect( container ).toBeEmptyDOMElement();
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe(
+				false
+			)
+		);
 	} );
 } );

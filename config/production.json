@@ -158,6 +158,7 @@
 		"site-indicator": true,
 		"site-profiler/metrics": false,
 		"site-spec": true,
+		"site-spec/build-wow-dsl": false,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,

@@ -1148,6 +1148,7 @@ export type EsDomainContactExtraDetails = {
 	registrantEntityType?: string;
 	registrantIdentificationNumber?: string;
 	adminIdentificationNumber?: string;
+	redEsAgreementAccepted?: boolean;
 };
 
 export interface TermsOfServiceRecord {

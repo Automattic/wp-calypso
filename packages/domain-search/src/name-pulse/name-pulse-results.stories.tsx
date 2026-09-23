@@ -33,6 +33,12 @@ const FAILING = 'icecream.app';
 
 const delay = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
+/**
+ * The bulk check prices premium names at the standard TLD rate; only this
+ * per-domain check knows the registry price, so it quotes a much higher one.
+ */
+const PREMIUM_REALTIME_PRICE = 3500;
+
 const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 	const entry = NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ] ?? buildNamePulseAvailabilityEntry();
 	let status = DomainAvailabilityStatus.NOT_AVAILABLE;
@@ -43,6 +49,8 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 			: DomainAvailabilityStatus.AVAILABLE;
 	}
 
+	const isPremium = status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
+
 	return {
 		domain_name: domainName,
 		tld: getTld( domainName ),
@@ -50,12 +58,13 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 		mappable: 'mappable',
 		supports_privacy: true,
 		root_domain_provider: 'wpcom',
-		cost: entry.cost ?? '',
-		raw_price: entry.raw_price,
-		sale_cost: entry.sale_cost,
+		cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		raw_price: isPremium ? PREMIUM_REALTIME_PRICE : entry.raw_price,
+		sale_cost: isPremium ? undefined : entry.sale_cost,
 		currency_code: 'USD',
 		product_slug: 'domain_reg',
 		product_id: 6,
+		...( isPremium ? { is_supported_premium_domain: true } : {} ),
 	};
 };
 
@@ -138,7 +147,11 @@ const StoryDomainSearch = ( {
 
 						return NAME_PULSE_TLDS_FIXTURE;
 					},
-					domainAvailability: async ( domainName ) => toRealtimeAvailability( domainName ),
+					domainAvailability: async ( domainName ) => {
+						await delay( 900 );
+
+						return toRealtimeAvailability( domainName );
+					},
 				} ) }
 			>
 				<div className="domain-search" style={ { padding: '2rem 1rem' } }>

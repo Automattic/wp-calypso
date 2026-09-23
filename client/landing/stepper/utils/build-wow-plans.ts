@@ -1,4 +1,4 @@
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 
 /**
  * Which plans route the AI build through build-wow. The post-checkout AI
@@ -8,4 +8,13 @@ import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
  */
 export function planSupportsBuildWow( planSlug: string | null | undefined ): boolean {
 	return !! planSlug && ( isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) );
+}
+
+/**
+ * Which plans get the pre-production "Build on the DSL graph" choice. Wider
+ * than planSupportsBuildWow(): the DSL build is a testing path, so Personal
+ * rides build-wow here too.
+ */
+export function planSupportsBuildWowDsl( planSlug: string | null | undefined ): boolean {
+	return !! planSlug && ( isPersonalPlan( planSlug ) || planSupportsBuildWow( planSlug ) );
 }

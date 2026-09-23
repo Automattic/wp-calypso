@@ -4,6 +4,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 import {
 	AgentsManagerContextProvider,
 	useAgentsManagerContext,
@@ -23,6 +24,9 @@ function ContextConsumer() {
 			<span data-testid="userId">{ context.currentUser?.ID ?? 'none' }</span>
 			<span data-testid="siteId">{ context.site?.ID ?? 'none' }</span>
 			<span data-testid="tabSessionId">{ context.getTabSessionId() }</span>
+			<span data-testid="zendeskIntegrationKey">
+				{ context.zendeskSmoochIntegrationKey ?? 'none' }
+			</span>
 		</div>
 	);
 }
@@ -52,6 +56,10 @@ describe( 'AgentsManagerContext', () => {
 	} );
 
 	describe( 'AgentsManagerContextProvider', () => {
+		afterEach( () => {
+			setLoadedProviderIds( undefined );
+		} );
+
 		it( 'provides `sectionName` to children', () => {
 			renderWithProvider( { sectionName: 'gutenberg', siteKey: 'no-site' } );
 
@@ -90,6 +98,14 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'isLoggedIn' ).textContent ).toBe( 'false' );
 			expect( screen.getByTestId( 'userId' ).textContent ).toBe( 'none' );
 			expect( screen.getByTestId( 'siteId' ).textContent ).toBe( 'none' );
+		} );
+
+		it( 'derives the Woo Zendesk integration from the loaded provider', () => {
+			setLoadedProviderIds( [ 'woocommerce-ai' ] );
+
+			renderWithProvider( { sectionName: 'gutenberg', siteKey: '456' } );
+
+			expect( screen.getByTestId( 'zendeskIntegrationKey' ) ).toHaveTextContent( 'woo' );
 		} );
 
 		it( 'derives `isLoggedIn` as `true` when `currentUser` has an `ID`', () => {

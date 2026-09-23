@@ -164,6 +164,10 @@ export default function ContactForm( {
 				children: [ 'firstName', 'lastName' ],
 			} as FormField,
 			'organization',
+			{
+				id: 'organizationNotice',
+				layout: { type: 'regular' as const, labelPosition: 'none' as const },
+			} as FormField,
 			'email',
 			'phone',
 			'countryCode',
