@@ -42,7 +42,9 @@ export const NamePulseResults = () => {
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
-			{ /* Keyed by the query so a new search brings back a dismissed notice. */ }
+			{ /* Keyed by the query so a new search brings back a dismissed notice. VStack
+			     runs its children through Children.toArray, so the key has to be prefixed
+			     to avoid colliding with the grid below, which is keyed on the query too. */ }
 			{ notice && ! isTldsError && (
 				<NamePulseSearchNotice
 					key={ `notice-${ query }` }
