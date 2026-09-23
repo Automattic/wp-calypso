@@ -262,7 +262,7 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
-					variant="secondary"
+					variant="tertiary"
 					isBusy={ isFetchingScheduleCallLink }
 					disabled={ isFetchingScheduleCallLink || revoke.isPending }
 					onClick={ handleSpeakWithManager }
