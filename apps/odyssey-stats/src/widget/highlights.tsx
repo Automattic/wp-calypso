@@ -9,8 +9,9 @@ import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { DateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
-import recordWidgetEvent from './record-widget-event';
+import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import WidgetSection from './widget-section';
+import type { MouseEvent } from 'react';
 
 import './highlights.scss';
 
@@ -20,7 +21,7 @@ interface ItemWrapperProps {
 	isItemLink: boolean;
 	item: HighLightItem;
 	isItemLinkExternal: boolean;
-	onClick?: () => void;
+	onClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
 
 interface TopColumnProps {
@@ -32,8 +33,8 @@ interface TopColumnProps {
 	siteId: number;
 	isItemLinkExternal?: boolean;
 	isItemLink?: boolean;
-	onItemClick?: () => void;
-	onViewAllClick?: () => void;
+	onItemClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
+	onViewAllClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
 
 interface HighlightsProps {
@@ -272,13 +273,11 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 							siteId={ siteId }
 							isItemLink
 							isItemLinkExternal={ active.isItemLinkExternal }
-							onItemClick={ () => recordWidgetEvent( active.itemEvent ) }
-							onViewAllClick={ () =>
-								recordWidgetEvent( 'see_more_clicked', {
-									tab: active.trackingName,
-									range: range.id,
-								} )
-							}
+							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
+							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
+								tab: active.trackingName,
+								range: range.id,
+							} ) }
 						/>
 					);
 				} }

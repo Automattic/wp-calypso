@@ -8,7 +8,7 @@ import useModuleDataQuery from '../hooks/use-module-data-query';
 import config, { optionalConfig } from '../lib/config-api';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import MetricValue from './metric-value';
-import recordWidgetEvent from './record-widget-event';
+import { recordWidgetEventThenFollow } from './record-widget-event';
 import WidgetSection from './widget-section';
 import './modules.scss';
 
@@ -245,7 +245,7 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 				<div className="stats-widget-modules__footer">
 					<a
 						href={ akismetUrl }
-						onClick={ () => recordWidgetEvent( 'anti_spam_insights_clicked' ) }
+						onClick={ recordWidgetEventThenFollow( 'anti_spam_insights_clicked' ) }
 					>
 						{ translate( 'Anti-spam insights' ) }
 					</a>

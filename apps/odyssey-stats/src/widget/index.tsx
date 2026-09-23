@@ -22,7 +22,7 @@ import DateRangeControl from './date-range-control';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
-import recordWidgetEvent from './record-widget-event';
+import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
 
@@ -131,11 +131,9 @@ export function init() {
 							</a>
 							<a
 								href={ exploreMore.url }
-								onClick={ () =>
-									recordWidgetEvent( 'explore_more_clicked', {
-										destination: exploreMore.destination,
-									} )
-								}
+								onClick={ recordWidgetEventThenFollow( 'explore_more_clicked', {
+									destination: exploreMore.destination,
+								} ) }
 							>
 								{ translate( 'Explore more' ) }
 							</a>
