@@ -1,23 +1,25 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
-import { formatCurrency, formatNumber } from '@automattic/number-formatters';
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import {
+	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
 import { useIntlLocale } from '../../../app/locale';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Stat } from '../../../components/stat';
+import { OWNER_ROLE } from '../../team/constants';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
 import { getPressablePlanInfo } from './lib/pressable-plans';
 import type { AgencyProduct } from '@automattic/api-core';
 
-const TITAN_INBOX_MONTHLY_PRICE = 3.5;
+const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
+const USAGE_WARNING_THRESHOLD = 80;
 
 const percentage = ( value: number, total: number ) =>
 	total > 0 ? Math.min( 100, Math.round( ( value / total ) * 100 ) ) : 0;
@@ -27,7 +29,14 @@ const formatTrialEndDate = ( date: string, locale: string ) =>
 		new Date( date )
 	);
 
-/** The agency's current plan and its usage; add-on licenses raise the limits. */
+const formatInboxCount = ( count: number ) =>
+	sprintf(
+		/* translators: %d is a number of email inboxes. */
+		_n( '%d inbox', '%d inboxes', count ),
+		count
+	);
+
+/** The agency's current plan, its usage and its Titan Email inboxes; add-on licenses raise the limits. */
 export default function PressableUsageCard( { existingPlan }: { existingPlan: AgencyProduct } ) {
 	const locale = useIntlLocale();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -37,7 +46,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 		return null;
 	}
 
-	// The usage is only there once the Pressable account is linked.
+	// A new plan has no usage until Pressable reports it, usually the next day.
 	const pressable = agency?.third_party?.pressable;
 	const usage = pressable?.usage ?? undefined;
 	const capacity = calculateEffectiveCapacity( planInfo, licenses, products );
@@ -52,19 +61,21 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 	const storageUsed = usage?.storage_gb ?? 0;
 	const sitesUsed = usage?.sites_count ?? 0;
 	const visitsUsed = usage?.visits_count ?? 0;
+	const storagePercent = percentage( storageUsed, capacity.storage );
+	const visitsPercent = percentage( visitsUsed, capacity.visits );
+	// Only the agency owner can sign in to the Pressable account.
+	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 
 	return (
 		<Card>
 			<CardHeader>
 				<SectionHeader
 					level={ 3 }
-					title={
-						<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
-							<span>{ existingPlan.name }</span>
-							<Badge>{ __( 'Plan' ) }</Badge>
-						</HStack>
-					}
-					description={ __( 'Your current Pressable plan' ) }
+					title={ sprintf(
+						/* translators: %s is the plan name, e.g. "Pressable Signature 4". */
+						__( 'Your %s plan' ),
+						existingPlan.name
+					) }
 				/>
 			</CardHeader>
 			<CardBody>
@@ -72,102 +83,92 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 					{ ! usage && (
 						<Text variant="muted">{ __( 'View your usage data here when it’s available.' ) }</Text>
 					) }
-					<div className="dashboard-marketplace-hosting__grid dashboard-marketplace-hosting__grid--3">
-						<Stat
-							density="high"
-							isLoading={ ! usage }
-							strapline={ __( 'Storage used' ) }
-							metric={ sprintf(
-								/* translators: %s is the storage used in GB. */
-								__( '%s GB' ),
-								formatNumber( storageUsed )
-							) }
-							description={ sprintf(
-								/* translators: %s is the storage limit in GB. */
-								__( 'of %s GB' ),
-								formatNumber( capacity.storage )
-							) }
-							progressValue={ percentage( storageUsed, capacity.storage ) }
-						/>
-						<Stat
-							density="high"
-							isLoading={ ! usage }
-							strapline={ __( 'Sites created' ) }
-							metric={ formatNumber( sitesUsed ) }
-							description={ sprintf(
-								/* translators: %s is the maximum number of sites. */
-								__( 'of %s' ),
-								formatNumber( capacity.install )
-							) }
-							progressValue={ percentage( sitesUsed, capacity.install ) }
-						/>
-						<Stat
-							density="high"
-							isLoading={ ! usage }
-							strapline={ __( 'Monthly visits' ) }
-							metric={ formatNumber( visitsUsed ) }
-							description={ sprintf(
-								/* translators: %s is the maximum number of monthly visits. */
-								__( 'of %s' ),
-								formatNumber( capacity.visits )
-							) }
-							progressValue={ percentage( visitsUsed, capacity.visits ) }
-						/>
-					</div>
+					<Stat
+						density="high"
+						isLoading={ ! usage }
+						strapline={ __( 'Sites created' ) }
+						metric={ formatNumber( sitesUsed ) }
+						description={ sprintf(
+							/* translators: %s is the maximum number of sites. */
+							__( 'of %s' ),
+							formatNumber( capacity.install )
+						) }
+						progressValue={ percentage( sitesUsed, capacity.install ) }
+					/>
+					<Stat
+						density="high"
+						isLoading={ ! usage }
+						strapline={ __( 'Visits this month' ) }
+						metric={ formatNumberCompact( visitsUsed ) }
+						description={ sprintf(
+							/* translators: %s is the maximum number of monthly visits. */
+							__( 'of %s' ),
+							formatNumberCompact( capacity.visits )
+						) }
+						progressValue={ visitsPercent }
+						progressColor={ visitsPercent > USAGE_WARNING_THRESHOLD ? 'alert-yellow' : undefined }
+					/>
+					<Stat
+						density="high"
+						isLoading={ ! usage }
+						strapline={ __( 'Storage used' ) }
+						metric={ sprintf(
+							/* translators: %s is the storage used in GB. */
+							__( '%sGB' ),
+							formatNumber( storageUsed )
+						) }
+						description={ sprintf(
+							/* translators: %s is the storage limit in GB. */
+							__( 'of %sGB' ),
+							formatNumber( capacity.storage )
+						) }
+						progressValue={ storagePercent }
+						progressColor={ storagePercent > USAGE_WARNING_THRESHOLD ? 'alert-yellow' : undefined }
+					/>
 					{ activeTitanOrders.length > 0 && (
+						<VStack spacing={ 4 }>
+							<HStack justify="space-between" alignment="flex-start" wrap>
+								<Text weight={ 500 }>{ __( 'Titan Email' ) }</Text>
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %1$s is a number of inboxes, e.g. "7 inboxes"; %2$s is a number of domains, e.g. "2 domains". */
+										__( '%1$s across %2$s' ),
+										formatInboxCount( totalInboxes ),
+										sprintf(
+											/* translators: %d is the number of domains with email inboxes. */
+											_n( '%d domain', '%d domains', activeTitanOrders.length ),
+											activeTitanOrders.length
+										)
+									) }
+								</Text>
+							</HStack>
+							{ activeTitanOrders.map( ( order ) => (
+								<HStack key={ order.domain } justify="space-between" alignment="flex-start">
+									<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
+										<Text weight={ 500 }>{ order.domain }</Text>
+										{ order.trial_end_at && (
+											<Text variant="muted">
+												{ sprintf(
+													/* translators: %s is the trial end date, e.g. "October 3". */
+													__( 'Trial ends %s' ),
+													formatTrialEndDate( order.trial_end_at, locale )
+												) }
+											</Text>
+										) }
+									</HStack>
+									<Text variant="muted">{ formatInboxCount( order.billable_inboxes ) }</Text>
+								</HStack>
+							) ) }
+						</VStack>
+					) }
+					{ isAgencyOwner && (
 						<>
 							<CardDivider />
-							<VStack spacing={ 3 }>
-								<HStack justify="space-between" alignment="flex-start" wrap>
-									<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-										<Text weight={ 600 }>{ __( 'Titan Email' ) }</Text>
-										<Badge>{ __( 'add-on' ) }</Badge>
-									</HStack>
-									<VStack spacing={ 0 } alignment="flex-end">
-										<Text>
-											{ sprintf(
-												/* translators: %d is the total number of active email inboxes. */
-												_n( '%d inbox', '%d inboxes', totalInboxes ),
-												totalInboxes
-											) }
-										</Text>
-										<Text variant="muted" size={ 12 }>
-											{ sprintf(
-												/* translators: %s is the price per inbox. */
-												__( '%s per inbox monthly' ),
-												formatCurrency( TITAN_INBOX_MONTHLY_PRICE, 'USD' )
-											) }
-										</Text>
-									</VStack>
-								</HStack>
-								{ activeTitanOrders.map( ( order ) => (
-									<HStack key={ order.domain } justify="space-between" alignment="flex-start" wrap>
-										<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
-											<Text>{ order.domain }</Text>
-											<Badge>{ __( 'standard' ) }</Badge>
-											{ order.trial_end_at && (
-												<>
-													<Badge intent="informational">{ __( 'trial' ) }</Badge>
-													<Text variant="muted" size={ 12 }>
-														{ sprintf(
-															/* translators: %s is the formatted trial end date. */
-															__( 'The trial ends by %s' ),
-															formatTrialEndDate( order.trial_end_at, locale )
-														) }
-													</Text>
-												</>
-											) }
-										</HStack>
-										<Text variant="muted">
-											{ sprintf(
-												/* translators: %d is the number of inboxes on the domain. */
-												_n( '%d inbox', '%d inboxes', order.billable_inboxes ),
-												order.billable_inboxes
-											) }
-										</Text>
-									</HStack>
-								) ) }
-							</VStack>
+							<div>
+								<ExternalLink href={ PRESSABLE_AGENCY_URL }>
+									{ __( 'Manage in Pressable' ) }
+								</ExternalLink>
+							</div>
 						</>
 					) }
 				</VStack>

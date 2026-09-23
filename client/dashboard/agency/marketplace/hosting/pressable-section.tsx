@@ -446,7 +446,6 @@ export default function PressableSection( {
 		<div className="dashboard-marketplace-hosting__layout">
 			<VStack spacing={ 8 } justify="flex-start">
 				<VStack spacing={ 4 }>
-					{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
 					<Card>
 						<CardHeader>
 							<SectionHeader
@@ -523,8 +522,11 @@ export default function PressableSection( {
 				<JetpackComplete />
 				<Testimonials brand="pressable" />
 			</VStack>
-			{ ! showPremiumSection && (
-				<div className="dashboard-marketplace-hosting__rail">{ renderRail() }</div>
+			{ ( ! showPremiumSection || showUsage ) && (
+				<VStack spacing={ 4 } justify="flex-start" className="dashboard-marketplace-hosting__rail">
+					{ ! showPremiumSection && renderRail() }
+					{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
+				</VStack>
 			) }
 		</div>
 	);
