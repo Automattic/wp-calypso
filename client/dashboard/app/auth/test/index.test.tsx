@@ -7,7 +7,14 @@ import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
-import { AuthProvider, sessionStateQuery, useSessionStateQuery } from '../index';
+import {
+	AUTH_QUERY_KEY,
+	AuthProvider,
+	initializeCurrentUser,
+	sessionStateQuery,
+	updateCurrentUser,
+	useSessionStateQuery,
+} from '../index';
 import type { User } from '@automattic/api-core';
 
 jest.mock( '../../analytics', () => ( {
@@ -38,6 +45,25 @@ function renderAuth() {
 		),
 	};
 }
+
+describe( 'updateCurrentUser', () => {
+	afterEach( () => {
+		config.disable( 'wpcom-user-bootstrap' );
+		delete window.currentUser;
+	} );
+
+	test( 'survives a refetch in a bootstrapped session', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.currentUser = { ...testUser, two_step_enabled: false };
+		const queryClient = new QueryClient();
+		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } );
+
+		updateCurrentUser( queryClient, { two_step_enabled: true } );
+		await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
+
+		expect( queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.two_step_enabled ).toBe( true );
+	} );
+} );
 
 describe( '<AuthProvider> stats', () => {
 	beforeEach( () => {
