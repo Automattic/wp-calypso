@@ -116,24 +116,60 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	} );
 }
 
+export type BlueprintArchiveLookup = {
+	exists: boolean;
+	/**
+	 * The plans the blueprint suggests, as WordPress.com plan product slugs
+	 * (e.g. `value_bundle`, `business-bundle`). Empty when it suggests none, or
+	 * when the blueprint has no usable archive.
+	 */
+	suggestedPlans: string[];
+};
+
+type BlueprintArchiveLookupResponse = {
+	slug?: string;
+	exists?: boolean;
+	// Absent on a wpcom that predates the field.
+	suggested_plans?: unknown;
+};
+
+/**
+ * Look a blueprint up on the host site by post ID or slug: whether it has a
+ * usable archive, and which plans it suggests. Never throws; a missing blueprint
+ * (or any request failure) reads as "does not exist".
+ */
+export async function lookupBlueprintArchive(
+	blueprintSlug: string
+): Promise< BlueprintArchiveLookup > {
+	if ( ! blueprintSlug ) {
+		return { exists: false, suggestedPlans: [] };
+	}
+
+	try {
+		const response = ( await wpcom.req.get( {
+			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
+			apiNamespace: 'wpcom/v2',
+		} ) ) as BlueprintArchiveLookupResponse;
+
+		const suggestedPlans = Array.isArray( response?.suggested_plans )
+			? response.suggested_plans.filter(
+					( plan ): plan is string => typeof plan === 'string' && plan !== ''
+				)
+			: [];
+
+		return { exists: true, suggestedPlans };
+	} catch {
+		return { exists: false, suggestedPlans: [] };
+	}
+}
+
 /**
  * Pre-checkout validation: does the blueprint slug resolve to a usable archive
  * on the host site? Resolves true/false; never throws.
  */
 export async function checkBlueprintExists( blueprintSlug: string ): Promise< boolean > {
-	if ( ! blueprintSlug ) {
-		return false;
-	}
-
-	try {
-		await wpcom.req.get( {
-			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
-			apiNamespace: 'wpcom/v2',
-		} );
-		return true;
-	} catch {
-		return false;
-	}
+	const { exists } = await lookupBlueprintArchive( blueprintSlug );
+	return exists;
 }
 
 /**
