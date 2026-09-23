@@ -1,6 +1,8 @@
 import {
 	Button,
+	ExternalLink,
 	SelectControl,
+	ToggleControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -121,10 +123,54 @@ const PREMIUM_FEATURES = [
 	__( 'Robust REST-based API, plus Git integration' ),
 ];
 
+// Sept 23: Noam chose the gate; ?premium=pitch keeps Main's pitch for comparison.
 export function premiumTreatment(): 'pitch' | 'gate' {
-	return new URLSearchParams( window.location.search ).get( 'premium' ) === 'gate'
-		? 'gate'
-		: 'pitch';
+	return new URLSearchParams( window.location.search ).get( 'premium' ) === 'pitch'
+		? 'pitch'
+		: 'gate';
+}
+
+// The Premium sell: starting price, commission and the feature list. Shown
+// under the pitch and, in the gate, under the selected plan's specs.
+function PremiumDetails() {
+	return (
+		<VStack spacing={ 3 }>
+			<VStack spacing={ 1 }>
+				<Heading level={ 4 } size={ 13 }>
+					{ sprintf(
+						/* translators: %1$s is the starting price, %2$d the commission percentage. */
+						__( 'Premium plans from %1$s per month. Get %2$d%% commission when you refer.' ),
+						formatUSD( PREMIUM_FROM ).replace( '.00', '' ),
+						PREMIUM_COMMISSION
+					) }
+				</Heading>
+				<Text variant="muted">{ __( 'per site, when billed monthly' ) }</Text>
+			</VStack>
+			<CheckGrid items={ PREMIUM_FEATURES } />
+		</VStack>
+	);
+}
+
+// Premium in the gate: the selected plan's numbers on one line (a Premium
+// plan is one site, so the pooled-limits copy does not apply), then the
+// feature list. The price and commission are in the rail.
+function PremiumSpecs( { plan }: { plan?: PressablePlan } ) {
+	return (
+		<VStack spacing={ 3 }>
+			{ plan && (
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: 1: visits per month, 2: storage in GB, 3: base PHP workers */
+						__( 'One site · %1$s visits per month · %2$dGB storage · %3$d base PHP workers' ),
+						formatCompactNumber( plan.visits ),
+						plan.storage,
+						plan.worker
+					) }
+				</Text>
+			) }
+			<CheckGrid items={ PREMIUM_FEATURES } />
+		</VStack>
+	);
 }
 
 function PremiumPitch( { onReferNow }: { onReferNow: () => void } ) {
@@ -156,20 +202,7 @@ function PremiumPitch( { onReferNow }: { onReferNow: () => void } ) {
 					</Button>
 				</ButtonStack>
 			</VStack>
-			<VStack spacing={ 3 }>
-				<VStack spacing={ 1 }>
-					<Heading level={ 4 } size={ 13 }>
-						{ sprintf(
-							/* translators: %1$s is the starting price, %2$d the commission percentage. */
-							__( 'Premium plans from %1$s per month. Get %2$d%% commission when you refer.' ),
-							formatUSD( PREMIUM_FROM ).replace( '.00', '' ),
-							PREMIUM_COMMISSION
-						) }
-					</Heading>
-					<Text variant="muted">{ __( 'per site, when billed monthly' ) }</Text>
-				</VStack>
-				<CheckGrid items={ PREMIUM_FEATURES } />
-			</VStack>
+			<PremiumDetails />
 		</VStack>
 	);
 }
@@ -201,22 +234,21 @@ export function PremiumGateRail( {
 						{ sprintf(
 							/* translators: %d is the commission percentage. */
 							__(
-								'Premium plans are sold through referrals. Refer this plan to a client and earn %d%% commission on every payment.'
+								'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
 							),
 							PREMIUM_COMMISSION
 						) }
 					</Text>
-					<Button variant="primary" __next40pxDefaultSize onClick={ onReferNow }>
-						{ __( 'Turn on referral mode' ) }
-					</Button>
-					<Button
-						variant="link"
-						href="https://pressable.com/contact/"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Buying for your agency? Talk to us ↗' ) }
-					</Button>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Refer products' ) }
+						checked={ false }
+						onChange={ onReferNow }
+					/>
+					<CardDivider />
+					<ExternalLink href="https://pressable.com/contact/">
+						{ __( 'Buying for your agency? Talk to us' ) }
+					</ExternalLink>
 				</VStack>
 			</CardBody>
 		</Card>
@@ -507,6 +539,7 @@ export default function PressableContent( {
 	isReferralMode = false,
 	onReferNow,
 	onCategoryChange,
+	premiumUnlocked = false,
 }: {
 	planSlug: string;
 	onPlanChange: ( slug: string ) => void;
@@ -515,6 +548,9 @@ export default function PressableContent( {
 	isReferralMode?: boolean;
 	onReferNow?: () => void;
 	onCategoryChange?: ( category: PlanCategory ) => void;
+	// Premium opens in its pitch state every time it is selected; "Refer now"
+	// unlocks the plan list for that visit only (Noam, Sept 23).
+	premiumUnlocked?: boolean;
 } ) {
 	const signature = usesSignatureCatalog();
 	const [ category, setCategoryState ] = useState< PlanCategory >( () => {
@@ -532,7 +568,9 @@ export default function PressableContent( {
 	const plan = pressablePlans.find( ( p ) => p.slug === planSlug );
 	const isCustomSlug = planSlug === PRESSABLE_CUSTOM_SLUG;
 	const showPremiumPitch =
-		category === 'premium' && ! isReferralMode && premiumTreatment() === 'pitch';
+		category === 'premium' &&
+		( ! isReferralMode || ! premiumUnlocked ) &&
+		premiumTreatment() === 'pitch';
 	const referNow = onReferNow ?? ( () => {} );
 
 	const handleCategoryChange = ( next: PlanCategory ) => {
@@ -624,7 +662,11 @@ export default function PressableContent( {
 						{ showPremiumPitch ? (
 							<PremiumPitch onReferNow={ referNow } />
 						) : (
-							<PlanSpecs category={ category } plan={ plan } isCustom={ isCustomSlug } />
+							category === 'premium' ? (
+								<PremiumSpecs plan={ plan } />
+							) : (
+								<PlanSpecs category={ category } plan={ plan } isCustom={ isCustomSlug } />
+							)
 						) }
 					</VStack>
 				</CardBody>

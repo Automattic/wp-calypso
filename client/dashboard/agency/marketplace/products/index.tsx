@@ -187,7 +187,7 @@ function CartDropdown( {
 } ) {
 	// ?cart=simple shows the line as the prototype had it, for comparison.
 	const cartStyle = new URLSearchParams( window.location.search ).get( 'cart' ) ?? 'full';
-	const checkoutVariant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'a';
+	const checkoutVariant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'dotcom';
 	const [ showDrawerForm, setShowDrawerForm ] = useState( false );
 	const total = items.reduce( ( sum, item ) => sum + item.total, 0 );
 	const commission = items.reduce( ( sum, item ) => sum + ( item.commission ?? 0 ), 0 );

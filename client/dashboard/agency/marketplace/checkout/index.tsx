@@ -828,7 +828,7 @@ function finishReferral( flow: 'send' | 'copy', email: string, link: string ) {
 
 export default function MarketplaceCheckout() {
 	const state = readCheckout();
-	const variant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'a';
+	const variant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'dotcom';
 	const title = state.referral ? __( 'Referral checkout' ) : __( 'Checkout' );
 
 	if ( variant === 'dotcom' ) {

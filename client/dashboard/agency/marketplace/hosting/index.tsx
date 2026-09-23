@@ -744,7 +744,7 @@ function CartDropdown( {
 
 	// A4AD-199: Main strikes the regular price beside the tier price; ?summary=row shows the discount on its own row.
 	const strikeStyle = new URLSearchParams( window.location.search ).get( 'summary' ) !== 'row';
-	const checkoutVariant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'a';
+	const checkoutVariant = new URLSearchParams( window.location.search ).get( 'checkout' ) ?? 'dotcom';
 	return (
 		<Dropdown
 			focusOnMount={ false }
@@ -889,6 +889,17 @@ export default function MarketplaceHosting() {
 	// Which plan type the Pressable picker is on; Premium with referral mode
 	// off changes what the rail shows (see PremiumGateRail / PremiumPitch).
 	const [ pressableCategory, setPressableCategory ] = useState< PlanCategory >( 'standard' );
+	// Premium shows its pitch until "Refer now" is clicked; selecting another
+	// plan type resets it, so Premium always opens fresh.
+	const [ premiumUnlocked, setPremiumUnlocked ] = useState( false );
+	// Premium is locked whenever referral mode is off, full stop; the unlock
+	// flag only covers the pitch variant, which has no toggle of its own.
+	const isPremiumLocked =
+		pressableCategory === 'premium' && ( ! isReferralMode || ! premiumUnlocked );
+	const referNowFromPremium = () => {
+		handleReferralToggle( true );
+		setPremiumUnlocked( true );
+	};
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( () => {
 		if ( ! new URLSearchParams( window.location.search ).has( 'existing' ) ) {
 			return usesSignatureCatalog() ? 'pressable-signature-1' : 'pressable-build';
@@ -1230,8 +1241,12 @@ export default function MarketplaceHosting() {
 								currentPlan={ effectivePressableCurrentPlan }
 								usage={ effectivePressableUsage }
 								isReferralMode={ isReferralMode }
-								onReferNow={ () => handleReferralToggle( true ) }
-								onCategoryChange={ setPressableCategory }
+								onReferNow={ referNowFromPremium }
+								onCategoryChange={ ( next ) => {
+									setPressableCategory( next );
+									setPremiumUnlocked( false );
+								} }
+								premiumUnlocked={ premiumUnlocked }
 							/>
 							<ScheduleDemoBanner />
 						</VStack>
@@ -1245,12 +1260,9 @@ export default function MarketplaceHosting() {
 					</VStack>
 					<div className="marketplace-hosting__rail">
 						<VStack spacing={ 4 }>
-							{ pressableCategory === 'premium' && ! isReferralMode ? (
+							{ isPremiumLocked ? (
 								premiumTreatment() === 'gate' && (
-									<PremiumGateRail
-										plan={ pressablePlan }
-										onReferNow={ () => handleReferralToggle( true ) }
-									/>
+									<PremiumGateRail plan={ pressablePlan } onReferNow={ referNowFromPremium } />
 								)
 							) : (
 								<YourPlan

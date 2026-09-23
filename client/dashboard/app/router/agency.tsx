@@ -307,7 +307,11 @@ export const marketplaceHostingIndexRoute = createRoute( {
 		if ( cause === 'preload' ) {
 			return;
 		}
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( 'pressable' ) } );
+		// Prototype: keep the demo params (?existing, ?titan, ?premium…) across the redirect.
+		throw dashboardRedirect( {
+			to: getMarketplaceHostingSectionRoute( 'pressable' ),
+			search: Object.fromEntries( new URLSearchParams( window.location.search ) ),
+		} );
 	},
 } );
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
