@@ -78,6 +78,63 @@ beforeEach( () => {
 } );
 
 describe( 'DomainUpsellCard', () => {
+	test( 'asks a free site to choose a plan', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false } ],
+		} );
+
+		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: true } } as Site } /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Choose a plan' } ) ).toBeVisible();
+		expect( screen.getByText( /Upgrade to an annual paid plan/ ) ).toBeVisible();
+	} );
+
+	test( 'asks a monthly-billed paid site to switch to annual billing instead of choosing a plan', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false } ],
+		} );
+
+		render(
+			<DomainUpsellCard
+				site={
+					{
+						...mockSite,
+						plan: { is_free: false, billing_period: 'Monthly', product_name_short: 'Personal' },
+					} as Site
+				}
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'button', { name: 'Switch to annual billing' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Personal' ).parentElement ).toHaveTextContent(
+			'Switch your Personal plan to annual billing to get example.com free for one year.'
+		);
+		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Upgrade to an annual paid plan/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'offers the domain itself to an annual paid site that has used its domain credit', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false } ],
+		} );
+
+		render(
+			<DomainUpsellCard
+				site={
+					{
+						...mockSite,
+						plan: { is_free: false, billing_period: 'Yearly', product_name_short: 'Personal' },
+					} as Site
+				}
+			/>
+		);
+
+		expect( await screen.findByRole( 'button', { name: 'Get this domain' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'shows an error notice when the shopping cart chunk fails to load', async () => {
 		const user = userEvent.setup();
 		mockShoppingCartImportError = new Error( 'Loading chunk failed' );

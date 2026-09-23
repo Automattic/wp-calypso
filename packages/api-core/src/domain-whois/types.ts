@@ -41,6 +41,7 @@ export type DomainContactValidationRequestExtraFields = {
 		registrant_entity_type?: string;
 		registrant_identification_number?: string;
 		admin_identification_number?: string;
+		red_es_agreement_accepted?: boolean;
 	};
 	is_for_business?: boolean;
 };
@@ -91,6 +92,7 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_entity_type?: string[];
 		registrant_identification_number?: string[];
 		admin_identification_number?: string[];
+		red_es_agreement_accepted?: string[];
 	};
 	is_for_business?: boolean;
 };
@@ -167,6 +169,7 @@ export type EsDomainContactExtraDetails = {
 	registrantEntityType?: string;
 	registrantIdentificationNumber?: string;
 	adminIdentificationNumber?: string;
+	redEsAgreementAccepted?: boolean;
 };
 
 export interface WhoisDataEntry {

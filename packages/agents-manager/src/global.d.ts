@@ -23,7 +23,6 @@ declare const __i18n_text_domain__: string;
 declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
-			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
@@ -39,7 +38,7 @@ declare const agentsManagerData:
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
-			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			/** The host section the chat runs in, e.g. `wp-admin` or `gutenberg`. */
 			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };

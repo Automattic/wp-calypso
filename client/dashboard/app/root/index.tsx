@@ -92,10 +92,11 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
+			pathname: state.location.pathname,
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -184,7 +185,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <OmnibarHelpCenter /> }
-			{ supports.help && <OmnibarAgentsManager /> }
+			<OmnibarAgentsManager pathname={ pathname } />
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
