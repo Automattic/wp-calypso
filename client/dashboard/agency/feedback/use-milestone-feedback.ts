@@ -1,6 +1,6 @@
 import {
+	a4aFeedbackSurveyMutation,
 	activeAgencyQuery,
-	marketingSurveyMutation,
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -22,7 +22,9 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 	const { data: answered, isLoading: isLoadingPreference } = useQuery(
 		userPreferenceQuery( PREFERENCE )
 	);
-	const { mutate: fileSurvey, isPending: isSubmitting } = useMutation( marketingSurveyMutation() );
+	const { mutate: fileSurvey, isPending: isSubmitting } = useMutation(
+		a4aFeedbackSurveyMutation()
+	);
 	const { mutate: rememberAnswer } = useMutation( userPreferenceMutation( PREFERENCE ) );
 
 	const agencyId = agency?.id;
