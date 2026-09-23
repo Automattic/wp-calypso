@@ -301,6 +301,10 @@ export const Header = ( {
 										accessibleWhenDisabled
 										disabled={ isMediaLibraryDisabled }
 										onClick={ () => {
+											// accessibleWhenDisabled keeps the button clickable, so guard here too.
+											if ( isMediaLibraryDisabled ) {
+												return;
+											}
 											trackImageStudioToolClick( 'media_library' );
 											onClassicMediaEditorNavigation( classicEditorUrl );
 										} }

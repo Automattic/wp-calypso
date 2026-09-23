@@ -38,9 +38,18 @@ jest.mock( '@wordpress/components', () => ( {
 		isPressed,
 		showTooltip,
 		accessibleWhenDisabled,
+		disabled,
 		...props
 	}: any ) => (
-		<button { ...props } aria-label={ label } aria-pressed={ isPressed }>
+		// Mirrors @wordpress/components: accessibleWhenDisabled keeps the button
+		// focusable and clickable, marking it only with aria-disabled.
+		<button
+			{ ...props }
+			aria-label={ label }
+			aria-pressed={ isPressed }
+			disabled={ accessibleWhenDisabled ? undefined : disabled }
+			aria-disabled={ accessibleWhenDisabled && disabled ? true : undefined }
+		>
 			{ children || text }
 		</button>
 	),
@@ -762,7 +771,6 @@ describe( 'Header', () => {
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
 					getHasUnsavedChanges: () => false,
-					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 					...overrides,
 				} ) );
@@ -786,7 +794,7 @@ describe( 'Header', () => {
 
 			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
 
-			expect( screen.getByLabelText( disabledLabel ) ).toBeDisabled();
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
 		it( 'keeps Media Library button enabled when drafts exist but the current image is saved', () => {
@@ -798,13 +806,13 @@ describe( 'Header', () => {
 				screen.getByLabelText(
 					'Edit this image in the WordPress Media Library (opens in a new tab)'
 				)
-			).toBeEnabled();
+			).not.toHaveAttribute( 'aria-disabled' );
 		} );
 
 		it( 'disables Media Library button while saving', () => {
 			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } isSaving /> );
 
-			expect( screen.getByLabelText( disabledLabel ) ).toBeDisabled();
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
 		it( 'disables Media Library button while AI is processing', () => {
@@ -812,7 +820,19 @@ describe( 'Header', () => {
 
 			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
 
-			expect( screen.getByLabelText( disabledLabel ) ).toBeDisabled();
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		it( 'does not navigate when the disabled Media Library button is activated', async () => {
+			const user = userEvent.setup();
+			mockStore( { getHasUnsavedChanges: () => true } );
+
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
+
+			await user.click( screen.getByLabelText( disabledLabel ) );
+
+			expect( propsWithAttachment.onClassicMediaEditorNavigation ).not.toHaveBeenCalled();
+			expect( mockTrackImageStudioToolClick ).not.toHaveBeenCalledWith( 'media_library' );
 		} );
 	} );
 
