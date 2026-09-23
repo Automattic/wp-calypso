@@ -1,8 +1,8 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
-import { useDebounce } from '@wordpress/compose';
-import { type ComponentProps, useCallback, useMemo, useRef } from 'react';
+import { debounce, useEvent } from '@wordpress/compose';
+import { type ComponentProps, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import {
@@ -24,6 +24,13 @@ import {
 	recordFiltersSubmit,
 	recordShowMoreResults,
 } from './analytics';
+import type { SearchTrigger } from '@automattic/domain-search';
+
+type PendingSearch = {
+	query: string;
+	trigger: SearchTrigger;
+	startedAt: number;
+};
 
 export const useWPCOMDomainSearchEvents = ( {
 	vendor,
@@ -42,38 +49,65 @@ export const useWPCOMDomainSearchEvents = ( {
 	const searchCount = useRef( 0 );
 	const lastSearchTime = useRef( Date.now() );
 
-	const triggerDomainSearchEvent = useCallback(
-		( query: string ) => {
-			searchCount.current++;
-			const timeDiffFromLastSearchInSeconds = Math.floor(
-				( Date.now() - lastSearchTime.current ) / 1000
-			);
-			lastSearchTime.current = Date.now();
+	const pendingSearch = useRef< PendingSearch | undefined >( undefined );
 
-			dispatch(
-				recordSearchFormSubmit(
-					query,
-					analyticsSection,
-					searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
-					searchCount.current,
-					vendor,
-					flowName
-				)
-			);
-		},
-		[ vendor, flowName, analyticsSection, dispatch ]
+	const triggerDomainSearchEvent = useEvent( () => {
+		if ( ! pendingSearch.current ) {
+			return;
+		}
+
+		const { query, trigger, startedAt } = pendingSearch.current;
+		pendingSearch.current = undefined;
+
+		searchCount.current++;
+		const timeDiffFromLastSearchInSeconds = Math.floor(
+			( startedAt - lastSearchTime.current ) / 1000
+		);
+		lastSearchTime.current = startedAt;
+
+		dispatch(
+			recordSearchFormSubmit(
+				query,
+				analyticsSection,
+				searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
+				searchCount.current,
+				vendor,
+				flowName,
+				trigger,
+				startedAt
+			)
+		);
+	} );
+
+	// Created during render, not in an effect, because DomainSearch reports its mount search
+	// before this hook's effects run. A pending search is sent early when the user leaves.
+	const debouncedDomainSearchEvent = useMemo(
+		() => debounce( triggerDomainSearchEvent, 10_000 ),
+		[ triggerDomainSearchEvent ]
 	);
 
-	const debouncedDomainSearchEvent = useDebounce( triggerDomainSearchEvent, 10_000 );
+	useEffect( () => {
+		const sendPendingSearch = () => debouncedDomainSearchEvent.flush();
+
+		window.addEventListener( 'pagehide', sendPendingSearch );
+
+		return () => {
+			window.removeEventListener( 'pagehide', sendPendingSearch );
+			sendPendingSearch();
+		};
+	}, [ debouncedDomainSearchEvent ] );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {
 		return {
 			onPageView: () => {
 				dispatch( recordSearchFormView( analyticsSection, flowName ) );
 			},
-			onQueryChange: ( query ) => {
+			onQueryChange: () => {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
-				debouncedDomainSearchEvent( query );
+			},
+			onSearchStart: ( query, trigger ) => {
+				pendingSearch.current = { query, trigger, startedAt: Date.now() };
+				debouncedDomainSearchEvent();
 			},
 			onSkip: ( suggestion ) => {
 				if ( suggestion ) {
@@ -152,11 +186,9 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onFilterApplied: ( filter ) => {
-				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersSubmit( filter, analyticsSection, flowName ) );
 			},
 			onFilterReset: ( filter, keysToReset ) => {
-				debouncedDomainSearchEvent( query ?? '' );
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
 			onShowMoreResults: ( pageNumber ) => {
