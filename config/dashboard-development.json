@@ -8,7 +8,10 @@
 	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
 		"my.a4a.localhost": {
+			"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
+			"favicon_brand": "a4a",
 			"oauth_client_id": 95928,
+			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true }
