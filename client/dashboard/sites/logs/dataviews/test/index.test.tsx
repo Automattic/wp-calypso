@@ -5,7 +5,7 @@
 import '@testing-library/jest-dom';
 import { LogType, type Site } from '@automattic/api-core';
 import { queryClient as appQueryClient } from '@automattic/api-queries';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -260,5 +260,49 @@ describe( 'SiteLogsDataViews', () => {
 
 		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		expect( toggle ).toBeDisabled();
+	} );
+
+	test( 'filters by request URL, and Reset view clears it', async () => {
+		mockPreferences();
+		const requestedQueries = mockServerLogs();
+		appQueryClient.clear();
+		const user = userEvent.setup();
+
+		render(
+			<SiteLogsDataViews
+				gmtOffset={ -8 }
+				timezoneString="America/Los_Angeles"
+				site={ mockSite as Site }
+				dateRange={ fixedDateRange }
+				autoRefresh={ false }
+				setAutoRefresh={ jest.fn() }
+				logType={ LogType.SERVER }
+			/>,
+			{ queryClient: appQueryClient }
+		);
+
+		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) );
+
+		const input = await screen.findByRole( 'textbox', { name: 'Request URL' } );
+		await user.type( input, '/my-post/' );
+		expect( input ).toHaveValue( '/my-post/' );
+
+		// Enter also confirms an IME composition; applying there would unmount the box.
+		fireEvent.keyDown( input, { key: 'Enter', isComposing: true } );
+		expect( input ).toBeInTheDocument();
+
+		await user.keyboard( '{Enter}' );
+
+		const requestedUrlFilter = () => requestedQueries.at( -1 )?.[ 'filter[request_url][]' ];
+		await waitFor( () => expect( requestedUrlFilter() ).toBe( '/my-post/' ) );
+
+		await user.click( await screen.findByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Reset view' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
 	} );
 } );
