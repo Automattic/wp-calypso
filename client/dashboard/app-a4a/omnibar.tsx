@@ -77,8 +77,6 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 			label: __( 'Overview' ),
 			icon: <A4AOmnibarHomeIcon />,
 			href: mainRoute,
-			onClick: ( event ) =>
-				omnibarEvents.linkClick.emit( { href: mainRoute, event: event.nativeEvent } ),
 		},
 		plugins: authUser && supports.help ? [ helpCenterNode ] : [],
 		user: authUser ? buildUserNode( authUser ) : undefined,
