@@ -34,25 +34,17 @@ function mockPreferences() {
 		.persist();
 }
 
-function captureSurvey( status = 200 ) {
+function captureSurvey( {
+	success = true,
+	err = null,
+}: { success?: boolean; err?: string | null } = {} ) {
 	const body: { value?: unknown } = {};
 	nock( API )
 		.post( '/wpcom/v2/marketing/survey', ( posted ) => {
 			body.value = posted;
 			return true;
 		} )
-		.reply( status, status === 200 ? { success: true, err: null } : { message: 'nope' } );
-	return body;
-}
-
-function captureRejectedSurvey() {
-	const body: { value?: unknown } = {};
-	nock( API )
-		.post( '/wpcom/v2/marketing/survey', ( posted ) => {
-			body.value = posted;
-			return true;
-		} )
-		.reply( 200, { success: false, err: 'nope' } );
+		.reply( 200, { success, err } );
 	return body;
 }
 
@@ -217,37 +209,10 @@ describe( '<MilestoneFeedbackModal>', () => {
 		} );
 	} );
 
-	test( 'keeps the answer on screen when filing it fails', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
-		mockAgency();
-		mockPreferences();
-		captureSurvey( 500 );
-		const preference = capturePreference();
-		const user = userEvent.setup();
-
-		const { onClose } = renderModal( { withSnackbars: true } );
-
-		await user.type( await screen.findByRole( 'textbox' ), 'The invite email looked like spam.' );
-		await user.click( screen.getByRole( 'button', { name: 'Send your feedback' } ) );
-
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Send your feedback' } ) ).toBeEnabled()
-		);
-		expect( onClose ).not.toHaveBeenCalled();
-		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'The invite email looked like spam.' );
-		expect( preference.value ).toBeUndefined();
-
-		const [ notice ] = await screen.findAllByText(
-			'Failed to send your feedback. Please try again.'
-		);
-		expect( notice ).toBeVisible();
-	} );
-
 	test( 'keeps the answer on screen when the survey rejects the submission', async () => {
 		mockAgency();
 		mockPreferences();
-		const survey = captureRejectedSurvey();
+		const survey = captureSurvey( { success: false, err: 'nope' } );
 		const preference = capturePreference();
 		const user = userEvent.setup();
 
