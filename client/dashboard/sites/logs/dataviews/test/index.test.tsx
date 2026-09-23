@@ -236,7 +236,7 @@ describe( 'SiteLogsDataViews', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Status' } ) );
 
-		expect( await screen.findByRole( 'option', { name: '404' } ) ).toBeInTheDocument();
+		await screen.findByRole( 'option', { name: '404' } );
 		expect( requestedQueries ).toHaveLength( requestsBefore );
 	} );
 
