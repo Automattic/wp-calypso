@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ProvisionAgencySiteParams } from './types';
+import type {
+	ProvisionAgencyDevSiteParams,
+	ProvisionAgencyDevSiteResponse,
+	ProvisionAgencySiteParams,
+} from './types';
 
 /**
  * Starts provisioning a pending agency site with the given configuration.
@@ -13,4 +17,42 @@ export async function provisionAgencySite(
 		path: `/agency/${ agencyId }/sites/${ params.id }/provision`,
 		body: params,
 	} );
+}
+
+/**
+ * Creates a free development site against one of the agency's dev licenses.
+ *
+ * Unlike a paid site there is nothing to provision against, so this one call
+ * issues the license and creates the site, and returns the site it made.
+ */
+export async function provisionAgencyDevSite(
+	agencyId: number,
+	params: ProvisionAgencyDevSiteParams
+): Promise< ProvisionAgencyDevSiteResponse > {
+	return wpcom.req.post( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites/provision-dev-site`,
+		body: params,
+	} );
+}
+
+/**
+ * Drops a site from the agency's dashboard. The site itself and any licenses
+ * attached to it are left alone.
+ */
+export async function removeAgencySite( agencyId: number, siteId: number ): Promise< boolean > {
+	const response: boolean | { success?: boolean } = await wpcom.req.post( {
+		method: 'DELETE',
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites/${ siteId }`,
+		// The ids are already in the path, but the endpoint has always been called
+		// with them in the body too. Keep sending both until that is confirmed
+		// redundant.
+		body: { siteId, agency_id: agencyId },
+	} );
+
+	// The endpoint answers with a bare `true`. Older callers typed it as
+	// `{ success }` without ever reading it, so accept both rather than reporting
+	// a removal that did happen as a failure.
+	return typeof response === 'boolean' ? response : !! response?.success;
 }

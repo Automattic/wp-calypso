@@ -20,6 +20,7 @@
 	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
 	"blackbox_api_key": "1b4f123e7dae4d83bbd18170c4358f8e",
+	"blackbox_signup_api_key": "ee892f3691e15bbc28b5cc1f18f05262",
 	"features": {
 		"100-year-plan/vip": true,
 		"ad-tracking": true,

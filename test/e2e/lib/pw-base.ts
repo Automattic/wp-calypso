@@ -544,7 +544,7 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( testInfo.project.name === 'authentication' ) {
+		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
