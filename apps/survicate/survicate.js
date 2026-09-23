@@ -5,8 +5,8 @@ import {
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
 
-// Matches the `mobile` breakpoint the Multi-site Dashboard gates on via
-// `useViewportMatch( 'mobile', '<' )`, so both surfaces agree on "mobile".
+// Matches the Multi-site Dashboard's `useViewportMatch( 'mobile', '<' )`, which
+// resolves to `(max-width: 480px)`, so both surfaces agree on "mobile".
 const MOBILE_BREAKPOINT = 480;
 
 function init() {
@@ -19,7 +19,7 @@ function init() {
 
 	const { locale = '', traits = {} } = config;
 
-	if ( ! shouldLoadSurvicate( { locale, isMobile: window.innerWidth < MOBILE_BREAKPOINT } ) ) {
+	if ( ! shouldLoadSurvicate( { locale, isMobile: window.innerWidth <= MOBILE_BREAKPOINT } ) ) {
 		return;
 	}
 

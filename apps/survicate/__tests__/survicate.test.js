@@ -71,12 +71,20 @@ describe( 'wp-admin Survicate entry', () => {
 		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: false } );
 	} );
 
-	it( 'treats viewports narrower than 480px as mobile', () => {
-		setViewportWidth( 479 );
+	it.each( [ 479, 480 ] )( 'treats a %ipx viewport as mobile', ( width ) => {
+		setViewportWidth( width );
 
 		boot( CONFIG );
 
 		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: true } );
+	} );
+
+	it( 'treats a 481px viewport as desktop', () => {
+		setViewportWidth( 481 );
+
+		boot( CONFIG );
+
+		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: false } );
 	} );
 
 	it( 'does not load the SDK when the load gate says no', () => {
@@ -96,11 +104,18 @@ describe( 'wp-admin Survicate entry', () => {
 	} );
 
 	it( 'swallows an SDK load failure', async () => {
+		const onUnhandledRejection = jest.fn();
+		process.on( 'unhandledRejection', onUnhandledRejection );
 		mockLoadSurvicateScript.mockRejectedValue( new Error( 'blocked' ) );
 
-		expect( () => boot( CONFIG ) ).not.toThrow();
-		await flushPromises();
+		try {
+			expect( () => boot( CONFIG ) ).not.toThrow();
+			await flushPromises();
 
-		expect( mockSetSurvicateVisitorTraits ).not.toHaveBeenCalled();
+			expect( onUnhandledRejection ).not.toHaveBeenCalled();
+			expect( mockSetSurvicateVisitorTraits ).not.toHaveBeenCalled();
+		} finally {
+			process.off( 'unhandledRejection', onUnhandledRejection );
+		}
 	} );
 } );
