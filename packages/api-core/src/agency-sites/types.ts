@@ -24,3 +24,38 @@ export interface AgencyPendingSite {
 export interface CreateAgencySiteResponse {
 	success: boolean;
 }
+
+export interface ProvisionAgencySiteParams {
+	id: number;
+	site_name?: string;
+	php_version?: string;
+	primary_data_center?: string;
+	is_fully_managed_agency_site?: boolean;
+}
+
+/**
+ * Whether a `.wordpress.com` address is free for the agency to claim.
+ */
+export interface AgencySiteAddressValidation {
+	valid: boolean;
+}
+
+/**
+ * A free development site is created outright rather than provisioned against a
+ * site the agency already paid for, so there is no pending record to name here.
+ */
+export interface ProvisionAgencyDevSiteParams {
+	site_name?: string;
+	php_version?: string;
+	primary_data_center?: string;
+	is_fully_managed_agency_site?: boolean;
+}
+
+/** The `/agency/{id}/sites/provision-dev-site` response, narrowed to the site it created. */
+export interface ProvisionAgencyDevSiteResponse {
+	site: {
+		id: number;
+		title: string;
+		url: string;
+	};
+}

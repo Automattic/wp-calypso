@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { calculateDiscountPercentage } from '../../lib/plan-pricing-utils';
 import { getRenewalPricingText } from './get-renewal-pricing-text';
@@ -330,22 +330,28 @@ export default function usePlanBillingDescription( {
 		} );
 	} else if ( showSimplifiedBillingDescription ) {
 		// Use simplified billing description
-		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 12 },
+		const simplifiedBillingDescription = ( months: number ) =>
+			fixMe( {
+				text: 'per month, billed every %(months)s months, excl. taxes',
+				newCopy: translate( 'per month, billed every %(months)s months, excl. taxes', {
+					args: { months },
+					comment: 'Excl. Taxes is short for excluding taxes',
+				} ),
+				oldCopy: translate( 'per month, billed every %(months)s months', {
+					args: { months },
+				} ),
 			} );
+
+		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+			return simplifiedBillingDescription( 12 );
 		}
 
 		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 24 },
-			} );
+			return simplifiedBillingDescription( 24 );
 		}
 
 		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 36 },
-			} );
+			return simplifiedBillingDescription( 36 );
 		}
 	} else if ( originalPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

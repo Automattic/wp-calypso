@@ -12,7 +12,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import wasMigrationTrialSite from 'calypso/state/selectors/was-migration-trial-site';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -24,7 +24,7 @@ const BusinessTrialExpired = (): JSX.Element => {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID ?? null;
 	const siteSlug = selectedSite?.slug ?? null;
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const sitePurchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const siteIsMigration = useSelector( ( state ) => wasMigrationTrialSite( state, siteId ) );
 
@@ -33,7 +33,7 @@ const BusinessTrialExpired = (): JSX.Element => {
 			sitePurchases.filter(
 				( purchase ) =>
 					! [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ].includes(
-						purchase.productSlug
+						purchase.product_slug
 					)
 			),
 		[ sitePurchases ]

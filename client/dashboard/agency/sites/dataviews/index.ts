@@ -12,7 +12,7 @@ import {
 import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-export { getAgencyActions } from './actions';
+export { getAgencyActions, useAgencyActions } from './actions';
 
 export function useAgencyFields( {
 	viewType,

@@ -2481,6 +2481,7 @@ __metadata:
   resolution: "@automattic/survicate@workspace:packages/survicate"
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     debug: "npm:^4.4.1"
@@ -2750,6 +2751,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-checkout@workspace:packages/wpcom-checkout"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"

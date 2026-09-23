@@ -71,7 +71,6 @@ export default function Omnibar( {
 	useOmnibarBridge();
 
 	const sectionName = useSelector( getSectionName );
-
 	const config: AppConfig = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
 		name: 'WordPress.com',

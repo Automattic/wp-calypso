@@ -107,6 +107,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
+	getDelayedDowngradeRenewalPriceText,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -1117,6 +1118,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const isCentennial = isCentennialPurchase( purchase );
 	// Email plans are billed per mailbox; show the per-mailbox renewal price.
 	if ( isEmailPlanManagementEnabled( purchase ) && ! purchase.is_trial_plan ) {
@@ -1168,6 +1170,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				} ),
 			} )
 		: '';
+	// The offer text describes the current plan, which won't renew if a downgrade is scheduled.
+	const renewalNote =
+		getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation ) ?? offerText;
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -1176,7 +1181,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				isSmallestUnit: true,
 			} ) }
 			description={
-				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + renewalNote
 			}
 		/>
 	);
@@ -1583,6 +1588,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 export default function PurchaseSettings() {
 	const { user } = useAuth();
+	const hasEnTranslation = useHasEnTranslation();
 	const { supports } = useAppContext();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
@@ -1629,7 +1635,12 @@ export default function PurchaseSettings() {
 			return __( 'Paid until' );
 		}
 		if ( displayRenewDate ) {
-			return __( 'Renews' );
+			return purchase.is_delayed_downgrade_pending && hasEnTranslation( 'Downgrades and renews' )
+				? __( 'Downgrades and renews' )
+				: __( 'Renews' );
+		}
+		if ( isOneTimePurchase( purchase ) ) {
+			return __( 'Renewal status' );
 		}
 		return __( 'Expires' );
 	} )();
@@ -1762,7 +1773,10 @@ export default function PurchaseSettings() {
 									if ( isExpiredAndInGracePeriod( purchase ) ) {
 										return formattedExpiry;
 									}
-									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'One-time purchase' );
+									}
+									if ( isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
 									if ( displayRenewDate ) {
@@ -1805,6 +1819,9 @@ export default function PurchaseSettings() {
 									}
 									if ( purchase.is_auto_renew_enabled ) {
 										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'Does not renew' );
 									}
 									return __( 'Auto-renew is disabled' );
 								} )() }

@@ -7,6 +7,7 @@ import {
 } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
+import { getWooZendeskIntegrationKey } from '../utils/is-woo-ai-provider';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -30,6 +31,8 @@ export interface AgentsManagerContextType {
 	sectionName: string;
 	/** The current route path. */
 	currentRoute?: string;
+	/** Whether this screen is currently enabled only for internal users. */
+	isInternalOnly: boolean;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
@@ -59,6 +62,7 @@ const defaultContext: AgentsManagerContextType = {
 	siteKey: NO_SITE,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
+	isInternalOnly: false,
 	isEligibleForChat: false,
 	zendeskConversationTags: [],
 	agentConfig: null,
@@ -77,6 +81,7 @@ export interface AgentsManagerContextProviderProps {
 			| 'currentUser'
 			| 'site'
 			| 'currentRoute'
+			| 'isInternalOnly'
 			| 'isEligibleForChat'
 			| 'zendeskConversationTags'
 			| 'zendeskSmoochIntegrationKey'
@@ -94,6 +99,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
+	const zendeskSmoochIntegrationKey = getWooZendeskIntegrationKey(
+		value.zendeskSmoochIntegrationKey
+	);
 
 	const navigate = useNavigate();
 
@@ -122,6 +130,7 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				...defaultContext,
 				...value,
 				isLoggedIn,
+				zendeskSmoochIntegrationKey,
 				agentConfig,
 				setAgentConfig,
 				getTabSessionId,

@@ -4,9 +4,10 @@ import debug from './debug';
 /**
  * Why a survey was suppressed. `modal` is the signal that measures this
  * package's modal-aware suppression; `help_center` is the pre-existing rule,
- * recorded alongside so the two can be compared.
+ * recorded alongside so the two can be compared. `support_session` covers a
+ * Happiness Engineer working in the user's account.
  */
-export type SuppressionReason = 'modal' | 'help_center';
+export type SuppressionReason = 'modal' | 'help_center' | 'support_session';
 
 /**
  * Which suppression path fired:
