@@ -3,6 +3,7 @@ import { getBrowserSafeLocale } from 'i18n-calypso';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
+export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
 
 /** One balance shown as a row in the credits popover. */
 export interface CreditsPool {
@@ -18,6 +19,8 @@ export interface CreditsPool {
 
 export interface CreditsStatus {
 	plan: CreditsPlan;
+	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
+	planTier?: CreditsPlanTier;
 	/** Overall remaining share, 0–100; drives the ring and tooltip. */
 	percent: number;
 	pools: CreditsPool[];

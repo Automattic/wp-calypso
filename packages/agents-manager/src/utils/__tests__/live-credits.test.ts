@@ -26,6 +26,50 @@ it( 'adapts the real draft allowance to one exact paid pool with its server rese
 		],
 	} );
 } );
+it.each( [ 'personal', 'premium', 'business', 'commerce' ] as const )(
+	'preserves the server tier %s independently of the allowance amount',
+	( plan_tier ) => {
+		const snapshot = creditSnapshot( { plan_tier } );
+		const parsed = parseCreditSnapshot( snapshot, 123 );
+		expect( parsed ).toEqual( snapshot );
+		expect( buildLiveCreditsStatus( parsed! ) ).toMatchObject( {
+			plan: 'paid',
+			planTier: plan_tier,
+			remaining: 2450,
+		} );
+	}
+);
+it( 'retains legacy balances without inferring a tier from the allowance', () => {
+	const parsed = parseCreditSnapshot( creditSnapshot(), 123 );
+	const status = buildLiveCreditsStatus( parsed! );
+	expect( parsed ).not.toHaveProperty( 'plan_tier' );
+	expect( status ).not.toHaveProperty( 'planTier' );
+	expect( status ).toMatchObject( { plan: 'paid', remaining: 2450 } );
+} );
+it.each( [
+	undefined,
+	null,
+	'',
+	'free',
+	'enterprise',
+	'Personal',
+	2500,
+	false,
+	{},
+	[ 'personal' ],
+] )(
+	'ignores unknown tier %p without discarding or mutating the numeric snapshot',
+	( plan_tier ) => {
+		const snapshot = Object.freeze( { ...creditSnapshot(), plan_tier } );
+		const parsed = parseCreditSnapshot( snapshot, 123 );
+		expect( parsed ).toEqual( creditSnapshot() );
+		expect( parsed ).not.toHaveProperty( 'plan_tier' );
+		const status = buildLiveCreditsStatus( parsed! );
+		expect( status ).not.toHaveProperty( 'planTier' );
+		expect( status ).toMatchObject( { plan: 'paid', remaining: 2450 } );
+		expect( snapshot.plan_tier ).toBe( plan_tier );
+	}
+);
 it.each( [ false, true ] )(
 	'accepts exhausted completion and blocked rejection (blocked=%s)',
 	( blocked ) => {

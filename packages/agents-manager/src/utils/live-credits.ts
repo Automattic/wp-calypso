@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getBrowserSafeLocale } from 'i18n-calypso';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import type { CreditsStatus } from './credits';
+import type { CreditsPlanTier, CreditsStatus } from './credits';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 /** The opted-in allowance draft's terminal result.ai_credits contract. */
@@ -15,6 +15,7 @@ export interface CreditSnapshot {
 	preview: true;
 	enforcement: 'site_allowance';
 	blog_id: number;
+	plan_tier?: CreditsPlanTier;
 	credits_limit: number;
 	credits_used: number;
 	credits_remaining: number;
@@ -64,7 +65,13 @@ export function parseCreditSnapshot( value: unknown, siteId: number ): CreditSna
 	) {
 		return undefined;
 	}
-	return value as CreditSnapshot;
+	const { plan_tier: planTier, ...balance } = snapshot;
+	const isKnownTier =
+		planTier === 'personal' ||
+		planTier === 'premium' ||
+		planTier === 'business' ||
+		planTier === 'commerce';
+	return { ...balance, ...( isKnownTier ? { plan_tier: planTier } : {} ) } as CreditSnapshot;
 }
 
 export function getLiveCreditSiteId(
@@ -94,6 +101,7 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	}
 	return {
 		plan: 'paid',
+		...( snapshot.plan_tier ? { planTier: snapshot.plan_tier } : {} ),
 		percent,
 		remaining: snapshot.credits_remaining,
 		pools: [

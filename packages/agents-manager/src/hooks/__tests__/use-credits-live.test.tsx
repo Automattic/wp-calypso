@@ -106,7 +106,7 @@ afterEach( () => {
 } );
 
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
-	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 	const { result } = renderCredits();
 	expect( result.current.trailingActions ).toBeUndefined();
 	await flush();
@@ -121,8 +121,80 @@ it( 'reads the authenticated balance on opening without sending a prompt', async
 		}
 	);
 	expect( props( result.current ).status.remaining ).toBe( 2450 );
+	expect( props( result.current ).status.planTier ).toBe( 'personal' );
 	expect( result.current.beforeSubmit() ).toBe( true );
 	expect( authProvider ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'refreshes the paid tier and balance together after an upgrade', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	const { result } = renderCredits();
+	await flush();
+	expect( props( result.current ).status.planTier ).toBe( 'personal' );
+	fetchMock.mockResolvedValueOnce(
+		response(
+			creditSnapshot( {
+				plan_tier: 'business',
+				credits_limit: 15000,
+				credits_remaining: 14950,
+			} )
+		)
+	);
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( props( result.current ).status ).toMatchObject( {
+		plan: 'paid',
+		planTier: 'business',
+		remaining: 14950,
+		pools: [ { total: 15000, remaining: 14950 } ],
+	} );
+} );
+it.each( [ 'GET', 'terminal' ] )(
+	'%s replaces a known tier with unknown metadata while retaining the current balance',
+	async ( source ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'commerce' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		for ( const tier of [ {}, { plan_tier: 'enterprise' }, { plan_tier: null } ] ) {
+			await receive( creditSnapshot( { plan_tier: 'commerce' } ) );
+			const snapshot = { ...exhausted(), ...tier };
+			if ( source === 'GET' ) {
+				fetchMock.mockResolvedValueOnce( response( snapshot ) );
+				act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+				await flush();
+			} else {
+				await receive( snapshot );
+			}
+			expect( props( result.current ).status ).not.toHaveProperty( 'planTier' );
+			expect( props( result.current ).status ).toMatchObject( { plan: 'paid', remaining: 0 } );
+			act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+			expect( result.current.notice ).toBeUndefined();
+		}
+	}
+);
+it( 'does not carry a paid tier across sites or reuse a prior visit callback', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'business' } ) ) );
+	const view = renderCredits();
+	await flush();
+	const oldObserver = mockConfig.onTaskUpdate;
+	expect( props( view.result.current ).status.planTier ).toBe( 'business' );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: 456 } ) ) );
+	view.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	} );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
+	expect( props( view.result.current ).status ).not.toHaveProperty( 'planTier' );
+	await receive( creditSnapshot( { blog_id: 456, plan_tier: 'premium' } ) );
+	expect( props( view.result.current ).status.planTier ).toBe( 'premium' );
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	view.rerender( defaultOptions );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
+	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'business' } ) ) ) );
+	expect( props( view.result.current ).status ).not.toHaveProperty( 'planTier' );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
 it.each( [ 401, 403, 404, 503 ] )(
 	'treats a %i read as unknown rather than zero',
@@ -244,14 +316,15 @@ it.each( [ 'success', 'failure' ] )(
 		fetchMock.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		await receive( exhausted() );
+		await receive( { ...exhausted(), plan_tier: 'commerce' } );
 		if ( outcome === 'success' ) {
-			read.resolve( response( creditSnapshot() ) );
+			read.resolve( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		} else {
 			read.reject( new Error( 'Late network error' ) );
 		}
 		await flush();
 		expect( props( result.current ).status.remaining ).toBe( 0 );
+		expect( props( result.current ).status.planTier ).toBe( 'commerce' );
 	}
 );
 it( 'uses the terminal balance and avoids reads while an Agent task is running', async () => {
@@ -382,11 +455,12 @@ it.each( [ 'completed', 'failed', 'canceled' ] as const )(
 		const view = renderCredits();
 		mockIsProcessing = true;
 		view.rerender( defaultOptions );
-		await receive( creditSnapshot(), state );
+		await receive( creditSnapshot( { plan_tier: 'premium' } ), state );
 		mockIsProcessing = false;
 		view.rerender( defaultOptions );
 		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 		expect( props( view.result.current ).status.percent ).toBe( 98 );
+		expect( props( view.result.current ).status.planTier ).toBe( 'premium' );
 	}
 );
 it( 'clears old amounts after cancellation/error without terminal metadata, including intermediate completions', async () => {
