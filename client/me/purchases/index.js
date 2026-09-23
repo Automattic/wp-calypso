@@ -104,7 +104,12 @@ export default ( router ) => {
 	// Legacy:
 
 	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
-	router( paths.deprecated.otherPurchases, () => page.redirect( paths.purchasesRoot ) );
+	router(
+		paths.deprecated.otherPurchases,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/monetize-subscriptions' ),
+		() => page.redirect( paths.purchasesRoot )
+	);
 
 	router(
 		paths.purchasesRoot + '/memberships/:subscriptionId',

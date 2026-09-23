@@ -3,7 +3,7 @@ import {
 	userPreferenceMutation,
 	siteMediaStorageQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { useState } from 'react';
@@ -19,10 +19,14 @@ import type { Site } from '@automattic/api-core';
  * In-session dismissal is handled inside the component itself.
  */
 export function useShouldShowStorageWarningBanner( site: Site ) {
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
+
+	if ( ! mediaStorage ) {
+		return false;
+	}
 
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 	return alertLevel !== 'none' && ! ( alertLevel === 'warning' && isDismissedPersisted );
@@ -30,16 +34,20 @@ export function useShouldShowStorageWarningBanner( site: Site ) {
 
 export function StorageWarningBanner( { site }: { site: Site } ) {
 	const shouldShow = useShouldShowStorageWarningBanner( site );
-	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( site.ID ) );
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
+	if ( ! shouldShow || ! mediaStorage ) {
+		return null;
+	}
+
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 
 	// Optimistically hide the banner while the dismissal preference is saving.
-	if ( ! shouldShow || ( alertLevel === 'warning' && isDismissing ) ) {
+	if ( alertLevel === 'warning' && isDismissing ) {
 		return null;
 	}
 

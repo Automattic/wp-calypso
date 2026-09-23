@@ -1117,6 +1117,7 @@ export type DomainContactDetailsExtra = {
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
 	in?: InDomainContactExtraDetails | null;
+	es?: EsDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1141,6 +1142,12 @@ export type FrDomainContactExtraDetails = {
 export type InDomainContactExtraDetails = {
 	nexusDeclaration?: boolean;
 	nexusConnectionType?: string;
+};
+
+export type EsDomainContactExtraDetails = {
+	registrantEntityType?: string;
+	registrantIdentificationNumber?: string;
+	adminIdentificationNumber?: string;
 };
 
 export interface TermsOfServiceRecord {

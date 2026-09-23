@@ -7,13 +7,14 @@ import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
 } from '../test-helpers/factories/name-pulse';
 import { NamePulseResults } from '.';
-import type { DomainSearchCart, SelectedDomain } from '../page/types';
+import type { DomainSearchCart, DomainSearchProps, SelectedDomain } from '../page/types';
 import type { DomainAvailability } from '@automattic/api-core';
 import type { Meta } from '@storybook/react';
 
@@ -90,12 +91,19 @@ const useStoryCart = (): DomainSearchCart => {
 	};
 };
 
-const StoryDomainSearch = ( { query }: { query: string } ) => {
+const StoryDomainSearch = ( {
+	query,
+	slots,
+}: {
+	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
+} ) => {
 	const cart = useStoryCart();
 	const [ currentQuery, setCurrentQuery ] = useState( query );
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query: currentQuery,
+		slots,
 		config: { showNamePulseSearch: true },
 		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
@@ -115,10 +123,15 @@ const StoryDomainSearch = ( { query }: { query: string } ) => {
 							domainNames.filter( ( name ) => ! OMITTED.has( name ) )
 						);
 					},
-					suggestions: async () => {
-						await delay( 1200 );
+					suggestions: async ( { use_ai } ) => {
+						await delay( use_ai ? 2400 : 1200 );
 
-						return { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] };
+						return {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						};
 					},
 					tlds: async () => {
 						await delay( 400 );
@@ -147,6 +160,17 @@ export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
 
+export const AiMode = () => <StoryDomainSearch query="a blog about ice cream" />;
+
 // Starts on the initial state so the swap to the results page can be checked
 // for layout shifts.
 export const EmptyQuery = () => <StoryDomainSearch query="" />;
+
+// The real promo card lives in `client/`, out of this package's reach.
+const BeforeResultsStandIn = () => (
+	<div style={ { padding: '1rem', border: '1px dashed currentColor' } }>Promo card slot</div>
+);
+
+export const WithBeforeResults = () => (
+	<StoryDomainSearch query="icecream" slots={ { BeforeResults: BeforeResultsStandIn } } />
+);

@@ -103,7 +103,8 @@ export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean
 export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
-	graph?: BuildWowGraph
+	graph?: BuildWowGraph,
+	blueprintId?: string
 ): Promise< BuildWowResponse > {
 	return wpcom.req.post(
 		{
@@ -116,6 +117,9 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
+			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
+			// the server otherwise refuses as somebody's established site.
+			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
 		}
 	);
 }
