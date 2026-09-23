@@ -49,6 +49,7 @@ export default function AgencyTierOverviewContent( {
 				style={ {
 					border: 0,
 					borderBlockEnd: '1px solid var(--color-gray-100)',
+					blockSize: 0,
 					margin: '16px 0',
 				} }
 			/>

@@ -151,6 +151,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 								style={ {
 									border: 0,
 									borderBlockEnd: '1px solid var( --color-border-subtle, #f0f0f0 )',
+									blockSize: 0,
 									margin: 0,
 								} }
 							/>
