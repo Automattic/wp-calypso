@@ -1,41 +1,45 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
-// Sits at the top of the Discover stream, between the navigation and the
-// compact post cards. Spacing and type scale follow the project design:
-// ~32px above the heading, 14px heading -> cards, 12px between cards,
-// 12px to "More like this", ~32px before the feed resumes.
+// Sits in the Recent stream between compact post cards. Values follow the
+// Figma design (Product Compass Feedback, node 3315-3049): 20px heading ->
+// cards, 14px between cards, 20px to "More like this", ~48px around the block.
 .reader-discover-new-blogs {
 	// padding, not margin: a top margin would collapse through the stream's
-	// list wrapper and not show up.
-	padding-top: 16px;
-	margin: 0 0 28px;
+	// list wrapper and not show up. The preceding card adds its own 24px.
+	padding-top: 24px;
+	margin: 0 0 48px;
 
 	&__header {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		margin: 0 0 14px;
+		margin: 0 0 20px;
 	}
 
 	&__heading {
-		font-size: $font-body-small;
+		font-size: $font-body;
 		font-weight: 600;
-		line-height: 1.4;
+		line-height: 1;
 		margin: 0;
 	}
 
-	&__hide.components-button.is-link {
-		font-size: $font-body-small;
-		color: var(--color-text-subtle);
+	&__hide.components-button.is-link,
+	&__more.components-button.is-link {
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1;
 		text-decoration: underline;
 	}
 
+	&__hide.components-button.is-link {
+		color: var(--color-text-subtle);
+	}
+
 	&__more.components-button.is-link {
-		margin-top: 12px;
-		font-size: $font-body-small;
+		margin-top: 20px;
 		color: var(--color-text);
-		text-decoration: underline;
 	}
 
 	&__list {
@@ -45,10 +49,10 @@
 	}
 
 	&__card {
-		margin: 0 0 12px;
-		padding: 20px;
+		margin: 0 0 14px;
+		padding: 20px 24px;
 		border: 1px solid var(--color-border-subtle);
-		border-radius: 8px;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		background: var(--color-surface);
 
 		&:last-child {
@@ -67,7 +71,7 @@
 	&__site {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 12px;
 		min-width: 0;
 		color: var(--color-text);
 		text-decoration: none;
@@ -78,7 +82,8 @@
 	}
 
 	&__site-name {
-		font-size: $font-body-small;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.8125rem;
 		font-weight: 600;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -95,13 +100,14 @@
 		// shown. Overrides the base .follow-button look.
 		.follow-button.reader-discover-new-blogs__subscribe {
 			box-sizing: border-box;
-			padding: 4px 12px;
+			padding: 5px 12px;
 			border: 1px solid var(--color-primary);
-			border-radius: 4px;
+			border-radius: 3px;
 			background: var(--color-surface);
-			font-size: $font-body-small;
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: 0.8125rem;
 			font-weight: 500;
-			line-height: 1.4;
+			line-height: 20px;
 
 			svg.reader-follow-feed,
 			svg.reader-following-feed {
@@ -111,6 +117,8 @@
 			.follow-button__label {
 				display: inline;
 				margin: 0;
+				font-size: inherit;
+				line-height: inherit;
 				color: var(--color-primary);
 			}
 
@@ -135,7 +143,8 @@
 		}
 
 		.reader-discover-new-blogs__dismiss {
-			color: var(--color-text-subtle);
+			color: var(--color-text);
+			opacity: 0.36;
 			min-width: 0;
 			padding: 0;
 			height: auto;
@@ -144,9 +153,9 @@
 
 	&__title {
 		margin: 0 0 10px;
-		font-size: $font-body-large;
+		font-size: $font-title-small;
 		font-weight: 600;
-		line-height: 1.3;
+		line-height: 1.2;
 
 		a {
 			color: var(--color-text);
@@ -193,16 +202,16 @@
 
 		.reader-discover-new-blogs__subscribe.is-placeholder {
 			display: inline-block;
-			width: 93px;
-			height: 30px;
-			border-radius: 4px;
+			width: 88px;
+			height: 32px;
+			border-radius: 3px;
 			@include placeholder();
 		}
 
 		.reader-discover-new-blogs__dismiss.is-placeholder {
 			display: inline-block;
-			width: 14px;
-			height: 14px;
+			width: 20px;
+			height: 20px;
 			@include placeholder();
 		}
 

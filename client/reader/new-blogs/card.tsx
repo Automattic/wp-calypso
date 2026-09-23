@@ -84,7 +84,7 @@ export default function NewBlogCard( { rec, onDismiss, onOpen, onFollowToggle }:
 					<Button
 						className="reader-discover-new-blogs__dismiss"
 						icon={ close }
-						iconSize={ 14 }
+						iconSize={ 20 }
 						label={ translate( 'Not interested' ) }
 						showTooltip
 						onClick={ onDismiss }
