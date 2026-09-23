@@ -115,8 +115,12 @@ support-session handling of its own: it only ever runs once the load gate has pa
 which means there is no support session. Its tests mock `isSupportSession()` to a
 constant `false` to keep that invariant explicit — don't add support-session cases there.
 
-**The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
-Jetpack monorepo) and is not covered here — it needs its own guard.
+**wp-admin runs this same package** (built by `apps/survicate/`, enqueued by
+`class-survicate.php` in the Jetpack monorepo), but `isSupportSession()` reads
+browser state Calypso sets (`sessionStorage.boot_support_user`,
+`window.isSupportSession`) that does not exist in wp-admin, so the gate is
+inert there. A wp-admin support-session signal would have to come from PHP
+through `window.wpcomSurvicateConfig`. Tracked as a follow-up.
 
 ## Modal & Help Center coordination (defense-in-depth)
 
@@ -231,12 +235,8 @@ rule. Properties:
   explicit `invokeSurvicateEvent()` was skipped, plus an `event_name` property).
 
 Recording is best-effort and wrapped in `try/catch` — a failing analytics call
-never interferes with suppression. The wp-admin loader (PHP) uses its own
-analytics path and does not emit this event yet.
-
-The wp-admin loader (`jetpack-mu-wpcom/src/features/survicate/class-survicate.php`,
-Jetpack monorepo) inlines the same logic in its emitted script; keep the two in sync
-when changing selectors or behavior.
+never interferes with suppression. The wp-admin bundle emits it too, with no
+property distinguishing the host yet.
 
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
@@ -267,9 +267,18 @@ race where a survey is already mid-display as a modal or the Help Center appears
 
 ## Consumers
 
-The package's entry point is `client/dashboard/app/survicate/index.tsx` (`useSurvicate`
-hook), gated behind the `survicate_enabled` config flag. `invokeSurvicateEvent` is also
-called from classic Calypso purchase/cancel and checkout flows.
+Three consumers, all funnelled through `shouldLoadSurvicate()`:
+
+- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.tsx` (`useSurvicate`),
+  gated behind the `survicate_enabled` config flag. Pushes identity and visit-count traits.
+- **Classic Calypso** — `client/lib/analytics/survicate.js` (`addSurvicate`), and
+  `invokeSurvicateEvent` from purchase/cancel and checkout flows.
+- **wp-admin on Simple and Atomic** — `apps/survicate/survicate.js`, bundled to
+  `https://widgets.wp.com/survicate/survicate.min.js` and enqueued by
+  `class-survicate.php` in `jetpack-mu-wpcom`. PHP decides eligibility and emits
+  site-level traits on `window.wpcomSurvicateConfig`; the bundle does the rest.
+  Ship a change to wp-admin with `install-plugin.sh survicate --release` on a
+  sandbox followed by `deploy wpcom` — no Jetpack release needed.
 
 ## Conventions & gotchas
 
