@@ -361,6 +361,7 @@ export async function streamToTask( stream: AsyncIterable< TaskUpdate > ): Promi
 			finalTask = {
 				id: update.id,
 				status: update.status,
+				...( update.aiCredits !== undefined && { ai_credits: update.aiCredits } ),
 			};
 		}
 	}

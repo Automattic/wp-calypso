@@ -3,7 +3,14 @@ import React, { createContext, useCallback, useContext, useRef, useState } from 
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
 import { ComplianceDisclosure, DefaultComplianceDisclosure } from './chat/ComplianceDisclosure';
 import { SourcesCard } from './sources';
-import type { AgentUIProps, Message, NoticeConfig, SubmitSource, Suggestion } from '../types';
+import type {
+	AgentUIProps,
+	Message,
+	NoticeConfig,
+	SubmitSource,
+	Suggestion,
+	TrailingActions,
+} from '../types';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	inputValue: string;
@@ -236,10 +243,14 @@ export function EmbeddedAgentUINotice( {
 export function EmbeddedAgentUIInput( {
 	className,
 	disabled,
+	leadingActions,
+	trailingActions,
 	onKeyDown,
 }: {
 	className?: string;
 	disabled?: boolean;
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 } = {} ) {
 	const {
@@ -249,6 +260,8 @@ export function EmbeddedAgentUIInput( {
 		files,
 		inputValue,
 		isProcessing,
+		leadingActions: contextLeadingActions,
+		trailingActions: contextTrailingActions,
 		maxInputLength = 600,
 		onStop,
 		placeholder,
@@ -260,6 +273,28 @@ export function EmbeddedAgentUIInput( {
 		! disabled &&
 		( isProcessing || ( !! inputValue.trim() && inputValue.length <= maxInputLength ) );
 	const placeholderText = Array.isArray( placeholder ) ? placeholder[ 0 ] : placeholder;
+
+	const resolvedTrailingActions = trailingActions ?? contextTrailingActions;
+	const submitButton = (
+		<button
+			type="button"
+			aria-label={
+				isProcessing
+					? __( 'Stop processing', 'a8c-agenttic' )
+					: __( 'Send message', 'a8c-agenttic' )
+			}
+			disabled={ ! canSubmit }
+			onClick={ () => {
+				if ( isProcessing ) {
+					onStop?.();
+					return;
+				}
+				submit();
+			} }
+		>
+			{ isProcessing ? '■' : '↑' }
+		</button>
+	);
 
 	return (
 		<div
@@ -285,6 +320,7 @@ export function EmbeddedAgentUIInput( {
 					</button>
 				</>
 			) }
+			{ leadingActions ?? contextLeadingActions }
 			<textarea
 				aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				placeholder={ placeholderText }
@@ -304,24 +340,14 @@ export function EmbeddedAgentUIInput( {
 					}
 				} }
 			/>
-			<button
-				type="button"
-				aria-label={
-					isProcessing
-						? __( 'Stop processing', 'a8c-agenttic' )
-						: __( 'Send message', 'a8c-agenttic' )
-				}
-				disabled={ ! canSubmit }
-				onClick={ () => {
-					if ( isProcessing ) {
-						onStop?.();
-						return;
-					}
-					submit();
-				} }
-			>
-				{ isProcessing ? '■' : '↑' }
-			</button>
+			{ typeof resolvedTrailingActions === 'function' ? (
+				resolvedTrailingActions( submitButton )
+			) : (
+				<>
+					{ resolvedTrailingActions }
+					{ submitButton }
+				</>
+			) }
 			{ files.length > 0 && (
 				<span className="agenttic-embedded__attachment-count">{ files.length }</span>
 			) }

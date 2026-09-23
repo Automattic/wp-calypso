@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseSSEStream } from './streaming';
+import { parseSSEStream, streamToTask } from './streaming';
+import type { TaskUpdate } from '../../types';
 
 const encoder = new TextEncoder();
 
@@ -1076,5 +1077,47 @@ describe( 'parseSSEStream', () => {
 			expect( updates ).toHaveLength( 5 );
 			expect( rafSpy.mock.calls.length ).toBeGreaterThanOrEqual( 1 );
 		} );
+	} );
+} );
+
+describe( 'streamToTask', () => {
+	async function* updates( values: TaskUpdate[] ) {
+		yield* values;
+	}
+	const finalUpdate: TaskUpdate = {
+		id: 'task-1',
+		status: { state: 'completed' },
+		final: true,
+		text: '',
+	};
+
+	it.each( [ { credits_remaining: 0, opaque: [ 'value' ] }, null, false, 0, '' ] )(
+		'preserves final opaque credit metadata %j in the raw Task field',
+		async ( aiCredits ) => {
+			const task = await streamToTask( updates( [ { ...finalUpdate, aiCredits } ] ) );
+			expect( task.ai_credits ).toBe( aiCredits );
+			expect( task ).not.toHaveProperty( 'aiCredits' );
+		}
+	);
+
+	it( 'does not promote nonfinal metadata or add absent metadata', async () => {
+		const task = await streamToTask(
+			updates( [
+				{ ...finalUpdate, final: false, aiCredits: { credits_remaining: 10 } },
+				finalUpdate,
+			] )
+		);
+		expect( task ).toEqual( { id: 'task-1', status: { state: 'completed' } } );
+		expect( task ).not.toHaveProperty( 'ai_credits' );
+	} );
+
+	it( 'uses the last final snapshot without retaining earlier credits', async () => {
+		const task = await streamToTask(
+			updates( [
+				{ ...finalUpdate, aiCredits: { credits_remaining: 10 } },
+				{ ...finalUpdate, id: 'task-2' },
+			] )
+		);
+		expect( task ).toEqual( { id: 'task-2', status: { state: 'completed' } } );
 	} );
 } );
