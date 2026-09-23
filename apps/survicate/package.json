@@ -1,0 +1,36 @@
+{
+	"name": "@automattic/survicate-app",
+	"version": "1.0.0",
+	"description": "Survicate loader for wp-admin, served from widgets.wp.com.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"sideEffects": [
+		"./survicate.js"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/survicate"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"teamcity:build-app": "yarn run build",
+		"build": "NODE_ENV=production yarn dev && find dist -maxdepth 1 -type f ! -name '*.min.js' -name '*.js' -delete",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/survicate",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@automattic/survicate": "workspace:^",
+		"@wordpress/data": "^10.48.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
+		"webpack": "^5.99.8"
+	},
+	"private": true
+}

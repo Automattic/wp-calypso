@@ -2476,6 +2476,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/survicate-app@workspace:apps/survicate":
+  version: 0.0.0-use.local
+  resolution: "@automattic/survicate-app@workspace:apps/survicate"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/survicate": "workspace:^"
+    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    webpack: "npm:^5.99.8"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/survicate@workspace:^, @automattic/survicate@workspace:packages/survicate":
   version: 0.0.0-use.local
   resolution: "@automattic/survicate@workspace:packages/survicate"
