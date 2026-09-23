@@ -292,7 +292,7 @@ describe( 'SiteLogsDataViews', () => {
 
 		// Enter also confirms an IME composition; applying there would unmount the box.
 		fireEvent.keyDown( input, { key: 'Enter', isComposing: true } );
-		expect( input ).toBeInTheDocument();
+		expect( input ).toBeVisible();
 
 		await user.keyboard( '{Enter}' );
 
