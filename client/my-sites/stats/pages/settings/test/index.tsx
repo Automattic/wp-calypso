@@ -101,6 +101,21 @@ describe( 'StatsSettingsPage', () => {
 		} );
 	} );
 
+	it.each( [
+		[ 'admin_bar', 'Put a chart showing 48 hours of views in the admin bar' ],
+		[ 'wpcom_reader_views_enabled', 'Show post views for this site.' ],
+	] )( 'records the %s setting turning off', async ( setting, label ) => {
+		render( <StatsSettingsPage /> );
+
+		await userEvent.click( screen.getByLabelText( label ) );
+
+		expect( mockTrack ).toHaveBeenCalledWith( 'stats_settings_changed', {
+			blog_id: 123,
+			setting,
+			enabled: false,
+		} );
+	} );
+
 	it( 'keeps administrators able to view Stats', () => {
 		mockSettings = { ...mockSettings, roles: [ 'editor' ] };
 		render( <StatsSettingsPage /> );
