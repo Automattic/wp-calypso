@@ -212,6 +212,15 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 		expect( url ).toContain( 'blueprint_slug=coachava' );
 	} );
 
+	it( 'carries build=custom-theme only when the run asked for it', () => {
+		const base = { siteSlug: 'example.wordpress.com', siteId: 123, blueprintSlug: 'zoom' };
+
+		expect( getBlueprintArchiveSiteSpecUrl( { ...base, customThemeBuild: true } ) ).toContain(
+			'build=custom-theme'
+		);
+		expect( getBlueprintArchiveSiteSpecUrl( base ) ).not.toContain( 'build=' );
+	} );
+
 	it( 'omits the funnel for a standalone run', () => {
 		const url = getBlueprintArchiveSiteSpecUrl( {
 			siteSlug: 'example.wordpress.com',
