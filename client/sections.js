@@ -10,18 +10,21 @@ const sections = [
 		name: 'reauth-required',
 		paths: [ '/me/reauth-required' ],
 		module: 'calypso/reauth-required',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'calypso/my-sites/customize',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
 		module: 'calypso/sites',
 		group: 'sites-dashboard',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'sites-dashboard',
@@ -39,6 +42,7 @@ const sections = [
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'account-close',
@@ -48,6 +52,7 @@ const sections = [
 		paths: [ '/me/account/close', '/me/account/closed' ],
 		module: 'calypso/me/account-close',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'promote-post-i2',
@@ -60,12 +65,14 @@ const sections = [
 		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'developer',
 		paths: [ '/me/developer' ],
 		module: 'calypso/me/developer',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'telegram-connect',
@@ -78,12 +85,14 @@ const sections = [
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'privacy',
 		paths: [ '/me/privacy' ],
 		module: 'calypso/me/privacy',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'purchases',
@@ -95,18 +104,21 @@ const sections = [
 		],
 		module: 'calypso/me/purchases',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'calypso/me/security',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'site-blocks',
 		paths: [ '/me/site-blocks' ],
 		module: 'calypso/me/site-blocks',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	// This should be the last section for `/me` paths as it would otherwise have precedence over
 	// the other sub `/me/*` sections when resolving the requested path
@@ -115,18 +127,21 @@ const sections = [
 		paths: [ '/me' ],
 		module: 'calypso/me',
 		group: 'me',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'activity',
 		paths: [ '/activity-log' ],
 		module: 'calypso/my-sites/activity',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'site-purchases',
 		paths: [ '/purchases' ],
 		module: 'calypso/my-sites/purchases',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'media',
@@ -139,6 +154,7 @@ const sections = [
 		paths: [ '/people' ],
 		module: 'calypso/my-sites/people',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'plugins',
@@ -173,65 +189,76 @@ const sections = [
 		paths: [ '/settings/performance' ],
 		module: 'calypso/my-sites/site-settings/settings-performance',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-writing',
 		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-reading',
 		paths: [ '/settings/reading' ],
 		module: 'calypso/my-sites/site-settings/settings-reading',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'calypso/my-sites/site-settings/settings-discussion',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-newsletter',
 		paths: [ '/settings/newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-podcast',
 		paths: [ '/settings/podcasting' ],
 		module: 'calypso/my-sites/site-settings/settings-podcast',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'podcasting',
 		paths: [ '/settings/podcast' ],
 		module: 'calypso/my-sites/podcast',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'calypso/my-sites/site-settings/settings-security',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings-jetpack',
 		paths: [ '/settings/jetpack' ],
 		module: 'calypso/my-sites/site-settings/settings-jetpack',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'calypso/my-sites/site-settings',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'marketing',
 		paths: [ '/marketing', '/sharing' ],
 		module: 'calypso/my-sites/marketing',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'subscribers',
@@ -287,6 +314,7 @@ const sections = [
 		module: 'calypso/my-sites/stats',
 		group: 'sites',
 		trackLoadPerformance: true,
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'google-my-business',
@@ -367,6 +395,7 @@ const sections = [
 		paths: [ '/mailboxes' ],
 		module: 'calypso/my-sites/email',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'checkout',
@@ -375,6 +404,7 @@ const sections = [
 		group: 'sites',
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'plans',
@@ -417,6 +447,7 @@ const sections = [
 		group: 'reader',
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'reader',
@@ -456,6 +487,7 @@ const sections = [
 		paths: [ '/following' ],
 		module: 'calypso/reader/following',
 		group: 'reader',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'reader',
@@ -584,6 +616,7 @@ const sections = [
 		paths: [ '/comments', '/comment' ],
 		module: 'calypso/my-sites/comments',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'domain-connect-authorize',
@@ -597,6 +630,7 @@ const sections = [
 		group: 'gutenberg',
 		trackLoadPerformance: true,
 		enableLoggedOut: true,
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'import',
@@ -622,12 +656,14 @@ const sections = [
 		module: 'calypso/my-sites/customer-home',
 		group: 'sites',
 		trackLoadPerformance: true,
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'preview',
 		paths: [ '/view' ],
 		module: 'calypso/my-sites/customer-home',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'site-settings',
@@ -640,6 +676,7 @@ const sections = [
 		paths: [ '/backup' ],
 		module: 'calypso/my-sites/backup',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'scan',
@@ -766,12 +803,14 @@ const sections = [
 		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
 		module: 'calypso/my-sites/add-ons',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
 		module: 'calypso/sites/monitoring',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'site-performance',
@@ -784,6 +823,7 @@ const sections = [
 		paths: [ '/site-logs' ],
 		module: 'calypso/sites/logs',
 		group: 'sites',
+		meta: [ { name: 'robots', content: 'noindex' } ],
 	},
 	{
 		name: 'github-deployments',
