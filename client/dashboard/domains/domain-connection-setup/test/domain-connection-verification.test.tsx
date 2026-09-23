@@ -54,6 +54,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	expired: false,
 	primary_domain: false,
 	can_set_as_primary: true,
+	set_primary_domain_pending: false,
 	domain_status: {
 		id: DomainStatus.ACTIVE,
 		label: 'Active',

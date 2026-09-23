@@ -60,23 +60,26 @@ const SiteOwnerTransferEligibility = ( {
 			onMutate: () => {
 				setSiteTransferEligibilityError( '' );
 			},
-			onError: ( e ) => {
+			onError: ( e, { newSiteOwner } ) => {
+				if ( newSiteOwner !== tempSiteOwner ) {
+					return;
+				}
 				setSiteTransferEligibilityError( e.message );
 				recordTracksEvent( 'calypso_site_owner_transfer_eligibility_error', {
 					message: e.message,
 				} );
 			},
-			onSuccess: () => {
-				if ( ! tempSiteOwner ) {
+			onSuccess: ( _data, { newSiteOwner } ) => {
+				if ( ! newSiteOwner || newSiteOwner !== tempSiteOwner ) {
 					return;
 				}
-				onNewUserOwnerSubmit?.( tempSiteOwner );
+				onNewUserOwnerSubmit?.( newSiteOwner );
 			},
 		} );
 
 	const handleFormSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( ! tempSiteOwner ) {
+		if ( ! tempSiteOwner || isCheckingSiteTransferEligibility ) {
 			return;
 		}
 
@@ -87,6 +90,9 @@ const SiteOwnerTransferEligibility = ( {
 	};
 
 	function onUserClick( userEmail: string ) {
+		if ( isCheckingSiteTransferEligibility ) {
+			return;
+		}
 		onRecipientChange( userEmail );
 		checkSiteTransferEligibility( { newSiteOwner: userEmail } );
 	}
@@ -118,6 +124,7 @@ const SiteOwnerTransferEligibility = ( {
 					value={ tempSiteOwner }
 					isError={ recipientError }
 					placeholder="example@example.com"
+					disabled={ isCheckingSiteTransferEligibility }
 					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onRecipientChange( e.target.value ) }
 				/>
 				{ recipientError && (

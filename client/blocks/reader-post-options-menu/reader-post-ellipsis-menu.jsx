@@ -286,12 +286,12 @@ class ReaderPostEllipsisMenu extends Component {
 									text: 'Mark as unread',
 									newCopy: translate( 'Mark as unread' ),
 									oldCopy: translate( 'Mark as unseen' ),
-							  } )
+								} )
 							: fixMe( {
 									text: 'Mark as read',
 									newCopy: translate( 'Mark as read' ),
 									oldCopy: translate( 'Mark as seen' ),
-							  } ) }
+								} ) }
 					</PopoverMenuItem>
 				) }
 

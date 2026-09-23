@@ -860,3 +860,579 @@
 .wpcom-global-nav-footer :is(.lp-footer-social-media .lp-icon) {
 	pointer-events:none;
 }
+/* stylelint-enable */
+
+/* 2026 footer preview: hand-written, scoped under .wpcom-global-nav-footer--2026
+   and mirroring Landpack's block of the same name in wpcom, rule for rule.
+   The vendored sheet above doubles utility classes; the repeats below out-specify it. */
+
+/* Variable Inter, as Landpack serves it; the vendored sheet only registers static faces. */
+@font-face {
+	font-display: swap;
+	font-family: inter-variable-web;
+	font-style: normal;
+	/* stylelint-disable-next-line scales/font-weights -- variable font range */
+	font-weight: 100 900;
+	src: url( https://wordpress.com/i/fonts/inter-4.0/InterVariable.woff2 ) format( 'woff2' );
+}
+
+.wpcom-global-nav-footer--2026 {
+	/* Studio palette: gray-100 #101517, gray-50 #646970, gray-20 #a7aaad,
+	   blue-50 #3858e9, blue-70 #1d35b4. */
+	--lp-footer-primary-color-rgb: 16, 21, 23;
+	--lp-footer-secondary-color: #646970;
+	--lp-footer-secondary-color-rgb: 100, 105, 112;
+	--lp-footer-control-border-color: #a7aaad;
+	--lp-footer-focus-color: #3858e9;
+	--lp-footer-automattic-hover-color: #1d35b4;
+
+	@supports ( font-variation-settings: normal ) {
+		--lp-font-stack-default: inter-variable-web, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+			Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	}
+
+	> .lp-footer-section {
+		background: #fff;
+	}
+
+	/* Landpack's reset transitions every property on links and headers (the
+	   vendored sheet eases opacity only), so focus and colour changes fade as on wpcom. */
+	> .lp-footer-section a,
+	> .lp-footer-section summary {
+		transition: 0.15s ease-out;
+
+		@media ( hover: hover ) {
+			&:active {
+				transition: none;
+			}
+		}
+	}
+
+	/* From L the accordion headers are plain headings and do not transition. */
+	@media ( min-width: 1152px ) {
+		> .lp-footer-section .lp-footer-stack > summary {
+			transition: none;
+		}
+	}
+
+	/* The do-not-sell slot balances its lines once a link is dropped in. */
+	.x-nav-footer--ccpa-dnsd {
+		text-wrap: balance;
+	}
+
+	.lp-footer-logo {
+		width: 190px;
+		height: 25.6px;
+		fill: #3858e9;
+	}
+
+	.lp-footer-stack__content__item,
+	.lp-language-picker {
+		color: var( --lp-footer-secondary-color );
+	}
+
+	.lp-footer-stack__content .lp-footer-stack__content__item.lp-link-invisible {
+		--lp-color: var( --lp-footer-secondary-color-rgb );
+		color: var( --lp-footer-secondary-color );
+	}
+
+
+	.lp-footer-stack {
+		margin: 0;
+	}
+
+	.lp-footer-stack__summary {
+		padding: 0;
+	}
+
+	/* Mobile accordion headings follow the 26px line and 20px gap. */
+	@media ( max-width: 1151px ) {
+		.lp-flex--justify-center {
+			justify-content: flex-start;
+		}
+
+		.has-text-align-center.has-text-align-center {
+			text-align: start !important;
+		}
+
+		.lp-grid--type-footer.lp-grid--gutter-y-4 {
+			grid-row-gap: 20px;
+		}
+	}
+
+	/* Bare-text language control; `field-sizing` sizes the select to its selected
+	   option so the focus ring hugs the label (older browsers keep the old width). */
+	.lp-language-picker__content {
+		border: none;
+		border-radius: 0;
+		padding: 0 calc( var( --lp-picker-icon-offset ) + var( --lp-picker-icon-size ) ) 0 0;
+		width: auto;
+		field-sizing: content;
+		/* 14/26 on mobile, 12/26 from L; source order beats the vendored 500 weight. */
+		font-size: 14px;
+		line-height: 26px;
+		font-weight: 400;
+
+		@media ( min-width: 1152px ) {
+			font-size: 12px;
+		}
+	}
+
+	/* The chevron is positioned against the wrapper, so shrink that to the label too. */
+	.lp-language-picker {
+		width: fit-content;
+
+		@media ( min-width: 1152px ) {
+			margin-inline-start: auto;
+		}
+	}
+
+	/* Figma type ramp: headers 18/26 medium (16/26 semibold from L), links 14/28, 1% tracking. */
+	.lp-footer-stack__summary__content.lp-bold.lp-bold {
+		font-weight: 500;
+		font-size: 18px;
+		line-height: 26px;
+		letter-spacing: 0.01em;
+
+		@media ( min-width: 1152px ) {
+			font-weight: 600;
+			font-size: 16px;
+		}
+	}
+
+	.lp-footer-stack__content__item {
+		padding: 0;
+		font-size: 14px;
+		line-height: 28px;
+		letter-spacing: 0.01em;
+	}
+
+	.lp-language-picker__chevron {
+		transform: scale( 0.65 );
+	}
+
+	/* `.has-tiny-font-size` uses !important, so set its custom properties instead. */
+	footer.lp-section .lp-section__content {
+		--lp-font-size-tiny: 12px;
+		--lp-line-height-tiny: 26px;
+		letter-spacing: 0.01em;
+
+		/* The "An Automattic …" tagline is set in uppercase with 4% tracking. */
+		.lp-flex--inline {
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+	}
+
+	/* Mobile: 24px side gutter on both sections; desktop keeps the defaults. */
+	> .lp-footer-section,
+	footer.lp-section {
+		--lp-section-padding-x: 24px;
+
+		@media ( min-width: 1152px ) {
+			--lp-section-padding-x: var( --lp-pad-4 );
+		}
+	}
+
+	> .lp-footer-section.lp-padding-top-7.lp-padding-top-7 {
+		padding-top: 60px;
+
+		@media ( min-width: 1152px ) {
+			padding-top: 84px;
+		}
+	}
+
+	/* Match the final logo-to-navigation spacing. */
+	.lp-padding-bottom-5.lp-padding-bottom-5 {
+		padding-bottom: 54px;
+
+		@media ( min-width: 1152px ) {
+			padding-bottom: 64px;
+		}
+	}
+
+
+	.lp-language-picker__icon {
+		display: none;
+	}
+
+	a:focus-visible,
+	button:focus-visible,
+	summary:focus-visible,
+	select:focus-visible {
+		outline: 2px solid var( --lp-footer-focus-color );
+		outline-offset: 2px;
+	}
+
+	.lp-mobile-badge {
+		--lp-mobile-badge-color: #101517;
+		--lp-mobile-badge-background: #fff;
+		--lp-mobile-badge-background-clip: unset;
+		--lp-mobile-badge-border-color-rgb: 167, 170, 173;
+		--lp-mobile-badge-border-opacity: 1;
+	}
+
+	.lp-footer-social-media .lp-color {
+		--lp-color: var( --lp-footer-primary-color-rgb );
+		--lp-color-alpha: 1;
+	}
+
+	.lp-icon--custom-automattic-footer {
+		width: 150px;
+		height: auto;
+		transition: color 0.15s ease-out;
+	}
+
+	.lp-link-invisible:has( > .lp-icon--custom-automattic-footer ) {
+		@media ( hover: hover ) {
+			&:hover {
+				opacity: 1;
+
+				.lp-icon--custom-automattic-footer {
+					color: var( --lp-footer-automattic-hover-color );
+				}
+			}
+		}
+
+		&:focus-visible .lp-icon--custom-automattic-footer {
+			color: var( --lp-footer-automattic-hover-color );
+		}
+	}
+
+	/* The bottom bar (legal links, ©, tagline) reads in the secondary colour. */
+	> .lp-footer-section > .lp-section__content > .lp-wrapper > .lp-section {
+		color: var( --lp-footer-secondary-color );
+
+		.color-blue-50,
+		.lp-grid--type-footer > :last-child {
+			color: var( --lp-footer-secondary-color ) !important;
+		}
+
+		.color-blue-50 .lp-link-invisible,
+		.lp-grid--type-footer > :last-child .lp-link-invisible {
+			--lp-color: var( --lp-footer-secondary-color-rgb );
+		}
+	}
+
+	.lp-language-picker__content option {
+		color: #101517;
+		background-color: #fff;
+	}
+
+	/* Dark colourway: white / gray-20 / gray-50 / blue-20 #adbaf3. */
+	&.wpcom-global-nav-footer--dark {
+		--lp-footer-primary-color-rgb: 255, 255, 255;
+		--lp-footer-secondary-color: #a7aaad;
+		--lp-footer-secondary-color-rgb: 167, 170, 173;
+		--lp-footer-control-border-color: #646970;
+		--lp-footer-focus-color: #adbaf3;
+		--lp-footer-automattic-hover-color: #adbaf3;
+
+		> .lp-footer-section {
+			background: #101517;
+		}
+
+		.lp-footer-logo {
+			fill: #fff;
+		}
+
+		.lp-mobile-badge {
+			--lp-mobile-badge-color: #fff;
+			--lp-mobile-badge-background: #101517;
+			--lp-mobile-badge-border-color-rgb: 100, 105, 112;
+			--lp-mobile-badge-border-opacity: 1;
+		}
+
+		.lp-language-picker__content option {
+			color: #fff;
+			background-color: #101517;
+		}
+	}
+	.lp-footer-bottom {
+		display: grid;
+		gap: 0;
+		padding: 60px 0 28px;
+		color: var(--lp-footer-secondary-color);
+		font-size: 12px;
+		line-height: 26px;
+		letter-spacing: 0.01em;
+	}
+
+	.lp-footer-bottom__language {
+		margin-bottom: 40px;
+	}
+
+	.lp-footer-bottom .lp-language-picker {
+		margin-inline-start: 0;
+	}
+
+	.lp-footer-bottom__downloads {
+		display: flex;
+		flex-direction: column;
+		gap: 31px;
+		margin-bottom: 40px;
+	}
+
+	.lp-footer-app-download {
+		display: none;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 14px 6px 6px;
+		min-height: 48px;
+		box-sizing: border-box;
+		border: 1px solid var(--lp-footer-control-border-color);
+		/* stylelint-disable-next-line scales/radii -- Matches the footer design. */
+		border-radius: 5px;
+		color: rgb(var(--lp-footer-primary-color-rgb));
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 26px;
+		letter-spacing: 0.03em;
+		text-decoration: none;
+	}
+
+	.lp-footer-app-download img {
+		width: 34px;
+		height: 34px;
+	}
+
+	.lp-footer-apps {
+		display: flex;
+		gap: 16px;
+		width: 100%;
+	}
+
+	.lp-footer-apps > li {
+		flex: 1;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__link {
+		display: block;
+		/* stylelint-disable-next-line scales/radii -- Matches the footer design. */
+		border-radius: 6px;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__content {
+		padding: 11px 8px;
+		gap: 10px;
+		min-height: 48px;
+		box-sizing: border-box;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__content__icon {
+		top: 0;
+		width: 20px;
+		height: 23px;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__content__label {
+		padding: 0;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__line--is-top {
+		display: none;
+	}
+
+	.lp-footer-apps .lp-mobile-badge__line--is-bottom {
+		left: 0;
+		font-size: 16px;
+		line-height: 26px;
+		font-weight: 500;
+	}
+
+	.lp-footer-bottom .lp-footer-social-media {
+		display: flex;
+		gap: 14px;
+	}
+
+	.lp-footer-bottom .lp-footer-social-media .lp-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	.lp-footer-legal {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		margin-bottom: 40px;
+		/* Host themes style bare lists (e.g. `:root :where(ul)`), so out-specify them. */
+		font-size: 14px !important;
+		line-height: 26px !important;
+	}
+
+	.lp-footer-legal a,
+	.lp-footer-legal button {
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		letter-spacing: inherit;
+		text-align: start;
+		cursor: pointer;
+		color: var(--lp-footer-secondary-color);
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			text-decoration: underline;
+			opacity: 1;
+		}
+	}
+
+	.lp-footer-bottom [hidden] {
+		display: none !important;
+	}
+
+	.lp-footer-bottom__copyright {
+		margin-bottom: 7px;
+	}
+
+	.lp-footer-bottom__branding {
+		display: flex;
+		align-items: center;
+		min-height: 32px;
+	}
+
+	.lp-footer-bottom__branding .lp-flex--inline {
+		gap: 10px;
+		--lp-color: var(--lp-footer-secondary-color-rgb);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	@media (min-width: 1152px) {
+		.lp-footer-stack__content {
+			padding-top: 12px;
+		}
+
+		.lp-footer-bottom {
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: 20px 24px;
+			padding-top: 58px;
+			padding-bottom: 34px;
+		}
+
+		.lp-footer-bottom__language {
+			grid-column: 1 / -1;
+			margin-bottom: 0;
+		}
+
+		.lp-footer-bottom__downloads {
+			grid-column: 1;
+			grid-row: 2;
+			flex-direction: row;
+			align-items: center;
+			gap: 20px;
+			margin-bottom: 0;
+		}
+
+		.lp-footer-apps {
+			display: none;
+		}
+
+		.lp-footer-app-download {
+			display: inline-flex;
+		}
+
+		.lp-footer-bottom .lp-footer-social-media {
+			gap: 10px;
+		}
+
+		.lp-footer-bottom .lp-footer-social-media a {
+			width: 26px;
+			height: 26px;
+		}
+
+		.lp-footer-bottom .lp-footer-social-media .lp-icon {
+			width: 20px;
+			height: 20px;
+		}
+
+		.lp-footer-legal {
+			grid-column: 1;
+			grid-row: 3;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 4px 16px;
+			margin-bottom: 0;
+			font-size: 12px !important;
+		}
+
+		.lp-footer-bottom__copyright {
+			grid-column: 2;
+			grid-row: 2;
+			align-self: center;
+			text-align: end;
+			margin-bottom: 0;
+		}
+
+		.lp-footer-bottom__branding {
+			min-height: 26px;
+			justify-content: flex-end;
+			grid-column: 2;
+			grid-row: 3;
+			text-align: end;
+		}
+	}
+	.lp-footer-bottom__language[hidden] {
+		display: none;
+	}
+
+	@media ( min-width: 1152px ) {
+		.lp-wrapper--layout-wide\@L.lp-wrapper--layout-wide\@L {
+			max-width: 1224px;
+		}
+
+		.lp-footer-bottom--without-language {
+			.lp-footer-bottom__downloads,
+			.lp-footer-bottom__copyright {
+				grid-row: 1;
+			}
+
+			.lp-footer-legal,
+			.lp-footer-bottom__branding {
+				grid-row: 2;
+			}
+		}
+	}
+	.lp-mobile-badge__content__icon [fill]:not(mask) {
+		fill: currentColor;
+	}
+
+	.lp-mobile-badge__content__icon g > path {
+		stroke: var( --lp-mobile-badge-background );
+		stroke-width: 1;
+	}
+
+	.lp-footer-social-media a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		box-sizing: border-box;
+		border: 1px solid var( --lp-footer-control-border-color );
+		border-radius: 50%;
+	}
+
+	.lp-footer-social-media .lp-icon {
+		width: 20px;
+		height: 20px;
+	}
+	/* External-link arrow per the design: a 12px regular-weight ↗ beside the 14px label,
+	   not the vendored bold, scaled glyph. */
+	:is( .lp-link-chevron-external.lp-link-chevron-external )::after,
+	:is( .lp-link-chevron-external.lp-link-chevron-external:hover )::after,
+	:is( .lp-link-chevron-external.lp-link-chevron-external:active )::after,
+	:is( a:hover .lp-link-chevron-external.lp-link-chevron-external )::after,
+	:is( a:active .lp-link-chevron-external.lp-link-chevron-external )::after {
+		font-size: 12px;
+		font-weight: 400;
+		position: relative;
+		margin-right: 0;
+		top: -2px;
+		left: 2px;
+		transform: none;
+	}
+
+}

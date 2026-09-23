@@ -148,7 +148,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							logoUrl: PressableLogo,
 							dateClassName: 'a4a-event__date--a4a',
 						},
-				  ]
+					]
 				: [] ),
 			...( showPressableExpansionOffer
 				? [
@@ -190,7 +190,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							logoUrl: PressableLogo,
 							dateClassName: 'a4a-event__date--a4a',
 						},
-				  ]
+					]
 				: [] ),
 		];
 

@@ -52,29 +52,29 @@ export interface FeaturedEvent {
  * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
  */
 export const FEATURED_EVENT: FeaturedEvent | null = {
-	id: 'a4a-wordcamp-us-2026',
-	logo: 'https://automattic.wordpress.com/wp-content/uploads/2026/07/wcus_2026.png',
-	logoAlt: __( 'WordCamp US 2026' ),
-	when: __( 'August 16th–19th, Phoenix, Arizona' ),
-	title: __( 'Join us at WordCamp US 2026!' ),
-	subtitle: __( 'Automattic for Agencies' ),
+	id: 'a4a-bfcm-webinar-2026',
+	logo: A4ALogo,
+	logoAlt: __( 'Automattic for Agencies' ),
+	when: __( 'Upcoming webinar' ),
+	title: __( 'Building a repeatable Black Friday playbook' ),
+	subtitle: __( 'Support your clients during peak season' ),
 	description: [
 		__(
-			'Join us at WordCamp US in Phoenix, August 16 to 19 at the Phoenix Convention Center. The Automattic for Agencies team will be there, along with the people behind WordPress.com, Pressable, WordPress VIP, Woo, and Jetpack.'
-		),
-		__(
-			'Come talk shop with our partner managers, get answers in person, and grab a pin while they last.'
+			'Join us September 29th at 11 AM ET (4 PM BST) for a live panel with experts from Woo, Pressable, and Automattic. Learn how to make peak-season readiness a process you run every year, instead of one you rebuild from scratch. Includes product demos & a fireside chat.'
 		),
 	],
 	ctas: [
 		{
-			id: 'register',
-			label: __( 'Get your spot!' ),
-			url: 'https://us.wordcamp.org/2026/',
+			id: 'rsvp',
+			label: __( 'RSVP now' ),
+			url: 'https://automattic.registration.goldcast.io/webinar/f6c62e86-e9b6-48f3-a9c6-961e4fcf67be',
+			variant: 'primary',
 			isExternal: true,
 		},
 	],
-	endsAt: '2026-08-20',
+	// Hidden once the webinar starts (11 AM ET), not at midnight UTC, which
+	// would drop it the evening before for US agencies.
+	endsAt: '2026-09-29T15:00:00Z',
 };
 
 /**

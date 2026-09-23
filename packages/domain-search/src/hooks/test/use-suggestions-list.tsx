@@ -42,8 +42,8 @@ describe( 'useSuggestionsList — bundle suggestions', () => {
 		queryClient.clear();
 	} );
 
-	// The top bundle card is the FQDN path, so bundleSuggestion is only fetched
-	// for an FQDN query (a bare-term search shows inline bundle rows instead).
+	// The bundle query runs for every query shape (DOMAINS-2238); the FQDN case
+	// keeps its own coverage here.
 	it( 'surfaces a bundle suggestion for an FQDN query when showBundleSuggestions is on', async () => {
 		mockGetSuggestionsQuery( { params: { query: 'test.com' }, suggestions: [] } );
 		mockGetBundleSuggestionQuery( {
@@ -58,13 +58,35 @@ describe( 'useSuggestionsList — bundle suggestions', () => {
 		expect( result.current.bundleSuggestion?.domains.length ).toBeGreaterThan( 0 );
 	} );
 
-	it( 'does not surface a bundle suggestion for a bare-term query', async () => {
+	// DOMAINS-2238: the backend anchors a bare-term bundle on its own suggestion
+	// list, so the query runs for bare terms too.
+	it( 'surfaces a bundle suggestion for a bare-term query when the backend anchors one', async () => {
 		mockGetSuggestionsQuery( { params: { query: 'test' }, suggestions: [] } );
+		mockGetBundleSuggestionQuery( {
+			params: { query: 'test' },
+			bundleSuggestion: TEST_BUNDLE_SUGGESTION,
+		} );
 
 		const { result } = renderUseSuggestionsList( { showBundleSuggestions: true } );
 
-		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
-		expect( result.current.bundleSuggestion ).toBeUndefined();
+		await waitFor( () => expect( result.current.bundleSuggestion ).toBeTruthy() );
+		expect( result.current.bundleSuggestion?.sld ).toBe( 'test' );
+		expect( result.current.isLoadingBundleSuggestion ).toBe( false );
+	} );
+
+	it( 'reports the bundle request as loading while it is in flight', async () => {
+		mockGetSuggestionsQuery( { params: { query: 'test' }, suggestions: [] } );
+		mockGetBundleSuggestionQuery( {
+			params: { query: 'test' },
+			bundleSuggestion: TEST_BUNDLE_SUGGESTION,
+			delayMs: 100,
+		} );
+
+		const { result } = renderUseSuggestionsList( { showBundleSuggestions: true } );
+
+		expect( result.current.isLoadingBundleSuggestion ).toBe( true );
+		await waitFor( () => expect( result.current.isLoadingBundleSuggestion ).toBe( false ) );
+		expect( result.current.bundleSuggestion?.sld ).toBe( 'test' );
 	} );
 
 	it( 'does not surface a bundle suggestion when the flag is off', async () => {
@@ -74,5 +96,6 @@ describe( 'useSuggestionsList — bundle suggestions', () => {
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.bundleSuggestion ).toBeUndefined();
+		expect( result.current.isLoadingBundleSuggestion ).toBe( false );
 	} );
 } );

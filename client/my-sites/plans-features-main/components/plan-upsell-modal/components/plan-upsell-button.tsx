@@ -35,13 +35,13 @@ function PlanUpsellButton( {
 							planTitle: planUpsellInfo.title,
 							planPrice: planUpsellInfo.formattedPriceMonthly,
 						},
-				  } )
+					} )
 				: translate( 'Get %(planTitle)s', {
 						comment: 'Eg: Get Personal',
 						args: {
 							planTitle: planUpsellInfo.title,
 						},
-				  } ) }
+					} ) }
 		</PlanButton>
 	);
 }

@@ -113,7 +113,7 @@ function ModalBody( {
 									comment:
 										'Message shown when scheduling a plan downgrade for a specific renewal date',
 								}
-						  )
+							)
 						: translate(
 								'Your plan will change from %(currentPlan)s to %(targetPlan)s at your next renewal. Until then you’ll continue using %(currentPlan)s.',
 								{
@@ -121,7 +121,7 @@ function ModalBody( {
 									comment:
 										'Message shown when scheduling a plan downgrade for end of the current billing term',
 								}
-						  ) }
+							) }
 				</p>
 				{ lostFeatures.length > 0 && (
 					<>

@@ -251,7 +251,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 					value: '-2',
 					disabled: true,
 				},
-		  ]
+			]
 		: pageOptions;
 
 	const pageSelector = (
@@ -329,7 +329,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 							/>
 						),
 					},
-			  } )
+				} )
 			: translate(
 					'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
 					{
@@ -337,7 +337,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 							link: <InlineSupportLink { ...getSupportLinkProps() } />,
 						},
 					}
-			  );
+				);
 
 	if ( ! isSiteAtomic && ! isSiteFlex ) {
 		return null;

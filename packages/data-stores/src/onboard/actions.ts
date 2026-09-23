@@ -256,6 +256,11 @@ export const setTransferStartedAt = ( transferStartedAt: number | null ) => ( {
 	transferStartedAt,
 } );
 
+export const setTransferTimedOut = ( transferTimedOut: boolean ) => ( {
+	type: 'SET_TRANSFER_TIMED_OUT' as const,
+	transferTimedOut,
+} );
+
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -425,6 +430,7 @@ export type OnboardAction = ReturnType<
 	| typeof setProgressTitle
 	| typeof setTransferStatus
 	| typeof setTransferStartedAt
+	| typeof setTransferTimedOut
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal

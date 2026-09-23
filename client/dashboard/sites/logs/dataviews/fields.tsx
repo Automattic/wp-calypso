@@ -1,9 +1,10 @@
 import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
+import { TextControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocale } from '../../../app/locale';
 import {
 	formatDateCell,
@@ -18,9 +19,57 @@ import {
 	VALUES_SEVERITY,
 	VALUES_STATUS,
 } from './constants';
-import type { Field, Operator, DataViewRenderFieldProps } from '@wordpress/dataviews';
+import type {
+	Field,
+	Operator,
+	DataViewRenderFieldProps,
+	DataFormControlProps,
+} from '@wordpress/dataviews';
 
 import './style.scss';
+
+/**
+ * Applying a filter restarts the logs query, which swaps the table for a spinner and
+ * takes this input down with it. The stock text control reports every keystroke, so
+ * the field would vanish after the first character; hold a draft and commit it once.
+ */
+function LogsFilterTextEdit( {
+	data,
+	field,
+	onChange,
+	hideLabelFromVision,
+}: DataFormControlProps< ServerLog > ) {
+	const value = String( field.getValue( { item: data } ) ?? '' );
+	const [ draft, setDraft ] = useState( value );
+
+	useEffect( () => setDraft( value ), [ value ] );
+
+	const commit = () => {
+		if ( draft !== value ) {
+			onChange( field.setValue( { item: data, value: draft } ) );
+		}
+	};
+
+	return (
+		<TextControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			label={ field.label }
+			hideLabelFromVision={ hideLabelFromVision }
+			help={ __( 'Press Enter to apply.' ) }
+			value={ draft }
+			onChange={ setDraft }
+			onKeyDown={ ( event: React.KeyboardEvent ) => {
+				// Enter also confirms a character being composed with an IME, and Safari
+				// reports that as keyCode 229 rather than through isComposing.
+				const isComposing = event.nativeEvent.isComposing || event.keyCode === 229;
+				if ( event.key === 'Enter' && ! isComposing ) {
+					commit();
+				}
+			} }
+		/>
+	);
+}
 
 type UseFieldsArgs =
 	| { logType: LogType; timezoneString: string; gmtOffset?: number }
@@ -177,13 +226,14 @@ export function useFields( {
 			{
 				id: 'request_url',
 				type: 'text',
+				Edit: LogsFilterTextEdit,
 				label: __( 'Request URL' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.request_url,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
 					<span className="site-logs-wrap">{ String( item.request_url ) }</span>
 				),
-				filterBy: { operators: [] as Operator[] },
+				filterBy: { operators: [ 'is' as Operator ] },
 			},
 			{
 				id: 'body_bytes_sent',
@@ -320,10 +370,11 @@ export function useFields( {
 			{
 				id: 'user_ip',
 				type: 'text',
+				Edit: LogsFilterTextEdit,
 				label: __( 'User IP' ),
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.user_ip,
-				filterBy: { operators: [] as Operator[] },
+				filterBy: { operators: [ 'is' as Operator ] },
 			},
 		] satisfies Field< ServerLog >[];
 	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );

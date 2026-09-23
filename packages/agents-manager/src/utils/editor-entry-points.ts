@@ -1,4 +1,3 @@
-import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 
 /**
@@ -54,11 +53,4 @@ function isEditorEntryVisible(): boolean {
  */
 export function isEditorAiEntryEnabled(): boolean {
 	return isEditorEntryVisible();
-}
-
-/**
- * Whether the editor toolbar Help Center "?" menu should show — only in the unified AI experience.
- */
-export function isEditorHelpMenuEnabled(): boolean {
-	return isEditorEntryVisible() && !! getAgentsManagerInlineData()?.useUnifiedExperience;
 }

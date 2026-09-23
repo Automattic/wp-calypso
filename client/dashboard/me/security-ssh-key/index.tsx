@@ -44,10 +44,10 @@ export default function SecuritySshKey() {
 						/>
 					),
 				}
-		  )
+			)
 		: __(
 				'Add an SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
-		  );
+			);
 
 	if ( isEditing ) {
 		description = __(

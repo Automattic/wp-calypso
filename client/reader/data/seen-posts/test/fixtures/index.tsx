@@ -23,6 +23,9 @@ interface SeenPostsWrapperOptions {
 	wpForTeamsBlogIds?: number[];
 	subscribedListFeedIds?: number[];
 	route?: string;
+	// `null` stores the preference as absent, so the default applies.
+	readerSeenPostsPreference?: boolean | null;
+	remotePreferencesReceived?: boolean;
 }
 
 /**
@@ -34,6 +37,8 @@ export function createSeenPostsWrapper( {
 	wpForTeamsBlogIds = [],
 	subscribedListFeedIds = [],
 	route,
+	readerSeenPostsPreference,
+	remotePreferencesReceived = true,
 }: SeenPostsWrapperOptions = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -66,6 +71,13 @@ export function createSeenPostsWrapper( {
 		],
 	} );
 
+	let remoteValues: Record< string, boolean > | null = {};
+	if ( ! remotePreferencesReceived ) {
+		remoteValues = null;
+	} else if ( readerSeenPostsPreference != null ) {
+		remoteValues = { 'reader-seen-posts': readerSeenPostsPreference };
+	}
+
 	const state = {
 		currentUser: { id: USER_ID },
 		sites: {
@@ -74,6 +86,7 @@ export function createSeenPostsWrapper( {
 			),
 		},
 		route: { path: { current: route ?? null } },
+		preferences: { remoteValues },
 	};
 	const store = createStore( () => state );
 

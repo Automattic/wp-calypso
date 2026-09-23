@@ -31,7 +31,7 @@ const selectors = {
 
 	// Add tag.
 	// String was changed for WP 6.8, so we need both for a bit: https://core.trac.wordpress.org/changeset/59784
-	tagInput: `${ panel } .components-form-token-field:is(:has-text("Add New Tag"),:has-text("Add Tag")) input`,
+	tagLabel: /^add (new )?tag$/i,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
@@ -411,12 +411,35 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterTag( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const inputLocator = editorParent.locator( selectors.tagInput );
+		const inputLocator = editorParent
+			.locator( panel )
+			.getByRole( 'combobox', { name: selectors.tagLabel } )
+			.first();
 		await inputLocator.fill( name );
-		await this.page.keyboard.press( 'Enter' );
 
-		const addedTagLocator = editorParent.locator( selectors.addedTag( name ) );
-		await addedTagLocator.waitFor();
+		// Gutenberg 24.1 replaced the FormTokenField with a chip combobox, where a term
+		// is only assigned by picking an option: the term itself, or "Create: <term>"
+		// for a new one. Enter alone assigns nothing there.
+		// See https://github.com/WordPress/gutenberg/pull/80967.
+		const isTokenField = await inputLocator.evaluate(
+			( element ) => !! element.closest( '.components-form-token-field' )
+		);
+
+		if ( isTokenField ) {
+			await this.page.keyboard.press( 'Enter' );
+			await editorParent.locator( selectors.addedTag( name ) ).waitFor();
+
+			return;
+		}
+
+		const existingTerm = editorParent.getByRole( 'option', { name, exact: true } );
+		const newTerm = editorParent.getByRole( 'option', {
+			name: `Create: ${ name }`,
+			exact: true,
+		} );
+		await existingTerm.or( newTerm ).first().click();
+
+		await editorParent.getByRole( 'button', { name: `Remove ${ name }`, exact: true } ).waitFor();
 	}
 
 	/**

@@ -11,7 +11,7 @@ const version = process.env.VERSION
 	? process.env.VERSION.replace( /^desktop-/, '' )
 	: ( function () {
 			throw new Error( 'Error: no version' );
-	  } )();
+		} )();
 const releaseName = `WP-Desktop ${ version.replace( /^v/, '' ) }`;
 const isPrerelease = isPrereleaseVersion( version );
 const releaseDirectory = path.resolve( __dirname, '..', '..', 'release' );

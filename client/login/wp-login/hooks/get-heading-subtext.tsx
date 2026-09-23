@@ -54,7 +54,7 @@ const getHeadingSubText = ( {
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 						{
@@ -75,7 +75,7 @@ const getHeadingSubText = ( {
 								),
 							},
 						}
-				  ) }
+					) }
 		</span>
 	);
 
@@ -95,7 +95,7 @@ const getHeadingSubText = ( {
 	const primary = isWooJPC
 		? translate(
 				"To access all of the features and functionality of the extensions you've chosen, you'll first need to connect your store to an account."
-		  )
+			)
 		: tos;
 
 	const secondary = isWooJPC && 'lostpassword' !== action ? tos : null;
@@ -105,7 +105,7 @@ const getHeadingSubText = ( {
 			'lostpassword' === action
 				? translate(
 						"Please enter your username or email address. You'll receive a link to create a new password via email."
-				  )
+					)
 				: primary,
 		secondary,
 	};

@@ -590,7 +590,7 @@ function hasCreditCardData( purchase: Purchase ) {
 	return Boolean( purchase.payment.creditCard?.expiryDate );
 }
 
-export function shouldAddPaymentSourceInsteadOfRenewingNow( purchase: Purchase ) {
+export function shouldAddPaymentSourceInsteadOfRenewingNow( purchase: { expiryDate?: string } ) {
 	if ( ! purchase || ! purchase.expiryDate ) {
 		return false;
 	}

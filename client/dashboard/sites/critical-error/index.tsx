@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, envelope, formatListBullets, help, wordpress } from '@wordpress/icons';
+import { Icon, envelope, file, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -20,7 +20,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { hasHostingFeature } from '../../utils/site-features';
+import { canAccessSftpSettings, hasHostingFeature } from '../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
 	getJetpackRecoverySessionErrors,
@@ -78,6 +78,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 		isAdmin &&
 		siteTypeSupportsFeature( site, 'logs' ) &&
 		hasHostingFeature( site, HostingFeatures.LOGS );
+	const canAccessSftp = canAccessSftpSettings( site );
 	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
@@ -133,6 +134,25 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					phpLogsLink: (
 						<Link to={ `/sites/${ siteSlug }/logs/php` } search={ { severity: 'Fatal error' } }>
 							{ __( 'Review the PHP logs' ) }
+						</Link>
+					),
+				}
+			),
+		} );
+	}
+	if ( canAccessSftp ) {
+		items.push( {
+			icon: file,
+			text: createInterpolateElement(
+				// translators: <sftpLink/> is a link to the SFTP/SSH settings page with the text "Connect over SFTP/SSH"
+				__( '<sftpLink/> to edit the files responsible for the error.' ),
+				{
+					sftpLink: (
+						<Link
+							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
+							onClick={ () => recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click' ) }
+						>
+							{ __( 'Connect over SFTP/SSH' ) }
 						</Link>
 					),
 				}

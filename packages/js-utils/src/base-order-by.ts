@@ -3,10 +3,7 @@ import castPath from './to-path';
 
 export type Order = 'asc' | 'desc';
 export type Iteratee< T > =
-	| ( ( value: T ) => unknown )
-	| string
-	| number
-	| ReadonlyArray< string | number >;
+	( ( value: T ) => unknown ) | string | number | ReadonlyArray< string | number >;
 
 interface Decorated< T > {
 	criteria: unknown[];

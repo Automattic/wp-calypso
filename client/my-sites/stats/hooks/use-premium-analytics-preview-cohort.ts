@@ -29,7 +29,7 @@ export type PremiumAnalyticsPreviewCohort = {
 };
 
 /**
- * Resolve everything the new Traffic tab invitation asks of a site, bar the site's own status.
+ * Resolve everything the preview invitation asks of a site, bar the site's own status.
  *
  * One answer for every surface that offers the invitation - the banner and the modules menu -
  * so a site cannot be invited by one and refused by the other.

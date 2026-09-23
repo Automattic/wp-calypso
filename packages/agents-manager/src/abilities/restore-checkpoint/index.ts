@@ -13,10 +13,8 @@ export const restoreCheckpointAbility: Ability = {
 	name: 'big-sky/restore-checkpoint',
 	label: __( 'Restore Checkpoint', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Restores editor state from a checkpoint associated with a previous mutating tool call. Use for undo/redo requests. Prefer checkpointId values from clientContext.availableCheckpoints whose toolId matches the user intent: block-edit checkpoints for content changes, theme-update checkpoints for style/theme changes, and navigation/entity checkpoints for navigation/entity changes. For undo, use the checkpointId for the most recent relevant non-restore mutating Big Sky tool call. Only use a checkpoint whose toolId is big_sky__restore_checkpoint for explicit redo requests, because those checkpoints represent the state before a prior undo/restore. Pass requestIntentType to describe the user intent: "undo" for undo requests, "redo" for redo requests, or "restore" when restoring a specific checkpoint/version. The checkpoint ID usually starts with "toolu_". Do not use the current restore-checkpoint call ID, any id starting with "call_", a tool name/id, or calypsoCheckpointId/messageId. If the user reports missing homepage/footer/navigation content, do not rebuild or redesign unless the user explicitly agrees; try a relevant checkpoint, WordPress revisions, or support escalation instead.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		required: [ 'checkpointId', 'summary', 'requestIntentType' ],

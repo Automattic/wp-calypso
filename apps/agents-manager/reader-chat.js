@@ -1089,7 +1089,7 @@ function ReaderChatApp() {
 				ID: readerSiteId,
 				URL: config.siteUrl || window.location.origin,
 				name: config.siteName || '',
-		  }
+			}
 		: null;
 
 	return (

@@ -1,6 +1,6 @@
 # @automattic/agents-manager
 
-Unified AI Agent manager for WordPress and Calypso.
+AI agent manager for WordPress and Calypso.
 
 ## Installation
 
@@ -68,11 +68,13 @@ See `src/hooks/custom-actions/README.md` for details.
 
 The host page URL can carry these query parameters:
 
-| Parameter | Description                                                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
-| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
-| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+| Parameter       | Description                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
+| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                                                        |
+| `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
+| `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
+| `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
 
 ## API Reference
 
@@ -85,25 +87,12 @@ The host page URL can carry these query parameters:
 | `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
 | `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                  |
 | `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `agentId`                        | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| `agentId`                        | `string` (optional)            | Explicit agent ID supplied by the host.                                                                                  |
 | `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                           |
 | `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
 | `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 
 ### Exported Hooks and Utilities
-
-```tsx
-import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
-
-function MyComponent() {
-	// Check if the unified agent experience is active. Outside a
-	// `QueryClientProvider`, pass a client: `useShouldUseUnifiedAgent( queryClient )`.
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
-
-	// Read the unified experience flag from inline script data (non-hook)
-	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
-}
-```
 
 Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`, `getAgentsManagerChatRoute`) and `recordAgentsManagerTracksEvent` are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 

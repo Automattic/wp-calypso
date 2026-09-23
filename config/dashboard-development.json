@@ -8,7 +8,10 @@
 	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
 		"my.a4a.localhost": {
+			"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
+			"favicon_brand": "a4a",
 			"oauth_client_id": 95928,
+			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true }
@@ -34,7 +37,6 @@
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
-		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
@@ -42,11 +44,13 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
+		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": true,
+		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
 		"plans/hosting-trial": true,

@@ -80,7 +80,7 @@ const UnforwardedButton: ForwardRefRenderFunction<
 				'is-busy': props.busy,
 				'is-borderless': props.borderless,
 				'is-transparent': props.transparent,
-		  } );
+			} );
 
 	if ( isAnchor( props ) ) {
 		const anchorProps = cleanAnchorProps( props );

@@ -14,10 +14,10 @@ import type { TitanPlanTier } from '../types';
 import type { Domain, Purchase } from '@automattic/api-core';
 
 /**
- * Which downgrade endpoint applies, decided by the server:
+ * Which downgrade endpoint applies:
  *
- * - `instant`: inside the refund window. Switches tier now and refunds the
- *   difference.
+ * - `instant`: inside the refund window, or on a free trial. Switches tier now
+ *   and refunds the difference, which is nothing on a trial.
  * - `delayed`: outside it. Schedules the switch for the end of the current
  *   term, with no refund or credit.
  */
@@ -47,10 +47,17 @@ export function useTitanDowngrade( {
 		( sitePurchase ) => isTitanMail( sitePurchase ) && sitePurchase.meta === domainName
 	);
 
+	// A free trial is an introductory offer that costs nothing. Nothing was
+	// paid, so there is nothing to keep until renewal and the tier switches now.
+	const introductoryOffer = purchase?.introductory_offer;
+	const isOnFreeTrial =
+		Boolean( introductoryOffer?.is_within_period ) && introductoryOffer?.cost_per_interval === 0;
+
 	// is_instant_downgrade_available is true even when the refund is worth
 	// nothing (comped, 100%-off coupon, credits), so the mode comes from it
 	// rather than from refund_options, which is only read for the amount.
-	const mode: TitanDowngradeMode = purchase?.is_instant_downgrade_available ? 'instant' : 'delayed';
+	const mode: TitanDowngradeMode =
+		purchase?.is_instant_downgrade_available || isOnFreeTrial ? 'instant' : 'delayed';
 
 	const getRefundAmount = useCallback(
 		( toProductId: number ) =>

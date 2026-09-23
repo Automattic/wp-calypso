@@ -5,4 +5,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	recentSites: [],
 	mediaScale: 0.157,
 	homeQuickLinksToggleStatus: 'expanded',
+	'reader-seen-posts': true,
 };

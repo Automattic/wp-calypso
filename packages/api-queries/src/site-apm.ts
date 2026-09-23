@@ -26,7 +26,7 @@ export const siteApmEnabledMutation = ( siteId: number ) =>
 					? {
 							...site,
 							options: { ...site.options, apm_enabled: active } as Site[ 'options' ],
-					  }
+						}
 					: site
 			);
 		},

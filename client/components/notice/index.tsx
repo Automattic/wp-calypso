@@ -22,12 +22,7 @@ const GRIDICONS_WITH_DROP = [
 ] as const;
 
 export type NoticeStatus =
-	| 'is-error'
-	| 'is-info'
-	| 'is-success'
-	| 'is-warning'
-	| 'is-plain'
-	| 'is-transparent-info';
+	'is-error' | 'is-info' | 'is-success' | 'is-warning' | 'is-plain' | 'is-transparent-info';
 
 interface NoticeProps {
 	className?: string;

@@ -1,5 +1,5 @@
 import i18n from 'i18n-calypso';
-import { domForHtml } from './utils';
+import { domForHtml, externalLinkParagraph } from './utils';
 
 const pollLinkSelectors = [
 	'a[href^="http://polldaddy.com/poll/"]',
@@ -34,14 +34,10 @@ export default function detectPolls( post, dom ) {
 				[];
 			const pollId = matches[ 2 ];
 			if ( pollId ) {
-				const p = document.createElement( 'p' );
-				p.innerHTML =
-					'<a target="_blank" rel="external noopener noreferrer" href="https://poll.fm/' +
-					pollId +
-					'">' +
-					i18n.translate( 'Take our poll' ) +
-					'</a>';
-				noscript.parentNode.replaceChild( p, noscript );
+				noscript.parentNode.replaceChild(
+					externalLinkParagraph( 'https://poll.fm/' + pollId, i18n.translate( 'Take our poll' ) ),
+					noscript
+				);
 			}
 		}
 	} );

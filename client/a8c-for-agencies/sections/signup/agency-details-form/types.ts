@@ -25,4 +25,5 @@ export interface AgencyDetailsPayload {
 	acquisition?: Record< string, string >;
 	tos?: 'consented';
 	initialSource?: string;
+	skip_hubspot?: boolean;
 }

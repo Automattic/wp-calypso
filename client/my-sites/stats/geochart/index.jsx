@@ -484,7 +484,7 @@ const ConnectedStatsGeochart = connect( ( state, ownProps ) => {
 					statType,
 					query.date,
 					'countries'
-			  )
+				)
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
 
 	return {

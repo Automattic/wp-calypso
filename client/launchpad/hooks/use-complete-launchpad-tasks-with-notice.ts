@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { useLaunchpad, updateLaunchpadSettings } from '@automattic/data-stores';
+import { useLaunchpad, updateLaunchpadSettings } from '@automattic/launchpad';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';

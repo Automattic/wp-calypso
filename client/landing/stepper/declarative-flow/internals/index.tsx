@@ -253,6 +253,9 @@ export const FlowRenderer: React.FC< {
 									key={ step.slug }
 									step={ step }
 									flow={ flow }
+									isResolving={
+										assertCondition && assertCondition.state === AssertConditionState.CHECKING
+									}
 									renderStep={ renderStep }
 									navigate={ navigate }
 								/>

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { shield } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -6,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
+import config, { optionalConfig } from '../lib/config-api';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import MetricValue from './metric-value';
 import WidgetSection from './widget-section';
@@ -204,6 +204,13 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 
 	// Akismet and Protect modules are not available on Simple sites.
 	if ( ! isWPAdminAndNotSimpleSite ) {
+		return null;
+	}
+
+	// Only the Jetpack plugin registers the REST routes these cards read. The standalone
+	// Stats plugin prints an empty `jetpack_version` when Jetpack is not active;
+	// stats-admin releases older than that key ship only with the Jetpack plugin.
+	if ( optionalConfig( 'jetpack_version' ) === '' ) {
 		return null;
 	}
 

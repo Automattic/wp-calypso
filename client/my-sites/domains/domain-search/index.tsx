@@ -46,7 +46,7 @@ export default function DomainSearch() {
 	const tldQuery = queryArguments?.tld;
 
 	const config = useMemo( () => {
-		const allowedTlds = Array.isArray( tldQuery ) ? tldQuery : tldQuery?.split( ',' ) ?? [];
+		const allowedTlds = Array.isArray( tldQuery ) ? tldQuery : ( tldQuery?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {

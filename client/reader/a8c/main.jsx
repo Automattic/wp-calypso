@@ -2,7 +2,10 @@ import { Button } from '@automattic/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import {
+	useMarkAllAsSeenMutation,
+	useSeenPostsPreferenceEnabled,
+} from 'calypso/reader/data/seen-posts';
 import { useOrganizationFeedsInfo } from 'calypso/reader/data/site-subscriptions';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -15,6 +18,7 @@ export default function A8CFollowing( props ) {
 	const dispatch = useDispatch();
 	const feedsInfo = useOrganizationFeedsInfo( AUTOMATTIC_ORG_ID );
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
+	const isSeenPostsEnabled = useSeenPostsPreferenceEnabled();
 
 	const handleMarkAllAsSeen = () => {
 		const { feedIds, feedUrls } = feedsInfo;
@@ -25,13 +29,15 @@ export default function A8CFollowing( props ) {
 	return (
 		<Stream { ...props }>
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
-				<Button compact onClick={ handleMarkAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
-					{ fixMe( {
-						text: 'Mark all as read',
-						newCopy: translate( 'Mark all as read' ),
-						oldCopy: translate( 'Mark all as seen' ),
-					} ) }
-				</Button>
+				{ isSeenPostsEnabled && (
+					<Button compact onClick={ handleMarkAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
+						{ fixMe( {
+							text: 'Mark all as read',
+							newCopy: translate( 'Mark all as read' ),
+							oldCopy: translate( 'Mark all as seen' ),
+						} ) }
+					</Button>
+				) }
 			</SectionHeader>
 		</Stream>
 	);

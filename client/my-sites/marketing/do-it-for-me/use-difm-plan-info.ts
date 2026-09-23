@@ -89,7 +89,7 @@ export const useDIFMPlanInfo = ( {
 		? formatCurrency( extraPageCost, currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
-		  } )
+			} )
 		: '';
 
 	const businessPlanCost = hasPriceDataLoaded

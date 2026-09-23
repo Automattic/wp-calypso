@@ -6,6 +6,7 @@ import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';
@@ -76,9 +77,7 @@ function HelpCenterContent() {
 		adminBarButton.onclick = handleToggleHelpCenter;
 
 		// At >= 600px our PHP hides this admin bar item to avoid duplicating the toolbar button;
-		// under the omnibar that button is gone, so reveal it. Revealing from JS — which the
-		// unified experience dequeues with this bundle — keeps it hidden when unified, like the
-		// toolbar button.
+		// under the omnibar that button is gone, so reveal it.
 		if ( isAdminBarInEditor ) {
 			adminBarButton.style.setProperty( 'display', 'block', 'important' );
 		}
@@ -133,16 +132,21 @@ function HelpCenterContent() {
 		};
 	}, [ isDesktop, isShown, setShowHelpCenter ] );
 
+	// The backend decides who sees the "Get Help" text beside the icon.
+	const entryLabel = helpCenterData?.entryLabel;
+
 	const content = (
 		<Button
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			onClick={ handleToggleHelpCenter }
 			icon={ <HelpIcon /> }
-			label="Help"
+			label={ entryLabel || __( 'Help' ) }
 			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
 			aria-expanded={ isShown ? true : false }
 			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
-		/>
+		>
+			{ entryLabel && <span className="help-center__entry-label">{ entryLabel }</span> }
+		</Button>
 	);
 
 	const customProps = {};

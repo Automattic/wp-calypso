@@ -69,7 +69,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 								if ( ref && ! spanRef ) {
 									setSpanRef( ref );
 								}
-						  }
+							}
 						: null
 				}
 			>

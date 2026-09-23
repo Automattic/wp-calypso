@@ -1547,6 +1547,7 @@ __metadata:
     postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.48.0
@@ -1568,6 +1569,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/launchpad": "workspace:^"
     "@automattic/odie-client": "workspace:^"
     "@automattic/support-articles": "workspace:^"
     "@automattic/viewport": "workspace:^"
@@ -1748,6 +1750,7 @@ __metadata:
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -1809,16 +1812,18 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/oauth-token": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^9.1.20"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/ui": "npm:^0.18.0"
+    "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
     msw-storybook-addon: "npm:2.0.7"
@@ -1832,10 +1837,7 @@ __metadata:
     webpack: "npm:^5.99.8"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^10.48.0
-    "@wordpress/element": ^8.0.0
     "@wordpress/i18n": ^6.21.0
-    debug: ^4.4.1
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -2482,6 +2484,7 @@ __metadata:
   resolution: "@automattic/survicate@workspace:packages/survicate"
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     debug: "npm:^4.4.1"
@@ -2751,6 +2754,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-checkout@workspace:packages/wpcom-checkout"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -28165,12 +28169,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:wp-prettier@3.0.3":
-  version: 3.0.3
-  resolution: "wp-prettier@npm:3.0.3"
+"prettier@npm:wp-prettier@3.9.6":
+  version: 3.9.6
+  resolution: "wp-prettier@npm:3.9.6"
   bin:
     prettier: bin/prettier.cjs
-  checksum: a8026c481a9d7957826da0ab8bfa6d79032d159a0bb99a322a53962874913b08b9f0470803fc465da0a8287b78004079cba606fdcd89f3086edefd42de2a545c
+  checksum: 3a161cca81d0c3e20d89cf2091a342bb237b86d182ac6cd9003cb5f8ec3e143c036135ee05f5520d513cab6d911b76e9ea07d3d37a2ab2b1d09b2cae8f699958
   languageName: node
   linkType: hard
 
@@ -35254,7 +35258,7 @@ __metadata:
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^12.1.11"
     postcss-scss: "npm:^4.0.9"
-    prettier: "npm:wp-prettier@3.0.3"
+    prettier: "npm:wp-prettier@3.9.6"
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
     react-hook-form: "npm:^7.52.2"

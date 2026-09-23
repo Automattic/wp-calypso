@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 
 type SkipLaunchpadProps = {
 	siteId: string | number | null;

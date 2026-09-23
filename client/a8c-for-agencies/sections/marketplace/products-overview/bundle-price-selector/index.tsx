@@ -50,7 +50,7 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 							discount: getDiscountPercentage( option ),
 						},
 						comment: '%(size)s is the number of licenses, %(discount)s is the discount percentage',
-				  } )
+					} )
 				: translate( 'Buy single license' );
 		},
 		[ translate, getDiscountPercentage ]

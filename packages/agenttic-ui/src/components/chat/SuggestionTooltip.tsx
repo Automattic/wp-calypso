@@ -29,7 +29,7 @@ export const SuggestionTooltip: React.FC< SuggestionTooltipProps > = ( {
 	// chat's overflow clipping. Falls back to the local node when a consumer uses
 	// `Suggestions` without that wrapper.
 	const setContainerNode = React.useCallback( ( node: HTMLElement | null ) => {
-		setPortalTarget( node ? node.closest< HTMLElement >( '.agenttic' ) ?? node : null );
+		setPortalTarget( node ? ( node.closest< HTMLElement >( '.agenttic' ) ?? node ) : null );
 	}, [] );
 
 	return (

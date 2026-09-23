@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { matchPath } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -39,7 +41,6 @@ import type {
 
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
-	STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 	STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -59,11 +60,42 @@ const BASE_STEPS = [
 ];
 
 function initialize() {
+	const { pathname, search, hash } = window.location;
+	if ( matchPath( '/setup/:flow/site-migration-import-or-migrate/:lang?', pathname ) ) {
+		window.location.replace(
+			pathname.replace(
+				'/site-migration-import-or-migrate',
+				`/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`
+			) +
+				search +
+				hash
+		);
+		return false as const;
+	}
+
 	return stepsWithRequiredLogin( BASE_STEPS );
 }
 
 const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
+};
+
+// The authorization URL is fully query-controlled. Only allow navigating to an
+// http(s) URL on the source site the user is migrating from — this rejects
+// `javascript:`, `data:`, scheme-relative, and off-source destinations.
+const isAuthorizationUrlAllowed = ( authorizationUrl?: string, from?: string | null ) => {
+	if ( ! authorizationUrl || ! from ) {
+		return false;
+	}
+
+	let sourceHostname;
+	try {
+		sourceHostname = new URL( from ).hostname;
+	} catch {
+		return false;
+	}
+
+	return isAllowedRedirectUrl( authorizationUrl, [ sourceHostname ] );
 };
 
 const siteMigration: FlowV2< typeof initialize > = {
@@ -206,7 +238,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+						return navigate( paths.howToMigratePath( { from, siteSlug, siteId } ) );
 					}
 
 					if ( userHasOtherWPComSites ) {
@@ -223,9 +255,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
 
 							Object.keys( newQueryParams ).forEach( ( key ) => {
-								newQueryParams[ key ]
-									? urlQueryParams.set( key, newQueryParams[ key ] )
-									: urlQueryParams.delete( key );
+								if ( newQueryParams[ key ] ) {
+									urlQueryParams.set( key, newQueryParams[ key ] );
+								} else {
+									urlQueryParams.delete( key );
+								}
 							} );
 
 							const queryParams = Object.fromEntries( urlQueryParams );
@@ -302,12 +336,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId,
 										backToFlow: `/${ flowPath }/${ STEPS.PICK_SITE.slug }`,
-										origin: '',
+										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 									} )
 								);
 							}
 
-							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
+							return navigate( paths.howToMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site': {
 							const detectedHost = providedDependencies.host as string | undefined;
@@ -428,38 +462,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					return replace( paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
+					return replace( paths.howToMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
 				}
 
-				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
-					const { destination } = providedDependencies as {
-						destination: 'import' | 'migrate';
-					};
-					// Switch to the normal Import flow.
-					if ( destination === 'import' ) {
-						if ( entryPoint === 'calypso-importer' ) {
-							return exitFlow(
-								paths.calypsoImporterPath(
-									{ engine: 'wordpress', ref: 'site-migration' },
-									{ siteSlug }
-								)
-							);
-						}
-
+				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					if ( providedDependencies?.destination === 'import' ) {
 						return exitFlow(
 							paths.siteSetupImportWordpressPath( {
 								siteId,
 								siteSlug,
-								from: fromQueryParam ?? '',
-								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+								from: fromQueryParam,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
 							} )
 						);
 					}
 
-					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
-				}
-
-				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
 						return replace(
@@ -660,9 +677,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const { action, authorizationUrl } = providedDependencies;
 
 					if ( action === 'authorization' ) {
-						const currentUrl = window.location.href;
-						const successUrl = encodeURIComponent( currentUrl );
-						return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
+						if ( isAuthorizationUrlAllowed( authorizationUrl, fromQueryParam ) ) {
+							const currentUrl = window.location.href;
+							const successUrl = encodeURIComponent( currentUrl );
+							return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
+						}
+
+						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 					}
 
 					if ( action === 'fallback-credentials' ) {

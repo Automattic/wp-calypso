@@ -61,10 +61,7 @@ export default function WordPressAgentTelegram( {
 	const authUrl = config( 'dolly_telegram_auth_url' ) as unknown as string | undefined;
 	const requestAccess = config( 'dolly_telegram_request_access' ) as unknown as 'write' | undefined;
 	const configuredSize = config( 'dolly_telegram_widget_size' ) as unknown as
-		| 'large'
-		| 'medium'
-		| 'small'
-		| undefined;
+		'large' | 'medium' | 'small' | undefined;
 	const showUserpic = Boolean(
 		config( 'dolly_telegram_show_userpic' ) as unknown as boolean | undefined
 	);
@@ -95,7 +92,7 @@ export default function WordPressAgentTelegram( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to Telegram?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {
@@ -225,10 +222,15 @@ export default function WordPressAgentTelegram( {
 							) }
 						/>
 						<div className="wordpress-agent-connection__actions">
-							<Button variant="secondary" onClick={ () => setPairingDismissed( true ) }>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								onClick={ () => setPairingDismissed( true ) }
+							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								onClick={ connectViaToken }
 								isBusy={ tokenMutation.isPending }
@@ -270,12 +272,13 @@ export default function WordPressAgentTelegram( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Telegram' ) }
-						description={ __( 'Chat with WordPress Agent on Telegram.' ) }
+						description={ __( 'Message your agent from Telegram for quick updates on the go.' ) }
 					/>
 					<div className="wordpress-agent-telegram__action">
 						{ ! isStatusReady && <Spinner /> }
 						{ isStatusReady && isConnected && (
 							<Button
+								__next40pxDefaultSize
 								variant="secondary"
 								isDestructive
 								onClick={ disconnect }

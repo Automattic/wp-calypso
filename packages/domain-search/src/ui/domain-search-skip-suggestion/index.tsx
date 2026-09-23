@@ -101,7 +101,7 @@ const DomainSearchSkipSuggestion = ( {
 					// translators: %(domain)s is the free WordPress.com subdomain
 					__( 'Start free with %(domain)s' ),
 					{ domain: freeSuggestion }
-			  );
+				);
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = buttonTextOverride ?? __( 'Start Free' );
 		chevronOnMobile = true;
@@ -119,7 +119,7 @@ const DomainSearchSkipSuggestion = ( {
 				// translators: %(domain)s is the domain name
 				__( 'Skip purchase and continue with %(domain)s' ),
 				{ domain: domain ?? '' }
-		  );
+			);
 
 	const renderRight = () => {
 		if ( ! showButton ) {

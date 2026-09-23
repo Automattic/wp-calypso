@@ -1,6 +1,7 @@
 import { EmailProvider } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -14,7 +15,7 @@ import OverviewCard from '../../../components/overview-card';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../../emails/types';
 import { isMonthlyEmailProduct } from '../../../emails/utils/is-monthly-email-product';
 import { getTitanTierFromSlug, isHighestTitanTier } from '../../../emails/utils/titan-tiers';
-import { isTitanMail } from '../../../utils/purchase';
+import { getDelayedDowngradeRenewalPriceText, isTitanMail } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -72,9 +73,9 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 	);
 	const description = isMonthlyEmailProduct( purchase )
 		? /* translators: %s is a per-mailbox monthly price, e.g. "$3.50". */
-		  sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
+			sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
 		: /* translators: %s is a per-mailbox yearly price, e.g. "$42". */
-		  sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
+			sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
 
 	return (
 		<ActionList.ActionItem
@@ -134,6 +135,11 @@ export function ManageEmailPlanActionItem( { purchase }: { purchase: Purchase } 
 }
 
 export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
+	const downgradeText = getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation );
+	const periodText = isMonthlyEmailProduct( purchase )
+		? __( 'Per mailbox/month. Excludes taxes.' )
+		: __( 'Per mailbox/year. Excludes taxes.' );
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -141,11 +147,7 @@ export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( getPerMailboxPriceInteger( purchase ), purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={
-				isMonthlyEmailProduct( purchase )
-					? __( 'Per mailbox/month. Excludes taxes.' )
-					: __( 'Per mailbox/year. Excludes taxes.' )
-			}
+			description={ downgradeText ? periodText + ' ' + downgradeText : periodText }
 		/>
 	);
 }
@@ -170,14 +172,14 @@ export function EmailPlanMailboxCard( { purchase }: { purchase: Purchase } ) {
 					// translators: %d is a number of mailboxes.
 					_n( '%d mailbox', '%d mailboxes', count ),
 					count
-			  );
+				);
 
 	return (
 		<OverviewCard
 			icon={ envelope }
 			title={ _n( 'Mailbox', 'Mailboxes', count ) }
 			heading={ heading }
-			description={ count === 1 && firstMailbox ? undefined : purchase.meta ?? undefined }
+			description={ count === 1 && firstMailbox ? undefined : ( purchase.meta ?? undefined ) }
 			link="/emails"
 			isLoading={ isLoading }
 		/>
