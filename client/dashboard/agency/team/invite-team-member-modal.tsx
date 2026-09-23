@@ -16,9 +16,14 @@ import { ButtonStack } from '../../components/button-stack';
 interface InviteTeamMemberModalProps {
 	agencyId: number;
 	onClose: () => void;
+	onSent: ( login: string ) => void;
 }
 
-export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeamMemberModalProps ) {
+export default function InviteTeamMemberModal( {
+	agencyId,
+	onClose,
+	onSent,
+}: InviteTeamMemberModalProps ) {
 	const [ login, setLogin ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ error, setError ] = useState( '' );
@@ -27,18 +32,19 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		if ( ! login.trim() ) {
+		const trimmedLogin = login.trim();
+		if ( ! trimmedLogin ) {
 			setError( __( 'Please enter a valid email or WordPress.com username.' ) );
 			return;
 		}
 		invite.mutate(
-			{ login: login.trim(), message: message.trim() },
+			{ login: trimmedLogin, message: message.trim() },
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'The invitation has been successfully sent.' ), {
 						type: 'snackbar',
 					} );
-					onClose();
+					onSent( trimmedLogin );
 				},
 				onError: () =>
 					createErrorNotice( __( 'Failed to send the invitation.' ), { type: 'snackbar' } ),
