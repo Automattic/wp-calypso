@@ -42,14 +42,16 @@ export const NamePulseResults = () => {
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ /* Keyed by the query so a new search brings back a dismissed notice. */ }
+			{ notice && ! isTldsError && (
+				<NamePulseSearchNotice
+					key={ `notice-${ query }` }
+					notice={ notice }
+					onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
+				/>
+			) }
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
-				{ notice && ! isTldsError && (
-					<NamePulseSearchNotice
-						notice={ notice }
-						onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
-					/>
-				) }
 				{ hasTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }

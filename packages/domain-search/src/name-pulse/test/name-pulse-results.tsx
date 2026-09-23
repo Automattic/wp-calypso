@@ -395,6 +395,38 @@ describe( 'NamePulseResults', () => {
 		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
 	} );
 
+	it( 'places the notice above the BeforeResults slot', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.d"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const notice = await findNotice();
+		const banner = screen.getByText( 'Before Results' );
+
+		expect(
+			notice.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'brings back a dismissed notice when the query changes', async () => {
+		const user = userEvent.setup();
+
+		const { rerender } = render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+
+		rerender( <NamePulseTestSearch query="sorbet.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+		);
+	} );
+
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
 		const user = userEvent.setup();
 		const onExternalDomainClick = jest.fn();
