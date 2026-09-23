@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import type { FeedbackAnswer, FeedbackType } from './types';
 
 const PREFERENCE = 'a4a-feedback';
@@ -25,7 +26,13 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 	const { mutate: fileSurvey, isPending: isSubmitting } = useMutation(
 		a4aFeedbackSurveyMutation()
 	);
-	const { mutate: rememberAnswer } = useMutation( userPreferenceMutation( PREFERENCE ) );
+	// On the mutation, not the mutate() call: the modal unmounts before the
+	// write settles, and per-call callbacks are dropped on unmount.
+	const { mutate: rememberAnswer } = useMutation(
+		withSnackbar( userPreferenceMutation( PREFERENCE ), {
+			error: __( "We couldn't save your answer, so we may ask again later." ),
+		} )
+	);
 
 	const agencyId = agency?.id;
 	const entry = answered?.[ type ];

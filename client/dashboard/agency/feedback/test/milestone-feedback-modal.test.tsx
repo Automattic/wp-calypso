@@ -6,6 +6,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useState } from 'react';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import MilestoneFeedbackModal from '../milestone-feedback-modal';
@@ -228,5 +229,47 @@ describe( '<MilestoneFeedbackModal>', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'The invite email looked like spam.' );
 		expect( preference.value ).toBeUndefined();
 		expect( survey.value ).toBeDefined();
+	} );
+
+	test( 'tells the partner when their answer could not be remembered', async () => {
+		window.scrollTo = jest.fn();
+		mockAgency();
+		mockPreferences();
+		captureSurvey();
+		nock( API ).post( '/rest/v1.1/me/preferences' ).reply( 500 );
+		const user = userEvent.setup();
+
+		// Unmount on close, as the real call sites do, since the write settles after that.
+		function Host() {
+			const [ isOpen, setIsOpen ] = useState( true );
+			return (
+				<>
+					{ isOpen && (
+						<MilestoneFeedbackModal
+							type="team-member-invite-sent"
+							args={ { email: 'nina@example.com' } }
+							onClose={ () => setIsOpen( false ) }
+						/>
+					) }
+					<Snackbars />
+				</>
+			);
+		}
+		const queryClient = new QueryClient();
+		queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as Agency );
+		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+		render( <Host />, { queryClient } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Send your feedback' } ) );
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'button', { name: 'Send your feedback' } )
+			).not.toBeInTheDocument()
+		);
+		const [ notice ] = await screen.findAllByText(
+			"We couldn't save your answer, so we may ask again later."
+		);
+		expect( notice ).toBeVisible();
 	} );
 } );
