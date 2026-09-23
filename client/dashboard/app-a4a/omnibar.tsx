@@ -1,7 +1,7 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { Omnibar } from '@automattic/omnibar';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { omnibarEvents } from '../app/omnibar/events';
 import { InitialOmnibar } from '../app/omnibar/omnibar';
@@ -34,9 +34,11 @@ function buildUserNode( user: User ): OmnibarNode {
 				children: [
 					{
 						id: 'user-info',
-						disabled: true,
 						icon: avatar,
 						meta: { displayName: user.display_name, username: user.username },
+						href: wpcomLink( '/me' ),
+						target: '_blank',
+						rel: 'noopener noreferrer',
 					},
 					{
 						id: 'a4a-profile',
@@ -69,21 +71,18 @@ export default function A4AOmnibar( { user }: { user?: User } ) {
 	const authUser = useOmnibarUser( { user, enabled: hydrated } );
 	const helpCenterNode = useHelpCenterPlugin( { sectionName: 'dashboard', adminBarNodes: [] } );
 
-	const nodes = useMemo< OmnibarNodes >(
-		() => ( {
-			home: {
-				id: 'a4a-home',
-				label: __( 'Overview' ),
-				icon: <A4AOmnibarHomeIcon />,
-				href: mainRoute,
-				onClick: ( event ) =>
-					omnibarEvents.linkClick.emit( { href: mainRoute, event: event.nativeEvent } ),
-			},
-			plugins: authUser && supports.help ? [ helpCenterNode ] : [],
-			user: authUser ? buildUserNode( authUser ) : undefined,
-		} ),
-		[ authUser, helpCenterNode, mainRoute, supports.help ]
-	);
+	const nodes: OmnibarNodes = {
+		home: {
+			id: 'a4a-home',
+			label: __( 'Overview' ),
+			icon: <A4AOmnibarHomeIcon />,
+			href: mainRoute,
+			onClick: ( event ) =>
+				omnibarEvents.linkClick.emit( { href: mainRoute, event: event.nativeEvent } ),
+		},
+		plugins: authUser && supports.help ? [ helpCenterNode ] : [],
+		user: authUser ? buildUserNode( authUser ) : undefined,
+	};
 
 	const handleClickResponsiveMenu = () => {
 		recordNodeClick( RESPONSIVE_MENU_NODE_ID );
