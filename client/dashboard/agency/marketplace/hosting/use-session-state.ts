@@ -1,7 +1,7 @@
 import { useCallback, useSyncExternalStore } from 'react';
 
-// Same sessionStorage keys as the classic marketplace, so a selection made on
-// one dashboard is still there on the other.
+// Same sessionStorage keys as the classic marketplace. The two dashboards run on
+// different origins, so a selection does not carry over between them.
 const VALUE_KEY_PREFIX = 'a4a-marketplace-slider-';
 const MAP_KEY_PREFIX = 'a4a-marketplace-keyed-';
 

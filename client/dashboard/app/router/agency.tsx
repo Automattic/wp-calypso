@@ -51,7 +51,10 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
+import {
+	getPressableOwnershipType,
+	pressableLicensesQuery,
+} from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import {
@@ -298,15 +301,18 @@ const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 		)
 	);
 
-// `/marketplace/hosting` has no screen of its own; it opens the Pressable section.
+// `/marketplace/hosting` has no screen of its own. Like classic, it opens
+// WordPress.com for agencies that signed up with 1-5 sites and Pressable otherwise.
 export const marketplaceHostingIndexRoute = createRoute( {
 	getParentRoute: () => marketplaceHostingRoute,
 	path: '/',
-	beforeLoad: ( { cause } ) => {
+	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( 'pressable' ) } );
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const section = agency?.signup_meta?.number_sites === '1-5' ? 'wpcom' : 'pressable';
+		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( section ) } );
 	},
 } );
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
@@ -484,17 +490,23 @@ export const marketplaceRoute = createRoute( {
 		const agencySupports = context.config.supports.agency;
 		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		const capabilities = activeAgency?.user?.capabilities ?? [];
-		const destination = agencySupports
-			? marketplaceSections.find( ( section ) =>
+		const availableSections = agencySupports
+			? marketplaceSections.filter( ( section ) =>
 					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
-				)?.route
-			: undefined;
+				)
+			: [];
+		// Pressable owners mostly come to buy products, so they land on Products as in classic.
+		const ownsPressable = getPressableOwnershipType( activeAgency ) !== 'none';
+		const destination =
+			( ownsPressable &&
+				availableSections.find( ( section ) => section.route === marketplaceProductsRoute ) ) ||
+			availableSections[ 0 ];
 
 		if ( ! destination ) {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 
-		throw dashboardRedirect( { to: destination.fullPath } );
+		throw dashboardRedirect( { to: destination.route.fullPath } );
 	},
 } );
 
@@ -606,6 +618,36 @@ const mcpConnectRoute = createRoute( {
 		createLazyRoute( 'resources-mcp-connect' )( { component: d.default } )
 	)
 );
+
+const resourcesSections = [
+	{ route: learnRoute, supports: 'learn' },
+	{ route: mcpRoute, supports: 'mcp' },
+	{ route: devToolsRoute, supports: 'devTools' },
+] as const;
+
+// `/resources` – no screen of its own; sends the user to the first Resources
+// section the app supports.
+export const resourcesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	getParentRoute: () => agencyRoute,
+	path: 'resources',
+	beforeLoad: ( { cause, context } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agencySupports = context.config.supports.agency;
+		const destination = resourcesSections.find(
+			( section ) => agencySupports && agencySupports[ section.supports ]
+		)?.route;
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/sites` – agency-managed sites
 export const agencySitesRoute = createRoute( {
@@ -1945,6 +1987,7 @@ export const createAgencyRoutes = () => [
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
+		resourcesRoute,
 		learnRoute,
 		devToolsRoute,
 		mcpRoute.addChildren( [

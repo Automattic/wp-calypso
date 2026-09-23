@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -21,6 +22,11 @@ interface AddWooPaymentsToSiteModalProps {
 	recordTracksEvent: RecordTracksEvent;
 	onSelectSite: ( siteId: number ) => void;
 	onClose: () => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the
+	 * Sites link renders a plain anchor for the host app's own router.
+	 */
+	shouldUseRouterLink?: boolean;
 }
 
 export default function AddWooPaymentsToSiteModal( {
@@ -29,8 +35,12 @@ export default function AddWooPaymentsToSiteModal( {
 	recordTracksEvent,
 	onSelectSite,
 	onClose,
+	shouldUseRouterLink = false,
 }: AddWooPaymentsToSiteModalProps ) {
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
+
+	const onSitesDashboardClick = () =>
+		recordTracksEvent( 'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click' );
 
 	const handleAddSite = () => {
 		if ( selectedSite ) {
@@ -53,15 +63,10 @@ export default function AddWooPaymentsToSiteModal( {
 							"If you don't see the site in the list, connect it first via the <a>Sites Dashboard</a>."
 						),
 						{
-							a: (
-								<a
-									href={ A4A_SITES_LINK }
-									onClick={ () =>
-										recordTracksEvent(
-											'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click'
-										)
-									}
-								/>
+							a: shouldUseRouterLink ? (
+								<Link to={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
+							) : (
+								<a href={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
 							),
 						}
 					) }

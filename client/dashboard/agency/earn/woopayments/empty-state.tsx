@@ -50,6 +50,7 @@ export default function WooPaymentsDashboardEmptyState() {
 									agencyId={ agencyId }
 									excludedSiteIds={ EXCLUDED_SITE_IDS }
 									recordTracksEvent={ recordTracksEvent }
+									shouldUseRouterLink
 									onSelectSite={ ( siteId ) =>
 										router.navigate( {
 											to: earnWooPaymentsSetupRoute.fullPath,
