@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useViewportMatch } from '@wordpress/compose';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
@@ -14,6 +15,8 @@ import {
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NAME_PULSE_QUERY_SETTLE_MS,
+	NAME_PULSE_TOP_RESULTS_COUNT,
+	NAME_PULSE_TOP_RESULTS_COUNT_TABLET,
 	NamePulseDomainStatus,
 	pickPricing,
 	sanitizeKeywordInput,
@@ -202,16 +205,33 @@ export const useNamePulseSearch = ( query: string ) => {
 	} );
 
 	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
+	// Capped here rather than hidden in CSS so a name dropped from Top results
+	// falls back into the sections below instead of vanishing.
+	const isSmallOrBigger = useViewportMatch( 'small', '>=' );
+	const isMediumOrBigger = useViewportMatch( 'medium', '>=' );
+	const topResultsCount =
+		isSmallOrBigger && ! isMediumOrBigger
+			? NAME_PULSE_TOP_RESULTS_COUNT_TABLET
+			: NAME_PULSE_TOP_RESULTS_COUNT;
 	const topResults = useMemo( () => {
 		if ( ! isAiMode ) {
-			return getTopResults( rawExactList );
+			return getTopResults( rawExactList ).slice( 0, topResultsCount );
 		}
 
-		// Both lists compete for the same three slots, so featuring the faster
-		// one's picks would swap every card once the other lands. The section
-		// stays on skeletons until it can pick from the full pool.
-		return isLoadingTop ? EMPTY_RESULTS : getAiTopResults( rawKeywordResults, rawCreativeResults );
-	}, [ isAiMode, isLoadingTop, rawKeywordResults, rawCreativeResults, rawExactList ] );
+		// Both lists compete for the same slots, so featuring the faster one's
+		// picks would swap every card once the other lands. The section stays on
+		// skeletons until it can pick from the full pool.
+		return isLoadingTop
+			? EMPTY_RESULTS
+			: getAiTopResults( rawKeywordResults, rawCreativeResults ).slice( 0, topResultsCount );
+	}, [
+		isAiMode,
+		isLoadingTop,
+		rawKeywordResults,
+		rawCreativeResults,
+		rawExactList,
+		topResultsCount,
+	] );
 
 	// Top results backfill from rows outside the initial slice (for example
 	// after that batch failed); make sure whatever is featured gets checked.
@@ -263,6 +283,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		keywordResults,
 		creativeResults,
 		topResults,
+		topResultsCount,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,

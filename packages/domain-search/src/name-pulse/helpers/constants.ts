@@ -1,6 +1,11 @@
 export const NAME_PULSE_TOP_RESULTS_COUNT = 3;
 
 /**
+ * The tablet grid has two columns, so a third card would sit alone on a second row.
+ */
+export const NAME_PULSE_TOP_RESULTS_COUNT_TABLET = 2;
+
+/**
  * Rows per "Show more" click and initial rows per section.
  */
 export const NAME_PULSE_PAGE_SIZE = 12;
