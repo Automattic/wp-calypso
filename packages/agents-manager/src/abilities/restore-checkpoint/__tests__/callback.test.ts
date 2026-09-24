@@ -387,6 +387,70 @@ describe( 'restoreCheckpointCallback', () => {
 		);
 	} );
 
+	describe( 'a redo that names the undone change', () => {
+		const UNDO_CHECKPOINT = {
+			id: 'toolu_undo',
+			toolId: 'big_sky__restore_checkpoint',
+			checkpointKeys: [ 'color' ],
+			restoresCheckpointId: TARGET_CHECKPOINT.id,
+			requestIntentType: 'redo' as const,
+		};
+
+		beforeEach( () => mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID ) );
+
+		it.each( [
+			[ 'an undo', 'redo' as const ],
+			[ 'a plain restore', 'restore' as const ],
+		] )( 're-applies the change from the checkpoint %s left', async ( _, requestIntentType ) => {
+			const undoCheckpoint = { ...UNDO_CHECKPOINT, requestIntentType };
+			mockGetCheckpoint.mockImplementation( ( id: string ) =>
+				[ TARGET_CHECKPOINT, undoCheckpoint ].find( ( checkpoint ) => checkpoint.id === id )
+			);
+			mockGetCheckpoints.mockReturnValue( [ TARGET_CHECKPOINT, undoCheckpoint ] );
+
+			const result = await restoreCheckpointCallback( makeInput( { requestIntentType: 'redo' } ) );
+
+			expect( restoreCheckpoint ).toHaveBeenCalledWith( UNDO_CHECKPOINT.id );
+			expect( setCheckpoint ).toHaveBeenCalledWith(
+				RESTORE_CALL_ID,
+				undoCheckpoint.checkpointKeys,
+				expect.objectContaining( {
+					restoresCheckpointId: UNDO_CHECKPOINT.id,
+					requestIntentType: 'undo',
+				} )
+			);
+			expect( result.result.success ).toBe( true );
+		} );
+
+		it.each( [
+			[
+				'an undo, which never turns into a redo',
+				'undo' as const,
+				[ TARGET_CHECKPOINT, UNDO_CHECKPOINT ],
+			],
+			[
+				'a redo once that checkpoint has been used',
+				'redo' as const,
+				[
+					TARGET_CHECKPOINT,
+					UNDO_CHECKPOINT,
+					{
+						...UNDO_CHECKPOINT,
+						id: 'toolu_redo',
+						restoresCheckpointId: UNDO_CHECKPOINT.id,
+						requestIntentType: 'undo' as const,
+					},
+				],
+			],
+		] )( 'restores the named checkpoint for %s', async ( _, requestIntentType, checkpoints ) => {
+			mockGetCheckpoints.mockReturnValue( checkpoints );
+
+			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
+
+			expect( restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
+		} );
+	} );
+
 	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
