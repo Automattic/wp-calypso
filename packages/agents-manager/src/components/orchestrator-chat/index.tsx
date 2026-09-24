@@ -70,7 +70,6 @@ import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../../utils/orchestrator-error-message';
-import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
@@ -1199,14 +1198,6 @@ export default function OrchestratorChat( {
 		nativeUndoRevertedTurn,
 		sourceDriftInvalidatedCheckpointIds,
 	] );
-
-	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
-	// ability migrates. Keeps the provider checkpoint store reachable for the
-	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
-	useEffect( () => {
-		setProviderCheckpoints( checkpoint );
-		return () => setProviderCheckpoints( undefined );
-	}, [ checkpoint ] );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =

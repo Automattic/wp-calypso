@@ -1033,9 +1033,8 @@ export interface CheckpointContextItem extends CheckpointMetadata {
 }
 
 /**
- * The AM-held checkpoints advertised to the agent via the client context for
- * `restore-checkpoint`. While the migration runs, the loader appends them to
- * the provider's own list, and ids from either store restore.
+ * The checkpoints advertised to the agent via the client context for
+ * `restore-checkpoint`.
  */
 export function getAvailableCheckpoints(): CheckpointContextItem[] {
 	const checkpoints = getCheckpoints();

@@ -7,9 +7,9 @@ import useAbilitiesRegistration from '../use-abilities-registration';
 
 jest.mock( '../../abilities', () => ( { registerAmAbilities: jest.fn() } ) );
 
-// Whether anything actually loads or registers (editor-only lazy loading, the
-// `?am_abilities=0` switch) is decided inside `registerAmAbilities()` and
-// covered by the abilities facade tests.
+// Whether anything actually loads or registers (editor-only lazy loading) is
+// decided inside `registerAmAbilities()` and covered by the abilities facade
+// tests.
 describe( 'useAbilitiesRegistration', () => {
 	it( 'registers AM abilities on mount', () => {
 		renderHook( () => useAbilitiesRegistration() );

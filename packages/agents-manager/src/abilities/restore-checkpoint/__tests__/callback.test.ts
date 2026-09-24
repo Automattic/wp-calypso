@@ -8,11 +8,6 @@ import {
 	setReciprocalCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
-import {
-	getProviderCheckpoint,
-	getProviderCheckpointRecords,
-	getProviderCheckpoints,
-} from '../../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { recordBigSkyTracksEvent } from '../../../utils/tracks';
 import { restoreCheckpointCallback } from '../callback';
@@ -27,11 +22,6 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 	setReciprocalCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
-jest.mock( '../../../utils/provider-checkpoints', () => ( {
-	getProviderCheckpoint: jest.fn( () => null ),
-	getProviderCheckpointRecords: jest.fn( () => [] ),
-	getProviderCheckpoints: jest.fn(),
-} ) );
 jest.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
 	getToolCallIdFromConversationHistory: jest.fn( () => null ),
@@ -41,9 +31,6 @@ const mockGetCheckpoint = getCheckpoint as jest.Mock;
 const mockGetCheckpoints = getCheckpoints as jest.Mock;
 const mockHasCheckpoint = hasCheckpoint as jest.Mock;
 const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
-const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
-const mockGetProviderCheckpoint = getProviderCheckpoint as jest.Mock;
-const mockGetProviderCheckpointRecords = getProviderCheckpointRecords as jest.Mock;
 
 const RESTORE_CALL_ID = 'toolu_restore';
 const RESTORE_SUMMARY = 'I undid the color change.';
@@ -53,14 +40,6 @@ const TARGET_CHECKPOINT = {
 	toolId: 'big_sky__show_component',
 	checkpointKeys: [ 'color' ],
 };
-
-const makeProviderCheckpoints = () => ( {
-	hasCheckpoint: jest.fn( ( id: string ) => id === TARGET_CHECKPOINT.id ),
-	restoreCheckpoint: jest.fn( () => Promise.resolve() ),
-	setCheckpoint: jest.fn(),
-	clearCheckpoint: jest.fn(),
-	addNavigationToCheckpoint: jest.fn(),
-} );
 
 const makeInput = ( overrides = {} ) => ( {
 	checkpointId: TARGET_CHECKPOINT.id,
@@ -82,9 +61,6 @@ beforeEach( () => {
 	);
 	mockGetCheckpoints.mockReturnValue( [ TARGET_CHECKPOINT ] );
 	mockGetToolCallId.mockReturnValue( null );
-	mockGetProviderCheckpoints.mockReturnValue( undefined );
-	mockGetProviderCheckpoint.mockReturnValue( null );
-	mockGetProviderCheckpointRecords.mockReturnValue( [] );
 } );
 
 afterEach( () => consoleError.mockRestore() );
@@ -251,176 +227,6 @@ describe( 'restoreCheckpointCallback', () => {
 			'toolu_old_redo',
 			'toolu_legacy',
 		] );
-	} );
-
-	it( 'clears stale reciprocals from the provider store after an AM restore', async () => {
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-		mockGetProviderCheckpointRecords.mockReturnValue( [
-			{
-				id: 'toolu_provider_stale',
-				toolId: RESTORE_CHECKPOINT_TOOL_ID,
-				requestIntentType: 'redo',
-			},
-			{ id: 'toolu_provider_edit', toolId: 'big_sky__edit_entity_record' },
-		] );
-
-		await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.clearCheckpoint.mock.calls.flat() ).toEqual( [
-			'toolu_provider_stale',
-		] );
-	} );
-
-	it( 'clears stale reciprocals from both stores after a delegated restore', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-		mockGetCheckpoints.mockReturnValue( [
-			{ id: 'toolu_am_stale', toolId: RESTORE_CHECKPOINT_TOOL_ID, requestIntentType: 'redo' },
-		] );
-		mockGetProviderCheckpointRecords.mockReturnValue( [
-			{
-				id: 'toolu_provider_stale',
-				toolId: RESTORE_CHECKPOINT_TOOL_ID,
-				requestIntentType: 'redo',
-			},
-		] );
-
-		await restoreCheckpointCallback( makeInput() );
-
-		expect( ( clearCheckpoint as jest.Mock ).mock.calls.flat() ).toEqual( [ 'toolu_am_stale' ] );
-		expect( providerCheckpoints.clearCheckpoint.mock.calls.flat() ).toEqual( [
-			'toolu_provider_stale',
-		] );
-	} );
-
-	it( 'restores even when recording the provider reciprocal fails', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
-		const providerCheckpoints = makeProviderCheckpoints();
-		providerCheckpoints.setCheckpoint.mockImplementationOnce( () => {
-			throw new Error( 'Snapshot exploded.' );
-		} );
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		const result = await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
-		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
-		expect( result.result.success ).toBe( true );
-		expect( consoleError ).toHaveBeenCalledWith(
-			`[AgentsManager] Failed to record a redo checkpoint for ${ TARGET_CHECKPOINT.id }:`,
-			expect.any( Error )
-		);
-	} );
-
-	it( 'delegates to the provider store when AM does not hold the id', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		const result = await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
-		expect( restoreCheckpoint ).not.toHaveBeenCalled();
-		expect( result ).toEqual( {
-			result: {
-				success: true,
-				message: RESTORE_SUMMARY,
-				details: { checkpointId: TARGET_CHECKPOINT.id },
-			},
-			returnToAgent: true,
-		} );
-	} );
-
-	it( 'records the reciprocal in the provider store scoped to the target keys', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		mockGetProviderCheckpoint.mockReturnValue( {
-			checkpointKeys: [ 'site_title', 'site_metadata' ],
-		} );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		await restoreCheckpointCallback( makeInput() );
-
-		expect( mockGetProviderCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
-		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith(
-			RESTORE_CALL_ID,
-			[ 'site_title', 'site_metadata' ],
-			{
-				toolCallId: RESTORE_CALL_ID,
-				toolId: 'big_sky__restore_checkpoint',
-				summary: RESTORE_SUMMARY,
-				restoresCheckpointId: TARGET_CHECKPOINT.id,
-				requestIntentType: 'redo',
-				createdByRequestIntentType: 'undo',
-			}
-		);
-		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
-	} );
-
-	it( 'copies the page-rename flip and navigation snapshots into the reciprocal', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		mockGetProviderCheckpoint.mockReturnValue( {
-			checkpointKeys: [ 'page', 'navigation' ],
-			pageRename: { pageId: 12, oldTitle: 'About', newTitle: 'Our Story' },
-			navigationRecords: { 'nav-1': {}, 'nav-2': {} },
-		} );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith(
-			RESTORE_CALL_ID,
-			[ 'page', 'navigation' ],
-			expect.objectContaining( {
-				pageRename: { pageId: 12, oldTitle: 'Our Story', newTitle: 'About' },
-			} )
-		);
-		expect( providerCheckpoints.addNavigationToCheckpoint.mock.calls ).toEqual( [
-			[ RESTORE_CALL_ID, 'nav-1' ],
-			[ RESTORE_CALL_ID, 'nav-2' ],
-		] );
-		expect(
-			providerCheckpoints.addNavigationToCheckpoint.mock.invocationCallOrder[ 0 ]
-		).toBeLessThan( providerCheckpoints.restoreCheckpoint.mock.invocationCallOrder[ 0 ] );
-	} );
-
-	it( 'skips the reciprocal when the target keys are unreadable', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		const providerCheckpoints = makeProviderCheckpoints();
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		const result = await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.setCheckpoint ).not.toHaveBeenCalled();
-		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
-		expect( result.result.success ).toBe( true );
-	} );
-
-	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
-		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
-		const providerCheckpoints = makeProviderCheckpoints();
-		providerCheckpoints.restoreCheckpoint.mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
-		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
-
-		const result = await restoreCheckpointCallback( makeInput() );
-
-		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
-		expect( result.result ).toMatchObject( {
-			success: false,
-			error: expect.stringContaining( 'Restore exploded.' ),
-		} );
 	} );
 
 	// Kept, not dropped: several domains persist as they restore, so a failure

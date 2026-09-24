@@ -18,7 +18,6 @@ import {
 	restoreCheckpoint,
 	swapCheckpoint,
 } from '../utils/checkpoints';
-import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { applyBlockEditsAbility } from './apply-block-edits';
 import { applyUpdateThemeAbility } from './apply-update-theme';
 import { captureCanvasAbility } from './capture-canvas';
@@ -33,15 +32,9 @@ import { showTemplateAbility } from './show-template';
 import { streamPageDesignAbility } from './stream-page-design';
 import type { Ability } from './types';
 
-// TODO (ability-migration): Fold both lists into one with the switch (see
-// `utils/is-am-abilities-disabled.ts`). Moving `show-component` to the AM-only
-// list before then must drop the converter's rendering gate with it, or the
-// switch would run AM's copy but render the provider's picker.
-
-// Editor abilities a provider still ships a copy of, so the switch below has
-// something to fall back to. Migrating one = add its folder under `abilities/`
-// and list it here.
-const MIGRATED_EDITOR_ABILITIES: Ability[] = [
+// The editor abilities AM owns. Migrating an ability = add its folder under
+// `abilities/` and list it here.
+export const EDITOR_ABILITIES: Ability[] = [
 	applyBlockEditsAbility,
 	applyUpdateThemeAbility,
 	captureCanvasAbility,
@@ -51,20 +44,9 @@ const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	setSiteLogoAbility,
 	showComponentAbility,
 	streamPageDesignAbility,
+	getBlockTreeAbility,
+	showTemplateAbility,
 ];
-
-// Editor abilities with no copy anywhere else.
-const AM_ONLY_EDITOR_ABILITIES: Ability[] = [ getBlockTreeAbility, showTemplateAbility ];
-
-const EDITOR_ABILITIES: Ability[] = [ ...MIGRATED_EDITOR_ABILITIES, ...AM_ONLY_EDITOR_ABILITIES ];
-
-/**
- * The editor abilities AM owns. `?am_abilities=0` hands the migrated ones
- * back to the provider copies; the AM-only ones have nothing to fall back to
- * and stay on.
- */
-export const getEditorAbilities = (): Ability[] =>
-	isAmAbilitiesDisabled() ? AM_ONLY_EDITOR_ABILITIES : EDITOR_ABILITIES;
 
 // Registration is one-time per page load.
 let hasRegistered = false;
@@ -94,7 +76,7 @@ export async function registerEditorAbilities(): Promise< void > {
 		// Category may already be registered.
 	}
 
-	for ( const ability of getEditorAbilities() ) {
+	for ( const ability of EDITOR_ABILITIES ) {
 		try {
 			await registerAbility( ability );
 		} catch ( error ) {

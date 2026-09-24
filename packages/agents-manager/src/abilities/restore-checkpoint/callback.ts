@@ -10,16 +10,10 @@ import {
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isRecord } from '../../utils/is-record';
-import {
-	getProviderCheckpoint,
-	getProviderCheckpointRecords,
-	getProviderCheckpoints,
-} from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { errorResult, successResult } from '../ability-result';
-import type { CheckpointMetadata, CheckpointRecord } from '../../utils/checkpoints';
-import type { UseCheckpointReturn } from '../../utils/load-external-providers';
+import type { CheckpointMetadata } from '../../utils/checkpoints';
 import type { AbilityResult } from '../types';
 
 export interface RestoreCheckpointInput {
@@ -59,8 +53,7 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 // changes.
 function clearStaleReciprocals(
 	restoreToolCallId: string,
-	reciprocalRequestIntentType: RestoreCheckpointInput[ 'requestIntentType' ],
-	providerCheckpoints: UseCheckpointReturn | undefined
+	reciprocalRequestIntentType: RestoreCheckpointInput[ 'requestIntentType' ]
 ): void {
 	const isStaleReciprocal = ( checkpoint: {
 		id: string;
@@ -75,105 +68,6 @@ function clearStaleReciprocals(
 	getCheckpoints()
 		.filter( isStaleReciprocal )
 		.forEach( ( { id } ) => clearCheckpoint( id ) );
-
-	// TODO (ability-migration): Delete this provider-store sweep with the
-	// bridge. Until then, reciprocals live in whichever store held their
-	// restore's target, so both stores are swept.
-	if ( providerCheckpoints ) {
-		getProviderCheckpointRecords()
-			.filter( isStaleReciprocal )
-			.forEach( ( { id } ) => providerCheckpoints.clearCheckpoint( id ) );
-	}
-}
-
-// Restores a checkpoint Big Sky still holds, since its tools write to its own
-// store until they migrate. The reciprocal goes there too, scoped to the
-// target's keys: a keyless one would redo through Big Sky's legacy full-snapshot
-// path and re-apply stale variation titles over AM-applied styles, so an
-// unreadable or keyless target gets none. The page-rename flip and navigation
-// snapshots are copied as Big Sky's tool does.
-async function restoreProviderCheckpoint(
-	providerCheckpoints: UseCheckpointReturn,
-	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
-): Promise< AbilityResult > {
-	const targetCheckpoint = getProviderCheckpoint( checkpointId );
-	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
-	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
-	const reciprocalId =
-		targetCheckpoint &&
-		restoreToolCallId &&
-		! hasCheckpoint( restoreToolCallId ) &&
-		! providerCheckpoints.hasCheckpoint( restoreToolCallId )
-			? restoreToolCallId
-			: null;
-
-	if ( reciprocalId && targetCheckpoint ) {
-		try {
-			const { pageRename } = targetCheckpoint;
-			// `toolCallId` matches Big Sky's own record shape in its store.
-			providerCheckpoints.setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
-				toolCallId: reciprocalId,
-				toolId: RESTORE_CHECKPOINT_TOOL_ID,
-				summary,
-				restoresCheckpointId: checkpointId,
-				requestIntentType: reciprocalRequestIntentType,
-				createdByRequestIntentType: requestIntentType,
-				...( pageRename && {
-					pageRename: {
-						pageId: pageRename.pageId,
-						oldTitle: pageRename.newTitle,
-						newTitle: pageRename.oldTitle,
-					},
-				} ),
-			} );
-
-			// Capture the navigation snapshots before the restore mutates them.
-			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach( ( navigationId ) =>
-				providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
-			);
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error(
-				`[AgentsManager] Failed to record a redo checkpoint for ${ checkpointId }:`,
-				error
-			);
-
-			// Redo bookkeeping must not block the restore — drop the partial
-			// record and proceed without one; no redo beats a wrong one.
-			providerCheckpoints.clearCheckpoint( reciprocalId );
-		}
-	}
-
-	try {
-		await providerCheckpoints.restoreCheckpoint( checkpointId );
-	} catch ( error ) {
-		if ( reciprocalId ) {
-			providerCheckpoints.clearCheckpoint( reciprocalId );
-		}
-		return restoreFailedResult( error, checkpointId );
-	}
-
-	if ( restoreToolCallId ) {
-		clearStaleReciprocals( restoreToolCallId, reciprocalRequestIntentType, providerCheckpoints );
-	}
-
-	return successResult( summary, { checkpointId } );
-}
-
-// The reciprocal an undo or restore of `checkpointId` recorded, while no redo
-// has used it: it re-applies the change. A redo's own reciprocal carries `undo`.
-function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefined {
-	const checkpoints = getCheckpoints();
-
-	return [ ...checkpoints ]
-		.reverse()
-		.find(
-			( checkpoint ) =>
-				checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
-				checkpoint.restoresCheckpointId === checkpointId &&
-				checkpoint.requestIntentType !== 'undo' &&
-				! checkpoints.some( ( other ) => other.restoresCheckpointId === checkpoint.id )
-		);
 }
 
 async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult > {
@@ -196,27 +90,14 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 		);
 	}
 
-	const requestedCheckpoint = getCheckpoint( checkpointId );
-	if ( ! requestedCheckpoint ) {
-		// TODO (ability-migration): Delete the delegation with the
-		// provider-checkpoints bridge (AM-72) — until Big Sky's copies go, an id
-		// written under `?am_abilities=0` still lives in its store.
-		const providerCheckpoints = getProviderCheckpoints();
-		if ( providerCheckpoints?.hasCheckpoint( checkpointId ) ) {
-			return restoreProviderCheckpoint( providerCheckpoints, input );
-		}
-
+	const targetCheckpoint = getCheckpoint( checkpointId );
+	if ( ! targetCheckpoint ) {
 		return errorResult(
 			`Checkpoint not found: ${ checkpointId }`,
 			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			{ checkpointId }
 		);
 	}
-
-	// A redo may name the undone change itself, whose checkpoint would only put
-	// back the undone state; it runs from the undo's reciprocal instead.
-	const targetCheckpoint =
-		( requestIntentType === 'redo' && findRedoReciprocal( checkpointId ) ) || requestedCheckpoint;
 
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
@@ -231,7 +112,7 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 			await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
 				toolId: RESTORE_CHECKPOINT_TOOL_ID,
 				summary,
-				restoresCheckpointId: targetCheckpoint.id,
+				restoresCheckpointId: checkpointId,
 				restoredCheckpointToolId: targetCheckpoint.toolId,
 				requestIntentType: reciprocalRequestIntentType,
 				createdByRequestIntentType: requestIntentType,
@@ -251,7 +132,7 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 	}
 
 	try {
-		await restoreCheckpoint( targetCheckpoint.id );
+		await restoreCheckpoint( checkpointId );
 	} catch ( error ) {
 		// The reciprocal is kept: domains restore in sequence and several persist,
 		// so a failure part-way leaves the site changed with this as the only way
@@ -260,11 +141,7 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 	}
 
 	if ( restoreToolCallId ) {
-		clearStaleReciprocals(
-			restoreToolCallId,
-			reciprocalRequestIntentType,
-			getProviderCheckpoints()
-		);
+		clearStaleReciprocals( restoreToolCallId, reciprocalRequestIntentType );
 	}
 
 	return successResult( summary, { checkpointId } );
