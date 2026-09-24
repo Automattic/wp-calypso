@@ -62,6 +62,7 @@ export interface UserPreferences {
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-referrals-bank-details-success-notice-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;

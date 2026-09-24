@@ -16,6 +16,7 @@ import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
@@ -58,10 +59,13 @@ export default function EarnReferrals() {
 				/>
 			}
 			notices={
-				<MissingPaymentSettingsNotice
-					hasCommissionActivity={ hasReferrals }
-					commissionType="referrals"
-				/>
+				<>
+					<MissingPaymentSettingsNotice
+						hasCommissionActivity={ hasReferrals }
+						commissionType="referrals"
+					/>
+					{ ! isLoading && ! hasReferrals && <BankDetailsNotice agencyId={ agencyId } /> }
+				</>
 			}
 		>
 			{ ! isLoading && ! hasReferrals ? (
