@@ -1,7 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	__experimentalDivider as Divider,
 	Tooltip,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -12,15 +11,17 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
-import { a4aLink } from '../../../utils/link';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
+import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
 import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
 import SelectedPlanCard from './selected-plan-card';
 import { useSessionState } from './use-session-state';
@@ -85,59 +86,65 @@ function DevSitesCallout( {
 	isAgencyApproved,
 }: Pick< Props, 'availableDevSites' | 'isAgencyApproved' > ) {
 	const { recordTracksEvent } = useAnalytics();
+	const [ isConfiguringSite, setIsConfiguringSite ] = useState( false );
 
-	// TODO: The classic page opens the site-configurations modal here; the MSD
-	// has no development-site creation flow yet, so this opens the classic page.
 	const button = (
 		<Button
 			variant="secondary"
 			size="compact"
-			href={ a4aLink( '/marketplace/hosting/wpcom' ) }
 			disabled={ ! availableDevSites || ! isAgencyApproved }
-			onClick={ () => recordTracksEvent( 'calypso_a4a_hosting_page_create_wpcom_dev_site_click' ) }
+			onClick={ () => {
+				recordTracksEvent( 'calypso_a4a_hosting_page_create_wpcom_dev_site_click' );
+				setIsConfiguringSite( true );
+			} }
 		>
 			{ __( 'Create a development site' ) }
 		</Button>
 	);
 
 	return (
-		<Callout
-			title={ __( 'Not ready to launch yet? Start building for free' ) }
-			titleAs="h3"
-			description={
-				<Text variant="muted">
-					{ sprintf(
-						/* translators: %1$d is the number of free development licenses, %2$d how many are still available. */
-						__(
-							'Create up to %1$d WordPress.com development sites and only pay when you launch. %2$d of %1$d available.'
-						),
-						FREE_DEV_LICENSES,
-						availableDevSites ?? 0
-					) }
-				</Text>
-			}
-			image={
-				<DomainUpsellIllustraction
-					title={ __( 'Development site' ) }
-					domain="yourclient.wpcomstaging.com"
-					search="yourclient"
-				/>
-			}
-			imageVariant="full-bleed"
-			actions={
-				isAgencyApproved ? (
-					button
-				) : (
-					<Tooltip
-						text={ __(
-							'Your agency is not yet approved. Please wait for approval before creating a development site.'
+		<>
+			{ isConfiguringSite && (
+				<DevSiteConfigurationModal closeModal={ () => setIsConfiguringSite( false ) } />
+			) }
+			<Callout
+				title={ __( 'Not ready to launch yet? Start building for free' ) }
+				titleAs="h3"
+				description={
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %1$d is the number of free development licenses, %2$d how many are still available. */
+							__(
+								'Create up to %1$d WordPress.com development sites and only pay when you launch. %2$d of %1$d available.'
+							),
+							FREE_DEV_LICENSES,
+							availableDevSites ?? 0
 						) }
-					>
-						<span>{ button }</span>
-					</Tooltip>
-				)
-			}
-		/>
+					</Text>
+				}
+				image={
+					<DomainUpsellIllustraction
+						title={ __( 'Development site' ) }
+						domain="yourclient.wpcomstaging.com"
+						search="yourclient"
+					/>
+				}
+				imageVariant="full-bleed"
+				actions={
+					isAgencyApproved ? (
+						button
+					) : (
+						<Tooltip
+							text={ __(
+								'Your agency is not yet approved. Please wait for approval before creating a development site.'
+							) }
+						>
+							<span>{ button }</span>
+						</Tooltip>
+					)
+				}
+			/>
+		</>
 	);
 }
 

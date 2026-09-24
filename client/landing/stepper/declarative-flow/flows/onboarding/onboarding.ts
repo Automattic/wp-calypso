@@ -43,12 +43,14 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	getBlueprintArchiveSiteSpecUrl,
 	getStandaloneBlueprintArchiveSlug,
+	isBlueprintCustomThemeBuild,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	logBuildWowEvent,
 	requestBuildWowSite,
+	type BuildWowGraph,
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
@@ -102,6 +104,7 @@ import type { Store } from 'redux';
  * @param options.siteSlug      The funnel site's slug.
  * @param options.siteId        The funnel site's blog ID.
  * @param options.blueprintSlug Blueprint being built, for the site-spec hand-off.
+ * @param options.customThemeBuild Whether the run asked for a generated theme (build=custom-theme).
  * @param options.ref           Referrer to carry through.
  * @param options.locale        Flow locale.
  * @returns The URL to land on after checkout.
@@ -112,6 +115,7 @@ function getWowFunnelPostCheckoutDestination( {
 	siteSlug,
 	siteId,
 	blueprintSlug,
+	customThemeBuild,
 	ref,
 	locale,
 }: {
@@ -120,6 +124,7 @@ function getWowFunnelPostCheckoutDestination( {
 	siteSlug: string;
 	siteId: number;
 	blueprintSlug?: string | null;
+	customThemeBuild?: boolean;
 	ref?: string | null;
 	locale: string;
 } ): string {
@@ -135,6 +140,7 @@ function getWowFunnelPostCheckoutDestination( {
 			blueprintSlug: blueprintSlug ?? '',
 			ref,
 			wowFunnel: funnelSlug,
+			customThemeBuild,
 		} );
 	}
 
@@ -237,6 +243,7 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 				siteSlug: pending.siteSlug,
 				siteId: pending.blogId,
 				blueprintSlug: queryParams.get( 'blueprint' ),
+				customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 				ref: queryParams.get( 'ref' ),
 				locale,
 			} ),
@@ -388,6 +395,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						siteSlug,
 						siteId,
 						blueprintSlug: queryParams.get( 'blueprint' ),
+						customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 						ref: refParameter,
 						locale,
 					} ),
@@ -427,6 +435,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							siteId: providedDependencies.siteId as number,
 							blueprintSlug: blueprintArchiveSlug,
 							ref: refParameter,
+							customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 						} ),
 						null,
 						null,
@@ -600,6 +609,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
 					const prompt = providedDependencies?.prompt as string | undefined;
+					const graph = providedDependencies?.graph as BuildWowGraph | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
@@ -651,6 +661,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteSlug,
 									siteId,
 									ref: refParameter,
+									graph,
 								} )
 							);
 							return;

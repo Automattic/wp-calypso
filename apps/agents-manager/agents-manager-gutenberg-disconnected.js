@@ -2,7 +2,7 @@
  * Gutenberg disconnected variant entry point.
  *
  * This lightweight variant is used when:
- * - The unified experience is disabled
+ * - The full Agents Manager experience is unavailable
  * - The help center icon needs to be displayed in the Gutenberg editor
  * - Full Agents Manager functionality is not needed
  *

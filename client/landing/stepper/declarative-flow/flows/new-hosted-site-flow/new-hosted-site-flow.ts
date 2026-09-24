@@ -258,7 +258,7 @@ const hosting: FlowV2< typeof initialize > = {
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );
 		useEffect( () => {
-			if ( studioSiteId ) {
+			if ( studioSiteId && currentStepSlug ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
 					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,

@@ -5,10 +5,7 @@ import type { useTranslate } from 'i18n-calypso';
 import type { JSX } from 'react';
 
 /**
- * Raw-`Purchase` versions of the callback types in `calypso/lib/purchases/types`,
- * for the legacy `client/me/purchases` pages being migrated off the assembler
- * (SHILL-2256). Kept local so the camelCase originals can keep serving the pages
- * that have not migrated yet.
+ * Callback types for the legacy `client/me/purchases` pages.
  */
 
 export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;

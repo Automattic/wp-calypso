@@ -2,6 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 
 .invoices-list-card {
+	&__date-label {
+		display: block;
+		font-size: 0.75rem;
+		color: var(--studio-gray-70);
+
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+
 	&__actions {
 		text-align: left;
 

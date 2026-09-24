@@ -80,14 +80,14 @@ describe( 'PurchaseMeta', () => {
 		expect( screen.getByText( /\/ three years\b/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'does render "Never Expires" in the Renews on column when it is a DIFM purchase', () => {
+	it( 'does render "One-time purchase" in the Renewal Status column when it is a DIFM purchase', () => {
 		renderPurchaseMeta( {
 			ID: 1,
 			product_slug: 'wp_difm_lite',
 			expiry_status: 'one-time-purchase',
 			subscription_status: 'active',
 		} );
-		expect( screen.getByText( /Never Expires/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /One-time purchase/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render auto renew coupon details in the price column when a auto renew coupon has been applied', () => {

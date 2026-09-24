@@ -23,7 +23,13 @@ export const AttachmentPreview = ( {
 			transition={ { ...animations.fastSpring } as Transition }
 			className={ clsx( 'odie-attachment-preview', { 'is-attaching-file': isAttachingFile } ) }
 		>
-			<img src={ URL.createObjectURL( attachmentPreview ) } alt={ attachmentPreview.name } />
+			{ attachmentPreview.type.startsWith( 'image/' ) ? (
+				<img src={ URL.createObjectURL( attachmentPreview ) } alt={ attachmentPreview.name } />
+			) : (
+				<span className="odie-attachment-preview-icon" aria-hidden>
+					📎
+				</span>
+			) }
 			<div>
 				<p className="odie-attachment-preview-name">{ attachmentPreview.name }</p>
 				{ fileType && (

@@ -11,6 +11,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { AnimatedPlaceholder } from './AnimatedPlaceholder';
 import styles from './ChatInput.module.css';
+import type { TrailingActions } from '../../types';
 
 interface ActionButton {
 	id: string;
@@ -20,6 +21,31 @@ interface ActionButton {
 	disabled?: boolean;
 	'aria-label': string;
 	className?: string;
+}
+
+/** Renders `ActionButton` configs with the composer's icon-button styling. */
+export function ActionButtons( { actions }: { actions: ActionButton[] } ) {
+	return (
+		<>
+			{ actions.map( ( action ) => (
+				<span
+					key={ action.id }
+					className={ cn( styles.actionWrapper, {
+						[ styles.actionWrapperDisabled ]: action.disabled,
+					} ) }
+				>
+					<Button
+						className={ action.className || styles.button }
+						onClick={ action.onClick }
+						disabled={ action.disabled }
+						variant={ action.variant || 'ghost' }
+						icon={ action.icon }
+						aria-label={ action[ 'aria-label' ] }
+					/>
+				</span>
+			) ) }
+		</>
+	);
 }
 
 interface ChatInputProps {
@@ -37,6 +63,11 @@ interface ChatInputProps {
 	onExpand?: () => void;
 	showExpandButton?: boolean;
 	focusOnMount?: boolean;
+	// Pinned to the start of the actions row (left edge in the stacked layout)
+	leadingActions?: React.ReactNode;
+	// Grouped with the submit button; see TrailingActions
+	trailingActions?: TrailingActions;
+	// Legacy: prefer leadingActions / trailingActions
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
 	onStop?: () => void; // Optional callback for stopping current request
@@ -64,6 +95,8 @@ export function ChatInput( {
 	onExpand,
 	showExpandButton = true,
 	focusOnMount = false,
+	leadingActions,
+	trailingActions,
 	customActions = [],
 	actionOrder = 'before-submit',
 	onStop,
@@ -145,25 +178,8 @@ export function ChatInput( {
 		focusOnMountRef.current = false;
 	}, [ focusOnMountRef, textareaRef ] );
 
-	const renderCustomActions = () => {
-		return customActions.map( ( action ) => (
-			<span
-				key={ action.id }
-				className={ cn( styles.actionWrapper, {
-					[ styles.actionWrapperDisabled ]: action.disabled,
-				} ) }
-			>
-				<Button
-					className={ action.className || styles.button }
-					onClick={ action.onClick }
-					disabled={ action.disabled }
-					variant={ action.variant || 'ghost' }
-					icon={ action.icon }
-					aria-label={ action[ 'aria-label' ] }
-				/>
-			</span>
-		) );
-	};
+	const renderCustomActions = () =>
+		customActions.length ? <ActionButtons actions={ customActions } /> : null;
 
 	const renderExpandButton = () => {
 		if ( variant === 'embedded' || floatingChatState === 'expanded' ) {
@@ -213,6 +229,17 @@ export function ChatInput( {
 			/>
 		);
 	};
+
+	const submitButton = renderSubmitButton();
+	const trailingContent =
+		typeof trailingActions === 'function' ? (
+			trailingActions( submitButton )
+		) : (
+			<>
+				{ trailingActions }
+				{ submitButton }
+			</>
+		);
 
 	return (
 		<div
@@ -265,9 +292,16 @@ export function ChatInput( {
 				} }
 			>
 				{ renderExpandButton() }
-				{ actionOrder === 'before-submit' && renderCustomActions() }
-				{ renderSubmitButton() }
-				{ actionOrder === 'after-submit' && renderCustomActions() }
+				{ leadingActions && (
+					<span data-slot="chat-input-leading-actions" className={ styles.leadingActions }>
+						{ leadingActions }
+					</span>
+				) }
+				<span data-slot="chat-input-trailing-actions" className={ styles.trailingActions }>
+					{ actionOrder === 'before-submit' && renderCustomActions() }
+					{ trailingContent }
+					{ actionOrder === 'after-submit' && renderCustomActions() }
+				</span>
 			</motion.div>
 		</div>
 	);

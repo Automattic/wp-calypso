@@ -38,6 +38,7 @@ const defaultValues: Required< UserPreferences > = {
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
 	'pressable-limit-notification-dismissed': 0,
+	'a4a-agency-approval-notice-dismissed': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -64,6 +65,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-marketplace-referral-guide-seen': 'a4agde',
 	'a4a-marketplace-term-pricing': 'a4aterm',
 	'pressable-limit-notification-dismissed': 'prslim',
+	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

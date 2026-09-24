@@ -31,6 +31,7 @@ export default function MarketplacePurchases() {
 		slug: 'marketplace-purchases',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ { field: 'status', operator: 'is' } ],
 	} );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {

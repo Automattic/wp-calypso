@@ -90,6 +90,11 @@ project {
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
+		// AWS secrets for the test reports S3 bucket.
+		password("A8C_TEST_REPORTS_S3_ACCESS_KEY", "credentialsJSON:1dc49412-c3f0-44ab-b45b-7a882d19d268", display = ParameterDisplay.HIDDEN)
+		password("A8C_TEST_REPORTS_S3_SECRET_ACCESS_KEY", "credentialsJSON:e6a1710d-e342-402e-9945-10e4eb841d12", display = ParameterDisplay.HIDDEN)
+		password("A8C_TEST_REPORTS_S3_ROOT", "credentialsJSON:8d82bf15-2eb9-4f68-b2ae-7733b3a70147", display = ParameterDisplay.HIDDEN)
+
 		// TeamCity Rich Notificaion App.
 		password("TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN", "credentialsJSON:1ade13b3-4f88-4b2a-a71a-9c6f95698d00", display=ParameterDisplay.HIDDEN)
 

@@ -18,6 +18,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
 | `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.  |
+| `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.   |
 | `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.      |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
@@ -42,7 +43,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 
 `recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
 `BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
-Chat and feedback events (message send, suggestions, responses, thumbs) are also recorded as `calypso_agents_manager_<same suffix>` with the unified properties; other names are recorded under the Big Sky name only.
+Chat and feedback events (message send, suggestions, responses, thumbs) are also recorded as `calypso_agents_manager_<same suffix>` with the shared properties; other names are recorded under the Big Sky name only.
 
 ## Ready signal
 

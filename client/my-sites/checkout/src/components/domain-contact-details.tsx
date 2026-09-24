@@ -2,6 +2,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoCaForm from 'calypso/components/domains/registrant-extra-info/ca-form';
+import RegistrantExtraInfoEsForm from 'calypso/components/domains/registrant-extra-info/es-form';
 import RegistrantExtraInfoFrForm from 'calypso/components/domains/registrant-extra-info/fr-form';
 import RegistrantExtraInfoInForm from 'calypso/components/domains/registrant-extra-info/in-form';
 import RegistrantExtraInfoUkForm from 'calypso/components/domains/registrant-extra-info/uk-form';
@@ -93,6 +94,16 @@ export default function DomainContactDetails( {
 				<RegistrantExtraInfoInForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.in ?? {} }
+					onContactDetailsChange={ updateDomainContactFields }
+					contactDetailsValidationErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
+				/>
+			) }
+			{ tlds.includes( 'es' ) && (
+				<RegistrantExtraInfoEsForm
+					contactDetails={ contactDetails }
+					ccTldDetails={ contactDetails?.extra?.es ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}

@@ -1,13 +1,8 @@
-import {
-	Card,
-	CardBody,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalDivider as Divider,
-} from '@wordpress/components';
+import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback } from 'react';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
+import Divider from 'calypso/dashboard/components/divider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
@@ -51,7 +46,7 @@ export default function AgencyTierOverviewContent( {
 				tierStatus={ tierStatus }
 				recordTracksEvent={ recordTracks }
 			/>
-			<Divider orientation="horizontal" margin={ 4 } style={ { color: 'var(--color-gray-100)' } } />
+			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }

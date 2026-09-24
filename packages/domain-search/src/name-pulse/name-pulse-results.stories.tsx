@@ -3,16 +3,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getTld } from '../helpers';
 import { DomainSearchContext, useDomainSearchContextValue } from '../page/context';
+import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
 } from '../test-helpers/factories/name-pulse';
 import { NamePulseResults } from '.';
-import type { DomainSearchCart, SelectedDomain } from '../page/types';
+import type { DomainSearchCart, DomainSearchProps, SelectedDomain } from '../page/types';
 import type { DomainAvailability } from '@automattic/api-core';
 import type { Meta } from '@storybook/react';
 
@@ -31,6 +33,12 @@ const FAILING = 'icecream.app';
 
 const delay = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
+/**
+ * The bulk check prices premium names at the standard TLD rate; only this
+ * per-domain check knows the registry price, so it quotes a much higher one.
+ */
+const PREMIUM_REALTIME_PRICE = 3500;
+
 const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 	const entry = NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ] ?? buildNamePulseAvailabilityEntry();
 	let status = DomainAvailabilityStatus.NOT_AVAILABLE;
@@ -41,6 +49,8 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 			: DomainAvailabilityStatus.AVAILABLE;
 	}
 
+	const isPremium = status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
+
 	return {
 		domain_name: domainName,
 		tld: getTld( domainName ),
@@ -48,12 +58,13 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 		mappable: 'mappable',
 		supports_privacy: true,
 		root_domain_provider: 'wpcom',
-		cost: entry.cost ?? '',
-		raw_price: entry.raw_price,
-		sale_cost: entry.sale_cost,
+		cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		raw_price: isPremium ? PREMIUM_REALTIME_PRICE : entry.raw_price,
+		sale_cost: isPremium ? undefined : entry.sale_cost,
 		currency_code: 'USD',
 		product_slug: 'domain_reg',
 		product_id: 6,
+		...( isPremium ? { is_supported_premium_domain: true } : {} ),
 	};
 };
 
@@ -89,14 +100,21 @@ const useStoryCart = (): DomainSearchCart => {
 	};
 };
 
-const StoryDomainSearch = ( { query }: { query: string } ) => {
+const StoryDomainSearch = ( {
+	query,
+	slots,
+}: {
+	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
+} ) => {
 	const cart = useStoryCart();
 	const [ currentQuery, setCurrentQuery ] = useState( query );
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query: currentQuery,
+		slots,
 		config: { showNamePulseSearch: true },
-		events: { onQueryChange: setCurrentQuery },
+		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
 
 	return (
@@ -114,21 +132,30 @@ const StoryDomainSearch = ( { query }: { query: string } ) => {
 							domainNames.filter( ( name ) => ! OMITTED.has( name ) )
 						);
 					},
-					suggestions: async () => {
-						await delay( 1200 );
+					suggestions: async ( { use_ai } ) => {
+						await delay( use_ai ? 2400 : 1200 );
 
-						return { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] };
+						return {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						};
 					},
 					tlds: async () => {
 						await delay( 400 );
 
 						return NAME_PULSE_TLDS_FIXTURE;
 					},
-					domainAvailability: async ( domainName ) => toRealtimeAvailability( domainName ),
+					domainAvailability: async ( domainName ) => {
+						await delay( 900 );
+
+						return toRealtimeAvailability( domainName );
+					},
 				} ) }
 			>
 				<div className="domain-search" style={ { padding: '2rem 1rem' } }>
-					<NamePulseResults />
+					{ currentQuery ? <NamePulseResults /> : <InitialState /> }
 				</div>
 			</DomainSearchContext.Provider>
 		</QueryClientProvider>
@@ -145,3 +172,21 @@ export default meta;
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
+
+export const AiMode = () => <StoryDomainSearch query="a blog about ice cream" />;
+
+// Truncated on desktop, wrapped onto a second line below it.
+export const LongName = () => <StoryDomainSearch query="icecreamshopnearsuratairport" />;
+
+// Starts on the initial state so the swap to the results page can be checked
+// for layout shifts.
+export const EmptyQuery = () => <StoryDomainSearch query="" />;
+
+// The real promo card lives in `client/`, out of this package's reach.
+const BeforeResultsStandIn = () => (
+	<div style={ { padding: '1rem', border: '1px dashed currentColor' } }>Promo card slot</div>
+);
+
+export const WithBeforeResults = () => (
+	<StoryDomainSearch query="icecream" slots={ { BeforeResults: BeforeResultsStandIn } } />
+);

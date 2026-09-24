@@ -53,7 +53,6 @@ import {
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import { loadDashboardLocaleData } from 'calypso/server/dashboard-i18n';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -917,7 +916,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-		extraMiddleware: [ loadDashboardLocaleData ],
 	},
 	{
 		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
@@ -925,7 +923,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-ciab',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedCiabDashboardHostname,
-		extraMiddleware: [ loadDashboardLocaleData ],
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -933,7 +930,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-a4a',
 		devEnv: 'a8c-for-agencies-development',
 		isAllowedHostname: isAllowedA4ADashboardHostname,
-		extraMiddleware: [],
 	},
 ];
 
@@ -1352,12 +1348,8 @@ export default function pages() {
 			return;
 		}
 		variant.paths.forEach( ( route ) =>
-			handleSectionPath(
-				variant.definition,
-				route,
-				variant.entrypoint,
-				( req ) => variant.isAllowedHostname( req.hostname ),
-				variant.extraMiddleware
+			handleSectionPath( variant.definition, route, variant.entrypoint, ( req ) =>
+				variant.isAllowedHostname( req.hostname )
 			)
 		);
 	} );
@@ -1431,7 +1423,7 @@ export default function pages() {
 				/.*/,
 				variant.entrypoint,
 				( req ) => variant.isAllowedHostname( req.hostname ),
-				[ setNotFoundStatus, ...variant.extraMiddleware ]
+				setNotFoundStatus
 			)
 		);
 

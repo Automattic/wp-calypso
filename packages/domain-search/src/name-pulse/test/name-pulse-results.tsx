@@ -11,40 +11,70 @@ import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart } from '../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
+	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
+	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
-import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
-import type { DomainSearchCart } from '../../page/types';
-import type { DomainAvailability, NamePulseAvailabilityResponse } from '@automattic/api-core';
+import {
+	NAME_PULSE_AI_TIMEOUT_MS,
+	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
+	NAME_PULSE_PAGE_SIZE,
+} from '../helpers';
+import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
+import type {
+	DomainAvailability,
+	NamePulseAvailabilityResponse,
+	NamePulseSuggestionsQuery,
+	NamePulseSuggestionsResponse,
+} from '@automattic/api-core';
 
 const NamePulseTestSearch = ( {
 	query,
+	slots,
 	cart = buildCart(),
 	availabilityRequests = [],
 	availability = async ( domainNames ) => buildNamePulseAvailabilityResponse( domainNames ),
+	suggestions = async ( { use_ai } ) => ( {
+		suggestions: use_ai ? NAME_PULSE_AI_SUGGESTIONS_FIXTURE : NAME_PULSE_SUGGESTIONS_FIXTURE,
+		errors: [],
+	} ),
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
-	domainAvailability = async ( domainName ) =>
-		buildAvailability( {
+	domainAvailability = async ( domainName ) => {
+		// Only this check knows a premium name's registry price; the bulk one
+		// quotes the standard TLD rate.
+		const isPremium = !! NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ]?.is_premium;
+
+		return buildAvailability( {
 			domain_name: domainName,
-			status: DomainAvailabilityStatus.AVAILABLE,
-			cost: '$24.00',
-			raw_price: 24,
-		} ),
+			status: isPremium
+				? DomainAvailabilityStatus.AVAILABLE_PREMIUM
+				: DomainAvailabilityStatus.AVAILABLE,
+			...( isPremium ? { is_supported_premium_domain: true } : {} ),
+			cost: isPremium ? '$3,500.00' : '$24.00',
+			raw_price: isPremium ? 3500 : 24,
+		} );
+	},
+	events,
 }: {
 	query: string;
+	slots?: DomainSearchProps[ 'slots' ];
 	cart?: DomainSearchCart;
 	availabilityRequests?: string[][];
 	availability?: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >;
+	suggestions?: ( params: NamePulseSuggestionsQuery ) => Promise< NamePulseSuggestionsResponse >;
 	tldsResponse?: () => Promise< string[] >;
 	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
+	events?: Partial< DomainSearchEvents >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query,
-		config: { showNamePulseSearch: true },
+		events,
+		slots,
+		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true },
 	} );
 
 	return (
@@ -56,7 +86,7 @@ const NamePulseTestSearch = ( {
 
 						return availability( domainNames );
 					},
-					suggestions: async () => ( { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] } ),
+					suggestions,
 					tlds: tldsResponse,
 					domainAvailability,
 				} ) }
@@ -83,6 +113,12 @@ const findRow = async ( domainName: string ) => {
 
 const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
+
+const findNotice = async () => {
+	await waitFor( () => expect( document.querySelector( '.name-pulse-notice' ) ).not.toBeNull() );
+
+	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
+};
 
 const domainsIn = ( id: string ) =>
 	sectionRows( id ).map( ( item ) =>
@@ -112,7 +148,6 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -135,12 +170,12 @@ describe( 'NamePulseResults', () => {
 		expect( skeletonsIn( 'exact' ) ).toBe( 0 );
 		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
 		expect( availabilityRequests.flat() ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
-		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.app' ] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] );
 		expect( domainsIn( 'exact' ).slice( 0, 4 ) ).toEqual( [
-			'icecream.org',
 			'icecream.net',
 			'icecream.art',
 			'icecream.info',
+			'icecream.shop',
 		] );
 	} );
 
@@ -162,7 +197,7 @@ describe( 'NamePulseResults', () => {
 
 		expect( await screen.findByText( 'Couldn’t load domain endings.' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'Top results' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 		expect( availabilityRequests ).toHaveLength( 0 );
 
 		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
@@ -188,8 +223,9 @@ describe( 'NamePulseResults', () => {
 		);
 
 		const premium = await findRow( 'icecream.co' );
-		expect( await within( premium ).findByText( 'Premium' ) ).toBeInTheDocument();
-		expect( within( premium ).queryByText( '/year' ) ).not.toBeInTheDocument();
+		expect( await within( premium ).findByText( '$3,500' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( '/year' ) ).toBeInTheDocument();
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
 		const sale = await findRow( 'icecream.site' );
@@ -237,10 +273,19 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'renders More suggestions for a multi-word query', async () => {
+	it( 'renders Related matches for a one-word query', async () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+
+		await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+	} );
+
+	it( 'renders Related matches for a multi-word query', async () => {
 		render( <NamePulseTestSearch query="ice cream" /> );
 
-		expect( screen.getByRole( 'heading', { name: 'More suggestions' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 		expect(
 			await screen.findByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
@@ -249,6 +294,84 @@ describe( 'NamePulseResults', () => {
 		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+	} );
+
+	it( 'drops the exact-match grid and adds Creative matches for a four-word query', async () => {
+		const requested: NamePulseSuggestionsQuery[] = [];
+
+		render(
+			<NamePulseTestSearch
+				query="a blog about icecream"
+				suggestions={ async ( params ) => {
+					requested.push( params );
+
+					return {
+						suggestions: params.use_ai
+							? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+							: NAME_PULSE_SUGGESTIONS_FIXTURE,
+						errors: [],
+					};
+				} }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Creative matches' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 0 );
+
+		expect( requested ).toEqual( [
+			{ query: 'a blog about icecream', use_ai: false },
+			{ query: 'a blog about icecream', use_ai: true, timeout: NAME_PULSE_AI_TIMEOUT_MS },
+		] );
+
+		// Cheapest available across both lists, ties broken by name.
+		expect( domainsIn( 'top' ) ).toEqual( [
+			'brainfreeze.club',
+			'scoops.blog',
+			'thedailyscoop.blog',
+		] );
+		// Featured rows, and the copy the keyword list already showed, are not repeated.
+		expect( domainsIn( 'suggestions' ) ).not.toContain( 'scoops.blog' );
+		expect( domainsIn( 'creative' ) ).toEqual( [ 'coldcomfort.cafe' ] );
+	} );
+
+	it( 'keeps Top results loading until both suggestion lists settle', async () => {
+		let resolveAi: ( response: NamePulseSuggestionsResponse ) => void = () => {};
+
+		render(
+			<NamePulseTestSearch
+				query="a blog about icecream"
+				suggestions={ async ( { use_ai } ) => {
+					if ( ! use_ai ) {
+						return { suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE, errors: [] };
+					}
+
+					return new Promise< NamePulseSuggestionsResponse >( ( resolve ) => {
+						resolveAi = resolve;
+					} );
+				} }
+			/>
+		);
+
+		expect( await screen.findByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+		expect( skeletonsIn( 'top' ) ).toBe( 3 );
+
+		await act( async () => {
+			resolveAi( { suggestions: NAME_PULSE_AI_SUGGESTIONS_FIXTURE, errors: [] } );
+		} );
+
+		await waitFor( () => expect( skeletonsIn( 'top' ) ).toBe( 0 ) );
+		expect( domainsIn( 'top' ) ).toEqual( [
+			'brainfreeze.club',
+			'scoops.blog',
+			'thedailyscoop.blog',
+		] );
 	} );
 
 	it( 'renders a typed FQDN as a row of the exact-match grid', async () => {
@@ -261,7 +384,210 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'More suggestions' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'explains an unrecognised ending and lists the joined name', async () => {
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+		);
+		expect(
+			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'heading', { name: 'Exact match for “icecreamd”' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'lets the reader dismiss the notice about how their query was read', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
+	} );
+
+	it( 'places the notice above the BeforeResults slot', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.d"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const notice = await findNotice();
+		const banner = screen.getByText( 'Before Results' );
+
+		expect(
+			notice.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'brings back a dismissed notice when the query changes', async () => {
+		const user = userEvent.setup();
+
+		const { rerender } = render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+
+		rerender( <NamePulseTestSearch query="sorbet.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+		);
+	} );
+
+	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
+		const user = userEvent.setup();
+		const onExternalDomainClick = jest.fn();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				events={ { onExternalDomainClick } }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+						tld: 'net',
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+
+		// The bulk check offers the name; only the per-domain check behind the notice
+		// knows it is registered, and the row must not contradict it.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByText( 'Unavailable' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+
+		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
+		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
+
+		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
+	} );
+
+	it( 'keeps a typed domain that is taken out of Top results, leaving it in the grid', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.com"
+				availability={ async ( domainNames ) => ( {
+					...buildNamePulseAvailabilityResponse( domainNames ),
+					...( domainNames.includes( 'icecream.com' )
+						? { 'icecream.com': { is_available: false } }
+						: {} ),
+				} ) }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( await findRow( 'icecream.com' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.org', 'icecream.net' ] );
+		expect( domainsIn( 'exact' ) ).toContain( 'icecream.com' );
+	} );
+
+	it( 'holds the typed domain on its check rather than offering a name the notice is about to reject', async () => {
+		let resolveTyped: ( availability: DomainAvailability ) => void = () => {};
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ ( domainName ) => {
+					if ( domainName === 'icecream.net' ) {
+						return new Promise< DomainAvailability >( ( resolve ) => {
+							resolveTyped = resolve;
+						} );
+					}
+
+					return Promise.resolve(
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE,
+							cost: '$24.00',
+							raw_price: 24,
+						} )
+					);
+				} }
+			/>
+		);
+
+		// The bulk check offers the typed name, but its own check is still running.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByLabelText( 'Checking…' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		expect( row.queryByText( '$24' ) ).not.toBeInTheDocument();
+
+		await act( async () => {
+			resolveTyped(
+				buildAvailability( {
+					domain_name: 'icecream.net',
+					status: DomainAvailabilityStatus.TRANSFERRABLE,
+					tld: 'net',
+				} )
+			);
+		} );
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( rowFor( 'icecream.net' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+	} );
+
+	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( { domain_name: domainName, status: DomainAvailabilityStatus.MAPPED } )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent(
+			'This domain is already connected to a WordPress.com site.'
+		);
+		expect( screen.queryByRole( 'button', { name: 'Transfer it here.' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the BeforeResults slot between the search input and the results', () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const banner = screen.getByText( 'Before Results' );
+		const searchInput = document.querySelector( '.domain-search__search-bar' ) as HTMLElement;
+		const firstSection = screen.getByRole( 'heading', { name: 'Top results' } );
+
+		expect(
+			searchInput.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			banner.compareDocumentPosition( firstSection ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'is not rendered when no BeforeResults slot is passed', () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.queryByText( 'Before Results' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'runs the real-time check on add to cart: a taken verdict flips the row, an available one adds it', async () => {
@@ -294,7 +620,14 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( rowFor( 'creamyice.com' ) ).findByText( 'Unavailable' )
 		).toBeInTheDocument();
-		expect( within( rowFor( 'creamyice.com' ) ).queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect(
+			within( rowFor( 'creamyice.com' ) ).getByRole( 'button', {
+				name: 'Sorry, this domain is no longer available.',
+			} )
+		).toHaveAttribute( 'aria-disabled', 'true' );
+		expect(
+			within( rowFor( 'creamyice.com' ) ).queryByRole( 'button', { name: 'Add to cart' } )
+		).not.toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).queryByText( '$24' ) ).not.toBeInTheDocument();
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
 
@@ -309,5 +642,48 @@ describe( 'NamePulseResults', () => {
 			)
 		);
 		expect( cart.onAddItem ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps a top result in its slot when the real-time check finds it taken', async () => {
+		const user = userEvent.setup();
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status:
+							domainName === 'icecream.blog'
+								? DomainAvailabilityStatus.NOT_AVAILABLE
+								: DomainAvailabilityStatus.AVAILABLE,
+						cost: '$24.00',
+						raw_price: 24,
+					} )
+				}
+			/>
+		);
+
+		const topDomains = [ 'icecream.blog', 'icecream.com', 'icecream.org' ];
+		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( topDomains ) );
+
+		// The row takes its slot as soon as the TLD order is known, a tick before its verdict
+		// arrives, so wait for the CTA rather than the row.
+		await user.click(
+			await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', { name: 'Add to cart' } )
+		);
+
+		const errorCTA = await within( rowFor( 'icecream.blog' ) ).findByRole( 'button', {
+			name: 'Sorry, this domain is no longer available.',
+		} );
+		expect( errorCTA ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( within( rowFor( 'icecream.blog' ) ).getByText( 'Unavailable' ) ).toBeInTheDocument();
+		expect( domainsIn( 'top' ) ).toEqual( topDomains );
+
+		await user.click( errorCTA );
+
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 } );

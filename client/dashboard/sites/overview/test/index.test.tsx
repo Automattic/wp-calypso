@@ -61,6 +61,8 @@ let agencyBlogResponse: { status: number; body: unknown } = {
 	body: { code: 'partner_for_blog_not_found' },
 };
 
+let mediaStorageResponse: [ number, unknown ];
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -136,10 +138,15 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { pages: [] } );
 
+		mediaStorageResponse = [
+			200,
+			{ max_storage_bytes: 1073741824, storage_used_bytes: 100000000 },
+		];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
 			.query( true )
-			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
+			.reply( () => mediaStorageResponse );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.4/sites/${ site.ID }/plans` )
@@ -179,6 +186,23 @@ describe( '<SiteOverview>', () => {
 
 	afterEach( () => {
 		window.localStorage.clear();
+	} );
+
+	test( 'renders the overview when the user cannot read media storage', async () => {
+		mediaStorageResponse = [
+			403,
+			{ error: 'unauthorized', message: 'User cannot view media storage limits' },
+		];
+		mockSite( site );
+
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Business' );
+
+		const planCard = await getCard( 'Business' );
+		expect( planCard ).toBeVisible();
+		expect( await within( planCard ).findByText( 'Information unavailable' ) ).toBeVisible();
+		expect( within( planCard ).getByText( 'Bandwidth' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with free plan', async () => {

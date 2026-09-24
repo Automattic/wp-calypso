@@ -1,8 +1,16 @@
-import { AgentUI, EmptyView, ZoomIcon, ZoomIconFilled } from '@automattic/agenttic-ui';
+import {
+	AgentUI,
+	EmptyView,
+	ProgressRing,
+	ZoomIcon,
+	ZoomIconFilled,
+} from '@automattic/agenttic-ui';
 import React, { useEffect, useState } from 'react';
 import MessageTester from './MessageTester';
 import { useDemoChat } from './hooks/useDemoChat';
+import { useDemoCredits } from './hooks/useDemoCredits';
 import { useDemoFeedback } from './hooks/useDemoFeedback';
+import { CreditsTool } from './playground/CreditsTool';
 import { ToolButton, usePlaygroundHeaderHeight, ViewTools } from './playground/PlaygroundShell';
 import { SuggestionsTool } from './playground/SuggestionsTool';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -37,6 +45,8 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 
 	useDemoFeedback( registerMessageActions );
 
+	const demoCredits = useDemoCredits();
+
 	// Register zoom action with `order: 1` so it appears before feedback actions.
 	useEffect( () => {
 		const zoomAction = {
@@ -69,6 +79,12 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 			} }
 		>
 			<ViewTools>
+				<CreditsTool
+					plan={ demoCredits.plan }
+					percent={ demoCredits.percent }
+					onPlanChange={ demoCredits.changePlan }
+					onPercentChange={ demoCredits.changePercent }
+				/>
 				<SuggestionsTool registerSuggestions={ registerSuggestions } />
 				<ToolButton
 					active={ freeDragEnabled }
@@ -101,15 +117,32 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				messageRenderer={ messageRenderer }
 				messagesPosition="bottom"
 				expandOnClick={ false }
-				notice={ {
-					message: 'Upgrade now to launch.',
-					action: {
-						label: 'Subscribe',
-						onClick: () => {
-							console.log( 'Subscribe' );
-						},
-					},
-				} }
+				notice={
+					demoCredits.plan !== 'none'
+						? demoCredits.notice
+						: {
+								message: 'Upgrade now to launch.',
+								action: {
+									label: 'Subscribe',
+									onClick: () => {
+										console.log( 'Subscribe' );
+									},
+								},
+							}
+				}
+				beforeSubmit={ demoCredits.beforeSubmit }
+				trailingActions={
+					demoCredits.plan !== 'none' && (
+						<span
+							role="img"
+							className="demo-credits-ring"
+							aria-label={ demoCredits.label }
+							title={ demoCredits.label }
+						>
+							<ProgressRing percent={ demoCredits.percent } tone={ demoCredits.tone } />
+						</span>
+					)
+				}
 				emptyView={ <EmptyView suggestions={ suggestions } /> }
 				freeDrag={ freeDragEnabled }
 				initialFreeDragPosition={ freeDragPosition }

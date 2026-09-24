@@ -11,7 +11,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
@@ -685,7 +685,7 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink()
+	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
@@ -949,3 +949,38 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
+
+/**
+ * Sentence naming what the next renewal will actually charge when a delayed
+ * downgrade is scheduled, since the purchase's own renewal price is still the
+ * current plan's. Returns null when there is no downgrade price to show, or
+ * when the sentence isn't translated into the user's language yet.
+ */
+export function getDelayedDowngradeRenewalPriceText(
+	purchase: Purchase,
+	hasEnTranslation: ( single: string ) => boolean
+): string | null {
+	if (
+		! purchase.is_delayed_downgrade_pending ||
+		purchase.delayed_downgrade_price_integer == null
+	) {
+		return null;
+	}
+	if (
+		! hasEnTranslation(
+			'Because of your scheduled downgrade, your next renewal will be %(price)s.'
+		)
+	) {
+		return null;
+	}
+	return sprintf(
+		/* translators: %(price)s is a monetary amount, e.g. $20 */
+		__( 'Because of your scheduled downgrade, your next renewal will be %(price)s.' ),
+		{
+			price: formatCurrency( purchase.delayed_downgrade_price_integer, purchase.currency_code, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} ),
+		}
+	);
+}

@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
-	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
+import Grid from '../../../components/grid';
 import { useTimeSince } from '../../../components/time-since';
 
 function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
@@ -40,7 +40,7 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid columns={ 4 } gap={ 4 }>
+					<Grid columns={ 4 } gap="lg">
 						{ data.propagation_status.map( ( area ) => (
 							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start">
 								<PropagationStatusIndicator propagated={ area.propagated } />
