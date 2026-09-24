@@ -159,9 +159,7 @@ describe( 'PageModuleToggler', () => {
 		await user.click( item );
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect(
-			screen.queryByRole( 'button', { name: 'Try the new Stats' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Try the new Stats' } ) ).not.toBeInTheDocument();
 		// Whatever the action opens returns focus here once it closes.
 		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
 	} );

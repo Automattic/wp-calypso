@@ -180,9 +180,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		expect(
-			screen.getByText( 'We couldn’t switch on the new Stats' )
-		).toBeVisible();
+		expect( screen.getByText( 'We couldn’t switch on the new Stats' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Contact support/ } ) ).toHaveAttribute(
 			'href',
 			'/help/contact'

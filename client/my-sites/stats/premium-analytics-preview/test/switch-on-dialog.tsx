@@ -58,9 +58,7 @@ describe( 'SwitchOnDialog', () => {
 	it( 'asks before switching on, and counts the ask once', () => {
 		renderDialog();
 
-		expect(
-			screen.getByRole( 'dialog', { name: 'Switch on the new Stats?' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'dialog', { name: 'Switch on the new Stats?' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect(
 			mockRecordTracksEvent.mock.calls.filter(
