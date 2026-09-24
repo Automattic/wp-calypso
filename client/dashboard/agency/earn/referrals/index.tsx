@@ -51,7 +51,13 @@ export default function EarnReferrals() {
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
 						hasReferrals && isAgencyApproved( agency ) ? (
-							<RouterLinkButton variant="primary" to="/marketplace/exclusive-offers">
+							<RouterLinkButton
+								variant="primary"
+								to="/marketplace/exclusive-offers"
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' )
+								}
+							>
 								{ __( 'New referral' ) }
 							</RouterLinkButton>
 						) : undefined
@@ -92,6 +98,9 @@ export default function EarnReferrals() {
 									to="/earn/referrals/$referralId"
 									params={ { referralId: String( item.id ) } }
 									style={ { color: 'inherit', textDecoration: 'none' } }
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' )
+									}
 								>
 									{ item.client.email }
 								</Link>

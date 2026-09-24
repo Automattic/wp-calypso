@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
@@ -16,6 +17,7 @@ const AGENCY_EARNINGS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
 export default function ReferralsEmptyState( { agencyId }: { agencyId: number } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
 	const accountStatus = getAccountStatus( payee );
 	const hasPayeeAccount = !! accountStatus?.status;
@@ -75,6 +77,9 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									size="compact"
 									__next40pxDefaultSize
 									to="/marketplace/exclusive-offers"
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' )
+									}
 								>
 									{ __( 'Get started' ) }
 								</RouterLinkButton>
@@ -102,6 +107,9 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									size="compact"
 									__next40pxDefaultSize
 									to="/earn/payout-settings"
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' )
+									}
 								>
 									{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
 								</RouterLinkButton>
