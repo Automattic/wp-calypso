@@ -1,4 +1,9 @@
 /**
+ * Tests for the domain overview action helpers.
+ *
+ * Run with:
+ * yarn test-client client/dashboard/domains/domain-overview/test/actions.utils.test.ts
+ *
  * @jest-environment jsdom
  */
 

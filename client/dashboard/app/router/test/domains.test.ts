@@ -1,4 +1,9 @@
 /**
+ * Tests for the domain transfer route guard.
+ *
+ * Run with:
+ * yarn test-client client/dashboard/app/router/test/domains.test.ts
+ *
  * @jest-environment jsdom
  */
 

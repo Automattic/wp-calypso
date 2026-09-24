@@ -49,8 +49,8 @@ export const shouldShowTransferAction = ( domain: Domain ) => {
 		return false;
 	}
 
-	// Anything the transfer route itself rejects must not be offered here, or
-	// the button only leads to a redirect back to this page.
+	// If the transfer route would reject the user, the button would only
+	// redirect back to the overview.
 	return canTransferDomain( domain );
 };
 
