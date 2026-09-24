@@ -133,9 +133,12 @@ export default function IcannSuspensionNotice( { domain }: { domain: Domain } ) 
 	};
 
 	const isSuspended = domain.is_icann_verification_suspended;
-	const formattedDeadline = domain.contact_verification_deadline
-		? formatDate( new Date( domain.contact_verification_deadline ), locale, { dateStyle: 'long' } )
-		: '';
+	const deadline = domain.contact_verification_deadline
+		? new Date( domain.contact_verification_deadline )
+		: null;
+	// Suspension runs in a twice-daily batch, so a domain can outlive its deadline for a few hours.
+	const formattedDeadline =
+		deadline && deadline > new Date() ? formatDate( deadline, locale, { dateStyle: 'long' } ) : '';
 
 	const sentences = [
 		...( isSuspended

@@ -20,6 +20,14 @@ const getMockedDomain = ( customProps: Partial< Domain > = {} ): Domain => {
 
 describe( '<IcannSuspensionNotice>', () => {
 	describe( 'pending verification', () => {
+		beforeEach( () => {
+			jest.useFakeTimers( { now: new Date( '2026-09-24T10:00:00+00:00' ) } );
+		} );
+
+		afterEach( () => {
+			jest.useRealTimers();
+		} );
+
 		test( 'shows the registrant email and the deadline', () => {
 			render( <IcannSuspensionNotice domain={ getMockedDomain() } /> );
 
@@ -45,6 +53,24 @@ describe( '<IcannSuspensionNotice>', () => {
 				)
 			).toBeVisible();
 			expect( screen.queryByText( /by/, { exact: false } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'omits the deadline sentence when the deadline has already passed', () => {
+			render(
+				<IcannSuspensionNotice
+					domain={ getMockedDomain( {
+						contact_verification_deadline: '2026-09-01T12:16:32+00:00',
+					} ) }
+				/>
+			);
+
+			expect(
+				screen.getByText(
+					'Follow the instructions in that email or your domain will be suspended.',
+					{ exact: false }
+				)
+			).toBeVisible();
+			expect( screen.queryByText( 'September 1, 2026' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'falls back to a generic message when the registrant email is unknown', () => {
