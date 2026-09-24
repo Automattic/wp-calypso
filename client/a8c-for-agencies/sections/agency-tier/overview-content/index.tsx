@@ -46,7 +46,7 @@ export default function AgencyTierOverviewContent( {
 				tierStatus={ tierStatus }
 				recordTracksEvent={ recordTracks }
 			/>
-			<Divider style={ { color: 'var(--color-gray-100)', margin: '16px 0' } } />
+			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }
