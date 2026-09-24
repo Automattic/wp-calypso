@@ -1,17 +1,9 @@
 import type { ComponentProps, CSSProperties } from 'react';
 
-// The `--wpds-dimension-gap-*` token scale from `@wordpress/theme`.
-const GAP_FALLBACKS = {
-	xs: '4px',
-	sm: '8px',
-	md: '12px',
-	lg: '16px',
-	xl: '24px',
-	'2xl': '32px',
-	'3xl': '40px',
-};
+import './style.scss';
 
-export type GapSize = keyof typeof GAP_FALLBACKS;
+// The `--wpds-dimension-gap-*` token scale from `@wordpress/theme`.
+export type GapSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
 interface GridProps extends ComponentProps< 'div' > {
 	columns?: number;
@@ -40,7 +32,7 @@ export default function Grid( {
 				gridTemplateColumns:
 					templateColumns ?? ( columns ? `repeat( ${ columns }, 1fr )` : undefined ),
 				gridTemplateRows: templateRows ?? ( rows ? `repeat( ${ rows }, 1fr )` : undefined ),
-				gap: gap && `var( --wpds-dimension-gap-${ gap }, ${ GAP_FALLBACKS[ gap ] } )`,
+				gap: gap && `var( --wpds-dimension-gap-${ gap } )`,
 				alignItems: align,
 				...style,
 			} }
