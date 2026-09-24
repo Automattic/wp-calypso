@@ -25,6 +25,11 @@ describe( 'SeoVisibilityNotice', () => {
 		expect( container ).toHaveTextContent( 'while your site is Coming Soon' );
 	} );
 
+	test( 'names Hidden for a public site that discourages search engines', () => {
+		const { container } = render( { blog_public: 0, wpcom_coming_soon: 0 } );
+		expect( container ).toHaveTextContent( 'while your site is Hidden' );
+	} );
+
 	test( 'renders nothing for a public site', () => {
 		const { container } = render( { blog_public: 1, wpcom_coming_soon: 0 } );
 		expect( container ).toBeEmptyDOMElement();

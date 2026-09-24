@@ -24,27 +24,22 @@ export default function SeoVisibilityNotice() {
 		return null;
 	}
 
-	let title;
+	let visibility;
 	if ( isSitePrivate ) {
-		title = translate(
-			"SEO settings aren't recognized by search engines while your site is Private."
-		);
+		visibility = translate( 'Your SEO settings won’t apply while your site is Private.' );
 	} else if ( siteIsComingSoon ) {
-		title = translate(
-			"SEO settings aren't recognized by search engines while your site is Coming Soon."
-		);
+		visibility = translate( 'Your SEO settings won’t apply while your site is Coming Soon.' );
 	} else {
-		title = translate(
-			"SEO settings aren't recognized by search engines while your site is Hidden."
-		);
+		visibility = translate( 'Your SEO settings won’t apply while your site is Hidden.' );
 	}
 
 	return (
 		<Notice.Root className="seo-settings__visibility-notice" intent="warning">
-			<Notice.Title>{ title }</Notice.Title>
+			<Notice.Title>{ translate( 'Search engines can’t see your site' ) }</Notice.Title>
 			<Notice.Description>
+				{ visibility }{ ' ' }
 				{ translate(
-					'Your site is not currently accessible to search engines. You must set your {{a}}privacy settings{{/a}} to “public”.',
+					'Update your {{a}}site visibility settings{{/a}} to let search engines find it.',
 					{
 						components: {
 							a: <Link href={ `/sites/settings/site/${ siteSlug }` } />,
