@@ -13,6 +13,14 @@
 	.panel-card {
 		margin-bottom: 16px;
 	}
+
+	// Outranks `.form-setting-explanation { display: block }` regardless of stylesheet order.
+	.seo-settings__preview {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 24px;
+	}
 }
 
 .seo-settings__page-title-header {
