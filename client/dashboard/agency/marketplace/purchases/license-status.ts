@@ -95,6 +95,16 @@ export function isChildLicense( license: JetpackLicense ): boolean {
 	return license.parent_license_id !== null;
 }
 
+// Only a development site that is still assigned can be prepared for launch.
+export function isDevSiteReadyForLaunch( license: JetpackLicense ): boolean {
+	return (
+		isWpcomHostingLicense( license ) &&
+		getLicenseStatus( license ) === 'assigned' &&
+		!! license.siteurl &&
+		license.meta?.a4a_is_dev_site === '1'
+	);
+}
+
 const TRANSFERRED_BADGE_DAYS = 60;
 
 // Extra labels the classic list shows next to the product name.

@@ -48,11 +48,11 @@ function mockPreferences() {
 		.persist();
 }
 
-function mockLicenses() {
+function mockLicenses( items: unknown[] = [ unassignedWpcomLicense ] ) {
 	nock( API )
 		.get( '/wpcom/v2/jetpack-licensing/licenses' )
 		.query( true )
-		.reply( 200, { items: [ unassignedWpcomLicense ], total_items: 1, total_pages: 1 } )
+		.reply( 200, { items, total_items: items.length, total_pages: 1 } )
 		.persist();
 }
 
@@ -115,5 +115,36 @@ describe( '<MarketplacePurchases>', () => {
 			'aria-disabled',
 			'true'
 		);
+	} );
+
+	test( 'names the client who owns a referred license', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses( [
+			{
+				...unassignedWpcomLicense,
+				referral: { id: 9, client: { id: 4, email: 'owner@example.com' } },
+			},
+		] );
+		mockPendingSites( 'pending' );
+
+		render( <MarketplacePurchases /> );
+
+		expect( await screen.findByText( /owns this/ ) ).toHaveTextContent(
+			'owner@example.com owns this'
+		);
+		expect( await screen.findByText( 'Referral' ) ).toBeVisible();
+	} );
+
+	test( 'says nothing about ownership for a license the agency bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+
+		expect( screen.queryByText( /owns this/ ) ).not.toBeInTheDocument();
 	} );
 } );
