@@ -55,6 +55,7 @@ function CancellationInfo( { expiry }: { expiry?: string } ) {
 					resize={ false }
 					focusOnMount
 					onFocusOutside={ () => setIsOpen( false ) }
+					onClose={ () => setIsOpen( false ) }
 				>
 					<VStack className="referrals-cancellation-popover" spacing={ 3 }>
 						<Text>
