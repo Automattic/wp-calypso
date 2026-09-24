@@ -60,7 +60,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
-const mockCanUser = jest.fn();
+const mockGetBlockEditorSettings = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -183,14 +183,12 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
-			if ( store === 'core' ) {
-				return { canUser: mockCanUser };
-			}
 			if ( store === 'core/block-editor' ) {
 				return {
 					getSelectedBlock: () => mockSelectedBlock,
 					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => mockEditorBlocks,
+					getSettings: mockGetBlockEditorSettings,
 				};
 			}
 			if ( store === 'core/editor' ) {
@@ -2503,7 +2501,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
-		mockCanUser.mockReturnValue( true );
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
 		mockImageStudioActions = null;
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
@@ -2526,10 +2524,10 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it.each( [ false, undefined ] )(
-		'hides Image Studio suggestions when upload permission is %s',
-		( canUpload ) => {
+		'hides Image Studio suggestions when mediaUpload is %s',
+		( mediaUpload ) => {
 			installAiEditorialReviewData();
-			mockCanUser.mockReturnValue( canUpload );
+			mockGetBlockEditorSettings.mockReturnValue( { mediaUpload } );
 			mockImageStudioActions = { openImageStudio: jest.fn() };
 			mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
 
@@ -2552,12 +2550,11 @@ describe( 'useSuggestions', () => {
 		const { result } = renderHook( () => useSuggestions() );
 
 		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( ids );
-		expect( mockCanUser ).toHaveBeenCalledWith( 'create', 'media' );
 	} );
 
-	it( 'updates Image Studio suggestions when upload permission changes', () => {
+	it( 'updates Image Studio suggestions when the editor upload setting changes', () => {
 		installAiEditorialReviewData();
-		mockCanUser.mockReturnValue( undefined );
+		mockGetBlockEditorSettings.mockReturnValue( {} );
 		mockImageStudioActions = { openImageStudio: jest.fn() };
 		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
 		const { result, rerender } = renderHook( () => useSuggestions() );
@@ -2566,7 +2563,7 @@ describe( 'useSuggestions', () => {
 			'generate-alt-text',
 		] );
 
-		mockCanUser.mockReturnValue( true );
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
 		rerender();
 
 		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
@@ -2575,7 +2572,7 @@ describe( 'useSuggestions', () => {
 			'edit-image',
 		] );
 
-		mockCanUser.mockReturnValue( false );
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: false } );
 		rerender();
 
 		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [

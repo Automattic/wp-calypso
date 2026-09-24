@@ -84,8 +84,8 @@ Builds the context object the AI agent receives. **0% test coverage.** This dete
 Image Studio has multiple entry points defined in `ImageStudioEntryPoint` enum (`src/types/index.ts`). Each affects modal behavior and feature availability. See `src/index.tsx:openImageStudioModal()` for initialization logic per entry point.
 
 - Every new or changed entry point must check upload permission before showing its button, menu item, or suggestion. Image Studio requires `upload_files`; a loaded Image Studio store does not prove the user has permission.
-- Reuse the host's upload check: `MediaUploadCheck` or the block editor's `getSettings().mediaUpload` for editor media controls, or `canUser( 'create', 'media' )` from the core data store. Keep entry points hidden until permission is confirmed.
-- Add tests for allowed, denied, and unresolved permission, and for permission changes where the UI subscribes to them.
+- In the editor, reuse `MediaUploadCheck` or the block editor's `getSettings().mediaUpload` for buttons, menu items, and suggestions. This follows the editor's behaviour, which may allow uploads while permission is still resolving. Outside the editor, use the host's upload check or require `canUser( 'create', 'media' ) === true` from the core data store.
+- Add tests for available and unavailable uploads, missing settings, and permission changes where the UI subscribes to them.
 
 ## Debugging Cross-Bundle
 

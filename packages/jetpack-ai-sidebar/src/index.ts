@@ -1645,15 +1645,15 @@ export function useSuggestions( maxSuggestions?: number ): {
 	}, [] );
 
 	const editorContext = useSelect( ( select ) => {
-		const core = select( 'core' ) as {
-			canUser?: ( action: string, resource: string ) => boolean | undefined;
+		const blockEditor = select( 'core/block-editor' ) as {
+			getSelectedBlock?: () => any;
+			getSettings?: () => { mediaUpload?: unknown };
 		};
-		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
 		const editor = select( 'core/editor' ) as {
 			getCurrentPostType?: () => string | undefined;
 		};
 		return {
-			canUploadFiles: core?.canUser?.( 'create', 'media' ) === true,
+			canUploadFiles: !! blockEditor?.getSettings?.()?.mediaUpload,
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postType: editor?.getCurrentPostType?.(),
 		};
