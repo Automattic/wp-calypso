@@ -1,7 +1,6 @@
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import {
 	Button,
-	__experimentalDivider as Divider,
 	ExternalLink,
 	SelectControl,
 	__experimentalHeading as Heading,
@@ -14,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
 import { a4aLink } from '../../../utils/link';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';

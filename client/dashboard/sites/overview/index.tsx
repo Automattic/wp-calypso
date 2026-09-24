@@ -1,7 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -15,6 +14,7 @@ import { useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import Divider from '../../components/divider';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -167,7 +167,6 @@ function SiteOverviewSecondaryCards( {
 			{ /* Divider re-ordered by CSS to appear above the HStack */ }
 			<Divider
 				className="site-overview-divider"
-				orientation="horizontal"
 				style={ { color: 'var(--dashboard-overview__divider-color)' } }
 			/>
 		</>
