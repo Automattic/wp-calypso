@@ -157,9 +157,9 @@ async function restoreProviderCheckpoint(
 	return successResult( summary, { checkpointId } );
 }
 
-// The checkpoint an undo or restore of `checkpointId` recorded, while no redo
-// has used it: it re-applies the change. A redo's own checkpoint carries `undo`.
-function findPendingRedo( checkpointId: string ): CheckpointRecord | undefined {
+// The reciprocal an undo or restore of `checkpointId` recorded, while no redo
+// has used it: it re-applies the change. A redo's own reciprocal carries `undo`.
+function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefined {
 	const checkpoints = getCheckpoints();
 
 	return [ ...checkpoints ]
@@ -169,7 +169,7 @@ function findPendingRedo( checkpointId: string ): CheckpointRecord | undefined {
 				checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
 				checkpoint.restoresCheckpointId === checkpointId &&
 				checkpoint.requestIntentType !== 'undo' &&
-				! checkpoints.some( ( later ) => later.restoresCheckpointId === checkpoint.id )
+				! checkpoints.some( ( other ) => other.restoresCheckpointId === checkpoint.id )
 		);
 }
 
@@ -216,9 +216,9 @@ export async function restoreCheckpointCallback(
 	}
 
 	// A redo may name the undone change itself, whose checkpoint would only put
-	// back the undone state; it runs from the undo's checkpoint instead.
+	// back the undone state; it runs from the undo's reciprocal instead.
 	const targetCheckpoint =
-		( requestIntentType === 'redo' && findPendingRedo( checkpointId ) ) || requestedCheckpoint;
+		( requestIntentType === 'redo' && findRedoReciprocal( checkpointId ) ) || requestedCheckpoint;
 
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
