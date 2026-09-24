@@ -266,6 +266,108 @@ export interface AgencyResourcesResponse {
 	total: number;
 }
 
+/**
+ * The enablement taxonomy used by the v2 resources endpoint.
+ *
+ * Every value is a stable slug rather than a display string: the client owns
+ * the translated labels, so renaming a label never breaks a saved filter.
+ */
+export type AgencyResourceProduct =
+	| 'automattic-for-agencies'
+	| 'jetpack'
+	| 'pressable'
+	| 'woocommerce'
+	| 'wordpress-com'
+	| 'wordpress-vip';
+
+export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
+
+export type AgencyResourceAudience = 'all' | 'developer' | 'business' | 'client';
+
+/**
+ * A new content type means updating this list, so derive filter options from
+ * the response rather than from it, and give any slug-keyed lookup a fallback:
+ * the API is not validated against this union at runtime.
+ */
+export type AgencyResourceContentType =
+	| 'battle-card'
+	| 'blog'
+	| 'case-study'
+	| 'checklist'
+	| 'guide'
+	| 'one-pager'
+	| 'process-guide'
+	| 'reference-guide'
+	| 'slide-deck'
+	| 'talk-track'
+	| 'webinar';
+
+/**
+ * How the client opens the resource, and a filter axis of its own.
+ *
+ * `video` opens `external_url` in the in-portal modal; every other value
+ * opens it in a new tab. It also picks the call-to-action label.
+ */
+export type AgencyResourceFormat = 'pdf' | 'slides' | 'video' | 'doc' | 'webpage';
+
+/**
+ * A single resource from the enablement hub, as returned by
+ * GET /wpcom/v2/agency/resources/v2.
+ *
+ * Successor to `AgencyResource`. The taxonomy is slugged, and the v1 fields
+ * that duplicated it are gone: `resource_type` became `content_type`,
+ * `section` became `is_featured` plus `stage`, and `related_product_type`
+ * was never read.
+ */
+export interface AgencyEnablementResource {
+	id: number;
+	name: string;
+	description: string;
+
+	/**
+	 * The destination for every format: the file for a PDF or deck, the page for
+	 * a webpage, the watch URL for a video. `format` says how to open it.
+	 *
+	 * There is no thumbnail field: cards are built from `product`,
+	 * `content_type` and `name` rather than from supplied artwork.
+	 */
+	external_url: string;
+
+	product: AgencyResourceProduct;
+	stage: AgencyResourceStage;
+	audience: AgencyResourceAudience;
+	content_type: AgencyResourceContentType;
+	format: AgencyResourceFormat;
+
+	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
+	is_featured: boolean;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface AgencyEnablementResourcesResponse {
+	status: string;
+	results: AgencyEnablementResource[];
+	total: number;
+}
+
+/**
+ * Engagement recorded per resource. `open` is the event the endpoint already
+ * records; `preview` and `download` are the in-portal actions v2 adds.
+ */
+export type AgencyResourceEventType = 'open' | 'preview' | 'download';
+
+export interface AgencyResourceEvent {
+	resource_id: number;
+	resource_name: string;
+	agency_id: number;
+	event_type?: AgencyResourceEventType;
+}
+
+export interface AgencyResourceEventResponse {
+	success: boolean;
+}
+
 export interface TipaltiIFrameUrl {
 	iframe_url: string;
 }

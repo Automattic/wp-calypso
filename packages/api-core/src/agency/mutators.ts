@@ -6,6 +6,8 @@ import type {
 	AgencyMediaUpload,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyResourceEvent,
+	AgencyResourceEventResponse,
 	AgencyVipPartnerOpportunity,
 } from './types';
 
@@ -87,4 +89,22 @@ export async function submitAgencyPressablePremiumPlanReferral(
 		apiNamespace: 'wpcom/v2',
 		body: { agency_id: agencyId, ...referral },
 	} );
+}
+
+/**
+ * Records an agency's engagement with a resource.
+ *
+ * Fire-and-forget: callers should not block opening, previewing or downloading
+ * on the response.
+ */
+export async function recordAgencyResourceEvent(
+	event: AgencyResourceEvent
+): Promise< AgencyResourceEventResponse > {
+	return wpcom.req.post(
+		{
+			path: '/agency/resources/record-event',
+			apiNamespace: 'wpcom/v2',
+		},
+		event
+	);
 }
