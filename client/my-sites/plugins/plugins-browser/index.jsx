@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -17,6 +18,7 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
+import { DESCRIBE_CATEGORY_SLUG } from 'calypso/my-sites/plugins/marketplace-ai-experience/constants';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import { PluginsFAQ } from 'calypso/my-sites/plugins/plugins-faq';
@@ -46,6 +48,9 @@ const MASTERBAR_HEIGHT = 32;
 
 // If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
+
+const loadMarketplaceAIExperience = () =>
+	import( 'calypso/my-sites/plugins/marketplace-ai-experience' );
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
@@ -131,6 +136,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 					sites={ sites }
 				/>
 			);
+		}
+
+		if ( category === DESCRIBE_CATEGORY_SLUG && isLoggedIn ) {
+			// Lazy-loaded so the agenttic-ui CSS import (and the rest of
+			// the AI bundle) stays out of the SSR build. Same pattern
+			// AgentsManagerLoader uses for the dock itself.
+			return <AsyncLoad require={ loadMarketplaceAIExperience } placeholder={ null } />;
 		}
 
 		if ( category ) {
@@ -228,10 +240,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 									isMarketplaceRedesignEnabled
 										? __(
 												'Add new features or connect your favorite tools with thousands of plugins — available on all paid WordPress.com plans.'
-											)
+										  )
 										: __(
 												'Add new functionality and integrations to your site with thousands of plugins.'
-											)
+										  )
 								}
 								searchTerms={ searchTerms }
 								renderTitleInH1={ ! category }

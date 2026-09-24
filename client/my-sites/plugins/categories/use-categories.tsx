@@ -1,6 +1,7 @@
 import { __, _x } from '@wordpress/i18n';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,6 +13,7 @@ export const ALLOWED_CATEGORIES = [
 	'customer',
 	'design',
 	'discover',
+	'describe',
 	'donations',
 	'ecommerce',
 	'education',
@@ -85,6 +87,14 @@ export const getCategories = (
 		menu: __( 'Discover' ),
 		title: __( 'Discover' ),
 		slug: 'discover',
+		tags: [],
+		preview: [],
+	},
+	describe: {
+		menu: __( 'Describe' ),
+		title: __( 'Describe a plugin' ),
+		description: __( "Describe what you need and we'll search the catalog for you." ),
+		slug: 'describe',
 		tags: [],
 		preview: [],
 	},
@@ -1083,6 +1093,7 @@ export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
 	const isJetpack = useSelector(
@@ -1095,6 +1106,11 @@ export function useCategories(
 	// Jetpack sites shouldn't see paid plugins
 	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
+	}
+
+	// Plugin recommendations `describe` tab requires a logged-in user.
+	if ( ! isLoggedIn && allowed.indexOf( 'describe' ) >= 0 ) {
+		allowed.splice( allowed.indexOf( 'describe' ), 1 );
 	}
 
 	return Object.fromEntries(

@@ -3,6 +3,7 @@ import { ResponsiveToolbarGroup } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
+import { sparkle } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -85,6 +86,10 @@ const Categories = ( {
 				<span key={ `category-${ category.slug }` } title={ category.menu }>
 					{ category.slug === 'discover' && isMarketplaceRedesignEnabled && (
 						<Icon icon={ starEmpty } size={ 22 } />
+					) }
+
+					{ category.slug === 'describe' && isMarketplaceRedesignEnabled && (
+						<Icon icon={ sparkle } size={ 22 } className="categories__describe-icon" />
 					) }
 
 					{ category.menu }
