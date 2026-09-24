@@ -66,7 +66,6 @@ import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggesti
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
-import { applyResponseActionVisibility } from '../../utils/response-action-visibility';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -1580,10 +1579,8 @@ export default function OrchestratorChat( {
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
-		// Everything after the user's latest reply is the turn in progress.
-		const latestTurnStartIndex = getLatestUserMessageIndex( currentMessages ) + 1;
 
-		currentMessages = currentMessages.map( ( message, index ) => {
+		currentMessages = currentMessages.map( ( message ) => {
 			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
 			const hasDisabledCheckpointAction = checkpointActions.some(
 				( action ) =>
@@ -1609,7 +1606,6 @@ export default function OrchestratorChat( {
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
@@ -1627,16 +1623,11 @@ export default function OrchestratorChat( {
 					action.id !== 'regenerate'
 			);
 
-			const actions = [ ...( existingActions ?? [] ), ...directActions ].sort(
-				( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
-			);
-
 			return {
 				...messageWithTraceId,
-				actions: applyResponseActionVisibility( actions, {
-					isLatestTurn: index >= latestTurnStartIndex,
-					isStreaming: isProcessing,
-				} ),
+				actions: [ ...( existingActions ?? [] ), ...directActions ].sort(
+					( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
+				),
 			};
 		} );
 
@@ -1786,6 +1777,9 @@ export default function OrchestratorChat( {
 			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}

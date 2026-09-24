@@ -6,6 +6,7 @@ export interface AgentUIContextValue {
 	// Core data
 	messages: Message[];
 	isProcessing: boolean;
+	isStreaming?: boolean;
 	error?: string | null;
 
 	// Input state

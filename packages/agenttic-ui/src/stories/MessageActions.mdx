@@ -19,7 +19,7 @@ interface MessageAction {
   onClick: (message: Message) => void | Promise<void>;
   disabled?: boolean;
   tooltip?: string;
-  revealOnHover?: boolean; // floats in a panel below the message on hover; docks into a row once a button in it is pressed
+  visibility?: 'always' | 'latest-turn'; // latest-turn: inline on the latest turn, on hover for earlier turns
 }
 ```
 

@@ -91,6 +91,9 @@ export interface Message {
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
 
+/** `latest-turn`: inline on the latest turn, on hover for earlier turns. */
+export type MessageActionVisibility = 'always' | 'latest-turn';
+
 export interface MessageActionButton {
 	type?: 'button';
 	id: string;
@@ -102,8 +105,8 @@ export interface MessageActionButton {
 	pressed?: boolean;
 	showLabel?: boolean;
 	order?: number;
-	/** Render in the panel that floats below the message on hover and docks into a row once pressed. */
-	revealOnHover?: boolean;
+	/** When the action shows. Defaults to `always`. */
+	visibility?: MessageActionVisibility;
 }
 
 export interface MessageActionComponent {
@@ -113,11 +116,8 @@ export interface MessageActionComponent {
 	component: React.ComponentType< any >;
 	componentProps?: Record< string, unknown >;
 	order?: number;
-	/**
-	 * Render in the panel that floats below the message on hover. Component actions carry no
-	 * pressed state; the panel docks into a row once a button action in it is pressed.
-	 */
-	revealOnHover?: boolean;
+	/** When the action shows. Defaults to `always`. */
+	visibility?: MessageActionVisibility;
 }
 
 export type MessageAction = MessageActionButton | MessageActionComponent;
@@ -129,6 +129,8 @@ export interface AgentUIProps {
 	// Core data from agent hook
 	messages: Message[];
 	isProcessing: boolean;
+	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
+	isStreaming?: boolean;
 	error?: string | null;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;
 

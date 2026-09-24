@@ -34,7 +34,7 @@ export function resolveActionsForMessage(
 					component: action.component,
 					componentProps: action.componentProps,
 					order: action.order,
-					revealOnHover: action.revealOnHover,
+					visibility: action.visibility,
 				};
 			}
 			return {
@@ -47,7 +47,7 @@ export function resolveActionsForMessage(
 				pressed: action.pressed,
 				showLabel: action.showLabel,
 				order: action.order,
-				revealOnHover: action.revealOnHover,
+				visibility: action.visibility,
 			};
 		} )
 		.sort( ( a, b ) => ( a.order ?? Infinity ) - ( b.order ?? Infinity ) );

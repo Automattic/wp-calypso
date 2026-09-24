@@ -223,8 +223,8 @@ export const DisabledActions: Story = {
 	},
 };
 
-// Story 7: Feedback on earlier turns is revealed on hover
-export const RevealOnHover: Story = {
+// Story 7: Actions show on the latest turn and on hover for earlier turns
+export const LatestTurn: Story = {
 	args: {
 		message: mockAgentMessage,
 	},
@@ -241,9 +241,7 @@ export const RevealOnHover: Story = {
 		const previousTurn: MessageType = {
 			...mockAgentMessage,
 			id: 'previous-turn',
-			actions: feedbackManager
-				.getActionsForMessage( mockAgentMessage )
-				.map( ( action ) => ( { ...action, revealOnHover: true } ) ),
+			actions: feedbackManager.getActionsForMessage( mockAgentMessage ),
 		};
 		const latestTurn: MessageType = {
 			...mockLongAgentMessage,
@@ -253,7 +251,7 @@ export const RevealOnHover: Story = {
 
 		return (
 			<div>
-				<Message message={ previousTurn } />
+				<Message message={ previousTurn } isLatestTurn={ false } />
 				<Message message={ mockUserMessage } />
 				<Message message={ latestTurn } />
 			</div>
@@ -263,7 +261,7 @@ export const RevealOnHover: Story = {
 		docs: {
 			description: {
 				story:
-					'Feedback on an earlier turn floats in a panel below the reply while it is hovered or focused, and docks into a plain row once a thumb is pressed; the latest turn keeps its row visible.',
+					'The latest turn shows its actions. An earlier turn keeps their space and shows them while hovered or focused, or always once a thumb is pressed.',
 			},
 		},
 	},

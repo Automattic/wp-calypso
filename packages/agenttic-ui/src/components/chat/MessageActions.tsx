@@ -6,75 +6,82 @@ import type { Message, MessageAction } from '../../types';
 interface MessageActionsProps {
 	message: Message;
 	actions?: MessageAction[];
+	/** The message belongs to the turn after the user's latest message. */
+	isLatestTurn?: boolean;
+	/** Whether the latest reply is still streaming. */
+	isStreaming?: boolean;
 }
 
-export function MessageActions( { message, actions: actionsProp }: MessageActionsProps ) {
-	const actions = actionsProp || message.actions;
+export function MessageActions( {
+	message,
+	actions: actionsProp,
+	isLatestTurn = true,
+	isStreaming = false,
+}: MessageActionsProps ) {
+	const actions = actionsProp || message.actions || [];
 
-	if ( ! actions || actions.length === 0 ) {
+	// `latest-turn` actions wait for the latest turn to settle, so the row appears
+	// at once; a pressed one stays. Earlier turns keep them in place, shown on
+	// hover, or always once one of them is pressed.
+	const isPressed = ( action: MessageAction ) => action.type !== 'component' && !! action.pressed;
+	const isHoverOnly = ( action: MessageAction ) =>
+		action.visibility === 'latest-turn' && ! isLatestTurn;
+	const isHeldBack = ( action: MessageAction ) =>
+		action.visibility === 'latest-turn' && isLatestTurn && isStreaming && ! isPressed( action );
+	const visibleActions = actions.filter( ( action ) => ! isHeldBack( action ) );
+
+	if ( visibleActions.length === 0 ) {
 		return null;
 	}
 
+	const isPinned = visibleActions.some(
+		( action ) => isHoverOnly( action ) && isPressed( action )
+	);
+
 	const renderAction = ( action: MessageAction ) => {
-		if ( action.type === 'component' ) {
-			const ActionComponent = action.component;
-			const element = <ActionComponent key={ action.id } { ...( action.componentProps || {} ) } />;
-			// Inline components stay direct flex items (some span the row); in the
-			// panel the wrapper keeps a component's control aligned with the buttons.
-			if ( ! action.revealOnHover ) {
-				return element;
-			}
-			return (
-				<span key={ action.id } className={ styles.componentWrapper }>
-					{ element }
-				</span>
+		const element =
+			action.type === 'component' ? (
+				<action.component key={ action.id } { ...( action.componentProps || {} ) } />
+			) : (
+				<Button
+					key={ action.id }
+					className={ styles.button }
+					icon={ action.icon }
+					onClick={ () => action.onClick( message ) }
+					variant="ghost"
+					size="sm"
+					type="button"
+					disabled={ action.disabled }
+					pressed={ action.pressed }
+					title={ action.tooltip || action.label }
+					aria-label={ action.label }
+					{ ...( action.tooltip && {
+						title: action.tooltip,
+					} ) }
+				>
+					{ action.showLabel ? action.label : undefined }
+				</Button>
 			);
-		}
-		return (
-			<Button
-				key={ action.id }
-				className={ styles.button }
-				icon={ action.icon }
-				onClick={ () => action.onClick( message ) }
-				variant="ghost"
-				size="sm"
-				type="button"
-				disabled={ action.disabled }
-				pressed={ action.pressed }
-				title={ action.tooltip || action.label }
-				aria-label={ action.label }
-				{ ...( action.tooltip && {
-					title: action.tooltip,
-				} ) }
-			>
-				{ action.showLabel ? action.label : undefined }
-			</Button>
+
+		// The wrapper fades, so an action's own opacity (a dimmed disabled button)
+		// still applies. Others stay direct flex items, since some span the row.
+		return isHoverOnly( action ) ? (
+			<span key={ action.id } className={ styles.hoverOnly }>
+				{ element }
+			</span>
+		) : (
+			element
 		);
 	};
 
-	// Hover-only actions share one panel that floats below the message; once one
-	// of them is pressed the panel docks, settling into the flow as a plain row.
-	const inlineActions = actions.filter( ( action ) => ! action.revealOnHover );
-	const hoverOnlyActions = actions.filter( ( action ) => action.revealOnHover );
-	const isDocked = hoverOnlyActions.some(
-		( action ) => action.type !== 'component' && action.pressed
-	);
-
 	return (
 		<div
-			className={ styles.container }
+			className={ cn( styles.container, { [ styles.pinned ]: isPinned } ) }
 			data-visible="true"
 			role="toolbar"
 			aria-label="Message actions"
 		>
-			{ inlineActions.map( renderAction ) }
-			{ hoverOnlyActions.length > 0 && (
-				<div className={ cn( styles.dock, isDocked ? styles.docked : undefined ) }>
-					<div className={ styles.dockInner }>
-						<div className={ styles.floating }>{ hoverOnlyActions.map( renderAction ) }</div>
-					</div>
-				</div>
-			) }
+			{ visibleActions.map( renderAction ) }
 		</div>
 	);
 }

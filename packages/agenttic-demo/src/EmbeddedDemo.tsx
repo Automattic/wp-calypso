@@ -102,6 +102,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { current
 						id: 'more-menu',
 						component: DemoMoreMenu,
 						order: 1,
+						visibility: 'latest-turn',
 					},
 				];
 			},
@@ -123,6 +124,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { current
 								icon: <RegenerateAltIcon />,
 								order: 2,
 								onClick: onRegenerate,
+								visibility: 'latest-turn',
 							},
 					  ]
 					: [];

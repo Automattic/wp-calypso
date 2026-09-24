@@ -41,6 +41,7 @@ export function AgentUIContainer( {
 	children,
 	messages,
 	isProcessing,
+	isStreaming,
 	error,
 	onSubmit,
 	variant = 'floating',
@@ -469,6 +470,7 @@ export function AgentUIContainer( {
 		// Core data
 		messages,
 		isProcessing,
+		isStreaming,
 		error,
 
 		// Input state

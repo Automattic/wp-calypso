@@ -73,6 +73,7 @@ export default function useCopyAction(): ( message: UIMessage ) => MessageAction
 				component: CopyActionButton,
 				componentProps: { text },
 				order: 4,
+				visibility: 'latest-turn',
 			},
 		];
 	}, [] );

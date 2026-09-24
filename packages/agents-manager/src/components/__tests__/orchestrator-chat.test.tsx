@@ -26,7 +26,6 @@ let mockConversationConfig:
 	  }
 	| undefined;
 const mockUseRegenerateAction = jest.fn();
-const mockGetFeedbackActionsForMessage = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
@@ -386,7 +385,7 @@ jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
 	submitFeedbackText: jest.fn(),
 	resetFeedback: jest.fn(),
-	getFeedbackActionsForMessage: ( message: unknown ) => mockGetFeedbackActionsForMessage( message ),
+	getFeedbackActionsForMessage: () => [],
 } ) );
 jest.mock( '../../hooks/use-regenerate-action', () => ( {
 	__esModule: true,
@@ -665,7 +664,6 @@ describe( 'OrchestratorChat', () => {
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
-		mockGetFeedbackActionsForMessage.mockReturnValue( [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
@@ -3359,120 +3357,15 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'reveals response actions of earlier turns only on hover, keeping the latest turn visible', () => {
-		const onClick = jest.fn();
-		mockGetFeedbackActionsForMessage.mockImplementation( ( message: { role: string } ) =>
-			message.role === 'agent'
-				? [ { id: 'feedback-up', label: 'Good response', onClick, order: 2 } ]
-				: []
-		);
-		mockUseCheckpointAction.mockReturnValue( ( message: { role: string } ) =>
-			message.role === 'agent' ? [ { id: 'checkpoint', label: 'Undo', onClick, order: 1 } ] : []
-		);
-		const textMessage = (
-			id: string,
-			role: 'user' | 'agent',
-			text: string,
-			timestamp: number
-		) => ( {
-			id,
-			role,
-			content: [ { type: 'text' as const, text } ],
-			timestamp,
-			archived: false,
-			showIcon: role === 'agent',
-		} );
-		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( {
-				messages: [
-					textMessage( 'user-1', 'user', 'First ask', 1 ),
-					textMessage( 'agent-1a', 'agent', 'First response', 2 ),
-					textMessage( 'agent-1b', 'agent', 'First follow-up', 3 ),
-					textMessage( 'user-2', 'user', 'Second ask', 4 ),
-					textMessage( 'agent-2', 'agent', 'Second response', 5 ),
-				],
-			} )
-		);
+	it( 'keeps response actions on the raw streaming state while images upload', () => {
+		renderWithImageUpload( createImageUpload( { isUploadingImages: true } ) );
 
-		render( chat() );
-
-		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
-			id: string;
-			actions?: Array< { id: string; revealOnHover?: boolean } >;
-		} >;
-		const actionsOf = ( id: string ) =>
-			messages
-				.find( ( message ) => message.id === id )
-				?.actions?.map( ( action ) => [ action.id, action.revealOnHover ] );
-
-		expect( actionsOf( 'agent-1a' ) ).toEqual( [
-			[ 'checkpoint', undefined ],
-			[ 'feedback-up', true ],
-		] );
-		expect( actionsOf( 'agent-1b' ) ).toEqual( [
-			[ 'checkpoint', undefined ],
-			[ 'feedback-up', true ],
-		] );
-		expect( actionsOf( 'agent-2' ) ).toEqual( [
-			[ 'checkpoint', undefined ],
-			[ 'feedback-up', undefined ],
-		] );
+		expect( mockAgentChat.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { isProcessing: true, isStreaming: false } )
+		);
 	} );
 
-	it( 'holds the response actions of the latest turn back while it streams', () => {
-		const onClick = jest.fn();
-		mockGetFeedbackActionsForMessage.mockImplementation( ( message: { role: string } ) =>
-			message.role === 'agent'
-				? [ { id: 'feedback-up', label: 'Good response', onClick, order: 2 } ]
-				: []
-		);
-		mockUseCheckpointAction.mockReturnValue( ( message: { role: string } ) =>
-			message.role === 'agent' ? [ { id: 'checkpoint', label: 'Undo', onClick, order: 1 } ] : []
-		);
-		const textMessage = (
-			id: string,
-			role: 'user' | 'agent',
-			text: string,
-			timestamp: number
-		) => ( {
-			id,
-			role,
-			content: [ { type: 'text' as const, text } ],
-			timestamp,
-			archived: false,
-			showIcon: role === 'agent',
-		} );
-		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( {
-				messages: [
-					textMessage( 'user-1', 'user', 'First ask', 1 ),
-					textMessage( 'agent-1', 'agent', 'First response', 2 ),
-					textMessage( 'user-2', 'user', 'Second ask', 3 ),
-					textMessage( 'agent-2', 'agent', 'Streaming response', 4 ),
-				],
-				isProcessing: true,
-			} )
-		);
-
-		render( chat() );
-
-		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
-			id: string;
-			actions?: Array< { id: string; revealOnHover?: boolean } >;
-		} >;
-		const actionsOf = ( id: string ) =>
-			messages
-				.find( ( message ) => message.id === id )
-				?.actions?.map( ( action ) => [ action.id, action.revealOnHover ] );
-
-		expect( actionsOf( 'agent-1' ) ).toEqual( [
-			[ 'checkpoint', undefined ],
-			[ 'feedback-up', true ],
-		] );
-		expect( actionsOf( 'agent-2' ) ).toEqual( [ [ 'checkpoint', undefined ] ] );
-	} );
-
-	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
+	it( 'tells the regenerate getter which message is latest', () => {
 		const getRegenerateActions = jest.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
 		mockUseAgentChat.mockReturnValue(
@@ -3503,11 +3396,11 @@ describe( 'OrchestratorChat', () => {
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-1' } ),
-			{ isLatestAgentMessage: false, isStreaming: true }
+			{ isLatestAgentMessage: false }
 		);
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-2' } ),
-			{ isLatestAgentMessage: true, isStreaming: true }
+			{ isLatestAgentMessage: true }
 		);
 	} );
 

@@ -20,6 +20,7 @@ import type { ChatProps } from '../../types';
 export function Chat( {
 	messages,
 	isProcessing,
+	isStreaming,
 	error,
 	onSubmit,
 	variant = 'floating',
@@ -272,6 +273,7 @@ export function Chat( {
 					textareaRef={ input.textareaRef }
 					placeholder={ placeholder }
 					isProcessing={ isProcessing }
+					isStreaming={ isStreaming }
 					onStop={ onStop }
 					showHeader={ false }
 					notice={ notice }
@@ -423,6 +425,7 @@ export function Chat( {
 								textareaRef={ input.textareaRef }
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
+								isStreaming={ isStreaming }
 								onStop={ onStop }
 								showHeader
 								onClose={ handleClose }

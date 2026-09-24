@@ -49,6 +49,8 @@ interface Props {
 	groupWritingSuggestions?: boolean;
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
+	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
+	isStreaming?: boolean;
 	/** Custom thinking message to display while the agent is processing. */
 	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
@@ -171,6 +173,7 @@ export default function AgentChat( {
 	emptyViewSuggestions = [],
 	groupWritingSuggestions = false,
 	isProcessing,
+	isStreaming,
 	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
@@ -305,6 +308,7 @@ export default function AgentChat( {
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
+			isStreaming={ isStreaming }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
