@@ -12,6 +12,11 @@
 	// Side by side, the always-visible upgrade badge doesn't fit beside its heading on narrow screens.
 	&--stacked {
 		flex-direction: column;
+		gap: 8px;
+
+		@include break-large {
+			gap: 32px;
+		}
 	}
 }
 
