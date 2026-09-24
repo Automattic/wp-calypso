@@ -38,6 +38,14 @@ body:has( .dashboard-backport-site-purchases ) :is( .components-popover, .compon
 	}
 }
 
+// The classic layout's top spacing leaves room for a compact classic header;
+// the Dashboard page header is already sized for its own 24px page padding.
+@media ( min-width: 661px ) {
+	.layout:has( .dashboard-backport-site-purchases ) .layout__content {
+		--_layout__content-top-spacing: calc( var( --masterbar-height ) + #{$grid-unit-30} );
+	}
+}
+
 // The Dashboard theme above is WordPress.com blue; the classic Jetpack Cloud
 // purchase pages these screens replace used Jetpack green.
 .theme-jetpack-cloud .dashboard-backport-site-purchases {
