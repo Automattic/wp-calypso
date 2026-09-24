@@ -45,10 +45,10 @@ export default function TwoStepRequiredNotice( { sites }: { sites: Site[] } ) {
 								'%s requires two-step authentication. You can’t open its WP Admin until you turn it on for your account.'
 							),
 							site.name
-					  )
+						)
 					: __(
 							'Some of your sites require two-step authentication. You can’t open their WP Admin until you turn it on for your account.'
-					  ) }
+						) }
 			</Notice>
 		</>
 	);
