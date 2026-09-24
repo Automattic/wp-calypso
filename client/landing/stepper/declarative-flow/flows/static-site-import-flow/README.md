@@ -8,23 +8,27 @@ take is sent back to `site-migration`.
 
 ## Steps
 
-| Step                              | Screen                              |
-| --------------------------------- | ----------------------------------- |
-| `static-site-import-reading`      | Reading your site                   |
-| `static-site-import-results`      | Your site is ready to move          |
-| `static-site-import-how-it-works` | Here’s how the move works           |
-| `static-site-import-address`      | Keep or change your address         |
-| `domains`                         | Domain search                       |
-| `plans`                           | Plans                               |
-| `create-site` → `processing`      | Site creation, then checkout        |
-| `static-site-import-ready`        | You’re all set                      |
-| `static-site-import-building`     | We’re building your site            |
-| `static-site-import-done`         | Your site is ready                  |
-| `static-site-import-expert`       | A migration expert will be in touch |
-| `static-site-import-failed`       | We couldn’t finish your move        |
+| Step                         | Screen                                                   |
+| ---------------------------- | -------------------------------------------------------- |
+| `static-site-import-reading` | Checking your site                                       |
+| `static-site-import-results` | We can move your site (or almost all / some parts can’t) |
+| `static-site-import-expert`  | A migration expert will be in touch                      |
+| `static-site-import-address` | Keep or change your address                              |
+| `domains`                    | Domain search                                            |
+| `plans`                      | Plans                                                    |
+| `create-site` → `processing` | Site creation, then checkout                             |
 
-State that has to survive checkout is kept in the URL: `from`, `platform`, `importSessionId`,
-`domainChoice`, `siteId` and `siteSlug`.
+The results screen picks its version from the session’s `preview_summary` (see
+`components/static-site-import/confidence.ts`): a store, bookings or member logins mean some parts
+can’t be moved; forms, embeds, sections that didn’t convert cleanly, pages that look different or
+pages that weren’t found are things to set up after the move; otherwise the whole site can move.
+
+After checkout the user lands on the site’s Overview in the dashboard
+(`client/dashboard/sites/overview-static-site-import`), which approves the move, follows it until
+it finishes, and then asks whether the site looks right.
+
+State that has to survive checkout is kept in the URL: `from`, `platform`, `importSessionId` and
+`domainChoice`.
 
 ## Feature flag
 
@@ -36,9 +40,10 @@ its previous behavior.
 1. `yarn start` and go to `/setup/site-migration`.
 2. Enter a Wix or Squarespace URL and confirm you land on
    `/setup/static-site-import/static-site-import-reading`.
-3. Walk through the results, how-it-works and address screens, then pick a plan and check out.
-4. After checkout, click **Move my site**. Reload the building screen and confirm it resumes.
-5. On the done screen, try **Something’s off** → **Get help with this** and check the expert screen.
+3. On the results screen, click **Move my site**, pick an address and a plan, and check out.
+4. After checkout, confirm you land on the site’s Overview with **We’re moving your site**. Reload
+   it and confirm it resumes.
+5. Once it’s ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
 
 ## Owned by
 

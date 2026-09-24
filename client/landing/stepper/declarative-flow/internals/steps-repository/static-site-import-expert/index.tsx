@@ -1,6 +1,4 @@
-import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
-import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalText as Text,
@@ -8,7 +6,6 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -19,19 +16,13 @@ import {
 } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
-export type StaticSiteImportExpertSubmits = { action: 'continue-alone'; finished: boolean };
+export type StaticSiteImportExpertSubmits = { action: 'continue-alone' };
 
 const StaticSiteImportExpert: StepType< { submits: StaticSiteImportExpertSubmits } > =
 	function StaticSiteImportExpert( { navigation } ) {
 		const { __ } = useI18n();
-		const [ searchParams ] = useSearchParams();
-		const sessionId = searchParams.get( 'importSessionId' ) ?? '';
 		const { host, platformName } = useStaticSiteImportSource();
 		const email = useSelector( getCurrentUserEmail );
-		const { data: session } = useQuery( {
-			...staticSiteImportSessionQuery( sessionId ),
-			enabled: Boolean( sessionId ),
-		} );
 
 		const site = host || __( 'your site' );
 		const handOff = email
@@ -83,12 +74,7 @@ const StaticSiteImportExpert: StepType< { submits: StaticSiteImportExpertSubmits
 								<Button
 									__next40pxDefaultSize
 									variant="secondary"
-									onClick={ () =>
-										navigation.submit?.( {
-											action: 'continue-alone',
-											finished: session?.state === 'finished',
-										} )
-									}
+									onClick={ () => navigation.submit?.( { action: 'continue-alone' } ) }
 								>
 									{ __( 'Continue on my own instead' ) }
 								</Button>

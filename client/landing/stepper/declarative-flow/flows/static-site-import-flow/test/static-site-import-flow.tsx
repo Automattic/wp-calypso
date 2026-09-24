@@ -69,7 +69,7 @@ describe( 'Static site import flow', () => {
 		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
 
 		renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
-			currentStep: STEPS.STATIC_SITE_IMPORT_READY.slug,
+			currentStep: STEPS.STATIC_SITE_IMPORT_RESULTS.slug,
 		} );
 
 		expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
@@ -158,10 +158,11 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
-	describe( 'choosing an address and plan', () => {
+	describe( 'results', () => {
 		it( 'asks for an address when there is no site yet', () => {
 			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS,
+				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				dependencies: { action: 'continue' },
 				query: SESSION,
 			} );
 
@@ -171,24 +172,66 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
-		it( 'skips to the move for a site already on a paid plan', () => {
+		it( 'hands a site with a store or bookings to a migration expert', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				dependencies: { action: 'expert' },
+				query: SESSION,
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_EXPERT,
+				query: null,
+			} );
+		} );
+
+		it( 'lets the user move the rest of the site after talking to an expert', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_EXPERT,
+				dependencies: { action: 'continue-alone' },
+				query: SESSION,
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_ADDRESS,
+				query: null,
+			} );
+		} );
+
+		it( 'reads the site again when the preview has expired', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				dependencies: { action: 'restart' },
+				query: SESSION,
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_READING,
+				query: { importSessionId: '' },
+			} );
+		} );
+
+		it( 'sends a site already on a paid plan straight to its overview', () => {
 			jest.mocked( useSite ).mockReturnValue( {
 				ID: 42,
 				URL: 'https://busybears.wordpress.com',
 				plan: { is_free: false },
 			} );
 
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_HOW_IT_WORKS,
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_RESULTS,
+				dependencies: { action: 'continue' },
 				query: { ...SESSION, ...SITE },
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READY,
-				query: null,
+			expect( lastExit() ).toMatchObject( {
+				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
+				query: { importSessionId: 'abc123', from: SOURCE.from },
 			} );
 		} );
+	} );
 
+	describe( 'choosing an address and plan', () => {
 		it.each( [
 			[ 'keep', STEPS.UNIFIED_PLANS ],
 			[ 'free', STEPS.UNIFIED_PLANS ],
@@ -203,7 +246,7 @@ describe( 'Static site import flow', () => {
 			expect( destination ).toMatchDestination( { step, query: { domainChoice } } );
 		} );
 
-		it( 'sends the new site to checkout with everything the move needs afterwards', () => {
+		it( 'returns from checkout to the new site’s overview, which runs the move', () => {
 			runNavigation( {
 				from: STEPS.PROCESSING,
 				dependencies: { siteCreated: true, goToCheckout: true, ...SITE },
@@ -215,11 +258,9 @@ describe( 'Static site import flow', () => {
 
 			expect( siteSlug ).toBe( SITE.siteSlug );
 			expect( plan ).toBeUndefined();
-			expect( path ).toBe( '/setup/static-site-import/static-site-import-ready' );
+			expect( path ).toMatch( new RegExp( `/sites/${ SITE.siteSlug }$` ) );
 			expect( Object.fromEntries( new URLSearchParams( query ) ) ).toEqual( {
 				...SESSION,
-				siteId: '42',
-				siteSlug: SITE.siteSlug,
 				domainChoice: 'keep',
 			} );
 		} );
@@ -235,70 +276,6 @@ describe( 'Static site import flow', () => {
 				siteSlug: SITE.siteSlug,
 				plan: 'business-bundle',
 			} );
-		} );
-	} );
-
-	describe( 'after checkout', () => {
-		it( 'builds the site once the move is approved', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_READY,
-				dependencies: { action: 'approved' },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_BUILDING,
-				query: null,
-			} );
-		} );
-
-		it( 'reads the site again when the preview has expired', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_READY,
-				dependencies: { action: 'restart' },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READING,
-				query: { importSessionId: '' },
-			} );
-		} );
-
-		it( 'connects the kept domain from the done screen', () => {
-			runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_DONE,
-				dependencies: { action: 'connect-domain' },
-				query: { ...SESSION, ...SITE, domainChoice: 'keep' },
-			} );
-
-			expect( lastExit() ).toMatchObject( {
-				path: `/domains/add/use-my-domain/${ SITE.siteSlug }`,
-				query: { initialQuery: 'busybearscleaning.com' },
-			} );
-		} );
-
-		it( 'hands a reported problem to a migration expert', () => {
-			const destination = runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_DONE,
-				dependencies: { action: 'reported' },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				query: null,
-			} );
-		} );
-
-		it( 'offers the content importer when the move never finished', () => {
-			runNavigation( {
-				from: STEPS.STATIC_SITE_IMPORT_EXPERT,
-				dependencies: { action: 'continue-alone', finished: false },
-				query: { ...SESSION, ...SITE },
-			} );
-
-			expect( lastExit().path ).toBe( '/setup/site-setup/importerWix' );
 		} );
 	} );
 } );

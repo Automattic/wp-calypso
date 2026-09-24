@@ -330,14 +330,6 @@ export const STEPS = {
 			),
 	},
 
-	STATIC_SITE_IMPORT_HOW_IT_WORKS: {
-		slug: 'static-site-import-how-it-works',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-how-it-works'
-			),
-	},
-
 	STATIC_SITE_IMPORT_ADDRESS: {
 		slug: 'static-site-import-address',
 		asyncComponent: () =>
@@ -346,43 +338,11 @@ export const STEPS = {
 			),
 	},
 
-	STATIC_SITE_IMPORT_READY: {
-		slug: 'static-site-import-ready',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-ready'
-			),
-	},
-
-	STATIC_SITE_IMPORT_BUILDING: {
-		slug: 'static-site-import-building',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-building'
-			),
-	},
-
-	STATIC_SITE_IMPORT_DONE: {
-		slug: 'static-site-import-done',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-done'
-			),
-	},
-
 	STATIC_SITE_IMPORT_EXPERT: {
 		slug: 'static-site-import-expert',
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-expert'
-			),
-	},
-
-	STATIC_SITE_IMPORT_FAILED: {
-		slug: 'static-site-import-failed',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-failed'
 			),
 	},
 
