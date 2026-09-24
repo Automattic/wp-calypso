@@ -1,0 +1,61 @@
+.static-site-import-card__checklist {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.static-site-import-card__spinner {
+	width: 20px;
+	height: 20px;
+	margin: 6px;
+}
+
+.static-site-import-card__count {
+	margin-inline-start: auto;
+}
+
+.static-site-import-card__frame {
+	overflow: hidden;
+	border: 1px solid var( --dashboard__border-color, var( --wp-components-color-gray-300 ) );
+	border-radius: 8px;
+}
+
+.static-site-import-card__frame-bar {
+	padding: 12px 20px;
+	border-block-end: 1px solid
+		var( --dashboard__border-color, var( --wp-components-color-gray-300 ) );
+	background-color: var( --wp-components-color-gray-100 );
+	color: var( --dashboard__text-muted-color );
+	font-size: 0.875rem;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.static-site-import-card__frame-url {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.static-site-import-card__frame-body {
+	position: relative;
+	height: 400px;
+	overflow: hidden;
+	background-color: var( --wp-components-color-gray-100 );
+}
+
+.static-site-import-card__frame-button {
+	position: absolute;
+	inset-inline-end: 16px;
+	inset-block-end: 16px;
+	background-color: var( --wp-components-color-background, var( --color-surface ) );
+}
+
+.static-site-import-card__feedback {
+	padding-block-start: 24px;
+	border-block-start: 1px solid
+		var( --dashboard__border-color, var( --wp-components-color-gray-300 ) );
+}
