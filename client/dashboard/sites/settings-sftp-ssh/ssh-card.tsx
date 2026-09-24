@@ -133,7 +133,7 @@ export default function SshCard( {
 	const {
 		data: userSshKeys,
 		error: userSshKeysError,
-		isPending: isUserSshKeysPending,
+		isFetchedAfterMount: isUserSshKeysFetchedAfterMount,
 	} = useQuery( {
 		...sshKeysQuery(),
 		enabled: sshEnabled,
@@ -147,7 +147,7 @@ export default function SshCard( {
 	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
 	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
-	const isLoadingUserSshKeys = sshEnabled && isUserSshKeysPending;
+	const isLoadingUserSshKeys = sshEnabled && ! isUserSshKeysFetchedAfterMount;
 	const showSshSettings = sshEnabled && ! isLoadingUserSshKeys;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
@@ -185,7 +185,7 @@ export default function SshCard( {
 					// Don't show snackbar until we know ssh keys have finished loading, so that
 					// the snackbar doesn't pop up moments before the ssh settings form.
 					try {
-						await queryClient.ensureQueryData( sshKeysQuery() );
+						await queryClient.fetchQuery( sshKeysQuery() );
 					} catch ( error ) {
 						if ( isWpError( error ) && error.code === 'reauthorization_required' ) {
 							// We will redirect, so show no notice.

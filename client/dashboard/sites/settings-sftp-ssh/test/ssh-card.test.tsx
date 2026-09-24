@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { sshKeysQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
@@ -21,17 +23,22 @@ describe( '<SshCard>', () => {
 	} );
 
 	afterEach( () => {
-		nock.cleanAll();
 		select( noticesStore )
 			.getNotices()
 			.forEach( ( notice ) => dispatch( noticesStore ).removeNotice( notice.id ) );
 	} );
 
 	test( 'keeps the SSH settings hidden and the toggle disabled while user SSH keys load', async () => {
+		let resolveUserSshKeys: () => void = () => {};
+		const userSshKeysLoaded = new Promise< void >( ( resolve ) => {
+			resolveUserSshKeys = resolve;
+		} );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/me/ssh-keys' )
-			.delay( 100 )
-			.reply( 200, [ { name: 'default', key: 'ssh-rsa AAAA', sha256: 'abc', created_at: '' } ] );
+			.reply( async () => {
+				await userSshKeysLoaded;
+				return [ 200, [ { name: 'default', key: 'ssh-rsa AAAA', sha256: 'abc', created_at: '' } ] ];
+			} );
 
 		render( <SshCard siteId={ siteId } sftpUsers={ sftpUsers } sshEnabled /> );
 
@@ -39,8 +46,37 @@ describe( '<SshCard>', () => {
 		expect( toggle ).toBeDisabled();
 		expect( screen.queryByText( 'Connection command' ) ).not.toBeInTheDocument();
 
+		resolveUserSshKeys();
+
 		expect( await screen.findByText( 'Connection command' ) ).toBeVisible();
 		expect( toggle ).toBeEnabled();
+	} );
+
+	test( 'waits for user SSH keys to refetch even when they are already cached', async () => {
+		let resolveUserSshKeys: () => void = () => {};
+		const userSshKeysLoaded = new Promise< void >( ( resolve ) => {
+			resolveUserSshKeys = resolve;
+		} );
+		const userSshKeysRequest = nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/me/ssh-keys' )
+			.reply( async () => {
+				await userSshKeysLoaded;
+				return [ 200, [] ];
+			} );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( sshKeysQuery().queryKey, [] );
+
+		render( <SshCard siteId={ siteId } sftpUsers={ sftpUsers } sshEnabled />, { queryClient } );
+
+		await waitFor( () => expect( userSshKeysRequest.isDone() ).toBe( true ) );
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable SSH access for this site' } )
+		).toBeDisabled();
+		expect( screen.queryByText( 'Connection command' ) ).not.toBeInTheDocument();
+
+		resolveUserSshKeys();
+
+		expect( await screen.findByText( 'Connection command' ) ).toBeVisible();
 	} );
 
 	test( 'does not load user SSH keys when SSH is disabled', () => {
