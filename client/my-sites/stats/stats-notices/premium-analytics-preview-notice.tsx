@@ -183,7 +183,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 			<NoticeContainer isOdyssey={ isOdyssey }>
 				<NoticeBanner
 					level="error"
-					title={ translate( 'We couldn’t switch on the new Traffic and Insights tabs' ) }
+					title={ translate( 'We couldn’t switch on the new Stats' ) }
 					onClose={ hideNotice }
 				>
 					<p key="desc" role="alert">
@@ -218,7 +218,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 		<NoticeContainer isOdyssey={ isOdyssey }>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Try the new Traffic and Insights tabs' ) }
+				title={ translate( 'Try the new Stats' ) }
 				// Nothing to dismiss halfway through a write that is about to change the answer.
 				hideCloseButton={ isBusy }
 				onClose={ dismissNotice }

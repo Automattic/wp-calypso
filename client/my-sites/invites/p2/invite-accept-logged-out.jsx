@@ -26,20 +26,14 @@ const P2InviteAcceptLoggedOut = ( props ) => {
 					isPasswordless
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ props.isSubmitting }
-					formHeader=""
 					submitting={ props.isSubmitting }
 					save={ props.save }
 					submitForm={ props.submitForm }
-					submitButtonText={ props.isSubmitting ? '' : props.translate( 'Sign up and join' ) }
-					footerLink={ renderFooterLink( props ) }
 					email={ props.invite.sentTo || '' }
 					suggestedUsername=""
-					disableEmailInput={ props.forceMatchingEmail }
-					disableEmailExplanation={ props.translate( 'This invite is only valid for %(email)s.', {
-						args: { email: props.invite.sentTo },
-					} ) }
 					className={ props.isSubmitting ? 'is-busy' : '' }
 				/>
+				{ renderFooterLink( props ) }
 				{ props.userData && props.loginUser() }
 			</div>
 			{ P2InviteAcceptFooter( { translate: props.translate } ) }

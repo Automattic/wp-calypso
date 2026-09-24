@@ -70,6 +70,20 @@ export interface DomainSearchCart {
 	hasItem: ( domainName: string ) => boolean;
 }
 
+/**
+ * What started a domain search: a user action on the page, or the query the page mounted with
+ * (`prefilled` when it sends a request, `cached` when results come from the client-side cache).
+ */
+export type SearchTrigger =
+	| 'submit'
+	| 'input_changed'
+	| 'filter_apply'
+	| 'filter_reset'
+	| 'hint_link'
+	| 'skip_suggestion'
+	| 'prefilled'
+	| 'cached';
+
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
@@ -81,6 +95,7 @@ export interface DomainSearchEvents {
 	onMapDomainClick: ( domainName: string ) => void;
 	onSubmitButtonClick: ( query: string ) => void;
 	onQueryChange: ( query: string ) => void;
+	onSearchStart: ( query: string, trigger: SearchTrigger ) => void;
 	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
@@ -186,7 +201,7 @@ export interface DomainSearchContextType extends Omit<
 	closeFullCart: () => void;
 	openFullCart: () => void;
 	query: string;
-	setQuery: ( query: string ) => void;
+	setQuery: ( query: string, trigger: SearchTrigger ) => void;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;
