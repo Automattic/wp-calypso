@@ -129,7 +129,11 @@ export default function SshCard( {
 } ) {
 	const { user } = useAuth();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
-	const { data: userSshKeys, error: userSshKeysError } = useQuery( {
+	const {
+		data: userSshKeys,
+		error: userSshKeysError,
+		isPending: isUserSshKeysPending,
+	} = useQuery( {
 		...sshKeysQuery(),
 		enabled: sshEnabled,
 	} );
@@ -141,6 +145,9 @@ export default function SshCard( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
+	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
+	const isLoadingUserSshKeys = sshEnabled && isUserSshKeysPending;
+	const showSshSettings = sshEnabled && ! isLoadingUserSshKeys;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
 		ssh_key: 'default',
@@ -338,11 +345,11 @@ export default function SshCard( {
 					<ToggleControl
 						label={ __( 'Enable SSH access for this site' ) }
 						checked={ sshEnabled }
-						disabled={ toggleSshAccessMutation.isPending }
+						disabled={ toggleSshAccessMutation.isPending || isLoadingUserSshKeys }
 						onChange={ handleToggleSshAccess }
 						__nextHasNoMarginBottom
 					/>
-					{ sshEnabled && (
+					{ showSshSettings && (
 						<DataForm< SshCardFormData >
 							data={ formData }
 							fields={ fields }
@@ -352,7 +359,7 @@ export default function SshCard( {
 							} }
 						/>
 					) }
-					{ sshEnabled && ! userKeyIsAttached && (
+					{ showSshSettings && ! userKeyIsAttached && (
 						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
