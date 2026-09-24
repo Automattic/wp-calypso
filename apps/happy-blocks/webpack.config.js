@@ -93,7 +93,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 						new GenerateChunksMapPlugin( {
 							output: path.join( blockPath, 'build/chunks-map.json' ),
 						} ),
-				  ]
+					]
 				: [] ),
 		],
 	};

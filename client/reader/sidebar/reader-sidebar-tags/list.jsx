@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -13,6 +14,7 @@ export class ReaderSidebarTagsList extends Component {
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
+		recordReaderTracksEvent: PropTypes.func,
 	};
 
 	renderItems() {
@@ -26,11 +28,11 @@ export class ReaderSidebarTagsList extends Component {
 			/>
 		) );
 	}
-	trackTagsPageClick() {
+	trackTagsPageClick = () => {
 		recordAction( 'clicked_reader_sidebar_tags_page_link' );
 		recordGaEvent( 'Clicked Reader Sidebar Tags Page Link' );
-		recordReaderTracksEvent( 'calypso_reader_sidebar_tags_page_link_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tags_page_link_clicked' );
+	};
 	render() {
 		return (
 			<>
@@ -52,4 +54,6 @@ export class ReaderSidebarTagsList extends Component {
 	}
 }
 
-export default localize( ReaderSidebarTagsList );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarTagsList ) );

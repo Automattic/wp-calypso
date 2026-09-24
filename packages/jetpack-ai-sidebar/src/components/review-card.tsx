@@ -10,7 +10,7 @@
  */
 import { RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { Icon, check, undo } from '@wordpress/icons';
+import { Icon, check, close, undo } from '@wordpress/icons';
 import { type ReactNode } from 'react';
 /**
  * Internal dependencies
@@ -97,6 +97,30 @@ function getApplyLabel( status: ReviewCardStatus ): string {
 	}
 }
 
+interface ReviewCardResolutionProps {
+	classPrefix?: string;
+	status: 'accepted' | 'dismissed';
+}
+
+/** Resolved-state badge: a circled status icon plus the Applied/Dismissed label. */
+export function ReviewCardResolution( {
+	classPrefix = DEFAULT_PREFIX,
+	status,
+}: ReviewCardResolutionProps ) {
+	return (
+		<span className={ `${ classPrefix }__resolution is-${ status }` }>
+			<Icon
+				className={ `${ classPrefix }__resolution-icon` }
+				icon={ status === 'accepted' ? check : close }
+				size={ 20 }
+			/>
+			{ status === 'accepted'
+				? __( 'Applied', __i18n_text_domain__ )
+				: __( 'Dismissed', __i18n_text_domain__ ) }
+		</span>
+	);
+}
+
 /** Shared action row for applicable review cards and conflict resolutions. */
 export function ReviewCardActions( {
 	applyAction,
@@ -172,14 +196,7 @@ export default function ReviewCard( {
 			<div className={ `${ classPrefix }__item is-resolved is-${ status }` }>
 				{ header }
 				<div className={ `${ classPrefix }__actions` }>
-					<span className={ `${ classPrefix }__resolution is-${ status }` }>
-						{ status === 'accepted' && (
-							<Icon className={ `${ classPrefix }__resolution-check` } icon={ check } size={ 20 } />
-						) }
-						{ status === 'accepted'
-							? __( 'Applied', __i18n_text_domain__ )
-							: __( 'Dismissed', __i18n_text_domain__ ) }
-					</span>
+					<ReviewCardResolution classPrefix={ classPrefix } status={ status } />
 					<button
 						type="button"
 						className={ `${ classPrefix }__action-button is-undo` }

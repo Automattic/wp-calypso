@@ -14,6 +14,7 @@ export const SITE_FIELDS = [
 	'subscribers_count',
 	'plan',
 	'capabilities',
+	'is_a4a_client',
 	'is_a4a_dev_site',
 	'is_a8c',
 	'is_deleted',
@@ -42,6 +43,7 @@ export const SITE_FIELDS = [
 	'garden_partner',
 	'garden_is_provisioned',
 	'big_sky_enabled',
+	'atomic_email_block',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -52,11 +54,14 @@ export const SITE_OPTIONS = [
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
+	'difm_lite_site_options',
 	'is_gating_business_q1',
+	'is_legacy_gating_site',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
 	'jetpack_recovery_mode_status',
+	'jetpack_sso_require_two_step',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',
@@ -64,6 +69,7 @@ export const SITE_OPTIONS = [
 	'software_version',
 	'updated_at',
 	'woocommerce_is_active',
+	'wpcom_admin_interface',
 	'wpcom_ai_launchpad_enabled',
 	'wpcom_ai_launchpad_dismissed',
 	'wpcom_ai_launchpad_completed',

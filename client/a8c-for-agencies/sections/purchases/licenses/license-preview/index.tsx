@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 import { ExternalLink } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -185,7 +185,7 @@ export default function LicensePreview( {
 	const isSiteAtomic = site?.is_wpcom_atomic;
 
 	const bundleCountContent = quantity && (
-		<Badge className="license-preview__license-count">
+		<Badge className="license-preview__license-count" intent="draft">
 			{ translate( '%(quantity)d License Bundle', {
 				context: 'bundle license count',
 				args: {
@@ -219,7 +219,7 @@ export default function LicensePreview( {
 				ref={ wrapperRef }
 				onActivate={ () => setShowPopover( true ) }
 			>
-				<Badge className="license-preview__migration-badge" intent="success">
+				<Badge className="license-preview__migration-badge" intent="stable">
 					{ translate( 'Transferred' ) }
 				</Badge>
 				{ showPopover && (
@@ -288,7 +288,9 @@ export default function LicensePreview( {
 						<div className="license-preview__product-title">
 							{ productTitle }
 							{ referral && (
-								<Badge className="license-preview__client-badge">{ translate( 'Referral' ) }</Badge>
+								<Badge className="license-preview__client-badge" intent="draft">
+									{ translate( 'Referral' ) }
+								</Badge>
 							) }
 						</div>
 						{ referral && (
@@ -315,7 +317,7 @@ export default function LicensePreview( {
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
 								<span className="license-preview__unassigned">
-									<Badge intent="warning">{ translate( 'Unassigned' ) }</Badge>
+									<Badge intent="medium">{ translate( 'Unassigned' ) }</Badge>
 									{ licenseType === LicenseType.Partner && ! isPressableAddonLicense && (
 										<Button
 											className="license-preview__assign-button"
@@ -330,7 +332,7 @@ export default function LicensePreview( {
 							) }
 							{ revokedAt && (
 								<span>
-									<Badge intent="error">{ translate( 'Revoked' ) }</Badge>
+									<Badge intent="high">{ translate( 'Revoked' ) }</Badge>
 								</span>
 							) }
 						</>
@@ -378,7 +380,7 @@ export default function LicensePreview( {
 				<div className="license-preview__badge-container-wrapper">
 					<div className="license-preview__badge-container">
 						{ !! isParentLicense && bundleCountContent }
-						{ isDevelopmentSite && <Badge>{ translate( 'Development' ) }</Badge> }
+						{ isDevelopmentSite && <Badge intent="draft">{ translate( 'Development' ) }</Badge> }
 						{ shouldShowTransferredBadge() && <TransferredBadge /> }
 					</div>
 				</div>

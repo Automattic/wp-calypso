@@ -36,3 +36,10 @@ Active.args = {
 	...defaultArgs,
 	isActive: true,
 };
+
+export const ActiveAndRetired: ThemeCardStory = Template.bind( {} );
+ActiveAndRetired.args = {
+	...defaultArgs,
+	isActive: true,
+	isThemeRetired: true,
+};

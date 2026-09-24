@@ -88,6 +88,7 @@ import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
+import StudioHandoff from './studio-handoff';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -252,7 +253,9 @@ export class CheckoutThankYou extends Component<
 				const params = [ 'trackCustom', 'BulkDomainTransfer', {} ];
 
 				debug( 'recordOrderInFacebookAds: WPCom Bulk Domain Transfer Purchase', params );
-				window.fbq && window.fbq( ...params );
+				if ( window.fbq ) {
+					window.fbq( ...params );
+				}
 			}
 
 			// Custom conversion for Twitter Ads.
@@ -702,6 +705,8 @@ export class CheckoutThankYou extends Component<
 						{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 
 						{ this.getMasterBar() }
+
+						<StudioHandoff siteId={ siteId } receiptId={ this.props.receiptId } />
 
 						{ pageContent }
 					</Main>

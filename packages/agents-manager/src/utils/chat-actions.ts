@@ -17,7 +17,7 @@ const getAgentsManagerActions = (): AgentsManagerActions | undefined =>
 
 /**
  * Open the agents-manager chat. With a `path`, navigate there first (the Help menu's
- * history/guides items). Without a path, resume the active conversation rather than
+ * history/guides items). Without a path, resume the tab's conversation rather than
  * start a new one — used by both the AI entry button and the "Chat Support" item.
  * Actions load asynchronously, so if they aren't ready yet, wait for the one-time
  * `agents-manager-ready` event.

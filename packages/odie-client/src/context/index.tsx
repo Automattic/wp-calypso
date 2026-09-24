@@ -7,7 +7,6 @@ import {
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 } from '../constants';
-import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
@@ -47,7 +46,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
-	odieBroadcastClientId: '',
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
@@ -58,9 +56,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 
 // Custom hook to access the OdieAssistantContext
 export const useOdieAssistantContext = () => useContext( OdieAssistantContext );
-
-// Generate random client id
-export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 /**
  * Provider for the Odie Assistant context.
@@ -83,6 +78,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	launcherContext,
 	children,
 } ) => {
 	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
@@ -138,7 +134,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 						chat_id: mainChatState?.odieId,
 						bot_name_slug: newInteractionsBotSlug,
 					},
-					[ [ 'selected_site', selectedSiteId ] ]
+					'selected_site',
+					selectedSiteId
 				)
 			);
 		},
@@ -167,8 +164,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
-
 	/**
 	 * Version for Odie API.
 	 * Set this query param to override the version in the request.
@@ -195,7 +190,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
-				odieBroadcastClientId,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
@@ -208,6 +202,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				launcherContext,
 			} }
 		>
 			{ children }

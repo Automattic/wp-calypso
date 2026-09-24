@@ -14,6 +14,10 @@
 .use-my-domain:has(.step-container-v2) {
 	padding: 0;
 
+	.components-card.use-my-domain {
+		background: transparent;
+	}
+
 	.domain-transfer-or-connect__content {
 		&.card {
 			padding: 0;

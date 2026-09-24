@@ -55,7 +55,7 @@ const styles = ( {
 				position: sticky;
 				top: ${ stickyOffset - stickyPadding + 'px' };
 				z-index: ${ zIndex };
-		  `;
+			`;
 
 const Container = styled.div`
 	${ styles }

@@ -421,6 +421,25 @@ export function redirectLoggedOutToDiscover( context, next ) {
 }
 
 /**
+ * Middleware to redirect logged out users to the Discover tags tab, selecting
+ * the requested tag when the route has one and preserving any locale prefix.
+ * Intended for the tag pages, which no longer support logged out users.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscoverTags( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+	const localePrefix = context.params.lang ? '/' + context.params.lang : '';
+	const tag = context.params.tag ? encodeURIComponent( context.params.tag ) : 'dailyprompt';
+	return page.redirect( `${ localePrefix }/discover/tags?selectedTag=${ tag }` );
+}
+
+/**
  * For backward compatibility redirect all `/read` URLs to `/reader`.
  */
 export function setupReadRoutes() {
@@ -569,15 +588,15 @@ export function setupReadRoutes() {
 		},
 		{
 			path: '/read/search',
-			getRedirect: () => '/reader/search',
+			getRedirect: () => '/discover/search',
 		},
 		{
 			path: `/${ langParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: `/${ anyLangParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: '/read/site/subscription/:blog_id',

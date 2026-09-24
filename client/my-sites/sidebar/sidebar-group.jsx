@@ -185,7 +185,7 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 			? translate( '%(count)d item needs attention', '%(count)d items need attention', {
 					count: group.signal.count,
 					args: { count: group.signal.count },
-			  } )
+				} )
 			: translate( 'Items need attention' );
 
 	return (

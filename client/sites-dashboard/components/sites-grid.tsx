@@ -44,7 +44,7 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 							key={ site.ID }
 							onSiteSelectBtnClick={ onSiteSelectBtnClick }
 						/>
-				  ) ) }
+					) ) }
 		</div>
 	);
 };

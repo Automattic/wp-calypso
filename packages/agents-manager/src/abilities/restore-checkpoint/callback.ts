@@ -15,7 +15,8 @@ import {
 	getProviderCheckpoints,
 } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
-import type { CheckpointMetadata } from '../../utils/checkpoints';
+import { errorResult, successResult } from '../ability-result';
+import type { CheckpointMetadata, CheckpointRecord } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
 
@@ -39,31 +40,13 @@ function getReciprocalRequestIntentType(
 	return requestIntentType;
 }
 
-function errorResult(
-	message: string,
-	error: string,
-	details?: Record< string, unknown >
-): AbilityResult {
-	return {
-		result: { success: false, message, error, ...( details && { details } ) },
-		returnToAgent: true,
-	};
-}
-
-function restoredResult( summary: string, checkpointId: string ): AbilityResult {
-	return {
-		result: { success: true, message: summary, details: { checkpointId } },
-		returnToAgent: true,
-	};
-}
-
 function restoreFailedResult( error: unknown, checkpointId: string ): AbilityResult {
 	// eslint-disable-next-line no-console
 	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
 
 	return errorResult(
-		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
 		error instanceof Error ? error.message : String( error ),
+		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
 		{ checkpointId }
 	);
 }
@@ -142,9 +125,8 @@ async function restoreProviderCheckpoint(
 			} );
 
 			// Capture the navigation snapshots before the restore mutates them.
-			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach(
-				( navigationId ) =>
-					providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
+			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach( ( navigationId ) =>
+				providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
 			);
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -172,7 +154,23 @@ async function restoreProviderCheckpoint(
 		clearStaleReciprocals( restoreToolCallId, reciprocalRequestIntentType, providerCheckpoints );
 	}
 
-	return restoredResult( summary, checkpointId );
+	return successResult( summary, { checkpointId } );
+}
+
+// The reciprocal an undo or restore of `checkpointId` recorded, while no redo
+// has used it: it re-applies the change. A redo's own reciprocal carries `undo`.
+function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefined {
+	const checkpoints = getCheckpoints();
+
+	return [ ...checkpoints ]
+		.reverse()
+		.find(
+			( checkpoint ) =>
+				checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
+				checkpoint.restoresCheckpointId === checkpointId &&
+				checkpoint.requestIntentType !== 'undo' &&
+				! checkpoints.some( ( other ) => other.restoresCheckpointId === checkpoint.id )
+		);
 }
 
 /**
@@ -185,23 +183,23 @@ export async function restoreCheckpointCallback(
 
 	if ( ! isEditorPage() ) {
 		return errorResult(
-			__( 'I can only restore checkpoints from the editor.', __i18n_text_domain__ ),
-			'Not an editor page.'
+			'Not an editor page.',
+			__( 'I can only restore checkpoints from the editor.', __i18n_text_domain__ )
 		);
 	}
 
 	if ( ! checkpointId ) {
 		return errorResult(
+			'Missing checkpointId.',
 			__(
 				'I could not restore the checkpoint because no checkpoint ID was provided.',
 				__i18n_text_domain__
-			),
-			'Missing checkpointId.'
+			)
 		);
 	}
 
-	const targetCheckpoint = getCheckpoint( checkpointId );
-	if ( ! targetCheckpoint ) {
+	const requestedCheckpoint = getCheckpoint( checkpointId );
+	if ( ! requestedCheckpoint ) {
 		// TODO (ability-migration): Delete the delegation once the last
 		// checkpoint-writing Big Sky ability migrates — every checkpoint then
 		// lives in AM's own store.
@@ -211,11 +209,16 @@ export async function restoreCheckpointCallback(
 		}
 
 		return errorResult(
-			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			`Checkpoint not found: ${ checkpointId }`,
+			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			{ checkpointId }
 		);
 	}
+
+	// A redo may name the undone change itself, whose checkpoint would only put
+	// back the undone state; it runs from the undo's reciprocal instead.
+	const targetCheckpoint =
+		( requestIntentType === 'redo' && findRedoReciprocal( checkpointId ) ) || requestedCheckpoint;
 
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
@@ -229,7 +232,7 @@ export async function restoreCheckpointCallback(
 		setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
-			restoresCheckpointId: checkpointId,
+			restoresCheckpointId: targetCheckpoint.id,
 			restoredCheckpointToolId: targetCheckpoint.toolId,
 			requestIntentType: reciprocalRequestIntentType,
 			createdByRequestIntentType: requestIntentType,
@@ -237,7 +240,7 @@ export async function restoreCheckpointCallback(
 	}
 
 	try {
-		await restoreCheckpoint( checkpointId );
+		await restoreCheckpoint( targetCheckpoint.id );
 	} catch ( error ) {
 		// A failed restore leaves the editor unchanged — drop the reciprocal
 		// so it does not advertise a redo for a restore that never happened.
@@ -255,5 +258,5 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	return restoredResult( summary, checkpointId );
+	return successResult( summary, { checkpointId } );
 }

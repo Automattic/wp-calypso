@@ -31,22 +31,6 @@
 				padding-top: 46px;
 			}
 		}
-
-		.lp-footer-language {
-			display: none;
-		}
-
-		.lpc-footer-nav,
-		.lpc-footer-automattic-nav {
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		.lpc-footer-nav-wrapper,
-		.lpc-footer-automattic-nav-wrapper,
-		.lp-link-work-m {
-			@include patterns-page-width;
-		}
 	}
 
 	// Pre-2026 design: dark masterbar with white nav text. Gated off the 2026 path.
@@ -75,14 +59,14 @@
 		}
 	}
 
-	// Closed over the dark hero: white nav ink, inverted CTA hover swap.
+	// Closed over the dark hero: white nav ink, white-filled CTA with blue label.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
 		.x-nav--2026-redesign
 		.x-nav-item {
-		--x-nav-2026-cta-hover-fill: var( --studio-white );
-		--x-nav-2026-cta-hover-ink: var( --studio-gray-100 );
+		--x-nav-2026-cta-fill: var( --studio-white );
+		--x-nav-2026-cta-ink: var( --studio-wordpress-blue-50 );
 
 		color: var( --studio-white ) !important;
 

@@ -1,5 +1,4 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	Modal,
@@ -10,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { ButtonStack } from '../../components/button-stack';
@@ -127,7 +127,7 @@ export default function TierCards( {
 								{ isCurrentTier && ! isEarlyAccess && (
 									<Badge
 										style={ { minWidth: 'fit-content' } }
-										intent="default"
+										intent="draft"
 										children={ __( 'Your tier' ) }
 									/>
 								) }
@@ -135,7 +135,7 @@ export default function TierCards( {
 							{ isCurrentTier && isEarlyAccess && (
 								<Badge
 									style={ { width: 'fit-content' } }
-									intent="default"
+									intent="draft"
 									children={ __( 'Your tier — Early access' ) }
 								/>
 							) }

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { memo, ComponentProps } from 'react';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
@@ -18,32 +18,32 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 	const dueDateMoment = moment( dueDate );
 	const payInvoice = usePayInvoiceMutation();
 
-	let badgeIntent: ComponentProps< typeof Badge >[ 'intent' ] = 'default';
+	let badgeIntent: ComponentProps< typeof Badge >[ 'intent' ] = 'draft';
 	let badgeLabel = translate( 'Draft' );
 
 	switch ( status ) {
 		case 'open':
-			badgeIntent = 'info';
+			badgeIntent = 'informational';
 			badgeLabel = translate( 'Open' );
 
 			if ( dueDateMoment.isBefore( moment() ) ) {
-				badgeIntent = 'warning';
+				badgeIntent = 'medium';
 				badgeLabel = translate( 'Past due' );
 			}
 			break;
 
 		case 'paid':
-			badgeIntent = 'success';
+			badgeIntent = 'stable';
 			badgeLabel = translate( 'Paid' );
 			break;
 
 		case 'uncollectible':
-			badgeIntent = 'error';
+			badgeIntent = 'high';
 			badgeLabel = translate( 'Uncollectible' );
 			break;
 
 		case 'void':
-			badgeIntent = 'default';
+			badgeIntent = 'draft';
 			badgeLabel = translate( 'Void' );
 			break;
 	}

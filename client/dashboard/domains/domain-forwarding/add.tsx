@@ -1,4 +1,8 @@
-import { domainQuery, domainForwardingSaveMutation } from '@automattic/api-queries';
+import {
+	domainQuery,
+	domainForwardingQuery,
+	domainForwardingSaveMutation,
+} from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
@@ -24,7 +28,10 @@ export default function AddDomainForwarding() {
 		} )
 	);
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
 	const forceSubdomainsOnly = domainData?.primary_domain && ! domainData?.is_domain_only_site;
+	// Only one root domain forward can exist at a time.
+	const hasRootForwarding = forwardingData.some( ( forwarding ) => ! forwarding.subdomain );
 
 	const handleSubmit = ( formData: FormData ) => {
 		const submitData: DomainForwardingSaveData = formDataToSubmitData( formData );
@@ -56,6 +63,7 @@ export default function AddDomainForwarding() {
 				isSubmitting={ saveMutation.isPending }
 				submitButtonText={ __( 'Add' ) }
 				forceSubdomain={ forceSubdomainsOnly }
+				defaultSourceType={ hasRootForwarding ? '' : 'root' }
 			/>
 		</PageLayout>
 	);

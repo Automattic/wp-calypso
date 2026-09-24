@@ -1,5 +1,6 @@
+import page from '@automattic/calypso-router';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { createContext, useMemo, useContext } from 'react';
+import { createContext, useMemo, useContext, useEffect } from 'react';
 
 const RouteContext = createContext( {
 	// TODO: a `null` value would be a better fit here, but existing code might access
@@ -10,10 +11,14 @@ const RouteContext = createContext( {
 	currentQuery: false,
 } );
 
+/** @type {(view: { path: string, route?: string }) => void} */
+const noopOnRouteCommit = () => {};
+
 export function RouteProvider( {
 	currentSection = false,
 	currentRoute = '',
 	currentQuery = false,
+	onRouteCommit = noopOnRouteCommit,
 	children,
 } ) {
 	// modify the `currentRouteInfo` object (and trigger rerender of consumers) only if any
@@ -22,6 +27,22 @@ export function RouteProvider( {
 		() => ( { currentSection, currentRoute, currentQuery } ),
 		[ currentSection, currentRoute, currentQuery ]
 	);
+	const path = currentRoute.split( /[?#]/ )[ 0 ];
+	// run the callback after commit, can be used to track page-views consistent with how we define them in the multi-site dashboard.
+	useEffect( () => {
+		if (
+			typeof onRouteCommit !== 'function' ||
+			! path ||
+			path !== page.current.split( /[?#]/ )[ 0 ]
+		) {
+			return;
+		}
+		const route = page.currentRoutePattern;
+		onRouteCommit( {
+			path,
+			route,
+		} );
+	}, [ path, onRouteCommit ] );
 
 	if ( ! currentRoute ) {
 		return null;

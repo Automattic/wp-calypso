@@ -1,13 +1,23 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	isValidEmailAddress,
+} from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
+import {
+	__experimentalInputControl as InputControl,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
@@ -23,7 +33,7 @@ interface EmailSectionProps {
 	onValidationChange?: ( isValid: boolean ) => void;
 }
 
-type EmailValidationState = 'valid' | 'invalid' | null;
+type EmailValidationState = 'valid' | 'invalid' | 'unknown_tld' | null;
 
 function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
 	const [ emailValidationState, setEmailValidationStateValue ] =
@@ -32,7 +42,7 @@ function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void )
 	const setEmailValidationState = useCallback(
 		( state: EmailValidationState ) => {
 			setEmailValidationStateValue( state );
-			onValidationChange?.( state !== 'invalid' );
+			onValidationChange?.( state === 'valid' || state === null );
 		},
 		[ onValidationChange ]
 	);
@@ -85,7 +95,10 @@ export default function EmailSection( {
 			}
 
 			try {
-				if ( ! emailValidator.validate( email ) ) {
+				const emailError = getEmailAddressError( email );
+				if ( emailError === 'unknown_tld' ) {
+					setEmailValidationState( 'unknown_tld' );
+				} else if ( emailError ) {
 					setEmailValidationState( 'invalid' );
 				} else {
 					setEmailValidationState( 'valid' );
@@ -101,6 +114,7 @@ export default function EmailSection( {
 		validateEmail( value );
 	}, [ value, validateEmail ] );
 
+	const { user } = useAuth();
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
 	const isAccountRecoveryReady = accountRecovery !== undefined;
 	const hasUsableRecoveryEmail =
@@ -108,10 +122,13 @@ export default function EmailSection( {
 		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
 	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
 
+	const showBouncingEmailError =
+		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
+
 	const showCustomDomainWarning =
 		! isEmailPending &&
 		!! value &&
-		emailValidator.validate( value ) &&
+		isValidEmailAddress( value ) &&
 		isCustomDomainEmail( value ) &&
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
@@ -120,13 +137,13 @@ export default function EmailSection( {
 		if ( isEmailPending ) {
 			return '';
 		}
-		if ( showCustomDomainWarning ) {
-			return 'has-warning';
+		if ( showBouncingEmailError ) {
+			return 'has-error';
 		}
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
 		}
-		if ( emailValidationState === 'invalid' ) {
+		if ( emailValidationState === 'invalid' || emailValidationState === 'unknown_tld' ) {
 			return 'has-error';
 		}
 		return '';
@@ -160,20 +177,11 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showCustomDomainWarning ) {
+		if ( showBouncingEmailError ) {
 			return (
 				<>
 					<Icon icon={ info } size={ 16 } />
-					<span>
-						{ createInterpolateElement(
-							__(
-								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
-							),
-							{
-								a: <Link to="/me/security/account-recovery" />,
-							}
-						) }
-					</span>
+					{ __( 'Messages we send to this address are bouncing back. Please update your email.' ) }
 				</>
 			);
 		}
@@ -185,6 +193,19 @@ export default function EmailSection( {
 					<>
 						<Icon icon={ check } size={ 16 } />
 						{ __( 'Email address looks good!' ) }
+					</>
+				);
+			}
+
+			if ( emailValidationState === 'unknown_tld' ) {
+				return (
+					<>
+						<Icon icon={ info } size={ 16 } />
+						{ sprintf(
+							/* translators: %s: the domain part of the email address the user typed */
+							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
+							getEmailDomain( value )
+						) }
 					</>
 				);
 			}
@@ -208,7 +229,7 @@ export default function EmailSection( {
 	}, [
 		isEmailPending,
 		isEmailVerified,
-		showCustomDomainWarning,
+		showBouncingEmailError,
 		value,
 		currentEmail,
 		emailValidationState,
@@ -217,18 +238,35 @@ export default function EmailSection( {
 	] );
 
 	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="email-input"
-			type="text"
-			label={ __( 'Email address' ) }
-			value={ value }
-			onChange={ ( newValue ) => onChange( newValue ?? '' ) }
-			autoComplete="email"
-			disabled={ disabled || isEmailPending }
-			className={ getValidationClass() }
-			help={ getHelpText() }
-			aria-describedby={ getHelpText() ? 'email-help' : undefined }
-		/>
+		<VStack spacing={ 4 }>
+			<InputControl
+				__next40pxDefaultSize
+				id="email-input"
+				type="text"
+				label={ __( 'Email address' ) }
+				value={ value }
+				onChange={ ( newValue ) => onChange( newValue ?? '' ) }
+				autoComplete="email"
+				disabled={ disabled || isEmailPending }
+				className={ getValidationClass() }
+				help={ getHelpText() }
+				aria-describedby={ getHelpText() ? 'email-help' : undefined }
+			/>
+			{ showCustomDomainWarning && (
+				<Notice
+					variant="warning"
+					title={ __( 'Protect access to your account' ) }
+					actions={
+						<RouterLinkButton variant="secondary" to="/me/security/account-recovery">
+							{ __( 'Set up account recovery' ) }
+						</RouterLinkButton>
+					}
+				>
+					{ __(
+						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Add a recovery email or phone number to keep access to your account.'
+					) }
+				</Notice>
+			) }
+		</VStack>
 	);
 }

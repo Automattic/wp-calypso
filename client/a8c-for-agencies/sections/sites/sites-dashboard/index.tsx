@@ -250,7 +250,7 @@ export function SitesDashboard() {
 		>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop isFullWidth withNavigation={ navItems.length > 1 }>
-					<ProvisioningSiteNotification />
+					<ProvisioningSiteNotification onSuccess={ () => refetch() } />
 					<A4AAgencyApprovalNotice isFullWidth />
 
 					<LayoutHeader>

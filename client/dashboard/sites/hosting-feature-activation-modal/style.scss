@@ -12,40 +12,6 @@
 			@include ui-mixins.when-dark-theme {
 				background-color: var(--wp-components-color-gray-100);
 			}
-
-			// The design-system default badge sets its own padding, min-height,
-			// and (in dark mode) an inset outline; override them so both pills
-			// match the Figma spec.
-			.hosting-feature-activation-modal__domain-badge {
-				min-height: 20px;
-				padding-block: 0;
-				padding-inline: 10px;
-				font-weight: 500;
-				border-radius: 4px;
-				box-shadow: none;
-			}
-
-			// The badges use fixed studio palette values tuned for the light row,
-			// so flip them to the dark end of the same ramps in dark mode.
-			.hosting-feature-activation-modal__domain-badge-current {
-				background-color: var(--studio-gray-5);
-				color: var(--studio-gray-80);
-
-				@include ui-mixins.when-dark-theme {
-					background-color: var(--studio-gray-80);
-					color: var(--studio-gray-5);
-				}
-			}
-
-			.hosting-feature-activation-modal__domain-badge-new {
-				background-color: var(--studio-green-5);
-				color: var(--studio-green-80);
-
-				@include ui-mixins.when-dark-theme {
-					background-color: var(--studio-green-80);
-					color: var(--studio-green-5);
-				}
-			}
 		}
 	}
 }

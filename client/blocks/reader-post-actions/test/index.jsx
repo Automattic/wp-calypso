@@ -8,9 +8,9 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import ReaderPostActions from '../index';
 
-let mockReaderSpacesEnabled = false;
+let mockReaderShelvesEnabled = false;
 jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: ( flag ) => ( flag === 'reader/spaces' ? mockReaderSpacesEnabled : false ),
+	isEnabled: ( flag ) => ( flag === 'reader/shelves' ? mockReaderShelvesEnabled : false ),
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn( () => ( { type: 'MOCK_TRACKS_EVENT' } ) );
@@ -22,8 +22,8 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
 jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
-jest.mock( 'calypso/reader/spaces/subscribe-with-space/space-picker-modal', () => ( {
-	SpacePickerModal: () => null,
+jest.mock( 'calypso/reader/shelves/subscribe-with-shelf/shelf-picker-modal', () => ( {
+	ShelfPickerModal: () => null,
 } ) );
 
 // Simple mock store
@@ -51,7 +51,7 @@ const defaultProps = {
 
 describe( 'ReaderPostActions', () => {
 	beforeEach( () => {
-		mockReaderSpacesEnabled = false;
+		mockReaderShelvesEnabled = false;
 		mockRecordReaderTracksEvent.mockClear();
 	} );
 
@@ -104,8 +104,8 @@ describe( 'ReaderPostActions', () => {
 		} );
 	} );
 
-	it( 'tracks when the spaces button is clicked', async () => {
-		mockReaderSpacesEnabled = true;
+	it( 'tracks when the shelves button is clicked', async () => {
+		mockReaderShelvesEnabled = true;
 		const user = userEvent.setup();
 		const store = createMockStore();
 		const props = {
@@ -125,10 +125,10 @@ describe( 'ReaderPostActions', () => {
 			</QueryClientProvider>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Move site to a space' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Move site to a shelf' } ) );
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-			'calypso_reader_subscribe_space_button_clicked',
+			'calypso_reader_subscribe_shelf_button_clicked',
 			{
 				blog_id: 456,
 				feed_id: 789,

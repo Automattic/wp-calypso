@@ -2,13 +2,12 @@
  * Agent Configuration Utilities
  *
  * Shared utilities for creating agent configurations and reading
- * agent overrides from URL parameters. Used by both the full
- * Agents Manager UI and headless mode.
+ * agent overrides from URL parameters.
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import { getSessionStorageKey } from './agent-session';
+import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
@@ -18,6 +17,10 @@ import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/
 
 export interface CreateAgentConfigOptions {
 	sessionId: string;
+	/** Site scope for session writes, captured at creation for async callbacks. */
+	sessionSiteKey: string;
+	/** User scope for session writes, captured alongside the site scope. */
+	sessionUserId?: number;
 	siteId?: number;
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
@@ -90,7 +93,7 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 									( [ , value ] ) => value !== null
 								)
 							),
-					  }
+						}
 					: ability.meta,
 			} ) ) as AgenticAbility[];
 		},
@@ -136,7 +139,7 @@ async function createWrappedContextProvider(
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-				  }
+					}
 				: pluginContext;
 
 			const externalEntries = getExternalContextEntries();
@@ -197,8 +200,8 @@ async function createDefaultContextProvider(
 			// and `siteUrl` here so the orchestrator knows which post the
 			// reader is viewing without every host wiring its own provider.
 			const hostData = isReaderChatAgent( agentId )
-				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-						.agentsManagerData ?? {}
+				? ( ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {} )
 				: {};
 			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
 			const siteEditorActions = getSiteEditorActions();
@@ -236,15 +239,16 @@ async function createDefaultContextProvider(
 
 /**
  * Create a complete agent configuration.
- *
- * Used by both the full Agents Manager UI and headless mode to ensure
- * consistent configuration.
  */
 export async function createAgentConfig(
 	options: CreateAgentConfigOptions
 ): Promise< UseAgentChatConfig > {
 	const {
 		sessionId,
+		// The callback below can fire while a response is still streaming, after
+		// the tab has switched scope — it writes under this captured scope.
+		sessionSiteKey,
+		sessionUserId,
 		siteId,
 		currentRoute,
 		toolProvider,
@@ -260,9 +264,12 @@ export async function createAgentConfig(
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
-		sessionIdStorageKey: getSessionStorageKey( agentId ),
+		// Persist server-assigned session IDs as this tab's session.
+		onSessionIdChange: ( newSessionId ) =>
+			saveSessionId( newSessionId, agentId, sessionSiteKey, sessionUserId ),
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
+			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
 	};

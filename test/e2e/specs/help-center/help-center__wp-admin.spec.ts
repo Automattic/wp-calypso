@@ -21,7 +21,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			const testAccount = new TestAccount( 'defaultUser' );
 			pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
 
-			await testAccount.authenticate( page, { waitUntilStable: true } );
+			await testAccount.authenticate( page );
 			await page.goto( pageUrl );
 
 			helpCenterComponent = new HelpCenterComponent( page );
@@ -70,8 +70,8 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			await helpCenterComponent.search( 'Change a Domain Name Address' );
 			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
 			expect(
-				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
+				resultTitles.some( ( title ) =>
+					normalizeString( title )?.includes( 'Change a Domain Name Address' )
 				)
 			).toBeTruthy();
 		} );

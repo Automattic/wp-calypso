@@ -71,7 +71,8 @@ export const HelpCenterArticle = ( {
 					search_query: query,
 					article_source: post.source,
 				},
-				[ [ 'support_site', siteId ] ]
+				'support_site',
+				siteId
 			);
 
 			recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
@@ -95,7 +96,8 @@ export const HelpCenterArticle = ( {
 									article_blog_id: post?.site_ID,
 									section_id: entry?.target?.id,
 								},
-								[ [ 'support_site', siteId ] ]
+								'support_site',
+								siteId
 							);
 							recordTracksEvent( 'calypso_helpcenter_article_section_view', tracksData );
 							observer.unobserve( entry.target ); // Unobserve after first intersection

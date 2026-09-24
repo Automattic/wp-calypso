@@ -34,11 +34,20 @@ export interface SettingsParams {
 	[ key: string ]: string | number;
 }
 
+export interface SiteSettingsParams {
+	[ key: string ]: string | number | boolean;
+}
+
 export interface NewCommentParams {
 	content: string;
 }
 
 /* Response Interfaces */
+
+export interface SiteSettingsResponse {
+	name: string;
+	settings: { [ key: string ]: unknown };
+}
 
 export interface BearerTokenResponse {
 	success: true;
@@ -84,6 +93,10 @@ export interface NewUserResponse {
 		user_id: number;
 		username: string;
 		bearer_token: string;
+		// A refused signup answers in this same envelope: the HTTP status is 200,
+		// the refusal is the enveloped `code`, and these two say what it was.
+		error?: string;
+		message?: string;
 	};
 }
 

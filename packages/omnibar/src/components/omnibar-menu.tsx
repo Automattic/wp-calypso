@@ -38,7 +38,9 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 	return (
 		<Menu.Item
 			tabbable
-			render={ node.href ? <a href={ node.href } /> : undefined }
+			render={
+				node.href ? <a href={ node.href } target={ node.target } rel={ node.rel } /> : undefined
+			}
 			onClick={ node.onClick }
 		>
 			<OmnibarNodeContent node={ node } />
@@ -88,7 +90,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	const label = node.title || node.label || '';
-	const menuClassName = [ 'omnibar__menu', className, node.className ]
+	const menuClassName = [ 'omnibar__menu', className, node.className, node.active && 'is-active' ]
 		.filter( Boolean )
 		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -111,11 +113,14 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 			<Button
 				variant="unstyled"
 				className={ menuClassName }
-				render={ isLink ? <a href={ node.href } /> : undefined }
+				render={
+					isLink ? <a href={ node.href } target={ node.target } rel={ node.rel } /> : undefined
+				}
 				nativeButton={ ! isLink }
 				disabled={ node.disabled }
 				onClick={ node.onClick }
 				aria-label={ label }
+				title={ node.tooltip }
 			>
 				<OmnibarNodeContent node={ node } />
 			</Button>
@@ -161,6 +166,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
 			<Menu.TriggerButton
 				ref={ triggerRef }
+				onClick={ node.onClick }
 				onMouseEnter={ () => setIsOpen( true ) }
 				onMouseLeave={ handleMouseLeave }
 				onTouchEnd={ handleTouchEnd }
@@ -171,7 +177,12 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 						variant="unstyled"
 						className={ menuClassName }
 						aria-label={ label }
-						render={ node.href ? <a href={ node.href } /> : undefined }
+						title={ node.tooltip }
+						render={
+							node.href ? (
+								<a href={ node.href } target={ node.target } rel={ node.rel } />
+							) : undefined
+						}
 						nativeButton={ ! node.href }
 					>
 						<OmnibarNodeContent node={ node } />

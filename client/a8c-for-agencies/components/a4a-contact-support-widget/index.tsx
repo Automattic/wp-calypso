@@ -7,6 +7,7 @@ import getDefaultProduct from './get-default-product';
 export const CONTACT_URL_HASH_FRAGMENT = '#contact-support';
 export const CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT = '#contact-support-a4a';
 export const CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT = '#contact-support-migration-offer';
+export const CONTACT_URL_FOR_PRESSABLE_OFFER_HASH_FRAGMENT = '#contact-support-pressable-offer';
 
 export default function A4AContactSupportWidget() {
 	const translate = useTranslate();

@@ -115,14 +115,19 @@ test.describe(
 				await pageLogin.submitVerificationCode( code );
 			} );
 
-			await test.step( 'Then I see the WooCommerce.com dashboard page', async function () {
-				await expect( page ).toHaveURL( `${ environment.WOO_BASE_URL }/my-dashboard/` );
+			await test.step( 'Then I am logged in on WooCommerce.com', async function () {
+				// The landing path is picked per user by a WooCommerce.com experiment, so only
+				// the origin is a stable contract for a completed OAuth round trip.
+				await expect( page ).toHaveURL(
+					( url ) => url.origin === new URL( environment.WOO_BASE_URL ).origin,
+					{ timeout: WOO_LOGIN_TIMEOUT }
+				);
 
-				// These dashboard headings are only visible after a successful WooCommerce.com login.
-				await expect( page.getByRole( 'heading', { name: 'My account' } ) ).toBeVisible();
-				await expect(
-					page.getByRole( 'heading', { name: 'Welcome to the world of WooCommerce!' } )
-				).toBeVisible();
+				// The account menu replaces the Log in link once WooCommerce.com recognises the session.
+				await expect( page.getByRole( 'button', { name: 'Open account menu' } ) ).toBeVisible( {
+					timeout: WOO_LOGIN_TIMEOUT,
+				} );
+				await expect( page.getByRole( 'link', { name: 'Log in', exact: true } ) ).toBeHidden();
 			} );
 		} );
 	}

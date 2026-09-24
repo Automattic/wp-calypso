@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
+	const containerSize = 48;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
@@ -239,19 +239,22 @@ export function getFields( {
 	transferredPurchases,
 	siteFilter,
 	visibleFields,
+	canFilterBySite = true,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
 	visibleFields?: string[];
+	canFilterBySite?: boolean;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 	return [
 		{
 			id: 'site',
@@ -266,7 +269,7 @@ export function getFields( {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
 						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
@@ -309,7 +312,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForListDisplay( item ) }
+							{ getTitleForListDisplay( item, false ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>
@@ -458,10 +461,10 @@ export function getFields( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return ! mightStillAutoRenew( item )
 					? // Do not return the card number when the payment method isn't in
-					  // use, since it won't be displayed; sorting it alongside active
-					  // purchases that have the same card would look wrong.
-					  'expired'
-					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
+						// use, since it won't be displayed; sorting it alongside active
+						// purchases that have the same card would look wrong.
+						'expired'
+					: ( item.payment_details ?? item.payment_card_type ?? 'no-payment-method' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;

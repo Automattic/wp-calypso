@@ -1,7 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQueries } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { RenderedPattern, RenderedPatterns, SiteInfo } from '../types';
+import type { RenderedPatterns, SiteInfo } from '../types';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 const fetchRenderedPatterns = (
 	siteId: number | string,
@@ -34,6 +35,14 @@ const fetchRenderedPatterns = (
 	} );
 };
 
+// Defined outside the hook and passed via `combine` so react-query can memoize the merged
+// object; rebuilding it on every render would invalidate every consumer of the context.
+const combineRenderedPatterns = ( results: Array< UseQueryResult< RenderedPatterns > > ) =>
+	results.reduce< RenderedPatterns >(
+		( acc, { data } ) => ( data ? Object.assign( acc, data ) : acc ),
+		{}
+	);
+
 const useRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
@@ -50,19 +59,10 @@ const useRenderedPatterns = (
 		refetchOnWindowFocus: false,
 	} ) );
 
-	const result = useQueries< RenderedPattern[] >( {
+	return useQueries( {
 		queries,
+		combine: combineRenderedPatterns,
 	} );
-
-	return result
-		.filter( ( query ) => !! query.data )
-		.reduce(
-			( acc, cur ) => ( {
-				...acc,
-				...( cur.data as RenderedPattern[] ),
-			} ),
-			{}
-		);
 };
 
 export default useRenderedPatterns;

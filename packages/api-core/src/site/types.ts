@@ -16,6 +16,12 @@ interface SitePlan {
 	product_name_en: string;
 	expired: boolean;
 	is_free: boolean;
+
+	/**
+	 * Whether the current user owns the plan's subscription, which is not the
+	 * same as owning the site: only the subscriber can renew it.
+	 */
+	user_is_owner?: boolean;
 	license_key?: string;
 	billing_period?: 'Yearly' | 'Monthly';
 	features: {
@@ -26,16 +32,24 @@ interface SitePlan {
 export interface SiteCapabilities {
 	manage_options: boolean;
 	update_plugins: boolean;
+	view_stats: boolean;
+}
+
+interface DifmLiteSiteOptions {
+	is_website_content_submitted?: boolean;
 }
 
 export interface SiteOptions {
 	admin_url: string;
 	apm_enabled?: boolean;
 	created_at?: string;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
+	/** Whether a plan change would move the site off the pre-2026 feature gating. */
+	is_legacy_gating_site?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_recovery_mode_status?: {
 		recovery_mode_email_last_sent?: number;
@@ -43,6 +57,7 @@ export interface SiteOptions {
 		recovery_session_exited_at?: number;
 		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
+	jetpack_sso_require_two_step?: boolean;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -52,12 +67,25 @@ export interface SiteOptions {
 	unmapped_url?: string;
 	wordads?: boolean;
 	woocommerce_is_active?: boolean;
+	wpcom_admin_interface?: string;
 	wpcom_ai_launchpad_enabled?: boolean;
 	wpcom_ai_launchpad_dismissed?: boolean;
 	wpcom_ai_launchpad_completed?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
+}
+
+/**
+ * Outgoing email block on a WordPress.com on Atomic site, as reported by the
+ * site endpoint. `null`/absent means the site can send. `status` is always
+ * `blocked` today; the field exists so an at-risk state can be added later
+ * without changing the shape.
+ */
+export interface AtomicEmailBlock {
+	status: 'blocked';
+	reason: string;
+	expires_on: string;
 }
 
 export interface Site {
@@ -75,6 +103,8 @@ export interface Site {
 	feed_URL: string;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
+	/** Connected to an agency through the Automattic for Agencies client plugin. */
+	is_a4a_client?: boolean;
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
@@ -107,6 +137,7 @@ export interface Site {
 	garden_is_provisioned: boolean | null;
 	/** Present when requested via SITE_FIELDS; indicates Big Sky / AI builder availability. */
 	big_sky_enabled?: boolean;
+	atomic_email_block?: AtomicEmailBlock | null;
 
 	// Injected local properties
 	__inaccessible_jetpack_error?: Error;

@@ -63,10 +63,4 @@ export interface GeneralFeedbackParams {
 }
 
 export type GeneralFeedbackTextAreaTypes =
-	| 'improvements'
-	| 'issues'
-	| 'location'
-	| 'screenshot'
-	| 'feature'
-	| 'inspiration'
-	| 'workflow';
+	'improvements' | 'issues' | 'location' | 'screenshot' | 'feature' | 'inspiration' | 'workflow';

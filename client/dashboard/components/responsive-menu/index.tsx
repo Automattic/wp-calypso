@@ -168,7 +168,7 @@ function ResponsiveMenu( {
 				{ React.Children.map( children, ( child ) => {
 					if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
 						const item = child as React.ReactElement< ResponsiveMenuItemProps >;
-						if ( item.props.target === '_blank' ) {
+						if ( item.props.href ) {
 							return (
 								<Button
 									className="dashboard-menu__item"
@@ -183,7 +183,9 @@ function ResponsiveMenu( {
 								>
 									<HStack justify="flex-start" spacing={ 1 }>
 										<span>{ item.props.children }</span>
-										<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+										{ item.props.target === '_blank' && (
+											<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+										) }
 									</HStack>
 								</Button>
 							);
@@ -268,11 +270,15 @@ function ResponsiveMenu( {
 					{ React.Children.map( children, ( child ) => {
 						if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
 							const item = child as React.ReactElement< ResponsiveMenuItemProps >;
-							if ( item.props.target === '_blank' ) {
+							if ( item.props.href ) {
+								const opensInNewTab = item.props.target === '_blank';
 								return (
 									<Menu.ItemLink
 										{ ...item.props }
 										onClick={ ( event ) => {
+											if ( ! opensInNewTab ) {
+												onClose();
+											}
 											item.props.onClick?.( event );
 											recordTracksEvent( 'calypso_dashboard_menu_item_click', {
 												to: item.props.href ?? '',
@@ -281,7 +287,9 @@ function ResponsiveMenu( {
 									>
 										<HStack justify="flex-start" spacing={ 1 }>
 											<span>{ item.props.children }</span>
-											<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+											{ opensInNewTab && (
+												<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+											) }
 										</HStack>
 									</Menu.ItemLink>
 								);

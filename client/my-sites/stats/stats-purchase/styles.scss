@@ -19,16 +19,6 @@ $button-padding: 8px 32px;
 // Adjust purchase page styling for WPCOM.
 .stats-purchase-page--is-wpcom {
 	.stats-purchase-wizard {
-		.components-button {
-			&.is-primary {
-				background-color: var(--color-accent);
-				border-color: var(--color-accent);
-			}
-			&.is-link {
-				color: var(--color-sidebar-menu-selected-background);
-			}
-		}
-
 		li.stats-purchase-wizard__benefits-item--included,
 		.stats-purchase-wizard__benefits--included li {
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IkFjdGlvbnMgLyBkb25lXzI0cHgiPgo8bWFzayBpZD0ibWFzazBfMzgwMl81NDI1IiBzdHlsZT0ibWFzay10eXBlOmx1bWluYW5jZSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMyIgeT0iNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE0Ij4KPHBhdGggaWQ9Imljb24vYWN0aW9uL2RvbmVfMjRweCIgZD0iTTguNzU2ODIgMTUuOUw0LjU3NzQzIDExLjdMMy4xODQzIDEzLjFMOC43NTY4MiAxOC43TDIwLjY5OCA2LjY5OTk5TDE5LjMwNDggNS4yOTk5OUw4Ljc1NjgyIDE1LjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfMzgwMl81NDI1KSI+CjxyZWN0IGlkPSJSZWN0YW5nbGUiIHdpZHRoPSIyMy44ODIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDY3NUM0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K);
@@ -87,21 +77,6 @@ $button-padding: 8px 32px;
 
 		.stats-purchase-wizard__card-grid {
 			color: var(--studio-black);
-		}
-
-		.jp-components-pricing-slider__track.jp-components-pricing-slider__track-0 {
-			background-color: var(--color-primary);
-		}
-
-		.jp-components-pricing-slider__thumb {
-			border-color: var(--color-primary);
-		}
-
-		// On holding thumb styling
-		.jp-components-pricing-slider--is-holding {
-			.jp-components-pricing-slider__thumb {
-				box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent);
-			}
 		}
 	}
 }
@@ -393,27 +368,10 @@ $button-padding: 8px 32px;
 	.components-button {
 		&.is-primary {
 			border-radius: 4px;
-			color: var(--jp-white);
-			background-color: #1a1a1a;
-			border-color: #1a1a1a;
-			transition: all 0.25s ease-out;
 			font-size: var(--font-body);
 			line-height: 24px;
 			padding: $button-padding;
 			height: auto;
-
-			&:hover,
-			&:active,
-			&:focus {
-				background: var(--studio-gray-80);
-				border-color: var(--studio-gray-80);
-			}
-
-			&[disabled],
-			&:disabled,
-			&.disabled {
-				opacity: 0.3;
-			}
 		}
 
 		&.is-secondary {
@@ -425,7 +383,6 @@ $button-padding: 8px 32px;
 		}
 
 		&.is-link {
-			color: var(--jp-green-50);
 			font-size: inherit;
 			display: inline;
 		}

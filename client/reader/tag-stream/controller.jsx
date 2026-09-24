@@ -10,10 +10,8 @@ import {
 	getStartDate,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import renderHeaderSection from '../lib/header-section';
 
 const loadMain = () =>
 	import(
@@ -58,9 +56,6 @@ export const tagListing = ( context, next ) => {
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
 
-	if ( ! isUserLoggedIn( state ) ) {
-		context.renderHeaderSection = renderHeaderSection;
-	}
 	context.primary = (
 		<>
 			<DocumentHead

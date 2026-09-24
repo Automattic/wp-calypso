@@ -10,7 +10,12 @@ import React from 'react';
 import SeoTitlePicker from './seo-title-picker';
 
 const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentMeta: Record< string, string > | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -34,6 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'SeoTitlePicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
 		mockCurrentMeta = undefined;
 	} );
 
@@ -41,6 +47,14 @@ describe( 'SeoTitlePicker', () => {
 		{ title: 'Best Vegetable Garden Guide for Beginners', explanation: 'a' },
 		{ title: 'Start a Vegetable Garden: Easy Beginner Steps', explanation: 'b' },
 	];
+
+	it( 'reveals the SEO panel once a title is applied', () => {
+		render( <SeoTitlePicker titles={ titles } /> );
+
+		fireEvent.click( screen.getByText( titles[ 0 ].title ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'seo' );
+	} );
 
 	it( 'renders every suggested SEO title', () => {
 		render( <SeoTitlePicker titles={ titles } /> );
@@ -71,5 +85,23 @@ describe( 'SeoTitlePicker', () => {
 		const applied = screen.getByText( titles[ 0 ].title ).closest( 'button' ) as HTMLButtonElement;
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'SEO title updated.' ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+		[ 'an array of invalid entries', [ null, {}, { title: 7 }, { title: '  ' } ] as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, titles ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <SeoTitlePicker titles={ titles } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { title: 7 }, { title: 'Valid SEO Title' } ] as any;
+		render( <SeoTitlePicker titles={ mixed } /> );
+		expect( screen.getByText( 'Valid SEO Title' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
 	} );
 } );

@@ -9,6 +9,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useStore } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { isSiteEligibleForDIFMPurchase } from './utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import './styles.scss';
 
@@ -16,7 +17,7 @@ interface Props {
 	stepSectionName: string | null;
 	stepName: string;
 	flowName: string;
-	signupDependencies: any;
+	signupDependencies: { back_to?: string };
 	goToStep: () => void;
 	goToNextStep: () => void;
 }
@@ -97,22 +98,18 @@ export default function DIFMSitePickerStep( props: Props ) {
 		return true;
 	};
 
-	const filterSites = ( site: SiteDetails ) => {
-		return !! (
-			site.capabilities?.manage_options &&
-			( site.is_wpcom_atomic || ! site.jetpack ) &&
-			! site.options?.is_wpforteams_site &&
-			! site.options?.is_difm_lite_in_progress
-		);
-	};
-
 	return (
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } /> }
+			stepContent={
+				<DIFMSitePicker
+					filter={ isSiteEligibleForDIFMPurchase }
+					onSiteSelect={ handleSiteSelect }
+				/>
+			}
 			hideSkip
 			backUrl={ backUrl }
 			allowBackFirstStep={ !! backUrl }

@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
+import { isCsatTriggerMessage, isZendeskSurveyMessage } from './util';
 import type { MessageType, ZendeskMessage } from './types';
 import type { ReactNode } from 'react';
 
@@ -80,12 +81,18 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 				);
 			}
 			break;
+		case 'file-placeholder':
+			messageContent = `📎 ${ message.altText || __( 'Attachment', __i18n_text_domain__ ) }`;
+			break;
 		default:
 			// We don't support it yet return generic message.
 			messageContent = __( 'Message content not supported', __i18n_text_domain__ );
 	}
 
-	if ( message?.metadata?.type === 'csat' && message.actions?.length ) {
+	if (
+		message.actions?.length &&
+		( isCsatTriggerMessage( message ) || isZendeskSurveyMessage( message ) )
+	) {
 		messageContent = __(
 			'Please help us improve. How would you rate your support experience?',
 			__i18n_text_domain__

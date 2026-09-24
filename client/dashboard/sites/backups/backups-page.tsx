@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -40,7 +40,7 @@ export function BackupsPage( {
 	hasBackups = true,
 	extraNotices,
 }: BackupsPageProps ) {
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const backupState = useBackupState( site.ID );
 
 	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );

@@ -1,23 +1,15 @@
-import wp from 'calypso/lib/wp';
 import {
 	MEDIA_DELETE,
-	MEDIA_ERRORS_CLEAR,
 	MEDIA_ITEM_CREATE,
-	MEDIA_ITEM_ERRORS_CLEAR,
-	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_SET_NEXT_PAGE_HANDLE,
-	MEDIA_SOURCE_CHANGE,
-	MEDIA_ITEM_EDIT,
 	MEDIA_SET_QUERY,
-	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/media';
@@ -155,22 +147,6 @@ export function createMediaItem( site, transientMedia ) {
 }
 
 /**
- * Returns an action object used in signalling that media item for the site
- * are to be edited.
- * @param {number} siteId site identifier
- * @param {Object} mediaItem media item with updated properties
- * @param {Object} data binary updated item data (to be sent to the server)
- * @param {Object} originalMediaItem original media item without updated properties
- */
-export const editMediaItem = ( siteId, mediaItem, data, originalMediaItem ) => ( {
-	type: MEDIA_ITEM_EDIT,
-	siteId,
-	mediaItem,
-	data,
-	originalMediaItem,
-} );
-
-/**
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
@@ -185,76 +161,6 @@ export function deleteMedia( siteId, mediaIds ) {
 	return {
 		type: MEDIA_DELETE,
 		mediaIds: Array.isArray( mediaIds ) ? mediaIds : [ mediaIds ],
-		siteId,
-	};
-}
-
-/**
- * Returns an action object used in signalling that the media source for the site has changed.
- * @param   {number} siteId Site ID
- * @returns {Object}        Action object
- */
-export function changeMediaSource( siteId ) {
-	return {
-		type: MEDIA_SOURCE_CHANGE,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object used in signalling that the media errors of a certain type have been cleared.
- * @param  {number}  siteId    Site ID
- * @param  {string}  errorType Error type
- * @returns {Object}           Action object
- */
-export function clearMediaErrors( siteId, errorType ) {
-	return {
-		type: MEDIA_ERRORS_CLEAR,
-		siteId,
-		errorType,
-	};
-}
-
-/**
- * Returns an action object used in signalling that the errors for a certain media item have been cleared.
- * @param  {number}   siteId Site ID
- * @param  {number}  mediaId Media ID
- * @returns {Object}         Action object
- */
-export function clearMediaItemErrors( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_ERRORS_CLEAR,
-		siteId,
-		mediaId,
-	};
-}
-
-/**
- * Returns an action object used in signaling to store errors for a certain media item.
- * @param {number} siteId Site ID
- * @param {(number|string)} mediaId Server or transient media ID to set the errors for
- * @param {Array<Object>} errors Errors for the media item
- */
-export function setMediaItemErrors( siteId, mediaId, errors ) {
-	return {
-		type: MEDIA_ITEM_ERRORS_SET,
-		siteId,
-		mediaId,
-		errors,
-	};
-}
-
-/**
- * Returns an action object used in signalling that new selected media item(s)
- * are being set for the site's media library.
- * @param  {number}  siteId Site ID
- * @param  {Array}   media  Array of media objects
- * @returns {Object}        Action object
- */
-export function selectMediaItems( siteId, media ) {
-	return {
-		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
-		media,
 		siteId,
 	};
 }
@@ -285,22 +191,4 @@ export function setQuery( siteId, query ) {
 		siteId,
 		query,
 	};
-}
-
-/**
- * Request the status of the Google Photos picker feature flag.
- */
-export function requestPhotosPickerFeatureStatus() {
-	return ( dispatch ) =>
-		wp.req
-			.get( {
-				apiNamespace: 'wpcom/v2',
-				path: '/meta/external-media/connection/google_photos/picker_status',
-			} )
-			.then( ( response ) =>
-				dispatch( {
-					type: MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
-					enabled: response.enabled,
-				} )
-			);
 }

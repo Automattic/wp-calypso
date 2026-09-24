@@ -1,11 +1,9 @@
 import { AgentUI } from '@automattic/agenttic-ui';
-import { AgentsManagerSelect } from '@automattic/data-stores';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAgentsManagerContext } from '../../contexts';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
@@ -36,29 +34,18 @@ export default function AgentHistory( {
 	onExpand,
 	onSelectConversation,
 }: Props ) {
-	const { resumeActiveChat } = useAgentsManagerContext();
-
-	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
-		useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { resumeChat } = useAgentsManagerContext();
+	const floatingPanelProps = useFloatingPanelProps();
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
 	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const title = __( 'Past chats', __i18n_text_domain__ );
 
-	const handleBack = () => resumeActiveChat();
+	const handleBack = () => resumeChat();
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
-			defaultSize={ floatingSize ?? undefined }
-			onResizeEnd={ setFloatingSize }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }

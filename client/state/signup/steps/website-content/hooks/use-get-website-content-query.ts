@@ -9,7 +9,7 @@ export function selectWebsiteContent( data: WebsiteContentResponseDTO ): Website
 	const pages = data.pages?.length
 		? data.pages.map( ( page: Record< string, unknown > ) =>
 				mapRecordKeysRecursively( page, snakeToCamelCase )
-		  )
+			)
 		: [];
 	// Server-provided instances win. Otherwise pair stored pages with
 	// selected_page_titles positionally (server preserves order) so
@@ -31,7 +31,7 @@ export function selectWebsiteContent( data: WebsiteContentResponseDTO ): Website
 						type: selectedPageTitles[ i ],
 						...( typeof title === 'string' && title ? { title } : {} ),
 					};
-			  } )
+				} )
 			: undefined );
 	return {
 		selectedPageTitles,

@@ -1,5 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
+import { handleActiveThrottles, recordResponseThrottle } from '../throttle-flags';
 
 type CartResponseDiagnostic = {
 	method: string;
@@ -18,6 +19,9 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 		return response.url().includes( '/me/shopping-cart/' );
 	}
 };
+
+// `reloadAndRetry` runs the search closure three times, inside a 120s test.
+const SEARCH_BUDGET = 60 * 1000;
 
 const normalizeText = ( value?: string | null ): string =>
 	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
@@ -104,6 +108,41 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
+		const deadline = Date.now() + SEARCH_BUDGET;
+
+		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
+		// closure three times, so the search as a whole has to be bounded too: one
+		// that outlives the 120s test timeout reports that timeout instead of its
+		// own error - or the throttle the error stands for. Playwright reads a zero
+		// timeout as "wait forever", so a spent budget ends the search rather than
+		// reaching one.
+		const within = ( cap: number ): number => {
+			const left = deadline - Date.now();
+
+			if ( left <= 0 ) {
+				throw new Error(
+					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.`
+				);
+			}
+
+			return Math.min( cap, left );
+		};
+
+		const normalizedKeyword = keyword.trim().toLowerCase();
+		// Suggestion titles are domain names, so compare on the second-level
+		// label only, letters and digits, so `coffee shop` matches
+		// `coffeeshop.com` and `e2e-flow-testing` matches `e2eflowtesting.blog`.
+		const keywordLabel = normalizedKeyword.split( '.' )[ 0 ].replace( /[^a-z0-9]/g, '' );
+		const titleMatchesKeyword = ( title: string | null ) =>
+			!! title &&
+			title
+				.toLowerCase()
+				.replace( /[^a-z0-9]/g, '' )
+				.includes( keywordLabel );
+		const isKeywordSuggestionsResponse = ( response: Response ) =>
+			/suggestions\?/.test( response.url() ) &&
+			new URL( response.url() ).searchParams.get( 'query' )?.trim().toLowerCase() ===
+				normalizedKeyword;
 
 		/**
 		 *
@@ -112,26 +151,28 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
-			// Capture the first suggestion's title before searching. If
-			// suggestions are already visible (e.g. pre-populated from the
-			// site slug), this lets us detect when React re-renders the list
-			// with new results after the API response arrives.
+			const searchbox = page.getByRole( 'searchbox' );
 			const firstListitem = container.getByRole( 'listitem' ).first();
-			let previousTitle: string | null = null;
-			if ( ( await firstListitem.count() ) > 0 ) {
-				previousTitle = await firstListitem.getAttribute( 'title' );
+
+			// Site flows pre-fill the searchbox and search for that value on
+			// mount. Typing before that first list renders drops the typed
+			// query: the input keeps the text but no request is made for it.
+			if ( ( await searchbox.inputValue() ) !== '' ) {
+				await firstListitem.waitFor( { timeout: within( 30 * 1000 ) } ).catch( () => {} );
 			}
 
 			const searchAndPressEnter = async () => {
-				await page.getByRole( 'searchbox' ).fill( keyword );
-				await page.getByRole( 'searchbox' ).press( 'Enter' );
+				await searchbox.fill( keyword );
+				await searchbox.press( 'Enter' );
 			};
 
 			const [ response ] = await Promise.all( [
-				// The domain lookup service is external and regularly exceeds the
-				// 10s default timeout under load; give it a longer budget instead
-				// of burning reloadAndRetry attempts on a slow-but-healthy service.
-				page.waitForResponse( /suggestions\?/, { timeout: 30 * 1000 } ),
+				// Match the request for this keyword, not the pre-fill request
+				// that can still be in flight. The domain lookup service is
+				// external and regularly exceeds the 10s default timeout under
+				// load; give it a longer budget instead of burning reloadAndRetry
+				// attempts on a slow-but-healthy service.
+				page.waitForResponse( isKeywordSuggestionsResponse, { timeout: within( 30 * 1000 ) } ),
 				searchAndPressEnter(),
 			] );
 
@@ -142,32 +183,53 @@ export class DomainSearchComponent {
 				);
 			}
 
-			// Wait for the DOM to reflect the new search results. The API
-			// response resolves before React re-renders the suggestion list
-			// (TanStack Query keeps isLoading false on refetch while prior
-			// data is cached), so without this guard selectFirstSuggestion
-			// can read a stale title from the previous search.
-			if ( previousTitle ) {
-				for ( let attempt = 0; attempt < 50; attempt++ ) {
-					const current = await firstListitem.getAttribute( 'title' );
-					if ( current !== previousTitle ) {
-						break;
-					}
-					await page.waitForTimeout( 200 );
+			await recordResponseThrottle( response );
+
+			// The response resolves before React re-renders the list, and a
+			// pre-fill response can land after it. Wait until the first row is
+			// a suggestion for this keyword, so selectFirstSuggestion never reads
+			// a row from another search.
+			let firstTitle: string | null = null;
+			for ( let attempt = 0; attempt < 50; attempt++ ) {
+				firstTitle = await firstListitem.getAttribute( 'title' );
+				if ( titleMatchesKeyword( firstTitle ) ) {
+					return;
 				}
+				await page.waitForTimeout( within( 200 ) );
 			}
+			throw new Error(
+				`Domain suggestions did not update for "${ keyword }": first suggestion is "${ firstTitle }".`
+			);
 		}
 
-		// Domain lookup service is external to Automattic and sometimes it returns an error.
-		// Retry a few times when this is encountered.
-		await reloadAndRetry( this.page, searchDomainClosure );
+		// Outside the retry: `reloadAndRetry` swallows the closure's error on every
+		// attempt but the last, and skipping or failing for a throttle is thrown,
+		// not returned.
+		handleActiveThrottles( [ 'domain-suggestions' ] );
+		try {
+			// Domain lookup service is external to Automattic and sometimes it returns an error.
+			// Retry a few times when this is encountered.
+			await reloadAndRetry( this.page, searchDomainClosure );
+		} catch ( error ) {
+			// The failure might be due to a ban.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 	}
 
 	/**
 	 * Clicks on the button to bring over an external domain to WordPress.com
 	 */
 	async clickBringItOver(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		try {
+			await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		} catch ( error ) {
+			// The button is rendered off the availability query, so a `domain-availability`
+			// ban leaves it absent and the click times out. Checking here rather than before
+			// the click keeps a button that did render clickable.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 	}
 
 	/**
@@ -260,7 +322,21 @@ export class DomainSearchComponent {
 		row: Locator,
 		waitForContinueButton: boolean = true
 	): Promise< string | null > {
-		await row.waitFor();
+		// Adding to the cart checks the domain's availability first, so this path
+		// runs into a `domain-availability` ban as surely as into a suggestions
+		// one, and the ban is answered before the request leaves the browser: the
+		// button lands in its error state and stays there until the test times out.
+		handleActiveThrottles( [ 'domain-availability' ] );
+
+		try {
+			await row.waitFor();
+		} catch ( error ) {
+			// If a domain-suggestions ban is in force, skip/fail accordingly; that throws.
+			// So reaching the throw means none was, and the wait's own error stands: a
+			// keyword row can be missing from a list that rendered fine.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		// List freshness is guaranteed by search(), which waits for the
 		// suggestions response and for the DOM to reflect it before returning,
@@ -272,7 +348,15 @@ export class DomainSearchComponent {
 		}
 
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
-		await addToCartButton.waitFor();
+		try {
+			await addToCartButton.waitFor();
+		} catch ( error ) {
+			// The check on entry only sees a ban that was already in force then; this
+			// one sees one raised since, by this worker or by a peer's. Reaching the
+			// throw means none was, and the wait's own error stands.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 
 		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
 		const trackCartResponse = ( response: Response ) => {
@@ -302,6 +386,12 @@ export class DomainSearchComponent {
 					const hasErrorClass = await addToCartButton.evaluate( ( el ) =>
 						el.classList.contains( 'domain-suggestion-cta--error' )
 					);
+
+					if ( hasErrorClass ) {
+						// The ban can be raised between the check above and this click,
+						// by this worker or by the pre-flight read of a peer's.
+						handleActiveThrottles( [ 'domain-availability' ] );
+					}
 
 					if ( ! hasErrorClass || attempt === maxRetries ) {
 						throw new Error(
@@ -424,7 +514,19 @@ export class DomainSearchComponent {
 	async skipPurchase(): Promise< string > {
 		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
 
-		await button.waitFor();
+		try {
+			await button.waitFor();
+		} catch ( error ) {
+			// The button carries the free subdomain a second `/domains/suggestions`
+			// call answered with. `search` records a ban it meets mid-search but
+			// leaves acting to whichever caller needed the list, and this is one of
+			// them: without this the ban leaves the button absent and the wait spends
+			// its timeout. Never `domain-availability`: nothing on this button comes
+			// from `is-available`, and reading that ban here would skip a test it had
+			// no part in.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		let domain = await button.getAttribute( 'aria-label' );
 		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;

@@ -2,7 +2,7 @@
  * Gutenberg disconnected variant entry point.
  *
  * This lightweight variant is used when:
- * - The unified experience is disabled
+ * - The full Agents Manager experience is unavailable
  * - The help center icon needs to be displayed in the Gutenberg editor
  * - Full Agents Manager functionality is not needed
  *
@@ -12,7 +12,7 @@
 
 /* global agentsManagerData */
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { createElement } from '@wordpress/element';
@@ -50,11 +50,19 @@ function AgentsManagerHelpButton() {
 			: 'https://wordpress.com/help';
 
 	const handleClick = () => {
-		recordTracksEvent( 'calypso_inlinehelp_show', {
-			force_site_id: true,
-			location: 'help-center',
-			section: 'gutenberg',
-		} );
+		recordTracksEvent(
+			'calypso_inlinehelp_show',
+			withSiteContext(
+				{
+					location: 'help-center',
+					section: 'gutenberg',
+				},
+				'agents_manager_data',
+				typeof agentsManagerData !== 'undefined' && agentsManagerData?.isWpcomPlatform === true
+					? agentsManagerData?.site?.ID
+					: undefined
+			)
+		);
 	};
 
 	const button = createElement( Button, {

@@ -113,7 +113,7 @@ async function runLoggedOutEmailValidationCheck(
 	contactInfo: ManagedContactDetails,
 	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
-): Promise< unknown > {
+): Promise< { validationResult: unknown; emailErrors: Record< string, string > } > {
 	const email = contactInfo.email?.value ?? '';
 	return getSignupEmailValidationResult( email, ( newEmail: string ) =>
 		getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
@@ -169,11 +169,8 @@ export async function validateContactDetails(
 	};
 
 	if ( isLoggedOutCart ) {
-		const loggedOutValidationResult = await runLoggedOutEmailValidationCheck(
-			contactInfo,
-			reduxDispatch,
-			translate
-		);
+		const { validationResult: loggedOutValidationResult, emailErrors } =
+			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate );
 		if ( shouldDisplayErrors ) {
 			handleContactValidationResult( {
 				translate,
@@ -189,6 +186,8 @@ export async function validateContactDetails(
 				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_contact_email_validation_failed', {
 						country: contactInfo.countryCode?.value,
+						error_codes: Object.keys( emailErrors ).join( ', ' ) || undefined,
+						messages: Object.values( emailErrors ).join( ', ' ) || undefined,
 					} )
 				);
 			}
@@ -441,6 +440,9 @@ async function getSignupEmailValidationResult(
 		email,
 		is_from_registrationless_checkout: true,
 	} );
+	// Keep the raw messages from the endpoint before they are replaced below; they
+	// are keyed by error code, which is what makes a failure attributable.
+	const emailErrors = response.messages?.email ?? {};
 	const signupValidationErrorResponse = getSignupValidationErrorResponse(
 		response,
 		email,
@@ -448,11 +450,11 @@ async function getSignupEmailValidationResult(
 	);
 
 	if ( Object.keys( signupValidationErrorResponse ).length === 0 ) {
-		return response;
+		return { validationResult: response, emailErrors };
 	}
 	const validationResponse = {
 		...response,
 		messages: signupValidationErrorResponse,
 	};
-	return validationResponse;
+	return { validationResult: validationResponse, emailErrors };
 }

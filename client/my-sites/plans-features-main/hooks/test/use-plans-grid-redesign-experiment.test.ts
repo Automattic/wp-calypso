@@ -52,7 +52,7 @@ function mockSite( {
 						site_creation_flow: siteCreationFlow,
 						...( createdAt && { created_at: createdAt } ),
 					},
-			  }
+				}
 			: null
 	);
 }
@@ -308,6 +308,69 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			usePlansGridRedesign: true,
 			usePlansGridRedesignNewDescription: true,
 			showWooCommerceBottomCard: true,
+		} );
+	} );
+
+	test( 'keeps the Enterprise card in the grid on logged-in plans pages for five_plan_new_description', () => {
+		mockSite( { isGatingBusinessQ1: true } );
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'five_plan_new_description' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'five_plan_new_description',
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			showEnterpriseBottomCard: false,
+		} );
+	} );
+
+	test( 'keeps the WooCommerce card in the grid on logged-in plans pages for four_plan_new_description', () => {
+		mockSite( { isGatingBusinessQ1: true } );
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'four_plan_new_description' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'four_plan_new_description',
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			showWooCommerceBottomCard: false,
+		} );
+	} );
+
+	test( 'hides the differentiator header on logged-in plans pages for six_plan_new_features', () => {
+		mockSite( { isGatingBusinessQ1: true } );
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'six_plan_new_features' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'six_plan_new_features',
+			usePlansGridRedesign: true,
+			showDifferentiatorHeader: false,
+			usePlansGridRedesignFeatures: true,
 		} );
 	} );
 } );

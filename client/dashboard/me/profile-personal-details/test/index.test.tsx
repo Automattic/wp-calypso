@@ -17,7 +17,6 @@ const settings = {
 	user_email: 'john@example.com',
 	email_verified: true,
 	user_login_can_be_changed: true,
-	is_dev_account: false,
 } as unknown as UserSettings;
 
 const unverifiedUser = {
@@ -78,8 +77,6 @@ describe( '<PersonalDetailsSection>', () => {
 		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
 			'john@example.com'
 		);
-		expect( screen.getByRole( 'checkbox', { name: 'I am a developer' } ) ).not.toBeChecked();
-
 		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
 		await user.clear( firstNameInput );
 		await user.type( firstNameInput, 'Jane' );
@@ -92,9 +89,6 @@ describe( '<PersonalDetailsSection>', () => {
 		await user.clear( emailInput );
 		await user.type( emailInput, 'jane@example.com' );
 
-		const devCheckbox = screen.getByRole( 'checkbox', { name: 'I am a developer' } );
-		await user.click( devCheckbox );
-
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => {
 				expect( body ).toEqual(
@@ -102,7 +96,6 @@ describe( '<PersonalDetailsSection>', () => {
 						first_name: 'Jane',
 						last_name: 'Smith',
 						user_email: 'jane@example.com',
-						is_dev_account: true,
 					} )
 				);
 				return true;
@@ -112,7 +105,6 @@ describe( '<PersonalDetailsSection>', () => {
 				first_name: 'Jane',
 				last_name: 'Smith',
 				user_email: 'jane@example.com',
-				is_dev_account: true,
 			} );
 
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
@@ -303,7 +295,7 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
-		test( 'links to the account recovery settings page', async () => {
+		test( 'shows a CTA linking to the account recovery settings page', async () => {
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -314,7 +306,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect(
-				await screen.findByRole( 'link', { name: /set up a recovery email or phone number/i } )
+				await screen.findByRole( 'link', { name: /set up account recovery/i } )
 			).toHaveAttribute( 'href', '/me/security/account-recovery' );
 		} );
 

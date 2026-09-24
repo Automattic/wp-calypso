@@ -1,10 +1,11 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useInterval } from 'calypso/lib/interval';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
@@ -31,6 +32,23 @@ export const PlaygroundSetupStep: Step< {
 	const [ query ] = useSearchParams();
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
 
+	const importMessages = [
+		{ title: __( 'Packing up your products and settings' ), duration: 8000 },
+		{ title: __( 'Uploading to WordPress.com' ), duration: 12000 },
+		{ title: __( 'Restoring your store' ), duration: 15000 },
+		{ title: __( 'This usually takes about a minute, hang tight' ), duration: 15000 },
+		{ title: __( 'Applying your store configuration' ), duration: 12000 },
+		{ title: __( 'Almost there' ), duration: null as number | null },
+	];
+	const [ messageIndex, setMessageIndex ] = useState( 0 );
+	const [ fakeProgress, setFakeProgress ] = useState( 0 );
+
+	useInterval(
+		() => setMessageIndex( ( i ) => i + 1 ),
+		messageIndex < importMessages.length - 1 ? importMessages[ messageIndex ].duration : null
+	);
+	useInterval( () => setFakeProgress( ( p ) => Math.min( p + 1, 95 ) ), 1000 );
+
 	useEffect( () => {
 		// If blueprint exists, import it and then submit
 		const blueprint = query.get( 'blueprint' );
@@ -52,35 +70,17 @@ export const PlaygroundSetupStep: Step< {
 		}
 	}, [ query, submit, siteSlug, siteId, importBlueprint ] );
 
-	useEffect( () => {
-		// Clean up any playground-related localStorage items on unmount
-		return () => {
-			const playgroundId = query.get( 'playground' );
-			const currentTimestamp = Math.floor( Date.now() / 1000 );
-
-			if ( playgroundId ) {
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId );
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId + '-ts' );
-			}
-
-			Object.keys( window.localStorage ).forEach( ( key ) => {
-				if ( key.startsWith( 'playground-plans-intent-' ) && key.endsWith( '-ts' ) ) {
-					const storedAt = parseInt( window.localStorage.getItem( key ) || '0' );
-					if ( currentTimestamp - storedAt > 7 * 24 * 60 * 60 ) {
-						window.localStorage.removeItem( key );
-						window.localStorage.removeItem( key.replace( '-ts', '' ) );
-					}
-				}
-			} );
-		};
-	}, [] );
-
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client ) {
 			return;
 		}
 
 		if ( ! submit ) {
+			return;
+		}
+
+		const playgroundSlug = query.get( 'playground' );
+		if ( ! playgroundSlug ) {
 			return;
 		}
 
@@ -94,7 +94,7 @@ export const PlaygroundSetupStep: Step< {
 			const importStartedAt = Date.now();
 			recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
 			try {
-				await importPlaygroundSite( client, siteId, { waitForCompletion: true } );
+				await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: true } );
 				recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
 					site_id: siteId,
 					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
@@ -108,7 +108,7 @@ export const PlaygroundSetupStep: Step< {
 				throw error;
 			}
 		} else {
-			await importPlaygroundSite( client, siteId, { waitForCompletion: false } );
+			await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: false } );
 		}
 
 		submit( {
@@ -122,11 +122,11 @@ export const PlaygroundSetupStep: Step< {
 
 		return (
 			<>
-				<Loading title={ __( 'Preparing your site for import' ) } />
+				<Loading title={ importMessages[ messageIndex ].title } progress={ fakeProgress } />
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"
-						playgroundClient={ playgroundClientRef.current }
+						hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
 						setPlaygroundClient={ startImport }
 					/>
 				) }

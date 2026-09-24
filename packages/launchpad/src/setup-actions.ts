@@ -1,7 +1,7 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import wpcomRequest from 'wpcom-proxy-request';
+import { updateLaunchpadSettings } from './use-launchpad';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [

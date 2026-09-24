@@ -54,6 +54,30 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		);
 	} );
 
+	it.each( [
+		'.foo .jp-stats-dashboard .bar',
+		'.foo>.jp-stats-widget',
+		'.a .b .components-popover__fallback-container .c',
+	] )( 'flags `%s` — an entry-point root is dead wherever in the chain it sits', ( selector ) => {
+		const css = `
+			${ PREFIX } ${ selector }{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [ expect.stringContaining( 'Dead rule found' ) ] );
+	} );
+
+	it( 'does not flag a class that merely starts with an entry-point root name', () => {
+		const css = `
+			${ PREFIX } .foo .jp-stats-dashboard-extra .bar{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
 	it( 'flags .components-popover__fallback-container self-nesting — the @wordpress/components Popover fallback', () => {
 		const css = `
 			${ PREFIX } .card{color:red}
@@ -105,6 +129,94 @@ describe( 'verify-css-scope findScopeFailures', () => {
 				'.jp-stats-new-widget is in `prefix` but not classified in `entryPointRoots` or `portalRoots`'
 			),
 		] );
+	} );
+
+	it( 'flags a prefixed `body>` selector — the compressed form that shipped dead', () => {
+		// The real regression: stats-main/style.scss applies the Stats interactive colours at
+		// `body > .color-scheme` to reach the body child Odyssey's RootChild portals into. Sass
+		// emitted it without spaces, `exclude` only recognised the spaced form, and the rule was
+		// prefixed into something that can never match.
+		const css = `
+			${ PREFIX } body>.color-scheme .date-range__picker{--color-accent:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining( 'was prefixed despite being anchored on body' ),
+		] );
+	} );
+
+	it.each( [
+		[ 'html.rtl .card', 'html' ],
+		[ 'body.is-section-stats .card', 'body' ],
+		[ ':root .card', ':root' ],
+		[ '.foo body .card', 'body' ],
+		[ 'html>body .x', 'html, body' ],
+	] )( 'flags `%s` when prefixed, naming %s as the anchor', ( selector, anchor ) => {
+		const css = `
+			${ PREFIX } ${ selector }{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining( `anchored on ${ anchor }` ),
+		] );
+	} );
+
+	it( 'does not flag a document-root selector that was correctly left unprefixed', () => {
+		const css = `
+			body>.color-scheme .date-range__picker{--color-accent:red}
+			${ PREFIX } .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
+	it.each( [
+		[ ':is(html,body) .card', ':is(html,body)' ],
+		[ ':where(html,body) .card', ':where(html,body)' ],
+		[ ':matches(html,body) .card', ':matches(html,body)' ],
+		[ ':is(body.rtl,html.rtl) .card', ':is(body.rtl,html.rtl)' ],
+		[ ':is(html body) .card', ':is(html body)' ],
+	] )(
+		'flags `%s` — every branch leads with a root, so the whole group is dead',
+		( selector, anchor ) => {
+			const css = `
+			${ PREFIX } ${ selector }{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+			expect( findScopeFailures( css ) ).toEqual( [
+				expect.stringContaining( `anchored on ${ anchor }` ),
+			] );
+		}
+	);
+
+	it( 'does not flag a mixed group like `:is(.foo,body)` — only one branch is dead, and the rule must stay scoped', () => {
+		// Excluding this from prefixing to save the `body` branch would ship `.foo .card`
+		// unscoped into wp-admin. A dead branch is the lesser problem.
+		const css = `
+			${ PREFIX } :is(.foo,body) .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+
+	it( 'does not flag a class merely containing a root tag name, such as .components-panel__body', () => {
+		const css = `
+			${ PREFIX } .components-panel__body .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [] );
 	} );
 
 	it( 'is unaffected by minification stripping whitespace after commas in :where(...)', () => {

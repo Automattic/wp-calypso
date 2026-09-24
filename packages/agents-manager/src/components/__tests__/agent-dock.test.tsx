@@ -12,7 +12,7 @@ const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
 const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
-const mockResumeActiveChat = jest.fn();
+const mockResumeChat = jest.fn();
 const mockCloseSidebar = jest.fn();
 let mockLayoutIsDocked = false;
 // Overrides the layout mock's `canDock` (which otherwise follows
@@ -26,7 +26,6 @@ let mockAgentsManagerState: {
 	isSplitScreen?: boolean;
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
-let mockShouldUseUnifiedAgent = false;
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -83,19 +82,9 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
 } ) );
-jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
-	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
-} ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../utils/persist-last-activity', () => ( {
-	persistLastActivity: jest.fn(),
-} ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
 jest.mock( '../editor-ai-chat-button', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
-jest.mock( '../editor-help-center-button', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -147,9 +136,11 @@ jest.mock( '../agent-history', () => ( {
 	__esModule: true,
 	default: ( {
 		onExpand,
+		onSelectConversation,
 		chatHeaderOptions,
 	}: {
 		onExpand: () => void;
+		onSelectConversation: ( conversation: { session_id: string } ) => void;
 		chatHeaderOptions: { title: string; onClick?: () => void; isDisabled?: boolean }[][];
 	} ) => (
 		<div data-testid="agent-history">
@@ -160,6 +151,9 @@ jest.mock( '../agent-history', () => ( {
 				</button>
 			) ) }
 			<button onClick={ onExpand }>Expand history</button>
+			<button onClick={ () => onSelectConversation( { session_id: 'conversation-session-id' } ) }>
+				Select conversation
+			</button>
 		</div>
 	),
 } ) );
@@ -178,14 +172,21 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { getSessionId } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
-	const { pathname } = useLocation();
-	return <div data-testid="location">{ pathname }</div>;
+	const { pathname, state } = useLocation();
+	return (
+		<div data-testid="location" data-is-new-chat={ String( !! state?.isNewChat ) }>
+			{ pathname }
+		</div>
+	);
 }
 
 function renderAgentDock(
@@ -208,8 +209,8 @@ function useWpAdminAgent() {
 		agentConfig: {
 			agentId: 'wp-orchestrator',
 		},
-		getActiveSessionId: () => 'session-123',
-		resumeActiveChat: mockResumeActiveChat,
+		getTabSessionId: () => 'session-123',
+		resumeChat: mockResumeChat,
 		zendeskConversationTags: [],
 	} as unknown as Partial< AgentsManagerContextType >;
 }
@@ -217,8 +218,10 @@ function useWpAdminAgent() {
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		setLoadedProviderIds( undefined );
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockHasAdminBar = false;
-		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
 		mockCanDock = null;
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -229,8 +232,8 @@ describe( 'AgentDock', () => {
 			agentConfig: {
 				agentId: 'reader-chat',
 			},
-			getActiveSessionId: () => 'session-123',
-			resumeActiveChat: mockResumeActiveChat,
+			getTabSessionId: () => 'session-123',
+			resumeChat: mockResumeChat,
 			zendeskConversationTags: [],
 		} as unknown as Partial< AgentsManagerContextType >;
 	} );
@@ -292,7 +295,7 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
 		// Expanding restores the last view instead of jumping back to the chat.
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
@@ -310,14 +313,13 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the support guides view when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( mockResumeChat ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
@@ -326,23 +328,11 @@ describe( 'AgentDock', () => {
 		// mid-session entry-button change (Site Editor navigation) can't
 		// redirect a user off the list.
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
 
 		renderAgentDock( '/support-guides' );
 
 		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'hides the support guides list without the unified agent', () => {
-		// Unknown paths fall back to `/chat`.
-		useWpAdminAgent();
-		mockHasAdminBar = true;
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
@@ -376,7 +366,7 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
+		setLoadedProviderIds( [ 'woocommerce-ai' ] );
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -384,6 +374,15 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
 
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
+	} );
+
+	it( 'does not register the Zendesk route without the Woo AI provider', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/zendesk' );
+
+		expect( screen.queryByTestId( 'zendesk-chat' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
@@ -411,8 +410,12 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Close chat' ) );
 
 		// Undocked close collapses the floating panel and tracks the back button.
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'dock_back_button_click' );
-		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'sidebar_close_click' );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_dock_back_button_click'
+		);
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_sidebar_close_click'
+		);
 		expect( mockCloseSidebar ).not.toHaveBeenCalled();
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( false, true );
 	} );
@@ -427,7 +430,9 @@ describe( 'AgentDock', () => {
 		// Docked close goes through closeSidebar, which fires sidebar_close_click
 		// via onCloseSidebar — so dock_back_button_click must not fire here.
 		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'dock_back_button_click' );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_dock_back_button_click'
+		);
 	} );
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {
@@ -467,21 +472,35 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
-	it( 'dual-fires the unified and Big Sky events for New chat', () => {
+	it( 'dual-fires the Agents Manager and Big Sky events for New chat', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
 		fireEvent.click( screen.getByText( 'New chat' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
+			{
+				menu_item: 'reset_chat',
+			}
+		);
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_ai_chat_more_options_click',
 			{
 				type: 'reset_chat',
 			}
 		);
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_chat_more_options_click', {
-			type: 'reset_chat',
-		} );
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'true' );
+	} );
+
+	it( 'does not treat the initial fallback as a new chat', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/' );
+
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
+		expect( screen.getByTestId( 'location' ) ).toHaveAttribute( 'data-is-new-chat', 'false' );
 	} );
 
 	it( 'offers the guidelines and settings items when wp-admin injects the site', () => {
@@ -525,12 +544,29 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'View history' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
-				type: 'view_history',
+				menu_item: 'view_history',
 			}
 		);
 		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/history' );
+	} );
+
+	it( 'selecting a past conversation saves it as the tab session and opens the chat', () => {
+		sessionStorage.clear();
+		useWpAdminAgent();
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'View history' ) );
+		fireEvent.click( screen.getByText( 'Select conversation' ) );
+
+		expect( getSessionId( undefined, 'site-1' ) ).toBe( 'conversation-session-id' );
+		// Recorded after the session is saved, so it carries the resumed session's id.
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_history_conversation_selected',
+			{ is_zendesk: false }
+		);
+		expect( screen.getByTestId( 'location' ) ).toHaveTextContent( '/chat' );
 	} );
 
 	it( 'opens the guidelines page from More Options', () => {
@@ -544,9 +580,9 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
-				type: 'knowledge_memory',
+				menu_item: 'knowledge_memory',
 			}
 		);
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -570,9 +606,9 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'AI Agent settings' ) );
 
 		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'ai_chat_more_options_click',
+			'calypso_agents_manager_ai_chat_more_options_click',
 			{
-				type: 'ai_agent_settings',
+				menu_item: 'ai_agent_settings',
 			}
 		);
 		expect( openSpy ).toHaveBeenCalledWith(
@@ -642,12 +678,158 @@ describe( 'AgentDock', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: label } ) );
 
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-				'ai_chat_more_options_click',
+				'calypso_agents_manager_ai_chat_more_options_click',
 				{
-					type,
+					menu_item: type,
 				}
 			);
 			expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( nextState );
 		}
 	);
+
+	describe( 'chat opened tracking', () => {
+		const chatOpenedCalls = () =>
+			mockRecordAgentsManagerTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_opened'
+			);
+
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		it( 'records a restored open when the chat is already open on load', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+
+			render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+			] );
+		} );
+
+		it( 'labels an open a host asked for through the actions bridge', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			const { rerender } = render( dock() );
+
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'records an open each time the chat goes from closed to open', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+			] );
+		} );
+
+		it( 'labels an expand from minimized that a host asked for', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			const { rerender } = render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [] );
+
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'consumes a leftover host mark on a restored open so the next open is not labelled host', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			markActionOrigin( 'open', 'host' );
+			const { rerender } = render( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+			] );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			expect( chatOpenedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_opened', { restored: true, trigger: 'restored' } ],
+				[ 'calypso_agents_manager_chat_opened', { restored: false, trigger: 'user' } ],
+			] );
+		} );
+	} );
+
+	describe( 'chat closed tracking', () => {
+		const chatClosedCalls = () =>
+			mockRecordAgentsManagerTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_closed'
+			);
+
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		it( 'records a close with the layout and who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockLayoutIsDocked = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: true };
+			rerender( dock() );
+			markActionOrigin( 'close', 'host' );
+			mockAgentsManagerState = { isOpen: false, isDocked: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'user' } ],
+				[ 'calypso_agents_manager_chat_closed', { docked: true, trigger: 'host' } ],
+			] );
+		} );
+
+		it( 'does not record a close when the chat is only minimized', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			rerender( dock() );
+
+			expect( chatClosedCalls() ).toEqual( [] );
+		} );
+	} );
 } );

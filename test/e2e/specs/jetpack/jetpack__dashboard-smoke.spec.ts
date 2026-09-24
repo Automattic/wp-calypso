@@ -13,6 +13,7 @@ import {
 	JetpackDashboardPage,
 	SettingsTabs,
 	TestAccount,
+	completeJetpackSso,
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
@@ -36,13 +37,15 @@ test.describe(
 				await testAccount.authenticate( page );
 				jetpackDashboardPage = new JetpackDashboardPage( page );
 
-				// Atomic tests sites might have local users, so the Jetpack SSO login will
-				// show up when visiting the Jetpack dashboard directly.
-				const siteUrl = testAccount.getSiteURL( { protocol: true } );
-				await page.goto( `${ siteUrl }wp-admin/`, {
-					timeout: 15 * 1000,
+				// A referer that looks like Calypso gets the site to skip the Jetpack SSO screen
+				// most of the time; `completeJetpackSso` covers the rest. `domcontentloaded` is
+				// enough because the next step navigates away, while "load" would sit through the
+				// dashboard's Site widget iframing a whole front-end page.
+				await page.goto( `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`, {
+					waitUntil: 'domcontentloaded',
 					referer: 'https://wordpress.com/',
 				} );
+				await completeJetpackSso( page );
 			} );
 
 			await test.step( 'Navigate to Jetpack dashboard', async () => {

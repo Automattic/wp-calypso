@@ -8,15 +8,18 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { useLocaleSlug } from '../locale';
 import { setSessionLocale } from '../locale/session-locale';
 import type { Language } from '@automattic/languages';
 
 import './omnibar-language-switcher-modal.scss';
 
-export default function OmnibarLanguageSwitcherModal( { onClose }: { onClose: () => void } ) {
-	const currentLocale = useLocaleSlug();
-
+export default function OmnibarLanguageSwitcherModal( {
+	currentLocale,
+	onClose,
+}: {
+	currentLocale: string;
+	onClose: () => void;
+} ) {
 	const [ selectedLanguage, setSelectedLanguage ] = useState< Language | undefined >( () =>
 		languages.find( ( { langSlug } ) => langSlug === currentLocale )
 	);

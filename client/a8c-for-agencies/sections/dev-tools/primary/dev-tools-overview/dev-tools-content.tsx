@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 import githubImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/github-deployments.webp';
 import jurassicImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/jurassic-ninja.webp';
 import studioImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/studio.webp';
-import telexImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/telex.webp';
 import playgroundImage from 'calypso/assets/images/a8c-for-agencies/dev-tools/wordpress-playground.webp';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
@@ -29,10 +28,6 @@ export default function DevToolsContent() {
 
 	const handleJurassicClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_dev_tools_jurassic_ninja_click' ) );
-	};
-
-	const handleTelexClick = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_dev_tools_try_telex_click' ) );
 	};
 
 	return (
@@ -101,31 +96,6 @@ export default function DevToolsContent() {
 			/>
 
 			<DevToolSection
-				name={ __( 'Telex' ) }
-				badge={ __( 'Build' ) }
-				tagline={ __( 'Describe it. Build it. Ship it.' ) }
-				description={ __(
-					'Create custom Gutenberg blocks using natural language. Upload a design, describe what you need, and get a production-ready WordPress block plugin.'
-				) }
-				features={ [
-					__( 'Describe what you need in plain English' ),
-					__( 'Upload a design and generate matching blocks' ),
-					__( 'Download production-ready block plugins' ),
-					__( 'Build blocks in 7 languages' ),
-					__( 'Track changes with built-in version control' ),
-				] }
-				cta={ {
-					label: __( 'Create blocks in minutes' ),
-					href: 'https://telex.automattic.ai/',
-					onClick: handleTelexClick,
-				} }
-				image={ {
-					src: telexImage,
-					alt: __( 'Telex' ),
-				} }
-			/>
-
-			<DevToolSection
 				name={ __( 'WordPress Playground' ) }
 				badge={ __( 'Test & demo' ) }
 				tagline={ __( 'Try it now, right in your browser' ) }
@@ -148,7 +118,6 @@ export default function DevToolsContent() {
 					src: playgroundImage,
 					alt: __( 'WordPress Playground' ),
 				} }
-				hasBackground
 			/>
 
 			<DevToolSection
@@ -174,6 +143,7 @@ export default function DevToolsContent() {
 					src: jurassicImage,
 					alt: __( 'Jurassic.ninja' ),
 				} }
+				hasBackground
 			/>
 		</>
 	);

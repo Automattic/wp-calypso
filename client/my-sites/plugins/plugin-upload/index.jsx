@@ -43,6 +43,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
@@ -206,7 +207,6 @@ class PluginUpload extends Component {
 			translate,
 			isJetpackMultisite,
 			siteId,
-			siteSlug,
 			isJetpack,
 			isTrialSite,
 			isAtomic,
@@ -234,7 +234,7 @@ class PluginUpload extends Component {
 				{ showUpgradeBanner && this.renderUpgradeBanner() }
 				{ showEligibilityWarnings && (
 					<EligibilityWarnings
-						backUrl={ `/plugins/${ siteSlug }` }
+						context="plugins-upload"
 						atomicTransferAction="plugins"
 						onProceed={ this.onProceedClick }
 					/>
@@ -259,6 +259,9 @@ const mapStateToProps = ( state ) => {
 	const hasUploadPluginsFeature = siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 	const canUpload = hasSftpFeature || hasUploadPluginsFeature;
 	const isStandaloneJetpack = isJetpack && ! isAtomic;
+	// The retry on the install error screen clears the attempt but cannot abort its request. Without
+	// a method on record this page owns no upload, whatever that request reports afterwards.
+	const hasLiveUpload = !! getPluginUploadMethod( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
@@ -276,8 +279,8 @@ const mapStateToProps = ( state ) => {
 		hasUploadPluginsFeature,
 		canUpload,
 		isStandaloneJetpack,
-		inProgress: isPluginUploadInProgress( state, siteId ),
-		complete: isPluginUploadComplete( state, siteId ),
+		inProgress: hasLiveUpload && isPluginUploadInProgress( state, siteId ),
+		complete: hasLiveUpload && isPluginUploadComplete( state, siteId ),
 		failed: !! error,
 		pluginId: getUploadedPluginId( state, siteId ),
 		error,

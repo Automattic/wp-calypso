@@ -43,10 +43,9 @@ interface ImporterConfigArgs {
 function getConfig( {
 	importerState = '',
 	isAtomic = false,
-	isJetpack = false,
 	siteSlug = '',
 	siteTitle = '',
-} ): ImporterConfigMap {
+}: ImporterConfigArgs ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
 
 	const isFinished = importerState === appStates.IMPORT_SUCCESS;
@@ -86,8 +85,6 @@ function getConfig( {
 				},
 			}
 		),
-		overrideDestination:
-			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
 		weight: 1,
 	};
 
@@ -355,11 +352,6 @@ function getConfig( {
 	};
 
 	const hasUnifiedImporter = config.isEnabled( 'importer/unified' );
-
-	// For Jetpack sites, we don't support migration as destination, so we remove the override here.
-	if ( hasUnifiedImporter && isJetpack && ! isAtomic ) {
-		delete importerConfig.wordpress.overrideDestination;
-	}
 
 	// For atomic sites filter out all importers except the WordPress ones if the Unified Importer is disabled.
 	if ( ! hasUnifiedImporter && isAtomic ) {

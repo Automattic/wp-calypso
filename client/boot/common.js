@@ -165,7 +165,7 @@ function authorizePath() {
 	return authUri.toString();
 }
 
-const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison', '/manage/pricing' ];
+const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
 const A4A_PUBLIC_ROUTES = [ '/signup' ];
 
 const oauthTokenMiddleware = () => {

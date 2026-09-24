@@ -1,15 +1,13 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from '@wordpress/element';
 import { useExperiment } from 'calypso/lib/explat';
-import { isRenewingBeforeExpiration, isSubscription } from 'calypso/lib/purchases';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-} from 'calypso/state/purchases/selectors';
+	isRenewingBeforeExpiration,
+	isSubscription,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import { useSelector } from 'calypso/state';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import {
@@ -21,7 +19,7 @@ import {
 	WELCOME_BACK_VARIATION_MANUAL,
 } from './constants';
 import { hasExceededDormancyThreshold } from './utils';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 interface EligibilityResult {
 	isLoading: boolean;
@@ -33,8 +31,8 @@ interface EligibilityResult {
 	isForcedVariation: boolean;
 }
 
-function hasActivePaidSubscription( purchases: Purchase[] | null ): boolean | null {
-	if ( purchases === null ) {
+function hasActivePaidSubscription( purchases: Purchase[] | undefined ): boolean | null {
+	if ( ! purchases ) {
 		return null;
 	}
 
@@ -44,24 +42,10 @@ function hasActivePaidSubscription( purchases: Purchase[] | null ): boolean | nu
 }
 
 export function useResurrectedFreeUserEligibility(): EligibilityResult {
-	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings );
 	const isUserSettingsFetching = useSelector( isFetchingUserSettings );
-	const currentUserId = useSelector( getCurrentUserId );
 
-	const purchases = useSelector( getUserPurchases );
-	const hasLoadedPurchases = useSelector( hasLoadedUserPurchasesFromServer );
-	const isUserPurchasesFetching = useSelector( isFetchingUserPurchases );
-
-	const purchasesLoaded = purchases !== null || hasLoadedPurchases;
-
-	useEffect( () => {
-		if ( purchasesLoaded || isUserPurchasesFetching || ! currentUserId ) {
-			return;
-		}
-
-		dispatch( fetchUserPurchases( currentUserId ) );
-	}, [ purchasesLoaded, isUserPurchasesFetching, currentUserId, dispatch ] );
+	const { data: purchases, isPending: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 
 	const rawLastSeen = userSettings?.last_admin_activity_timestamp;
 	let lastSeen: number | null = null;
@@ -115,10 +99,7 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	}
 
 	const isLoading =
-		isUserSettingsFetching ||
-		! purchasesLoaded ||
-		isUserPurchasesFetching ||
-		( baseEligibility && isExperimentLoading );
+		isUserSettingsFetching || isLoadingPurchases || ( baseEligibility && isExperimentLoading );
 
 	return {
 		isLoading,

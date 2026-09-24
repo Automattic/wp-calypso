@@ -55,6 +55,9 @@ interface SignupFormSocialFirst {
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
+	// Holds the email submit (button and Enter) while true, leaving the social options and the email
+	// field alone. The onboarding account step keeps this on until the email-verification arm loads.
+	isSubmitBlocked?: boolean;
 	// Replaces account creation with a change to the account the caller already has, making this an
 	// email-only screen: nothing on it offers a second account. Submitting the address unchanged is
 	// how the caller gets its user back, so there is nothing else to leave by.
@@ -118,6 +121,7 @@ const SignupFormSocialFirst = ( {
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
+	isSubmitBlocked,
 	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
@@ -205,6 +209,7 @@ const SignupFormSocialFirst = ( {
 		stepName,
 		flowName,
 		activationEmailFrom,
+		isSubmitBlocked,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -232,9 +237,15 @@ const SignupFormSocialFirst = ( {
 		submitButtonLoadingLabel,
 	};
 
+	// Both screens stay mounted (stacked, toggled via CSS visibility) and share the
+	// global Blackbox singleton, so at most one PasswordlessSignupForm may be
+	// unsuspended at a time — each instance gates on its own screen being active.
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
-			<PasswordlessSignupForm { ...passwordlessFormProps } />
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'initial' }
+			/>
 		</div>
 	) : null;
 
@@ -251,6 +262,7 @@ const SignupFormSocialFirst = ( {
 		<div className="signup-form-social-first-email">
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'email' }
 				renderTerms={ renderEmailStepTermsOfService }
 				// Partner copy is positionally worded — Woo's says "the options below".
 				termsAfterActions={ ! showsPartnerTerms }

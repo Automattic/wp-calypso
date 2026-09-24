@@ -1,4 +1,6 @@
+import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQueryClient } from '@tanstack/react-query';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
@@ -108,6 +110,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	);
 
 	const domains = useSiteDomains( siteId ?? undefined );
+	const queryClient = useQueryClient();
 
 	return useCallback(
 		async ( { transactionLastResponse }: PaymentEventCallbackArguments ) => {
@@ -179,6 +182,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
+			queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 			// Removes the destination cookie only if redirecting to the signup destination.
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -288,6 +292,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			isComingFromUpsell,
 			isInModal,
 			reduxDispatch,
+			queryClient,
 			siteId,
 			responseCart,
 			createUserAndSiteBeforeTransaction,

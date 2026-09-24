@@ -16,8 +16,8 @@ export const maybeSetDeploymentDone = () => {
 	if ( cookieValue ) {
 		return;
 	}
-	setSurveyCookie( 'has-deployments', 'true', 365 * 24 * 60 * 60 ) /* 1 year */;
-	setSurveyCookie( 'hide-survey', 'true', 7 * 24 * 60 * 60 ) /* 7 days */;
+	setSurveyCookie( 'has-deployments', 'true', 365 * 24 * 60 * 60 ); /* 1 year */
+	setSurveyCookie( 'hide-survey', 'true', 7 * 24 * 60 * 60 ); /* 7 days */
 };
 
 export const shouldShowDeploymentSurvey = () => {

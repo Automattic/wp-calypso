@@ -29,6 +29,36 @@ describe( 'Plugins Utils', () => {
 			const normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			expect( normalizedPlugin.icon ).toEqual( '2x test icon' );
 		} );
+
+		describe( 'with malformed plugin data', () => {
+			test( 'should not throw when the author is not a string', () => {
+				const normalizedPlugin = PluginUtils.normalizePluginData( { author: 42 } );
+				expect( normalizedPlugin.author ).toEqual( 42 );
+				expect( normalizedPlugin.author_name ).toEqual( '' );
+				expect( normalizedPlugin.author_url ).toEqual( '' );
+			} );
+
+			test( 'should not throw when sections is null', () => {
+				const normalizedPlugin = PluginUtils.normalizePluginData( { sections: null } );
+				expect( normalizedPlugin.sections ).toEqual( {} );
+				expect( normalizedPlugin.screenshots ).toBeNull();
+			} );
+
+			test( 'should not throw when compatibility is null', () => {
+				const normalizedPlugin = PluginUtils.normalizePluginData( { compatibility: null } );
+				expect( normalizedPlugin.compatibility ).toEqual( [] );
+			} );
+
+			test( 'should pass ratings through when it is not an object', () => {
+				const normalizedPlugin = PluginUtils.normalizePluginData( { ratings: '5' } );
+				expect( normalizedPlugin.ratings ).toEqual( '5' );
+			} );
+
+			test( 'should use a non-object icons value as the icon', () => {
+				const normalizedPlugin = PluginUtils.normalizePluginData( { icons: 'icon.png' } );
+				expect( normalizedPlugin.icon ).toEqual( 'icon.png' );
+			} );
+		} );
 	} );
 
 	describe( 'getAllowedPluginData', () => {
@@ -58,6 +88,21 @@ describe( 'Plugins Utils', () => {
 				updating: false,
 			};
 			expect( PluginUtils.getAllowedPluginData( plugin ) ).toEqual( plugin );
+		} );
+
+		test( 'should keep is_retired so the detail page can redirect retired products', () => {
+			expect( PluginUtils.getAllowedPluginData( { is_retired: true } ) ).toEqual( {
+				is_retired: true,
+			} );
+			expect( PluginUtils.getAllowedPluginData( { is_retired: false } ) ).toEqual( {
+				is_retired: false,
+			} );
+		} );
+
+		test( 'should not add is_retired when the API omits it', () => {
+			expect( PluginUtils.getAllowedPluginData( { slug: 'developer' } ) ).toEqual( {
+				slug: 'developer',
+			} );
 		} );
 	} );
 

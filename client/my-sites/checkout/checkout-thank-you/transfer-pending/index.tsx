@@ -6,6 +6,7 @@ import Loading from 'calypso/components/loading';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -81,16 +82,31 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ dispatch ] );
 
+	const latestTransfer = React.useRef( transfer );
+	latestTransfer.current = transfer;
+
+	// A client_timeout already in the store when this screen asks for the transfer is an earlier
+	// wait's verdict: the request drops it, and only a timeout stored afterwards ends this wait.
+	const preRequestTransfer = React.useRef( transfer );
+	React.useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		preRequestTransfer.current = latestTransfer.current;
+		dispatch( fetchAtomicTransfer( siteId ) );
+	}, [ siteId, dispatch ] );
+
 	// Redirect based on transfer status
 	const didRedirect = React.useRef( false );
 	React.useEffect( () => {
-		const retryOnError = () => {
+		const redirectWithNotice = ( message: string ) => {
 			if ( didRedirect.current ) {
 				return;
 			}
 
 			dispatch(
-				errorNotice( __( "Sorry, we couldn't process your transfer. Please try again later." ), {
+				errorNotice( message, {
 					id: 'atomic-transfer-error',
 					isPersistent: true,
 					displayOnNextPage: true,
@@ -111,9 +127,23 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 			}
 
 			// If the processing status indicates that there was something wrong.
-			if ( transferStates.ERROR === transfer.status ) {
+			if ( [ transferStates.ERROR, transferStates.REVERTED ].includes( transfer.status ) ) {
 				// Redirect users back to the stats page so they can try again.
-				retryOnError();
+				redirectWithNotice(
+					__( "Sorry, we couldn't process your transfer. Please try again later." )
+				);
+
+				return;
+			}
+
+			if ( transferStates.CLIENT_TIMEOUT === transfer.status ) {
+				if ( transfer !== preRequestTransfer.current ) {
+					redirectWithNotice(
+						__(
+							'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
+						)
+					);
+				}
 
 				return;
 			}

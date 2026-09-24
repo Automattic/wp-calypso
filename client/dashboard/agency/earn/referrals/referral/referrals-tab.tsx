@@ -3,7 +3,6 @@ import {
 	archiveReferralMutation,
 	resendReferralEmailMutation,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,6 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { DataViews, DataViewsCard } from '../../../../components/dataviews';

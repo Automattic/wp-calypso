@@ -7,7 +7,6 @@ import {
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
-	isConciergeSession,
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
@@ -170,12 +169,6 @@ export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
-	return getDomainRegistrations( cart ).some( ( registration ) =>
-		isDomainBeingUsedForPlan( cart, registration.meta )
-	);
-}
-
 export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
@@ -208,10 +201,6 @@ export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProd
  */
 export function hasOnlyRenewalItems( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
-}
-
-export function hasConciergeSession( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isConciergeSession );
 }
 
 /**
@@ -774,15 +763,15 @@ export function shouldBundleDomainWithPlan(
 ): boolean {
 	return Boolean(
 		withPlansOnly &&
-			// not free or a cart item
-			( isDomainRegistration( suggestionOrCartItem ) ||
-				( hasSomeSlug( suggestionOrCartItem ) && isDomainMapping( suggestionOrCartItem ) ) ||
-				( suggestionOrCartItem.domain_name &&
-					! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
-			! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) && // a plan in cart
-			! isNextDomainFree( cart ) && // domain credit
-			! hasPlan( cart ) && // already a plan in cart
-			( ! selectedSite || selectedSite.plan?.product_slug === 'free_plan' )
+		// not free or a cart item
+		( isDomainRegistration( suggestionOrCartItem ) ||
+			( hasSomeSlug( suggestionOrCartItem ) && isDomainMapping( suggestionOrCartItem ) ) ||
+			( suggestionOrCartItem.domain_name &&
+				! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
+		! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) && // a plan in cart
+		! isNextDomainFree( cart ) && // domain credit
+		! hasPlan( cart ) && // already a plan in cart
+		( ! selectedSite || selectedSite.plan?.product_slug === 'free_plan' )
 	); // site has a plan
 }
 
@@ -816,8 +805,8 @@ export function hasToUpgradeToPayForADomain(
 export function isDomainMappingFree( selectedSite: SiteDetails | null | undefined ): boolean {
 	return Boolean(
 		selectedSite?.plan &&
-			isPlan( selectedSite.plan ) &&
-			! isBloggerPlan( selectedSite.plan.product_slug )
+		isPlan( selectedSite.plan ) &&
+		! isBloggerPlan( selectedSite.plan.product_slug )
 	);
 }
 
@@ -826,16 +815,7 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 }
 
 export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
-	return Boolean(
-		flowName &&
-			[
-				'free',
-				'personal-monthly',
-				'premium-monthly',
-				'business-monthly',
-				'ecommerce-monthly',
-			].includes( flowName )
-	);
+	return Boolean( flowName && [ 'free', 'ecommerce-monthly' ].includes( flowName ) );
 };
 
 export function getDomainPriceRule(

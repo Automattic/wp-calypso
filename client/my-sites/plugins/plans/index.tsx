@@ -132,7 +132,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 										a: <ActionPanelLink href="/help/contact" />,
 									},
 								}
-						  )
+							)
 						: translate(
 								'Need some help? Let us help you find the perfect plan for your site. {{a}}Chat now{{/a}} or {{a}}contact our support{{/a}}.',
 								{
@@ -140,7 +140,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 										a: <ActionPanelLink href="/help/contact" />,
 									},
 								}
-						  )
+							)
 				}
 				buttonText={
 					translate( 'Upgrade to %(planName)s', {

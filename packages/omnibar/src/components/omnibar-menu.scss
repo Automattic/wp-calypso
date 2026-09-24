@@ -22,12 +22,21 @@
 		padding-inline: 0;
 	}
 
+	&:not( [data-submenu] ) {
+		min-width: max( 160px, var( --popover-anchor-width, 0px ) );
+
+		@media ( max-width: 600px ) {
+			width: var( --popover-available-width, 100vw );
+			max-width: none;
+		}
+	}
+
 	[role='menuitem'],
 	[role='menuitemradio'],
 	[role='menuitemcheckbox'],
 	.omnibar__menu-static-item {
 		min-height: 42px;
-		padding-block: 8px;
+		padding-block: 4px;
 		padding-inline: 16px;
 		font-size: 16px;
 		line-height: 1.6;

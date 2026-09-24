@@ -141,9 +141,6 @@ describe( 'index', () => {
 			flow.steps.forEach( ( step ) => definedSteps.delete( step ) );
 		} );
 
-		// Remove the `site` step manually since it is used in tests.
-		definedSteps.delete( 'site' );
-
 		// Do not consider the user step as deprecated since there is still a config flag
 		// deciding whether user-social or user is used.
 		definedSteps.delete( 'user' );

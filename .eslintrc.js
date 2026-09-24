@@ -315,6 +315,9 @@ module.exports = {
 					// These files don't have GPL license
 					files: [
 						'./desktop/package.json',
+						'./packages/agenttic-client/package.json',
+						'./packages/agenttic-demo/package.json',
+						'./packages/agenttic-ui/package.json',
 						'./packages/material-design-icons/package.json',
 						'./packages/wpcom-proxy-request/package.json',
 						'./packages/wpcom-xhr-request/package.json',
@@ -567,8 +570,6 @@ module.exports = {
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
 					'__experimentalConfirmDialog',
-					'__experimentalDivider',
-					'__experimentalGrid',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',

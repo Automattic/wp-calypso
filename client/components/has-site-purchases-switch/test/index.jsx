@@ -1,73 +1,51 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
-import { reducer as purchases } from 'calypso/state/purchases/reducer';
+import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import HasSitePurchasesSwitch from '../index';
 
-jest.mock( 'calypso/components/data/query-site-purchases', () => () => <p>Query</p> );
-
 const siteId = 1;
-const trueComponent = <p>True</p>;
-const falseComponent = <p>False</p>;
-const loadingComponent = <p>Loading</p>;
 const props = {
 	siteId,
-	trueComponent,
-	falseComponent,
-	loadingComponent,
+	trueComponent: <p>True</p>,
+	falseComponent: <p>False</p>,
+	loadingComponent: <p>Loading</p>,
 };
 
-const getQueryElt = () => screen.getByText( /query/i );
-const getLoadingElt = () => screen.getByText( /loading/i );
-const getTrueElt = () => screen.getByText( /true/i );
-const getFalseElt = () => screen.getByText( /false/i );
-const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { purchases } } );
+const mockSitePurchases = ( purchases ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/upgrades' )
+		.query( true )
+		.reply( 200, purchases );
 
 describe( 'HasSitePurchasesSwitch', () => {
-	it( 'should render the loading state if data is being fetched', () => {
-		render( <HasSitePurchasesSwitch { ...props } />, {
-			initialState: {
-				purchases: {
-					isFetchingSitePurchases: true,
-				},
-			},
-		} );
-
-		expect( getLoadingElt() ).toBeInTheDocument();
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
-	it( 'should render the loading state and fetch data if data has not been loaded yet', () => {
-		render( <HasSitePurchasesSwitch { ...props } /> );
+	it( 'should render the loading state while the purchases are being fetched', () => {
+		mockSitePurchases( [] );
 
-		expect( getLoadingElt() ).toBeInTheDocument();
-		expect( getQueryElt() ).toBeInTheDocument();
+		renderWithProvider( <HasSitePurchasesSwitch { ...props } /> );
+
+		expect( screen.getByText( /loading/i ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render the correct component if site has purchases', () => {
-		render( <HasSitePurchasesSwitch { ...props } />, {
-			initialState: {
-				purchases: {
-					hasLoadedSitePurchasesFromServer: true,
-					data: [ { blog_id: siteId } ],
-				},
-			},
-		} );
+	it( 'should render the correct component if site has purchases', async () => {
+		mockSitePurchases( [ { ID: 1, blog_id: siteId } ] );
 
-		expect( getTrueElt() ).toBeInTheDocument();
+		renderWithProvider( <HasSitePurchasesSwitch { ...props } /> );
+
+		await waitFor( () => expect( screen.getByText( /true/i ) ).toBeInTheDocument() );
 	} );
 
-	it( 'should render the correct component if site has no purchase', () => {
-		render( <HasSitePurchasesSwitch { ...props } />, {
-			initialState: {
-				purchases: {
-					hasLoadedSitePurchasesFromServer: true,
-					data: [],
-				},
-			},
-		} );
+	it( 'should render the correct component if site has no purchase', async () => {
+		mockSitePurchases( [] );
 
-		expect( getFalseElt() ).toBeInTheDocument();
+		renderWithProvider( <HasSitePurchasesSwitch { ...props } /> );
+
+		await waitFor( () => expect( screen.getByText( /false/i ) ).toBeInTheDocument() );
 	} );
 } );

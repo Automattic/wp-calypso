@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/variables';
+
+// The preview thumbnail is rendered by this app and passed into the modal's
+// `preview` prop, so its styling stays here rather than in the package.
+.site-launch-pre-launch-modal__thumbnail {
+	position: relative;
+	flex-shrink: 0;
+	inline-size: 114px;
+	block-size: 88px;
+	overflow: hidden;
+	border-radius: $radius-medium;
+	background-color: var( --color-neutral-5 );
+
+	// Static placeholder that covers the preview until the iframe has finished
+	// loading. A loading iframe paints an opaque viewport, so the placeholder
+	// must sit on top rather than behind it.
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background-color: var( --color-neutral-5 );
+	}
+
+	&[data-preview-loaded="true"]::before {
+		display: none;
+	}
+}

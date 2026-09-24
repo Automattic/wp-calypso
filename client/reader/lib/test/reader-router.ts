@@ -10,12 +10,12 @@ describe( 'reader-router', () => {
 			const noop = () => {};
 			readerPage( '/reader/conversations', noop );
 			readerPage( '/reader/feeds/:feed/posts/:post', noop );
-			readerPage( '/reader/spaces/:slug/:tab', noop );
+			readerPage( '/reader/shelves/:slug/:tab', noop );
 
 			// Known: exact static route and parameterized routes with real segments.
 			expect( isKnownReaderRoute( '/reader/conversations' ) ).toBe( true );
 			expect( isKnownReaderRoute( '/reader/feeds/123/posts/456' ) ).toBe( true );
-			expect( isKnownReaderRoute( '/reader/spaces/design/discover' ) ).toBe( true );
+			expect( isKnownReaderRoute( '/reader/shelves/design/discover' ) ).toBe( true );
 
 			// Query strings and a trailing slash are ignored when matching.
 			expect( isKnownReaderRoute( '/reader/conversations?ref=x' ) ).toBe( true );
@@ -59,6 +59,19 @@ describe( 'reader-router', () => {
 
 			expect( registry.has( '/reader/strict' ) ).toBe( true );
 			expect( registry.has( '/reader/strict/' ) ).toBe( false );
+		} );
+
+		it( 'exposes the matched route pattern after navigation', () => {
+			const router = page.create();
+			const registry = createRouteRegistry( router );
+			const pattern = '/reader/feeds/:feed/posts/:post';
+
+			registry.page( pattern, () => {} );
+			router.start( { dispatch: false, click: false, popstate: false } );
+
+			router.show( '/reader/feeds/123/posts/456?ref=test' );
+
+			expect( router.currentRoutePattern ).toBe( pattern );
 		} );
 	} );
 } );

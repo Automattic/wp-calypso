@@ -30,7 +30,7 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesignNewDescription: boolean;
 	/**
-	 * When true, show the differentiator header (4 bullet points).
+	 * When true, show the differentiator header (4 bullet points). Signup only.
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
@@ -38,11 +38,13 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesignFeatures: boolean;
 	/**
-	 * When true, show the Enterprise/VIP card at the bottom.
+	 * When true, show the Enterprise/VIP card at the bottom. Signup only; the
+	 * logged-in plans page renders it as a regular column instead.
 	 */
 	showEnterpriseBottomCard: boolean;
 	/**
-	 * When true, show the WooCommerce card at the bottom.
+	 * When true, show the WooCommerce card at the bottom. Signup only; the
+	 * logged-in plans page renders it as a regular column instead.
 	 */
 	showWooCommerceBottomCard: boolean;
 	/**
@@ -110,10 +112,13 @@ function usePlansGridRedesignExperiment( {
 		variant,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
-		showDifferentiatorHeader: usePlansGridRedesign && variant === 'six_plan_new_features',
+		showDifferentiatorHeader:
+			usePlansGridRedesign && isInSignup && variant === 'six_plan_new_features',
 		usePlansGridRedesignFeatures: usePlansGridRedesign && variant === 'six_plan_new_features',
-		showEnterpriseBottomCard: usePlansGridRedesign && variant === 'five_plan_new_description',
-		showWooCommerceBottomCard: usePlansGridRedesign && variant === 'four_plan_new_description',
+		showEnterpriseBottomCard:
+			usePlansGridRedesign && isInSignup && variant === 'five_plan_new_description',
+		showWooCommerceBottomCard:
+			usePlansGridRedesign && isInSignup && variant === 'four_plan_new_description',
 		isExperimentEligible: isEligible,
 	};
 }

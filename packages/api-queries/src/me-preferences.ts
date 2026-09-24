@@ -8,16 +8,22 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-color-scheme': 'light',
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
-	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'wordpress-labs-opt-in': { value: 'unset', updated_at: '' },
+	'wordpress-labs-excluded-sites': [],
 	'account-recovery-interstitial-snoozed-until': 0,
 	'account-recovery-interstitial-dismiss-count': 0,
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'reader-seen-posts': true,
 	'sites-landing-page': {
 		useSitesAsLandingPage: false,
+		updatedAt: 0,
+	},
+	'logged-in-homepage': {
+		show: true,
 		updatedAt: 0,
 	},
 	'achievements-visibility': 'private',
@@ -26,6 +32,13 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
+	'a4a-dashboard-pd-not-approved-popover': false,
+	'a4a-marketplace-referral-guide-seen': false,
+	'a4a-marketplace-term-pricing': 'yearly',
+	'notifications-layout-style': 'simplified',
+	'notifications-view-settings-seen': false,
+	'pressable-limit-notification-dismissed': 0,
+	'a4a-agency-approval-notice-dismissed': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -33,18 +46,26 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'hosting-dashboard-color-scheme': 'color',
 	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
 	'hosting-dashboard-opt-in': 'optin',
-	'hosting-dashboard-opt-in-welcome-modal-dismissed': 'optwelc',
 	'hosting-dashboard-welcome-notice-dismissed': 'welcome',
+	'wordpress-labs-opt-in': 'wplabin',
+	'wordpress-labs-excluded-sites': 'wplabex',
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
+	'reader-seen-posts': 'rdseen',
 	'sites-landing-page': 'stland',
+	'logged-in-homepage': 'lohp',
 	'achievements-visibility': 'achvis',
 	'achievements-global-notifications': 'achnot',
 	'reader-profile-posts-visibility': 'postvis',
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
+	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
+	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-marketplace-term-pricing': 'a4aterm',
+	'pressable-limit-notification-dismissed': 'prslim',
+	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
@@ -92,9 +113,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 			return fetchedValue === undefined
 				? defaultValues[ preferenceName ]
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
-				  // as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
-				  // the query is used in the component.
-				  ( fetchedValue as Required< UserPreferences >[ P ] );
+					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
+					// the query is used in the component.
+					( fetchedValue as Required< UserPreferences >[ P ] );
 		},
 	} );
 

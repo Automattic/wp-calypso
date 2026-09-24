@@ -198,7 +198,7 @@ function McpComponent( { path } ) {
 									decoration={
 										<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
 									}
-									badges={ [ { text: mcpAddSiteBadgeText } ] }
+									badges={ [ { text: mcpAddSiteBadgeText, intent: 'draft' } ] }
 									density="medium"
 								/>
 							) }
@@ -230,8 +230,8 @@ function McpComponent( { path } ) {
 							}
 							badges={
 								disabledSiteCount > 0
-									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
-									: [ { text: translate( 'No exceptions' ) } ]
+									? [ { text: mcpSiteExceptionsBadgeText, intent: 'low' } ]
+									: [ { text: translate( 'No exceptions' ), intent: 'draft' } ]
 							}
 							density="medium"
 						/>

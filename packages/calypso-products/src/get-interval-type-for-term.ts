@@ -5,8 +5,11 @@ import {
 	TERM_MONTHLY,
 	TERM_TRIENNIALLY,
 } from './constants';
+import type { UrlFriendlyTermType } from './constants/terms';
 
-export function getIntervalTypeForTerm( term: string ): string | null {
+export function getIntervalTypeForTerm(
+	term: string | null | undefined
+): UrlFriendlyTermType | null {
 	switch ( term ) {
 		case TERM_MONTHLY:
 			return 'monthly';

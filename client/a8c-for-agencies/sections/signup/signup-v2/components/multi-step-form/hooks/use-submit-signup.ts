@@ -1,15 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
-import { useCallback, useEffect } from 'react';
-import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
-import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useCallback } from 'react';
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
+import useAcquisitionProps from 'calypso/a8c-for-agencies/sections/signup/hooks/use-acquisition-props';
 import { saveSignupDataToLocalStorage } from 'calypso/a8c-for-agencies/sections/signup/lib/signup-data-to-local-storage';
 import { useHandleWPCOMRedirect } from 'calypso/a8c-for-agencies/sections/signup/signup-form/hooks/use-handle-wpcom-redirect';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIError } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -22,11 +18,10 @@ export default function useSubmitSignup() {
 
 	const queryParams = new URLSearchParams( window.location.search );
 	const referer = queryParams.get( 'ref' );
+	const acquisitionProps = useAcquisitionProps();
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const shouldRedirectToWPCOM = ! userLoggedIn;
 	const handleWPCOMRedirect = useHandleWPCOMRedirect();
-
-	const currentAgency = useSelector( getActiveAgency );
 
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
@@ -37,22 +32,15 @@ export default function useSubmitSignup() {
 		},
 	} );
 
-	useEffect( () => {
-		if ( currentAgency ) {
-			if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
-				page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
-			} else {
-				page.redirect( A4A_OVERVIEW_LINK );
-			}
-		}
-	}, [ createAgency.isSuccess, currentAgency, dispatch ] );
-
 	return useCallback(
 		async ( payload: AgencyDetailsSignupPayload ) => {
 			dispatch( removeNotice( notificationId ) );
 			const data = {
 				...payload,
 				referer,
+				// The WPCOM round trip returns to a URL without the acquisition params,
+				// so they travel with the payload for the event we record once the user is back.
+				acquisition: acquisitionProps,
 			};
 
 			if ( shouldRedirectToWPCOM ) {
@@ -85,9 +73,17 @@ export default function useSubmitSignup() {
 					state: payload.state,
 					referer,
 					phone_number: payload.phoneNumber ?? '',
+					...acquisitionProps,
 				} )
 			);
 		},
-		[ dispatch, shouldRedirectToWPCOM, createAgency, referer, handleWPCOMRedirect ]
+		[
+			dispatch,
+			shouldRedirectToWPCOM,
+			createAgency,
+			referer,
+			handleWPCOMRedirect,
+			acquisitionProps,
+		]
 	);
 }

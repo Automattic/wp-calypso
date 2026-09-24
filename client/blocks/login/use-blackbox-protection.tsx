@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -18,10 +19,17 @@ export interface BlackboxProtection {
 interface UseBlackboxProtectionOptions {
 	/**
 	 * Feature flag gating Blackbox for this surface. Form is only protected when
-	 * this flag is enabled and a `blackbox_api_key` is configured. When disabled,
-	 * `getSessionId` is a no-op so no SDK load/collect happens.
+	 * this flag is enabled and that surface's public key is configured. Signup
+	 * surfaces use `blackbox_signup_api_key`; other surfaces use `blackbox_api_key`.
+	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
+	/**
+	 * Keep Blackbox off while the host form is mounted but not the active
+	 * surface (e.g. hidden behind another step). No collect happens and no
+	 * challenge can render until this flips back to false.
+	 */
+	suspended?: boolean;
 }
 
 const noopGetSessionId = () => Promise.resolve( undefined );
@@ -31,23 +39,41 @@ const noopGetSessionId = () => Promise.resolve( undefined );
  */
 export function useBlackboxProtection( {
 	feature,
+	suspended,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
+	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
-		!! config( 'blackbox_api_key' ) &&
-		config.isEnabled( 'blackbox' ) &&
-		config.isEnabled( feature );
+		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
+
+	// Re-block during render when a suspended surface re-enables: the challenge
+	// only re-blocks from a post-paint effect, which would leave the submit
+	// button clickable for a frame.
+	const prevEnabled = useRef( enabled );
+	if ( prevEnabled.current !== enabled ) {
+		prevEnabled.current = enabled;
+		setIsSubmitBlocked( enabled );
+	}
 
 	const handleSubmitBlockedChange = useCallback( ( isBlocked: boolean ) => {
 		setIsSubmitBlocked( isBlocked );
 	}, [] );
 
+	const getSessionId = useCallback(
+		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
+		[ apiKey ]
+	);
+
 	return {
 		isSubmitBlocked,
 		challenge: (
-			<BlackboxChallenge enabled={ enabled } onSubmitBlockedChange={ handleSubmitBlockedChange } />
+			<BlackboxChallenge
+				enabled={ enabled }
+				apiKey={ apiKey }
+				onSubmitBlockedChange={ handleSubmitBlockedChange }
+			/>
 		),
-		getSessionId: enabled ? getBlackboxSessionId : noopGetSessionId,
+		getSessionId: enabled ? getSessionId : noopGetSessionId,
 		reset: () => {
 			try {
 				window.Blackbox?.reset?.();

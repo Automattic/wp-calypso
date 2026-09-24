@@ -5,11 +5,9 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	connections,
 	layout,
-	marketingTools,
 	redirectConnections,
 	redirectDefaultConnectionsDomain,
-	redirectMarketingTools,
-	redirectMarketingBusinessTools,
+	redirectHome,
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
@@ -25,12 +23,18 @@ export default function () {
 		window.location.replace( localizeUrl( 'https://wordpress.com/support/courses/seo/' ) );
 	} );
 
+	// The Marketing page is gone, so everything that pointed at it lands on My
+	// Home instead. These are registered before '/marketing/:domain' so the
+	// literal segments win over the site-slug parameter.
+	page( '/marketing/tools', redirectHome );
+	page( '/marketing/tools/:domain', redirectHome );
+	page( '/marketing/business-tools/:domain', redirectHome );
+	page( '/marketing', redirectHome );
+
 	const paths = [
-		'/marketing',
 		'/marketing/activitypub',
 		'/marketing/connections',
 		'/marketing/sharing-buttons',
-		'/marketing/tools',
 		'/marketing/traffic',
 		'/sharing',
 		'/sharing/buttons',
@@ -43,9 +47,8 @@ export default function () {
 	page( '/sharing/:domain', redirectConnections );
 	page( '/sharing/buttons/:domain', redirectSharingButtons );
 
-	page( '/marketing/:domain', redirectMarketingTools );
+	page( '/marketing/:domain', redirectHome );
 	page( '/marketing/activitypub/:domain', siteSelection, activitypub );
-	page( '/marketing/business-tools/:domain', redirectMarketingBusinessTools );
 
 	page(
 		'/marketing/connections/:domain',
@@ -71,16 +74,6 @@ export default function () {
 		siteSelection,
 		navigation,
 		sharingButtons,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/tools/:domain',
-		siteSelection,
-		navigation,
-		marketingTools,
 		layout,
 		makeLayout,
 		clientRender

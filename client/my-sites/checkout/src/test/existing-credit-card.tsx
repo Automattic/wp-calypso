@@ -93,12 +93,12 @@ function mockTaxLocationEndpoint( { isSet = false } = {} ) {
 						is_tax_info_set: true,
 						tax_country_code: 'US',
 						tax_postal_code: '10001',
-				  }
+					}
 				: {
 						is_tax_info_set: false,
 						tax_country_code: '',
 						tax_postal_code: '',
-				  }
+					}
 		);
 }
 

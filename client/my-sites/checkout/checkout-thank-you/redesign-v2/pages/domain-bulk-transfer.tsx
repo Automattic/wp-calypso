@@ -39,7 +39,7 @@ export default function DomainBulkTransferThankYou( {
 		transferSite
 			? getDomainsBySiteId( state, blogIds[ 0 ] ).find(
 					( domainObject ) => domainObject.domain === purchases[ 0 ].meta
-			  )
+				)
 			: null
 	);
 

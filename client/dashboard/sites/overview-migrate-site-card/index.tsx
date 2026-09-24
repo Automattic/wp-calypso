@@ -10,8 +10,8 @@ export default function MigrateSiteCard( { site }: { site: Site } ) {
 		<OverviewCard
 			icon={ shuffle }
 			title={ __( 'Migrate' ) }
-			heading={ __( 'Migrate site' ) }
-			description={ __( 'Bring your site to WordPress.com.' ) }
+			heading={ __( 'Migrate another site' ) }
+			description={ __( 'Move a site from another host to WordPress.com.' ) }
 			link={ addQueryArgs( wpcomLink( '/setup/site-migration' ), {
 				siteSlug: site.slug,
 			} ) }

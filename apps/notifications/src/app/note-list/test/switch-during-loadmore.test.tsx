@@ -22,6 +22,7 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	timestamp: new Date( Date.UTC( 2026, 5, 1, 0, 0, id ) ).toISOString(),
 	title: `${ label } title`,
 	subject: [ { text: label, ranges: [], media: [] } ],
+	body: [],
 } );
 
 const page = ( ids: number[] ) => ids.map( ( id ) => makeNote( id, `note ${ id }` ) );

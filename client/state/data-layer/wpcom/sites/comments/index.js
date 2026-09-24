@@ -180,7 +180,7 @@ const announceFailure =
 			site && site.name
 				? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
 						args: { siteName: site.name },
-				  } )
+					} )
 				: translate( 'Failed to retrieve comments for your site' );
 
 		dispatch( errorNotice( error ) );
@@ -201,7 +201,7 @@ export const editComment = ( action ) => ( dispatch, getState ) => {
 					author_url: comment.authorUrl,
 					content: comment.commentContent,
 					date: comment.commentDate,
-			  }
+				}
 			: comment;
 
 	dispatch(

@@ -6,10 +6,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { MouseEventHandler, ReactNode } from 'react';
 import type { ZendeskConversation } from '../../types';
 
-const mockGetActiveSessionId = jest.fn();
+const mockGetTabSessionId = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseGetZendeskConversations = jest.fn();
+let mockZendeskSmoochIntegrationKey: string | undefined = 'woo';
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -58,12 +59,13 @@ jest.mock( '../../contexts', () => ( {
 			agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
 			sessionId: 'ai-chat-123',
 		},
-		getActiveSessionId: mockGetActiveSessionId,
-		zendeskSmoochIntegrationKey: 'woo',
+		getTabSessionId: mockGetTabSessionId,
+		zendeskSmoochIntegrationKey: mockZendeskSmoochIntegrationKey,
 	} ),
 } ) );
 
 import { EscalationButton, findConversationByChatSessionId } from '../escalation-button';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 
 function createConversation(
 	id: string,
@@ -81,7 +83,9 @@ function createConversation(
 describe( 'EscalationButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockGetActiveSessionId.mockReturnValue( 'ai-chat-123' );
+		setLoadedProviderIds( [ 'woocommerce-ai' ] );
+		mockZendeskSmoochIntegrationKey = 'woo';
+		mockGetTabSessionId.mockReturnValue( 'ai-chat-123' );
 		mockUseGetZendeskConversations.mockReturnValue( {
 			conversations: [],
 			isLoading: false,
@@ -92,6 +96,19 @@ describe( 'EscalationButton', () => {
 			pagination: {},
 			sessionId: 'ai-chat-123',
 		} );
+	} );
+
+	afterEach( () => {
+		setLoadedProviderIds( undefined );
+	} );
+
+	it( 'hides the Zendesk handoff outside the Woo AI provider', () => {
+		setLoadedProviderIds( [ 'jetpack-ai-sidebar' ] );
+
+		render( <EscalationButton messageId="message-1" /> );
+
+		expect( mockUseGetZendeskConversations ).toHaveBeenCalledWith( false );
+		expect( screen.queryByText( 'Switch to Happiness Engineer' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues an existing Zendesk conversation for the active AI chat', () => {

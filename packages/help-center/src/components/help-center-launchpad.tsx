@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
-import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useLaunchpad } from '@automattic/launchpad';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';

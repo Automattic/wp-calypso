@@ -1,35 +1,144 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+@mixin site-generation-place( $block-start, $inline-start, $width, $height ) {
+	inset-block-start: $block-start;
+	inset-inline-start: $inline-start;
+	width: $width;
+	height: $height;
+}
+
 .site-generation {
 	// Gutenberg editor-chrome colors with no color-studio token equivalent.
-	--site-generation-color-frame: #1e1e1e;
 	--site-generation-color-surface: #f0f0f0;
 	--site-generation-color-surface-muted: #e2e4e7;
-	--site-generation-color-notice-surface: #24272b;
+	// Match the docked Agents Manager shell and its dark-mode palette.
+	--site-generation-color-frame: #1e1e1e;
+	--site-generation-color-sidebar-foreground: var( --studio-white );
+	--site-generation-color-notice-surface: #2f2f2f;
 	--site-generation-color-frame-muted: #8f8f8f;
-	--site-generation-sidebar-width: 350px;
 	position: fixed;
 	z-index: 1000000;
 	inset: 0;
 	display: flex;
+	flex-direction: column;
 	box-sizing: border-box;
-	width: 100vw;
+	width: 100%;
 	height: 100vh;
-	min-height: 620px;
+	height: 100dvh;
+	min-height: 0;
 	background: var( --site-generation-color-frame );
 	color: var( --site-generation-color-frame );
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-	overflow: hidden;
+	font-family: $sans;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior-y: contain;
+
+	@include break-medium {
+		flex-direction: row;
+		overflow: hidden;
+	}
 }
 
+// The canvas palette. Untinted, every value is the design token it replaces;
+// a tap on the preview switches to OKLCH colors sharing one hue, which keeps
+// the accent at the blue's intensity and gives the grays an even wash. The
+// base colour is whatever was on screen at the tap, so the reveal layer can
+// sweep the new hue over it; once the tint fades, everything is back to the
+// tokens and the layer goes away.
 .site-generation__editor {
+	--site-generation-canvas-accent: var( --studio-wordpress-blue );
+	--site-generation-canvas-base: var( --studio-gray-0 );
+	--site-generation-canvas-background: var( --studio-gray-0 );
+	--site-generation-canvas-placeholder: var( --site-generation-color-surface );
+	--site-generation-canvas-line: var( --studio-gray-5 );
+	--site-generation-canvas-heading: var( --studio-gray-90 );
+	--site-generation-canvas-mark: var( --studio-gray-80 );
+	--site-generation-canvas-text: var( --studio-gray-60 );
+	// Colours inside the canvas change faster than the background reveal, so
+	// they have caught up by the time the circle has passed over them. The
+	// drift back to the default palette is slow.
+	--site-generation-tint-duration: 0.4s;
+	--site-generation-tint-easing: ease-out;
+	position: relative;
+	isolation: isolate;
 	display: flex;
-	flex: 1;
+	flex: none;
 	flex-direction: column;
+	width: 100%;
 	min-width: 0;
-	margin-block: 16px;
-	margin-inline: 16px 8px;
-	background: var( --site-generation-color-surface );
-	border-radius: 8px;
-	overflow: hidden;
+	min-height: 0;
+	background: var( --site-generation-canvas-base );
+	overflow: visible;
+
+	@include break-medium {
+		flex: 1;
+		width: auto;
+		overflow: hidden;
+	}
+
+	&[data-tinted='true'] {
+		--site-generation-canvas-accent: oklch( 55% 0.2 var( --site-generation-hue ) );
+		--site-generation-canvas-background: oklch( 97.5% 0.012 var( --site-generation-hue ) );
+		--site-generation-canvas-placeholder: oklch( 95.5% 0.012 var( --site-generation-hue ) );
+		--site-generation-canvas-line: oklch( 89% 0.02 var( --site-generation-hue ) );
+		--site-generation-canvas-heading: oklch( 30% 0.05 var( --site-generation-hue ) );
+		--site-generation-canvas-mark: oklch( 42% 0.05 var( --site-generation-hue ) );
+		--site-generation-canvas-text: oklch( 52% 0.05 var( --site-generation-hue ) );
+	}
+
+	&[data-tint-fading='true'] {
+		--site-generation-tint-duration: 4s;
+		--site-generation-tint-easing: ease-in-out;
+	}
+}
+
+.site-generation__tint {
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background: var( --site-generation-canvas-background );
+	pointer-events: none;
+	transition: background-color var( --site-generation-tint-duration )
+		var( --site-generation-tint-easing );
+	animation: site-generation-tint-reveal 0.9s cubic-bezier( 0.22, 1, 0.36, 1 ) both;
+}
+
+@keyframes site-generation-tint-reveal {
+	from {
+		clip-path: circle( 0 at 50% 50% );
+	}
+
+	to {
+		clip-path: circle( 75% at 50% 50% );
+	}
+}
+
+.site-generation__brand {
+	display: flex;
+	flex-wrap: wrap;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding-block: calc( 20px + env( safe-area-inset-top ) ) 20px;
+	padding-inline: 20px;
+	color: var( --site-generation-color-frame );
+
+	@include break-medium {
+		margin-block-end: 24px;
+		padding: 20px 24px 0;
+	}
+}
+
+.site-generation__brand-logo {
+	display: block;
+	width: 134px;
+	height: 18px;
+	max-width: 100%;
 }
 
 .site-generation__wordpress-mark {
@@ -39,228 +148,621 @@
 }
 .site-generation__canvas {
 	display: flex;
+	flex: none;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
 	width: 100%;
-	height: 100%;
-	padding: 32px clamp( 20px, 4vw, 64px );
-	overflow: auto;
+	min-height: 0;
+	padding: 24px 20px 28px;
+	overflow: visible;
+
+	@include break-medium {
+		flex: 1;
+		padding: 32px clamp( 20px, 4vw, 64px );
+		overflow: auto;
+	}
 }
 
 .site-generation__waiting {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: min( 720px, 100% );
+	width: min( 800px, 100% );
 	text-align: center;
-}
 
-.site-generation__build-visual {
-	position: relative;
-	width: min( 580px, 100% );
-	margin-block-end: 34px;
-}
-
-.site-generation__build-status {
-	position: absolute;
-	z-index: 2;
-	inset-block-start: -16px;
-	left: 50%;
-	display: flex;
-	align-items: center;
-	gap: 9px;
-	max-width: calc( 100% - 32px );
-	padding: 8px 12px;
-	transform: translateX( -50% );
-	border: 1px solid var( --studio-gray-5 );
-	border-radius: 4px;
-	background: var( --studio-white );
-	box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.08 );
-	color: var( --studio-gray-60 );
-	font-size: 12px;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.site-generation__activity-grid {
-	display: grid;
-	grid-template-columns: repeat( 3, 3px );
-	gap: 2px;
-}
-
-.site-generation__activity-dot {
-	width: 3px;
-	height: 3px;
-	background: var( --studio-gray-50 );
-	animation: site-generation-dot-pulse 1.2s ease-in-out infinite;
-
-	@for $index from 1 through 9 {
-		&:nth-child( #{ $index } ) {
-			animation-delay: #{( $index - 1 ) * 0.08}s;
-		}
+	@include break-medium {
+		transform: translateY( clamp( -36px, -3vh, -20px ) );
 	}
 }
 
-.site-generation__live-dot {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: var( --studio-green-40 );
-	animation: site-generation-live-pulse 1.6s ease-out infinite;
+// The stage sets the height every frame shares: its aspect ratio derives the
+// height from the width, and the width is capped by the container, by an
+// absolute maximum, and by the viewport height (expressed as a width through
+// the same ratio). The wide frame fills the stage; the mobile frame keeps the
+// stage height at 9:16, which works out to the fraction of the stage width
+// below. Narrow viewports use a squarer stage so both frames stay legible.
+.site-generation__build-visual {
+	--site-generation-mobile-frame-width: calc( 100% * 27 / 64 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: min( 100%, calc( 40vh * 4 / 3 ) );
+	aspect-ratio: 4 / 3;
+	margin-block-end: 24px;
+
+	@include break-medium {
+		--site-generation-mobile-frame-width: calc( 100% * 81 / 256 );
+		width: min( 100%, calc( 480px * 16 / 9 ), calc( 44vh * 16 / 9 ) );
+		aspect-ratio: 16 / 9;
+		margin-block-end: 40px;
+	}
 }
 
+// The frame's scale is the product of two factors so the hover lift and the
+// morph dip compose instead of overriding each other. The pointer tilt lives
+// on `transform` with its own short transition, and the parallax offsets it
+// sets are read by the atoms below.
 .site-generation__page-preview {
+	--site-generation-morph-easing: cubic-bezier( 0.85, 0, 0.15, 1 );
+	--site-generation-settle-duration: calc( var( --site-generation-morph-duration ) / 2 );
+	--site-generation-settle-easing: cubic-bezier( 0.33, 1, 0.68, 1 );
+	--site-generation-shadow-rest: 0 24px 64px rgba( 0, 0, 0, 0.08 ), 0 2px 8px rgba( 0, 0, 0, 0.04 );
+	--site-generation-lift: 1;
+	--site-generation-dip: 1;
+	--site-generation-press: 1;
+	--site-generation-scale-duration: var( --site-generation-settle-duration );
+	--site-generation-scale-easing: var( --site-generation-settle-easing );
+	--site-generation-shadow-duration: var( --site-generation-settle-duration );
+	--site-generation-tilt-x: 0deg;
+	--site-generation-tilt-y: 0deg;
+	--site-generation-parallax-x: 0;
+	--site-generation-parallax-y: 0;
 	position: relative;
 	box-sizing: border-box;
 	width: 100%;
-	aspect-ratio: 16 / 9;
-	border: 1px solid var( --studio-gray-10 );
-	border-radius: 4px;
+	height: 100%;
+	border-radius: 8px;
 	background: var( --studio-white );
-	box-shadow: 0 12px 32px rgba( 0, 0, 0, 0.08 );
+	box-shadow: var( --site-generation-shadow-rest );
 	overflow: hidden;
+	scale: calc(
+		var( --site-generation-lift ) * var( --site-generation-dip ) * var( --site-generation-press )
+	);
+	transform: perspective( 1200px ) rotateX( var( --site-generation-tilt-x ) )
+		rotateY( var( --site-generation-tilt-y ) );
+	transition:
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		border-radius var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		box-shadow var( --site-generation-shadow-duration ) var( --site-generation-settle-easing ),
+		scale var( --site-generation-scale-duration ) var( --site-generation-scale-easing ),
+		transform 100ms ease-out;
+	animation: site-generation-enter 0.9s cubic-bezier( 0.22, 1, 0.36, 1 ) backwards;
+
+	&[data-frame='mobile'] {
+		width: var( --site-generation-mobile-frame-width );
+		border-radius: 16px;
+	}
+
+	// Dips while the atoms travel, then settles back once they land.
+	&[data-morphing='true'] {
+		--site-generation-dip: 0.94;
+	}
+}
+
+@media ( hover: hover ) {
+	.site-generation__page-preview:hover {
+		--site-generation-lift: 1.03;
+		box-shadow:
+			0 48px 96px rgba( 0, 0, 0, 0.14 ),
+			0 4px 12px rgba( 0, 0, 0, 0.05 );
+	}
+}
+
+// Pressing slams the frame onto the canvas: it bounces inwards past its held
+// size, loses its shadow, and the parallax flattens for as long as the pointer
+// is down. Releasing springs it back past its resting size before settling.
+// These sit after the hover rules so the held state wins while hovered.
+.site-generation__page-preview[data-press='down'] {
+	--site-generation-press: 0.92;
+	--site-generation-scale-duration: 220ms;
+	--site-generation-scale-easing: cubic-bezier( 0.34, 1.56, 0.64, 1 );
+	--site-generation-shadow-duration: 150ms;
+	box-shadow: none;
+}
+
+.site-generation__page-preview[data-press='down']
+	.site-generation__preview-bar
+	.site-generation__wordpress-mark,
+.site-generation__page-preview[data-press='down'] .site-generation__preview-nav-item,
+.site-generation__page-preview[data-press='down'] .site-generation__preview-media,
+.site-generation__page-preview[data-press='down'] .site-generation__preview-line,
+.site-generation__page-preview[data-press='down'] .site-generation__preview-card {
+	--site-generation-depth: 0;
+}
+
+.site-generation__page-preview[data-press='up'] {
+	--site-generation-scale-duration: 550ms;
+	--site-generation-scale-easing: cubic-bezier( 0.34, 1.56, 0.64, 1 );
+}
+
+// The copy under the frame gets shoved down by the slam and springs back with
+// it, on the same curves and durations as the frame's press states.
+.site-generation__waiting-copy {
+	transition: translate 550ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
+}
+
+.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] )
+	.site-generation__waiting-copy {
+	translate: 0 14px;
+	transition-duration: 220ms;
+}
+
+// The description travels a little less than the title, closing the gap
+// between them while pressed.
+.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] )
+	.site-generation__waiting-description {
+	translate: 0 -4px;
+	transition-duration: var( --site-generation-tint-duration ), 220ms;
+}
+
+// Every wireframe atom is positioned in percentages of the frame, so a layout
+// is one block of geometry per atom (further down) and the atoms tween between
+// layouts. Heights stay comparable across frames because every frame shares
+// the stage height.
+.site-generation__preview-bar,
+.site-generation__preview-media,
+.site-generation__preview-line,
+.site-generation__preview-card {
+	--site-generation-morph-delay: 0s;
+	position: absolute;
+	box-sizing: border-box;
+	transition:
+		inset-block-start var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		inset-inline-start var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		height var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		padding-inline-start var( --site-generation-morph-duration )
+			var( --site-generation-morph-easing ) var( --site-generation-morph-delay ),
+		padding-inline-end var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		border-radius var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		opacity var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		translate 100ms ease-out,
+		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+}
+
+// Parallax: the content floats as one plane above the page under the pointer,
+// the header mark and pills hover just above it, and media that runs to the
+// frame edge sits flat on it (depth 0).
+.site-generation__preview-bar .site-generation__wordpress-mark,
+.site-generation__preview-nav-item,
+.site-generation__preview-media,
+.site-generation__preview-line,
+.site-generation__preview-card {
+	--site-generation-depth: 0.7;
+	translate: calc( var( --site-generation-parallax-x ) * var( --site-generation-depth ) )
+		calc( var( --site-generation-parallax-y ) * var( --site-generation-depth ) );
 }
 
 .site-generation__preview-bar {
+	inset-block-start: 0;
+	inset-inline-start: 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 17%;
-	padding: 0 5%;
-	border-block-end: 1px solid var( --site-generation-color-surface-muted );
+	width: 100%;
+	height: 14%;
+	padding-inline: 3.5% 5%;
 }
 
+.site-generation__page-preview[data-frame='mobile'] .site-generation__preview-bar {
+	height: 8%;
+	padding-inline: 5%;
+}
+
+// Sized against the bar so the mark scales with the frame on small viewports.
 .site-generation__preview-bar .site-generation__wordpress-mark {
-	width: 18px;
-	height: 18px;
-	color: var( --studio-gray-80 );
+	width: auto;
+	height: 57%;
+	--site-generation-depth: 0.2;
+	color: var( --site-generation-canvas-mark );
+	transition:
+		height var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		translate 100ms ease-out,
+		color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+}
+
+.site-generation__page-preview[data-frame='desktop']
+	.site-generation__preview-bar
+	.site-generation__wordpress-mark {
+	height: 40%;
 }
 
 .site-generation__preview-nav {
 	display: flex;
-	gap: 12px;
 }
 
 .site-generation__preview-nav-item {
+	--site-generation-depth: 0.2;
 	display: block;
 	width: 32px;
 	height: 5px;
+	margin-inline-start: 12px;
 	border-radius: 4px;
-	background: var( --studio-gray-5 );
+	background: var( --site-generation-canvas-line );
+	transition:
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		margin-inline-start var( --site-generation-morph-duration )
+			var( --site-generation-morph-easing ),
+		opacity var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		translate 100ms ease-out,
+		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
 
-.site-generation__preview-content {
-	display: grid;
-	grid-template-columns: 1fr 0.8fr;
-	gap: 8%;
-	align-items: center;
-	height: 57%;
-	padding: 4% 7%;
+.site-generation__page-preview[data-frame='mobile']
+	.site-generation__preview-nav-item.is-secondary {
+	width: 0;
+	margin-inline-start: 0;
+	opacity: 0;
 }
 
-.site-generation__preview-copy {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 7px;
+.site-generation__preview-media {
+	border-radius: 8px;
+	background: var( --site-generation-canvas-placeholder );
 }
 
 .site-generation__preview-line {
 	display: block;
 	border-radius: 3px;
-	background: var( --site-generation-color-surface-muted );
+	background: var( --site-generation-canvas-line );
 }
 
-.site-generation__preview-line.is-eyebrow {
-	width: 25%;
-	height: 5px;
-	margin-block-end: 3px;
-	background: var( --studio-blue-50 );
+.site-generation__preview-line.is-eyebrow,
+.site-generation__preview-line.is-button {
+	background: var( --site-generation-canvas-accent );
 }
 
-.site-generation__preview-line.is-heading {
-	width: 92%;
-	height: 15px;
-	background: var( --studio-gray-80 );
-}
-
-.site-generation__preview-line.is-short {
-	width: 67%;
-}
-
-.site-generation__preview-line.is-copy {
-	width: 82%;
-	height: 6px;
-	margin-block-start: 5px;
+.site-generation__preview-line.is-heading,
+.site-generation__preview-line.is-subheading {
+	background: var( --site-generation-canvas-heading );
 }
 
 .site-generation__preview-line.is-button {
-	width: 56px;
-	height: 18px;
-	margin-block-start: 6px;
-	background: var( --studio-blue-50 );
-}
-
-.site-generation__preview-media {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 80%;
 	border-radius: 4px;
-	background: var( --site-generation-color-surface );
-	color: var( --studio-gray-20 );
-}
-
-.site-generation__preview-media .site-generation__wordpress-mark {
-	width: 28px;
-	height: 28px;
-}
-
-.site-generation__preview-cards {
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	gap: 3%;
-	height: 26%;
-	padding: 0 7% 5%;
 }
 
 .site-generation__preview-card {
-	border-radius: 4px 4px 0 0;
-	background: var( --site-generation-color-surface );
+	display: block;
+	border-radius: 4px;
+	background: var( --site-generation-canvas-placeholder );
 }
 
-.site-generation__preview-nav-item,
-.site-generation__preview-line,
-.site-generation__preview-media,
-.site-generation__preview-card {
-	animation: site-generation-shimmer 2.8s ease-in-out infinite;
+// A short stagger so the page reads as re-composing itself, top to bottom.
+.site-generation__preview-line.is-heading {
+	--site-generation-morph-delay: 40ms;
 }
 
-.site-generation__preview-scan {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: -22%;
-	width: 18%;
-	background: linear-gradient( 90deg, transparent, rgba( 56, 88, 233, 0.1 ), transparent );
-	transform: skewX( -12deg );
-	animation: site-generation-scan 3.4s ease-in-out infinite;
+.site-generation__preview-line.is-subheading {
+	--site-generation-morph-delay: 80ms;
+}
+
+.site-generation__preview-line.is-copy,
+.site-generation__preview-card.is-first {
+	--site-generation-morph-delay: 120ms;
+}
+
+.site-generation__preview-line.is-copy-short,
+.site-generation__preview-card.is-second {
+	--site-generation-morph-delay: 160ms;
+}
+
+.site-generation__preview-line.is-button,
+.site-generation__preview-card.is-third {
+	--site-generation-morph-delay: 200ms;
+}
+
+// Layouts. Atoms absent from a layout are parked below the fold with zero
+// opacity so they fade out rather than fly off-screen. Media that runs to the
+// frame edge sits flat (no parallax) so it cannot open a gap along the edge.
+.site-generation__page-preview[data-layout='hero-split'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 25%, 52%, 33%, 38% );
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 30%, 15%, 9%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 35%, 15%, 30%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 41%, 15%, 24%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 47.5%, 15%, 30%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 51.5%, 15%, 25%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 56%, 15%, 8%, 5% );
+	}
+
+	.site-generation__preview-card.is-first {
+		@include site-generation-place( 74%, 15%, 22%, 40% );
+	}
+
+	.site-generation__preview-card.is-second {
+		@include site-generation-place( 74%, 39%, 22%, 40% );
+	}
+
+	.site-generation__preview-card.is-third {
+		@include site-generation-place( 74%, 63%, 22%, 40% );
+	}
+}
+
+.site-generation__page-preview[data-layout='mobile-stack'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 12%, 7%, 86%, 24% );
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 40%, 7%, 24%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 44.5%, 7%, 82%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 50.5%, 7%, 60%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 57%, 7%, 86%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 61%, 7%, 70%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 65.5%, 7%, 30%, 5% );
+	}
+
+	.site-generation__preview-card.is-first {
+		@include site-generation-place( 75%, 7%, 86%, 14% );
+	}
+
+	.site-generation__preview-card.is-second {
+		@include site-generation-place( 91%, 7%, 86%, 14% );
+	}
+
+	.site-generation__preview-card.is-third {
+		@include site-generation-place( 107%, 7%, 86%, 14% );
+	}
+}
+
+.site-generation__page-preview[data-layout='hero-cover'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 14%, 0, 100%, 86% );
+		border-radius: 0;
+		--site-generation-depth: 0;
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 36%, 45.5%, 9%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 41%, 30%, 40%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 47%, 36%, 28%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 54%, 33%, 34%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 58%, 37%, 26%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 64%, 45%, 10%, 5% );
+	}
+
+	.site-generation__preview-card {
+		opacity: 0;
+	}
+
+	.site-generation__preview-card.is-first {
+		@include site-generation-place( 100%, 15%, 22%, 20% );
+	}
+
+	.site-generation__preview-card.is-second {
+		@include site-generation-place( 100%, 39%, 22%, 20% );
+	}
+
+	.site-generation__preview-card.is-third {
+		@include site-generation-place( 100%, 63%, 22%, 20% );
+	}
+}
+
+.site-generation__page-preview[data-layout='mobile-cover'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 8%, 0, 100%, 92% );
+		border-radius: 0;
+		--site-generation-depth: 0;
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 58%, 10%, 24%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 62.5%, 10%, 80%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 68.5%, 10%, 60%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 75%, 10%, 80%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 79%, 10%, 62%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 84%, 10%, 34%, 5% );
+	}
+
+	.site-generation__preview-card {
+		@include site-generation-place( 100%, 7%, 86%, 14% );
+		opacity: 0;
+	}
+}
+
+.site-generation__page-preview[data-layout='split-cards'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 14%, 0, 46%, 86% );
+		border-radius: 0;
+		--site-generation-depth: 0;
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 24%, 54%, 9%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 29%, 54%, 34%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 35%, 54%, 26%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 41.5%, 54%, 36%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 45.5%, 54%, 30%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 50%, 54%, 9%, 5% );
+	}
+
+	.site-generation__preview-card.is-first {
+		@include site-generation-place( 64%, 54%, 11.5%, 26% );
+	}
+
+	.site-generation__preview-card.is-second {
+		@include site-generation-place( 64%, 67.5%, 11.5%, 26% );
+	}
+
+	.site-generation__preview-card.is-third {
+		@include site-generation-place( 64%, 81%, 11.5%, 26% );
+	}
+}
+
+.site-generation__page-preview[data-layout='mobile-list'] {
+	.site-generation__preview-media {
+		@include site-generation-place( 100%, 7%, 86%, 20% );
+		opacity: 0;
+	}
+
+	.site-generation__preview-line.is-eyebrow {
+		@include site-generation-place( 16%, 38%, 24%, 2.2% );
+	}
+
+	.site-generation__preview-line.is-heading {
+		@include site-generation-place( 20.5%, 11%, 78%, 4% );
+	}
+
+	.site-generation__preview-line.is-subheading {
+		@include site-generation-place( 26.5%, 23%, 54%, 4% );
+	}
+
+	.site-generation__preview-line.is-copy {
+		@include site-generation-place( 33%, 10%, 80%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-copy-short {
+		@include site-generation-place( 37%, 20%, 60%, 1.8% );
+	}
+
+	.site-generation__preview-line.is-button {
+		@include site-generation-place( 42%, 33%, 34%, 5% );
+	}
+
+	.site-generation__preview-card.is-first {
+		@include site-generation-place( 52%, 7%, 86%, 14% );
+	}
+
+	.site-generation__preview-card.is-second {
+		@include site-generation-place( 68%, 7%, 86%, 14% );
+	}
+
+	.site-generation__preview-card.is-third {
+		@include site-generation-place( 84%, 7%, 86%, 14% );
+	}
 }
 
 .site-generation__waiting-title {
-	margin: 0 0 12px;
-	font-size: clamp( 28px, 3vw, 40px );
+	margin: 0 0 8px;
+	font-size: $font-title-medium;
 	font-weight: 500;
-	letter-spacing: -0.03em;
+	color: var( --site-generation-canvas-heading );
+	line-height: 32px;
+	letter-spacing: -0.01em;
+	transition: color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+	animation: site-generation-rise 0.7s cubic-bezier( 0.22, 1, 0.36, 1 ) 250ms backwards;
 }
 
 .site-generation__waiting-description {
-	max-width: 480px;
+	max-width: 460px;
 	margin: 0 auto;
-	color: var( --studio-gray-60 );
-	font-size: 16px;
+	color: var( --site-generation-canvas-text );
+	font-size: $font-body;
 	line-height: 1.5;
+	text-wrap: balance;
+	transition:
+		color var( --site-generation-tint-duration ) var( --site-generation-tint-easing ),
+		translate 550ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
+	animation: site-generation-rise 0.7s cubic-bezier( 0.22, 1, 0.36, 1 ) 350ms backwards;
+}
+
+@keyframes site-generation-enter {
+	from {
+		opacity: 0;
+		translate: 0 24px;
+	}
+}
+
+@keyframes site-generation-rise {
+	from {
+		opacity: 0;
+		translate: 0 12px;
+	}
 }
 
 .site-generation__outcome {
@@ -286,7 +788,7 @@
 
 .site-generation__outcome-title {
 	margin: 0 0 12px;
-	font-size: clamp( 28px, 3vw, 40px );
+	font-size: clamp( $font-title-medium, 3vw, $font-title-large );
 	font-weight: 500;
 	letter-spacing: -0.03em;
 }
@@ -294,7 +796,7 @@
 .site-generation__outcome-description {
 	margin: 0;
 	color: var( --studio-gray-60 );
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.5;
 }
 
@@ -304,50 +806,78 @@
 
 .site-generation__sidebar {
 	display: flex;
+	flex: none;
 	flex-direction: column;
 	box-sizing: border-box;
-	width: var( --site-generation-sidebar-width );
-	height: 100%;
-	padding-block: 16px 12px;
-	padding-inline: 8px 0;
-	color: var( --site-generation-color-surface );
+	width: 100%;
+	height: auto;
+	min-height: 0;
+	padding-block: 28px calc( 24px + env( safe-area-inset-bottom ) );
+	padding-inline: 20px;
+	background-color: var( --site-generation-color-frame );
+	color: var( --site-generation-color-sidebar-foreground );
+	font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji';
+	font-size: $font-body-small;
+	line-height: 1.65;
+	letter-spacing: -0.01em;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+
+	@include break-medium {
+		width: 350px;
+		height: 100%;
+		padding: 16px;
+	}
 }
 
 .site-generation__sidebar-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 38px;
-	margin-block-end: 20px;
+	margin-block-end: 12px;
+	padding: 0;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 70ms backwards;
+
+	@include break-medium {
+		margin-block-start: 16px;
+		padding-inline-start: 16px;
+	}
 }
-.site-generation__assistant-title {
+
+.site-generation__assistant-icon {
 	display: flex;
-	align-items: center;
-	gap: 9px;
-	font-size: 14px;
-	font-weight: 500;
+	// The mark has about 10px of whitespace inside its 48px viewBox.
+	// Compensate for it so the visible sparkle aligns with the text.
+	margin-inline-start: -10px;
+	color: var( --studio-blue-50 );
+	fill: currentColor;
 }
-.site-generation__assistant-title .site-generation__wordpress-mark {
-	width: 22px;
-	height: 22px;
-}
+
 .site-generation__conversation {
-	flex: 1;
-	padding: 8px;
-	overflow: auto;
-	font-size: 14px;
-	line-height: 1.5;
+	flex: none;
+	padding: 0;
+	overflow: visible;
+	font-size: inherit;
+	line-height: inherit;
+
+	@include break-medium {
+		flex: 1;
+		padding-inline: 16px;
+		overflow: auto;
+	}
 }
 .site-generation__conversation-message {
-	margin: 0 0 28px;
-	color: var( --site-generation-color-surface );
+	margin: 0 0 24px;
+	color: var( --site-generation-color-sidebar-foreground );
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 130ms backwards;
 }
 .site-build-progress {
 	box-sizing: border-box;
 	margin-block: 8px 0;
 	margin-inline: 0;
 	padding-block: 8px 0;
-	padding-inline: 8px;
+	padding-inline: 0;
 }
 
 .site-build-progress__header {
@@ -355,12 +885,33 @@
 	align-items: center;
 	gap: 4px;
 	margin-block-end: 11px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 190ms backwards;
+}
+
+@keyframes site-generation-sidebar-enter {
+	from {
+		opacity: 0;
+		translate: 0 4px;
+	}
 }
 
 .site-build-progress__title {
-	color: var( --studio-white );
-	font-size: 14px;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 500;
+	line-height: inherit;
+}
+
+.site-build-progress__announcement {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	clip-path: inset( 50% );
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .site-build-progress .site-build-progress__list {
@@ -373,16 +924,30 @@
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 15px;
+	gap: 12px;
 	padding-block-end: 10px;
+	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 235ms backwards;
+
+	@for $step-index from 2 through 6 {
+		&:nth-child( #{ $step-index } ) {
+			animation-delay: #{190ms + ( $step-index - 1 ) * 45ms};
+		}
+	}
 
 	&::before {
 		position: absolute;
-		inset-block: 20px -6px;
+		inset-block: 16px 0;
 		inset-inline-start: calc( 8px - 0.75px );
 		width: 1.5px;
-		background-color: var( --studio-blue-50 );
+		background-color: transparent;
 		content: '';
+	}
+
+	&[data-next-reached='true']::before {
+		background-color: var( --studio-blue-50 );
+		transform-origin: top;
+		animation: site-build-progress-connector-enter 420ms cubic-bezier( 0.22, 1, 0.36, 1 ) 120ms
+			backwards;
 	}
 
 	&[data-last='true'] {
@@ -394,7 +959,20 @@
 	}
 }
 
+@keyframes site-build-progress-connector-enter {
+	from {
+		opacity: 0;
+		transform: scaleY( 0 );
+	}
+
+	to {
+		opacity: 1;
+		transform: scaleY( 1 );
+	}
+}
+
 .site-build-progress__indicator {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -403,31 +981,108 @@
 	width: 16px;
 	height: 16px;
 	border-radius: 50%;
+
+	&::before {
+		position: absolute;
+		box-sizing: border-box;
+		inset: 1px;
+		border: 2px solid transparent;
+		border-radius: inherit;
+		content: '';
+	}
 }
 
-.site-build-progress__indicator--completed {
+.site-build-progress__indicator--done {
 	background-color: var( --studio-blue-50 );
 	color: var( --studio-white );
+	animation: site-build-progress-complete 320ms cubic-bezier( 0.22, 1, 0.36, 1 ) both;
 }
 
-.site-build-progress__indicator--loading {
-	border: 2px solid var( --site-generation-color-frame-muted );
+.site-build-progress__indicator--active {
 	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+		opacity: 0;
+		animation: site-build-progress-idle-indicator-exit 240ms ease-out 220ms both;
+	}
+}
+
+.site-build-progress__indicator--idle {
+	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+	}
 }
 
 .site-build-progress__check {
-	width: 8px;
-	height: 8px;
+	width: 14px;
+	height: 14px;
+	color: var( --studio-white );
+	fill: currentColor;
+	transform-origin: center;
+	animation: site-build-progress-check-enter 280ms cubic-bezier( 0.34, 1.56, 0.64, 1 ) 80ms
+		backwards;
 }
 
-.site-build-progress__spinner {
+@keyframes site-build-progress-complete {
+	from {
+		background-color: transparent;
+		transform: scale( 0.82 );
+	}
+
+	to {
+		background-color: var( --studio-blue-50 );
+		transform: scale( 1 );
+	}
+}
+
+@keyframes site-build-progress-check-enter {
+	from {
+		opacity: 0;
+		transform: scale( 0.4 ) rotate( -8deg );
+	}
+
+	to {
+		opacity: 1;
+		transform: scale( 1 ) rotate( 0 );
+	}
+}
+
+@keyframes site-build-progress-idle-indicator-exit {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+.site-build-progress__activity {
+	display: block;
+	flex-shrink: 0;
 	box-sizing: border-box;
-	width: 8px;
-	height: 8px;
-	border: 1.5px solid var( --site-generation-color-frame-muted );
-	border-top-color: var( --studio-white );
+	width: 16px;
+	height: 16px;
+	border: 2px solid transparent;
+	border-block-start-color: var( --studio-blue-50 );
+	border-inline-end-color: var( --studio-blue-50 );
 	border-radius: 50%;
-	animation: site-build-spin 0.8s linear infinite;
+	animation:
+		site-build-spin 0.8s linear infinite,
+		site-build-progress-activity-enter 280ms ease-out 220ms backwards;
+}
+
+@keyframes site-build-progress-activity-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes site-build-spin {
@@ -439,20 +1094,101 @@
 .site-build-progress__text {
 	flex: 1;
 	min-width: 0;
-	color: var( --studio-white );
-	font-size: 13px;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 400;
-	line-height: 1.4;
+	line-height: inherit;
+	transition:
+		color 240ms cubic-bezier( 0.22, 1, 0.36, 1 ),
+		font-weight 240ms cubic-bezier( 0.22, 1, 0.36, 1 );
 }
 
-.site-build-progress__item--in-progress .site-build-progress__text {
+.site-build-progress__elapsed {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	color: var( --site-generation-color-frame-muted );
+	font-size: $font-body-extra-small;
+	font-variant-numeric: tabular-nums;
+	line-height: inherit;
+}
+
+.site-build-progress__item--idle .site-build-progress__text {
 	color: var( --site-generation-color-frame-muted );
 }
+
+.site-build-progress__item--active .site-build-progress__text {
+	font-weight: 500;
+	transition-delay: 0ms, 220ms;
+}
+
+.site-build-progress__label {
+	display: inline-block;
+}
+
+.site-build-progress__item--active .site-build-progress__elapsed {
+	animation: site-build-progress-elapsed-enter 240ms ease-out 260ms backwards;
+}
+
+@keyframes site-build-progress-elapsed-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.site-build-progress__text-wave {
+	background-color: var( --studio-white );
+	background-image: linear-gradient(
+		90deg,
+		var( --studio-white ) 0%,
+		var( --studio-white ) 35%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 45%,
+		var( --site-generation-color-frame-muted ) 50%,
+		color-mix( in srgb, var( --studio-white ) 60%, var( --site-generation-color-frame-muted ) ) 55%,
+		var( --studio-white ) 65%,
+		var( --studio-white ) 100%
+	);
+	background-repeat: no-repeat;
+	background-position: 100% 0;
+	background-size: 300% 100%;
+	background-clip: text;
+	color: transparent;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation:
+		site-build-progress-text-wave 3s linear 220ms infinite,
+		site-build-progress-text-activate 260ms cubic-bezier( 0.22, 1, 0.36, 1 ) 220ms both;
+}
+
+@keyframes site-build-progress-text-activate {
+	from {
+		opacity: 0.5;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes site-build-progress-text-wave {
+	0% {
+		background-position: 100% 0;
+	}
+
+	55%,
+	100% {
+		background-position: 0% 0;
+	}
+}
+
 .site-build-progress .site-generation__sidebar-notice {
 	margin-block-start: 20px;
 	background: var( --site-generation-color-notice-surface );
 	color: var( --site-generation-color-surface );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .site-generation__sidebar-notice-content {
@@ -465,99 +1201,93 @@
 	color: var( --studio-gray-10 );
 }
 
-.site-generation__completion-note {
-	margin-block: 12px 4px;
-	margin-inline: 8px;
-	padding-block-start: 12px;
-	border-block-start: 1px solid var( --studio-gray-70 );
-	color: var( --studio-gray-20 );
-	font-size: 12px;
-	line-height: 1.5;
-}
-
-@keyframes site-generation-dot-pulse {
-	0%,
-	100% {
-		opacity: 0.25;
-	}
-	45% {
-		opacity: 1;
-	}
-}
-
-@keyframes site-generation-live-pulse {
-	0% {
-		box-shadow: 0 0 0 0 rgba( 0, 163, 42, 0.3 );
-	}
-	70%,
-	100% {
-		box-shadow: 0 0 0 6px rgba( 0, 163, 42, 0 );
-	}
-}
-
-@keyframes site-generation-shimmer {
-	0%,
-	100% {
-		opacity: 0.62;
-	}
-	50% {
-		opacity: 1;
-	}
-}
-
-@keyframes site-generation-scan {
-	0% {
-		left: -22%;
-	}
-	65%,
-	100% {
-		left: 110%;
-	}
-}
-
 @media ( prefers-reduced-motion: reduce ) {
-	.site-generation__activity-dot,
-	.site-generation__live-dot,
+	.site-generation__page-preview,
+	.site-generation__preview-bar,
+	.site-generation__preview-bar .site-generation__wordpress-mark,
 	.site-generation__preview-nav-item,
-	.site-generation__preview-line,
 	.site-generation__preview-media,
+	.site-generation__preview-line,
 	.site-generation__preview-card,
-	.site-generation__preview-scan,
-	.site-build-progress__spinner {
+	.site-generation__tint,
+	.site-generation__waiting-copy,
+	.site-generation__waiting-title,
+	.site-generation__waiting-description {
+		transition: none;
+	}
+
+	.site-generation__page-preview:hover {
+		--site-generation-lift: 1;
+		box-shadow: var( --site-generation-shadow-rest );
+	}
+
+	.site-generation__page-preview,
+	.site-generation__tint,
+	.site-generation__waiting-title,
+	.site-generation__waiting-description {
 		animation: none;
+	}
+	.site-generation__preview-scan,
+	.site-generation__sidebar-header,
+	.site-generation__conversation-message,
+	.site-build-progress__header,
+	.site-build-progress__item,
+	.site-build-progress__item::before,
+	.site-build-progress__indicator,
+	.site-build-progress__indicator::before,
+	.site-build-progress__check,
+	.site-build-progress__activity,
+	.site-build-progress__elapsed,
+	.site-build-progress__text-wave {
+		animation: none;
+	}
+
+	.site-build-progress__text-wave {
+		background: none;
+		color: var( --studio-white );
+		-webkit-text-fill-color: currentColor;
 	}
 
 	.site-generation__preview-scan {
 		display: none;
 	}
 }
-@media ( max-width: 900px ) {
-	.site-generation {
-		--site-generation-sidebar-width: 310px;
+// A short landscape viewport needs the same graceful compression as other
+// full-screen Stepper surfaces. The canvas remains scrollable if translated
+// copy or browser chrome leaves less room than expected.
+@media ( max-height: #{ $break-small } ) and ( orientation: landscape ) {
+	.site-generation__brand {
+		margin-block-end: 0;
+		padding-block-start: calc( 12px + env( safe-area-inset-top ) );
 	}
-	.site-generation__editor {
-		margin-block: 8px;
-		margin-inline: 8px 4px;
-	}
-	.site-generation__sidebar {
-		padding-block: 8px;
-		padding-inline: 4px 8px;
-	}
-}
 
-@media ( max-width: 680px ) {
-	.site-generation {
-		display: block;
-		overflow: auto;
+	.site-generation__canvas {
+		padding-block: 16px;
 	}
-	.site-generation__editor {
-		height: 55vh;
-		min-height: 420px;
-		margin: 8px;
+
+	.site-generation__waiting {
+		transform: none;
 	}
+
+	.site-generation__build-visual {
+		width: min( 100%, calc( 240px * 16 / 9 ), calc( 45vh * 16 / 9 ) );
+		margin-block-end: 16px;
+	}
+
+	.site-generation__waiting-title {
+		font-size: $font-title-small;
+		line-height: 28px;
+	}
+
+	.site-generation__waiting-description {
+		font-size: $font-body-small;
+	}
+
 	.site-generation__sidebar {
-		width: 100%;
-		height: 520px;
-		padding: 16px;
+		padding-block: 16px calc( 8px + env( safe-area-inset-bottom ) );
+	}
+
+	.site-generation__sidebar-header {
+		margin-block-end: 8px;
 	}
 }

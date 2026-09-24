@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -81,12 +82,14 @@ export default function WPContactForm( {
 	contactDetailsType,
 	isLoggedOutCart,
 	setShouldShowContactDetailsValidationErrors,
+	setIsPrefillPending,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
+	setIsPrefillPending?: ( isPending: boolean ) => void;
 } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
@@ -100,6 +103,11 @@ export default function WPContactForm( {
 		isLoggedOut: isLoggedOutCart,
 		suppressScrollOnAutoComplete: isMobileCheckoutStickySummary,
 	} );
+
+	useEffect( () => {
+		setIsPrefillPending?.( ! hasCompleted );
+	}, [ hasCompleted, setIsPrefillPending ] );
+	useEffect( () => () => setIsPrefillPending?.( false ), [ setIsPrefillPending ] );
 
 	return (
 		<>

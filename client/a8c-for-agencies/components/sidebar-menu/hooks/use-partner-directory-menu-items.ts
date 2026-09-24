@@ -74,7 +74,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 							},
 							path
 						),
-				  ]
+					]
 				: [] ),
 		];
 	}, [ hasDirectoryApproval, path, translate ] );

@@ -75,7 +75,7 @@ export function useActions( viewType: View[ 'type' ], onClose?: () => void ) {
 							return domain.type !== domainTypes.WPCOM;
 						},
 					},
-			  ]
+				]
 			: [] ),
 		{
 			id: 'manage-dns-settings',

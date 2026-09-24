@@ -43,20 +43,45 @@ export const HelpCenterA4AContactForm = () => {
 	const [ searchParams ] = useSearchParams();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const isMigrationRequest = !! searchParams.get( 'migration-request' );
+	const isPressableOfferRequest = !! searchParams.get( 'pressable-offer' );
 
 	const navigate = useNavigate();
 
-	const [ formData, setFormData ] = useState< FormData >( {
+	const getDefaultMessage = () => {
+		if ( isMigrationRequest ) {
+			return __(
+				"I'd like to migrate from [insert your current host here].",
+				__i18n_text_domain__
+			);
+		}
+		if ( isPressableOfferRequest ) {
+			return __(
+				"I'm interested in the Pressable upgrade promo and would love to speak to someone about upgrading",
+				__i18n_text_domain__
+			);
+		}
+		return '';
+	};
+
+	const getHeading = () => {
+		if ( isMigrationRequest ) {
+			return __( 'Request a Free Concierge Migration', __i18n_text_domain__ );
+		}
+		if ( isPressableOfferRequest ) {
+			return __( 'Pressable Upgrade Promo', __i18n_text_domain__ );
+		}
+		return __( 'Contact sales & support', __i18n_text_domain__ );
+	};
+
+	const [ formData, setFormData ] = useState< FormData >( () => ( {
 		name: currentUser?.display_name ?? '',
 		email: currentUser?.email ?? '',
 		site: '',
-		product: '',
-		message: isMigrationRequest
-			? __( "I'd like to migrate from [insert your current host here].", __i18n_text_domain__ )
-			: '',
+		product: isPressableOfferRequest ? 'a4a' : '',
+		message: getDefaultMessage(),
 		no_of_sites: 1,
 		pressable_contact: 'sales',
-	} );
+	} ) );
 
 	const {
 		isPending,
@@ -110,13 +135,14 @@ export const HelpCenterA4AContactForm = () => {
 						isValid: {
 							required: true,
 						},
-				  }
+					}
 				: {
 						id: 'site',
 						label: __( 'Related site', __i18n_text_domain__ ),
 						type: 'text' as const,
 						placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
-				  },
+						isVisible: () => ! isPressableOfferRequest,
+					},
 			{
 				id: 'product',
 				label: isMigrationRequest
@@ -142,7 +168,7 @@ export const HelpCenterA4AContactForm = () => {
 								label: __( 'I need help to decide', __i18n_text_domain__ ),
 								value: 'dont-know',
 							},
-					  ]
+						]
 					: [
 							{
 								label: __( 'Choose a product', __i18n_text_domain__ ),
@@ -168,10 +194,11 @@ export const HelpCenterA4AContactForm = () => {
 								label: __( 'Pressable', __i18n_text_domain__ ),
 								value: 'pressable',
 							},
-					  ],
+						],
 				isValid: {
 					required: true,
 				},
+				isVisible: () => ! isPressableOfferRequest,
 			},
 			{
 				id: 'pressable_contact',
@@ -196,7 +223,7 @@ export const HelpCenterA4AContactForm = () => {
 					? __(
 							'Anything we should know about your current site(s) or migration needs?',
 							__i18n_text_domain__
-					  )
+						)
 					: __( 'How can we help?', __i18n_text_domain__ ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
@@ -206,7 +233,7 @@ export const HelpCenterA4AContactForm = () => {
 							? __(
 									"Please provide the team with a detailed explanation of the issue you're facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.",
 									__i18n_text_domain__
-							  )
+								)
 							: __( 'Add your message here', __i18n_text_domain__ );
 					return (
 						<TextareaControl
@@ -225,7 +252,7 @@ export const HelpCenterA4AContactForm = () => {
 				},
 			},
 		],
-		[ isMigrationRequest ]
+		[ isMigrationRequest, isPressableOfferRequest ]
 	);
 
 	const { validity } = useFormValidity( formData, fields, FORM_CONFIG );
@@ -280,11 +307,7 @@ export const HelpCenterA4AContactForm = () => {
 	return (
 		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form">
 			<VStack spacing={ 4 } justify="flex-start">
-				<Heading level={ 3 }>
-					{ isMigrationRequest
-						? __( 'Request a Free Concierge Migration', __i18n_text_domain__ )
-						: __( 'Contact sales & support', __i18n_text_domain__ ) }
-				</Heading>
+				<Heading level={ 3 }>{ getHeading() }</Heading>
 
 				{ isMigrationRequest && (
 					<Text>

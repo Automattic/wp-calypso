@@ -41,7 +41,7 @@
 		"build": "tsc --build ./tsconfig-build.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook:start": "storybook dev"
+		"storybook:start": "storybook dev -p 26836"
 	},
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",

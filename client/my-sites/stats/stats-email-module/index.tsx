@@ -51,10 +51,10 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 		statType === 'clicks'
 			? translate( 'Clicks by countries will appear here.', {
 					context: 'Stats: Info box label when the email Countries module is empty',
-			  } )
+				} )
 			: translate( 'Opens by countries will appear here.', {
 					context: 'Stats: Info box label when the email Countries module is empty',
-			  } );
+				} );
 
 	const emptyMessage =
 		path === 'countries' ? (

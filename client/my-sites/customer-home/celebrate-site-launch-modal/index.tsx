@@ -2,7 +2,7 @@ import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
-import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
+import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-modal/celebration-modal';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { setSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/actions';

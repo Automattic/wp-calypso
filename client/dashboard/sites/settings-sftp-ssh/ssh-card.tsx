@@ -7,8 +7,7 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -25,8 +24,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
+import { useIntlLocale } from '../../app/locale';
 import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -64,7 +66,7 @@ const SshKeyCard = ( {
 							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
-						<Badge intent="info" style={ { height: '24px' } }>
+						<Badge intent="informational" style={ { height: '24px' } }>
 							{ sprintf(
 								/* translators: %s is when the SSH key was attached. */
 								__( 'Attached on %s' ),
@@ -89,12 +91,20 @@ const SshKeyCard = ( {
 };
 
 const AddSshKeyButton = () => {
+	const { supports } = useAppContext();
+
 	if ( isDashboardBackport() ) {
 		return (
 			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
 				{ __( 'Add new SSH key ↗' ) }
 			</Button>
 		);
+	}
+
+	// The SSH key settings page only exists in dashboards that register the
+	// `/me/security` routes.
+	if ( ! ( supports.me && supports.me.security ) ) {
+		return null;
 	}
 
 	return (
@@ -118,8 +128,13 @@ export default function SshCard( {
 	sshEnabled: boolean;
 } ) {
 	const { user } = useAuth();
+	const queryClient = useQueryClient();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
-	const { data: userSshKeys, error: userSshKeysError } = useQuery( {
+	const {
+		data: userSshKeys,
+		error: userSshKeysError,
+		isFetchedAfterMount: isUserSshKeysFetchedAfterMount,
+	} = useQuery( {
 		...sshKeysQuery(),
 		enabled: sshEnabled,
 	} );
@@ -129,8 +144,11 @@ export default function SshCard( {
 	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const userLocale = user.locale_variant || user.language || 'en';
+	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
+	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
+	const isLoadingUserSshKeys = sshEnabled && ! isUserSshKeysFetchedAfterMount;
+	const showSshSettings = sshEnabled && ! isLoadingUserSshKeys;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
 		ssh_key: 'default',
@@ -162,25 +180,36 @@ export default function SshCard( {
 
 	const handleToggleSshAccess = () => {
 		toggleSshAccessMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice(
-					sshEnabled
-						? __( 'SSH access has been successfully disabled for this site.' )
-						: __( 'SSH access has been successfully enabled for this site.' ),
-					{
-						type: 'snackbar',
+			onSuccess: async ( { setting } ) => {
+				if ( setting === 'ssh' ) {
+					// Don't show snackbar until we know ssh keys have finished loading, so that
+					// the snackbar doesn't pop up moments before the ssh settings form.
+					try {
+						await queryClient.fetchQuery( sshKeysQuery() );
+					} catch ( error ) {
+						if ( isWpError( error ) && error.code === 'reauthorization_required' ) {
+							// We will redirect, so show no notice.
+							return;
+						}
 					}
-				);
+					createSuccessNotice( __( 'SSH access has been successfully enabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				} else {
+					createSuccessNotice( __( 'SSH access has been successfully disabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				}
 			},
 			onError: () => {
 				createErrorNotice(
 					sshEnabled
 						? __(
 								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
-						  )
+							)
 						: __(
 								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
-						  ),
+							),
 					{
 						type: 'snackbar',
 					}
@@ -220,7 +249,7 @@ export default function SshCard( {
 	};
 
 	const SshKeysControl = < Item, >( { field }: DataFormControlProps< Item > ) => (
-		<BaseControl label={ field.label } __nextHasNoMarginBottom>
+		<BaseControl label={ field.label }>
 			<VStack>
 				{ siteSshKeys?.map( ( siteSshKey: SiteSshKey ) => (
 					<SshKeyCard
@@ -245,7 +274,6 @@ export default function SshCard( {
 						label={ field.label }
 						value={ field.getValue( { item: data } ) }
 						readOnly
-						__next40pxDefaultSize
 						onCopy={ handleCopy }
 					/>
 				);
@@ -278,8 +306,6 @@ export default function SshCard( {
 								[ field.id ]: newValue,
 							} )
 						}
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 						hideLabelFromVision={ hideLabelFromVision }
 					/>
 				);
@@ -288,13 +314,13 @@ export default function SshCard( {
 				? userSshKeys.map( ( userSshKey: UserSshKey ) => ( {
 						label: `${ user.username }-${ userSshKey.name }`,
 						value: userSshKey.name,
-				  } ) )
+					} ) )
 				: [
 						{
 							label: __( 'No SSH keys available' ),
 							value: '',
 						},
-				  ],
+					],
 		},
 	];
 
@@ -328,11 +354,10 @@ export default function SshCard( {
 					<ToggleControl
 						label={ __( 'Enable SSH access for this site' ) }
 						checked={ sshEnabled }
-						disabled={ toggleSshAccessMutation.isPending }
+						disabled={ toggleSshAccessMutation.isPending || isLoadingUserSshKeys }
 						onChange={ handleToggleSshAccess }
-						__nextHasNoMarginBottom
 					/>
-					{ sshEnabled && (
+					{ showSshSettings && (
 						<DataForm< SshCardFormData >
 							data={ formData }
 							fields={ fields }
@@ -342,7 +367,7 @@ export default function SshCard( {
 							} }
 						/>
 					) }
-					{ sshEnabled && ! userKeyIsAttached && (
+					{ showSshSettings && ! userKeyIsAttached && (
 						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"

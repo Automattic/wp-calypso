@@ -86,7 +86,6 @@ export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
 export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';
-export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';
 
 /**
  * Vendor Id's from refer.wordpress.com

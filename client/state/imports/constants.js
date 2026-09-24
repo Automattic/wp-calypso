@@ -1,3 +1,5 @@
+export const ID_GENERATOR_PREFIX = 'local-generated-id-';
+
 export const appStates = Object.freeze( {
 	CANCEL_PENDING: 'importer-canceling',
 	DEFUNCT: 'importer-defunct',

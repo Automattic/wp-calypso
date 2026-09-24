@@ -1,23 +1,39 @@
 /**
  * @jest-environment jsdom
  */
-import config from '../config-api';
+import config, { optionalConfig } from '../config-api';
 import { isProvidedByWpAdmin } from '../load-wp-components-style';
 
-jest.mock( '../config-api', () => jest.fn() );
+jest.mock( '../config-api', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+	optionalConfig: jest.fn(),
+} ) );
 
 const SITE_ID = 123;
 
-function mockSiteOptions( options ) {
-	config.mockImplementation( ( key ) => {
-		if ( key === 'blog_id' ) {
-			return SITE_ID;
-		}
+/**
+ * @param {Object} options    Site options, as served inside `intial_state`.
+ * @param {Object} [topLevel] Values served at the top level of the config, alongside `blog_id`.
+ * @param {number} [blogId]   The site's blog id; 0 when it has no WordPress.com connection.
+ */
+function mockConfig( options, topLevel = {}, blogId = SITE_ID ) {
+	config.mockImplementation( ( key ) => ( key === 'blog_id' ? blogId : undefined ) );
+	optionalConfig.mockImplementation( ( key ) => {
 		if ( key === 'intial_state' ) {
-			return { sites: { items: { [ SITE_ID ]: { options } } } };
+			return options && { sites: { items: { [ blogId ]: { options } } } };
 		}
-		return undefined;
+		return topLevel[ key ];
 	} );
+}
+
+function mockSiteOptions( options ) {
+	mockConfig( options );
+}
+
+function resetConfig() {
+	config.mockReset();
+	optionalConfig.mockReset();
 }
 
 function mockWpVersion( softwareVersion ) {
@@ -29,9 +45,7 @@ function mockStatsAdminVersion( statsAdminVersion ) {
 }
 
 describe( 'isProvidedByWpAdmin — software_version signal (WP 7.0+ command palette)', () => {
-	afterEach( () => {
-		config.mockReset();
-	} );
+	afterEach( resetConfig );
 
 	it.each( [ '7.0', '7.0.2', '7.1', '8.0', '10.0' ] )(
 		'reports WP %s as already providing the stylesheet, so we skip our copy',
@@ -67,9 +81,7 @@ describe( 'isProvidedByWpAdmin — software_version signal (WP 7.0+ command pale
 } );
 
 describe( 'isProvidedByWpAdmin — stats_admin_version signal (Jetpack declares the dependency)', () => {
-	afterEach( () => {
-		config.mockReset();
-	} );
+	afterEach( resetConfig );
 
 	it.each( [ '0.32.0', '0.32.1', '0.33.0', '1.0.0' ] )(
 		'reports stats-admin %s as already providing the stylesheet, so we skip our copy',
@@ -94,9 +106,7 @@ describe( 'isProvidedByWpAdmin — stats_admin_version signal (Jetpack declares 
 } );
 
 describe( 'isProvidedByWpAdmin — either signal is sufficient', () => {
-	afterEach( () => {
-		config.mockReset();
-	} );
+	afterEach( resetConfig );
 
 	it( 'skips our copy when Jetpack has updated but WP has not — the dependency declaration is enough on its own', () => {
 		mockSiteOptions( { software_version: '6.9', stats_admin_version: '0.32.0' } );
@@ -115,9 +125,7 @@ describe( 'isProvidedByWpAdmin — either signal is sufficient', () => {
 } );
 
 describe( 'isProvidedByWpAdmin — malformed or missing data fails safe toward loading our copy', () => {
-	afterEach( () => {
-		config.mockReset();
-	} );
+	afterEach( resetConfig );
 
 	it.each( [
 		[ 'undefined', undefined ],
@@ -141,7 +149,35 @@ describe( 'isProvidedByWpAdmin — malformed or missing data fails safe toward l
 	} );
 
 	it( 'falls back to loading our copy when site options are missing entirely', () => {
-		config.mockImplementation( ( key ) => ( key === 'blog_id' ? SITE_ID : {} ) );
+		mockSiteOptions( undefined );
+		expect( isProvidedByWpAdmin() ).toBe( false );
+	} );
+} );
+
+describe( 'isProvidedByWpAdmin — a site with no WordPress.com connection', () => {
+	afterEach( resetConfig );
+
+	// Such a site reports blog id 0 and ships no `intial_state`, so both versions arrive at the
+	// top level of the config instead of nested under the site's options.
+	const mockUnconnected = ( topLevel ) => mockConfig( undefined, topLevel, 0 );
+
+	it( 'reads software_version from the top level', () => {
+		mockUnconnected( { software_version: '7.0.3' } );
+		expect( isProvidedByWpAdmin() ).toBe( true );
+	} );
+
+	it( 'reads stats_admin_version from the top level', () => {
+		mockUnconnected( { stats_admin_version: '0.32.0' } );
+		expect( isProvidedByWpAdmin() ).toBe( true );
+	} );
+
+	it( 'loads our copy when neither top-level signal holds', () => {
+		mockUnconnected( { software_version: '6.9', stats_admin_version: '0.31.11' } );
+		expect( isProvidedByWpAdmin() ).toBe( false );
+	} );
+
+	it( 'survives a payload carrying neither version', () => {
+		mockUnconnected( {} );
 		expect( isProvidedByWpAdmin() ).toBe( false );
 	} );
 } );

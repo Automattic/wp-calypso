@@ -17,7 +17,6 @@ import type { OnboardSelect } from '@automattic/data-stores';
 const { SiteGoal } = Onboard;
 
 const featureFlagEnabled = isEnabled( 'calypso/big-sky' );
-const featurePostCheckoutAiStepEnabled = isEnabled( 'onboarding/post-checkout-ai-step' );
 
 const invalidGoals = [
 	SiteGoal.PaidSubscribers,
@@ -51,12 +50,7 @@ export function useIsBigSkyEligible( flowName?: string ) {
 
 	if ( flowName === SITE_SETUP_FLOW ) {
 		return {
-			isEligible:
-				featureFlagEnabled &&
-				featurePostCheckoutAiStepEnabled &&
-				!! isOwner &&
-				siteHasBigSkyFeature &&
-				onSupportedDevice,
+			isEligible: featureFlagEnabled && !! isOwner && siteHasBigSkyFeature && onSupportedDevice,
 		};
 	}
 

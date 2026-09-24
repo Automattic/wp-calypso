@@ -1,7 +1,11 @@
+/** Keys are whatever the site has registered with `show_in_rest`; values are Unix timestamps in seconds. */
+export type SiteUserMeta = Record< string, number | undefined >;
+
 export interface SiteUser {
 	id: number;
 	name: string;
 	slug: string;
+	meta?: SiteUserMeta;
 }
 
 export interface WpcomSiteUser {

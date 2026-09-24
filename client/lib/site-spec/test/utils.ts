@@ -15,6 +15,7 @@ import {
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 } from '../utils';
 
@@ -219,6 +220,57 @@ describe( 'SiteSpec Utils', () => {
 			expect( buildSiteUrl.searchParams.get( 'ref' ) ).toBe( 'referrer' );
 			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
 			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
+		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.links ).toBe( 'social' );
+		} );
+
+		it( 'should leave the other flows on the default spec preview', () => {
+			// The widget gates the brief on a truthy features.siteBrief, so any
+			// flow that grows one starts rendering the brief. Pin that only this
+			// flow and the blueprint flow ask for it.
+			expect( getDefaultSiteSpecConfig().features ).toBeUndefined();
+			expect( getEarlyProvisionSiteSpecConfig().features ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'getBlueprintSiteSpecConfig', () => {
+		it( 'should forward the blueprint identifier to the widget', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.blueprintId ).toBe( 'coachava' );
+			expect( result.agentUrl ).toBe( 'https://api.example.com/agent' );
+		} );
+
+		it( 'should omit the blueprint identifier when none is given', () => {
+			const result = getBlueprintSiteSpecConfig( {} );
+
+			expect( result ).not.toHaveProperty( 'blueprintId' );
+		} );
+
+		it( 'should enable the next site brief', () => {
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
+
+			expect( result.features?.links ).toBe( 'social' );
 		} );
 	} );
 } );

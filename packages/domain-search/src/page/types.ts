@@ -6,6 +6,9 @@ import {
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
+	namePulseAvailabilityQuery,
+	namePulseSuggestionsQuery,
+	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { PriceRulesConfig, useSuggestion } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
@@ -17,6 +20,7 @@ import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
+	NamePulseSuggestionsQuery,
 } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -66,6 +70,20 @@ export interface DomainSearchCart {
 	hasItem: ( domainName: string ) => boolean;
 }
 
+/**
+ * What started a domain search: a user action on the page, or the query the page mounted with
+ * (`prefilled` when it sends a request, `cached` when results come from the client-side cache).
+ */
+export type SearchTrigger =
+	| 'submit'
+	| 'input_changed'
+	| 'filter_apply'
+	| 'filter_reset'
+	| 'hint_link'
+	| 'skip_suggestion'
+	| 'prefilled'
+	| 'cached';
+
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
@@ -77,6 +95,7 @@ export interface DomainSearchEvents {
 	onMapDomainClick: ( domainName: string ) => void;
 	onSubmitButtonClick: ( query: string ) => void;
 	onQueryChange: ( query: string ) => void;
+	onSearchStart: ( query: string, trigger: SearchTrigger ) => void;
 	onQueryClear: () => void;
 	onAddDomainToCart: (
 		domainName: string,
@@ -136,6 +155,12 @@ export interface DomainSearchConfig {
 		title?: string;
 		buttonText?: string;
 	};
+	/**
+	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
+	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
+	 * atomic funnel, which always transfers to Atomic).
+	 */
+	hideFreeSubdomainSuggestion?: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;
@@ -149,6 +174,8 @@ export interface DomainSearchConfig {
 	 * false, so bundles stay hidden unless a consumer opts in.
 	 */
 	showBundleSuggestions: boolean;
+	/** Set from the `domain-search/name-pulse` flag by the signup domain-only step. */
+	showNamePulseSearch: boolean;
 }
 
 export interface DomainSearchProps {
@@ -165,17 +192,16 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
-export interface DomainSearchContextType
-	extends Omit<
-		DomainSearchProps,
-		'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
-	> {
+export interface DomainSearchContextType extends Omit<
+	DomainSearchProps,
+	'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
 	query: string;
-	setQuery: ( query: string ) => void;
+	setQuery: ( query: string, trigger: SearchTrigger ) => void;
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;
@@ -190,6 +216,13 @@ export interface DomainSearchContextType
 		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
 		bundleTriggers: ( query: string ) => ReturnType< typeof bundleTriggersQuery >;
 		bundleForDomain: ( fqdn: string ) => ReturnType< typeof bundleForDomainQuery >;
+		namePulseSuggestions: (
+			params: NamePulseSuggestionsQuery
+		) => ReturnType< typeof namePulseSuggestionsQuery >;
+		namePulseAvailability: (
+			domainNames: string[]
+		) => ReturnType< typeof namePulseAvailabilityQuery >;
+		namePulseTlds: () => ReturnType< typeof namePulseTldsQuery >;
 	};
 	config: DomainSearchConfig;
 }

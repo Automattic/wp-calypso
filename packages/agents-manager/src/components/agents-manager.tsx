@@ -11,12 +11,28 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
+import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
+import { useSessionHandoffLinks } from '../hooks/use-session-handoff-links';
+import { useUrlSessionHandoff } from '../hooks/use-url-session-handoff';
+import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
+import {
+	clearSessionId,
+	getOrCreateSessionId,
+	getSessionId,
+	NO_SITE,
+	saveSessionId,
+} from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
+import {
+	loadExternalProviders,
+	type AbilitiesSetupHook,
+	type LoadedProviders,
+} from '../utils/load-external-providers';
+import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
+import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -32,8 +48,10 @@ export interface AgentsManagerProps {
 	currentRoute?: string;
 	/** The ID of the currently selected site, or undefined for non-site contexts. */
 	currentSiteId?: number;
-	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
+	/** Explicit agent ID supplied by the host. */
 	agentId?: string;
+	/** Whether this screen is currently enabled only for internal users. */
+	isInternalOnly?: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -48,6 +66,35 @@ const queryClient = new QueryClient();
 // every render and retrigger downstream conversation effects.
 const EMPTY_ARRAY: string[] = [];
 
+// The scope the live agent was initialized for. Module-level like the agent
+// manager itself, so a host that unmounts and remounts this tree (Calypso does
+// on some routes) still discards when the remount lands on a different scope.
+let lastInitializedScope: string | undefined;
+
+// External editor abilities currently register from a chat-owned hook. These
+// inert chat actions let that hook mount for WebMCP without starting a chat run.
+const WEBMCP_PROVIDER_SETUP_ACTIONS = {
+	addMessage: () => {},
+	clearMessages: () => {},
+	clearSuggestions: () => {},
+	getAgentManager,
+	isProcessing: false,
+	setIsThinking: () => {},
+	deleteMarkedMessages: () => {},
+	getSessionId: () => undefined,
+	setIsBuildingSite: () => {},
+	setThinkingMessage: () => {},
+} satisfies Parameters< AbilitiesSetupHook >[ 0 ];
+
+function WebMcpProviderAbilitiesSetup( {
+	useProviderAbilitiesSetup,
+}: {
+	useProviderAbilitiesSetup: AbilitiesSetupHook;
+} ): null {
+	useProviderAbilitiesSetup( WEBMCP_PROVIDER_SETUP_ACTIONS );
+	return null;
+}
+
 export default function AgentsManager( {
 	sectionName,
 	currentUser,
@@ -55,12 +102,15 @@ export default function AgentsManager( {
 	currentRoute,
 	currentSiteId,
 	agentId,
+	isInternalOnly = false,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
-	// Wait for the store to load before rendering PersistentRouter
-	// This ensures router history is restored from persisted state
+	const urlSessionHandoff = useUrlSessionHandoff();
+
+	// Wait for the store to load so persisted UI state (open/docked/minimized)
+	// is restored before the dock first renders.
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -74,7 +124,7 @@ export default function AgentsManager( {
 		return null;
 	}
 
-	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
+	const siteKey = currentSiteId ? String( currentSiteId ) : NO_SITE;
 
 	return (
 		<QueryClientProvider client={ queryClient }>
@@ -86,66 +136,175 @@ export default function AgentsManager( {
 						site,
 						siteKey,
 						currentRoute,
+						isInternalOnly,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
 						zendeskTicketProductFieldValue,
 					} }
 				>
-					<AgentSetup agentId={ agentId } />
+					<AgentSetup agentId={ agentId } urlSessionHandoff={ urlSessionHandoff } />
 				</AgentsManagerContextProvider>
 			</PersistentRouter>
 		</QueryClientProvider>
 	);
 }
 
+/**
+ * Resolve the session to resume from this tab's stored session, which
+ * conversation switches save before navigating here.
+ * Reader chat pre-generates one (blog frontends reload on every navigation);
+ * other agents get theirs from the server via `onSessionIdChange`.
+ * Empty means a new chat.
+ */
+function resolveTabSessionId(
+	isNewChat: boolean,
+	agentId: string | undefined,
+	siteKey: string,
+	userId?: number
+): string {
+	if ( isNewChat ) {
+		return '';
+	}
+	if ( isReaderChatAgent( agentId ) ) {
+		return getOrCreateSessionId( agentId, siteKey, userId );
+	}
+	return getSessionId( agentId, siteKey, userId );
+}
+
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
-	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
+function AgentSetup( {
+	agentId: hostAgentId,
+	urlSessionHandoff,
+}: {
+	agentId?: string;
+	urlSessionHandoff: SessionHandoff | null;
+} ): JSX.Element | null {
+	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
+	const userId = currentUser?.ID;
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	const agentConfigRef = useRef( agentConfig );
+	agentConfigRef.current = agentConfig;
+	const wasChatViewShowingRef = useRef( false );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
 
+	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
+	// unmounts on close, so closing must count as leaving the chat view.
+	const { isOpen } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+	const hasAiChatEntry = useHasAiChatEntryButton();
+	const isChatVisible = !! isOpen || ! hasAiChatEntry;
+
+	// Where the conversation view (and its `useConversation` fetch) is mounted;
+	// '/' only exists transiently before the catch-all redirects to the chat.
+	const isChatViewShowing = ( pathname.startsWith( '/chat' ) || pathname === '/' ) && isChatVisible;
+
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	// Restore the session ID. Priority:
-	//   1. Router state (calypso navigation carries sessionId on resume).
-	//   2. localStorage (reader-chat on blog frontends, where there's no
-	//      router state on fresh page loads). We persist client-side so
-	//      the same session_id flows with every request.
-	//   3. Generate a new client-side UUID, persist, and use it.
-	// This is more robust than relying on agenttic-client's own sessionIdStorageKey
-	// write — that fires after the server returns a sessionId, which can be
-	// skipped if the response shape doesn't match what the client parses.
-	const sessionId =
-		( ! isNewChat && state?.sessionId ) ||
-		( isReaderChatAgent( agentId ) ? getOrCreateSessionId( isNewChat, agentId ) : '' );
+	useSessionHandoffLinks( isAgentConfigLoading ? undefined : agentId );
+
+	// A handed-off session is stored under its own site scope and resumed only
+	// when this page is in that scope, as a site switch within one origin would.
+	const handoff = urlSessionHandoff && isHandoffAgent( agentId ) ? urlSessionHandoff : null;
+	const handoffSiteKey = handoff?.siteKey ?? siteKey;
+	const initialSessionId = handoff && handoffSiteKey === siteKey ? handoff.sessionId : '';
+
+	let sessionId: string;
+	if ( initialSessionId && ! agentConfig ) {
+		sessionId = initialSessionId;
+	} else {
+		sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	}
+
+	useWebMcpTools( {
+		toolProvider: loadedProvidersRef.current?.toolProvider,
+		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
+			window.location.search
+		}`,
+	} );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
 		if ( isAgentConfigLoading ) {
 			return;
 		}
+		if ( ! agentConfigRef.current && handoff ) {
+			saveSessionId( handoff.sessionId, agentId, handoffSiteKey, userId );
+		}
+		// A dep change supersedes this run mid-await — a stale initialization
+		// must not navigate or publish its config over the newer run's.
+		let isSuperseded = false;
+
+		const isReturningToChatView = isChatViewShowing && ! wasChatViewShowingRef.current;
+		wasChatViewShowingRef.current = isChatViewShowing;
+
+		// Abort the agent's in-flight request and remove it.
+		async function discardAgent(): Promise< void > {
+			const agentManager = getAgentManager();
+
+			if ( agentManager.hasAgent( agentId ) ) {
+				await agentManager.abortCurrentRequest( agentId );
+				agentManager.removeAgent( agentId );
+			}
+		}
 
 		async function initializeAgent(): Promise< void > {
+			// A session-scope switch (`siteKey` and the user, which together key
+			// the tab's storage) is a context switch: drop the previous scope's
+			// agent so its still-streaming response can't write into this scope's
+			// session or transcript, then initialize from this scope's session.
+			const scope = `${ siteKey }-${ userId ?? '' }`;
+			const previousScope = lastInitializedScope;
+			lastInitializedScope = scope;
+
+			if ( previousScope !== undefined && previousScope !== scope ) {
+				await discardAgent();
+
+				if ( isSuperseded ) {
+					return;
+				}
+			}
+
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
-				const agentManager = getAgentManager();
+				await discardAgent();
 
-				if ( agentManager.hasAgent( agentId ) ) {
-					await agentManager.abortCurrentRequest( agentId );
-					agentManager.removeAgent( agentId );
+				if ( isSuperseded ) {
+					return;
 				}
 
-				// Clear stored session ID
-				clearSessionId( agentId );
+				clearSessionId( agentId, siteKey, userId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
+				return;
+			}
+
+			const currentConfig = agentConfigRef.current;
+			const isSameAgent = currentConfig?.agentId === agentId;
+			// A live agent is required to skip: after a teardown the config can
+			// still match while the agent is gone, and only a fresh config makes
+			// `useAgentChat` recreate it.
+			const hasLiveAgent = getAgentManager().hasAgent( agentId );
+
+			// Already aligned with this tab's session — nothing to initialize.
+			if ( isSameAgent && currentConfig?.sessionId === sessionId && hasLiveAgent ) {
+				return;
+			}
+
+			// The running conversation wins while the chat view stays shown: the
+			// only thing that writes a session in that window is the agent's own
+			// `onSessionIdChange` (every user-driven switch navigates first), and
+			// re-initializing would refetch and clobber the live transcript.
+			// Storage is honored on the next navigation — away, or back to here.
+			if ( isSameAgent && isChatViewShowing && ! isReturningToChatView && hasLiveAgent ) {
 				return;
 			}
 
@@ -154,12 +313,18 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
 				loadedProvidersRef.current = providers;
+
+				if ( isSuperseded ) {
+					return;
+				}
 			}
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
 
 			const config = await createAgentConfig( {
 				sessionId,
+				sessionSiteKey: siteKey,
+				sessionUserId: userId,
 				siteId,
 				currentRoute,
 				toolProvider: providers.toolProvider,
@@ -171,21 +336,33 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				onTaskUpdate: providers.onTaskUpdate,
 			} );
 
+			if ( isSuperseded ) {
+				return;
+			}
+
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
+
+		return () => {
+			isSuperseded = true;
+		};
 	}, [
 		agentId,
 		currentRoute,
 		isAgentConfigLoading,
+		isChatViewShowing,
 		isNewChat,
+		handoff,
+		handoffSiteKey,
 		navigate,
 		sessionId,
 		sectionName,
 		setAgentConfig,
 		site?.ID,
-		hostAgentId,
+		siteKey,
+		userId,
 		version,
 	] );
 
@@ -200,17 +377,24 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	}
 
 	return (
-		<AgentDock
-			emptyViewSuggestions={ emptyViewSuggestions }
-			markdownComponents={ loadedProviders.markdownComponents || {} }
-			markdownExtensions={ loadedProviders.markdownExtensions || {} }
-			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
-			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-			useSuggestions={ loadedProviders.useSuggestions }
-			getChatComponent={ loadedProviders.getChatComponent }
-			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			useCheckpoint={ loadedProviders.useCheckpoint }
-			capabilities={ loadedProviders.capabilities }
-		/>
+		<>
+			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
+				<WebMcpProviderAbilitiesSetup
+					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				/>
+			) }
+			<AgentDock
+				emptyViewSuggestions={ emptyViewSuggestions }
+				markdownComponents={ loadedProviders.markdownComponents || {} }
+				markdownExtensions={ loadedProviders.markdownExtensions || {} }
+				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				useSuggestions={ loadedProviders.useSuggestions }
+				getChatComponent={ loadedProviders.getChatComponent }
+				siteBuildUtils={ loadedProviders.siteBuildUtils }
+				transformMessages={ loadedProviders.transformMessages }
+				useCheckpoint={ loadedProviders.useCheckpoint }
+				capabilities={ loadedProviders.capabilities }
+			/>
+		</>
 	);
 }

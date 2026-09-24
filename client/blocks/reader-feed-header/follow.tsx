@@ -7,7 +7,7 @@ import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-se
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useIsSeenEnabled, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import { useCanMarkSeen, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getFeedUrl, getSiteUrl } from 'calypso/reader/get-helpers';
@@ -33,6 +33,7 @@ interface ReaderFeed {
 	subscription_id?: number;
 	blog_owner?: string;
 	name?: string;
+	organization_id?: number;
 }
 
 interface ReaderSite {
@@ -57,7 +58,11 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID;
 	const followFeedId = resolvedFeed?.feed_ID;
 	const reduxFollowing = useIsSubscribed( { feedUrl: followFeedUrl } );
-	const isSeenEnabled = useIsSeenEnabled( { feedId: followFeedId, blogId: resolvedSiteId } );
+	const canMarkSeen = useCanMarkSeen( {
+		feedId: followFeedId,
+		blogId: resolvedSiteId,
+		organizationId: resolvedFeed?.organization_id,
+	} );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,
@@ -157,7 +162,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 					</div>
 				) }
 			</div>
-			{ isSeenEnabled && resolvedFeed && (
+			{ canMarkSeen && resolvedFeed && (
 				<button
 					onClick={ markAllAsSeen }
 					className="reader-feed-header__seen-button"

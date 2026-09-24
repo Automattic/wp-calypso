@@ -104,7 +104,7 @@
 		text-decoration: underline;
 	}
 
-	&.eligibility-warnings--without-title {
+	&.eligibility-warnings--boxed {
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
@@ -235,10 +235,8 @@
 	}
 }
 
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold,
-.eligibility-warnings--blocking-hold .eligibility-warnings__header {
-	opacity: 0.2;
+.eligibility-warnings--blocking-hold .eligibility-warnings__confirm-buttons {
+	margin-block-start: 16px;
 }
 
 .eligibility-warnings__plan-storage-wrapper {

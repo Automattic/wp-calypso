@@ -244,6 +244,8 @@ export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 
+export const PRODUCT_STUDIO_CODE_AI_CREDITS = 'studio-code-ai-credits';
+
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
 export const AkismetUpgradesProductMap: Record< string, string > = {

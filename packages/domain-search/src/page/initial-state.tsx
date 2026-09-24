@@ -1,4 +1,5 @@
 import { SearchForm } from '../components/search-form';
+import { NamePulseSearchInput } from '../name-pulse';
 import { DomainSearchAlreadyOwnDomainCTA } from '../ui';
 import { useDomainSearch } from './context';
 
@@ -10,7 +11,7 @@ export const InitialState = () => {
 
 	return (
 		<div className="domain-search--initial-state">
-			<SearchForm />
+			{ config.showNamePulseSearch ? <NamePulseSearchInput /> : <SearchForm /> }
 			{ config.allowsUsingOwnDomain && onExternalDomainClick && (
 				<div className="domain-search--initial-state__already-own-domain-cta">
 					<DomainSearchAlreadyOwnDomainCTA onClick={ () => onExternalDomainClick() } />

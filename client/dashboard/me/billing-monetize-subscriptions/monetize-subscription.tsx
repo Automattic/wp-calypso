@@ -10,7 +10,6 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
 	Button,
 	Notice,
@@ -26,6 +25,7 @@ import { monetizeSubscriptionRoute, monetizeSubscriptionsRoute } from '../../app
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
+import Grid from '../../components/grid';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -156,9 +156,9 @@ function StopSubscriptionButton( {
 	const navigate = useNavigate();
 	const title = isProduct
 		? // translators: %s is the product title
-		  sprintf( __( 'Remove %s product' ), subscription.title )
+			sprintf( __( 'Remove %s product' ), subscription.title )
 		: // translators: %s is the product title
-		  sprintf( __( 'Stop %s subscription' ), subscription.title );
+			sprintf( __( 'Stop %s subscription' ), subscription.title );
 	return (
 		<ActionList.ActionItem
 			title={ title }
@@ -263,7 +263,7 @@ export default function MonetizeSubscriptionDetails() {
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
 				<VStack spacing={ 6 }>
-					<Grid columns={ 2 } rows={ 2 } gap={ 6 }>
+					<Grid columns={ 2 } rows={ 2 } gap="xl">
 						<OverviewCard
 							icon={ siteLogo }
 							title={ __( 'Site' ) }

@@ -125,7 +125,7 @@ export default function StatsMain( {
 					label: translate( 'Help' ),
 					href: 'admin.php?page=my-jetpack#/help',
 				},
-		  ]
+			]
 		: [];
 
 	const titleContent = breadcrumbs ? (

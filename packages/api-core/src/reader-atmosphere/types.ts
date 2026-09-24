@@ -162,8 +162,7 @@ export interface AtmosphereQuoteBlockedTombstone {
 }
 
 export type AtmosphereQuoteTombstone =
-	| AtmosphereQuoteNotFoundTombstone
-	| AtmosphereQuoteBlockedTombstone;
+	AtmosphereQuoteNotFoundTombstone | AtmosphereQuoteBlockedTombstone;
 
 export interface AtmosphereEmbedQuote {
 	type: 'quote';
@@ -230,9 +229,7 @@ export interface AtmosphereThreadBlockedNode {
 }
 
 export type AtmosphereThreadNode =
-	| AtmosphereThreadPostNode
-	| AtmosphereThreadNotFoundNode
-	| AtmosphereThreadBlockedNode;
+	AtmosphereThreadPostNode | AtmosphereThreadNotFoundNode | AtmosphereThreadBlockedNode;
 
 export interface AtmosphereThreadResponse {
 	thread: AtmosphereThreadNode;
@@ -275,10 +272,7 @@ export interface AtmosphereAuthorFeedPage {
  * type-system supported but not exposed in this slice.
  */
 export type AtmosphereAuthorFeedFilter =
-	| 'posts_no_replies'
-	| 'posts_with_replies'
-	| 'posts_with_media'
-	| 'posts_and_author_threads';
+	'posts_no_replies' | 'posts_with_replies' | 'posts_with_media' | 'posts_and_author_threads';
 
 /**
  * Discriminated union encoding the "is the caller following the target?"
@@ -289,8 +283,7 @@ export type AtmosphereAuthorFeedFilter =
  * value once they've narrowed `following` to a string.
  */
 export type AtmosphereProfileFollowState =
-	| { following: null; following_rkey: null }
-	| { following: string; following_rkey: string };
+	{ following: null; following_rkey: null } | { following: string; following_rkey: string };
 
 /**
  * Caller-relative relationship state surfaced on the authed
@@ -490,13 +483,7 @@ export interface DeletePostParams {
  * a generic renderer that uses `protocol_type` for the label.
  */
 export type AtmosphereNotificationCanonicalType =
-	| 'like'
-	| 'repost'
-	| 'follow'
-	| 'mention'
-	| 'reply'
-	| 'quote'
-	| 'other';
+	'like' | 'repost' | 'follow' | 'mention' | 'reply' | 'quote' | 'other';
 
 export interface AtmosphereNotificationActor {
 	handle: string;

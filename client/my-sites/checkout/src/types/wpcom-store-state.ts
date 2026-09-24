@@ -4,6 +4,8 @@ import type {
 	CaDomainContactExtraDetails,
 	UkDomainContactExtraDetails,
 	FrDomainContactExtraDetails,
+	InDomainContactExtraDetails,
+	EsDomainContactExtraDetails,
 } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -11,6 +13,8 @@ import type {
 	CaDomainContactExtraDetailsErrors,
 	UkDomainContactExtraDetailsErrors,
 	FrDomainContactExtraDetailsErrors,
+	InDomainContactExtraDetailsErrors,
+	EsDomainContactExtraDetailsErrors,
 	ManagedContactDetailsShape,
 	ManagedContactDetailsTldExtraFieldsShape,
 	ManagedValue,
@@ -139,6 +143,62 @@ export function updateManagedContactDetailsShape< A, B >(
 		};
 	}
 
+	if ( data.tldExtraFields?.in ) {
+		if ( update.tldExtraFields?.in ) {
+			tldExtraFields.in = {
+				nexusDeclaration: combine(
+					update.tldExtraFields.in.nexusDeclaration,
+					data.tldExtraFields.in.nexusDeclaration
+				),
+				nexusConnectionType: combine(
+					update.tldExtraFields.in.nexusConnectionType,
+					data.tldExtraFields.in.nexusConnectionType
+				),
+			};
+		} else {
+			tldExtraFields.in = data.tldExtraFields.in;
+		}
+	} else if ( update.tldExtraFields?.in ) {
+		tldExtraFields.in = {
+			nexusDeclaration: construct( update.tldExtraFields.in.nexusDeclaration ),
+			nexusConnectionType: construct( update.tldExtraFields.in.nexusConnectionType ),
+		};
+	}
+
+	if ( data.tldExtraFields?.es ) {
+		if ( update.tldExtraFields?.es ) {
+			tldExtraFields.es = {
+				registrantEntityType: combine(
+					update.tldExtraFields.es.registrantEntityType,
+					data.tldExtraFields.es.registrantEntityType
+				),
+				registrantIdentificationNumber: combine(
+					update.tldExtraFields.es.registrantIdentificationNumber,
+					data.tldExtraFields.es.registrantIdentificationNumber
+				),
+				adminIdentificationNumber: combine(
+					update.tldExtraFields.es.adminIdentificationNumber,
+					data.tldExtraFields.es.adminIdentificationNumber
+				),
+				redEsAgreementAccepted: combine(
+					update.tldExtraFields.es.redEsAgreementAccepted,
+					data.tldExtraFields.es.redEsAgreementAccepted
+				),
+			};
+		} else {
+			tldExtraFields.es = data.tldExtraFields.es;
+		}
+	} else if ( update.tldExtraFields?.es ) {
+		tldExtraFields.es = {
+			registrantEntityType: construct( update.tldExtraFields.es.registrantEntityType ),
+			registrantIdentificationNumber: construct(
+				update.tldExtraFields.es.registrantIdentificationNumber
+			),
+			adminIdentificationNumber: construct( update.tldExtraFields.es.adminIdentificationNumber ),
+			redEsAgreementAccepted: construct( update.tldExtraFields.es.redEsAgreementAccepted ),
+		};
+	}
+
 	return {
 		firstName: combine( update.firstName, data.firstName ),
 		lastName: combine( update.lastName, data.lastName ),
@@ -207,7 +267,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.ca.ciraAgreementAccepted
 						? f( x.tldExtraFields.ca.ciraAgreementAccepted )
 						: null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const ukValues =
@@ -218,7 +278,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 						? f( x.tldExtraFields.uk.registrationNumber )
 						: null,
 					x.tldExtraFields.uk.tradingName ? f( x.tldExtraFields.uk.tradingName ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const frValues =
@@ -227,10 +287,38 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.fr.registrantType ? f( x.tldExtraFields.fr.registrantType ) : null,
 					x.tldExtraFields.fr.trademarkNumber ? f( x.tldExtraFields.fr.trademarkNumber ) : null,
 					x.tldExtraFields.fr.sirenSiret ? f( x.tldExtraFields.fr.sirenSiret ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
-	return values.concat( caValues, ukValues, frValues );
+	const inValues =
+		x.tldExtraFields && x.tldExtraFields.in
+			? ( [
+					x.tldExtraFields.in.nexusDeclaration ? f( x.tldExtraFields.in.nexusDeclaration ) : null,
+					x.tldExtraFields.in.nexusConnectionType
+						? f( x.tldExtraFields.in.nexusConnectionType )
+						: null,
+				].filter( Boolean ) as B[] )
+			: [];
+
+	const esValues =
+		x.tldExtraFields && x.tldExtraFields.es
+			? ( [
+					x.tldExtraFields.es.registrantEntityType
+						? f( x.tldExtraFields.es.registrantEntityType )
+						: null,
+					x.tldExtraFields.es.registrantIdentificationNumber
+						? f( x.tldExtraFields.es.registrantIdentificationNumber )
+						: null,
+					x.tldExtraFields.es.adminIdentificationNumber
+						? f( x.tldExtraFields.es.adminIdentificationNumber )
+						: null,
+					x.tldExtraFields.es.redEsAgreementAccepted
+						? f( x.tldExtraFields.es.redEsAgreementAccepted )
+						: null,
+				].filter( Boolean ) as B[] )
+			: [];
+
+	return values.concat( caValues, ukValues, frValues, inValues, esValues );
 }
 
 export function isValid( arg: ManagedValue ): boolean {
@@ -461,11 +549,15 @@ function prepareTldExtraContactDetails( details: ManagedContactDetails ): {
 	ca: null | CaDomainContactExtraDetails;
 	uk: null | UkDomainContactExtraDetails;
 	fr: null | FrDomainContactExtraDetails;
+	in: null | InDomainContactExtraDetails;
+	es: null | EsDomainContactExtraDetails;
 } {
 	return {
 		ca: prepareCaDomainContactExtraDetails( details ),
 		uk: prepareUkDomainContactExtraDetails( details ),
 		fr: prepareFrDomainContactExtraDetails( details ),
+		in: prepareInDomainContactExtraDetails( details ),
+		es: prepareEsDomainContactExtraDetails( details ),
 	};
 }
 
@@ -473,11 +565,15 @@ function prepareTldExtraContactDetailsErrors( details: ManagedContactDetails ): 
 	ca: null | CaDomainContactExtraDetailsErrors;
 	uk: null | UkDomainContactExtraDetailsErrors;
 	fr: null | FrDomainContactExtraDetailsErrors;
+	in: null | InDomainContactExtraDetailsErrors;
+	es: null | EsDomainContactExtraDetailsErrors;
 } {
 	return {
 		ca: prepareCaDomainContactExtraDetailsErrors( details ),
 		uk: prepareUkDomainContactExtraDetailsErrors( details ),
 		fr: prepareFrDomainContactExtraDetailsErrors( details ),
+		in: prepareInDomainContactExtraDetailsErrors( details ),
+		es: prepareEsDomainContactExtraDetailsErrors( details ),
 	};
 }
 
@@ -567,6 +663,61 @@ function prepareFrDomainContactExtraDetailsErrors(
 	return null;
 }
 
+function prepareInDomainContactExtraDetails(
+	details: ManagedContactDetails
+): InDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.in ) {
+		return {
+			nexusDeclaration: details.tldExtraFields.in.nexusDeclaration?.value === 'true',
+			nexusConnectionType: details.tldExtraFields.in.nexusConnectionType?.value,
+		};
+	}
+	return null;
+}
+
+function prepareInDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): InDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.in ) {
+		return {
+			nexusDeclaration: details.tldExtraFields.in?.nexusDeclaration?.errors?.[ 0 ],
+			nexusConnectionType: details.tldExtraFields.in?.nexusConnectionType?.errors?.[ 0 ],
+		};
+	}
+	return null;
+}
+
+function prepareEsDomainContactExtraDetails(
+	details: ManagedContactDetails
+): EsDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.es ) {
+		return {
+			registrantEntityType: details.tldExtraFields.es.registrantEntityType?.value,
+			registrantIdentificationNumber:
+				details.tldExtraFields.es.registrantIdentificationNumber?.value,
+			adminIdentificationNumber: details.tldExtraFields.es.adminIdentificationNumber?.value,
+			redEsAgreementAccepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
+		};
+	}
+	return null;
+}
+
+function prepareEsDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): EsDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.es ) {
+		return {
+			registrantEntityType: details.tldExtraFields.es?.registrantEntityType?.errors?.[ 0 ],
+			registrantIdentificationNumber:
+				details.tldExtraFields.es?.registrantIdentificationNumber?.errors?.[ 0 ],
+			adminIdentificationNumber:
+				details.tldExtraFields.es?.adminIdentificationNumber?.errors?.[ 0 ],
+			redEsAgreementAccepted: details.tldExtraFields.es?.redEsAgreementAccepted?.errors?.[ 0 ],
+		};
+	}
+	return null;
+}
+
 export function prepareDomainContactValidationRequest(
 	details: ManagedContactDetails
 ): DomainContactValidationRequest {
@@ -592,6 +743,21 @@ export function prepareDomainContactValidationRequest(
 			registrant_vat_id: details.vatId?.value,
 			trademark_number: details.tldExtraFields.fr.trademarkNumber?.value,
 			siren_siret: details.tldExtraFields.fr.sirenSiret?.value,
+		};
+	}
+	if ( details.tldExtraFields?.in ) {
+		extra.in = {
+			nexus_declaration: details.tldExtraFields.in.nexusDeclaration?.value === 'true',
+			nexus_connection_type: details.tldExtraFields.in.nexusConnectionType?.value,
+		};
+	}
+	if ( details.tldExtraFields?.es ) {
+		extra.es = {
+			registrant_entity_type: details.tldExtraFields.es.registrantEntityType?.value,
+			registrant_identification_number:
+				details.tldExtraFields.es.registrantIdentificationNumber?.value,
+			admin_identification_number: details.tldExtraFields.es.adminIdentificationNumber?.value,
+			red_es_agreement_accepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
 		};
 	}
 
@@ -688,6 +854,17 @@ export function formatDomainContactValidationResponse(
 				trademarkNumber: response.messages?.extra?.fr?.trademark_number,
 				sirenSiret: response.messages?.extra?.fr?.siren_siret,
 			},
+			in: {
+				nexusDeclaration: response.messages?.extra?.in?.nexus_declaration,
+				nexusConnectionType: response.messages?.extra?.in?.nexus_connection_type,
+			},
+			es: {
+				registrantEntityType: response.messages?.extra?.es?.registrant_entity_type,
+				registrantIdentificationNumber:
+					response.messages?.extra?.es?.registrant_identification_number,
+				adminIdentificationNumber: response.messages?.extra?.es?.admin_identification_number,
+				redEsAgreementAccepted: response.messages?.extra?.es?.red_es_agreement_accepted,
+			},
 		},
 	};
 }
@@ -725,6 +902,16 @@ function prepareManagedContactDetailsUpdate(
 				registrantType: rawFields?.extra?.fr?.registrantType,
 				trademarkNumber: rawFields?.extra?.fr?.trademarkNumber,
 				sirenSiret: rawFields?.extra?.fr?.sirenSiret,
+			},
+			in: {
+				nexusDeclaration: rawFields?.extra?.in?.nexusDeclaration?.toString(),
+				nexusConnectionType: rawFields?.extra?.in?.nexusConnectionType,
+			},
+			es: {
+				registrantEntityType: rawFields?.extra?.es?.registrantEntityType,
+				registrantIdentificationNumber: rawFields?.extra?.es?.registrantIdentificationNumber,
+				adminIdentificationNumber: rawFields?.extra?.es?.adminIdentificationNumber,
+				redEsAgreementAccepted: rawFields?.extra?.es?.redEsAgreementAccepted?.toString(),
 			},
 		},
 	};

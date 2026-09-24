@@ -35,9 +35,6 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-e
 		isExperimentEligible: false,
 	} ) )
 );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getByPurchaseId: jest.fn(),
-} ) );
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
@@ -155,6 +152,48 @@ describe( 'PlansFeaturesMain', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
 				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
+			);
+		} );
+
+		test( 'Should fall back to default plans when the site intent leaves no plans to show', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan hidePremiumPlan />
+			);
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+
+		test( 'Should fall back to default plans when the site intent leaves only the current plan', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan /> );
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_PREMIUM,
+					PLAN_BUSINESS,
+					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
+		test( 'Should keep the site intent plans in signup even when only one plan remains', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } isInSignup hideFreePlan hidePersonalPlan />
+			);
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_PREMIUM ] )
 			);
 		} );
 

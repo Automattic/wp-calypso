@@ -84,10 +84,13 @@ const playNotificationSound = () => {
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
 	const queryClient = useQueryClient();
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const smoochRef = useRef< HTMLDivElement >( null );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		site?.ID
+	);
 	const {
 		isHelpCenterShown,
 		isChatLoaded,

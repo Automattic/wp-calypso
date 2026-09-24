@@ -30,11 +30,9 @@ export function HelpCenterChat( {
 		newInteractionsBotSlug,
 		newLoggedOutInteractionsBotSlug,
 		newInteractionsBotVersion,
+		launcherContext,
 	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
-	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
-		!! currentUser?.ID
-	);
 	const { search } = useLocation();
 	const { data } = useSupportStatus( ! featureConfig.chat.skipSupportStatus );
 	const params = new URLSearchParams( search );
@@ -44,6 +42,10 @@ export function HelpCenterChat( {
 	const requestedSiteId = Number( siteId ) || Number( site?.ID );
 	const selectedSiteId =
 		Number.isInteger( requestedSiteId ) && requestedSiteId > 0 ? requestedSiteId : undefined;
+	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		selectedSiteId ?? site?.ID
+	);
 	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: selectedSiteId } );
 	const externalChatProvider = params.get( 'externalChatProvider' );
 	const externalChatId = params.get( 'externalChatId' );
@@ -79,6 +81,7 @@ export function HelpCenterChat( {
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
+			launcherContext={ launcherContext }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

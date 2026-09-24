@@ -1,16 +1,24 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { setNoticeHidden } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 
 /** The `from` value the pricing grid's paid CTA sends to the purchase page. */
 export const PRICING_GRID_REFERRER = 'jetpack-stats-pricing-grid';
 
 /**
+ * Query arg naming the plan the visitor picked on a surface that asked the Free-vs-Paid question
+ * before this grid could, so the grid must not ask again. Sent by Odyssey's pre-connection screen —
+ * which has no blog id to record an answer against, so the choice can only travel in the URL — and
+ * by My Jetpack's Add Stats interstitial.
+ */
+export const PLAN_CHOSEN_QUERY_ARG = 'stats_plan_chosen';
+
+/**
  * Returns a function that records the pricing grid dismissal server-side and
  * patches the cached notices in place, so the gate sees the choice on SPA route
  * changes without waiting for a refetch. The patch can't cover every path — the
- * raw notices entry may be absent when the purchase page was reached directly —
+ * notices entry may be absent when the purchase page was reached directly —
  * but the round-trip needn't be awaited: the mutation invalidates the notices
  * query on success, so a gate that fetched pre-dismissal state self-corrects
  * once the POST lands. A rejection (after the mutation's own retry) is
@@ -30,9 +38,6 @@ export default function useDismissPricingGrid( siteId: number | null ) {
 
 	return useCallback( () => {
 		recordDismissal().catch( () => null );
-		queryClient.setQueryData(
-			[ 'stats', 'notices-visibility', 'raw', siteId ],
-			( notices: Notices | undefined ) => notices && { ...notices, pricing_grid: false }
-		);
+		setNoticeHidden( queryClient, siteId, 'pricing_grid' );
 	}, [ recordDismissal, queryClient, siteId ] );
 }

@@ -8,7 +8,7 @@ const translations = {
 	follow: __( 'Subscriptions' ),
 	achievement: __( 'Site achievements' ),
 	mentions: __( 'Username mentions' ),
-	scheduled_publicize: __( 'Jetpack Social' ),
+	scheduled_publicize: __( 'Scheduled social shares' ),
 	blogging_prompt: __( 'Daily writing prompts' ),
 	draft_post_prompt: __( 'Draft post reminders' ),
 	store_order: __( 'New order' ),

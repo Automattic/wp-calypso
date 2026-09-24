@@ -268,6 +268,8 @@ type DomainContactDetailsErrorsExtra = {
 	ca?: CaDomainContactExtraDetailsErrors | null;
 	uk?: UkDomainContactExtraDetailsErrors | null;
 	fr?: FrDomainContactExtraDetailsErrors | null;
+	in?: InDomainContactExtraDetailsErrors | null;
+	es?: EsDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
@@ -287,6 +289,18 @@ export type FrDomainContactExtraDetailsErrors = {
 	registrantVatId?: string[] | TranslateResult[];
 	trademarkNumber?: string[] | TranslateResult[];
 	sirenSiret?: string[] | TranslateResult[];
+};
+
+export type InDomainContactExtraDetailsErrors = {
+	nexusDeclaration?: string | TranslateResult;
+	nexusConnectionType?: string | TranslateResult;
+};
+
+export type EsDomainContactExtraDetailsErrors = {
+	registrantEntityType?: string | TranslateResult;
+	registrantIdentificationNumber?: string | TranslateResult;
+	adminIdentificationNumber?: string | TranslateResult;
+	redEsAgreementAccepted?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -414,6 +428,16 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
+	};
+	in?: {
+		nexusDeclaration?: T;
+		nexusConnectionType?: T;
+	};
+	es?: {
+		registrantEntityType?: T;
+		registrantIdentificationNumber?: T;
+		adminIdentificationNumber?: T;
+		redEsAgreementAccepted?: T;
 	};
 };
 
@@ -583,6 +607,16 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	};
+	es?: {
+		registrant_entity_type?: string;
+		registrant_identification_number?: string;
+		admin_identification_number?: string;
+		red_es_agreement_accepted?: boolean;
+	};
 	is_for_business?: boolean;
 };
 
@@ -601,6 +635,16 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_type?: string[];
 		trademark_number?: string[];
 		siren_siret?: string[];
+	};
+	in?: {
+		nexus_declaration?: string[];
+		nexus_connection_type?: string[];
+	};
+	es?: {
+		registrant_entity_type?: string[];
+		registrant_identification_number?: string[];
+		admin_identification_number?: string[];
+		red_es_agreement_accepted?: string[];
 	};
 	is_for_business?: boolean;
 };
@@ -644,28 +688,12 @@ export type RawDomainContactValidationResponse =
 			messages_simple: string[];
 	  };
 
-export interface CountryListItemBase {
-	code: string;
-	name: string;
-	has_postal_codes?: boolean;
-	tax_needs_city?: boolean;
-	tax_needs_subdivision?: boolean;
-	tax_needs_organization?: boolean;
-	tax_needs_address?: boolean;
-
-	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 */
-	tax_name?: string;
-}
-export interface CountryListItemWithoutVat extends CountryListItemBase {
-	vat_supported: false;
-}
-export interface CountryListItemWithVat extends CountryListItemBase {
-	vat_supported: true;
-	tax_country_codes: string[];
-}
-export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
+export type {
+	CountryListItemBase,
+	CountryListItemWithoutVat,
+	CountryListItemWithVat,
+	CountryListItem,
+} from '@automattic/api-core';
 
 /**
  * Copied these types from Redux to avoid needing to import the whole package.

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
@@ -16,6 +17,18 @@ function renderFooter( cart: ResponseCart ) {
 			<CheckoutPayButtonFooter cart={ cart } />
 		</ThemeProvider>
 	);
+}
+
+function cartWith( ...productSlugs: string[] ): ResponseCart {
+	const cart = getEmptyResponseCart();
+	cart.products.push(
+		...productSlugs.map( ( product_slug ) => ( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 5,
+			product_slug,
+		} ) )
+	);
+	return cart;
 }
 
 describe( 'CheckoutPayButtonFooter', () => {
@@ -42,5 +55,26 @@ describe( 'CheckoutPayButtonFooter', () => {
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
 		// 3 direct children: SSL trust line, divider, legal notice (modal is closed).
 		expect( wrapper?.childElementCount ).toBe( 3 );
+	} );
+
+	it( 'links the AI Credits Guidelines for a cart containing Studio Code AI Credits', () => {
+		renderFooter( cartWith( PLAN_PREMIUM, PRODUCT_STUDIO_CODE_AI_CREDITS ) );
+
+		expect( screen.getByRole( 'link', { name: 'AI Credits Guidelines' } ) ).toHaveAttribute(
+			'href',
+			'https://developer.wordpress.com/docs/developer-tools/studio/studio-code/ai-credits-guidelines/'
+		);
+		// The standard notice is unaffected by the extra line.
+		expect(
+			screen.getByRole( 'button', { name: 'View billing and renewal details' } )
+		).toBeVisible();
+	} );
+
+	it( 'omits the AI Credits Guidelines for any other cart', () => {
+		renderFooter( cartWith( PLAN_PREMIUM ) );
+
+		expect(
+			screen.queryByRole( 'link', { name: 'AI Credits Guidelines' } )
+		).not.toBeInTheDocument();
 	} );
 } );

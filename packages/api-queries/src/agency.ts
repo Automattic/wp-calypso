@@ -4,12 +4,25 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
+	updateAgencyPartnerDirectoryApplication,
+	updateAgencyProfile,
+	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
+	submitAgencyPressablePremiumPlanReferral,
+	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { Agency, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
+import type {
+	Agency,
+	AgencyHostingReferral,
+	AgencyPartnerDirectoryApplicationUpdate,
+	AgencyProfileUpdate,
+	AgencyVipPartnerOpportunity,
+	McpSettings,
+	McpSettingsUpdate,
+} from '@automattic/api-core';
 
 // Mirror the server's response shape so the optimistic snapshot matches what
 // onSuccess later writes.
@@ -107,6 +120,64 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'tipalti-payee' ] as const,
 		queryFn: () => fetchTipaltiPayee( agencyId ),
 		enabled: !! agencyId,
+	} );
+
+// Merge rather than replace: the PUT responses may omit fields the
+// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+const mergeIntoActiveAgency = ( agency: Agency ) => {
+	queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+		previous ? { ...previous, ...agency } : agency
+	);
+};
+
+export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-application-update' },
+		mutationFn: async ( update: AgencyPartnerDirectoryApplicationUpdate ) => {
+			const agency = await updateAgencyPartnerDirectoryApplication( agencyId, update );
+			// A 2xx without the saved application means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile?.partner_directory_application?.status ) {
+				throw new Error( 'The response did not include the saved application.' );
+			}
+			return agency;
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyProfileMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-profile-update' },
+		mutationFn: async ( update: AgencyProfileUpdate ) => {
+			const agency = await updateAgencyProfile( agencyId, update );
+			// A 2xx without the saved profile means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile ) {
+				throw new Error( 'The response did not include the saved profile.' );
+			}
+			return agency;
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-logo-upload' },
+		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
+	} );
+
+export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-vip-opp-submit' },
+		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
+			submitAgencyVipPartnerOpportunity( agencyId, referral ),
+	} );
+
+export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-press-prem-submit' },
+		mutationFn: ( referral: AgencyHostingReferral ) =>
+			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

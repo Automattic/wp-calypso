@@ -67,13 +67,16 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
+				// DataViews passes `getValue()` results to `sort()`, not items, despite
+				// what the `Field` type says.
 				sort: ( a, b, direction ) => {
-					if ( a.primary_domain === b.primary_domain ) {
+					const isPrimaryA = Boolean( a );
+					if ( isPrimaryA === Boolean( b ) ) {
 						return 0;
 					}
 
 					const factor = direction === 'asc' ? 1 : -1;
-					return a.primary_domain ? -1 * factor : 1 * factor;
+					return isPrimaryA ? -1 * factor : 1 * factor;
 				},
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
@@ -147,23 +150,7 @@ export const useFields = ( {
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					if ( ! item.expiry ) {
-						return null;
-					}
-
-					const expiryDate = new Date( item.expiry );
-					const now = new Date();
-					const diffInMs = expiryDate.getTime() - now.getTime();
-					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
-
-					if ( item.expired ) {
-						return '1-expired';
-					} else if ( diffInDays <= 90 ) {
-						return '2-next-90-days';
-					}
-					return '3-more-than-90-days';
-				},
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
 				render: ( { item } ) => {
 					return (
 						<DomainExpiryField

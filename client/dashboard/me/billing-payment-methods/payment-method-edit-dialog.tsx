@@ -53,6 +53,7 @@ export function PaymentMethodEditDialog( {
 
 				<TaxLocationForm
 					data={ formData }
+					allowIsForBusinessCheckbox
 					onChange={ ( updated ) => {
 						setFormData( ( previous ) => ( { ...previous, ...updated } ) );
 					} }

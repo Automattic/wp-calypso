@@ -4,12 +4,9 @@ import { intervalToDuration } from 'date-fns';
 import { isGSuiteOrGoogleWorkspaceProductSlug, DisplayVariant } from '../../../utils/purchase';
 
 /**
- * Minimal purchase shape the confirmation copy depends on. Both surfaces
- * (dashboard `Purchase` from `@automattic/api-core`; legacy `Purchases.Purchase`
- * from `@automattic/data-stores`) adapt to this shape so the copy helper
- * itself is surface-agnostic. The dashboard Purchase is structurally
- * assignable; the legacy side uses the adapter in
- * `client/me/purchases/cancel-purchase/to-purchase-for-copy.ts`.
+ * Minimal purchase shape the confirmation copy depends on, shared by the
+ * dashboard and legacy cancel flows. The api-core `Purchase` is structurally
+ * assignable to it.
  */
 export type PurchaseForCopy = {
 	is_plan: boolean;
@@ -32,14 +29,7 @@ export type PurchaseForCopy = {
  * distinct heading / notice / checkbox / fallback-loss phrasing.
  */
 export type ProductCategory =
-	| 'plan'
-	| 'domain'
-	| 'email'
-	| 'jetpack'
-	| 'akismet'
-	| 'marketplace'
-	| 'one-time'
-	| 'other';
+	'plan' | 'domain' | 'email' | 'jetpack' | 'akismet' | 'marketplace' | 'one-time' | 'other';
 
 function isTitanMailSlug( productSlug: string ): boolean {
 	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( productSlug );

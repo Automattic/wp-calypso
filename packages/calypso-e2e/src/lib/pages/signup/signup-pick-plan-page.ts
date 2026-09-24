@@ -1,4 +1,5 @@
 import { Locator, Page } from 'playwright';
+import { handleActiveThrottles, recordResponseThrottle } from '../../throttle-flags';
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
@@ -17,6 +18,11 @@ export class SignupPickPlanPage {
 	private page: Page;
 	private plansPage: PlansPage;
 	readonly theresAPlanForYouHeading: Locator;
+	/**
+	 * Site created by the last `selectPlan` call. Set as soon as `/sites/new` responds,
+	 * so a caller whose `selectPlan` then times out can still clean the site up.
+	 */
+	createdSite: NewSiteResponse | undefined;
 
 	/**
 	 * Constructs an instance of the component.
@@ -40,6 +46,8 @@ export class SignupPickPlanPage {
 	 * @returns {Promise<NewSiteResponse>}
 	 */
 	private captureNewSiteResponse(): Promise< NewSiteResponse > {
+		this.createdSite = undefined;
+
 		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
 			this.page.route(
 				/.*\/sites\/new\?.*/,
@@ -48,6 +56,14 @@ export class SignupPickPlanPage {
 						const response = await route.fetch();
 						const body = await response.body();
 						await route.fulfill( { response } );
+
+						// `/sites/new` is where the signup ban is answered, and this is the
+						// only place the suite reads what it answers with. A refusal parses
+						// as nothing and would otherwise leave a syntax error behind.
+						const throttle = await recordResponseThrottle( response );
+						if ( throttle ) {
+							handleActiveThrottles( [ throttle ] );
+						}
 
 						const parsed = JSON.parse( body.toString() );
 						const siteDetails: NewSiteResponse = parsed.body;
@@ -59,6 +75,7 @@ export class SignupPickPlanPage {
 						}
 
 						siteDetails.blog_details.blogid = Number( siteDetails.blog_details.blogid );
+						this.createdSite = siteDetails;
 						resolve( siteDetails );
 					} catch ( error ) {
 						reject( error );
@@ -85,14 +102,18 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
+		// Awaited alongside the redirect rather than after it: a refused creation
+		// never redirects, and a skip left to be read afterwards would spend the
+		// ninety seconds first and then be lost to the timeout that ends the wait.
 		const responsePromise = this.captureNewSiteResponse();
 
-		await Promise.all( [
+		const [ , , siteDetails ] = await Promise.all( [
 			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
 			this.plansPage.selectPlan( name ),
+			responsePromise,
 		] );
 
-		return responsePromise;
+		return siteDetails;
 	}
 
 	/**
@@ -147,6 +168,26 @@ export class SignupPickPlanPage {
 	}
 
 	/**
+	 * Clicks the "start with a free plan" link and waits for navigation.
+	 *
+	 * Intended for flows where the free plan is de-emphasized and a free subdomain is
+	 * used, so no upsell modal is shown.
+	 *
+	 * @param {RegExp} redirectUrl Optional URL pattern to wait for after clicking.
+	 * @returns {Promise<void>}
+	 */
+	async startWithFreePlan( redirectUrl?: RegExp ): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		redirectUrl ??= new RegExp( '.*/home/.*' );
+
+		await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.plansPage.clickStartWithFreePlan(),
+		] );
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger.
 	 *
 	 * Use this when you need to inspect or assert modal content before committing to a plan.
@@ -156,16 +197,6 @@ export class SignupPickPlanPage {
 	async openEscapeHatch(): Promise< void > {
 		await this.page.waitForURL( plansPageUrl );
 		await this.plansPage.openEscapeHatch();
-	}
-
-	/**
-	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
-	 *
-	 * @param {string} domainName The domain name that will be shown to visitors.
-	 * @returns {Promise<void>}
-	 */
-	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
-		await this.plansPage.validateNoCustomDomainWarning( domainName );
 	}
 
 	/**
