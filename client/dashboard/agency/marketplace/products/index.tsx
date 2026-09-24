@@ -2,7 +2,6 @@ import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries'
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
@@ -17,6 +16,7 @@ import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
 import { ButtonStack } from '../../../components/button-stack';
 import { Callout } from '../../../components/callout';
+import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -339,7 +339,7 @@ export default function MarketplaceProducts() {
 	};
 
 	const renderGrid = ( items: ProductListItem[] ) => (
-		<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 6 }>
+		<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 			{ items.map( ( item ) => (
 				<ProductCard
 					key={ getItemId( item ) }
@@ -456,7 +456,7 @@ export default function MarketplaceProducts() {
 				</DataViews>
 			</div>
 			{ isLoading && (
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 6 }>
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 					{ Array.from( { length: 4 }, ( _, index ) => (
 						<ProductCardSkeleton key={ index } />
 					) ) }

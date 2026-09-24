@@ -1,7 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -15,6 +14,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import Divider from '../../components/divider';
+import Grid, { type GapSize } from '../../components/grid';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -80,10 +80,10 @@ function getGridLayout( {
 	};
 }
 
-function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: number } ) {
+function SiteOverviewPrimaryCards( { site, gap }: { site: Site; gap: GapSize } ) {
 	if ( isCommerceGarden( site ) ) {
 		return (
-			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
 				<PlanCard site={ site } />
 				<VisibilityCardCiab site={ site } />
 			</Grid>
@@ -96,13 +96,13 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 			{ ( () => {
 				const showVisibilityCard = ! site.is_wpcom_flex;
 				return (
-					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ spacing }>
+					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ gap }>
 						{ showVisibilityCard && <VisibilityCard site={ site } /> }
 						<BackupCard site={ site } />
 					</Grid>
 				);
 			} )() }
-			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
 				{ ( () => {
 					if ( site.is_a4a_dev_site ) {
 						return <AgencySiteShareCard site={ site } />;
@@ -186,6 +186,7 @@ function SiteOverview( {
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
 	const showSitePreview = ! isSmallViewport && supports.siteOverview.preview;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const gap = isSmallViewport ? 'lg' : 'xl';
 	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
 		count: ( isCommerceGardenSite ? 1 : 3 ) + Number( showSitePreview ),
@@ -265,9 +266,9 @@ function SiteOverview( {
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-				<Grid { ...gridLayout } gap={ spacing }>
+				<Grid { ...gridLayout } gap={ gap }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<SiteOverviewPrimaryCards site={ site } spacing={ spacing } />
+					<SiteOverviewPrimaryCards site={ site } gap={ gap } />
 				</Grid>
 				<SiteOverviewSecondaryCards
 					site={ site }

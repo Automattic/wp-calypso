@@ -55,7 +55,8 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const { name, supports, components, LoadingLogo = WordPressLogo } = useAppContext();
+	const HelpCenter = components.helpCenter ?? OmnibarHelpCenter;
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
@@ -184,7 +185,7 @@ function Root() {
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
-			{ supports.help && <OmnibarHelpCenter /> }
+			{ supports.help && <HelpCenter /> }
 			<OmnibarAgentsManager pathname={ pathname } />
 			<OmnibarSiteSwitcher />
 			<Snackbars />

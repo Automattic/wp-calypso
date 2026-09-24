@@ -40,7 +40,22 @@ describe( 'getTopResults', () => {
 		] );
 	} );
 
-	it( 'keeps a row taken by a real-time check in its slot', () => {
+	it( 'keeps a row taken by the cart check in its slot', () => {
+		const rows = [
+			{ ...row( 'test.blog', NamePulseDomainStatus.TAKEN ), is_cart_check: true },
+			row( 'test.com' ),
+			row( 'test.app' ),
+			row( 'test.dev' ),
+		];
+
+		expect( getTopResults( rows ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.blog',
+			'test.com',
+			'test.app',
+		] );
+	} );
+
+	it( 'drops a row taken by a real-time check the reader never asked for', () => {
 		const rows = [
 			{ ...row( 'test.blog', NamePulseDomainStatus.TAKEN ), is_realtime: true },
 			row( 'test.com' ),
@@ -49,9 +64,9 @@ describe( 'getTopResults', () => {
 		];
 
 		expect( getTopResults( rows ).map( ( r ) => r.domain_name ) ).toEqual( [
-			'test.blog',
 			'test.com',
 			'test.org',
+			'test.app',
 		] );
 	} );
 } );

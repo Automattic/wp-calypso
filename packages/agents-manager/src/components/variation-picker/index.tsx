@@ -1,9 +1,4 @@
-import {
-	Button,
-	__experimentalGrid as Grid,
-	Tooltip,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { memo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -15,8 +10,7 @@ import './style.scss';
 // Variations per page — one full 2×2 grid in the docked sidebar.
 const DEFAULT_MAX_TO_SHOW = 4;
 
-// Mirror the grid: the 140px track minimum in `GRID_TEMPLATE_COLUMNS` and the
-// 8px gap from the Grid's `gap={ 2 }` (4px base).
+// Mirror the grid: the 140px track minimum in `GRID_TEMPLATE_COLUMNS` and its gap.
 const CARD_MIN_WIDTH = 140;
 const GRID_GAP = 8;
 
@@ -66,10 +60,9 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	return (
 		<div className="agents-manager-variation-picker" ref={ resizeRef }>
 			<VStack spacing={ 1 }>
-				<Grid
-					gap={ 2 }
-					templateColumns={ GRID_TEMPLATE_COLUMNS }
+				<div
 					className="agents-manager-variation-picker__grid"
+					style={ { display: 'grid', gridTemplateColumns: GRID_TEMPLATE_COLUMNS, gap: GRID_GAP } }
 				>
 					{ /* Every option stays mounted and off-page cards hide via the
 					   `hidden` attribute — remounting on page flips would reboot
@@ -90,7 +83,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 							</div>
 						</Tooltip>
 					) ) }
-				</Grid>
+				</div>
 				{ ! showAll && totalPages > 1 && (
 					<div className="agents-manager-variation-picker__arrows">
 						<Button
