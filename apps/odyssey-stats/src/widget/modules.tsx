@@ -211,7 +211,8 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 	}
 
 	// Doubles as the Akismet key configuration page, which is where its spam figures live.
-	// It needs the same capability as the module itself, so it travels with the card.
+	// WordPress registers it with the plugin, so it exists only while Akismet reports a
+	// figure; the card offers its own link for the key that needs fixing.
 	const akismetUrl = adminBaseUrl + 'admin.php?page=akismet-key-config';
 
 	return (
@@ -228,7 +229,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					manageUrl={ akismetUrl }
 				/>
 			</div>
-			{ hasAkismet && (
+			{ ! isAkismetError && (
 				<div className="stats-widget-modules__footer">
 					<a
 						href={ akismetUrl }

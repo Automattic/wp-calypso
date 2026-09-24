@@ -130,7 +130,28 @@ describe( 'Modules', () => {
 
 			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Anti-spam insights' } ) ).toBeInTheDocument();
+		} );
+
+		it.each( [ 'not_installed', 'not_active' ] )(
+			'hides the Anti-spam link while Akismet is %s, since its page is not registered yet',
+			( error ) => {
+				moduleStates( { protect: ok( 12345 ), akismet: failed( error ) } );
+				renderModules();
+
+				expect(
+					screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+				).not.toBeInTheDocument();
+			}
+		);
+
+		it( 'points an invalid key at the page that fixes it, from the card rather than the footer', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'invalid_key' ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Manage Akismet key' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
