@@ -23,7 +23,6 @@ import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls'
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -66,6 +65,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
@@ -140,9 +140,9 @@ import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const SPACING = {
-	DEFAULT: 6,
-	SMALL: 4,
-};
+	DEFAULT: 'xl',
+	SMALL: 'lg',
+} as const;
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
