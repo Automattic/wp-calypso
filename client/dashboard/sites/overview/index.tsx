@@ -1,5 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -35,6 +36,7 @@ import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
+import StaticSiteImportCard from '../overview-static-site-import';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
@@ -42,6 +44,7 @@ import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
+import type { StaticSiteImportSearch } from '../overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
 
@@ -201,6 +204,8 @@ function SiteOverview( {
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
+	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
+	const importSessionId = importSearch.importSessionId;
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -269,18 +274,22 @@ function SiteOverview( {
 				</SitesNoticeArbiter>
 			}
 		>
-			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-				<Grid { ...gridLayout } gap={ gap }>
-					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<SiteOverviewPrimaryCards site={ site } gap={ gap } />
-				</Grid>
-				<SiteOverviewSecondaryCards
-					site={ site }
-					spacing={ spacing }
-					isLargeViewport={ isLargeViewport }
-					isSmallViewport={ isSmallViewport }
-				/>
-			</VStack>
+			{ importSessionId ? (
+				<StaticSiteImportCard site={ site } search={ { ...importSearch, importSessionId } } />
+			) : (
+				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+					<Grid { ...gridLayout } gap={ gap }>
+						{ showSitePreview && <SitePreviewCard site={ site } /> }
+						<SiteOverviewPrimaryCards site={ site } gap={ gap } />
+					</Grid>
+					<SiteOverviewSecondaryCards
+						site={ site }
+						spacing={ spacing }
+						isLargeViewport={ isLargeViewport }
+						isSmallViewport={ isSmallViewport }
+					/>
+				</VStack>
+			) }
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-site-overview"
 				guidedTours={ [
