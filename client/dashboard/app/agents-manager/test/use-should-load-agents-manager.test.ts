@@ -79,3 +79,39 @@ describe( 'useShouldLoadAgentsManager', () => {
 		expect( mockedIsEnabled ).toHaveBeenCalledWith( 'calypso/agents-manager-internal' );
 	} );
 } );
+
+describe( 'marketplace eligibility', () => {
+	it( 'keeps the dashboard plugin management page disabled', () => {
+		expect( getAgentsManagerEligibility( '/plugins', true ).routeIsEnabled ).toBe( false );
+	} );
+	it.each( [
+		'/plugins',
+		'/plugins/',
+		'/plugins/example.com',
+		'/plugins/wordpress-seo',
+		'/plugins/wordpress-seo/example.com',
+		'/plugins/browse/seo',
+		'/plugins/browse/seo/example.com',
+		'/plugins?search=seo',
+	] )( 'loads %s without Big Sky or a selected site', ( route ) => {
+		mockedIsEnabled.mockReturnValue( false );
+		const { result } = renderHook( () => useShouldLoadAgentsManager( route, null, true ) );
+		expect( result.current ).toEqual( { routeIsEnabled: true, isInternalOnly: false } );
+	} );
+	it.each( [
+		'manage',
+		'upload',
+		'setup',
+		'scheduled-updates',
+		'active',
+		'inactive',
+		'updates',
+		'plans',
+	] )( 'excludes %s routes', ( route ) => {
+		for ( const suffix of [ '', '/example.com', '/edit/123' ] ) {
+			expect(
+				getAgentsManagerEligibility( `/plugins/${ route }${ suffix }`, true, true ).routeIsEnabled
+			).toBe( false );
+		}
+	} );
+} );
