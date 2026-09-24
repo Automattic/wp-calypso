@@ -111,8 +111,15 @@ export default function CreditsMeter( {
 			contentClassName="agents-manager-credits-meter__popover"
 			open={ isOpen }
 			onToggle={ onToggle }
+			focusOnMount
 			// Render inside the panel so opening the popover doesn't blur it
-			popoverProps={ { inline: true, placement: 'top-end', offset: 8 } }
+			popoverProps={ {
+				inline: true,
+				placement: 'top-end',
+				offset: 8,
+				role: 'dialog',
+				'aria-label': __( 'Site credits', __i18n_text_domain__ ),
+			} }
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
 					className="agents-manager-credits-meter__toggle"
@@ -127,11 +134,7 @@ export default function CreditsMeter( {
 				/>
 			) }
 			renderContent={ () => (
-				<div
-					className="agents-manager-credits-meter__content"
-					role="dialog"
-					aria-label={ __( 'Site credits', __i18n_text_domain__ ) }
-				>
+				<div className="agents-manager-credits-meter__content">
 					<div className="agents-manager-credits-meter__header">
 						<span className="agents-manager-credits-meter__title">
 							{ __( 'Site credits', __i18n_text_domain__ ) }
@@ -158,7 +161,7 @@ export default function CreditsMeter( {
 					{ ( upgradeUrl || onAction ) && (
 						<Button
 							className="agents-manager-credits-meter__cta"
-							variant={ isFree ? 'primary' : 'secondary' }
+							variant={ upgradeUrl || isFree ? 'primary' : 'secondary' }
 							onClick={ onAction }
 							href={ upgradeUrl }
 							target={ upgradeUrl ? '_blank' : undefined }

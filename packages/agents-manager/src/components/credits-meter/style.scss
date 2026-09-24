@@ -119,7 +119,16 @@
 	justify-content: center;
 	width: 100%;
 
-	// The paid-plan CTA is a filled muted button, not wp's outlined secondary.
+	&.is-primary {
+		background-color: var( --color-primary );
+		color: var( --color-primary-foreground );
+
+		&:hover:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-primary ) 85%, #000 );
+		}
+	}
+
+	// Add credits uses a filled muted button, not wp's outlined secondary.
 	&.is-secondary {
 		background-color: var( --color-muted );
 		color: var( --color-foreground );
