@@ -862,7 +862,10 @@ class ThemeSheet extends Component {
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }
 					onClick={ this.onStyleVariationClick }
-					onUpgradeClick={ siteSlug ? this.onStyleVariationsUpgradeBadgeClick : undefined }
+					onUpgradeClick={
+						// Personal only unlocks styles for free themes; other tiers have their own purchase path.
+						siteSlug && isFreeTier ? this.onStyleVariationsUpgradeBadgeClick : undefined
+					}
 				/>
 			)
 		);
