@@ -11,6 +11,7 @@ import type { AppState } from 'calypso/types';
  */
 export default createSelector( ( state: AppState ): SiteDetails[] =>
 	getSites( state ).filter(
-		( site: SiteDetails ) => ! isJetpackSite( state, site.ID ) && userCan( 'own_site', site )
+		( site ): site is SiteDetails =>
+			!! site && ! isJetpackSite( state, site.ID ) && !! userCan( 'own_site', site )
 	)
 );
