@@ -12,11 +12,14 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
-import { amToolProvider, getAmCheckpointContext } from '../abilities';
+import { amToolProvider, getAmCheckpointContext, getAmPageContentMarkup } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
+import { withPageDesignStream } from '../abilities/stream-page-design/stream';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
+import isAmAbilitiesDisabled from './is-am-abilities-disabled';
+import { isEditorPage } from './is-editor-page';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { setLoadedProviderIds } from './loaded-provider-ids';
 import {
@@ -447,6 +450,29 @@ function withAmCheckpoints(
 	};
 }
 
+// TODO (ability-migration): Big Sky's client context feeds the same key while its
+// provider loads; this one wins by running last.
+/**
+ * Adds `currentPageContentMarkup`, the page body as the editor holds it, for
+ * the backend's page-design agent.
+ */
+function withPageContentMarkup(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return contextProvider;
+	}
+
+	return {
+		getClientContext: () => {
+			const context = contextProvider.getClientContext();
+			const currentPageContentMarkup = getAmPageContentMarkup();
+
+			return currentPageContentMarkup ? { ...context, currentPageContentMarkup } : context;
+		},
+	};
+}
+
 export function mergeContextProviders(
 	contextProviders: ContextProvider[]
 ): ContextProvider | undefined {
@@ -704,8 +730,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
+	// AM paints and describes the page only where it owns the editor abilities;
+	// elsewhere the provider copy does, with everything it needs left in place.
+	const amOwnsEditorAbilities = ! isAmAbilitiesDisabled() && isEditorPage();
+	const amContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
 	const mergedContextProvider = withCanvasBinding(
-		withAmCheckpoints( mergeContextProviders( allContextProviders ) )
+		amOwnsEditorAbilities ? withPageContentMarkup( amContextProvider ) : amContextProvider
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
@@ -854,7 +884,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
-		onTaskUpdate: mergedOnTaskUpdate,
+		onTaskUpdate: amOwnsEditorAbilities
+			? withPageDesignStream( mergedOnTaskUpdate )
+			: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		transformMessages: mergedTransformMessages,
