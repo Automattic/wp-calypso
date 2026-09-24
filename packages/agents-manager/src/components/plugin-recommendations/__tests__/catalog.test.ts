@@ -40,3 +40,33 @@ it( 'does not cross catalogs for explicit wp.org picks and exposes network error
 	);
 	expect( wpcomRequest ).not.toHaveBeenCalled();
 } );
+
+it( 'retains a missing wp.org recommendation without offering a retry', async () => {
+	fetchMock.mockResolvedValue( { ok: false, status: 404 } );
+	await expect(
+		fetchRecommendation( { slug: 'missing', source: 'wporg' }, 'en' )
+	).resolves.toBeNull();
+	expect( wpcomRequest ).not.toHaveBeenCalled();
+} );
+
+it( 'falls back to the commercial catalog after a wp.org 404', async () => {
+	fetchMock.mockResolvedValue( { ok: false, status: 404 } );
+	jest.mocked( wpcomRequest ).mockResolvedValue( { name: 'Premium' } );
+	await expect( fetchRecommendation( { slug: 'premium' }, 'en' ) ).resolves.toEqual( {
+		name: 'Premium',
+	} );
+} );
+
+it( 'retains a missing commercial recommendation without offering a retry', async () => {
+	jest.mocked( wpcomRequest ).mockRejectedValue( { statusCode: 404 } );
+	await expect(
+		fetchRecommendation( { slug: 'missing', source: 'commercial' }, 'en' )
+	).resolves.toBeNull();
+} );
+
+it( 'exposes commercial catalog errors so they can be retried', async () => {
+	jest.mocked( wpcomRequest ).mockRejectedValue( new Error( 'Offline' ) );
+	await expect(
+		fetchRecommendation( { slug: 'premium', source: 'commercial' }, 'en' )
+	).rejects.toThrow( 'Offline' );
+} );

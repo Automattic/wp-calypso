@@ -27,10 +27,10 @@ export async function fetchRecommendation(
 				'request[locale]': locale,
 			} );
 			const response = await fetch( `https://api.wordpress.org/plugins/info/1.2/?${ query }` );
-			if ( ! response.ok ) {
+			if ( ! response.ok && response.status !== 404 ) {
 				throw new Error( 'Unable to load plugin.' );
 			}
-			const plugin = asPlugin( await response.json() );
+			const plugin = response.status === 404 ? null : asPlugin( await response.json() );
 			if ( plugin || pick.source === 'wporg' ) {
 				return plugin;
 			}
@@ -40,10 +40,17 @@ export async function fetchRecommendation(
 			}
 		}
 	}
-	return asPlugin(
-		await wpcomRequest( {
-			path: `/marketplace/products/${ pick.slug }`,
-			apiNamespace: 'wpcom/v2',
-		} )
-	);
+	try {
+		return asPlugin(
+			await wpcomRequest( {
+				path: `/marketplace/products/${ pick.slug }`,
+				apiNamespace: 'wpcom/v2',
+			} )
+		);
+	} catch ( error ) {
+		if ( error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 404 ) {
+			return null;
+		}
+		throw error;
+	}
 }

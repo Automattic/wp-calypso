@@ -39,14 +39,15 @@ export function normalizeRecommendations( input: unknown ): PluginRecommendation
 			if ( typeof item.url !== 'string' ) {
 				continue;
 			}
-			url = item.url.trim();
+			const normalizedUrl = item.url.trim();
 			try {
-				if ( ! [ 'http:', 'https:' ].includes( new URL( url ).protocol ) ) {
+				if ( ! [ 'http:', 'https:' ].includes( new URL( normalizedUrl ).protocol ) ) {
 					continue;
 				}
 			} catch {
 				continue;
 			}
+			url = normalizedUrl;
 		}
 		seen.add( slug );
 		picks.push( {
