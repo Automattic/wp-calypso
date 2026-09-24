@@ -37,11 +37,11 @@ export default function SeoVisibilityNotice() {
 
 	return (
 		<Notice.Root className="seo-settings__visibility-notice" intent="warning">
-			<Notice.Title>{ translate( 'Search engines can’t see your site' ) }</Notice.Title>
+			<Notice.Title>{ translate( 'Your site may not appear in search results' ) }</Notice.Title>
 			<Notice.Description>
 				{ visibility }{ ' ' }
 				{ translate(
-					'Update your {{a}}site visibility settings{{/a}} to let search engines find it.',
+					'Update your {{a}}site visibility settings{{/a}} to let search engines index it.',
 					{
 						components: {
 							a: <Link href={ `/sites/settings/site/${ siteSlug }` } />,
