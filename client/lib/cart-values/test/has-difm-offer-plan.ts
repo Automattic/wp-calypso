@@ -27,6 +27,12 @@ describe( 'hasDIFMOfferPlan()', () => {
 
 	test( 'returns false for an unflagged Business plan', () => {
 		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS ) ) ).toBe( false );
+		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS, { difm_offer: false } ) ) ).toBe( false );
+	} );
+
+	test( 'returns false for a Business plan whose difm_offer is not exactly true', () => {
+		const extra = { difm_offer: 'yes' } as unknown as ResponseCartProductExtra;
+		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS, extra ) ) ).toBe( false );
 	} );
 
 	test( 'returns false for a flagged product that is not a Business plan', () => {
