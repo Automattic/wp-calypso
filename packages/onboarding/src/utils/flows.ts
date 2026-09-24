@@ -80,24 +80,6 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	);
 };
 
-/**
- * Flows where `/sites/new` generates the site address when `blog_name` is empty. Other flows
- * reject an empty `blog_name` or name the site "Site", so they must keep sending a name.
- */
-export const canSendEmptyBlogName = ( flowName?: string | null ) => {
-	return Boolean(
-		flowName &&
-		[
-			ONBOARDING_FLOW,
-			'onboarding-pm',
-			FREE_FLOW,
-			SITE_MIGRATION_FLOW,
-			WITH_THEME_FLOW,
-			'with-plugin',
-		].includes( flowName )
-	);
-};
-
 export const isCopySiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
 };
