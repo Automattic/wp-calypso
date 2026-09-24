@@ -1,16 +1,15 @@
 import { createSelector } from '@automattic/state-utils';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import type { AppState } from 'calypso/types';
 
 /**
  * Whether the user currently has any Atomic sites
- * @param {Object} state  Global state tree
- * @returns {boolean}
  */
 export default createSelector(
-	( state ) => {
+	( state: AppState ): boolean => {
 		const siteIds = Object.keys( getSitesItems( state ) );
-		return siteIds.some( ( siteId ) => isAtomicSite( state, siteId ) );
+		return siteIds.some( ( siteId ) => isAtomicSite( state, Number( siteId ) ) );
 	},
-	( state ) => [ getSitesItems( state ) ]
+	( state: AppState ) => [ getSitesItems( state ) ]
 );

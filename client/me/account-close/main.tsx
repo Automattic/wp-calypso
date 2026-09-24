@@ -1,12 +1,13 @@
+import { monetizeSubscriptionsQuery, userPurchasesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button as LegacyButton, Gridicon } from '@automattic/components';
 import { useOpenArticleInHelpCenter } from '@automattic/help-center/src/hooks';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, Fragment } from 'react';
-import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
@@ -15,14 +16,15 @@ import ActionPanelFigureList from 'calypso/components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-list-item';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import NavigationHeader from 'calypso/components/navigation-header';
+import {
+	hasCancelablePurchases as hasCancelablePurchasesInList,
+	hasRenewableMonetizeSubscriptions,
+} from 'calypso/dashboard/utils/purchase';
+import { useDispatch, useSelector } from 'calypso/state';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
-import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
@@ -30,31 +32,37 @@ import AccountCloseConfirmDialog from './confirm-dialog';
 
 import './style.scss';
 
-const AccountSettingsClose = ( {
-	translate,
-	hasAtomicSites,
-	hasCancelablePurchases,
-	isLoading,
-	purchasedPremiumThemes,
-	sitesToBeDeleted,
-	isAccountAlreadyClosed,
-	handleRedirectToLogout,
-} ) => {
+export default function AccountSettingsClose() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const areSitesLoaded = useSelector( hasLoadedSites );
+	const hasAtomicSites = useSelector( userHasAnyAtomicSites );
+	const isAccountAlreadyClosed = useSelector( isAccountClosed );
+	const sitesToBeDeleted = useSelector( getAccountClosureSites );
 	const [ showConfirmDialog, setShowConfirmDialog ] = useState( false );
 	const [ showSiteDropdown, setShowSiteDropdown ] = useState( true );
 	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
+	const { data: purchases } = useQuery( userPurchasesQuery() );
+	const purchasedPremiumThemes = purchases?.filter(
+		( purchase ) => purchase.product_type === 'theme'
+	);
+	const { data: monetizeSubscriptions } = useQuery( monetizeSubscriptionsQuery() );
+	const hasCancelablePurchases =
+		( purchases ? hasCancelablePurchasesInList( purchases ) : false ) ||
+		( monetizeSubscriptions ? hasRenewableMonetizeSubscriptions( monetizeSubscriptions ) : false );
+	const isLoading = ! purchases || ! monetizeSubscriptions || ! areSitesLoaded;
 
 	useEffect( () => {
 		if ( isAccountAlreadyClosed ) {
-			handleRedirectToLogout();
+			dispatch( redirectToLogout() );
 		}
-	}, [ isAccountAlreadyClosed, handleRedirectToLogout ] );
+	}, [ isAccountAlreadyClosed, dispatch ] );
 
 	const handleSupportArticleClick = () => {
 		openArticleInHelpCenter( localizeUrl( 'https://wordpress.com/support/close-account/' ) );
 	};
 	const goBack = () => page( '/me/account' );
-	const handleDeleteClick = ( event ) => {
+	const handleDeleteClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
 		if ( ! isLoading ) {
 			setShowConfirmDialog( true );
@@ -71,7 +79,6 @@ const AccountSettingsClose = ( {
 
 	return (
 		<div className={ containerClasses } role="main">
-			<QueryUserPurchases />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Account Settings' ) } />
 
 			<HeaderCake onClick={ goBack }>
@@ -238,26 +245,4 @@ const AccountSettingsClose = ( {
 			</ActionPanel>
 		</div>
 	);
-};
-
-export default connect(
-	( state ) => {
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
-		const isLoading =
-			! purchasedPremiumThemes ||
-			! hasLoadedSites( state ) ||
-			! hasLoadedUserPurchasesFromServer( state );
-
-		return {
-			isLoading,
-			hasCancelablePurchases: hasCancelableUserPurchases( state ),
-			purchasedPremiumThemes,
-			hasAtomicSites: userHasAnyAtomicSites( state ),
-			isAccountAlreadyClosed: isAccountClosed( state ),
-			sitesToBeDeleted: getAccountClosureSites( state ),
-		};
-	},
-	{
-		handleRedirectToLogout: redirectToLogout,
-	}
-)( localize( AccountSettingsClose ) );
+}
