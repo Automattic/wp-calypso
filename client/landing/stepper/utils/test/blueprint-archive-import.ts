@@ -183,6 +183,26 @@ describe( 'getSiteEditorUrl', () => {
 	} );
 
 	/**
+	 * Easy mode is an opt-in the Big Sky plugin reads from the URL once and
+	 * then remembers in a cookie, so the hand-off has to carry it.
+	 */
+	it( 'opts into easy mode when asked', () => {
+		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
+			canvasEdit: true,
+			easyMode: true,
+		} );
+		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
+
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit&easy-mode=true' );
+	} );
+
+	it( 'says nothing about easy mode unless asked', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } )
+		).not.toContain( 'easy-mode' );
+	} );
+
+	/**
 	 * The copy walkthrough is rolled back: the editor opens quietly and the
 	 * customer speaks first. Nothing on the hand-off may start it.
 	 */
