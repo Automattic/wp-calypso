@@ -1,6 +1,6 @@
 import type { ComponentProps, CSSProperties } from 'react';
 
-import './style.scss';
+import '@wordpress/theme/design-tokens.css';
 
 // The `--wpds-dimension-gap-*` token scale from `@wordpress/theme`.
 export type GapSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
