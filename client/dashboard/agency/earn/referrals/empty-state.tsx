@@ -1,7 +1,7 @@
 import { tipaltiPayeeQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, ExternalLink, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, ExternalLink, Icon, Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
@@ -19,6 +19,18 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
 	const accountStatus = getAccountStatus( payee );
 	const hasPayeeAccount = !! accountStatus?.status;
+
+	const statusBadge = ( () => {
+		if ( ! accountStatus ) {
+			return null;
+		}
+		const badge = <Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>;
+		return accountStatus.statusReason ? (
+			<Tooltip text={ accountStatus.statusReason }>{ badge }</Tooltip>
+		) : (
+			badge
+		);
+	} )();
 
 	return (
 		<EmptyState.Wrapper>
@@ -72,9 +84,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 							title={
 								<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 									<span>{ __( 'Prepare to get paid' ) }</span>
-									{ accountStatus && (
-										<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
-									) }
+									{ statusBadge }
 								</HStack>
 							}
 							description={ createInterpolateElement(
