@@ -412,14 +412,12 @@ export class SiteSettingsFormSEO extends Component {
 											text={ translate( 'HTML tags are not allowed.' ) }
 										/>
 									) }
-									<FormSettingExplanation>
-										<Button className="seo-settings__preview-button" onClick={ this.showPreview }>
-											{ translate( 'Show Previews' ) }
-										</Button>
-										<span className="seo-settings__preview-explanation">
+									<div className="seo-settings__preview">
+										<Button onClick={ this.showPreview }>{ translate( 'Show Previews' ) }</Button>
+										<FormSettingExplanation>
 											{ translate( 'See how this will look on Google, Facebook, and X.' ) }
-										</span>
-									</FormSettingExplanation>
+										</FormSettingExplanation>
+									</div>
 								</div>
 								<div style={ { clear: 'both', marginBottom: '12px' } } />
 								<Button
