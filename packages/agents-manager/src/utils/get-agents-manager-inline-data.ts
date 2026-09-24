@@ -9,7 +9,7 @@
  * Read the server-injected Agents Manager inline payload.
  *
  * Jetpack's Agents Manager feature injects a bare `const agentsManagerData` global
- * rather than a `window` property. Embedded hosts (reader-chat, Plugin Compass)
+ * rather than a `window` property. Embedded hosts (reader-chat)
  * may assign `window.agentsManagerData` instead. Read the bare global first and
  * fall back to `window.agentsManagerData`.
  *
