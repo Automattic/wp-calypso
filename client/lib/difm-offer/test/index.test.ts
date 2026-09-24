@@ -95,10 +95,13 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( false );
 	} );
 
-	it( 'accepts en and en-gb and rejects fr', () => {
+	it( 'accepts en and en-gb and rejects en-us and fr', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'en' }, NOW ) ).toBe( true );
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'en-gb' }, NOW ) ).toBe(
 			true
+		);
+		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'en-us' }, NOW ) ).toBe(
+			false
 		);
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'fr' }, NOW ) ).toBe( false );
 	} );
