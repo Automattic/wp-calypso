@@ -1,5 +1,5 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
-import { Notice } from '@wordpress/components';
+import { Link, Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
@@ -24,34 +24,34 @@ export default function SeoVisibilityNotice() {
 		return null;
 	}
 
-	let text;
+	let title;
 	if ( isSitePrivate ) {
-		text = translate(
+		title = translate(
 			"SEO settings aren't recognized by search engines while your site is Private."
 		);
 	} else if ( siteIsComingSoon ) {
-		text = translate(
+		title = translate(
 			"SEO settings aren't recognized by search engines while your site is Coming Soon."
 		);
 	} else {
-		text = translate(
+		title = translate(
 			"SEO settings aren't recognized by search engines while your site is Hidden."
 		);
 	}
 
 	return (
-		<Notice
-			className="seo-settings__visibility-notice"
-			status="warning"
-			isDismissible={ false }
-			actions={ [
-				{
-					label: translate( 'Privacy Settings', { context: 'Site visibility settings' } ),
-					url: `/sites/settings/site/${ siteSlug }`,
-				},
-			] }
-		>
-			{ text }
-		</Notice>
+		<Notice.Root className="seo-settings__visibility-notice" intent="warning">
+			<Notice.Title>{ title }</Notice.Title>
+			<Notice.Description>
+				{ translate(
+					'Your site is not currently accessible to search engines. You must set your {{a}}privacy settings{{/a}} to “public”.',
+					{
+						components: {
+							a: <Link href={ `/sites/settings/site/${ siteSlug }` } />,
+						},
+					}
+				) }
+			</Notice.Description>
+		</Notice.Root>
 	);
 }
