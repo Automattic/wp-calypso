@@ -43,3 +43,19 @@ body:has( .dashboard-backport-site-purchases ) :is( .components-popover, .compon
 	--wp-admin-theme-color-darker-10: var( --studio-jetpack-green-60 );
 	--wp-admin-theme-color-darker-20: var( --studio-jetpack-green-70 );
 }
+
+.layout__primary .main {
+	& div.section-nav {
+		@media ( max-width: 480px ) {
+			&.is-open {
+				& > .section-nav__panel {
+					padding: 0;
+
+					& > .section-nav-group {
+						margin-block-start: 0;
+					}
+				}
+			}
+		}
+	}
+}

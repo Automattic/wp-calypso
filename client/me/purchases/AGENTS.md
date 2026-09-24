@@ -1,9 +1,15 @@
-# Classic Purchases — Billing & Purchase Management
+# Classic Purchases — Redirects & Shared Purchase Helpers
 
-Redux/page.js-based billing and purchase management. Covers the full purchase
-lifecycle: listing, detail, payment methods, billing history, cancellation, and
-tax details. Related billing areas: `client/dashboard/me/billing-purchases/`
-(Dashboard), `client/my-sites/checkout/` (Checkout).
+Account-level purchase management (the purchases list, purchase details,
+cancellation, payment methods, billing history and tax details) lives in the
+Dashboard under `client/dashboard/me/billing-purchases/`. The classic
+`/me/purchases/*` and `/me/billing/*` routes registered in `index.js` only
+redirect there so old links keep working.
+
+What remains in this directory is shared by other classic Calypso surfaces
+(domain and email management, plans, checkout, marketing-survey cancellation
+dialogs), not by any page of its own. Don't add new purchase-management UI here;
+build it in the Dashboard.
 
 ## Project Knowledge
 
@@ -11,104 +17,40 @@ tax details. Related billing areas: `client/dashboard/me/billing-purchases/`
 
 ```
 client/me/purchases/
-├── index.js + controller.jsx       # page.js route registration (not React Router)
-├── manage-purchase/
-│   └── index.tsx                   # Main detail page — class component (not functional)
-├── purchases-list-in-dataviews/    # Modern DataViews list (retrofitted into Redux architecture)
-├── cancel-purchase/                # Cancel flow — separate from remove-purchase/
-├── remove-purchase/                # Remove flow (expired items, DELETE API) — separate from cancel
-└── billing-history/main.tsx        # DataViews-based history list
+├── index.js + controller.js       # page.js redirects to the Dashboard
+├── paths.js                       # Classic URLs, still linked from other sections
+├── lib/raw-purchase-helpers.ts    # Helpers over the raw api-core `Purchase`
+├── manage-purchase/auto-renew-toggle/ # Used by domain and email management
+├── remove-purchase/               # Used by domain management
+└── upcoming-renewals/             # Used by checkout
 ```
-
-### Redux Selectors
-
-`getRawSitePurchases(state, siteId)` returns `[]` when not loaded — indistinguishable
-from "no purchases." `getRawUserPurchases(state)` returns `null` when not loaded.
-Always check `hasLoadedUserPurchasesFromServer` / `hasLoadedSitePurchasesFromServer`
-before trusting results.
-
-`getRawByPurchaseId` searches ALL purchases (user + site) from a single flat array.
-What's in that array depends on which `Query*Purchases` components have mounted.
 
 ### Architecture Context
 
-Classic and Dashboard (`client/dashboard/me/billing-purchases/`) both use the raw
-`Purchase` type from `@automattic/api-core` (snake_case fields, e.g. `purchase.site_slug`;
-expiry values `'auto-renewing'`, `'manual-renew'`).
-
-## Architectural Decisions
-
-1. **Two cancel entry points (mutually exclusive)** — `manage-purchase/index.tsx` renders
-   one of two CTAs, both linking to the same cancel page with a different `?intent=`:
-
-   - `renderCancelPurchaseNavItem()` → `?intent=cancel`, when auto-renew is on and
-     `canAutoRenewBeTurnedOff(purchase)` is true
-   - `renderRemovePurchaseNavItem()` → `?intent=remove`, when auto-renew is off, the
-     purchase is in its post-expiry grace period, or it's a domain connection bundled
-     with a plan
-
-   The intent decides the API call on submit (`disableAutoRenew` for cancel,
-   `cancelAndRefund` for a refundable remove, `removePurchase` DELETE otherwise) — see
-   `getMutationFlowType` in `client/lib/purchases/utils.ts`. They are NOT interchangeable.
-   `<RemovePurchase>` in `remove-purchase/` is no longer part of this page; only
-   `client/my-sites/domains/domain-management` still uses it.
-
-2. **Three payment method paths** — `changePaymentMethod` (per-purchase, has card),
-   `addPaymentMethod` (per-purchase, no card), `addNewPaymentMethod` (account-level).
-   Different routes, different components. `getChangePaymentMethodPath` in `utils.ts`
-   chooses between the first two.
-
-3. **Auto-renew toggle is asymmetric** — Enabling requires a valid payment method
-   (silently shows dialog instead). Disabling has no such gate.
+Everything here reads the raw `Purchase` type from `@automattic/api-core`
+(snake_case fields, e.g. `purchase.site_slug`; expiry values `'auto-renewing'`,
+`'manual-renew'`).
 
 ## Common Pitfalls
 
-1. **`canAutoRenewBeTurnedOff` name lies** — Despite the name, this function is the
-   **cancel eligibility gate**, not an auto-renew check. Returns `true` for refundable
-   purchases even when auto-renew is already off. See `client/lib/purchases/index.ts`.
-   Don't substitute `purchase.isAutoRenewEnabled`.
+1. **Auto-renew toggle is asymmetric** — Enabling requires a valid payment method
+   (silently shows dialog instead). Disabling has no such gate.
 
-2. **Bundled purchases are Remove-only** — A purchase with `expiry_status === 'included'`
-   renews with its parent plan, so `is_auto_renew_enabled` says nothing useful about it and
-   disabling auto-renew is a no-op (`canAutoRenewBeTurnedOff` already returns `false` for
-   them). Only domain connections (`domain_map`) can be removed on their own; the rest of a
-   plan's bundle goes with the plan. See `renderRemovePurchaseNavItem` in
-   `manage-purchase/index.tsx`.
-
-3. **`isSiteLevel` prop changes data source silently** — In `manage-purchase`,
-   `isSiteLevel=true` checks `hasLoadedSitePurchasesFromServer` instead of
-   `hasLoadedUserPurchasesFromServer`. Without the matching `QuerySitePurchases`
-   component, you get a permanent loading state with no error.
-
-4. **Auto-renew toggle: deferred notice pattern** — Notices created while
+2. **Auto-renew toggle: deferred notice pattern** — Notices created while
    `showAutoRenewDisablingDialog` is visible get swallowed. The component uses
    `pendingNotice` state + `componentDidUpdate` to defer. Don't call `createNotice`
    directly in dialog callbacks.
 
-5. **`page()` vs `page.redirect()` after actions** — Use `page.redirect()` after
-   cancel/remove so users can't navigate back to an invalid state. `page()` is
-   for normal navigation.
-
-6. **`purchase` is optional in PaymentMethodSelector** — The "add payment method"
-   flow passes `undefined`. Processors must handle this case. Success messages
-   branch on whether `purchase` exists.
-
-7. **`site.wpcom_url` lies for `.home.blog` sites** — Always returns
+3. **`site.wpcom_url` lies for `.home.blog` sites** — Always returns
    `.wordpress.com` even when the site's free domain is `.home.blog` (or 27
    other `.blog` subdomains). Use `getWpComDomainBySiteId()` selector to get
-   the actual free domain. Affects `NonPrimaryDomainDialog` in both
-   `remove-purchase/` and `manage-purchase/`.
+   the actual free domain. Affects `NonPrimaryDomainDialog` in `remove-purchase/`.
 
-8. **`isMonthly()` only checks plan slugs** — Returns `false` for Jetpack
+4. **`isMonthly()` only checks plan slugs** — Returns `false` for Jetpack
    product slugs like `jetpack_videopress_monthly` because it only checks
    `JETPACK_MONTHLY_PLANS`. Use `getJetpackItemTermVariants()` for products.
    Same issue with `getYearlyPlanByMonthly()` — only works for plans.
 
-9. **VAT API errors need field mapping** — `useMutation` error has
-   `{ error: string, message: string }` but no field indicator. Map error
-   codes to fields: `missing_country`/`invalid_country` → country field,
-   `invalid_vat`/`missing_id`/`validation_failed` → id field.
+5. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use holding sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
 
-10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use holding sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
-
-11. **Transferred purchases** — Always check ownership before allowing purchase actions.
+6. **Transferred purchases** — Always check ownership before allowing purchase actions.
