@@ -397,7 +397,11 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
  */
 export function getSiteEditorUrl(
 	adminUrl: string,
-	{ canvasEdit = false, path }: { canvasEdit?: boolean; path?: string } = {}
+	{
+		canvasEdit = false,
+		easyMode = false,
+		path,
+	}: { canvasEdit?: boolean; easyMode?: boolean; path?: string } = {}
 ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
@@ -415,9 +419,19 @@ export function getSiteEditorUrl(
 	// parameter was once blamed for came from sites where Big Sky had not been
 	// enabled by hand-off time (the enable race fixed on the wpcom side); when Big
 	// Sky mounts, it suppresses the guide itself.
+	//
+	// `easy-mode=true` opts the browser into Big Sky's easy mode: the locked-down
+	// presentation of the core Site Editor that build-wow already lands on. The
+	// plugin reads the parameter once and remembers it in a session cookie, so
+	// it only has to be on this first hop. It is an opt-in, not a switch: the
+	// plugin still gates on its own rules (a static front page among them), and
+	// a site that fails the gate gets the standard editor as before.
 	const args: Record< string, string > = {};
 	if ( canvasEdit ) {
 		args.canvas = 'edit';
+	}
+	if ( easyMode ) {
+		args[ 'easy-mode' ] = 'true';
 	}
 	if ( path ) {
 		args.p = path;
