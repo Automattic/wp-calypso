@@ -4,12 +4,13 @@ import { Button, Tooltip, __experimentalText as Text } from '@wordpress/componen
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo, useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
-import { DomainSearchTrademarkClaimsModal, DomainSuggestionBadge } from '../../ui';
+import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
 	isNamePulseAvailable,
 	NamePulseDomainStatus,
@@ -215,12 +216,8 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				</Tooltip>
 				{ ( showSaleBadge || showPremiumBadge ) && (
 					<span className="name-pulse-row__badges">
-						{ showSaleBadge && (
-							<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
-						) }
-						{ showPremiumBadge && (
-							<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
-						) }
+						{ showSaleBadge && <Badge intent="stable">{ __( 'Sale' ) }</Badge> }
+						{ showPremiumBadge && <Badge intent="informational">{ __( 'Premium' ) }</Badge> }
 					</span>
 				) }
 			</span>
