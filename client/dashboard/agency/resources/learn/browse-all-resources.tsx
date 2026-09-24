@@ -3,6 +3,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -11,6 +13,7 @@ import Grid from '../../../components/grid';
 import { getContentTypeLabel, getProductLabel } from './labels';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
+import type { AgencyResourceStage } from '@automattic/api-core';
 import type { View, Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -23,6 +26,8 @@ const initialView: View = {
 	page: 1,
 	perPage: 100,
 };
+
+type StageFilter = AgencyResourceStage | 'all';
 
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
@@ -38,6 +43,21 @@ export default function BrowseAllResources( {
 	onResourceClick,
 }: BrowseAllResourcesProps ) {
 	const [ view, setView ] = useState< View >( initialView );
+	const [ stage, setStage ] = useState< StageFilter >( 'all' );
+
+	const stageResources = useMemo(
+		() =>
+			stage === 'all' ? resources : resources.filter( ( resource ) => resource.stage === stage ),
+		[ resources, stage ]
+	);
+
+	const stageOptions: { value: StageFilter; label: string }[] = [
+		{ value: 'all', label: __( 'All' ) },
+		{ value: 'learn', label: __( 'Learn' ) },
+		{ value: 'sell', label: __( 'Sell' ) },
+		{ value: 'manage', label: __( 'Manage' ) },
+		{ value: 'grow', label: __( 'Grow' ) },
+	];
 
 	// Build filter options dynamically from available resources.
 	const filterOptions = useMemo( () => {
@@ -102,15 +122,15 @@ export default function BrowseAllResources( {
 	);
 
 	const { data: filteredData, paginationInfo } = useMemo(
-		() => filterSortAndPaginate( resources, view, fields ),
-		[ resources, view, fields ]
+		() => filterSortAndPaginate( stageResources, view, fields ),
+		[ stageResources, view, fields ]
 	);
 
 	return (
 		<>
 			<div className="dashboard-resources-learn__filters">
 				<DataViews< ResourceItem >
-					data={ resources }
+					data={ stageResources }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
@@ -119,11 +139,27 @@ export default function BrowseAllResources( {
 					getItemId={ ( item ) => String( item.id ) }
 					search
 				>
-					<HStack justify="space-between" className="dashboard-resources-learn__toolbar">
+					<HStack justify="space-between" wrap className="dashboard-resources-learn__toolbar">
 						<HStack justify="flex-start" expanded={ false }>
 							<DataViews.Search />
 							<DataViews.FiltersToggle />
 						</HStack>
+						<ToggleGroupControl
+							label={ __( 'Stage' ) }
+							value={ stage }
+							hideLabelFromVision
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							onChange={ ( value ) => setStage( ( value ?? 'all' ) as StageFilter ) }
+						>
+							{ stageOptions.map( ( option ) => (
+								<ToggleGroupControlOption
+									key={ option.value }
+									value={ option.value }
+									label={ option.label }
+								/>
+							) ) }
+						</ToggleGroupControl>
 					</HStack>
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled />
