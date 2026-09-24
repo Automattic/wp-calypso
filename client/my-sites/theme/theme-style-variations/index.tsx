@@ -13,7 +13,6 @@ interface ThemeStyleVariationsProps {
 	splitDefaultVariation: boolean;
 	needsUpgrade: boolean;
 	onClick: ( variation: StyleVariation ) => void;
-	onUpgradeClick?: () => void;
 }
 
 const ThemeStyleVariations = ( {
@@ -22,7 +21,6 @@ const ThemeStyleVariations = ( {
 	splitDefaultVariation,
 	needsUpgrade,
 	onClick,
-	onUpgradeClick,
 }: ThemeStyleVariationsProps ) => {
 	return (
 		<div className="theme__sheet-style-variations">
@@ -37,7 +35,6 @@ const ThemeStyleVariations = ( {
 					showOnlyHoverViewDefaultVariation={ false }
 					needsUpgrade={ needsUpgrade }
 					onSelect={ onClick }
-					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>
 		</div>

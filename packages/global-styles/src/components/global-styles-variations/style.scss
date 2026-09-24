@@ -109,25 +109,3 @@
 		outline: none;
 	}
 }
-
-.global-styles-variations__header h2:has(> .global-styles-variations__upgrade-badge) {
-	flex-wrap: wrap;
-	gap: 4px 10px;
-}
-
-.global-styles-variations__upgrade-badge {
-	display: inline-flex;
-	padding: 0;
-	border: 0;
-	background: none;
-	cursor: pointer;
-
-	.premium-badge {
-		margin-left: 0;
-		cursor: inherit;
-	}
-
-	&:focus-visible .premium-badge {
-		box-shadow: 0 0 0 2px var(--studio-blue-50);
-	}
-}

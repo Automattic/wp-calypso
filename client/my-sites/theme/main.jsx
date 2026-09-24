@@ -846,8 +846,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { isFreePlan, themeTier, shouldLimitGlobalStyles, siteSlug, styleVariations } =
-			this.props;
+		const { isFreePlan, themeTier, shouldLimitGlobalStyles, styleVariations } = this.props;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
 		const shouldSplitDefaultVariation = isFreeTier;
@@ -862,10 +861,6 @@ class ThemeSheet extends Component {
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }
 					onClick={ this.onStyleVariationClick }
-					onUpgradeClick={
-						// Personal only unlocks styles for free themes; other tiers have their own purchase path.
-						siteSlug && isFreeTier ? this.onStyleVariationsUpgradeBadgeClick : undefined
-					}
 				/>
 			)
 		);
@@ -1231,23 +1226,10 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
-		this.setState( { showUnlockStyleUpgradeModal: false } );
-		this.goToPremiumGlobalStylesCheckout();
-	};
-
-	onStyleVariationsUpgradeBadgeClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_theme_sheet_global_styles_upgrade_badge_click',
-			this.getPremiumGlobalStylesEventProps()
-		);
-
-		this.goToPremiumGlobalStylesCheckout();
-	};
-
-	goToPremiumGlobalStylesCheckout = () => {
 		const params = new URLSearchParams();
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
+		this.setState( { showUnlockStyleUpgradeModal: false } );
 		const upgradeToPlan = 'personal';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
