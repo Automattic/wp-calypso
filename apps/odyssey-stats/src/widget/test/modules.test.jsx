@@ -3,14 +3,14 @@
  */
 import { render, screen } from '@testing-library/react';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
-import { optionalConfig } from '../../lib/config-api';
+import config, { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
 import Modules from '../modules';
 
 jest.mock( '../../lib/config-api', () => {
-	const config = jest.fn();
-	config.isEnabled = ( feature ) => feature === 'is_running_in_jetpack_site';
-	return { __esModule: true, default: config, optionalConfig: jest.fn() };
+	const configApi = jest.fn();
+	configApi.isEnabled = jest.fn();
+	return { __esModule: true, default: configApi, optionalConfig: jest.fn() };
 } );
 jest.mock( '../../hooks/use-module-data-query' );
 jest.mock( '../../lib/selectors/can-current-user' );
@@ -52,18 +52,30 @@ function renderModules() {
 describe( 'Modules', () => {
 	beforeEach( () => {
 		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		config.isEnabled.mockImplementation( ( feature ) => feature === 'is_running_in_jetpack_site' );
 		mockConfigValues( { jetpack_version: '15.1' } );
 		canCurrentUser.mockReturnValue( true );
 		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
+		useModuleDataQuery.mockClear();
 	} );
 
 	afterEach( () => optionalConfig.mockReset() );
 
-	it( 'hides the cards on a site without the Jetpack plugin, whose routes they would 404 on', () => {
-		mockConfigValues( { jetpack_version: '' } );
-		const { container } = renderModules();
-		expect( container ).toBeEmptyDOMElement();
-	} );
+	it.each( [
+		[ 'a site without the Jetpack plugin', { jetpack_version: '' }, true ],
+		[ 'a Simple site', { jetpack_version: '15.1' }, false ],
+	] )(
+		'renders nothing on %s, and asks it for no module data, whose routes it would 404 on',
+		( _, values, isJetpackSite ) => {
+			config.isEnabled.mockReturnValue( isJetpackSite );
+			mockConfigValues( values );
+
+			const { container } = renderModules();
+
+			expect( container ).toBeEmptyDOMElement();
+			expect( useModuleDataQuery ).not.toHaveBeenCalled();
+		}
+	);
 
 	it.each( [
 		[ 'the Jetpack plugin is active', { jetpack_version: '15.1' } ],

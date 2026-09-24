@@ -193,27 +193,14 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 	);
 };
 
-export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
+const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseUrl } ) => {
 	const translate = useTranslate();
-	const isWPAdminAndNotSimpleSite = config.isEnabled( 'is_running_in_jetpack_site' );
 	const canManageModules = canCurrentUser( siteId, 'manage_options' );
 
 	// Both cards query through these keys too, so this reads their cached state rather
 	// than fetching again.
 	const { isError: isProtectError } = useModuleDataQuery( 'protect' );
 	const { isError: isAkismetError } = useModuleDataQuery( 'akismet' );
-
-	// Akismet and Protect modules are not available on Simple sites.
-	if ( ! isWPAdminAndNotSimpleSite ) {
-		return null;
-	}
-
-	// Only the Jetpack plugin registers the REST routes these cards read. The standalone
-	// Stats plugin prints an empty `jetpack_version` when Jetpack is not active;
-	// stats-admin releases older than that key ship only with the Jetpack plugin.
-	if ( optionalConfig( 'jetpack_version' ) === '' ) {
-		return null;
-	}
 
 	// A card hides itself when its figure failed and the viewer cannot act on it; with
 	// both hidden the section would be an empty card.
@@ -253,4 +240,22 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 			) }
 		</WidgetSection>
 	);
+};
+
+export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
+	// Akismet and Protect modules are not available on Simple sites.
+	if ( ! config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return null;
+	}
+
+	// Only the Jetpack plugin registers the REST routes these cards read. The standalone
+	// Stats plugin prints an empty `jetpack_version` when Jetpack is not active;
+	// stats-admin releases older than that key ship only with the Jetpack plugin.
+	if ( optionalConfig( 'jetpack_version' ) === '' ) {
+		return null;
+	}
+
+	// The cards' queries all run inside this component, so a site that fails either gate
+	// never asks for routes it does not serve.
+	return <SiteProtection siteId={ siteId } adminBaseUrl={ adminBaseUrl } />;
 }
