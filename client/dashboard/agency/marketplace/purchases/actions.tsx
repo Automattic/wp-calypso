@@ -6,9 +6,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { a4aLink, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
-import { getMarketplaceHostingSectionRoute } from '../paths';
+import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
 	getLicenseProductName,
@@ -33,6 +33,7 @@ export function getLicenseActions( {
 	isProvisioning,
 	onCopyKey,
 	onDownload,
+	onOpenCrmDownloads,
 	onOpenHosting,
 	recordTracksEvent,
 }: {
@@ -43,6 +44,7 @@ export function getLicenseActions( {
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
 	onDownload: ( license: JetpackLicense ) => void;
+	onOpenCrmDownloads: ( license: JetpackLicense ) => void;
 	onOpenHosting: ( license: JetpackLicense ) => void;
 	recordTracksEvent: ( eventName: string ) => void;
 } ): Action< JetpackLicense >[] {
@@ -184,9 +186,7 @@ export function getLicenseActions( {
 			label: __( 'Download Jetpack CRM Extensions' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isJetpackCrmLicense( item ) && getLicenseStatus( item ) === 'assigned',
-			// The CRM downloads page still lives in the classic dashboard.
-			callback: ( items ) =>
-				window.location.assign( a4aLink( `/purchases/crm-downloads/${ items[ 0 ].license_key }` ) ),
+			callback: ( items ) => onOpenCrmDownloads( items[ 0 ] ),
 		},
 		{
 			id: 'revoke-license',
@@ -216,12 +216,12 @@ export function getLicenseActions( {
 							__( 'Revoke bundle of %1$d %2$s licenses?' ),
 							items[ 0 ].quantity ?? 0,
 							getLicenseProductName( items[ 0 ] )
-						)
+					  )
 					: sprintf(
 							/* translators: %s is the product name. */
 							__( 'Revoke %s license?' ),
 							getLicenseProductName( items[ 0 ] )
-						),
+					  ),
 			RenderModal: ( { items, closeModal } ) => (
 				<RevokeLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
 			),
@@ -284,6 +284,11 @@ export function useLicenseActions( {
 		[ navigate ]
 	);
 
+	const onOpenCrmDownloads = useCallback(
+		( license: JetpackLicense ) => navigate( { to: getCrmDownloadsRoute( license.license_key ) } ),
+		[ navigate ]
+	);
+
 	return useMemo(
 		() =>
 			getLicenseActions( {
@@ -292,6 +297,7 @@ export function useLicenseActions( {
 				isProvisioning,
 				onCopyKey,
 				onDownload,
+				onOpenCrmDownloads,
 				onOpenHosting,
 				recordTracksEvent,
 			} ),
@@ -301,6 +307,7 @@ export function useLicenseActions( {
 			isProvisioning,
 			onCopyKey,
 			onDownload,
+			onOpenCrmDownloads,
 			onOpenHosting,
 			recordTracksEvent,
 		]

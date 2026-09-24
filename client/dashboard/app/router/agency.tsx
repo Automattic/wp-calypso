@@ -55,6 +55,7 @@ import { __ } from '@wordpress/i18n';
 import { pressableLicensesQuery } from '../../agency/marketplace/hosting/lib/pressable-products';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import {
+	CRM_DOWNLOADS_SEGMENT,
 	getMarketplaceHostingSectionRoute,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
@@ -436,9 +437,33 @@ export const marketplacePurchasesRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
+} );
+
+export const marketplacePurchasesIndexRoute = createRoute( {
+	getParentRoute: () => marketplacePurchasesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/purchases/crm-downloads/$licenseKey` – Jetpack CRM extension downloads
+export const marketplacePurchasesCrmDownloadsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'CRM downloads' ),
+			},
+		],
+	} ),
+	getParentRoute: () => marketplacePurchasesRoute,
+	path: `${ CRM_DOWNLOADS_SEGMENT }/$licenseKey`,
+} ).lazy( () =>
+	import( '../../agency/marketplace/purchases/crm-downloads' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-purchases-crm-downloads' )( {
 			component: d.default,
 		} )
 	)
@@ -520,7 +545,7 @@ export const marketplaceRoute = createRoute( {
 		const destination = agencySupports
 			? marketplaceSections.find( ( section ) =>
 					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
-				)?.route
+			  )?.route
 			: undefined;
 
 		if ( ! destination ) {
@@ -1159,8 +1184,9 @@ export const agencySitePerformanceBackendRoute = createRoute( {
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
-		await import( '../../sites/performance/backend/timeframe' );
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
+		'../../sites/performance/backend/timeframe'
+	);
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
@@ -1251,8 +1277,9 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } =
-			await import( '../../sites/performance/backend/timeframe' );
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
+			'../../sites/performance/backend/timeframe'
+		);
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
 			siteApmDetailQuery( site.ID, { method, route, windowSec } )
@@ -1990,7 +2017,10 @@ export const createAgencyRoutes = () => [
 			marketplaceHostingReferPremiumRoute,
 		] ),
 		marketplaceProductsRoute,
-		marketplacePurchasesRoute,
+		marketplacePurchasesRoute.addChildren( [
+			marketplacePurchasesIndexRoute,
+			marketplacePurchasesCrmDownloadsRoute,
+		] ),
 		exclusiveOffersRoute,
 		learnRoute,
 		devToolsRoute,
