@@ -331,7 +331,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -532,6 +532,7 @@ export default function OrchestratorChat( {
 		agentConfig: agentChatConfig!,
 		siteKey,
 		userId: currentUser?.ID,
+		site,
 		isOpen: isOpen || ( ! isDocked && isCompactMode ),
 	} );
 	const {

@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTextMessage } from './utils/index';
+import { validateJsonRpcResponse } from './utils/internal/errors';
 import { createClient, sendMessageAndWait } from './index';
-import type { ToolProvider } from './types/index';
+import type { JsonRpcResponse, ToolProvider } from './types/index';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -34,6 +35,28 @@ describe( 'Client', () => {
 	afterEach( () => {
 		vi.restoreAllMocks();
 	} );
+
+	it.each( [ null, false, 42, 'invalid', [] ] )(
+		'preserves the original validation error for a malformed response: %j',
+		async ( payload ) => {
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				json: async () => payload,
+			} );
+			let validationError;
+			try {
+				validateJsonRpcResponse( payload as unknown as JsonRpcResponse< unknown > );
+			} catch ( error ) {
+				validationError = error;
+			}
+			expect( validationError ).toBeInstanceOf( Error );
+			const client = createClient( { agentId: 'test-agent' } );
+			await expect(
+				client.sendMessage( { message: createTextMessage( 'hello' ) } )
+			).rejects.toEqual( validationError );
+		}
+	);
 
 	it.each( [ 'send', 'continue' ] )(
 		'preserves credit metadata on synchronous %s responses',

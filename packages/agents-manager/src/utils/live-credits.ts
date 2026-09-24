@@ -3,6 +3,7 @@ import { getBrowserSafeLocale } from 'i18n-calypso';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import type { CreditsPlanTier, CreditsStatus } from './credits';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { AgentsManagerSite } from '@automattic/data-stores';
 
 /** The opted-in allowance draft's terminal result.ai_credits contract. */
 export interface CreditSnapshot {
@@ -120,4 +121,22 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 			},
 		],
 	};
+}
+
+/** Bind the plans destination to the same site as the authenticated balance. */
+export function getLiveCreditsUpgradeUrl(
+	status: CreditsStatus,
+	siteId: number | undefined,
+	site?: AgentsManagerSite | null
+): string | undefined {
+	if (
+		! siteId ||
+		Number( site?.ID ) !== siteId ||
+		! site?.domain.trim() ||
+		[ '.', '..' ].includes( site.domain ) ||
+		! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' )
+	) {
+		return undefined;
+	}
+	return `https://wordpress.com/plans/${ encodeURIComponent( site.domain ) }`;
 }
