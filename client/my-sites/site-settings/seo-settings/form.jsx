@@ -33,11 +33,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
@@ -59,10 +56,6 @@ import './style.scss';
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
-
-function getGeneralTabUrl( slug ) {
-	return `/sites/settings/site/${ slug }`;
-}
 
 export class SiteSettingsFormSEO extends Component {
 	_mounted = createRef();
@@ -220,14 +213,11 @@ export class SiteSettingsFormSEO extends Component {
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
-			siteIsComingSoon,
 			showAdvancedSeo,
 			isAtomic,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
-			isSitePrivate,
-			isSiteHidden,
 			translate,
 			isFetchingSettings,
 			isSavingSettings,
@@ -245,8 +235,6 @@ export class SiteSettingsFormSEO extends Component {
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
 		const isSaveDisabled =
 			isDisabled || isSavingSettings || ( ! showPasteError && invalidCodes.length > 0 );
-
-		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
@@ -268,38 +256,11 @@ export class SiteSettingsFormSEO extends Component {
 							} ),
 					};
 
-		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
-		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
-
 		return (
 			<div ref={ this._mounted } style={ { width: '100%' } }>
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && showAdvancedSeo && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ ( function () {
-							if ( isSitePrivate ) {
-								return translate(
-									"SEO settings aren't recognized by search engines while your site is Private."
-								);
-							} else if ( isPublicComingSoon ) {
-								return translate(
-									"SEO settings aren't recognized by search engines while your site is Coming Soon."
-								);
-							}
-							return translate(
-								"SEO settings aren't recognized by search engines while your site is Hidden."
-							);
-						} )() }
-					>
-						<NoticeAction href={ generalTabUrl }>
-							{ translate( 'Privacy Settings', { context: 'Site visibility settings' } ) }
-						</NoticeAction>
-					</Notice>
-				) }
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"
@@ -465,9 +426,6 @@ const mapStateToProps = ( state ) => {
 		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-		isSiteHidden: isHiddenSite( state, siteId ),
-		isSitePrivate: isPrivateSite( state, siteId ),
-		siteIsComingSoon: isSiteComingSoon( state, siteId ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),
