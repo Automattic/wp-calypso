@@ -64,8 +64,8 @@ function isTextContentEdit( toolId: unknown, data: unknown ): boolean {
 /**
  * Gets checkpoint details embedded in a tool message.
  *
- * Restored conversations can carry a checkpoint ID, but provider checkpoint
- * state is session-only; `hasCheckpoint` filters out stale IDs.
+ * Restored conversations can carry a checkpoint ID, but checkpoint state is
+ * session-only; `hasCheckpoint` filters out stale IDs.
  */
 function getCheckpointInfo(
 	message: Pick< UIMessage, 'content' >

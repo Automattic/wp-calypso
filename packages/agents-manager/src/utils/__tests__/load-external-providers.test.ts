@@ -25,10 +25,6 @@ import {
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import { getPageContentMarkup } from '../page-content-markup';
 import { getPageStructure } from '../page-structure';
-import {
-	getProviderCheckpointObservedAt,
-	getProviderCheckpointRecords,
-} from '../provider-checkpoints';
 import type { Ability } from '../../extension-types';
 import type {
 	ProviderCapabilities,
@@ -44,10 +40,6 @@ jest.mock( '../canvas-binding', () => ( {
 	...jest.requireActual( '../canvas-binding' ),
 	bindToOpenCanvas: jest.fn(),
 	getBlockingMove: jest.fn( () => null ),
-} ) );
-jest.mock( '../provider-checkpoints', () => ( {
-	...jest.requireActual( '../provider-checkpoints' ),
-	getProviderCheckpointRecords: jest.fn( () => [] ),
 } ) );
 jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
 jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
@@ -183,7 +175,6 @@ describe( 'mergeCapabilitiesInto', () => {
 
 describe( 'loadExternalProviders', () => {
 	afterEach( () => {
-		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 		setLoadedProviderIds( undefined );
@@ -324,20 +315,6 @@ describe( 'loadExternalProviders', () => {
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'stamps provider checkpoints at execution time', async () => {
-		const provider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/edit-thing' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { ok: true } ) ),
-		};
-		setAgentsManagerData( { agentProviders: [ { toolProvider: provider } ] } );
-		jest.mocked( getProviderCheckpointRecords ).mockReturnValueOnce( [ { id: 'toolu_mid_turn' } ] );
-
-		const providers = await loadExternalProviders();
-		await providers.toolProvider?.executeAbility( 'host/edit-thing', {} );
-
-		expect( getProviderCheckpointObservedAt( 'toolu_mid_turn' ) ).toBeGreaterThan( 0 );
-	} );
-
 	it( 'executes migrated abilities through AM before any provider copy', async () => {
 		const bigSkyProvider = {
 			getAbilities: jest.fn( () =>
@@ -355,65 +332,6 @@ describe( 'loadExternalProviders', () => {
 
 		expect( result?.result?.success ).toBe( true );
 		expect( bigSkyProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
-
-	it( 'flips execution to the provider copy with `?am_abilities=0`', async () => {
-		window.history.replaceState( {}, '', '/?am_abilities=0' );
-		const bigSkyProvider = {
-			getAbilities: jest.fn( () =>
-				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
-			),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
-		};
-		const onTaskUpdate = jest.fn();
-		const useCheckpoint = jest.fn();
-		setAgentsManagerData( {
-			agentProviders: [
-				{
-					toolProvider: bigSkyProvider,
-					contextProvider: { getClientContext: () => ( {} ) },
-					onTaskUpdate,
-					useCheckpoint,
-				},
-			],
-		} );
-
-		// The switch is read once per page load, so load the providers under it.
-		await jest.isolateModulesAsync( async () => {
-			const { loadExternalProviders: loadUnderSwitch } = jest.requireActual<
-				typeof import( '../load-external-providers' )
-			>( '../load-external-providers' );
-
-			const providers = await loadUnderSwitch();
-
-			// Migrated editor abilities flip to the provider copy; abilities with
-			// no provider copy stay AM's.
-			expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
-				abilityShapes( [
-					wpAdminNavigateAbility,
-					getBlockTreeAbility,
-					showTemplateAbility,
-					createAbility( 'big-sky/show-component' ),
-				] )
-			);
-			await expect(
-				providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
-			).resolves.toEqual( { handledBy: 'big-sky' } );
-			expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
-
-			// The page-design stream, the chat's Undo and the page context are the
-			// provider copy's too.
-			expect( providers.onTaskUpdate ).toBe( onTaskUpdate );
-			expect( providers.useCheckpoint ).toBe( useCheckpoint );
-
-			// The mocks are shared with every other test, whose reads must not count.
-			jest.mocked( getPageContentMarkup ).mockClear();
-			jest.mocked( getPageStructure ).mockClear();
-			providers.contextProvider?.getClientContext();
-
-			expect( getPageContentMarkup ).not.toHaveBeenCalled();
-			expect( getPageStructure ).not.toHaveBeenCalled();
-		} );
 	} );
 
 	it( 'keeps the remaining abilities when a provider fails to list its own', async () => {
@@ -632,123 +550,6 @@ describe( 'loadExternalProviders', () => {
 		consoleWarn.mockRestore();
 	} );
 
-	it( 'lists AM checkpoints created after the provider ones last', async () => {
-		const amCreatedAt = Date.now() + 60_000;
-		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
-			{
-				checkpointId: 'toolu_am',
-				checkpointIndex: 0,
-				checkpointKeys: [ 'color' ],
-				createdAt: amCreatedAt,
-			},
-		] );
-		setAgentsManagerData( {
-			agentProviders: [
-				{
-					contextProvider: {
-						getClientContext: () => ( {
-							url: 'https://example.com/wp-admin/site-editor.php',
-							pathname: '/wp-admin/site-editor.php',
-							search: '',
-							environment: 'wp-admin',
-							availableCheckpoints: [
-								{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
-							],
-						} ),
-					},
-				},
-			],
-		} );
-
-		const providers = await loadExternalProviders();
-
-		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual( [
-			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
-			{
-				checkpointId: 'toolu_am',
-				checkpointIndex: 1,
-				checkpointKeys: [ 'color' ],
-				createdAt: amCreatedAt,
-			},
-		] );
-	} );
-
-	it( 'lists AM checkpoints created before a provider record appeared first', async () => {
-		const amCreatedAt = Date.now() - 60_000;
-		jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( [
-			{
-				checkpointId: 'toolu_am_early',
-				checkpointIndex: 0,
-				checkpointKeys: [ 'color' ],
-				createdAt: amCreatedAt,
-			},
-		] );
-		setAgentsManagerData( {
-			agentProviders: [
-				{
-					contextProvider: {
-						getClientContext: () => ( {
-							url: 'https://example.com/wp-admin/site-editor.php',
-							pathname: '/wp-admin/site-editor.php',
-							search: '',
-							environment: 'wp-admin',
-							availableCheckpoints: [
-								{
-									checkpointId: 'toolu_bsp_late',
-									checkpointIndex: 0,
-									checkpointKeys: [ 'blocks' ],
-								},
-							],
-						} ),
-					},
-				},
-			],
-		} );
-
-		const providers = await loadExternalProviders();
-
-		expect(
-			providers.contextProvider
-				?.getClientContext()
-				.availableCheckpoints?.map(
-					( item: { checkpointId?: string; checkpointIndex?: number } ) => [
-						item.checkpointId,
-						item.checkpointIndex,
-					]
-				)
-		).toEqual( [
-			[ 'toolu_am_early', 0 ],
-			[ 'toolu_bsp_late', 1 ],
-		] );
-	} );
-
-	it( 'leaves the provider checkpoint list untouched when AM has none', async () => {
-		const providerCheckpoints = [
-			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
-		];
-		setAgentsManagerData( {
-			agentProviders: [
-				{
-					contextProvider: {
-						getClientContext: () => ( {
-							url: 'https://example.com/wp-admin/site-editor.php',
-							pathname: '/wp-admin/site-editor.php',
-							search: '',
-							environment: 'wp-admin',
-							availableCheckpoints: providerCheckpoints,
-						} ),
-					},
-				},
-			],
-		} );
-
-		const providers = await loadExternalProviders();
-
-		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual(
-			providerCheckpoints
-		);
-	} );
-
 	it( 'merges markdown components and extensions from multiple providers', async () => {
 		const hostStrong = jest.fn( () => ( { type: 'strong', props: { provider: 'host' } } ) );
 		const wooTable = jest.fn( () => ( { type: 'table', props: { provider: 'woo' } } ) );
@@ -928,6 +729,13 @@ describe( 'loadExternalProviders', () => {
 			currentPageContent: [ { clientId: 'uuid' } ],
 			selectedBlockClientId: 'uuid',
 		};
+		const amCheckpoint = {
+			checkpointId: 'toolu_am',
+			checkpointIndex: 0,
+			checkpointKeys: [ 'color' ],
+			createdAt: 1,
+		};
+		const providerCheckpoint = { ...amCheckpoint, checkpointId: 'toolu_bsp' };
 
 		// Not a once-value: the sidebar case never reads it, and it would leak.
 		afterEach( () => jest.mocked( getPageStructure ).mockReturnValue( null ) );
@@ -943,6 +751,34 @@ describe( 'loadExternalProviders', () => {
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
 				...providerContext,
 				currentPageContentMarkup: '<!-- wp:paragraph /-->',
+			} );
+		} );
+
+		// A provider holds checkpoints only after a failed chunk load, and
+		// restores them itself.
+		it.each( [
+			{
+				case: "sends the checkpoints AM holds, over a provider's",
+				amCheckpoints: [ amCheckpoint ],
+				expected: [ amCheckpoint ],
+			},
+			{
+				case: "leaves a provider's checkpoints while AM holds none",
+				amCheckpoints: [],
+				expected: [ providerCheckpoint ],
+			},
+		] )( '$case', async ( { amCheckpoints, expected } ) => {
+			jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( amCheckpoints );
+			const context = { ...providerContext, availableCheckpoints: [ providerCheckpoint ] };
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...providerContext,
+				availableCheckpoints: expected,
 			} );
 		} );
 

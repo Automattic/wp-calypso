@@ -17,7 +17,6 @@ import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-sugges
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
-import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
@@ -351,7 +350,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
+				{ isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (

@@ -27,7 +27,6 @@ import { LocalConversationListItem } from '../../types';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
-import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
@@ -524,7 +523,7 @@ export default function AgentDock( {
 	return (
 		<>
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
-			{ ! isAmAbilitiesDisabled() && isEditorPage() && <PageDesignRenderer /> }
+			{ isEditorPage() && <PageDesignRenderer /> }
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.

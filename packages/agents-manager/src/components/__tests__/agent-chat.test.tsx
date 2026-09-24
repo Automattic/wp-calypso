@@ -15,14 +15,6 @@ const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
-const mockIsAmAbilitiesDisabled = jest.fn( () => false );
-
-// The switch is read once per page load, so it is mocked rather than set in
-// the URL after the module has already read it.
-jest.mock( '../../utils/is-am-abilities-disabled', () => ( {
-	__esModule: true,
-	default: () => mockIsAmAbilitiesDisabled(),
-} ) );
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -304,19 +296,6 @@ describe( 'AgentChat', () => {
 		renderAgentChat();
 		await act( () => Promise.resolve() );
 		expect( mockEditorHistoryBridge ).not.toHaveBeenCalled();
-	} );
-
-	it( 'skips the bridge when ?am_abilities=0 hands navigation back to the provider', async () => {
-		mockIsAmAbilitiesDisabled.mockReturnValue( true );
-		document.body.classList.add( 'site-editor-php' );
-
-		renderAgentChat();
-		await act( () => Promise.resolve() );
-
-		// Without the published history the callback takes the whole-page path,
-		// which is what the provider's own copy does.
-		expect( mockEditorHistoryBridge ).not.toHaveBeenCalled();
-		mockIsAmAbilitiesDisabled.mockReturnValue( false );
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>
