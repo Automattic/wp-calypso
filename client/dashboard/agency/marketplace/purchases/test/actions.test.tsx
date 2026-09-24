@@ -224,6 +224,14 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'download-crm-extensions', assignedJetpack ) ).toBe( false );
 	} );
 
+	it( 'CRM extensions download opens the CRM downloads page', () => {
+		const { run, onNavigate } = setupWithCallbacks();
+		run( 'download-crm-extensions', assignedCrm );
+		expect( onNavigate ).toHaveBeenCalledWith(
+			`/purchases/crm-downloads/${ assignedCrm.license_key }`
+		);
+	} );
+
 	it( 'offers assignment only for unassigned partner licenses', () => {
 		const isEligible = setup();
 		expect( isEligible( 'assign-license', unassigned ) ).toBe( true );

@@ -74,7 +74,10 @@ export function isPressableAddonLicense( license: JetpackLicense ): boolean {
 
 // Jetpack CRM extensions are downloaded from a dedicated page rather than the license.
 export function isJetpackCrmLicense( license: JetpackLicense ): boolean {
-	const key = license.license_key;
+	return isJetpackCrmLicenseKey( license.license_key );
+}
+
+export function isJetpackCrmLicenseKey( key: string ): boolean {
 	return (
 		key.startsWith( 'jetpack-complete' ) ||
 		key.startsWith( 'jetpack_complete' ) ||
