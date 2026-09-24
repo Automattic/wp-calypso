@@ -1,3 +1,4 @@
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { pick } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
@@ -25,7 +26,10 @@ import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
+import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -38,7 +42,7 @@ const loadForm = () =>
 
 const loadVisibilityNotice = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-form" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
+		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
@@ -66,6 +70,7 @@ const SiteSettingsTraffic = ( {
 	siteId,
 	siteSlug,
 	shouldShowAdvertisingOption,
+	showSeoVisibilityNotice,
 	translate,
 } ) => {
 	useEffect( () => {
@@ -107,7 +112,9 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
-					{ isAdmin && <AsyncLoad require={ loadVisibilityNotice } placeholder={ null } /> }
+					{ isAdmin && showSeoVisibilityNotice && (
+						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
+					) }
 					{ isAdmin && shouldShowAdvertisingOption && (
 						<PromoCardBlock
 							productSlug="blaze"
@@ -177,6 +184,9 @@ const connectComponent = connect( ( state ) => {
 		isJetpackAdmin,
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
+		showSeoVisibilityNotice:
+			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
+			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),
 	};
 } );
 
