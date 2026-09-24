@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -81,6 +82,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
+	// Below desktop the row is too narrow to truncate without losing most of the
+	// name, so the name wraps onto a second line instead.
+	const wrapName = useViewportMatch( 'medium', '<' );
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
 
@@ -133,6 +137,11 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const stackBadges = showSaleBadge && showPremiumBadge;
 	const labelTruncateLimit = ( showSaleBadge || showPremiumBadge ) && ! stackBadges ? 12 : 20;
 	const inCart = cart.hasItem( domainName );
+	const suffixText = (
+		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
+			{ suffix ? `.${ suffix }` : '' }
+		</Text>
+	);
 
 	const {
 		mutate: toggleCart,
@@ -201,22 +210,30 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			<span
 				className={ clsx( 'name-pulse-row__name', stackBadges && 'name-pulse-row__name--stacked' ) }
 			>
-				<Tooltip text={ domainName }>
-					<span className="name-pulse-row__domain">
-						<Text
-							as="span"
-							variant="muted"
-							truncate
-							ellipsizeMode="middle"
-							limit={ labelTruncateLimit }
-						>
+				{ wrapName ? (
+					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
+						<Text as="span" variant="muted">
 							{ label }
 						</Text>
-						<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
-							{ suffix ? `.${ suffix }` : '' }
-						</Text>
+						<wbr />
+						{ suffixText }
 					</span>
-				</Tooltip>
+				) : (
+					<Tooltip text={ domainName }>
+						<span className="name-pulse-row__domain">
+							<Text
+								as="span"
+								variant="muted"
+								truncate
+								ellipsizeMode="middle"
+								limit={ labelTruncateLimit }
+							>
+								{ label }
+							</Text>
+							{ suffixText }
+						</span>
+					</Tooltip>
+				) }
 				{ ( showSaleBadge || showPremiumBadge ) && (
 					<span className="name-pulse-row__badges">
 						{ showSaleBadge && (

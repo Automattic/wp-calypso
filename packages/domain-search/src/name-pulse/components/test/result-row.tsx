@@ -4,6 +4,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -12,6 +13,19 @@ import { queryClient } from '../../../test-helpers/renderer';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from '../../helpers';
 import { NamePulseResultRow } from '../result-row';
 import type { DomainAvailability } from '@automattic/api-core';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
+
+beforeEach( () => {
+	mockUseViewportMatch.mockReturnValue( false );
+} );
+
+const LONG_DOMAIN = 'icecreamshopnearsuratairport.boutique';
 
 const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDomainResult => ( {
 	domain_name: 'icecream.net',
@@ -97,6 +111,22 @@ describe( 'NamePulseResultRow', () => {
 		renderRow( buildResult( { status: NamePulseDomainStatus.WAITING } ) );
 
 		expect( screen.getByRole( 'img', { name: 'Checking…' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'truncates a long name on desktop', () => {
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.queryByText( 'icecreamshopnearsuratairport' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the full long name below desktop', () => {
+		mockUseViewportMatch.mockReturnValue( true );
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
 	} );
 
 	it( 'replaces the bulk price of a premium exact match with the per-domain one', async () => {
