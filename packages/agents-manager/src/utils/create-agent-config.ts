@@ -15,6 +15,11 @@ import { getClientConstructorArguments, getSiteEditorActions } from './site-edit
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
+export interface AgentConfig extends UseAgentChatConfig {
+	/** Scope captured by the authentication provider during initialization. */
+	authenticationScope?: { siteId?: number; userId?: number };
+}
+
 export interface CreateAgentConfigOptions {
 	sessionId: string;
 	/** Site scope for session writes, captured at creation for async callbacks. */
@@ -242,7 +247,7 @@ async function createDefaultContextProvider(
  */
 export async function createAgentConfig(
 	options: CreateAgentConfigOptions
-): Promise< UseAgentChatConfig > {
+): Promise< AgentConfig > {
 	const {
 		sessionId,
 		// The callback below can fire while a response is still streaming, after
@@ -260,7 +265,8 @@ export async function createAgentConfig(
 		onTaskUpdate,
 	} = options;
 
-	const config: UseAgentChatConfig = {
+	const config: AgentConfig = {
+		authenticationScope: { siteId, userId: sessionUserId },
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,

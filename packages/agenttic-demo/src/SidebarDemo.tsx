@@ -18,6 +18,8 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 	const uploaderRef = useRef< ImageUploaderHandle >( null );
 	const { uploadedImages, handleFilesSelected, handleRemoveImage } = useImageUploads();
 
+	const demoCredits = useDemoCredits();
+
 	const {
 		messages,
 		isProcessing,
@@ -33,9 +35,8 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 	} = useDemoChat( {
 		sessionId: 'dev-session-sidebar',
 		enableStreaming: true,
+		onTaskUpdate: demoCredits.onTaskUpdate,
 	} );
-
-	const demoCredits = useDemoCredits();
 
 	const sampleSuggestions = useMemo(
 		() => [

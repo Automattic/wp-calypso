@@ -145,4 +145,74 @@ describe( 'useAgentChat — credentials pass-through', () => {
 		expect( onTaskUpdate ).toHaveBeenNthCalledWith( 1, updates[ 0 ] );
 		expect( onTaskUpdate ).toHaveBeenNthCalledWith( 2, updates[ 1 ] );
 	} );
+
+	it( 'keeps the request observer when the config changes and uses the new observer on the next send', async () => {
+		const workingUpdate: TaskUpdate = {
+			id: 'site-a-task',
+			status: { state: 'working' },
+			final: false,
+			text: '',
+			kind: 'delta',
+		};
+		const terminalUpdate: TaskUpdate = {
+			...workingUpdate,
+			status: { state: 'completed' },
+			final: true,
+			kind: 'status',
+			aiCredits: { blog_id: 123, credits_remaining: 12_000 },
+		};
+		const nextRequestUpdate: TaskUpdate = {
+			...terminalUpdate,
+			id: 'site-b-task',
+			aiCredits: { blog_id: 456, credits_remaining: 7_000 },
+		};
+		let releaseTerminal = () => {};
+		const terminalReady = new Promise< void >( ( resolve ) => {
+			releaseTerminal = resolve;
+		} );
+		sendMessageStream
+			.mockImplementationOnce( async function* () {
+				yield workingUpdate;
+				await terminalReady;
+				yield terminalUpdate;
+			} )
+			.mockImplementationOnce( async function* () {
+				yield nextRequestUpdate;
+			} );
+		const siteAObserver = vi.fn();
+		const siteBObserver = vi.fn();
+		let onSubmit: UseAgentChatReturn[ 'onSubmit' ] | undefined;
+		const onReady = ( submit: UseAgentChatReturn[ 'onSubmit' ] ) => {
+			onSubmit = submit;
+		};
+		await act( async () => {
+			root.render( React.createElement( HookHarness, { onReady, onTaskUpdate: siteAObserver } ) );
+		} );
+
+		let pendingSubmit: Promise< void > | undefined;
+		await act( async () => {
+			pendingSubmit = onSubmit?.( 'Site A request' );
+		} );
+		expect( siteAObserver ).toHaveBeenCalledWith( workingUpdate );
+
+		await act( async () => {
+			root.render( React.createElement( HookHarness, { onReady, onTaskUpdate: siteBObserver } ) );
+		} );
+		await act( async () => {
+			releaseTerminal();
+			await pendingSubmit;
+		} );
+
+		expect( siteAObserver ).toHaveBeenCalledTimes( 2 );
+		expect( siteAObserver ).toHaveBeenLastCalledWith( terminalUpdate );
+		expect( siteBObserver ).not.toHaveBeenCalled();
+
+		await act( async () => {
+			await onSubmit?.( 'Site B request' );
+		} );
+
+		expect( siteAObserver ).toHaveBeenCalledTimes( 2 );
+		expect( siteBObserver ).toHaveBeenCalledTimes( 1 );
+		expect( siteBObserver ).toHaveBeenCalledWith( nextRequestUpdate );
+	} );
 } );

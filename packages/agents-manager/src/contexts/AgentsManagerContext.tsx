@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getSessionId, NO_SITE, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
 import { getWooZendeskIntegrationKey } from '../utils/is-woo-ai-provider';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { AgentConfig } from '../utils/create-agent-config';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
 /**
@@ -46,9 +46,9 @@ export interface AgentsManagerContextType {
 	/** Zendesk Product ticket-field value to apply to new support conversations. */
 	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
-	agentConfig: UseAgentChatConfig | null;
+	agentConfig: AgentConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
-	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
+	setAgentConfig: ( config: AgentConfig | null ) => void;
 	/** Returns this tab's active session ID from the stored session. */
 	getTabSessionId: () => string;
 	/** Reopen the chat, resuming this tab's conversation. */
@@ -97,7 +97,7 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	children,
 	value,
 } ) => {
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const [ agentConfig, setAgentConfig ] = useState< AgentConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 	const zendeskSmoochIntegrationKey = getWooZendeskIntegrationKey(
 		value.zendeskSmoochIntegrationKey

@@ -64,6 +64,7 @@ describe( 'credit states', () => {
 	it( 'reads exhausted only at an exact zero, for any plan', () => {
 		expect( isCreditsExhausted( free( 0 ) ) ).toBe( true );
 		expect( isCreditsExhausted( paid( 0 ) ) ).toBe( true );
+		expect( isCreditsExhausted( { ...paid( 0 ), remaining: 1 } ) ).toBe( false );
 		expect( isCreditsExhausted( free( 0.4 ) ) ).toBe( false );
 		expect( isCreditsExhausted( free( 1 ) ) ).toBe( false );
 	} );

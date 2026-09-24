@@ -17,9 +17,11 @@ interface Props {
 	status: CreditsStatus;
 	isOpen: boolean;
 	onToggle: ( willOpen: boolean ) => void;
-	/** Single CTA: Upgrade on free plans, Add credits on paid ones. */
+	/** Mock CTA: Upgrade on free plans, Add credits on paid ones. */
 	onAction?: () => void;
-	/** Full balance and purchases page. The link renders regardless; it goes nowhere until the page exists. */
+	/** Plans page for a live balance with a supported upgradeable tier. */
+	upgradeUrl?: string;
+	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
 }
 
@@ -90,7 +92,14 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
  * single CTA. Percent stays the primary figure everywhere; exact credits are
  * popover detail only.
  */
-export default function CreditsMeter( { status, isOpen, onToggle, onAction, manageUrl }: Props ) {
+export default function CreditsMeter( {
+	status,
+	isOpen,
+	onToggle,
+	onAction,
+	upgradeUrl,
+	manageUrl,
+}: Props ) {
 	const label = getCreditsLabel( status );
 	const tone = getCreditsTone( status );
 	const isExhausted = isCreditsExhausted( status );
@@ -102,8 +111,15 @@ export default function CreditsMeter( { status, isOpen, onToggle, onAction, mana
 			contentClassName="agents-manager-credits-meter__popover"
 			open={ isOpen }
 			onToggle={ onToggle }
+			focusOnMount
 			// Render inside the panel so opening the popover doesn't blur it
-			popoverProps={ { inline: true, placement: 'top-end', offset: 8 } }
+			popoverProps={ {
+				inline: true,
+				placement: 'top-end',
+				offset: 8,
+				role: 'dialog',
+				'aria-label': __( 'Site credits', __i18n_text_domain__ ),
+			} }
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
 					className="agents-manager-credits-meter__toggle"
@@ -118,23 +134,21 @@ export default function CreditsMeter( { status, isOpen, onToggle, onAction, mana
 				/>
 			) }
 			renderContent={ () => (
-				<div
-					className="agents-manager-credits-meter__content"
-					role="dialog"
-					aria-label={ __( 'Site credits', __i18n_text_domain__ ) }
-				>
+				<div className="agents-manager-credits-meter__content">
 					<div className="agents-manager-credits-meter__header">
 						<span className="agents-manager-credits-meter__title">
 							{ __( 'Site credits', __i18n_text_domain__ ) }
 						</span>
-						<Button
-							className="agents-manager-credits-meter__manage"
-							variant="link"
-							href={ manageUrl }
-							target={ manageUrl ? '_blank' : undefined }
-						>
-							{ __( 'Manage', __i18n_text_domain__ ) }
-						</Button>
+						{ manageUrl && (
+							<Button
+								className="agents-manager-credits-meter__manage"
+								variant="link"
+								href={ manageUrl }
+								target="_blank"
+							>
+								{ __( 'Manage', __i18n_text_domain__ ) }
+							</Button>
+						) }
 					</div>
 					{ status.pools.map( ( pool ) => (
 						<PoolRow key={ pool.id } pool={ pool } isExhausted={ isFree && isExhausted } />
@@ -144,14 +158,17 @@ export default function CreditsMeter( { status, isOpen, onToggle, onAction, mana
 							{ __( 'You’ve used all your free credits.', __i18n_text_domain__ ) }
 						</p>
 					) }
-					{ onAction && (
+					{ ( upgradeUrl || onAction ) && (
 						<Button
 							className="agents-manager-credits-meter__cta"
-							variant={ isFree ? 'primary' : 'secondary' }
+							variant={ upgradeUrl || isFree ? 'primary' : 'secondary' }
 							onClick={ onAction }
+							href={ upgradeUrl }
+							target={ upgradeUrl ? '_blank' : undefined }
+							rel={ upgradeUrl ? 'noopener noreferrer' : undefined }
 							__next40pxDefaultSize
 						>
-							{ isFree
+							{ upgradeUrl || isFree
 								? __( 'Upgrade', __i18n_text_domain__ )
 								: __( 'Add credits', __i18n_text_domain__ ) }
 						</Button>
