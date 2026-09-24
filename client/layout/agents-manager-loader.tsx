@@ -30,7 +30,7 @@ export default function AgentsManagerLoader( {
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }
-			site={ sectionName === 'plugins' ? selectedSite ?? null : site }
+			site={ sectionName === 'plugins' ? ( selectedSite ?? null ) : site }
 			currentSiteId={ isSiteSpecific || sectionName === 'plugins' ? selectedSite?.ID : undefined }
 			isInternalOnly={ isInternalOnly }
 		/>

@@ -624,14 +624,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							timestamp: messageTimestamp,
 							archived: options?.archived ?? false,
 							showIcon: false,
-					  } as UIMessage );
+						} as UIMessage );
 
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
-						: internalOptions?.initialUiMessages ?? prev.uiMessages,
+						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
 					error: null,
 				} ) );
@@ -687,7 +687,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							{ success: true, message },
 							messageOptions,
 							options?.fileParts
-					  )
+						)
 					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
@@ -756,7 +756,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 														text: update.text,
 													},
 												],
-										  }
+											}
 										: msg
 								),
 							} ) );
