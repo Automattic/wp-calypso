@@ -31,27 +31,72 @@ describe( 'StaticSiteImportResults', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'continues once the preview is ready', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, {
-				session_id: 'abc123',
-				status: 'new',
-				state: 'preview_ready',
-				source_digest: 'digest',
-				preview_summary: { pages: 12 },
-				site_url: '',
-			} );
+	const mockSession = ( preview_summary: object ) =>
+		mockApi().get( '/wpcom/v2/static-site-import-session/abc123' ).query( true ).reply( 200, {
+			session_id: 'abc123',
+			status: 'new',
+			state: 'preview_ready',
+			source_digest: 'digest',
+			preview_summary,
+			site_url: '',
+		} );
+
+	it( 'moves the whole site when everything can come across', async () => {
+		mockSession( {
+			pages: 12,
+			quality_pass: true,
+			inspection: { measured: true, confidence: 'bounded-sample', capabilities: {} },
+		} );
 
 		const submit = render();
 
-		const button = screen.getByRole( 'button', { name: 'Continue' } );
+		const button = screen.getByRole( 'button', { name: 'Move my site' } );
 		expect( button ).toBeDisabled();
 		await waitFor( () => expect( button ).toBeEnabled() );
+		expect( screen.getByRole( 'heading', { name: 'We can move your site' } ) ).toBeVisible();
+		expect( screen.getByText( 'High confidence. Everything can come with you.' ) ).toBeVisible();
 		expect( screen.getByText( '12 pages' ) ).toBeVisible();
 
 		await userEvent.click( button );
+		expect( submit ).toHaveBeenCalledWith( { action: 'continue' } );
+	} );
+
+	it( 'lists what has to be set up after the move', async () => {
+		mockSession( {
+			pages: 12,
+			quality_pass: true,
+			inspection: { measured: true, confidence: 'bounded-sample', capabilities: { forms: 1 } },
+		} );
+
+		render();
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'We can move almost all of your site' } )
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Good confidence. 1 thing to set up after the move.' )
+		).toBeVisible();
+		expect( screen.getByText( 'Your contact form' ) ).toBeVisible();
+	} );
+
+	it( 'offers an expert when the store can’t be moved', async () => {
+		mockSession( {
+			pages: 12,
+			quality_pass: true,
+			inspection: { measured: true, confidence: 'bounded-sample', capabilities: { commerce: 2 } },
+		} );
+
+		const submit = render();
+
+		expect(
+			await screen.findByRole( 'heading', {
+				name: 'Some parts of your site can’t be moved automatically',
+			} )
+		).toBeVisible();
+		expect( screen.getByText( 'Your online store' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Talk to a migration expert' } ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Continue without these items' } ) );
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue' } );
 	} );
 

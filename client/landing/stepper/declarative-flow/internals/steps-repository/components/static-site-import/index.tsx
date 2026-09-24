@@ -15,6 +15,7 @@ import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-subm
 import { getPlatformName, getSourceHost, toSourceUrl } from './utils';
 import type { ReactNode } from 'react';
 
+export * from './confidence';
 export * from './utils';
 
 export const useStaticSiteImportSource = () => {
