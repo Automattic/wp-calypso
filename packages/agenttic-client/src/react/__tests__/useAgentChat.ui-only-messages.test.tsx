@@ -5,12 +5,13 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createClient } from '../../client/index';
 import { getAgentManager } from '../agentManager';
+import { clearAllConversations } from '../conversationStorage';
 import { useAgentChat } from '../useAgentChat';
 import type { Client, Message as ClientMessage, TaskUpdate } from '../../client/types/index';
 import type { UIMessage, UseAgentChatReturn } from '../useAgentChat';
 
 vi.mock( '../../client/index', async ( importOriginal ) => {
-	const actual = await importOriginal< typeof import( '../../client/index' ) >();
+	const actual = await importOriginal< typeof import('../../client/index') >();
 
 	return {
 		...actual,
@@ -51,8 +52,9 @@ describe( 'useAgentChat normal send reconcile', () => {
 	let root: Root;
 	let mockClient: Client;
 
-	beforeEach( () => {
+	beforeEach( async () => {
 		getAgentManager().clear();
+		await clearAllConversations();
 		sessionStorage.clear();
 		mockClient = {
 			sendMessage: vi.fn(),
@@ -77,6 +79,76 @@ describe( 'useAgentChat normal send reconcile', () => {
 		latestHookValue = null;
 		container.remove();
 	} );
+
+	it.each( [ true, false ] )(
+		'retains recommendation cards during and after continuation (deltas: %s)',
+		async ( streamText ) => {
+			const payload = JSON.stringify( {
+				tool_id: 'wpcom__render_plugin_recommendations',
+				data: { picks: [ { slug: 'seo-by-rank-math', source: 'wporg', why: 'SEO tools.' } ] },
+			} );
+			const card = clientMessage( 'recommendations', 'agent', payload, Date.now() );
+			let releaseFinal!: () => void;
+			const gate = new Promise< void >( ( resolve ) => {
+				releaseFinal = resolve;
+			} );
+			vi.mocked( mockClient.sendMessageStream ).mockImplementation( async function* () {
+				yield {
+					id: 'task',
+					final: false,
+					status: { state: 'working', message: card },
+					text: payload,
+				};
+				if ( streamText ) {
+					yield {
+						id: 'task',
+						final: false,
+						kind: 'delta',
+						status: { state: 'working' },
+						text: 'Here are the plugins.',
+					};
+				}
+				await gate;
+				yield {
+					id: 'task',
+					final: true,
+					status: {
+						state: 'completed',
+						message: clientMessage( 'answer', 'agent', 'Here are the plugins.', Date.now() + 1 ),
+					},
+					text: 'Here are the plugins.',
+				};
+			} );
+			await act( async () => {
+				root.render( <HookHarness /> );
+			} );
+			let submission: Promise< void > | undefined;
+			await act( async () => {
+				submission = latestHookValue?.onSubmit( 'I need a seo plugin' );
+			} );
+			expect(
+				latestHookValue?.messages.filter( ( m ) => m.content[ 0 ]?.text === payload )
+			).toHaveLength( 1 );
+			await act( async () => {
+				releaseFinal();
+				await submission;
+			} );
+			expect(
+				latestHookValue?.messages.filter( ( m ) => m.content[ 0 ]?.text === payload )
+			).toHaveLength( 1 );
+			expect(
+				latestHookValue?.messages.find( ( m ) => m.id === 'answer' )?.content[ 0 ]?.text
+			).toBe( 'Here are the plugins.' );
+			await act( async () => {
+				await latestHookValue?.loadMessages(
+					getAgentManager().getConversationHistory( 'ui-only-test' )
+				);
+			} );
+			expect(
+				latestHookValue?.messages.filter( ( m ) => m.content[ 0 ]?.text === payload )
+			).toHaveLength( 1 );
+		}
+	);
 
 	it( 'preserves a tool-injected UI-only message through a normal send', async () => {
 		vi.mocked( mockClient.sendMessageStream ).mockImplementation(

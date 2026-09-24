@@ -232,7 +232,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		// The switch is read once per page load, so load the converter under it.
 		jest.isolateModules( () => {
 			const { default: convertUnderSwitch } = jest.requireActual<
-				typeof import( '../convert-tool-messages-to-components' )
+				typeof import('../convert-tool-messages-to-components')
 			>( '../convert-tool-messages-to-components' );
 
 			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );
@@ -1164,5 +1164,22 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			expect( getChatComponent ).not.toHaveBeenCalled();
 		} );
+	} );
+} );
+
+describe( 'plugin recommendations', () => {
+	it( 'restores each recommendation message from its persisted payload', () => {
+		const picks = [ { slug: 'woocommerce', why: 'Sell products.' } ];
+		const messages = [
+			createToolMessage( 'wpcom__render_plugin_recommendations', { picks } ),
+			createMessage( { role: 'user' } ),
+		];
+		const restored = convertToolMessagesToComponents( { messages } );
+		expect( restored[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			componentProps: { picks },
+		} );
+		expect( restored[ 0 ].disabled ).not.toBe( true );
+		expect( convertToolMessagesToComponents( { messages: [] } ) ).toEqual( [] );
 	} );
 } );

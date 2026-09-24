@@ -3,6 +3,7 @@ import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager } from './agentManager';
+import { messageCarriesToolPayload } from './conversationUtils';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -623,14 +624,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							timestamp: messageTimestamp,
 							archived: options?.archived ?? false,
 							showIcon: false,
-						} as UIMessage );
+					  } as UIMessage );
 
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
-						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
+						: internalOptions?.initialUiMessages ?? prev.uiMessages,
 					isProcessing: true,
 					error: null,
 				} ) );
@@ -686,7 +687,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							{ success: true, message },
 							messageOptions,
 							options?.fileParts
-						)
+					  )
 					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
@@ -707,8 +708,22 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						} ) );
 					}
 
-					// Handle incremental text updates during streaming
-					if ( ! update.final && update.text ) {
+					if ( ! update.final && messageCarriesToolPayload( update.status?.message ) ) {
+						const toolMessage = transformClientMessageToUI(
+							update.status.message!,
+							registrationsRef.current
+						);
+						if ( toolMessage ) {
+							setState( ( prev ) => ( {
+								...prev,
+								uiMessages: [
+									...prev.uiMessages.filter( ( msg ) => msg.id !== toolMessage.id ),
+									toolMessage,
+								],
+							} ) );
+						}
+						streamingMessageId = null;
+					} else if ( ! update.final && update.text ) {
 						// Create or update the streaming message
 						if ( ! streamingMessageId ) {
 							streamingMessageId = `agent-streaming-${ Date.now() }`;
@@ -741,7 +756,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 														text: update.text,
 													},
 												],
-											}
+										  }
 										: msg
 								),
 							} ) );

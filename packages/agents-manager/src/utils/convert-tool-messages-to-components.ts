@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { PLUGIN_RECOMMENDATIONS_TOOL_ID } from '../abilities/render-plugin-recommendations';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
@@ -31,7 +32,13 @@ export interface AgentsManagerUIMessage extends UIMessage {
 // The pickers carry the block-editor preview stack, so they load on demand:
 // a picker row fetches its chunk when it first renders, and other chats never
 // download it.
-const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
+const AM_COMPONENTS: Record< ShowComponentType | 'plugin-recommendations', React.ComponentType > = {
+	'plugin-recommendations': lazyComponent(
+		() =>
+			import(
+				/* webpackChunkName: "am-plugin-recommendations" */ '../components/plugin-recommendations'
+			)
+	),
 	'button-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
 	),
@@ -327,6 +334,21 @@ export default function convertToolMessagesToComponents( {
 			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
+		if ( textData.tool_id === PLUGIN_RECOMMENDATIONS_TOOL_ID ) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'component' as const,
+							component: AM_COMPONENTS[ 'plugin-recommendations' ],
+							componentProps: { picks: textData.data?.picks },
+						},
+					],
+				},
+			];
+		}
+
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
@@ -397,7 +419,7 @@ export default function convertToolMessagesToComponents( {
 								componentType: contentType,
 								toolId: textData.tool_id,
 								...( toolCallId ? { toolCallId } : {} ),
-							} )
+						  } )
 						: undefined,
 				};
 			}
@@ -411,7 +433,7 @@ export default function convertToolMessagesToComponents( {
 									type: 'text' as const,
 									text: summaryText,
 								},
-							]
+						  ]
 						: [] ),
 					{
 						type: 'component' as const,
@@ -437,7 +459,7 @@ export default function convertToolMessagesToComponents( {
 										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
 									},
 								},
-							]
+						  ]
 						: [] ),
 				],
 				disabled: isStale,
@@ -494,13 +516,13 @@ export default function convertToolMessagesToComponents( {
 								type: 'text' as const,
 								text: __( '✓ No changes needed', __i18n_text_domain__ ),
 							},
-						]
+					  ]
 					: [
 							{
 								type: 'text' as const,
 								text: summary as string,
 							},
-						];
+					  ];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,
