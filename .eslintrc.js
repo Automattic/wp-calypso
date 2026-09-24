@@ -570,8 +570,6 @@ module.exports = {
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
 					'__experimentalConfirmDialog',
-					'__experimentalDivider',
-					'__experimentalGrid',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',

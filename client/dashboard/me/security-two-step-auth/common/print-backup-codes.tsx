@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	CheckboxControl,
 	Button,
@@ -16,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardFooter } from '../../../components/card';
+import Grid from '../../../components/grid';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import VerifyCodeForm from './verify-code-form';
@@ -157,7 +157,7 @@ export default function PrintBackupCodes( {
 						<>
 							<Card>
 								<CardBody>
-									<Grid columns={ 2 }>
+									<Grid columns={ 2 } gap="md">
 										{ backupCodes.codes.map( ( code ) => (
 											<Text key={ code } align="center" size="15px">
 												{ code }
