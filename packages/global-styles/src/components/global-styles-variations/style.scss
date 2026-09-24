@@ -8,6 +8,11 @@
 	@include break-large {
 		flex-direction: column;
 	}
+
+	// Side by side, the always-visible upgrade badge doesn't fit beside its heading on narrow screens.
+	&--stacked {
+		flex-direction: column;
+	}
 }
 
 .global-styles-variations {
