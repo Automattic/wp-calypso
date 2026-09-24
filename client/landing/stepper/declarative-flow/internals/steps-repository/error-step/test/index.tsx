@@ -74,13 +74,29 @@ describe( 'ErrorStep', () => {
 		} );
 	} );
 
-	it( 'bumps the MC stat but does not log when there is no site setup error', () => {
+	it( 'bumps the MC stat and logs a sentinel error code when there is no site setup error', () => {
 		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
 
 		render();
 
 		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
 		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_stepper_error_step', 'onboarding_en' );
-		expect( logToLogstash ).not.toHaveBeenCalled();
+
+		expect( logToLogstash ).toHaveBeenCalledTimes( 1 );
+		expect( logToLogstash ).toHaveBeenCalledWith( {
+			feature: 'calypso_client',
+			message: 'Error in Stepper flow',
+			extra: {
+				error: undefined,
+				message: undefined,
+				flow: 'onboarding',
+				variant: undefined,
+			},
+			properties: {
+				flow: 'onboarding',
+				locale: 'en',
+				error: 'no_stored_error',
+			},
+		} );
 	} );
 } );
