@@ -109,3 +109,15 @@
 		outline: none;
 	}
 }
+
+.global-styles-variations__upgrade-badge {
+	display: inline-flex;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+
+	.premium-badge {
+		cursor: inherit;
+	}
+}

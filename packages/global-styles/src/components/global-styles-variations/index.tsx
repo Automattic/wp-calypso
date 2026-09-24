@@ -33,6 +33,7 @@ interface GlobalStylesVariationsProps {
 	splitDefaultVariation?: boolean;
 	needsUpgrade?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
+	onUpgradeClick?: () => void;
 }
 
 const GlobalStylesVariation = ( {
@@ -100,15 +101,17 @@ const GlobalStylesVariations = ( {
 	splitDefaultVariation = true,
 	needsUpgrade = true,
 	onSelect,
+	onUpgradeClick,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const upgradeToPlan = PLAN_PERSONAL;
+	const upgradeToPlanName = getPlan( upgradeToPlan )?.getTitle() ?? '';
 
 	const variationDescription = needsUpgrade
 		? translate(
 				'Preview our style variations for free or pick your own fonts and colors with the %(planName)s plan later on.',
-				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
+				{ args: { planName: upgradeToPlanName } }
 			)
 		: translate( 'You can change your style at any time.' );
 
@@ -203,7 +206,26 @@ const GlobalStylesVariations = ( {
 												count: nonDefaultStyles.length,
 											} ) }
 								</span>
-								{ needsUpgrade && (
+								{ needsUpgrade && onUpgradeClick && (
+									<button
+										type="button"
+										className="global-styles-variations__upgrade-badge"
+										onClick={ onUpgradeClick }
+									>
+										<PremiumBadge
+											shouldHideTooltip
+											labelText={
+												( hasEnTranslation( 'Available on %(planName)s' )
+													? translate( 'Available on %(planName)s', {
+															args: { planName: upgradeToPlanName },
+															comment: 'planName is a WordPress.com plan name, e.g. Personal',
+														} )
+													: translate( 'Upgrade' ) ) as string
+											}
+										/>
+									</button>
+								) }
+								{ needsUpgrade && ! onUpgradeClick && (
 									<PremiumBadge
 										shouldHideTooltip
 										shouldCompactWithAnimation
