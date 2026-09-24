@@ -8,7 +8,7 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
@@ -60,14 +60,11 @@ function CancellationInfo( { expiry }: { expiry?: string } ) {
 					<VStack className="referrals-cancellation-popover" spacing={ 3 }>
 						<Text>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %s is the date the product expires, e.g. "January 5, 2026". */
-									__(
-										'This product was cancelled, but it will remain active until <b>%s</b>. After that, it will not renew.'
-									),
-									expiryDate || __( 'N/A' )
+								/* translators: <expiryDate /> is the date the product expires, e.g. "January 5, 2026". */
+								__(
+									'This product was cancelled, but it will remain active until <expiryDate />. After that, it will not renew.'
 								),
-								{ b: <b /> }
+								{ expiryDate: <b>{ expiryDate || __( 'N/A' ) }</b> }
 							) }
 						</Text>
 						<Text>
