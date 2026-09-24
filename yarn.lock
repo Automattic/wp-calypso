@@ -329,7 +329,9 @@ __metadata:
     "@wordpress/router": "npm:^1.51.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
+    colord: "npm:2.9.3"
     deepmerge: "npm:^4.3.1"
+    fast-average-color: "npm:^9.3.0"
     history: "npm:^5.3.0"
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
@@ -19600,10 +19602,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-average-color@npm:^9.1.1":
-  version: 9.3.0
-  resolution: "fast-average-color@npm:9.3.0"
-  checksum: d43949bb1aea924324cdb27f1eef35326c5e4573dd506ea86b3fd13ab95c3d85ae77bddac568cf9c578ab3094499543de70011e42e40f9378f6352745345aa72
+"fast-average-color@npm:^9.1.1, fast-average-color@npm:^9.3.0":
+  version: 9.6.0
+  resolution: "fast-average-color@npm:9.6.0"
+  checksum: 0c42ee34078e69a75afc9d2c8e126a2356942d8316c8a01dbf45835b4719363a984828ca32d692658af3cc461da096bf2c3bf9cd3b796eea8cf5706bfd871e63
   languageName: node
   linkType: hard
 

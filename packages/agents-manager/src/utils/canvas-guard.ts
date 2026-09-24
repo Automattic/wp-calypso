@@ -89,6 +89,21 @@ function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
 }
 
 /**
+ * Throws, and refuses the rest of the turn, once the canvas has moved. For a
+ * write that yields between its steps: the policy checks only as an ability starts.
+ */
+export function assertCanvasUnmoved(): void {
+	const move = getBlockingMove();
+
+	if ( move ) {
+		blockCurrentRequest();
+		throw new Error(
+			`Stopped: the editor left ${ move.from } while the edits were being applied. The edits that had landed stay in place. Do not retry — tell the user what happened.`
+		);
+	}
+}
+
+/**
  * Binds to the open canvas on every outgoing message.
  *
  * Wraps the merged provider rather than each external one, so the binding happens

@@ -15,8 +15,11 @@ import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
+import type { PageStructure } from '../utils/page-structure';
 
 type EditorAbilitiesModule = typeof import( './editor-abilities' );
+
+type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
 
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
@@ -117,4 +120,21 @@ export function getAmCheckpointContext(): CheckpointContextItem[] {
  */
 export function getAmPageContentMarkup(): string {
 	return loadedEditorAbilities?.getPageContentMarkup() ?? '';
+}
+
+/**
+ * The page's blocks and the selected one for the client context, under the
+ * short ids the editor abilities resolve. `null` until they have loaded,
+ * which leaves the context as the providers built it.
+ */
+export function getAmPageStructure(): PageStructure | null {
+	return loadedEditorAbilities?.getPageStructure() ?? null;
+}
+
+/**
+ * AM's checkpoint store for the chat's Undo, or `null` until the editor
+ * abilities have loaded — before then nothing has written to it.
+ */
+export function getAmCheckpointActions(): CheckpointActions | null {
+	return loadedEditorAbilities?.checkpointActions ?? null;
 }

@@ -12,7 +12,13 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
-import { amToolProvider, getAmCheckpointContext, getAmPageContentMarkup } from '../abilities';
+import {
+	amToolProvider,
+	getAmCheckpointActions,
+	getAmCheckpointContext,
+	getAmPageContentMarkup,
+	getAmPageStructure,
+} from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
 import { withPageDesignStream } from '../abilities/stream-page-design/stream';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
@@ -450,13 +456,62 @@ function withAmCheckpoints(
 	};
 }
 
-// TODO (ability-migration): Big Sky's client context feeds the same key while its
-// provider loads; this one wins by running last.
 /**
- * Adds `currentPageContentMarkup`, the page body as the editor holds it, for
- * the backend's page-design agent.
+ * Puts AM's checkpoint store ahead of the providers' for the chat's Undo: an
+ * id AM holds restores and swaps there, any other passes through, and a clear
+ * reaches both. The chat calls nothing else of the hook, so the rest of its
+ * surface may be absent. Not merged into `mergeUseCheckpointHooks`, whose
+ * `setCheckpoint` drops the metadata AM's records carry.
  */
-function withPageContentMarkup(
+function withAmCheckpointActions(
+	useCheckpoint: UseCheckpointHook | undefined
+): UseCheckpointHook {
+	return () => {
+		const provider = useCheckpoint?.();
+		const am = getAmCheckpointActions();
+
+		return {
+			...provider,
+			hasCheckpoint: ( id ) => !! am?.hasCheckpoint( id ) || !! provider?.hasCheckpoint( id ),
+			restoreCheckpoint: async ( id ) => {
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.restoreCheckpoint( id );
+				} else {
+					await provider?.restoreCheckpoint( id );
+				}
+			},
+			canSwapCheckpoint: ( id ) =>
+				am?.hasCheckpoint( id ) ? am.canSwapCheckpoint( id ) : provider?.canSwapCheckpoint?.( id ),
+			swapCheckpoint: async ( id ) => {
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.swapCheckpoint( id );
+				} else if ( provider?.swapCheckpoint ) {
+					await provider.swapCheckpoint( id );
+				} else {
+					throw new Error( `Checkpoint "${ id }" does not support swapping.` );
+				}
+			},
+			clearCheckpoint: ( id ) => {
+				am?.clearCheckpoint( id );
+				provider?.clearCheckpoint( id );
+			},
+		} as UseCheckpointReturn;
+	};
+}
+
+// The Jetpack AI sidebar describes the post editor itself, and its tools take
+// the editor's clientIds as they are.
+const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
+
+// TODO (ability-migration): Big Sky's client context feeds the same keys;
+// these win by running last. Once it stops, describe the page where no
+// provider has a context too — until then Big Sky's always does.
+/**
+ * Adds `currentPageContent` and `selectedBlockClientId`, under the short ids
+ * AM's abilities resolve, and `currentPageContentMarkup`, the page body the
+ * backend's page-design agent reads.
+ */
+function withPageContext(
 	contextProvider: ContextProvider | undefined
 ): ContextProvider | undefined {
 	if ( ! contextProvider ) {
@@ -468,7 +523,11 @@ function withPageContentMarkup(
 			const context = contextProvider.getClientContext();
 			const currentPageContentMarkup = getAmPageContentMarkup();
 
-			return currentPageContentMarkup ? { ...context, currentPageContentMarkup } : context;
+			return {
+				...context,
+				...( currentPageContentMarkup && { currentPageContentMarkup } ),
+				...( context.environment !== JETPACK_AI_SIDEBAR_ENVIRONMENT && getAmPageStructure() ),
+			};
 		},
 	};
 }
@@ -735,7 +794,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const amOwnsEditorAbilities = ! isAmAbilitiesDisabled() && isEditorPage();
 	const amContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
 	const mergedContextProvider = withCanvasBinding(
-		amOwnsEditorAbilities ? withPageContentMarkup( amContextProvider ) : amContextProvider
+		amOwnsEditorAbilities ? withPageContext( amContextProvider ) : amContextProvider
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
@@ -748,10 +807,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	} else if ( allToolProviders.length > 1 ) {
 		// Query providers live on each call rather than snapshotting at load.
 		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
-		// so abilities registered later stay visible. Big Sky, for one, registers
-		// its editor abilities (big-sky/apply-block-edits and friends) from a
-		// React effect that runs after loadExternalProviders(); a captured list
-		// would freeze those out and the agent's calls would silently not dispatch.
+		// so abilities registered later stay visible. A provider may register its
+		// abilities from a React effect that runs after loadExternalProviders();
+		// a captured list would freeze those out and the agent's calls would
+		// silently not dispatch.
 		const collectAbilityResults = async () =>
 			Promise.all(
 				allToolProviders.map( async ( tp ) => {
@@ -853,7 +912,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge useCheckpoint: run every provider's hook, search all stores by id.
-	const mergedUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
+	// Where AM owns the editor abilities its own store answers first, so the
+	// chat's Undo sees the checkpoints they write.
+	const providerUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
+	const mergedUseCheckpoint = amOwnsEditorAbilities
+		? withAmCheckpointActions( providerUseCheckpoint )
+		: providerUseCheckpoint;
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {

@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 import { amToolProvider } from '../../abilities';
+import { applyBlockEditsAbility } from '../../abilities/apply-block-edits';
 import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
+import { captureCanvasAbility } from '../../abilities/capture-canvas';
 import { editEntityRecordAbility } from '../../abilities/edit-entity-record';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
@@ -22,6 +24,7 @@ import {
 } from '../load-external-providers';
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import { getPageContentMarkup } from '../page-content-markup';
+import { getPageStructure } from '../page-structure';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -47,15 +50,18 @@ jest.mock( '../provider-checkpoints', () => ( {
 	getProviderCheckpointRecords: jest.fn( () => [] ),
 } ) );
 jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
+jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
 jest.mock( '../checkpoints', () => ( {
 	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	canSwapCheckpoint: jest.fn(),
 	clearCheckpoint: jest.fn(),
 	getAvailableCheckpoints: jest.fn( () => [] ),
 	getCheckpoints: jest.fn( () => [] ),
 	hasCheckpoint: jest.fn(),
 	restoreCheckpoint: jest.fn(),
 	setCheckpoint: jest.fn(),
+	swapCheckpoint: jest.fn(),
 } ) );
 
 // The abilities facade only loads the editor abilities on editor pages —
@@ -181,6 +187,9 @@ describe( 'loadExternalProviders', () => {
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 		setLoadedProviderIds( undefined );
+		jest.clearAllMocks();
+		jest.requireMock( '../checkpoints' ).hasCheckpoint.mockReset();
+		jest.requireMock( '../checkpoints' ).canSwapCheckpoint.mockReset();
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -250,7 +259,9 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
+				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
@@ -290,7 +301,9 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
+				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
@@ -353,12 +366,14 @@ describe( 'loadExternalProviders', () => {
 			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
 		};
 		const onTaskUpdate = jest.fn();
+		const useCheckpoint = jest.fn();
 		setAgentsManagerData( {
 			agentProviders: [
 				{
 					toolProvider: bigSkyProvider,
 					contextProvider: { getClientContext: () => ( {} ) },
 					onTaskUpdate,
+					useCheckpoint,
 				},
 			],
 		} );
@@ -386,14 +401,18 @@ describe( 'loadExternalProviders', () => {
 			).resolves.toEqual( { handledBy: 'big-sky' } );
 			expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
 
-			// The page-design stream and the page markup are the provider copy's too.
+			// The page-design stream, the chat's Undo and the page context are the
+			// provider copy's too.
 			expect( providers.onTaskUpdate ).toBe( onTaskUpdate );
+			expect( providers.useCheckpoint ).toBe( useCheckpoint );
 
-			// The mock is shared with every other test, whose reads must not count.
+			// The mocks are shared with every other test, whose reads must not count.
 			jest.mocked( getPageContentMarkup ).mockClear();
+			jest.mocked( getPageStructure ).mockClear();
 			providers.contextProvider?.getClientContext();
 
 			expect( getPageContentMarkup ).not.toHaveBeenCalled();
+			expect( getPageStructure ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -416,7 +435,9 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
+				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
@@ -897,8 +918,19 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
-	describe( 'page content markup', () => {
+	describe( 'page context', () => {
 		const providerContext = { url: 'https://x' };
+		const pageStructure = {
+			currentPageContent: [ { clientId: 'abcd', name: 'core/paragraph', innerBlocks: [] } ],
+			selectedBlockClientId: 'abcd',
+		};
+		const providerStructure = {
+			currentPageContent: [ { clientId: 'uuid' } ],
+			selectedBlockClientId: 'uuid',
+		};
+
+		// Not a once-value: the sidebar case never reads it, and it would leak.
+		afterEach( () => jest.mocked( getPageStructure ).mockReturnValue( null ) );
 
 		it( 'adds the page body the editor holds to the client context', async () => {
 			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
@@ -922,6 +954,33 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( providerContext );
+		} );
+
+		// The ids the agent sends back have to be the ones AM's abilities resolve.
+		it.each( [
+			{
+				case: "sends its own structure, over a provider's",
+				environment: 'wp-admin',
+				expected: pageStructure,
+			},
+			{
+				case: "leaves the Jetpack AI sidebar's structure, whose tools take clientIds as they are",
+				environment: 'gutenberg',
+				expected: providerStructure,
+			},
+		] )( '$case', async ( { environment, expected } ) => {
+			jest.mocked( getPageStructure ).mockReturnValue( pageStructure );
+			const context = { ...providerContext, environment, ...providerStructure };
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...context,
+				...expected,
+			} );
 		} );
 	} );
 
@@ -953,14 +1012,14 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'resolves abilities registered after load time (queried live, not snapshotted)', async () => {
-		// Big Sky registers its editor abilities from a React effect that runs
+		// A provider may register its abilities from a React effect that runs
 		// after `loadExternalProviders()` — the merged provider must query each
 		// provider live, or those late registrations would never dispatch.
 		let editorAbilityRegistered = false;
 		const bigSkyProvider = {
 			getAbilities: jest.fn( () =>
 				Promise.resolve(
-					editorAbilityRegistered ? [ createAbility( 'big-sky/apply-block-edits' ) ] : []
+					editorAbilityRegistered ? [ createAbility( 'big-sky/compose-patterns' ) ] : []
 				)
 			),
 			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
@@ -979,7 +1038,9 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
+				captureCanvasAbility,
 				editEntityRecordAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
@@ -988,14 +1049,14 @@ describe( 'loadExternalProviders', () => {
 				streamPageDesignAbility,
 				getBlockTreeAbility,
 				showTemplateAbility,
-				createAbility( 'big-sky/apply-block-edits' ),
+				createAbility( 'big-sky/compose-patterns' ),
 				createAbility( 'wpcom/manage-site' ),
 			] )
 		);
 		await expect(
-			providers.toolProvider?.executeAbility( 'big_sky__apply_block_edits', { updates: [] } )
+			providers.toolProvider?.executeAbility( 'big_sky__compose_patterns', { updates: [] } )
 		).resolves.toEqual( { handledBy: 'big-sky' } );
-		expect( bigSkyProvider.executeAbility ).toHaveBeenCalledWith( 'big_sky__apply_block_edits', {
+		expect( bigSkyProvider.executeAbility ).toHaveBeenCalledWith( 'big_sky__compose_patterns', {
 			updates: [],
 		} );
 		expect( otherProvider.executeAbility ).not.toHaveBeenCalled();
@@ -1044,25 +1105,65 @@ describe( 'loadExternalProviders', () => {
 		expect( secondReturn.setCheckpoint ).not.toHaveBeenCalled();
 	} );
 
-	it( 'passes a single provider checkpoint hook through unchanged', async () => {
-		const hook = jest.fn( () => createCheckpointReturn() );
-		setAgentsManagerData( {
-			agentProviders: [ { useCheckpoint: hook } ],
+	// The editor abilities write to AM's own store, which the chat's Undo has
+	// to see; the provider's hook still answers for the ids it holds.
+	const withBothStores = async () => {
+		const amCheckpoints = jest.requireMock( '../checkpoints' );
+		amCheckpoints.hasCheckpoint.mockImplementation( ( id: string ) => id === 'am-cp' );
+		amCheckpoints.canSwapCheckpoint.mockReturnValue( true );
+		const providerReturn = createCheckpointReturn( {
+			hasCheckpoint: jest.fn( ( id: string ) => id === 'provider-cp' ),
+			canSwapCheckpoint: jest.fn( () => false ),
 		} );
+		setAgentsManagerData( { agentProviders: [ { useCheckpoint: () => providerReturn } ] } );
 
-		const providers = await loadExternalProviders();
+		const checkpoint = ( await loadExternalProviders() ).useCheckpoint?.();
 
-		expect( providers.useCheckpoint ).toBe( hook );
+		return { amCheckpoints, providerReturn, checkpoint };
+	};
+
+	it( "routes an id AM holds to AM's store without asking the provider hook", async () => {
+		const { amCheckpoints, providerReturn, checkpoint } = await withBothStores();
+
+		expect( checkpoint?.hasCheckpoint( 'am-cp' ) ).toBe( true );
+		await checkpoint?.restoreCheckpoint( 'am-cp' );
+		expect( checkpoint?.canSwapCheckpoint?.( 'am-cp' ) ).toBe( true );
+		await checkpoint?.swapCheckpoint?.( 'am-cp' );
+		checkpoint?.clearCheckpoint( 'am-cp' );
+
+		expect( amCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( 'am-cp' );
+		expect( amCheckpoints.swapCheckpoint ).toHaveBeenCalledWith( 'am-cp' );
+		expect( amCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( 'am-cp' );
+		expect( providerReturn.hasCheckpoint ).not.toHaveBeenCalled();
+		expect( providerReturn.restoreCheckpoint ).not.toHaveBeenCalled();
+		expect( providerReturn.canSwapCheckpoint ).not.toHaveBeenCalled();
 	} );
 
-	it( 'leaves useCheckpoint undefined when no provider exports one', async () => {
-		setAgentsManagerData( {
-			agentProviders: [ { getEmptyViewSuggestions: () => [] } ],
-		} );
+	it( 'routes an id only the provider holds to its hook, which cannot swap it', async () => {
+		const { amCheckpoints, providerReturn, checkpoint } = await withBothStores();
 
-		const providers = await loadExternalProviders();
+		expect( checkpoint?.hasCheckpoint( 'provider-cp' ) ).toBe( true );
+		expect( checkpoint?.hasCheckpoint( 'missing-cp' ) ).toBe( false );
 
-		expect( providers.useCheckpoint ).toBeUndefined();
+		await checkpoint?.restoreCheckpoint( 'provider-cp' );
+		expect( checkpoint?.canSwapCheckpoint?.( 'provider-cp' ) ).toBe( false );
+		await expect( checkpoint?.swapCheckpoint?.( 'provider-cp' ) ).rejects.toThrow(
+			'does not support swapping'
+		);
+
+		expect( providerReturn.restoreCheckpoint ).toHaveBeenCalledWith( 'provider-cp' );
+		expect( amCheckpoints.restoreCheckpoint ).not.toHaveBeenCalled();
+		expect( checkpoint?.getLastEditorState() ).toBeNull();
+	} );
+
+	it( "serves AM's checkpoints with no provider hook at all", async () => {
+		jest.requireMock( '../checkpoints' ).hasCheckpoint.mockReturnValue( true );
+		setAgentsManagerData( { agentProviders: [ { getEmptyViewSuggestions: () => [] } ] } );
+
+		const checkpoint = ( await loadExternalProviders() ).useCheckpoint?.();
+
+		expect( checkpoint?.hasCheckpoint( 'am-cp' ) ).toBe( true );
+		expect( checkpoint?.getLastEditorState ).toBeUndefined();
 	} );
 } );
 

@@ -10,13 +10,18 @@ jest.mock( '@wordpress/blocks', () => ( {
 	serialize: jest.fn( () => '<serialized />' ),
 } ) );
 jest.mock( '../site-metadata', () => ( { getSiteMetadata: jest.fn( () => ( {} ) ) } ) );
+jest.mock( '../editor-blocks', () => ( { getBlock: jest.fn(), getBlockParents: jest.fn() } ) );
 
 import { parse } from '@wordpress/blocks';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { getBlock, getBlockParents } from '../editor-blocks';
 import {
 	addNavigationItem,
+	getLoadedMenuItems,
+	getMenuIdAround,
 	getMenuIdsToRelabel,
 	prefetchMenus,
+	readMenuItems,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../navigation-menu';
@@ -85,6 +90,53 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
 	saveSpecifiedEntityEdits.mockReset();
+} );
+
+describe( 'getMenuIdAround', () => {
+	const blocks: Record< string, { name: string; attributes: Record< string, unknown > } > = {
+		nav: { name: 'core/navigation', attributes: { ref: 19 } },
+		link: { name: 'core/navigation-link', attributes: {} },
+		para: { name: 'core/paragraph', attributes: {} },
+	};
+
+	beforeEach( () => {
+		jest.mocked( getBlock ).mockImplementation( ( id ) => blocks[ id ] as never );
+		jest
+			.mocked( getBlockParents )
+			.mockImplementation( ( id ) => ( id === 'link' ? [ 'nav' ] : [] ) );
+	} );
+
+	it.each( [
+		[ 'an item inside a saved menu', 'link', 19 ],
+		[ 'the navigation block itself', 'nav', 19 ],
+		[ 'a block outside any menu', 'para', undefined ],
+	] )( 'names the menu around %s', ( _, clientId, expected ) => {
+		expect( getMenuIdAround( clientId ) ).toBe( expected );
+	} );
+} );
+
+describe( 'getLoadedMenuItems', () => {
+	const serveMenu = ( menu: unknown ) => {
+		( select as jest.Mock ).mockReturnValue( { getEditedEntityRecord: () => menu } );
+		( resolveSelect as jest.Mock ).mockReturnValue( { getEditedEntityRecord: async () => menu } );
+	};
+
+	// Parsing mints new clientIds: parsed again, the items the page structure
+	// showed the agent would be gone by the time an ability reads the menu.
+	it( 'parses a record once, so a later read finds the same items', async () => {
+		serveMenu( { id: 10, content: { raw: '<!-- wp:navigation-link /-->' } } );
+
+		const items = getLoadedMenuItems( 10 );
+
+		await expect( readMenuItems( 10 ) ).resolves.toBe( items );
+		expect( parse ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'is undefined while the menu has not loaded', () => {
+		serveMenu( undefined );
+
+		expect( getLoadedMenuItems( 10 ) ).toBeUndefined();
+	} );
 } );
 
 describe( 'addNavigationItem', () => {

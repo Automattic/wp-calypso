@@ -6,7 +6,9 @@ import {
 	clearBlockSelection,
 	DOCUMENT_ROOT_CLIENT_ID,
 	getCurrentPost,
+	getPaletteColor,
 	getRootBlocks,
+	openUndoLevel,
 	replaceRootBlocks,
 	resolveBlocksRoot,
 	stageRootBlocks,
@@ -23,6 +25,7 @@ const block = ( clientId: string, name: string ): EditorBlock => ( {
 const replaceInnerBlocks = jest.fn();
 const resetBlocks = jest.fn();
 const markNextChangeAsNotPersistent = jest.fn();
+const markLastChangeAsPersistent = jest.fn();
 const clearSelectedBlock = jest.fn();
 
 function withEditor( {
@@ -58,6 +61,7 @@ function withEditor( {
 		resetBlocks,
 		clearSelectedBlock,
 		__unstableMarkNextChangeAsNotPersistent: markNextChangeAsNotPersistent,
+		__unstableMarkLastChangeAsPersistent: markLastChangeAsPersistent,
 	} );
 }
 
@@ -103,6 +107,15 @@ it( 'reads the document root as the top-level blocks', () => {
 	expect( getRootBlocks( 'a' ) ).toEqual( [] );
 } );
 
+it( 'reads a palette colour by slug', () => {
+	jest.mocked( select ).mockReturnValue( {
+		getSettings: () => ( { colors: [ { slug: 'vivid-red', color: '#cf2e2e' } ] } ),
+	} as never );
+
+	expect( getPaletteColor( 'vivid-red' ) ).toBe( '#cf2e2e' );
+	expect( getPaletteColor( 'unknown' ) ).toBeUndefined();
+} );
+
 it( 'reads the post the editor holds', () => {
 	withEditor( { postId: 7, title: 'About' } );
 
@@ -138,6 +151,37 @@ describe( 'writes', () => {
 		expect( markNextChangeAsNotPersistent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			replaceInnerBlocks.mock.invocationCallOrder[ 0 ]
 		);
+	} );
+
+	// The first write commits the user's own pending change and opens the
+	// level; the later ones stay staged until the close folds them in.
+	it( 'folds several writes into one undo level', () => {
+		withEditor();
+		const level = openUndoLevel();
+		const write = level.write( replaceInnerBlocks );
+
+		write( 'a', blocks );
+
+		expect( level.hasWritten() ).toBe( true );
+		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
+		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'a', blocks );
+
+		write( 'b', blocks );
+		level.close();
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledWith();
+		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'closes nothing when nothing was written', () => {
+		withEditor();
+		const level = openUndoLevel();
+
+		level.close();
+
+		expect( level.hasWritten() ).toBe( false );
+		expect( markLastChangeAsPersistent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'stages at once without a batch', () => {

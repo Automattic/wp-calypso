@@ -46,13 +46,11 @@ export function getDisplayMessageFromToolData( data: unknown ): string | undefin
 export type ApplyBlockEditsOutcome = 'updated' | 'no-changes';
 
 /**
- * Whether a visual check of this edit is actually coming.
- *
- * The flag is the conjunction, resolved by the plugin: the server sets it when
- * the filter is on, and the plugin only forwards it once the rasterizer has
- * produced a capture to check against. A refused or blank capture therefore
- * looks the same here as no check at all, which is what keeps the summary from
- * being withheld for a reply that never arrives.
+ * Whether a visual check of this edit is actually coming: the server sets the
+ * flag when the filter is on, and `apply-block-edits` forwards it only once a
+ * canvas capture exists to check against, so a refused or blank capture reads
+ * as no check at all and the summary is never withheld for a reply that never
+ * arrives.
  */
 export function isVisualCheckPending( toolId: unknown, data: unknown ): boolean {
 	if ( ! isBlockEditToolId( toolId ) || typeof data !== 'object' || data === null ) {

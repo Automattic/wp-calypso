@@ -7,11 +7,25 @@
 import { dispatch, select } from '@wordpress/data';
 import { unlock } from './private-apis';
 
+export type BlockAttributes = Record< string, unknown >;
+
 export interface EditorBlock {
 	clientId: string;
 	name: string;
-	attributes: Record< string, unknown >;
+	attributes: BlockAttributes;
 	innerBlocks: EditorBlock[];
+}
+
+/** The blocks of one template part, which the editor keeps apart from the tree. */
+export interface TemplatePartBlocks {
+	slug: string;
+	blocks: EditorBlock[];
+}
+
+/** Every block the page holds: its root's, and those of each template part. */
+export interface PageBlocks {
+	blocks: EditorBlock[];
+	templateParts: TemplatePartBlocks[];
 }
 
 export interface CurrentPost {
@@ -30,20 +44,35 @@ export interface BlocksRoot {
 export const DOCUMENT_ROOT_CLIENT_ID = '__agents-manager-document-root__';
 
 interface BlockEditorSelect {
+	getBlock?: ( clientId: string ) => EditorBlock | null;
 	getBlocks: ( rootClientId?: string ) => EditorBlock[];
 	getBlocksByName?: ( name: string ) => string[];
+	getBlockParents?: ( clientId: string ) => string[];
+	getBlockRootClientId?: ( clientId: string ) => string | null;
+	getSelectedBlockClientId?: () => string | null;
 	getSectionRootClientId?: () => string | undefined;
+	getSettings?: () => { colors?: { slug: string; color: string }[] };
 }
 
 interface BlockEditorDispatch {
+	insertBlock: (
+		block: EditorBlock,
+		index: number | undefined,
+		rootClientId: string | undefined,
+		updateSelection: boolean
+	) => void;
+	removeBlock: ( clientId: string, selectPrevious: boolean ) => void;
+	replaceBlock: ( clientId: string, block: EditorBlock ) => void;
 	replaceInnerBlocks: (
 		rootClientId: string,
 		blocks: EditorBlock[],
 		updateSelection: boolean
 	) => void;
 	resetBlocks: ( blocks: EditorBlock[] ) => void;
+	updateBlockAttributes: ( clientId: string, attributes: BlockAttributes ) => void;
 	clearSelectedBlock: () => void;
 	__unstableMarkNextChangeAsNotPersistent: ( options?: { history?: 'ignore' } ) => void;
+	__unstableMarkLastChangeAsPersistent: () => void;
 }
 
 // Resolved by name to keep `@wordpress/block-editor` out of this module.
@@ -52,8 +81,33 @@ const blockEditorSelect = () =>
 const blockEditorDispatch = () =>
 	dispatch( 'core/block-editor' ) as unknown as BlockEditorDispatch | undefined;
 
-const getBlocks = ( rootClientId?: string ): EditorBlock[] =>
+/** The blocks under `rootClientId`, or the document's own without one. */
+export const getBlocks = ( rootClientId?: string ): EditorBlock[] =>
 	blockEditorSelect()?.getBlocks( rootClientId ) ?? [];
+
+export const getBlock = ( clientId: string ): EditorBlock | undefined =>
+	blockEditorSelect()?.getBlock?.( clientId ) ?? undefined;
+
+/** The clientIds of every `name` block, at any depth. */
+export const getBlocksByName = ( name: string ): string[] =>
+	blockEditorSelect()?.getBlocksByName?.( name ) ?? [];
+
+/** The ancestors of `clientId`, outermost first. */
+export const getBlockParents = ( clientId: string ): string[] =>
+	blockEditorSelect()?.getBlockParents?.( clientId ) ?? [];
+
+/** The parent of `clientId`, or `undefined` for a block at the document root. */
+export const getBlockRootClientId = ( clientId: string ): string | undefined =>
+	blockEditorSelect()?.getBlockRootClientId?.( clientId ) || undefined;
+
+export const getSelectedBlockClientId = (): string | undefined =>
+	blockEditorSelect()?.getSelectedBlockClientId?.() ?? undefined;
+
+/** The colour a palette slug stands for, or `undefined` when the palette lacks it. */
+export const getPaletteColor = ( slug: string ): string | undefined =>
+	blockEditorSelect()
+		?.getSettings?.()
+		.colors?.find( ( entry ) => entry.slug === slug )?.color;
 
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {
@@ -75,8 +129,8 @@ export function getCurrentPost(): CurrentPost | undefined {
 	return { id, type, ...( typeof title === 'string' && title && { title } ) };
 }
 
-// Behind the private API: the container the site editor's own tools write into.
-function getSectionRootClientId(): string | undefined {
+/** Behind the private API: the container the site editor's own tools write into. */
+export function getSectionRootClientId(): string | undefined {
 	const blockEditor = blockEditorSelect();
 
 	if ( ! blockEditor || ! unlock ) {
@@ -90,9 +144,11 @@ function getSectionRootClientId(): string | undefined {
 	}
 }
 
+export const POST_CONTENT_BLOCK = 'core/post-content';
+
 /** The first `core/post-content` block, at any depth. */
 export const findPostContentClientId = (): string | undefined =>
-	blockEditorSelect()?.getBlocksByName?.( 'core/post-content' )[ 0 ];
+	getBlocksByName( POST_CONTENT_BLOCK )[ 0 ];
 
 /**
  * Where the page's blocks live, or `null` while the editor is still loading.
@@ -119,21 +175,114 @@ export function resolveBlocksRoot(): BlocksRoot | null {
 		: { kind: 'document', clientId: DOCUMENT_ROOT_CLIENT_ID, post };
 }
 
+/** The blocks of a `BlocksRoot`, whose `clientId` may stand in for the document root. */
 export const getRootBlocks = ( clientId: string ): EditorBlock[] =>
 	getBlocks( clientId === DOCUMENT_ROOT_CLIENT_ID ? undefined : clientId );
 
-/** Replaces the blocks of `clientId`, recording an undo level. */
-export function replaceRootBlocks( clientId: string, blocks: EditorBlock[] ): void {
+export const TEMPLATE_PART_BLOCK = 'core/template-part';
+
+/** The template parts on the page, by slug, in tree order. */
+export const getTemplatePartClientIds = (): { slug: string; clientId: string }[] =>
+	getBlocksByName( TEMPLATE_PART_BLOCK ).flatMap( ( clientId ) => {
+		const slug = getBlock( clientId )?.attributes.slug;
+
+		return typeof slug === 'string' && slug ? [ { slug, clientId } ] : [];
+	} );
+
+/** The blocks of every template part on the page, by slug. */
+export const getTemplatePartBlocks = (): TemplatePartBlocks[] =>
+	getTemplatePartClientIds().map( ( { slug, clientId } ) => ( {
+		slug,
+		blocks: getBlocks( clientId ),
+	} ) );
+
+/** The template part with `slug`, or `undefined` when the page shows none. */
+export const findTemplatePartClientId = ( slug: string ): string | undefined =>
+	getTemplatePartClientIds().find( ( part ) => part.slug === slug )?.clientId;
+
+/** The page as the editor holds it now: the root's blocks and each template part's. */
+export const getPageBlocks = (): PageBlocks => ( {
+	blocks: getRootBlocks( resolveBlocksRoot()?.clientId ?? DOCUMENT_ROOT_CLIENT_ID ),
+	templateParts: getTemplatePartBlocks(),
+} );
+
+function requireBlockEditor(): BlockEditorDispatch {
 	const blockEditor = blockEditorDispatch();
 
 	if ( ! blockEditor ) {
 		throw new Error( 'The editor is unavailable to write blocks.' );
 	}
 
+	return blockEditor;
+}
+
+/** Inserts `block` under `rootClientId`, or at the document root without one. */
+export function insertBlock( block: EditorBlock, index?: number, rootClientId?: string ): void {
+	requireBlockEditor().insertBlock( block, index, rootClientId, false );
+}
+
+export function removeBlock( clientId: string ): void {
+	requireBlockEditor().removeBlock( clientId, false );
+}
+
+export function replaceBlock( clientId: string, block: EditorBlock ): void {
+	requireBlockEditor().replaceBlock( clientId, block );
+}
+
+export function replaceInnerBlocks( clientId: string, blocks: EditorBlock[] ): void {
+	requireBlockEditor().replaceInnerBlocks( clientId, blocks, false );
+}
+
+export function updateBlockAttributes( clientId: string, attributes: BlockAttributes ): void {
+	requireBlockEditor().updateBlockAttributes( clientId, attributes );
+}
+
+export interface UndoLevel {
+	/** Wraps a write so that it lands in this level. */
+	write: < Args extends unknown[] >(
+		write: ( ...args: Args ) => void
+	) => ( ...args: Args ) => void;
+	/** Folds the writes into one undo record; nothing to fold is a no-op. */
+	close: () => void;
+	hasWritten: () => boolean;
+}
+
+/**
+ * Block writes that undo as one level. The first write commits whatever the
+ * user was typing, so that stays its own level, and opens this one; every
+ * later write stays out of the undo stack until `close()` folds it in.
+ */
+export function openUndoLevel(): UndoLevel {
+	let hasWritten = false;
+
+	return {
+		write:
+			( write ) =>
+			( ...args ) => {
+				if ( hasWritten ) {
+					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
+				} else {
+					requireBlockEditor().__unstableMarkLastChangeAsPersistent();
+					hasWritten = true;
+				}
+
+				write( ...args );
+			},
+		close: () => {
+			if ( hasWritten ) {
+				requireBlockEditor().__unstableMarkLastChangeAsPersistent();
+			}
+		},
+		hasWritten: () => hasWritten,
+	};
+}
+
+/** Replaces the blocks of `clientId`, recording an undo level. */
+export function replaceRootBlocks( clientId: string, blocks: EditorBlock[] ): void {
 	if ( clientId === DOCUMENT_ROOT_CLIENT_ID ) {
-		blockEditor.resetBlocks( blocks );
+		requireBlockEditor().resetBlocks( blocks );
 	} else {
-		blockEditor.replaceInnerBlocks( clientId, blocks, false );
+		replaceInnerBlocks( clientId, blocks );
 	}
 }
 

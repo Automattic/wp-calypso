@@ -1,4 +1,5 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
+import { getMenuItemAttributes, resolveClientId } from '../../utils/block-ids';
 import { normalizeLabel } from '../../utils/entity-title';
 import { isRecord } from '../../utils/is-record';
 import {
@@ -7,7 +8,6 @@ import {
 	readMenuItems,
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
-import { providerSelectors } from '../../utils/provider-store';
 import { sameUrl, urlKey } from '../../utils/same-url';
 
 /**
@@ -171,36 +171,19 @@ const identityKeys = ( {
 		label && `label:${ normalizeLabel( label ) }`,
 	].filter( ( key ): key is string => !! key );
 
-interface PageStructure {
-	clientIdMap?: Record< string, string >;
-	navigationItemMap?: Record< string, { attributes?: Record< string, unknown > } >;
-}
-
-// TODO (ability-migration): Big Sky's page structure hands the agent short block
-// ids, and its store keeps what they stood for — the editor's clientId, and a
-// menu item's attributes. Until that context migrates, this is the way back.
-const pageStructure = (): PageStructure | undefined =>
-	providerSelectors< { getFullPageStructure?: () => PageStructure } >()?.getFullPageStructure?.();
-
 /**
  * The identities an input can claim, in two groups. `known` is what the page
- * structure holds for the item: the editor clientId its short id maps to, and
- * the attributes it recorded. `own` is the input's own values, claimed second
- * because they may be new — a re-link's page id would otherwise claim whichever
- * item already points at that page. An id the structure does not know is taken
- * as an editor clientId.
+ * structure holds for the item: the editor clientId its short id stands for,
+ * and the attributes it recorded. `own` is the input's own values, claimed
+ * second because they may be new — a re-link's page id would otherwise claim
+ * whichever item already points at that page.
  */
 const identitiesOf = ( item: NavigationItemInput ): { known: string[]; own: string[] } => {
-	const structure = pageStructure();
-	const recorded = item.clientId
-		? structure?.navigationItemMap?.[ item.clientId ]?.attributes
-		: undefined;
+	const recorded = item.clientId ? getMenuItemAttributes( item.clientId ) : undefined;
 
 	return {
 		known: [
-			...identityKeys( {
-				clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
-			} ),
+			...identityKeys( { clientId: item.clientId && resolveClientId( item.clientId ) } ),
 			...( recorded ? identityKeys( recorded ) : [] ),
 		],
 		own: identityKeys( { ...item, clientId: undefined } ),

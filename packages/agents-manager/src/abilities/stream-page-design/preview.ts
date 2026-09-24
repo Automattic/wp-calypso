@@ -3,6 +3,8 @@
  * being written, and the canvas following it down.
  */
 
+import { getCanvasDocument } from '../../utils/editor-canvas';
+
 export const PREVIEW_CLASS_NAME = 'is-agents-manager-page-design-preview';
 
 const PREVIEW_STYLES_ID = 'agents-manager-page-design-preview-styles';
@@ -80,18 +82,6 @@ function injectPreviewStyles( targetDocument: Document | null ): void {
 	style.textContent = PREVIEW_STYLES_CSS;
 	// A document still loading may have no head yet.
 	( targetDocument.head ?? targetDocument.documentElement )?.appendChild( style );
-}
-
-function getCanvasDocument(): Document | null {
-	try {
-		return (
-			document.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' )
-				?.contentDocument ?? null
-		);
-	} catch {
-		// A cross-origin frame under that name is not the canvas.
-		return null;
-	}
 }
 
 /** Injects the preview styles into the page and the editor canvas, once each. */

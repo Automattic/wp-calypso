@@ -3,7 +3,10 @@ jest.mock( '@wordpress/blocks', () => ( {
 	parse: jest.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
 	serialize: jest.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
 } ) );
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+jest.mock( '../../../utils/block-ids', () => ( {
+	getMenuItemAttributes: jest.fn(),
+	resolveClientId: jest.fn(),
+} ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	NAVIGATION_LINK_BLOCK: 'core/navigation-link',
 	NAVIGATION_SUBMENU_BLOCK: 'core/navigation-submenu',
@@ -11,7 +14,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 } ) );
 
 import { parse } from '@wordpress/blocks';
-import { select } from '@wordpress/data';
+import { getMenuItemAttributes, resolveClientId } from '../../../utils/block-ids';
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';
 
@@ -32,11 +35,17 @@ const SUBMENU = 'core/navigation-submenu';
 const withMenu = ( items: unknown[] | null ) =>
 	( readMenuItems as jest.Mock ).mockResolvedValue( items );
 
-/** What Big Sky's page structure leaves in its store for the agent's short ids. */
-const withPageStructure = ( structure: {
-	clientIdMap?: Record< string, string >;
-	navigationItemMap?: Record< string, { attributes?: Record< string, unknown > } >;
-} ) => ( select as jest.Mock ).mockReturnValue( { getFullPageStructure: () => structure } );
+/** What the page structure kept for the agent's short ids. */
+const withPageStructure = ( {
+	clientIds = {},
+	menuItemAttributes = {},
+}: {
+	clientIds?: Record< string, string >;
+	menuItemAttributes?: Record< string, Record< string, unknown > >;
+} ) => {
+	( resolveClientId as jest.Mock ).mockImplementation( ( id ) => clientIds[ id ] ?? id );
+	( getMenuItemAttributes as jest.Mock ).mockImplementation( ( id ) => menuItemAttributes[ id ] );
+};
 
 /** The labels of the rebuilt menu, in order. */
 const labelsOf = ( record: Record< string, unknown > ) =>
@@ -53,7 +62,7 @@ const attributesOf = ( record: Record< string, unknown >, index = 0 ) =>
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	( select as jest.Mock ).mockReturnValue( undefined );
+	withPageStructure( {} );
 	withMenu( null );
 } );
 
@@ -135,20 +144,20 @@ it( 'resolves an item moved under a different parent', async () => {
 	] );
 } );
 
-// The page structure Big Sky sends the agent carries short block ids, with the
-// map back to the editor's clientIds in its store; the editor's own ids, which
+// The page structure carries short block ids, which `utils/block-ids.ts`
+// resolves back to the editor's clientIds; the editor's own ids, which
 // `get-block-tree` reports, work directly.
 describe( 'clientId', () => {
 	beforeEach( () => withMenu( [ item( 'about', 'About' ), item( 'svc', 'Services' ) ] ) );
 
 	/** A short id whose clientId is gone, and what the structure recorded for it. */
 	const staleShortId = {
-		clientIdMap: { bMnU: 'gone' },
-		navigationItemMap: { bMnU: { attributes: { label: 'Services' } } },
+		clientIds: { bMnU: 'gone' },
+		menuItemAttributes: { bMnU: { label: 'Services' } },
 	};
 
-	it( 'resolves a short id through the provider map', async () => {
-		withPageStructure( { clientIdMap: { bMnU: 'svc' } } );
+	it( 'resolves a short id through the id map', async () => {
+		withPageStructure( { clientIds: { bMnU: 'svc' } } );
 
 		const result = await buildNavigationItems( 10, {
 			navigationItems: [ { clientId: 'bMnU' }, { label: 'About' } ],
@@ -160,7 +169,7 @@ describe( 'clientId', () => {
 	// The structure held for the turn is what named the ids, so a re-read returns
 	// them again: the refusal sends the retry to the menu's labels instead.
 	it( 'steers a short id that names nothing to the labels, not to a re-read', async () => {
-		withPageStructure( { clientIdMap: { bMnU: 'gone' } } );
+		withPageStructure( { clientIds: { bMnU: 'gone' } } );
 
 		await expect(
 			buildNavigationItems( 10, { navigationItems: [ { clientId: 'bMnU' } ] } )
@@ -200,8 +209,6 @@ describe( 'clientId', () => {
 	// A clientId names an existing item; one that resolves to nothing must not
 	// be rebuilt from the label, dropping the block it meant.
 	it( 'refuses a clientId that resolves to nothing, even with a label', async () => {
-		withPageStructure( {} );
-
 		await expect(
 			buildNavigationItems( 10, { navigationItems: [ { clientId: 'gone', label: 'New' } ] } )
 		).rejects.toThrow( 'Navigation items not found: gone' );
