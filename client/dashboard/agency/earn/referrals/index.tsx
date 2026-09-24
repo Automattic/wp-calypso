@@ -14,6 +14,7 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
@@ -48,7 +49,7 @@ export default function EarnReferrals() {
 					title={ __( 'Referrals' ) }
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
-						hasReferrals ? (
+						hasReferrals && isAgencyApproved( agency ) ? (
 							<RouterLinkButton variant="primary" to="/marketplace/exclusive-offers">
 								{ __( 'New referral' ) }
 							</RouterLinkButton>
