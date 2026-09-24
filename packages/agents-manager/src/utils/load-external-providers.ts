@@ -586,11 +586,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		return { useSuggestions: useReaderFollowupSuggestions };
 	}
 
-	if ( agentProviders.length === 0 ) {
-		setLoadedProviderIds( [] );
-		return {};
-	}
-
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;

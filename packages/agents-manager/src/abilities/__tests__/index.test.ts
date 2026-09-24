@@ -73,6 +73,21 @@ beforeEach( () => {
 } );
 
 describe( 'abilities facade', () => {
+	it.each( [
+		'/plugins',
+		'/plugins/seo/example.com',
+		'/plugins-other',
+		'/wp-admin/plugins.php',
+		'/sites/example.com/plugins',
+	] )( 'does not own plugin recommendations on %s', async ( path ) => {
+		window.history.replaceState( {}, '', path );
+		const { amToolProvider } = await load();
+
+		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
+			ALL_SURFACE_ABILITY_NAMES
+		);
+	} );
+
 	it( 'owns only the all-surface abilities off the editor', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { registerAmAbilities, amToolProvider, getAmCheckpointContext, registerAbility } =
