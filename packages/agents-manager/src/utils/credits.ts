@@ -36,11 +36,28 @@ export function clampPercent( percent: number ): number {
 		return 0;
 	}
 
-	return Math.min( 100, Math.max( 0, Math.floor( percent ) ) );
+	return Math.min( 100, Math.max( 0, percent ) );
 }
 
+/**
+ * Whole-number percentage for labels. A positive balance under one percent
+ * reads as "<1" rather than "0", since it is still spendable.
+ */
+export function formatPercent( percent: number ): string {
+	const value = clampPercent( percent );
+
+	if ( value > 0 && value < 1 ) {
+		return '<1';
+	}
+
+	return String( Math.floor( value ) );
+}
+
+/** Exhaustion is the exact balance hitting zero; a fraction left still spends. */
 export function isCreditsExhausted( status: CreditsStatus ): boolean {
-	return status.remaining !== undefined ? status.remaining === 0 : status.percent === 0;
+	return status.remaining !== undefined
+		? status.remaining === 0
+		: clampPercent( status.percent ) <= 0;
 }
 
 export function isCreditsLow(
@@ -67,39 +84,23 @@ export function getCreditsTone(
 
 /** Tooltip and screen-reader sentence for the ring. */
 export function getCreditsLabel( status: CreditsStatus ): string {
-	const percent = clampPercent( status.percent );
-	if ( status.percent > 0 && status.percent < 1 ) {
-		return status.plan === 'paid'
-			? __( 'Less than 1% of site credits left', __i18n_text_domain__ )
-			: __( 'Less than 1% of free credits left', __i18n_text_domain__ );
-	}
+	const percent = formatPercent( status.percent );
 
 	if ( status.plan === 'paid' ) {
 		// The aggregate across the plan and top-up pools, hence "site credits"
 		// (the popover's heading), not the monthly allowance alone.
 		return sprintf(
-			/* translators: %d: percentage of the site's credits left */
-			__( '%d%% of site credits left', __i18n_text_domain__ ),
+			/* translators: %s: percentage of the site's credits left, e.g. "72" or "<1" */
+			__( '%s%% of site credits left', __i18n_text_domain__ ),
 			percent
 		);
 	}
 
 	return sprintf(
-		/* translators: %d: percentage of free credits left */
-		__( '%d%% of free credits left', __i18n_text_domain__ ),
+		/* translators: %s: percentage of free credits left, e.g. "15" or "<1" */
+		__( '%s%% of free credits left', __i18n_text_domain__ ),
 		percent
 	);
-}
-
-/** Preserve a positive fractional balance in the pool's displayed percentage. */
-export function formatCreditsPercent( percent: number ): string {
-	return percent > 0 && percent < 1
-		? __( '<1%', __i18n_text_domain__ )
-		: sprintf(
-				/* translators: %d: percentage of credits remaining. */
-				__( '%d%%', __i18n_text_domain__ ),
-				clampPercent( percent )
-			);
 }
 
 // The interface locale, not the browser's, so the figures match the

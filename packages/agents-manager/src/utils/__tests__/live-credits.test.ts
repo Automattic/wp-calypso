@@ -26,6 +26,43 @@ it( 'adapts the real draft allowance to one exact paid pool with its server rese
 		],
 	} );
 } );
+it.each( [
+	[ 'wpcom-site-monthly-v1', '2026-10-01T00:00:00Z', 'Oct 1' ],
+	[ 'wpcom-site-plan-period-v1', '2026-10-17T14:30:00+00:00', 'Oct 17' ],
+] as const )( 'accepts %s and displays its server reset date', ( policy_id, resets_at, date ) => {
+	const snapshot = {
+		...creditSnapshot(),
+		policy_id,
+		resets_at,
+		period_start: '2026-09-17T14:30:00+00:00',
+	};
+	const parsed = parseCreditSnapshot( snapshot, 123 );
+	expect( parsed ).toEqual( snapshot );
+	expect( buildLiveCreditsStatus( parsed! ) ).toMatchObject( {
+		plan: 'paid',
+		remaining: 2450,
+		pools: [ { dateLabel: `Resets ${ date } (UTC)` } ],
+	} );
+} );
+it.each( [ 'wpcom-site-plan-period-v2', 'wpcom-site-monthly-v2', '', null ] )(
+	'rejects unsupported policy %p',
+	( policy_id ) => {
+		expect( parseCreditSnapshot( { ...creditSnapshot(), policy_id }, 123 ) ).toBeUndefined();
+	}
+);
+it.each( [
+	{ blog_id: 456 },
+	{ credits_remaining: 2400 },
+	{ resets_at: '2026-10-17T14:30:00+01:00' },
+	{ reason: 'wpcom_no_plan', eligible: false, credits_limit: 0 },
+] )( 'retains paid snapshot validation for plan-period metadata %p', ( overrides ) => {
+	expect(
+		parseCreditSnapshot(
+			{ ...creditSnapshot(), policy_id: 'wpcom-site-plan-period-v1', ...overrides },
+			123
+		)
+	).toBeUndefined();
+} );
 it.each( [ 'personal', 'premium', 'business', 'commerce' ] as const )(
 	'preserves the server tier %s independently of the allowance amount',
 	( plan_tier ) => {

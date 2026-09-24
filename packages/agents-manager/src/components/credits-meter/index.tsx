@@ -4,8 +4,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import {
 	type CreditsPool,
 	type CreditsStatus,
-	formatCreditsPercent,
+	clampPercent,
 	formatCreditsDetail,
+	formatPercent,
 	getCreditsLabel,
 	getCreditsTone,
 	isCreditsExhausted,
@@ -23,7 +24,8 @@ interface Props {
 }
 
 function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boolean } ) {
-	const percent = formatCreditsPercent( pool.percent );
+	const percent = clampPercent( pool.percent );
+	const percentLabel = formatPercent( pool.percent );
 	const detail = formatCreditsDetail( pool );
 	return (
 		<div
@@ -32,17 +34,17 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 			aria-label={
 				pool.dateLabel
 					? sprintf(
-							/* translators: 1: pool name, 2: formatted percentage left, 3: reset or expiry date */
-							__( '%1$s, %2$s left, %3$s', __i18n_text_domain__ ),
+							/* translators: 1: pool name, 2: percentage left, 3: reset or expiry date */
+							__( '%1$s, %2$s%% left, %3$s', __i18n_text_domain__ ),
 							pool.label,
-							percent,
+							percentLabel,
 							pool.dateLabel
 						)
 					: sprintf(
-							/* translators: 1: pool name, 2: formatted percentage left */
-							__( '%1$s, %2$s left', __i18n_text_domain__ ),
+							/* translators: 1: pool name, 2: percentage left */
+							__( '%1$s, %2$s%% left', __i18n_text_domain__ ),
 							pool.label,
-							percent
+							percentLabel
 						)
 			}
 		>
@@ -60,17 +62,21 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 				>
 					{ isExhausted
 						? sprintf(
-								/* translators: %s: formatted percentage of credits left */
-								__( '%s left', __i18n_text_domain__ ),
-								percent
+								/* translators: %s: percentage of credits left, e.g. "0" */
+								__( '%s%% left', __i18n_text_domain__ ),
+								percentLabel
 							)
-						: percent }
+						: sprintf(
+								/* translators: %s: percentage of credits left, e.g. "72" or "<1" */
+								__( '%s%%', __i18n_text_domain__ ),
+								percentLabel
+							) }
 				</span>
 			</div>
 			<div className="agents-manager-credits-meter__bar" aria-hidden="true">
 				<div
 					className="agents-manager-credits-meter__bar-fill"
-					style={ { width: `${ Math.min( 100, Math.max( 0, pool.percent ) ) }%` } }
+					style={ { width: `${ percent }%` } }
 				/>
 			</div>
 			{ detail && <div className="agents-manager-credits-meter__pool-detail">{ detail }</div> }

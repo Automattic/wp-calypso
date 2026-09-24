@@ -22,21 +22,19 @@ client/me/purchases/
 
 ### Redux Selectors
 
-`getSitePurchases(state, siteId)` returns `[]` when not loaded — indistinguishable
-from "no purchases." `getUserPurchases(state)` returns `null` when not loaded.
+`getRawSitePurchases(state, siteId)` returns `[]` when not loaded — indistinguishable
+from "no purchases." `getRawUserPurchases(state)` returns `null` when not loaded.
 Always check `hasLoadedUserPurchasesFromServer` / `hasLoadedSitePurchasesFromServer`
 before trusting results.
 
-`getByPurchaseId` searches ALL purchases (user + site) from a single flat array.
+`getRawByPurchaseId` searches ALL purchases (user + site) from a single flat array.
 What's in that array depends on which `Query*Purchases` components have mounted.
 
 ### Architecture Context
 
-Classic uses `Purchase` from `calypso/lib/purchases/types` (camelCase fields, e.g.,
-`purchase.siteSlug`). Expiry values: `'autoRenewing'`, `'manualRenew'`. Dashboard
-(`client/dashboard/me/billing-purchases/`) uses a different `Purchase` type from
-`@automattic/api-core` (snake_case, different string values) — never copy logic
-between the two without converting field names and values.
+Classic and Dashboard (`client/dashboard/me/billing-purchases/`) both use the raw
+`Purchase` type from `@automattic/api-core` (snake_case fields, e.g. `purchase.site_slug`;
+expiry values `'auto-renewing'`, `'manual-renew'`).
 
 ## Architectural Decisions
 

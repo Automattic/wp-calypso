@@ -1,11 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import {
-	__experimentalGrid as Grid,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import PayoutCards from '../referrals/payout-cards';
 import type { WooPaymentsData } from '@automattic/api-core';
@@ -35,7 +32,7 @@ export default function ConsolidatedViews( {
 		<Grid
 			className="consolidated-views"
 			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
-			gap={ 4 }
+			gap="lg"
 		>
 			<ConsolidatedStatCard
 				value={ formatCurrency( totalCommission, 'USD' ) }

@@ -88,6 +88,32 @@ describe( 'useCredits', () => {
 		expect( result.current.notice ).toBeUndefined();
 	} );
 
+	it( 'opens the upsell once when a reply drains the free balance to zero', () => {
+		seed( '?am_credits=5&am_plan=free' );
+		const { result, rerender } = renderCredits();
+		const meter = () =>
+			result.current.trailingActions as React.ReactElement< {
+				isOpen: boolean;
+				onToggle: ( open: boolean ) => void;
+			} >;
+		expect( meter().props.isOpen ).toBe( false );
+
+		completeRequest( rerender );
+		expect( result.current.notice?.message ).toBe( 'You’re out of free credits.' );
+		expect( meter().props.isOpen ).toBe( true );
+
+		act( () => meter().props.onToggle( false ) );
+		completeRequest( rerender );
+		expect( meter().props.isOpen ).toBe( false );
+	} );
+
+	it( 'does not open the upsell on its own when the chat mounts already exhausted', () => {
+		seed( '?am_credits=0&am_plan=free' );
+		const { result } = renderCredits();
+		const meter = result.current.trailingActions as React.ReactElement< { isOpen: boolean } >;
+		expect( meter.props.isOpen ).toBe( false );
+	} );
+
 	it( 'blocks submits with a persistent notice once free credits run out', () => {
 		seed( '?am_credits=0&am_plan=free' );
 		const { result } = renderCredits();
@@ -117,6 +143,17 @@ describe( 'useCredits', () => {
 			allowed = result.current.beforeSubmit();
 		} );
 		expect( allowed ).toBe( false );
+	} );
+
+	it( 'opens the popover on its own when a reply drains a paid balance to zero', () => {
+		seed( '?am_credits=5&am_plan=paid' );
+		const { result, rerender } = renderCredits();
+		const meter = () => result.current.trailingActions as React.ReactElement< { isOpen: boolean } >;
+		expect( meter().props.isOpen ).toBe( false );
+
+		completeRequest( rerender );
+		expect( result.current.notice ).toBeUndefined();
+		expect( meter().props.isOpen ).toBe( true );
 	} );
 
 	it( 'drains the mocked paid pools plan-first, consistently with the aggregate', () => {

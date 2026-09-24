@@ -7,7 +7,7 @@ import 'calypso/state/purchases/init';
 
 /**
  * Returns every purchase in the state tree in the snake_case shape the API
- * serves, rather than the camelCase shape `getPurchases` assembles.
+ * serves.
  *
  * The Redux fetch thunks store the response body untouched, so ids may still
  * arrive as numeric strings; `normalizePurchase` coerces them exactly the way

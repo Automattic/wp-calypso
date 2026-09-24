@@ -27,9 +27,6 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'help-center' },
-	Purchases: {
-		utils: { createPurchaseObject: jest.fn(), createPurchasesArray: jest.fn() },
-	},
 } ) );
 
 jest.mock( '@automattic/calypso-products', () => ( {

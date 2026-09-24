@@ -7,7 +7,7 @@ import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 /** The opted-in allowance draft's terminal result.ai_credits contract. */
 export interface CreditSnapshot {
 	schema_version: 1;
-	policy_id: 'wpcom-site-monthly-v1';
+	policy_id: 'wpcom-site-monthly-v1' | 'wpcom-site-plan-period-v1';
 	cost_version: 'provider-cost-v1';
 	accounting_mode: 'provider_cost';
 	reason: 'wpcom_site_plan';
@@ -42,7 +42,8 @@ export function parseCreditSnapshot( value: unknown, siteId: number ): CreditSna
 	const { credits_limit: limit, credits_used: used, credits_remaining: remaining } = snapshot;
 	if (
 		snapshot.schema_version !== 1 ||
-		snapshot.policy_id !== 'wpcom-site-monthly-v1' ||
+		( snapshot.policy_id !== 'wpcom-site-monthly-v1' &&
+			snapshot.policy_id !== 'wpcom-site-plan-period-v1' ) ||
 		snapshot.cost_version !== 'provider-cost-v1' ||
 		snapshot.accounting_mode !== 'provider_cost' ||
 		snapshot.reason !== 'wpcom_site_plan' ||

@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
@@ -56,7 +57,7 @@ export default function DashboardBackportSitePurchases( {
 		if ( shouldSeedSiteFilter( { section, siteId, search } ) ) {
 			page.replace( addQueryArgs( pathname + search, { site: siteId } ) );
 		}
-	}, [ section, siteId ] );
+	}, [ path, section, siteId ] );
 
 	// Update the root instance upon dependency change.
 	useEffect( () => {
@@ -82,7 +83,14 @@ export default function DashboardBackportSitePurchases( {
 						}
 					}
 					path={ path }
-					subNav={ section && <PurchasesNavigation section={ section } siteSlug={ siteSlug } /> }
+					subNav={
+						section && (
+							<PurchasesNavigation
+								section={ isJetpackCloud() && section === 'activeUpgrades' ? 'myPlan' : section }
+								siteSlug={ siteSlug }
+							/>
+						)
+					}
 				/>
 			);
 		} );

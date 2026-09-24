@@ -125,6 +125,59 @@ it( 'reads the authenticated balance on opening without sending a prompt', async
 	expect( result.current.beforeSubmit() ).toBe( true );
 	expect( authProvider ).toHaveBeenCalledTimes( 1 );
 } );
+it.each( [
+	[ 'wpcom-site-monthly-v1', 'wpcom-site-plan-period-v1' ],
+	[ 'wpcom-site-plan-period-v1', 'wpcom-site-monthly-v1' ],
+] as const )(
+	'keeps the meter across a %s GET and %s terminal update, opening once on depletion',
+	async ( getPolicy, terminalPolicy ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { policy_id: getPolicy } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( props( result.current ).status.remaining ).toBe( 2450 );
+		const zero = creditSnapshot( {
+			...exhausted(),
+			policy_id: terminalPolicy,
+			resets_at: '2026-10-17T14:30:00+00:00',
+		} );
+		await receive( zero );
+		expect( props( result.current ).isOpen ).toBe( true );
+		expect( props( result.current ).status ).toMatchObject( {
+			plan: 'paid',
+			remaining: 0,
+			pools: [ { dateLabel: 'Resets Oct 17 (UTC)' } ],
+		} );
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		act( () => props( result.current ).onToggle( false ) );
+		await receive( zero );
+		expect( props( result.current ).isOpen ).toBe( false );
+		fetchMock.mockResolvedValueOnce( response( zero ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( props( result.current ).isOpen ).toBe( false );
+	}
+);
+it( 'keeps initial and new-site exhausted plan-period balances quiet', async () => {
+	const zero = creditSnapshot( { ...exhausted(), policy_id: 'wpcom-site-plan-period-v1' } );
+	fetchMock.mockResolvedValueOnce( response( zero ) );
+	const view = renderCredits();
+	await flush();
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( props( view.result.current ).isOpen ).toBe( false );
+	await receive( creditSnapshot() );
+	const oldObserver = mockConfig.onTaskUpdate;
+	fetchMock.mockResolvedValueOnce( response( { ...zero, blog_id: 456 } ) );
+	view.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	} );
+	await flush();
+	await act( async () => oldObserver?.( terminal( zero ) ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( props( view.result.current ).isOpen ).toBe( false );
+} );
 it( 'refreshes the paid tier and balance together after an upgrade', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 	const { result } = renderCredits();
@@ -536,7 +589,13 @@ it( 'waits while closed, reads on opening, and refreshes on reopen and a fresh m
 } );
 it( 'expires the old balance and reads the next period without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce(
-		response( creditSnapshot( { ...exhausted(), resets_at: '2026-09-21T12:00:01Z' } ) )
+		response(
+			creditSnapshot( {
+				...exhausted(),
+				policy_id: 'wpcom-site-plan-period-v1',
+				resets_at: '2026-09-21T12:00:01Z',
+			} )
+		)
 	);
 	const { result } = renderCredits();
 	await flush();

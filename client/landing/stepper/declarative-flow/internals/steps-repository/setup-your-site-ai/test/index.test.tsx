@@ -156,12 +156,13 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme' }
+				{ selection: 'generate-theme', graph: 'blocks-first' }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
 				setupChoice: 'generate-theme',
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
+				graph: 'blocks-first',
 			} );
 		} );
 

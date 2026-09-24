@@ -82,6 +82,30 @@ describe( 'leaveCheckout', () => {
 			);
 		} );
 
+		it( 'should redirect to cancel_to when it is a Jetpack Cloud URL', () => {
+			const cancelTo = 'https://cloud.jetpack.com/purchases/subscriptions/example.com/123';
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).toBe( cancelTo );
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not redirect to cancel_to on a host that only starts with Jetpack Cloud', () => {
+			window.location.search = `?cancel_to=${ encodeURIComponent(
+				'https://cloud.jetpack.com.evil.com/purchases'
+			) }`;
+
+			leaveCheckout( {
+				siteSlug: 'test.wordpress.com',
+				tracksEvent: 'checkout_cancel',
+				userHasClearedCart: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
+		} );
+
 		it( 'should fall through to closeUrl when cancel_to is an invalid external URL', () => {
 			window.location.search = '?cancel_to=https://evil.com/malicious';
 

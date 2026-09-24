@@ -8,6 +8,7 @@ import {
 	type CreditsPlan,
 	buildMockCreditsStatus,
 	clampPercent,
+	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../utils/credits';
@@ -302,6 +303,21 @@ export function useCredits( {
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
 
+	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
+	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
+	useEffect( () => {
+		const previous = wasExhaustedRef.current;
+		if (
+			previous.scope === scope &&
+			previous.hasBalance &&
+			isExhausted &&
+			! previous.isExhausted
+		) {
+			setIsPopoverOpen( true );
+		}
+		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
+	}, [ scope, status, isExhausted, setIsPopoverOpen ] );
+
 	const handleAction = useCallback( () => {
 		// TODO: route to the plan upgrade / add-credits checkout once the CTA destination is decided.
 		setIsPopoverOpen( false );
@@ -339,9 +355,9 @@ export function useCredits( {
 			return {
 				icon: false,
 				message: sprintf(
-					/* translators: %d: percentage of free credits left */
-					__( '%d%% of free credits left.', __i18n_text_domain__ ),
-					clampPercent( status.percent )
+					/* translators: %s: percentage of free credits left, e.g. "15" or "<1" */
+					__( '%s%% of free credits left.', __i18n_text_domain__ ),
+					formatPercent( status.percent )
 				),
 				action: { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: handleAction },
 				dismissible: true,
