@@ -464,12 +464,87 @@ describe( 'NamePulseResults', () => {
 		);
 
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
-		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+
+		// The bulk check offers the name; only the per-domain check behind the notice
+		// knows it is registered, and the row must not contradict it.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByText( 'Unavailable' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
 
 		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
 		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
 
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
+	} );
+
+	it( 'keeps a typed domain that is taken out of Top results, leaving it in the grid', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.com"
+				availability={ async ( domainNames ) => ( {
+					...buildNamePulseAvailabilityResponse( domainNames ),
+					...( domainNames.includes( 'icecream.com' )
+						? { 'icecream.com': { is_available: false } }
+						: {} ),
+				} ) }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( await findRow( 'icecream.com' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.org', 'icecream.net' ] );
+		expect( domainsIn( 'exact' ) ).toContain( 'icecream.com' );
+	} );
+
+	it( 'holds the typed domain on its check rather than offering a name the notice is about to reject', async () => {
+		let resolveTyped: ( availability: DomainAvailability ) => void = () => {};
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ ( domainName ) => {
+					if ( domainName === 'icecream.net' ) {
+						return new Promise< DomainAvailability >( ( resolve ) => {
+							resolveTyped = resolve;
+						} );
+					}
+
+					return Promise.resolve(
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE,
+							cost: '$24.00',
+							raw_price: 24,
+						} )
+					);
+				} }
+			/>
+		);
+
+		// The bulk check offers the typed name, but its own check is still running.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByLabelText( 'Checking…' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		expect( row.queryByText( '$24' ) ).not.toBeInTheDocument();
+
+		await act( async () => {
+			resolveTyped(
+				buildAvailability( {
+					domain_name: 'icecream.net',
+					status: DomainAvailabilityStatus.TRANSFERRABLE,
+					tld: 'net',
+				} )
+			);
+		} );
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( rowFor( 'icecream.net' ) ).getByText( 'Unavailable' ) ).toBeVisible();
 	} );
 
 	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {

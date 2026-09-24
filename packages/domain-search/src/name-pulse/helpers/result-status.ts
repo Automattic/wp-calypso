@@ -8,7 +8,7 @@ import type { DomainAvailability } from '@automattic/api-core';
  * and UNKNOWN never enter the cache; they are query states, not data.
  */
 export interface NamePulseVerdict
-	extends NamePulsePricing, Pick< NamePulseDomainResult, 'is_realtime' > {
+	extends NamePulsePricing, Pick< NamePulseDomainResult, 'is_realtime' | 'is_cart_check' > {
 	status: NamePulseDomainStatus.AVAILABLE | NamePulseDomainStatus.TAKEN;
 }
 
@@ -22,12 +22,20 @@ export interface NamePulseVerdictState {
 }
 
 /**
- * A real-time verdict is never overwritten by a bulk zone-file one.
+ * A real-time verdict is never overwritten by a bulk zone-file one. Once the reader
+ * has run a cart check on a name, later verdicts carry that too: the row they acted
+ * on keeps its slot however the verdict is refreshed afterwards.
  */
 export const mergeNamePulseVerdict = (
 	existing: NamePulseVerdict | undefined,
 	update: NamePulseVerdict
-): NamePulseVerdict => ( existing?.is_realtime && ! update.is_realtime ? existing : update );
+): NamePulseVerdict => {
+	if ( existing?.is_realtime && ! update.is_realtime ) {
+		return existing;
+	}
+
+	return existing?.is_cart_check ? { ...update, is_cart_check: true } : update;
+};
 
 /**
  * A premium name is only offered when its TLD is one we can sell premiums on;

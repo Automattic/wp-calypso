@@ -96,8 +96,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		! result.is_realtime &&
 		source === 'exact';
 
-	// The key is shared with the pre-cart check, so clicking the row afterwards
-	// costs no second request.
+	// The key is shared with the pre-cart check and the typed-domain notice, so
+	// clicking the row afterwards costs no second request, and even while disabled
+	// the query reports whatever verdict those two already fetched for the name.
 	const { data: realtimeAvailability, isError: isPremiumPriceError } = useQuery( {
 		...queries.domainAvailability( domainName ),
 		enabled: needsPremiumPrice,
@@ -155,7 +156,10 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
 			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			setNamePulseVerdict( queryClient, domainName, toNamePulseRealtimeVerdict( availability ) );
+			setNamePulseVerdict( queryClient, domainName, {
+				...toNamePulseRealtimeVerdict( availability ),
+				is_cart_check: true,
+			} );
 
 			if ( ! isNamePulseAvailable( availability ) ) {
 				throw new Error( __( 'Sorry, this domain is no longer available.' ) );
