@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useIsMutating } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
@@ -11,7 +11,12 @@ import {
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { emptyChat } from '../context';
-import { useGetZendeskConversation, useOdieChat } from '../data';
+import {
+	getZendeskConversationHistoryQueryKey,
+	useGetZendeskConversation,
+	useGetZendeskConversationHistory,
+	useOdieChat,
+} from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
 	getConversationIdFromInteraction,
@@ -51,6 +56,29 @@ export function deduplicateZDMessages( messages: Message[] ) {
 	return distinctMessages;
 }
 
+function getOldestReceived( messages: Message[] ) {
+	return messages.reduce< number | undefined >(
+		( oldest, { received } ) =>
+			received && ( ! oldest || received < oldest ) ? received : oldest,
+		undefined
+	);
+}
+
+/**
+ * Put the older Zendesk messages right after the "support request started" divider.
+ * @param messages - The chat messages.
+ * @param history - The older Zendesk messages.
+ * @returns The chat messages with the history in place.
+ */
+function insertZendeskHistory( messages: Message[], history: Message[] ) {
+	const divider = getZendeskChatStartedMetaMessage();
+	const dividerIndex = messages.findIndex( ( message ) => isEqual( message, divider ) );
+	return [
+		...messages.slice( 0, dividerIndex + 1 ),
+		...deduplicateZDMessages( [ ...history, ...messages.slice( dividerIndex + 1 ) ] ),
+	];
+}
+
 /**
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
@@ -82,6 +110,11 @@ export const useGetCombinedChat = (
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
+	const getZendeskConversationHistory = useGetZendeskConversationHistory();
+	const queryClient = useQueryClient();
+	const [ historyLoadingConversationId, setHistoryLoadingConversationId ] = useState<
+		string | null
+	>( null );
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat(
 		Number( odieId ),
 		sessionId,
@@ -128,6 +161,38 @@ export const useGetCombinedChat = (
 			refreshConversation();
 		}
 	}, [ isChatLoaded, conversationId, refreshConversation ] );
+
+	// Smooch only hands over the latest page of messages; load the older ones in the background.
+	const loadZendeskHistory = useCallback(
+		( historyConversationId: string, before: number, clientId?: string ) => {
+			setHistoryLoadingConversationId( historyConversationId );
+			getZendeskConversationHistory( { conversationId: historyConversationId, before, clientId } )
+				.then( ( history ) => {
+					if ( history.length ) {
+						setMainChatState( ( prevChat ) =>
+							prevChat.conversationId === historyConversationId
+								? {
+										...prevChat,
+										messages: insertZendeskHistory( prevChat.messages, history as Message[] ),
+									}
+								: prevChat
+						);
+					}
+				} )
+				.catch( ( error ) => {
+					recordTracksEvent( 'calypso_odie_zendesk_conversation_history_failed', {
+						conversation_id: historyConversationId,
+						error: error instanceof Error ? error.message : String( error ),
+					} );
+				} )
+				.finally( () => {
+					setHistoryLoadingConversationId( ( current ) =>
+						current === historyConversationId ? null : current
+					);
+				} );
+		},
+		[ getZendeskConversationHistory ]
+	);
 
 	useEffect( () => {
 		// Logged out chats don't have interactions. Only direct odie IDs.
@@ -197,6 +262,14 @@ export const useGetCombinedChat = (
 			getZendeskConversation( conversationId )
 				?.then( ( conversation ) => {
 					if ( conversation ) {
+						const before = getOldestReceived( conversation.messages as Message[] );
+						const historyQueryKey = before
+							? getZendeskConversationHistoryQueryKey( conversation.id, before )
+							: null;
+						const cachedHistory = historyQueryKey
+							? queryClient.getQueryData< Message[] >( historyQueryKey )
+							: [];
+
 						setMainChatState( ( prevChat ) => {
 							const isSameConversation =
 								prevChat.odieId?.toString() === odieId?.toString() &&
@@ -215,6 +288,7 @@ export const useGetCombinedChat = (
 									),
 									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
+										...( cachedHistory ?? [] ),
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
 											? prevChat.messages.filter( isQueuedZendeskMessage )
@@ -226,6 +300,10 @@ export const useGetCombinedChat = (
 								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 							};
 						} );
+
+						if ( before && ! cachedHistory ) {
+							loadZendeskHistory( conversation.id, before, conversation.clientId );
+						}
 					}
 				} )
 				.catch( ( error ) => {
@@ -277,7 +355,13 @@ export const useGetCombinedChat = (
 		mainChatState?.messages?.length,
 		mainChatState?.odieId,
 		odieChat,
+		queryClient,
+		loadZendeskHistory,
 	] );
 
-	return { mainChatState, setMainChatState };
+	const isLoadingZendeskHistory =
+		!! historyLoadingConversationId &&
+		historyLoadingConversationId === mainChatState.conversationId;
+
+	return { mainChatState, setMainChatState, isLoadingZendeskHistory };
 };

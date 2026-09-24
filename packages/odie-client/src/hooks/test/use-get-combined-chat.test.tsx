@@ -15,6 +15,8 @@ let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
+const mockGetZendeskConversationHistory = jest.fn();
+const mockGetQueryData = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	// The hook's only useSelect call returns { isChatLoaded, connectionStatus }.
@@ -26,6 +28,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@tanstack/react-query', () => ( {
 	useIsMutating: () => 0,
+	useQueryClient: () => ( { getQueryData: mockGetQueryData } ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -42,6 +45,12 @@ jest.mock( '../use-logged-out-session', () => ( {
 
 jest.mock( '../../data', () => ( {
 	useGetZendeskConversation: () => mockGetZendeskConversation,
+	useGetZendeskConversationHistory: () => mockGetZendeskConversationHistory,
+	getZendeskConversationHistoryQueryKey: ( conversationId: string, before: number ) => [
+		'zendesk-conversation-history',
+		conversationId,
+		before,
+	],
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
@@ -101,6 +110,8 @@ beforeEach( () => {
 	mockConversation = null;
 	mockOdieChat = undefined;
 	mockGetZendeskConversation.mockImplementation( () => Promise.resolve( mockConversation ) );
+	mockGetZendeskConversationHistory.mockImplementation( () => Promise.resolve( [] ) );
+	mockGetQueryData.mockReturnValue( undefined );
 } );
 
 describe( 'useGetCombinedChat — merging the Odie and Zendesk halves', () => {
@@ -348,5 +359,97 @@ describe( 'useGetCombinedChat — when the conversation cannot be fetched', () =
 		} );
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'useGetCombinedChat — older Zendesk messages', () => {
+	const receivedMessage = ( id: number, content: string, received: number ): Message =>
+		( { ...agentMessage( id, content ), id: `zd-${ id }`, received } ) as unknown as Message;
+
+	const contents = ( messages: Message[] ) => messages.map( ( message ) => message.content );
+
+	beforeEach( () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: null,
+			status: 'open',
+		};
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ receivedMessage( 3, 'latest page', 300 ) ],
+		};
+	} );
+
+	it( 'loads the messages before the latest page and puts them after the support divider', async () => {
+		let resolveHistory: ( messages: Message[] ) => void = () => {};
+		mockGetZendeskConversationHistory.mockImplementation(
+			() => new Promise( ( resolve ) => ( resolveHistory = resolve ) )
+		);
+
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.isLoadingZendeskHistory ).toBe( true );
+		} );
+		expect( mockGetZendeskConversationHistory ).toHaveBeenCalledWith( {
+			conversationId: 'conv-1',
+			before: 300,
+			clientId: undefined,
+		} );
+		expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+			'chat-started',
+			'latest page',
+		] );
+
+		await act( async () => {
+			resolveHistory( [ receivedMessage( 1, 'first', 100 ), receivedMessage( 2, 'second', 200 ) ] );
+		} );
+
+		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+		expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+			'chat-started',
+			'first',
+			'second',
+			'latest page',
+		] );
+	} );
+
+	it( 'reuses the cached history when the conversation is re-fetched', async () => {
+		mockGetQueryData.mockReturnValue( [ receivedMessage( 1, 'first', 100 ) ] );
+
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+				'chat-started',
+				'first',
+				'latest page',
+			] );
+		} );
+		expect( mockGetQueryData ).toHaveBeenCalledWith( [
+			'zendesk-conversation-history',
+			'conv-1',
+			300,
+		] );
+		expect( mockGetZendeskConversationHistory ).not.toHaveBeenCalled();
+		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+	} );
+
+	it( 'keeps the latest page when the history cannot be loaded', async () => {
+		mockGetZendeskConversationHistory.mockImplementation( () =>
+			Promise.reject( new Error( 'unauthorized' ) )
+		);
+
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalled();
+			expect( result.current.isLoadingZendeskHistory ).toBe( false );
+		} );
+		expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+			'chat-started',
+			'latest page',
+		] );
 	} );
 } );

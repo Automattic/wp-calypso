@@ -43,6 +43,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
 	hasUserEverEscalatedToHumanSupport: false,
+	isLoadingZendeskHistory: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
@@ -108,7 +109,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat(
+	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
 		isUserEligibleForPaidSupport && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
@@ -190,6 +191,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
+				isLoadingZendeskHistory,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,

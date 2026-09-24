@@ -29,8 +29,14 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport, launcherContext } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		forceEmailSupport,
+		launcherContext,
+		isLoadingZendeskHistory,
+	} = useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -156,7 +162,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						key={ 0 }
 					/>
 				) }
-				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
+				{ chat.messages?.length > 0 && (
+					<MessagesClusterizer
+						messages={ chat.messages }
+						isLoadingZendeskHistory={ isLoadingZendeskHistory }
+					/>
+				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }

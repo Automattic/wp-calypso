@@ -16,6 +16,7 @@ export type OdieAssistantContextInterface = {
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
 	hasUserEverEscalatedToHumanSupport: boolean;
+	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	selectedSiteId?: number | null;

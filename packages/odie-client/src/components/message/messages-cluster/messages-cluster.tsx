@@ -1,4 +1,5 @@
 import { translationExists } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
@@ -149,7 +150,13 @@ function clusterMessagesBySender( messages: Message[] ) {
 	return groups;
 }
 
-export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
+export function MessagesClusterizer( {
+	messages,
+	isLoadingZendeskHistory = false,
+}: {
+	messages: Message[];
+	isLoadingZendeskHistory?: boolean;
+} ) {
 	const groups = clusterMessagesBySender( messages );
 
 	return groups.map( ( group ) => {
@@ -200,6 +207,15 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 								: __( 'Chat with support team started', __i18n_text_domain__ )
 						}
 					/>
+				) }
+				{ startingHumanSupport && isLoadingZendeskHistory && (
+					<div
+						className="odie-chatbox-messages-cluster__history-loading"
+						role="status"
+						aria-label={ __( 'Loading earlier messages', __i18n_text_domain__ ) }
+					>
+						<Spinner />
+					</div>
 				) }
 			</Fragment>
 		);
