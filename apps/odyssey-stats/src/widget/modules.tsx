@@ -69,7 +69,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 			aria-label={ title }
 		>
 			<div className="stats-widget-metric__title">{ title }</div>
-			{ ( isLoading || ! isError || ! canManageModule ) && (
+			{ ( isLoading || ! isError ) && (
 				// Zero while loading, so it counts up once the figure lands, as in Overview.
 				<MetricValue
 					value={ ! isLoading && Number.isFinite( value ) ? value : 0 }
