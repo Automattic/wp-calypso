@@ -588,7 +588,27 @@ async function* processAgentResponseStream(
 	abortSignal?: AbortSignal,
 	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
+	const serverToolCalls = new Map< string, ToolCallDataPart >();
 	for await ( const update of stream ) {
+		if ( update.kind !== 'delta' && update.status.state === 'running' && update.status.message ) {
+			for ( const call of extractToolCallsFromMessage( update.status.message ) ) {
+				serverToolCalls.set( call.data.toolCallId, call );
+			}
+			for ( const part of update.status.message.parts ) {
+				if (
+					part.type !== 'data' ||
+					! ( 'toolCallId' in part.data ) ||
+					! ( 'result' in part.data )
+				) {
+					continue;
+				}
+				const call = serverToolCalls.get( part.data.toolCallId as string );
+				if ( call && call.data.toolId === part.data.toolId ) {
+					newConversationParts.push( { ...update.status.message, parts: [ call, part ] } );
+					serverToolCalls.delete( call.data.toolCallId );
+				}
+			}
+		}
 		const inputRequiredMessage =
 			update.status.state === 'input-required' && update.status.message && toolProvider
 				? update.status.message
@@ -625,7 +645,7 @@ async function* processAgentResponseStream(
 			? {
 					...update,
 					final: false,
-				}
+			  }
 			: update;
 
 		// Handle running state tool calls (async execution without blocking).
@@ -642,14 +662,14 @@ async function* processAgentResponseStream(
 		const { matched: runningToolCalls } =
 			update.status.state === 'running' && update.status.message && toolProvider
 				? // A provider can expose advertised tools, dispatchable tools and
-					// abilities at once (the Agents Manager merges several providers
-					// into one). Narrow to advertised tools only, so neither an
-					// ability nor a backend-dispatched tool riding along in the same
-					// message is executed from this branch.
-					await getMatchingToolCalls( toolProvider, update.status.message, {
+				  // abilities at once (the Agents Manager merges several providers
+				  // into one). Narrow to advertised tools only, so neither an
+				  // ability nor a backend-dispatched tool riding along in the same
+				  // message is executed from this branch.
+				  await getMatchingToolCalls( toolProvider, update.status.message, {
 						includeAbilities: false,
 						includeDispatchable: false,
-					} )
+				  } )
 				: NO_MATCHING_TOOL_CALLS;
 		if ( runningToolCalls.length > 0 ) {
 			// Execute tools async without blocking the stream
