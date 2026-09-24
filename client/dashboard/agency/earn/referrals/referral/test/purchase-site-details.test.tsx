@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import PurchaseSiteDetails from '../purchase-site-details';
@@ -53,11 +53,28 @@ describe( '<PurchaseSiteDetails>', () => {
 
 		await userEvent.click( infoButton() );
 
-		expect( await screen.findByText( /remain active until/ ) ).toBeVisible();
-		expect( screen.getByText( 'December 1, 2026' ) ).toBeVisible();
+		// The popover fades in, and jsdom never finishes the animation, so its
+		// content is asserted by presence rather than visibility.
+		expect( await screen.findByText( /remain active until/ ) ).toBeInTheDocument();
+		expect( screen.getByText( 'December 1, 2026' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: /Learn more about cancelations/ } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
+		);
+	} );
+
+	test( 'closes the cancellation popover with Escape', async () => {
+		render(
+			<PurchaseSiteDetails purchase={ createPurchase( { subscription: cancelledSubscription } ) } />
+		);
+
+		await userEvent.click( infoButton() );
+		expect( await screen.findByText( /remain active until/ ) ).toBeInTheDocument();
+
+		await userEvent.keyboard( '{Escape}' );
+
+		await waitFor( () =>
+			expect( screen.queryByText( /remain active until/ ) ).not.toBeInTheDocument()
 		);
 	} );
 
