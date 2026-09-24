@@ -216,7 +216,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				</Tooltip>
 				{ ( showSaleBadge || showPremiumBadge ) && (
 					<span className="name-pulse-row__badges">
-						{ showSaleBadge && <Badge intent="stable">{ __( 'Sale' ) }</Badge> }
+						{ showSaleBadge && <Badge intent="medium">{ __( 'Sale' ) }</Badge> }
 						{ showPremiumBadge && <Badge intent="informational">{ __( 'Premium' ) }</Badge> }
 					</span>
 				) }
