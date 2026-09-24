@@ -20,6 +20,9 @@ jest.mock( '@wordpress/components', () => ( {
 		children,
 		className,
 		href,
+		target,
+		rel,
+		variant,
 		icon,
 		label,
 		onClick,
@@ -28,13 +31,22 @@ jest.mock( '@wordpress/components', () => ( {
 		children?: React.ReactNode;
 		className?: string;
 		href?: string;
+		target?: string;
+		rel?: string;
+		variant?: string;
 		icon?: React.ReactNode;
 		label?: string;
 		onClick?: () => void;
 		'aria-expanded'?: boolean;
 	} ) =>
 		href ? (
-			<a className={ className } href={ href }>
+			<a
+				className={ className }
+				href={ href }
+				target={ target }
+				rel={ rel }
+				data-variant={ variant }
+			>
 				{ children }
 			</a>
 		) : (
@@ -102,6 +114,23 @@ const freeOut: CreditsStatus = {
 };
 
 describe( 'CreditsMeter', () => {
+	it( 'uses the paid secondary CTA to open plans while preserving the current editor', () => {
+		render(
+			<CreditsMeter
+				status={ paid }
+				isOpen
+				onToggle={ () => {} }
+				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
+			/>
+		);
+		const action = screen.getByRole( 'link', { name: 'Upgrade' } );
+		expect( action ).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
+		expect( action ).toHaveAttribute( 'target', '_blank' );
+		expect( action ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		expect( action ).toHaveAttribute( 'data-variant', 'secondary' );
+		expect( screen.queryByRole( 'button', { name: 'Add credits' } ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
+	} );
 	it( 'labels the ring with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );

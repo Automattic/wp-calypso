@@ -8,6 +8,7 @@ import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
 import type { TaskUpdate, UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { AgentsManagerSite } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 let mockIsProcessing = false;
@@ -43,7 +44,15 @@ const agentConfig: AgentConfig = {
 	sessionId: '',
 	authProvider,
 };
-const defaultOptions = { enabled: true, agentConfig, siteKey: '123', userId: 1, isOpen: true };
+const site = { ID: 123, domain: 'example.wordpress.com' };
+const defaultOptions = {
+	enabled: true,
+	agentConfig,
+	siteKey: '123',
+	site: site as AgentsManagerSite | null | undefined,
+	userId: 1,
+	isOpen: true,
+};
 const terminal = (
 	aiCredits?: unknown,
 	state: 'completed' | 'failed' | 'canceled' = 'completed'
@@ -69,6 +78,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 			isOpen: boolean;
 			onToggle: ( open: boolean ) => void;
 			onAction?: unknown;
+			upgradeUrl?: string;
 			manageUrl?: string;
 		} >
 	 )?.props;
@@ -103,6 +113,116 @@ beforeEach( () => {
 } );
 afterEach( () => {
 	jest.useRealTimers();
+} );
+
+it.each( [ 'personal', 'premium', 'business' ] as const )(
+	'offers the selected-site plans flow for %s through GET and terminal updates',
+	async ( plan_tier ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		expect( props( result.current ).onAction ).toBeUndefined();
+		await receive( { ...exhausted(), plan_tier } );
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+	}
+);
+it.each( [ 'commerce', undefined, null, 'unsupported' ] )(
+	'keeps the balance without an upgrade or fabricated guidance for tier %p',
+	async ( plan_tier ) => {
+		const { result } = renderCredits();
+		await receive( { ...creditSnapshot(), plan_tier } );
+		expect( props( result.current ).status.remaining ).toBe( 2450 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( props( result.current ).onAction ).toBeUndefined();
+		expect( result.current.notice ).toBeUndefined();
+	}
+);
+it( 'waits for matching site data and follows a domain change for the same site', async () => {
+	const view = renderCredits( { site: undefined } );
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
+	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+	view.rerender( defaultOptions );
+	expect( props( view.result.current ).upgradeUrl ).toBe(
+		'https://wordpress.com/plans/example.wordpress.com'
+	);
+	view.rerender( { ...defaultOptions, site: { ID: '123', domain: 'mapped.example::blog' } } );
+	expect( props( view.result.current ).upgradeUrl ).toBe(
+		'https://wordpress.com/plans/mapped.example%3A%3Ablog'
+	);
+} );
+it.each( [ '', '.', '..', ' ' ] )(
+	'omits the destination for an invalid site slug %p',
+	async ( domain ) => {
+		const { result } = renderCredits( { site: { ...site, domain } } );
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( props( result.current ).status.remaining ).toBe( 2450 );
+	}
+);
+it( 'never uses a previous site destination during a site switch', async () => {
+	const view = renderCredits();
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	const oldObserver = mockConfig.onTaskUpdate;
+	const next = {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	};
+	view.rerender( next );
+	expect( view.result.current.trailingActions ).toBeUndefined();
+	await receive( creditSnapshot( { blog_id: 456, plan_tier: 'premium' } ) );
+	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
+	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
+	expect( props( view.result.current ).upgradeUrl ).toBe(
+		'https://wordpress.com/plans/second.wordpress.com'
+	);
+} );
+it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
+	'drops the upgrade action when the authenticated visit changes: %p',
+	async ( next ) => {
+		const view = renderCredits();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
+		view.rerender( { ...defaultOptions, ...next } );
+		expect( view.result.current.trailingActions ).toBeUndefined();
+	}
+);
+it( 'refreshes an upgraded balance on return focus and removes the action at Commerce', async () => {
+	fetchMock.mockResolvedValueOnce(
+		response( creditSnapshot( { ...exhausted(), plan_tier: 'personal' } ) )
+	);
+	const { result } = renderCredits();
+	await flush();
+	expect( props( result.current ).upgradeUrl ).toBeDefined();
+	fetchMock.mockResolvedValueOnce(
+		response(
+			creditSnapshot( {
+				plan_tier: 'business',
+				credits_limit: 15000,
+				credits_remaining: 14950,
+			} )
+		)
+	);
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( props( result.current ).status ).toMatchObject( {
+		planTier: 'business',
+		remaining: 14950,
+	} );
+	expect( props( result.current ).upgradeUrl ).toBeDefined();
+	expect( result.current.beforeSubmit() ).toBe( true );
+	await receive( creditSnapshot( { plan_tier: 'commerce' } ) );
+	expect( props( result.current ).upgradeUrl ).toBeUndefined();
+	expect( props( result.current ).status.remaining ).toBe( 2450 );
 } );
 
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {

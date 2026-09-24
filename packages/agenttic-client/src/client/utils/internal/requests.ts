@@ -273,7 +273,7 @@ export async function executeRequest(
 		try {
 			return validateJsonRpcResponse( data, 'request' );
 		} catch ( error ) {
-			if ( error instanceof Error && data.result?.ai_credits !== undefined ) {
+			if ( error instanceof Error && data?.result?.ai_credits !== undefined ) {
 				Object.assign( error, { aiCredits: data.result.ai_credits } );
 			}
 			throw error;

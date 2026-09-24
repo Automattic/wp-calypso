@@ -15,12 +15,14 @@ import {
 import {
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
+	getLiveCreditsUpgradeUrl,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
 import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
+import type { AgentsManagerSite } from '@automattic/data-stores';
 
 interface MockCreditsSeed {
 	plan: CreditsPlan;
@@ -56,6 +58,7 @@ interface UseCreditsOptions {
 	enabled: boolean;
 	agentConfig: AgentConfig;
 	siteKey: string;
+	site?: AgentsManagerSite | null;
 	userId?: number;
 	isOpen: boolean;
 }
@@ -79,6 +82,7 @@ export function useCredits( {
 	enabled,
 	agentConfig,
 	siteKey,
+	site,
 	userId,
 	isOpen,
 }: UseCreditsOptions ): UseCreditsResult {
@@ -319,7 +323,6 @@ export function useCredits( {
 	}, [ scope, status, isExhausted, setIsPopoverOpen ] );
 
 	const handleAction = useCallback( () => {
-		// TODO: route to the plan upgrade / add-credits checkout once the CTA destination is decided.
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
@@ -333,9 +336,10 @@ export function useCredits( {
 				isOpen={ isPopoverOpen }
 				onToggle={ setIsPopoverOpen }
 				onAction={ siteId ? undefined : handleAction }
+				upgradeUrl={ getLiveCreditsUpgradeUrl( status, siteId, site ) }
 			/>
 		);
-	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId ] );
+	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, site ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( ! status || status.plan !== 'free' ) {
