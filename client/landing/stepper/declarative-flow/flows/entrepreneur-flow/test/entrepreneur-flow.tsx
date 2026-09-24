@@ -44,7 +44,7 @@ const SurveyThenProcessing = () => {
 	);
 
 	useEffect( () => {
-		if ( currentStep === 'start' ) {
+		if ( currentStep === ( 'start' as StepperStep[ 'slug' ] ) ) {
 			submit?.( { isMigrationFlow: true } );
 			setCurrentStep( STEPS.PROCESSING.slug );
 			return;
