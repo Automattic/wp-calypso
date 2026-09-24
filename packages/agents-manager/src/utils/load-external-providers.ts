@@ -445,11 +445,10 @@ const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
 // provider has a context too — until then Big Sky's always does.
 /**
  * Adds what AM knows of the page: `currentPageContent` and
- * `selectedBlockClientId`, under the short ids AM's abilities resolve,
- * `currentPageContentMarkup`, the page body the backend's page-design agent
- * reads, and `availableCheckpoints`, the checkpoints AM holds. Where it holds
- * none, a provider's list stands: its copies write and restore their own after
- * a failed chunk load.
+ * `selectedBlockClientId` under the short ids AM's abilities resolve,
+ * `currentPageContentMarkup` for the backend's page-design agent, and AM's
+ * `availableCheckpoints`. A provider's list stays while AM holds none, as after
+ * a failed chunk load, when its copies restore their own.
  */
 function withPageContext(
 	contextProvider: ContextProvider | undefined

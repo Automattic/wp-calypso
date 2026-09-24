@@ -754,8 +754,8 @@ describe( 'loadExternalProviders', () => {
 			} );
 		} );
 
-		// Only after a failed chunk load does a provider copy hold checkpoints,
-		// and it restores them itself.
+		// A provider holds checkpoints only after a failed chunk load, and
+		// restores them itself.
 		it.each( [
 			{
 				case: "sends the checkpoints AM holds, over a provider's",
