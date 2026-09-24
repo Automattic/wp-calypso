@@ -6,6 +6,9 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
@@ -13,6 +16,7 @@ import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
+	DIFM_OFFER_MAX_SITE_AGE_DAYS,
 	isEligibleForDifmOffer,
 	normalizeDifmOfferVariation,
 	useDifmOffer,
@@ -60,12 +64,25 @@ describe( 'isEligibleForDifmOffer', () => {
 		}
 	} );
 
-	it( 'accepts a site created 6 days ago and rejects one created 8 days ago', () => {
+	it( 'rejects Jetpack plans that share a type with an eligible plan', () => {
+		for ( const planSlug of [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM ] ) {
+			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
+		}
+	} );
+
+	it( 'accepts a site exactly at the maximum age and rejects one a millisecond older', () => {
+		const maxAgeMs = DIFM_OFFER_MAX_SITE_AGE_DAYS * MS_PER_DAY;
 		expect(
-			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: isoDaysAgo( 6 ) }, NOW )
+			isEligibleForDifmOffer(
+				{ ...eligibleInput(), siteCreatedAt: new Date( NOW - maxAgeMs ).toISOString() },
+				NOW
+			)
 		).toBe( true );
 		expect(
-			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: isoDaysAgo( 8 ) }, NOW )
+			isEligibleForDifmOffer(
+				{ ...eligibleInput(), siteCreatedAt: new Date( NOW - maxAgeMs - 1 ).toISOString() },
+				NOW
+			)
 		).toBe( false );
 	} );
 

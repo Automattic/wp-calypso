@@ -1,4 +1,9 @@
-import { isFreePlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
+import {
+	isWpComFreePlan,
+	isWpComPersonalPlan,
+	isWpComPremiumPlan,
+} from '@automattic/calypso-products';
+import { englishLocales } from '@automattic/i18n-utils';
 import { useExperiment } from 'calypso/lib/explat';
 
 /**
@@ -52,7 +57,9 @@ export function normalizeDifmOfferVariation(
 }
 
 function isEligiblePlan( planSlug: string ): boolean {
-	return isFreePlan( planSlug ) || isPersonalPlan( planSlug ) || isPremiumPlan( planSlug );
+	return (
+		isWpComFreePlan( planSlug ) || isWpComPersonalPlan( planSlug ) || isWpComPremiumPlan( planSlug )
+	);
 }
 
 function isRecentSite( siteCreatedAt: string, now: number ): boolean {
@@ -66,7 +73,7 @@ function isRecentSite( siteCreatedAt: string, now: number ): boolean {
 }
 
 function isEnglishLocale( localeSlug: string ): boolean {
-	return localeSlug === 'en' || localeSlug.startsWith( 'en-' );
+	return englishLocales.includes( localeSlug );
 }
 
 export function isEligibleForDifmOffer(
