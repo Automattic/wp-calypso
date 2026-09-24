@@ -65,8 +65,6 @@ function mockEndpoints( {
 const newReferralButton = () => screen.queryByRole( 'link', { name: 'New referral' } );
 
 describe( '<EarnReferrals>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'offers a new referral to an approved agency', async () => {
 		mockEndpoints();
 		const { recordTracksEvent } = render( <EarnReferrals /> );

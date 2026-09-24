@@ -31,8 +31,6 @@ function mockPreferences( seen: boolean ) {
 }
 
 describe( '<BankDetailsNotice>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'confirms the details once and records that it was shown', async () => {
 		mockPayee();
 		mockPreferences( false );
