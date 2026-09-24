@@ -390,7 +390,7 @@ describe( 'restoreCheckpointCallback', () => {
 	describe( 'a redo that names the undone change', () => {
 		const UNDO_CHECKPOINT = {
 			id: 'toolu_undo',
-			toolId: 'big_sky__restore_checkpoint',
+			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			checkpointKeys: [ 'color' ],
 			restoresCheckpointId: TARGET_CHECKPOINT.id,
 			requestIntentType: 'redo' as const,
