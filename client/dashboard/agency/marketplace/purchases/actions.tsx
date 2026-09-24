@@ -149,7 +149,7 @@ export function getLicenseActions( {
 			modalHeader: __( 'Configure your new site' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
-				<SiteConfigurationModal license={ items[ 0 ] } closeModal={ closeModal } />
+				<SiteConfigurationModal licenseKey={ items[ 0 ].license_key } closeModal={ closeModal } />
 			),
 		},
 		{
@@ -159,7 +159,11 @@ export function getLicenseActions( {
 			modalHeader: __( 'Which site would you like to assign this license to?' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
-				<AssignLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
+				<AssignLicenseModal
+					licenseKey={ items[ 0 ].license_key }
+					productName={ getLicenseProductName( items[ 0 ] ) }
+					closeModal={ closeModal }
+				/>
 			),
 		},
 		{
