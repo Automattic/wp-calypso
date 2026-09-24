@@ -1,4 +1,6 @@
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/theme/design-tokens.css';
+@import '@wordpress/dataviews/build-style/style.css';
 @import 'calypso/dashboard/app/dataforms-overrides.scss';
 @import 'calypso/dashboard/app/dataviews-overrides.scss';
 @import 'calypso/dashboard/app/wp-components-overrides.scss';
@@ -33,6 +35,14 @@ body:has( .dashboard-backport-site-purchases ) :is( .components-popover, .compon
 		p {
 			margin-block-end: revert;
 		}
+	}
+}
+
+// The classic layout's top spacing leaves room for a compact classic header;
+// the Dashboard page header is already sized for its own 24px page padding.
+@media ( min-width: 661px ) {
+	.layout:has( .dashboard-backport-site-purchases ) .layout__content {
+		--_layout__content-top-spacing: calc( var( --masterbar-height ) + #{$grid-unit-30} );
 	}
 }
 
