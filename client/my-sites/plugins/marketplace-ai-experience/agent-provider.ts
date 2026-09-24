@@ -87,7 +87,7 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 				label: 'Render Plugin Recommendations',
 				category: CATEGORY_SLUG,
 				description:
-					'Render plugin recommendation cards on the marketplace landing page. Pass the slug and a short personalized "why" for each pick; optionally include `source` ("wporg" or "commercial") when you know which catalog it came from to skip the wp.org-first lookup. Each slug must be one you saw in an earlier `plugin-marketplace-search` or `get-curated-plugins` call — invented slugs are dropped silently when they fail to hydrate.',
+					'First call `plugin-marketplace-search`. Render its results as ordered recommendation cards with personalized reasons, and link to their product URLs in your reply.',
 				input_schema: {
 					type: 'object',
 					additionalProperties: false,
