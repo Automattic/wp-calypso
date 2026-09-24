@@ -255,6 +255,17 @@ describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 } );
 
 describe( 'getAvailableCheckpoints', () => {
+	it( 'advertises a restore checkpoint under the intent of the request that created it', async () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+		setCheckpoint( 'call-1', [ checkpointKeys.COLOR ], {
+			toolId: 'big_sky__restore_checkpoint',
+			requestIntentType: 'redo',
+			createdByRequestIntentType: 'undo',
+		} );
+
+		expect( getAvailableCheckpoints()[ 0 ] ).toMatchObject( { requestIntentType: 'undo' } );
+	} );
+
 	// The list is re-sent to the agent every turn; snapshots carry whole
 	// global-styles records, menu block trees and site metadata.
 	it( 'sends no snapshot fields to the model', async () => {
