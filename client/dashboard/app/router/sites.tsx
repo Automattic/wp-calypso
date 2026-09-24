@@ -74,6 +74,7 @@ import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -219,6 +220,15 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
+	validateSearch: ( search ): StaticSiteImportSearch => {
+		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		return {
+			importSessionId: asString( search.importSessionId ),
+			from: asString( search.from ),
+			platform: asString( search.platform ),
+			domainChoice: asString( search.domainChoice ),
+		};
+	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
