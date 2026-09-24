@@ -7,7 +7,7 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -128,6 +128,7 @@ export default function SshCard( {
 	sshEnabled: boolean;
 } ) {
 	const { user } = useAuth();
+	const queryClient = useQueryClient();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
 	const {
 		data: userSshKeys,
@@ -179,15 +180,26 @@ export default function SshCard( {
 
 	const handleToggleSshAccess = () => {
 		toggleSshAccessMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice(
-					sshEnabled
-						? __( 'SSH access has been successfully disabled for this site.' )
-						: __( 'SSH access has been successfully enabled for this site.' ),
-					{
-						type: 'snackbar',
+			onSuccess: async ( { setting } ) => {
+				if ( setting === 'ssh' ) {
+					// Don't show snackbar until we know ssh keys have finished loading, so that
+					// the snackbar doesn't pop up moments before the ssh settings form.
+					try {
+						await queryClient.ensureQueryData( sshKeysQuery() );
+					} catch ( error ) {
+						if ( isWpError( error ) && error.code === 'reauthorization_required' ) {
+							// We will redirect, so show no notice.
+							return;
+						}
 					}
-				);
+					createSuccessNotice( __( 'SSH access has been successfully enabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				} else {
+					createSuccessNotice( __( 'SSH access has been successfully disabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				}
 			},
 			onError: () => {
 				createErrorNotice(
