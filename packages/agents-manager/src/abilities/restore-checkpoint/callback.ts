@@ -18,7 +18,7 @@ import {
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { errorResult, successResult } from '../ability-result';
-import type { CheckpointMetadata } from '../../utils/checkpoints';
+import type { CheckpointMetadata, CheckpointRecord } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
 
@@ -160,6 +160,22 @@ async function restoreProviderCheckpoint(
 	return successResult( summary, { checkpointId } );
 }
 
+// The reciprocal an undo or restore of `checkpointId` recorded, while no redo
+// has used it: it re-applies the change. A redo's own reciprocal carries `undo`.
+function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefined {
+	const checkpoints = getCheckpoints();
+
+	return [ ...checkpoints ]
+		.reverse()
+		.find(
+			( checkpoint ) =>
+				checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
+				checkpoint.restoresCheckpointId === checkpointId &&
+				checkpoint.requestIntentType !== 'undo' &&
+				! checkpoints.some( ( other ) => other.restoresCheckpointId === checkpoint.id )
+		);
+}
+
 async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult > {
 	const { checkpointId, summary, requestIntentType = 'restore' } = input;
 
@@ -180,8 +196,8 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 		);
 	}
 
-	const targetCheckpoint = getCheckpoint( checkpointId );
-	if ( ! targetCheckpoint ) {
+	const requestedCheckpoint = getCheckpoint( checkpointId );
+	if ( ! requestedCheckpoint ) {
 		// TODO (ability-migration): Delete the delegation with the
 		// provider-checkpoints bridge (AM-72) — until Big Sky's copies go, an id
 		// written under `?am_abilities=0` still lives in its store.
@@ -197,6 +213,11 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 		);
 	}
 
+	// A redo may name the undone change itself, whose checkpoint would only put
+	// back the undone state; it runs from the undo's reciprocal instead.
+	const targetCheckpoint =
+		( requestIntentType === 'redo' && findRedoReciprocal( checkpointId ) ) || requestedCheckpoint;
+
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
 
@@ -210,7 +231,7 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 			await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
 				toolId: RESTORE_CHECKPOINT_TOOL_ID,
 				summary,
-				restoresCheckpointId: checkpointId,
+				restoresCheckpointId: targetCheckpoint.id,
 				restoredCheckpointToolId: targetCheckpoint.toolId,
 				requestIntentType: reciprocalRequestIntentType,
 				createdByRequestIntentType: requestIntentType,
@@ -230,7 +251,7 @@ async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult 
 	}
 
 	try {
-		await restoreCheckpoint( checkpointId );
+		await restoreCheckpoint( targetCheckpoint.id );
 	} catch ( error ) {
 		// The reciprocal is kept: domains restore in sequence and several persist,
 		// so a failure part-way leaves the site changed with this as the only way
