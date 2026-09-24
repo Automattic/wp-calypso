@@ -143,11 +143,9 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 			</HStack>
 			{ clientEmail && (
 				<Text variant="muted" title={ clientEmail }>
-					{ createInterpolateElement(
-						/* translators: %s is the client's email address. */
-						sprintf( __( '<email>%s</email> owns this' ), clientEmail ),
-						{ email: <strong /> }
-					) }
+					{ createInterpolateElement( __( '<email /> owns this' ), {
+						email: <strong>{ clientEmail }</strong>,
+					} ) }
 				</Text>
 			) }
 		</VStack>
