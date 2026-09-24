@@ -3,7 +3,6 @@ import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
-import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import {
@@ -343,9 +342,7 @@ export default function convertToolMessagesToComponents( {
 				typeof textData.tool_call_id === 'string' && textData.tool_call_id
 					? textData.tool_call_id
 					: undefined;
-			// The testing switch flips rendering to the provider components too,
-			// so the comparison covers the whole flow.
-			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
+			const amComponent = getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
 			const Component = amComponent ?? getChatComponent?.( contentType );

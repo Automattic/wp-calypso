@@ -4,9 +4,7 @@
  * The editor abilities carry the editor stack (checkpoint engine, style
  * application), so they load as an async chunk and only on editor pages.
  * Chats everywhere else (Reader, wp-admin list screens, Calypso) never fetch
- * the chunk, keeping their bundles small. The `?am_abilities=0` testing
- * switch hands the migrated editor abilities back to the provider copies;
- * abilities with no provider copy stay on.
+ * the chunk, keeping their bundles small.
  */
 
 import { isEditorPage } from '../utils/is-editor-page';
@@ -66,7 +64,7 @@ async function getOwnedAbilities(): Promise< Ability[] > {
 	let editorAbilities: Ability[] = [];
 	try {
 		const module = loadEditorAbilities();
-		editorAbilities = module ? ( await module ).getEditorAbilities() : [];
+		editorAbilities = module ? ( await module ).EDITOR_ABILITIES : [];
 	} catch {
 		// Fall through with the chunk-less list.
 	}
@@ -104,7 +102,7 @@ export async function registerAmAbilities(): Promise< void > {
 }
 
 /**
- * AM's checkpoints for the merged `availableCheckpoints` context — a sync
+ * AM's checkpoints for the `availableCheckpoints` client context — a sync
  * view because the `ContextProvider` contract is sync. Empty until the
  * editor abilities finish loading: with no ability executions there are no
  * checkpoints, so reading is never a reason to load them.

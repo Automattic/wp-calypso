@@ -97,7 +97,6 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
-8. Use `?am_abilities=0` to exercise the external-provider ownership path during migration.
 
 The adapter reconciles the provider every two seconds only while the experiment is eligible. This
 covers abilities registered by later React effects. Changing scope or unmounting Agents Manager
