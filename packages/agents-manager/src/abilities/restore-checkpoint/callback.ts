@@ -247,7 +247,7 @@ export async function restoreCheckpointCallback(
 		if ( reciprocalId ) {
 			clearCheckpoint( reciprocalId );
 		}
-		return restoreFailedResult( error, targetCheckpoint.id );
+		return restoreFailedResult( error, checkpointId );
 	}
 
 	if ( restoreToolCallId ) {
