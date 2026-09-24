@@ -81,8 +81,7 @@ const refreshNotes = () => notificationAppModule?.then( ( module ) => module.ref
 
 const debug = debugFactory( 'notifications:panel' );
 
-const getMasterbarBell = () =>
-	document.querySelector( '.masterbar-notifications, .omnibar__notifications' );
+const getMasterbarBell = () => document.querySelector( '.omnibar__notifications' );
 
 const Notifications3PCNotice = ( { className } ) => {
 	const translate = useTranslate();
