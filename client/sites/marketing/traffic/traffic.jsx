@@ -20,6 +20,7 @@ import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mod
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
 import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
+import SeoVisibilityNotice from 'calypso/my-sites/site-settings/seo-settings/visibility-notice';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
@@ -102,6 +103,7 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
+					{ isAdmin && <SeoVisibilityNotice /> }
 					{ isAdmin && shouldShowAdvertisingOption && (
 						<PromoCardBlock
 							productSlug="blaze"
