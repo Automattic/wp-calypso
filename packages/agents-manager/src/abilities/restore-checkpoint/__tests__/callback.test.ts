@@ -395,60 +395,70 @@ describe( 'restoreCheckpointCallback', () => {
 			restoresCheckpointId: TARGET_CHECKPOINT.id,
 			requestIntentType: 'redo' as const,
 		};
+		const REDO_CHECKPOINT = {
+			...UNDO_CHECKPOINT,
+			id: 'toolu_redo',
+			requestIntentType: 'undo' as const,
+		};
 
 		beforeEach( () => mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID ) );
 
 		it.each( [
-			[ 'an undo', 'redo' as const ],
-			[ 'a plain restore', 'restore' as const ],
-		] )( 're-applies the change from the checkpoint %s left', async ( _, requestIntentType ) => {
-			const undoCheckpoint = { ...UNDO_CHECKPOINT, requestIntentType };
-			mockGetCheckpoint.mockImplementation( ( id: string ) =>
-				[ TARGET_CHECKPOINT, undoCheckpoint ].find( ( checkpoint ) => checkpoint.id === id )
-			);
-			mockGetCheckpoints.mockReturnValue( [ TARGET_CHECKPOINT, undoCheckpoint ] );
+			{ case: 'an undo', requestIntentType: 'redo' as const },
+			{ case: 'a plain restore', requestIntentType: 'restore' as const },
+		] )(
+			're-applies the change from the checkpoint $case left',
+			async ( { requestIntentType } ) => {
+				const undoCheckpoint = { ...UNDO_CHECKPOINT, requestIntentType };
+				mockGetCheckpoints.mockReturnValue( [ TARGET_CHECKPOINT, undoCheckpoint ] );
 
-			const result = await restoreCheckpointCallback( makeInput( { requestIntentType: 'redo' } ) );
+				const result = await restoreCheckpointCallback(
+					makeInput( { requestIntentType: 'redo' } )
+				);
 
-			expect( restoreCheckpoint ).toHaveBeenCalledWith( UNDO_CHECKPOINT.id );
-			expect( setCheckpoint ).toHaveBeenCalledWith(
-				RESTORE_CALL_ID,
-				undoCheckpoint.checkpointKeys,
-				expect.objectContaining( {
-					restoresCheckpointId: UNDO_CHECKPOINT.id,
-					requestIntentType: 'undo',
-				} )
-			);
-			expect( result.result.success ).toBe( true );
-		} );
+				expect( restoreCheckpoint ).toHaveBeenCalledWith( UNDO_CHECKPOINT.id );
+				expect( setCheckpoint ).toHaveBeenCalledWith(
+					RESTORE_CALL_ID,
+					undoCheckpoint.checkpointKeys,
+					expect.objectContaining( {
+						restoresCheckpointId: UNDO_CHECKPOINT.id,
+						requestIntentType: 'undo',
+					} )
+				);
+				expect( result.result.success ).toBe( true );
+			}
+		);
 
 		it.each( [
-			[
-				'an undo, which never turns into a redo',
-				'undo' as const,
-				[ TARGET_CHECKPOINT, UNDO_CHECKPOINT ],
-			],
-			[
-				'a redo once that checkpoint has been used',
-				'redo' as const,
-				[
+			{
+				case: 'an undo, which never turns into a redo',
+				requestIntentType: 'undo' as const,
+				checkpoints: [ TARGET_CHECKPOINT, UNDO_CHECKPOINT ],
+			},
+			{
+				case: 'a redo once that checkpoint has been used',
+				requestIntentType: 'redo' as const,
+				checkpoints: [
 					TARGET_CHECKPOINT,
 					UNDO_CHECKPOINT,
-					{
-						...UNDO_CHECKPOINT,
-						id: 'toolu_redo',
-						restoresCheckpointId: UNDO_CHECKPOINT.id,
-						requestIntentType: 'undo' as const,
-					},
+					{ ...REDO_CHECKPOINT, restoresCheckpointId: UNDO_CHECKPOINT.id },
 				],
-			],
-		] )( 'restores the named checkpoint for %s', async ( _, requestIntentType, checkpoints ) => {
-			mockGetCheckpoints.mockReturnValue( checkpoints );
+			},
+			{
+				case: "a redo whose only checkpoint of that change is a redo's own",
+				requestIntentType: 'redo' as const,
+				checkpoints: [ TARGET_CHECKPOINT, REDO_CHECKPOINT ],
+			},
+		] )(
+			'restores the named checkpoint for $case',
+			async ( { requestIntentType, checkpoints } ) => {
+				mockGetCheckpoints.mockReturnValue( checkpoints );
 
-			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
+				await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
 
-			expect( restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
-		} );
+				expect( restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
+			}
+		);
 	} );
 
 	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
