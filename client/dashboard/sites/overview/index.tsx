@@ -13,6 +13,9 @@ import { useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import TwoStepRequiredNotice, {
+	useSitesRequiringTwoStep,
+} from '../../app/two-step-required-notice';
 import Divider from '../../components/divider';
 import Grid, { type GapSize } from '../../components/grid';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
@@ -198,6 +201,8 @@ function SiteOverview( {
 	const wpAdminButtonRef = useRef( null );
 
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
+	const sitesRequiringTwoStep = useSitesRequiringTwoStep( [ site ] );
+	const showTwoStepRequiredNotice = supports.me && sitesRequiringTwoStep.length > 0;
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -260,6 +265,7 @@ function SiteOverview( {
 					{ site.__inaccessible_jetpack_error && (
 						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } site={ site } />
 					) }
+					{ showTwoStepRequiredNotice && <TwoStepRequiredNotice sites={ sitesRequiringTwoStep } /> }
 					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
 				</SitesNoticeArbiter>
