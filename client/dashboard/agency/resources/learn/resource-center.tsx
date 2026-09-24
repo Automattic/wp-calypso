@@ -7,21 +7,19 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
-import { formatAgencyResources } from './format-resources';
 import ResourceSection from './resource-section';
 import { useFilterResources } from './use-filter-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
-import type { AgencyResourcesResponse } from '@automattic/api-core';
 
 interface ResourceCenterProps {
-	data: AgencyResourcesResponse | undefined;
+	resources: ResourceItem[];
 	recordTracksEvent?: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
 }
 
 export default function ResourceCenter( {
-	data,
+	resources: unsortedResources,
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
@@ -33,15 +31,14 @@ export default function ResourceCenter( {
 		setShowVideoModal( true );
 	};
 
-	const resources = useMemo( () => {
-		if ( ! data?.results ) {
-			return [];
-		}
-		// Sort by created_at descending (newest first).
-		return formatAgencyResources( data.results ).sort(
-			( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
-		);
-	}, [ data ] );
+	const resources = useMemo(
+		() =>
+			// Sort by created_at descending (newest first).
+			[ ...unsortedResources ].sort(
+				( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+			),
+		[ unsortedResources ]
+	);
 
 	const { topResources, artOfTheDealResources, browseAllResources } =
 		useFilterResources( resources );
