@@ -1,9 +1,18 @@
 import type { ComponentProps, CSSProperties } from 'react';
 
-import '@wordpress/theme/design-tokens.css';
+// Local fallbacks rather than importing `@wordpress/theme/design-tokens.css`: loaded lazily,
+// that stylesheet resets Calypso's `:root` token overrides (e.g. the 499 emphasis weight).
+const GAP_FALLBACKS = {
+	xs: '4px',
+	sm: '8px',
+	md: '12px',
+	lg: '16px',
+	xl: '24px',
+	'2xl': '32px',
+	'3xl': '40px',
+};
 
-// The `--wpds-dimension-gap-*` token scale from `@wordpress/theme`.
-export type GapSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+export type GapSize = keyof typeof GAP_FALLBACKS;
 
 interface GridProps extends ComponentProps< 'div' > {
 	columns?: number;
@@ -32,7 +41,7 @@ export default function Grid( {
 				gridTemplateColumns:
 					templateColumns ?? ( columns ? `repeat( ${ columns }, 1fr )` : undefined ),
 				gridTemplateRows: templateRows ?? ( rows ? `repeat( ${ rows }, 1fr )` : undefined ),
-				gap: gap && `var( --wpds-dimension-gap-${ gap } )`,
+				gap: gap && `var( --wpds-dimension-gap-${ gap }, ${ GAP_FALLBACKS[ gap ] } )`,
 				alignItems: align,
 				...style,
 			} }
