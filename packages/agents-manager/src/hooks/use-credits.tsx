@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
+	CREDITS_LOW_THRESHOLD,
 	buildMockCreditsStatus,
 	clampPercent,
 	formatPercent,
@@ -67,7 +68,7 @@ interface UseCreditsResult {
 	chat: UseAgentChatReturn;
 	/** Ring + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
-	/** Low (free, one-time, dismissible) or exhausted (persistent) notice. */
+	/** Dismissible low-credit notice, or a persistent exhausted free-plan notice. */
 	notice?: NoticeConfig;
 	/** Blocks Send and suggestions at zero, keeping the typed text. */
 	beforeSubmit: () => boolean;
@@ -110,7 +111,13 @@ export function useCredits( {
 	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
-	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
+	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
+	const isLowNoticeDismissed = dismissedNoticeScope === scope;
+	const dismissLowNotice = useCallback( () => {
+		if ( currentScope.current === scope && scope.active ) {
+			setDismissedNoticeScope( scope );
+		}
+	}, [ scope ] );
 	const [ popoverScope, setPopoverScope ] = useState< typeof scope >();
 	const isPopoverOpen = popoverScope === scope;
 	const setIsPopoverOpen = useCallback(
@@ -306,6 +313,7 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
+	const upgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
 
 	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
@@ -336,12 +344,37 @@ export function useCredits( {
 				isOpen={ isPopoverOpen }
 				onToggle={ setIsPopoverOpen }
 				onAction={ siteId ? undefined : handleAction }
-				upgradeUrl={ getLiveCreditsUpgradeUrl( status, siteId, site ) }
+				upgradeUrl={ upgradeUrl }
 			/>
 		);
-	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, site ] );
+	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
+		if (
+			siteId &&
+			status?.plan === 'paid' &&
+			status.percent <= CREDITS_LOW_THRESHOLD &&
+			! isLowNoticeDismissed
+		) {
+			return {
+				icon: false,
+				message: sprintf(
+					/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
+					__( '%s%% of site credits left.', __i18n_text_domain__ ),
+					formatPercent( status.percent )
+				),
+				action: upgradeUrl
+					? {
+							label: __( 'Upgrade', __i18n_text_domain__ ),
+							href: upgradeUrl,
+							target: '_blank',
+							rel: 'noopener noreferrer',
+						}
+					: undefined,
+				dismissible: true,
+				onDismiss: dismissLowNotice,
+			};
+		}
 		if ( ! status || status.plan !== 'free' ) {
 			return undefined;
 		}
@@ -365,12 +398,21 @@ export function useCredits( {
 				),
 				action: { label: __( 'Upgrade', __i18n_text_domain__ ), onClick: handleAction },
 				dismissible: true,
-				onDismiss: () => setIsLowNoticeDismissed( true ),
+				onDismiss: dismissLowNotice,
 			};
 		}
 
 		return undefined;
-	}, [ status, isExhausted, isLow, isLowNoticeDismissed, handleAction ] );
+	}, [
+		status,
+		siteId,
+		upgradeUrl,
+		isExhausted,
+		isLow,
+		isLowNoticeDismissed,
+		handleAction,
+		dismissLowNotice,
+	] );
 
 	// A known zero opens the existing details without discarding the draft.
 	const beforeSubmit = useCallback( () => {
