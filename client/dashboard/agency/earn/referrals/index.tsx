@@ -57,7 +57,12 @@ export default function EarnReferrals() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
+			notices={
+				<MissingPaymentSettingsNotice
+					hasCommissionActivity={ hasReferrals }
+					commissionType="referrals"
+				/>
+			}
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />
