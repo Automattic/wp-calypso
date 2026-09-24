@@ -49,12 +49,18 @@
 .global-styles-variations__header h2 {
 	align-items: center;
 	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 4px 10px;
 	font-size: 1rem;
 	white-space: nowrap;
 	font-weight: 500;
 	line-height: 24px;
 	color: var(--studio-gray-100);
 	margin: 0;
+
+	.premium-badge {
+		margin-left: 0;
+	}
 }
 
 .global-styles-variations__header p {
