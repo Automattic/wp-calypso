@@ -30,7 +30,9 @@ export default function SeoVisibilityNotice() {
 	} else if ( siteIsComingSoon ) {
 		visibility = translate( 'Your SEO settings won’t apply while your site is Coming Soon.' );
 	} else {
-		visibility = translate( 'Your SEO settings won’t apply while your site is Hidden.' );
+		visibility = translate(
+			'Your SEO settings won’t apply while your site discourages search engines from indexing it.'
+		);
 	}
 
 	return (
