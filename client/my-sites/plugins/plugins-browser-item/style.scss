@@ -1,8 +1,8 @@
-@use "../variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
+@use '../variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@automattic/color-studio/dist/color-variables';
 
 .plugins-browser-item {
 	width: 100%;
@@ -38,7 +38,7 @@
 	.plugins-browser-item__last-updated {
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-left: calc(47px + 16px); // icon width + margin
+		margin-left: calc( 47px + 16px ); // icon width + margin
 	}
 
 	.plugins-browser-item__title {
@@ -62,7 +62,7 @@
 			font-size: $font-body-extra-small;
 			line-height: 20px;
 			font-weight: 500;
-			color: var(--studio-gray-80);
+			color: var( --studio-gray-80 );
 			margin-right: 5px;
 		}
 
@@ -70,20 +70,20 @@
 			font-size: $font-body-extra-small;
 			line-height: 20px;
 			font-weight: 400;
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 		}
 	}
 
 	.plugins-browser-item__description {
 		margin: 12px 0 24px 0;
-		font-family: "SF Pro Text", $sans;
+		font-family: 'SF Pro Text', $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
 		line-height: 20px;
 		color: $studio-gray-80;
 
 		// limit to 2 lines
-		height: calc(20px * 3); // line height * number of lines
+		height: calc( 20px * 3 ); // line height * number of lines
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
@@ -119,20 +119,20 @@
 		@include break-medium {
 			// select first row for a 2 column grid
 			&:first-of-type,
-			&:nth-of-type(2) {
+			&:nth-of-type( 2 ) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 9px); // 2 column grid with 18px gutter
+			width: calc( 50% - 9px ); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
 			// select first row for a 3 column grid
 			&:first-of-type,
-			&:nth-of-type(2),
-			&:nth-of-type(3) {
+			&:nth-of-type( 2 ),
+			&:nth-of-type( 3 ) {
 				margin-top: 24px;
 			}
-			width: calc(33% - 10px); // 3 column grid with 20px gutter
+			width: calc( 33% - 10px ); // 3 column grid with 20px gutter
 		}
 
 		.full-width-section & {
@@ -154,11 +154,11 @@
 
 	&.extended {
 		@include break-large {
-			width: calc((100% - 18px) / 2); // 2 column grid with 18px gutter
+			width: calc( ( 100% - 18px ) / 2 ); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
-			width: calc((100% - 36px) / 3); // 3 column grid with 18px gutter
+			width: calc( ( 100% - 36px ) / 3 ); // 3 column grid with 18px gutter
 		}
 	}
 
@@ -170,7 +170,7 @@
 				color: $studio-blue-40;
 			}
 
-			*:not(.plugins-browser-item__incompatible) {
+			*:not( .plugins-browser-item__incompatible ) {
 				opacity: 0.6;
 			}
 		}
@@ -190,22 +190,22 @@
 	height: 100%;
 	padding: 24px;
 	box-sizing: border-box;
-	border: 1px solid var(--studio-gray-5);
+	border: 1px solid var( --studio-gray-5 );
 	border-radius: 4px;
 
 	&:focus,
 	&:hover {
-		border-color: var(--studio-gray-30);
+		border-color: var( --studio-gray-30 );
 	}
 
 	.full-width-section & {
-		background: var(--studio-gray-0);
+		background: var( --studio-gray-0 );
 		border-color: transparent;
 		border-radius: 8px;
 
 		&:focus,
 		&:hover {
-			border-color: var(--studio-blue-50);
+			border-color: var( --studio-blue-50 );
 		}
 
 		.plugins-browser-item__author {
@@ -216,10 +216,10 @@
 		padding: 30px;
 	}
 	.full-width-section .compact & {
-		background: var(--studio-white);
+		background: var( --studio-white );
 	}
 	.full-width-section--gray & {
-		background: var(--studio-white);
+		background: var( --studio-white );
 	}
 }
 
@@ -230,7 +230,7 @@
 
 	.is-placeholder & {
 		color: transparent;
-		background-color: var(--color-neutral-0);
+		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -240,15 +240,15 @@
 }
 
 .plugins-browser-item__title {
-	color: var(--color-neutral-100);
+	color: var( --color-neutral-100 );
 	font-weight: 500;
 	font-size: $font-body;
 	line-height: 20px;
 }
 
 .plugins-browser-item__author {
-	color: var(--studio-gray-60);
-	font-family: "SF Pro Text", $sans;
+	color: var( --studio-gray-60 );
+	font-family: 'SF Pro Text', $sans;
 	font-weight: 500;
 	font-size: $font-body-small;
 	line-height: 20px;
@@ -256,7 +256,7 @@
 }
 
 .plugins-browser-item__author-name {
-	color: var(--color-link);
+	color: var( --color-link );
 }
 
 // Editorial "why" annotation — opt-in via the `why` prop. The label is
@@ -375,14 +375,14 @@
 .plugins-browser-item__last-updated,
 .plugins-browser-item__rating-value,
 .plugins-browser-item__active-installs {
-	color: var(--studio-gray-60);
+	color: var( --studio-gray-60 );
 	font-size: $font-body-extra-small;
 }
 
 .plugins-browser-item__untested-notice {
 	display: flex;
-	color: var(--studio-gray-60);
-	fill: var(--studio-gray-60);
+	color: var( --studio-gray-60 );
+	fill: var( --studio-gray-60 );
 	font-size: $font-body-small;
 	margin-bottom: 16px;
 
@@ -406,10 +406,11 @@
 	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 1.42;
-	color: var(--studio-gray-80);
+	color: var( --studio-gray-80 );
 
 	.full-width-section & {
-		&, & > * {
+		&,
+		& > * {
 			font-size: $font-body-extra-small;
 			font-weight: 500;
 		}
@@ -428,15 +429,15 @@
 	}
 
 	.badge--success {
-		color: var(--studio-celadon-80);
+		color: var( --studio-celadon-80 );
 		font-weight: 600;
 		background-color: #abe8bc; // TODO: add this color somewhere
 	}
 
 	.badge--info {
-		color: var(--color-neutral-80);
+		color: var( --color-neutral-80 );
 		font-weight: 600;
-		background-color: var(--color-neutral-10);
+		background-color: var( --color-neutral-10 );
 	}
 }
 
@@ -464,8 +465,8 @@
 	}
 
 	.gridicon.checkmark {
-		color: var(--studio-gray-60);
-		border: 1px solid var(--studio-gray-60);
+		color: var( --studio-gray-60 );
+		border: 1px solid var( --studio-gray-60 );
 	}
 }
 
@@ -479,8 +480,8 @@
 
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
-	color: var(--studio-gray-50);
-	font-family: "SF Pro Text", $sans;
+	color: var( --studio-gray-50 );
+	font-family: 'SF Pro Text', $sans;
 	font-weight: 400;
 	font-size: $font-body-small;
 }
