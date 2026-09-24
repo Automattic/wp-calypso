@@ -17,6 +17,7 @@ import { TERM_PRICING_PREFERENCE_KEY, TERM_PRICING_YEARLY } from './hoc/with-ter
 import HostingOverview from './hosting-overview';
 import { getPressableOwnershipType } from './lib/get-pressable-ownership-type';
 import { getValidHostingSection } from './lib/hosting';
+import { getPreparedCheckoutRequest } from './lib/prepared-checkout/get-prepared-checkout-request';
 import { getValidBrand } from './lib/product-brand';
 import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
 import DownloadProducts from './primary/download-products';
@@ -152,12 +153,18 @@ export const checkoutContext: Callback = ( context, next ) => {
 	const { siteSlug, planSlug } = context.params;
 	const { referral_blog_id } = context.query;
 	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+	const preparedRequest = getPreparedCheckoutRequest( context.querystring );
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<MarketplacePageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout referralBlogId={ referralBlogId } siteSlug={ siteSlug } planSlug={ planSlug } />
+			<Checkout
+				referralBlogId={ referralBlogId }
+				siteSlug={ siteSlug }
+				planSlug={ planSlug }
+				preparedRequest={ preparedRequest }
+			/>
 		</>
 	);
 	next();
