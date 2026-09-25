@@ -12,8 +12,8 @@ import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 
-// TODO: the MSD dashboard has no contact-support entry point yet. This matches the
-// '#contact-support' placeholder in agency/tiers/constants.ts — wire both up together.
+// TODO: the MSD dashboard has no contact-support entry point yet (A4A-3422). This
+// matches the placeholder on the Tiers screen — wire both up together.
 const CONTACT_SUPPORT_URL = '#contact-support';
 
 // TODO: the MSD dashboard has no partner-directory screen yet — point the growth

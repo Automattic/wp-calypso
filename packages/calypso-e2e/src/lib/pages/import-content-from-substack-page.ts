@@ -1,6 +1,10 @@
 import { Page } from 'playwright';
 import { DataHelper, ImportFileContentPage } from '../..';
 
+// The backend converts the uploaded export asynchronously and the page only learns the outcome
+// from a periodic status poll; the conversion took up to ~10s in CI. Same budget as the other importers.
+const CONVERSION_SUMMARY_TIMEOUT = 30 * 1000;
+
 /**
  * Represents the Import Content from Substack page.
  */
@@ -54,6 +58,13 @@ export class ImportContentFromSubstackPage {
 	 */
 	get conversionSummaryHeading() {
 		return this.page.getByRole( 'heading', { name: 'Conversion summary' } );
+	}
+
+	/**
+	 * Waits for the conversion summary that follows the asynchronous upload processing.
+	 */
+	async waitForConversionSummary(): Promise< void > {
+		await this.conversionSummaryHeading.waitFor( { timeout: CONVERSION_SUMMARY_TIMEOUT } );
 	}
 
 	/**

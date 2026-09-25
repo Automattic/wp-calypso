@@ -25,9 +25,10 @@ describe( 'SearchBar#Filter', () => {
 		} );
 
 		const onFilterApplied = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearchWithSuggestions query="test" events={ { onFilterApplied } }>
+			<TestDomainSearchWithSuggestions query="test" events={ { onFilterApplied, onSearchStart } }>
 				<Filter />
 			</TestDomainSearchWithSuggestions>
 		);
@@ -52,6 +53,7 @@ describe( 'SearchBar#Filter', () => {
 			tlds: [ 'com' ],
 			exactSldMatchesOnly: false,
 		} );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test', 'filter_apply' );
 	} );
 
 	it( 'allows the user to filter by exact match only', async () => {
@@ -124,9 +126,10 @@ describe( 'SearchBar#Filter', () => {
 		} );
 
 		const onFilterReset = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch query="test" events={ { onFilterReset } }>
+			<TestDomainSearch query="test" events={ { onFilterReset, onSearchStart } }>
 				<Filter />
 			</TestDomainSearch>
 		);
@@ -170,6 +173,7 @@ describe( 'SearchBar#Filter', () => {
 			},
 			[ 'tlds', 'exactSldMatchesOnly' ]
 		);
+		expect( onSearchStart ).toHaveBeenLastCalledWith( 'test', 'filter_reset' );
 	} );
 
 	it( 'does not render if there are no available TLDs', async () => {

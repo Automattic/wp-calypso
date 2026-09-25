@@ -1,4 +1,4 @@
-import { BlockControls } from '@wordpress/block-editor';
+import { BlockControls, store as blockEditorStore } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
@@ -23,12 +23,17 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 
 			// Fetch the attachment from the media store
-			const { media, hasResolved } = useSelect(
+			const { media, hasResolved, canUploadFiles } = useSelect(
 				( select ) => {
-					if ( ! attributes?.id ) {
-						return { media: null, hasResolved: true };
+					const { getSettings } = select( blockEditorStore ) as unknown as {
+						getSettings: () => { mediaUpload?: unknown };
+					};
+					const canUploadFiles = !! getSettings().mediaUpload;
+					if ( ! canUploadFiles || ! attributes?.id ) {
+						return { media: null, hasResolved: true, canUploadFiles };
 					}
 					return {
+						canUploadFiles,
 						media: select( coreStore ).getEntityRecord(
 							'postType',
 							'attachment',
@@ -80,7 +85,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
 			}, [ attachmentId, handleClose, openImageStudio, props.name ] );
 
-			if ( props.name !== 'core/image' || ! attributes?.id ) {
+			if ( props.name !== 'core/image' || ! attributes?.id || ! canUploadFiles ) {
 				return <BlockEdit { ...props } />;
 			}
 

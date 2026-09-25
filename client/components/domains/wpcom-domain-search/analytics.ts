@@ -5,6 +5,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import type { SearchTrigger } from '@automattic/domain-search';
 
 export const recordDomainSearchStepSubmit = (
 	suggestion: FreeDomainSuggestion | { domain_name: string },
@@ -69,7 +70,9 @@ export const recordSearchFormSubmit = (
 	timeDiffFromLastSearch: number,
 	count: number,
 	vendor: string | undefined,
-	flowName: string
+	flowName: string,
+	trigger: SearchTrigger,
+	searchStartedAt: number
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -85,6 +88,8 @@ export const recordSearchFormSubmit = (
 			search_vendor: vendor,
 			section,
 			flow_name: flowName,
+			trigger,
+			search_started_at: searchStartedAt,
 		} )
 	);
 
