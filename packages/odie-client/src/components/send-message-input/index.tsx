@@ -44,10 +44,14 @@ const AiDisclosure = ( { id }: { id: string } ) => (
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
-	cantTransferToZendesk: boolean
+	cantTransferToZendesk: boolean,
+	hasPendingApproval: boolean
 ) => {
 	if ( cantTransferToZendesk ) {
 		return __( 'Oops, something went wrong', __i18n_text_domain__ );
+	}
+	if ( hasPendingApproval ) {
+		return __( 'Approve or decline the request above to continue', __i18n_text_domain__ );
 	}
 	return shouldDisableInputField
 		? __( 'Just a moment…', __i18n_text_domain__ )
@@ -64,6 +68,17 @@ export const OdieSendMessageButton = () => {
 		false;
 	const { sendMessage } = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
+	// The turn is parked on an approval card: the buttons are the only valid input until it is
+	// answered (a typed "yes" would start a new turn and a second identical card).
+	const lastMessage = chat.messages?.[ chat.messages.length - 1 ];
+	const hasPendingApproval =
+		lastMessage?.role === 'bot' &&
+		!! lastMessage?.context?.flags?.wpcom_approval_required &&
+		!! lastMessage?.context?.approval?.token &&
+		! (
+			lastMessage?.context?.approval?.status &&
+			lastMessage.context.approval.status !== 'pending_approval'
+		);
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ searchParams ] = useSearchParams();
@@ -124,7 +139,7 @@ export const OdieSendMessageButton = () => {
 		inputValue,
 		setInputValue,
 		hasAttachments,
-		isChatBusy,
+		isChatBusy: isChatBusy || hasPendingApproval,
 		chat,
 		sendAttachments,
 		textareaRef,
@@ -156,7 +171,11 @@ export const OdieSendMessageButton = () => {
 		}
 	}, [ textareaRef, isLiveChat ] );
 
-	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
+	const textAreaPlaceholder = getTextAreaPlaceholder(
+		isChatBusy,
+		cantTransferToZendesk,
+		hasPendingApproval
+	);
 
 	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
@@ -197,7 +216,9 @@ export const OdieSendMessageButton = () => {
 	// 2. Input is empty AND no attachments
 	const isDisabled = !! messageSizeNotice || ( isInputEmpty && ! hasAttachments );
 	// When there is a reason to disable the input, we should not convey a processing state.
-	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
+	const isProcessing =
+		( isChatBusy || isAttachingFile || cantTransferToZendesk || hasPendingApproval ) &&
+		! isDisabled;
 
 	useEffect( () => {
 		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
