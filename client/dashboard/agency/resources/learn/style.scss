@@ -4,20 +4,28 @@
 }
 
 .dashboard-resources-learn__card {
+	position: relative;
 	block-size: 100%;
+
+	&:hover,
+	&:has( .dashboard-resources-learn__card-link:focus-visible ) {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
 }
 
-.dashboard-resources-learn__card-body {
-	display: flex;
-	flex-direction: column;
-	block-size: 100%;
-	box-sizing: border-box;
-}
+.dashboard-resources-learn__card-link {
+	color: inherit;
+	text-decoration: none;
 
-.dashboard-resources-learn__card-main {
-	flex: 1;
-}
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
 
-.dashboard-resources-learn__card-footer {
-	margin-block-start: 16px;
+	// The card draws the focus ring instead.
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
 }
