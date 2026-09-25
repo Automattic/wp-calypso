@@ -16,6 +16,7 @@ import { applyUpdateThemeAbility } from './apply-update-theme';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
+import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
@@ -33,6 +34,7 @@ import type { Ability } from './types';
 const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	applyUpdateThemeAbility,
 	editorNavigateAbility,
+	openHelpCenterAbility,
 	restoreCheckpointAbility,
 	setSiteLogoAbility,
 	showComponentAbility,

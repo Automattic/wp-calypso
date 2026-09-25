@@ -3,6 +3,7 @@ import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
+import OpenHelpCenterButton from '../components/open-help-center-button';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
@@ -15,6 +16,7 @@ import {
 	isVisualCheckPending,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
+import type { OPEN_HELP_CENTER_BUTTON_TYPE } from '../abilities/open-help-center';
 import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -25,13 +27,15 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	suppressThinking?: boolean;
 }
 
-// AM-owned components by `ShowComponentType`. These take precedence over
-// provider components — AM is the single source of truth for each migrated type.
+type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
+
+// AM-owned components by type. These take precedence over provider
+// components — AM is the single source of truth for each migrated type.
 //
 // The pickers carry the block-editor preview stack, so they load on demand:
 // a picker row fetches its chunk when it first renders, and other chats never
-// download it.
-const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
+// download it. The Help Center button is a plain button and ships inline.
+const AM_COMPONENTS: Record< AmComponentType, React.ComponentType > = {
 	'button-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
 	),
@@ -41,12 +45,13 @@ const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
 	'font-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
 	),
+	'open-help-center-button': OpenHelpCenterButton,
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
 	// Own-property check so degenerate types (e.g. `toString`) can't resolve
 	// to `Object.prototype` members.
-	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
+	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as AmComponentType ] : null;
 }
 
 interface Options {

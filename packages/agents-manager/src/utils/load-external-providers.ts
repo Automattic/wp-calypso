@@ -74,8 +74,8 @@ export type SiteBuildUtils = {
  * Supported chat component types for agent messages.
  */
 type ChatComponentType =
-	// The picker types resolve to AM's own components first; kept for
-	// provider back-compat until Big Sky drops its copies.
+	// TODO (ability-migration): The picker and Help Center button types resolve
+	// to AM's own components first; drop them here once Big Sky deletes its copies.
 	| 'button-picker'
 	| 'font-picker'
 	| 'color-picker'

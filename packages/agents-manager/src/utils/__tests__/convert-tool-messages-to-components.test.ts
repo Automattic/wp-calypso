@@ -32,6 +32,10 @@ jest.mock( '../../components/font-picker', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
+jest.mock( '../../components/open-help-center-button', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
 jest.mock( '../../components/chat-response-tracking', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
@@ -44,6 +48,7 @@ import ButtonPicker from '../../components/button-picker';
 import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
+import OpenHelpCenterButton from '../../components/open-help-center-button';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
@@ -1076,6 +1081,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			[ 'button-picker', ButtonPicker ],
 			[ 'color-picker', ColorPicker ],
 			[ 'font-picker', FontPicker ],
+			[ 'open-help-center-button', OpenHelpCenterButton ],
 		] )( 'resolves %s to its AM component', async ( type, picker ) => {
 			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 				type,

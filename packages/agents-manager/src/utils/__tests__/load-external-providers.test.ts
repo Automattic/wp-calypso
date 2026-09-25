@@ -5,6 +5,7 @@ import { amToolProvider } from '../../abilities';
 import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
+import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
@@ -247,6 +248,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -285,6 +287,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -391,6 +394,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -870,6 +874,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
+				openHelpCenterAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
