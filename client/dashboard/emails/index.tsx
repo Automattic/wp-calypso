@@ -23,6 +23,7 @@ import {
 	EmptyMailboxesSearchStateContent,
 } from './empty-mailboxes-state';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import type { DomainWithUnusedMailboxes } from './components/unused-mailbox-notice';
 import type { Email } from './types';
 
 import './style.scss';
@@ -54,24 +55,28 @@ function Emails() {
 	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings
-	const domainsWithUnusedMailbox: string[] = useMemo( () => {
+	const domainsWithUnusedMailboxes: DomainWithUnusedMailboxes[] = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
-		const warnedDomains = new Set< string >();
+		const unusedMailboxesByDomain = new Map< string, number >();
 		for ( const account of allEmailAccounts ) {
 			const hasUnusedWarning = ( account.warnings ?? [] ).some(
 				( w ) => w.warning_slug === 'unused_mailboxes'
 			);
 			if ( hasUnusedWarning ) {
-				warnedDomains.add( account.domains[ 0 ].domain );
+				const unusedCount = account.maximum_mailboxes - account.emails.length;
+				unusedMailboxesByDomain.set( account.domains[ 0 ].domain, unusedCount );
 			}
 		}
 
 		// Return only domains we show in the table (i.e., that actually have emails)
 		return domainsWithEmails
-			.filter( ( d ) => warnedDomains.has( d.domain ) )
-			.map( ( d ) => d.domain );
+			.filter( ( d ) => unusedMailboxesByDomain.has( d.domain ) )
+			.map( ( d ) => ( {
+				domain: d.domain,
+				unusedCount: unusedMailboxesByDomain.get( d.domain ) ?? 0,
+			} ) );
 	}, [ domainsWithEmails, allEmailAccounts ] );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
@@ -185,7 +190,7 @@ function Emails() {
 				/>
 			}
 		>
-			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
+			<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
 			{ renderContent() }
 		</PageLayout>
 	);

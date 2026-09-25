@@ -105,4 +105,30 @@ describe( '<Emails>', () => {
 
 		expect( await screen.findByText( 'You need a domain to set up email' ) ).toBeVisible();
 	} );
+
+	test( 'counts free mailboxes, not domains, in the unused mailbox notice', async () => {
+		const titanAccount = {
+			account_type: EmailProvider.Titan,
+			can_user_add_email: true,
+			status: 'active',
+			maximum_mailboxes: 3,
+			warnings: [ { warning_slug: 'unused_mailboxes', message: '' } ],
+			domains: [ { domain: DOMAIN, is_primary: true } ],
+			emails: [
+				{
+					mailbox: 'hello',
+					domain: DOMAIN,
+					email_type: 'email',
+					role: 'standard',
+					warnings: [],
+				},
+			],
+		} as unknown as EmailAccount;
+		mockApi( { domains: [ nonOwnedDomain ], accounts: [ titanAccount ] } );
+		render( <Emails /> );
+
+		expect(
+			await screen.findByText( 'You have 2 free mailboxes waiting to be set up.' )
+		).toBeVisible();
+	} );
 } );
