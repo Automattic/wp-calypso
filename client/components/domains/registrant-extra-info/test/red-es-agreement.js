@@ -55,6 +55,13 @@ async function switchLanguage( dialog, name ) {
 
 const englishButtonName = 'English version – for information only';
 
+function getListedDomains( dialog ) {
+	const list = dialog.querySelector( '.registrant-extra-info__red-es-agreement-domains' );
+	return within( list )
+		.getAllByRole( 'listitem' )
+		.map( ( item ) => item.textContent );
+}
+
 describe( 'RedEsAgreement', () => {
 	describe( 'gating', () => {
 		test.each( [
@@ -114,8 +121,9 @@ describe( 'RedEsAgreement', () => {
 				} )
 			).toBeVisible();
 			expect( dialog ).toHaveTextContent(
-				'Lucía García, como solicitante del nombre de dominio example.es'
+				'Lucía García, como solicitante de los nombres de dominio indicados a continuación'
 			);
+			expect( getListedDomains( dialog ) ).toEqual( [ 'example.es' ] );
 			expect( dialog ).toHaveTextContent( 'D./Dña. Lucía García, con DNI/pasaporte 12345678Z' );
 			expect( dialog.querySelector( '[lang="es"]' ) ).toBeVisible();
 		} );
@@ -130,13 +138,15 @@ describe( 'RedEsAgreement', () => {
 				within( dialog ).getByRole( 'heading', { name: 'Annex III of the Registrar Contract' } )
 			).toBeVisible();
 			expect( dialog ).toHaveTextContent(
-				'Lucía García, as applicant for the domain name example.es'
+				'Lucía García, as applicant for the domain names listed below'
 			);
+			expect( dialog ).toHaveTextContent( 'the domain names listed above' );
+			expect( getListedDomains( dialog ) ).toEqual( [ 'example.es' ] );
 			expect( dialog.querySelector( '[lang="en"]' ) ).toBeVisible();
 
 			await switchLanguage( dialog, 'Spanish version' );
 
-			expect( dialog ).toHaveTextContent( 'como solicitante del nombre de dominio' );
+			expect( dialog ).toHaveTextContent( 'como solicitante de los nombres de dominio' );
 		} );
 
 		test( 'reopens in Spanish after reading the English version', async () => {
@@ -148,7 +158,7 @@ describe( 'RedEsAgreement', () => {
 
 			const reopened = await openAgreement();
 
-			expect( reopened ).toHaveTextContent( 'como solicitante del nombre de dominio' );
+			expect( reopened ).toHaveTextContent( 'como solicitante de los nombres de dominio' );
 		} );
 
 		test( 'names the contact person, never the company, as the applicant', async () => {
@@ -160,8 +170,9 @@ describe( 'RedEsAgreement', () => {
 			const dialog = await openAgreement();
 
 			expect( dialog ).toHaveTextContent(
-				'Lucía García, como solicitante del nombre de dominio example.es'
+				'Lucía García, como solicitante de los nombres de dominio indicados a continuación'
 			);
+			expect( getListedDomains( dialog ) ).toEqual( [ 'example.es' ] );
 			expect( dialog ).toHaveTextContent( 'D./Dña. Lucía García, con DNI/pasaporte X1234567L' );
 			expect( dialog ).not.toHaveTextContent( 'Ejemplo SL' );
 			expect( dialog ).not.toHaveTextContent( 'B12345678' );
@@ -213,9 +224,17 @@ describe( 'RedEsAgreement', () => {
 
 			const dialog = await openAgreement();
 
-			expect( dialog ).toHaveTextContent(
-				'como solicitante del nombre de dominio example.es, ejemplo.es'
-			);
+			expect( getListedDomains( dialog ) ).toEqual( [ 'example.es', 'ejemplo.es' ] );
+			expect( dialog ).toHaveTextContent( 'de los nombres de dominio indicados arriba' );
+		} );
+
+		test( 'escapes the domain names', async () => {
+			renderAgreement( { domainNames: [ '<i>example</i>.es' ] } );
+
+			const dialog = await openAgreement();
+
+			expect( getListedDomains( dialog ) ).toEqual( [ '<i>example</i>.es' ] );
+			expect( dialog.querySelector( 'i' ) ).toBeNull();
 		} );
 
 		test( 'escapes the interpolated values', async () => {
