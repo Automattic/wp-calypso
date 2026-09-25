@@ -430,6 +430,9 @@ export const marketplacePurchasesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/purchases',
+	// The list's page, search and status filter, plus the one-time parameters a
+	// finished checkout returns with.
+	validateSearch: ( search: Record< string, unknown > ): Record< string, unknown > => search,
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),
