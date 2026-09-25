@@ -1,7 +1,7 @@
 import {
-	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_PERSONAL,
 	TERM_ANNUALLY,
 	findFirstSimilarPlanKey,
 	getPlan,
@@ -35,7 +35,7 @@ export function getPreferredBillingCycleProductSlug(
 
 /**
  * Returns the plan to add to the cart alongside an externally managed theme for a site that isn't eligible for it.
- * eCommerce trial sites can't buy Business, so they're offered eCommerce instead.
+ * eCommerce trial sites can only upgrade to eCommerce, so they're offered that instead.
  * @param currentPlanSlug The site's current plan slug.
  * @returns The plan slug, on the same term as the current paid plan or annual otherwise.
  */
@@ -46,7 +46,7 @@ export function getExternallyManagedThemeRequiredPlanSlug( currentPlanSlug?: str
 	}
 
 	const minimumPlan =
-		currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ? PLAN_ECOMMERCE : PLAN_BUSINESS;
+		currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ? PLAN_ECOMMERCE : PLAN_PERSONAL;
 
 	return findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } ) || minimumPlan;
 }

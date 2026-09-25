@@ -1,22 +1,21 @@
 import {
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_FREE,
+	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getExternallyManagedThemeRequiredPlanSlug } from '../theme-utils';
 
 describe( 'getExternallyManagedThemeRequiredPlanSlug', () => {
-	it( 'returns the annual Business plan for sites without a plan or on the Free plan', () => {
-		expect( getExternallyManagedThemeRequiredPlanSlug() ).toBe( PLAN_BUSINESS );
-		expect( getExternallyManagedThemeRequiredPlanSlug( PLAN_FREE ) ).toBe( PLAN_BUSINESS );
+	it( 'returns the annual Personal plan for sites without a plan or on the Free plan', () => {
+		expect( getExternallyManagedThemeRequiredPlanSlug() ).toBe( PLAN_PERSONAL );
+		expect( getExternallyManagedThemeRequiredPlanSlug( PLAN_FREE ) ).toBe( PLAN_PERSONAL );
 	} );
 
-	it( 'returns the Business plan on the same term as the current plan', () => {
+	it( 'returns the Personal plan on the same term as the current plan', () => {
 		expect( getExternallyManagedThemeRequiredPlanSlug( PLAN_PERSONAL_MONTHLY ) ).toBe(
-			PLAN_BUSINESS_MONTHLY
+			PLAN_PERSONAL_MONTHLY
 		);
 	} );
 
