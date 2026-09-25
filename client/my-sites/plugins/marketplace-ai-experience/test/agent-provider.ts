@@ -19,9 +19,10 @@ jest.mock( '@wordpress/abilities', () => {
 it( 'delivers normalized recommendations to the marketplace and opens Describe', async () => {
 	const onPicks = jest.fn( ( picks ) => deliverPicks( picks, 'example.com' ) );
 	const provider = createToolProvider( { onPicks } );
-	await provider.getAbilities();
+	const [ ability ] = await provider.getAbilities();
+	expect( ability.callback ).toEqual( expect.any( Function ) );
 	await expect(
-		provider.executeAbility( 'wpcom/render-plugin-recommendations', {
+		ability.callback( {
 			picks: [ { slug: ' SEO-BY-RANK-MATH ', why: ' SEO tools. ', source: 'wporg' } ],
 		} )
 	).resolves.toEqual( {
@@ -41,9 +42,10 @@ it( 'delivers recommendations only to the provider executing the ability', async
 	const firstProvider = createToolProvider( { onPicks: firstOnPicks } );
 	const secondProvider = createToolProvider( { onPicks: secondOnPicks } );
 	await firstProvider.getAbilities();
+	const [ ability ] = await secondProvider.getAbilities();
 	const picks = [ { slug: 'woocommerce', why: 'Sell products.' } ];
 
-	await secondProvider.executeAbility( 'wpcom/render-plugin-recommendations', { picks } );
+	await ability.callback( { picks } );
 
 	expect( secondOnPicks ).toHaveBeenCalledWith( picks );
 	expect( firstOnPicks ).not.toHaveBeenCalled();

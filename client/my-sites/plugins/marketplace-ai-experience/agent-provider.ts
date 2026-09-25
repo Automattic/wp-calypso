@@ -2,12 +2,7 @@
 // Registers the `wpcom/render-plugin-recommendations` ability the LLM calls to surface
 // picks, validates incoming records, and hands them off to the host.
 
-import {
-	executeAbility,
-	getAbilities,
-	registerAbility,
-	registerAbilityCategory,
-} from '@wordpress/abilities';
+import { getAbilities, registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 
 const ABILITY_NAME = 'wpcom/render-plugin-recommendations';
 const CATEGORY_SLUG = 'plugin-recommendations';
@@ -76,6 +71,12 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 
 interface ToolProviderOptions {
 	onPicks: ( picks: Pick[] ) => void;
+}
+
+async function renderPluginRecommendations( input: AbilityInput ) {
+	const picks = normalizeIncomingPicks( input?.picks );
+
+	return { rendered: true, count: picks.length, picks };
 }
 
 // Shared registration promise so concurrent callers don't double-register.
@@ -159,11 +160,7 @@ function ensureRegistered(): Promise< void > {
 						},
 					},
 				},
-				callback: async ( input: AbilityInput ) => {
-					const picks = normalizeIncomingPicks( input?.picks );
-
-					return { rendered: true, count: picks.length, picks };
-				},
+				callback: renderPluginRecommendations,
 			} );
 		} )().catch( ( error ) => {
 			// Don't leave a poisoned promise in place — clear so the next
@@ -177,22 +174,27 @@ function ensureRegistered(): Promise< void > {
 }
 
 export function createToolProvider( { onPicks }: ToolProviderOptions ) {
+	const runAbility = async ( args: unknown ) => {
+		await ensureRegistered();
+		const result = await renderPluginRecommendations( args as AbilityInput );
+		onPicks( result.picks );
+		return result;
+	};
+
 	return {
 		getAbilities: async () => {
 			await ensureRegistered();
 
-			return getAbilities().filter( ( a ) => a?.name === ABILITY_NAME );
+			return getAbilities()
+				.filter( ( ability ) => ability?.name === ABILITY_NAME )
+				.map( ( ability ) => ( { ...ability, callback: runAbility } ) );
 		},
 		executeAbility: async ( name: string, args: unknown ) => {
-			await ensureRegistered();
-
 			if ( name !== ABILITY_NAME ) {
 				throw new Error( `[plugin-recommendations] Ability "${ name }" is not allowed here.` );
 			}
 
-			const result = await executeAbility( name, args );
-			onPicks( result.picks );
-			return result;
+			return runAbility( args );
 		},
 	};
 }
