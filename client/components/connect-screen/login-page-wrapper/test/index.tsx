@@ -51,7 +51,7 @@ describe( 'LoginPageWrapper', () => {
 
 		expect( screen.getByRole( 'link', { name: 'Terms of Service' } ) ).toHaveAttribute(
 			'href',
-			'https://wordpress.com/tos/'
+			'https://automattic.com/tos/'
 		);
 		expect( screen.getByRole( 'link', { name: 'Privacy Policy' } ) ).toHaveAttribute(
 			'href',

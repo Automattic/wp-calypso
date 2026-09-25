@@ -223,7 +223,7 @@ export function getFooterColumns( {
 				{
 					slug: 'tos',
 					label: __( 'Terms of Service', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/tos/' ),
+					url: localizeUrl( 'https://automattic.com/tos/' ),
 				},
 				{
 					slug: 'privacy',
