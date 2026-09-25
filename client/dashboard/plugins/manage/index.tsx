@@ -1,8 +1,9 @@
-import { MarketplaceSearchResult } from '@automattic/api-core';
+import { isGeneratedPluginIcon, MarketplaceSearchResult } from '@automattic/api-core';
 import {
 	marketplacePluginsQuery,
 	marketplaceSearchQuery,
 	pluginsQuery,
+	useWpOrgPluginIcons,
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
@@ -92,18 +93,17 @@ export default function PluginsList() {
 		} ),
 	} );
 
-	const iconBySlug = useMemo( () => {
-		// Only recalculate once all queries have data
-		if ( ! allSearchQueriesLoaded ) {
-			return new Map< string, PluginListRow[ 'icon' ] >();
-		}
+	const marketplaceSearchBySlug = useMemo(
+		() =>
+			marketplaceSearchData.reduce( ( acc, { fields } ) => {
+				acc.set( fields.slug, fields );
+				return acc;
+			}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() ),
+		[ marketplaceSearchData ]
+	);
 
+	const indexIconBySlug = useMemo( () => {
 		const marketplacePluginsBySlug = new Map( Object.entries( marketplacePlugins?.results || {} ) );
-
-		const marketplaceSearchBySlug = marketplaceSearchData.reduce( ( acc, { fields } ) => {
-			acc.set( fields.slug, fields );
-			return acc;
-		}, new Map< string, MarketplaceSearchResult[ 'fields' ] >() );
 
 		return plugins.reduce( ( acc, { slug } ) => {
 			let icon;
@@ -117,7 +117,28 @@ export default function PluginsList() {
 
 			return acc;
 		}, new Map< string, PluginListRow[ 'icon' ] >() );
-	}, [ plugins, marketplacePlugins, marketplaceSearchData, allSearchQueriesLoaded ] );
+	}, [ plugins, marketplacePlugins, marketplaceSearchBySlug ] );
+
+	// The search index only has a generated pattern for wp.org plugins (SEARCH-333).
+	// Waiting for every batch keeps this to one request rather than one per instalment.
+	const wpOrgIcons = useWpOrgPluginIcons(
+		allSearchQueriesLoaded
+			? [ ...indexIconBySlug ]
+					.filter( ( [ , icon ] ) => isGeneratedPluginIcon( icon ) )
+					.map( ( [ slug ] ) => slug )
+			: []
+	);
+
+	const iconBySlug = useMemo( () => {
+		// Only recalculate once all queries have data
+		if ( ! allSearchQueriesLoaded ) {
+			return new Map< string, PluginListRow[ 'icon' ] >();
+		}
+
+		return new Map(
+			[ ...indexIconBySlug ].map( ( [ slug, icon ] ) => [ slug, wpOrgIcons[ slug ] || icon ] )
+		);
+	}, [ indexIconBySlug, allSearchQueriesLoaded, wpOrgIcons ] );
 
 	const pluginsWithIcon = useMemo( () => {
 		return plugins.map( ( plugin ) => {
