@@ -18,12 +18,16 @@ export function useCheckoutReturn() {
 			return;
 		}
 		clearStoredCart( 'regular' );
-		params.delete( RECEIPT_ID_PARAM );
-		// The app shell shows the one-time flash toast in this same commit and
-		// strips its parameter from the address bar, so the navigation must not
-		// write it back.
-		params.delete( FLASH_QUERY_PARAM );
-		navigate( { search: () => Object.fromEntries( params ), replace: true } );
+		navigate( {
+			// The app shell shows the one-time flash toast in this same commit and
+			// strips its parameter from the address bar, so the navigation must not
+			// write it back either.
+			search: ( prev: Record< string, unknown > ) => {
+				const { [ RECEIPT_ID_PARAM ]: _receiptId, [ FLASH_QUERY_PARAM ]: _flash, ...rest } = prev;
+				return rest;
+			},
+			replace: true,
+		} );
 		// The parameter arrives with the page load, so this only needs to run once.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
