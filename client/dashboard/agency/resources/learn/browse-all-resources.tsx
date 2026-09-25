@@ -167,7 +167,7 @@ export default function BrowseAllResources( {
 						</ToggleGroupControl>
 					</HStack>
 					<Spacer marginBottom={ 4 }>
-						<DataViews.FiltersToggled />
+						<DataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 					</Spacer>
 				</DataViews>
 			</div>
