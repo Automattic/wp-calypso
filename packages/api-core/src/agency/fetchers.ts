@@ -4,7 +4,6 @@ import type {
 	AgencyBlog,
 	AgencyProgramStats,
 	AgencyEnablementResourcesResponse,
-	AgencyResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
 	TipaltiIFrameUrl,
@@ -18,13 +17,6 @@ export async function fetchAgency(): Promise< AgencyApiResponse > {
 	} );
 }
 
-export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
-	return wpcom.req.get( {
-		path: '/agency/resources',
-		apiNamespace: 'wpcom/v2',
-	} );
-}
-
 export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
 	return wpcom.req.get( {
 		path: '/agency/stats',
@@ -34,9 +26,6 @@ export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
 
 /**
  * Fetches enablement resources with the v2 taxonomy.
- *
- * Runs alongside `fetchAgencyResources` while the classic A4A page is still on
- * v1; it replaces that endpoint once the page is retired.
  */
 export async function fetchAgencyEnablementResources(): Promise< AgencyEnablementResourcesResponse > {
 	return wpcom.req.get( {
