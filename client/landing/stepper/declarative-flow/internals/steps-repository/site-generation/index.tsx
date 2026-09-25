@@ -40,7 +40,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView onReload={ reload } state={ state } />
+			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
 		</>
 	);
 };
