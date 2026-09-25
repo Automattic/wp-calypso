@@ -131,7 +131,6 @@
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
-		"plugins/plugin-compass": true,
 		"plugins/stepper-plans": true,
 		"plugins/universal-header": true,
 		"post-list/qr-code-link": true,

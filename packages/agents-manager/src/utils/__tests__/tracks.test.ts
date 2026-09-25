@@ -306,9 +306,9 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'sends the resolved agent id as agent_name when one is set', () => {
-			setResolvedAgentId( 'plugin-compass' );
+			setResolvedAgentId( 'custom-agent' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
-			expect( lastEventProps().agent_name ).toBe( 'plugin-compass' );
+			expect( lastEventProps().agent_name ).toBe( 'custom-agent' );
 		} );
 
 		it( 'falls back to the Dolly agent id while no agent is resolved', () => {

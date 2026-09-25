@@ -18,7 +18,6 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
-import MarketplaceAIBanner from 'calypso/my-sites/plugins/marketplace-ai-experience/banner';
 import { DESCRIBE_CATEGORY_SLUG } from 'calypso/my-sites/plugins/marketplace-ai-experience/constants';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
@@ -139,15 +138,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			);
 		}
 
-		if (
-			category === DESCRIBE_CATEGORY_SLUG &&
-			isEnabled( 'plugins/plugin-compass' ) &&
-			isLoggedIn
-		) {
+		if ( category === DESCRIBE_CATEGORY_SLUG ) {
 			// Lazy-loaded so the agenttic-ui CSS import (and the rest of
 			// the AI bundle) stays out of the SSR build. Same pattern
 			// AgentsManagerLoader uses for the dock itself.
-			return <AsyncLoad require={ loadMarketplaceAIExperience } placeholder={ null } />;
+			return categories[ DESCRIBE_CATEGORY_SLUG ] ? (
+				<AsyncLoad require={ loadMarketplaceAIExperience } placeholder={ null } />
+			) : null;
 		}
 
 		if ( category ) {
@@ -264,15 +261,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</FullWidthSection>
 					</>
 				) }
-				{ selectedSite &&
-					isEnabled( 'plugins/plugin-compass' ) &&
-					category !== DESCRIBE_CATEGORY_SLUG &&
-					! category &&
-					! search && (
-						<div className="marketplace-ai-banner-wrap">
-							<MarketplaceAIBanner variant="hero" />
-						</div>
-					) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<FullWidthSection

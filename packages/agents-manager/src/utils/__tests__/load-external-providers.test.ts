@@ -204,6 +204,27 @@ describe( 'loadExternalProviders', () => {
 		expect( getLoadedProviderIds() ).toEqual( [] );
 	} );
 
+	it( 'delegates marketplace recommendations to the original provider', async () => {
+		window.history.replaceState( {}, '', '/plugins' );
+		const executeAbility = jest.fn().mockResolvedValue( { rendered: true, count: 1 } );
+		setAgentsManagerData( {
+			agentProviders: [
+				{
+					toolProvider: {
+						getAbilities: async () => [ { name: 'wpcom/render-plugin-recommendations' } ],
+						executeAbility,
+					},
+				},
+			],
+		} );
+		const providers = await loadExternalProviders();
+		const args = { picks: [ { slug: 'woocommerce', why: 'Sell products.' } ] };
+		await expect(
+			providers.toolProvider!.executeAbility( 'wpcom/render-plugin-recommendations', args )
+		).resolves.toEqual( { rendered: true, count: 1 } );
+		expect( executeAbility ).toHaveBeenCalledWith( 'wpcom/render-plugin-recommendations', args );
+	} );
+
 	it( 'publishes the loaded provider ids for the Tracks wrappers', async () => {
 		setAgentsManagerData( {
 			agentProviders: [ { providerId: 'jetpack-ai' }, { providerId: 'woocommerce-ai' } ],

@@ -295,7 +295,7 @@ describe( 'AgentSetup', () => {
 	} );
 
 	it( 'ignores a handed-off session for a surface-bound agent', async () => {
-		mockAgentConfig = { agentId: 'wpcom-workflow-plugin_compass', isLoading: false };
+		mockAgentConfig = { agentId: 'custom-agent', isLoading: false };
 		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
 
 		render( manager( 111 ) );
@@ -304,7 +304,7 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
 			expect.objectContaining( { sessionId: '' } )
 		);
-		expect( getSessionId( 'wpcom-workflow-plugin_compass', '111' ) ).toBe( '' );
+		expect( getSessionId( 'custom-agent', '111' ) ).toBe( '' );
 		expect( window.location.search ).toBe( '' );
 	} );
 

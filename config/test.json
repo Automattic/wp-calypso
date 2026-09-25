@@ -90,7 +90,6 @@
 		"onboarding/woo-hosting-post-purchase-setup-choice": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
-		"plugins/plugin-compass": true,
 		"plugins/stepper-plans": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,

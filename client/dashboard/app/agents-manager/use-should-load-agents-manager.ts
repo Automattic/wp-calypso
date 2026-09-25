@@ -15,6 +15,16 @@ export interface AgentsManagerEligibility {
 
 const ENABLED_ROUTES: AgentsManagerRoute[] = [
 	{ pattern: /^\/sites\/[^/]+\/?$/, isInternalOnly: true },
+	{ pattern: /^\/plugins\/?$/, isInternalOnly: false },
+	{
+		pattern: /^\/plugins\/browse\/[^/]+(?:\/[^/]+)?\/?$/,
+		isInternalOnly: false,
+	},
+	{
+		pattern:
+			/^\/plugins\/(?!(?:browse|manage|upload|setup|scheduled-updates|active|inactive|updates|plans)(?:\/|$))[^/]+(?:\/[^/]+)?\/?$/,
+		isInternalOnly: false,
+	},
 ];
 
 export function getAgentsManagerEligibility(
@@ -54,6 +64,6 @@ export default function useShouldLoadAgentsManager(
 
 	return {
 		...routeEligibility,
-		routeIsEnabled: routeEligibility.routeIsEnabled && pluginStatus?.enabled === true,
+		routeIsEnabled: routeEligibility.routeIsEnabled && !! siteId && pluginStatus?.enabled === true,
 	};
 }

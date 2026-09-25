@@ -1,4 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useSelector } from 'calypso/state';
@@ -1096,6 +1097,10 @@ export function useCategories(
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
+	const { data: isAgentsManagerEnabled = false } = useQuery(
+		omnibarAgentsManagerEnabledQuery(),
+		queryClient
+	);
 
 	const isJetpack = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
@@ -1109,11 +1114,7 @@ export function useCategories(
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
 	}
 
-	// Plugin Compass `describe` tab requires the flag and a logged-in user.
-	if (
-		( ! isEnabled( 'plugins/plugin-compass' ) || ! isLoggedIn ) &&
-		allowed.indexOf( 'describe' ) >= 0
-	) {
+	if ( ( ! isLoggedIn || ! isAgentsManagerEnabled ) && allowed.indexOf( 'describe' ) >= 0 ) {
 		allowed.splice( allowed.indexOf( 'describe' ), 1 );
 	}
 
