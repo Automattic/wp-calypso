@@ -7,6 +7,7 @@ import nock from 'nock';
 import { render } from '../../../test-utils';
 import AgencyPartnerDirectoryDetails from '../details';
 import PartnerDirectoryDetailsContent from '../details/details-content';
+import { PARTNER_DIRECTORY_ROUTE } from '../paths';
 import type { AgencyProfile } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
@@ -54,6 +55,14 @@ function mockCountryRegions() {
 		.query( true )
 		.reply( 200, { US: 'United States (US)', 'US:TX': 'United States (US) — Texas' } )
 		.persist();
+}
+
+// The save is a PUT, and `agencyProfileMutation` throws unless the response
+// carries the saved profile back.
+function mockSave() {
+	nock( API )
+		.put( '/wpcom/v2/agency/123/profile' )
+		.reply( 200, { id: 123, name: 'Test Agency', profile: makeProfile() } );
 }
 
 beforeAll( () => {
@@ -116,5 +125,31 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 
 		await waitFor( () => expect( onSubmitSuccess ).toHaveBeenCalled() );
 		expect( scope.isDone() ).toBe( true );
+	} );
+
+	test( 'returns straight to the Partner Directory for a partner who already answered', async () => {
+		mockAgency( makeProfile() );
+		mockCountryRegions();
+		nock( API )
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'a4a-feedback': {
+						'partner-directory-details-added': { lastSkippedAt: 1757000000000 },
+					},
+				},
+			} )
+			.persist();
+		mockSave();
+
+		const { router } = render( <AgencyPartnerDirectoryDetails /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Save public profile' } ) );
+
+		await waitFor( () =>
+			expect( screen.queryByText( 'Details successfully added!' ) ).not.toBeInTheDocument()
+		);
+		await waitFor( () => expect( router.state.location.pathname ).toBe( PARTNER_DIRECTORY_ROUTE ) );
 	} );
 } );

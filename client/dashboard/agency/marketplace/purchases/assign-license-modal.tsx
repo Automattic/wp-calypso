@@ -44,9 +44,10 @@ const DEFAULT_SITES_VIEW: View = {
 interface Props {
 	license: JetpackLicense;
 	closeModal?: () => void;
+	onAssigned: () => void;
 }
 
-export default function AssignLicenseModal( { license, closeModal }: Props ) {
+export default function AssignLicenseModal( { license, closeModal, onAssigned }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -117,6 +118,7 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 						{ type: 'snackbar' }
 					);
 					closeModal?.();
+					onAssigned();
 				},
 				onError: ( error: Error & { code?: string } ) => {
 					if ( error.code === 'partner_not_connected_to_site' ) {
