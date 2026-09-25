@@ -1,0 +1,102 @@
+@import '@wordpress/base-styles/mixins';
+
+.referral-checkout {
+	min-height: 100vh;
+	background: var( --color-surface );
+}
+
+.referral-checkout__top-bar {
+	padding-block: 16px;
+	padding-inline: 24px;
+}
+
+.referral-checkout__body {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+	gap: 32px;
+	max-width: 1136px;
+	margin-inline: auto;
+	padding-block: 24px 64px;
+	padding-inline: 24px;
+
+	@include break-large {
+		grid-template-columns: minmax( 0, 1fr ) 400px;
+		gap: 48px;
+	}
+}
+
+.referral-checkout__empty {
+	max-width: 640px;
+	margin-inline: auto;
+	padding-block: 24px;
+	padding-inline: 24px;
+}
+
+.referral-checkout__title-check {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: var( --color-success );
+	color: var( --color-text-inverted );
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.referral-checkout__line-check {
+	color: var( --color-success );
+}
+
+.referral-checkout__logo-drop-area {
+	position: relative;
+	padding-block: 24px;
+	padding-inline: 16px;
+	border: 1px dashed var( --color-border );
+	border-radius: 4px;
+	text-align: center;
+}
+
+.referral-checkout__logo-frame {
+	width: 320px;
+	max-width: 100%;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	overflow: hidden;
+
+	img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}
+
+.referral-checkout__preview-link {
+	align-self: center;
+}
+
+// The preview sits on classic's navy backdrop with the email as a white card,
+// the way a mail client would show it.
+.referral-checkout__email-preview {
+	min-height: 100%;
+	padding: 4px;
+	border-radius: 8px;
+	background: var( --a4a-brand-blue-80 );
+
+	@include break-small {
+		padding: 56px;
+	}
+}
+
+.referral-checkout__email-preview-card {
+	width: 100%;
+	max-width: 600px;
+	margin-inline: auto;
+	border-radius: 8px;
+	overflow: hidden;
+	background: var( --color-surface );
+}

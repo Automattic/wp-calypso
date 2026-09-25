@@ -5,6 +5,24 @@
 	flex-direction: column;
 }
 
+// A route with `bareLayout` static data takes the whole screen: no sidebar
+// (the root skips it) and no omnibar, which lives outside the React root.
+.dashboard-root__layout.is-bare-layout {
+	// stylelint-disable-next-line length-zero-no-unit -- the value feeds calc(), which needs a unit.
+	--masterbar-height: 0px;
+}
+
+body:has( #wpcom-omnibar ):has( .dashboard-root__layout.is-bare-layout ) {
+	#wpcom-omnibar {
+		display: none;
+	}
+
+	#wpcom {
+		padding-block-start: 0;
+		min-height: 100vh;
+	}
+}
+
 .dashboard-root__body {
 	display: flex;
 }

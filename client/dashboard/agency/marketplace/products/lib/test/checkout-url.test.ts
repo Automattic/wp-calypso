@@ -5,6 +5,7 @@ import {
 	getBillingProductId,
 	getCheckoutReturnUrl,
 	getCheckoutUrl,
+	getTermProductId,
 	RECEIPT_ID_PLACEHOLDER,
 } from '../checkout-url';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -45,7 +46,7 @@ describe( 'getCheckoutUrl', () => {
 	} );
 
 	it( 'sends a regular cart to the WordPress.com agency checkout with the agency and every line', () => {
-		const url = new URL( getCheckoutUrl( lines, false, { agencyId: 123, term: 'yearly' } ) );
+		const url = new URL( getCheckoutUrl( lines, { agencyId: 123, term: 'yearly' } ) );
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
 		expect( url.searchParams.get( 'agency_id' ) ).toBe( '123' );
 		expect( url.searchParams.get( 'products' ) ).toBe(
@@ -54,7 +55,7 @@ describe( 'getCheckoutUrl', () => {
 	} );
 
 	it( 'returns to Purchases with the receipt marker after payment', () => {
-		const url = new URL( getCheckoutUrl( lines, false, { agencyId: 123, term: 'yearly' } ) );
+		const url = new URL( getCheckoutUrl( lines, { agencyId: 123, term: 'yearly' } ) );
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/marketplace/purchases?receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
 		);
@@ -62,7 +63,7 @@ describe( 'getCheckoutUrl', () => {
 
 	it( 'returns to the WordPress.com licenses waiting for a site when the cart holds a WordPress.com plan', () => {
 		const url = new URL(
-			getCheckoutUrl( lines, false, { agencyId: 123, term: 'yearly', hasWpcomHostingPlan: true } )
+			getCheckoutUrl( lines, { agencyId: 123, term: 'yearly', hasWpcomHostingPlan: true } )
 		);
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/marketplace/purchases?status=unassigned&search=WordPress.com&receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
@@ -70,20 +71,18 @@ describe( 'getCheckoutUrl', () => {
 	} );
 
 	it( 'comes back to the current page, without its hash, on Back', () => {
-		const url = new URL( getCheckoutUrl( lines, false, { agencyId: 123, term: 'yearly' } ) );
+		const url = new URL( getCheckoutUrl( lines, { agencyId: 123, term: 'yearly' } ) );
 		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
 			`${ window.location.origin }/marketplace/products?category=jetpack`
 		);
 	} );
+} );
 
-	it( 'keeps sending referral carts through the classic products page in referral mode', () => {
-		const url = new URL( getCheckoutUrl( lines, true, { agencyId: 123, term: 'yearly' } ) );
-		expect( url.hostname ).not.toBe( window.location.hostname );
-		expect( url.pathname ).toBe( '/marketplace/products' );
-		expect( url.searchParams.get( 'products' ) ).toBe(
-			'wpcom-hosting-business:3,jetpack-backup-t1:1'
-		);
-		expect( url.searchParams.get( 'purchase_type' ) ).toBe( 'referral' );
+describe( 'getTermProductId', () => {
+	it( 'picks the product of the chosen term, falling back to the base product', () => {
+		expect( getTermProductId( wpcomPlan, 'monthly' ) ).toBe( 1009 );
+		expect( getTermProductId( wpcomPlan, 'yearly' ) ).toBe( 1008 );
+		expect( getTermProductId( pressable, 'monthly' ) ).toBe( 3001 );
 	} );
 } );
 

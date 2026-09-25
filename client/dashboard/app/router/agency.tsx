@@ -418,6 +418,42 @@ export const marketplaceProductsRoute = createRoute( {
 	)
 );
 
+// `/marketplace/referral-checkout` – request a client's payment for the referral
+// cart. Takes the whole screen, like the WordPress.com checkout the paid cart
+// goes to; `from` is the marketplace page the Back link returns to.
+export const marketplaceReferralCheckoutRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace', bareLayout: true },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Referral checkout' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/referral-checkout',
+	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
+		from:
+			typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+	} ),
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( agency?.id ) {
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/marketplace/referral-checkout' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-referral-checkout' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/purchases` – licenses, invoices, and payment methods
 export const marketplacePurchasesRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
@@ -695,6 +731,25 @@ export const earnReferralsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/referrals',
+	// The referral checkout returns here with the request it just sent, for the banner.
+	validateSearch: (
+		search: Record< string, unknown >
+	): {
+		new_referral_order_email?: string;
+		new_referral_order_checkout_url?: string;
+		flow_type?: 'send' | 'copy';
+	} => ( {
+		new_referral_order_email:
+			typeof search.new_referral_order_email === 'string'
+				? search.new_referral_order_email
+				: undefined,
+		new_referral_order_checkout_url:
+			typeof search.new_referral_order_checkout_url === 'string'
+				? search.new_referral_order_checkout_url
+				: undefined,
+		flow_type:
+			search.flow_type === 'copy' || search.flow_type === 'send' ? search.flow_type : undefined,
+	} ),
 } ).lazy( () =>
 	import( '../../agency/earn/referrals' ).then( ( d ) =>
 		createLazyRoute( 'earn-referrals' )( { component: d.default } )
@@ -1993,6 +2048,7 @@ export const createAgencyRoutes = () => [
 			marketplaceHostingReferPremiumRoute,
 		] ),
 		marketplaceProductsRoute,
+		marketplaceReferralCheckoutRoute,
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,

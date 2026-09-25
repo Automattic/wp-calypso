@@ -1,12 +1,20 @@
 import {
 	fetchReferrals,
 	fetchReferralCommissionPayout,
+	fetchReferralEmailPreview,
 	archiveReferral,
+	createReferral,
 	resendReferralEmail,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { activeAgencyQuery } from './agency';
 import { queryClient } from './query-client';
-import type { Referral, ReferralApiResponse } from '@automattic/api-core';
+import type {
+	CreateReferralParams,
+	Referral,
+	ReferralApiResponse,
+	ReferralEmailPreviewParams,
+} from '@automattic/api-core';
 
 /**
  * Groups the raw referrals list (one entry per referral order) by client, so
@@ -122,4 +130,23 @@ export const resendReferralEmailMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-referral-email-resend' },
 		mutationFn: ( referralId: number ) => resendReferralEmail( agencyId, referralId ),
+	} );
+
+export const createReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-referral-create' },
+		mutationFn: ( params: CreateReferralParams ) => createReferral( agencyId, params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } );
+			// A custom logo becomes the agency's last referral logo.
+			queryClient.invalidateQueries( { queryKey: activeAgencyQuery().queryKey } );
+		},
+	} );
+
+export const referralEmailPreviewQuery = ( agencyId: number, params: ReferralEmailPreviewParams ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'referral-email-preview', params ] as const,
+		queryFn: () => fetchReferralEmailPreview( agencyId, params ),
+		enabled: agencyId > 0 && params.product_ids.length > 0,
+		staleTime: 5 * 60 * 1000,
 	} );

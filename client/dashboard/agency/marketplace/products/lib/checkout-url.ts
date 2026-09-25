@@ -1,9 +1,5 @@
-import { a4aLink, wpcomLink } from '../../../../utils/link';
-import {
-	MARKETPLACE_PRODUCTS_ROUTE,
-	MARKETPLACE_PURCHASES_ROUTE,
-	WPCOM_AGENCY_CHECKOUT_PATH,
-} from '../../paths';
+import { wpcomLink } from '../../../../utils/link';
+import { MARKETPLACE_PURCHASES_ROUTE, WPCOM_AGENCY_CHECKOUT_PATH } from '../../paths';
 import type { TermPricing } from '../../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -41,10 +37,16 @@ export function getCheckoutReturnUrl( {
  * the link because the checkout runs under the WordPress.com session, which
  * the agency product endpoint does not answer.
  */
-export function getBillingProductId( product: AgencyProduct, term: TermPricing ): number {
-	const termProductId =
+/** The product of the chosen term, which is what a referral is made of. */
+export function getTermProductId( product: AgencyProduct, term: TermPricing ): number {
+	return (
 		( term === 'yearly' ? product.yearly_product_id : product.monthly_product_id ) ||
-		product.product_id;
+		product.product_id
+	);
+}
+
+export function getBillingProductId( product: AgencyProduct, term: TermPricing ): number {
+	const termProductId = getTermProductId( product, term );
 	const termAlternativeProductId =
 		( term === 'yearly'
 			? product.yearly_alternative_product_id
@@ -52,26 +54,18 @@ export function getBillingProductId( product: AgencyProduct, term: TermPricing )
 	return termAlternativeProductId || termProductId;
 }
 
+/**
+ * The WordPress.com checkout link for a regular cart. Referral carts stay in
+ * the dashboard, on the referral checkout route.
+ */
 export function getCheckoutUrl(
 	lines: CheckoutLine[],
-	isReferralMode: boolean,
 	{
 		agencyId,
 		term,
 		hasWpcomHostingPlan = false,
 	}: { agencyId: number; term: TermPricing; hasWpcomHostingPlan?: boolean }
 ): string {
-	if ( isReferralMode ) {
-		// The classic checkout takes the purchase mode only from its own session,
-		// so referral carts go through the classic products page in referral mode.
-		const products = lines
-			.map( ( { product, quantity } ) => `${ encodeURIComponent( product.slug ) }:${ quantity }` )
-			.join( ',' );
-		return a4aLink(
-			`${ MARKETPLACE_PRODUCTS_ROUTE }?products=${ products }&purchase_type=referral`
-		);
-	}
-
 	const search = new URLSearchParams( {
 		agency_id: String( agencyId ),
 		products: lines

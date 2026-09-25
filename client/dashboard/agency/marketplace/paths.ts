@@ -5,6 +5,7 @@
 export const MARKETPLACE_HOSTING_ROUTE = '/marketplace/hosting';
 export const MARKETPLACE_PRODUCTS_ROUTE = '/marketplace/products';
 export const MARKETPLACE_PURCHASES_ROUTE = '/marketplace/purchases';
+export const MARKETPLACE_REFERRAL_CHECKOUT_ROUTE = '/marketplace/referral-checkout';
 
 // The agency checkout lives on WordPress.com, next to the client referral
 // checkout; link it through `wpcomLink()`.
