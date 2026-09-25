@@ -1,0 +1,6 @@
+// `isBlock` splits the width equally between the options, which leaves the
+// longer label too little room in the header, so it wrapped onto two lines.
+.dashboard-marketplace-term-pricing-toggle {
+	flex-shrink: 0;
+	min-inline-size: 240px;
+}

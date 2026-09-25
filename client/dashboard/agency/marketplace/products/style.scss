@@ -33,9 +33,10 @@
 
 .dashboard-marketplace-products__tiles {
 	display: flex;
-	gap: 16px;
+	gap: 8px;
 	overflow-x: auto;
 	padding: 4px;
+	scroll-behavior: smooth;
 	scrollbar-width: none;
 
 	&::-webkit-scrollbar {
@@ -49,7 +50,7 @@
 }
 
 .dashboard-marketplace-products__tile {
-	flex: 0 0 200px;
+	flex: 0 0 auto;
 	cursor: pointer;
 
 	&:hover,
@@ -62,23 +63,25 @@
 	}
 }
 
+// The same 40px height as the search field and the billing control.
 .dashboard-marketplace-products__tile-body {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	block-size: 100px;
-	box-sizing: border-box;
-}
-
-.dashboard-marketplace-products__tile-logo {
-	block-size: 28px;
-	inline-size: auto;
-}
-
-.dashboard-marketplace-products__tile-label {
-	display: inline-flex;
-	align-items: center;
 	gap: 8px;
+	block-size: 40px;
+	padding-block: 0;
+	padding-inline: 16px;
+	box-sizing: border-box;
+	white-space: nowrap;
+}
+
+// The brand mark is the round badge at the start of the descriptor lockup.
+.dashboard-marketplace-products__tile-mark {
+	inline-size: 20px;
+	block-size: 20px;
+	object-fit: cover;
+	object-position: left;
+	flex-shrink: 0;
 }
 
 .dashboard-marketplace-products__card {
@@ -96,19 +99,10 @@
 	flex: 1;
 }
 
-// Price and actions sit together at the foot of the card, so short
-// descriptions leave the gap above the price rather than between them.
+// The actions sit at the foot of the card, so short descriptions leave
+// the gap above them.
 .dashboard-marketplace-products__card-footer {
 	margin-block-start: 16px;
-}
-
-// The brand mark is the round badge at the start of the descriptor lockup.
-.dashboard-marketplace-products__card-mark {
-	inline-size: 24px;
-	block-size: 24px;
-	object-fit: cover;
-	object-position: left;
-	flex-shrink: 0;
 }
 
 .dashboard-marketplace-products__card-logo {

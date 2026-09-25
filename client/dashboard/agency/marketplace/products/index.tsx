@@ -28,7 +28,13 @@ import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
-import CategoryTiles, { isCategoryTileValue } from './category-tiles';
+import {
+	dropEmptyCategoryFilter,
+	getInitialCategoryFilters,
+	getTileCategory,
+	setTileCategory,
+} from './category-filter';
+import CategoryTiles from './category-tiles';
 import { BRAND_MARKS } from './lib/brand-marks';
 import {
 	getBrandLabels,
@@ -78,13 +84,6 @@ interface ProductsSearchParams {
 	purchase_type?: string;
 }
 
-// Classic category keys that differ from the tile values.
-const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
-	'pressable-addon': 'pressable',
-	'shipping-delivery-fulfillment': 'shipping',
-	'store-content-and-customization': 'store-content',
-};
-
 // TODO: Still missing from the classic Products page:
 // - the agency approval notice (pending / approved / rejected)
 // - the overdue invoice notice
@@ -129,15 +128,13 @@ export default function MarketplaceProducts() {
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
+		filters: getInitialCategoryFilters( searchParams.category ),
 	} ) );
-	const [ selectedTile, setSelectedTile ] = useState< CategoryTileValue | null >( () => {
-		const category = searchParams.category
-			? ( CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
-			: null;
-		return isCategoryTileValue( category ) ? category : null;
-	} );
 	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
-	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
+	// The tiles read and write the DataViews category filter, so a tile, the
+	// filter menu, and the chip all show the same selection.
+	const tileCategory = getTileCategory( view.filters );
+	const hasTileCategory = tileCategory !== null;
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
 	// products, as the classic products page does.
@@ -207,7 +204,8 @@ export default function MarketplaceProducts() {
 						label: categoryLabels[ category ],
 					} ) ),
 				],
-				filterBy: { operators: [ 'isAny' ] },
+				// Primary while a tile is selected, so its chip shows and can clear it.
+				filterBy: { operators: [ 'isAny' ], isPrimary: hasTileCategory },
 				enableSorting: false,
 				getValue: ( { item } ) => [
 					getProductBrand( item ),
@@ -251,22 +249,11 @@ export default function MarketplaceProducts() {
 				getValue: ( { item } ) => ( isFreeProduct( item ) ? 'free' : 'paid' ),
 			},
 		];
-	}, [] );
+	}, [ hasTileCategory ] );
 
-	const tileProducts = useMemo(
-		() =>
-			tileCategory
-				? products.filter( ( product ) =>
-						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
-							tileCategory
-						)
-					)
-				: products,
-		[ products, tileCategory ]
-	);
 	const { data: filteredProducts } = useMemo(
-		() => filterSortAndPaginate( tileProducts, view, fields ),
-		[ tileProducts, view, fields ]
+		() => filterSortAndPaginate( products, view, fields ),
+		[ products, view, fields ]
 	);
 	// Every section stays while searching or filtering, each showing only its
 	// matching products, as the classic dashboard does.
@@ -298,14 +285,17 @@ export default function MarketplaceProducts() {
 				} );
 			}
 		}
-		setView( nextView );
+		setView( { ...nextView, filters: dropEmptyCategoryFilter( nextView.filters ) } );
 	};
 
 	const handleTileSelect = ( category: CategoryTileValue | null ) => {
 		if ( category ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_product_category_selected', { category } );
 		}
-		setSelectedTile( category );
+		setView( ( current ) => ( {
+			...current,
+			filters: setTileCategory( current.filters, category ),
+		} ) );
 	};
 
 	const toggleCart = useCallback(
@@ -401,7 +391,8 @@ export default function MarketplaceProducts() {
 						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
 					) }
 					actions={
-						<HStack spacing={ 4 } expanded={ false }>
+						<HStack spacing={ 4 } expanded={ false } wrap>
+							<TermPricingToggle />
 							<ReferralToggle />
 							<CartMenu
 								items={ cartItems }
@@ -434,21 +425,18 @@ export default function MarketplaceProducts() {
 			/>
 			<div className="dashboard-marketplace-products__filters">
 				<DataViews< AgencyProduct >
-					data={ tileProducts }
+					data={ products }
 					getItemId={ ( item ) => item.slug }
 					fields={ fields }
 					view={ view }
 					onChangeView={ handleViewChange }
-					paginationInfo={ { totalItems: tileProducts.length, totalPages: 1 } }
+					paginationInfo={ { totalItems: products.length, totalPages: 1 } }
 					defaultLayouts={ { list: {} } }
 					search
 				>
-					<HStack justify="space-between" className="dashboard-marketplace-products__toolbar">
-						<HStack justify="flex-start" expanded={ false }>
-							<DataViews.Search />
-							<DataViews.FiltersToggle />
-						</HStack>
-						<TermPricingToggle />
+					<HStack justify="flex-start" className="dashboard-marketplace-products__toolbar">
+						<DataViews.Search />
+						<DataViews.FiltersToggle />
 					</HStack>
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled />

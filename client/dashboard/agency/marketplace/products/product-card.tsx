@@ -12,8 +12,7 @@ import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import woopaymentsLogo from '../exclusive-offers/images/woopayments.svg';
-import { BRAND_MARKS } from './lib/brand-marks';
-import { getProductBadgeLabels, getProductBrand } from './lib/product-categories';
+import { getProductBadgeLabels } from './lib/product-categories';
 import { getProductDescription } from './lib/product-descriptions';
 import { getItemProducts } from './lib/product-groups';
 import { getProductPriceInfo, getTermAvailabilityNote } from './lib/product-pricing';
@@ -77,32 +76,33 @@ export default function ProductCard( {
 					justify="flex-start"
 					className="dashboard-marketplace-products__card-main"
 				>
-					<HStack spacing={ 2 } justify="space-between" alignment="flex-start">
+					{ isWooPayments && (
 						<img
-							src={ isWooPayments ? woopaymentsLogo : BRAND_MARKS[ getProductBrand( product ) ] }
+							src={ woopaymentsLogo }
 							alt=""
-							className={
-								isWooPayments
-									? 'dashboard-marketplace-products__card-logo'
-									: 'dashboard-marketplace-products__card-mark'
-							}
+							className="dashboard-marketplace-products__card-logo"
 						/>
-						<HStack spacing={ 1 } justify="flex-end" wrap expanded={ false }>
-							{ getProductBadgeLabels( product ).map( ( label ) => (
-								<Badge key={ label }>{ label }</Badge>
-							) ) }
-						</HStack>
+					) }
+					<Text weight={ 500 }>
+						{ isWooPayments
+							? wooPaymentsCopy.title
+							: getProductShortTitle( product, variants.length > 1 ) }
+					</Text>
+					<HStack spacing={ 1 } justify="flex-start" wrap>
+						{ getProductBadgeLabels( product ).map( ( label ) => (
+							<Badge key={ label }>{ label }</Badge>
+						) ) }
 					</HStack>
-					<VStack spacing={ 1 }>
-						<Text weight={ 500 }>
-							{ isWooPayments
-								? wooPaymentsCopy.title
-								: getProductShortTitle( product, variants.length > 1 ) }
-						</Text>
-						<Text variant="muted">
-							{ isWooPayments ? wooPaymentsCopy.description : description }
-						</Text>
-					</VStack>
+					{ ! isWooPayments && (
+						<VStack spacing={ 1 }>
+							<ProductPrice priceInfo={ priceInfo } currency={ product.currency } />
+							{ termNote && (
+								<Text variant="muted" size={ 12 }>
+									{ termNote }
+								</Text>
+							) }
+						</VStack>
+					) }
 					{ variants.length > 1 && (
 						<SelectControl
 							__next40pxDefaultSize
@@ -127,18 +127,9 @@ export default function ProductCard( {
 							} }
 						/>
 					) }
+					<Text variant="muted">{ isWooPayments ? wooPaymentsCopy.description : description }</Text>
 				</VStack>
-				<VStack spacing={ 3 } className="dashboard-marketplace-products__card-footer">
-					{ ! isWooPayments && (
-						<VStack spacing={ 1 }>
-							<ProductPrice priceInfo={ priceInfo } currency={ product.currency } />
-							{ termNote && (
-								<Text variant="muted" size={ 12 }>
-									{ termNote }
-								</Text>
-							) }
-						</VStack>
-					) }
+				<div className="dashboard-marketplace-products__card-footer">
 					<ButtonStack justify="flex-start">
 						<Button
 							variant="secondary"
@@ -153,7 +144,7 @@ export default function ProductCard( {
 							</Button>
 						) }
 					</ButtonStack>
-				</VStack>
+				</div>
 			</CardBody>
 		</Card>
 	);

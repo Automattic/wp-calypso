@@ -1,10 +1,14 @@
 import {
+	Button,
 	Icon,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import {
+	chevronLeft,
+	chevronRight,
 	commentAuthorName,
 	currencyDollar,
 	lock,
@@ -18,6 +22,7 @@ import {
 	trendingUp,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { BRAND_MARKS } from './lib/brand-marks';
@@ -66,7 +71,7 @@ function getTiles( { showPressable }: { showPressable: boolean } ): Tile[] {
 	return [
 		...brands.map( ( brand ) => ( {
 			value: brand,
-			label: brandLabels[ brand ],
+			label: brand === 'woocommerce' ? __( 'Woo' ) : brandLabels[ brand ],
 			logo: BRAND_MARKS[ brand ],
 		} ) ),
 		...categories.map( ( category ) => ( {
@@ -86,11 +91,71 @@ export default function CategoryTiles( {
 	showPressable: boolean;
 	onSelect: ( category: CategoryTileValue | null ) => void;
 } ) {
+	const rowRef = useRef< HTMLDivElement >( null );
+	const [ canScroll, setCanScroll ] = useState( { back: false, forward: false } );
+
+	// Re-measured when the Pressable tile shows up after the first render, since
+	// the observer only sees the row's own box, not its scroll width.
+	useEffect( () => {
+		const row = rowRef.current;
+		if ( ! row ) {
+			return;
+		}
+		// scrollLeft is negative in RTL, so compare its magnitude.
+		const update = () => {
+			const offset = Math.abs( row.scrollLeft );
+			const max = row.scrollWidth - row.clientWidth;
+			setCanScroll( { back: offset > 1, forward: offset < max - 1 } );
+		};
+		update();
+		row.addEventListener( 'scroll', update, { passive: true } );
+		const observer = new ResizeObserver( update );
+		observer.observe( row );
+		return () => {
+			row.removeEventListener( 'scroll', update );
+			observer.disconnect();
+		};
+	}, [ showPressable ] );
+
+	const scrollPage = ( direction: 1 | -1 ) => {
+		const row = rowRef.current;
+		if ( row ) {
+			const sign = getComputedStyle( row ).direction === 'rtl' ? -1 : 1;
+			row.scrollBy( { left: sign * direction * row.clientWidth * 0.8, behavior: 'smooth' } );
+		}
+	};
+
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader level={ 2 } title={ __( 'Shop products by category' ) } />
+			<SectionHeader
+				level={ 2 }
+				title={ __( 'Shop products by category' ) }
+				actions={
+					<HStack spacing={ 1 } expanded={ false }>
+						<Button
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							label={ __( 'Previous categories' ) }
+							size="compact"
+							variant="tertiary"
+							accessibleWhenDisabled
+							disabled={ ! canScroll.back }
+							onClick={ () => scrollPage( -1 ) }
+						/>
+						<Button
+							icon={ isRTL() ? chevronLeft : chevronRight }
+							label={ __( 'Next categories' ) }
+							size="compact"
+							variant="tertiary"
+							accessibleWhenDisabled
+							disabled={ ! canScroll.forward }
+							onClick={ () => scrollPage( 1 ) }
+						/>
+					</HStack>
+				}
+			/>
 			<div className="dashboard-marketplace-products__tiles-wrap">
 				<div
+					ref={ rowRef }
 					className="dashboard-marketplace-products__tiles"
 					role="group"
 					aria-label={ __( 'Product categories' ) }
@@ -119,15 +184,13 @@ export default function CategoryTiles( {
 									{ tile.logo ? (
 										<img
 											src={ tile.logo }
-											alt={ tile.label }
-											className="dashboard-marketplace-products__tile-logo"
+											alt=""
+											className="dashboard-marketplace-products__tile-mark"
 										/>
 									) : (
-										<span className="dashboard-marketplace-products__tile-label">
-											<Icon icon={ tile.icon } size={ 20 } />
-											<Text weight={ 500 }>{ tile.label }</Text>
-										</span>
+										<Icon icon={ tile.icon } size={ 20 } />
 									) }
+									<Text weight={ 500 }>{ tile.label }</Text>
 								</CardBody>
 							</Card>
 						);
