@@ -62,7 +62,12 @@ export default function EarnMigrations() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ taggedSites.length > 0 } /> }
+			notices={
+				<MissingPaymentSettingsNotice
+					hasCommissionActivity={ taggedSites.length > 0 }
+					commissionType="migrations"
+				/>
+			}
 		>
 			<MigrationsCommissionsContent
 				taggedSites={ taggedSites }

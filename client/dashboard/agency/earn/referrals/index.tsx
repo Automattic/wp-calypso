@@ -14,7 +14,9 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
@@ -48,15 +50,29 @@ export default function EarnReferrals() {
 					title={ __( 'Referrals' ) }
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
-						hasReferrals ? (
-							<RouterLinkButton variant="primary" to="/marketplace/exclusive-offers">
+						hasReferrals && isAgencyApproved( agency ) ? (
+							<RouterLinkButton
+								variant="primary"
+								to="/marketplace/exclusive-offers"
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' )
+								}
+							>
 								{ __( 'New referral' ) }
 							</RouterLinkButton>
 						) : undefined
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
+			notices={
+				<>
+					<MissingPaymentSettingsNotice
+						hasCommissionActivity={ hasReferrals }
+						commissionType="referrals"
+					/>
+					{ ! isLoading && ! hasReferrals && <BankDetailsNotice agencyId={ agencyId } /> }
+				</>
+			}
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />
@@ -82,6 +98,9 @@ export default function EarnReferrals() {
 									to="/earn/referrals/$referralId"
 									params={ { referralId: String( item.id ) } }
 									style={ { color: 'inherit', textDecoration: 'none' } }
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' )
+									}
 								>
 									{ item.client.email }
 								</Link>

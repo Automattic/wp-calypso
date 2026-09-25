@@ -73,7 +73,12 @@ export default function EarnWooPayments() {
 	return (
 		<PageLayout
 			header={ header }
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasSites } /> }
+			notices={
+				<MissingPaymentSettingsNotice
+					hasCommissionActivity={ hasSites }
+					commissionType="woopayments"
+				/>
+			}
 		>
 			{ showEmptyState ? (
 				<WooPaymentsDashboardEmptyState />

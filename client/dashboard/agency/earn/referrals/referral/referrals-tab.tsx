@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { DataViews, DataViewsCard } from '../../../../components/dataviews';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
@@ -44,10 +45,20 @@ export default function ReferralReferralsTab() {
 
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	// The server explains why a referral cannot be archived or its email resent
+	// (an order already paid for, a bounced address), so its message is shown.
 	const { mutate: archiveReferral, isPending: isArchiving } = useMutation(
-		archiveReferralMutation( agencyId )
+		withSnackbar( archiveReferralMutation( agencyId ), {
+			success: __( 'The referral has been archived.' ),
+			error: { source: 'server' },
+		} )
 	);
-	const { mutate: resendReferralEmail } = useMutation( resendReferralEmailMutation( agencyId ) );
+	const { mutate: resendReferralEmail, isPending: isResending } = useMutation(
+		withSnackbar( resendReferralEmailMutation( agencyId ), {
+			success: __( 'The referral email has been resent.' ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const fields = useMemo< Field< ReferralApiResponse >[] >(
 		() => [
@@ -80,22 +91,14 @@ export default function ReferralReferralsTab() {
 				id: 'resend-email',
 				label: __( 'Resend email' ),
 				isEligible: ( item ) => item.status === 'pending',
+				disabled: isResending,
 				callback: ( items ) => {
 					const order = items[ 0 ];
 					if ( ! order ) {
 						return;
 					}
 					recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' );
-					resendReferralEmail( order.id, {
-						onSuccess: () =>
-							createSuccessNotice( __( 'The referral email has been resent.' ), {
-								type: 'snackbar',
-							} ),
-						onError: () =>
-							createErrorNotice( __( 'Failed to resend the referral email.' ), {
-								type: 'snackbar',
-							} ),
-					} );
+					resendReferralEmail( order.id );
 				},
 			},
 			{
@@ -132,17 +135,9 @@ export default function ReferralReferralsTab() {
 							return;
 						}
 						recordTracksEvent( 'calypso_a4a_referrals_archive_referral_button_click' );
-						archiveReferral( order.id, {
-							onSuccess: () =>
-								createSuccessNotice( __( 'The referral has been archived.' ), {
-									type: 'snackbar',
-								} ),
-							onError: () =>
-								createErrorNotice( __( 'Failed to archive the referral.' ), {
-									type: 'snackbar',
-								} ),
-						} );
-						closeModal?.();
+						// The modal stays up until the request settles, so the confirm
+						// button can show that something is happening.
+						archiveReferral( order.id, { onSettled: () => closeModal?.() } );
 					};
 					return (
 						<VStack spacing={ 4 }>
@@ -181,6 +176,7 @@ export default function ReferralReferralsTab() {
 		[
 			archiveReferral,
 			isArchiving,
+			isResending,
 			resendReferralEmail,
 			createSuccessNotice,
 			createErrorNotice,
