@@ -27,6 +27,7 @@ interface StepShareSSHAccessProps {
 	onAskForHelp: () => void;
 	helpLink: ReactNode;
 	isTransferring: boolean;
+	isTransferFailed: boolean;
 	shouldGenerateKey: boolean;
 	isInputDisabled: boolean;
 	isProcessingAssistedMigration: boolean;
@@ -50,12 +51,14 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	onAskForHelp,
 	helpLink,
 	isTransferring,
+	isTransferFailed,
 	shouldGenerateKey,
 	isInputDisabled,
 	isProcessingAssistedMigration,
 } ) => {
 	const translate = useTranslate();
 	const [ copied, setCopied ] = useState( false );
+	const isUsernameDisabled = isUsernameLockedForKey || isInputDisabled;
 
 	const handleAuthMethodChange = ( method: 'password' | 'key' ) => {
 		recordTracksEvent( 'calypso_site_migration_ssh_action', {
@@ -96,12 +99,6 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 	const getErrorMessage = () => {
 		const isCredentialFailure = error?.message === 'credential_failure';
 
-		if ( ! isCredentialFailure ) {
-			return translate(
-				'We ran into a problem starting the migration. Please check your details and try again.'
-			);
-		}
-
 		const AskForHelpButton = (
 			<Button
 				variant="link"
@@ -120,6 +117,18 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 				{ isProcessingAssistedMigration && <Spinner /> }
 			</Button>
 		);
+
+		if ( isTransferFailed ) {
+			return translate( 'We ran into a problem preparing your site for migration. {{button/}}', {
+				components: { button: AskForHelpButton },
+			} );
+		}
+
+		if ( ! isCredentialFailure ) {
+			return translate(
+				'We ran into a problem starting the migration. Please check your details and try again.'
+			);
+		}
 
 		// Provide specific guidance based on authentication method with link to assisted migration
 		if ( authMethod === 'password' ) {
@@ -153,7 +162,9 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 
 			{ helpLink }
 
-			{ error && <AccordionNotice variant="error">{ getErrorMessage() }</AccordionNotice> }
+			{ ( error || isTransferFailed ) && (
+				<AccordionNotice variant="error">{ getErrorMessage() }</AccordionNotice>
+			) }
 
 			<div className="site-migration-ssh__step-share-ssh-auth-method">
 				<label className="site-migration-ssh__step-share-ssh-label">
@@ -235,8 +246,8 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 										onUsernameChange( e.target.value )
 									}
 									placeholder={ translate( 'Enter your SSH username' ) }
-									disabled={ isUsernameLockedForKey }
-									className={ isUsernameLockedForKey ? 'is-disabled' : '' }
+									disabled={ isUsernameDisabled }
+									className={ isUsernameDisabled ? 'is-disabled' : '' }
 								/>
 							</div>
 							{ isUsernameLockedForKey && (
@@ -245,6 +256,7 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									label={ translate( 'Edit username' ) }
 									className="site-migration-ssh__step-share-ssh-edit-button"
 									onClick={ handleEditUsername }
+									disabled={ isInputDisabled }
 								/>
 							) }
 						</div>
@@ -263,7 +275,10 @@ export const StepShareSSHAccess: FC< StepShareSSHAccessProps > = ( {
 									variant="secondary"
 									onClick={ handleGenerateSSHKey }
 									disabled={
-										! username || isGeneratingKey || ( isTransferring && shouldGenerateKey )
+										! username ||
+										isGeneratingKey ||
+										isTransferFailed ||
+										( isTransferring && shouldGenerateKey )
 									}
 									isBusy={ isGeneratingKey || ( isTransferring && shouldGenerateKey ) }
 								>
