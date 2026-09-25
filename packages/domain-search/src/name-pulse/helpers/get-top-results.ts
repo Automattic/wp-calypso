@@ -14,15 +14,21 @@ const isCandidate = ( result: NamePulseDomainResult ) =>
 /**
  * The backend owns the TLD order, so the first candidates in list order are featured.
  */
-export function getTopResults( results: NamePulseDomainResult[] ): NamePulseDomainResult[] {
-	return results.filter( isCandidate ).slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
+export function getTopResults(
+	results: NamePulseDomainResult[],
+	count = NAME_PULSE_TOP_RESULTS_COUNT
+): NamePulseDomainResult[] {
+	return results.filter( isCandidate ).slice( 0, count );
 }
 
 /**
  * AI mode has no exact matches to feature, so the cheapest available
  * suggestions stand in; the name breaks ties to keep the order stable.
  */
-export function getAiTopResults( ...lists: NamePulseDomainResult[][] ): NamePulseDomainResult[] {
+export function getAiTopResults(
+	lists: NamePulseDomainResult[][],
+	count = NAME_PULSE_TOP_RESULTS_COUNT
+): NamePulseDomainResult[] {
 	const byName = new Map< string, NamePulseDomainResult >();
 
 	for ( const result of lists.flat() ) {
@@ -37,5 +43,5 @@ export function getAiTopResults( ...lists: NamePulseDomainResult[][] ): NamePuls
 				( a.raw_price ?? Infinity ) - ( b.raw_price ?? Infinity ) ||
 				a.domain_name.localeCompare( b.domain_name )
 		)
-		.slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
+		.slice( 0, count );
 }

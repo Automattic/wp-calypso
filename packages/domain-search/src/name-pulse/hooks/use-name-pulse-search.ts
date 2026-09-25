@@ -215,7 +215,7 @@ export const useNamePulseSearch = ( query: string ) => {
 			: NAME_PULSE_TOP_RESULTS_COUNT;
 	const topResults = useMemo( () => {
 		if ( ! isAiMode ) {
-			return getTopResults( rawExactList ).slice( 0, topResultsCount );
+			return getTopResults( rawExactList, topResultsCount );
 		}
 
 		// Both lists compete for the same slots, so featuring the faster one's
@@ -223,7 +223,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		// skeletons until it can pick from the full pool.
 		return isLoadingTop
 			? EMPTY_RESULTS
-			: getAiTopResults( rawKeywordResults, rawCreativeResults ).slice( 0, topResultsCount );
+			: getAiTopResults( [ rawKeywordResults, rawCreativeResults ], topResultsCount );
 	}, [
 		isAiMode,
 		isLoadingTop,
