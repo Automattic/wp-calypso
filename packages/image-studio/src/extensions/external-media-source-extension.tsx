@@ -1,5 +1,6 @@
 import { BigSkyIcon } from '@automattic/agenttic-ui';
-import { dispatch } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
@@ -17,6 +18,13 @@ export const addImageStudioMediaSource = (
 		onClick: () => void;
 	}
 ) => {
+	const { getSettings } = select( blockEditorStore ) as unknown as {
+		getSettings: () => { mediaUpload?: unknown };
+	};
+	if ( ! getSettings().mediaUpload ) {
+		return _value;
+	}
+
 	const { onSelect, multiple, isFeatured, onClick } = args;
 	const handleClose = ( image: ImageData | null ) => {
 		handleImageSelection( {

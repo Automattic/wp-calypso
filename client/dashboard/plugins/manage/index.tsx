@@ -6,13 +6,13 @@ import {
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import Grid from '../../components/grid';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
@@ -172,7 +172,7 @@ export default function PluginsList() {
 				/>
 			}
 		>
-			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
+			<Grid gap="md" templateColumns="392px 1fr">
 				<PluginSwitcher
 					pluginsWithIcon={ pluginsWithIcon }
 					searchableFields={ searchableFields }

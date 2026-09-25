@@ -76,5 +76,43 @@ describe( 'get-new-site-params', () => {
 			expect( result ).toHaveProperty( 'blog_name', 'myUser' );
 			expect( result ).toHaveProperty( 'find_available_url', true );
 		} );
+
+		test.each( [ 'onboarding', 'onboarding-pm', 'free', 'with-theme', 'with-plugin' ] )(
+			'and the %s flow it should send an empty blog_name instead of the username',
+			( flowToCheck ) => {
+				const result = getNewSiteParams( {
+					dependencies: {},
+					flowToCheck,
+					state: {
+						currentUser: {
+							user: { username: 'myUser' },
+						},
+					},
+				} );
+
+				expect( result ).toHaveProperty( 'blog_name', '' );
+				expect( result ).toHaveProperty( 'find_available_url', true );
+			}
+		);
+
+		test( 'and a server-generated flow with a site title it should use the site title', () => {
+			const result = getNewSiteParams( {
+				dependencies: {},
+				flowToCheck: 'onboarding',
+				state: {
+					signup: {
+						dependencyStore: {
+							siteTitle: 'Testing Inc.',
+						},
+					},
+					currentUser: {
+						user: { username: 'myUser' },
+					},
+				},
+			} );
+
+			expect( result ).toHaveProperty( 'blog_name', 'Testing Inc.' );
+			expect( result ).toHaveProperty( 'find_available_url', true );
+		} );
 	} );
 } );

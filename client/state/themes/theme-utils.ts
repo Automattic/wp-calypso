@@ -1,4 +1,13 @@
-import { isWpComMonthlyPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	TERM_ANNUALLY,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isFreePlan,
+	isWpComMonthlyPlan,
+} from '@automattic/calypso-products';
 
 interface ProductWithBillingCycle {
 	product_slug: string;
@@ -22,4 +31,22 @@ export function getPreferredBillingCycleProductSlug(
 		( product ) => product.product_term === preferredBillingCycle
 	);
 	return preferredProduct?.product_slug ?? products[ 0 ].product_slug;
+}
+
+/**
+ * Returns the plan to add to the cart alongside an externally managed theme for a site that isn't eligible for it.
+ * eCommerce trial sites can't buy Business, so they're offered eCommerce instead.
+ * @param currentPlanSlug The site's current plan slug.
+ * @returns The plan slug, on the same term as the current paid plan or annual otherwise.
+ */
+export function getExternallyManagedThemeRequiredPlanSlug( currentPlanSlug?: string ): string {
+	let requiredTerm = TERM_ANNUALLY;
+	if ( currentPlanSlug && ! isFreePlan( currentPlanSlug ) ) {
+		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+	}
+
+	const minimumPlan =
+		currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ? PLAN_ECOMMERCE : PLAN_BUSINESS;
+
+	return findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } ) || minimumPlan;
 }

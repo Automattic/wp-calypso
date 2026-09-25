@@ -14,7 +14,6 @@ jest.mock( '../variation-picker/variation', () => {
 } );
 
 jest.mock( '@wordpress/components', () => ( {
-	__experimentalGrid: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	__experimentalVStack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	Button: ( { children, ...props }: { children: React.ReactNode } ) => (
 		<button { ...props }>{ children }</button>

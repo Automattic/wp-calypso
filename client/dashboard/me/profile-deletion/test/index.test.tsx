@@ -10,10 +10,12 @@ import { render } from '../../../test-utils';
 import AccountDeletionSection from '../index';
 import type { User } from '@automattic/api-core';
 
-function mockPurchases( purchases: object[] = [] ) {
+function mockPurchases( purchases: object[] = [], monetizeSubscriptions: object[] = [] ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/upgrades' )
-		.reply( 200, purchases );
+		.reply( 200, purchases )
+		.get( '/rest/v1.1/me/memberships/subscriptions' )
+		.reply( 200, { subscriptions: monetizeSubscriptions } );
 }
 
 describe( '<AccountDeletionSection>', () => {
@@ -140,6 +142,33 @@ describe( '<AccountDeletionSection>', () => {
 
 			// A removed purchase is not "cancelable", so the user proceeds to the
 			// alternatives screen rather than being blocked.
+			await screen.findByRole( 'dialog', { name: 'Are you sure?' } );
+			expect(
+				screen.queryByText( 'You still have active purchases on your account.' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'blocks deletion when user has a renewable newsletter subscription', async () => {
+			const user = userEvent.setup();
+			mockPurchases( [], [ { ID: '1', status: 'active', is_renewable: true } ] );
+
+			render( <AccountDeletionSection /> );
+
+			await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
+			expect(
+				await screen.findByText( 'You still have active purchases on your account.' )
+			).toBeVisible();
+		} );
+
+		test( 'does not block deletion when the newsletter subscription does not renew', async () => {
+			const user = userEvent.setup();
+			mockPurchases( [], [ { ID: '1', status: 'active', is_renewable: false } ] );
+
+			render( <AccountDeletionSection /> );
+
+			await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
 			await screen.findByRole( 'dialog', { name: 'Are you sure?' } );
 			expect(
 				screen.queryByText( 'You still have active purchases on your account.' )

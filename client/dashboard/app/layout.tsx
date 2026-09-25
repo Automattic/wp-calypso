@@ -1,9 +1,8 @@
 import { queryClient } from '@automattic/api-queries';
-// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
-	recordTracksEvent,
-	recordTracksPageViewWithPageParams,
+	recordTracksEvent, // eslint-disable-line no-restricted-imports
+	recordTracksPageViewWithPageParams, // eslint-disable-line no-restricted-imports
 } from '@automattic/calypso-analytics';
 import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';

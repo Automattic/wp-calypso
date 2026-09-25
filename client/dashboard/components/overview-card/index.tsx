@@ -2,7 +2,6 @@ import CircularProgressBar from '@automattic/components/src/circular-progress-ba
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
-	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
@@ -16,6 +15,7 @@ import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
+import Divider from '../divider';
 import { Text } from '../text';
 import { TextBlur } from '../text-blur';
 import { Truncate } from '../truncate';

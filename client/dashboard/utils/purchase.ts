@@ -20,7 +20,7 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import type { Product, Purchase } from '@automattic/api-core';
+import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -91,6 +91,35 @@ export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
  */
 export function isRemoved( purchase: Purchase ): boolean {
 	return 'active' !== purchase.subscription_status;
+}
+
+/**
+ * Returns true if any purchase still needs to be canceled before the account can be closed.
+ */
+export function hasCancelablePurchases( purchases: Purchase[] ): boolean {
+	return purchases.some( ( purchase ) => {
+		// Skip only fully-removed purchases. An expired-but-still-active purchase
+		// (in its grace period) can still be renewed, so it should require action
+		// before the account is deleted.
+		if ( isRemoved( purchase ) ) {
+			return false;
+		}
+		if ( purchase.product_slug === 'premium_theme' && ! purchase.is_refundable ) {
+			return false;
+		}
+		return Boolean( purchase.is_cancelable );
+	} );
+}
+
+/**
+ * Returns true if any newsletter subscription still needs to be canceled before the account can be closed.
+ */
+export function hasRenewableMonetizeSubscriptions(
+	subscriptions: MonetizeSubscription[]
+): boolean {
+	return subscriptions.some(
+		( subscription ) => subscription.status === 'active' && Boolean( subscription.is_renewable )
+	);
 }
 
 /**

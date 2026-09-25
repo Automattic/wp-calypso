@@ -30,18 +30,6 @@ const noop = () => {};
 class InviteAcceptLoggedOut extends Component {
 	state = { bearerToken: false, userData: false, submitting: false };
 
-	submitButtonText = () => {
-		let text = '';
-		if ( 'follower' === this.props.invite.role ) {
-			text = this.props.translate( 'Sign Up & Follow' );
-		} else if ( 'viewer' === this.props.invite.role ) {
-			text = this.props.translate( 'Sign Up & View' );
-		} else {
-			text = this.props.translate( 'Sign Up & Join' );
-		}
-		return text;
-	};
-
 	clickSignInLink = () => {
 		const linkParams = { redirectTo: window.location.href };
 		if ( this.props.invite?.site?.is_wpforteams_site ?? false ) {
@@ -250,32 +238,24 @@ class InviteAcceptLoggedOut extends Component {
 				<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
-					<SignupForm
-						className="signup-form--connect-screen"
-						redirectToAfterLoginUrl={ window.location.href }
-						isPasswordless
-						displayUsernameInput={ false }
-						disabled={ this.state.submitting }
-						formHeader={ this.renderFormHeader() }
-						submitting={ this.state.submitting }
-						save={ this.save }
-						submitForm={ this.submitForm }
-						submitButtonText={ this.submitButtonText() }
-						footerLink={ this.renderFooterLink() }
-						email={ this.props.invite.sentTo }
-						suggestedUsername=""
-						disableEmailInput={ this.props.forceMatchingEmail }
-						disableEmailExplanation={ this.props.translate(
-							'This invite is only valid for %(email)s.',
-							{
-								args: { email: this.props.invite.sentTo },
-							}
-						) }
-						submitButtonLabel={ this.props.translate( 'Create an account' ) }
-						labelText={ this.props.translate( 'Your email address' ) }
-						useConnectScreenActions
-						handleSocialResponse={ this.handleSocialResponse }
-					/>
+					<div className="invite-accept-logged-out__form">
+						<SignupForm
+							className="signup-form--connect-screen"
+							redirectToAfterLoginUrl={ window.location.href }
+							isPasswordless
+							displayUsernameInput={ false }
+							disabled={ this.state.submitting }
+							submitting={ this.state.submitting }
+							save={ this.save }
+							submitForm={ this.submitForm }
+							email={ this.props.invite.sentTo }
+							suggestedUsername=""
+							labelText={ this.props.translate( 'Your email address' ) }
+							useConnectScreenActions
+							handleSocialResponse={ this.handleSocialResponse }
+						/>
+						{ this.renderFooterLink() }
+					</div>
 					{ this.state.userData && this.loginUser() }
 				</div>
 			</>

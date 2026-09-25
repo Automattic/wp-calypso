@@ -1,8 +1,8 @@
 import { isPurchaseOneTimePurchase } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { Button, ToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { Component, type ReactNode } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
@@ -23,7 +23,6 @@ import {
 import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import type { GetChangePaymentMethodUrlFor } from '../../lib/types';
 import type { Purchase } from '@automattic/api-core';
 import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/notices/types';
 
@@ -31,16 +30,10 @@ export interface AutoRenewToggleProps {
 	purchase: Purchase;
 	siteDomain: string;
 	planName?: string;
-	shouldDisable?: boolean;
 	withTextStatus?: boolean;
 	toggleSource?: string;
-	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
-	paymentMethodUrl?: string;
-	showLink?: boolean;
-	label?: ReactNode;
 	productSlug?: string;
 	siteSlug?: string | null;
-	children?: React.ReactNode;
 }
 
 export interface AutoRenewToggleConnectedProps {
@@ -101,14 +94,7 @@ class AutoRenewToggle extends Component<
 	}
 
 	goToUpdatePaymentMethod = () => {
-		const {
-			purchase,
-			siteSlug,
-			productSlug,
-			isAtomicSite,
-			toggleSource,
-			getChangePaymentMethodUrlFor,
-		} = this.props;
+		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
 		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
@@ -117,9 +103,7 @@ class AutoRenewToggle extends Component<
 			toggle_source: toggleSource,
 		} );
 
-		page(
-			( getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath )( siteSlug ?? '', purchase )
-		);
+		page( getChangePaymentMethodPath( siteSlug ?? '', purchase ) );
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {
@@ -247,41 +231,20 @@ class AutoRenewToggle extends Component<
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, withTextStatus, shouldDisable, showLink, children } =
-			this.props;
+		const { planName, siteDomain, purchase, withTextStatus } = this.props;
 
-		if ( ! showLink && ! this.shouldRender( purchase ) ) {
+		if ( ! this.shouldRender( purchase ) ) {
 			return null;
-		}
-
-		let toggle;
-		if ( showLink ) {
-			toggle = this.isUpdatingAutoRenew() ? (
-				'…'
-			) : (
-				<Button
-					variant="link"
-					className="is-link"
-					onClick={ this.onToggleAutoRenew }
-					disabled={ shouldDisable || ! this.shouldRender( purchase ) }
-				>
-					{ children }
-				</Button>
-			);
-		} else {
-			toggle = (
-				<ToggleControl
-					checked={ this.getToggleUiStatus() }
-					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
-					onChange={ this.onToggleAutoRenew }
-					label={ this.props.label ?? ( withTextStatus ? this.renderTextStatus() : undefined ) }
-				/>
-			);
 		}
 
 		return (
 			<>
-				{ toggle }
+				<ToggleControl
+					checked={ this.getToggleUiStatus() }
+					disabled={ this.isUpdatingAutoRenew() }
+					onChange={ this.onToggleAutoRenew }
+					label={ withTextStatus ? this.renderTextStatus() : undefined }
+				/>
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName ? planName : '' }

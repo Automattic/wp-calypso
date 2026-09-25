@@ -110,6 +110,23 @@
 		.components-text {
 			text-wrap: nowrap;
 		}
+
+		// Label and suffix flow as one run of text so the TLD follows the label
+		// onto the next line; `anywhere` lets a name with no break points wrap,
+		// and the `<wbr>` prefers a break before the TLD when the label fits.
+		&--wrap {
+			display: block;
+			overflow-wrap: anywhere;
+
+			> :first-child {
+				overflow: visible;
+				white-space: normal;
+			}
+
+			.components-text {
+				text-wrap: wrap;
+			}
+		}
 	}
 
 	&__status {

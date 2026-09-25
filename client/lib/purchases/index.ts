@@ -81,58 +81,6 @@ export function handleRenewNowClick(
 	};
 }
 
-/**
- * Adds all purchases renewal to the cart and redirects to checkout.
- * @param {Array} purchases - the purchases to be renewed
- * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {Object} [options] - optional information
- * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
- * @param {Object} [options.tracksProps] - where was the renew button clicked from
- */
-export function handleRenewMultiplePurchasesClick(
-	purchases: RawPurchase[],
-	siteSlug: string,
-	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
-) {
-	return ( dispatch: CalypsoDispatch ) => {
-		try {
-			purchases.forEach( ( purchase ) => {
-				// Track the renew now submit.
-				recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
-					product_slug: purchase.product_slug,
-					...options.tracksProps,
-				} );
-			} );
-
-			const renewItems = purchases.map( ( otherPurchase ) =>
-				getRenewalItemFromProduct(
-					{
-						...otherPurchase,
-						id: Number( otherPurchase.ID ),
-						isRenewable: otherPurchase.is_renewable,
-					},
-					{ domain: otherPurchase.meta }
-				)
-			);
-			const { purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
-
-			if ( purchaseIds.length === 0 ) {
-				throw new Error( 'Could not find product slug or purchase id for renewal.' );
-			}
-
-			let renewalUrl = `/checkout/renew/${ purchaseIds.join( ',' ) }`;
-			if ( options.redirectTo ) {
-				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-			}
-			debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
-
-			page( renewalUrl );
-		} catch ( error ) {
-			dispatch( errorNotice( ( error as Error ).message ) );
-		}
-	};
-}
-
 function getProductSlugsAndPurchaseIds( renewItems: MinimalRequestCartProduct[] ) {
 	const productSlugs: string[] = [];
 	const purchaseIds: string[] = [];
