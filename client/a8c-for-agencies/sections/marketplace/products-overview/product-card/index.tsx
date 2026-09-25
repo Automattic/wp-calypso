@@ -21,6 +21,7 @@ import withProductLightbox, {
 	ProductLightboxActivatorProps,
 	WithProductLightboxProps,
 } from '../hocs/with-product-lightbox';
+import { isTitanInboxMockProduct } from '../lib/titan-inbox-mock';
 import ProductBadges from '../product-badges';
 import useCustomProductCard from './hooks/use-custom-product-card';
 import ProductPriceWithDiscount from './product-price-with-discount-info';
@@ -58,6 +59,7 @@ function ProductCard( props: Props ) {
 
 	const pressableMemoryTarget = getPressableMemoryTarget( currentProduct );
 	const isPressableMemoryAddon = isPressablePhpMemoryAddon( currentProduct );
+	const isTitanInboxMockAddon = isTitanInboxMockProduct( currentProduct );
 	const { description: productDescription } = useProductDescription(
 		currentProduct.slug,
 		pressableMemoryTarget
@@ -228,14 +230,15 @@ function ProductCard( props: Props ) {
 					>
 						{ ctaLabel }
 					</Button>
-					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
-						<LicenseLightboxLink
-							customText={ translate( 'View details' ) }
-							productName={ getProductShortTitle( currentProduct ) }
-							onClick={ onShowLightbox }
-							showIcon={ false }
-						/>
-					) }
+					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) &&
+						! isTitanInboxMockAddon && (
+							<LicenseLightboxLink
+								customText={ translate( 'View details' ) }
+								productName={ getProductShortTitle( currentProduct ) }
+								onClick={ onShowLightbox }
+								showIcon={ false }
+							/>
+						) }
 				</div>
 			</div>
 		</div>
