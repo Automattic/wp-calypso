@@ -11,6 +11,7 @@ const PRODUCT_LABELS: Record< string, string > = {
 	pressable: 'Pressable',
 	woocommerce: 'WooCommerce',
 	'wordpress-com': 'WordPress.com',
+	'wordpress-org': 'WordPress.org',
 	'wordpress-vip': 'WordPress VIP',
 };
 

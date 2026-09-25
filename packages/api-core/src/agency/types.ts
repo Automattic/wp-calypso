@@ -269,6 +269,7 @@ export type AgencyResourceProduct =
 	| 'pressable'
 	| 'woocommerce'
 	| 'wordpress-com'
+	| 'wordpress-org'
 	| 'wordpress-vip';
 
 export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
