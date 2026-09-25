@@ -63,9 +63,11 @@ const dataProtectionTableEs = `
 </table>`;
 
 const bodyHtmlEs = `
-<p><strong>{{applicant}}</strong>, como solicitante del nombre de dominio <strong>{{domains}}</strong> (en adelante, "el Solicitante") declara que:</p>
+<p><strong>{{applicant}}</strong>, como solicitante de los nombres de dominio indicados a continuación (en adelante, "el Solicitante"):</p>
+<ul class="registrant-extra-info__red-es-agreement-domains">{{domains}}</ul>
+<p>declara que:</p>
 <ul>
-	<li>Autoriza al AGENTE REGISTRADOR <strong>REALTIME REGISTER B.V.</strong> (en lo sucesivo, "el AGENTE REGISTRADOR") para actuar por su cuenta ante Red.es (en adelante, indistintamente, "el Registro" o "la Autoridad de Asignación"), y para realizar todas las actuaciones necesarias para la asignación y renovación del nombre de dominio <strong>{{domains}}</strong> (en adelante, "el Nombre de Dominio"), incluyendo la recepción de las correspondientes comunicaciones.</li>
+	<li>Autoriza al AGENTE REGISTRADOR <strong>REALTIME REGISTER B.V.</strong> (en lo sucesivo, "el AGENTE REGISTRADOR") para actuar por su cuenta ante Red.es (en adelante, indistintamente, "el Registro" o "la Autoridad de Asignación"), y para realizar todas las actuaciones necesarias para la asignación y renovación de los nombres de dominio indicados arriba (en adelante, "el Nombre de Dominio"), incluyendo la recepción de las correspondientes comunicaciones.</li>
 	<li>Autoriza al AGENTE REGISTRADOR para actuar en cuantas actuaciones sean necesarias para realizar por su cuenta los pagos correspondientes a la asignación y renovación de los Nombres de Dominio, que solicita se realice por años sucesivos.</li>
 	<li>El AGENTE REGISTRADOR le ha informado adecuadamente y está al corriente de las normas y procedimientos vigentes, términos y condiciones, tarifas y forma de pago y requisitos técnicos establecidos para el registro de nombres de dominio bajo ".es" con la mediación de un AGENTE REGISTRADOR acreditado, y los acepta en su totalidad. En particular, el Solicitante declara conocer las normas, procedimientos, términos y condiciones para el Registro de un Nombre de Dominio bajo ".es", cuyo contenido se encuentra disponible en: <a href="https://www.dominios.es/en/sobre-dominios/normativa" target="_blank" rel="noopener noreferrer">https://www.dominios.es/en/sobre-dominios/normativa</a></li>
 	<li>Conoce que el incumplimiento de estas normas, en los casos en que esté así expresamente establecido, supondrá la pérdida del nombre de dominio y su posible reasignación desde ese mismo momento para su registro a favor de un solicitante que esté legitimado para ello.</li>
@@ -125,9 +127,11 @@ const dataProtectionTableEn = `
 </table>`;
 
 const bodyHtmlEn = `
-<p><strong>{{applicant}}</strong>, as applicant for the domain name <strong>{{domains}}</strong> (hereinafter, "the Applicant"), hereby declares that:</p>
+<p><strong>{{applicant}}</strong>, as applicant for the domain names listed below (hereinafter, "the Applicant"):</p>
+<ul class="registrant-extra-info__red-es-agreement-domains">{{domains}}</ul>
+<p>hereby declares that:</p>
 <ul>
-	<li>The REGISTRAR <strong>REALTIME REGISTER B.V.</strong> (hereinafter, "the REGISTRAR") is authorised to act on its behalf before Red.es (hereinafter, either "the Registry" or "the Assignment Authority"), and to take all actions necessary for the assignment and renewal of the domain name <strong>{{domains}}</strong> (hereinafter, "the Domain Name"), including receiving the corresponding notifications.</li>
+	<li>The REGISTRAR <strong>REALTIME REGISTER B.V.</strong> (hereinafter, "the REGISTRAR") is authorised to act on its behalf before Red.es (hereinafter, either "the Registry" or "the Assignment Authority"), and to take all actions necessary for the assignment and renewal of the domain names listed above (hereinafter, "the Domain Name"), including receiving the corresponding notifications.</li>
 	<li>The REGISTRAR is authorised to take any action necessary to make, on its behalf, the payments corresponding to the assignment and renewal of the Domain Name, which it requests be carried out for successive years.</li>
 	<li>It has been duly informed by the REGISTRAR and is aware of the applicable rules and procedures, terms and conditions, fees and payment methods and technical requirements established for the registration of ".es" domain names through an accredited REGISTRAR, and accepts them in their entirety. In particular, the Applicant declares that it is aware of the rules, procedures, terms and conditions for the registration of a Domain Name under ".es", the content of which is available at: <a href="https://www.dominios.es/en/sobre-dominios/normativa" target="_blank" rel="noopener noreferrer">https://www.dominios.es/en/sobre-dominios/normativa</a></li>
 	<li>It understands that failure to comply with these rules shall, in the cases where this is expressly established, result in the loss of the domain name and its possible reassignment, from that very moment, for registration in favour of an eligible applicant.</li>
@@ -204,7 +208,9 @@ export function interpolateRedEsAgreement(
 ): string {
 	const placeholders: Record< string, string > = {
 		applicant: escapeHtml( values.applicant_name ),
-		domains: values.domains.map( escapeHtml ).join( ', ' ),
+		domains: values.domains
+			.map( ( domain ) => `<li><strong>${ escapeHtml( domain ) }</strong></li>` )
+			.join( '' ),
 		admin_contact_name: escapeHtml( values.applicant_name ),
 		admin_contact_id: escapeHtml( values.applicant_identification_number ),
 		date: escapeHtml( date ),

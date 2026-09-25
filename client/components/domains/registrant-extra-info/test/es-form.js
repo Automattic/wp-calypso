@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import { RegistrantExtraInfoEsForm } from '../es-form';
@@ -204,6 +204,6 @@ describe( 'es-form', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Read the agreement' } ) );
 
-		expect( screen.getByRole( 'dialog' ) ).toHaveTextContent( 'nombre de dominio example.es' );
+		expect( within( screen.getByRole( 'dialog' ) ).getByText( 'example.es' ) ).toBeVisible();
 	} );
 } );
