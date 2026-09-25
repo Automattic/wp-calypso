@@ -1,5 +1,4 @@
 import {
-	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -13,6 +12,8 @@ import { getContentTypeLabel, getProductLabel } from './labels';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
+
+import './style.scss';
 
 const initialView: View = {
 	type: 'list',
@@ -107,31 +108,30 @@ export default function BrowseAllResources( {
 
 	return (
 		<>
-			<Spacer marginBottom={ 2 }>
-				<Heading level={ 2 } weight={ 500 } size={ 20 }>
-					{ __( 'Browse all' ) }
-				</Heading>
-			</Spacer>
-			<DataViews< ResourceItem >
-				data={ resources }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				paginationInfo={ paginationInfo }
-				defaultLayouts={ { list: {} } }
-				getItemId={ ( item ) => String( item.id ) }
-				search
-			>
-				<HStack justify="start" style={ { paddingBlock: '16px' } }>
-					<DataViews.Search />
-					<DataViews.FiltersToggle />
-				</HStack>
-				<Spacer marginBottom={ 4 }>
-					<DataViews.FiltersToggled />
-				</Spacer>
-			</DataViews>
+			<div className="dashboard-resources-learn__filters">
+				<DataViews< ResourceItem >
+					data={ resources }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { list: {} } }
+					getItemId={ ( item ) => String( item.id ) }
+					search
+				>
+					<HStack justify="space-between" className="dashboard-resources-learn__toolbar">
+						<HStack justify="flex-start" expanded={ false }>
+							<DataViews.Search />
+							<DataViews.FiltersToggle />
+						</HStack>
+					</HStack>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
 			{ filteredData.length > 0 ? (
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 					{ filteredData.map( ( item ) => (
 						<ResourceCard
 							key={ item.id }
@@ -145,16 +145,14 @@ export default function BrowseAllResources( {
 					) ) }
 				</Grid>
 			) : (
-				<Spacer marginTop={ 2 } marginBottom={ 4 }>
-					<VStack spacing={ 2 }>
-						<Text weight={ 500 }>{ __( "We couldn't find any resources related to that." ) }</Text>
-						<Text>
-							{ __(
-								'Try adjusting your search or exploring other resources to help your agency grow.'
-							) }
-						</Text>
-					</VStack>
-				</Spacer>
+				<VStack spacing={ 1 }>
+					<Text weight={ 500 }>{ __( "We couldn't find any resources related to that." ) }</Text>
+					<Text variant="muted">
+						{ __(
+							'Try adjusting your search or exploring other resources to help your agency grow.'
+						) }
+					</Text>
+				</VStack>
 			) }
 		</>
 	);

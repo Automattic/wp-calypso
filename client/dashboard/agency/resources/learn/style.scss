@@ -1,0 +1,27 @@
+// The DataViews wrapper paints its own surface; the filter bar sits on the page background.
+.dashboard-resources-learn__filters {
+	--wp-dataviews-color-background: transparent;
+}
+
+.dashboard-resources-learn__toolbar {
+	padding-block: 16px;
+}
+
+.dashboard-resources-learn__card {
+	block-size: 100%;
+}
+
+.dashboard-resources-learn__card-body {
+	display: flex;
+	flex-direction: column;
+	block-size: 100%;
+	box-sizing: border-box;
+}
+
+.dashboard-resources-learn__card-main {
+	flex: 1;
+}
+
+.dashboard-resources-learn__card-footer {
+	margin-block-start: 16px;
+}
