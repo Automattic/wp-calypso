@@ -42,12 +42,10 @@ function getAgreementValues(
 	const lastName = asTrimmedString( contactDetails.lastName );
 
 	return {
-		registrant_name: firstName && lastName ? `${ firstName } ${ lastName }` : '',
-		organization: isIndividual ? '' : asTrimmedString( contactDetails.organization ),
-		identification_number: registrantIdentificationNumber,
-		// An individual is their own administrative contact, so the form only asks for the
-		// contact person's ID when the owner is an organization.
-		admin_identification_number: isIndividual
+		applicant_name: firstName && lastName ? `${ firstName } ${ lastName }` : '',
+		// The applicant is always a person. An individual is their own administrative contact;
+		// for an organization the form asks for the contact person's NIF/NIE separately.
+		applicant_identification_number: isIndividual
 			? registrantIdentificationNumber
 			: asTrimmedString( ccTldDetails.adminIdentificationNumber ),
 		domains: domainNames,
@@ -58,12 +56,7 @@ function canAcceptAgreement( entityType: unknown, values: RedEsAgreementValues )
 	if ( ! entityType ) {
 		return false;
 	}
-	return RED_ES_AGREEMENT_FIELDS.every( ( field ) => {
-		if ( field === 'organization' && entityType === INDIVIDUAL_ENTITY_TYPE ) {
-			return true;
-		}
-		return values[ field ].length > 0;
-	} );
+	return RED_ES_AGREEMENT_FIELDS.every( ( field ) => values[ field ].length > 0 );
 }
 
 function areAgreementValuesEqual( a: RedEsAgreementValues, b: RedEsAgreementValues ): boolean {

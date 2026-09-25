@@ -15,12 +15,14 @@ export const RED_ES_AGREEMENT_VERSION = 'anexo-iii-2024.01-r1';
 /**
  * The customer values interpolated in the agreement. Keep in sync with the `values` the backend
  * logs with the accepted version (DOMENG-1213).
+ *
+ * The applicant is always a person, never the company: the registrant when the owner is an
+ * individual, otherwise the contact person (the same first and last name) with the contact
+ * person's NIF/NIE.
  */
 export const RED_ES_AGREEMENT_FIELDS = [
-	'registrant_name',
-	'organization',
-	'identification_number',
-	'admin_identification_number',
+	'applicant_name',
+	'applicant_identification_number',
 	'domains',
 ] as const;
 
@@ -123,7 +125,6 @@ const dataProtectionTableEn = `
 </table>`;
 
 const bodyHtmlEn = `
-<p><em>This English translation is provided for convenience only. The Spanish version of this agreement is the legally binding text.</em></p>
 <p><strong>{{applicant}}</strong>, as applicant for the domain name <strong>{{domains}}</strong> (hereinafter, "the Applicant"), hereby declares that:</p>
 <ul>
 	<li>The REGISTRAR <strong>REALTIME REGISTER B.V.</strong> (hereinafter, "the REGISTRAR") is authorised to act on its behalf before Red.es (hereinafter, either "the Registry" or "the Assignment Authority"), and to take all actions necessary for the assignment and renewal of the domain name <strong>{{domains}}</strong> (hereinafter, "the Domain Name"), including receiving the corresponding notifications.</li>
@@ -202,10 +203,10 @@ export function interpolateRedEsAgreement(
 	date: string
 ): string {
 	const placeholders: Record< string, string > = {
-		applicant: escapeHtml( values.organization || values.registrant_name ),
+		applicant: escapeHtml( values.applicant_name ),
 		domains: values.domains.map( escapeHtml ).join( ', ' ),
-		admin_contact_name: escapeHtml( values.registrant_name ),
-		admin_contact_id: escapeHtml( values.admin_identification_number ),
+		admin_contact_name: escapeHtml( values.applicant_name ),
+		admin_contact_id: escapeHtml( values.applicant_identification_number ),
 		date: escapeHtml( date ),
 	};
 	return bodyHtml.replace(
