@@ -8,6 +8,7 @@ import PageLayout from '../../../components/page-layout';
 import PerformanceCard from '../../../sites/overview-performance-card';
 import SiteOverviewFields from '../../../sites/overview-site-fields';
 import VisibilityCard from '../../../sites/overview-visibility-card';
+import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
@@ -32,7 +33,9 @@ export default function AgencySiteOverview() {
 				<VisibilityCard site={ fullSite } />
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
-				<PerformanceCard site={ fullSite } />
+				{ siteTypeSupportsFeature( fullSite, 'performance' ) && (
+					<PerformanceCard site={ fullSite } />
+				) }
 			</Grid>
 			<ActivityCard />
 		</PageLayout>
