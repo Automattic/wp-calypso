@@ -1,7 +1,6 @@
 import {
 	Button,
 	Icon,
-	__experimentalGrid as Grid,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
@@ -12,6 +11,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { Card, CardBody } from '../../../components/card';
+import Grid from '../../../components/grid';
 
 interface DevToolSectionProps {
 	name: string;
@@ -42,7 +42,7 @@ export default function DevToolSection( {
 		<Card size="large">
 			<CardBody>
 				<Spacer padding={ isLargeViewport ? 4 : 0 } marginBottom={ 0 }>
-					<Grid columns={ isLargeViewport ? 2 : 1 } gap={ 8 } align="center">
+					<Grid columns={ isLargeViewport ? 2 : 1 } gap="2xl" align="center">
 						<VStack spacing={ 4 } alignment="flex-start">
 							<VStack spacing={ 2 }>
 								<HStack alignment="left" wrap>

@@ -36,7 +36,15 @@ describe( '<ContactForm>', () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-countries' ) )
-			.reply( 200, [ { code: 'FR', name: 'France' } ] )
+			.reply( 200, [
+				{ code: 'FR', name: 'France' },
+				{ code: 'CA', name: 'Canada' },
+			] )
+			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/CA' ) )
+			.reply( 200, [
+				{ code: 'AB', name: 'Alberta' },
+				{ code: 'BC', name: 'British Columbia' },
+			] )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/' ) )
 			.reply( 200, [] )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/meta/sms-country-codes/' ) )
@@ -47,6 +55,50 @@ describe( '<ContactForm>', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
+	} );
+
+	test( 'clears a state that does not belong to the selected country instead of substituting one', async () => {
+		render(
+			<ContactForm
+				initialData={ {
+					...frIndividualContact,
+					countryCode: 'CA',
+					city: 'Grande Prairie',
+					state: 'XX',
+					postalCode: 'T8V 7S1',
+					extra: {},
+				} }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const provinceSelect = await screen.findByRole( 'combobox', { name: 'Select Province' } );
+		expect( await screen.findByRole( 'option', { name: 'Alberta' } ) ).toBeVisible();
+		expect( provinceSelect ).toHaveValue( '' );
+	} );
+
+	test( 'shows the legal owner notice below the organization field', async () => {
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'textbox', { name: 'Organization (Optional)' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				/the listed organization will be considered the legal domain owner and that this information will be publicly visible/
+			)
+		).toBeVisible();
 	} );
 
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {
@@ -87,6 +139,83 @@ describe( '<ContactForm>', () => {
 				expect(
 					screen.queryByText( /An individual \.fr registrant cannot have an organization/ )
 				).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	// Regression test for DOMENG-1172: the registry rejects address lines shorter
+	// than two characters, so the form must catch them before submission.
+	test( 'blocks saving when a required address line is a single character', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const address1 = await screen.findByRole( 'textbox', { name: 'Address' } );
+
+		await user.clear( address1 );
+		await user.type( address1, 'a' );
+		// Blur the field so its validation message is revealed.
+		await user.tab();
+
+		expect( await screen.findByText( 'Value is too short.' ) ).toBeVisible();
+		await waitFor( () => expect( save ).toBeDisabled(), { timeout: 3000 } );
+
+		await user.type( address1, 'b' );
+
+		await waitFor(
+			() => {
+				expect( screen.queryByText( 'Value is too short.' ) ).not.toBeInTheDocument();
+				expect( save ).toBeEnabled();
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	// The second address line is optional, so an empty value must stay valid while
+	// a single character is still rejected. Start from a non-empty line 2 so that
+	// clearing it is still an edit (Save is gated on the form being dirty).
+	test( 'keeps an empty second address line valid but rejects a single character', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ContactForm
+				initialData={ { ...frIndividualContact, address2: 'Second floor' } }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		const address2 = await screen.findByRole( 'textbox', { name: /Address line 2/ } );
+
+		await user.clear( address2 );
+		await user.type( address2, 'a' );
+		// Blur the field so its validation message is revealed.
+		await user.tab();
+
+		expect( await screen.findByText( 'Value is too short.' ) ).toBeVisible();
+		await waitFor( () => expect( save ).toBeDisabled(), { timeout: 3000 } );
+
+		// Clearing it back to empty is valid — the field is optional — so saving is
+		// unblocked even though line 2 is now blank.
+		await user.clear( address2 );
+
+		await waitFor(
+			() => {
+				expect( screen.queryByText( 'Value is too short.' ) ).not.toBeInTheDocument();
 				expect( save ).toBeEnabled();
 			},
 			{ timeout: 3000 }

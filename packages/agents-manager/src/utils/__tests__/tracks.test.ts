@@ -36,7 +36,7 @@ function lastEventProps(): Record< string, unknown > {
 	return ( call?.[ 1 ] ?? {} ) as Record< string, unknown >;
 }
 
-/** The Big Sky event records first; a mirrored unified event follows it. */
+/** The Big Sky event records first; a mirrored Agents Manager event follows it. */
 function bigSkyProps(): Record< string, unknown > {
 	return ( mockRecordTracksEvent.mock.calls[ 0 ]?.[ 1 ] ?? {} ) as Record< string, unknown >;
 }
@@ -206,8 +206,8 @@ describe( 'tracks wrappers', () => {
 		} );
 	} );
 
-	describe( 'unified mirror of Big Sky events', () => {
-		it( 'sends the caller props with the unified base props, not the Big Sky ones', () => {
+	describe( 'Agents Manager mirror of Big Sky events', () => {
+		it( 'sends the caller props with the shared base props, not the Big Sky ones', () => {
 			recordBigSkyTracksEvent( 'jetpack_big_sky_response_action_thumbs_up', {
 				message_id: 'message-1',
 			} );
@@ -253,8 +253,41 @@ describe( 'tracks wrappers', () => {
 		);
 	} );
 
+	describe( 'turn id', () => {
+		beforeEach( () => {
+			sessionStorage.setItem( 'agents-manager-turn-id', 'turn-1' );
+		} );
+
+		afterEach( () => {
+			sessionStorage.removeItem( 'agents-manager-turn-id' );
+		} );
+
+		it.each( [
+			'ability_completed',
+			'chat_response_completed',
+			'chat_response_stopped',
+			'chat_error',
+		] )( 'puts the turn on %s', ( suffix ) => {
+			recordAgentsManagerTracksEvent( `calypso_agents_manager_${ suffix }` );
+			expect( lastEventProps().turn_id ).toBe( 'turn-1' );
+		} );
+
+		it( 'puts the turn on the unified send, not on the Big Sky one', () => {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+
+			const [ bigSky, unified ] = mockRecordTracksEvent.mock.calls.map( ( [ , props ] ) => props );
+			expect( bigSky ).not.toHaveProperty( 'turn_id' );
+			expect( unified.turn_id ).toBe( 'turn-1' );
+		} );
+
+		it( 'keeps it off events that are not part of a turn', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+			expect( lastEventProps() ).not.toHaveProperty( 'turn_id' );
+		} );
+	} );
+
 	describe( 'recordAgentsManagerTracksEvent', () => {
-		it( 'injects the unified base-prop set', () => {
+		it( 'injects the shared base-prop set', () => {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
@@ -302,14 +335,14 @@ describe( 'tracks wrappers', () => {
 				delete ( window as { pagenow?: string } ).pagenow;
 			} );
 
-			it( 'reports ciab when the host section is Commerce in a Box', () => {
+			it( 'reports wp-admin when a host payload was injected', () => {
 				( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
-					sectionName: 'ciab',
+					sectionName: 'wp-admin',
 				};
 
 				recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
 
-				expect( lastEventProps().surface ).toBe( 'ciab' );
+				expect( lastEventProps().surface ).toBe( 'wp-admin' );
 			} );
 
 			it( 'reports calypso when no host payload was injected', () => {
@@ -528,6 +561,31 @@ describe( 'tracks wrappers', () => {
 				expect( lastEventProps() ).not.toHaveProperty( 'is_a11n' );
 			}
 		);
+	} );
+
+	describe( "the site's tracking opt-in", () => {
+		it( 'records nothing from either family when the host says tracking is off', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				isTrackingAllowed: false,
+			};
+
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened' );
+
+			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'records as before when the host says nothing', () => {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_opened' );
+
+			expect( recordedEventNames() ).toEqual( [
+				'jetpack_big_sky_chat_input_send_message',
+				'calypso_agents_manager_chat_input_send_message',
+				'calypso_agents_manager_chat_opened',
+			] );
+		} );
 	} );
 
 	describe( 'is_test (getIsTest)', () => {

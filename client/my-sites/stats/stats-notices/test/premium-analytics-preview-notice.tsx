@@ -80,7 +80,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	it( 'invites the site to switch the new dashboard on', () => {
 		renderNotice();
 
-		expect( screen.getByText( 'Try the new Traffic tab' ) ).toBeVisible();
+		expect( screen.getByText( 'Try the new Stats' ) ).toBeVisible();
 		// Accepting leaves the page, so the invitation says so up front.
 		expect(
 			screen.getByText(
@@ -114,7 +114,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		] );
 	} );
 
-	it( 'switches on, records it, and takes the reader to the new Traffic tab', async () => {
+	it( 'switches on, records it, and takes the reader to the new Stats', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
@@ -180,7 +180,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		expect( screen.getByText( 'We couldn’t switch on the new Traffic tab' ) ).toBeVisible();
+		expect( screen.getByText( 'We couldn’t switch on the new Stats' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Contact support/ } ) ).toHaveAttribute(
 			'href',
 			'/help/contact'
@@ -330,7 +330,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
-		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Try the new Stats' ) ).not.toBeInTheDocument();
 		settle();
 	} );
 
@@ -341,7 +341,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
-		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Try the new Stats' ) ).not.toBeInTheDocument();
 		await waitFor( () =>
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_stats_premium_analytics_preview_notice_dismiss_failed',
@@ -378,7 +378,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		const { rerender } = renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Try the new Stats' ) ).not.toBeInTheDocument();
 
 		rerender(
 			<PremiumAnalyticsPreviewNotice
@@ -388,11 +388,11 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Try the new Traffic tab' ) ).toBeVisible();
+		expect( screen.getByText( 'Try the new Stats' ) ).toBeVisible();
 	} );
 
 	/**
-	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * Back from the preview, the browser can restore this page from its cache with the
 	 * button still busy. The site is on by then, so the cache says so and the notices host takes
 	 * the invitation down.
 	 */

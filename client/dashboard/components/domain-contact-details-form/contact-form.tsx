@@ -71,10 +71,11 @@ export default function ContactForm( {
 			return formData;
 		}
 
-		// If current state is not in the statesList, use the first available state
+		// A state from another country (or free text) has no entry in the list, so
+		// clear it and let the user pick one rather than silently substituting.
 		const isValidState = statesList.some( ( state ) => state.code === formData.state );
 		if ( formData.state && ! isValidState ) {
-			return { ...formData, state: statesList[ 0 ]?.code };
+			return { ...formData, state: '' };
 		}
 
 		return formData;
@@ -163,6 +164,10 @@ export default function ContactForm( {
 				children: [ 'firstName', 'lastName' ],
 			} as FormField,
 			'organization',
+			{
+				id: 'organizationNotice',
+				layout: { type: 'regular' as const, labelPosition: 'none' as const },
+			} as FormField,
 			'email',
 			'phone',
 			'countryCode',

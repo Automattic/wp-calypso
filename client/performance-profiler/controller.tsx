@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Context } from '@automattic/calypso-router';
-import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -29,7 +30,7 @@ export function PerformanceProfilerWrapper( {
 		<>
 			{ isLoggedIn && <Nav2026UniversalHeader isLoggedIn /> }
 			<Main fullWidthLayout>{ children }</Main>
-			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
+			<GlobalFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
 		</>
 	);
 }

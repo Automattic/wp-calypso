@@ -6,7 +6,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -16,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import Divider from '../../../components/divider';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { isAgencyApproved } from '../is-agency-approved';
@@ -30,7 +30,9 @@ import { useMarketplaceType } from '../use-marketplace-type';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
+import PressableUsageLimitNotice from './pressable-usage-limit-notice';
 import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
@@ -192,6 +194,8 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				/>
 			}
 		>
+			<PressableUsageLimitNotice agency={ agency } />
+			<PressableOffers agency={ agency } />
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
 					<HStack justify="space-between" wrap>

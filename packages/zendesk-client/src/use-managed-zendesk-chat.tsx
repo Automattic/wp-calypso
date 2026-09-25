@@ -336,11 +336,13 @@ export const useManagedZendeskChat = ( {
 
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
+		connectionStatusRef.current = 'disconnected';
 		setConnectionStatus( 'disconnected' );
 		recordZendeskTracksEvent( 'calypso_smooch_messenger_disconnected' );
 	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const reconnectingListener = useCallback( () => {
+		connectionStatusRef.current = 'reconnecting';
 		setConnectionStatus( 'reconnecting' );
 		recordZendeskTracksEvent( 'calypso_smooch_messenger_reconnecting' );
 	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
@@ -361,11 +363,12 @@ export const useManagedZendeskChat = ( {
 	const connectedListener = useCallback( () => {
 		// We only want to revert the connection status to connected if it was disconnected before.
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
-		if ( connectionStatus ) {
+		if ( connectionStatusRef.current ) {
+			connectionStatusRef.current = 'connected';
 			setConnectionStatus( 'connected' );
 			recordZendeskTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
-	}, [ setConnectionStatus, connectionStatus, recordZendeskTracksEvent ] );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const navigate = useNavigate();
 

@@ -11,6 +11,7 @@ import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/pay
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import { createEbanxTokenVgs } from './create-ebanx-token-vgs';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
@@ -200,6 +201,25 @@ async function ebanxCardProcessor(
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
+	let cart = createTransactionEndpointCartFromResponseCart( {
+		siteId: transactionOptions.siteId,
+		contactDetails:
+			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+		responseCart: transactionOptions.responseCart,
+	} );
+
+	// EBANX tokenization requires a logged-in session, so for logged-out
+	// checkout the account must be created (which logs the user in) before we
+	// tokenize, rather than inside `submitWpcomTransaction` as other processors do.
+	if ( transactionOptions.createUserAndSiteBeforeTransaction ) {
+		try {
+			cart = await createWpcomAccountBeforeTransaction( cart, transactionOptions );
+		} catch ( error ) {
+			debug( 'account creation failed' );
+			return makeErrorResponse( ( error as Error ).message );
+		}
+	}
+
 	let paymentMethodToken;
 	let ebanxTokenResponse: EbanxTokenizeResponse;
 	try {
@@ -229,16 +249,14 @@ async function ebanxCardProcessor(
 			includeGSuiteDetails,
 		} ),
 		paymentMethodToken: paymentMethodToken.token,
-		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId,
-			contactDetails:
-				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
-			responseCart: transactionOptions.responseCart,
-		} ),
+		cart,
 		paymentMethodType: 'WPCOM_Billing_Ebanx',
 	} );
 	debug( 'sending ebanx transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+	return submitWpcomTransaction( formattedTransactionData, {
+		...transactionOptions,
+		createUserAndSiteBeforeTransaction: false,
+	} )
 		.then( makeSuccessResponse )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );

@@ -1,18 +1,26 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/theme/design-tokens.css';
+@import '@wordpress/dataviews/build-style/style.css';
 @import 'calypso/dashboard/app/dataforms-overrides.scss';
 @import 'calypso/dashboard/app/dataviews-overrides.scss';
 @import 'calypso/dashboard/app/wp-components-overrides.scss';
 @import 'calypso/dashboard/app-dotcom/style.scss';
 
-.dashboard-backport-site-purchases {
-	.dashboard-page-layout {
-		margin: 0;
-		padding: 0;
+// Calypso's body text is 16px, so anything the Dashboard screens leave to
+// inherit, including the popovers and modals they portal into the body, would
+// render larger than it does in the Dashboard.
+.dashboard-backport-site-purchases,
+body:has( .dashboard-backport-site-purchases ) :is( .components-popover, .components-modal__screen-overlay ) {
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+}
 
-		// The narrow screens have no section tabs to line up with, so they sit
-		// centered in the classic wide layout rather than against its left edge.
-		&.is-small {
-			margin-inline: auto;
-		}
+.dashboard-backport-site-purchases {
+	// The classic layout already pads the content area, so the page layout only
+	// keeps its own max width, which drives the DataViews column breakpoints.
+	.dashboard-page-layout {
+		margin-block: 0;
+		padding: 0;
 	}
 
 	// The section tabs are handed to the page layout, which owns the vertical
@@ -26,6 +34,38 @@
 		// Here, we revert it to make <p> look good in DataViews' empty state.
 		p {
 			margin-block-end: revert;
+		}
+	}
+}
+
+// The classic layout's top spacing leaves room for a compact classic header;
+// the Dashboard page header is already sized for its own 24px page padding.
+@media ( min-width: 661px ) {
+	.layout:has( .dashboard-backport-site-purchases ) .layout__content {
+		--_layout__content-top-spacing: calc( var( --masterbar-height ) + #{$grid-unit-30} );
+	}
+}
+
+// The Dashboard theme above is WordPress.com blue; the classic Jetpack Cloud
+// purchase pages these screens replace used Jetpack green.
+.theme-jetpack-cloud .dashboard-backport-site-purchases {
+	--wp-admin-theme-color: var( --studio-jetpack-green-50 );
+	--wp-admin-theme-color-darker-10: var( --studio-jetpack-green-60 );
+	--wp-admin-theme-color-darker-20: var( --studio-jetpack-green-70 );
+}
+
+.layout__primary .main {
+	& div.section-nav {
+		@media ( max-width: 480px ) {
+			&.is-open {
+				& > .section-nav__panel {
+					padding: 0;
+
+					& > .section-nav-group {
+						margin-block-start: 0;
+					}
+				}
+			}
 		}
 	}
 }

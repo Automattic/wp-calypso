@@ -8,6 +8,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
 import { usePersistentView } from '../use-persistent-view';
+import type { QueryParamFilterField } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -204,6 +205,33 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
+		it( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper } = createTestWrapper();
+
+			const queryParams = { status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView,
+						queryParams,
+						queryParamFilterFields,
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'status', operator: 'is', value: 'unassigned' },
+				] );
+			} );
+		} );
+
 		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
@@ -329,6 +357,42 @@ describe( 'usePersistentView', () => {
 				result.current.updateView( {
 					...defaultView,
 					filters: [ { field: 'status', operator: 'isAny', value: [ 'active' ] } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+		} );
+
+		it( 'should remove a bare-value transient filter from the current URL query params if no longer in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', status: 'unassigned' };
+			const queryParamFilterFields: QueryParamFilterField[] = [
+				{ field: 'status', operator: 'is' },
+			];
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams, queryParamFilterFields } ),
+				{
+					wrapper: Wrapper,
+				}
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					filters: [ { field: 'status', operator: 'is', value: 'assigned' } ],
 				} );
 			} );
 

@@ -1,16 +1,14 @@
-import { useDebounce, useEvent } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
-
-const DELAY_TIMEOUT = 300;
+import { sanitizeDomainInput } from '../helpers';
+import './search-input.scss';
 
 export const NamePulseSearchInput = () => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
-	const debouncedSetQuery = useDebounce( useEvent( setQuery ), DELAY_TIMEOUT );
 	const inputRef = useRef< HTMLInputElement >( null );
 
 	// The page swaps InitialState for NamePulseResults on the first query, which
@@ -21,14 +19,15 @@ export const NamePulseSearchInput = () => {
 		input?.setSelectionRange( input.value.length, input.value.length );
 	}, [] );
 
+	// The query comes back normalised; keep what the user typed unless it changed.
 	useEffect( () => {
 		setLocalQuery( ( current ) =>
-			current.trim().toLowerCase() === query.toLowerCase() ? current : query
+			sanitizeDomainInput( current ) === sanitizeDomainInput( query ) ? current : query
 		);
 	}, [ query ] );
 
 	return (
-		<div className="domain-search__search-bar">
+		<div className="domain-search__search-bar name-pulse-search-input">
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
@@ -39,9 +38,8 @@ export const NamePulseSearchInput = () => {
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
-						debouncedSetQuery( trimmedValue );
+						setQuery( trimmedValue, 'input_changed' );
 					} else {
-						debouncedSetQuery.cancel();
 						events.onQueryClear();
 					}
 				} }

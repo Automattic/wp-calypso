@@ -15,6 +15,7 @@ import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
 import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
 
 export default function MarketplacePurchases() {
@@ -30,6 +31,7 @@ export default function MarketplacePurchases() {
 		slug: 'marketplace-purchases',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ { field: 'status', operator: 'is' } ],
 	} );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
@@ -37,11 +39,12 @@ export default function MarketplacePurchases() {
 		enabled: agencyId > 0,
 		placeholderData: keepPreviousData,
 	} );
+	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
 	const fields = useMemo(
-		() => getLicenseFields( { locale, isAgencyOwner } ),
-		[ locale, isAgencyOwner ]
+		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys } ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys ]
 	);
-	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner } );
+	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner, isProvisioning } );
 
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,

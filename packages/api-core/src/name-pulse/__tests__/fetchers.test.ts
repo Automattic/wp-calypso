@@ -6,7 +6,7 @@ const BASE = 'https://public-api.wordpress.com';
 describe( 'fetchNamePulseSuggestions', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'requests keyword suggestions with use_ai=0 and the default providers', async () => {
+	it( 'requests keyword suggestions with use_ai=0, domainsbot and no timeout', async () => {
 		const scope = nock( BASE )
 			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
 			.query(
@@ -14,7 +14,8 @@ describe( 'fetchNamePulseSuggestions', () => {
 					query.query === 'coffee shop' &&
 					query.use_ai === '0' &&
 					query.allow_premium === 'true' &&
-					query.providers === 'verisign,domainsbot'
+					query.providers === 'domainsbot' &&
+					query.timeout === undefined
 			)
 			.reply( 200, {
 				suggestions: [
@@ -29,6 +30,30 @@ describe( 'fetchNamePulseSuggestions', () => {
 		expect( scope.isDone() ).toBe( true );
 		expect( response.suggestions ).toHaveLength( 2 );
 		expect( response.errors ).toHaveLength( 1 );
+	} );
+
+	it( 'requests AI suggestions with use_ai=1, verisign and the timeout in milliseconds', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
+			.query(
+				( query ) =>
+					query.query === 'a blog about coffee' &&
+					query.use_ai === '1' &&
+					query.allow_premium === 'true' &&
+					query.providers === 'verisign' &&
+					query.timeout === '10000'
+			)
+			.reply( 200, { suggestions: [ { domain_name: 'dailybrew.blog', relevance: 0.8 } ] } );
+
+		const response = await fetchNamePulseSuggestions( {
+			query: 'a blog about coffee',
+			use_ai: true,
+			timeout: 10000,
+		} );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( response.suggestions ).toHaveLength( 1 );
+		expect( response.errors ).toEqual( [] );
 	} );
 } );
 

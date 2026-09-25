@@ -1,29 +1,57 @@
-import { detectFqdn } from './detect-fqdn';
+import { detectFqdn, type FqdnDetails } from './detect-fqdn';
 import { getWordCount, sanitizeDomainInput, sanitizeKeywordInput } from './sanitize';
 
 export type NamePulseMode = 'empty' | 'fqdn' | 'single' | 'keyword' | 'ai';
 
-export interface NamePulseResultsLayout {
+export interface NamePulseResultsLayout extends FqdnDetails {
 	mode: NamePulseMode;
 	baseName: string;
 	wordCount: number;
 	fqdn?: { baseName: string; tld: string; fullDomain: string };
+	top: { show: boolean };
 	exactGrid: { show: boolean };
 	suggestions: { show: boolean };
+	creative: { show: boolean };
 }
 
-type NamePulseSections = Pick< NamePulseResultsLayout, 'exactGrid' | 'suggestions' >;
+type NamePulseSections = Pick<
+	NamePulseResultsLayout,
+	'top' | 'exactGrid' | 'suggestions' | 'creative'
+>;
 
 const AI_MODE_MIN_WORDS = 4;
 
-// The fqdn and ai rows are placeholders that keep the exact-match behaviour
-// until those modes are built.
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
-	empty: { exactGrid: { show: false }, suggestions: { show: false } },
-	fqdn: { exactGrid: { show: true }, suggestions: { show: false } },
-	single: { exactGrid: { show: true }, suggestions: { show: false } },
-	keyword: { exactGrid: { show: true }, suggestions: { show: true } },
-	ai: { exactGrid: { show: true }, suggestions: { show: true } },
+	empty: {
+		top: { show: false },
+		exactGrid: { show: false },
+		suggestions: { show: false },
+		creative: { show: false },
+	},
+	fqdn: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: true },
+		creative: { show: false },
+	},
+	single: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: true },
+		creative: { show: false },
+	},
+	keyword: {
+		top: { show: true },
+		exactGrid: { show: true },
+		suggestions: { show: true },
+		creative: { show: false },
+	},
+	ai: {
+		top: { show: true },
+		exactGrid: { show: false },
+		suggestions: { show: true },
+		creative: { show: true },
+	},
 };
 
 function getMode( baseName: string, wordCount: number, isFqdn: boolean ): NamePulseMode {
@@ -54,9 +82,9 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 	const fqdn = detection?.isFqdn
 		? { baseName: detection.baseName, tld: detection.tld, fullDomain: detection.fullDomain }
 		: undefined;
-	const baseName = fqdn
-		? fqdn.baseName
-		: sanitizeDomainInput( isMultiWord ? sanitizeKeywordInput( trimmed ) : trimmed );
+	const baseName = detection
+		? detection.baseName
+		: sanitizeDomainInput( sanitizeKeywordInput( trimmed ) );
 	const wordCount = isMultiWord ? getWordCount( trimmed ) : Number( baseName.length > 0 );
 	const mode = getMode( baseName, wordCount, Boolean( fqdn ) );
 
@@ -65,6 +93,9 @@ export function getResultsLayout( query: string, tlds: readonly string[] ): Name
 		baseName,
 		wordCount,
 		...( fqdn ? { fqdn } : {} ),
+		...( detection?.subdomain ? { subdomain: detection.subdomain } : {} ),
+		...( detection?.unknownEnding ? { unknownEnding: detection.unknownEnding } : {} ),
+		...( detection?.isFreeSubdomain ? { isFreeSubdomain: detection.isFreeSubdomain } : {} ),
 		...SECTIONS_BY_MODE[ mode ],
 	};
 }

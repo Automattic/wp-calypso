@@ -37,6 +37,7 @@ describe( 'ProcessingStep', () => {
 		jest.clearAllMocks();
 		onboardActions().setTransferStatus( null );
 		onboardActions().setTransferStartedAt( null );
+		onboardActions().setTransferTimedOut( false );
 	} );
 
 	it( 'shows the transfer wait for a transferring hosted site creation flow', () => {
@@ -74,6 +75,19 @@ describe( 'ProcessingStep', () => {
 			'/sites/example.wordpress.com'
 		);
 		jest.useRealTimers();
+	} );
+
+	it( 'passes a timed-out wait through to the transfer card', () => {
+		onboardActions().setTransferStatus( transferStates.ACTIVE );
+		onboardActions().setTransferTimedOut( true );
+
+		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
+
+		expect( screen.getByText( /Your site is still being set up/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com'
+		);
 	} );
 
 	// The processing step is seen mounting twice for one signup in production, a second or less

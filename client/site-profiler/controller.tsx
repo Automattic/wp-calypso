@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
-import { getFooterColorway, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SiteProfiler from './components/site-profiler';
 import SiteProfilerV2 from './components/site-profiler-v2';
@@ -53,7 +54,7 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 				<SiteProfilerComponent routerDomain={ routerDomain } />
 			</Main>
 
-			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
+			<GlobalFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
 		</>
 	);
 
@@ -81,7 +82,7 @@ export const siteProfilerReportContext: Callback = ( context, next ) => {
 				/>
 			</Main>
 
-			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
+			<GlobalFooter isLoggedIn={ isLoggedIn } colorway={ footerColorway } />
 		</>
 	);
 

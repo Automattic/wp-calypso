@@ -1,7 +1,6 @@
 import { siteGranularBackupDownloadInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -15,6 +14,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
+import Grid from '../../components/grid';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { ImagePreview } from './image-preview';
@@ -142,7 +142,7 @@ export function BackupDetails( {
 							</Text>
 						) }
 					</HStack>
-					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))">
+					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
 							backup.streams.map( ( item, index ) => (
 								<ImagePreview key={ index } item={ item } multipleImages />

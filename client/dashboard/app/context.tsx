@@ -11,6 +11,7 @@ import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
+	User,
 } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
 
@@ -87,6 +88,10 @@ export type AppConfig = {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
+		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
+		omnibar?: React.FC< { user?: User } >;
+		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
+		helpCenter?: React.FC;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;

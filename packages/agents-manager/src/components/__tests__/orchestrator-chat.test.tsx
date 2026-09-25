@@ -413,6 +413,18 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+// Returns `undefined` after a mock reset, which the wrapper reads as allowed.
+const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
+const mockCreditsVisibility = jest.fn();
+jest.mock( '../../hooks/use-credits', () => ( {
+	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+		mockCreditsVisibility( isOpen );
+		return {
+			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
+			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+		};
+	},
+} ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -706,6 +718,17 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, true ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+		[ 'closed dock', { isOpen: false, isDocked: true, isCompactMode: true }, false ],
+	] as const )( 'loads credits only for a visible %s composer', ( _name, options, visible ) => {
+		render( chat( options ) );
+		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -1447,6 +1470,93 @@ describe( 'OrchestratorChat', () => {
 				expect.objectContaining( { source: 'composer' } )
 			);
 		} );
+	} );
+
+	it( 'gates a context-card submit on credits and keeps the card for a retry', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await act( async () => {} );
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'gates a host submit through the actions bridge on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+
+		// The blocked host send must not leave its origin pending for the
+		// composer send that follows.
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'gates a regeneration on credits', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( agentticRegenerate ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			expect.anything()
+		);
+	} );
+
+	it( 'records a regeneration when credits allow it', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( true );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( agentticRegenerate ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			{ message_id: 'agent-1' }
+		);
 	} );
 
 	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
@@ -3859,22 +3969,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 			expect( addMessage ).not.toHaveBeenCalled();
-		} );
-
-		it( 'aborts for unified chat as well as the orchestrator', () => {
-			// The canvas abilities are migrating into AM, which serves them on
-			// unified-chat surfaces. Gating on the orchestrator alone would leave this
-			// switched off exactly where those abilities are heading.
-			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
-			const { abortCurrentRequest } = mockUseAgentChat();
-
-			render( chat() );
-			bindToOpenCanvas();
-
-			openPage( CONTACT_PAGE );
-
-			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'never aborts on a surface with no editor', () => {

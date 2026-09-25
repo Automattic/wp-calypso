@@ -5,7 +5,6 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
-// eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
 import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';

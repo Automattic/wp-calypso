@@ -1,6 +1,7 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { getMarketplaceReferHostingRoute } from '../paths';
 import AvalaraLogo from './images/avalara.svg';
 import JetpackLogo from './images/jetpack-descriptor.svg';
 import PressableLogo from './images/pressable-descriptor.svg';
@@ -11,8 +12,7 @@ import WordPressDotComLogo from './images/wordpressdotcom-descriptor.svg';
 import type { PartnerOffer } from './types';
 
 // Marketplace constant values inlined from client/a8c-for-agencies so the
-// dashboard has no dependency on the classic A4A app. These CTA links resolve
-// in the classic A4A marketplace until a dashboard Marketplace exists.
+// dashboard has no dependency on the classic A4A app.
 const MARKETPLACE_TYPE_REFERRAL = 'referral';
 const MARKETPLACE_TYPE_REGULAR = 'regular';
 const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
@@ -20,9 +20,9 @@ const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
 const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = '/marketplace/hosting/wpcom';
 const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = '/marketplace/hosting/pressable';
 const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK =
-	'/marketplace/hosting/refer-pressable-premium-plan';
+	getMarketplaceReferHostingRoute( 'premium' );
 const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK =
-	'/marketplace/hosting/refer-enterprise-hosting';
+	getMarketplaceReferHostingRoute( 'enterprise' );
 const A4A_MARKETPLACE_PRODUCTS_LINK = '/marketplace/products';
 const A4A_WOOPAYMENTS_OVERVIEW_LINK = '/woopayments/overview';
 
@@ -214,23 +214,6 @@ export const partnerOffers: PartnerOffer[] = [
 			label: __( 'Save on Woo' ),
 			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
 				category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
-			} ),
-			purchase_type: MARKETPLACE_TYPE_REGULAR,
-		},
-	},
-	{
-		id: 'jetpack-products-resell',
-		offerType: 'resell',
-		product: 'jetpack',
-		logo: <img src={ JetpackLogo } alt="Jetpack" />,
-		title: __( 'Get up to 80% off' ),
-		description: __(
-			'Get up to 80% off Jetpack’s security, performance, and growth products when you buy in bulk and resell to your clients.'
-		),
-		cta: {
-			label: __( 'Save on Jetpack' ),
-			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
-				category: PRODUCT_BRAND_FILTER_JETPACK,
 			} ),
 			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},

@@ -23,7 +23,6 @@ import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls'
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -66,6 +65,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
@@ -76,6 +76,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -107,6 +108,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
+	getDelayedDowngradeRenewalPriceText,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -138,9 +140,9 @@ import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const SPACING = {
-	DEFAULT: 6,
-	SMALL: 4,
-};
+	DEFAULT: 'xl',
+	SMALL: 'lg',
+} as const;
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -163,7 +165,7 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
+	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
 	return href
 		? {
 				href,
@@ -221,7 +223,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
-		...getPlanChangeReturnUrls(),
+		...getPlanChangeReturnUrls( purchase ),
 		upgradeOnly: true,
 	} );
 	if ( planAction ) {
@@ -246,6 +248,11 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
+	// Jetpack Cloud has no domain or email management of its own.
+	if ( isJetpackCloud() ) {
+		return null;
+	}
+
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -621,7 +628,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		} );
 
 	if ( isDotcomPlan( purchase ) ) {
-		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls() );
+		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls( purchase ) );
 		if ( ! action ) {
 			return null;
 		}
@@ -1117,6 +1124,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const isCentennial = isCentennialPurchase( purchase );
 	// Email plans are billed per mailbox; show the per-mailbox renewal price.
 	if ( isEmailPlanManagementEnabled( purchase ) && ! purchase.is_trial_plan ) {
@@ -1168,6 +1176,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				} ),
 			} )
 		: '';
+	// The offer text describes the current plan, which won't renew if a downgrade is scheduled.
+	const renewalNote =
+		getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation ) ?? offerText;
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -1176,7 +1187,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				isSmallestUnit: true,
 			} ) }
 			description={
-				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + renewalNote
 			}
 		/>
 	);
@@ -1353,7 +1364,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
 					),
 					{
-						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+						a: (
+							<a
+								href={ wpcomLink(
+									domainManagementEdit( purchase.site_slug, domain.domain, null )
+								) }
+							/>
+						),
 					}
 				) }
 			</Text>
@@ -1372,10 +1389,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					{
 						a: (
 							<a
-								href={ domainUseMyDomain(
-									purchase.site_slug,
-									purchase.meta,
-									useMyDomainInputMode.startPendingTransfer
+								href={ wpcomLink(
+									domainUseMyDomain(
+										purchase.site_slug,
+										purchase.meta,
+										useMyDomainInputMode.startPendingTransfer
+									)
 								) }
 							/>
 						),
@@ -1583,6 +1602,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 export default function PurchaseSettings() {
 	const { user } = useAuth();
+	const hasEnTranslation = useHasEnTranslation();
 	const { supports } = useAppContext();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
@@ -1629,7 +1649,12 @@ export default function PurchaseSettings() {
 			return __( 'Paid until' );
 		}
 		if ( displayRenewDate ) {
-			return __( 'Renews' );
+			return purchase.is_delayed_downgrade_pending && hasEnTranslation( 'Downgrades and renews' )
+				? __( 'Downgrades and renews' )
+				: __( 'Renews' );
+		}
+		if ( isOneTimePurchase( purchase ) ) {
+			return __( 'Renewal status' );
 		}
 		return __( 'Expires' );
 	} )();
@@ -1762,7 +1787,10 @@ export default function PurchaseSettings() {
 									if ( isExpiredAndInGracePeriod( purchase ) ) {
 										return formattedExpiry;
 									}
-									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'One-time purchase' );
+									}
+									if ( isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
 									if ( displayRenewDate ) {
@@ -1805,6 +1833,9 @@ export default function PurchaseSettings() {
 									}
 									if ( purchase.is_auto_renew_enabled ) {
 										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'Does not renew' );
 									}
 									return __( 'Auto-renew is disabled' );
 								} )() }

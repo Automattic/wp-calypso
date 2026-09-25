@@ -49,7 +49,10 @@ const SORTABLE_FIELDS = [
 ];
 
 export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
-	const status = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
+	// The endpoint takes one status, so the field is single-select. A view
+	// persisted while it was multi-select still holds an array.
+	const rawStatus = view.filters?.find( ( filter ) => filter.field === 'status' )?.value;
+	const status = Array.isArray( rawStatus ) ? rawStatus[ 0 ] : rawStatus;
 	const sortField = SORTABLE_FIELDS.find( ( field ) => field === view.sort?.field );
 
 	return {
@@ -74,9 +77,11 @@ const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 function SiteCell( {
 	license,
 	isAgencyOwner,
+	isProvisioning,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
+	isProvisioning: boolean;
 } ) {
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
@@ -89,7 +94,11 @@ function SiteCell( {
 		return <Text variant="muted">—</Text>;
 	}
 	if ( ! license.siteurl ) {
-		return <Text variant="muted">{ __( 'Not assigned' ) }</Text>;
+		return (
+			<Text variant="muted">
+				{ isProvisioning ? __( 'Being created…' ) : __( 'Not assigned' ) }
+			</Text>
+		);
 	}
 	return (
 		<ExternalLink href={ license.siteurl }>{ getSiteHostname( license.siteurl ) }</ExternalLink>
@@ -136,9 +145,11 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
+	provisioningLicenseKeys,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
+	provisioningLicenseKeys: Set< string >;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
@@ -181,7 +192,13 @@ export function getLicenseFields( {
 			filterBy: false,
 			enableSorting: false,
 			getValue: ( { item } ) => item.siteurl ?? '',
-			render: ( { item } ) => <SiteCell license={ item } isAgencyOwner={ isAgencyOwner } />,
+			render: ( { item } ) => (
+				<SiteCell
+					license={ item }
+					isAgencyOwner={ isAgencyOwner }
+					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+				/>
+			),
 		},
 		{
 			id: 'issued_at',
