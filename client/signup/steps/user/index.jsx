@@ -28,6 +28,7 @@ import { getPartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
+import { getMobileAppClientName } from 'calypso/login/wp-login/hooks/get-header-text';
 import getHeadingSubText from 'calypso/login/wp-login/hooks/get-heading-subtext';
 import getNoThanksRedirectUrl from 'calypso/login/wp-login/hooks/get-no-thanks-redirect';
 import flows from 'calypso/signup/config/flows';
@@ -48,6 +49,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
@@ -438,7 +440,14 @@ export class UserStep extends Component {
 			isJetpackCloud,
 			isStudioApp,
 			isBlazePro,
+			isJetpackApp,
 		} = this.props;
+
+		const mobileAppClientName = getMobileAppClientName( {
+			oauth2Client,
+			isJetpackApp,
+			translate,
+		} );
 
 		/**
 		 * BEGIN: Unified create account
@@ -453,12 +462,15 @@ export class UserStep extends Component {
 					isA4A ||
 					isBlazePro ||
 					isJetpackCloud ||
-					isStudioApp ) ) ||
+					isStudioApp ||
+					mobileAppClientName ) ) ||
 			isAkismet
 		) {
 			let clientName = oauth2Client?.name;
 
-			if ( isAkismet ) {
+			if ( mobileAppClientName ) {
+				clientName = mobileAppClientName;
+			} else if ( isAkismet ) {
 				clientName = 'Akismet';
 			} else if ( isA4A ) {
 				clientName = 'Automattic for Agencies';
@@ -474,7 +486,15 @@ export class UserStep extends Component {
 				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
 				newCopy: translate( 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com', {
 					args: { client: clientName },
-					components: { span: <span className="wp-login__one-login-header-client-name" /> },
+					components: {
+						span: (
+							<span
+								className={ clsx( 'wp-login__one-login-header-client-name', {
+									'is-exact-case': !! mobileAppClientName,
+								} ) }
+							/>
+						),
+					},
 				} ),
 				oldCopy: translate( 'Create your account' ),
 			} );
@@ -716,6 +736,7 @@ const ConnectedUser = connect(
 			isVIPClient,
 			isJetpackCloud,
 			isStudioApp,
+			isJetpackApp: getIsJetpackApp( state ),
 		};
 	},
 	{
