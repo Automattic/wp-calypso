@@ -138,11 +138,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			);
 		}
 
-		if ( category === DESCRIBE_CATEGORY_SLUG && isLoggedIn ) {
+		if ( category === DESCRIBE_CATEGORY_SLUG ) {
 			// Lazy-loaded so the agenttic-ui CSS import (and the rest of
 			// the AI bundle) stays out of the SSR build. Same pattern
 			// AgentsManagerLoader uses for the dock itself.
-			return <AsyncLoad require={ loadMarketplaceAIExperience } placeholder={ null } />;
+			return categories[ DESCRIBE_CATEGORY_SLUG ] ? (
+				<AsyncLoad require={ loadMarketplaceAIExperience } placeholder={ null } />
+			) : null;
 		}
 
 		if ( category ) {

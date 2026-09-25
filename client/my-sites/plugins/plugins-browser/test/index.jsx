@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 
 jest.mock( '@automattic/calypso-router' );
+jest.mock( 'calypso/components/async-load', () => () => <div data-testid="async-load" /> );
 jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),
@@ -61,6 +62,7 @@ jest.mock( 'calypso/lib/route/path', () => ( {
 	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
 } ) );
 
+import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
@@ -177,6 +179,22 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 } );
 
 describe( 'PluginsBrowser basic tests', () => {
+	test( 'shows Describe when Agents Manager is active', () => {
+		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, true );
+		render( <PluginsBrowser category="describe" />, {
+			initialState: { currentUser: { id: 1 } },
+		} );
+		expect( screen.getByTestId( 'async-load' ) ).toBeVisible();
+	} );
+
+	test( 'does not show Describe when Agents Manager is inactive', () => {
+		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, false );
+		render( <PluginsBrowser category="describe" />, {
+			initialState: { currentUser: { id: 1 } },
+		} );
+		expect( screen.queryByTestId( 'async-load' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'should not blow up and have proper CSS class', () => {
 		render( <PluginsBrowser /> );
 		const main = screen.getByRole( 'main' );
