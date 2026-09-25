@@ -11,6 +11,7 @@ import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart } from '../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
+	buildNamePulseBundle,
 	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
@@ -25,6 +26,7 @@ import {
 } from '../helpers';
 import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	NamePulseAvailabilityResponse,
 	NamePulseSuggestionsQuery,
@@ -58,6 +60,8 @@ const NamePulseTestSearch = ( {
 		} );
 	},
 	events,
+	showBundleSuggestions = false,
+	bundleForDomain = async ( fqdn ) => buildNamePulseBundle( fqdn ),
 }: {
 	query: string;
 	slots?: DomainSearchProps[ 'slots' ];
@@ -68,13 +72,15 @@ const NamePulseTestSearch = ( {
 	tldsResponse?: () => Promise< string[] >;
 	domainAvailability?: ( domainName: string ) => Promise< DomainAvailability >;
 	events?: Partial< DomainSearchEvents >;
+	showBundleSuggestions?: boolean;
+	bundleForDomain?: ( fqdn: string ) => Promise< BundleSuggestion | null >;
 } ) => {
 	const contextValue = useDomainSearchContextValue( {
 		cart,
 		query,
 		events,
 		slots,
-		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true },
+		config: { showNamePulseSearch: true, allowsUsingOwnDomain: true, showBundleSuggestions },
 	} );
 
 	return (
@@ -89,6 +95,7 @@ const NamePulseTestSearch = ( {
 					suggestions,
 					tlds: tldsResponse,
 					domainAvailability,
+					bundleForDomain,
 				} ) }
 			>
 				<NamePulseResults />
@@ -119,6 +126,27 @@ const findNotice = async () => {
 
 	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
 };
+
+const findExactMatchCard = async () => {
+	await waitFor( () =>
+		expect( document.querySelector( '.name-pulse-exact-card[data-domain]' ) ).not.toBeNull()
+	);
+
+	return document.querySelector( '.name-pulse-exact-card[data-domain]' ) as HTMLElement;
+};
+
+const findBundleCard = async () => {
+	await waitFor( () => expect( document.querySelector( '.bundle-card' ) ).not.toBeNull() );
+
+	return document.querySelector( '.bundle-card' ) as HTMLElement;
+};
+
+const isAfterTopResults = ( element: HTMLElement ) =>
+	Boolean(
+		( document.querySelector( '[data-section="top"]' ) as HTMLElement ).compareDocumentPosition(
+			element
+		) & Node.DOCUMENT_POSITION_FOLLOWING
+	);
 
 const domainsIn = ( id: string ) =>
 	sectionRows( id ).map( ( item ) =>
@@ -374,16 +402,21 @@ describe( 'NamePulseResults', () => {
 		] );
 	} );
 
-	it( 'renders a typed FQDN as a row of the exact-match grid', async () => {
+	it( 'features an available typed FQDN in its own card, out of Top results and the grid', async () => {
 		render( <NamePulseTestSearch query="icecream.net" /> );
 
+		const card = within( await findExactMatchCard() );
+		expect( card.getByText( 'Exact match' ) ).toBeVisible();
+		expect( card.getByText( "It's available!" ) ).toBeVisible();
+		expect( card.getByText( '$24' ) ).toBeVisible();
+		expect( card.getByRole( 'button', { name: 'Add to cart' } ) ).toBeEnabled();
+
 		expect(
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' )
+			await screen.findByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
-		expect(
-			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
-		).toBeInTheDocument();
-		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
+		await waitFor( () => expect( domainsIn( 'top' ) ).toHaveLength( 3 ) );
+		expect( domainsIn( 'top' ) ).not.toContain( 'icecream.net' );
+		expect( domainsIn( 'exact' ) ).not.toContain( 'icecream.net' );
 		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 	} );
 
@@ -527,11 +560,13 @@ describe( 'NamePulseResults', () => {
 			/>
 		);
 
-		// The bulk check offers the typed name, but its own check is still running.
-		const row = within( await findRow( 'icecream.net' ) );
-		expect( await row.findByLabelText( 'Checking…' ) ).toBeVisible();
-		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
-		expect( row.queryByText( '$24' ) ).not.toBeInTheDocument();
+		// The bulk check offers the typed name, but its own check is still running:
+		// it waits in the card's slot rather than as a priced row.
+		expect( await screen.findByRole( 'img', { name: 'Checking…' } ) ).toHaveClass(
+			'name-pulse-exact-card--skeleton'
+		);
+		await findRow( 'icecream.org' );
+		expect( rowFor( 'icecream.net' ) ).toBeNull();
 
 		await act( async () => {
 			resolveTyped(
@@ -544,7 +579,8 @@ describe( 'NamePulseResults', () => {
 		} );
 
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
-		expect( within( rowFor( 'icecream.net' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+		expect( document.querySelector( '.name-pulse-exact-card' ) ).toBeNull();
+		expect( within( await findRow( 'icecream.net' ) ).getByText( 'Unavailable' ) ).toBeVisible();
 	} );
 
 	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {
@@ -685,5 +721,185 @@ describe( 'NamePulseResults', () => {
 		await user.click( errorCTA );
 
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the exact-match card to the cart through the real-time check, then offers to continue', async () => {
+		const user = userEvent.setup();
+		const onContinue = jest.fn();
+		const items: string[] = [];
+		const cart = buildCart( {
+			onAddItem: jest.fn( async ( suggestion ) => {
+				items.push( suggestion.domain_name );
+			} ),
+			hasItem: ( domainName ) => items.includes( domainName ),
+		} );
+
+		const { rerender } = render(
+			<NamePulseTestSearch query="icecream.net" cart={ cart } events={ { onContinue } } />
+		);
+
+		const card = within( await findExactMatchCard() );
+		await user.click( card.getByRole( 'button', { name: 'Add to cart' } ) );
+
+		await waitFor( () =>
+			expect( cart.onAddItem ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: 'icecream.net', cost: '$24.00' } )
+			)
+		);
+
+		rerender(
+			<NamePulseTestSearch query="icecream.net" cart={ { ...cart } } events={ { onContinue } } />
+		);
+		await user.click( await card.findByRole( 'button', { name: 'Continue' } ) );
+
+		expect( onContinue ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'bundle card', () => {
+		it( 'is not requested when bundle suggestions are off', async () => {
+			const bundleForDomain = jest.fn( async () => null );
+
+			render( <NamePulseTestSearch query="icecream.com" bundleForDomain={ bundleForDomain } /> );
+
+			await findExactMatchCard();
+			await waitFor( () => expect( domainsIn( 'top' ) ).toHaveLength( 3 ) );
+
+			expect( bundleForDomain ).not.toHaveBeenCalled();
+			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+		} );
+
+		it( 'sits beside the exact-match card of a typed .com, anchored on it', async () => {
+			const onBundleShown = jest.fn();
+			const bundleForDomain = jest.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
+
+			render(
+				<NamePulseTestSearch
+					query="icecream.com"
+					showBundleSuggestions
+					bundleForDomain={ bundleForDomain }
+					events={ { onBundleShown } }
+				/>
+			);
+
+			const bundle = await findBundleCard();
+
+			expect( bundle.closest( '.name-pulse-featured' ) ).toContainElement(
+				await findExactMatchCard()
+			);
+			expect( within( bundle ).getByText( 'Protect your brand' ) ).toBeVisible();
+			expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' );
+			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'icecream-group' } ),
+				'card'
+			);
+		} );
+
+		it( 'falls back to the first top result with a bundle when the typed ending has none', async () => {
+			const bundleForDomain = jest.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
+
+			render(
+				<NamePulseTestSearch
+					query="icecream.blog"
+					showBundleSuggestions
+					bundleForDomain={ bundleForDomain }
+				/>
+			);
+
+			const bundle = await findBundleCard();
+
+			expect( bundle.closest( '.name-pulse-featured' ) ).not.toBeNull();
+			expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com', 'icecream.org', 'icecream.net' ] );
+			expect( bundleForDomain.mock.calls.map( ( [ fqdn ] ) => fqdn ) ).toEqual( [
+				'icecream.blog',
+				'icecream.com',
+				'icecream.org',
+				'icecream.net',
+			] );
+		} );
+
+		it( 'appears under Top results when the typed domain is taken', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream.org"
+					showBundleSuggestions
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.TRANSFERRABLE,
+						} )
+					}
+				/>
+			);
+
+			const bundle = await findBundleCard();
+
+			expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull();
+			expect( isAfterTopResults( bundle ) ).toBe( true );
+		} );
+
+		it( 'appears under Top results for a bare-term search', async () => {
+			render( <NamePulseTestSearch query="icecream" showBundleSuggestions /> );
+
+			const bundle = await findBundleCard();
+
+			expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull();
+			expect( isAfterTopResults( bundle ) ).toBe( true );
+		} );
+
+		it( 'renders nothing when no anchor has a bundle', async () => {
+			const bundleForDomain = jest.fn( async () => null );
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					showBundleSuggestions
+					bundleForDomain={ bundleForDomain }
+				/>
+			);
+
+			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledTimes( 3 ) );
+
+			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+		} );
+
+		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {
+			const user = userEvent.setup();
+			const onBundleAddToCart = jest.fn();
+			const cart = buildCart( {
+				onAddBundle: jest
+					.fn()
+					.mockRejectedValueOnce(
+						Object.assign( new Error(), { code: 'domain_bundle_unavailable' } )
+					)
+					.mockResolvedValueOnce( undefined ),
+			} );
+
+			render(
+				<NamePulseTestSearch
+					query="icecream.com"
+					cart={ cart }
+					showBundleSuggestions
+					events={ { onBundleAddToCart } }
+				/>
+			);
+
+			const bundle = within( await findBundleCard() );
+			await user.click( bundle.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			expect(
+				await bundle.findByText(
+					'This bundle is no longer available — one or more of the domains may have just been registered.'
+				)
+			).toBeVisible();
+			expect( onBundleAddToCart ).not.toHaveBeenCalled();
+
+			await user.click( bundle.getByRole( 'button', { name: 'Get bundle' } ) );
+
+			await waitFor( () => expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 ) );
+			expect( cart.onAddBundle ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { bundle_group_id: 'icecream-group' } )
+			);
+		} );
 	} );
 } );

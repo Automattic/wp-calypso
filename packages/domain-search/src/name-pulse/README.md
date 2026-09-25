@@ -6,9 +6,11 @@ The Name Pulse results mode for the WordPress.com domain search. `DomainSearch` 
 
 Premium names are priced apart from the rest. The bulk check quotes every name at its TLD's standard rate, so an exact match it flags premium holds its badge and a skeleton while `components/result-row.tsx` fetches the registry price from the per-domain `is-available` check, on the key the pre-cart check already uses. Suggestions come priced by the registry and render as they arrive. A premium name on a TLD we do not sell premiums on reads as unavailable.
 
+A typed `name.tld` leaves the grid for its own card (`components/exact-match-card.tsx`), fed by the same per-domain check as the notice; a taken name has no card and its row stays in the grid. With `config.showBundleSuggestions` on, `hooks/use-name-pulse-bundle.ts` asks the per-domain bundle endpoint for the typed domain, then each Top result, and shows the first bundle found: beside the exact-match card, or under Top results when there is none. The backend only anchors bundles on an available `.com`, which is why the Top results are asked too.
+
 ## Not yet built
 
-FQDN card for a typed `name.tld`, the "Protect your brand" bundle card, the filter button.
+The filter button.
 
 ## Imports
 

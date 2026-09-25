@@ -4,9 +4,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
 import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice } from '../ui';
+import { NamePulseBundleCard } from './components/bundle-card';
+import {
+	NamePulseExactMatchCard,
+	NamePulseFeaturedCardSkeleton,
+} from './components/exact-match-card';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
+import { useNamePulseBundle } from './hooks/use-name-pulse-bundle';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 
 import './components/style.scss';
@@ -22,6 +28,8 @@ export const NamePulseResults = () => {
 	const {
 		layout,
 		notice,
+		exactMatch,
+		bundleAnchors,
 		exactList,
 		keywordResults,
 		creativeResults,
@@ -38,6 +46,10 @@ export const NamePulseResults = () => {
 	// Only the exact-match grid needs the TLD list, so its failure takes down
 	// Top results with it but leaves the suggestion sections alone.
 	const hasTldsError = layout.exactGrid.show && isTldsError;
+	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
+	const bundleCard = bundle ? (
+		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } />
+	) : null;
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
@@ -62,6 +74,18 @@ export const NamePulseResults = () => {
 						</Button>
 					</DomainSearchNotice>
 				) }
+				{ /* A typed domain shares its row with the bundle; any other search, or a
+				     typed domain that is taken, gets the bundle under Top results. */ }
+				{ exactMatch && (
+					<div className="name-pulse-featured">
+						{ exactMatch.result ? (
+							<NamePulseExactMatchCard result={ exactMatch.result } />
+						) : (
+							<NamePulseFeaturedCardSkeleton label={ __( 'Checking…' ) } />
+						) }
+						{ bundleCard ?? ( isLoadingBundle && <NamePulseFeaturedCardSkeleton /> ) }
+					</div>
+				) }
 				{ layout.top.show && ! hasTldsError && (
 					<NamePulseResultsSection
 						id="top"
@@ -72,6 +96,7 @@ export const NamePulseResults = () => {
 						skeletonCount={ topResultsCount }
 					/>
 				) }
+				{ ! exactMatch && bundleCard }
 				{ layout.exactGrid.show && ! hasTldsError && (
 					<NamePulseResultsSection
 						id="exact"

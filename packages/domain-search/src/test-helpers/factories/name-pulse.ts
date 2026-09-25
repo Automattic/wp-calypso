@@ -1,5 +1,6 @@
 import type { DomainSearchContextType } from '../../page/types';
 import type {
+	BundleSuggestion,
 	DomainAvailability,
 	NamePulseAvailabilityEntry,
 	NamePulseAvailabilityResponse,
@@ -117,6 +118,48 @@ export const NAME_PULSE_AI_SUGGESTIONS_FIXTURE: NamePulseSuggestion[] = [
 	{ domain_name: 'scoops.blog', relevance: 0.8, currency_code: 'USD', raw_price: 22 },
 ];
 
+/**
+ * Mirrors the backend: only an available `.com` anchors a bundle, with `.net`
+ * and `.blog` as its companions.
+ */
+export const buildNamePulseBundle = ( fqdn: string ): BundleSuggestion | null => {
+	if ( ! fqdn.endsWith( '.com' ) ) {
+		return null;
+	}
+
+	const sld = fqdn.slice( 0, -'.com'.length );
+
+	return {
+		sld,
+		domains: [
+			{ domain: fqdn, role: 'primary', cost: '$13', raw_price: 13, product_slug: 'domain_reg' },
+			{
+				domain: `${ sld }.net`,
+				role: 'companion',
+				cost: '$13',
+				raw_price: 13,
+				product_slug: 'dotnet_domain',
+			},
+			{
+				domain: `${ sld }.blog`,
+				role: 'companion',
+				cost: '$21',
+				raw_price: 21,
+				product_slug: 'dotblog_domain',
+			},
+		],
+		bundle_price: 14.4,
+		bundle_cost: '$14.40',
+		original_price: 47,
+		original_cost: '$47',
+		discount_percent: 69,
+		category: 'verisign_promo',
+		bundle_id: `${ sld }_verisign_promo`,
+		bundle_group_id: `${ sld }-group`,
+		catalogue_version: '2026-09-01',
+	};
+};
+
 export const withNamePulseQueries = (
 	contextValue: DomainSearchContextType,
 	fetchers: {
@@ -124,6 +167,7 @@ export const withNamePulseQueries = (
 		suggestions: ( params: NamePulseSuggestionsQuery ) => Promise< NamePulseSuggestionsResponse >;
 		tlds: () => Promise< string[] >;
 		domainAvailability: ( domainName: string ) => Promise< DomainAvailability >;
+		bundleForDomain?: ( fqdn: string ) => Promise< BundleSuggestion | null >;
 	}
 ): DomainSearchContextType => ( {
 	...contextValue,
@@ -144,6 +188,10 @@ export const withNamePulseQueries = (
 		domainAvailability: ( domainName ) => ( {
 			...contextValue.queries.domainAvailability( domainName ),
 			queryFn: () => fetchers.domainAvailability( domainName ),
+		} ),
+		bundleForDomain: ( fqdn ) => ( {
+			...contextValue.queries.bundleForDomain( fqdn ),
+			queryFn: async () => ( fetchers.bundleForDomain ?? buildNamePulseBundle )( fqdn ),
 		} ),
 	},
 } );
