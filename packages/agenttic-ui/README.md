@@ -509,7 +509,7 @@ interface MessageAction {
 	disabled?: boolean;
 	pressed?: boolean;
 	showLabel?: boolean;
-	visibility?: 'always' | 'latest-turn'; // `latest-turn`: inline on the latest turn, on hover for earlier turns
+	visibility?: 'always' | 'latest-turn'; // `latest-turn`: inline on the latest turn; floats in a panel on hover for earlier turns, docking once pressed
 }
 
 interface Suggestion {

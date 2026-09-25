@@ -261,7 +261,7 @@ export const LatestTurn: Story = {
 		docs: {
 			description: {
 				story:
-					'The latest turn shows its actions. An earlier turn keeps their space and shows them while hovered or focused, or always once a thumb is pressed.',
+					'The latest turn shows its actions inline. On an earlier turn they float in a panel below the reply while it is hovered or focused, and dock into a plain row once a thumb is pressed.',
 			},
 		},
 	},

@@ -10,32 +10,89 @@
 	display: none;
 }
 
-/* Earlier turns keep the row's space, so nothing moves, and fade these actions
-   in while the message or the row is hovered or focused, or once one is pressed. */
-.hoverOnly {
+/* A wrapped component action must align with the buttons, not with a text baseline. */
+.componentWrapper {
 	display: inline-flex;
 	align-items: center;
+}
+
+/* Hover-only actions hang below the message in a panel that takes no space:
+   the dock is a grid row at 0fr, so the panel overflows into the gap. The
+   container's own gap places it where a plain row would sit. Once an action
+   is pressed the row animates to 1fr, opening the panel's natural height
+   beneath it (whatever the host's button size), and the panel drops its
+   surface to become that plain row. */
+.dock {
+	display: grid;
+	grid-template-rows: 0fr;
+	flex-basis: 100%;
+	transition: grid-template-rows 0.25s ease;
+}
+
+.dock.docked {
+	grid-template-rows: 1fr;
+}
+
+.dockInner {
+	position: relative;
+	z-index: 1;
+	min-height: 0;
+}
+
+.floating {
+	display: flex;
+	width: fit-content;
+	align-items: center;
+	gap: var( --spacing-1 );
+	padding: var( --spacing-1 );
+	background: var( --color-background );
+	border-radius: var( --radius-sm );
+	box-shadow: var( --shadow-outline ), var( --shadow-lg );
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	/* Hidden, the panel still overflows into the gap below; keep it out of hit-testing there. */
+	pointer-events: none;
+	transition:
+		opacity 0.2s ease,
+		padding 0.25s ease,
+		background-color 0.25s ease,
+		box-shadow 0.25s ease;
 }
 
-[data-slot='message']:hover .hoverOnly,
-[data-slot='message']:focus-within .hoverOnly,
-.container:hover .hoverOnly,
-.container:focus-within .hoverOnly,
-.pinned .hoverOnly {
+/* Revealed on hover or keyboard focus of the message, or of the row itself
+   when MessageActions renders without a Message around it. */
+[data-slot='message']:hover .floating,
+[data-slot='message']:focus-within .floating,
+.container:hover .floating,
+.container:focus-within .floating,
+.docked .floating {
 	opacity: 1;
+	pointer-events: auto;
 }
 
-/* No hover on touch: the actions stay visible. */
+.docked .floating {
+	padding: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+/* No hover on touch: the actions stay a plain, visible row. */
 @media ( hover: none ) {
-	.hoverOnly {
+	.dock {
+		grid-template-rows: 1fr;
+	}
+
+	.floating {
+		padding: 0;
 		opacity: 1;
+		pointer-events: auto;
+		background: transparent;
+		box-shadow: none;
 	}
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.hoverOnly {
+	.dock,
+	.floating {
 		transition: none;
 	}
 }

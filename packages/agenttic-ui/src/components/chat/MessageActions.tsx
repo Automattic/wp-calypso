@@ -21,8 +21,9 @@ export function MessageActions( {
 	const actions = actionsProp || message.actions || [];
 
 	// `latest-turn` actions wait for the latest turn to settle, so the row appears
-	// at once; a pressed one stays. Earlier turns keep them in place, shown on
-	// hover, or always once one of them is pressed.
+	// at once; a pressed one stays. On earlier turns they share one panel that
+	// floats below the message; once one of them is pressed the panel docks,
+	// settling into the flow as a plain row.
 	const isPressed = ( action: MessageAction ) => action.type !== 'component' && !! action.pressed;
 	const isHoverOnly = ( action: MessageAction ) =>
 		action.visibility === 'latest-turn' && ! isLatestTurn;
@@ -34,9 +35,9 @@ export function MessageActions( {
 		return null;
 	}
 
-	const isPinned = visibleActions.some(
-		( action ) => isHoverOnly( action ) && isPressed( action )
-	);
+	const inlineActions = visibleActions.filter( ( action ) => ! isHoverOnly( action ) );
+	const hoverOnlyActions = visibleActions.filter( isHoverOnly );
+	const isDocked = hoverOnlyActions.some( isPressed );
 
 	const renderAction = ( action: MessageAction ) => {
 		const element =
@@ -63,10 +64,10 @@ export function MessageActions( {
 				</Button>
 			);
 
-		// The wrapper fades, so an action's own opacity (a dimmed disabled button)
-		// still applies. Others stay direct flex items, since some span the row.
-		return isHoverOnly( action ) ? (
-			<span key={ action.id } className={ styles.hoverOnly }>
+		// In the panel the wrapper keeps a component's control aligned with the
+		// buttons. Inline components stay direct flex items, since some span the row.
+		return action.type === 'component' && isHoverOnly( action ) ? (
+			<span key={ action.id } className={ styles.componentWrapper }>
 				{ element }
 			</span>
 		) : (
@@ -76,12 +77,19 @@ export function MessageActions( {
 
 	return (
 		<div
-			className={ cn( styles.container, { [ styles.pinned ]: isPinned } ) }
+			className={ styles.container }
 			data-visible="true"
 			role="toolbar"
 			aria-label="Message actions"
 		>
-			{ visibleActions.map( renderAction ) }
+			{ inlineActions.map( renderAction ) }
+			{ hoverOnlyActions.length > 0 && (
+				<div className={ cn( styles.dock, { [ styles.docked ]: isDocked } ) }>
+					<div className={ styles.dockInner }>
+						<div className={ styles.floating }>{ hoverOnlyActions.map( renderAction ) }</div>
+					</div>
+				</div>
+			) }
 		</div>
 	);
 }

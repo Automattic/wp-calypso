@@ -91,7 +91,10 @@ export interface Message {
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
 
-/** `latest-turn`: inline on the latest turn, on hover for earlier turns. */
+/**
+ * `latest-turn`: inline on the latest turn; on earlier turns, in a panel that floats below the
+ * message on hover and docks into a row once one of its buttons is pressed.
+ */
 export type MessageActionVisibility = 'always' | 'latest-turn';
 
 export interface MessageActionButton {

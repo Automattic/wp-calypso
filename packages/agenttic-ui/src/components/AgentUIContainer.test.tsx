@@ -785,7 +785,7 @@ describe( 'AgentUIContainer latest-turn message actions', () => {
 			return 'hidden';
 		}
 
-		return button.closest( `.${ messageActionsStyles.hoverOnly }` ) ? 'hover' : 'inline';
+		return button.closest( `.${ messageActionsStyles.floating }` ) ? 'panel' : 'inline';
 	};
 
 	it.each( [
@@ -813,10 +813,10 @@ describe( 'AgentUIContainer latest-turn message actions', () => {
 		} );
 
 		expect( messages.map( ( { id } ) => placementOf( id ) ) ).toEqual( [
-			'hover',
-			'hover',
-			'hover',
-			'hover',
+			'panel',
+			'panel',
+			'panel',
+			'panel',
 			latest,
 		] );
 	} );

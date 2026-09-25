@@ -100,35 +100,35 @@ describe( 'MessageActions', () => {
 			isLatestTurn: true,
 			isStreaming: false,
 			pressed: false,
-			expected: { undo: 'inline', up: 'inline', down: 'inline', copy: 'inline', pinned: false },
+			expected: { undo: 'inline', up: 'inline', down: 'inline', copy: 'inline', docked: false },
 		},
 		{
 			name: 'holds latest-turn actions back while the latest turn streams',
 			isLatestTurn: true,
 			isStreaming: true,
 			pressed: false,
-			expected: { undo: 'inline', up: 'hidden', down: 'hidden', copy: 'hidden', pinned: false },
+			expected: { undo: 'inline', up: 'hidden', down: 'hidden', copy: 'hidden', docked: false },
 		},
 		{
 			name: 'keeps a pressed latest-turn action while the latest turn streams',
 			isLatestTurn: true,
 			isStreaming: true,
 			pressed: true,
-			expected: { undo: 'inline', up: 'hidden', down: 'inline', copy: 'hidden', pinned: false },
+			expected: { undo: 'inline', up: 'hidden', down: 'inline', copy: 'hidden', docked: false },
 		},
 		{
-			name: 'shows latest-turn actions of an earlier turn on hover, in place',
+			name: 'floats latest-turn actions of an earlier turn in the panel',
 			isLatestTurn: false,
 			isStreaming: true,
 			pressed: false,
-			expected: { undo: 'inline', up: 'hover', down: 'hover', copy: 'hover', pinned: false },
+			expected: { undo: 'inline', up: 'panel', down: 'panel', copy: 'panel', docked: false },
 		},
 		{
-			name: "keeps an earlier turn's actions shown once one is pressed",
+			name: 'docks the panel once one of its actions is pressed',
 			isLatestTurn: false,
 			isStreaming: true,
 			pressed: true,
-			expected: { undo: 'inline', up: 'hover', down: 'hover', copy: 'hover', pinned: true },
+			expected: { undo: 'inline', up: 'panel', down: 'panel', copy: 'panel', docked: true },
 		},
 	] )( '$name', async ( { isLatestTurn, isStreaming, pressed, expected } ) => {
 		const message = agentMessage( [
@@ -166,7 +166,7 @@ describe( 'MessageActions', () => {
 				return 'hidden';
 			}
 
-			return button.closest( `.${ styles.hoverOnly }` ) ? 'hover' : 'inline';
+			return button.closest( `.${ styles.floating }` ) ? 'panel' : 'inline';
 		};
 
 		expect( {
@@ -174,8 +174,31 @@ describe( 'MessageActions', () => {
 			up: placementOf( 'Good response' ),
 			down: placementOf( 'Bad response' ),
 			copy: placementOf( 'Copy' ),
-			pinned: container.querySelector( `.${ styles.pinned }` ) !== null,
+			docked: container.querySelector( `.${ styles.docked }` ) !== null,
 		} ).toEqual( expected );
+	} );
+
+	it( 'aligns a component action inside the panel and keeps inline ones direct', async () => {
+		const message = agentMessage( [
+			{ type: 'component', id: 'checkpoint', component: () => <div data-testid="checkpoint" /> },
+			{
+				type: 'component',
+				id: 'copy',
+				component: () => <button aria-label="Copy" />,
+				visibility: 'latest-turn',
+			},
+		] );
+
+		await act( async () => {
+			root.render( <MessageActions message={ message } isLatestTurn={ false } /> );
+		} );
+
+		expect(
+			container.querySelector( '[data-testid="checkpoint"]' )?.parentElement?.className
+		).toBe( styles.container );
+		expect( container.querySelector( 'button[aria-label="Copy"]' )?.parentElement?.className ).toBe(
+			styles.componentWrapper
+		);
 	} );
 
 	it( 'renders nothing while every action is held back', async () => {
