@@ -1,9 +1,12 @@
+import { AutomatticLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { Icon, help } from '@wordpress/icons';
 import clsx from 'clsx';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getAllowedDashboardUrl } from 'calypso/my-sites/checkout/agency-siteless/lib/agency-checkout-params';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	LeaveCheckoutModal,
@@ -51,7 +54,7 @@ const CheckoutMasterbar = ( {
 			return 'akismet';
 		}
 
-		if ( window.location.pathname.startsWith( '/checkout/agency/referral' ) ) {
+		if ( window.location.pathname.startsWith( '/checkout/agency' ) ) {
 			return 'a4a';
 		}
 
@@ -87,6 +90,33 @@ const CheckoutMasterbar = ( {
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
 
+	// The agency dashboard's checkout returns to the page the cart came from,
+	// with the cart kept, so it bypasses the leave-checkout prompt.
+	const agencyBackUrl =
+		checkoutType === 'a4a' ? getAllowedDashboardUrl( searchParams.get( 'cancel_to' ) ) : undefined;
+
+	const renderLeftElement = () => {
+		if ( agencyBackUrl ) {
+			return (
+				<Step.BackButton
+					href={ agencyBackUrl }
+					enableTracksEvent={ false }
+					onClick={ () => recordTracksEvent( 'calypso_a4a_marketplace_checkout_back_click' ) }
+				/>
+			);
+		}
+		if ( showCloseButton ) {
+			return (
+				<Step.BackButton
+					onClick={ leaveModalProps.clickClose }
+					disabled={ leaveModalProps.isLeaveDisabled }
+					accessibleWhenDisabled
+				/>
+			);
+		}
+		return undefined;
+	};
+
 	return (
 		<Masterbar
 			className={ clsx( 'masterbar--is-checkout', 'masterbar--is-checkout-redesign-v1', {
@@ -98,15 +128,12 @@ const CheckoutMasterbar = ( {
 			} ) }
 		>
 			<Step.TopBar
-				leftElement={
-					showCloseButton ? (
-						<Step.BackButton
-							onClick={ leaveModalProps.clickClose }
-							disabled={ leaveModalProps.isLeaveDisabled }
-							accessibleWhenDisabled
-						/>
-					) : undefined
+				logo={
+					// The wordmark sits in the middle third of its viewBox, so this box
+					// renders it at roughly the WordPress wordmark's height.
+					checkoutType === 'a4a' ? <AutomatticLogo width={ 183 } height={ 40 } /> : undefined
 				}
+				leftElement={ renderLeftElement() }
 				rightElement={
 					<>
 						{ stepCounter && (

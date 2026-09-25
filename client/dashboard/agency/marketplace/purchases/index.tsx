@@ -15,6 +15,7 @@ import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
 import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -26,6 +27,7 @@ export default function MarketplacePurchases() {
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
+	useCheckoutReturn();
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'marketplace-purchases',

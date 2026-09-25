@@ -30,12 +30,13 @@ interface Props {
 	products: AgencyProduct[];
 	term: TermPricing;
 	isReferralMode: boolean;
+	agencyId: number;
 	isAgencyApproved: boolean;
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
 	onRemove: ( slug: string ) => void;
-	onCheckout: () => void;
+	onCheckout?: () => void;
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
@@ -48,6 +49,7 @@ export default function CartMenu( {
 	products,
 	term,
 	isReferralMode,
+	agencyId,
 	isAgencyApproved,
 	open,
 	onToggle,
@@ -103,7 +105,17 @@ export default function CartMenu( {
 		} ),
 		{ total: 0, commission: 0 }
 	);
-	const checkoutUrl = getCheckoutUrl( items, isReferralMode );
+	const checkoutUrl = getCheckoutUrl(
+		lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
+		isReferralMode,
+		{
+			agencyId,
+			term,
+			hasWpcomHostingPlan: lines.some(
+				( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
+			),
+		}
+	);
 
 	const checkoutButton = (
 		<Button
@@ -116,7 +128,7 @@ export default function CartMenu( {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
 					term_pricing: term,
 				} );
-				onCheckout();
+				onCheckout?.();
 			} }
 		>
 			{ __( 'Checkout' ) }
