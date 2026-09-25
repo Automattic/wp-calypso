@@ -236,6 +236,34 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		describe( 'with a year search term', () => {
+			let requestedQuery;
+			useNock( ( nock ) => {
+				requestedQuery = undefined;
+				nock( 'https://public-api.wordpress.com:443' )
+					.get( '/wpcom/v2/themes' )
+					.query( ( query ) => {
+						requestedQuery = query;
+						return true;
+					} )
+					.reply( 200, {
+						found: 1,
+						themes: [ { ID: 'twentyeleven', name: 'Twenty Eleven' } ],
+					} );
+			} );
+
+			test( 'should search the API for the default theme slug released that year, while keeping the typed term in state', async () => {
+				await requestThemes( 'wpcom', { search: '2011' } )( spy, getState );
+
+				expect( requestedQuery.search ).toBe( 'twentyeleven' );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: THEMES_REQUEST,
+					siteId: 'wpcom',
+					query: { search: '2011' },
+				} );
+			} );
+		} );
+
 		describe( 'with a Jetpack site', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
