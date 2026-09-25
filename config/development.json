@@ -74,7 +74,6 @@
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/plans": true,
-		"purchases/site-level-dashboard-backport": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,

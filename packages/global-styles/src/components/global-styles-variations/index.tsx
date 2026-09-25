@@ -153,7 +153,7 @@ const GlobalStylesVariations = ( {
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-styles-variations__container">
+			<div className="global-styles-variations__container global-styles-variations__container--stacked">
 				<div
 					className={ clsx( 'global-styles-variations__type', {
 						'combined-variations': ! splitDefaultVariation,
@@ -204,11 +204,7 @@ const GlobalStylesVariations = ( {
 											} ) }
 								</span>
 								{ needsUpgrade && (
-									<PremiumBadge
-										shouldHideTooltip
-										shouldCompactWithAnimation
-										labelText={ translate( 'Upgrade' ) }
-									/>
+									<PremiumBadge shouldHideTooltip labelText={ translate( 'Upgrade' ) } />
 								) }
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>

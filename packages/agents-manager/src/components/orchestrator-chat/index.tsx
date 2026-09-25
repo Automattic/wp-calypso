@@ -1,9 +1,4 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type TaskUpdate,
-	type UIMessage,
-} from '@automattic/agenttic-client';
+import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -336,7 +331,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -531,6 +526,15 @@ export default function OrchestratorChat( {
 		};
 	}, [ agentConfig, checkpointStreamGeneration ] );
 
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+	const credits = useCredits( {
+		enabled: ! isReaderChat,
+		agentConfig: agentChatConfig!,
+		siteKey,
+		userId: currentUser?.ID,
+		site,
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+	} );
 	const {
 		addMessage,
 		messages,
@@ -545,7 +549,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-	} = useAgentChat( agentChatConfig! );
+	} = credits.chat;
 	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -619,11 +623,6 @@ export default function OrchestratorChat( {
 			setIsRegenerating( false );
 		}
 	}, [ isProcessing, isRegenerating ] );
-
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
-
-	// Reader chat is a public blog frontend with no site credits to meter.
-	const credits = useCredits( { enabled: ! isReaderChat, isProcessing } );
 
 	// While a regeneration runs, the component being regenerated is deliberately
 	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:

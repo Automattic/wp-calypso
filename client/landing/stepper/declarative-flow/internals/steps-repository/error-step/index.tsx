@@ -33,10 +33,8 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 		const localeBucket = 'en' === locale ? 'en' : 'non_en';
 		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
 
-		if ( ! error || ! message ) {
-			return;
-		}
-
+		// Some flows navigate here without storing an error. Log those arrivals too,
+		// so every bump of the stat above has a log line to split by error code.
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'Error in Stepper flow',
@@ -49,7 +47,7 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 			properties: {
 				flow,
 				locale,
-				error,
+				error: error || 'no_stored_error',
 			},
 		} );
 	}, [ error, flow, locale, message, variantSlug ] );

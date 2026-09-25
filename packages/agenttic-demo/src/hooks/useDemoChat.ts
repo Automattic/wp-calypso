@@ -2,7 +2,7 @@ import { useAgentChat } from '@automattic/agenttic-client';
 import { getClientContext, getClientTools } from '@automattic/agenttic-client/mocks';
 import { createMessageRenderer } from '@automattic/agenttic-ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { ContextProvider } from '@automattic/agenttic-client';
+import type { ContextProvider, TaskUpdate } from '@automattic/agenttic-client';
 
 // Chart styles are required by the `charts` markdown extension enabled below.
 import '../../../agenttic-ui/src/markdown-extensions/charts/charts.css';
@@ -10,6 +10,7 @@ import '../../../agenttic-ui/src/markdown-extensions/charts/charts.css';
 interface UseDemoChatOptions {
 	sessionId: string;
 	enableStreaming?: boolean;
+	onTaskUpdate?: ( update: TaskUpdate ) => void;
 	/**
 	 * Custom markdown components forwarded to `createMessageRenderer`.
 	 * The renderer is re-created when this reference changes, so memoize it.
@@ -24,11 +25,13 @@ interface UseDemoChatOptions {
  * @param options                    Demo chat options.
  * @param options.sessionId          Unique session id per demo view.
  * @param options.enableStreaming    Forwarded to `useAgentChat`.
+ * @param options.onTaskUpdate       Observes completed tasks for demo credit usage.
  * @param options.markdownComponents Custom markdown components for the renderer.
  */
 export function useDemoChat( {
 	sessionId,
 	enableStreaming,
+	onTaskUpdate,
 	markdownComponents,
 }: UseDemoChatOptions ) {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -54,6 +57,7 @@ export function useDemoChat( {
 		contextProvider,
 		toolProvider,
 		enableStreaming,
+		onTaskUpdate,
 	} );
 
 	const { addMessage, onSubmit, clearSuggestions } = chat;

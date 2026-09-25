@@ -61,7 +61,7 @@ describe( '<ReferHosting>', () => {
 
 		// One change event per text field keeps the test well inside CI's timeout.
 		const fillText = ( name: string, value: string ) =>
-			fireEvent.change( screen.getByRole( 'textbox', { name } ), { target: { value } } );
+			fireEvent.change( screen.getByLabelText( name ), { target: { value } } );
 		await screen.findByRole( 'textbox', { name: 'Company name' } );
 		fillText( 'Company name', 'Acme' );
 		fillText( 'Company address', '1 Main St' );

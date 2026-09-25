@@ -120,6 +120,44 @@ describe( 'AgentUIInput actions row', () => {
 		container.remove();
 	} );
 
+	it( 'preserves explicit legacy after-submit ordering for upload and custom actions', async () => {
+		const openFileDialog = vi.fn();
+		const uploaderRef = { current: { openFileDialog } as unknown as ImageUploaderHandle };
+		await act( async () => {
+			root.render(
+				<AgentUIContainer
+					messages={ [] }
+					isProcessing={ false }
+					onSubmit={ () => {} }
+					variant="embedded"
+					inputValue="hello"
+					onInputChange={ () => {} }
+				>
+					<AgentUIInput
+						imageUploaderRef={ uploaderRef }
+						actionOrder="after-submit"
+						leadingActions={ <span data-testid="lead" /> }
+						trailingActions={ <span data-testid="trail" /> }
+						customActions={ [
+							{ id: 'legacy', icon: <span />, onClick: () => {}, 'aria-label': 'Legacy' },
+						] }
+					/>
+				</AgentUIContainer>
+			);
+		} );
+		expect( rowOrder( container ) ).toEqual( [
+			'lead',
+			'trail',
+			'Send message',
+			'Upload image',
+			'Legacy',
+		] );
+		await act( async () =>
+			container.querySelector< HTMLButtonElement >( 'button[aria-label="Upload image"]' )?.click()
+		);
+		expect( openFileDialog ).toHaveBeenCalledOnce();
+	} );
+
 	it( 'leads with the upload button, then host leading actions, and trails before Send', async () => {
 		const uploaderRef = { current: { openFileDialog: vi.fn() } as unknown as ImageUploaderHandle };
 		await act( async () => {

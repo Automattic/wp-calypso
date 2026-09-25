@@ -11,7 +11,7 @@
 - **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
   - client/my-sites — per-site management; deprecated in favor of the Dashboard client
   - client/my-sites/checkout — checkout flow
-  - client/me/purchases — purchase management
+  - client/me/purchases — redirects to the Dashboard billing screens, plus purchase helpers shared by other sections
   - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
   - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
   - Shared infra: client/components, client/state, client/lib, client/layout
@@ -25,7 +25,7 @@
 - **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, Simple, and Atomic sites. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
 - **Agenttic** (`packages/agenttic-client`, `packages/agenttic-ui`) — AI agent chat client library and UI components. Also published to npm for consumers outside this repo. ⚠️ Still on its pre-migration package layout (vite-built, ESM-only, flat `dist/`, no `calypso:src`); normalizing it is a future goal, but the published artifact shape is a contract with external consumers — read the Development and Releasing sections in `packages/agenttic-client/README.md` before restructuring or publishing.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
-- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
+- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. When adding Image Studio entry points, read [packages/image-studio/AGENTS.md](packages/image-studio/AGENTS.md).
 - **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps

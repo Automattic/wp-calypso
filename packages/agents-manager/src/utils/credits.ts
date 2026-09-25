@@ -3,6 +3,7 @@ import { getBrowserSafeLocale } from 'i18n-calypso';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
+export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
 
 /** One balance shown as a row in the credits popover. */
 export interface CreditsPool {
@@ -18,9 +19,13 @@ export interface CreditsPool {
 
 export interface CreditsStatus {
 	plan: CreditsPlan;
+	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
+	planTier?: CreditsPlanTier;
 	/** Overall remaining share, 0–100; drives the ring and tooltip. */
 	percent: number;
 	pools: CreditsPool[];
+	/** Exact balance when supplied by the server; display rounding never drives gating. */
+	remaining?: number;
 }
 
 /** Free-plan balance at or below this reads as low. */
@@ -50,7 +55,9 @@ export function formatPercent( percent: number ): string {
 
 /** Exhaustion is the exact balance hitting zero; a fraction left still spends. */
 export function isCreditsExhausted( status: CreditsStatus ): boolean {
-	return clampPercent( status.percent ) <= 0;
+	return status.remaining !== undefined
+		? status.remaining === 0
+		: clampPercent( status.percent ) <= 0;
 }
 
 export function isCreditsLow(

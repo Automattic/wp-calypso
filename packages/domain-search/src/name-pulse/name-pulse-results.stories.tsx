@@ -175,6 +175,9 @@ export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
 
 export const AiMode = () => <StoryDomainSearch query="a blog about ice cream" />;
 
+// Truncated on desktop, wrapped onto a second line below it.
+export const LongName = () => <StoryDomainSearch query="icecreamshopnearsuratairport" />;
+
 // Starts on the initial state so the swap to the results page can be checked
 // for layout shifts.
 export const EmptyQuery = () => <StoryDomainSearch query="" />;
