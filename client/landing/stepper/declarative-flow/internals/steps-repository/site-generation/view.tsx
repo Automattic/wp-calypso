@@ -141,7 +141,7 @@ function WaitingCanvas( {
 	const description =
 		graph === 'dsl'
 			? translate(
-					'This can take up to 5 minutes. No worries, you’ll receive an email when the site is ready.'
+					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
 				)
 			: translate(
 					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
