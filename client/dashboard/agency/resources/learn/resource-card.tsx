@@ -70,7 +70,9 @@ export default function ResourceCard( {
 			<ResourceCardHeader resource={ resource } title={ link } />
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
-					<Text variant="muted">{ resource.description }</Text>
+					<Text variant="muted" className="dashboard-resources-learn__card-description">
+						{ resource.description }
+					</Text>
 					<HStack spacing={ 1 } justify="flex-start" wrap>
 						<Badge intent="draft">{ getAudienceLabel( resource.audience ) }</Badge>
 						<Badge intent="draft">{ getStageLabel( resource.stage ) }</Badge>

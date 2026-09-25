@@ -43,8 +43,25 @@
 
 .dashboard-resources-learn__card {
 	position: relative;
-	block-size: 100%;
 	overflow: hidden;
+
+	// Each card spans a header row and a body row of the page grid, so headers
+	// in the same row share a height and the bodies line up beneath them.
+	// Card wraps its children in an inner element, which has to pass it on.
+	&,
+	> :first-child {
+		display: grid;
+		grid-row: span 2;
+		grid-template-rows: subgrid;
+		row-gap: 0;
+	}
+
+	.dashboard-resources-learn__card-description {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+	}
 }
 
 // A small lift on hover, tilting alternate cards the opposite way.
