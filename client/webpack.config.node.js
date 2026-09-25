@@ -4,17 +4,15 @@
 
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const SwcTranspileConfig = require( '@automattic/calypso-build/webpack/transpile-swc' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const nodeExternals = require( 'webpack-node-externals' );
-const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 const ExternalModulesWriter = require( './server/bundler/external-modules' );
 const config = require( './server/config' );
 const bundleEnv = config( 'env' );
-const { workerCount } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -24,7 +22,6 @@ const devTarget = process.env.DEV_TARGET || 'evergreen';
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
-const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
 	// The final URL of the image is `${publicPath}${outputPath}/${fileName}` (note the slashes)
@@ -130,20 +127,14 @@ const webpackConfig = {
 					},
 				},
 			},
-			TranspileConfig.loader( {
-				workerCount,
-				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory,
-				cacheIdentifier,
-				cacheCompression: false,
+			SwcTranspileConfig.loader( {
+				browserslistEnv: 'server',
+				importSource: '@emotion/react',
 				exclude: /node_modules\//,
 			} ),
-			TranspileConfig.loader( {
-				workerCount,
-				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
-				cacheDirectory,
-				cacheIdentifier,
-				cacheCompression: false,
+			SwcTranspileConfig.loader( {
+				browserslistEnv: 'server',
+				unambiguous: true,
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
