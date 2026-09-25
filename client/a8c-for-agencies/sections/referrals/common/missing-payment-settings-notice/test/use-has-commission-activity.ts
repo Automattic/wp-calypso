@@ -4,7 +4,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
-import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import useHasCommissionActivity from '../use-has-commission-activity';
@@ -17,16 +17,14 @@ jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn( () => 1 ),
 } ) );
 jest.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
-jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
+jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses' );
 jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
 
 const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 const mockUseFetchTaggedSitesForMigration = useFetchTaggedSitesForMigration as jest.MockedFunction<
 	typeof useFetchTaggedSitesForMigration
 >;
-const mockUseFetchAllLicenses = useFetchAllLicenses as jest.MockedFunction<
-	typeof useFetchAllLicenses
->;
+const mockUseFetchLicenses = useFetchLicenses as jest.MockedFunction< typeof useFetchLicenses >;
 const mockUseFetchSitesWithPlugins = useFetchSitesWithPlugins as jest.MockedFunction<
 	typeof useFetchSitesWithPlugins
 >;
@@ -67,8 +65,8 @@ const setMocks = ( {
 			typeof useFetchTaggedSitesForMigration
 		>
 	);
-	mockUseFetchAllLicenses.mockReturnValue(
-		queryResult( licenses, loading.licenses ) as ReturnType< typeof useFetchAllLicenses >
+	mockUseFetchLicenses.mockReturnValue(
+		queryResult( licenses, loading.licenses ) as ReturnType< typeof useFetchLicenses >
 	);
 	mockUseFetchSitesWithPlugins.mockReturnValue(
 		queryResult( sitesWithPlugins, loading.plugins ) as ReturnType<
