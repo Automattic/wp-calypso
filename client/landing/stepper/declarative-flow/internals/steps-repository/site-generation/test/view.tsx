@@ -187,10 +187,10 @@ describe( 'SiteGenerationView wait estimate', () => {
 		steps: [ { id: 'prepare', label: 'Preparing your site', status: 'active' } ],
 	};
 
-	it( 'promises up to 4 minutes on the DSL graph', () => {
+	it( 'promises up to 5 minutes on the DSL graph', () => {
 		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
 
-		expect( screen.getByText( /This can take up to 4 minutes\./ ) ).toBeInTheDocument();
+		expect( screen.getByText( /This can take up to 5 minutes\./ ) ).toBeInTheDocument();
 	} );
 
 	it.each( [ 'blocks-first' as const, undefined ] )(
