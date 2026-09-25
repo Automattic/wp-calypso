@@ -6,9 +6,7 @@ import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
 
 export const getResourceCenterDescription = () =>
-	__(
-		'Browse our guides and articles for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including practical ways to recommend the right solutions for your clients.'
-	);
+	__( 'Resources to help you learn, win clients, and deliver great work.' );
 
 interface ResourceCenterProps {
 	resources: ResourceItem[];
