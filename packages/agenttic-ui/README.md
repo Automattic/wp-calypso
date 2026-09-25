@@ -217,6 +217,7 @@ interface AgentUIProps {
 	// Core chat data
 	messages: Message[];
 	isProcessing: boolean;
+	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
 	error?: string | null;
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
@@ -508,6 +509,7 @@ interface MessageAction {
 	disabled?: boolean;
 	pressed?: boolean;
 	showLabel?: boolean;
+	visibility?: 'always' | 'latest-turn'; // `latest-turn`: inline on the latest turn; floats in a panel on hover for earlier turns, docking once pressed
 }
 
 interface Suggestion {

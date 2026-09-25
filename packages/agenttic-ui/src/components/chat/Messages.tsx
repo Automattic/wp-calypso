@@ -14,6 +14,8 @@ import type { ComponentType } from 'react';
 interface MessagesProps {
 	messages: MessageType[];
 	isProcessing?: boolean;
+	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
+	isStreaming?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
@@ -45,6 +47,7 @@ function getSpokenText( element: Element | null | undefined ): string {
 export function Messages( {
 	messages,
 	isProcessing,
+	isStreaming = isProcessing,
 	error,
 	emptyView,
 	messageRenderer,
@@ -58,6 +61,10 @@ export function Messages( {
 	const visibleMessages = getVisibleMessages( messages );
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
+
+	// The latest turn is everything after the user's latest message.
+	const latestTurnStartIndex =
+		visibleMessages.map( ( message ) => message.role ).lastIndexOf( 'user' ) + 1;
 
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
@@ -150,13 +157,15 @@ export function Messages( {
 				ref={ scrollAreaRef }
 			>
 				<AnimatePresence mode="popLayout">
-					{ visibleMessages.flatMap( ( message ) => {
+					{ visibleMessages.flatMap( ( message, index ) => {
 						const nodes = [
 							<Message
 								key={ message.reactKey || message.id }
 								message={ message }
 								messageRenderer={ messageRenderer }
 								showAgentIcon={ showAgentIcon }
+								isLatestTurn={ index >= latestTurnStartIndex }
+								isStreaming={ isStreaming }
 							/>,
 						];
 						if ( message.role === 'agent' && message.sources?.length ) {

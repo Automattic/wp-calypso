@@ -112,6 +112,9 @@ export interface UIMessage {
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
+// Mirrors `MessageAction.visibility` in agenttic-ui.
+type MessageActionVisibility = 'always' | 'latest-turn';
+
 // Message action type for UI, resolved from condition and passed to the dumb component
 export type UIMessageAction =
 	| {
@@ -125,6 +128,7 @@ export type UIMessageAction =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -133,6 +137,7 @@ export type UIMessageAction =
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 // Internal types for message actions with conditional logic
@@ -149,6 +154,7 @@ export type MessageActionDefinition =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -158,6 +164,7 @@ export type MessageActionDefinition =
 			componentProps?: Record< string, unknown >;
 			condition?: ( message: UIMessage ) => boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 export interface MessageActionsRegistration {

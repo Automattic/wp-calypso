@@ -3674,7 +3674,15 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
+	it( 'keeps response actions on the raw streaming state while images upload', () => {
+		renderWithImageUpload( createImageUpload( { isUploadingImages: true } ) );
+
+		expect( mockAgentChat.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { isProcessing: true, isStreaming: false } )
+		);
+	} );
+
+	it( 'tells the regenerate getter which message is latest', () => {
 		const getRegenerateActions = jest.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
 		mockUseAgentChat.mockReturnValue(
@@ -3705,11 +3713,11 @@ describe( 'OrchestratorChat', () => {
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-1' } ),
-			{ isLatestAgentMessage: false, isStreaming: true }
+			{ isLatestAgentMessage: false }
 		);
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-2' } ),
-			{ isLatestAgentMessage: true, isStreaming: true }
+			{ isLatestAgentMessage: true }
 		);
 	} );
 
