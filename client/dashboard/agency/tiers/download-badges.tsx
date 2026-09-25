@@ -3,13 +3,11 @@ import { VIPLogo } from '@automattic/components/src/logos/vip-logo';
 import {
 	Button,
 	Modal,
-	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
 import { useState } from 'react';
 import pressableLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woo.svg';
@@ -167,33 +165,13 @@ export default function DownloadBadges( {
 				{ __( 'Download your badges' ) }
 			</Button>
 			{ isModalOpen && (
-				<Modal
-					size="medium"
-					aria={ { labelledby: 'agency-tier-download-badges-modal-title' } }
-					onRequestClose={ closeModal }
-					__experimentalHideHeader
-				>
+				<Modal size="medium" title={ __( 'Download your badges' ) } onRequestClose={ closeModal }>
 					<VStack spacing={ 4 }>
-						<HStack justify="space-between" alignment="center">
-							<Heading
-								id="agency-tier-download-badges-modal-title"
-								level={ 1 }
-								size={ 20 }
-								lineHeight="24px"
-								weight={ 500 }
-							>
-								{ __( 'Download your agency badges' ) }
-							</Heading>
-							<Button icon={ close } label={ __( 'Close' ) } onClick={ closeModal } />
-						</HStack>
 						<Text size={ 13 } lineHeight="20px">
 							{ __(
 								'Impress potential clients by displaying your expertise in Automattic products on your website and materials.'
 							) }
 						</Text>
-						<Heading level={ 2 } size={ 13 } lineHeight="20px" weight={ 500 }>
-							{ __( 'Available badges for download:' ) }
-						</Heading>
 						<VStack spacing={ 1 }>
 							{ badges.map( ( badge ) => (
 								<HStack

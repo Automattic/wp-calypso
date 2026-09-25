@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DownloadBadges, { getBadgeDownloads } from '../download-badges';
@@ -56,7 +56,7 @@ describe( '<DownloadBadges>', () => {
 			'calypso_a4a_agency_tier_badges_download_modal_open'
 		);
 
-		const dialog = screen.getByRole( 'dialog', { name: 'Download your agency badges' } );
+		const dialog = screen.getByRole( 'dialog', { name: 'Download your badges' } );
 		const link = screen.getByRole( 'link', {
 			name: 'Download Pressable Pro Agency Partner badges',
 		} );
@@ -74,7 +74,7 @@ describe( '<DownloadBadges>', () => {
 		);
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		await waitForElementToBeRemoved( dialog );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_agency_tier_badges_download_modal_close'
 		);
