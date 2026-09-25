@@ -8,18 +8,21 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
+	type PlanSlug,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getProductCost, getProductDisplayCost } from 'calypso/state/products-list/selectors';
-import type { IAppState } from 'calypso/state/types';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
+import { useSelector } from 'calypso/state';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
@@ -34,6 +37,31 @@ const monthlyPlansMap = {
 	[ PLAN_BUSINESS ]: PLAN_BUSINESS_MONTHLY,
 };
 
+/**
+ * Resolves the price a new purchase would pay for the first period: a discounted
+ * price first, then an intro offer covering exactly one billing term, then the
+ * regular price. Returns null while pricing is still loading.
+ */
+const getFirstPeriodPrice = (
+	pricing: Plans.PricingMetaForGridPlan | undefined,
+	term: 'month' | 'year'
+): number | null => {
+	if ( ! pricing ) {
+		return null;
+	}
+
+	const { introOffer } = pricing;
+	const introOfferPrice =
+		introOffer &&
+		! introOffer.isOfferComplete &&
+		introOffer.intervalUnit === term &&
+		introOffer.intervalCount === 1
+			? introOffer.rawPrice.full
+			: null;
+
+	return pricing.discountedPrice.full || introOfferPrice || pricing.originalPrice.full || null;
+};
+
 const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerProps ) => {
 	const translate = useTranslate();
 	const [ isMonthly, setIsMonthly ] = useState< boolean >( false );
@@ -46,21 +74,28 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 	const monthlyPlanSlug = monthlyPlansMap[ planSlug ];
 	const monthlyPlan = getPlan( monthlyPlanSlug );
 
-	const costMonth = useSelector(
-		( state: IAppState ) => getProductCost( state, monthlyPlanSlug ) || 0
-	);
-	const displayCostMonth = useSelector( ( state: IAppState ) =>
-		getProductDisplayCost( state, monthlyPlanSlug )
-	);
-	const costYear = useSelector( ( state: IAppState ) => getProductCost( state, planSlug ) || 0 );
-	const displayCostYear = useSelector( ( state: IAppState ) =>
-		getProductDisplayCost( state, planSlug )
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ planSlug, monthlyPlanSlug ] as PlanSlug[],
+		siteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+	const currencyCode =
+		pricingMeta?.[ planSlug ]?.currencyCode ??
+		pricingMeta?.[ monthlyPlanSlug ]?.currencyCode ??
+		'USD';
+	const costMonth = getFirstPeriodPrice( pricingMeta?.[ monthlyPlanSlug ], 'month' );
+	const costYear = getFirstPeriodPrice( pricingMeta?.[ planSlug ], 'year' );
+	const formatCost = ( cost: number | null ) =>
+		cost === null
+			? null
+			: formatCurrency( cost, currencyCode, { stripZeros: true, isSmallestUnit: true } );
+	const displayCostMonth = formatCost( costMonth );
+	const displayCostYear = formatCost( costYear );
 
-	const costMonthAnnualized = costMonth * 12;
-	const annualDiscount = Math.floor(
-		( ( costYear - costMonthAnnualized ) / costMonthAnnualized ) * -100
-	);
+	const annualDiscount =
+		costMonth && costYear ? Math.floor( ( 1 - costYear / ( costMonth * 12 ) ) * 100 ) : 0;
 
 	const trackClick = useCallback( () => {
 		recordTracksEvent( 'calypso_themeshowcase_plan_upgrade_banner_click', {
