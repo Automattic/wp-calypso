@@ -7,6 +7,7 @@ import {
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
+	isBusinessPlan,
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
@@ -87,6 +88,15 @@ export function getRenewalItems( cart: ObjectWithProducts ): ResponseCartProduct
  */
 export function hasDIFMProduct( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isDIFMProduct );
+}
+
+/**
+ * Determines whether the shopping cart has a Business plan added from the free DIFM offer.
+ */
+export function hasDIFMOfferPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some(
+		( product ) => isBusinessPlan( product.product_slug ) && product.extra?.difm_offer === true
+	);
 }
 
 /**
