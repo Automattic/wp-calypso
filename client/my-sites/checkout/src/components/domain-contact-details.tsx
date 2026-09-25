@@ -104,6 +104,9 @@ export default function DomainContactDetails( {
 				<RegistrantExtraInfoEsForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.es ?? {} }
+					domainNames={ domainNames.filter(
+						( domainName ) => getTopLevelOfTld( domainName ) === 'es'
+					) }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}

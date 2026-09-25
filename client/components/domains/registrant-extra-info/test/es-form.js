@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import { RegistrantExtraInfoEsForm } from '../es-form';
@@ -18,9 +18,7 @@ const entityTypeLabel = 'Choose the option that best describes the domain owner:
 const registrantIdLabel = 'Domain owner identification number';
 const adminIdLabel = 'Contact person identification number (NIF or NIE)';
 const noticeText = /Red.es requires the administrative and technical contact/;
-const agreementLabel = /I have read and agree to the/;
-const agreementLinkText = 'Red.es terms and conditions';
-const agreementUrl = 'https://example.com/red-es-terms-and-conditions';
+const agreementLabel = 'I have read and agree to the Red.es agreement.';
 
 describe( 'es-form', () => {
 	test( 'renders the entity type select and the registrant ID for empty details', () => {
@@ -159,77 +157,6 @@ describe( 'es-form', () => {
 		expect( screen.getByRole( 'checkbox', { name: agreementLabel } ) ).toBeVisible();
 	} );
 
-	test( 'shows Required while the Red.es agreement is unchecked', () => {
-		render(
-			<RegistrantExtraInfoEsForm
-				{ ...mockProps }
-				ccTldDetails={ { redEsAgreementAccepted: false } }
-			/>
-		);
-
-		expect( screen.getByRole( 'checkbox', { name: agreementLabel } ) ).not.toBeChecked();
-		expect( screen.getByText( 'Required' ) ).toBeVisible();
-	} );
-
-	test( 'hides the Red.es agreement error once checked', () => {
-		render(
-			<RegistrantExtraInfoEsForm
-				{ ...mockProps }
-				ccTldDetails={ { redEsAgreementAccepted: true } }
-			/>
-		);
-
-		expect( screen.getByRole( 'checkbox', { name: agreementLabel } ) ).toBeChecked();
-		expect( screen.queryByText( 'Required' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders the backend Red.es agreement error instead of Required', () => {
-		render(
-			<RegistrantExtraInfoEsForm
-				{ ...mockProps }
-				ccTldDetails={ { redEsAgreementAccepted: false } }
-				contactDetailsValidationErrors={ {
-					extra: {
-						es: {
-							redEsAgreementAccepted: 'Please review and accept the Red.es terms and conditions.',
-						},
-					},
-				} }
-			/>
-		);
-
-		expect(
-			screen.getByText( 'Please review and accept the Red.es terms and conditions.' )
-		).toBeVisible();
-		expect( screen.queryByText( 'Required' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'sends the Red.es agreement acceptance when checked', async () => {
-		const onContactDetailsChange = jest.fn();
-		render(
-			<RegistrantExtraInfoEsForm
-				{ ...mockProps }
-				ccTldDetails={ { redEsAgreementAccepted: false } }
-				onContactDetailsChange={ onContactDetailsChange }
-			/>
-		);
-
-		await userEvent.click( screen.getByRole( 'checkbox', { name: agreementLabel } ) );
-
-		expect( onContactDetailsChange ).toHaveBeenLastCalledWith( {
-			extra: { es: { redEsAgreementAccepted: true } },
-		} );
-	} );
-
-	test( 'links the Red.es terms in a new tab', () => {
-		render( <RegistrantExtraInfoEsForm { ...mockProps } /> );
-
-		const link = screen.getByRole( 'link', { name: agreementLinkText } );
-		expect( link ).toHaveAttribute( 'href', agreementUrl );
-		expect( link ).toHaveAttribute( 'target', '_blank' );
-		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
-	} );
-
 	test( 'seeds the Red.es agreement as not accepted on mount when absent', () => {
 		const onContactDetailsChange = jest.fn();
 		render(
@@ -246,7 +173,7 @@ describe( 'es-form', () => {
 		} );
 	} );
 
-	test( 'does not overwrite a provided Red.es agreement value on mount', () => {
+	test( 'resets a cached Red.es agreement acceptance on mount', () => {
 		const onContactDetailsChange = jest.fn();
 		render(
 			<RegistrantExtraInfoEsForm
@@ -256,6 +183,27 @@ describe( 'es-form', () => {
 			/>
 		);
 
-		expect( onContactDetailsChange ).not.toHaveBeenCalled();
+		expect( onContactDetailsChange ).toHaveBeenCalledTimes( 1 );
+		expect( onContactDetailsChange ).toHaveBeenCalledWith( {
+			extra: { es: { redEsAgreementAccepted: false, redEsAgreementVersion: '' } },
+		} );
+	} );
+
+	test( 'passes the .es domains to the Red.es agreement', async () => {
+		render(
+			<RegistrantExtraInfoEsForm
+				{ ...mockProps }
+				contactDetails={ { firstName: 'Lucía', lastName: 'García' } }
+				ccTldDetails={ {
+					registrantEntityType: '1',
+					registrantIdentificationNumber: '12345678Z',
+				} }
+				domainNames={ [ 'example.es' ] }
+			/>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Read the agreement' } ) );
+
+		expect( within( screen.getByRole( 'dialog' ) ).getByText( 'example.es' ) ).toBeVisible();
 	} );
 } );

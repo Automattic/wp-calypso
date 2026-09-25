@@ -84,6 +84,7 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 			redEsAgreementAccepted: extra.es?.red_es_agreement_accepted
 				? String( extra.es.red_es_agreement_accepted )
 				: undefined,
+			redEsAgreementVersion: extra.es?.red_es_agreement_version,
 		},
 	};
 }
