@@ -39,6 +39,11 @@
 	.dashboard-resources-learn__stage-filter {
 		border-color: $gray-400;
 	}
+
+	// Only rendered while the filters are open, so the gap goes with them.
+	.dashboard-resources-learn__filters-toggled {
+		margin-block-start: $grid-unit-15;
+	}
 }
 
 .dashboard-resources-learn__card {
