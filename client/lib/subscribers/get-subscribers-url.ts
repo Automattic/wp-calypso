@@ -24,8 +24,14 @@ interface SubscribersUrlOptions {
 	subscriptionId?: number | null;
 	/** The subscriber's WordPress.com user id, absent for email-only subscribers. */
 	userId?: number | null;
+	/** Opens the Add subscribers modal on arrival. */
+	addSubscribers?: boolean;
 	fallbackSiteUrl?: string;
 }
+
+// Both the wp-admin Newsletter page and the Jetpack Cloud list open their Add subscribers
+// modal from this hash.
+const ADD_SUBSCRIBERS_HASH = '#add-subscribers';
 
 /**
  * Whether the site manages subscribers on the wp-admin Newsletter page rather than on
@@ -86,27 +92,34 @@ export function getNewsletterPageUrl(
 export function getSubscribersUrl(
 	state: AppState,
 	siteId: number | null,
-	{ subscriptionId, userId, fallbackSiteUrl }: SubscribersUrlOptions = {}
+	{ subscriptionId, userId, addSubscribers, fallbackSiteUrl }: SubscribersUrlOptions = {}
 ): string {
+	const hash = addSubscribers ? ADD_SUBSCRIBERS_HASH : '';
+
 	if ( hasNewsletterSubscribersPage( state, siteId ) ) {
-		// The Newsletter page opens on Subscribers, so the list itself needs no route.
-		const route = subscriptionId
-			? `/?subscriber=${ subscriptionId }${ userId ? `&u=${ userId }` : '' }`
-			: undefined;
+		// `tab` is only read from inside the route, and the Subscribers tab has to be asked
+		// for by name: the page opens on Overview where that is enabled, and the subscriber
+		// details panel renders on no other tab.
+		let route = '/?tab=subscribers';
+
+		if ( subscriptionId ) {
+			route += `&subscriber=${ subscriptionId }${ userId ? `&u=${ userId }` : '' }`;
+		}
+
 		const newsletterUrl = getNewsletterPageUrl( state, siteId, { route, fallbackSiteUrl } );
 
 		if ( newsletterUrl ) {
-			return newsletterUrl;
+			return `${ newsletterUrl }${ hash }`;
 		}
 
 		// Nothing in state says where this site's wp-admin lives. The Calypso route is kept
 		// as a redirect target for exactly this, and for links sent before the move.
-		return `https://wordpress.com/subscribers/${ getSiteSlug( state, siteId ) ?? '' }`;
+		return `https://wordpress.com/subscribers/${ getSiteSlug( state, siteId ) ?? '' }${ hash }`;
 	}
 
 	const slug = getSiteSlug( state, siteId ) ?? '';
 
 	return `https://cloud.jetpack.com/subscribers/${ slug }${
 		subscriptionId ? `/${ subscriptionId }` : ''
-	}`;
+	}${ hash }`;
 }

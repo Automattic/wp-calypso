@@ -5,6 +5,7 @@ const SITE_ID = 1;
 const SITE_URL = 'https://example.com';
 const ADMIN_URL = `${ SITE_URL }/wp-admin/`;
 const NEWSLETTER_URL = `${ ADMIN_URL }admin.php?page=jetpack-newsletter`;
+const SUBSCRIBERS_URL = `${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsubscribers`;
 
 function makeState( {
 	jetpack = false,
@@ -37,20 +38,20 @@ function makeState( {
 }
 
 describe( 'getSubscribersUrl()', () => {
-	test( 'sends a Simple site to the wp-admin Newsletter page', () => {
-		expect( getSubscribersUrl( makeState(), SITE_ID ) ).toBe( NEWSLETTER_URL );
+	test( 'sends a Simple site to the Subscribers tab of the wp-admin Newsletter page', () => {
+		expect( getSubscribersUrl( makeState(), SITE_ID ) ).toBe( SUBSCRIBERS_URL );
 	} );
 
 	test( 'sends an Atomic site to wp-admin even when its Jetpack version is unknown', () => {
 		expect( getSubscribersUrl( makeState( { jetpack: true, isAtomic: true } ), SITE_ID ) ).toBe(
-			NEWSLETTER_URL
+			SUBSCRIBERS_URL
 		);
 	} );
 
 	test( 'sends self-hosted Jetpack 16.1 and above to wp-admin', () => {
 		expect(
 			getSubscribersUrl( makeState( { jetpack: true, jetpackVersion: '16.1' } ), SITE_ID )
-		).toBe( NEWSLETTER_URL );
+		).toBe( SUBSCRIBERS_URL );
 	} );
 
 	test( 'keeps self-hosted Jetpack below 16.1 on Jetpack Cloud', () => {
@@ -65,16 +66,32 @@ describe( 'getSubscribersUrl()', () => {
 		);
 	} );
 
-	test( 'nests a subscriber and user id in the encoded route param', () => {
+	test( 'nests the subscriber and user id in the encoded route param', () => {
 		expect(
 			getSubscribersUrl( makeState(), SITE_ID, { subscriptionId: 944012532, userId: 266514373 } )
-		).toBe( `${ NEWSLETTER_URL }&p=%2F%3Fsubscriber%3D944012532%26u%3D266514373` );
+		).toBe(
+			`${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsubscribers%26subscriber%3D944012532%26u%3D266514373`
+		);
 	} );
 
 	test( 'omits the user id for email-only subscribers', () => {
 		expect( getSubscribersUrl( makeState(), SITE_ID, { subscriptionId: 944012532 } ) ).toBe(
-			`${ NEWSLETTER_URL }&p=%2F%3Fsubscriber%3D944012532`
+			`${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsubscribers%26subscriber%3D944012532`
 		);
+	} );
+
+	test( 'asks for the Add subscribers modal with the hash the page listens for', () => {
+		expect( getSubscribersUrl( makeState(), SITE_ID, { addSubscribers: true } ) ).toBe(
+			`${ SUBSCRIBERS_URL }#add-subscribers`
+		);
+	} );
+
+	test( 'keeps the Add subscribers hash on the Jetpack Cloud list below 16.1', () => {
+		expect(
+			getSubscribersUrl( makeState( { jetpack: true, jetpackVersion: '16.0' } ), SITE_ID, {
+				addSubscribers: true,
+			} )
+		).toBe( 'https://cloud.jetpack.com/subscribers/example.com#add-subscribers' );
 	} );
 
 	test( 'appends the subscriber id to the Jetpack Cloud path below 16.1', () => {
@@ -88,7 +105,7 @@ describe( 'getSubscribersUrl()', () => {
 	test( 'builds wp-admin from the given site URL when the admin URL is missing', () => {
 		expect(
 			getSubscribersUrl( makeState( { adminUrl: null } ), SITE_ID, { fallbackSiteUrl: SITE_URL } )
-		).toBe( `${ SITE_URL }/wp-admin/admin.php?page=jetpack-newsletter` );
+		).toBe( `${ SITE_URL }/wp-admin/admin.php?page=jetpack-newsletter&p=%2F%3Ftab%3Dsubscribers` );
 	} );
 
 	test( 'falls back to the Calypso route when nothing says where wp-admin is', () => {
