@@ -221,6 +221,67 @@
 	}
 }
 
+// The exact-match card and the bundle card split the row; either one alone
+// takes the full width, and they stack once there is no room for two.
+.name-pulse-featured {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
+	gap: 1rem;
+}
+
+.name-pulse-exact-card {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	min-width: 0;
+	padding: 24px;
+	border-radius: 8px;
+	box-sizing: border-box;
+	box-shadow:
+		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
+		0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+	&__badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	&__domain.components-text {
+		margin: 0;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	&__tld {
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	&__footer {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-block-start: auto;
+
+		.name-pulse-row__price {
+			align-items: flex-start;
+		}
+	}
+
+	&--skeleton {
+		justify-content: center;
+		min-height: 12rem;
+	}
+
+	&__skeleton-domain {
+		width: 60%;
+		height: 1.5rem;
+	}
+}
+
 @keyframes name-pulse-skeleton {
 	0%,
 	100% {

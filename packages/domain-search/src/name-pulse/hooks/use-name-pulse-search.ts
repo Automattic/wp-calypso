@@ -8,6 +8,7 @@ import {
 	excludeDomains,
 	generateExactMatches,
 	getAiTopResults,
+	getNamePulseExactMatch,
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
@@ -170,25 +171,28 @@ export const useNamePulseSearch = ( query: string ) => {
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
 	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability, isPending: isCheckingTypedDomain } = useQuery( {
+	const { data: typedDomainAvailability, isError: isTypedDomainError } = useQuery( {
 		...queries.domainAvailability( typedDomain ),
 		enabled: Boolean( typedDomain ),
 	} );
 
-	// Its row waits on that verdict rather than quoting a bulk price and a cart
-	// button the notice is about to contradict.
-	const uncheckedTypedDomain = isCheckingTypedDomain ? typedDomain : '';
+	// The typed domain leaves the grid for its own card while it is checked, so
+	// neither its row nor Top results quote a bulk price and a cart button the
+	// notice may be about to contradict. A taken name comes back to the grid.
+	const exactMatch = useMemo(
+		() => getNamePulseExactMatch( layout.fqdn, typedDomainAvailability, isTypedDomainError ),
+		[ layout.fqdn, typedDomainAvailability, isTypedDomainError ]
+	);
+	const exactMatchName = exactMatch?.domainName;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo(
 		() =>
-			exactRows.map( ( row ) =>
-				row.domain_name === uncheckedTypedDomain
-					? { ...row, status: NamePulseDomainStatus.WAITING }
-					: applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] )
-			),
-		[ exactRows, exactVerdicts, uncheckedTypedDomain ]
+			exactRows
+				.filter( ( row ) => row.domain_name !== exactMatchName )
+				.map( ( row ) => applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] ) ),
+		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
@@ -271,6 +275,26 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ rawCreativeResults, topResults, exactList, keywordResults ]
 	);
 
+	// Anchors wait for every verdict they depend on, so an answer arriving late
+	// cannot slot in ahead of the bundle already shown.
+	const bundleAnchors = useMemo( () => {
+		const isWaiting = ( result: NamePulseDomainResult ) =>
+			result.status === NamePulseDomainStatus.WAITING;
+
+		if (
+			! isSettled ||
+			isLoadingTop ||
+			( exactMatch && ! exactMatch.result ) ||
+			topResults.some( isWaiting )
+		) {
+			return null;
+		}
+
+		return [ ...( exactMatch?.result ? [ exactMatch.result ] : [] ), ...topResults ]
+			.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
+			.map( ( result ) => result.domain_name );
+	}, [ isSettled, isLoadingTop, exactMatch, topResults ] );
+
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
 		[ requestNames ]
@@ -279,6 +303,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	return {
 		layout,
 		notice,
+		exactMatch,
+		bundleAnchors,
 		exactList,
 		keywordResults,
 		creativeResults,
