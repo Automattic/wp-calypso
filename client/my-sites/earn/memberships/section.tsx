@@ -19,6 +19,7 @@ import {
 	getMembershipsSandboxStatusForSiteId,
 	getCouponsAndGiftsEnabledForSiteId,
 	getIsConnectedForSiteId,
+	getIsBrokenStripeConnectionForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CommissionFees from '../components/commission-fees';
@@ -45,6 +46,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	const hasConnectedAccount = useSelector( ( state ) =>
 		getIsConnectedForSiteId( state, site?.ID )
+	);
+
+	const isBrokenStripeConnection = useSelector( ( state ) =>
+		getIsBrokenStripeConnectionForSiteId( state, site?.ID )
 	);
 
 	const isMembershipsSandboxed = useSelector( ( state ) =>
@@ -197,6 +202,20 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	function renderNotices() {
 		const stripe_connect_success = query?.stripe_connect_success;
+
+		if ( isBrokenStripeConnection ) {
+			return (
+				<Notice
+					status="is-error"
+					showDismiss={ false }
+					text={ translate(
+						'Your Stripe account is not connected. Reconnect to continue accepting payments.'
+					) }
+				>
+					<NoticeAction href={ connectUrl }>{ translate( 'Reconnect Stripe' ) }</NoticeAction>
+				</Notice>
+			);
+		}
 
 		if ( stripe_connect_success === 'earn' ) {
 			const siteHasPlans = products.length !== 0;
