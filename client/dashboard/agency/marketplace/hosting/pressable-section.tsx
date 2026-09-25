@@ -42,7 +42,7 @@ import {
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import OptionCards from './option-cards';
-import PressablePremiumSection from './pressable-premium-section';
+import PressablePremiumGate from './pressable-premium-gate';
 import PressableUsageCard from './pressable-usage-card';
 import SelectedPlanCard from './selected-plan-card';
 import { useKeyedSessionState, useSessionState } from './use-session-state';
@@ -146,13 +146,11 @@ export default function PressableSection( {
 		[ catalog ]
 	);
 
-	// Premium plans are only sold through referrals for now.
-	const hasNewPremiumPlans =
-		isReferralMode && catalogPlans.some( ( plan ) => plan.category === PLAN_CATEGORY_PREMIUM );
+	const hasPremiumPlans = catalogPlans.some( ( plan ) => plan.category === PLAN_CATEGORY_PREMIUM );
 
 	const defaultTab = getDefaultPlanCategoryTab( existingPressablePlan, areSignaturePlans );
 	const [ storedTab, setSelectedTab ] = useSessionState( 'pressable-tab', defaultTab );
-	const tabs = getPlanCategoryTabs( areSignaturePlans, hasNewPremiumPlans );
+	const tabs = getPlanCategoryTabs( areSignaturePlans, hasPremiumPlans );
 	// The stored tab is shared with classic and may not exist in this catalog
 	// (e.g. after toggling referral mode), so fall back like classic's TabPanel.
 	const selectedTab = tabs.some( ( tab ) => tab.key === storedTab ) ? storedTab : defaultTab;
@@ -232,7 +230,11 @@ export default function PressableSection( {
 		: undefined;
 	const selectedPlanInfo = selectedProduct ? getPressablePlanInfo( selectedProduct ) : undefined;
 	const isCustomPlan = selectedSlug === null;
-	const showPremiumSection = selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans;
+	const isPremiumTab = selectedTab === PLAN_CATEGORY_PREMIUM;
+	// Agencies on a legacy plan have no Premium plans to pick from.
+	const hasPlanPicker = ! isPremiumTab || hasPremiumPlans;
+	// Premium plans are only sold through referrals for now.
+	const showPremiumGate = isPremiumTab && ! isReferralMode;
 
 	const disableLowTab = isLowTabDisabled( existingPressablePlan, lowOptions );
 
@@ -246,6 +248,19 @@ export default function PressableSection( {
 	const hasIntroductoryDiscount = !! priceInfo && priceInfo.regularPrice !== undefined;
 
 	const planName = selectedProduct ? getPressablePlanName( selectedProduct.name ) : __( 'Custom' );
+
+	const getGateLabel = () => {
+		if ( selectedProduct ) {
+			return selectedProduct.name;
+		}
+		if ( hasPremiumPlans ) {
+			return __( 'Pressable Custom' );
+		}
+		// An agency on a Premium plan sees the legacy catalog, which has no Premium plans to pick.
+		return existingPlanInfo?.category === PLAN_CATEGORY_PREMIUM && existingPlan
+			? existingPlan.name
+			: __( 'Pressable Premium' );
+	};
 
 	const getPlanDetailsIntro = () => {
 		if ( isReferralMode ) {
@@ -480,38 +495,40 @@ export default function PressableSection( {
 										onSelect={ setSelectedTab }
 									/>
 								</VStack>
-								{ ! showPremiumSection && (
-									<VStack spacing={ 3 }>
-										<Heading level={ 4 } size={ 13 }>
-											{ __( 'Select your plan' ) }
-										</Heading>
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											label={ __( 'Select your plan' ) }
-											hideLabelFromVision
-											value={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
-											options={ [
-												...tabOptions.map( ( plan, index ) => {
-													const product = catalog.find(
-														( candidate ) => candidate.slug === plan.slug
-													);
-													return {
-														value: plan.slug,
-														label: product ? getPlanOptionLabel( product, plan ) : plan.slug,
-														disabled: index < minimumIndex,
-													};
-												} ),
-												...( hasCustomOption
-													? [ { value: CUSTOM_PLAN_OPTION, label: __( 'Custom' ) } ]
-													: [] ),
-											] }
-											onChange={ selectPlan }
-										/>
-									</VStack>
+								{ hasPlanPicker && (
+									<>
+										<VStack spacing={ 3 }>
+											<Heading level={ 4 } size={ 13 }>
+												{ __( 'Select your plan' ) }
+											</Heading>
+											<SelectControl
+												__nextHasNoMarginBottom
+												__next40pxDefaultSize
+												label={ __( 'Select your plan' ) }
+												hideLabelFromVision
+												value={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
+												options={ [
+													...tabOptions.map( ( plan, index ) => {
+														const product = catalog.find(
+															( candidate ) => candidate.slug === plan.slug
+														);
+														return {
+															value: plan.slug,
+															label: product ? getPlanOptionLabel( product, plan ) : plan.slug,
+															disabled: index < minimumIndex,
+														};
+													} ),
+													...( hasCustomOption
+														? [ { value: CUSTOM_PLAN_OPTION, label: __( 'Custom' ) } ]
+														: [] ),
+												] }
+												onChange={ selectPlan }
+											/>
+										</VStack>
+										<CardDivider />
+										{ renderPlanDetails() }
+									</>
 								) }
-								<CardDivider />
-								{ showPremiumSection ? <PressablePremiumSection /> : renderPlanDetails() }
 							</VStack>
 						</CardBody>
 					</Card>
@@ -522,12 +539,10 @@ export default function PressableSection( {
 				<JetpackComplete />
 				<Testimonials brand="pressable" />
 			</VStack>
-			{ ( ! showPremiumSection || showUsage ) && (
-				<VStack spacing={ 4 } justify="flex-start" className="dashboard-marketplace-hosting__rail">
-					{ ! showPremiumSection && renderRail() }
-					{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
-				</VStack>
-			) }
+			<VStack spacing={ 4 } justify="flex-start" className="dashboard-marketplace-hosting__rail">
+				{ showPremiumGate ? <PressablePremiumGate label={ getGateLabel() } /> : renderRail() }
+				{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
+			</VStack>
 		</div>
 	);
 }
