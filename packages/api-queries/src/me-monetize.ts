@@ -22,9 +22,9 @@ export const monetizeSubscriptionQuery = ( subscriptionId: string ) =>
 	queryOptions( {
 		queryKey: [ ...MonetizeQueryKeys, subscriptionId ],
 		queryFn: async () => {
-			const subscriptions: MonetizeSubscription[] = await queryClient.ensureQueryData( {
-				queryKey: monetizeSubscriptionsQuery().queryKey,
-			} );
+			const subscriptions: MonetizeSubscription[] = await queryClient.ensureQueryData(
+				monetizeSubscriptionsQuery()
+			);
 			const subscription = ( subscriptions ?? [] ).find( ( sub ) => sub.ID === subscriptionId );
 			if ( ! subscription ) {
 				throw new Error( `Subscription with ID ${ subscriptionId } not found` );
