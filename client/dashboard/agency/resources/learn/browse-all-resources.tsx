@@ -9,6 +9,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Grid from '../../../components/grid';
+import { getContentTypeLabel, getProductLabel } from './labels';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -40,20 +41,22 @@ export default function BrowseAllResources( {
 	// Build filter options dynamically from available resources.
 	const filterOptions = useMemo( () => {
 		const products = new Set< string >();
-		const resourceTypes = new Set< string >();
+		const contentTypes = new Set< string >();
 
 		resources.forEach( ( resource ) => {
-			if ( resource.relatedProduct ) {
-				products.add( resource.relatedProduct );
-			}
-			if ( resource.resourceType ) {
-				resourceTypes.add( resource.resourceType );
-			}
+			products.add( resource.product );
+			contentTypes.add( resource.contentType );
 		} );
 
 		return {
-			products: Array.from( products ).map( ( value ) => ( { value, label: value } ) ),
-			resourceTypes: Array.from( resourceTypes ).map( ( value ) => ( { value, label: value } ) ),
+			products: Array.from( products ).map( ( value ) => ( {
+				value,
+				label: getProductLabel( value ),
+			} ) ),
+			contentTypes: Array.from( contentTypes ).map( ( value ) => ( {
+				value,
+				label: getContentTypeLabel( value ),
+			} ) ),
 		};
 	}, [ resources ] );
 
@@ -70,10 +73,10 @@ export default function BrowseAllResources( {
 				enableGlobalSearch: true,
 			},
 			{
-				id: 'relatedProduct',
+				id: 'product',
 				label: __( 'Product' ),
 				type: 'text',
-				getValue: ( { item } ) => item.relatedProduct,
+				getValue: ( { item } ) => item.product,
 				elements: filterOptions.products,
 				filterBy: {
 					operators: [ 'is' ],
@@ -82,11 +85,11 @@ export default function BrowseAllResources( {
 				enableHiding: true,
 			},
 			{
-				id: 'resourceType',
+				id: 'contentType',
 				label: __( 'Resource type' ),
 				type: 'text',
-				getValue: ( { item } ) => item.resourceType,
-				elements: filterOptions.resourceTypes,
+				getValue: ( { item } ) => item.contentType,
+				elements: filterOptions.contentTypes,
 				filterBy: {
 					operators: [ 'is' ],
 				},
