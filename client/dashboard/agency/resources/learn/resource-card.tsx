@@ -4,8 +4,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
+import { getAudienceLabel, getStageLabel } from './labels';
 import { useResourceCtaLabel } from './use-resource-cta-label';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { MouseEvent } from 'react';
@@ -54,6 +56,10 @@ export default function ResourceCard( {
 						<Text weight={ 500 }>{ resource.name }</Text>
 						<Text variant="muted">{ resource.description }</Text>
 					</VStack>
+					<HStack spacing={ 1 } justify="flex-start" wrap>
+						<Badge intent="draft">{ getAudienceLabel( resource.audience ) }</Badge>
+						<Badge intent="draft">{ getStageLabel( resource.stage ) }</Badge>
+					</HStack>
 				</VStack>
 				<ButtonStack justify="flex-start" className="dashboard-resources-learn__card-footer">
 					<Button

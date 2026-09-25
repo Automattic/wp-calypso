@@ -10,7 +10,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Grid from '../../../components/grid';
-import { getContentTypeLabel, getProductLabel } from './labels';
+import { getContentTypeLabel, getProductLabel, getStageLabel } from './labels';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { AgencyResourceStage } from '@automattic/api-core';
@@ -53,10 +53,10 @@ export default function BrowseAllResources( {
 
 	const stageOptions: { value: StageFilter; label: string }[] = [
 		{ value: 'all', label: __( 'All' ) },
-		{ value: 'learn', label: __( 'Learn' ) },
-		{ value: 'sell', label: __( 'Sell' ) },
-		{ value: 'manage', label: __( 'Manage' ) },
-		{ value: 'grow', label: __( 'Grow' ) },
+		...( [ 'learn', 'sell', 'manage', 'grow' ] as const ).map( ( value ) => ( {
+			value,
+			label: getStageLabel( value ),
+		} ) ),
 	];
 
 	// Build filter options dynamically from available resources.
