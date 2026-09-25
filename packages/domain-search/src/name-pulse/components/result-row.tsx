@@ -83,9 +83,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
-	// Below desktop the row is too narrow to truncate without losing most of the
-	// name, so the name wraps onto a second line instead.
-	const wrapName = useViewportMatch( 'medium', '<' );
+	// Below wide desktop the row is too narrow to truncate without losing most of
+	// the name, so the name wraps onto a second line instead.
+	const wrapName = useViewportMatch( 'large', '<' );
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
 

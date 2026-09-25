@@ -7,7 +7,6 @@ import { DomainSearchNotice } from '../ui';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
-import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 
 import './components/style.scss';
@@ -27,6 +26,7 @@ export const NamePulseResults = () => {
 		keywordResults,
 		creativeResults,
 		topResults,
+		topResultsCount,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,
@@ -68,8 +68,8 @@ export const NamePulseResults = () => {
 						title={ __( 'Top results' ) }
 						results={ topResults }
 						isLoading={ isLoadingTop }
-						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
+						maxVisible={ topResultsCount }
+						skeletonCount={ topResultsCount }
 					/>
 				) }
 				{ layout.exactGrid.show && ! hasTldsError && (

@@ -30,7 +30,7 @@
 	overflow: hidden;
 	gap: 1px;
 
-	@media ( max-width: #{ $break-medium - 1px } ) {
+	@media ( max-width: #{ $break-large - 1px } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 
@@ -56,6 +56,32 @@
 	padding: 0.75rem 1rem;
 	box-sizing: border-box;
 	flex-wrap: wrap;
+
+	// On phones the price drops under the name and the cart button sits to the
+	// right of both, so the name gets the full width of its column.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr ) auto;
+		align-items: center;
+		gap: 0.25rem 0.75rem;
+
+		.name-pulse-row__status {
+			display: contents;
+
+			> * {
+				grid-column: 1;
+			}
+		}
+
+		.name-pulse-row__cart {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+		}
+
+		.name-pulse-row__price {
+			align-items: flex-start;
+		}
+	}
 
 	&__name {
 		display: flex;

@@ -4,6 +4,7 @@
 import { namePulseTldsQuery } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -28,6 +29,13 @@ import type {
 	NamePulseSuggestionsQuery,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
 
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
@@ -118,6 +126,7 @@ const statusOf = ( result: ReturnType< typeof renderSearch >[ 'result' ], name: 
 
 describe( 'useNamePulseSearch', () => {
 	beforeEach( () => {
+		mockUseViewportMatch.mockReturnValue( false );
 		nock.disableNetConnect();
 		queryClient.clear();
 		queryClient.setQueryData( namePulseTldsQuery().queryKey, NAME_PULSE_TLDS_FIXTURE );
@@ -163,6 +172,34 @@ describe( 'useNamePulseSearch', () => {
 		await waitFor( () =>
 			expect( statusOf( result, 'testcom.blog' ) ).toBe( NamePulseDomainStatus.AVAILABLE )
 		);
+	} );
+
+	it( 'features two top results below the large breakpoint and hands the third back to the exact matches', async () => {
+		stubBulkAvailability();
+		const { result, rerender } = renderSearch( 'test' );
+
+		await waitFor( () => expect( result.current.topResults ).toHaveLength( 3 ) );
+		const [ , , third ] = result.current.topResults;
+		expect( result.current.topResultsCount ).toBe( 3 );
+
+		mockUseViewportMatch.mockImplementation( ( breakpoint ) => breakpoint === 'small' );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 2 );
+		expect( result.current.topResults ).toHaveLength( 2 );
+		expect( result.current.exactList.map( ( row ) => row.domain_name ) ).toContain(
+			third.domain_name
+		);
+
+		mockUseViewportMatch.mockImplementation( ( breakpoint ) => breakpoint !== 'large' );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 2 );
+
+		mockUseViewportMatch.mockReturnValue( true );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 3 );
 	} );
 
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
