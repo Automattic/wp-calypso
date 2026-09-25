@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
 import type { SiteGenerationState } from './use-site-generation';
+import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import type { CSSProperties } from 'react';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
@@ -129,8 +130,22 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 	);
 }
 
-function WaitingCanvas( { onPreviewTap }: { onPreviewTap: () => void } ) {
+function WaitingCanvas( {
+	graph,
+	onPreviewTap,
+}: {
+	graph?: BuildWowGraph;
+	onPreviewTap: () => void;
+} ) {
 	const translate = useTranslate();
+	const description =
+		graph === 'dsl'
+			? translate(
+					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
+				)
+			: translate(
+					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+				);
 
 	return (
 		<div className="site-generation__waiting">
@@ -139,11 +154,7 @@ function WaitingCanvas( { onPreviewTap }: { onPreviewTap: () => void } ) {
 				<h1 className="site-generation__waiting-title">
 					{ translate( 'All good things are worth the wait' ) }
 				</h1>
-				<p className="site-generation__waiting-description">
-					{ translate(
-						'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
-					) }
-				</p>
+				<p className="site-generation__waiting-description">{ description }</p>
 			</div>
 		</div>
 	);
@@ -264,9 +275,11 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 
 export function SiteGenerationView( {
 	state,
+	graph,
 	onReload,
 }: {
 	state: SiteGenerationState;
+	graph?: BuildWowGraph;
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
@@ -311,7 +324,7 @@ export function SiteGenerationView( {
 					{ state.status === 'failed' ? (
 						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
-						<WaitingCanvas onPreviewTap={ cycleTint } />
+						<WaitingCanvas graph={ graph } onPreviewTap={ cycleTint } />
 					) }
 				</div>
 			</section>
