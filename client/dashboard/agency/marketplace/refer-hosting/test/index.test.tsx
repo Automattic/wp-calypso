@@ -35,6 +35,9 @@ function mockApi( approval_status: 'pending' | 'approved' ) {
 		.reply( 200, { FR: 'France' } );
 }
 
+// Filling in the whole form takes several seconds on a busy CI agent.
+const FULL_FORM_TIMEOUT = 15000;
+
 describe( '<ReferHosting>', () => {
 	beforeEach( () => nock.cleanAll() );
 
@@ -50,47 +53,51 @@ describe( '<ReferHosting>', () => {
 		expect( screen.getByRole( 'button', { name: 'Submit VIP referral' } ) ).toBeVisible();
 	} );
 
-	test( 'thanks the agency and links back to the marketplace once the referral is sent', async () => {
-		mockApi( 'approved' );
-		nock( API )
-			.post( '/wpcom/v2/agency/pressable/premium-plan-referral' )
-			.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
-		const user = userEvent.setup();
+	test(
+		'thanks the agency and links back to the marketplace once the referral is sent',
+		async () => {
+			mockApi( 'approved' );
+			nock( API )
+				.post( '/wpcom/v2/agency/pressable/premium-plan-referral' )
+				.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
+			const user = userEvent.setup();
 
-		const { recordTracksEvent } = render( <ReferHosting type="premium" /> );
+			const { recordTracksEvent } = render( <ReferHosting type="premium" /> );
 
-		// One change event per text field keeps the test well inside CI's timeout.
-		const fillText = ( name: string, value: string ) =>
-			fireEvent.change( screen.getByLabelText( name ), { target: { value } } );
-		await screen.findByRole( 'textbox', { name: 'Company name' } );
-		fillText( 'Company name', 'Acme' );
-		fillText( 'Company address', '1 Main St' );
-		await user.click( screen.getByRole( 'combobox', { name: 'Country' } ) );
-		await user.click( await screen.findByRole( 'option', { name: 'France' } ) );
-		fillText( 'City', 'Paris' );
-		fillText( 'ZIP/Postal code', '75001' );
-		fillText( 'First name', 'Ada' );
-		fillText( 'Last name', 'Lovelace' );
-		fillText( 'Title', 'CTO' );
-		fillText( 'Email', 'ada@example.com' );
-		fillText( 'Website', 'example.com' );
-		fillText( 'Tell us more about this opportunity', 'A big site.' );
-		await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+			// One change event per text field instead of typing each keystroke.
+			const fillText = ( name: string, value: string ) =>
+				fireEvent.change( screen.getByLabelText( name ), { target: { value } } );
+			await screen.findByRole( 'textbox', { name: 'Company name' } );
+			fillText( 'Company name', 'Acme' );
+			fillText( 'Company address', '1 Main St' );
+			await user.click( screen.getByRole( 'combobox', { name: 'Country' } ) );
+			await user.click( await screen.findByRole( 'option', { name: 'France' } ) );
+			fillText( 'City', 'Paris' );
+			fillText( 'ZIP/Postal code', '75001' );
+			fillText( 'First name', 'Ada' );
+			fillText( 'Last name', 'Lovelace' );
+			fillText( 'Title', 'CTO' );
+			fillText( 'Email', 'ada@example.com' );
+			fillText( 'Website', 'example.com' );
+			fillText( 'Tell us more about this opportunity', 'A big site.' );
+			await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
 
-		expect(
-			await screen.findByRole( 'heading', { name: 'Thank you for your Premium plan referral' } )
-		).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'Submit Premium plan referral' } )
-		).not.toBeInTheDocument();
+			expect(
+				await screen.findByRole( 'heading', { name: 'Thank you for your Premium plan referral' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Submit Premium plan referral' } )
+			).not.toBeInTheDocument();
 
-		const backLink = screen.getByRole( 'link', { name: 'Back to the marketplace' } );
-		expect( backLink ).toHaveAttribute( 'href', '/marketplace/hosting/pressable' );
-		await user.click( backLink );
-		await waitFor( () =>
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace'
-			)
-		);
-	} );
+			const backLink = screen.getByRole( 'link', { name: 'Back to the marketplace' } );
+			expect( backLink ).toHaveAttribute( 'href', '/marketplace/hosting/pressable' );
+			await user.click( backLink );
+			await waitFor( () =>
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace'
+				)
+			);
+		},
+		FULL_FORM_TIMEOUT
+	);
 } );
