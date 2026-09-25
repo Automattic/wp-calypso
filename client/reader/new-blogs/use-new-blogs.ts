@@ -12,6 +12,7 @@
  * See client/reader/new-blogs/README.md.
  */
 import { readNewBlogsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -73,10 +74,11 @@ export function useNewBlogs(): UseNewBlogsResult {
 	);
 	const { mutate: dismissRecommendedSite } = useDismissRecommendedSite();
 
-	// Don't fetch once hidden, or when logged out (the endpoint is user-scoped).
+	// Only fetch with the flag on, when logged in (the endpoint is user-scoped)
+	// and while the module isn't hidden.
 	const { data } = useQuery( {
 		...readNewBlogsQuery(),
-		enabled: isLoggedIn && ! isHidden,
+		enabled: isEnabled( 'reader/discover-new-blogs' ) && isLoggedIn && ! isHidden,
 	} );
 
 	const dismissBlog = useCallback(

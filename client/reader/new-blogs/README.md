@@ -16,10 +16,8 @@ is `@automattic/api-core` `fetchReadNewBlogs` + `@automattic/api-queries`
 
 `reader/discover-new-blogs`
 
-| env                                   | value   |
-| ------------------------------------- | ------- |
-| development (`yarn start`, localhost) | `true`  |
-| wpcalypso, horizon, stage, production | `false` |
+Off (`false`) in every environment. To try it, append
+`?flags=reader/discover-new-blogs` to the URL (works locally and on calypso.live).
 
 Mount point: `client/reader/following/main.tsx` calls `useNewBlogs()` and, when
 the flag is on, the view is the "all subscriptions" Recent stream (no `feedId`),

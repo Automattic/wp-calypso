@@ -85,7 +85,14 @@ export default function NewBlogCard( { rec, onDismiss, onOpen, onFollowToggle }:
 						className="reader-discover-new-blogs__dismiss"
 						icon={ close }
 						iconSize={ 20 }
-						label={ translate( 'Not interested' ) }
+						label={
+							siteName
+								? ( translate( 'Not interested in %(siteName)s', {
+										args: { siteName },
+										comment: 'Dismisses a recommended blog. %(siteName)s is the blog name.',
+									} ) as string )
+								: translate( 'Not interested' )
+						}
 						showTooltip
 						onClick={ onDismiss }
 					/>
