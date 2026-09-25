@@ -17,6 +17,7 @@ export const GranularConsent = ( { name, content, disabled, checked, onChange }:
 		},
 		[ onChange ]
 	);
+	const labelId = `cookie-banner__option-${ name }-label`;
 	return (
 		<div className="cookie-banner__bucket-container">
 			<FormToggle
@@ -24,9 +25,10 @@ export const GranularConsent = ( { name, content, disabled, checked, onChange }:
 				checked={ checked }
 				disabled={ disabled }
 				data-testid={ `${ name }-bucket-toggle` }
+				aria-labelledby={ labelId }
 			/>
 			<div className="cookie-banner__option-description">
-				<strong>{ content.name }</strong>
+				<strong id={ labelId }>{ content.name }</strong>
 				<p>{ content.description }</p>
 			</div>
 		</div>
