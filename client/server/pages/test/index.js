@@ -103,6 +103,11 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
+const createMockStore = () => ( {
+	dispatch: jest.fn(),
+	getState: jest.fn( () => ( { documentHead: { meta: [] } } ) ),
+} );
+
 /**
  * Builds an app for an specific environment.
  *
@@ -142,6 +147,7 @@ const buildApp = ( environment ) => {
 		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
 		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
+		mocks.createReduxStore.mockImplementation( createMockStore );
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
 		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
@@ -283,7 +289,7 @@ const buildApp = ( environment ) => {
 		},
 		withReduxStore( store ) {
 			mocks.createReduxStore.mockImplementation( () => store );
-			tearDown.push( () => mocks.createReduxStore.mockReset() );
+			tearDown.push( () => mocks.createReduxStore.mockImplementation( createMockStore ) );
 		},
 		withSetCurrentAction( action ) {
 			mocks.setCurrentUser.mockImplementation( () => action );
@@ -805,9 +811,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		let theAction;
 
 		beforeEach( () => {
-			theStore = {
-				dispatch: jest.fn(),
-			};
+			theStore = createMockStore();
 			theAction = {};
 
 			// This method resets the existing enabled config, we need to re-enable 'use-translation-chunks'.
@@ -1043,7 +1047,7 @@ describe( 'main app', () => {
 		it( 'redirects authenticated Woo-origin requests to a URL without return_to', async () => {
 			app.withAuthenticatedUser();
 			app.withBootstrapUser( {} );
-			app.withReduxStore( { dispatch: jest.fn() } );
+			app.withReduxStore( createMockStore() );
 			app.withSetCurrentAction( {} );
 
 			const { response } = await app.run( {
@@ -1236,9 +1240,7 @@ describe( 'main app', () => {
 					'use-translation-chunks': true,
 				} );
 				app.withBootstrapUser( {} );
-				app.withReduxStore( {
-					dispatch: jest.fn(),
-				} );
+				app.withReduxStore( createMockStore() );
 			} );
 
 			afterEach(
