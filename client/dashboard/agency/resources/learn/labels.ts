@@ -35,3 +35,25 @@ export function getContentTypeLabel( contentType: string ): string {
 
 	return labels[ contentType ] ?? contentType;
 }
+
+export function getStageLabel( stage: string ): string {
+	const labels: Record< string, string > = {
+		learn: __( 'Learn' ),
+		sell: __( 'Sell' ),
+		manage: __( 'Manage' ),
+		grow: __( 'Grow' ),
+	};
+
+	return labels[ stage ] ?? stage;
+}
+
+export function getAudienceLabel( audience: string ): string {
+	const labels: Record< string, string > = {
+		all: __( 'All audiences' ),
+		developer: __( 'Developers' ),
+		business: __( 'Business' ),
+		client: __( 'Clients' ),
+	};
+
+	return labels[ audience ] ?? audience;
+}
