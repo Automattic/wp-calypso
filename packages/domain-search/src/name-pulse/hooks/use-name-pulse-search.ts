@@ -208,9 +208,9 @@ export const useNamePulseSearch = ( query: string ) => {
 	// Capped here rather than hidden in CSS so a name dropped from Top results
 	// falls back into the sections below instead of vanishing.
 	const isSmallOrBigger = useViewportMatch( 'small', '>=' );
-	const isMediumOrBigger = useViewportMatch( 'medium', '>=' );
+	const isLargeOrBigger = useViewportMatch( 'large', '>=' );
 	const topResultsCount =
-		isSmallOrBigger && ! isMediumOrBigger
+		isSmallOrBigger && ! isLargeOrBigger
 			? NAME_PULSE_TOP_RESULTS_COUNT_TABLET
 			: NAME_PULSE_TOP_RESULTS_COUNT;
 	const topResults = useMemo( () => {

@@ -174,7 +174,7 @@ describe( 'useNamePulseSearch', () => {
 		);
 	} );
 
-	it( 'features two top results on tablet and hands the third back to the exact matches', async () => {
+	it( 'features two top results below the large breakpoint and hands the third back to the exact matches', async () => {
 		stubBulkAvailability();
 		const { result, rerender } = renderSearch( 'test' );
 
@@ -190,6 +190,16 @@ describe( 'useNamePulseSearch', () => {
 		expect( result.current.exactList.map( ( row ) => row.domain_name ) ).toContain(
 			third.domain_name
 		);
+
+		mockUseViewportMatch.mockImplementation( ( breakpoint ) => breakpoint !== 'large' );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 2 );
+
+		mockUseViewportMatch.mockReturnValue( true );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 3 );
 	} );
 
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {

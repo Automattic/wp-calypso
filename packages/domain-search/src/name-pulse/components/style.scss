@@ -30,7 +30,7 @@
 	overflow: hidden;
 	gap: 1px;
 
-	@media ( max-width: #{ $break-medium - 1px } ) {
+	@media ( max-width: #{ $break-large - 1px } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 
