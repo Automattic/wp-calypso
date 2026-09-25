@@ -1,5 +1,4 @@
 import {
-	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_BANDWIDTH,
 	FEATURE_BURST,
@@ -10,16 +9,11 @@ import {
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_PRIORITY_24_7_SUPPORT,
-	FEATURE_MANAGED_HOSTING,
-	FEATURE_MULTI_SITE,
-	FEATURE_NO_ADS,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
@@ -104,7 +98,7 @@ export const ThemeUpgradeModal = ( {
 	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
 	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
-	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
+	const requiredPlanName = getPlan( requiredPlan )?.getTitle() || '';
 
 	const getPersonalPlanModalData = (): UpgradeModalContent => {
 		const planPrice = requiredPlanProduct?.combined_cost_display;
@@ -352,7 +346,7 @@ export const ThemeUpgradeModal = ( {
 		};
 
 		const productPrice = marketplaceProduct?.cost_display;
-		const businessPlanPriceText = getMarketplacePlanTextByTerm(
+		const requiredPlanPriceText = getMarketplacePlanTextByTerm(
 			requiredPlanProduct?.product_term || '',
 			requiredPlanProduct?.combined_cost_display || ''
 		);
@@ -366,17 +360,7 @@ export const ThemeUpgradeModal = ( {
 			text: (
 				<>
 					{ ! isPlanSufficient && (
-						<p>
-							{ translate(
-								'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
-								{
-									args: {
-										businessPlanName: businessPlanName,
-										commercePlanName: ecommercePlanName,
-									},
-								}
-							) }
-						</p>
+						<p>{ translate( 'This partner theme is available to buy on all paid plans.' ) }</p>
 					) }
 					<div>
 						<div className="theme-upgrade-modal__price-summary">
@@ -409,14 +393,14 @@ export const ThemeUpgradeModal = ( {
 							{ isMarketplacePlanSubscriptionNeeded && (
 								<div className="theme-upgrade-modal__price-item">
 									<label>
-										{ translate( '%(businessPlanName)s plan', {
+										{ translate( '%(planName)s plan', {
 											args: {
-												businessPlanName: businessPlanName,
+												planName: requiredPlanName,
 											},
 										} ) }
 									</label>
 									<label className="theme-upgrade-modal__price-value">
-										<strong>{ businessPlanPriceText }</strong>
+										<strong>{ requiredPlanPriceText }</strong>
 									</label>
 								</div>
 							) }
@@ -489,16 +473,9 @@ export const ThemeUpgradeModal = ( {
 	const getExternallyManagedFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_PLUGINS_THEMES,
-			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_PRIORITY_24_7_SUPPORT,
-			FEATURE_NO_ADS,
-			FEATURE_ACCEPT_PAYMENTS,
-			FEATURE_MANAGED_HOSTING,
-			FEATURE_BANDWIDTH,
-			FEATURE_GLOBAL_EDGE_CACHING,
-			FEATURE_CDN,
-			FEATURE_MULTI_SITE,
-			FEATURE_VIDEOPRESS_JP,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
 		] );
 	};
 
@@ -524,8 +501,8 @@ export const ThemeUpgradeModal = ( {
 		modalTitle = translate( 'Unlock this partner theme' );
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
-		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
-			args: { businessPlanName: businessPlanName },
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: requiredPlanName },
 		} );
 	} else if ( theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ) {
 		modalData = getPersonalPlanModalData();

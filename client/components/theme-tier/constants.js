@@ -62,7 +62,7 @@ export const THEME_TIERS = {
 				context: 'This theme is developed and supported by a theme partner',
 			} );
 		},
-		minimumUpsellPlan: PLAN_BUSINESS,
+		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
 	woocommerce: {
