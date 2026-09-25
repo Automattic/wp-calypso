@@ -75,6 +75,7 @@ describe( 'updateManagedContactDetailsShape', function () {
 		'extra.es.registrantIdentificationNumber',
 		'extra.es.adminIdentificationNumber',
 		'extra.es.redEsAgreementAccepted',
+		'extra.es.redEsAgreementVersion',
 	];
 
 	const testProperty = ( merge, construct, update, data ) => {
@@ -140,6 +141,7 @@ describe( 'updateManagedContactDetailsShape', function () {
 				registrantIdentificationNumber: gen(),
 				adminIdentificationNumber: gen(),
 				redEsAgreementAccepted: gen(),
+				redEsAgreementVersion: gen(),
 			};
 		}
 
@@ -275,6 +277,7 @@ describe( 'mapManagedContactDetailsShape', function () {
 		'extra.es.registrantIdentificationNumber',
 		'extra.es.adminIdentificationNumber',
 		'extra.es.redEsAgreementAccepted',
+		'extra.es.redEsAgreementVersion',
 	];
 
 	const testProperty = ( f, data ) => {
@@ -336,6 +339,7 @@ describe( 'mapManagedContactDetailsShape', function () {
 				registrantIdentificationNumber: gen(),
 				adminIdentificationNumber: gen(),
 				redEsAgreementAccepted: gen(),
+				redEsAgreementVersion: gen(),
 			};
 		}
 
@@ -441,10 +445,11 @@ describe( 'flattenManagedContactDetailsShape', function () {
 						registrantIdentificationNumber: 'registrantIdentificationNumber',
 						adminIdentificationNumber: 'adminIdentificationNumber',
 						redEsAgreementAccepted: 'redEsAgreementAccepted',
+						redEsAgreementVersion: 'redEsAgreementVersion',
 					},
 				},
 			} )
-		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 20, 30, 25, 22 ] );
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 20, 30, 25, 22, 21 ] );
 	} );
 
 	it( 'with uk fields', () => {
