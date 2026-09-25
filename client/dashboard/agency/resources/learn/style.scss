@@ -1,5 +1,6 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 
 // Display faces from the Automattic for Agencies site.
 @font-face {
@@ -44,12 +45,29 @@
 	position: relative;
 	block-size: 100%;
 	overflow: hidden;
+}
 
-	// An outline, not an inset shadow, so the branded header can't paint over it.
-	&:hover,
-	&:has( .dashboard-resources-learn__card-link:focus-visible ) {
-		outline: 1px solid var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
-		outline-offset: -1px;
+// A small lift on hover, tilting alternate cards the opposite way.
+@media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
+	.dashboard-resources-learn__card {
+		transition:
+			transform 280ms cubic-bezier( 0.2, 1.4, 0.4, 1 ),
+			box-shadow 180ms ease-out;
+
+		&:hover {
+			z-index: 1;
+			transform: translateY( -3px ) rotate( -0.5deg ) scale( 1.018 );
+			box-shadow: 0 0 0 1px
+				color-mix(
+					in srgb,
+					var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 20%,
+					transparent
+				);
+		}
+
+		&:nth-child( even ):hover {
+			transform: translateY( -3px ) rotate( 0.5deg ) scale( 1.018 );
+		}
 	}
 }
 
@@ -61,12 +79,19 @@
 		content: '';
 		position: absolute;
 		inset: 0;
+		// Matches Card's corners, so the focus ring isn't clipped.
+		border-radius: $radius-large;
 	}
 
-	// The card draws the focus ring instead.
+	// The stretched ::after draws the focus ring around the whole card instead.
 	&:focus {
 		box-shadow: none;
 		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
 	}
 }
 
