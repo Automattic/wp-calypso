@@ -8,7 +8,9 @@ import {
 	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
@@ -124,21 +126,29 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 	);
 }
 
-// TODO: classic shows the referring client's email under the product name. Port
-// it once the `referral` field on JetpackLicense is typed.
 function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
 	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
+	const clientEmail = license.referral?.client?.email;
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-			{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
-			{ getLicenseTags( license ).map( ( tag ) => (
-				<Badge key={ tag }>{ tag }</Badge>
-			) ) }
-			{ transferredUntil && isRecentlyTransferred( license ) && (
-				<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+		<VStack spacing={ 0 }>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
+				{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
+				{ getLicenseTags( license ).map( ( tag ) => (
+					<Badge key={ tag }>{ tag }</Badge>
+				) ) }
+				{ transferredUntil && isRecentlyTransferred( license ) && (
+					<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+				) }
+			</HStack>
+			{ clientEmail && (
+				<Text variant="muted" title={ clientEmail }>
+					{ createInterpolateElement( __( '<email /> owns this' ), {
+						email: <strong>{ clientEmail }</strong>,
+					} ) }
+				</Text>
 			) }
-		</HStack>
+		</VStack>
 	);
 }
 

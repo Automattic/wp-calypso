@@ -46,7 +46,7 @@ const assignedWpcomDev = license( {
 } );
 const referral = license( {
 	...assignedWpcom,
-	referral: { id: 1 },
+	referral: { id: 1 } as JetpackLicense[ 'referral' ],
 } );
 const standard = license( { owner_type: 'user' } );
 const revoked = license( {
@@ -99,12 +99,14 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const onOpenHosting = jest.fn();
+	const onNavigate = jest.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
 		isProvisioning: false,
 		onCopyKey: () => {},
 		onDownload: () => {},
+		onNavigate,
 		onOpenHosting,
 		recordTracksEvent: () => {},
 	} );
@@ -122,7 +124,8 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		}
 		return action.isEligible( item );
 	};
-	return { isEligible, run, onOpenHosting };
+	const getAction = ( id: string ) => actions.find( ( a ) => a.id === id );
+	return { isEligible, run, onOpenHosting, onNavigate, getAction };
 }
 
 const SITE_ACTIONS = [
@@ -158,6 +161,33 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'prepare-for-launch', assignedJetpack ) ).toBe( false );
 		expect( isEligible( 'change-domain', assignedWpcomDev ) ).toBe( false );
 		expect( isEligible( 'upgrade', assignedWpcomDev ) ).toBe( false );
+	} );
+
+	it( 'keeps Change domain outside the dashboard', () => {
+		const { run } = setupWithCallbacks();
+		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		// The A4A app registers no domains routes, so this one still leaves the dashboard.
+		run( 'change-domain', assignedWpcom );
+		expect( open ).toHaveBeenCalledTimes( 1 );
+		expect( open.mock.calls[ 0 ][ 0 ] ).toContain( '/domains/manage/example.wpcomstaging.com' );
+		open.mockRestore();
+	} );
+
+	it( 'sends the site actions to their dashboard routes', () => {
+		const { run, onNavigate } = setupWithCallbacks();
+
+		run( 'set-up-site', assignedWpcom );
+		run( 'hosting-configuration', assignedWpcom );
+		run( 'prepare-for-launch', assignedWpcomDev );
+
+		// Users without `manage_options` are turned away by the routes themselves,
+		// which explain it on the site page, so nothing is gated here.
+		expect( onNavigate.mock.calls.map( ( [ to ]: [ string ] ) => to ) ).toEqual( [
+			'/sites/example.wpcomstaging.com',
+			'/sites/example.wpcomstaging.com/settings',
+			'/sites/example.wpcomstaging.com/settings/site-visibility',
+		] );
 	} );
 
 	it( 'offers upgrade for hosting licenses that are still renewing', () => {
@@ -229,7 +259,10 @@ describe( 'getLicenseActions eligibility', () => {
 	} );
 
 	it( 'gates a bundle on the revoke capability alone, like classic', () => {
-		const referralBundle = license( { quantity: 5, referral: { id: 1 } } );
+		const referralBundle = license( {
+			quantity: 5,
+			referral: { id: 1 } as JetpackLicense[ 'referral' ],
+		} );
 		const autoRenewOffBundle = license( { quantity: 5, subscription: autoRenewOff.subscription } );
 		expect( setup()( 'revoke-license', referralBundle ) ).toBe( true );
 		expect( setup()( 'revoke-license', autoRenewOffBundle ) ).toBe( true );
