@@ -19,11 +19,14 @@ interface NewsletterPageOptions {
 	fallbackSiteUrl?: string;
 }
 
-interface SubscribersUrlOptions {
+interface SubscriberTarget {
 	/** Opens this subscriber's details instead of the list. */
 	subscriptionId?: number | null;
 	/** The subscriber's WordPress.com user id, absent for email-only subscribers. */
 	userId?: number | null;
+}
+
+interface SubscribersUrlOptions extends SubscriberTarget {
 	/** Opens the Add subscribers modal on arrival. */
 	addSubscribers?: boolean;
 	fallbackSiteUrl?: string;
@@ -87,6 +90,25 @@ export function getNewsletterPageUrl(
 }
 
 /**
+ * The route to the Subscribers tab inside the Newsletter page, optionally with one subscriber
+ * selected. `tab` is only read from inside the route, and the tab has to be asked for by name:
+ * the page opens on Overview where that is enabled, and the subscriber details panel renders on
+ * no other tab.
+ */
+export function getNewsletterSubscribersRoute( {
+	subscriptionId,
+	userId,
+}: SubscriberTarget = {} ): string {
+	let route = '/?tab=subscribers';
+
+	if ( subscriptionId ) {
+		route += `&subscriber=${ subscriptionId }${ userId ? `&u=${ userId }` : '' }`;
+	}
+
+	return route;
+}
+
+/**
  * Where to send someone to manage a site's subscribers, or one subscriber's details.
  */
 export function getSubscribersUrl(
@@ -97,16 +119,10 @@ export function getSubscribersUrl(
 	const hash = addSubscribers ? ADD_SUBSCRIBERS_HASH : '';
 
 	if ( hasNewsletterSubscribersPage( state, siteId ) ) {
-		// `tab` is only read from inside the route, and the Subscribers tab has to be asked
-		// for by name: the page opens on Overview where that is enabled, and the subscriber
-		// details panel renders on no other tab.
-		let route = '/?tab=subscribers';
-
-		if ( subscriptionId ) {
-			route += `&subscriber=${ subscriptionId }${ userId ? `&u=${ userId }` : '' }`;
-		}
-
-		const newsletterUrl = getNewsletterPageUrl( state, siteId, { route, fallbackSiteUrl } );
+		const newsletterUrl = getNewsletterPageUrl( state, siteId, {
+			route: getNewsletterSubscribersRoute( { subscriptionId, userId } ),
+			fallbackSiteUrl,
+		} );
 
 		if ( newsletterUrl ) {
 			return `${ newsletterUrl }${ hash }`;
