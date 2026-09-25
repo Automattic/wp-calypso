@@ -16,7 +16,6 @@ interface ResourceCardProps {
 	onResourceClick?: ( resource: ResourceItem ) => void;
 	showLogo?: boolean;
 	tracksEventName: string;
-	isPlain?: boolean;
 }
 
 export default function ResourceCard( {
@@ -26,7 +25,6 @@ export default function ResourceCard( {
 	onResourceClick,
 	showLogo = false,
 	tracksEventName,
-	isPlain = false,
 }: ResourceCardProps ) {
 	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'video';
@@ -46,44 +44,28 @@ export default function ResourceCard( {
 		onResourceClick?.( resource );
 	};
 
-	const content = (
-		<>
-			<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-				{ showLogo && <HStack>{ resource.logo }</HStack> }
-				<VStack spacing={ 1 }>
-					<Text size={ 13 } weight={ 500 }>
-						{ resource.name }
-					</Text>
-					<Text variant="muted" size={ 12 }>
-						{ resource.description }
-					</Text>
-				</VStack>
-			</VStack>
-			<Button
-				variant="secondary"
-				size="compact"
-				{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-				onClick={ handleClick }
-				style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-			>
-				{ ctaLabel }
-			</Button>
-		</>
-	);
-
-	// A Card paints a white surface even without a border, which shows on the grey page.
-	if ( isPlain ) {
-		return (
-			<VStack spacing={ 0 } justify="flex-start" style={ { height: '100%' } }>
-				{ content }
-			</VStack>
-		);
-	}
-
 	return (
 		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				{ content }
+				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+					{ showLogo && <HStack>{ resource.logo }</HStack> }
+					<VStack spacing={ 1 }>
+						<Text size={ 13 } weight={ 500 }>
+							{ resource.name }
+						</Text>
+						<Text variant="muted" size={ 12 }>
+							{ resource.description }
+						</Text>
+					</VStack>
+				</VStack>
+				<Button
+					variant="secondary"
+					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
+					onClick={ handleClick }
+					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+				>
+					{ ctaLabel }
+				</Button>
 			</CardBody>
 		</Card>
 	);
