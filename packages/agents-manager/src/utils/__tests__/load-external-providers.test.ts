@@ -6,6 +6,7 @@ import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { saveChangesAbility } from '../../abilities/save-changes';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
@@ -248,6 +249,7 @@ describe( 'loadExternalProviders', () => {
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
@@ -286,6 +288,7 @@ describe( 'loadExternalProviders', () => {
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
@@ -392,6 +395,7 @@ describe( 'loadExternalProviders', () => {
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
@@ -871,6 +875,7 @@ describe( 'loadExternalProviders', () => {
 				applyUpdateThemeAbility,
 				editorNavigateAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
