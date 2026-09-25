@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { Card, CardBody, CardMedia } from '../../../components/card';
+import { Card, CardBody } from '../../../components/card';
 import { useResourceCtaLabel } from './use-resource-cta-label';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { MouseEvent } from 'react';
@@ -15,7 +15,6 @@ interface ResourceCardProps {
 	recordTracksEvent: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
 	showLogo?: boolean;
-	showPreviewImage?: boolean;
 	tracksEventName: string;
 	isBorderless?: boolean;
 }
@@ -26,12 +25,11 @@ export default function ResourceCard( {
 	recordTracksEvent,
 	onResourceClick,
 	showLogo = false,
-	showPreviewImage = false,
 	tracksEventName,
 	isBorderless = false,
 }: ResourceCardProps ) {
 	const ctaLabel = useResourceCtaLabel( resource.format );
-	const isVideo = resource.format === 'Video';
+	const isVideo = resource.format === 'video';
 
 	const handleClick = ( event: MouseEvent ) => {
 		if ( isVideo ) {
@@ -52,11 +50,6 @@ export default function ResourceCard( {
 		<Card isBorderless={ isBorderless } size={ isBorderless ? 'none' : undefined }>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					{ showPreviewImage && resource.previewImage && (
-						<CardMedia style={ { borderRadius: '4px' } }>
-							<img src={ resource.previewImage } alt={ resource.name } />
-						</CardMedia>
-					) }
 					{ showLogo && <HStack>{ resource.logo }</HStack> }
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>

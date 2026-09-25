@@ -65,7 +65,6 @@ export default function ResourceSection( {
 						recordTracksEvent={ recordTracksEvent }
 						onResourceClick={ onResourceClick }
 						showLogo={ showLogo }
-						showPreviewImage
 						tracksEventName={ tracksEventName }
 						isBorderless
 					/>

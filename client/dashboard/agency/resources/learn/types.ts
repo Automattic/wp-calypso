@@ -1,4 +1,10 @@
-import type { AgencyResourceStage } from '@automattic/api-core';
+import type {
+	AgencyResourceAudience,
+	AgencyResourceContentType,
+	AgencyResourceFormat,
+	AgencyResourceProduct,
+	AgencyResourceStage,
+} from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 export type ResourceItem = {
@@ -6,14 +12,12 @@ export type ResourceItem = {
 	name: string;
 	description: string;
 	externalUrl: string;
-	format: string;
-	relatedProduct: string;
-	relatedProductType: string;
-	resourceType: string;
-	previewImage: string;
-	section: string;
-	/** Only v2 resources carry a stage. */
-	stage?: AgencyResourceStage;
+	product: AgencyResourceProduct;
+	stage: AgencyResourceStage;
+	audience: AgencyResourceAudience;
+	contentType: AgencyResourceContentType;
+	format: AgencyResourceFormat;
+	isFeatured: boolean;
 	createdAt: string;
 	updatedAt: string;
 	// Computed field

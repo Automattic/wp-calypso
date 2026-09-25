@@ -5,13 +5,13 @@ import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { formatAgencyEnablementResources } from './format-resources';
+import { formatAgencyResources } from './format-resources';
 import ResourceCenter from './resource-center';
 
 export default function Learn() {
 	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( agencyEnablementResourcesQuery() );
-	const resources = useMemo( () => formatAgencyEnablementResources( data.results ), [ data ] );
+	const resources = useMemo( () => formatAgencyResources( data.results ), [ data ] );
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Library' ) } /> }>
