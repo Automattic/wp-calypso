@@ -117,7 +117,7 @@ export const useMultisiteUpdateScheduleQuery = (
 		enabled: isEligibleForFeature,
 		retry: false,
 		select: ( data ) => {
-			const result: MultisiteSchedulesUpdates[] = [];
+			const schedulesById = new Map< string, MultisiteSchedulesUpdates >();
 
 			for ( const site_id in data.sites ) {
 				for ( const scheduleId in data.sites[ site_id ] ) {
@@ -133,10 +133,7 @@ export const useMultisiteUpdateScheduleQuery = (
 
 					const id = generateId( scheduleId, timestamp, schedule, interval );
 
-					const existingSchedule = result.find(
-						( item ) =>
-							generateId( item.schedule_id, item.timestamp, item.schedule, item.interval ) === id
-					);
+					const existingSchedule = schedulesById.get( id );
 
 					const site = retrieveSite( parseInt( site_id, 10 ) ) as SiteDetails;
 					if ( existingSchedule ) {
@@ -147,7 +144,7 @@ export const useMultisiteUpdateScheduleQuery = (
 							last_run_timestamp,
 						} );
 					} else {
-						result.push( {
+						schedulesById.set( id, {
 							id,
 							schedule_id: scheduleId,
 							timestamp,
@@ -166,6 +163,8 @@ export const useMultisiteUpdateScheduleQuery = (
 					}
 				}
 			}
+
+			const result = [ ...schedulesById.values() ];
 
 			// sort by schedule (daily/weekly) then timestamp
 			result.sort( ( a, b ) => {

@@ -289,6 +289,9 @@ export const upsertPostCache = (
 	ensurePostCacheQueryDefaults( queryClient );
 
 	const validPosts = posts.filter( Boolean ) as Post[];
+	if ( ! validPosts.length ) {
+		return;
+	}
 	const keyStringsByPost = new Map(
 		validPosts.map( ( post ) => [ post, new Set( postKeyStringsFromPost( post ) ) ] )
 	);
