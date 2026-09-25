@@ -10,9 +10,8 @@ import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import {
 	AUTH_QUERY_KEY,
 	AuthProvider,
-	initializeCurrentUser,
+	authQueryFn,
 	sessionStateQuery,
-	updateCurrentUser,
 	useSessionStateQuery,
 } from '../index';
 import type { User } from '@automattic/api-core';
@@ -46,21 +45,25 @@ function renderAuth() {
 	};
 }
 
-describe( 'updateCurrentUser', () => {
+describe( 'authQueryFn', () => {
 	afterEach( () => {
 		config.disable( 'wpcom-user-bootstrap' );
 		delete window.currentUser;
 	} );
 
-	test( 'survives a refetch in a bootstrapped session', async () => {
+	test( 'requests /me once the bootstrapped user is cached', async () => {
 		config.enable( 'wpcom-user-bootstrap' );
 		window.currentUser = { ...testUser, two_step_enabled: false };
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, { ...testUser, two_step_enabled: true } );
 		const queryClient = new QueryClient();
-		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } );
+		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: authQueryFn } );
 
-		updateCurrentUser( queryClient, { two_step_enabled: true } );
 		await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
 
+		expect( scope.isDone() ).toBe( true );
 		expect( queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.two_step_enabled ).toBe( true );
 	} );
 } );
