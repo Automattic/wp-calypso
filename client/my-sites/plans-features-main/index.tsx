@@ -721,7 +721,7 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
-	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
+	} = usePlansGridRedesignExperiment( { flowName, intent, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 

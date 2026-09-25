@@ -373,4 +373,46 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			usePlansGridRedesignFeatures: true,
 		} );
 	} );
+
+	test( 'keeps the Enterprise card in the grid for the WordPress hosting intent in signup', () => {
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'five_plan_new_description' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: 'onboarding',
+				intent: 'plans-wordpress-hosting',
+				isInSignup: true,
+				siteId: null,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'five_plan_new_description',
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			showEnterpriseBottomCard: false,
+		} );
+	} );
+
+	test( 'keeps the WooCommerce card in the grid for the WordPress hosting intent in signup', () => {
+		mockUseExperiment.mockReturnValue( [ false, { variationName: 'four_plan_new_description' } ] );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: 'onboarding',
+				intent: 'plans-wordpress-hosting',
+				isInSignup: true,
+				siteId: null,
+			} )
+		);
+
+		expect( result.current ).toEqual( {
+			...CONTROL_RESULT,
+			variant: 'four_plan_new_description',
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			showWooCommerceBottomCard: false,
+		} );
+	} );
 } );
