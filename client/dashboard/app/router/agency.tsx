@@ -545,7 +545,7 @@ export const marketplaceRoute = createRoute( {
 		const destination = agencySupports
 			? marketplaceSections.find( ( section ) =>
 					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
-			  )?.route
+				)?.route
 			: undefined;
 
 		if ( ! destination ) {
@@ -1184,9 +1184,8 @@ export const agencySitePerformanceBackendRoute = createRoute( {
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
-		'../../sites/performance/backend/timeframe'
-	);
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
+		await import( '../../sites/performance/backend/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
@@ -1277,9 +1276,8 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
-			'../../sites/performance/backend/timeframe'
-		);
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } =
+			await import( '../../sites/performance/backend/timeframe' );
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
 			siteApmDetailQuery( site.ID, { method, route, windowSec } )

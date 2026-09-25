@@ -216,12 +216,12 @@ export function getLicenseActions( {
 							__( 'Revoke bundle of %1$d %2$s licenses?' ),
 							items[ 0 ].quantity ?? 0,
 							getLicenseProductName( items[ 0 ] )
-					  )
+						)
 					: sprintf(
 							/* translators: %s is the product name. */
 							__( 'Revoke %s license?' ),
 							getLicenseProductName( items[ 0 ] )
-					  ),
+						),
 			RenderModal: ( { items, closeModal } ) => (
 				<RevokeLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
 			),
