@@ -58,3 +58,15 @@ export function getAudienceLabel( audience: string ): string {
 
 	return labels[ audience ] ?? audience;
 }
+
+export function getFormatLabel( format: string ): string {
+	const labels: Record< string, string > = {
+		pdf: __( 'PDF' ),
+		slides: __( 'Slides' ),
+		video: __( 'Video' ),
+		doc: __( 'Document' ),
+		webpage: __( 'Webpage' ),
+	};
+
+	return labels[ format ] ?? format;
+}
