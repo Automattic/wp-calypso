@@ -8,8 +8,10 @@ import {
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -18,7 +20,7 @@ import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
-import type { CardFieldState, CardStoreType } from './types';
+import type { CardElementType, CardFieldState, CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
@@ -207,21 +209,47 @@ function isCreditCardFormValid(
 ) {
 	debug( 'validating credit card fields for partner', paymentPartner );
 
-	function setFieldsError() {
+	// Builds the "fill out these fields" notice, naming each missing field.
+	// Falls back to a generic message when no labels are available.
+	function setFieldsError( fieldLabels: string[] = [] ) {
+		if ( ! fieldLabels.length ) {
+			setDisplayFieldsError(
+				__( 'Something seems to be missing — please fill out all the required fields.' )
+			);
+			return;
+		}
 		setDisplayFieldsError(
-			__( 'Something seems to be missing — please fill out all the required fields.' )
+			sprintf(
+				/* translators: %s is a comma-separated list of payment form field names, e.g. "Card number, Security code" */
+				__( 'Please fill out the required fields: %s' ),
+				new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
+					style: 'long',
+					type: 'conjunction',
+				} ).format( fieldLabels )
+			)
 		);
 	}
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
+			// Declared in form order, which is the order the notice lists them in.
+			// Keep in sync with the labels rendered by credit-card-number-field,
+			// credit-card-expiry-field and credit-card-cvv-field — the notice is
+			// only useful if it names the fields the way the form does.
+			const cardElementLabels: Record< CardElementType, string > = {
+				cardNumber: __( 'Card number' ),
+				cardExpiry: __( 'Expiry date' ),
+				cardCvc: __( 'Security code' ),
+			};
+			const missingFieldLabels: string[] = [];
+
 			const fields = selectors.getFields( store.getState() );
 			const cardholderName = fields.cardholderName;
 			if ( ! cardholderName?.value?.length ) {
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
-				setFieldsError();
+				missingFieldLabels.push( __( 'Cardholder name' ) );
 			}
 			const errors = selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
@@ -232,9 +260,14 @@ function isCreditCardFormValid(
 				incompleteFieldKeys.map( ( key ) =>
 					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 				);
-				setFieldsError();
+				missingFieldLabels.push(
+					...Object.entries( cardElementLabels )
+						.filter( ( [ key ] ) => incompleteFieldKeys.includes( key as CardElementType ) )
+						.map( ( [ , label ] ) => label )
+				);
 			}
 			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
+				setFieldsError( missingFieldLabels );
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 
 				return false;
@@ -275,6 +308,9 @@ function isCreditCardFormValid(
 				// Unlike the stripe branch above, nothing here previously
 				// surfaced an error notice or scrolled the invalid fields
 				// into view, so the button appeared to do nothing.
+				// requiredFields holds raw keys like 'street-number' rather
+				// than labels, so this stays generic; naming them is
+				// follow-up work.
 				setFieldsError();
 			}
 
