@@ -127,13 +127,14 @@ const RedesignedNotifications = ( {
 	const layoutStyle = useSelector( ( state ) =>
 		getPreference( state, 'notifications-layout-style' )
 	);
+	const views = useSelector( ( state ) => getPreference( state, 'notifications-views' ) );
 	const viewSettingsSeen = useSelector( ( state ) =>
 		getPreference( state, 'notifications-view-settings-seen' )
 	);
 
 	const preferences = useMemo(
-		() => ( hasPreferences ? { layoutStyle, viewSettingsSeen } : undefined ),
-		[ hasPreferences, layoutStyle, viewSettingsSeen ]
+		() => ( hasPreferences ? { layoutStyle, views, viewSettingsSeen } : undefined ),
+		[ hasPreferences, layoutStyle, views, viewSettingsSeen ]
 	);
 
 	const handlePreferenceChange = useCallback(

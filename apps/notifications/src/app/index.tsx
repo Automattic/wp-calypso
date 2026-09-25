@@ -2,6 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
+import { type StoredView } from '../common/premade-views';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
@@ -25,16 +26,21 @@ repliesCache.cleanup();
 
 export type NotificationPreferences = {
 	layoutStyle?: LayoutStyle | null;
+	views?: StoredView[] | null;
 	viewSettingsSeen?: boolean | null;
 };
 
 let hasResolvedPreferences = false;
 
-const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
+const applyPreferences = ( { layoutStyle, views, viewSettingsSeen }: NotificationPreferences ) => {
 	// Unset means never chosen, and those people get the simplified rows. Where the picker
 	// is missing the note list renders the detailed ones whatever this says, so there is
 	// nothing here to ask about the flag.
 	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
+
+	if ( views ) {
+		store.dispatch( actions.ui.setViews( views ) );
+	}
 
 	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };

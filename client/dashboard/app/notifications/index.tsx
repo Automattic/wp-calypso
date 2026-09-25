@@ -37,10 +37,14 @@ export default function Notifications( {
 
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 
-	// Both share one query key, so this is a single request — and it is skipped entirely
-	// without the picker, where nothing reads either value.
+	// These share one query key, so this is a single request — and it is skipped entirely
+	// without the picker, where nothing reads any of them.
 	const { data: layoutStyle } = useQuery( {
 		...userPreferenceQuery( 'notifications-layout-style' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { data: views } = useQuery( {
+		...userPreferenceQuery( 'notifications-views' ),
 		enabled: isViewSettingsEnabled,
 	} );
 	const { data: viewSettingsSeen } = useQuery( {
@@ -56,8 +60,8 @@ export default function Notifications( {
 	);
 
 	const notificationPreferences = useMemo(
-		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
-		[ layoutStyle, viewSettingsSeen ]
+		() => ( layoutStyle === undefined ? undefined : { layoutStyle, views, viewSettingsSeen } ),
+		[ layoutStyle, views, viewSettingsSeen ]
 	);
 
 	const popoverAnchor = useMemo(
