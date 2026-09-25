@@ -40,8 +40,7 @@ export default function ResourceCenter( {
 		[ unsortedResources ]
 	);
 
-	const { topResources, artOfTheDealResources, browseAllResources } =
-		useFilterResources( resources );
+	const { topResources, browseAllResources } = useFilterResources( resources );
 
 	return (
 		<>
@@ -59,24 +58,9 @@ export default function ResourceCenter( {
 				onOpenVideoModal={ handleOpenVideoModal }
 				recordTracksEvent={ recordTracksEvent }
 				onResourceClick={ onResourceClick }
-				maxResources={ 3 }
 				showLogo
 				columnMinWidth={ 320 }
 				tracksEventName="calypso_a4a_resource_center_top_resource_click"
-			/>
-
-			<ResourceSection
-				title={ __( 'Client conversations that work' ) }
-				description={ __(
-					'Learn practical ways to have better client conversations, build trust, and guide decisions that lead to new business and extended partnerships.'
-				) }
-				resources={ artOfTheDealResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				maxResources={ 2 }
-				columnMinWidth={ 380 }
-				tracksEventName="calypso_a4a_resource_center_art_of_deal_click"
 			/>
 
 			<BrowseAllResources

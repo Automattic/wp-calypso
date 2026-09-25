@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import type { ResourceItem } from './types';
 
+const MAX_TOP_RESOURCES = 3;
+
 /**
  * Custom hook to filter resources into different sections
  * @param resources - Array of all resources
@@ -8,33 +10,17 @@ import type { ResourceItem } from './types';
  */
 export function useFilterResources( resources: ResourceItem[] ) {
 	const topResources = useMemo( () => {
-		return resources.filter( ( resource ) => resource.section === 'top-resources' );
-	}, [ resources ] );
-
-	const artOfTheDealResources = useMemo( () => {
-		return resources.filter( ( resource ) => resource.section === 'art-of-the-deal' );
+		return resources.filter( ( resource ) => resource.isFeatured ).slice( 0, MAX_TOP_RESOURCES );
 	}, [ resources ] );
 
 	const browseAllResources = useMemo( () => {
-		const displayedTopResourceIds = new Set(
-			topResources.slice( 0, 3 ).map( ( resource ) => resource.id )
-		);
-		const displayedArtOfTheDealIds = new Set(
-			artOfTheDealResources.map( ( resource ) => resource.id )
-		);
+		const displayedTopResourceIds = new Set( topResources.map( ( resource ) => resource.id ) );
 
-		return resources.filter( ( resource ) => {
-			// Include if not displayed in top resources or art of the deal sections
-			return (
-				! displayedTopResourceIds.has( resource.id ) &&
-				! displayedArtOfTheDealIds.has( resource.id )
-			);
-		} );
-	}, [ resources, topResources, artOfTheDealResources ] );
+		return resources.filter( ( resource ) => ! displayedTopResourceIds.has( resource.id ) );
+	}, [ resources, topResources ] );
 
 	return {
 		topResources,
-		artOfTheDealResources,
 		browseAllResources,
 	};
 }
