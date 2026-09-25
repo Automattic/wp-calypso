@@ -21,6 +21,8 @@ import {
 	getTitleForDisplay,
 	isPurchaseDowngradeEligible,
 	isWithinRefundWindowDowngradeEligible,
+	isA4ASubscriptionMeta,
+	isA4ABillingDragonPurchase,
 } from '../purchase';
 import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
@@ -480,6 +482,29 @@ describe( 'isFreeTrialEndingOnExpiryDate', () => {
 		expect(
 			isFreeTrialEndingOnExpiryDate( freeTrial( { expiry_date: null as unknown as string } ) )
 		).toBe( false );
+	} );
+} );
+
+describe( 'isA4ASubscriptionMeta', () => {
+	test( 'accepts the marker with or without an instance key', () => {
+		expect( isA4ASubscriptionMeta( 'is-a4a' ) ).toBe( true );
+		expect( isA4ASubscriptionMeta( 'is-a4a:example.com' ) ).toBe( true );
+	} );
+
+	test( 'rejects other values', () => {
+		expect( isA4ASubscriptionMeta( 'is-a4a-not' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( 'example.com' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( '' ) ).toBe( false );
+		expect( isA4ASubscriptionMeta( undefined ) ).toBe( false );
+	} );
+} );
+
+describe( 'isA4ABillingDragonPurchase', () => {
+	test( 'matches meta with an instance key', () => {
+		expect( isA4ABillingDragonPurchase( makePurchase( { meta: 'is-a4a:example.com' } ) ) ).toBe(
+			true
+		);
+		expect( isA4ABillingDragonPurchase( makePurchase( { meta: 'example.com' } ) ) ).toBe( false );
 	} );
 } );
 
