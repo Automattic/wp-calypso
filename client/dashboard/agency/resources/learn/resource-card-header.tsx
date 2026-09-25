@@ -23,21 +23,21 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 	return (
 		<div className="dashboard-resources-learn__card-header" data-product={ resource.product }>
 			<VStack spacing={ 2 } alignment="flex-start" expanded={ false }>
-				<Text color="inherit" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
+				<Text
+					className="dashboard-resources-learn__card-eyebrow"
+					color="inherit"
+					size={ 10 }
+					weight={ 600 }
+					lineHeight="16px"
+					upperCase
+				>
 					{ getContentTypeLabel( resource.contentType ) }
 				</Text>
 				{ resource.isFeatured && (
 					<Badge className="dashboard-resources-learn__top-badge">{ __( 'Top resource' ) }</Badge>
 				) }
 			</VStack>
-			<Heading
-				level={ 3 }
-				color="inherit"
-				size={ 24 }
-				weight={ 600 }
-				lineHeight={ 1.15 }
-				className="dashboard-resources-learn__card-title"
-			>
+			<Heading level={ 3 } color="inherit" className="dashboard-resources-learn__card-title">
 				{ title }
 			</Heading>
 			<div className="dashboard-resources-learn__card-brand">
