@@ -64,13 +64,6 @@ describe( 'RedEsAgreement', () => {
 			[ 'the owner ID', { ccTldDetails: { registrantEntityType: '1' } } ],
 			[ 'the domains', { domainNames: [] } ],
 			[
-				'the organization of a company',
-				{
-					contactDetails: { firstName: 'Lucía', lastName: 'García' },
-					ccTldDetails: companyCcTldDetails,
-				},
-			],
-			[
 				'the contact person ID of a company',
 				{
 					contactDetails: companyContactDetails,
@@ -91,6 +84,13 @@ describe( 'RedEsAgreement', () => {
 		test.each( [
 			[ 'an individual', {} ],
 			[ 'a company', { contactDetails: companyContactDetails, ccTldDetails: companyCcTldDetails } ],
+			[
+				'a company without an organization name',
+				{
+					contactDetails: { firstName: 'Lucía', lastName: 'García' },
+					ccTldDetails: companyCcTldDetails,
+				},
+			],
 		] )( 'enables the checkbox and the link for %s with every detail', ( _, props ) => {
 			renderAgreement( props );
 
@@ -129,7 +129,6 @@ describe( 'RedEsAgreement', () => {
 			expect(
 				within( dialog ).getByRole( 'heading', { name: 'Annex III of the Registrar Contract' } )
 			).toBeVisible();
-			expect( dialog ).toHaveTextContent( 'This English translation is provided for convenience' );
 			expect( dialog ).toHaveTextContent(
 				'Lucía García, as applicant for the domain name example.es'
 			);
@@ -152,7 +151,7 @@ describe( 'RedEsAgreement', () => {
 			expect( reopened ).toHaveTextContent( 'como solicitante del nombre de dominio' );
 		} );
 
-		test( 'shows the organization and the contact person ID for a company', async () => {
+		test( 'names the contact person, never the company, as the applicant', async () => {
 			renderAgreement( {
 				contactDetails: companyContactDetails,
 				ccTldDetails: companyCcTldDetails,
@@ -160,8 +159,43 @@ describe( 'RedEsAgreement', () => {
 
 			const dialog = await openAgreement();
 
-			expect( dialog ).toHaveTextContent( 'Ejemplo SL, como solicitante del nombre de dominio' );
+			expect( dialog ).toHaveTextContent(
+				'Lucía García, como solicitante del nombre de dominio example.es'
+			);
 			expect( dialog ).toHaveTextContent( 'D./Dña. Lucía García, con DNI/pasaporte X1234567L' );
+			expect( dialog ).not.toHaveTextContent( 'Ejemplo SL' );
+			expect( dialog ).not.toHaveTextContent( 'B12345678' );
+		} );
+
+		test( 'resets the acceptance when the entity type changes the applicant ID', async () => {
+			const onContactDetailsChange = jest.fn();
+			const { rerenderAgreement } = renderAgreement( {
+				onContactDetailsChange,
+				contactDetails: companyContactDetails,
+				ccTldDetails: companyCcTldDetails,
+			} );
+			await userEvent.click( screen.getByRole( 'checkbox', { name: checkboxName } ) );
+			rerenderAgreement( {
+				ccTldDetails: {
+					...companyCcTldDetails,
+					redEsAgreementAccepted: true,
+					redEsAgreementVersion: RED_ES_AGREEMENT_VERSION,
+				},
+			} );
+			expect( onContactDetailsChange ).toHaveBeenCalledTimes( 1 );
+
+			rerenderAgreement( {
+				ccTldDetails: {
+					...companyCcTldDetails,
+					registrantEntityType: '1',
+					redEsAgreementAccepted: true,
+					redEsAgreementVersion: RED_ES_AGREEMENT_VERSION,
+				},
+			} );
+
+			expect( onContactDetailsChange ).toHaveBeenLastCalledWith( {
+				extra: { es: { redEsAgreementAccepted: false, redEsAgreementVersion: '' } },
+			} );
 		} );
 
 		test( 'ignores a leftover contact person ID for an individual', async () => {
