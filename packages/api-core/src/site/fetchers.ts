@@ -62,6 +62,7 @@ export const SITE_OPTIONS = [
 	'is_wpforteams_site',
 	'jetpack_recovery_mode_status',
 	'jetpack_sso_require_two_step',
+	'jetpack_version',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',

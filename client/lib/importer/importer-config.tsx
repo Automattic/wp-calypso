@@ -33,6 +33,7 @@ interface ImporterConfigMap {
 }
 
 interface ImporterConfigArgs {
+	addSubscribersUrl?: string;
 	importerState?: string;
 	isAtomic?: boolean;
 	isJetpack?: boolean;
@@ -41,9 +42,9 @@ interface ImporterConfigArgs {
 }
 
 function getConfig( {
+	addSubscribersUrl,
 	importerState = '',
 	isAtomic = false,
-	siteSlug = '',
 	siteTitle = '',
 }: ImporterConfigArgs ): ImporterConfigMap {
 	let importerConfig: ImporterConfigMap = {};
@@ -197,11 +198,11 @@ function getConfig( {
 						}
 					) }
 				</p>
-				{ ! isFinished && (
+				{ ! isFinished && addSubscribersUrl && (
 					<p>
 						{ translate( 'To import your subscribers, go to {{a}}subscribers page{{/a}}.', {
 							components: {
-								a: <a href={ `/subscribers/${ siteSlug }#add-subscribers` } />,
+								a: <a href={ addSubscribersUrl } />,
 							},
 						} ) }
 					</p>

@@ -109,7 +109,11 @@ export const setUpActionsForTasks = ( {
 
 				case 'manage_subscribers':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/subscribers/${ siteSlug }`;
+					// Subscribers live on the Newsletter page in wp-admin, whose router reads its
+					// route from `p`, so the Subscribers tab has to be asked for by name.
+					task.calypso_path = `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
+						'/?tab=subscribers'
+					) }`;
 					break;
 
 				case 'site_launched':
