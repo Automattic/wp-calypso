@@ -1,0 +1,234 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
+// Sits in the Recent stream between compact post cards. Values follow the
+// Figma design (Product Compass Feedback, node 3315-3049): 20px heading ->
+// cards, 14px between cards, 20px to "More like this", ~48px around the block.
+.reader-discover-new-blogs {
+	// padding, not margin: a top margin would collapse through the stream's
+	// list wrapper and not show up. The preceding card adds its own 24px.
+	padding-top: 24px;
+	margin: 0 0 48px;
+
+	&__header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin: 0 0 20px;
+	}
+
+	&__heading {
+		font-size: $font-body;
+		font-weight: 600;
+		line-height: 1;
+		margin: 0;
+	}
+
+	&__hide.components-button.is-link,
+	&__more.components-button.is-link {
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1;
+		text-decoration: underline;
+	}
+
+	&__hide.components-button.is-link {
+		color: var(--color-text-subtle);
+	}
+
+	&__more.components-button.is-link {
+		margin-top: 20px;
+		color: var(--color-text);
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	&__card {
+		margin: 0 0 14px;
+		padding: 20px 24px;
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		background: var(--color-surface);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__card-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	&__site {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		min-width: 0;
+		color: var(--color-text);
+		text-decoration: none;
+
+		.site-icon {
+			flex-shrink: 0;
+		}
+	}
+
+	&__site-name {
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.8125rem;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__card-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-shrink: 0;
+
+		// Design: outlined blue "Subscribe" pill, no feed icon, label always
+		// shown. Overrides the base .follow-button look.
+		.follow-button.reader-discover-new-blogs__subscribe {
+			box-sizing: border-box;
+			padding: 5px 12px;
+			border: 1px solid var(--color-primary);
+			border-radius: 3px;
+			background: var(--color-surface);
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: 0.8125rem;
+			font-weight: 500;
+			line-height: 20px;
+
+			svg.reader-follow-feed,
+			svg.reader-following-feed {
+				display: none;
+			}
+
+			.follow-button__label {
+				display: inline;
+				margin: 0;
+				font-size: inherit;
+				line-height: inherit;
+				color: var(--color-primary);
+			}
+
+			&:hover,
+			&:focus {
+				background: var(--color-primary-0);
+
+				.follow-button__label {
+					color: var(--color-primary-dark);
+				}
+			}
+
+			&.is-following,
+			&.is-following:hover {
+				border-color: var(--color-neutral-10);
+				background: var(--color-surface);
+
+				.follow-button__label {
+					color: var(--color-text-subtle);
+				}
+			}
+		}
+
+		.reader-discover-new-blogs__dismiss {
+			color: var(--color-text);
+			opacity: 0.36;
+			min-width: 0;
+			padding: 0;
+			height: auto;
+		}
+	}
+
+	&__title {
+		margin: 0 0 10px;
+		font-size: $font-title-small;
+		font-weight: 600;
+		line-height: 1.2;
+
+		a {
+			color: var(--color-text);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&__excerpt {
+		font-size: $font-body-small;
+		line-height: 1.45;
+		color: var(--color-text-subtle);
+
+		.reader-excerpt {
+			margin: 0;
+		}
+
+		.reader-excerpt__content {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			overflow: hidden;
+		}
+	}
+
+	// Loading state: same layout, pulsing blocks in place of text.
+	&__card.is-placeholder {
+		.reader-discover-new-blogs__site-icon.is-placeholder {
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__site-name.is-placeholder {
+			width: 120px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__subscribe.is-placeholder {
+			display: inline-block;
+			width: 88px;
+			height: 32px;
+			border-radius: 3px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__dismiss.is-placeholder {
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__title.is-placeholder {
+			width: 70%;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__excerpt.is-placeholder p {
+			margin: 0 0 4px;
+			width: 95%;
+			@include placeholder();
+
+			&:last-child {
+				width: 60%;
+				margin: 0;
+			}
+		}
+	}
+}

@@ -96,6 +96,12 @@ class PostLifecycle extends Component {
 					itemRef={ this.props.itemRef }
 				/>
 			);
+		} else if ( postKey.isCustomBlock ) {
+			return (
+				<div ref={ this.props.itemRef } className="reader-stream__custom-block">
+					{ this.props.inStreamBlock }
+				</div>
+			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div
