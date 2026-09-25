@@ -80,6 +80,7 @@ describe( 'PlanUpgradeBanner', () => {
 
 		expect( screen.getByText( '$300' ) ).toBeVisible();
 		expect( screen.getByText( '(save 37%)' ) ).toBeVisible();
+		expect( screen.queryByText( /renewal/ ) ).not.toBeInTheDocument();
 
 		await user.click( screen.getByLabelText( /Monthly/ ) );
 		expect( screen.getByText( '$40' ) ).toBeVisible();
@@ -90,8 +91,17 @@ describe( 'PlanUpgradeBanner', () => {
 		render( <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } /> );
 
 		expect( screen.getByText( '$120' ) ).toBeVisible();
-		expect( screen.queryByText( '$300' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '$300/year renewal.' ) ).toBeVisible();
 		expect( screen.getByText( '(save 75%)' ) ).toBeVisible();
+	} );
+
+	test( 'hides the renewal price when the monthly plan is selected', async () => {
+		const user = userEvent.setup();
+		mockPricingMeta( { [ PLAN_BUSINESS ]: { introOffer: yearlyIntroOffer } } );
+		render( <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } /> );
+
+		await user.click( screen.getByLabelText( /Monthly/ ) );
+		expect( screen.queryByText( /renewal/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the first-month intro offer price for the monthly plan', async () => {

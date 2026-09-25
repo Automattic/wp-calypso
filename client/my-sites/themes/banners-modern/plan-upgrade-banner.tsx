@@ -14,6 +14,7 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -93,6 +94,11 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 			: formatCurrency( cost, currencyCode, { stripZeros: true, isSmallestUnit: true } );
 	const displayCostMonth = formatCost( costMonth );
 	const displayCostYear = formatCost( costYear );
+	const renewalCostYear = pricingMeta?.[ planSlug ]?.originalPrice.full ?? null;
+	const displayRenewalCostYear =
+		costYear !== null && renewalCostYear !== null && renewalCostYear !== costYear
+			? formatCost( renewalCostYear )
+			: null;
 
 	const annualDiscount =
 		costMonth && costYear ? Math.floor( ( 1 - costYear / ( costMonth * 12 ) ) * 100 ) : 0;
@@ -156,6 +162,17 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 					<span className="plan-upgrade-banner__price-amount">{ amount }</span>
 					<span className="plan-upgrade-banner__price-period">{ period }</span>
 				</div>
+				{ ! isMonthly && displayRenewalCostYear && (
+					<p className="plan-upgrade-banner__price-renewal">
+						{ createInterpolateElement(
+							translate( 'For first year. <span>%(price)s/year renewal.</span>', {
+								args: { price: displayRenewalCostYear },
+								comment: '%(price)s is the plan renewal price',
+							} ) as string,
+							{ span: <span style={ { whiteSpace: 'nowrap' } } /> }
+						) }
+					</p>
+				) }
 				<fieldset className="plan-upgrade-banner__billing-toggle">
 					<label className="plan-upgrade-banner__billing-option">
 						<input type="radio" checked={ isMonthly } onChange={ () => setIsMonthly( true ) } />
