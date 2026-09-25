@@ -4,8 +4,10 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query';
 export const jetpackCrmExtensionsQuery = ( appUrl: string ) =>
 	queryOptions( {
 		queryKey: [ 'jetpack-crm', appUrl, 'extensions' ],
-		queryFn: () => fetchJetpackCrmExtensions( appUrl ),
-		select: ( extensions ) => [ ...extensions ].sort( ( a, b ) => a.name.localeCompare( b.name ) ),
+		queryFn: async () => {
+			const extensions = await fetchJetpackCrmExtensions( appUrl );
+			return [ ...extensions ].sort( ( a, b ) => a.name.localeCompare( b.name ) );
+		},
 	} );
 
 export const jetpackCrmExtensionDownloadMutation = ( appUrl: string, licenseKey: string ) =>
