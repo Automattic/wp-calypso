@@ -133,8 +133,8 @@ describe( 'createSiteWithCart()', () => {
 } );
 
 describe( 'createSiteAndAddDIFMToCart()', () => {
-	// The server no longer forces Coming Soon on sites with a DIFM build in progress,
-	// so new DIFM sites rely on being created with Coming Soon enabled.
+	// New DIFM sites must be created as Coming Soon rather than relying on the
+	// server to hide them while a build is in progress (HAPD-4802).
 	test.each( [ DIFM_FLOW, DIFM_FLOW_STORE ] )(
 		'creates a new site as Coming Soon in the %s flow',
 		async ( flowName ) => {
