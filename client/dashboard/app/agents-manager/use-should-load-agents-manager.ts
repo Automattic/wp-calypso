@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 interface AgentsManagerRoute {
 	pattern: RegExp;
-	sectionName?: string;
 	isInternalOnly: boolean;
 }
 
@@ -16,32 +15,25 @@ export interface AgentsManagerEligibility {
 
 const ENABLED_ROUTES: AgentsManagerRoute[] = [
 	{ pattern: /^\/sites\/[^/]+\/?$/, isInternalOnly: true },
-	{ pattern: /^\/plugins\/?$/, sectionName: 'plugins', isInternalOnly: false },
+	{ pattern: /^\/plugins\/?$/, isInternalOnly: false },
 	{
 		pattern: /^\/plugins\/browse\/[^/]+(?:\/[^/]+)?\/?$/,
-		sectionName: 'plugins',
 		isInternalOnly: false,
 	},
 	{
 		pattern:
 			/^\/plugins\/(?!(?:browse|manage|upload|setup|scheduled-updates|active|inactive|updates|plans)(?:\/|$))[^/]+(?:\/[^/]+)?\/?$/,
-		sectionName: 'plugins',
 		isInternalOnly: false,
 	},
 ];
 
 export function getAgentsManagerEligibility(
 	currentRoute: string | null | undefined,
-	isWordPressAgentEnabled: boolean,
-	sectionName?: string
+	isWordPressAgentEnabled: boolean
 ): AgentsManagerEligibility {
 	const path = currentRoute?.split( '?' )[ 0 ];
 	const route = path
-		? ENABLED_ROUTES.find(
-				( candidate ) =>
-					( ! candidate.sectionName || candidate.sectionName === sectionName ) &&
-					candidate.pattern.test( path )
-			)
+		? ENABLED_ROUTES.find( ( candidate ) => candidate.pattern.test( path ) )
 		: undefined;
 	const isInternalOnly = route?.isInternalOnly ?? false;
 
@@ -56,12 +48,11 @@ export function getAgentsManagerEligibility(
 
 export default function useShouldLoadAgentsManager(
 	currentRoute?: string | null,
-	siteId?: number | null,
-	sectionName?: string
+	siteId?: number | null
 ): AgentsManagerEligibility {
 	const routeEligibility = useMemo(
-		() => getAgentsManagerEligibility( currentRoute, true, sectionName ),
-		[ currentRoute, sectionName ]
+		() => getAgentsManagerEligibility( currentRoute, true ),
+		[ currentRoute ]
 	);
 	const { data: pluginStatus } = useQuery(
 		{
