@@ -1,6 +1,5 @@
 import {
 	fetchAgency,
-	fetchAgencyResources,
 	fetchAgencyProgramStats,
 	fetchAgencyEnablementResources,
 	recordAgencyResourceEvent,
@@ -105,13 +104,6 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		retry: false,
 	} );
 
-export const agencyResourcesQuery = () =>
-	queryOptions( {
-		queryKey: [ 'agency', 'resources' ] as const,
-		queryFn: fetchAgencyResources,
-		staleTime: 5 * 60 * 1000,
-	} );
-
 export const agencyProgramStatsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'agency', 'program-stats' ] as const,
@@ -120,9 +112,6 @@ export const agencyProgramStatsQuery = () =>
 
 /**
  * Enablement resources with the v2 taxonomy.
- *
- * Keyed separately from `agencyResourcesQuery` so both endpoints can be in
- * flight while the classic A4A page is still on v1.
  */
 export const agencyEnablementResourcesQuery = () =>
 	queryOptions( {

@@ -251,30 +251,6 @@ export interface AgencyBlog {
 }
 
 /**
- * A single learn/resource item, as returned by GET /wpcom/v2/agency/resources.
- */
-export interface AgencyResource {
-	id: number;
-	name: string;
-	description: string;
-	external_url: string;
-	format: string;
-	related_product: string;
-	related_product_type: string;
-	resource_type: string;
-	preview_image: string;
-	section: string;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface AgencyResourcesResponse {
-	status: string;
-	results: AgencyResource[];
-	total: number;
-}
-
-/**
  * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
  */
 export interface AgencyProgramStats {
@@ -328,11 +304,6 @@ export type AgencyResourceFormat = 'pdf' | 'slides' | 'video' | 'doc' | 'webpage
 /**
  * A single resource from the enablement hub, as returned by
  * GET /wpcom/v2/agency/resources/v2.
- *
- * Successor to `AgencyResource`. The taxonomy is slugged, and the v1 fields
- * that duplicated it are gone: `resource_type` became `content_type`,
- * `section` became `is_featured` plus `stage`, and `related_product_type`
- * was never read.
  */
 export interface AgencyEnablementResource {
 	id: number;
