@@ -33,13 +33,9 @@ export const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
  */
 export const getHidePlanPropsBasedOnThemeType = ( themeType: string ) => {
 	/**
-	 * Marketplace themes: Display only Business and eCommerce plans.
+	 * Community and bundled themes: Display only Business and eCommerce plans.
 	 */
-	if (
-		themeType === DOT_ORG_THEME ||
-		themeType === MARKETPLACE_THEME ||
-		themeType === BUNDLED_THEME
-	) {
+	if ( themeType === DOT_ORG_THEME || themeType === BUNDLED_THEME ) {
 		return { hidePremiumPlan: true, hidePersonalPlan: true, hideFreePlan: true };
 	}
 
@@ -51,9 +47,9 @@ export const getHidePlanPropsBasedOnThemeType = ( themeType: string ) => {
 	}
 
 	/**
-	 * Personal themes: Display Personal, Premium, Business and eCommerce
+	 * Personal and marketplace themes: Display Personal, Premium, Business and eCommerce
 	 */
-	if ( themeType === PERSONAL_THEME ) {
+	if ( themeType === PERSONAL_THEME || themeType === MARKETPLACE_THEME ) {
 		return { hideFreePlan: true };
 	}
 
