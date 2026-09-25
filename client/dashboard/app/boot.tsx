@@ -6,7 +6,7 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
-import { AUTH_QUERY_KEY, initializeCurrentUser } from './auth';
+import { AUTH_QUERY_KEY, loadInitialUser } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
@@ -43,7 +43,7 @@ function boot( config: AppConfig ) {
 
 	import( './omnibar' ).then( ( m ) => m.default( config ) ).catch( captureException );
 
-	initializeCurrentUser()
+	loadInitialUser()
 		.then( ( user ) => {
 			// Seed the query cache with the auth query result. Avoids
 			// redundant request by AuthProvider.
