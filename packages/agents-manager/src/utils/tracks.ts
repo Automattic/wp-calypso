@@ -3,12 +3,16 @@
  *
  * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
- *   live Looker dashboard keeps working. Removable once that parity is dropped.
- * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
+ *   live Looker dashboard keeps working, and mirrors the chat and feedback events
+ *   as `calypso_agents_manager_<same suffix>` with the shared props so analysis
+ *   can move off the Big Sky family before it is retired. Removable once that
+ *   parity is dropped.
+ * - `recordAgentsManagerTracksEvent` uses the property schema shared across the new
  *   AI products.
  *
  * Callers pass event names in full — the template-literal parameter types enforce
  * the namespace — so every event is findable by searching the code for its name.
+ * Mirrored names are derived, so search for their Big Sky suffix instead.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
@@ -18,11 +22,40 @@ import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
+import { getTabId } from './tab-id';
+import { getTurnId } from './turn-id';
 
 type TracksProps = Record< string, unknown >;
 
 export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
 export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
+
+/**
+ * Big Sky events also recorded under the Agents Manager name. The rest stay Big
+ * Sky-only until the Tracks plan for the family (AM-47) decides whether each
+ * one moves or retires; each mirrored name needs registering.
+ */
+const MIRRORED_BIG_SKY_SUFFIXES = new Set< string >( [
+	'chat_input_send_message',
+	'chat_suggestions_rendered',
+	'chat_suggestion_click',
+	'chat_response_rendered',
+	'chat_response_action',
+	'response_action_thumbs_up',
+	'response_action_thumbs_down',
+] );
+
+/**
+ * The events that belong to one turn carry its `turn_id`, so a send can be paired
+ * with its own reply. Any other event would only carry whichever turn came last.
+ */
+const TURN_EVENTS = new Set< string >( [
+	'calypso_agents_manager_chat_input_send_message',
+	'calypso_agents_manager_ability_completed',
+	'calypso_agents_manager_chat_response_completed',
+	'calypso_agents_manager_chat_response_stopped',
+	'calypso_agents_manager_chat_error',
+] );
 
 type EditorSelectStore =
 	| {
@@ -32,8 +65,7 @@ type EditorSelectStore =
 	| undefined;
 
 type CoreSelectStore =
-	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
-	| undefined;
+	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -47,6 +79,15 @@ function getBlogId(): number | undefined {
 	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
 		? blogId
 		: undefined;
+}
+
+/**
+ * The loaded external provider IDs, sorted so the same provider set always
+ * yields the same value; 'none' until the providers load (events can fire
+ * before the chat mounts) or when none are configured.
+ */
+function getProviderIds(): string {
+	return getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none';
 }
 
 type BigSkyTracksData = {
@@ -94,8 +135,7 @@ function getBigSkyPageProps(): TracksProps {
 		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
-			| { page_on_front?: number }
-			| undefined;
+			{ page_on_front?: number } | undefined;
 
 		return {
 			...surfaceProps,
@@ -108,13 +148,27 @@ function getBigSkyPageProps(): TracksProps {
 }
 
 /**
+ * A self-hosted site's own usage-tracking opt-in, passed in by the host. The
+ * WordPress.com consent cookies `calypso-analytics` checks are never set on a
+ * store's domain, so without this a merchant who opted out would still be
+ * recorded by the chat while the store's own events stay silent.
+ */
+function isTrackingAllowed(): boolean {
+	return getAgentsManagerInlineData()?.isTrackingAllowed !== false;
+}
+
+/**
  * Records an event under Big Sky's exact name and props so the existing Big Sky
- * dashboards keep working.
+ * dashboards keep working, then mirrors chat and feedback events under the
+ * Agents Manager name.
  */
 export function recordBigSkyTracksEvent(
 	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
+	if ( ! isTrackingAllowed() ) {
+		return;
+	}
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
 		return; // Big Sky parity events are editor-only; never on reader-chat.
 	}
@@ -132,6 +186,7 @@ export function recordBigSkyTracksEvent(
 		phase: 'editor',
 		big_sky_version: bigSky.bigSkyVersion,
 		screen: bigSky.screen,
+		provider_ids: getProviderIds(),
 		...getBigSkyPageProps(),
 	};
 
@@ -147,6 +202,11 @@ export function recordBigSkyTracksEvent(
 	}
 
 	recordTracksEvent( eventName, mergedProps );
+
+	const suffix = eventName.slice( BIG_SKY_EVENT_PREFIX.length );
+	if ( MIRRORED_BIG_SKY_SUFFIXES.has( suffix ) ) {
+		recordAgentsManagerTracksEvent( `calypso_agents_manager_${ suffix }`, props );
+	}
 }
 
 /**
@@ -168,17 +228,45 @@ function getAgentManagerVersion(): string {
 	return 'none';
 }
 
-function getUnifiedBaseProps(): TracksProps {
+function hasEditorStore(): boolean {
+	try {
+		return !! select( 'core/editor' );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Where the chat runs. The block editor keeps the historical `editor` value.
+ * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
+ * absence means a Calypso-rendered page.
+ */
+function getAgentsManagerSurface(): string {
+	if ( isReaderChatHost() ) {
+		return 'reader-chat';
+	}
+	if ( hasEditorStore() ) {
+		return 'editor';
+	}
+	const inlineData = getAgentsManagerInlineData();
+	if ( ! inlineData ) {
+		return 'calypso';
+	}
+	return 'wp-admin';
+}
+
+function getAgentsManagerBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
 		ai_session_id: getActiveSessionId(),
+		// Joins the events before the server assigns a session to the conversation.
+		tab_id: getTabId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		agent_manager_version: getAgentManagerVersion(),
-		// Sorted so the same provider set always yields the same value; 'none'
-		// until the providers load (events can fire before the chat mounts).
-		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
-		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
+		provider_ids: getProviderIds(),
+		surface: getAgentsManagerSurface(),
+		...( typeof window !== 'undefined' && window.pagenow ? { screen: window.pagenow } : {} ),
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
@@ -187,11 +275,38 @@ function getUnifiedBaseProps(): TracksProps {
 }
 
 /**
- * Records an Agents Manager event using the shared unified property names.
+ * Records an Agents Manager event using the shared property names.
  */
 export function recordAgentsManagerTracksEvent(
 	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
-	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
+	if ( ! isTrackingAllowed() ) {
+		return;
+	}
+	const turnId = TURN_EVENTS.has( eventName ) ? getTurnId() : '';
+	recordTracksEvent( eventName, {
+		...getAgentsManagerBaseProps(),
+		...( turnId ? { turn_id: turnId } : {} ),
+		...props,
+	} );
+}
+
+/**
+ * The Tracks props for a wp-admin route: the pathname and the `page` and
+ * `post_type` query args that name the screen. Other query values can carry
+ * search terms and IDs, so they are never recorded. Never throws, so it is
+ * safe beside a send.
+ */
+export function getWpAdminRouteTracksProps( href: string ) {
+	try {
+		const url = new URL( href, window.location.origin );
+		return {
+			path: url.pathname,
+			page: url.searchParams.get( 'page' ) ?? '',
+			postType: url.searchParams.get( 'post_type' ) ?? '',
+		};
+	} catch {
+		return { path: '', page: '', postType: '' };
+	}
 }

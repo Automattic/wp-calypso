@@ -5,7 +5,21 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 import type { AnyRouteMatch } from '@tanstack/react-router';
-import type { Filter, View } from '@wordpress/dataviews';
+import type { Filter, Operator, View } from '@wordpress/dataviews';
+
+/**
+ * A field to build a transient filter for, optionally with the operator its
+ * DataViews field declares.
+ *
+ * Operators taking a tuple or an object rather than a value are excluded: a
+ * query param carries a single string.
+ */
+export type QueryParamFilterField =
+	string | { field: string; operator: Exclude< Operator, 'between' | 'inThePast' | 'over' > };
+
+function getFilterFieldName( filterField: QueryParamFilterField ): string {
+	return typeof filterField === 'string' ? filterField : filterField.field;
+}
 
 export interface UseViewOptions {
 	/**
@@ -28,8 +42,20 @@ export interface UseViewOptions {
 	/**
 	 * Fields that should become transient filters when present in the URL query params.
 	 * The returned view's `filters` will be merged with the transient filters.
+	 *
+	 * Pair a field with an operator where its DataViews field declares something
+	 * other than the `isAny` default. The operator decides whether the filter
+	 * holds a list or a bare value, and DataViews reads it with the selection
+	 * model the field declares, so a mismatch leaves the filter chip empty.
 	 */
-	queryParamFilterFields?: string[];
+	queryParamFilterFields?: QueryParamFilterField[];
+
+	/**
+	 * Marks the transient filters as locked, so that the DataViews reset control
+	 * leaves them in place. Use it where the filter is imposed by the surrounding
+	 * page rather than chosen by the user.
+	 */
+	lockQueryParamFilters?: boolean;
 
 	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
@@ -58,6 +84,7 @@ export function useBasePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	lockQueryParamFilters = false,
 	matches,
 	sanitizeFields,
 	navigate,
@@ -88,23 +115,35 @@ export function useBasePersistentView( {
 
 	const transientProperties = useMemo( () => ( { page, search } ), [ page, search ] );
 
-	const transientFilterFields = queryParamFilterFields.filter(
-		( field ) => queryParams && queryParams[ field ] !== undefined
+	const transientQueryParamFilterFields = queryParamFilterFields.filter(
+		( filterField ) => queryParams && queryParams[ getFilterFieldName( filterField ) ] !== undefined
 	);
 
+	const transientFilterFields = transientQueryParamFilterFields.map( getFilterFieldName );
+
 	const [ transientFilters, setTransientFilters ] = useState< Filter[] >( () =>
-		queryParamFilterFields
-			.filter( ( field ) => queryParams && queryParams[ field ] !== undefined )
-			.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+		transientQueryParamFilterFields.map( ( filterField ) =>
+			getTransientFilter(
+				filterField,
+				queryParams[ getFilterFieldName( filterField ) ],
+				lockQueryParamFilters
+			)
+		)
 	);
 
 	useEffect( () => {
 		setTransientFilters(
-			transientFilterFields.map( ( field ) => getTransientFilter( field, queryParams[ field ] ) )
+			transientQueryParamFilterFields.map( ( filterField ) =>
+				getTransientFilter(
+					filterField,
+					queryParams[ getFilterFieldName( filterField ) ],
+					lockQueryParamFilters
+				)
+			)
 		);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( transientFilterFields ) ] );
+	}, [ JSON.stringify( transientQueryParamFilterFields ), lockQueryParamFilters ] );
 
 	useEffect( () => {
 		if ( ! matches || matches.length === 0 ) {
@@ -149,14 +188,19 @@ export function useBasePersistentView( {
 
 	const updateView = useCallback(
 		( newView: View ) => {
-			const newTransientFilterFields = transientFilterFields.filter(
-				( field ) =>
-					newView.filters?.some(
+			const newTransientFilterFields = transientQueryParamFilterFields
+				.filter( ( filterField ) => {
+					const field = getFilterFieldName( filterField );
+					return newView.filters?.some(
 						( filter ) =>
 							filter.field === field &&
-							fastDeepEqual( filter.value, getTransientFilter( field, queryParams[ field ] ).value )
-					)
-			);
+							fastDeepEqual(
+								filter.value,
+								getTransientFilter( filterField, queryParams[ field ], lockQueryParamFilters ).value
+							)
+					);
+				} )
+				.map( getFilterFieldName );
 
 			if ( queryParams ) {
 				const newTransientProperties = {
@@ -196,6 +240,8 @@ export function useBasePersistentView( {
 			queryParams,
 			transientProperties,
 			transientFilterFields,
+			transientQueryParamFilterFields,
+			lockQueryParamFilters,
 			navigate,
 			baseView,
 			defaultView,
@@ -216,12 +262,23 @@ export function useBasePersistentView( {
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
 
-function getTransientFilter( field: string, rawValue: unknown ): Filter {
+// DataViews holds a list for these and a bare value for the rest.
+const MULTI_SELECTION_OPERATORS: Operator[] = [ 'isAny', 'isNone', 'isAll', 'isNotAll' ];
+
+function getTransientFilter(
+	filterField: QueryParamFilterField,
+	rawValue: unknown,
+	isLocked = false
+): Filter {
+	const field = getFilterFieldName( filterField );
+	const operator = typeof filterField === 'string' ? 'isAny' : filterField.operator;
 	const stringValue = String( rawValue );
+	const lock = isLocked ? { isLocked: true } : {};
 	if ( stringValue === 'true' || stringValue === 'false' ) {
-		return { field, operator: 'is', value: stringValue === 'true' } as Filter;
+		return { field, operator: 'is', value: stringValue === 'true', ...lock } as Filter;
 	}
-	return { field, operator: 'isAny', value: [ stringValue ] } as Filter;
+	const value = MULTI_SELECTION_OPERATORS.includes( operator ) ? [ stringValue ] : stringValue;
+	return { field, operator, value, ...lock } as Filter;
 }
 
 function removeTransientPropertiesFromView( view: View ): View {

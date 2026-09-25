@@ -8,6 +8,8 @@ interface UseInputProps {
 	isInputOverLimit?: boolean;
 	disabled?: boolean;
 	floatingChatState?: string;
+	// Return false to keep the value in the field instead of submitting it
+	beforeSubmit?: ( value: string ) => boolean;
 }
 
 export interface UseInputReturn {
@@ -27,6 +29,7 @@ export function useInput( {
 	isInputOverLimit = false,
 	floatingChatState,
 	disabled = false,
+	beforeSubmit,
 }: UseInputProps ): UseInputReturn {
 	// No need for setValue callback since it's passed as prop
 
@@ -70,11 +73,17 @@ export function useInput( {
 				! disabled
 			) {
 				e.preventDefault();
-				onSubmit( value.trim() );
+				const message = value.trim();
+
+				if ( beforeSubmit && ! beforeSubmit( message ) ) {
+					return;
+				}
+
+				onSubmit( message );
 				clear();
 			}
 		},
-		[ value, isProcessing, isInputOverLimit, onSubmit, clear, disabled ]
+		[ value, isProcessing, isInputOverLimit, onSubmit, clear, disabled, beforeSubmit ]
 	);
 
 	// Adjust height when value changes or when transitioning to expanded view

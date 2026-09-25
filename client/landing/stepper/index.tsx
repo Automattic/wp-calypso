@@ -8,6 +8,7 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
+import { setRequester as setLaunchpadRequester } from '@automattic/launchpad';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -66,10 +67,6 @@ const loadCookieBanner = () =>
 const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-	);
-const loadAgentsManagerLoader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
 	);
 const loadWebpackBuildMonitor = () =>
 	import(
@@ -160,7 +157,11 @@ async function main() {
 				}
 			} );
 		};
+		// Each package holds its own requester. One left out here silently falls back to an
+		// unauthenticated proxy request instead of failing, so every package that talks to
+		// the API on Stepper's behalf needs a line below.
 		setDataStoresRequester( requester );
+		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
 	}
 
@@ -283,15 +284,7 @@ async function main() {
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
-							<>
-								<AsyncHelpCenterApp requireLogin sectionName="stepper" />
-								<AsyncLoad
-									require={ loadAgentsManagerLoader }
-									placeholder={ null }
-									sectionName={ flowName }
-									loadAgentsManager
-								/>
-							</>
+							<AsyncHelpCenterApp requireLogin sectionName="stepper" />
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />

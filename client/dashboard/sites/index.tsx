@@ -25,6 +25,7 @@ import { sitesRoute } from '../app/router/sites';
 import SecurityKeyReregisterNotice, {
 	useShouldShowSecurityKeyReregisterNotice,
 } from '../app/security-key-reregister-notice';
+import TwoStepRequiredNotice, { useSitesRequiringTwoStep } from '../app/two-step-required-notice';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -218,6 +219,9 @@ export default function Sites() {
 		}
 	);
 
+	const sitesRequiringTwoStep = useSitesRequiringTwoStep( sites ?? [] );
+	const showTwoStepRequiredNotice = supports.me && sitesRequiringTwoStep.length > 0;
+
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
@@ -298,6 +302,9 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showTwoStepRequiredNotice && (
+							<TwoStepRequiredNotice sites={ sitesRequiringTwoStep } />
+						) }
 						{ showRecoveryEmailMatchesAccountEmailNotice && (
 							<RecoveryEmailMatchesAccountEmailNotice />
 						) }

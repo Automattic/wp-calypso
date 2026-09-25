@@ -23,6 +23,9 @@ export function Chat( {
 	isStreaming,
 	error,
 	onSubmit,
+	beforeSubmit,
+	leadingActions,
+	trailingActions,
 	variant = 'floating',
 	triggerIcon,
 	triggerTitle,
@@ -86,6 +89,7 @@ export function Chat( {
 	}, [] );
 
 	const input = useInput( {
+		beforeSubmit: ( message ) => beforeSubmit?.( message, 'input' ) ?? true,
 		value: inputValue,
 		setValue: setInputValue,
 		onSubmit: async ( message: string ) => {
@@ -202,6 +206,9 @@ export function Chat( {
 	const handleSubmit = useCallback( async () => {
 		if ( input.value.trim() ) {
 			const message = input.value.trim();
+			if ( beforeSubmit && ! beforeSubmit( message, 'input' ) ) {
+				return;
+			}
 			input.clear();
 			if ( chat.state !== 'expanded' ) {
 				onExpand?.();
@@ -209,7 +216,7 @@ export function Chat( {
 			chat.setState( 'expanded' );
 			await onSubmit( message );
 		}
-	}, [ input, onSubmit, chat, onExpand ] );
+	}, [ input, onSubmit, chat, onExpand, beforeSubmit ] );
 
 	// Handle expand (go to expanded state)
 	const handleExpand = useCallback( () => {
@@ -272,6 +279,8 @@ export function Chat( {
 					onKeyDown={ input.handleKeyDown }
 					textareaRef={ input.textareaRef }
 					placeholder={ placeholder }
+					leadingActions={ leadingActions }
+					trailingActions={ trailingActions }
 					isProcessing={ isProcessing }
 					isStreaming={ isStreaming }
 					onStop={ onStop }
@@ -357,7 +366,7 @@ export function Chat( {
 											? STYLE_CONSTANTS.COLLAPSED_SIZE
 											: STYLE_CONSTANTS.COMPACT_WIDTH,
 									height: getHeightForState( chat.state ),
-							  } ),
+								} ),
 						x:
 							chat.state === 'collapsed' && currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE
@@ -403,6 +412,8 @@ export function Chat( {
 									onKeyDown={ input.handleKeyDown }
 									textareaRef={ input.textareaRef }
 									placeholder={ placeholder }
+									leadingActions={ leadingActions }
+									trailingActions={ trailingActions }
 									isProcessing={ isProcessing }
 									onBlur={ handleAutoCollapse }
 									onExpand={ handleExpand }
@@ -424,6 +435,8 @@ export function Chat( {
 								onKeyDown={ input.handleKeyDown }
 								textareaRef={ input.textareaRef }
 								placeholder={ placeholder }
+								leadingActions={ leadingActions }
+								trailingActions={ trailingActions }
 								isProcessing={ isProcessing }
 								isStreaming={ isStreaming }
 								onStop={ onStop }

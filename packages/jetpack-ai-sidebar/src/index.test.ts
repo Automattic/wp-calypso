@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, renderHook } from '@testing-library/react';
 import React from 'react';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
@@ -60,6 +60,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
+const mockGetBlockEditorSettings = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -100,9 +101,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -120,7 +121,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -187,6 +188,7 @@ jest.mock( '@wordpress/data', () => ( {
 					getSelectedBlock: () => mockSelectedBlock,
 					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => mockEditorBlocks,
+					getSettings: mockGetBlockEditorSettings,
 				};
 			}
 			if ( store === 'core/editor' ) {
@@ -276,6 +278,7 @@ interface PostTypeMockOptions {
 	isPostEmpty?: boolean;
 	/** Drops the selector, as an editor predating it would. */
 	omitIsEditedPostEmpty?: boolean;
+	mediaUpload?: unknown;
 }
 
 function installPostTypeMock(
@@ -321,6 +324,9 @@ function installPostTypeMock(
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
+						getSettings: () => ( {
+							mediaUpload: 'mediaUpload' in options ? options.mediaUpload : jest.fn(),
+						} ),
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
@@ -1443,8 +1449,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
@@ -1660,8 +1666,8 @@ describe( 'Proofread', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
@@ -2244,7 +2250,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
-	it( 'shows Generate Featured Image when Image Studio is available', () => {
+	it( 'shows Generate Featured Image when Image Studio and uploads are available', () => {
 		installPostTypeMock( 'post' );
 		mockImageStudioActions = { openImageStudio: jest.fn() };
 
@@ -2255,6 +2261,33 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( chip?.label ).toBe( 'Generate featured image' );
 		expect( chip?.prompt ).toBe( '' );
 		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Generate Featured Image when mediaUpload is %s',
+		( mediaUpload ) => {
+			installPostTypeMock( 'post', 123, { mediaUpload } );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+
+			const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+			expect( ids ).not.toContain( 'generate-featured-image' );
+		}
+	);
+
+	it( 'checks upload permission each time featured image suggestions are requested', () => {
+		const options: PostTypeMockOptions = { mediaUpload: undefined };
+		installPostTypeMock( 'post', 123, options );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const ids = () => getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids() ).not.toContain( 'generate-featured-image' );
+
+		options.mediaUpload = jest.fn();
+		expect( ids() ).toContain( 'generate-featured-image' );
+
+		options.mediaUpload = false;
+		expect( ids() ).not.toContain( 'generate-featured-image' );
 	} );
 
 	it( 'hides Generate Featured Image when Image Studio is not available', () => {
@@ -2468,6 +2501,8 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		mockImageStudioActions = null;
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
 			clearSuggestions: () => undefined,
@@ -2483,8 +2518,66 @@ describe( 'useSuggestions', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		mockImageStudioActions = null;
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Image Studio suggestions when mediaUpload is %s',
+		( mediaUpload ) => {
+			installAiEditorialReviewData();
+			mockGetBlockEditorSettings.mockReturnValue( { mediaUpload } );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+
+			const { result } = renderHook( () => useSuggestions() );
+
+			expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+				'generate-alt-text',
+			] );
+		}
+	);
+
+	it.each( [
+		[ { id: 42 }, [ 'generate-alt-text', 'generate-image', 'edit-image' ] ],
+		[ {}, [ 'generate-alt-text', 'generate-image' ] ],
+	] )( 'shows permitted Image Studio suggestions for image attributes %j', ( attributes, ids ) => {
+		installAiEditorialReviewData();
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes };
+
+		const { result } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( ids );
+	} );
+
+	it( 'updates Image Studio suggestions when the editor upload setting changes', () => {
+		installAiEditorialReviewData();
+		mockGetBlockEditorSettings.mockReturnValue( {} );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+		const { result, rerender } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
+
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+			'generate-image',
+			'edit-image',
+		] );
+
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: false } );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
 	} );
 
 	it( 'shows only block-specific suggestions when a block is selected', () => {
@@ -3624,6 +3717,36 @@ describe( 'toolProvider', () => {
 			expect( executeAbility ).not.toHaveBeenCalled();
 			expect( result.result ).toMatchObject( { success: false } );
 			expect( result.result.error ).toMatch( /missing type/ );
+		} );
+
+		it( 'omits server-registered abilities from the registry', async () => {
+			const clientCallback = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'big-sky/capture-canvas', category: 'big-sky' },
+					{
+						name: 'big-sky/stream-page-design',
+						meta: { streaming: { enabled: true } },
+					},
+					{
+						name: 'plugin/client-with-rest-meta',
+						callback: clientCallback,
+						meta: { show_in_rest: true },
+					},
+					{ name: 'wpcom/get-posts', meta: { show_in_rest: true, public: false } },
+					{ name: 'core/get-site-info', meta: { show_in_rest: true, public: true } },
+				] ),
+				executeAbility: jest.fn(),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( 'big-sky/capture-canvas' );
+			expect( names ).toContain( 'big-sky/stream-page-design' );
+			expect( names ).toContain( 'plugin/client-with-rest-meta' );
+			expect( names ).not.toContain( 'wpcom/get-posts' );
+			expect( names ).not.toContain( 'core/get-site-info' );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {

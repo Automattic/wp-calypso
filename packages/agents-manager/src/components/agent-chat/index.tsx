@@ -8,6 +8,7 @@ import {
 	type Suggestion,
 	type ChatState,
 	type UploadedImage,
+	type TrailingActions,
 } from '@automattic/agenttic-ui';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -88,6 +89,10 @@ interface Props {
 	onInputChange?: ( value: string ) => void;
 	/** Notice to display in the chat. */
 	notice?: NoticeConfig;
+	/** Content grouped with the composer's Send button (e.g. the credits meter). */
+	trailingActions?: TrailingActions;
+	/** Return false to keep the message in the input instead of sending it. */
+	beforeSubmit?: ComponentProps< typeof AgentUI.Container >[ 'beforeSubmit' ];
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
@@ -186,6 +191,8 @@ export default function AgentChat( {
 	onSuggestionClick,
 	onSuggestionsRendered,
 	notice,
+	trailingActions,
+	beforeSubmit,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -330,6 +337,9 @@ export default function AgentChat( {
 			messagesPosition="bottom"
 			expandOnHover={ false }
 			notice={ notice }
+			beforeSubmit={ beforeSubmit }
+			// On the container so the floating compact composer gets it too
+			trailingActions={ trailingActions }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -352,7 +362,11 @@ export default function AgentChat( {
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }
 				{ showFeedbackInput && (
-					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
+					<FeedbackInput
+						variant="dialog"
+						onSubmit={ onSubmitFeedbackText }
+						onCancel={ onCancelFeedback }
+					/>
 				) }
 				{ alternativeFooter ? (
 					alternativeFooter

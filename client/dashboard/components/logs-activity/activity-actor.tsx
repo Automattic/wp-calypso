@@ -16,7 +16,7 @@ function getMcpIndicator( actor?: ActivityActorDetails ): string | null {
 		? sprintf(
 				/* translators: %s: MCP client name and version */ __( 'via %s (MCP)' ),
 				actor.mcpClient
-		  )
+			)
 		: __( 'via MCP' );
 }
 

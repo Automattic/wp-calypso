@@ -338,7 +338,7 @@ export default function ChooseEmailSolution() {
 						pendingDowngradeTier={ pendingDowngradeTier }
 						busyDowngradeTier={
 							isDowngrading || isCancellingDowngrade
-								? pendingDowngrade?.tier ?? pendingDowngradeTier
+								? ( pendingDowngrade?.tier ?? pendingDowngradeTier )
 								: undefined
 						}
 						onUpgrade={ handleTierUpgrade }
@@ -374,6 +374,8 @@ export default function ChooseEmailSolution() {
 					refundAmount={ pendingDowngrade ? getRefundAmount( pendingDowngrade.toProductId ) : 0 }
 					currencyCode={ titanPurchase?.currency_code ?? 'USD' }
 					renewDate={ titanPurchase?.renew_date }
+					purchaseId={ titanPurchase?.ID }
+					isRechargeable={ titanPurchase?.is_rechargeable ?? false }
 					isBusy={ isDowngrading }
 					onCancel={ () => setPendingDowngrade( null ) }
 					onConfirm={ confirmDowngrade }
@@ -399,7 +401,7 @@ export default function ChooseEmailSolution() {
 									<>
 										<HStack alignment="bottomLeft">
 											<PriceDisplay
-												price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
+												price={ provider.hasFreeTrial ? 0 : ( provider.product?.cost ?? 0 ) }
 												currency={ provider.product?.currency_code ?? 'USD' }
 											/>
 											{ provider.hasFreeTrial && (
@@ -422,7 +424,7 @@ export default function ChooseEmailSolution() {
 															/* translators: %d is the number of free trial months. */
 															__( '%d month free trial' ),
 															provider.trialMonths
-													  )
+														)
 													: __( '3 month free trial' ) }
 											</div>
 										) }

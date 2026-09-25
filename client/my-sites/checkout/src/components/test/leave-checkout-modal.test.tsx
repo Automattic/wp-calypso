@@ -19,8 +19,8 @@ jest.mock( '../../lib/leave-checkout', () => ( {
 	leaveCheckout: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: () => ( { type: 'NOOP_RECORD_TRACKS_EVENT' } ),
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 import {
@@ -32,6 +32,7 @@ import {
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from '../../../use-cart-key';
 import useValidCheckoutBackUrl from '../../hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from '../../lib/leave-checkout';
@@ -75,7 +76,7 @@ function createFakeCartBackend( initialCarts: Partial< Record< CartKey, FakeCart
 		const cartKey = ( isNaN( Number( key ) ) ? key : Number( key ) ) as CartKey;
 		const overrides: Partial< ResponseCart > = Array.isArray( seed )
 			? { products: seed }
-			: seed ?? {};
+			: ( seed ?? {} );
 		carts.set( cartKey, {
 			...getEmptyResponseCart(),
 			cart_key: cartKey,
@@ -299,6 +300,112 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		// `'no-user'` is still cleared defensively because it can hold pre-login
 		// products that survive the login transition.
 		expect( setCallsByKey ).toContain( 'no-user' );
+	} );
+} );
+
+describe( 'useCheckoutLeaveModal Tracks events', () => {
+	beforeEach( () => {
+		( useCartKey as jest.Mock ).mockReset();
+		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
+		( leaveCheckout as jest.Mock ).mockReset();
+		( recordTracksEvent as jest.Mock ).mockReset();
+		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+	} );
+
+	async function renderWithCart(
+		products: ResponseCartProduct[],
+		backend = createFakeCartBackend( { [ NEW_SITE_CART_KEY ]: products } )
+	) {
+		const client = createShoppingCartManagerClient( {
+			getCart: backend.getCart,
+			setCart: backend.setCart,
+		} );
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
+			wrapper: buildWrapper( client ),
+		} );
+		await waitFor( () =>
+			expect( client.forCartKey( NEW_SITE_CART_KEY ).getState().isLoading ).toBe( false )
+		);
+		await waitFor( () =>
+			expect(
+				client.forCartKey( NEW_SITE_CART_KEY ).getState().responseCart.products
+			).toHaveLength( products.length )
+		);
+		return result;
+	}
+
+	it( 'records the modal being displayed', async () => {
+		const result = await renderWithCart( [ planProduct ] );
+
+		act( () => {
+			result.current.clickClose();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_checkout_close_modal_displayed'
+		);
+	} );
+
+	it( 'records the modal being submitted without clearing the cart', async () => {
+		const result = await renderWithCart( [ planProduct ] );
+
+		act( () => {
+			result.current.clickClose();
+		} );
+		await act( async () => {
+			result.current.closeAndLeave();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_checkout_close_modal_submitted',
+			{ user_has_cleared_cart: false }
+		);
+	} );
+
+	it( 'records the modal being submitted after clearing the cart', async () => {
+		const result = await renderWithCart( [ planProduct ] );
+
+		await act( async () => {
+			await result.current.clearCartAndLeave();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_checkout_close_modal_submitted',
+			{ user_has_cleared_cart: true }
+		);
+	} );
+
+	it( 'records a failed cart-clear', async () => {
+		const backend = createFakeCartBackend( { [ NEW_SITE_CART_KEY ]: [ planProduct ] } );
+		const setCart: SetCart = async ( cartKey, newCart ) => {
+			if ( cartKey === 'no-user' ) {
+				throw new Error( 'clear failed' );
+			}
+			return backend.setCart( cartKey, newCart );
+		};
+		const result = await renderWithCart( [ planProduct ], { ...backend, setCart } );
+
+		await act( async () => {
+			await result.current.clearCartAndLeave();
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_masterbar_checkout_close_modal_clear_failed',
+			{ error: expect.any( String ) }
+		);
+		expect( leaveCheckout ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'records no modal events when leaving with an empty cart', async () => {
+		const result = await renderWithCart( [] );
+
+		await act( async () => {
+			result.current.clickClose();
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 } );
 

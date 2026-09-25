@@ -1,12 +1,13 @@
 import { agencyProductsQuery, referralCommissionPayoutQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
+import Grid from '../../../../components/grid';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
@@ -124,7 +125,7 @@ export default function ReferralOverview() {
 				products={ products }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap={ 6 } align="start">
+			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap="xl" align="start">
 				<PreviewListCard
 					title={ __( 'Recent referrals' ) }
 					isEmpty={ recentReferrals.length === 0 }

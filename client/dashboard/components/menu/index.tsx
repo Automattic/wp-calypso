@@ -3,8 +3,10 @@ import { ComponentProps, ComponentType } from 'react';
 import RouterLinkButton from '../router-link-button';
 import './style.scss';
 
-interface MenuItemLinkProps
-	extends Omit< ComponentProps< typeof WPMenuItem >, 'href' | 'target' | 'rel' > {
+interface MenuItemLinkProps extends Omit<
+	ComponentProps< typeof WPMenuItem >,
+	'href' | 'target' | 'rel'
+> {
 	href?: string;
 	target?: string;
 	rel?: string;

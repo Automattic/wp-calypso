@@ -39,7 +39,7 @@ const DateButton: React.FC< Props > = ( {
 			? disabledDates.map( ( date ) => {
 					const momentDate = moment( date );
 					return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
-			  } )
+				} )
 			: [];
 	}, [ disabledDates, moment ] );
 
@@ -63,7 +63,7 @@ const DateButton: React.FC< Props > = ( {
 											firstBackupDate.year(),
 											firstBackupDate.month(),
 											firstBackupDate.date()
-									  )
+										)
 									: null, // The first known backup date - should be nothing before this.
 								after: today // If the offset value of today that factors in the blog's GMT offset is available, use that.
 									? new Date( today.year(), today.month(), today.date() )

@@ -49,6 +49,7 @@ export interface UserPreferences {
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
 	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;
+	'reader-seen-posts'?: boolean;
 	'sites-landing-page'?: SitesLandingPage;
 	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
@@ -60,4 +61,11 @@ export interface UserPreferences {
 	'reader-profile-hidden-sites'?: number[];
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
+	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
+	'notifications-layout-style'?: 'detailed' | 'simplified';
+	'notifications-view-settings-seen'?: boolean;
+	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
+	'pressable-limit-notification-dismissed'?: number;
+	'a4a-agency-approval-notice-dismissed'?: boolean;
 }

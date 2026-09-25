@@ -23,7 +23,6 @@ import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls'
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -52,6 +51,7 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { useAppContext } from '../../../app/context';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
@@ -65,6 +65,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
@@ -75,6 +76,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -106,6 +108,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
+	getDelayedDowngradeRenewalPriceText,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -137,9 +140,9 @@ import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const SPACING = {
-	DEFAULT: 6,
-	SMALL: 4,
-};
+	DEFAULT: 'xl',
+	SMALL: 'lg',
+} as const;
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -162,14 +165,14 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
+	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
 	return href
 		? {
 				href,
 				// Jetpack plans are plans too, even though they route through here
 				// rather than the WordPress.com plan-change helper.
 				title: purchase.is_plan ? __( 'Upgrade plan' ) : __( 'Upgrade subscription' ),
-		  }
+			}
 		: undefined;
 }
 
@@ -220,7 +223,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
-		...getPlanChangeReturnUrls(),
+		...getPlanChangeReturnUrls( purchase ),
 		upgradeOnly: true,
 	} );
 	if ( planAction ) {
@@ -245,6 +248,11 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
+	// Jetpack Cloud has no domain or email management of its own.
+	if ( isJetpackCloud() ) {
+		return null;
+	}
+
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -493,7 +501,7 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	const expiryDateFormatted = purchase.expiry_date
 		? formatDate( new Date( purchase.expiry_date ), locale, {
 				dateStyle: 'long',
-		  } ).replace( / /g, '\u00A0' )
+			} ).replace( / /g, '\u00A0' )
 		: '';
 
 	const category = classifyPurchaseForCopy( purchase );
@@ -502,7 +510,7 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 				category,
 				productName: purchase.product_name,
 				expiryDateFormatted,
-		  } )
+			} )
 		: null;
 	const removeCopy = showRemove
 		? getRemoveButtonCopy( { category, productName: purchase.product_name, hasRefund } )
@@ -620,7 +628,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		} );
 
 	if ( isDotcomPlan( purchase ) ) {
-		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls() );
+		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls( purchase ) );
 		if ( ! action ) {
 			return null;
 		}
@@ -1116,6 +1124,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const isCentennial = isCentennialPurchase( purchase );
 	// Email plans are billed per mailbox; show the per-mailbox renewal price.
 	if ( isEmailPlanManagementEnabled( purchase ) && ! purchase.is_trial_plan ) {
@@ -1160,13 +1169,16 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
 	const offerText = isOffer
 		? /* translators: %(regularPrice)s is a monetary amount that the customer will be charged after this offer ends */
-		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
+			sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
 				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ),
-		  } )
+			} )
 		: '';
+	// The offer text describes the current plan, which won't renew if a downgrade is scheduled.
+	const renewalNote =
+		getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation ) ?? offerText;
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -1175,7 +1187,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				isSmallestUnit: true,
 			} ) }
 			description={
-				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + renewalNote
 			}
 		/>
 	);
@@ -1274,7 +1286,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								{
 									numberOfIncludedPages: String( tier0.maximum_units ),
 								}
-						  ) }
+							) }
 				</span>{ ' ' }
 				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
 				<span>
@@ -1300,7 +1312,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							{
 								ContactUs: BBESupportLink,
 							}
-					  )
+						)
 					: createInterpolateElement(
 							// translators: ContactUs is a link to send an email to support and SubmitContent is a link to the signup flow for site creation
 							__(
@@ -1318,7 +1330,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								),
 								ContactUs: BBESupportLink,
 							}
-					  ) }
+						) }
 			</div>
 		</div>
 	);
@@ -1352,7 +1364,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
 					),
 					{
-						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+						a: (
+							<a
+								href={ wpcomLink(
+									domainManagementEdit( purchase.site_slug, domain.domain, null )
+								) }
+							/>
+						),
 					}
 				) }
 			</Text>
@@ -1371,10 +1389,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					{
 						a: (
 							<a
-								href={ domainUseMyDomain(
-									purchase.site_slug,
-									purchase.meta,
-									useMyDomainInputMode.startPendingTransfer
+								href={ wpcomLink(
+									domainUseMyDomain(
+										purchase.site_slug,
+										purchase.meta,
+										useMyDomainInputMode.startPendingTransfer
+									)
 								) }
 							/>
 						),
@@ -1530,10 +1550,10 @@ function PurchaseSecondSubtitle( {
 		const description = isTitanMail( purchase )
 			? __(
 					'Integrated email solution with powerful features. Manage your email and more on any device.'
-			  )
+				)
 			: __(
 					'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
-			  );
+				);
 
 		if ( purchase.renewal_price_tier_usage_quantity ) {
 			return (
@@ -1582,6 +1602,8 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 export default function PurchaseSettings() {
 	const { user } = useAuth();
+	const hasEnTranslation = useHasEnTranslation();
+	const { supports } = useAppContext();
 	const params = purchaseSettingsRoute.useParams();
 	const purchaseId = params.purchaseId;
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
@@ -1612,9 +1634,9 @@ export default function PurchaseSettings() {
 	const parentWillRenew = parentPurchase
 		? Boolean(
 				parentPurchase.is_auto_renew_enabled &&
-					parentPurchase.renew_date &&
-					! isExpiring( parentPurchase )
-		  )
+				parentPurchase.renew_date &&
+				! isExpiring( parentPurchase )
+			)
 		: undefined;
 	const expiryDateTitle = ( () => {
 		if ( isIncluded && parentPurchase ) {
@@ -1627,7 +1649,12 @@ export default function PurchaseSettings() {
 			return __( 'Paid until' );
 		}
 		if ( displayRenewDate ) {
-			return __( 'Renews' );
+			return purchase.is_delayed_downgrade_pending && hasEnTranslation( 'Downgrades and renews' )
+				? __( 'Downgrades and renews' )
+				: __( 'Renews' );
+		}
+		if ( isOneTimePurchase( purchase ) ) {
+			return __( 'Renewal status' );
 		}
 		return __( 'Expires' );
 	} )();
@@ -1678,7 +1705,7 @@ export default function PurchaseSettings() {
 				title={ __( 'Site' ) }
 				heading={ site.name }
 				description={ purchase.site_slug }
-				link={ `/sites/${ purchase.site_slug }` }
+				link={ supports.sites ? `/sites/${ purchase.site_slug }` : undefined }
 			/>
 		) );
 	const ownerOrMailboxCard = isEmailPlan ? (
@@ -1750,7 +1777,7 @@ export default function PurchaseSettings() {
 							<OverviewCard
 								icon={ calendar }
 								title={ expiryDateTitle }
-								intent={ expiryUrgency === 'info' ? undefined : expiryUrgency ?? undefined }
+								intent={ expiryUrgency === 'info' ? undefined : ( expiryUrgency ?? undefined ) }
 								heading={ ( () => {
 									if ( isIncluded && parentPurchase ) {
 										return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;
@@ -1760,7 +1787,10 @@ export default function PurchaseSettings() {
 									if ( isExpiredAndInGracePeriod( purchase ) ) {
 										return formattedExpiry;
 									}
-									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'One-time purchase' );
+									}
+									if ( isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
 									if ( displayRenewDate ) {
@@ -1803,6 +1833,9 @@ export default function PurchaseSettings() {
 									}
 									if ( purchase.is_auto_renew_enabled ) {
 										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'Does not renew' );
 									}
 									return __( 'Auto-renew is disabled' );
 								} )() }

@@ -232,7 +232,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		// The switch is read once per page load, so load the converter under it.
 		jest.isolateModules( () => {
 			const { default: convertUnderSwitch } = jest.requireActual<
-				typeof import('../convert-tool-messages-to-components')
+				typeof import( '../convert-tool-messages-to-components' )
 			>( '../convert-tool-messages-to-components' );
 
 			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );
@@ -792,7 +792,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'renders `EscalationButton` when `forward_to_human_support` flag is set', () => {
+	it( 'renders `EscalationButton` when human escalation is available', () => {
 		const message = createMessage( {
 			content: [
 				{ type: 'text', text: 'Hello' },
@@ -805,6 +805,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
+			canEscalateToHuman: true,
 		} );
 
 		expect( result ).toHaveLength( 1 );
@@ -815,6 +816,28 @@ describe( 'convertToolMessagesToComponents', () => {
 				messageId: 'msg-1',
 			},
 		} );
+	} );
+
+	it( 'keeps the agent reply when human escalation is unavailable', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'You can contact our support team for more help.' },
+				{
+					type: 'data',
+					data: { flags: { forward_to_human_support: true } },
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			canEscalateToHuman: false,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'You can contact our support team for more help.' },
+		] );
 	} );
 
 	it( 'filters out unhandled tool messages', () => {

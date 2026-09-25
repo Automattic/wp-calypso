@@ -40,9 +40,9 @@ export default function PaymentsFilter( props: Props ) {
 		const selectedOption = options.find( ( item ) => item.value === paymentsFilter )?.label;
 		return selectedOption
 			? // translators: filterOption is something like All sites, Current site
-			  translate( 'View: %(filterOption)s', {
+				translate( 'View: %(filterOption)s', {
 					args: { filterOption: selectedOption },
-			  } )
+				} )
 			: undefined;
 	};
 

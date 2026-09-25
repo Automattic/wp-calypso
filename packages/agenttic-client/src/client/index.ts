@@ -625,7 +625,7 @@ async function* processAgentResponseStream(
 			? {
 					...update,
 					final: false,
-			  }
+				}
 			: update;
 
 		// Handle running state tool calls (async execution without blocking).
@@ -642,14 +642,14 @@ async function* processAgentResponseStream(
 		const { matched: runningToolCalls } =
 			update.status.state === 'running' && update.status.message && toolProvider
 				? // A provider can expose advertised tools, dispatchable tools and
-				  // abilities at once (the Agents Manager merges several providers
-				  // into one). Narrow to advertised tools only, so neither an
-				  // ability nor a backend-dispatched tool riding along in the same
-				  // message is executed from this branch.
-				  await getMatchingToolCalls( toolProvider, update.status.message, {
+					// abilities at once (the Agents Manager merges several providers
+					// into one). Narrow to advertised tools only, so neither an
+					// ability nor a backend-dispatched tool riding along in the same
+					// message is executed from this branch.
+					await getMatchingToolCalls( toolProvider, update.status.message, {
 						includeAbilities: false,
 						includeDispatchable: false,
-				  } )
+					} )
 				: NO_MATCHING_TOOL_CALLS;
 		if ( runningToolCalls.length > 0 ) {
 			// Execute tools async without blocking the stream
@@ -868,14 +868,24 @@ async function* processAgentResponseStream(
 
 					// Get the final result from the stream
 					let continuedTaskUpdate: TaskUpdate | null = null;
-					for await ( const streamUpdate of continuedTaskStream ) {
-						// Yield intermediate updates
-						if ( ! streamUpdate.final ) {
-							yield streamUpdate;
-						} else {
-							// Store the final result
-							continuedTaskUpdate = streamUpdate;
+					try {
+						for await ( const streamUpdate of continuedTaskStream ) {
+							// Yield intermediate updates
+							if ( ! streamUpdate.final ) {
+								yield streamUpdate;
+							} else {
+								// Store the final result
+								continuedTaskUpdate = streamUpdate;
+							}
 						}
+					} catch ( error ) {
+						if (
+							continuedTaskUpdate &&
+							[ 'failed', 'canceled' ].includes( continuedTaskUpdate.status.state )
+						) {
+							yield continuedTaskUpdate;
+						}
+						throw error;
 					}
 
 					// If we didn't get a final result, throw an error
@@ -963,14 +973,24 @@ async function* processAgentResponseStream(
 
 								// Get the final result from the stream
 								let moreFinalTask: TaskUpdate | null = null;
-								for await ( const streamUpdate of moreTaskStream ) {
-									// Yield intermediate updates
-									if ( ! streamUpdate.final ) {
-										yield streamUpdate;
-									} else {
-										// Store the final result
-										moreFinalTask = streamUpdate;
+								try {
+									for await ( const streamUpdate of moreTaskStream ) {
+										// Yield intermediate updates
+										if ( ! streamUpdate.final ) {
+											yield streamUpdate;
+										} else {
+											// Store the final result
+											moreFinalTask = streamUpdate;
+										}
 									}
+								} catch ( error ) {
+									if (
+										moreFinalTask &&
+										[ 'failed', 'canceled' ].includes( moreFinalTask.status.state )
+									) {
+										yield moreFinalTask;
+									}
+									throw error;
 								}
 
 								// If we didn't get a final result, throw an error
@@ -1056,6 +1076,9 @@ async function* processAgentResponseStream(
 								state: 'completed',
 								message: finalAgentMessage,
 							},
+							...( enhancedUpdate.aiCredits !== undefined && {
+								aiCredits: enhancedUpdate.aiCredits,
+							} ),
 							final: true,
 							text: combinedAgentText,
 						};
@@ -1268,6 +1291,7 @@ export function createClient( config: ClientConfig ): Client {
 
 				return {
 					...currentTask,
+					...( currentTask.ai_credits !== undefined && { aiCredits: currentTask.ai_credits } ),
 					// Keep the enhanced message with tool results
 					// The agent message will be handled separately by the caller
 					text: combinedAgentText,
@@ -1277,6 +1301,7 @@ export function createClient( config: ClientConfig ): Client {
 
 			return {
 				...currentTask,
+				...( currentTask.ai_credits !== undefined && { aiCredits: currentTask.ai_credits } ),
 				text: extractTextFromMessage(
 					currentTask.status?.message || {
 						role: 'agent',
@@ -1399,6 +1424,7 @@ export function createClient( config: ClientConfig ): Client {
 
 			return {
 				...currentTask,
+				...( currentTask.ai_credits !== undefined && { aiCredits: currentTask.ai_credits } ),
 				text: extractTextFromMessage(
 					currentTask.status?.message || {
 						role: 'agent',
@@ -1431,16 +1457,26 @@ export async function sendMessageAndWait(
 	client: Client,
 	params: SendMessageParams
 ): Promise< TaskUpdate > {
-	for await ( const update of client.sendMessageStream( params ) ) {
-		if ( update.final ) {
-			return {
-				id: update.id,
-				status: update.status,
-				final: update.final,
-				artifact: update.artifact,
-				text: update.text,
-			};
+	let failedUpdate: TaskUpdate | undefined;
+	try {
+		for await ( const update of client.sendMessageStream( params ) ) {
+			if ( update.final ) {
+				if ( [ 'failed', 'canceled' ].includes( update.status.state ) ) {
+					// The transport yields terminal metadata before throwing its protocol error.
+					failedUpdate = update;
+				} else {
+					return update;
+				}
+			}
 		}
+	} catch ( error ) {
+		if ( error instanceof Error && failedUpdate?.aiCredits !== undefined ) {
+			Object.assign( error, { aiCredits: failedUpdate.aiCredits } );
+		}
+		throw error;
+	}
+	if ( failedUpdate ) {
+		return failedUpdate;
 	}
 	throw new Error( 'Stream ended without final result' );
 }

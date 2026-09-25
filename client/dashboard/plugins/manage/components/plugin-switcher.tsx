@@ -96,7 +96,7 @@ export const PluginSwitcher = ( {
 						item.sitesWithPluginUpdate.length
 					),
 					{ updateCount: item.sitesWithPluginUpdate.length }
-			  )
+				)
 			: '';
 
 		return (

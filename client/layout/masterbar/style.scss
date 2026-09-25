@@ -14,7 +14,6 @@ $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
 @import "calypso/assets/stylesheets/shared/animation";
-@import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
@@ -129,6 +128,13 @@ body.is-mobile-app-view {
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
 		}
+
+		// The labelled entry point puts an icon beside the text, as in the admin bar.
+		.checkout-skip-button.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+		}
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
@@ -139,67 +145,6 @@ body.is-mobile-app-view {
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-}
-
-.masterbar__section {
-	display: flex;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		flex: 2;
-		.masterbar__item-wrapper {
-			flex: 0 0 auto;
-		}
-	}
-
-	&--left {
-		.masterbar__item-subitems {
-			left: 0;
-		}
-
-
-		@include breakpoint-deprecated( "<660px" ) {
-			a .masterbar__item-content {
-				display: none;
-			}
-		}
-	}
-
-	&--right {
-		flex: 1;
-		justify-content: flex-end;
-
-		.masterbar__item-subitems {
-			right: 0;
-		}
-
-		a.masterbar__item-howdy + .masterbar__item-subitems {
-			padding-bottom: 0 !important;
-		}
-
-		@include breakpoint-deprecated( ">480px" ) {
-			flex-grow: 0;
-		}
-
-		@media only screen and (max-width: 480px) {
-			position: absolute;
-			top: 0;
-			right: 0;
-			background: var(--color-masterbar-background);
-		}
-	}
-}
-
-.masterbar__section--center {
-	flex: 1;
-	justify-content: center;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		flex: 0 0 auto;
-	}
-}
-
-.masterbar__drafts {
-	white-space: nowrap;
 }
 
 .masterbar__item-wrapper {
@@ -218,50 +163,6 @@ body.is-mobile-app-view {
 	text-decoration: none;
 	cursor: default;
 	justify-content: center;
-
-	&.masterbar__reader {
-		padding: 0 8px;
-	}
-
-	&.masterbar__item-my-site,
-	&.masterbar__item-my-site-actions,
-	&.masterbar__item-updates,
-	&.masterbar__item-comments {
-		padding-left: 7px;
-		gap: 6px;
-	}
-
-	&.masterbar__item-my-site.has-site-icon {
-		gap: 6px;
-
-		.masterbar__item-site-icon {
-			width: 20px;
-			height: 20px;
-			border-radius: 2px;
-			background: #f0f0f1;
-		}
-
-		@media only screen and (max-width: 781px) {
-			.masterbar__item-site-icon {
-				width: 28px;
-				height: 28px;
-				border-radius: 4px;
-			}
-		}
-	}
-
-	@media only screen and (max-width: 781px) {
-		&.masterbar__item-my-site {
-			padding-left: inherit;
-		}
-		&.masterbar__item-my-site-actions {
-			padding: 0;
-		}
-
-		&.masterbar__reader {
-			padding: 0;
-		}
-	}
 
 	&.has-subitems {
 		&:hover,
@@ -398,31 +299,6 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
-	&.masterbar__item-command-palette {
-		gap: 6px;
-
-		.masterbar__item-content {
-			display: flex;
-			align-items: center;
-			line-height: 1;
-		}
-	}
-
-	.dashicons-before {
-		height: 20px;
-		color: var(--color-masterbar-icon);
-	}
-	.dashicons-plus {
-		padding-top: 4px;
-	}
-	.dashicons-admin-comments {
-		padding-top: 2px;
-
-		& + span .count-0 {
-			opacity: .5;
-		}
-	}
-
 	// Show submenu on hover (except when click-to-open is enabled)
 	&:not(.open-submenu-on-click):hover,
 	&.is-open,
@@ -452,9 +328,6 @@ body.is-mobile-app-view {
 			.masterbar__item-content {
 				color: var(--color-masterbar-highlight);
 			}
-			.dashicons-before {
-				color: var(--color-masterbar-highlight);
-			}
 		}
 	}
 
@@ -482,15 +355,6 @@ body.is-mobile-app-view {
 		background: var(--color-masterbar-item-active-background);
 	}
 
-	&.masterbar__close-button {
-		color: var(--color-checkout-masterbar-text);
-		cursor: pointer;
-
-		.masterbar__item-content {
-			display: none;
-		}
-	}
-
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
 		--color-masterbar-icon: var(--studio-gray-5) !important;
@@ -505,10 +369,6 @@ body.is-mobile-app-view {
 	.is-support-session &.is-active:hover {
 		background: var(--studio-orange-70);
 		color: var(--studio-gray-5);
-	}
-
-	&.masterbar__item-notifications {
-		margin-right: 0;
 	}
 
 	@media only screen and (max-width: 781px) {
@@ -527,10 +387,6 @@ body.is-mobile-app-view {
 			display: none;
 		}
 
-		.masterbar__item-howdy-howdy {
-			display: none;
-		}
-
 		&.masterbar__item--always-show-content .masterbar__item-content {
 			display: block;
 		}
@@ -540,56 +396,6 @@ body.is-mobile-app-view {
 		.gridicon {
 			height: 36px;
 			width: 36px;
-		}
-
-		.dashicons-plus {
-			padding-top: 0;
-			&::before {
-				font-size: 40px !important;
-				vertical-align: middle;
-				top: 2px !important;
-			}
-		}
-
-		.dashicons-before {
-			height: unset;
-			&::before {
-				width: 52px;
-				display: inline-block;
-				position: relative;
-				font-size: 32px;
-				text-align: center;
-				top: 7px;
-				height: unset;
-			}
-
-			&:hover {
-				color: var(--color-masterbar-highlight);
-			}
-		}
-
-		.dashicons-update {
-			&::before {
-				font-size: 40px;
-				top: 3px;
-			}
-		}
-
-		.dashicons-menu-alt {
-			padding-top: 0;
-			position: relative;
-			float: left;
-			&::before {
-				font-size: 40px;
-				top: -1px;
-				vertical-align: middle;
-			}
-		}
-	}
-
-	@media only screen and (max-width: 600px) {
-		&.masterbar__item-updates {
-			display: none;
 		}
 	}
 
@@ -605,47 +411,12 @@ body.is-mobile-app-view {
 		&.masterbar__item--always-show-content .masterbar__item-content {
 			display: block;
 		}
-
-		&.masterbar__item-my-site-actions {
-			display: none;
-		}
-	}
-
-	@media only screen and (max-width: 360px) {
-		&.masterbar__reader {
-			display: none;
-		}
 	}
 
 	&:disabled {
 		&:hover {
 			background: initial;
 			color: initial;
-		}
-	}
-
-	&.masterbar__item-sidebar-menu {
-		display: none;
-		@media only screen and (max-width: 781px) {
-			display: inline-block;
-			margin-right: 2px;
-			margin-left: -1px;
-			cursor: pointer;
-		}
-	}
-
-
-	&.masterbar__item-my-sites,
-	&.masterbar__item-no-sites {
-		padding: 0 8px;
-
-		@media only screen and (max-width: 781px) {
-			padding: 0;
-
-			svg {
-				width: 32px;
-				height: 32px;
-			}
 		}
 	}
 
@@ -696,19 +467,9 @@ body.is-mobile-app-view {
 			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
 			--color-masterbar-item-active-background: var(--color-sidebar-background);
 
-			&.masterbar__item-howdy {
-				border-top-right-radius: 0;
-			}
-
 			&::before,
 			&::after {
 				opacity: 1;
-			}
-
-			@media only screen and (min-width: 781px) {
-				&.masterbar__item-my-sites {
-					border-top-left-radius: 0;
-				}
 			}
 		}
 	}
@@ -717,72 +478,6 @@ body.is-mobile-app-view {
 .masterbar__item-subitems {
 	a {
 		text-decoration: none;
-	}
-}
-
-// In the global sidebar the submenu group background is white (matching the panel),
-// which suits the user menu but leaves the W-icon dropdown's second group (About
-// WordPress / Get Involved) looking like a stray gap. Give just that group a light
-// grey so it reads as a distinct section.
-.is-global-sidebar-visible .masterbar__item-my-sites + .masterbar__item-subitems {
-	--color-masterbar-submenu-group-background: #{$gray-100};
-}
-
-.masterbar__item-stats-sparkline {
-	padding: 0 10px;
-
-	.masterbar__item-content {
-		display: flex;
-		align-items: center;
-		height: 100%;
-	}
-
-	.wpcom-stats-sparkline {
-		width: auto;
-		height: auto;
-	}
-
-	.wpcom-stats-sparkline-bar {
-		fill: var(--color-masterbar-icon);
-	}
-
-	.wpcom-stats-sparkline-arrow {
-		fill: var(--color-masterbar-icon);
-	}
-
-	.wpcom-stats-sparkline-label {
-		fill: var(--color-masterbar-icon);
-	}
-
-	&:hover,
-	&:focus-visible {
-		.wpcom-stats-sparkline {
-			overflow: visible;
-		}
-
-		.wpcom-stats-sparkline-peak {
-			opacity: 1;
-		}
-	}
-
-	@media only screen and (max-width: 781px) {
-		display: none;
-	}
-}
-
-.masterbar__item-launch-site {
-	gap: 6px;
-	cursor: pointer;
-	@media only screen and (max-width: 480px) {
-		display: none;
-	}
-	svg {
-		width: 15px;
-		height: 15px;
-		@media only screen and (max-width: 781px) {
-			width: 28px;
-			height: 28px;
-		}
 	}
 }
 
@@ -856,157 +551,6 @@ body.is-mobile-app-view {
 	}
 }
 
-.masterbar__item-howdy {
-	a {
-		outline: none;
-	}
-
-	.masterbar__item-content {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-	}
-
-	&,
-	+ .masterbar__item-subitems {
-		.gravatar {
-			border: 1px solid var(--color-masterbar-border);
-			border-radius: 50%;
-			margin-left: 1px;
-
-			@media only screen and (max-width: 781px) {
-				width: 28px;
-				height: 28px;
-			}
-		}
-	}
-
-	+ .masterbar__item-subitems {
-		min-width: 264px !important;
-		padding-top: 12px;
-
-
-		@media only screen and (max-width: 781px) {
-			max-height: 100%;
-		}
-
-		.masterbar__item-howdy-account-wrapper {
-			display: flex;
-			flex-direction: row;
-			gap: 12px;
-			padding: 4px 3px;
-
-			.masterbar__item-howdy-account-gravatar {
-				border: none;
-				flex-basis: auto;
-				max-width: 50%;
-			}
-
-			.masterbar__item-howdy-account-details {
-				flex-basis: auto;
-				flex-grow: 1;
-				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				padding: 3px 5px;
-				margin: 0;
-				line-height: 18px;
-				overflow: hidden;
-
-				.display-name, .username {
-					width: 100%;
-					 overflow: hidden;
-					 text-overflow: ellipsis;
-				}
-
-				.username {
-					font-size: 11px;
-					line-height: 14px;
-					margin-bottom: 4px;
-				}
-			}
-		}
-
-		.masterbar__item-subitems-item {
-			&.account-link,
-			&.logout-link {
-				position: relative;
-				top: -5px;
-				left: 85px;
-				margin-bottom: 5px;
-			}
-
-			&.wpcom-link {
-				box-sizing: border-box;
-			}
-		}
-
-		span.wpcom-button {
-			display: inline-block;
-			color: #fff;
-			background-color: #3858e9;
-			border-color: #3858e9;
-			border-radius: 2px;
-			padding: 0 14px;
-			box-sizing: border-box;
-			height: 34px;
-			line-height: 32px;
-			width: 100%;
-			text-align: center;
-			margin: 12px 0;
-			font-size: inherit;
-
-			&:hover {
-				background-color: #4664eb;
-				border-color: #4664eb;
-			}
-
-			svg {
-				display: inline-block;
-				position: relative;
-				top: -1px;
-				margin-left: -2px;
-				margin-right: -4px;
-				vertical-align: middle;
-				fill: currentColor;
-				transform: scale(0.8);
-			}
-		}
-	}
-
-	@media only screen and (max-width: 781px) {
-		.masterbar__item-howdy-howdy,
-		+ .masterbar__item-subitems .masterbar__item-howdy-account-gravatar {
-			display: none;
-		}
-
-		+ .masterbar__item-subitems {
-			.masterbar__item-howdy-account-wrapper {
-				padding-inline-start: 0;
-
-				.masterbar__item-howdy-account-details {
-					padding: 0;
-				}
-			}
-
-			.masterbar__item-subitems-item {
-
-				min-width: 100% !important;
-				&.account-link {
-					top: -10px;
-					left: 0;
-				}
-
-				&.logout-link {
-					top: -10px;
-					left: 0;
-				}
-			}
-		}
-	}
-
-}
-
 .masterbar__login-links {
 	display: flex;
 	margin-left: auto;
@@ -1021,64 +565,6 @@ body.is-mobile-app-view {
 			margin-right: 20px;
 		}
 	}
-}
-
-.masterbar__reader {
-	@media only screen and (max-width: 781px) {
-		.gridicon + .masterbar__item-content {
-			padding-left: 6px;
-		}
-	}
-}
-
-.masterbar__site-info {
-	align-items: center;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	margin: 6px -6px -6px;
-	min-width: 248px;
-	padding: 12px;
-
-	.masterbar__info-badges {
-		display: flex;
-		flex: 1;
-		flex-wrap: wrap;
-		gap: 4px;
-		justify-content: flex-end;
-		margin-left: 16px;
-		min-width: 0;
-	}
-}
-
-.button > .masterbar__site-info,
-.masterbar__item-subitems-item a > .masterbar__site-info {
-	margin: 0 -6px;
-}
-
-.masterbar__site-plan {
-	padding: 0 6px;
-}
-
-.masterbar__site-status {
-	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15%));
-	color: var(--color-masterbar-submenu-text);
-}
-
-.masterbar__site-badge {
-	box-sizing: border-box;
-	flex-shrink: 0;
-	padding-inline: 8px;
-	border-radius: 2px;
-	background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
-	color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; // override the link color
-	font-size: 12px;
-	line-height: 24px;
-}
-
-.masterbar__item-reader-label {
-	padding-left: 6px;
 }
 
 .masterbar-cart-button {
@@ -1108,54 +594,6 @@ body.is-mobile-app-view {
 	}
 }
 
-.masterbar-notifications {
-	svg {
-		overflow: visible;
-		width: 24px;
-		height: 24px;
-
-		@media only screen and (max-width: 781px) {
-			width: 32px;
-			height: 32px;
-		}
-	}
-
-	.notifications-bell-icon__bubble {
-		animation: bubble-unread-indication 0.5s linear both;
-		transform-origin: 20px 4px;
-
-		use {
-			transition: all 200ms ease-in-out;
-			transform-origin: 20px 4px;
-			transform: translate(-2%, 2%) scale(0.93);
-			stroke-width: 6%;
-			stroke: var(--color-masterbar-background);
-		}
-	}
-
-	&:hover use {
-		@media only screen and (min-width: 481px) {
-			stroke: var(--color-masterbar-item-hover-background);
-		}
-	}
-}
-
-@keyframes bubble-unread-indication {
-	30% {
-		transform: scale3d(1.5, 1.5, 1.5);
-	}
-	60% {
-		transform: scale3d(0.85, 0.85, 0.85);
-	}
-	80% {
-		transform: scale3d(1.15, 1.15, 1.15);
-	}
-}
-
-a.masterbar__quick-language-switcher {
-	cursor: pointer;
-}
-
 .is-section-gutenberg-editor .masterbar {
 	@include break-medium {
 		opacity: 0;
@@ -1170,79 +608,6 @@ a.masterbar__quick-language-switcher {
 .has-no-masterbar .masterbar {
 	opacity: 0;
 	pointer-events: none;
-}
-
-.masterbar__secure-checkout {
-	display: flex;
-	align-items: center;
-
-	.masterbar--is-akismet &,
-	.masterbar--is-jetpack &,
-	.masterbar--is-a4a &,
-	.masterbar--is-passport & {
-		column-gap: 1em;
-	}
-
-	.masterbar__wpcom-wordmark {
-		margin-left: 8px;
-		color: var(--color-checkout-masterbar-text);
-		fill: var(--color-checkout-masterbar-text);
-	}
-
-	.masterbar__jetpack-wordmark {
-		height: 25px;
-
-	}
-
-	/* empty for now, saved for future use if needed
-		.masterbar__akismet-wordmark {
-		}
-	*/
-
-	.masterbar__close-button {
-		flex: initial;
-		width: initial;
-		padding: 1em;
-
-		@include breakpoint-deprecated( ">480px" ) {
-			padding: 1.5em;
-		}
-
-		&:hover {
-			.gridicon {
-				fill: var(--studio-gray-90);
-			}
-		}
-	}
-
-	.masterbar__secure-checkout-text {
-		color: var(--color-checkout-masterbar-text);
-		font-size: 0.75rem;
-		position: relative;
-
-		/* Hide the secure checkout text on very small devices */
-		@media screen and (max-width: 300px) {
-			display: none;
-		}
-
-		@include breakpoint-deprecated( ">480px" ) {
-			font-size: 100%;
-		}
-
-		.masterbar--is-wpcom & {
-			transform: translateY(0.5px);
-			margin-left: 16px;
-		}
-
-		.masterbar--is-jetpack &
-		.masterbar--is-a4a & {
-			transform: translateY(0.5px);
-		}
-
-		.masterbar--is-akismet & {
-			transform: translateY(4px);
-		}
-	}
 }
 
 .masterbar--is-checkout.masterbar--is-checkout-redesign-v1 {

@@ -31,14 +31,11 @@ const deployment = {
 	installation_id: installation.external_id,
 } as CodeDeploymentData;
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+jest.mock( '@tanstack/react-router', () => {
+	const actual = jest.requireActual( '@tanstack/react-router' );
 	return {
 		...actual,
-		siteRoute: {
-			...actual.siteRoute,
-			useParams: () => ( { siteSlug: 'test-site', deploymentId: 5 } ),
-		},
+		useParams: () => ( { siteSlug: 'test-site', deploymentId: 5 } ),
 	};
 } );
 

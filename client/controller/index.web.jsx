@@ -20,6 +20,7 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -85,6 +86,7 @@ export const ProviderWrappedLayout = ( {
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
+				onRouteCommit={ recordUnifiedAdminPageView }
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>

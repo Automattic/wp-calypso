@@ -576,6 +576,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 			isSendingRef.current = true;
 
+			// Keep in-flight updates attached to the site and agent that started the request.
+			const onTaskUpdate = onTaskUpdateRef.current;
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
@@ -630,14 +632,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							timestamp: messageTimestamp,
 							archived: options?.archived ?? false,
 							showIcon: false,
-					  } as UIMessage );
+						} as UIMessage );
 
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
-						: internalOptions?.initialUiMessages ?? prev.uiMessages,
+						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
 					error: null,
 				} ) );
@@ -693,13 +695,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							{ success: true, message },
 							messageOptions,
 							options?.fileParts
-					  )
+						)
 					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
-					if ( onTaskUpdateRef.current ) {
+					if ( onTaskUpdate ) {
 						try {
-							await onTaskUpdateRef.current( update );
+							await onTaskUpdate( update );
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
@@ -748,7 +750,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 														text: update.text,
 													},
 												],
-										  }
+											}
 										: msg
 								),
 							} ) );

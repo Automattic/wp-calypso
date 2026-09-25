@@ -9,13 +9,15 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
  * Communicates submit-blocking state back to the parent via onSubmitBlockedChange.
  * @param {Object}   props
  * @param {boolean}  props.enabled Whether Blackbox is active for this surface.
+ * @param {string}   [props.apiKey] Public key for this surface.
  * @param {Function} props.onSubmitBlockedChange Called with true/false when Blackbox should block submit.
  */
-export default function BlackboxChallenge( { enabled, onSubmitBlockedChange } ) {
+export default function BlackboxChallenge( { enabled, apiKey, onSubmitBlockedChange } ) {
 	const containerRef = useRef( null );
 	const { isChallengeActive, isLoading, hasChallengeContent } = useBlackbox( {
 		containerRef,
 		enabled,
+		apiKey,
 	} );
 
 	useIsomorphicLayoutEffect( () => {

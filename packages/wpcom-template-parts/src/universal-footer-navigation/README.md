@@ -7,20 +7,21 @@ it in sync with that twin by hand, the same way the header twin is kept in sync
 
 ## What is vendored, and from where
 
-- **`style.scss`** — machine-extracted from the twin's Landpack stylesheet
-  bundle. Source: the first `/_static/??-…` stylesheet linked by a logged-out
-  render of a WPCOM marketing page (extracted from `https://wordpress.com/pricing/`
-  in September 2026; the concat URL changes per deploy, so re-fetch the page and
-  take its first `rel='stylesheet'` link).
+- **`style.scss`** — up to the `2026 footer preview` banner, machine-extracted
+  from the twin's Landpack stylesheet bundle. Source: the first `/_static/??-…`
+  stylesheet linked by a logged-out render of a WPCOM marketing page (extracted
+  from `https://wordpress.com/pricing/` in September 2026; the concat URL
+  changes per deploy, so re-fetch the page and take its first
+  `rel='stylesheet'` link).
 - **`svgs.tsx`** — the eleven SVGs lifted verbatim from the same page's rendered
   footer markup (the two identical chevrons were deduped into `ChevronSvg`).
 - **`taxonomy.ts`** — the link columns, transcribed from the rendered markup with
   labels wrapped in `__()` and wordpress.com URLs wrapped in `localizeUrl()`.
 
-## Regeneration procedure (style.scss)
+## Regeneration procedure (legacy part of style.scss)
 
-`style.scss` is generated output — **do not hand-edit it**; regenerate and
-re-diff instead:
+The vendored part of `style.scss` is generated output — **do not hand-edit
+it**; regenerate and re-diff instead:
 
 1. Fetch a logged-out WPCOM marketing page and save its footer subtree
    (`<section class="wpcom-global-nav-footer …">`) and its first linked
@@ -47,6 +48,15 @@ re-diff instead:
 Two things the scoping cannot contain: the `@font-face` blocks register
 `inter-web` globally (font faces cannot be scoped), and font files load from
 `wordpress.com` (CORS-open; verified `Access-Control-Allow-Origin: *`).
+
+## 2026 preview styles (hand-written)
+
+The block at the end of `style.scss` is hand-written, not vendored. It is
+scoped under `.wpcom-global-nav-footer--2026` and mirrors the block of the
+same name in Landpack's `footer-section` block styles in wpcom, rule for rule,
+so the two can be read side by side. Keep them in step by checking computed
+styles against the wpcom render of the 2026 footer; the current footer (no
+`--2026` class) must not change.
 
 ## Contracts worth knowing
 

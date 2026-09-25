@@ -131,11 +131,11 @@ const getBundledPlanNoticeText = (
 		? translate(
 				'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
 				{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
-		  )
+			)
 		: translate(
 				'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
 				{ args: { planName } }
-		  );
+			);
 
 const StatsUpgradeInstructions = ( {
 	isNearLimit,

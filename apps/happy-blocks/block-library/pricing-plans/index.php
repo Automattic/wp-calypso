@@ -67,12 +67,13 @@ function happyblocks_pricing_plans_is_author() {
  * @return array
  */
 function happyblocks_pricing_plans_get_config() {
+	$site_locale = get_blog_lang_code( get_current_blog_id() );
 
 	return array(
 		'features' => array(
 			'tracking' => apply_filters( 'happy_blocks_pricing_plans_tracking', true ),
 		),
-		'locale'   => get_user_locale(),
+		'locale'   => $site_locale ? $site_locale : 'en',
 	);
 }
 

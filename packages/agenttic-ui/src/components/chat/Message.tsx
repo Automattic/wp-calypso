@@ -93,7 +93,9 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 						: undefined
 				}
 			>
-				<div className={ styles.bubble }>{ renderMessageContent() }</div>
+				<div className={ styles.bubble } data-slot="message-bubble">
+					{ renderMessageContent() }
+				</div>
 				{ message.role !== 'user' && messageActions }
 			</div>
 			{ message.role === 'user' && messageActions }

@@ -238,7 +238,7 @@ export default function SearchResultsModern( {
 											buildRelativeSearchUrl( THEME_COLLECTIONS.community.seeAllLink, search )
 										);
 										window.scrollTo( { top: 0 } );
-								  }
+									}
 								: undefined
 						}
 					/>

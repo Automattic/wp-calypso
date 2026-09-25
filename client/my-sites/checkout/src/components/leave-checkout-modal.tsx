@@ -3,7 +3,7 @@ import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/compon
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getPreviousRoute from '../../../../state/selectors/get-previous-route';
 import useCartKey from '../../use-cart-key';
 import useValidCheckoutBackUrl from '../hooks/use-valid-checkout-back-url';

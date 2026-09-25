@@ -939,10 +939,13 @@ $x-nav-2026-scrolled-blur: 8px;
 $x-nav-2026-content-max-width: 1200px;
 // Dropdown metrics from the live reference's computed styles.
 $x-nav-2026-item-padding-x: 8px;
+// 23px + the 1px border = the WPCOM twin's 24px text inset, whose border sits on
+// the ::before pill rather than the padded element.
+$x-nav-2026-cta-padding-x: 23px;
 $x-dropdown-2026-link-font-size: 18px;
-$x-dropdown-2026-link-line-height: 38px;
+$x-dropdown-2026-link-line-height: 34px;
 $x-dropdown-2026-column-max-width: 220px;
-$x-dropdown-2026-column-gap: 100px;
+$x-dropdown-2026-column-gap: 135px;
 $x-dropdown-2026-subtitle-font-size: 12px;
 $x-dropdown-2026-content-padding: 20px 24px 48px;
 $x-menu-2026-admin-bar-desktop: 32px;
@@ -1114,20 +1117,27 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		}
 	}
 
-	// "Get started" CTA — outlined pill (no fill). Hover flips it to a filled
-	// pill: ink fill, inverted label. Sections that recolour the nav ink over
-	// dark heroes can override the flip pair via the two custom properties.
+	// "Get started" CTA: blue fill and white label by default; dark-hero pages swap the
+	// fill/ink pair to a white pill with a blue label.
 	.x-nav-link__primary.cta-btn-nav {
 		display: flex;
 		align-items: center;
+		// border-box so the 1px border sits inside the 40px pill and the 24px
+		// padding is a true text inset, matching the WPCOM twin's ::before pill.
+		box-sizing: border-box;
 		height: 40px;
 		margin-block: 0;
-		margin-inline-start: 12px;
+		// Owns the gap to the preceding "Log in" link (8px of its padding + this
+		// = the design's 29px), so the shared nav-item padding stays untouched.
+		margin-inline-start: 21px;
 		margin-inline-end: 15px;
-		padding: 0 20px !important;
-		background-color: transparent !important;
-		color: inherit !important;
-		border: 1px solid currentcolor;
+		padding: 0 $x-nav-2026-cta-padding-x !important;
+		background-color: var(
+			--x-nav-2026-cta-fill,
+			#{$studio-wordpress-blue-50}
+		) !important;
+		color: var( --x-nav-2026-cta-ink, #{$studio-white} ) !important;
+		border: 1px solid var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} );
 		border-radius: 3px;
 		transition:
 			background-color $x-nav-2026-transition,
@@ -1138,11 +1148,12 @@ $x-menu-2026-admin-bar-mobile: 46px;
 			display: none;
 		}
 
+		// Hover empties the pill: the fill colour moves to the border and the label.
 		&:hover,
 		&:focus {
-			background-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} ) !important;
-			color: var( --x-nav-2026-cta-hover-ink, #{$studio-white} ) !important;
-			border-color: var( --x-nav-2026-cta-hover-fill, #{$studio-gray-100} );
+			background-color: transparent !important;
+			color: var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} ) !important;
+			border-color: var( --x-nav-2026-cta-fill, #{$studio-wordpress-blue-50} );
 		}
 	}
 
@@ -1192,7 +1203,7 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 
 	// Non-dropdown items (no chevron) dim to 0.8 on hover instead of changing
-	// colour. The "Get started" CTA is excluded: it flips to a filled pill above.
+	// colour. The "Get started" CTA is excluded: it empties to an outlined pill above.
 	.x-nav-item:hover .x-nav-link:not( :has( .x-nav-link-chevron ) ):not( .x-nav-link__primary ) {
 		opacity: 0.8;
 	}
@@ -1416,28 +1427,33 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: none;
 	}
 
+	// Row grid, not per-column stacks: every row-2 heading lines up with its
+	// siblings instead of floating under a shorter row-1 group.
 	.x-dropdown-subcategories {
-		display: flex;
-		flex-wrap: nowrap; // Columns compress (labels wrap) in verbose locales; never spill to a second row.
-		// Don't stretch short columns to the tallest column's height.
-		align-items: flex-start;
-		gap: clamp(40px, 7vw, $x-dropdown-2026-column-gap);
+		display: grid;
+		// Content-sized, capped so long labels wrap instead of widening the panel.
+		grid-auto-columns: minmax( 0, max-content );
+		// Rows size to their own tallest group, so short rows don't gain height.
+		grid-auto-rows: min-content;
+		align-items: start;
+		justify-content: start;
+		column-gap: min( $x-dropdown-2026-column-gap, 8vw );
+		row-gap: 32px;
 		max-width: $x-nav-2026-content-max-width;
 		margin: 0;
 		padding: 0;
 	}
 
+	// The wrapper only groups a column's rows in markup; the grid places its children.
 	.x-dropdown-column-group {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		min-width: 0;
-		max-width: $x-dropdown-2026-column-max-width;
-		margin: 0;
+		display: contents;
 	}
 
 	.x-dropdown-subcategory {
+		grid-column: var( --column-index, auto );
+		grid-row: var( --row-index, auto );
 		min-width: 0;
+		max-width: $x-dropdown-2026-column-max-width;
 		margin: 0;
 
 		> ul {
@@ -1461,8 +1477,8 @@ $x-menu-2026-admin-bar-mobile: 46px;
 
 	.x-dropdown-subcategory-title {
 		margin: 0;
-		// Separates the title from the first link below it.
-		padding-bottom: 12px;
+		// 33px line box trimmed to the design's 26px title row, plus its 10px gap to the first link.
+		padding-bottom: 3px;
 		font-size: $x-dropdown-2026-subtitle-font-size;
 		font-weight: 400;
 		line-height: 33px;
@@ -1520,16 +1536,45 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 /* Leaves-WordPress.com marker; shared by the 2026 desktop dropdown and mobile menu. */
-.x-nav__external-link-icon {
-	white-space: nowrap;
+// Scrolled or menu open: white bar, so back to the blue fill. Declared directly, not
+// only as vars, so a page's hardcoded !important colours can't keep it white.
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container.is-scrolled
+	.masterbar-menu
+	.masterbar
+	.x-nav--2026-redesign
+	.x-nav-link__primary.cta-btn-nav,
+.lpc-header-nav-wrapper
+	.lpc-header-nav-container:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
+	.masterbar-menu
+	.masterbar
+	.x-nav--2026-redesign
+	.x-nav-link__primary.cta-btn-nav {
+	--x-nav-2026-cta-fill: #{$studio-wordpress-blue-50};
+	--x-nav-2026-cta-ink: #{$studio-white};
 
-	.x-icon--external {
-		display: inline-block;
-		width: 9px;
-		height: 9px;
-		fill: currentColor;
-		vertical-align: baseline;
+	background-color: var( --x-nav-2026-cta-fill ) !important;
+	color: var( --x-nav-2026-cta-ink ) !important;
+	border-color: var( --x-nav-2026-cta-fill );
+
+	&:hover,
+	&:focus {
+		background-color: transparent !important;
+		color: var( --x-nav-2026-cta-fill ) !important;
+		border-color: var( --x-nav-2026-cta-fill );
 	}
+}
+
+// 11px paints the same ~6.5px arrow as the footer's 12px Inter glyph; top/left centre it on the 18px labels.
+// line-height 1 so the smaller glyph doesn't grow the row.
+.x-nav__external-link-icon {
+	display: inline;
+	position: relative;
+	top: -3px;
+	left: 2px;
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1;
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */

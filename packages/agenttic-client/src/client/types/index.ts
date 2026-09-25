@@ -24,13 +24,7 @@ export interface JsonRpcError {
 }
 
 export type TaskState =
-	| 'submitted'
-	| 'working'
-	| 'running'
-	| 'input-required'
-	| 'completed'
-	| 'canceled'
-	| 'failed';
+	'submitted' | 'working' | 'running' | 'input-required' | 'completed' | 'canceled' | 'failed';
 
 /**
  * Content type for text parts
@@ -250,6 +244,8 @@ export interface Artifact {
 }
 
 export interface Task {
+	/** Server-owned credit snapshot; opaque to the transport. */
+	ai_credits?: unknown;
 	id: string;
 	sessionId?: string;
 	status: TaskStatus;
@@ -334,6 +330,8 @@ export interface TaskUpdate {
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
+	/** Credit status from the server's task result. Not persisted to messages. */
+	aiCredits?: unknown;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts
@@ -344,6 +342,7 @@ export interface TaskUpdate {
 }
 
 export interface Client {
+	/** Protocol errors retain aiCredits when the server supplies a terminal snapshot. */
 	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
 	sendMessageStream: ( params: SendMessageParams ) => AsyncIterable< TaskUpdate >;
 

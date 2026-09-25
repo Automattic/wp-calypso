@@ -43,7 +43,7 @@ export default function useToggleActivateMonitor(
 				dataViewsState.sort,
 				dataViewsState.perPage,
 				...( agencyId ? [ agencyId ] : [] ),
-		  ]
+			]
 		: [
 				'jetpack-agency-dashboard-sites',
 				search,
@@ -51,7 +51,7 @@ export default function useToggleActivateMonitor(
 				filter,
 				sort,
 				...( agencyId ? [ agencyId ] : [] ),
-		  ];
+			];
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {

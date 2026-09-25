@@ -1,3 +1,53 @@
+// Covers the whole chat card, above the footer. chat-ui.scss makes the card
+// the positioning context in both the docked and the floating chat.
+.agents-manager-feedback-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 12px 12%;
+	box-sizing: border-box;
+	border-radius: inherit;
+	background: color-mix( in srgb, var( --color-background ) 65%, transparent );
+	backdrop-filter: blur( 4px );
+	animation: agents-manager-feedback-overlay-in 150ms ease-out;
+
+	@media ( prefers-reduced-transparency: reduce ) {
+		backdrop-filter: none;
+		background: color-mix( in srgb, var( --color-background ) 92%, transparent );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
+}
+
+@keyframes agents-manager-feedback-overlay-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.agents-manager-feedback-overlay .agents-manager-feedback-input {
+	width: 100%;
+	max-width: 480px;
+	margin: 0;
+
+	.agents-manager-feedback-input__inner {
+		margin-top: 0;
+		border-radius: 8px;
+		box-shadow:
+			0 0 0 1px rgba( 0, 0, 0, 0.075 ),
+			0 2px 24px rgba( 0, 0, 0, 0.075 );
+	}
+}
+
 .agents-manager-feedback-input {
 	margin-left: 12px;
 	margin-right: 12px;

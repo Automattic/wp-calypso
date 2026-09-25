@@ -215,7 +215,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		[ hasVideoPress, moduleToggles ]
 	);
 
-	// The way into the new Traffic tab that outlives the banner: an entry in the modules menu.
+	// The way into the preview that outlives the banner: an entry in the modules menu.
 	const { isInvited: isInvitedToPreview, dashboardUrl: previewDashboardUrl } =
 		usePremiumAnalyticsPreviewInvitation( siteId );
 	const [ isPreviewDialogOpen, setIsPreviewDialogOpen ] = useState( false );
@@ -228,14 +228,14 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				? [
 						{
 							key: 'premium-analytics-preview',
-							label: translate( 'Try the new Traffic tab' ),
+							label: translate( 'Try the new Stats' ),
 							description: translate(
 								'Clearer charts and movable widgets. Switch it off at any time.'
 							),
 							icon: chartBar,
 							onSelect: () => setIsPreviewDialogOpen( true ),
 						},
-				  ]
+					]
 				: [],
 		[ isInvitedToPreview, previewDashboardUrl ]
 	);

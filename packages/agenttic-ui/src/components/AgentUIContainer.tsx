@@ -17,7 +17,7 @@ import styles from './chat/Chat.module.css';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
-import type { AgentUIProps, Suggestion } from '../types';
+import type { AgentUIProps, SubmitSource, Suggestion } from '../types';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
@@ -49,6 +49,9 @@ export function AgentUIContainer( {
 	triggerTitle,
 	placeholder,
 	notice,
+	beforeSubmit,
+	leadingActions,
+	trailingActions,
 	onOpen,
 	onExpand,
 	onClose,
@@ -180,6 +183,12 @@ export function AgentUIContainer( {
 		timeoutRefs.current.clear();
 	}, [] );
 
+	const canSubmitMessage = useCallback(
+		( message: string, source: SubmitSource ) =>
+			beforeSubmit ? beforeSubmit( message, source ) !== false : true,
+		[ beforeSubmit ]
+	);
+
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -190,6 +199,7 @@ export function AgentUIContainer( {
 			chat.setState( 'expanded' );
 			await onSubmit( message );
 		},
+		beforeSubmit: ( message ) => canSubmitMessage( message, 'input' ),
 		isProcessing,
 		isInputOverLimit,
 		floatingChatState: chat.state,
@@ -297,8 +307,16 @@ export function AgentUIContainer( {
 
 			if ( selectedSuggestion.autoSubmit ) {
 				// Auto-submit: send message directly to LLM
-				clearSuggestions?.();
 				const message = value.trim();
+
+				// A blocked send is a no-op: the suggestion stays in the list and the
+				// click is not reported, so hosts don't retire it as consumed.
+				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
+					return;
+				}
+
+				clearSuggestions?.();
+
 				if ( message ) {
 					await onSubmit( message );
 				}
@@ -318,7 +336,7 @@ export function AgentUIContainer( {
 
 			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 		},
-		[ clearSuggestions, onSubmit, onSuggestionClick, input ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
 	);
 
 	// Handle opening the chat and call onOpen callback
@@ -384,13 +402,18 @@ export function AgentUIContainer( {
 	// Handle message submission (for button clicks)
 	const handleSubmit = useCallback( async () => {
 		const message = input.value.trim();
+
+		if ( ! canSubmitMessage( message, 'input' ) ) {
+			return;
+		}
+
 		input.clear();
 		if ( chat.state !== 'expanded' ) {
 			onExpand?.();
 		}
 		chat.setState( 'expanded' );
 		await onSubmit( message );
-	}, [ input, onSubmit, chat, onExpand ] );
+	}, [ input, onSubmit, chat, onExpand, canSubmitMessage ] );
 
 	// Handle expand (go to expanded state)
 	const handleExpand = useCallback( () => {
@@ -449,7 +472,7 @@ export function AgentUIContainer( {
 	const computedEmptyView = showEmptyView
 		? React.cloneElement( emptyView, {
 				onSuggestionClick: handleSuggestionSubmit,
-		  } as any )
+			} as any )
 		: undefined;
 
 	// Compute notice - prioritize input limit error over user-provided notice
@@ -462,7 +485,7 @@ export function AgentUIContainer( {
 				),
 				dismissible: false,
 				status: 'error' as const,
-		  }
+			}
 		: notice;
 
 	// Create context value
@@ -508,6 +531,10 @@ export function AgentUIContainer( {
 
 		// Notice
 		notice: computedNotice,
+
+		// Composer action slots
+		leadingActions,
+		trailingActions,
 
 		// Thinking message
 		thinkingMessage,
@@ -606,7 +633,7 @@ export function AgentUIContainer( {
 											? STYLE_CONSTANTS.COLLAPSED_SIZE
 											: STYLE_CONSTANTS.COMPACT_WIDTH,
 									height: getHeightForState( chat.state ),
-							  } ),
+								} ),
 						x:
 							chat.state === 'collapsed' && currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE
@@ -658,6 +685,8 @@ export function AgentUIContainer( {
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }
+									leadingActions={ leadingActions }
+									trailingActions={ trailingActions }
 									onStop={ onStop }
 									suggestions={ suggestions }
 									clearSuggestions={ clearSuggestions }

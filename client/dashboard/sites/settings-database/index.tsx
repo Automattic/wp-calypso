@@ -79,7 +79,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				{
 					learnMoreLink: <InlineSupportLink supportContext="hosting-mysql" />,
 				}
-		  )
+			)
 		: undefined;
 
 	return (

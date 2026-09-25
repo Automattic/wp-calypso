@@ -56,15 +56,6 @@ export interface PriceTierEntry {
 	flat_fee?: number | null;
 }
 
-export interface PurchasePriceTier {
-	minimumUnits: number;
-	maximumUnits?: null | number;
-	minimumPrice: number;
-	maximumPrice: number;
-	minimumPriceDisplay: string;
-	maximumPriceDisplay?: string | null;
-}
-
 /**
  * A subscription or one-time purchase.
  *
@@ -666,6 +657,18 @@ export interface Purchase {
 	 * renewal, or null when no delayed downgrade is scheduled.
 	 */
 	delayed_downgrade_to_product_slug: string | null;
+
+	/**
+	 * What the next renewal will charge once the scheduled delayed downgrade
+	 * takes effect, in the smallest unit of `currency_code` and excluding
+	 * taxes. This is priced from the billing plan pinned when the downgrade was
+	 * scheduled, so it matches the pre-renewal email and the eventual charge
+	 * rather than `price_integer`, which is the current plan's renewal price.
+	 *
+	 * Null when no delayed downgrade is scheduled or the target price cannot
+	 * be resolved; undefined from backends that predate the field.
+	 */
+	delayed_downgrade_price_integer?: number | null;
 }
 
 export type RawPurchase = Purchase & {

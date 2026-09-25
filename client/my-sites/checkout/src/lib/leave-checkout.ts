@@ -135,6 +135,10 @@ export const leaveCheckout = ( {
 				window.location.href = cancelPath;
 				return;
 			}
+			if ( isJetpackCloudUrl( cancelPath ) ) {
+				window.location.href = cancelPath;
+				return;
+			}
 			// If cancel_to is invalid (e.g., external URL), fall through to default close URL.
 		}
 	} catch ( error ) {
@@ -145,6 +149,23 @@ export const leaveCheckout = ( {
 
 	navigate( closeUrl );
 };
+
+const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
+
+/**
+ * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and
+ * `cancel_to` points back at them.
+ */
+function isJetpackCloudUrl( url: string ) {
+	try {
+		const { protocol, hostname } = new URL( url );
+		return (
+			[ 'https:', 'http:' ].includes( protocol ) && JETPACK_CLOUD_HOSTNAMES.includes( hostname )
+		);
+	} catch {
+		return false;
+	}
+}
 
 export function isRelativeUrl( url: string ) {
 	try {

@@ -49,6 +49,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -197,7 +198,11 @@ export const siteRoute = createRoute( {
 			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settles the plan-expiry notice before paint so it can outrank page notices.
+			ensureSiteExpiryNoticeData( site ),
+		] );
 
 		return { site };
 	},
@@ -237,7 +242,9 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 
 			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
+				// Error gets logged at ErrorBoundary.
+			} ),
 		] );
 	},
 } ).lazy( () =>
@@ -796,6 +803,13 @@ export const siteSettingsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+
+		// SFTP/SSH is the only settings page reachable while the site is broken,
+		// and it doesn't need the data fetched below.
+		if ( site.__inaccessible_jetpack_error ) {
+			return;
+		}
+
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
@@ -1337,7 +1351,10 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsServer' },
+	staticData: {
+		requiresSiteTypeSupport: 'settingsServer',
+		availableToInaccessibleJetpackSites: true,
+	},
 	head: () => ( {
 		meta: [
 			{
@@ -1842,7 +1859,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 							sitePerformanceBackendExternalRequestsRoute,
 							sitePerformanceBackendRequestDetailRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] ),
 		siteMonitoringRoute,

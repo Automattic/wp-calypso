@@ -11,7 +11,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
@@ -20,7 +20,7 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import type { Product, Purchase } from '@automattic/api-core';
+import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -91,6 +91,35 @@ export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
  */
 export function isRemoved( purchase: Purchase ): boolean {
 	return 'active' !== purchase.subscription_status;
+}
+
+/**
+ * Returns true if any purchase still needs to be canceled before the account can be closed.
+ */
+export function hasCancelablePurchases( purchases: Purchase[] ): boolean {
+	return purchases.some( ( purchase ) => {
+		// Skip only fully-removed purchases. An expired-but-still-active purchase
+		// (in its grace period) can still be renewed, so it should require action
+		// before the account is deleted.
+		if ( isRemoved( purchase ) ) {
+			return false;
+		}
+		if ( purchase.product_slug === 'premium_theme' && ! purchase.is_refundable ) {
+			return false;
+		}
+		return Boolean( purchase.is_cancelable );
+	} );
+}
+
+/**
+ * Returns true if any newsletter subscription still needs to be canceled before the account can be closed.
+ */
+export function hasRenewableMonetizeSubscriptions(
+	subscriptions: MonetizeSubscription[]
+): boolean {
+	return subscriptions.some(
+		( subscription ) => subscription.status === 'active' && Boolean( subscription.is_renewable )
+	);
 }
 
 /**
@@ -180,8 +209,8 @@ export function isAkismetProduct( product: Purchase ): boolean {
 export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.subscribed_date &&
-			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
-			purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 	);
 }
 
@@ -377,7 +406,7 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
  * differently. For example, domains are displayed with the domain name as the
  * title and the product name as the subtitle (see `getSubtitleForDisplay`).
  */
-export function getTitleForDisplay( purchase: Purchase ): string {
+export function getTitleForDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_hundred_year_domain ) {
 		return __( '100-Year Domain Registration' );
 	}
@@ -445,16 +474,19 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		/* translators: %(productName)s is the product name "WordPress.com Personal" */
-		return sprintf( __( '%(productName)s Plan' ), {
-			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-		} );
+		if ( includeProductType ) {
+			/* translators: %(productName)s is the product name "WordPress.com Personal" */
+			return sprintf( __( '%(productName)s Plan' ), {
+				productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			} );
+		}
+		return purchase.product_name.replace( /\s*\(.*$/, '' ).trim();
 	}
 
 	return purchase.product_name;
 }
 
-export function getTitleForListDisplay( purchase: Purchase ): string {
+export function getTitleForListDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_domain_registration && purchase.meta ) {
 		if ( purchase.is_hundred_year_domain ) {
 			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
@@ -463,7 +495,7 @@ export function getTitleForListDisplay( purchase: Purchase ): string {
 		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
 		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
 	}
-	return getTitleForDisplay( purchase );
+	return getTitleForDisplay( purchase, includeProductType );
 }
 
 /**
@@ -682,7 +714,7 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink()
+	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
@@ -946,3 +978,38 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
+
+/**
+ * Sentence naming what the next renewal will actually charge when a delayed
+ * downgrade is scheduled, since the purchase's own renewal price is still the
+ * current plan's. Returns null when there is no downgrade price to show, or
+ * when the sentence isn't translated into the user's language yet.
+ */
+export function getDelayedDowngradeRenewalPriceText(
+	purchase: Purchase,
+	hasEnTranslation: ( single: string ) => boolean
+): string | null {
+	if (
+		! purchase.is_delayed_downgrade_pending ||
+		purchase.delayed_downgrade_price_integer == null
+	) {
+		return null;
+	}
+	if (
+		! hasEnTranslation(
+			'Because of your scheduled downgrade, your next renewal will be %(price)s.'
+		)
+	) {
+		return null;
+	}
+	return sprintf(
+		/* translators: %(price)s is a monetary amount, e.g. $20 */
+		__( 'Because of your scheduled downgrade, your next renewal will be %(price)s.' ),
+		{
+			price: formatCurrency( purchase.delayed_downgrade_price_integer, purchase.currency_code, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} ),
+		}
+	);
+}

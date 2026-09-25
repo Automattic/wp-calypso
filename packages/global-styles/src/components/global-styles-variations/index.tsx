@@ -109,7 +109,7 @@ const GlobalStylesVariations = ( {
 		? translate(
 				'Preview our style variations for free or pick your own fonts and colors with the %(planName)s plan later on.',
 				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
-		  )
+			)
 		: translate( 'You can change your style at any time.' );
 
 	const baseGlobalStyles = useMemo(
@@ -153,7 +153,7 @@ const GlobalStylesVariations = ( {
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-styles-variations__container">
+			<div className="global-styles-variations__container global-styles-variations__container--stacked">
 				<div
 					className={ clsx( 'global-styles-variations__type', {
 						'combined-variations': ! splitDefaultVariation,
@@ -198,17 +198,13 @@ const GlobalStylesVariations = ( {
 									{ hasEnTranslation( 'Style Variations' )
 										? translate( 'Style Variation', 'Style Variations', {
 												count: nonDefaultStyles.length,
-										  } )
+											} )
 										: translate( 'Premium Style', 'Premium Styles', {
 												count: nonDefaultStyles.length,
-										  } ) }
+											} ) }
 								</span>
 								{ needsUpgrade && (
-									<PremiumBadge
-										shouldHideTooltip
-										shouldCompactWithAnimation
-										labelText={ translate( 'Upgrade' ) }
-									/>
+									<PremiumBadge shouldHideTooltip labelText={ translate( 'Upgrade' ) } />
 								) }
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>

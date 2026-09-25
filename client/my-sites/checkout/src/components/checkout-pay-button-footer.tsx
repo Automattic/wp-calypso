@@ -128,11 +128,11 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 									),
 								},
 							}
-					  )
+						)
 					: translate(
 							'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
 							{ components }
-					  ) }
+						) }
 			</LegalNotice>
 
 			<CheckoutTermsModal

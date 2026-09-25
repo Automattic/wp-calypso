@@ -104,8 +104,7 @@ function mockGetCheckpointIdForMessage( message: {
 
 const mockCheckpointActions = () => {
 	let getCheckpointActionState:
-		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
-		| undefined;
+		( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' ) | undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
@@ -114,7 +113,7 @@ const mockCheckpointActions = () => {
 
 		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
 			? 'hidden'
-			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+			: ( getCheckpointActionState?.( checkpointId ) ?? 'enabled' );
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
@@ -158,6 +157,7 @@ const mockAgentChat = jest.fn(
 		inputValue,
 		onInputChange,
 		emptyViewSuggestions = [],
+		onContextCardAction,
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: (
@@ -172,6 +172,10 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		isLoadingConversation?: boolean;
+		onContextCardAction?: (
+			card: { id: string },
+			action: { label: string; prompt: string; type: 'submit' }
+		) => void;
 	} ) => (
 		<>
 			<button
@@ -272,6 +276,16 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button
+				onClick={ () =>
+					onContextCardAction?.(
+						{ id: 'card-1' },
+						{ label: 'Ask', prompt: 'From the context card', type: 'submit' }
+					)
+				}
+			>
+				Submit context card
+			</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
@@ -307,7 +321,8 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => {
-	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useReducer, useRef } =
+		jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -356,8 +371,10 @@ jest.mock( '../../contexts', () => {
 		} ),
 	};
 } );
+const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
-	useRegisterCustomActions: () => {},
+	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
+		Object.assign( mockRegisteredActions, actions ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -396,6 +413,18 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+// Returns `undefined` after a mock reset, which the wrapper reads as allowed.
+const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
+const mockCreditsVisibility = jest.fn();
+jest.mock( '../../hooks/use-credits', () => ( {
+	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+		mockCreditsVisibility( isOpen );
+		return {
+			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
+			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+		};
+	},
+} ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -419,7 +448,7 @@ jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
 jest.mock( '../agent-chat', () => {
-	const { useEffect, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	// Report the empty-view chips the way Agenttic does: nothing behind the loading
 	// skeleton, once per distinct id set, truncated when a test simulates the
 	// floating limit.
@@ -445,6 +474,7 @@ jest.mock( '../agent-chat', () => {
 } );
 
 import { getSessionId } from '../../utils/agent-session';
+import { takeActionOrigin } from '../../utils/action-origin';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -453,7 +483,7 @@ import {
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
@@ -661,6 +691,8 @@ const countShowComponentMessages = () => {
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
@@ -686,6 +718,17 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, true ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+		[ 'closed dock', { isOpen: false, isDocked: true, isCompactMode: true }, false ],
+	] as const )( 'loads credits only for a visible %s composer', ( _name, options, visible ) => {
+		render( chat( options ) );
+		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -1378,6 +1421,163 @@ describe( 'OrchestratorChat', () => {
 		} );
 	} );
 
+	it( 'labels a send from the composer', () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'labels a send whose text is a suggestion on screen', () => {
+		render( chat( { emptyViewSuggestions: [ { id: 's1', label: 'Describe these images' } ] } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'suggestion' } )
+		);
+	} );
+
+	it( 'labels a send a host submits through the actions bridge', async () => {
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'host' } )
+		);
+	} );
+
+	it( 'does not label a context-card submit as host', async () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await waitFor( () => {
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_chat_input_send_message',
+				expect.objectContaining( { source: 'composer' } )
+			);
+		} );
+	} );
+
+	it( 'gates a context-card submit on credits and keeps the card for a retry', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await act( async () => {} );
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'gates a host submit through the actions bridge on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+
+		// The blocked host send must not leave its origin pending for the
+		// composer send that follows.
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'gates a regeneration on credits', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( agentticRegenerate ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			expect.anything()
+		);
+	} );
+
+	it( 'records a regeneration when credits allow it', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( true );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( agentticRegenerate ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			{ message_id: 'agent-1' }
+		);
+	} );
+
+	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				suggestions: [
+					{ id: 's1', label: 'Describe these images', prompt: 'Describe these images' },
+				],
+			} )
+		);
+
+		render( chat( { suggestionsVisible: false } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
 		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [
 			{ id: 1, url: 'a' },
@@ -1549,6 +1749,10 @@ describe( 'OrchestratorChat', () => {
 
 		expect( abortUpload ).toHaveBeenCalled();
 		expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'upload' }
+		);
 	} );
 
 	it( 'stops the agent request when no upload is in flight', () => {
@@ -1559,6 +1763,119 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Stop' ) );
 
 		expect( abortCurrentRequest ).toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'response' }
+		);
+	} );
+
+	describe( 'chat error tracking', () => {
+		const chatErrorCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
+				);
+
+		it( 'records one event per error shown, with its type', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
+			);
+
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'usage_limit' } ],
+			] );
+		} );
+
+		it( 'records the same error again once the chat has recovered from it', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			const { rerender } = render( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
+		} );
+
+		it( 'records nothing while there is no error', () => {
+			render( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'response outcome tracking', () => {
+		const outcomeCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_response_completed'
+				);
+
+		beforeEach( () => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		} );
+
+		it( 'records one completed outcome per task, with the reply message id', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_response_completed',
+					{ status: 'completed', message_id: 'agent-outcome' },
+				],
+			] );
+		} );
+
+		it.each( [ 'failed', 'canceled' ] as const )( 'records a %s outcome', async ( state ) => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: `task-${ state }`,
+					status: { state },
+					final: true,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_response_completed', { status: state } ],
+			] );
+		} );
+
+		it( 'records nothing while the task is still working', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: 'task-working',
+					status: { state: 'working' },
+					final: false,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [] );
+		} );
 	} );
 
 	it( 'drops a same-tick duplicate send before upload state propagates', async () => {
@@ -3311,7 +3628,7 @@ describe( 'OrchestratorChat', () => {
 								onClick: onRegenerate,
 								disabled: ! options.isLatestAgentMessage,
 							},
-					  ]
+						]
 					: []
 		);
 		mockUseAgentChat.mockReturnValue(
@@ -3660,22 +3977,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 			expect( addMessage ).not.toHaveBeenCalled();
-		} );
-
-		it( 'aborts for unified chat as well as the orchestrator', () => {
-			// The canvas abilities are migrating into AM, which serves them on
-			// unified-chat surfaces. Gating on the orchestrator alone would leave this
-			// switched off exactly where those abilities are heading.
-			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
-			const { abortCurrentRequest } = mockUseAgentChat();
-
-			render( chat() );
-			bindToOpenCanvas();
-
-			openPage( CONTACT_PAGE );
-
-			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'never aborts on a surface with no editor', () => {

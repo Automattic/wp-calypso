@@ -126,7 +126,7 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { current
 								onClick: onRegenerate,
 								visibility: 'latest-turn',
 							},
-					  ]
+						]
 					: [];
 			},
 		} );

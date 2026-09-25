@@ -29,7 +29,7 @@ export default function ReportLoading( {
 					__( 'Fetching historic data.' ),
 					__( 'Identifying performance improvements.' ),
 					__( 'Finalizing your results.' ),
-			  ];
+				];
 	};
 
 	const { step, steps } = useLoadingSteps( {

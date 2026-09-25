@@ -56,7 +56,6 @@ import {
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
-	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
@@ -123,6 +122,7 @@ export type CustomOptions = {
 	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
+	sitePublicSiteCount: 1 | 2;
 };
 
 /**
@@ -406,10 +406,6 @@ export const test = base.extend<
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
 		/**
-		 * Page object representing the Import Content WordPress Question page.
-		 */
-		pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
-		/**
 		 * Page object representing the Import Content from Another Platform or File page.
 		 */
 		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
@@ -501,6 +497,7 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	sitePublicSiteCount: [ 1, { option: true } ],
 	_abandonLoginLockWaits: [
 		async ( {}, use ) => {
 			await use();
@@ -547,7 +544,7 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( testInfo.project.name === 'authentication' ) {
+		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
@@ -717,10 +714,6 @@ export const test = base.extend<
 		const importPlansPage = new ImportPlansPage( page );
 		await use( importPlansPage );
 	},
-	pageImportContentWordpressQuestion: async ( { page }, use ) => {
-		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
-		await use( importContentWordpressQuestionPage );
-	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
@@ -793,7 +786,10 @@ export const test = base.extend<
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
+	sitePublic: async (
+		{ page, clientEmail, helperData, pageLogin, pageUserSignUp, sitePublicSiteCount },
+		use
+	) => {
 		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
@@ -813,6 +809,13 @@ export const test = base.extend<
 				name: siteName,
 				title: siteName,
 			} );
+			if ( sitePublicSiteCount === 2 ) {
+				const companionSiteName = helperData.getBlogName();
+				await restAPIClient.createSite( {
+					name: companionSiteName,
+					title: companionSiteName,
+				} );
+			}
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,

@@ -44,13 +44,14 @@ describe( 'getUpsellReturnUrl', () => {
 		} );
 	} );
 
-	// `leaveCheckout` ignores an absolute `cancel_to`, so sending one would only
-	// look like the cancel destination was honoured.
-	it( 'omits the cancel destination in Jetpack Cloud', () => {
+	// `leaveCheckout` ignores an absolute `cancel_to`; without `checkoutBackUrl`,
+	// leaving checkout strands the user on WordPress.com instead of Cloud.
+	it( 'sends the cancel destination as checkoutBackUrl in Jetpack Cloud', () => {
 		mockedIsJetpackCloud.mockReturnValue( true );
 
 		expect( getUpsellCheckoutQueryArgs() ).toEqual( {
 			redirect_to: 'https://example.com/earn/payments/example.wordpress.com',
+			checkoutBackUrl: 'https://example.com/earn/payments/example.wordpress.com',
 		} );
 	} );
 } );

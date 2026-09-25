@@ -55,6 +55,7 @@ interface Options {
 	currentPostId?: number | string;
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
+	canEscalateToHuman?: boolean;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -261,6 +262,7 @@ export default function convertToolMessagesToComponents( {
 	getChatComponent,
 	currentPostId,
 	isProcessing,
+	canEscalateToHuman = true,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
@@ -278,15 +280,23 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// The user asked for human support
-		if (
-			message.content.find(
-				( content ) =>
-					content.type === 'data' &&
-					content.data?.flags &&
-					typeof content.data.flags === 'object' &&
-					'forward_to_human_support' in content.data.flags
-			)
-		) {
+		const forwardToHumanSupportContent = message.content.find(
+			( content ) =>
+				content.type === 'data' &&
+				content.data?.flags &&
+				typeof content.data.flags === 'object' &&
+				'forward_to_human_support' in content.data.flags
+		);
+		if ( forwardToHumanSupportContent ) {
+			if ( ! canEscalateToHuman ) {
+				return {
+					...message,
+					content: message.content.filter(
+						( content ) => content !== forwardToHumanSupportContent
+					),
+				};
+			}
+
 			return {
 				...message,
 				content: [
@@ -387,7 +397,7 @@ export default function convertToolMessagesToComponents( {
 								componentType: contentType,
 								toolId: textData.tool_id,
 								...( toolCallId ? { toolCallId } : {} ),
-						  } )
+							} )
 						: undefined,
 				};
 			}
@@ -401,7 +411,7 @@ export default function convertToolMessagesToComponents( {
 									type: 'text' as const,
 									text: summaryText,
 								},
-						  ]
+							]
 						: [] ),
 					{
 						type: 'component' as const,
@@ -427,7 +437,7 @@ export default function convertToolMessagesToComponents( {
 										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
 									},
 								},
-						  ]
+							]
 						: [] ),
 				],
 				disabled: isStale,
@@ -484,13 +494,13 @@ export default function convertToolMessagesToComponents( {
 								type: 'text' as const,
 								text: __( '✓ No changes needed', __i18n_text_domain__ ),
 							},
-					  ]
+						]
 					: [
 							{
 								type: 'text' as const,
 								text: summary as string,
 							},
-					  ];
+						];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,

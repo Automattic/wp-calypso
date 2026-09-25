@@ -55,7 +55,7 @@ export function mapMastodonFeedItemToSocialPost(
 						handle: qualifyAcct( item.boost.by.acct, options.instance ),
 						display_name: item.boost.by.display_name,
 					},
-			  }
+				}
 			: null,
 		counts: {
 			replies: item.counts.replies,

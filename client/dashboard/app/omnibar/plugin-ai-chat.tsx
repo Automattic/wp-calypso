@@ -5,17 +5,34 @@ import {
 	openAgentsManagerChat,
 	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
+import { __ } from '@wordpress/i18n';
 import { adminBarIcon } from './admin-bar-icon';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-ai-chat.scss';
 
-export function createAiChatNodeBuilder( sectionName?: string ) {
-	return ( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => ( {
+export function buildAiChatPluginNode( {
+	enabled,
+	sectionName,
+	adminBarNodes,
+}: {
+	enabled: boolean;
+	sectionName?: string;
+	adminBarNodes: AdminBarNode[];
+} ): OmnibarNode | undefined {
+	if ( ! enabled ) {
+		return undefined;
+	}
+
+	const adminBarNode = adminBarNodes.find( ( node ) => node.id === 'agents-manager-ai-chat' );
+	const label = adminBarNode?.meta?.menu_title || __( 'Agent' );
+
+	return {
+		id: 'agents-manager-ai-chat',
 		title: undefined,
-		label: adminBarNode.meta?.menu_title,
-		icon: adminBarIcon( adminBarNode.meta?.icon, 'omnibar__ai-chat-icon' ),
-		tooltip: adminBarNode.meta?.menu_title,
+		label,
+		icon: adminBarIcon( adminBarNode?.meta?.icon ?? 'sparkle', 'omnibar__ai-chat-icon' ),
+		tooltip: label,
 		className: 'masterbar__item-agents-manager-ai-chat',
 		render: ( { icon, label } ) => (
 			<>
@@ -38,5 +55,5 @@ export function createAiChatNodeBuilder( sectionName?: string ) {
 				openAgentsManagerChat();
 			}
 		},
-	} );
+	};
 }

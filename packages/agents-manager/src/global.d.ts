@@ -22,18 +22,24 @@ declare const __i18n_text_domain__: string;
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
-			useUnifiedExperience?: boolean;
+			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			agentId?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
+			/**
+			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
+			 * store's). `false` stops every Tracks event; absent means allowed.
+			 */
+			isTrackingAllowed?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
+			/** The host section the chat runs in, e.g. `wp-admin` or `gutenberg`. */
+			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
@@ -45,6 +51,7 @@ declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';
 	interface BlockEditorSelectors {
 		getSelectedBlock(): {
+			clientId: string;
 			name: string;
 			attributes?: {
 				content?: {
@@ -103,7 +110,7 @@ interface AgentsManagerExternalContextCard {
 	 * Publisher-owned card body. AM renders this inside the card frame
 	 * and only adds the dismiss button and actions row.
 	 */
-	body: import('react').ReactNode;
+	body: import( 'react' ).ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
 }
@@ -114,12 +121,16 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/** The `tab_id` the chat's Tracks events carry, so a host's events can join on it. */
+	getTabId?: () => string;
+	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
+	getTurnId?: () => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.
 	 */
 	recordBigSkyTracksEvent?: (
-		eventName: import('./utils/tracks').BigSkyEventName,
+		eventName: import( './utils/tracks' ).BigSkyEventName,
 		props?: Record< string, unknown >
 	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
@@ -134,7 +145,7 @@ interface AgentsManagerActions {
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
-	chatNavigate: import('react-router-dom').NavigateFunction;
+	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
 	getCurrentRoute: () => string;
@@ -165,6 +176,8 @@ interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;
+	/** WordPress's current admin screen id, e.g. `woocommerce_page_wc-admin`; set on wp-admin pages. */
+	pagenow?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;

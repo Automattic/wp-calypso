@@ -143,7 +143,7 @@ export default function SsoForm( {
 							onError: () => {
 								createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
 							},
-					  }
+						}
 					: {}
 			);
 		}

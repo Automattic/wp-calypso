@@ -44,36 +44,20 @@ describe( 'utils', () => {
 			primary_domain: false,
 		};
 
-		test( 'returns true for a registered domain that can be set as primary but is not yet primary', () => {
-			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( true );
+		test( 'returns true when the backend reports the domain as pending', () => {
+			expect( isPendingPrimaryDomain( { ...baseDomain, set_primary_domain_pending: true } ) ).toBe(
+				true
+			);
 		} );
 
-		test( 'returns false when domain is already primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, primary_domain: true } ) ).toBe( false );
-		} );
-
-		test( 'returns false when domain cannot be set as primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, can_set_as_primary: false } ) ).toBe(
+		test( 'returns false when the backend reports the domain as not pending', () => {
+			expect( isPendingPrimaryDomain( { ...baseDomain, set_primary_domain_pending: false } ) ).toBe(
 				false
 			);
 		} );
 
-		test( 'returns false for non-registration domains', () => {
-			expect(
-				isPendingPrimaryDomain( {
-					...baseDomain,
-					subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default' },
-				} )
-			).toBe( false );
-		} );
-
-		test( 'returns false for domain connections', () => {
-			expect(
-				isPendingPrimaryDomain( {
-					...baseDomain,
-					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
-				} )
-			).toBe( false );
+		test( 'returns false for a non-primary registration the backend does not report as pending', () => {
+			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( false );
 		} );
 	} );
 

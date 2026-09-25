@@ -22,7 +22,7 @@ export function getCountRecords( state, siteId, postId, period, statType ) {
 					stats[ key ] && stats[ key ].chart ? stats[ key ].chart : {}
 				),
 				'period'
-		  );
+			);
 }
 
 /**
@@ -58,7 +58,7 @@ export function isLoadingTabs(
 		return false;
 	}
 	return state.stats.emails
-		? state.stats.emails.requests?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ]?.[ date ]
-				?.requesting ?? false
+		? ( state.stats.emails.requests?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ]?.[ date ]
+				?.requesting ?? false )
 		: false;
 }

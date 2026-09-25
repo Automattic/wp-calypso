@@ -8,6 +8,8 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { Logo } from './logo';
+import A4AOmnibar from './omnibar';
+import A4AOmnibarHelpCenter from './omnibar-help-center';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -17,6 +19,7 @@ import './style.scss';
 
 boot( {
 	name: 'A4A',
+	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,
@@ -29,7 +32,10 @@ boot( {
 			exclusiveOffers: true,
 			learn: true,
 			mcp: true,
+			amplify: true,
+			devTools: true,
 			sites: true,
+			plugins: true,
 			team: true,
 			earn: true,
 		},
@@ -52,7 +58,10 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {},
+	components: {
+		omnibar: A4AOmnibar,
+		helpCenter: A4AOmnibarHelpCenter,
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

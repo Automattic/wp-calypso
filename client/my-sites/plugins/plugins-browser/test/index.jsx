@@ -49,7 +49,6 @@ jest.mock( '@automattic/languages', () => [
 ] );
 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getUserPurchases: jest.fn(),
 	isFetchingSitePurchases: jest.fn( () => false ),
 } ) );
 

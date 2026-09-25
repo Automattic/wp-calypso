@@ -183,6 +183,26 @@ describe( 'getSiteEditorUrl', () => {
 	} );
 
 	/**
+	 * Easy mode is an opt-in the Big Sky plugin reads from the URL once and
+	 * then remembers in a cookie, so the hand-off has to carry it.
+	 */
+	it( 'opts into easy mode when asked', () => {
+		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
+			canvasEdit: true,
+			easyMode: true,
+		} );
+		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
+
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit&easy-mode=true' );
+	} );
+
+	it( 'says nothing about easy mode unless asked', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } )
+		).not.toContain( 'easy-mode' );
+	} );
+
+	/**
 	 * The copy walkthrough is rolled back: the editor opens quietly and the
 	 * customer speaks first. Nothing on the hand-off may start it.
 	 */
@@ -210,6 +230,15 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 		expect( url ).toContain( 'wow_funnel=blueprint' );
 		expect( url ).toContain( 'blueprint_archive_import=1' );
 		expect( url ).toContain( 'blueprint_slug=coachava' );
+	} );
+
+	it( 'carries build=custom-theme only when the run asked for it', () => {
+		const base = { siteSlug: 'example.wordpress.com', siteId: 123, blueprintSlug: 'zoom' };
+
+		expect( getBlueprintArchiveSiteSpecUrl( { ...base, customThemeBuild: true } ) ).toContain(
+			'build=custom-theme'
+		);
+		expect( getBlueprintArchiveSiteSpecUrl( base ) ).not.toContain( 'build=' );
 	} );
 
 	it( 'omits the funnel for a standalone run', () => {

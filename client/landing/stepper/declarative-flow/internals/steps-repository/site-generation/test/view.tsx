@@ -163,8 +163,8 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 
 		expect(
-			getAllByRole( 'status' ).some(
-				( region ) => region.textContent?.includes( 'Building the pages' )
+			getAllByRole( 'status' ).some( ( region ) =>
+				region.textContent?.includes( 'Building the pages' )
 			)
 		).toBe( false );
 	} );
@@ -179,6 +179,31 @@ const failedState: SiteGenerationState = {
 	retryBuild: jest.fn(),
 	isRetryingBuild: false,
 };
+
+describe( 'SiteGenerationView wait estimate', () => {
+	const workingState: SiteGenerationState = {
+		...idleState,
+		status: 'working',
+		steps: [ { id: 'prepare', label: 'Preparing your site', status: 'active' } ],
+	};
+
+	it( 'promises up to 4 minutes on the DSL graph', () => {
+		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
+
+		expect( screen.getByText( /This can take up to 4 minutes\./ ) ).toBeInTheDocument();
+	} );
+
+	it.each( [ 'blocks-first' as const, undefined ] )(
+		'promises up to 10 minutes when the graph is %s',
+		( graph ) => {
+			render(
+				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
+			);
+
+			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
+		}
+	);
+} );
 
 describe( 'SiteGenerationView server recovery', () => {
 	it( 'renders the server failure copy and starts the rebuild', async () => {

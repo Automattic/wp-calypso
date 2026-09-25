@@ -1,8 +1,8 @@
-import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { Card, CardBody } from '../../components/card';
+import Grid from '../../components/grid';
 import { BackupDetails } from './backup-details';
 import { BackupDetailsSkeleton } from './backup-details-skeleton';
 import { BackupsList } from './backups-list';
@@ -148,7 +148,7 @@ export function BackupsBrowser( {
 	};
 
 	return (
-		<Grid columns={ 2 } templateColumns="40% 1fr">
+		<Grid templateColumns="40% 1fr" gap="md">
 			{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
 			{ renderList() }
 			{ renderDetailsPanel() }

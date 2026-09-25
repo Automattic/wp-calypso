@@ -17,6 +17,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -135,7 +136,10 @@ export const preferencesRoute = createRoute( {
 export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
+		if ( context.config.supports.reader ) {
+			queryClient.prefetchQuery( readTeamsQuery() );
+		}
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
@@ -346,7 +350,9 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
 				} ),
 				isDotcomPlan( purchase )
-					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
+					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) ).catch( () => {
+							// Error gets logged at ErrorBoundary.
+						} )
 					: undefined,
 			] );
 		}
@@ -491,7 +497,7 @@ export const cancelPurchaseRoute = createRoute( {
 						// rather than failing the whole route (SHILL-1442).
 						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
 						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
-				  ]
+					]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( plansQuery() ),
@@ -1063,6 +1069,27 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const preferencesReaderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Reader' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'reader',
+	loader: async () => {
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/reader' ).then( ( d ) =>
+		createLazyRoute( 'preferences-reader' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const hostingDashboardRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1415,6 +1442,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+		preferencesChildren.push( preferencesReaderRoute );
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
@@ -1458,7 +1486,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							monetizeSubscriptionsIndexRoute,
 							monetizeSubscriptionRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 			purchasesRoute.addChildren( [
 				purchasesIndexRoute,
@@ -1496,7 +1524,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							securityLegacyContactIndexRoute,
 							securityLegacyContactPrintRoute,
 						] ),
-				  ]
+					]
 				: [] ),
 		] )
 	);

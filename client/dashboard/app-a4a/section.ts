@@ -20,6 +20,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/resources/ai-mcp/write',
 	'/resources/ai-mcp/prompts',
 	'/resources/ai-mcp/connect',
+	'/resources/dev-tools',
 	'/earn',
 	'/earn/referrals',
 	'/earn/woopayments',

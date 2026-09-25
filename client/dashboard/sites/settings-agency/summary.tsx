@@ -37,11 +37,11 @@ export default function AgencySettingsSummary( {
 				isWpcomFeaturesDisabled
 					? {
 							text: __( 'WordPress.com features disabled' ),
-					  }
+						}
 					: {
 							text: __( 'WordPress.com features enabled' ),
 							intent: 'informational',
-					  },
+						},
 			] }
 		/>
 	);

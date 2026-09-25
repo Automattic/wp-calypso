@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { ChatState, Message, NoticeConfig, Suggestion } from '../types';
+import type { ChatState, Message, NoticeConfig, Suggestion, TrailingActions } from '../types';
 import type { ComponentType } from 'react';
 
 export interface AgentUIContextValue {
@@ -49,6 +49,10 @@ export interface AgentUIContextValue {
 
 	// Notice
 	notice?: NoticeConfig;
+
+	// Composer action slots
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 
 	// Thinking message
 	thinkingMessage?: string;

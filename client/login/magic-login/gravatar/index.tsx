@@ -97,11 +97,11 @@ const GravPoweredMagicLoginTos = () => {
 				? translate(
 						"By clicking “Continue“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.",
 						textOptions
-				  )
+					)
 				: translate(
 						"By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.",
 						textOptions
-				  ) }
+					) }
 		</div>
 	);
 };
@@ -740,7 +740,7 @@ const GravPoweredEmailCodeVerification = ( {
 						? translate( 'Send again' )
 						: translate( 'Send again (%(countdown)d)', {
 								args: { countdown: resendEmailCountdown },
-						  } ) }
+							} ) }
 				</button>
 				{ shouldShowSwitchEmail && (
 					<button
@@ -796,7 +796,7 @@ const GravPoweredEmailLinkVerification = ( {
 								redirectTo: currentQueryArguments?.redirect_to ?? '',
 								requestLoginEmailFormFlow: true,
 								createAccount: true,
-								flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
+								flow: oauth2Client ? ( getGravatarOAuth2Flow( oauth2Client ) ?? '' ) : '',
 								showGlobalNotices: true,
 								tokenType: 'link',
 								source: false,
@@ -836,10 +836,10 @@ const GravPoweredEmailLinkVerification = ( {
 					? translate(
 							"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
 							{ components: { strong: <strong /> }, args: { emailAddress } }
-					  )
+						)
 					: translate(
 							'We just emailed you a link. Please check your inbox and click the link to log in.'
-					  ) }
+						) }
 			</p>
 			<hr className="grav-powered-magic-login__divider" />
 			<div className="grav-powered-magic-login__footer">
@@ -849,11 +849,11 @@ const GravPoweredEmailLinkVerification = ( {
 						? translate(
 								'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
 								emailTextOptions
-						  )
+							)
 						: translate(
 								'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
 								emailTextOptions
-						  ) }
+							) }
 				</div>
 			</div>
 		</div>
@@ -866,8 +866,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const locale = useSelector( getCurrentLocaleSlug );
 	const lastCheckedUsernameOrEmail = useSelector( getLastCheckedUsernameOrEmail ) as string | null;
 	const currentQueryArguments = useSelector( getCurrentQueryArguments ) as
-		| Record< string, string >
-		| undefined;
+		Record< string, string > | undefined;
 	const initialQueryArguments = useSelector( getInitialQueryArguments );
 	const userEmail =
 		lastCheckedUsernameOrEmail ||

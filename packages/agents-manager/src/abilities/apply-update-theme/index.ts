@@ -29,10 +29,7 @@ export const applyUpdateThemeAbility: Ability = {
 	name: 'big-sky/apply-update-theme',
 	label: __( 'Update Theme', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
-		'Update WordPress theme settings and styles using theme.json format',
-		__i18n_text_domain__
-	),
+	description: 'Update WordPress theme settings and styles using theme.json format',
 	input_schema: {
 		type: 'object',
 		properties: {

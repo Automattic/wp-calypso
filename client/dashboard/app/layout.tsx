@@ -1,9 +1,8 @@
 import { queryClient } from '@automattic/api-queries';
-// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
-	recordTracksEvent,
-	recordTracksPageViewWithPageParams,
+	recordTracksEvent, // eslint-disable-line no-restricted-imports
+	recordTracksPageViewWithPageParams, // eslint-disable-line no-restricted-imports
 } from '@automattic/calypso-analytics';
 import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
@@ -29,7 +28,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog } = useAppContext();
+	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -62,9 +61,17 @@ function AnalyticsProviderWithClient( {
 				recordTracksPageViewWithPageParams( url, {
 					device_type: resolveDeviceTypeByViewPort(),
 				} );
+				if ( app ) {
+					recordTracksEvent( 'wpcom_unified_admin_page_view', {
+						source: 'msd',
+						app,
+						path: router.state.location.pathname,
+						route: url,
+					} );
+				}
 			},
 		} ),
-		[ router ]
+		[ router, app ]
 	);
 
 	useSurvicate();

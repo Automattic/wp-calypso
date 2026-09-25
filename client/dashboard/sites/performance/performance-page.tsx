@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 
 export type PerformanceTab = 'frontend' | 'backend';
 
@@ -41,7 +42,11 @@ export default function PerformancePage( {
 
 	// Without APM there is only one view, so a tab bar would be noise.
 	if ( ! isEnabled( 'performance/apm' ) ) {
-		return <PageLayout header={ header }>{ children }</PageLayout>;
+		return (
+			<PageLayout header={ header } notices={ <SitesNoticeArbiter /> }>
+				{ children }
+			</PageLayout>
+		);
 	}
 
 	const handleSelect = ( name: string ) => {
@@ -53,7 +58,7 @@ export default function PerformancePage( {
 	};
 
 	return (
-		<PageLayout header={ header }>
+		<PageLayout header={ header } notices={ <SitesNoticeArbiter /> }>
 			<Tabs selectedTabId={ tab } onSelect={ handleSelect }>
 				<Tabs.TabList>
 					<Tabs.Tab tabId="frontend">{ __( 'Page speed' ) }</Tabs.Tab>

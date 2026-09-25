@@ -47,7 +47,7 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 						isSingle && image.aspect_ratio
 							? {
 									aspectRatio: `${ image.aspect_ratio.width } / ${ image.aspect_ratio.height }`,
-							  }
+								}
 							: undefined;
 					const cellClassName = 'social-post-card-embed-images__item';
 					const cellContent: ReactNode = (
@@ -67,12 +67,12 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 								args: { alt: image.alt },
 								comment:
 									'Accessible label for opening a Bluesky post image in the full-size carousel; uses the per-image alt text.',
-						  } ) as string )
+							} ) as string )
 						: ( translate( 'View image %(index)d of %(count)d', {
 								args: { index: index + 1, count: embed.images.length },
 								comment:
 									'Accessible label fallback for opening a Bluesky post image in the full-size carousel when no alt text is available.',
-						  } ) as string );
+							} ) as string );
 					return (
 						<button
 							key={ image.thumb }

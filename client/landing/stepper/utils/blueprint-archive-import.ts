@@ -69,6 +69,19 @@ export function getBlueprintArchiveSiteIdentifier( {
 	return null;
 }
 
+/**
+ * `build=custom-theme` on a blueprint CTA forks the run after checkout: the blueprint is a
+ * plugins-only one, so instead of applying the spec to the restored site the confirmed spec goes
+ * to the build-wow generator, which replaces the blueprint's stock theme with a generated one.
+ * Everything before checkout is the ordinary blueprint onboarding.
+ */
+export const BLUEPRINT_BUILD_QUERY_PARAM = 'build';
+export const BLUEPRINT_BUILD_CUSTOM_THEME = 'custom-theme';
+
+export function isBlueprintCustomThemeBuild( queryParams: URLSearchParams ): boolean {
+	return queryParams.get( BLUEPRINT_BUILD_QUERY_PARAM ) === BLUEPRINT_BUILD_CUSTOM_THEME;
+}
+
 export function getBlueprintArchiveSiteSpecUrl( {
 	siteSlug,
 	siteId,
@@ -76,6 +89,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref,
 	source,
 	wowFunnel,
+	customThemeBuild,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -83,6 +97,7 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	ref?: string | null;
 	source?: string | null;
 	wowFunnel?: string | null;
+	customThemeBuild?: boolean;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
 		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
@@ -95,7 +110,57 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		// "do not start one" guard off this param, so it has to survive into the URL — without
 		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
 		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
+		...( customThemeBuild
+			? { [ BLUEPRINT_BUILD_QUERY_PARAM ]: BLUEPRINT_BUILD_CUSTOM_THEME }
+			: {} ),
 	} );
+}
+
+export type BlueprintArchiveLookup = {
+	exists: boolean;
+	/**
+	 * The plans the blueprint suggests, as WordPress.com plan product slugs
+	 * (e.g. `value_bundle`, `business-bundle`). Empty when it suggests none, or
+	 * when the blueprint has no usable archive.
+	 */
+	suggestedPlans: string[];
+};
+
+type BlueprintArchiveLookupResponse = {
+	slug?: string;
+	exists?: boolean;
+	// Absent on a wpcom that predates the field.
+	suggested_plans?: unknown;
+};
+
+/**
+ * Look a blueprint up on the host site by post ID or slug: whether it has a
+ * usable archive, and which plans it suggests. Never throws; a missing blueprint
+ * (or any request failure) reads as "does not exist".
+ */
+export async function lookupBlueprintArchive(
+	blueprintSlug: string
+): Promise< BlueprintArchiveLookup > {
+	if ( ! blueprintSlug ) {
+		return { exists: false, suggestedPlans: [] };
+	}
+
+	try {
+		const response = ( await wpcom.req.get( {
+			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
+			apiNamespace: 'wpcom/v2',
+		} ) ) as BlueprintArchiveLookupResponse;
+
+		const suggestedPlans = Array.isArray( response?.suggested_plans )
+			? response.suggested_plans.filter(
+					( plan ): plan is string => typeof plan === 'string' && plan !== ''
+				)
+			: [];
+
+		return { exists: true, suggestedPlans };
+	} catch {
+		return { exists: false, suggestedPlans: [] };
+	}
 }
 
 /**
@@ -103,19 +168,8 @@ export function getBlueprintArchiveSiteSpecUrl( {
  * on the host site? Resolves true/false; never throws.
  */
 export async function checkBlueprintExists( blueprintSlug: string ): Promise< boolean > {
-	if ( ! blueprintSlug ) {
-		return false;
-	}
-
-	try {
-		await wpcom.req.get( {
-			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
-			apiNamespace: 'wpcom/v2',
-		} );
-		return true;
-	} catch {
-		return false;
-	}
+	const { exists } = await lookupBlueprintArchive( blueprintSlug );
+	return exists;
 }
 
 /**
@@ -343,7 +397,11 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
  */
 export function getSiteEditorUrl(
 	adminUrl: string,
-	{ canvasEdit = false, path }: { canvasEdit?: boolean; path?: string } = {}
+	{
+		canvasEdit = false,
+		easyMode = false,
+		path,
+	}: { canvasEdit?: boolean; easyMode?: boolean; path?: string } = {}
 ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
@@ -361,9 +419,19 @@ export function getSiteEditorUrl(
 	// parameter was once blamed for came from sites where Big Sky had not been
 	// enabled by hand-off time (the enable race fixed on the wpcom side); when Big
 	// Sky mounts, it suppresses the guide itself.
+	//
+	// `easy-mode=true` opts the browser into Big Sky's easy mode: the locked-down
+	// presentation of the core Site Editor that build-wow already lands on. The
+	// plugin reads the parameter once and remembers it in a session cookie, so
+	// it only has to be on this first hop. It is an opt-in, not a switch: the
+	// plugin still gates on its own rules (a static front page among them), and
+	// a site that fails the gate gets the standard editor as before.
 	const args: Record< string, string > = {};
 	if ( canvasEdit ) {
 		args.canvas = 'edit';
+	}
+	if ( easyMode ) {
+		args[ 'easy-mode' ] = 'true';
 	}
 	if ( path ) {
 		args.p = path;

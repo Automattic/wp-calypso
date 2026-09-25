@@ -48,6 +48,8 @@ export interface SiteOptions {
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
+	/** Whether a plan change would move the site off the pre-2026 feature gating. */
+	is_legacy_gating_site?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_recovery_mode_status?: {
 		recovery_mode_email_last_sent?: number;
@@ -55,6 +57,7 @@ export interface SiteOptions {
 		recovery_session_exited_at?: number;
 		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
+	jetpack_sso_require_two_step?: boolean;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -100,6 +103,8 @@ export interface Site {
 	feed_URL: string;
 	subscribers_count: number;
 	options?: SiteOptions; // Can be undefined for deleted sites.
+	/** Connected to an agency through the Automattic for Agencies client plugin. */
+	is_a4a_client?: boolean;
 	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;

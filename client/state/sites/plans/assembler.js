@@ -1,3 +1,7 @@
+/**
+ * @param {Object} [plan] Raw plan from the `/sites/$site/plans` payload.
+ * @returns {import('./types').SitePlanData} The assembled, camelCase site plan.
+ */
 export const createSitePlanObject = ( plan ) => {
 	if ( ! plan ) {
 		return {};
