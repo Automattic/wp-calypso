@@ -139,7 +139,7 @@ export default function BrowseAllResources( {
 					getItemId={ ( item ) => String( item.id ) }
 					search
 				>
-					<HStack justify="space-between" wrap className="dashboard-resources-learn__toolbar">
+					<HStack justify="space-between" wrap>
 						<HStack justify="flex-start" expanded={ false }>
 							<DataViews.Search />
 							<DataViews.FiltersToggle />
