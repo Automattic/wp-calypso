@@ -48,6 +48,7 @@ export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
 export const FLEX_SITE_FLOW = 'flex-site';
 export const WOO_HOSTED_PLANS_FLOW = 'woo-hosted-plans';
 export const ART_PROMO_FLOW = 'art-domain';
+export const VIDEOPRESS_CHANNEL_FLOW = 'videopress-channel';
 
 export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -132,6 +133,10 @@ export const isStartWritingFlow = ( flowName: string | null ) => {
 
 export const isWriteOnFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WRITE_ON_FLOW ].includes( flowName ) );
+};
+
+export const isVideoPressChannelFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && VIDEOPRESS_CHANNEL_FLOW === flowName );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {

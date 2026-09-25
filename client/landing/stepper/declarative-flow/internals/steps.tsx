@@ -81,6 +81,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/subscribers' ),
 	},
 
+	VIDEOPRESS_CHANNEL_SETUP: {
+		slug: 'channelSetup',
+		asyncComponent: () => import( './steps-repository/videopress-channel-setup' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),

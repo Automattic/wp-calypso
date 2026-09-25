@@ -37,6 +37,7 @@ export enum SiteIntent {
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',
+	VideoPressChannel = 'videopress-channel',
 	NewsletterGoal = 'intent-newsletter-goal',
 	CreateCourseGoal = 'create-course-goal',
 	FreePostSetup = 'free-post-setup', // non-signup flow
