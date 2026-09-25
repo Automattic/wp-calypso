@@ -6,7 +6,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { formatAgencyResources } from './format-resources';
-import ResourceCenter from './resource-center';
+import ResourceCenter, { getResourceCenterDescription } from './resource-center';
 
 export default function Learn() {
 	const { recordTracksEvent } = useAnalytics();
@@ -14,7 +14,11 @@ export default function Learn() {
 	const resources = useMemo( () => formatAgencyResources( data.results ), [ data ] );
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Library' ) } /> }>
+		<PageLayout
+			header={
+				<PageHeader title={ __( 'Library' ) } description={ getResourceCenterDescription() } />
+			}
+		>
 			{ /*
 			 * TODO: `onResourceClick` is not passed here, so the dashboard does not
 			 * record server-side resource engagement the way a8c-for-agencies does

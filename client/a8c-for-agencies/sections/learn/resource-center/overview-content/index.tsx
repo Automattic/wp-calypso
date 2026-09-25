@@ -1,7 +1,10 @@
+import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
 import { useCallback, useMemo } from 'react';
 import useRecordResourceEventMutation from 'calypso/a8c-for-agencies/data/learn/use-record-resource-event-mutation';
 import { formatAgencyResources } from 'calypso/dashboard/agency/resources/learn/format-resources';
-import ResourceCenter from 'calypso/dashboard/agency/resources/learn/resource-center';
+import ResourceCenter, {
+	getResourceCenterDescription,
+} from 'calypso/dashboard/agency/resources/learn/resource-center';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -45,10 +48,15 @@ export default function ResourceCenterOverviewContent( {
 	);
 
 	return (
-		<ResourceCenter
-			resources={ resources }
-			recordTracksEvent={ recordTracks }
-			onResourceClick={ handleResourceClick }
-		/>
+		<>
+			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
+				<Text size={ 15 }>{ getResourceCenterDescription() }</Text>
+			</Spacer>
+			<ResourceCenter
+				resources={ resources }
+				recordTracksEvent={ recordTracks }
+				onResourceClick={ handleResourceClick }
+			/>
+		</>
 	);
 }
