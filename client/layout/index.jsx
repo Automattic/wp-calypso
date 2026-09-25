@@ -155,7 +155,7 @@ function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager(
 		currentRoute,
 		siteId,
-		sectionName === 'plugins'
+		sectionName
 	);
 
 	if ( ! routeIsEnabled ) {

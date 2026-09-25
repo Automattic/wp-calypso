@@ -47,7 +47,6 @@ function PluginRecommendationsAgentLoaderInner(): JSX.Element | null {
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 
-	// AM supports site-less mode; install actions defer to ManageSites.
 	const gatesPassed = !! user;
 
 	const [ ready, setReady ] = useState( cachedProvider !== null );

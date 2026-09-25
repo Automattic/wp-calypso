@@ -62,23 +62,13 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 			? ( rawSource as PickSource )
 			: undefined;
 
-		let url: string | undefined;
-		if ( p.url !== undefined ) {
-			if ( typeof p.url !== 'string' ) {
-				continue;
-			}
-			url = p.url.trim();
-			try {
-				if ( ! [ 'http:', 'https:' ].includes( new URL( url ).protocol ) ) {
-					continue;
-				}
-			} catch {
-				continue;
-			}
-		}
-
 		seen.add( slug );
-		out.push( { slug, why, ...( source && { source } ), ...( url && { url } ) } );
+		out.push( {
+			slug,
+			why,
+			...( source && { source } ),
+			...( p.url !== undefined && { url: p.url } ),
+		} );
 	}
 
 	return out;
@@ -134,8 +124,6 @@ function ensureRegistered(): Promise< void > {
 									},
 									url: {
 										type: 'string',
-										format: 'uri',
-										pattern: '^https?://',
 										description:
 											'Product URL from the search result. Preserve its query parameters; this URL is returned with the recommendation.',
 									},
@@ -165,7 +153,7 @@ function ensureRegistered(): Promise< void > {
 									slug: { type: 'string' },
 									why: { type: 'string' },
 									source: { type: 'string', enum: VALID_SOURCES },
-									url: { type: 'string', format: 'uri', pattern: '^https?://' },
+									url: { type: 'string' },
 								},
 							},
 						},

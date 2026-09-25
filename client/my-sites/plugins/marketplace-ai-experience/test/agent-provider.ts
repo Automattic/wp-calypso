@@ -49,7 +49,7 @@ it( 'delivers recommendations only to the provider executing the ability', async
 	expect( firstOnPicks ).not.toHaveBeenCalled();
 } );
 
-it( 'accepts and returns product URLs with query parameters intact', async () => {
+it( 'passes product URLs through unchanged', async () => {
 	const onPicks = jest.fn();
 	const provider = createToolProvider( { onPicks } );
 	const [ ability ] = await provider.getAbilities();
@@ -60,10 +60,10 @@ it( 'accepts and returns product URLs with query parameters intact', async () =>
 		type: 'string',
 	} );
 	const url =
-		'https://wordpress.com/plugins/woocommerce/example.com?wp-agent-chat=session-123&wp-agent-site=42';
+		' https://wordpress.com/plugins/woocommerce/example.com?wp-agent-chat=session-123&wp-agent-site=42 ';
 	await expect(
 		provider.executeAbility( 'wpcom/render-plugin-recommendations', {
-			picks: [ { slug: 'woocommerce', why: 'Sell products.', url: ` ${ url } ` } ],
+			picks: [ { slug: 'woocommerce', why: 'Sell products.', url } ],
 		} )
 	).resolves.toEqual( {
 		rendered: true,
@@ -72,15 +72,3 @@ it( 'accepts and returns product URLs with query parameters intact', async () =>
 	} );
 	expect( onPicks ).toHaveBeenCalledWith( [ { slug: 'woocommerce', why: 'Sell products.', url } ] );
 } );
-
-it.each( [ 'javascript:alert(1)', '/plugins/woocommerce', 'invalid', null, 123 ] )(
-	'drops recommendations with an invalid URL: %p',
-	async ( url ) => {
-		const provider = createToolProvider( { onPicks: jest.fn() } );
-		await expect(
-			provider.executeAbility( 'wpcom/render-plugin-recommendations', {
-				picks: [ { slug: 'woocommerce', why: 'Sell products.', url } ],
-			} )
-		).resolves.toEqual( { rendered: true, count: 0, picks: [] } );
-	}
-);
