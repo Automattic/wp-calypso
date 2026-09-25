@@ -1166,20 +1166,3 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 } );
-
-describe( 'plugin recommendations', () => {
-	it( 'restores each recommendation message from its persisted payload', () => {
-		const picks = [ { slug: 'woocommerce', why: 'Sell products.' } ];
-		const messages = [
-			createToolMessage( 'wpcom__render_plugin_recommendations', { picks } ),
-			createMessage( { role: 'user' } ),
-		];
-		const restored = convertToolMessagesToComponents( { messages } );
-		expect( restored[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			componentProps: { picks },
-		} );
-		expect( restored[ 0 ].disabled ).not.toBe( true );
-		expect( convertToolMessagesToComponents( { messages: [] } ) ).toEqual( [] );
-	} );
-} );

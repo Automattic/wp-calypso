@@ -20,18 +20,14 @@ export default function AgentsManagerLoader( {
 	const isSiteSpecific = useSelector( isSiteSection );
 	const { selectedSite, site } = useHelpCenterSite();
 
-	if ( ! user ) {
-		return null;
-	}
-
 	return (
 		<AsyncLoad
 			require={ importAgentsManager }
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }
-			site={ sectionName === 'plugins' ? ( selectedSite ?? null ) : site }
-			currentSiteId={ isSiteSpecific || sectionName === 'plugins' ? selectedSite?.ID : undefined }
+			site={ site }
+			currentSiteId={ isSiteSpecific ? selectedSite?.ID : undefined }
 			isInternalOnly={ isInternalOnly }
 		/>
 	);

@@ -192,6 +192,18 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 	} );
 
+	// With nothing configured, even `amToolProvider` stays absent — picker
+	// surfaces always register at least one external provider.
+	it.each( [
+		[ 'not an array', 'not-an-array' ],
+		[ 'an empty array', [] ],
+	] )( 'resolves to no providers when agentProviders is %s', async ( _case, agentProviders ) => {
+		setAgentsManagerData( { agentProviders } );
+
+		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+		expect( getLoadedProviderIds() ).toEqual( [] );
+	} );
+
 	it( 'delegates marketplace recommendations to the original provider', async () => {
 		window.history.replaceState( {}, '', '/plugins' );
 		const executeAbility = jest.fn().mockResolvedValue( { rendered: true, count: 1 } );

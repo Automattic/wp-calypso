@@ -3,7 +3,6 @@ import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager } from './agentManager';
-import { messageCarriesToolPayload } from './conversationUtils';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -708,22 +707,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						} ) );
 					}
 
-					if ( ! update.final && messageCarriesToolPayload( update.status?.message ) ) {
-						const toolMessage = transformClientMessageToUI(
-							update.status.message!,
-							registrationsRef.current
-						);
-						if ( toolMessage ) {
-							setState( ( prev ) => ( {
-								...prev,
-								uiMessages: [
-									...prev.uiMessages.filter( ( msg ) => msg.id !== toolMessage.id ),
-									toolMessage,
-								],
-							} ) );
-						}
-						streamingMessageId = null;
-					} else if ( ! update.final && update.text ) {
+					// Handle incremental text updates during streaming
+					if ( ! update.final && update.text ) {
 						// Create or update the streaming message
 						if ( ! streamingMessageId ) {
 							streamingMessageId = `agent-streaming-${ Date.now() }`;

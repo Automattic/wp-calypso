@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import { PLUGIN_RECOMMENDATIONS_TOOL_ID } from '../abilities/render-plugin-recommendations';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
@@ -32,13 +31,7 @@ export interface AgentsManagerUIMessage extends UIMessage {
 // The pickers carry the block-editor preview stack, so they load on demand:
 // a picker row fetches its chunk when it first renders, and other chats never
 // download it.
-const AM_COMPONENTS: Record< ShowComponentType | 'plugin-recommendations', React.ComponentType > = {
-	'plugin-recommendations': lazyComponent(
-		() =>
-			import(
-				/* webpackChunkName: "am-plugin-recommendations" */ '../components/plugin-recommendations'
-			)
-	),
+const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
 	'button-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
 	),
@@ -332,21 +325,6 @@ export default function convertToolMessagesToComponents( {
 			typeof textData.tool_id !== 'string'
 		) {
 			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
-		}
-
-		if ( textData.tool_id === PLUGIN_RECOMMENDATIONS_TOOL_ID ) {
-			return [
-				{
-					...message,
-					content: [
-						{
-							type: 'component' as const,
-							component: AM_COMPONENTS[ 'plugin-recommendations' ],
-							componentProps: { picks: textData.data?.picks },
-						},
-					],
-				},
-			];
 		}
 
 		// Handle `show-component` tool message

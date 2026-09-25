@@ -17,6 +17,7 @@ type PickSource = 'wporg' | 'commercial';
 export interface Pick {
 	slug: string;
 	why: string;
+	url?: string;
 	// Optional — the hydrator queries the named catalog directly when set,
 	// or tries wp.org first with a commercial fallback when omitted.
 	source?: PickSource;
@@ -28,6 +29,7 @@ interface AbilityInput {
 	picks?: Array< {
 		slug?: string;
 		why?: string;
+		url?: string;
 		source?: string;
 	} >;
 }
@@ -60,8 +62,23 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 			? ( rawSource as PickSource )
 			: undefined;
 
+		let url: string | undefined;
+		if ( p.url !== undefined ) {
+			if ( typeof p.url !== 'string' ) {
+				continue;
+			}
+			url = p.url.trim();
+			try {
+				if ( ! [ 'http:', 'https:' ].includes( new URL( url ).protocol ) ) {
+					continue;
+				}
+			} catch {
+				continue;
+			}
+		}
+
 		seen.add( slug );
-		out.push( source ? { slug, why, source } : { slug, why } );
+		out.push( { slug, why, ...( source && { source } ), ...( url && { url } ) } );
 	}
 
 	return out;
@@ -74,7 +91,7 @@ interface ToolProviderOptions {
 // Shared registration promise so concurrent callers don't double-register.
 let registrationPromise: Promise< void > | null = null;
 
-function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void > {
+function ensureRegistered(): Promise< void > {
 	if ( ! registrationPromise ) {
 		registrationPromise = ( async () => {
 			await registerAbilityCategory( CATEGORY_SLUG, {
@@ -87,7 +104,7 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 				label: 'Render Plugin Recommendations',
 				category: CATEGORY_SLUG,
 				description:
-					'First call `plugin-marketplace-search`. Render its results as ordered recommendation cards with personalized reasons, and link to their product URLs in your reply.',
+					"First call `wpcom/plugin-search`. Render its results as ordered recommendation cards with personalized reasons. Pass each result's product URL as `url`, and format every plugin name in the chat reply as `[Plugin name](returned product URL)` using the exact URL from its search result.",
 				input_schema: {
 					type: 'object',
 					additionalProperties: false,
@@ -115,6 +132,13 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 										description:
 											"Short personalized rationale (1–2 sentences) tying the pick to the user's expressed goal. Plain text; no markdown links. Do not paste the plugin's description here — write your own editorial framing.",
 									},
+									url: {
+										type: 'string',
+										format: 'uri',
+										pattern: '^https?://',
+										description:
+											'Product URL from the search result. Preserve its query parameters; this URL is returned with the recommendation.',
+									},
 									source: {
 										type: 'string',
 										enum: VALID_SOURCES,
@@ -126,11 +150,31 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 						},
 					},
 				},
+				output_schema: {
+					type: 'object',
+					required: [ 'rendered', 'count', 'picks' ],
+					properties: {
+						rendered: { type: 'boolean' },
+						count: { type: 'integer' },
+						picks: {
+							type: 'array',
+							items: {
+								type: 'object',
+								required: [ 'slug', 'why' ],
+								properties: {
+									slug: { type: 'string' },
+									why: { type: 'string' },
+									source: { type: 'string', enum: VALID_SOURCES },
+									url: { type: 'string', format: 'uri', pattern: '^https?://' },
+								},
+							},
+						},
+					},
+				},
 				callback: async ( input: AbilityInput ) => {
 					const picks = normalizeIncomingPicks( input?.picks );
-					onPicks( picks );
 
-					return { rendered: true, count: picks.length };
+					return { rendered: true, count: picks.length, picks };
 				},
 			} );
 		} )().catch( ( error ) => {
@@ -147,18 +191,20 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 export function createToolProvider( { onPicks }: ToolProviderOptions ) {
 	return {
 		getAbilities: async () => {
-			await ensureRegistered( onPicks );
+			await ensureRegistered();
 
 			return getAbilities().filter( ( a ) => a?.name === ABILITY_NAME );
 		},
 		executeAbility: async ( name: string, args: unknown ) => {
-			await ensureRegistered( onPicks );
+			await ensureRegistered();
 
 			if ( name !== ABILITY_NAME ) {
 				throw new Error( `[plugin-recommendations] Ability "${ name }" is not allowed here.` );
 			}
 
-			return executeAbility( name, args );
+			const result = await executeAbility( name, args );
+			onPicks( result.picks );
+			return result;
 		},
 	};
 }

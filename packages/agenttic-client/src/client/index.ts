@@ -588,27 +588,7 @@ async function* processAgentResponseStream(
 	abortSignal?: AbortSignal,
 	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
-	const serverToolCalls = new Map< string, ToolCallDataPart >();
 	for await ( const update of stream ) {
-		if ( update.kind !== 'delta' && update.status.state === 'running' && update.status.message ) {
-			for ( const call of extractToolCallsFromMessage( update.status.message ) ) {
-				serverToolCalls.set( call.data.toolCallId, call );
-			}
-			for ( const part of update.status.message.parts ) {
-				if (
-					part.type !== 'data' ||
-					! ( 'toolCallId' in part.data ) ||
-					! ( 'result' in part.data )
-				) {
-					continue;
-				}
-				const call = serverToolCalls.get( part.data.toolCallId as string );
-				if ( call && call.data.toolId === part.data.toolId ) {
-					newConversationParts.push( { ...update.status.message, parts: [ call, part ] } );
-					serverToolCalls.delete( call.data.toolCallId );
-				}
-			}
-		}
 		const inputRequiredMessage =
 			update.status.state === 'input-required' && update.status.message && toolProvider
 				? update.status.message
