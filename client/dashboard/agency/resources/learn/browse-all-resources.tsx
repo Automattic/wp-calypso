@@ -145,6 +145,7 @@ export default function BrowseAllResources( {
 							<DataViews.FiltersToggle />
 						</HStack>
 						<ToggleGroupControl
+							className="dashboard-resources-learn__stage-filter"
 							label={ __( 'Stage' ) }
 							value={ stage }
 							hideLabelFromVision
@@ -175,7 +176,6 @@ export default function BrowseAllResources( {
 							onOpenVideoModal={ onOpenVideoModal }
 							recordTracksEvent={ recordTracksEvent }
 							onResourceClick={ onResourceClick }
-							showLogo
 							tracksEventName="calypso_a4a_resource_center_browse_cta_click"
 						/>
 					) ) }

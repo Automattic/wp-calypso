@@ -1,15 +1,27 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;
+
+	// Show the border the control otherwise only draws on hover. Nested for
+	// specificity over the component's own runtime styles.
+	.dashboard-resources-learn__stage-filter {
+		border-color: $gray-400;
+	}
 }
 
 .dashboard-resources-learn__card {
 	position: relative;
 	block-size: 100%;
+	overflow: hidden;
 
+	// An outline, not an inset shadow, so the branded header can't paint over it.
 	&:hover,
 	&:has( .dashboard-resources-learn__card-link:focus-visible ) {
-		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+		outline: 1px solid var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		outline-offset: -1px;
 	}
 }
 
@@ -28,4 +40,80 @@
 		box-shadow: none;
 		outline: none;
 	}
+}
+
+// Product palettes come from Color Studio. VIP's gold is from its brand palette
+// and Pressable's red-orange from https://pressable.com/press-kit/.
+.dashboard-resources-learn__card-header {
+	--resource-card-ink: #{$studio-black};
+	--resource-card-paper: #{$studio-gray-0};
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-block-size: 220px;
+	padding: 20px 24px;
+	box-sizing: border-box;
+	color: var( --resource-card-ink );
+	background: var( --resource-card-paper );
+
+	&[data-product='automattic-for-agencies'] {
+		--resource-card-ink: #{$studio-white};
+		--resource-card-paper: #{$studio-gray-100};
+	}
+
+	&[data-product='jetpack'] {
+		--resource-card-ink: #{$studio-white};
+		--resource-card-paper: #{$studio-jetpack-green-50};
+	}
+
+	&[data-product='pressable'] {
+		--resource-card-ink: #{$studio-black};
+		--resource-card-paper: #dd3a03;
+	}
+
+	&[data-product='woocommerce'] {
+		--resource-card-ink: #{$studio-white};
+		--resource-card-paper: #{$studio-woocommerce-purple-50};
+	}
+
+	&[data-product='wordpress-com'] {
+		--resource-card-ink: #{$studio-white};
+		--resource-card-paper: #{$studio-wordpress-blue-50};
+	}
+
+	&[data-product='wordpress-vip'] {
+		--resource-card-ink: #13191e;
+		--resource-card-paper: #d8a45f;
+	}
+}
+
+// Inverted against the header, so it reads on every palette.
+.dashboard-resources-learn__top-badge {
+	background-color: var( --resource-card-ink );
+	border-color: var( --resource-card-ink );
+	color: var( --resource-card-paper );
+}
+
+.dashboard-resources-learn__card-title {
+	margin-block-start: auto;
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+.dashboard-resources-learn__card-brand {
+	padding-block-start: 12px;
+	border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
+}
+
+.dashboard-resources-learn__product-logo {
+	display: block;
+	block-size: 20px;
+	inline-size: var( --resource-logo-width );
+	max-inline-size: 100%;
+	background: currentColor;
+	mask-image: var( --resource-logo-image );
+	mask-size: contain;
+	mask-position: left center;
+	mask-repeat: no-repeat;
 }

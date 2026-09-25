@@ -5,7 +5,6 @@ import type {
 	AgencyResourceProduct,
 	AgencyResourceStage,
 } from '@automattic/api-core';
-import type { ReactNode } from 'react';
 
 export type ResourceItem = {
 	id: number;
@@ -20,8 +19,6 @@ export type ResourceItem = {
 	isFeatured: boolean;
 	createdAt: string;
 	updatedAt: string;
-	// Computed field
-	logo: ReactNode | null;
 };
 
 /**
