@@ -17,7 +17,7 @@ import type { AgencyTierType, RecordTracksEvent } from './types';
 import './style.scss';
 
 const LEARN_MORE_URL =
-	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+	'https://agencieshelp.automattic.com/knowledge-base/agency-tiers-and-benefits/';
 
 function InfluencedRevenueStrapline( {
 	recordTracksEvent,
