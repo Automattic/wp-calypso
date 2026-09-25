@@ -1696,7 +1696,6 @@ export default function OrchestratorChat( {
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
@@ -1871,6 +1870,9 @@ export default function OrchestratorChat( {
 			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}

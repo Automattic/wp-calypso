@@ -1565,16 +1565,16 @@ $x-menu-2026-admin-bar-mobile: 46px;
 	}
 }
 
+// 11px paints the same ~6.5px arrow as the footer's 12px Inter glyph; top/left centre it on the 18px labels.
+// line-height 1 so the smaller glyph doesn't grow the row.
 .x-nav__external-link-icon {
-	white-space: nowrap;
-
-	.x-icon--external {
-		display: inline-block;
-		width: 9px;
-		height: 9px;
-		fill: currentColor;
-		vertical-align: baseline;
-	}
+	display: inline;
+	position: relative;
+	top: -3px;
+	left: 2px;
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 1;
 }
 
 /* Mobile menu — full-screen white panel: header (logo ⇄ back + close), drill-down category list, footer (logged-out CTAs vs logged-in user). */

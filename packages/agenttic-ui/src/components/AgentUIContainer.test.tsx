@@ -2,10 +2,13 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createFeedbackActions } from '../message-actions/utils';
 import { AgentUIContainer } from './AgentUIContainer';
+import messageActionsStyles from './chat/MessageActions.module.css';
 import { Suggestions } from './chat/Suggestions';
+import { AgentUIMessages } from './composable/AgentUIMessages';
 import { AgentUISuggestions } from './composable/AgentUISuggestions';
-import type { ChatState, Suggestion } from '../types';
+import type { ChatState, Message, Suggestion } from '../types';
 import type { MotionValue } from 'framer-motion';
 
 // Capture every animate() call so we can assert what the minimize effect drives
@@ -726,5 +729,95 @@ describe( 'AgentUIContainer resize', () => {
 		} );
 
 		expect( dragStartSpy ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'AgentUIContainer latest-turn message actions', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+
+	afterEach( async () => {
+		await act( async () => {
+			root.unmount();
+		} );
+		container.remove();
+	} );
+
+	const feedbackActions = createFeedbackActions( {
+		onFeedback: () => {},
+		icons: { up: 'up', down: 'down' },
+	} );
+
+	const message = ( id: string, role: Message[ 'role' ] ): Message => {
+		const base: Message = {
+			id,
+			role,
+			content: [ { type: 'text', text: `${ id } text` } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: false,
+		};
+
+		return { ...base, actions: feedbackActions.getActionsForMessage( base ) };
+	};
+
+	// Two replies in the earlier turn, one in the latest.
+	const messages = [
+		message( 'user-1', 'user' ),
+		message( 'agent-1a', 'agent' ),
+		message( 'agent-1b', 'agent' ),
+		message( 'user-2', 'user' ),
+		message( 'agent-2', 'agent' ),
+	];
+
+	const placementOf = ( id: string ) => {
+		const button = [ ...container.querySelectorAll( '[data-slot="message"]' ) ]
+			.find( ( element ) => element.textContent?.includes( `${ id } text` ) )
+			?.querySelector( 'button[aria-label="Good response"]' );
+
+		if ( ! button ) {
+			return 'hidden';
+		}
+
+		return button.closest( `.${ messageActionsStyles.floating }` ) ? 'panel' : 'inline';
+	};
+
+	it.each( [
+		{ name: 'shows the latest turn inline once it settles', isProcessing: false, latest: 'inline' },
+		{ name: 'holds the latest turn back while processing', isProcessing: true, latest: 'hidden' },
+		{
+			name: 'follows `isStreaming` over `isProcessing`',
+			isProcessing: true,
+			isStreaming: false,
+			latest: 'inline',
+		},
+	] )( '$name', async ( { isProcessing, isStreaming, latest } ) => {
+		await act( async () => {
+			root.render(
+				<AgentUIContainer
+					messages={ messages }
+					isProcessing={ isProcessing }
+					isStreaming={ isStreaming }
+					onSubmit={ () => {} }
+					variant="embedded"
+				>
+					<AgentUIMessages />
+				</AgentUIContainer>
+			);
+		} );
+
+		expect( messages.map( ( { id } ) => placementOf( id ) ) ).toEqual( [
+			'panel',
+			'panel',
+			'panel',
+			'panel',
+			latest,
+		] );
 	} );
 } );

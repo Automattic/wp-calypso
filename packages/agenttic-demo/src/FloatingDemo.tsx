@@ -141,6 +141,7 @@ const FloatingDemo: React.FC< {
 					onClick: handleCopy,
 					condition: ( message: UIMessage ) => message.role === 'agent',
 					tooltip: 'Copy message content',
+					visibility: 'latest-turn',
 				},
 			],
 		} );
