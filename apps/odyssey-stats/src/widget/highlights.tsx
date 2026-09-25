@@ -1,13 +1,17 @@
-import { SegmentedControl } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Icon, external } from '@wordpress/icons';
-import clsx from 'clsx';
+import { TabPanel } from '@wordpress/components';
+import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState, FunctionComponent } from 'react';
+import { FunctionComponent, useRef } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
+import { DateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
+import GrowHeight from './grow-height';
+import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import WidgetSection from './widget-section';
+import type { MouseEvent } from 'react';
 
 import './highlights.scss';
 
@@ -17,25 +21,27 @@ interface ItemWrapperProps {
 	isItemLink: boolean;
 	item: HighLightItem;
 	isItemLinkExternal: boolean;
+	onClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
 
 interface TopColumnProps {
 	items: Array< HighLightItem >;
 	viewAllUrl: string;
 	viewAllText: string;
-	title: string;
 	isLoading: boolean;
 	statsBaseUrl: string;
 	siteId: number;
 	isItemLinkExternal?: boolean;
 	isItemLink?: boolean;
-	className?: null | string;
+	onItemClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
+	onViewAllClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
 
 interface HighlightsProps {
 	siteId: number;
 	gmtOffset: number;
 	statsBaseUrl: string;
+	range: DateRange;
 }
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
@@ -57,28 +63,42 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 	isItemLink,
 	item,
 	isItemLinkExternal,
+	onClick,
 } ) => {
 	const translate = useTranslate();
 
+	// The bare figure is what the design shows; screen readers get the worded version so
+	// the number is not announced without its unit.
 	const renderedItem = (
-		<div>
-			<p>{ item.title }</p>
-			<span>
+		<>
+			<span className="stats-widget-highlights-card__title">
+				<span className="stats-widget-highlights-card__title-text">{ item.title }</span>
+				{ isItemLink && isItemLinkExternal && (
+					<Icon className="stats-icon" icon={ external } size={ 16 } />
+				) }
+			</span>
+			<span className="stats-widget-highlights-card__value" aria-hidden="true">
+				{ formatNumber( item.views ) }
+			</span>
+			<span className="screen-reader-text">
 				{ translate( '%(views)s Views', {
 					args: {
 						views: formatNumber( item.views ),
 					},
 				} ) }
+				{ isItemLink && isItemLinkExternal && ` ${ translate( '(opens in a new tab)' ) }` }
 			</span>
-		</div>
+		</>
 	);
 
 	return isItemLink ? (
 		<a
+			className="stats-widget-highlights-card__item"
 			href={
 				isItemLinkExternal ? externalLink( item ) : postAndPageLink( statsBaseUrl, siteId, item.id )
 			}
 			target={ isItemLinkExternal ? '_blank' : '_self' }
+			onClick={ onClick }
 			rel="noopener noreferrer"
 			title={ translate( 'View detailed stats for %(title)s', {
 				args: {
@@ -89,10 +109,9 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 			} ) }
 		>
 			{ renderedItem }
-			{ isItemLinkExternal && <Icon className="stats-icon" icon={ external } size={ 18 } /> }
 		</a>
 	) : (
-		renderedItem
+		<div className="stats-widget-highlights-card__item">{ renderedItem }</div>
 	);
 };
 
@@ -100,138 +119,169 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	items,
 	viewAllUrl,
 	viewAllText,
-	title,
 	isLoading,
 	statsBaseUrl,
 	siteId,
 	isItemLink = false,
 	isItemLinkExternal = false,
-	className = null,
+	onItemClick,
+	onViewAllClick,
 } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className={ clsx( 'stats-widget-highlights-card', className ) }>
-			<label className="stats-widget-highlights-card__title">{ title }</label>
-			{ items.length === 0 && (
-				<p className="stats-widget-highlights-card__empty">
-					{ isLoading ? `${ translate( 'Loading' ) }...` : translate( 'No data to show' ) }
-				</p>
-			) }
-			{ items.length > 0 && (
-				<ul className="stats-widget-highlights-card__list">
-					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
-						<li key={ idx }>
-							<ItemWrapper
-								item={ item }
-								statsBaseUrl={ statsBaseUrl }
-								siteId={ siteId }
-								isItemLink={ isItemLink }
-								isItemLinkExternal={ isItemLinkExternal }
-							/>
-						</li>
-					) ) }
-				</ul>
-			) }
+		<div className="stats-widget-highlights-card">
+			<GrowHeight>
+				{ items.length === 0 && isLoading && (
+					// One row, not a full list: how many items come back is unknown, and the one
+					// thing a loading list can promise is that there is at least one.
+					<div className="stats-widget-highlights-card__list stats-widget-highlights-card__skeleton">
+						<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+						<div className="stats-widget-highlights-card__item" aria-hidden="true">
+							<span className="stats-widget-highlights-card__skeleton-bar is-title" />
+							<span className="stats-widget-highlights-card__skeleton-bar is-value" />
+						</div>
+					</div>
+				) }
+				{ items.length === 0 && ! isLoading && (
+					<p className="stats-widget-highlights-card__empty">{ translate( 'No data to show' ) }</p>
+				) }
+				{ items.length > 0 && (
+					<ul className="stats-widget-highlights-card__list">
+						{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
+							<li key={ idx }>
+								<ItemWrapper
+									item={ item }
+									statsBaseUrl={ statsBaseUrl }
+									siteId={ siteId }
+									isItemLink={ isItemLink }
+									isItemLinkExternal={ isItemLinkExternal }
+									onClick={ onItemClick }
+								/>
+							</li>
+						) ) }
+					</ul>
+				) }
+			</GrowHeight>
 			<div className="stats-widget-highlights-card__view-all">
-				<a href={ viewAllUrl }>{ viewAllText }</a>
+				<a href={ viewAllUrl } onClick={ onViewAllClick }>
+					{ viewAllText }
+				</a>
 			</div>
 		</div>
 	);
 };
 
-export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: HighlightsProps ) {
+export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: HighlightsProps ) {
 	const translate = useTranslate();
+	const { unit, quantity } = range;
 
-	const headingTitle = translate( '7 Day Highlights' );
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
-
-	const moduleTabs = [
-		{
-			value: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-			label: topPostsAndPagesTitle,
-		},
-		{
-			value: HIGHLIGHT_TAB_TOP_REFERRERS,
-			label: topReferrersTitle,
-		},
-	];
-
-	// Default to the first tab `topPostsAndPages`.
-	const [ selectedTab, setSelectedTab ] = useState( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	// The period segment and `num` both track the range, so the deep link opens the
+	// same window the widget is showing.
+	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/${ unit }/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
+	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/${ unit }/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 
 	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
 		siteId,
-		'day',
-		7,
+		unit,
+		quantity,
 		queryDate
 	);
 
 	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
 		siteId,
-		'day',
-		7,
+		unit,
+		quantity,
 		queryDate
 	);
 
+	// TabPanel also reports the initial tab on mount; only a change is a user's click.
+	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
+
+	// Nothing to show in either list, once both have answered: drop the section rather
+	// than leave a card of two empty tabs. While either is loading it stays, showing its
+	// skeleton. A single empty list keeps its tab and says so.
+	const isEmpty =
+		! isFetchingPostsAndPages &&
+		! isFetchingReferrers &&
+		topPostsAndPages.length === 0 &&
+		topReferrers.length === 0;
+
+	if ( isEmpty ) {
+		return null;
+	}
+
+	const tabs = [
+		{
+			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
+			title: topPostsAndPagesTitle,
+			items: topPostsAndPages,
+			isLoading: isFetchingPostsAndPages,
+			viewAllUrl: viewAllPostsStatsUrl,
+			isItemLinkExternal: false,
+			trackingName: 'top_posts',
+			itemEvent: 'post_clicked',
+		},
+		{
+			name: HIGHLIGHT_TAB_TOP_REFERRERS,
+			title: topReferrersTitle,
+			items: topReferrers,
+			isLoading: isFetchingReferrers,
+			viewAllUrl: viewAllReferrerStatsUrl,
+			isItemLinkExternal: true,
+			trackingName: 'top_referrers',
+			itemEvent: 'referrer_clicked',
+		},
+	];
+
 	return (
-		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
-			<div className="stats-widget-highlights__header">
-				<label>{ headingTitle }</label>
-			</div>
-			<div className="stats-widget-highlights__tabs">
-				<SegmentedControl primary>
-					{ moduleTabs.map( ( tab ) => {
-						return (
-							<SegmentedControl.Item
-								key={ tab.value }
-								selected={ tab.value === selectedTab }
-								onClick={ () => setSelectedTab( tab.value ) }
-							>
-								{ tab.label }
-							</SegmentedControl.Item>
-						);
-					} ) }
-				</SegmentedControl>
-			</div>
-			<div className="stats-widget-highlights__body">
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-					} ) }
-					title={ topPostsAndPagesTitle }
-					viewAllUrl={ viewAllPostsStatsUrl }
-					viewAllText={ translate( 'View all posts & pages stats' ) }
-					items={ topPostsAndPages }
-					isLoading={ isFetchingPostsAndPages }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-				/>
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
-					} ) }
-					title={ topReferrersTitle }
-					viewAllUrl={ viewAllReferrerStatsUrl }
-					viewAllText={ translate( 'View all referrer stats' ) }
-					items={ topReferrers }
-					isLoading={ isFetchingReferrers }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-					isItemLinkExternal
-				/>
-			</div>
-		</div>
+		<WidgetSection
+			title={ translate( 'Popular content & referrers' ) }
+			icon={ chartBar }
+			className="stats-widget-highlights"
+		>
+			<TabPanel
+				className="stats-widget-highlights__tabs"
+				tabs={ tabs.map( ( { name, title } ) => ( { name, title } ) ) }
+				onSelect={ ( tabName: string ) => {
+					if ( tabName === selectedTabRef.current ) {
+						return;
+					}
+					selectedTabRef.current = tabName;
+					const selected = tabs.find( ( candidate ) => candidate.name === tabName );
+					if ( selected ) {
+						recordWidgetEvent( 'highlights_tab_clicked', { tab: selected.trackingName } );
+					}
+				} }
+			>
+				{ ( tab ) => {
+					const active = tabs.find( ( candidate ) => candidate.name === tab.name ) ?? tabs[ 0 ];
+
+					return (
+						<TopColumn
+							viewAllUrl={ active.viewAllUrl }
+							viewAllText={ translate( 'See more' ) }
+							items={ active.items }
+							isLoading={ active.isLoading }
+							statsBaseUrl={ statsBaseUrl }
+							siteId={ siteId }
+							isItemLink
+							isItemLinkExternal={ active.isItemLinkExternal }
+							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
+							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
+								tab: active.trackingName,
+								range: range.id,
+							} ) }
+						/>
+					);
+				} }
+			</TabPanel>
+		</WidgetSection>
 	);
 }

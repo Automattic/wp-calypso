@@ -1,104 +1,55 @@
-@import "@automattic/typography/styles/variables";
+@import "./metric";
 
 .stats-widget-minichart {
-	border-bottom: 1px solid #c3c4c7;
 
-	// For empty chart placeholder
-	.chart.is-placeholder {
-		padding: 8px 16px;
-
-		.chart__y-axis-marker.is-hundred {
-			display: none;
-		}
-
-		.chart__bar {
-			&,
-			&:hover {
-				.chart__bar-section {
-					background-color: var(--color-accent-0);
-				}
-			}
-		}
-	}
-
-	.stats-widget-minichart__chart-head {
+	.stats-widget-metric__title {
 		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
 		align-items: center;
-		width: 100%;
-		padding: 16px 24px;
-		box-sizing: border-box;
+		gap: var(--wpds-dimension-gap-sm, 8px);
 	}
 
-	.chart__legend {
-		margin: 16px 0;
-		padding: 0;
+	// Totals carry the series colour, so they double as the chart's legend.
+	.stats-widget-metrics {
+		margin-block-end: var(--wpds-dimension-gap-lg, 16px);
+	}
 
-		.chart__legend-options {
-			margin: auto;
+	// As thick as the chart's lines.
+	.stats-widget-metric__swatch {
+		display: inline-block;
+		inline-size: var(--wpds-dimension-size-2xs, 16px);
+		block-size: 2px;
+		border-radius: var(--wpds-border-radius-sm, 2px);
+	}
+
+
+	// The notice's icon needs `fill: currentColor`, which wp-admin doesn't provide (Jetpack
+	// Backup restores it the same way).
+	.stats-widget-empty-notice {
+		// Sized to its message and centred. The component is an inline-size container,
+		// which collapses under `fit-content`; its only container query is for a title,
+		// which this notice doesn't have.
+		container-type: normal;
+		inline-size: fit-content;
+		max-inline-size: 100%;
+		margin-inline: auto;
+		margin-block: var(--wpds-dimension-gap-lg, 16px);
+
+		svg {
+			fill: currentColor;
 		}
 	}
 
-	.chart__legend-option {
-		.chart__legend-checkbox {
-			display: none;
+	// A fixed box for the responsive chart to measure; without it the two grow unbounded.
+	.stats-widget-chart {
+		inline-size: 100%;
+		overflow: hidden;
+
+		// On the 7-day chart the last date sits on the right edge, so end it at its tick
+		// instead of centring it. CSS because the package doesn't expose `tickLabelProps`.
+		&.has-edge-label .stats-widget-chart__x-axis .visx-axis-tick:last-of-type text {
+			text-anchor: end;
 		}
 
-		.chart__legend-label.is-selectable.form-label {
-			cursor: auto;
-		}
-
-		.chart__legend-color {
-			width: 14px;
-			height: 14px;
-			vertical-align: middle;
-			margin-top: -3px;
-		}
 	}
 
-	.chart__legend-label {
-		font-size: $font-body-small;
-		font-weight: 400;
-		line-height: 24px;
-		margin-top: -3px;
-		vertical-align: middle;
-		color: var(--studio-gray-100);
-		letter-spacing: -0.02em;
-	}
-
-	.chart__y-axis-marker {
-		border-color: color-mix(in srgb, var(--color-neutral-5) 50%, transparent);
-	}
-
-	.chart__y-axis {
-		padding: 0 5px;
-	}
-
-	.chart__x-axis-label,
-	.chart__y-axis-label {
-		&:not(.chart__x-axis-width-spacer) {
-			font-size: $font-body-extra-small;
-			letter-spacing: -0.02em;
-			color: var(--color-neutral-60);
-			white-space: nowrap;
-		}
-	}
-
-	.stats__empty-state {
-		.empty-state-card {
-			padding: 24px;
-			border: 1px solid var(--studio-gray-5);
-			box-shadow: none;
-		}
-
-		.empty-state-card-heading {
-			font-size: $font-body-large;
-		}
-
-		.empty-state-card-info {
-			margin: 0;
-			color: var(--studio-gray-60);
-		}
-	}
 }

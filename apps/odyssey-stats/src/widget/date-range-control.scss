@@ -1,0 +1,33 @@
+// Follows Premium Analytics' `menu-trigger` mixin (jetpack
+// `premium-analytics/packages/ui/src/styles/_menu-trigger.scss`), restyling wp-components'
+// Button as a form field. It is the Button WordPress ships, not the one in `node_modules`.
+.stats-widget-date-range {
+	// Flex, so the inline-flex button doesn't sit on a text baseline.
+	display: flex;
+
+	.stats-widget-date-range__toggle {
+		// 32px to fit the section header; Premium Analytics uses 40px.
+		height: var(--wpds-dimension-size-md, 32px);
+		// In full, since the Button sets `border: 0`.
+		border: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
+		border-radius: var(--wpds-border-radius-sm, 2px);
+		color: var(--wpds-color-foreground-interactive-neutral, #1e1e1e);
+		font-size: var(--wpds-typography-font-size-md, 13px);
+		font-weight: inherit;
+		white-space: nowrap;
+
+		// Darken the stroke rather than tinting the label, as a field does.
+		&:hover:not(:disabled, [aria-disabled="true"]),
+		&[aria-expanded="true"] {
+			border-color: var(--wpds-color-stroke-interactive-neutral-active, #6e6e6e);
+			color: var(--wpds-color-foreground-interactive-neutral, #1e1e1e);
+		}
+
+		// An outset ring instead of the Button's focus shadow.
+		&:focus:not(:active) {
+			outline: var(--wpds-border-width-focus, 1.5px) solid var(--wpds-color-stroke-focus, var(--wp-admin-theme-color, #3858e9));
+			outline-offset: var(--wpds-border-width-focus, 1.5px);
+			box-shadow: none;
+		}
+	}
+}

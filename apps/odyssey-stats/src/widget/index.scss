@@ -2,10 +2,7 @@
 @import "../styles/scoped-theme-for-widget";
 @import "../styles/wp-admin";
 @import "../styles/typography";
-@import "@wordpress/base-styles/breakpoints";
 @import "calypso/my-sites/stats/interactive-colors";
-
-$segmentedControlItemBorderRadius: 4px;
 
 .jp-stats-widget {
 	container-type: inline-size;
@@ -20,13 +17,13 @@ $segmentedControlItemBorderRadius: 4px;
 	overflow: hidden;
 }
 
-// Counters WP-admin core's own `.card` utility class, which collides with the `Card` component
-// StatsEmptyState (rendered by MiniChart/Modules) uses for its empty-state placeholder. Mirrors
-// the equivalent `.jp-stats-dashboard .card` override in app.scss for the main app.
-.card {
-	border: 0;
-	max-width: initial;
-	min-width: initial;
+// wp-components draws focus rings with `--wpds-color-stroke-focus`, which WordPress 7.1
+// defines as a fixed blue on `:root`; admin colour schemes only set
+// `--wp-admin-theme-color`. Map one to the other for the widget and for the date range
+// menu, which renders outside it in the popover container.
+.stats-widget-content,
+.stats-widget-date-range__popover {
+	--wpds-color-stroke-focus: var(--wp-admin-theme-color, #3858e9);
 }
 
 .stats-widget-content {
@@ -38,98 +35,42 @@ $segmentedControlItemBorderRadius: 4px;
 	// not load the main app's stylesheet.
 	@include stats-interactive-colors;
 
-	// For both MiniChart and Highlights.
-	.segmented-control {
-		height: 36px;
-		min-width: 259px;
+	// No link here sits in running text, so they drop the underline as core's dashboard
+	// widgets do, bringing it back on hover and focus. Highlights rows underline only
+	// their title.
+	a {
+		text-decoration: none;
 
-		// The base component gates its hover behind `.notouch`, which Calypso only puts on the
-		// document it controls — the Stats page has it, the wp-admin dashboard this widget lives in
-		// does not — so the selected item needs its own ungated rule to respond to the pointer. The
-		// shade is the one a design-system button darkens to.
-		//
-		// `:focus` is the opposite case: the base component darkens it to `--color-primary-dark`
-		// with no `.notouch` gate, so it does fire here. This widget keeps focus flat, but only
-		// while the pointer is elsewhere: the segment is an `<a href tabindex="0">`, so clicking one
-		// leaves it focused, and at equal specificity a bare `:focus` would outrank the hover above
-		// for the rest of the session.
-		//
-		// The admin theme colour is not guaranteed here the way it is in the app: `wp-components`,
-		// which defines it, is loaded by `AppBoot` and not by this entry, so on a site old enough to
-		// have neither WP 7.0 nor a recent `jetpack-stats-admin` nothing supplies it. Without the
-		// fallback these declarations would be invalid rather than merely un-themed, and the segment
-		// would lose its fill entirely.
-		&.is-primary .segmented-control__item.is-selected .segmented-control__link {
-			&:hover {
-				background-color: var(--wp-admin-theme-color-darker-10, var(--color-accent-60));
-				border-color: var(--wp-admin-theme-color-darker-10, var(--color-accent-60));
-			}
-
-			&:focus:not(:hover) {
-				background-color: var(--wp-admin-theme-color, var(--color-accent));
-				border-color: var(--wp-admin-theme-color, var(--color-accent));
-			}
-		}
-
-		.segmented-control__item {
-			&:first-of-type .segmented-control__link {
-				border-top-left-radius: $segmentedControlItemBorderRadius;
-				border-bottom-left-radius: $segmentedControlItemBorderRadius;
-			}
-
-			&:last-of-type .segmented-control__link {
-				border-top-right-radius: $segmentedControlItemBorderRadius;
-				border-bottom-right-radius: $segmentedControlItemBorderRadius;
-			}
-		}
-
-		.segmented-control__link {
-			color: var(--studio-gray-70);
-			font-weight: 600;
+		&:not(.stats-widget-highlights-card__item):is(:hover, :focus-visible) {
+			text-decoration: underline;
 		}
 	}
 }
 
+// The stack of section cards.
 .stats-widget-wrapper {
-	padding: 24px;
-
-	label {
-		cursor: auto;
-		font-family: $font-sf-pro-display;
-	}
-}
-
-// Shared styles for the stats widget cards.
-.stats-widget-card {
-	padding: 16px;
-	color: var(--studio-gray-100);
-	background-color: var(--studio-white);
-	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
-	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-sm, 8px);
+	padding: var(--wpds-dimension-padding-sm, 8px);
+	background-color: var(--color-surface-backdrop);
 }
 
 .stats-widget-footer {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 24px;
+	padding: var(--wpds-dimension-padding-sm, 8px);
 
+	// Flex so the logo link is only as tall as the logo; as an inline SVG it sat on the
+	// text baseline, with room for descenders below it.
 	a {
-		display: inline-block;
-		font-style: normal;
-		font-weight: 500;
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		text-decoration-line: underline;
-		color: var(--studio-gray-100);
+		display: flex;
+		align-items: center;
 	}
 }
 
-@container (max-width: #{$break-mobile}) {
-	@include stats-widget-single-column-view;
-}
-
-@media only screen and (max-width: $break-small) {
+// The widget's own width decides whether the metrics fit, not the viewport's.
+@container (max-width: #{$stats-widget-stack-width}) {
 	@include stats-widget-single-column-view;
 }

@@ -5,51 +5,24 @@
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
 @import "./variables";
-@import "calypso/my-sites/stats/modernized-tooltip-styles";
+
+// The width below which the widget's metric pairs stop fitting side by side. A pair is
+// roughly 250px ("Visitors —" over "1.7K", twice, plus the gap), so this leaves headroom
+// for longer labels in other locales without stacking while there is still room.
+$stats-widget-stack-width: 360px;
 
 @mixin stats-widget-single-column-view {
 
-	// Full width Segmented Control.
-	.stats-widget-content .segmented-control {
-		width: 100%;
+	// At narrow widths the metric pairs stop fitting side by side. Everything else in
+	// the widget is already a single column, so this is all the narrow view needs.
+	.stats-widget-metrics {
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-lg, 16px);
 	}
 
-	// Smaller padding.
-	.stats-widget-wrapper {
-		padding: 24px 16px;
-	}
-
-	.stats-widget-highlights {
-		// Show highlights tabs.
-		.stats-widget-highlights__tabs {
-			display: block;
-		}
-
-		// Single column layout.
-		.stats-widget-highlights__body {
-			grid-template-columns: none;
-		}
-
-		// Only show one of the chosen highlights.
-		.stats-widget-highlights__column {
-			display: none;
-
-			&.stats-widget-highlights__column--show-in-mobile {
-				display: block;
-				width: 100%;
-
-				.stats-widget-highlights-card__title {
-					display: none;
-				}
-			}
-		}
-
-	}
-
-	// Single column layout for module cards.
-	.stats-widget-modules {
-		grid-template-columns: auto;
-		grid-template-rows: repeat(2, 1fr);
-		row-gap: 24px;
+	// Stacked, the equal-share split applies to the cross axis and would stretch each
+	// row to the same height; size to content instead.
+	.stats-widget-metric {
+		flex: none;
 	}
 }
