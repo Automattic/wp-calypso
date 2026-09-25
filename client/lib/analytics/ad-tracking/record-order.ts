@@ -1,9 +1,16 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
-import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
-import { splitCartProducts } from '../utils/split-wpcom-jetpack-cart-info';
+import {
+	getReceiptCouponCode,
+	getReceiptItemBillPeriod,
+	getReceiptItemCost,
+	getReceiptItemName,
+	getReceiptTotal,
+	isSaleCouponAppliedToReceiptItem,
+} from '../utils/receipt-item-details';
+import { receiptToGaPurchase } from '../utils/receipt-to-ga-purchase';
+import { splitReceiptItems } from '../utils/split-receipt-items';
 import {
 	debug,
 	TRACKING_IDS,
@@ -12,7 +19,7 @@ import {
 	PANDORA_CONVERSION_PIXEL_URL,
 	ICON_MEDIA_ORDER_PIXEL_URL,
 } from './constants';
-import { cartToCriteoItems, recordInCriteo } from './criteo';
+import { receiptToCriteoItems, recordInCriteo } from './criteo';
 import { circularReferenceSafeJSONStringify } from './debug';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import {
@@ -23,8 +30,8 @@ import { initGTMContainer, loadGTMContainer } from './gtm-container';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { loadParselyTracker } from './parsely';
 import { isWooExpressUpgrade } from './woo';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { WpcomJetpackCartInfo } from 'calypso/lib/analytics/utils/split-wpcom-jetpack-cart-info';
+import type { Receipt, ReceiptItem } from '@automattic/api-core';
+import type { WpcomJetpackReceiptInfo } from 'calypso/lib/analytics/utils/split-receipt-items';
 
 // Ensure setup has run.
 import './setup';
@@ -49,44 +56,36 @@ declare global {
 /**
  * Tracks a purchase conversion
  */
-export async function recordOrder(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	sitePlanSlug: string | null | undefined
-): Promise< void > {
+export async function recordOrder( receipt: Receipt ): Promise< void > {
 	await refreshCountryCodeCookieGdpr();
 
 	await loadTrackingScripts();
 
-	if ( cart.is_signup ) {
-		return;
-	}
-
-	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
+	const usdTotalCost = costToUSD( getReceiptTotal( receipt ), receipt.currency );
 
 	// Purchase tracking happens in one of three ways:
 
 	// Fire one tracking event that includes details about the entire order
 
-	const wpcomJetpackCartInfo = splitCartProducts( cart );
-	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
+	const receiptInfo = splitReceiptItems( receipt );
+	debug( 'recordOrder: receiptInfo:', receiptInfo );
 
-	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInCriteo( cart, orderId );
-	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInParsely( wpcomJetpackCartInfo );
-	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
-	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
-	recordOrderInTikTok( orderId, wpcomJetpackCartInfo );
-	recordOrderInOpenAI( orderId, wpcomJetpackCartInfo );
+	recordOrderInGoogleAds( receipt, receiptInfo );
+	recordOrderInFacebook( receipt, receiptInfo );
+	recordOrderInFloodlight( receipt, receiptInfo );
+	recordOrderInBing( receipt, receiptInfo );
+	recordOrderInQuantcast( receipt, receiptInfo );
+	recordOrderInCriteo( receipt );
+	recordOrderInJetpackGA( receipt, receiptInfo );
+	recordOrderInWPcomGA4( receipt, receiptInfo );
+	recordOrderInParsely( receiptInfo );
+	recordOrderInAkismetGA( receipt, receiptInfo );
+	recordOrderInWooGTM( receipt );
+	recordOrderInAkismetGTM( receipt, receiptInfo );
+	recordOrderInJetpackGTM( receipt, receiptInfo );
+	recordOrderInReddit( receipt, receiptInfo );
+	recordOrderInTikTok( receipt, receiptInfo );
+	recordOrderInOpenAI( receipt, receiptInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -116,9 +115,9 @@ export async function recordOrder(
 	}
 
 	if ( mayWeTrackByTracker( 'iconMedia' ) ) {
-		const skus = cart.products.map( ( product ) => product.product_slug ).join( ',' );
+		const skus = receipt.items.map( ( item ) => item.wpcom_product_slug ).join( ',' );
 		const params =
-			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
+			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ receipt.id }&sku=${ skus }&price=${ usdTotalCost }`;
 		debug( 'recordOrder: [Icon Media]', params );
 		new window.Image().src = params;
 	}
@@ -136,13 +135,13 @@ export async function recordOrder(
 			'track',
 			'checkout',
 			{
-				value: cart.total_cost,
-				currency: cart.currency,
-				line_items: cart.products.map( ( product ) => ( {
-					product_name: product.product_name,
-					product_id: product.product_slug,
+				value: getReceiptTotal( receipt ),
+				currency: receipt.currency,
+				line_items: receipt.items.map( ( item ) => ( {
+					product_name: getReceiptItemName( item ),
+					product_id: item.wpcom_product_slug,
 				} ) ),
-				order_id: orderId,
+				order_id: receipt.id,
 			},
 		];
 		debug( 'recordOrder: [Pinterest]', params );
@@ -155,14 +154,14 @@ export async function recordOrder(
 		window.adRoll.trackPurchase();
 	}
 
-	if ( mayWeTrackByTracker( 'linkedin' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) && receiptInfo.containsJetpackItems ) {
 		const params = { conversion_id: 10947410 };
 
 		debug( 'recordOrder: [LinkedIn]', params );
 		window.lintrk( 'track', params );
 	}
 
-	if ( mayWeTrackByTracker( 'linkedin' ) && wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) && receiptInfo.containsWpcomItems ) {
 		const params = {
 			conversion_id: 19839620,
 			conversion_value: usdTotalCost,
@@ -173,8 +172,8 @@ export async function recordOrder(
 		window.lintrk( 'track', params );
 	}
 
-	if ( mayWeTrackByTracker( 'twitter' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
-		const params = [ 'event', 'tw-odlje-oekzo', { value: wpcomJetpackCartInfo.jetpackCostUSD } ];
+	if ( mayWeTrackByTracker( 'twitter' ) && receiptInfo.containsJetpackItems ) {
+		const params = [ 'event', 'tw-odlje-oekzo', { value: receiptInfo.jetpackCostUSD } ];
 		debug( 'recordOrder: [Twitter]', params );
 		window.twq( ...params );
 	}
@@ -188,55 +187,49 @@ export async function recordOrder(
 /**
  * Records an order in Quantcast
  */
-function recordOrderInQuantcast(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInQuantcast( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'quantcast' ) ) {
 		return;
 	}
 
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
+	if ( receiptInfo.containsWpcomItems ) {
+		if ( null !== receiptInfo.wpcomCostUSD ) {
 			// Note that all properties have to be strings or they won't get tracked
 			const params = {
 				qacct: TRACKING_IDS.quantcast,
 				labels:
 					'_fp.event.Purchase Confirmation,_fp.pcat.' +
-					wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => product.product_slug ).join( ' ' ),
-				orderid: orderId?.toString(),
-				revenue: wpcomJetpackCartInfo.wpcomCostUSD.toString(),
+					receiptInfo.wpcomItems.map( ( item ) => item.wpcom_product_slug ).join( ' ' ),
+				orderid: String( receipt.id ),
+				revenue: receiptInfo.wpcomCostUSD.toString(),
 				event: 'refresh',
 			};
 			debug( 'recordOrderInQuantcast: record WPCom purchase', params );
 			window._qevents.push( params );
 		} else {
 			debug(
-				`recordOrderInQuantcast: currency ${ cart.currency } not supported, dropping WPCom pixel`
+				`recordOrderInQuantcast: currency ${ receipt.currency } not supported, dropping WPCom pixel`
 			);
 		}
 	}
 
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD ) {
+	if ( receiptInfo.containsJetpackItems ) {
+		if ( null !== receiptInfo.jetpackCostUSD ) {
 			// Note that all properties have to be strings or they won't get tracked
 			const params = {
 				qacct: TRACKING_IDS.quantcast,
 				labels:
 					'_fp.event.Purchase Confirmation,_fp.pcat.' +
-					wpcomJetpackCartInfo.jetpackProducts
-						.map( ( product ) => product.product_slug )
-						.join( ' ' ),
-				orderid: orderId?.toString(),
-				revenue: wpcomJetpackCartInfo.jetpackCostUSD.toString(),
+					receiptInfo.jetpackItems.map( ( item ) => item.wpcom_product_slug ).join( ' ' ),
+				orderid: String( receipt.id ),
+				revenue: receiptInfo.jetpackCostUSD.toString(),
 				event: 'refresh',
 			};
 			debug( 'recordOrderInQuantcast: record Jetpack purchase', params );
 			window._qevents.push( params );
 		} else {
 			debug(
-				`recordOrderInQuantcast: currency ${ cart.currency } not supported, dropping Jetpack pixel`
+				`recordOrderInQuantcast: currency ${ receipt.currency } not supported, dropping Jetpack pixel`
 			);
 		}
 	}
@@ -245,11 +238,7 @@ function recordOrderInQuantcast(
 /**
  * Records an order in DCM Floodlight
  */
-function recordOrderInFloodlight(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInFloodlight( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
 		return;
 	}
@@ -258,43 +247,39 @@ function recordOrderInFloodlight(
 
 	debug( 'recordOrderInFloodlight:' );
 	recordParamsInFloodlightGtag( {
-		value: wpcomJetpackCartInfo.totalCostUSD,
-		transaction_id: orderId,
-		u1: wpcomJetpackCartInfo.totalCostUSD,
-		u2: cart.products.map( ( product ) => product.product_name ).join( ', ' ),
+		value: receiptInfo.totalCostUSD,
+		transaction_id: receipt.id,
+		u1: receiptInfo.totalCostUSD,
+		u2: receipt.items.map( ( item ) => getReceiptItemName( item ) ).join( ', ' ),
 		u3: 'USD',
-		u8: orderId,
+		u8: receipt.id,
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
 	} );
 
 	// WPCom
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( receiptInfo.containsWpcomItems ) {
 		debug( 'recordOrderInFloodlight: WPCom' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.wpcomCostUSD,
-			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.wpcomCostUSD,
-			u2: wpcomJetpackCartInfo.wpcomProducts
-				.map( ( product ) => product.product_name )
-				.join( ', ' ),
+			value: receiptInfo.wpcomCostUSD,
+			transaction_id: receipt.id,
+			u1: receiptInfo.wpcomCostUSD,
+			u2: receiptInfo.wpcomItems.map( ( item ) => getReceiptItemName( item ) ).join( ', ' ),
 			u3: 'USD',
-			u8: orderId,
+			u8: receipt.id,
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
 		} );
 	}
 
 	// Jetpack
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( receiptInfo.containsJetpackItems ) {
 		debug( 'recordOrderInFloodlight: Jetpack' );
 		recordParamsInFloodlightGtag( {
-			value: wpcomJetpackCartInfo.jetpackCostUSD,
-			transaction_id: orderId,
-			u1: wpcomJetpackCartInfo.jetpackCostUSD,
-			u2: wpcomJetpackCartInfo.jetpackProducts
-				.map( ( product ) => product.product_name )
-				.join( ', ' ),
+			value: receiptInfo.jetpackCostUSD,
+			transaction_id: receipt.id,
+			u1: receiptInfo.jetpackCostUSD,
+			u2: receiptInfo.jetpackItems.map( ( item ) => getReceiptItemName( item ) ).join( ', ' ),
 			u3: 'USD',
-			u8: orderId,
+			u8: receipt.id,
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
 		} );
 	}
@@ -303,11 +288,7 @@ function recordOrderInFloodlight(
 /**
  * Records an order in Facebook (a single event for the entire order)
  */
-function recordOrderInFacebook(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInFacebook( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		return;
 	}
@@ -315,13 +296,13 @@ function recordOrderInFacebook(
 	const currentUser = getCurrentUser();
 
 	// WPCom
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+	if ( receiptInfo.containsWpcomItems ) {
+		if ( null !== receiptInfo.wpcomCostUSD && receiptInfo.wpcomCostUSD > 0 ) {
 			// This gives us the billing frequency as a string, and combines yearly and multi-yearly into one bucket.
 			// Due to tracking-constraints in Facebook, this is needed. But we also supply the bill_period separately
 			// as this is used for other tracking purposes in Facebook.
-			const getFrequencyTypeForProduct = ( product: ResponseCartProduct ) => {
-				switch ( product.bill_period ) {
+			const getFrequencyTypeForItem = ( item: ReceiptItem ) => {
+				switch ( getReceiptItemBillPeriod( item ) ) {
 					case '31':
 						return 'monthly';
 					case '365':
@@ -332,19 +313,19 @@ function recordOrderInFacebook(
 						return 'other';
 				}
 			};
-			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
+			const cartItemsArray = receiptInfo.wpcomItems.map( ( item ) => {
 				return {
-					product_slug: product.product_slug ?? '',
-					id: product.product_id ?? '',
-					product_name: product.product_name ?? '',
-					bill_period: product.bill_period ?? 0,
-					billing_frequency: getFrequencyTypeForProduct( product ),
-					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
-					is_bundled: product.is_bundled ?? false,
-					is_domain_registration: product.is_domain_registration ?? false,
-					is_plan: isPlan( product ) ?? false,
-					value: costToUSD( product.cost, product.currency ) ?? 0,
-					quantity: product.volume ?? 1,
+					product_slug: item.wpcom_product_slug,
+					id: item.product_id,
+					product_name: getReceiptItemName( item ),
+					bill_period: getReceiptItemBillPeriod( item ),
+					billing_frequency: getFrequencyTypeForItem( item ),
+					is_sale_coupon_applied: isSaleCouponAppliedToReceiptItem( item ),
+					is_bundled: item.uses_free_domain_credit,
+					is_domain_registration: item.is_domain_registration,
+					is_plan: item.is_plan,
+					value: costToUSD( getReceiptItemCost( item, receipt.currency ), receipt.currency ) ?? 0,
+					quantity: item.volume,
 				};
 			} );
 			const params = [
@@ -354,13 +335,13 @@ function recordOrderInFacebook(
 				{
 					contents: cartItemsArray.length > 0 ? cartItemsArray : [],
 					content_type: 'product',
-					product_slug: wpcomJetpackCartInfo.wpcomProducts
-						.map( ( product ) => product.product_slug )
+					product_slug: receiptInfo.wpcomItems
+						.map( ( item ) => item.wpcom_product_slug )
 						.join( ', ' ),
-					value: wpcomJetpackCartInfo.wpcomCostUSD,
+					value: receiptInfo.wpcomCostUSD,
 					currency: 'USD',
 					user_id: currentUser ? currentUser.hashedPii.ID : 0,
-					order_id: orderId,
+					order_id: receipt.id,
 				},
 			];
 			debug( 'recordOrderInFacebook: WPCom', params );
@@ -369,20 +350,20 @@ function recordOrderInFacebook(
 	}
 
 	// Jetpack
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD && wpcomJetpackCartInfo.jetpackCostUSD > 0 ) {
+	if ( receiptInfo.containsJetpackItems ) {
+		if ( null !== receiptInfo.jetpackCostUSD && receiptInfo.jetpackCostUSD > 0 ) {
 			const params = [
 				'trackSingle',
 				TRACKING_IDS.facebookJetpackInit,
 				'Purchase',
 				{
-					product_slug: wpcomJetpackCartInfo.jetpackProducts
-						.map( ( product ) => product.product_slug )
+					product_slug: receiptInfo.jetpackItems
+						.map( ( item ) => item.wpcom_product_slug )
 						.join( ', ' ),
-					value: wpcomJetpackCartInfo.jetpackCostUSD,
+					value: receiptInfo.jetpackCostUSD,
 					currency: 'USD',
 					user_id: currentUser ? currentUser.hashedPii.ID : 0,
-					order_id: orderId,
+					order_id: receipt.id,
 				},
 			];
 			debug( 'recordOrderInFacebook: Jetpack', params );
@@ -391,20 +372,20 @@ function recordOrderInFacebook(
 	}
 
 	// Akismet
-	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
-		if ( null !== wpcomJetpackCartInfo.akismetCostUSD && wpcomJetpackCartInfo.akismetCostUSD > 0 ) {
+	if ( receiptInfo.containsAkismetItems ) {
+		if ( null !== receiptInfo.akismetCostUSD && receiptInfo.akismetCostUSD > 0 ) {
 			const params = [
 				'trackSingle',
 				TRACKING_IDS.facebookAkismetInit,
 				'Purchase',
 				{
-					product_slug: wpcomJetpackCartInfo.akismetProducts
-						.map( ( product ) => product.product_slug )
+					product_slug: receiptInfo.akismetItems
+						.map( ( item ) => item.wpcom_product_slug )
 						.join( ', ' ),
-					value: wpcomJetpackCartInfo.akismetCostUSD,
+					value: receiptInfo.akismetCostUSD,
 					currency: 'USD',
 					user_id: currentUser ? currentUser.hashedPii.ID : 0,
-					order_id: orderId,
+					order_id: receipt.id,
 				},
 			];
 			debug( 'recordOrderInFacebook: Akismet', params );
@@ -416,38 +397,36 @@ function recordOrderInFacebook(
 /**
  * Records a signup|purchase in Bing.
  */
-function recordOrderInBing(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
-	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
+function recordOrderInBing( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
+	// NOTE: `receipt.id` is not used at this time, but it could be useful in the near future.
 
 	if ( ! mayWeTrackByTracker( 'bing' ) ) {
 		return;
 	}
 
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
+	if ( receiptInfo.containsWpcomItems ) {
+		if ( null !== receiptInfo.wpcomCostUSD ) {
 			const params = {
 				event_category: 'purchase',
 				event_label: 'purchase',
-				revenue_value: wpcomJetpackCartInfo.wpcomCostUSD,
+				revenue_value: receiptInfo.wpcomCostUSD,
 				currency: 'USD',
 			};
 
 			debug( 'recordOrderInBing: record WPCom purchase', params );
 			window.uetq.push( 'event', 'purchase', params );
 		} else {
-			debug( `recordOrderInBing: currency ${ cart.currency } not supported, dropping WPCom pixel` );
+			debug(
+				`recordOrderInBing: currency ${ receipt.currency } not supported, dropping WPCom pixel`
+			);
 		}
 	}
 
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD ) {
+	if ( receiptInfo.containsJetpackItems ) {
+		if ( null !== receiptInfo.jetpackCostUSD ) {
 			const params = {
 				ec: 'purchase',
-				gv: wpcomJetpackCartInfo.jetpackCostUSD,
+				gv: receiptInfo.jetpackCostUSD,
 				// NOTE: `el` must be included only for jetpack plans.
 				el: 'jetpack',
 			};
@@ -455,7 +434,7 @@ function recordOrderInBing(
 			window.uetq.push( params );
 		} else {
 			debug(
-				`recordOrderInBing: currency ${ cart.currency } not supported, dropping Jetpack pixel`
+				`recordOrderInBing: currency ${ receipt.currency } not supported, dropping Jetpack pixel`
 			);
 		}
 	}
@@ -464,11 +443,7 @@ function recordOrderInBing(
 /**
  * Records an order/sign_up in Google Ads Gtag
  */
-function recordOrderInGoogleAds(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInGoogleAds( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'googleAds' ) ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
@@ -491,9 +466,9 @@ function recordOrderInGoogleAds(
 			'conversion',
 			{
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
-				value: cart.total_cost,
-				currency: cart.currency,
-				transaction_id: orderId,
+				value: getReceiptTotal( receipt ),
+				currency: receipt.currency,
+				transaction_id: receipt.id,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
@@ -501,15 +476,15 @@ function recordOrderInGoogleAds(
 	}
 
 	// Jetpack
-	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) && receiptInfo.containsJetpackItems ) {
 		const params = [
 			'event',
 			'conversion',
 			{
 				send_to: TRACKING_IDS.jetpackGoogleAdsGtagPurchase,
-				value: wpcomJetpackCartInfo.jetpackCost,
-				currency: cart.currency,
-				transaction_id: orderId,
+				value: receiptInfo.jetpackCost,
+				currency: receipt.currency,
+				transaction_id: receipt.id,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
@@ -520,18 +495,14 @@ function recordOrderInGoogleAds(
 /**
  * Records an order in the Jetpack.com GA4 Property
  */
-function recordOrderInJetpackGA(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInJetpackGA( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
 
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( receiptInfo.containsJetpackItems ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
+			receiptToGaPurchase( receipt, receiptInfo ),
 			Ga4PropertyGtag.JETPACK
 		);
 	}
@@ -540,18 +511,14 @@ function recordOrderInJetpackGA(
 /**
  * Records an order in the Akismet.com GA4 Property
  */
-function recordOrderInAkismetGA(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInAkismetGA( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
 
-	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+	if ( receiptInfo.containsAkismetItems ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
+			receiptToGaPurchase( receipt, receiptInfo ),
 			Ga4PropertyGtag.AKISMET
 		);
 	}
@@ -560,39 +527,25 @@ function recordOrderInAkismetGA(
 /**
  * Records an order in the WordPress.com GA4 Property
  */
-function recordOrderInWPcomGA4(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInWPcomGA4( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'ga' ) ) {
 		return;
 	}
 
-	if (
-		! wpcomJetpackCartInfo.containsWpcomProducts &&
-		! wpcomJetpackCartInfo.containsJetpackProducts
-	) {
+	if ( ! receiptInfo.containsWpcomItems && ! receiptInfo.containsJetpackItems ) {
 		debug( 'recordOrderInWPcomGA4: [Skipping] No products' );
 		return;
 	}
 	// Firing both Jetpack and WPcom Purchases on WPcom (similar to enhanced ecommerce in UA).
-	fireEcommercePurchaseGA4(
-		cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
-		Ga4PropertyGtag.WPCOM
-	);
+	fireEcommercePurchaseGA4( receiptToGaPurchase( receipt, receiptInfo ), Ga4PropertyGtag.WPCOM );
 	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 }
 
 /**
  * Sends a purchase event to Google Tag Manager for Akismet purchases.
  */
-function recordOrderInAkismetGTM(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
-	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+function recordOrderInAkismetGTM( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
+	if ( receiptInfo.containsAkismetItems ) {
 		// We ensure that we can track with GTM
 		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
 			return;
@@ -601,19 +554,17 @@ function recordOrderInAkismetGTM(
 		const purchaseEventMeta = {
 			event: 'purchase',
 			ecommerce: {
-				coupon: cart.coupon?.toString() ?? '',
-				transaction_id: orderId,
+				coupon: getReceiptCouponCode( receipt ),
+				transaction_id: receipt.id,
 				currency: 'USD',
-				items: wpcomJetpackCartInfo.akismetProducts.map(
-					( { product_id, product_name, cost, volume, bill_period } ) => ( {
-						id: product_id.toString(),
-						name: product_name.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
-						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
-					} )
-				),
-				value: wpcomJetpackCartInfo.akismetCostUSD,
+				items: receiptInfo.akismetItems.map( ( item ) => ( {
+					id: item.product_id.toString(),
+					name: getReceiptItemName( item ),
+					quantity: item.volume,
+					price: costToUSD( getReceiptItemCost( item, receipt.currency ), receipt.currency ) ?? 0,
+					billing_term: item.months_per_renewal_interval === 12 ? 'yearly' : 'monthly',
+				} ) ),
+				value: receiptInfo.akismetCostUSD,
 			},
 		};
 
@@ -626,12 +577,8 @@ function recordOrderInAkismetGTM(
 /**
  * Sends a purchase event to Google Tag Manager for Jetpack purchases.
  */
-function recordOrderInJetpackGTM(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
-	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+function recordOrderInJetpackGTM( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
+	if ( receiptInfo.containsJetpackItems ) {
 		// We ensure that we can track with GTM
 		if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
 			return;
@@ -640,19 +587,17 @@ function recordOrderInJetpackGTM(
 		const purchaseEventMeta = {
 			event: 'purchase',
 			ecommerce: {
-				coupon: cart.coupon?.toString() ?? '',
-				transaction_id: orderId,
+				coupon: getReceiptCouponCode( receipt ),
+				transaction_id: receipt.id,
 				currency: 'USD',
-				items: wpcomJetpackCartInfo.jetpackProducts.map(
-					( { product_id, product_name, cost, volume, bill_period } ) => ( {
-						id: product_id.toString(),
-						name: product_name.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
-						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
-					} )
-				),
-				value: wpcomJetpackCartInfo.jetpackCostUSD,
+				items: receiptInfo.jetpackItems.map( ( item ) => ( {
+					id: item.product_id.toString(),
+					name: getReceiptItemName( item ),
+					quantity: item.volume,
+					price: costToUSD( getReceiptItemCost( item, receipt.currency ), receipt.currency ) ?? 0,
+					billing_term: item.months_per_renewal_interval === 12 ? 'yearly' : 'monthly',
+				} ) ),
+				value: receiptInfo.jetpackCostUSD,
 			},
 		};
 
@@ -665,17 +610,17 @@ function recordOrderInJetpackGTM(
 /**
  * Sends a purchase conversion event to Prasely.
  */
-function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): void {
+function recordOrderInParsely( receiptInfo: WpcomJetpackCartInfo ): void {
 	if ( ! mayWeTrackByTracker( 'parsely' ) ) {
 		return;
 	}
 
-	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( ! receiptInfo.containsWpcomItems ) {
 		return;
 	}
 
-	const cartContents = wpcomJetpackCartInfo.wpcomProducts
-		.map( ( product ) => product.product_slug )
+	const cartContents = receiptInfo.wpcomItems
+		.map( ( item ) => item.wpcom_product_slug )
 		.join( ', ' );
 
 	loadParselyTracker()
@@ -694,28 +639,25 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 /**
  * Sends a purchase event to Reddit Ads for WPcom purchases.
  */
-function recordOrderInReddit(
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInReddit( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
 		return;
 	}
 
-	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( ! receiptInfo.containsWpcomItems ) {
 		return;
 	}
 
-	const cartContents = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
-		id: product.product_id,
-		name: product.product_name_en,
-		category: product.product_type,
+	const cartContents = receiptInfo.wpcomItems.map( ( item ) => ( {
+		id: item.product_id,
+		name: item.product_name_en,
+		category: item.product_type,
 	} ) );
 
 	const params = {
-		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		value: receiptInfo.wpcomCostUSD,
 		currency: 'USD',
-		transactionId: orderId,
+		transactionId: receipt.id,
 		products: cartContents,
 		itemCount: cartContents.length,
 	};
@@ -723,48 +665,42 @@ function recordOrderInReddit(
 	debug( 'recordOrderInReddit:', 'track', params );
 	window.rdt( 'track', 'Purchase', params );
 }
-function recordOrderInTikTok(
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInTikTok( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'tiktok' ) ) {
 		return;
 	}
-	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( ! receiptInfo.containsWpcomItems ) {
 		return;
 	}
 	const params = {
-		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
-			content_id: product.product_slug,
-			content_name: product.product_name_en,
+		contents: receiptInfo.wpcomItems.map( ( item ) => ( {
+			content_id: item.wpcom_product_slug,
+			content_name: item.product_name_en,
 			content_type: 'product',
 		} ) ),
-		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		value: receiptInfo.wpcomCostUSD,
 		currency: 'USD',
 	};
 	debug( 'recordOrderInTikTok:', 'track', params );
 	window.ttq.track( 'Purchase', params );
 }
 
-function recordOrderInOpenAI(
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
+function recordOrderInOpenAI( receipt: Receipt, receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'openai' ) ) {
 		return;
 	}
-	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+	if ( ! receiptInfo.containsWpcomItems ) {
 		return;
 	}
 	const params = {
 		type: 'contents',
-		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
-			id: product.product_slug,
-			name: product.product_name_en,
+		contents: receiptInfo.wpcomItems.map( ( item ) => ( {
+			id: item.wpcom_product_slug,
+			name: item.product_name_en,
 			content_type: 'product',
 			quantity: 1,
 		} ) ),
-		amount: Math.round( Number( wpcomJetpackCartInfo.wpcomCostUSD ) * 100 ),
+		amount: Math.round( Number( receiptInfo.wpcomCostUSD ) * 100 ),
 		currency: 'USD',
 	};
 	debug( 'recordOrderInOpenAI:', 'track', params );
@@ -774,12 +710,8 @@ function recordOrderInOpenAI(
 /**
  * Sends a purchase event to Google Tag Manager for eligible Woo Express upgrades.
  */
-function recordOrderInWooGTM(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	sitePlanSlug: string | null | undefined
-): void {
-	if ( ! isWooExpressUpgrade( cart, sitePlanSlug ?? undefined ) ) {
+function recordOrderInWooGTM( receipt: Receipt ): void {
+	if ( ! isWooExpressUpgrade( receipt ) ) {
 		return;
 	}
 
@@ -798,16 +730,16 @@ function recordOrderInWooGTM(
 			const purchaseEventMeta = {
 				event: 'purchase',
 				ecommerce: {
-					coupon: cart.coupon?.toString() ?? '',
-					transaction_id: orderId,
+					coupon: getReceiptCouponCode( receipt ),
+					transaction_id: receipt.id,
 					currency: 'USD',
-					items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
+					items: receipt.items.map( ( item ) => ( {
+						id: item.product_id.toString(),
+						name: getReceiptItemName( item ),
+						quantity: item.volume,
+						price: costToUSD( getReceiptItemCost( item, receipt.currency ), receipt.currency ) ?? 0,
 					} ) ),
-					value: costToUSD( cart.total_cost_integer / 100, cart.currency ),
+					value: costToUSD( getReceiptTotal( receipt ), receipt.currency ),
 				},
 			};
 
@@ -823,16 +755,16 @@ function recordOrderInWooGTM(
 /**
  * Records an order in Criteo
  */
-function recordOrderInCriteo( cart: ResponseCart, orderId: number | null | undefined ): void {
+function recordOrderInCriteo( receipt: Receipt ): void {
 	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		return;
 	}
 
 	// @TODO Separate WPCOM from Jetpack events.
 	const params = {
-		id: orderId,
-		currency: cart.currency,
-		item: cartToCriteoItems( cart ),
+		id: receipt.id,
+		currency: receipt.currency,
+		item: receiptToCriteoItems( receipt ),
 	};
 	debug( 'recordOrderInCriteo:', 'trackTransaction', params );
 	recordInCriteo( 'trackTransaction', params );
