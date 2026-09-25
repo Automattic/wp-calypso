@@ -235,6 +235,9 @@ export default function MonetizeSubscriptionDetails() {
 	const formattedRenewal = useFormattedTime( subscription?.end_date ?? '' );
 	const isOneTimePurchase = subscription?.end_date === null;
 	const expiryDateTitle = ( () => {
+		if ( isOneTimePurchase ) {
+			return __( 'Renewal status' );
+		}
 		if ( isProduct ) {
 			return __( 'Paid until' );
 		}
@@ -276,7 +279,7 @@ export default function MonetizeSubscriptionDetails() {
 							title={ expiryDateTitle }
 							heading={ ( () => {
 								if ( isOneTimePurchase ) {
-									return __( 'Never expires.' );
+									return __( 'One-time purchase' );
 								}
 								if ( isAutoRenewing ) {
 									return formattedRenewal;
@@ -285,7 +288,7 @@ export default function MonetizeSubscriptionDetails() {
 							} )() }
 							description={ ( () => {
 								if ( isOneTimePurchase ) {
-									return undefined;
+									return __( 'Does not renew' );
 								}
 								if ( isAutoRenewing ) {
 									return __( 'Auto-renew is enabled.' );
