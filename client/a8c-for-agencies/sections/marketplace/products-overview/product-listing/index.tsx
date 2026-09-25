@@ -17,6 +17,7 @@ import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import usePressableAddonVisibility, {
 	canShowPressableAddonsInMarketplace,
 } from '../../hooks/use-pressable-addon-visibility';
+import { addCartItem } from '../../lib/cart-items';
 import { SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -149,6 +150,24 @@ export default function ProductListing( {
 				...product,
 				quantity,
 			};
+
+			// In agency-purchase (regular) mode the button is additive: each click adds
+			// another copy so agencies can buy multiple licenses of the same product at
+			// once. Adjusting the count or removing items happens in the cart.
+			if ( ! isReferralMode ) {
+				setSelectedCartItems( addCartItem( selectedCartItems, productBundle ) );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
+						product: product.slug,
+						quantity,
+						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
+					} )
+				);
+				return;
+			}
+
+			// Referral mode keeps the original toggle behavior (one copy per product).
 			const index = selectedCartItems.findIndex(
 				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
 			);
@@ -176,7 +195,15 @@ export default function ProductListing( {
 				);
 			}
 		},
-		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems, termPricing ]
+		[
+			dispatch,
+			isReferralMode,
+			marketplaceType,
+			quantity,
+			selectedCartItems,
+			setSelectedCartItems,
+			termPricing,
+		]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
