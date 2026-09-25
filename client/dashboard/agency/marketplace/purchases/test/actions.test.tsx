@@ -99,12 +99,14 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const onOpenHosting = jest.fn();
+	const onOpenCrmDownloads = jest.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
 		isProvisioning: false,
 		onCopyKey: () => {},
 		onDownload: () => {},
+		onOpenCrmDownloads,
 		onOpenHosting,
 		recordTracksEvent: () => {},
 	} );
@@ -122,7 +124,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		}
 		return action.isEligible( item );
 	};
-	return { isEligible, run, onOpenHosting };
+	return { isEligible, run, onOpenHosting, onOpenCrmDownloads };
 }
 
 const SITE_ACTIONS = [
@@ -192,6 +194,12 @@ describe( 'getLicenseActions eligibility', () => {
 			isEligible( 'download-crm-extensions', license( { license_key: 'jetpack-crm_x' } ) )
 		).toBe( false );
 		expect( isEligible( 'download-crm-extensions', assignedJetpack ) ).toBe( false );
+	} );
+
+	it( 'CRM extensions download hands the license to the CRM downloads callback', () => {
+		const { run, onOpenCrmDownloads } = setupWithCallbacks();
+		run( 'download-crm-extensions', assignedCrm );
+		expect( onOpenCrmDownloads ).toHaveBeenCalledWith( assignedCrm );
 	} );
 
 	it( 'offers assignment only for unassigned partner licenses', () => {

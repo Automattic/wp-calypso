@@ -4,6 +4,10 @@
  */
 export const MARKETPLACE_HOSTING_ROUTE = '/marketplace/hosting';
 export const MARKETPLACE_PRODUCTS_ROUTE = '/marketplace/products';
+export const MARKETPLACE_PURCHASES_ROUTE = '/marketplace/purchases';
+
+// Same segment as the classic dashboard, so links shared between the two keep working.
+export const CRM_DOWNLOADS_SEGMENT = 'crm-downloads';
 
 // The checkout still lives in the classic dashboard; link it through `a4aLink()`.
 export const CLASSIC_MARKETPLACE_CHECKOUT_PATH = '/marketplace/checkout';
@@ -23,3 +27,8 @@ export const getMarketplaceReferHostingRoute = ( type: ReferHostingType ) =>
 
 export const getMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 	`${ MARKETPLACE_HOSTING_ROUTE }/${ section }`;
+
+export const getCrmDownloadsRoute = ( licenseKey: string ) =>
+	`${ MARKETPLACE_PURCHASES_ROUTE }/${ CRM_DOWNLOADS_SEGMENT }/${ encodeURIComponent(
+		licenseKey
+	) }`;
