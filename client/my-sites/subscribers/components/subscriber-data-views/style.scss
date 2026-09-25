@@ -7,26 +7,29 @@
 
 $padding-standard: 16px;
 
-// Prevent layout shift when the DataViews actions dropdown opens.
-// Ariakit's modal dropdown sets overflow:hidden on the body to lock
-// scrolling, which hides the viewport scrollbar and jerks the content.
-// `scrollbar-gutter: stable` reserves that space permanently, so the
-// scrollbar can come and go without moving the content.
+// Prevent layout shift when the DataViews actions dropdown opens. Ariakit's modal
+// dropdown sets overflow:hidden on the body to lock scrolling, which hides the
+// viewport scrollbar and jerks the content; reserving the gutter keeps it still.
 //
-// Body scrolling itself has to stay available: when the site's menu is
-// taller than the window, `syncSidebarHeight` in client/layout/utils.ts
-// grows `#content` to the sidebar's height and relies on the window
-// scrolling to reach it. Locking the body here left the page unable to
-// scroll, which put the DataViews footer, and with it pagination and
-// bulk actions, permanently out of reach.
+// The gutter belongs on the root element: `scrollbar-gutter` applies to scroll
+// containers, and with body scrolling restored below, the body is not one. The
+// viewport's scrollbar is the root element's.
+html:has( > body.is-section-subscribers:not( .is-global ) ),
+html:has( > body.theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers ) {
+	scrollbar-gutter: stable;
+}
+
+// Body scrolling has to stay available: when the site's menu is taller than the
+// window, `syncSidebarHeight` in client/layout/utils.ts grows `#content` to the
+// sidebar's height and relies on the window scrolling to reach it. Locking the body
+// here left the page unable to scroll, which put the DataViews footer, and with it
+// pagination and bulk actions, permanently out of reach.
 //
 // Scoped with :not( .is-global ) so the rule only applies to the
 // subscribers data-view page; the global site picker at /subscribers
 // keeps default body scrolling, since its list can exceed the viewport.
 body.is-section-subscribers:not( .is-global ),
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
-	scrollbar-gutter: stable;
-
 	// Pins .layout__primary to the viewport so the page body scrolls
 	// internally, independent of the shell's sidebar height.
 	@include admin-ui-page-sticky-footer;
