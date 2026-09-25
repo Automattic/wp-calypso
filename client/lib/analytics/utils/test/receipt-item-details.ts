@@ -5,6 +5,7 @@ import {
 	getReceiptTotal,
 	isSaleCouponAppliedToReceiptItem,
 	mergeDomainMappingsIntoDomains,
+	removeFailedPurchases,
 	smallestUnitToAmount,
 } from '../receipt-item-details';
 import type { Receipt, ReceiptItem, ReceiptItemCostOverride } from '@automattic/api-core';
@@ -130,5 +131,78 @@ describe( 'mergeDomainMappingsIntoDomains', () => {
 		const mapping = mappingFor( 'example.net' );
 		const receipt = { items: [ registration, mapping ] } as Receipt;
 		expect( mergeDomainMappingsIntoDomains( receipt ).items ).toEqual( [ registration, mapping ] );
+	} );
+} );
+
+describe( 'removeFailedPurchases', () => {
+	const plan = makeItem( {
+		site_id: 1,
+		product_id: 1009,
+		domain: 'example.com',
+		amount_integer: 1000,
+		subtotal_integer: 800,
+		tax_integer: 200,
+	} );
+	const domainA = makeItem( {
+		site_id: 1,
+		product_id: 6,
+		domain: 'a.com',
+		amount_integer: 500,
+		subtotal_integer: 400,
+		tax_integer: 100,
+	} );
+	const domainB = makeItem( {
+		site_id: 1,
+		product_id: 6,
+		domain: 'b.com',
+		amount_integer: 300,
+		subtotal_integer: 240,
+		tax_integer: 60,
+	} );
+	const makeFailedReceipt = ( failed: Receipt[ 'failed_purchases' ] ) =>
+		( {
+			items: [ plan, domainA, domainB ],
+			amount_integer: 1800,
+			subtotal_integer: 1440,
+			tax_integer: 360,
+			failed_purchases: failed,
+		} ) as Receipt;
+	const failedPurchase = ( product_id: number | string, product_meta: string ) => ( {
+		product_id,
+		product_meta,
+		product_slug: '',
+		product_cost: 0,
+		product_name: '',
+	} );
+
+	it( 'returns the receipt unchanged when nothing failed', () => {
+		const receipt = makeFailedReceipt( undefined );
+		expect( removeFailedPurchases( receipt ) ).toBe( receipt );
+	} );
+
+	it( 'removes a failed item matched by site and product ID and reduces the totals', () => {
+		const result = removeFailedPurchases(
+			makeFailedReceipt( { '1': [ failedPurchase( '1009', '' ) ] } )
+		);
+		expect( result.items ).toEqual( [ domainA, domainB ] );
+		expect( result.amount_integer ).toBe( 800 );
+		expect( result.subtotal_integer ).toBe( 640 );
+		expect( result.tax_integer ).toBe( 160 );
+	} );
+
+	it( 'uses the domain to tell apart items for the same product and site', () => {
+		const result = removeFailedPurchases(
+			makeFailedReceipt( { '1': [ failedPurchase( 6, 'b.com' ) ] } )
+		);
+		expect( result.items ).toEqual( [ plan, domainA ] );
+		expect( result.amount_integer ).toBe( 1500 );
+	} );
+
+	it( 'ignores failed purchases on other sites', () => {
+		const result = removeFailedPurchases(
+			makeFailedReceipt( { '2': [ failedPurchase( 1009, '' ) ] } )
+		);
+		expect( result.items ).toEqual( [ plan, domainA, domainB ] );
+		expect( result.amount_integer ).toBe( 1800 );
 	} );
 } );
