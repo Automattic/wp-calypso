@@ -5,6 +5,7 @@ const translations = {
 	recommended_blog: __( 'Blog recommendations' ),
 	new_comment: __( 'Comments on my site' ),
 	post_like: __( 'Likes on my posts' ),
+	reblog: __( 'Reposts of my posts' ),
 	follow: __( 'Subscriptions' ),
 	achievement: __( 'Site achievements' ),
 	mentions: __( 'Username mentions' ),

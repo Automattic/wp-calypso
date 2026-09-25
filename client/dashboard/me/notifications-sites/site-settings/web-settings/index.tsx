@@ -109,6 +109,11 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 				value: timelineSettings?.post_like ?? false,
 			},
 			{
+				id: 'reblog',
+				label: getFieldLabel( 'reblog' ),
+				value: timelineSettings?.reblog ?? false,
+			},
+			{
 				id: 'recommended_blog',
 				label: getFieldLabel( 'recommended_blog' ),
 				value: timelineSettings?.recommended_blog ?? false,
