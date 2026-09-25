@@ -97,6 +97,11 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 		);
 		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();
 	} );
+	test( 'simple form shows the Measurement ID field without a toggle when eligible', () => {
+		renderWithStore( <GoogleAnalyticsSimpleForm { ...props } showUpgradeNudge={ false } /> );
+		expect( screen.getByLabelText( 'Google Analytics Measurement ID' ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+	} );
 	test( 'simple form should not show upgrade nudge if disabled', () => {
 		renderWithStore( <GoogleAnalyticsSimpleForm { ...props } showUpgradeNudge={ false } /> );
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
