@@ -37,6 +37,11 @@ declare module '@tanstack/react-router' {
 		 * of these capabilities. Enforced in agencyRoute.beforeLoad.
 		 */
 		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
+		/**
+		 * Renders the route without the dashboard shell (sidebar and omnibar),
+		 * for pages that take the whole screen, like a checkout.
+		 */
+		bareLayout?: boolean;
 	}
 }
 

@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
@@ -11,16 +12,14 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
+import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
-import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
-import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
-import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
-import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
-import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl } from './lib/checkout-url';
-import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
+import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
+import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -57,82 +56,41 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	// Owned WordPress.com sites raise the volume tier, so the total matches the
-	// Hosting page wherever the cart is shown.
-	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
-	// Pressable's introductory price only applies to agencies without a plan,
-	// so the cart checks for one itself and matches the Hosting page everywhere.
-	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
-	const applyPressableIntroductoryPrice =
-		isReferralMode ||
-		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
-			'agency';
-
-	const lines = items
-		.map( ( item ) => {
-			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			if ( ! product ) {
-				return null;
-			}
-			const applyIntroductoryPrice =
-				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
-			const priceInfo = getProductPriceInfo( product, term, { applyIntroductoryPrice } );
-			const subtotal =
-				product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-					? getWpcomTieredPrice( product, item.quantity, term, ownedWpcomSites ).discountedCost
-					: priceInfo.price * item.quantity;
-			return {
-				item,
-				product,
-				priceInfo,
-				subtotal,
-				commission: subtotal * getProductCommissionPercentage( product.slug, product.family_slug ),
-			};
-		} )
-		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
-
-	// A WordPress.com line's price depends on the owned sites, so hold the
-	// amounts until they are known rather than showing a total that then drops.
-	const isTotalReady =
-		isOwnedSitesReady ||
-		! lines.some( ( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG );
-
-	const currency = lines[ 0 ]?.product.currency ?? 'USD';
-	const { total, commission } = lines.reduce(
-		( sums, line ) => ( {
-			total: sums.total + line.subtotal,
-			commission: sums.commission + line.commission,
-		} ),
-		{ total: 0, commission: 0 }
-	);
-	const checkoutUrl = getCheckoutUrl(
-		lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
+	const location = useLocation();
+	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
+		items,
+		products,
+		term,
 		isReferralMode,
-		{
-			agencyId,
-			term,
-			hasWpcomHostingPlan: lines.some(
-				( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-			),
-		}
-	);
+	} );
 
-	const checkoutButton = (
+	const checkoutButtonProps = {
+		variant: 'primary' as const,
+		__next40pxDefaultSize: true,
+		disabled: lines.length === 0 || ! isAgencyApproved || ! isTotalReady,
+		onClick: () => {
+			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+				term_pricing: term,
+			} );
+			onCheckout?.();
+		},
+		children: __( 'Checkout' ),
+	};
+	const checkoutButton = isReferralMode ? (
+		<RouterLinkButton
+			{ ...checkoutButtonProps }
+			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
+			search={ { from: location.pathname + location.searchStr } }
+		/>
+	) : (
 		<Button
-			variant="primary"
-			__next40pxDefaultSize
-			href={ checkoutUrl }
-			disabled={ lines.length === 0 || ! isAgencyApproved || ! isTotalReady }
-			onClick={ () => {
-				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
-					purchase_mode: isReferralMode ? 'referral' : 'regular',
-					term_pricing: term,
-				} );
-				onCheckout?.();
-			} }
-		>
-			{ __( 'Checkout' ) }
-		</Button>
+			{ ...checkoutButtonProps }
+			href={ getCheckoutUrl(
+				lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
+				{ agencyId, term, hasWpcomHostingPlan }
+			) }
+		/>
 	);
 
 	return (

@@ -146,6 +146,8 @@ export interface Agency {
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
 	profile?: AgencyProfile;
+	/** The logo the agency last uploaded for a referral email. */
+	referrals_logo?: string | null;
 	partner_directory?: {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];

@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
+import clsx from 'clsx';
 import {
 	Suspense,
 	lazy,
@@ -93,11 +94,12 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad, pathname } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname, isBareLayout } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
 			pathname: state.location.pathname,
+			isBareLayout: state.matches.some( ( match ) => match.staticData?.bareLayout ),
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -155,7 +157,9 @@ function Root() {
 
 		return (
 			<div className="dashboard-root__body">
-				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				{ ! isBareLayout && (
+					<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				) }
 				<div className="dashboard-root__content">
 					<main>
 						<CatchNotFound fallback={ NotFound }>
@@ -172,7 +176,7 @@ function Root() {
 	}, [ name, title ] );
 
 	return (
-		<div className="dashboard-root__layout">
+		<div className={ clsx( 'dashboard-root__layout', { 'is-bare-layout': isBareLayout } ) }>
 			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={

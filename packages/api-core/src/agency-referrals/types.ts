@@ -49,6 +49,40 @@ export interface ReferralApiResponse {
 	checkout_url: string;
 }
 
+export type ReferralFlowType = 'send' | 'copy';
+
+export interface ReferralLogoPayload {
+	type: 'profile' | 'custom' | 'none';
+	url?: string;
+}
+
+/**
+ * Body of POST /agency/{agencyId}/referrals: a payment request for a client.
+ */
+export interface CreateReferralParams {
+	client_email: string;
+	client_message: string;
+	/** Comma-separated product ids. */
+	product_ids: string;
+	licenses?: { product_id: number; license_id: number }[];
+	flow_type: ReferralFlowType;
+	logo?: ReferralLogoPayload;
+}
+
+/**
+ * Body of POST /agency/{agencyId}/referral-email-preview.
+ */
+export interface ReferralEmailPreviewParams {
+	product_ids: number[];
+	greeting_line: string;
+	logo_url?: string;
+	term_pricing: 'monthly' | 'yearly';
+}
+
+export interface ReferralEmailPreview {
+	html: string;
+}
+
 /**
  * Referrals grouped by client, as consumed by the Referrals dashboard.
  */

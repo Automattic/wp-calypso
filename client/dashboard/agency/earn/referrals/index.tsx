@@ -18,6 +18,7 @@ import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
+import NewReferralNotice from './new-referral-notice';
 import ReferralsList from './referrals-list';
 import type { View } from '@wordpress/dataviews';
 
@@ -56,7 +57,12 @@ export default function EarnReferrals() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
+			notices={
+				<>
+					<NewReferralNotice />
+					<MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } />
+				</>
+			}
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />

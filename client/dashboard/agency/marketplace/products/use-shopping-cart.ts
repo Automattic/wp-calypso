@@ -69,8 +69,13 @@ function subscribe( listener: () => void ) {
 	};
 }
 
-export function useShoppingCart() {
-	const { marketplaceType } = useMarketplaceType();
+/**
+ * The cart of the current marketplace mode, or of `type` for a page that
+ * belongs to one mode whatever the toggle says.
+ */
+export function useShoppingCart( type?: MarketplaceType ) {
+	const { marketplaceType: currentType } = useMarketplaceType();
+	const marketplaceType = type ?? currentType;
 	const items = useSyncExternalStore( subscribe, () => getSnapshot( marketplaceType ) );
 
 	const hasItem = useCallback(
