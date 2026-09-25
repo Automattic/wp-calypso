@@ -71,10 +71,6 @@ describe( '<PressableSection> Premium plans', () => {
 			.reply( 200, [ { id: 1 } ] );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'with referrals off, the picker stays and the rail shows the gate', async () => {
 		renderSection();
 
@@ -104,7 +100,7 @@ describe( '<PressableSection> Premium plans', () => {
 		expect( planPicker() ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Pressable Premium' ) ).toBeVisible();
 		expect( screen.getByText( gateText ) ).toBeVisible();
-		expect( screen.getByTestId( 'usage-card' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'usage-card' ) ).toBeVisible();
 	} );
 
 	test( 'an agency on a Premium plan sees its own plan named in the gate', async () => {
