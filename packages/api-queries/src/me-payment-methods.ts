@@ -64,8 +64,9 @@ export const userPaymentMethodTaxInfoQuery = ( paymentMethodId: string ) =>
 		queryFn: () => fetchPaymentMethodTaxInfo( paymentMethodId ),
 	} );
 
-export const userPaymentMethodSetBackupQuery = () =>
+export const userPaymentMethodSetBackupMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'payment-method-backup-toggle' },
 		mutationFn: ( data: Pick< StoredPaymentMethod, 'stored_details_id' | 'is_backup' > ) =>
 			setPaymentMethodBackup( data.stored_details_id, data.is_backup ),
 		onSuccess: () => {
@@ -75,8 +76,9 @@ export const userPaymentMethodSetBackupQuery = () =>
 		},
 	} );
 
-export const userPaymentMethodDeleteQuery = () =>
+export const userPaymentMethodDeleteMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'payment-method-delete' },
 		mutationFn: ( paymentMethodId: string ) => requestPaymentMethodDeletion( paymentMethodId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
@@ -85,8 +87,9 @@ export const userPaymentMethodDeleteQuery = () =>
 		},
 	} );
 
-export const userPaymentMethodSetTaxInfoQuery = () =>
+export const userPaymentMethodSetTaxInfoMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'payment-method-tax-update' },
 		mutationFn: ( data: Pick< StoredPaymentMethod, 'stored_details_id' | 'tax_location' > ) =>
 			setPaymentMethodTaxInfo( data.stored_details_id, data.tax_location ),
 		onSuccess: () => {
