@@ -317,6 +317,10 @@ export function AgentUIContainer( {
 
 				clearSuggestions?.();
 
+				// Report the click before awaiting the send: `onSubmit` may not settle
+				// until the reply finishes streaming (or at all).
+				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+
 				if ( message ) {
 					await onSubmit( message );
 				}
@@ -332,9 +336,9 @@ export function AgentUIContainer( {
 						valueWithSpace.length
 					);
 				}
-			}
 
-			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+			}
 		},
 		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
 	);
