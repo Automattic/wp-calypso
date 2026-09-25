@@ -64,8 +64,13 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 			...( source && { source } ),
 			...( p.url !== undefined && { url: p.url } ),
 		} );
-	}
-
+			const url = typeof p.url === 'string' ? p.url.trim() : undefined;
+			out.push( {
+				slug,
+				why,
+				...( source && { source } ),
+				...( url && { url } ),
+			} );
 	return out;
 }
 
