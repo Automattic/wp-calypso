@@ -1,19 +1,13 @@
 import { recordOrder } from 'calypso/lib/analytics/ad-tracking';
 import { costToUSD } from 'calypso/lib/analytics/utils';
 import { gaRecordEvent } from './ga';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import { getReceiptTotal } from './utils/receipt-item-details';
+import type { Receipt } from '@automattic/api-core';
 
-export async function recordPurchase( {
-	cart,
-	orderId,
-	sitePlanSlug,
-}: {
-	cart: ResponseCart;
-	orderId: number | null | undefined;
-	sitePlanSlug: string | null | undefined;
-} ) {
-	if ( cart.total_cost >= 0.01 ) {
-		const usdValue = costToUSD( cart.total_cost, cart.currency );
+export async function recordPurchase( receipt: Receipt ) {
+	const total = getReceiptTotal( receipt );
+	if ( total >= 0.01 ) {
+		const usdValue = costToUSD( total, receipt.currency );
 
 		// Google Analytics
 		gaRecordEvent(
@@ -24,6 +18,6 @@ export async function recordPurchase( {
 		);
 
 		// Marketing
-		recordOrder( cart, orderId, sitePlanSlug );
+		await recordOrder( receipt );
 	}
 }
