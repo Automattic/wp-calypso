@@ -193,7 +193,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder }: PluginDetailsCTAProps ) =>
 					<a
 						target="_blank"
 						rel="noopener noreferrer"
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						href={ localizeUrl( 'https://automattic.com/tos/' ) }
 					/>
 				),
 				thirdPartyTos: (

@@ -21,7 +21,7 @@ export default function TosText( {
 				{ createInterpolateElement( __( 'You agree to our <tosLink>Terms of Service</tosLink>.' ), {
 					tosLink: (
 						<ExternalLink
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							href={ localizeUrl( 'https://automattic.com/tos/' ) }
 							rel="noopener noreferrer"
 							children={ undefined }
 						/>
@@ -43,7 +43,7 @@ export default function TosText( {
 							href={
 								isAkismetPurchase
 									? localizeUrl( 'https://akismet.com/tos/' )
-									: localizeUrl( 'https://wordpress.com/tos/' )
+									: localizeUrl( 'https://automattic.com/tos/' )
 							}
 							rel="noopener noreferrer"
 							children={ undefined }

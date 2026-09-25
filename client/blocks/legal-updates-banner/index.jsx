@@ -28,7 +28,7 @@ const LegalUpdateBanner = ( props ) => {
 									<ExternalLink
 										icon
 										target="_blank"
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										href={ localizeUrl( 'https://automattic.com/tos/' ) }
 									/>
 								),
 							},
