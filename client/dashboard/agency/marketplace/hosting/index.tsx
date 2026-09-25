@@ -176,7 +176,8 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 						'Choose the right hosting for each client, from single sites to enterprise platforms.'
 					) }
 					actions={
-						<HStack spacing={ 4 } expanded={ false }>
+						<HStack spacing={ 4 } expanded={ false } wrap>
+							<TermPricingToggle />
 							<ReferralToggle />
 							<CartMenu
 								items={ cartItems }
@@ -198,21 +199,18 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 			<PressableOffers agency={ agency } />
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
-					<HStack justify="space-between" wrap>
-						<Tabs.TabList>
-							{ hostingBrands.map( ( brand ) => (
-								<Tabs.Tab key={ brand.key } tabId={ brand.key }>
-									<VStack spacing={ 0.5 } alignment="flex-start">
-										<span>{ brand.tier }</span>
-										<Text variant="muted" size={ 12 } lineHeight="16px">
-											{ brand.subtitle }
-										</Text>
-									</VStack>
-								</Tabs.Tab>
-							) ) }
-						</Tabs.TabList>
-						<TermPricingToggle />
-					</HStack>
+					<Tabs.TabList>
+						{ hostingBrands.map( ( brand ) => (
+							<Tabs.Tab key={ brand.key } tabId={ brand.key }>
+								<VStack spacing={ 0.5 } alignment="flex-start">
+									<span>{ brand.tier }</span>
+									<Text variant="muted" size={ 12 } lineHeight="16px">
+										{ brand.subtitle }
+									</Text>
+								</VStack>
+							</Tabs.Tab>
+						) ) }
+					</Tabs.TabList>
 					<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 				</VStack>
 				{ hostingBrands.map( ( brand ) => (
