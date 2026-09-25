@@ -61,6 +61,10 @@ const GoogleAnalyticsJetpackForm = ( {
 	const analyticsSupportUrl = isAtomic
 		? localizeUrl( 'https://wordpress.com/support/google-analytics/' )
 		: 'https://jetpack.com/support/google-analytics/';
+	// On Atomic, the info popover opens the WordPress.com doc in the Help Center.
+	const supportInfoProps = isAtomic
+		? { link: analyticsSupportUrl, supportPostId: 98905, privacyLink: false }
+		: { link: 'https://jetpack.com/support/google-analytics/' };
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
 	const wooCommercePlugin = sitePlugins?.find( ( plugin ) => plugin.slug === 'woocommerce' );
@@ -267,7 +271,7 @@ const GoogleAnalyticsJetpackForm = ( {
 											' through your site, and goal conversion lets you' +
 											' measure how visitors complete specific tasks.'
 									) }
-									link="https://jetpack.com/support/google-analytics/"
+									{ ...supportInfoProps }
 								/>
 								{ isJetpackModuleAvailable ? (
 									<JetpackModuleToggle

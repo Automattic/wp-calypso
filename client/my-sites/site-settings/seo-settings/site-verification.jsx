@@ -1,4 +1,5 @@
 import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { omit } from '@automattic/js-utils';
 import { withBreakpoint } from '@automattic/viewport-react';
 import { localize } from 'i18n-calypso';
@@ -19,6 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -254,6 +256,7 @@ export class SiteVerification extends Component {
 			jetpackVersion,
 			siteId,
 			siteIsJetpack,
+			siteIsWpcom,
 			translate,
 		} = this.props;
 		const {
@@ -293,7 +296,15 @@ export class SiteVerification extends Component {
 								text={ translate(
 									'Provides the necessary hidden tags needed to verify your WordPress site with various services.'
 								) }
-								link="https://jetpack.com/support/site-verification-tools/"
+								{ ...( siteIsWpcom
+									? {
+											link: localizeUrl(
+												'https://wordpress.com/support/site-verification-services/'
+											),
+											supportPostId: 5022,
+											privacyLink: false,
+										}
+									: { link: 'https://jetpack.com/support/site-verification-tools/' } ) }
 							/>
 						</>
 					) }
@@ -403,6 +414,7 @@ export default connect(
 			site,
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsWpcom: isSiteWpcom( state, siteId ),
 			siteSettings: getSiteSettings( state, siteId ),
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
