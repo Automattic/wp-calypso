@@ -16,14 +16,11 @@ export default function SiteSettingsForm( {
 	isWpcomStagingSite,
 	fields,
 	updateFields,
-	onChangeField,
 	handleToggle,
 	handleAutosavingToggle,
 	handleSubmitForm,
 	isRequestingSettings,
 	isSavingSettings,
-	eventTracker,
-	uniqueEventTracker,
 } ) {
 	if ( ! site ) {
 		return null;
@@ -56,13 +53,10 @@ export default function SiteSettingsForm( {
 
 			<EnhancedOwnershipForm
 				fields={ fields }
-				onChangeField={ onChangeField }
 				handleToggle={ handleToggle }
 				isSaving={ isSavingSettings }
 				onSave={ handleSubmitForm }
 				disabled={ isRequestingSettings || isSavingSettings }
-				eventTracker={ eventTracker }
-				uniqueEventTracker={ uniqueEventTracker }
 			/>
 
 			<DIFMUpsell
