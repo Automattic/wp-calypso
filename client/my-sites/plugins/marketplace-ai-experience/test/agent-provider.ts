@@ -53,10 +53,10 @@ it( 'accepts and returns product URLs with query parameters intact', async () =>
 	const onPicks = jest.fn();
 	const provider = createToolProvider( { onPicks } );
 	const [ ability ] = await provider.getAbilities();
-	expect( ability.input_schema.properties.picks.items.properties.url ).toMatchObject( {
+	expect( ability.input_schema?.properties.picks.items.properties.url ).toMatchObject( {
 		type: 'string',
 	} );
-	expect( ability.output_schema.properties.picks.items.properties.url ).toMatchObject( {
+	expect( ability.output_schema?.properties.picks.items.properties.url ).toMatchObject( {
 		type: 'string',
 	} );
 	const url =
