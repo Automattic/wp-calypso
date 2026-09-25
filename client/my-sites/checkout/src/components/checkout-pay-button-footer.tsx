@@ -82,7 +82,7 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 	const components = {
 		tos: (
 			<a
-				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				href={ localizeUrl( 'https://automattic.com/tos/' ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			/>

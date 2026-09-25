@@ -19,8 +19,8 @@ const LOCALIZABLE_URLS = [
 	// automattic.com/privacy/
 	/^(https?:)?\/\/automattic\.com\/privacy\/?((#|\?).*)?$/i,
 
-	// wordpress.com/tos/
-	/^(https?:)?\/\/wordpress\.com\/tos\/?((#|\?).*)?$/i,
+	// automattic.com/tos/
+	/^(https?:)?\/\/automattic\.com\/tos\/?((#|\?).*)?$/i,
 
 	// wordpress.com/blog/
 	/^(https?:)?\/\/wordpress\.com\/blog\/?((#|\?).*)?$/i,

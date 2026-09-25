@@ -300,7 +300,7 @@ const Footer2026Bottom = ( {
 		</div>
 		<ul className="lp-footer-legal" aria-label={ __( 'Legal links', __i18n_text_domain__ ) }>
 			<li className="x-nav-footer--tos">
-				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) }>
+				<a href={ localizeUrl( 'https://automattic.com/tos/' ) }>
 					{ __( 'Terms of service', __i18n_text_domain__ ) }
 				</a>
 			</li>

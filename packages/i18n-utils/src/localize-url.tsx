@@ -129,7 +129,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
 	},
 	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
-	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'automattic.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),

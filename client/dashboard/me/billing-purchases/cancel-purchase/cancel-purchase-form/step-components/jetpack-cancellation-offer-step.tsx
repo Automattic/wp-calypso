@@ -188,7 +188,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					{
 						tosLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								href={ localizeUrl( 'https://automattic.com/tos/' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
