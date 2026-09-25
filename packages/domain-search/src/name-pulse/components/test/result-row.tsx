@@ -114,8 +114,11 @@ describe( 'NamePulseResultRow', () => {
 	} );
 
 	it( 'truncates a long name on desktop', () => {
-		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
 
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'icecreamshopnearsuratairport' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
 	} );
@@ -125,6 +128,20 @@ describe( 'NamePulseResultRow', () => {
 
 		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
 
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'wraps the full long name on narrow desktop, where the three-column row is too tight to truncate', () => {
+		mockUseViewportMatch.mockImplementation(
+			( breakpoint, operator ) => breakpoint === 'large' && operator === '<'
+		);
+
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
+
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
 	} );
