@@ -227,3 +227,18 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 		expect( replacedWith ).toBeUndefined();
 	} );
 } );
+
+describe( 'onboarding processing failure', () => {
+	beforeEach( () => {
+		mockDomainCartItem = undefined;
+		jest.clearAllMocks();
+	} );
+
+	it( 'replaces processing with the error step so Back does not re-run it', async () => {
+		const { navigate } = await submitPostCheckoutProcessing( {
+			processingResult: ProcessingResult.FAILURE,
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'error', undefined, true );
+	} );
+} );
