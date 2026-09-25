@@ -1,6 +1,34 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 
+// Display faces from the Automattic for Agencies site.
+@font-face {
+	font-family: 'A4A Knockout';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/knockout/knockout-400-normal.woff2 )
+		format( 'woff2' );
+}
+
+@font-face {
+	font-family: 'A4A Source Serif';
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/source-serif-4/source-serif-4-variable-normal.woff2 )
+		format( 'woff2' );
+}
+
+@font-face {
+	font-family: 'A4A Source Serif';
+	font-style: italic;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url( https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts/source-serif-4/source-serif-4-variable-italic.woff2 )
+		format( 'woff2' );
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;
@@ -57,34 +85,89 @@
 	color: var( --resource-card-ink );
 	background: var( --resource-card-paper );
 
+	// Nested under the header for specificity over the components' own runtime styles.
+	.dashboard-resources-learn__card-eyebrow {
+		letter-spacing: 0.14em;
+	}
+
+	.dashboard-resources-learn__card-title {
+		margin-block-start: auto;
+		font-size: 31px;
+		font-weight: 600;
+		line-height: 1.03;
+		letter-spacing: -0.035em;
+		text-wrap: balance;
+		overflow-wrap: anywhere;
+	}
+
 	&[data-product='automattic-for-agencies'] {
 		--resource-card-ink: #{$studio-white};
 		--resource-card-paper: #{$studio-gray-100};
+
+		.dashboard-resources-learn__card-title {
+			font-family: 'A4A Knockout', Impact, sans-serif;
+			font-size: 38px;
+			font-weight: 400;
+			letter-spacing: 0;
+			text-transform: uppercase;
+		}
 	}
 
 	&[data-product='jetpack'] {
 		--resource-card-ink: #{$studio-white};
 		--resource-card-paper: #{$studio-jetpack-green-50};
+
+		.dashboard-resources-learn__card-title {
+			padding-inline-start: 12px;
+			border-inline-start: 4px solid currentColor;
+			font-size: 28px;
+			font-weight: 700;
+		}
 	}
 
 	&[data-product='pressable'] {
 		--resource-card-ink: #{$studio-black};
 		--resource-card-paper: #dd3a03;
+
+		.dashboard-resources-learn__card-title {
+			font-family: 'A4A Knockout', Impact, sans-serif;
+			font-size: 38px;
+			font-weight: 400;
+			letter-spacing: 0;
+			text-transform: uppercase;
+		}
 	}
 
 	&[data-product='woocommerce'] {
 		--resource-card-ink: #{$studio-white};
 		--resource-card-paper: #{$studio-woocommerce-purple-50};
+
+		.dashboard-resources-learn__card-title {
+			font-weight: 700;
+			letter-spacing: -0.045em;
+		}
 	}
 
 	&[data-product='wordpress-com'] {
 		--resource-card-ink: #{$studio-white};
 		--resource-card-paper: #{$studio-wordpress-blue-50};
+
+		.dashboard-resources-learn__card-title {
+			font-family: 'A4A Source Serif', Georgia, serif;
+			font-style: italic;
+			font-weight: 500;
+		}
 	}
 
 	&[data-product='wordpress-vip'] {
 		--resource-card-ink: #13191e;
 		--resource-card-paper: #d8a45f;
+
+		.dashboard-resources-learn__card-title {
+			font-family: 'A4A Source Serif', Georgia, serif;
+			font-weight: 600;
+			letter-spacing: -0.045em;
+		}
 	}
 }
 
@@ -93,12 +176,6 @@
 	background-color: var( --resource-card-ink );
 	border-color: var( --resource-card-ink );
 	color: var( --resource-card-paper );
-}
-
-.dashboard-resources-learn__card-title {
-	margin-block-start: auto;
-	text-wrap: balance;
-	overflow-wrap: anywhere;
 }
 
 .dashboard-resources-learn__card-brand {
