@@ -149,7 +149,7 @@ $heading-font-body-small: 15px;
 					font-weight: 500;
 					font-size: $heading-font-body-small;
 					font-family: $heading-font-family;
-					color: #8f8e93;
+					color: var( --color-text );
 					padding: 0;
 					letter-spacing: 0.34px;
 				}
