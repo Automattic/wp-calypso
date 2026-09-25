@@ -131,6 +131,42 @@ describe( 'useGetZendeskConversationHistory', () => {
 		).toBe( Infinity );
 	} );
 
+	it( 'merges with history cached by a newer overlapping request', async () => {
+		let resolveFirstFetch: ( response: ReturnType< typeof page > ) => void = () => {};
+		let resolveSecondFetch: ( response: ReturnType< typeof page > ) => void = () => {};
+		fetchMock
+			.mockImplementationOnce( () => new Promise( ( resolve ) => ( resolveFirstFetch = resolve ) ) )
+			.mockImplementationOnce(
+				() => new Promise( ( resolve ) => ( resolveSecondFetch = resolve ) )
+			);
+
+		const { getHistory, queryClient } = renderHistoryHook();
+		const firstRequest = getHistory( {
+			conversationId: 'conv-1',
+			before: 200,
+			clientId: 'c-1',
+			jwt: 'the-jwt',
+		} );
+		const secondRequest = getHistory( {
+			conversationId: 'conv-1',
+			before: 300,
+			clientId: 'c-1',
+			jwt: 'the-jwt',
+		} );
+
+		resolveSecondFetch( page( [ rawMessage( 'newer', 200 ) ], false ) );
+		await secondRequest;
+		resolveFirstFetch( page( [ rawMessage( 'older', 100 ) ], false ) );
+		const { messages } = await firstRequest;
+
+		expect( messages.map( ( message ) => message.id ) ).toEqual( [ 'older', 'newer' ] );
+		expect(
+			queryClient
+				.getQueryData< { id: string }[] >( getZendeskConversationHistoryQueryKey( 'conv-1' ) )
+				?.map( ( message ) => message.id )
+		).toEqual( [ 'older', 'newer' ] );
+	} );
+
 	it( 'reports truncation after the page cap', async () => {
 		fetchMock.mockResolvedValue( page( [ rawMessage( 'message', 100 ) ], true ) );
 

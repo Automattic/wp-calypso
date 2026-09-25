@@ -121,11 +121,12 @@ export const useGetZendeskConversationHistory = () => {
 					cursor = messages[ 0 ].received;
 				}
 
-				const messages = mergeHistoryMessages(
-					cachedHistory,
-					convertZendeskMessages( olderMessages )
-				);
-				queryClient.setQueryData( queryKey, messages );
+				const convertedMessages = convertZendeskMessages( olderMessages );
+				const messages =
+					queryClient.setQueryData< ReturnType< typeof convertZendeskMessages > >(
+						queryKey,
+						( currentHistory = [] ) => mergeHistoryMessages( currentHistory, convertedMessages )
+					) ?? [];
 
 				return { messages, truncated };
 			} )();

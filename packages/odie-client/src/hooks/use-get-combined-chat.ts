@@ -122,6 +122,8 @@ export const useGetCombinedChat = (
 		conversationId: string;
 		before: number;
 	} | null >( null );
+	const startedZendeskHistoryRequestRef = useRef( zendeskHistoryRequest );
+	const activeZendeskHistoryRequestIdRef = useRef( 0 );
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat(
 		Number( odieId ),
 		sessionId,
@@ -170,64 +172,54 @@ export const useGetCombinedChat = (
 	}, [ isChatLoaded, conversationId, refreshConversation ] );
 
 	// Smooch only hands over the latest page of messages; load the older ones in the background.
-	const loadZendeskHistory = useCallback(
-		(
-			historyConversationId: string,
-			before: number,
-			clientId: string | undefined,
-			jwt: string
-		) => {
-			setHistoryLoadingConversationId( historyConversationId );
-			getZendeskConversationHistory( {
-				conversationId: historyConversationId,
-				before,
-				clientId,
-				jwt,
-			} )
-				.then( ( { messages, truncated } ) => {
-					recordTracksEvent( 'calypso_odie_zendesk_conversation_history_loaded', {
-						conversation_id: historyConversationId,
-						message_count: messages.length,
-						truncated,
-					} );
-					if ( messages.length ) {
-						setMainChatState( ( prevChat ) =>
-							prevChat.conversationId === historyConversationId
-								? {
-										...prevChat,
-										messages: insertZendeskHistory( prevChat.messages, messages as Message[] ),
-									}
-								: prevChat
-						);
-					}
-				} )
-				.catch( ( error ) => {
-					recordTracksEvent( 'calypso_odie_zendesk_conversation_history_failed', {
-						conversation_id: historyConversationId,
-						error: error instanceof Error ? error.message : String( error ),
-					} );
-				} )
-				.finally( () => {
-					setHistoryLoadingConversationId( ( current ) =>
-						current === historyConversationId ? null : current
-					);
-				} );
-		},
-		[ getZendeskConversationHistory ]
-	);
-
 	useEffect( () => {
 		if ( ! zendeskHistoryRequest || ! authData?.jwt ) {
 			return;
 		}
 
-		loadZendeskHistory(
-			zendeskHistoryRequest.conversationId,
-			zendeskHistoryRequest.before,
-			zendeskClientId,
-			authData.jwt
-		);
-	}, [ zendeskHistoryRequest, zendeskClientId, authData?.jwt, loadZendeskHistory ] );
+		if ( startedZendeskHistoryRequestRef.current === zendeskHistoryRequest ) {
+			return;
+		}
+
+		startedZendeskHistoryRequestRef.current = zendeskHistoryRequest;
+		const historyConversationId = zendeskHistoryRequest.conversationId;
+		const requestId = ++activeZendeskHistoryRequestIdRef.current;
+		setHistoryLoadingConversationId( historyConversationId );
+		getZendeskConversationHistory( {
+			conversationId: historyConversationId,
+			before: zendeskHistoryRequest.before,
+			clientId: zendeskClientId,
+			jwt: authData.jwt,
+		} )
+			.then( ( { messages, truncated } ) => {
+				recordTracksEvent( 'calypso_odie_zendesk_conversation_history_loaded', {
+					conversation_id: historyConversationId,
+					message_count: messages.length,
+					truncated,
+				} );
+				if ( messages.length ) {
+					setMainChatState( ( prevChat ) =>
+						prevChat.conversationId === historyConversationId
+							? {
+									...prevChat,
+									messages: insertZendeskHistory( prevChat.messages, messages as Message[] ),
+								}
+							: prevChat
+					);
+				}
+			} )
+			.catch( ( error ) => {
+				recordTracksEvent( 'calypso_odie_zendesk_conversation_history_failed', {
+					conversation_id: historyConversationId,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+			} )
+			.finally( () => {
+				if ( activeZendeskHistoryRequestIdRef.current === requestId ) {
+					setHistoryLoadingConversationId( null );
+				}
+			} );
+	}, [ zendeskHistoryRequest, zendeskClientId, authData?.jwt, getZendeskConversationHistory ] );
 
 	useEffect( () => {
 		// Logged out chats don't have interactions. Only direct odie IDs.

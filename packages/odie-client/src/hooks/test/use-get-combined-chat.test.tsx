@@ -38,6 +38,10 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/i18n-utils', () => ( {
+	useHasEnTranslation: () => false,
+} ) );
+
 jest.mock( '../use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( {
 		loggedOutOdieChatId: undefined,
@@ -487,6 +491,66 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 		} );
 	} );
 
+	it( 'does not restart an in-flight history request when the client ID arrives', async () => {
+		mockZendeskClientId = undefined;
+		let resolveHistory: ( history: { messages: Message[]; truncated: boolean } ) => void = () => {};
+		mockGetZendeskConversationHistory.mockImplementation(
+			() => new Promise( ( resolve ) => ( resolveHistory = resolve ) )
+		);
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.isLoadingZendeskHistory ).toBe( true );
+		} );
+
+		mockZendeskClientId = 'client-1';
+		rerender();
+
+		expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 1 );
+
+		await act( async () => {
+			resolveHistory( { messages: [], truncated: false } );
+		} );
+		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+	} );
+
+	it( 'keeps loading while a newer history request is still in flight', async () => {
+		const resolveHistoryRequests: ( ( history: {
+			messages: Message[];
+			truncated: boolean;
+		} ) => void )[] = [];
+		mockGetZendeskConversationHistory.mockImplementation(
+			() =>
+				new Promise( ( resolve ) => {
+					resolveHistoryRequests.push( resolve );
+				} )
+		);
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		mockConnectionStatus = 'connected';
+		rerender();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		await act( async () => {
+			resolveHistoryRequests[ 0 ]( { messages: [], truncated: false } );
+		} );
+		expect( result.current.isLoadingZendeskHistory ).toBe( true );
+
+		await act( async () => {
+			resolveHistoryRequests[ 1 ]( { messages: [], truncated: false } );
+		} );
+		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+	} );
+
 	it( 'keeps the latest page when the history cannot be loaded', async () => {
 		mockGetZendeskConversationHistory.mockImplementation( () =>
 			Promise.reject( new Error( 'unauthorized' ) )
@@ -502,5 +566,12 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 			'chat-started',
 			'latest page',
 		] );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_zendesk_conversation_history_failed',
+			{
+				conversation_id: 'conv-1',
+				error: 'unauthorized',
+			}
+		);
 	} );
 } );
