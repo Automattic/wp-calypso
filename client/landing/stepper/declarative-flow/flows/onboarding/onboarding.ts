@@ -832,7 +832,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// Replaced so Back skips processing. Pushed, Back re-runs processing, which
+						// fails at once and pushes the error step again, once per press.
+						return navigate( 'error' as typeof currentStepSlug, undefined, true );
 					}
 					return;
 				}
