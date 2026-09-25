@@ -277,12 +277,6 @@ export function getFooterColumns2026( {
 					url: localizeUrl( 'https://wordpress.com/ecommerce/' ),
 				},
 				{
-					slug: 'link-in-bio',
-					label: __( 'Link in bio', __i18n_text_domain__ ),
-					url: 'https://gravatar.com/link-in-bio',
-					chevron: true,
-				},
-				{
 					slug: 'hosting',
 					label: __( 'Managed hosting', __i18n_text_domain__ ),
 					url: localizeUrl( 'https://wordpress.com/hosting/' ),

@@ -23,8 +23,9 @@
 		}
 	}
 
+	// Pre-2026 only: the 2026 nav floats over the hero, and the layout already clears the admin bar.
 	.is-logged-in {
-		.lpc-header-nav-wrapper {
+		.lpc-header-nav-wrapper:not( :has( .x-nav--2026-redesign ) ) {
 			padding-top: 32px;
 
 			@media ( max-width: $break-medium ) {
