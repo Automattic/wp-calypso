@@ -1,3 +1,4 @@
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 
 /**
@@ -68,4 +69,32 @@ export function getReceiptItemBillPeriod( item: ReceiptItem ): string {
 
 export function getReceiptItemSlugObject( item: ReceiptItem ): { product_slug: string } {
 	return { product_slug: item.wpcom_product_slug };
+}
+
+/**
+ * Returns the receipt without the domain mapping items for domains that were
+ * registered or transferred in the same purchase.
+ *
+ * The shopping cart merges each such mapping into its domain, but the receipt
+ * lists it as a separate (usually free) item. Removing it keeps the items we
+ * report the same as the ones the customer saw in checkout.
+ */
+export function mergeDomainMappingsIntoDomains( receipt: Receipt ): Receipt {
+	const purchasedDomains = new Set(
+		receipt.items
+			.filter(
+				( item ) =>
+					item.is_domain_registration || isDomainTransfer( getReceiptItemSlugObject( item ) )
+			)
+			.map( ( item ) => item.domain )
+	);
+	return {
+		...receipt,
+		items: receipt.items.filter(
+			( item ) =>
+				! (
+					isDomainMapping( getReceiptItemSlugObject( item ) ) && purchasedDomains.has( item.domain )
+				)
+		),
+	};
 }

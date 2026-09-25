@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { mergeDomainMappingsIntoDomains } from 'calypso/lib/analytics/utils/receipt-item-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordCompositeCheckoutErrorDuringAnalytics } from './analytics';
 import type { Receipt } from '@automattic/api-core';
@@ -48,9 +49,10 @@ function markReceiptRecorded( receiptId: number ): void {
  * comes first. It never rejects.
  */
 export async function recordCompletedPurchaseAnalytics(
-	receipt: Receipt,
+	fullReceipt: Receipt,
 	reduxDispatch: CalypsoDispatch
 ): Promise< void > {
+	const receipt = mergeDomainMappingsIntoDomains( fullReceipt );
 	if ( getRecordedReceiptIds().includes( receipt.id ) ) {
 		debug( 'receipt already recorded', receipt.id );
 		return;

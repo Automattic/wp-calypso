@@ -4,6 +4,7 @@ import {
 	getReceiptItemName,
 	getReceiptTotal,
 	isSaleCouponAppliedToReceiptItem,
+	mergeDomainMappingsIntoDomains,
 	smallestUnitToAmount,
 } from '../receipt-item-details';
 import type { Receipt, ReceiptItem, ReceiptItemCostOverride } from '@automattic/api-core';
@@ -101,5 +102,33 @@ describe( 'getReceiptItemBillPeriod', () => {
 		expect( getReceiptItemBillPeriod( makeItem( { months_per_renewal_interval: months } ) ) ).toBe(
 			expected
 		);
+	} );
+} );
+
+describe( 'mergeDomainMappingsIntoDomains', () => {
+	const registration = makeItem( {
+		wpcom_product_slug: 'dotcom_domain',
+		domain: 'example.com',
+		is_domain_registration: true,
+	} );
+	const transfer = makeItem( {
+		wpcom_product_slug: 'domain_transfer',
+		domain: 'example.org',
+		is_domain_registration: false,
+	} );
+	const mappingFor = ( domain: string ) =>
+		makeItem( { wpcom_product_slug: 'domain_map', domain, is_domain_registration: false } );
+
+	it( 'removes mappings for domains registered or transferred in the same purchase', () => {
+		const receipt = {
+			items: [ registration, mappingFor( 'example.com' ), transfer, mappingFor( 'example.org' ) ],
+		} as Receipt;
+		expect( mergeDomainMappingsIntoDomains( receipt ).items ).toEqual( [ registration, transfer ] );
+	} );
+
+	it( 'keeps mappings bought on their own', () => {
+		const mapping = mappingFor( 'example.net' );
+		const receipt = { items: [ registration, mapping ] } as Receipt;
+		expect( mergeDomainMappingsIntoDomains( receipt ).items ).toEqual( [ registration, mapping ] );
 	} );
 } );
