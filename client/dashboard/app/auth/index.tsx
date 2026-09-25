@@ -19,6 +19,9 @@ import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
+// When the user is bootstrapped, refetching this query returns the page-load
+// `window.currentUser` again, so invalidating it won't pick up account changes.
+// Fetch `/me` and set the query data instead (see `me-social-logins.ts`).
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 /**
