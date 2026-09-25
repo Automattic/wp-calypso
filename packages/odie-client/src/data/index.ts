@@ -1,6 +1,7 @@
 export { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 export {
 	getZendeskConversationHistoryQueryKey,
+	useAuthenticateZendeskMessaging,
 	useGetZendeskConversation,
 	useGetZendeskConversationHistory,
 	useGetUnreadConversations,

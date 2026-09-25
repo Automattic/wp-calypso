@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useGetCombinedChat } from '../use-get-combined-chat';
 import type { Message } from '../../types';
@@ -11,6 +12,8 @@ import type { Message } from '../../types';
  */
 let mockIsChatLoaded = true;
 let mockConnectionStatus: string | undefined;
+let mockZendeskClientId: string | undefined;
+let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
@@ -19,10 +22,10 @@ const mockGetZendeskConversationHistory = jest.fn();
 const mockGetQueryData = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
-	// The hook's only useSelect call returns { isChatLoaded, connectionStatus }.
 	useSelect: () => ( {
 		isChatLoaded: mockIsChatLoaded,
 		connectionStatus: mockConnectionStatus,
+		zendeskClientId: mockZendeskClientId,
 	} ),
 } ) );
 
@@ -44,12 +47,14 @@ jest.mock( '../use-logged-out-session', () => ( {
 } ) );
 
 jest.mock( '../../data', () => ( {
+	useAuthenticateZendeskMessaging: () => ( {
+		data: mockZendeskJwt ? { jwt: mockZendeskJwt } : undefined,
+	} ),
 	useGetZendeskConversation: () => mockGetZendeskConversation,
 	useGetZendeskConversationHistory: () => mockGetZendeskConversationHistory,
-	getZendeskConversationHistoryQueryKey: ( conversationId: string, before: number ) => [
+	getZendeskConversationHistoryQueryKey: ( conversationId: string ) => [
 		'zendesk-conversation-history',
 		conversationId,
-		before,
 	],
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
@@ -106,11 +111,15 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	mockIsChatLoaded = true;
 	mockConnectionStatus = undefined;
+	mockZendeskClientId = 'client-1';
+	mockZendeskJwt = 'messenger-jwt';
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
 	mockOdieChat = undefined;
 	mockGetZendeskConversation.mockImplementation( () => Promise.resolve( mockConversation ) );
-	mockGetZendeskConversationHistory.mockImplementation( () => Promise.resolve( [] ) );
+	mockGetZendeskConversationHistory.mockImplementation( () =>
+		Promise.resolve( { messages: [], truncated: false } )
+	);
 	mockGetQueryData.mockReturnValue( undefined );
 } );
 
@@ -382,7 +391,7 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 	} );
 
 	it( 'loads the messages before the latest page and puts them after the support divider', async () => {
-		let resolveHistory: ( messages: Message[] ) => void = () => {};
+		let resolveHistory: ( history: { messages: Message[]; truncated: boolean } ) => void = () => {};
 		mockGetZendeskConversationHistory.mockImplementation(
 			() => new Promise( ( resolve ) => ( resolveHistory = resolve ) )
 		);
@@ -395,7 +404,8 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 		expect( mockGetZendeskConversationHistory ).toHaveBeenCalledWith( {
 			conversationId: 'conv-1',
 			before: 300,
-			clientId: undefined,
+			clientId: 'client-1',
+			jwt: 'messenger-jwt',
 		} );
 		expect( contents( result.current.mainChatState.messages ) ).toEqual( [
 			'chat-started',
@@ -403,7 +413,14 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 		] );
 
 		await act( async () => {
-			resolveHistory( [ receivedMessage( 1, 'first', 100 ), receivedMessage( 2, 'second', 200 ) ] );
+			resolveHistory( {
+				messages: [
+					receivedMessage( 1, 'first', 100 ),
+					receivedMessage( 2, 'second', 200 ),
+					receivedMessage( 3, 'latest page', 300 ),
+				],
+				truncated: false,
+			} );
 		} );
 
 		expect( result.current.isLoadingZendeskHistory ).toBe( false );
@@ -413,10 +430,18 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 			'second',
 			'latest page',
 		] );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_zendesk_conversation_history_loaded',
+			expect.objectContaining( { truncated: false } )
+		);
 	} );
 
-	it( 'reuses the cached history when the conversation is re-fetched', async () => {
+	it( 'fills the gap after cached history when the conversation is re-fetched', async () => {
 		mockGetQueryData.mockReturnValue( [ receivedMessage( 1, 'first', 100 ) ] );
+		mockGetZendeskConversationHistory.mockResolvedValue( {
+			messages: [ receivedMessage( 1, 'first', 100 ), receivedMessage( 2, 'gap', 200 ) ],
+			truncated: false,
+		} );
 
 		const { result } = renderCombinedChat();
 
@@ -424,16 +449,42 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 			expect( contents( result.current.mainChatState.messages ) ).toEqual( [
 				'chat-started',
 				'first',
+				'gap',
 				'latest page',
 			] );
 		} );
-		expect( mockGetQueryData ).toHaveBeenCalledWith( [
-			'zendesk-conversation-history',
-			'conv-1',
-			300,
-		] );
-		expect( mockGetZendeskConversationHistory ).not.toHaveBeenCalled();
+		expect( mockGetQueryData ).toHaveBeenCalledWith( [ 'zendesk-conversation-history', 'conv-1' ] );
+		expect( mockGetZendeskConversationHistory ).toHaveBeenCalledWith( {
+			conversationId: 'conv-1',
+			before: 300,
+			clientId: 'client-1',
+			jwt: 'messenger-jwt',
+		} );
 		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+	} );
+
+	it( 'starts history loading when credentials arrive after the conversation', async () => {
+		mockZendeskClientId = undefined;
+		mockZendeskJwt = undefined;
+
+		const { rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+		} );
+		expect( mockGetZendeskConversationHistory ).not.toHaveBeenCalled();
+
+		mockZendeskJwt = 'messenger-jwt';
+		rerender();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledWith( {
+				conversationId: 'conv-1',
+				before: 300,
+				clientId: undefined,
+				jwt: 'messenger-jwt',
+			} );
+		} );
 	} );
 
 	it( 'keeps the latest page when the history cannot be loaded', async () => {

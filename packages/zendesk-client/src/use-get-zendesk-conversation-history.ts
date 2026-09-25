@@ -1,7 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { SMOOCH_APP_ID, SMOOCH_APP_ID_STAGING, WIDGET_URL, WIDGET_URL_STAGING } from './constants';
-import { fetchMessagingAuth } from './use-authenticate-zendesk-messaging';
 import { convertZendeskMessages } from './use-get-zendesk-conversation';
 import { isTestModeEnvironment } from './util';
 import type { MessageAction, ZendeskMessage } from './types';
@@ -22,11 +21,18 @@ type SunshineMessagesPage = {
 	hasPrevious?: boolean;
 };
 
-export const getZendeskConversationHistoryQueryKey = ( conversationId: string, before: number ) => [
+export const getZendeskConversationHistoryQueryKey = ( conversationId: string ) => [
 	'zendesk-conversation-history',
 	conversationId,
-	before,
 ];
+
+function mergeHistoryMessages( ...messageGroups: ReturnType< typeof convertZendeskMessages >[] ) {
+	const messagesById = new Map(
+		messageGroups.flat().map( ( message ) => [ message.id, message ] )
+	);
+
+	return [ ...messagesById.values() ].sort( ( first, second ) => first.received - second.received );
+}
 
 /**
  * The REST API returns messages in their raw Sunshine shape. Map them to the shape
@@ -58,61 +64,72 @@ export const useGetZendeskConversationHistory = () => {
 			conversationId,
 			before,
 			clientId,
+			jwt,
 		}: {
 			conversationId: string;
 			before: number;
 			clientId?: string;
-		} ) =>
-			queryClient.fetchQuery( {
-				queryKey: getZendeskConversationHistoryQueryKey( conversationId, before ),
-				queryFn: async () => {
-					const isTestMode = isTestModeEnvironment();
-					const appId = isTestMode ? SMOOCH_APP_ID_STAGING : SMOOCH_APP_ID;
-					const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
-					// Same query `useSmooch` authenticates with, so this is normally served from the cache.
-					const auth = await queryClient.fetchQuery( {
-						queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
-						queryFn: () => fetchMessagingAuth( 'zendesk', false ),
-						staleTime: 7 * 24 * 60 * 60 * 1000,
-					} );
+			jwt: string;
+		} ) => {
+			const queryKey = getZendeskConversationHistoryQueryKey( conversationId );
+			queryClient.setQueryDefaults( queryKey, {
+				staleTime: Infinity,
+				gcTime: Infinity,
+				meta: { persist: false },
+			} );
+			const cachedHistory =
+				queryClient.getQueryData< ReturnType< typeof convertZendeskMessages > >( queryKey ) ?? [];
+			const newestCachedReceived = cachedHistory.at( -1 )?.received;
+			const isTestMode = isTestModeEnvironment();
+			const appId = isTestMode ? SMOOCH_APP_ID_STAGING : SMOOCH_APP_ID;
+			const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
 
-					let olderMessages: ZendeskMessage[] = [];
-					let cursor = before;
+			return ( async () => {
+				let olderMessages: ZendeskMessage[] = [];
+				let cursor = before;
+				let truncated = false;
 
-					for ( let page = 0; page < MAX_HISTORY_PAGES; page++ ) {
-						const response = await fetch(
-							`${ url }/sc/sdk/v2/apps/${ appId }/conversations/${ conversationId }/messages?before=${ cursor }`,
-							{
-								credentials: 'include',
-								headers: {
-									Authorization: `Bearer ${ auth.jwt }`,
-									'x-smooch-appid': appId,
-									...( clientId && { 'x-smooch-clientid': clientId } ),
-									'x-smooch-sdk': 'web/zendesk/0.1',
-								},
-							}
-						);
-
-						if ( ! response.ok ) {
-							throw new Error( `Failed to fetch the conversation history: ${ response.status }` );
+				for ( let page = 0; page < MAX_HISTORY_PAGES; page++ ) {
+					const response = await fetch(
+						`${ url }/sc/sdk/v2/apps/${ appId }/conversations/${ conversationId }/messages?before=${ cursor }`,
+						{
+							credentials: 'include',
+							headers: {
+								Authorization: `Bearer ${ jwt }`,
+								'x-smooch-appid': appId,
+								...( clientId && { 'x-smooch-clientid': clientId } ),
+								'x-smooch-sdk': 'web/zendesk/0.1',
+							},
 						}
+					);
 
-						const { messages = [], hasPrevious }: SunshineMessagesPage = await response.json();
-						olderMessages = [ ...messages.map( toSmoochMessage ), ...olderMessages ];
-
-						if ( ! hasPrevious || ! messages.length ) {
-							break;
-						}
-						cursor = messages[ 0 ].received;
+					if ( ! response.ok ) {
+						throw new Error( `Failed to fetch the conversation history: ${ response.status }` );
 					}
 
-					return convertZendeskMessages( olderMessages );
-				},
-				staleTime: Infinity,
-				meta: {
-					persist: false,
-				},
-			} ),
+					const { messages = [], hasPrevious }: SunshineMessagesPage = await response.json();
+					olderMessages = [ ...messages.map( toSmoochMessage ), ...olderMessages ];
+					const reachedCachedHistory =
+						newestCachedReceived !== undefined &&
+						messages.some( ( message ) => message.received <= newestCachedReceived );
+
+					if ( reachedCachedHistory || ! hasPrevious || ! messages.length ) {
+						break;
+					}
+
+					truncated = page === MAX_HISTORY_PAGES - 1;
+					cursor = messages[ 0 ].received;
+				}
+
+				const messages = mergeHistoryMessages(
+					cachedHistory,
+					convertZendeskMessages( olderMessages )
+				);
+				queryClient.setQueryData( queryKey, messages );
+
+				return { messages, truncated };
+			} )();
+		},
 		[ queryClient ]
 	);
 };

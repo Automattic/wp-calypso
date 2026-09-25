@@ -10,13 +10,10 @@ export const convertZendeskMessages = ( messages: ZendeskMessage[] ) =>
 		.filter( ( message ) => message.type !== 'form' && message.type !== 'formResponse' )
 		.map( zendeskMessageConverter );
 
-const parseResponse = ( conversation: Conversation ) => {
-	const clientId = conversation?.messages.findLast(
-		( message: ZendeskMessage ) => message.source?.id
-	)?.source?.id;
-
-	return { ...conversation, clientId, messages: convertZendeskMessages( conversation?.messages ) };
-};
+const parseResponse = ( conversation: Conversation ) => ( {
+	...conversation,
+	messages: convertZendeskMessages( conversation?.messages ),
+} );
 
 /**
  * Get the conversation for the Zendesk conversation.
