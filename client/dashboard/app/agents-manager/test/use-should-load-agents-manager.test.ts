@@ -111,7 +111,6 @@ describe( 'marketplace eligibility', () => {
 		'/plugins/wordpress-seo/example.com',
 		'/plugins/browse/seo',
 		'/plugins/browse/seo/example.com',
-		'/plugins?search=seo',
 	] )( 'loads %s with WordPress Agent enabled on the selected site', ( route ) => {
 		const siteId = 123;
 		queryClient.setQueryData( bigSkyPluginQuery( siteId ).queryKey, { enabled: true } );

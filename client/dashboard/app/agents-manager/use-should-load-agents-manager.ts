@@ -31,9 +31,8 @@ export function getAgentsManagerEligibility(
 	currentRoute: string | null | undefined,
 	isWordPressAgentEnabled: boolean
 ): AgentsManagerEligibility {
-	const path = currentRoute?.split( '?' )[ 0 ];
-	const route = path
-		? ENABLED_ROUTES.find( ( candidate ) => candidate.pattern.test( path ) )
+	const route = currentRoute
+		? ENABLED_ROUTES.find( ( candidate ) => candidate.pattern.test( currentRoute ) )
 		: undefined;
 	const isInternalOnly = route?.isInternalOnly ?? false;
 
