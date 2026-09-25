@@ -37,7 +37,6 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import PluginRecommendationsAgentLoader from 'calypso/my-sites/plugins/plugin-recommendations-agent-loader';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -156,10 +155,6 @@ function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
 
 	if ( ! routeIsEnabled ) {
 		return null;
-	}
-
-	if ( sectionName === 'plugins' ) {
-		return <PluginRecommendationsAgentLoader sectionName={ sectionName } />;
 	}
 
 	return <AgentsManagerLoader sectionName={ sectionName } isInternalOnly={ isInternalOnly } />;

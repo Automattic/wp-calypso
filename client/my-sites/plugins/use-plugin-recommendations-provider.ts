@@ -1,25 +1,11 @@
-// Mounts the agents-manager dock on plugins pages and bridges the
-// Plugin recommendations tool provider into AM's externally-loaded providers
-// chain. Lives at layout level (rendered by `client/layout/index.jsx`)
-// so the dock survives navigation between marketplace sub-routes.
-
-import { ORCHESTRATOR_AGENT_ID } from '@automattic/agents-manager/src/constants';
 import { useEffect, useState } from '@wordpress/element';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import {
 	deliverPicks,
 	setPicks,
 } from 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store';
 import { useStore } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { JSX } from 'react';
-
-const importAgentsManager = () =>
-	import(
-		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
-	);
 
 const importAgentProvider = () =>
 	import(
@@ -29,43 +15,31 @@ const importAgentProvider = () =>
 // Module-scoped so the provider object's identity is stable across re-renders.
 let cachedProvider: { toolProvider: object } | null = null;
 
-export default function PluginRecommendationsAgentLoader( {
-	sectionName,
-}: {
-	sectionName: string;
-} ): JSX.Element | null {
-	if ( sectionName !== 'plugins' ) {
-		// Fast-path for the majority of routes pageviews that aren't in the plugins section.
-		return null;
-	}
-
-	return <PluginRecommendationsAgentLoaderInner />;
-}
-
-function PluginRecommendationsAgentLoaderInner(): JSX.Element | null {
+export default function usePluginRecommendationsProvider( enabled: boolean ) {
 	const store = useStore();
-	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 
-	const gatesPassed = !! user;
-
-	const [ ready, setReady ] = useState( cachedProvider !== null );
+	const [ ready, setReady ] = useState( false );
 
 	// Picks are tied to the agent conversation that produced them, which is
 	// scoped to a specific site. The picks store is module-scoped (survives
 	// route changes), so a site switch would otherwise leave site A's picks
 	// rendering under site B. Clear on every site change.
 	useEffect( () => {
-		setPicks( [] );
-	}, [ selectedSite?.ID ] );
+		if ( enabled ) {
+			setPicks( [] );
+		}
+	}, [ enabled, selectedSite?.ID ] );
 
 	useEffect( () => {
-		if ( ! gatesPassed ) {
+		if ( ! enabled ) {
+			setReady( false );
 			return;
 		}
 
 		if ( cachedProvider ) {
 			registerInlineProvider( cachedProvider );
+			setReady( true );
 			return;
 		}
 
@@ -88,23 +62,9 @@ function PluginRecommendationsAgentLoaderInner(): JSX.Element | null {
 		return () => {
 			cancelled = true;
 		};
-	}, [ gatesPassed, store ] );
+	}, [ enabled, store ] );
 
-	if ( ! gatesPassed || ! ready ) {
-		return null;
-	}
-
-	return (
-		<AsyncLoad
-			require={ importAgentsManager }
-			placeholder={ null }
-			agentId={ ORCHESTRATOR_AGENT_ID }
-			currentUser={ user }
-			sectionName="plugins"
-			site={ selectedSite ?? null }
-			currentSiteId={ selectedSite?.ID }
-		/>
-	);
+	return ready;
 }
 
 function registerInlineProvider( provider: object ): void {
