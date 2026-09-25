@@ -120,6 +120,26 @@ describe( 'CreditsMeter', () => {
 		expect( onAction ).toHaveBeenCalled();
 	} );
 
+	it( 'updates the paid ring tone at the exact threshold independently of its rounded label', () => {
+		const { rerender } = render(
+			<CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } />
+		);
+		for ( const [ percent, tone ] of [
+			[ 20.01, 'muted' ],
+			[ 20, 'error' ],
+			[ 20.01, 'muted' ],
+		] as const ) {
+			rerender(
+				<CreditsMeter status={ { ...paid, percent } } isOpen={ false } onToggle={ () => {} } />
+			);
+			expect(
+				screen.getByRole( 'button', { name: '20% of site credits left' } )
+			).toBeInTheDocument();
+			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', tone );
+			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-percent', String( percent ) );
+		}
+	} );
+
 	it( 'renders real fractional allowance details without inventing purchase or manage actions', () => {
 		const status: CreditsStatus = {
 			plan: 'paid',

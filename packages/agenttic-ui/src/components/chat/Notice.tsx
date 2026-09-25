@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import React, { useCallback } from 'react';
 import Markdown from 'react-markdown';
 import { cn } from '../../utils/classNames';
@@ -6,14 +7,12 @@ import { AlertTriangleIcon } from '../icons/AlertTriangleIcon';
 import { XIcon } from '../icons/XIcon';
 import { Button } from '../ui/button';
 import styles from './Notice.module.css';
+import type { NoticeConfig } from '../../types';
 
 interface NoticeProps {
 	icon?: React.ReactNode | null | false;
 	message: string;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?: NoticeConfig[ 'action' ];
 	dismissible?: boolean;
 	onDismiss?: () => void;
 	className?: string;
@@ -86,13 +85,28 @@ export function Notice( {
 				</div>
 			</div>
 			<div className={ styles.actions }>
-				{ action && (
-					<Button className={ styles.action } onClick={ action.onClick } variant="link">
-						{ action.label }
+				{ action?.href !== undefined ? (
+					<Button className={ styles.action } variant="link" asChild>
+						<a href={ action.href } target={ action.target } rel={ action.rel }>
+							{ action.label }
+						</a>
 					</Button>
+				) : (
+					action && (
+						<Button
+							type="button"
+							className={ styles.action }
+							onClick={ action.onClick }
+							variant="link"
+						>
+							{ action.label }
+						</Button>
+					)
 				) }
 				{ dismissible && onDismiss && (
 					<Button
+						type="button"
+						aria-label={ __( 'Dismiss notice', 'a8c-agenttic' ) }
 						className={ styles.dismissible }
 						onClick={ onDismiss }
 						variant="ghost"

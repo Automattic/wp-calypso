@@ -220,10 +220,15 @@ export interface AgentUIProps {
 export interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
 	message: string;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?:
+		| { label: string; onClick: () => void; href?: never }
+		| {
+				label: string;
+				href: string;
+				target?: React.HTMLAttributeAnchorTarget;
+				rel?: string;
+				onClick?: never;
+		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
 	status?: 'success' | 'warning' | 'error';
