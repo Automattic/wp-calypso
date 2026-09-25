@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { useResourceCtaLabel } from './use-resource-cta-label';
 import type { ResourceItem, RecordTracksEvent } from './types';
@@ -45,27 +46,24 @@ export default function ResourceCard( {
 	};
 
 	return (
-		<Card>
-			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+		<Card className="dashboard-resources-learn__card">
+			<CardBody className="dashboard-resources-learn__card-body">
+				<VStack spacing={ 3 } justify="flex-start" className="dashboard-resources-learn__card-main">
 					{ showLogo && <HStack>{ resource.logo }</HStack> }
 					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
-							{ resource.name }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ resource.description }
-						</Text>
+						<Text weight={ 500 }>{ resource.name }</Text>
+						<Text variant="muted">{ resource.description }</Text>
 					</VStack>
 				</VStack>
-				<Button
-					variant="secondary"
-					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-					onClick={ handleClick }
-					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-				>
-					{ ctaLabel }
-				</Button>
+				<ButtonStack justify="flex-start" className="dashboard-resources-learn__card-footer">
+					<Button
+						variant="secondary"
+						{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
+						onClick={ handleClick }
+					>
+						{ ctaLabel }
+					</Button>
+				</ButtonStack>
 			</CardBody>
 		</Card>
 	);

@@ -1,14 +1,14 @@
-import {
-	Modal,
-	__experimentalSpacer as Spacer,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
+
+export const getResourceCenterDescription = () =>
+	__(
+		'Browse our guides and articles for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including practical ways to recommend the right solutions for your clients.'
+	);
 
 interface ResourceCenterProps {
 	resources: ResourceItem[];
@@ -42,14 +42,6 @@ export default function ResourceCenter( {
 
 	return (
 		<>
-			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
-				<Text size={ 15 }>
-					{ __(
-						'Browse our guides and articles for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including practical ways to recommend the right solutions for your clients.'
-					) }
-				</Text>
-			</Spacer>
-
 			<BrowseAllResources
 				resources={ resources }
 				onOpenVideoModal={ handleOpenVideoModal }
