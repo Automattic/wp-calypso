@@ -10,7 +10,7 @@ export const jetpackCrmExtensionsQuery = ( appUrl: string ) =>
 
 export const jetpackCrmExtensionDownloadMutation = ( appUrl: string, licenseKey: string ) =>
 	mutationOptions( {
-		meta: { statId: 'jetpack-crm-extension-download' },
+		meta: { statId: 'jetpack-crm-download' },
 		mutationFn: ( extensionSlug: string ) =>
 			fetchJetpackCrmExtensionDownload( appUrl, licenseKey, extensionSlug ),
 	} );

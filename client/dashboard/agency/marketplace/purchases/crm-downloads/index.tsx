@@ -1,4 +1,3 @@
-import { JetpackCrmRequestError, type JetpackCrmExtension } from '@automattic/api-core';
 import {
 	jetpackCrmExtensionDownloadMutation,
 	jetpackCrmExtensionsQuery,
@@ -26,35 +25,18 @@ import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
 import { TextSkeleton } from '../../../../components/text-skeleton';
 import { isJetpackCrmLicenseKey } from '../license-status';
+import {
+	getConnectionErrorMessage,
+	getDownloadErrorMessage,
+	getExtensionsErrorMessage,
+} from './errors';
 import { getExtensionDescription } from './extension-descriptions';
+import type { JetpackCrmExtension } from '@automattic/api-core';
 
 const JETPACK_CRM_APP_URL =
 	config( 'env' ) === 'development'
 		? 'https://devapp.jetpackcrm.com'
 		: 'https://app.jetpackcrm.com';
-
-const CONNECTION_ERROR = () =>
-	__( 'Could not connect to download server. Please check your connection and try again.' );
-
-const getExtensionsStatusMessages = (): Record< number, string > => ( {
-	404: __( 'Extensions not found' ),
-} );
-
-const getDownloadStatusMessages = (): Record< number, string > => ( {
-	400: __( 'Missing required fields' ),
-	401: __( 'Invalid API key' ),
-	403: __( 'Invalid license key format. Must be a Jetpack Complete license key.' ),
-	404: __( 'Extension not found' ),
-} );
-
-function getErrorMessage( error: Error, statusMessages: Record< number, string > ) {
-	const message =
-		error instanceof JetpackCrmRequestError
-			? error.message || statusMessages[ error.status ] || CONNECTION_ERROR()
-			: CONNECTION_ERROR();
-	/* translators: %s is an error message from the download server */
-	return sprintf( __( 'Error: %s' ), message );
-}
 
 function LicenseKeyCard( { licenseKey }: { licenseKey: string } ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
@@ -90,7 +72,7 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 		refetch,
 		isFetching,
 	} = useQuery( jetpackCrmExtensionsQuery( JETPACK_CRM_APP_URL ) );
-	const { mutate: fetchDownload } = useMutation(
+	const { mutateAsync: fetchDownload } = useMutation(
 		jetpackCrmExtensionDownloadMutation( JETPACK_CRM_APP_URL, licenseKey )
 	);
 	// Several downloads can be in flight at once, so pending state is tracked per extension.
@@ -98,30 +80,29 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 
 	useEffect( () => {
 		if ( error ) {
-			createErrorNotice( getErrorMessage( error, getExtensionsStatusMessages() ), {
-				type: 'snackbar',
-			} );
+			createErrorNotice( getExtensionsErrorMessage( error ), { type: 'snackbar' } );
 		}
 	}, [ error, createErrorNotice ] );
 
 	const download = ( extension: JetpackCrmExtension ) => {
 		setPendingSlugs( ( slugs ) => [ ...slugs, extension.slug ] );
-		fetchDownload( extension.slug, {
-			onSuccess: ( { download_url } ) => {
+		// `mutate()` callbacks only fire for the latest call, so each download
+		// handles its own promise to keep concurrent downloads independent.
+		fetchDownload( extension.slug )
+			.then( ( { download_url } ) => {
 				window.location.assign( download_url );
 				createInfoNotice(
 					/* translators: %s is the name of a Jetpack CRM extension */
 					sprintf( __( 'Downloading %s' ), extension.name ),
 					{ type: 'snackbar' }
 				);
-			},
-			onError: ( downloadError ) =>
-				createErrorNotice( getErrorMessage( downloadError, getDownloadStatusMessages() ), {
-					type: 'snackbar',
-				} ),
-			onSettled: () =>
-				setPendingSlugs( ( slugs ) => slugs.filter( ( slug ) => slug !== extension.slug ) ),
-		} );
+			} )
+			.catch( ( downloadError: Error ) =>
+				createErrorNotice( getDownloadErrorMessage( downloadError ), { type: 'snackbar' } )
+			)
+			.finally( () =>
+				setPendingSlugs( ( slugs ) => slugs.filter( ( slug ) => slug !== extension.slug ) )
+			);
 	};
 
 	if ( isLoading ) {
@@ -149,7 +130,7 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 } alignment="left">
-						<Text>{ CONNECTION_ERROR() }</Text>
+						<Text>{ getConnectionErrorMessage() }</Text>
 						<Button
 							variant="secondary"
 							__next40pxDefaultSize
@@ -204,8 +185,7 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 	);
 }
 
-export default function CrmDownloads() {
-	const { licenseKey } = marketplacePurchasesCrmDownloadsRoute.useParams();
+export function CrmDownloadsContent( { licenseKey }: { licenseKey: string } ) {
 	const isValidKey = isJetpackCrmLicenseKey( licenseKey );
 
 	return (
@@ -236,4 +216,9 @@ export default function CrmDownloads() {
 			) }
 		</PageLayout>
 	);
+}
+
+export default function CrmDownloads() {
+	const { licenseKey } = marketplacePurchasesCrmDownloadsRoute.useParams();
+	return <CrmDownloadsContent licenseKey={ licenseKey } />;
 }
