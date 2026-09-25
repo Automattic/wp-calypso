@@ -44,6 +44,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
+import './style.scss';
 
 function SiteSpecContainer( {
 	siteSpecConfig,
@@ -56,7 +57,7 @@ function SiteSpecContainer( {
 } ) {
 	useSiteSpec( { siteSpecConfig, onMessage, onSpecConfirm } );
 
-	return <div id="site-spec-container" style={ { height: '100vh' } } />;
+	return <div id="site-spec-container" className="site-spec-step__container" />;
 }
 
 function getSpecId( specData: unknown ): string {
