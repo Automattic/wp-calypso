@@ -35,9 +35,27 @@ export function domainItem(
 }
 
 /**
+ * Returns the number of mailboxes being bought. On a first purchase WordPress.com
+ * provisions exactly this many mailboxes, so it is never lower than 1.
+ */
+function getTitanNewMailboxCount( extra?: RequestCartProductExtra ): number {
+	const newQuantity = extra?.new_quantity ?? 0;
+	if ( newQuantity >= 1 ) {
+		return newQuantity;
+	}
+
+	const mailboxCount = extra?.email_users?.length ?? 0;
+	if ( mailboxCount >= 1 ) {
+		return mailboxCount;
+	}
+
+	return 1;
+}
+
+/**
  * Creates a new shopping cart item for Titan Mail.
  */
-function titanMailProduct(
+export function titanMailProduct(
 	properties: TitanProductProps,
 	productSlug: string
 ): MinimalRequestCartProduct {
@@ -50,7 +68,10 @@ function titanMailProduct(
 	return {
 		...domainItem( productSlug, domainName, properties.source ),
 		quantity: properties.quantity,
-		extra: properties.extra,
+		extra: {
+			...properties.extra,
+			new_quantity: getTitanNewMailboxCount( properties.extra ),
+		},
 	};
 }
 
