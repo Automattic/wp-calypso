@@ -233,7 +233,7 @@ export default function MonetizeSubscriptionDetails() {
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 	const formattedExpiry = useFormattedTime( subscription?.end_date ?? '' );
 	const formattedRenewal = useFormattedTime( subscription?.end_date ?? '' );
-	const isOneTimePurchase = subscription?.renew_interval === 'one-time';
+	const isOneTimePurchase = subscription?.end_date === null;
 	const expiryDateTitle = ( () => {
 		if ( isProduct ) {
 			return __( 'Paid until' );
@@ -284,6 +284,9 @@ export default function MonetizeSubscriptionDetails() {
 								return formattedExpiry;
 							} )() }
 							description={ ( () => {
+								if ( isOneTimePurchase ) {
+									return undefined;
+								}
 								if ( isAutoRenewing ) {
 									return __( 'Auto-renew is enabled.' );
 								}
@@ -319,11 +322,13 @@ export default function MonetizeSubscriptionDetails() {
 								) }
 							/>
 						) }
-						<OverviewCard
-							icon={ rotateRight }
-							title={ __( 'Renewal interval' ) }
-							heading={ subscription.renew_interval || '-' }
-						/>
+						{ ! isOneTimePurchase && (
+							<OverviewCard
+								icon={ rotateRight }
+								title={ __( 'Renewal interval' ) }
+								heading={ subscription.renew_interval || '-' }
+							/>
+						) }
 					</Grid>
 
 					{ isRenewable && (
