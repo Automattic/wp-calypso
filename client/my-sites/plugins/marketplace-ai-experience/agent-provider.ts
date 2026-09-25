@@ -56,21 +56,17 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 		const source = VALID_SOURCES.includes( rawSource as PickSource )
 			? ( rawSource as PickSource )
 			: undefined;
+		const url = typeof p.url === 'string' ? p.url.trim() : undefined;
 
 		seen.add( slug );
 		out.push( {
 			slug,
 			why,
 			...( source && { source } ),
-			...( p.url !== undefined && { url: p.url } ),
+			...( url && { url } ),
 		} );
-			const url = typeof p.url === 'string' ? p.url.trim() : undefined;
-			out.push( {
-				slug,
-				why,
-				...( source && { source } ),
-				...( url && { url } ),
-			} );
+	}
+
 	return out;
 }
 
