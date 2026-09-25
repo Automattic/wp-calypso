@@ -16,7 +16,6 @@ interface ResourceCardProps {
 	onResourceClick?: ( resource: ResourceItem ) => void;
 	showLogo?: boolean;
 	tracksEventName: string;
-	isBorderless?: boolean;
 }
 
 export default function ResourceCard( {
@@ -26,7 +25,6 @@ export default function ResourceCard( {
 	onResourceClick,
 	showLogo = false,
 	tracksEventName,
-	isBorderless = false,
 }: ResourceCardProps ) {
 	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'video';
@@ -47,7 +45,7 @@ export default function ResourceCard( {
 	};
 
 	return (
-		<Card isBorderless={ isBorderless } size={ isBorderless ? 'none' : undefined }>
+		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					{ showLogo && <HStack>{ resource.logo }</HStack> }

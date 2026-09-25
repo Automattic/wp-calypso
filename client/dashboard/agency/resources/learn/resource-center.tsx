@@ -7,8 +7,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
-import ResourceSection from './resource-section';
-import { useFilterResources } from './use-filter-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
 
@@ -33,14 +31,14 @@ export default function ResourceCenter( {
 
 	const resources = useMemo(
 		() =>
-			// Sort by created_at descending (newest first).
+			// Featured first, then by created_at descending (newest first).
 			[ ...unsortedResources ].sort(
-				( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+				( a, b ) =>
+					Number( b.isFeatured ) - Number( a.isFeatured ) ||
+					new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
 			),
 		[ unsortedResources ]
 	);
-
-	const { topResources, browseAllResources } = useFilterResources( resources );
 
 	return (
 		<>
@@ -52,19 +50,8 @@ export default function ResourceCenter( {
 				</Text>
 			</Spacer>
 
-			<ResourceSection
-				title={ __( 'Top resources' ) }
-				resources={ topResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				showLogo
-				columnMinWidth={ 320 }
-				tracksEventName="calypso_a4a_resource_center_top_resource_click"
-			/>
-
 			<BrowseAllResources
-				resources={ browseAllResources }
+				resources={ resources }
 				onOpenVideoModal={ handleOpenVideoModal }
 				recordTracksEvent={ recordTracksEvent }
 				onResourceClick={ onResourceClick }
