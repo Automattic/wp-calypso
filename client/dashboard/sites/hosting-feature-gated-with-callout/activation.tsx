@@ -120,7 +120,7 @@ export default function ActivationCallout( {
 					onRequestClose={ () => setIsModalOpen( false ) }
 					size="medium"
 				>
-					<HostingFeatureActivationModal siteId={ site.ID } onProceed={ handleConfirm } />
+					<HostingFeatureActivationModal site={ site } onProceed={ handleConfirm } />
 				</Modal>
 			</Suspense>
 		);
