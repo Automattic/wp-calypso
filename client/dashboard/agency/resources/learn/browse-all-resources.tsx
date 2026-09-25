@@ -10,7 +10,13 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Grid from '../../../components/grid';
-import { getContentTypeLabel, getProductLabel, getStageLabel } from './labels';
+import {
+	getAudienceLabel,
+	getContentTypeLabel,
+	getFormatLabel,
+	getProductLabel,
+	getStageLabel,
+} from './labels';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { AgencyResourceStage } from '@automattic/api-core';
@@ -59,30 +65,34 @@ export default function BrowseAllResources( {
 		} ) ),
 	];
 
-	// Build filter options dynamically from available resources.
-	const filterOptions = useMemo( () => {
-		const products = new Set< string >();
-		const contentTypes = new Set< string >();
+	const fields: Field< ResourceItem >[] = useMemo( () => {
+		// Only offer values that occur in the data, per the v2 contract.
+		const toElements = (
+			getValue: ( resource: ResourceItem ) => string,
+			getLabel: ( value: string ) => string
+		) =>
+			Array.from( new Set( resources.map( getValue ) ) ).map( ( value ) => ( {
+				value,
+				label: getLabel( value ),
+			} ) );
 
-		resources.forEach( ( resource ) => {
-			products.add( resource.product );
-			contentTypes.add( resource.contentType );
+		const filterField = (
+			id: string,
+			label: string,
+			getValue: ( resource: ResourceItem ) => string,
+			getLabel: ( value: string ) => string
+		): Field< ResourceItem > => ( {
+			id,
+			label,
+			type: 'text',
+			getValue: ( { item } ) => getValue( item ),
+			elements: toElements( getValue, getLabel ),
+			filterBy: { operators: [ 'is', 'isAny' ] },
+			enableSorting: false,
+			enableHiding: true,
 		} );
 
-		return {
-			products: Array.from( products ).map( ( value ) => ( {
-				value,
-				label: getProductLabel( value ),
-			} ) ),
-			contentTypes: Array.from( contentTypes ).map( ( value ) => ( {
-				value,
-				label: getContentTypeLabel( value ),
-			} ) ),
-		};
-	}, [ resources ] );
-
-	const fields: Field< ResourceItem >[] = useMemo(
-		() => [
+		return [
 			{
 				id: 'name',
 				getValue: ( { item } ) => item.name,
@@ -94,32 +104,26 @@ export default function BrowseAllResources( {
 				enableGlobalSearch: true,
 			},
 			{
-				id: 'product',
-				label: __( 'Product' ),
+				id: 'featured',
+				label: __( 'Top resources' ),
 				type: 'text',
-				getValue: ( { item } ) => item.product,
-				elements: filterOptions.products,
-				filterBy: {
-					operators: [ 'is' ],
-				},
+				getValue: ( { item } ) => ( item.isFeatured ? 'featured' : '' ),
+				elements: [ { value: 'featured', label: __( 'Top resource' ) } ],
+				filterBy: { operators: [ 'is' ] },
 				enableSorting: false,
 				enableHiding: true,
 			},
-			{
-				id: 'contentType',
-				label: __( 'Resource type' ),
-				type: 'text',
-				getValue: ( { item } ) => item.contentType,
-				elements: filterOptions.contentTypes,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
-		],
-		[ filterOptions ]
-	);
+			filterField( 'product', __( 'Product' ), ( item ) => item.product, getProductLabel ),
+			filterField( 'audience', __( 'Audience' ), ( item ) => item.audience, getAudienceLabel ),
+			filterField(
+				'contentType',
+				__( 'Content type' ),
+				( item ) => item.contentType,
+				getContentTypeLabel
+			),
+			filterField( 'format', __( 'Format' ), ( item ) => item.format, getFormatLabel ),
+		];
+	}, [ resources ] );
 
 	const { data: filteredData, paginationInfo } = useMemo(
 		() => filterSortAndPaginate( stageResources, view, fields ),
