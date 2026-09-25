@@ -1,14 +1,13 @@
 import {
-	Button,
+	VisuallyHidden,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { getAudienceLabel, getStageLabel } from './labels';
-import { useResourceCtaLabel } from './use-resource-cta-label';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { MouseEvent } from 'react';
 
@@ -29,7 +28,6 @@ export default function ResourceCard( {
 	showLogo = false,
 	tracksEventName,
 }: ResourceCardProps ) {
-	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'video';
 
 	const handleClick = ( event: MouseEvent ) => {
@@ -49,11 +47,30 @@ export default function ResourceCard( {
 
 	return (
 		<Card className="dashboard-resources-learn__card">
-			<CardBody className="dashboard-resources-learn__card-body">
-				<VStack spacing={ 3 } justify="flex-start" className="dashboard-resources-learn__card-main">
+			<CardBody>
+				<VStack spacing={ 3 } justify="flex-start">
 					{ showLogo && <HStack>{ resource.logo }</HStack> }
 					<VStack spacing={ 1 }>
-						<Text weight={ 500 }>{ resource.name }</Text>
+						<Text weight={ 500 }>
+							{ /* Its ::after covers the card, so the whole card is the link. */ }
+							<a
+								className="dashboard-resources-learn__card-link"
+								href={ resource.externalUrl }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ handleClick }
+							>
+								{ resource.name }
+								{ ! isVideo && (
+									<VisuallyHidden as="span">
+										{
+											/* translators: accessibility text */
+											__( '(opens in a new tab)' )
+										}
+									</VisuallyHidden>
+								) }
+							</a>
+						</Text>
 						<Text variant="muted">{ resource.description }</Text>
 					</VStack>
 					<HStack spacing={ 1 } justify="flex-start" wrap>
@@ -61,15 +78,6 @@ export default function ResourceCard( {
 						<Badge intent="draft">{ getStageLabel( resource.stage ) }</Badge>
 					</HStack>
 				</VStack>
-				<ButtonStack justify="flex-start" className="dashboard-resources-learn__card-footer">
-					<Button
-						variant="secondary"
-						{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-						onClick={ handleClick }
-					>
-						{ ctaLabel }
-					</Button>
-				</ButtonStack>
 			</CardBody>
 		</Card>
 	);
