@@ -17,7 +17,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -143,67 +143,109 @@ function AutoRenewButton( {
 	);
 }
 
-function StopSubscriptionButton( {
+function CancelOrRemoveButton( {
+	disableAutoRenew,
 	stopSubscription,
 	isProduct,
-	subscription,
+	isAutoRenewing,
+	renewalDate,
 }: {
+	disableAutoRenew: ( data: any, variables?: object ) => void;
 	stopSubscription: ( data: any, variables: object ) => void;
 	isProduct: boolean;
-	subscription: MonetizeSubscription;
+	isAutoRenewing: boolean;
+	renewalDate: string;
 } ) {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
-	const title = isProduct
-		? // translators: %s is the product title
-			sprintf( __( 'Remove %s product' ), subscription.title )
-		: // translators: %s is the product title
-			sprintf( __( 'Stop %s subscription' ), subscription.title );
+
+	const showCancel = ! isProduct && isAutoRenewing;
+
+	const title = ( () => {
+		if ( showCancel ) {
+			return __( 'Cancel subscription' );
+		}
+		return isProduct ? __( 'Remove one-time purchase' ) : __( 'Remove subscription' );
+	} )();
+
+	const description = ( () => {
+		if ( showCancel ) {
+			/* translators: %(date)s is a formatted date string. */
+			return sprintf( __( 'Stop future payments. Keep access to subscription until %(date)s.' ), {
+				date: renewalDate,
+			} );
+		}
+		return isProduct
+			? __( 'One-time purchase will be removed immediately.' )
+			: __( 'Subscription will be removed immediately.' );
+	} )();
+
+	const buttonLabel = showCancel
+		? _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' )
+		: _x(
+				'Remove',
+				'Remove the cancelled or expired subscription from the list of active purchases.'
+			);
+
+	const onClick = () => {
+		if ( showCancel ) {
+			disableAutoRenew( null, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Auto-renew has been disabled.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to update your subscription.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				},
+			} );
+			return;
+		}
+
+		stopSubscription( null, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
+				navigate( { to: monetizeSubscriptionsRoute.fullPath } );
+			},
+			onError: () => {
+				if ( isProduct ) {
+					createErrorNotice( __( 'There was a problem while removing your product.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				} else {
+					createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
+						actions: [
+							{
+								url: SUPPORT_CONTACT_URL,
+								label: __( 'Please contact support' ),
+							},
+						],
+						type: 'snackbar',
+					} );
+				}
+			},
+		} );
+	};
+
 	return (
 		<ActionList.ActionItem
 			title={ title }
-			description={ __( 'We’ll be sorry to see you go!' ) }
+			description={ description }
 			actions={
-				<Button
-					variant="secondary"
-					isDestructive
-					size="compact"
-					onClick={ () => {
-						stopSubscription( null, {
-							onSuccess: () => {
-								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
-								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
-							},
-							onError: () => {
-								if ( isProduct ) {
-									createErrorNotice( __( 'There was a problem while removing your product.' ), {
-										actions: [
-											{
-												url: SUPPORT_CONTACT_URL,
-												label: __( 'Please contact support' ),
-											},
-										],
-										type: 'snackbar',
-									} );
-								} else {
-									createErrorNotice(
-										__( 'There was a problem while stopping your subscription.' ),
-										{
-											actions: [
-												{
-													url: SUPPORT_CONTACT_URL,
-													label: __( 'Please contact support' ),
-												},
-											],
-											type: 'snackbar',
-										}
-									);
-								}
-							},
-						} );
-					} }
-				>
-					{ title }
+				<Button variant="secondary" isDestructive size="compact" onClick={ onClick }>
+					{ buttonLabel }
 				</Button>
 			}
 		/>
@@ -345,10 +387,12 @@ export default function MonetizeSubscriptionDetails() {
 						/>
 					) }
 					<ActionList>
-						<StopSubscriptionButton
-							subscription={ subscription }
+						<CancelOrRemoveButton
+							disableAutoRenew={ disableAutoRenew }
 							stopSubscription={ stopSubscription }
 							isProduct={ isProduct }
+							isAutoRenewing={ isAutoRenewing }
+							renewalDate={ formattedRenewal }
 						/>
 					</ActionList>
 				</VStack>
