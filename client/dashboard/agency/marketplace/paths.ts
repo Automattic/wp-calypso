@@ -4,9 +4,11 @@
  */
 export const MARKETPLACE_HOSTING_ROUTE = '/marketplace/hosting';
 export const MARKETPLACE_PRODUCTS_ROUTE = '/marketplace/products';
+export const MARKETPLACE_PURCHASES_ROUTE = '/marketplace/purchases';
 
-// The checkout still lives in the classic dashboard; link it through `a4aLink()`.
-export const CLASSIC_MARKETPLACE_CHECKOUT_PATH = '/marketplace/checkout';
+// The agency checkout lives on WordPress.com, next to the client referral
+// checkout; link it through `wpcomLink()`.
+export const WPCOM_AGENCY_CHECKOUT_PATH = '/checkout/agency/purchase';
 
 export type HostingSection = 'wpcom' | 'pressable' | 'vip';
 

@@ -9,7 +9,8 @@ interface FlashMessageProps {
 	type?: 'success' | 'error';
 }
 
-const PARAM_NAME = 'flash';
+export const FLASH_QUERY_PARAM = 'flash';
+const PARAM_NAME = FLASH_QUERY_PARAM;
 
 export function reloadWithFlashMessage( messageId: string ) {
 	const newUrl = addQueryArgs( window.location.href, { [ PARAM_NAME ]: messageId } );

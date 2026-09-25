@@ -57,6 +57,11 @@ function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[]
 	listeners.forEach( ( listener ) => listener() );
 }
 
+/** Empties the stored cart outside React, for the page a finished checkout returns to. */
+export function clearStoredCart( marketplaceType: MarketplaceType ) {
+	writeItems( marketplaceType, [] );
+}
+
 function subscribe( listener: () => void ) {
 	listeners.add( listener );
 	return () => {

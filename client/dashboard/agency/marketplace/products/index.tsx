@@ -118,14 +118,7 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const {
-		items: cartItems,
-		hasItem,
-		addItem,
-		removeItem,
-		replaceItems,
-		clearCart,
-	} = useShoppingCart();
+	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -408,9 +401,9 @@ export default function MarketplaceProducts() {
 								products={ allProducts ?? [] }
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
+								agencyId={ agencyId }
 								isAgencyApproved={ isAgencyApproved( agency ) }
 								onRemove={ removeItem }
-								onCheckout={ clearCart }
 							/>
 						</HStack>
 					}
