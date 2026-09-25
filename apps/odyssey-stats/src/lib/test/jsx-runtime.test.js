@@ -59,6 +59,14 @@ describe( 'jsx-runtime', () => {
 		expect( element.props ).toEqual( { children: 'Views' } );
 	} );
 
+	it( 'lets a spread key win over the explicit one, as React does for <Row key="a" {...props} />', () => {
+		const { jsx } = loadRuntime( undefined );
+
+		const element = jsx( 'li', { key: 'spread', children: 'Views' }, 'explicit' );
+
+		expect( element.key ).toBe( 'spread' );
+	} );
+
 	it( 'renders literal siblings without "unique key" warnings', () => {
 		const { jsx, jsxs } = loadRuntime( undefined );
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );

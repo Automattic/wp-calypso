@@ -25,8 +25,9 @@ export interface JsxRuntime {
 }
 
 export function createElementRuntime( react: typeof ReactNamespace ): JsxRuntime {
+	// As in React's runtime, a key spread in through `config` wins over the explicit one.
 	const withKey = ( config: Record< string, unknown > | null, maybeKey?: ReactNamespace.Key ) =>
-		maybeKey === undefined ? config : { ...config, key: maybeKey };
+		maybeKey === undefined || config?.key !== undefined ? config : { ...config, key: maybeKey };
 
 	const jsx: JsxFactory = ( type, config, maybeKey ) =>
 		react.createElement( type, withKey( config, maybeKey ) );
