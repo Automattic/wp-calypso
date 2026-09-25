@@ -28,13 +28,16 @@ export default () => {
 	let assetsFileModified = 0;
 	async function doReadAssets() {
 		const fd = await open( ASSETS_FILE );
-		const stats = await fd.stat();
-		if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
-			assetsFile = JSON.parse( await fd.readFile( 'utf8' ) );
-			assetsFileModified = stats.mtimeMs;
+		try {
+			const stats = await fd.stat();
+			if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
+				assetsFile = JSON.parse( await fd.readFile( 'utf8' ) );
+				assetsFileModified = stats.mtimeMs;
+			}
+			return assetsFile;
+		} finally {
+			await fd.close();
 		}
-		await fd.close();
-		return assetsFile;
 	}
 
 	let checking = null;
