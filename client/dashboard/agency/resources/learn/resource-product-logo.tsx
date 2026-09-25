@@ -3,6 +3,7 @@ import jetpackLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmark
 import pressableLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/pressable.svg';
 import vipLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/vip.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/woo.svg';
+import wordpressOrgLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wordpress-org.png';
 import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
 import { getProductLabel } from './labels';
 import type { CSSProperties } from 'react';
@@ -13,6 +14,7 @@ const LOGOS: Record< string, { src: string; inlineSize: number } > = {
 	pressable: { src: pressableLogo, inlineSize: 88 },
 	woocommerce: { src: wooLogo, inlineSize: 52 },
 	'wordpress-com': { src: wpcomLogo, inlineSize: 112 },
+	'wordpress-org': { src: wordpressOrgLogo, inlineSize: 98 },
 	'wordpress-vip': { src: vipLogo, inlineSize: 48 },
 };
 
