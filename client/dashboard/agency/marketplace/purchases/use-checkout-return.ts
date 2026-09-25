@@ -1,5 +1,5 @@
-import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
+import { marketplacePurchasesRoute } from '../../../app/router/agency';
 import { FLASH_QUERY_PARAM } from '../../../components/flash-message';
 import { RECEIPT_ID_PARAM } from '../products/lib/checkout-url';
 import { clearStoredCart } from '../products/use-shopping-cart';
@@ -10,7 +10,7 @@ import { clearStoredCart } from '../products/use-shopping-cart';
  * means the cart was bought: empty the cart and drop the parameter from the URL.
  */
 export function useCheckoutReturn() {
-	const navigate = useNavigate();
+	const navigate = marketplacePurchasesRoute.useNavigate();
 
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
