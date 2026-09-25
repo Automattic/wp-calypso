@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
 import { act, render, waitFor } from '@testing-library/react';
 import AsyncLoad from 'calypso/components/async-load';
 import { createToolProvider } from 'calypso/my-sites/plugins/marketplace-ai-experience/agent-provider';
@@ -42,6 +43,7 @@ const loadedProps = () => AsyncLoad.mock.calls.at( -1 )[ 0 ];
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, false );
 	delete window.agentsManagerData;
 	getCurrentUser.mockReturnValue( user );
 	getSelectedSite.mockReturnValue( selectedSite );
@@ -53,22 +55,26 @@ beforeEach( () => {
 it( 'registers the plugin provider before mounting and delivers picks to the current site', async () => {
 	const existingProvider = {};
 	window.agentsManagerData = { agentProviders: [ existingProvider ] };
+	queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, true );
 	const { rerender } = render( <AgentsManagerLoader sectionName="plugins" isInternalOnly /> );
 
 	expect( AsyncLoad ).not.toHaveBeenCalled();
+	expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( false );
 	await waitFor( () => expect( AsyncLoad ).toHaveBeenCalled() );
+	expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( true );
 	expect( window.agentsManagerData.agentProviders ).toEqual( [
 		existingProvider,
 		{ toolProvider: createToolProvider.mock.results[ 0 ].value },
 	] );
 	expect( loadedProps() ).toMatchObject( {
-		agentId: 'wp-orchestrator',
 		currentUser: user,
 		sectionName: 'plugins',
 		site: selectedSite,
 		currentSiteId: 1,
 		isInternalOnly: true,
 	} );
+
+	expect( loadedProps().agentId ).toBeUndefined();
 
 	setPicks.mockClear();
 	getSelectedSite.mockReturnValue( { ID: 4 } );
@@ -86,7 +92,6 @@ it( 'registers the plugin provider before mounting and delivers picks to the cur
 it( 'preserves shared loader behavior outside plugins and initializes plugins on navigation', async () => {
 	const { rerender } = render( <AgentsManagerLoader sectionName="hosting" isInternalOnly /> );
 	expect( loadedProps() ).toMatchObject( {
-		agentId: undefined,
 		site: primarySite,
 		currentSiteId: undefined,
 		isInternalOnly: true,
@@ -118,4 +123,44 @@ it( 'does not register a provider or mount plugins for logged-out users', async 
 	} );
 	expect( AsyncLoad ).not.toHaveBeenCalled();
 	expect( window.agentsManagerData ).toBeUndefined();
+} );
+
+it( 'removes section tools on navigation and restores them without duplicates', async () => {
+	const existingProvider = {};
+	window.agentsManagerData = { agentProviders: [ existingProvider ] };
+	const { rerender, unmount } = render( <AgentsManagerLoader sectionName="plugins" /> );
+	await waitFor( () => expect( AsyncLoad ).toHaveBeenCalled() );
+	const pluginProvider = window.agentsManagerData.agentProviders[ 1 ];
+
+	rerender( <AgentsManagerLoader sectionName="hosting" /> );
+	expect( window.agentsManagerData.agentProviders ).toEqual( [ existingProvider ] );
+	expect( loadedProps().sectionName ).toBe( 'hosting' );
+
+	rerender( <AgentsManagerLoader sectionName="plugins" /> );
+	await waitFor( () => expect( loadedProps().sectionName ).toBe( 'plugins' ) );
+	expect( window.agentsManagerData.agentProviders ).toEqual( [ existingProvider, pluginProvider ] );
+
+	unmount();
+	expect( window.agentsManagerData.agentProviders ).toEqual( [ existingProvider ] );
+	expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( false );
+} );
+
+it( 'ignores a provider that finishes loading after leaving its section', async () => {
+	const { rerender } = render( <AgentsManagerLoader sectionName="plugins" /> );
+	rerender( <AgentsManagerLoader sectionName="hosting" /> );
+	await act( async () => {} );
+	expect( window.agentsManagerData ).toBeUndefined();
+	expect( loadedProps().sectionName ).toBe( 'hosting' );
+} );
+
+it( 'removes section tools and stops rendering when the user logs out', async () => {
+	const { rerender } = render( <AgentsManagerLoader sectionName="plugins" /> );
+	await waitFor( () => expect( AsyncLoad ).toHaveBeenCalled() );
+	expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( true );
+	AsyncLoad.mockClear();
+	getCurrentUser.mockReturnValue( null );
+	rerender( <AgentsManagerLoader sectionName="plugins" /> );
+	expect( AsyncLoad ).not.toHaveBeenCalled();
+	expect( window.agentsManagerData.agentProviders ).toEqual( [] );
+	expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( false );
 } );

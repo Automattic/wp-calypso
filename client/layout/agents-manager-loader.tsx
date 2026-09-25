@@ -1,10 +1,11 @@
-import { ORCHESTRATOR_AGENT_ID } from '@automattic/agents-manager/src/constants';
+import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import usePluginRecommendationsProvider from 'calypso/my-sites/plugins/use-plugin-recommendations-provider';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isSiteSection } from 'calypso/state/ui/selectors';
 import { useHelpCenterSite } from './use-help-center-site';
+import useSectionAgentProvider, { getSectionAgentProviderKey } from './use-section-agent-provider';
 
 const importAgentsManager = () =>
 	import(
@@ -22,18 +23,27 @@ export default function AgentsManagerLoader( {
 	const isSiteSpecific = useSelector( isSiteSection );
 	const { selectedSite, site } = useHelpCenterSite();
 	const isPlugins = sectionName === 'plugins';
-	const providerReady = usePluginRecommendationsProvider( isPlugins && !! user );
+	const isReady = useSectionAgentProvider( sectionName, !! user );
 
-	if ( isPlugins && ( ! user || ! providerReady ) ) {
+	useEffect( () => {
+		const { queryKey } = omnibarAgentsManagerEnabledQuery();
+		queryClient.cancelQueries( { queryKey } );
+		queryClient.setQueryData( queryKey, isReady );
+
+		return () => {
+			queryClient.setQueryData( queryKey, false );
+		};
+	}, [ isReady ] );
+
+	if ( ! isReady ) {
 		return null;
 	}
 
 	return (
 		<AsyncLoad
-			key={ isPlugins ? 'plugins' : 'default' }
+			key={ getSectionAgentProviderKey( sectionName ) }
 			require={ importAgentsManager }
 			placeholder={ null }
-			agentId={ isPlugins ? ORCHESTRATOR_AGENT_ID : undefined }
 			currentUser={ user }
 			sectionName={ sectionName }
 			site={ isPlugins ? ( selectedSite ?? null ) : site }
