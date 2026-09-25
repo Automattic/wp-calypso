@@ -8,9 +8,11 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
 import {
+	createSiteAndAddDIFMToCart,
 	createSiteWithCart,
 	getPluginBillingPeriodForPlan,
 	isDomainFulfilled,
@@ -23,6 +25,7 @@ jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/
 jest.mock( 'calypso/signup/config/flows-pure', () =>
 	require( './mocks/signup/config/flows-pure' )
 );
+jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
 
 // A Promise wrapper around the callback which resolves after the callback completes
 // to ensure jest waits for the test to finish.
@@ -127,6 +130,31 @@ describe( 'createSiteWithCart()', () => {
 			fakeStore
 		);
 	} );
+} );
+
+describe( 'createSiteAndAddDIFMToCart()', () => {
+	// New DIFM sites must be created as Coming Soon rather than relying on the
+	// server to hide them while a build is in progress (HAPD-4802).
+	test.each( [ DIFM_FLOW, DIFM_FLOW_STORE ] )(
+		'creates a new site as Coming Soon in the %s flow',
+		async ( flowName ) => {
+			expect.assertions( 3 );
+			const fakeStore = {
+				getState: () => ( {
+					signup: { dependencyStore: { newOrExistingSiteChoice: 'new-site' } },
+				} ),
+			};
+
+			// Relies on the persisted /sites/new nock above, which echoes the request body.
+			const error = await new Promise( ( resolve ) =>
+				createSiteAndAddDIFMToCart( resolve, {}, { lastKnownFlow: flowName }, fakeStore )
+			);
+
+			expect( error.requestBody.options.site_creation_flow ).toBe( flowName );
+			expect( error.requestBody.options.wpcom_public_coming_soon ).toBe( 1 );
+			expect( error.requestBody.public ).toBe( 0 );
+		}
+	);
 } );
 
 describe( 'isDomainFulfilled', () => {
