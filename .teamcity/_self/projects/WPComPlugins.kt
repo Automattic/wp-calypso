@@ -42,6 +42,7 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
+					"survicate-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -113,6 +114,7 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
+		apps/survicate/dist => survicate.zip
 	""".trimIndent()
 
 	steps {

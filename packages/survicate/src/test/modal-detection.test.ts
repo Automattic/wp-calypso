@@ -59,6 +59,15 @@ describe( 'isModalOpen', () => {
 		expect( isModalOpen() ).toBe( false );
 	} );
 
+	test( 'should ignore block editor chrome popovers', () => {
+		const toolbar = makeRendered( document.createElement( 'div' ) );
+		toolbar.className =
+			'components-popover block-editor-block-popover block-editor-block-list__block-popover';
+		document.body.appendChild( toolbar );
+
+		expect( isModalOpen() ).toBe( false );
+	} );
+
 	test( 'should ignore a dialog role without aria-modal', () => {
 		const popover = makeRendered( document.createElement( 'div' ) );
 		popover.setAttribute( 'role', 'dialog' );
