@@ -44,6 +44,14 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
+			/**
+			 * Site Chat brand kit, set by the reader-chat entry from the
+			 * `brand` object Jetpack injects. Both are optional: Jetpack omits
+			 * keys that resolve to nothing, and an older cached bundle may run
+			 * against PHP that sends no brand at all.
+			 */
+			brandName?: string;
+			brandLogoUrl?: string;
 	  }
 	| undefined;
 
