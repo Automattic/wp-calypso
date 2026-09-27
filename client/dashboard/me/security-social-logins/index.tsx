@@ -1,6 +1,7 @@
+import { fetchUser } from '@automattic/api-core';
 import { connectSocialUserMutation, disconnectSocialUserMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -8,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
+import { updateCurrentUser, useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { securitySocialLoginsRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
@@ -50,6 +51,23 @@ const SocialLoginIcon = ( {
 	return <Icon icon={ icon } />;
 };
 
+let latestConnectionsRefresh = 0;
+
+// Fetched from `/me` because invalidating the auth user doesn't work when it's
+// bootstrapped: the refetch returns the page-load `window.currentUser` again.
+async function refreshSocialLoginConnections( queryClient: QueryClient ) {
+	const refresh = ++latestConnectionsRefresh;
+	try {
+		const { social_login_connections } = await fetchUser();
+		// Don't let a slower, earlier refresh overwrite a later one.
+		if ( refresh === latestConnectionsRefresh ) {
+			updateCurrentUser( queryClient, { social_login_connections } );
+		}
+	} catch {
+		// The change itself succeeded; the page catches up on the next load.
+	}
+}
+
 const SocialLoginItem = ( {
 	service,
 	decoration,
@@ -67,6 +85,7 @@ const SocialLoginItem = ( {
 	}: SocialLoginButtonProps ) => React.ReactNode;
 } ) => {
 	const { user } = useAuth();
+	const queryClient = useQueryClient();
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -95,6 +114,7 @@ const SocialLoginItem = ( {
 		} );
 		connectSocialUser( data, {
 			onSuccess: () => {
+				refreshSocialLoginConnections( queryClient );
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */
@@ -117,6 +137,7 @@ const SocialLoginItem = ( {
 	const disconnectSocialLogin = () => {
 		disconnectSocialUser( lowerCaseService, {
 			onSuccess: () => {
+				refreshSocialLoginConnections( queryClient );
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */

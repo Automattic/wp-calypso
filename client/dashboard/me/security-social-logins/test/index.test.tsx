@@ -9,7 +9,7 @@ import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import SecuritySocialLogins from '..';
-import { AuthProvider } from '../../../app/auth';
+import { AUTH_QUERY_KEY, AuthProvider } from '../../../app/auth';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import type { User } from '@automattic/api-core';
@@ -37,6 +37,13 @@ function renderWithBootstrappedUser( user: User ) {
 		</AuthProvider>,
 		{ queryClient }
 	);
+}
+
+// The page refetches the auth user once it's stale (e.g. when the tab regains focus),
+// which mustn't undo the change.
+async function refetchSocialLoginConnections() {
+	await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
+	return queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.social_login_connections;
 }
 
 describe( '<SecuritySocialLogins>', () => {
@@ -79,6 +86,10 @@ describe( '<SecuritySocialLogins>', () => {
 		await waitFor( () => expect( connect.isDone() ).toBe( true ) );
 		expect( await screen.findByText( 'person@example.com' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Disconnect' } ) ).toBeVisible();
+
+		expect( await refetchSocialLoginConnections() ).toEqual(
+			userWithApple.social_login_connections
+		);
 	} );
 
 	test( 'shows Apple as disconnected after removing it', async () => {
@@ -100,6 +111,8 @@ describe( '<SecuritySocialLogins>', () => {
 		);
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 		expect( screen.queryByRole( 'button', { name: 'Disconnect' } ) ).not.toBeInTheDocument();
+
+		expect( await refetchSocialLoginConnections() ).toEqual( [] );
 	} );
 
 	test( 'confirms the disconnect even when refreshing the user fails', async () => {
