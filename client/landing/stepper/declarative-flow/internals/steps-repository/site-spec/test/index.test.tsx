@@ -228,6 +228,28 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
+	it( 'builds on the requested graph and carries it to site generation for retries', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-dsl&graph=dsl'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-dsl', graph: 'dsl' }
+		);
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'graph' ) ).toBe( 'dsl' );
+	} );
+
 	it( 'leaves build-wow routing alone when build_wow is not requested', () => {
 		mockQueryParams = new URLSearchParams( 'siteSlug=example.wordpress.com' );
 
@@ -278,6 +300,38 @@ describe( 'SiteSpec early provisioning step', () => {
 			buildWowError: 'build_wow_request_failed',
 		} );
 		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'starts the Atomic transfer when the interview opens, before any spec is confirmed', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&source=sites-dashboard'
+		);
+		wpcomPostMock.mockResolvedValue( { blog_id: 123 } );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( mockUseSiteSpec ).toHaveBeenCalled();
+		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			{ path: '/sites/example.wordpress.com/big-sky/build-wow', apiNamespace: 'wpcom/v2' },
+			{}
+		);
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'keeps the interview open when the early transfer request fails', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockRejectedValue( new Error( 'Forbidden' ) );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetSiteSetupError ).not.toHaveBeenCalled();
+		expect( navigation.submit ).not.toHaveBeenCalled();
 	} );
 
 	it( 'goes straight to the error step when build_wow has no target site', () => {

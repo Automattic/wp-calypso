@@ -1,12 +1,12 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../../components/consolidated-stat-card';
+import Grid from '../../../../components/grid';
 import type { TaggedSite } from '../types';
 
 const PROGRAM_INCENTIVES_URL = 'https://automattic.com/for-agencies/program-incentives/#migrations';
@@ -36,7 +36,7 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 		<Grid
 			className="consolidated-commissions"
 			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
-			gap={ 4 }
+			gap="lg"
 		>
 			<ConsolidatedStatCard
 				value={ formatCurrency( migrationCommissions, 'USD' ) }

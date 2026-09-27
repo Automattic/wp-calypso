@@ -19,6 +19,7 @@ import {
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
+import { getTurnId } from '../../utils/turn-id';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -280,6 +281,7 @@ export function useSetupCustomActions( {
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		getTabId,
+		getTurnId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
@@ -299,7 +301,7 @@ export function useSetupCustomActions( {
 		broadcastsAgentActivity: true,
 	} );
 
-	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.
+	// Hosts listen for `agents-manager-ready` to invoke actions without polling.
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 	}, [] );

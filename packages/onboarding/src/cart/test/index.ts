@@ -1,7 +1,7 @@
 import { Visibility } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import { createSite, getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW } from '../../utils/flows';
+import { FREE_FLOW, HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
@@ -171,6 +171,34 @@ describe( 'getNewSiteParams', () => {
 			} )
 		);
 	} );
+
+	test.each( [
+		ONBOARDING_FLOW,
+		'onboarding-pm',
+		FREE_FLOW,
+		'site-migration',
+		'with-theme',
+		'with-plugin',
+	] )(
+		'%s flow sends an empty blog_name instead of the username when site title and URL are missing',
+		( flowToCheck ) => {
+			expect(
+				getNewSiteParams(
+					testParams( {
+						flowToCheck,
+						siteUrl: undefined,
+						siteTitle: '',
+						username: 'janedoe',
+					} )
+				)
+			).toEqual(
+				expect.objectContaining( {
+					blog_name: '',
+					find_available_url: true,
+				} )
+			);
+		}
+	);
 
 	test( 'blog_name hint uses the site URL when present', () => {
 		expect(

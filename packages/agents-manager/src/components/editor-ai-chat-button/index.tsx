@@ -16,7 +16,7 @@ interface Props {
 }
 
 /**
- * AI chat button for the block editor header, shown to the right of the Help Center "?" button.
+ * AI chat button for the block editor header.
  * The `PinnedItems/core` fill is inert outside the editor.
  */
 export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {

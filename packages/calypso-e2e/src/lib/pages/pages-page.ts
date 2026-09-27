@@ -8,6 +8,9 @@ const selectors = {
 	addNewPageButton: 'a.page-title-action, span.split-page-title-action>a',
 };
 
+// Cap for Calypso's hop to wp-admin; the chain took ~13s under CI load, which runs ~1.7x slower than local.
+const PAGES_LIST_TIMEOUT = 30 * 1000;
+
 /**
  * Represents the Pages page
  */
@@ -31,13 +34,9 @@ export class PagesPage {
 	async visit( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< Response | null > {
 		const response = await this.page.goto( getCalypsoURL( 'pages' ) );
 
-		if ( siteSlug ) {
-			// On single-site accounts, the server-side redirect already lands on /pages/<siteSlug>, so we
-			// can skip the selector click.
-			if ( new URL( this.page.url() ).pathname === `/pages/${ siteSlug }` ) {
-				return response;
-			}
-
+		// On single-site accounts, the server-side redirect already lands on /pages/<siteSlug>, so we
+		// can skip the selector click.
+		if ( siteSlug && new URL( this.page.url() ).pathname !== `/pages/${ siteSlug }` ) {
 			const siteLink = this.page
 				.locator( `.site-selector__sites a:has-text("${ siteSlug }")` )
 				.first();
@@ -62,6 +61,16 @@ export class PagesPage {
 				} );
 			}
 		}
+
+		// Calypso answers the Pages route with the site's own wp-admin list, and an Atomic site
+		// carrying local users answers that with the Jetpack SSO screen first.
+		await this.page.waitForURL( /\/wp-admin\/edit\.php\?post_type=page|\/wp-login\.php/, {
+			timeout: PAGES_LIST_TIMEOUT,
+		} );
+		await completeJetpackSso( this.page );
+		await this.page.waitForURL( /\/wp-admin\/edit\.php\?post_type=page/, {
+			timeout: PAGES_LIST_TIMEOUT,
+		} );
 
 		return response;
 	}

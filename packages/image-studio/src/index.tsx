@@ -420,46 +420,12 @@ function ImageStudioIntegration(): JSX.Element | null {
 		[ attachmentId, cleanupOnExit, closeImageStudio, invalidateResolution, onCloseCallback ]
 	);
 
-	// Handle navigation to Media Library classic editor
-	// Saves metadata, runs cleanup (keeps original + current), then navigates
-	const handleClassicMediaEditorNavigation = useCallback(
-		async ( url: string ) => {
-			// Save metadata and mark checkpoint (critical - must succeed)
-			try {
-				await handleSave();
-			} catch ( error ) {
-				window.console?.error?.(
-					'[Image Studio] Save failed during Media Library navigation:',
-					error
-				);
-				// Don't navigate if save failed - would lose unsaved changes
-				// Error notice will be shown by Header component, allowing user to retry
-				throw error;
-			}
-
-			// Save succeeded - try cleanup (non-critical, proceed even if it fails)
-			try {
-				await cleanupOnExit();
-			} catch ( cleanupError ) {
-				window.console?.error?.(
-					'[Image Studio] Cleanup failed during navigation (proceeding anyway):',
-					cleanupError
-				);
-			}
-
-			// Invalidate WordPress cache for fresh data
-			invalidateResolution( 'getEntityRecords', [ 'postType', 'attachment' ] );
-
-			if ( attachmentId ) {
-				invalidateResolution( 'getEntityRecord', [ 'postType', 'attachment', attachmentId ] );
-			}
-
-			// Navigate to classic editor
-			// Safe to navigate immediately because all async operations have completed
-			window.location.href = url;
-		},
-		[ handleSave, cleanupOnExit, invalidateResolution, attachmentId ]
-	);
+	// Open the Media Library classic editor in a new tab. Image Studio stays open so
+	// the flow that launched it (e.g. featured image) still completes. The header only
+	// enables this while there is nothing unsaved, so no save happens here.
+	const handleClassicMediaEditorNavigation = useCallback( ( url: string ) => {
+		window.open( url, '_blank', 'noopener,noreferrer' );
+	}, [] );
 
 	// Don't render modal until we have image data
 	if ( ! isOpen ) {

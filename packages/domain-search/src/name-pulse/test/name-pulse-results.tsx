@@ -12,6 +12,7 @@ import { buildCart } from '../../test-helpers/factories/cart';
 import {
 	buildNamePulseAvailabilityResponse,
 	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
+	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_TLDS_FIXTURE,
 	withNamePulseQueries,
@@ -41,13 +42,21 @@ const NamePulseTestSearch = ( {
 		errors: [],
 	} ),
 	tldsResponse = async () => NAME_PULSE_TLDS_FIXTURE,
-	domainAvailability = async ( domainName ) =>
-		buildAvailability( {
+	domainAvailability = async ( domainName ) => {
+		// Only this check knows a premium name's registry price; the bulk one
+		// quotes the standard TLD rate.
+		const isPremium = !! NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ]?.is_premium;
+
+		return buildAvailability( {
 			domain_name: domainName,
-			status: DomainAvailabilityStatus.AVAILABLE,
-			cost: '$24.00',
-			raw_price: 24,
-		} ),
+			status: isPremium
+				? DomainAvailabilityStatus.AVAILABLE_PREMIUM
+				: DomainAvailabilityStatus.AVAILABLE,
+			...( isPremium ? { is_supported_premium_domain: true } : {} ),
+			cost: isPremium ? '$3,500.00' : '$24.00',
+			raw_price: isPremium ? 3500 : 24,
+		} );
+	},
 	events,
 }: {
 	query: string;
@@ -139,7 +148,6 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -215,8 +223,9 @@ describe( 'NamePulseResults', () => {
 		);
 
 		const premium = await findRow( 'icecream.co' );
-		expect( await within( premium ).findByText( 'Premium' ) ).toBeInTheDocument();
-		expect( within( premium ).queryByText( '/year' ) ).not.toBeInTheDocument();
+		expect( await within( premium ).findByText( '$3,500' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( 'Premium' ) ).toBeInTheDocument();
+		expect( within( premium ).getByText( '/year' ) ).toBeInTheDocument();
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
 		const sale = await findRow( 'icecream.site' );
@@ -262,6 +271,15 @@ describe( 'NamePulseResults', () => {
 		expect(
 			await within( rowFor( unchecked[ 0 ] as string ) ).findByText( '$24' )
 		).toBeInTheDocument();
+	} );
+
+	it( 'renders Related matches for a one-word query', async () => {
+		render( <NamePulseTestSearch query="icecream" /> );
+
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
+
+		await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );
 
 	it( 'renders Related matches for a multi-word query', async () => {
@@ -366,7 +384,7 @@ describe( 'NamePulseResults', () => {
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
 		expect( domainsIn( 'exact' ) ).toContain( 'icecream.net' );
-		expect( screen.queryByRole( 'heading', { name: 'Related matches' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Related matches' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'explains an unrecognised ending and lists the joined name', async () => {
@@ -395,6 +413,38 @@ describe( 'NamePulseResults', () => {
 		expect( await findRow( 'icecreamd.net' ) ).toBeInTheDocument();
 	} );
 
+	it( 'places the notice above the BeforeResults slot', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.d"
+				slots={ { BeforeResults: () => <div>Before Results</div> } }
+			/>
+		);
+
+		const notice = await findNotice();
+		const banner = screen.getByText( 'Before Results' );
+
+		expect(
+			notice.compareDocumentPosition( banner ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'brings back a dismissed notice when the query changes', async () => {
+		const user = userEvent.setup();
+
+		const { rerender } = render( <NamePulseTestSearch query="icecream.d" /> );
+
+		await findNotice();
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		expect( document.querySelector( '.name-pulse-notice' ) ).toBeNull();
+
+		rerender( <NamePulseTestSearch query="sorbet.d" /> );
+
+		expect( await findNotice() ).toHaveTextContent(
+			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+		);
+	} );
+
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
 		const user = userEvent.setup();
 		const onExternalDomainClick = jest.fn();
@@ -414,12 +464,87 @@ describe( 'NamePulseResults', () => {
 		);
 
 		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
-		expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+
+		// The bulk check offers the name; only the per-domain check behind the notice
+		// knows it is registered, and the row must not contradict it.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByText( 'Unavailable' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
 
 		expect( await findNotice() ).toHaveTextContent( 'Already yours?' );
 		await user.click( screen.getByRole( 'button', { name: 'Transfer it here.' } ) );
 
 		expect( onExternalDomainClick ).toHaveBeenCalledWith( 'icecream.net' );
+	} );
+
+	it( 'keeps a typed domain that is taken out of Top results, leaving it in the grid', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.com"
+				availability={ async ( domainNames ) => ( {
+					...buildNamePulseAvailabilityResponse( domainNames ),
+					...( domainNames.includes( 'icecream.com' )
+						? { 'icecream.com': { is_available: false } }
+						: {} ),
+				} ) }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						status: DomainAvailabilityStatus.TRANSFERRABLE,
+					} )
+				}
+			/>
+		);
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( await findRow( 'icecream.com' ) ).getByText( 'Unavailable' ) ).toBeVisible();
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.org', 'icecream.net' ] );
+		expect( domainsIn( 'exact' ) ).toContain( 'icecream.com' );
+	} );
+
+	it( 'holds the typed domain on its check rather than offering a name the notice is about to reject', async () => {
+		let resolveTyped: ( availability: DomainAvailability ) => void = () => {};
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.net"
+				domainAvailability={ ( domainName ) => {
+					if ( domainName === 'icecream.net' ) {
+						return new Promise< DomainAvailability >( ( resolve ) => {
+							resolveTyped = resolve;
+						} );
+					}
+
+					return Promise.resolve(
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE,
+							cost: '$24.00',
+							raw_price: 24,
+						} )
+					);
+				} }
+			/>
+		);
+
+		// The bulk check offers the typed name, but its own check is still running.
+		const row = within( await findRow( 'icecream.net' ) );
+		expect( await row.findByLabelText( 'Checking…' ) ).toBeVisible();
+		expect( row.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		expect( row.queryByText( '$24' ) ).not.toBeInTheDocument();
+
+		await act( async () => {
+			resolveTyped(
+				buildAvailability( {
+					domain_name: 'icecream.net',
+					status: DomainAvailabilityStatus.TRANSFERRABLE,
+					tld: 'net',
+				} )
+			);
+		} );
+
+		expect( await findNotice() ).toHaveTextContent( 'This domain is already registered.' );
+		expect( within( rowFor( 'icecream.net' ) ).getByText( 'Unavailable' ) ).toBeVisible();
 	} );
 
 	it( 'reports a domain already connected to WordPress.com without offering a transfer', async () => {

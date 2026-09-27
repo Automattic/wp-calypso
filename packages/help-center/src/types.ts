@@ -80,7 +80,6 @@ interface Eligibility {
 	is_chat_restricted: boolean;
 	wapuu_assistant_enabled: boolean;
 	user_field_flow_name: string;
-	unified_agent_enabled?: boolean;
 }
 
 export interface HelpCenterCTAData {

@@ -71,6 +71,10 @@ describe( 'updateManagedContactDetailsShape', function () {
 		'extra.fr.registrantType',
 		'extra.fr.trademarkNumber',
 		'extra.fr.sirenSiret',
+		'extra.es.registrantEntityType',
+		'extra.es.registrantIdentificationNumber',
+		'extra.es.adminIdentificationNumber',
+		'extra.es.redEsAgreementAccepted',
 	];
 
 	const testProperty = ( merge, construct, update, data ) => {
@@ -128,6 +132,14 @@ describe( 'updateManagedContactDetailsShape', function () {
 				registrantType: gen(),
 				trademarkNumber: gen(),
 				sirenSiret: gen(),
+			};
+		}
+		if ( getRandomBoolean() ) {
+			data.tldExtraFields.es = {
+				registrantEntityType: gen(),
+				registrantIdentificationNumber: gen(),
+				adminIdentificationNumber: gen(),
+				redEsAgreementAccepted: gen(),
 			};
 		}
 
@@ -259,6 +271,10 @@ describe( 'mapManagedContactDetailsShape', function () {
 		'extra.fr.registrantType',
 		'extra.fr.trademarkNumber',
 		'extra.fr.sirenSiret',
+		'extra.es.registrantEntityType',
+		'extra.es.registrantIdentificationNumber',
+		'extra.es.adminIdentificationNumber',
+		'extra.es.redEsAgreementAccepted',
 	];
 
 	const testProperty = ( f, data ) => {
@@ -312,6 +328,14 @@ describe( 'mapManagedContactDetailsShape', function () {
 				registrantType: gen(),
 				trademarkNumber: gen(),
 				sirenSiret: gen(),
+			};
+		}
+		if ( getRandomBoolean() ) {
+			data.tldExtraFields.es = {
+				registrantEntityType: gen(),
+				registrantIdentificationNumber: gen(),
+				adminIdentificationNumber: gen(),
+				redEsAgreementAccepted: gen(),
 			};
 		}
 
@@ -392,6 +416,35 @@ describe( 'flattenManagedContactDetailsShape', function () {
 				},
 			} )
 		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21 ] );
+	} );
+
+	it( 'with es fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( ( x ) => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {
+					es: {
+						registrantEntityType: 'registrantEntityType',
+						registrantIdentificationNumber: 'registrantIdentificationNumber',
+						adminIdentificationNumber: 'adminIdentificationNumber',
+						redEsAgreementAccepted: 'redEsAgreementAccepted',
+					},
+				},
+			} )
+		).toEqual( [ 9, 8, 12, 5, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 20, 30, 25, 22 ] );
 	} );
 
 	it( 'with uk fields', () => {

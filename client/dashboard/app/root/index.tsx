@@ -55,7 +55,8 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const { name, supports, components, LoadingLogo = WordPressLogo } = useAppContext();
+	const HelpCenter = components.helpCenter ?? OmnibarHelpCenter;
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
@@ -92,10 +93,11 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
+			pathname: state.location.pathname,
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -183,8 +185,8 @@ function Root() {
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
-			{ supports.help && <OmnibarHelpCenter /> }
-			{ supports.help && <OmnibarAgentsManager /> }
+			{ supports.help && <HelpCenter /> }
+			<OmnibarAgentsManager pathname={ pathname } />
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />

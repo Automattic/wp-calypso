@@ -7,3 +7,11 @@ export const omnibarSiteIdQuery = () =>
 		staleTime: Infinity,
 		meta: { persist: false },
 	} );
+
+export const omnibarAgentsManagerEnabledQuery = () =>
+	queryOptions( {
+		queryKey: [ 'omnibar', 'agents-manager-enabled' ],
+		queryFn: () => Promise.resolve( false ),
+		staleTime: Infinity,
+		meta: { persist: false },
+	} );

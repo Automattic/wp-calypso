@@ -61,7 +61,7 @@ const SkipSuggestion = () => {
 				title={ config.skipSuggestionCopy?.title }
 				buttonText={ config.skipSuggestionCopy?.buttonText }
 				onSkip={ () => events.onSkip( suggestion ) }
-				onSuggestionClick={ () => setQuery( suggestion.domain_name ) }
+				onSuggestionClick={ () => setQuery( suggestion.domain_name, 'skip_suggestion' ) }
 				disabled={ !! isMutating }
 			/>
 		);

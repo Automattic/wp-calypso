@@ -30,7 +30,7 @@
 	overflow: hidden;
 	gap: 1px;
 
-	@media ( max-width: #{ $break-medium - 1px } ) {
+	@media ( max-width: #{ $break-large - 1px } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 
@@ -57,6 +57,32 @@
 	box-sizing: border-box;
 	flex-wrap: wrap;
 
+	// On phones the price drops under the name and the cart button sits to the
+	// right of both, so the name gets the full width of its column.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr ) auto;
+		align-items: center;
+		gap: 0.25rem 0.75rem;
+
+		.name-pulse-row__status {
+			display: contents;
+
+			> * {
+				grid-column: 1;
+			}
+		}
+
+		.name-pulse-row__cart {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+		}
+
+		.name-pulse-row__price {
+			align-items: flex-start;
+		}
+	}
+
 	&__name {
 		display: flex;
 		align-items: center;
@@ -67,18 +93,30 @@
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
 
-		.domain-suggestion-badge {
+		// A Sale and a Premium badge together leave the name only a few
+		// characters, so the pair drops under it.
+		&--stacked {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.25rem;
+		}
+	}
+
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		max-width: 100%;
+
+		> * {
 			flex-shrink: 0;
-			height: 20px;
-			padding-inline: 6px;
-			border-radius: 4px;
-			font-size: 11px;
 		}
 	}
 
 	&__domain {
 		display: flex;
 		min-width: 0;
+		max-width: 100%;
 
 		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
 		// never loses space to the label and is never cut off.
@@ -97,6 +135,23 @@
 		// wrap independently of the `white-space: nowrap` above.
 		.components-text {
 			text-wrap: nowrap;
+		}
+
+		// Label and suffix flow as one run of text so the TLD follows the label
+		// onto the next line; `anywhere` lets a name with no break points wrap,
+		// and the `<wbr>` prefers a break before the TLD when the label fits.
+		&--wrap {
+			display: block;
+			overflow-wrap: anywhere;
+
+			> :first-child {
+				overflow: visible;
+				white-space: normal;
+			}
+
+			.components-text {
+				text-wrap: wrap;
+			}
 		}
 	}
 

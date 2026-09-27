@@ -307,6 +307,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const specConfirmStartTime = Date.now();
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
+			const graph = getBuildWowGraph( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
@@ -314,11 +315,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite(
-					buildWowSiteIdentifier,
-					specId,
-					getBuildWowGraph( queryParams )
-				);
+				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -364,6 +361,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					editorUrl: destination,
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
+					...( graph ? { graph } : {} ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
@@ -393,6 +391,36 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			failBuildWow( 'build_wow_missing_site', 'No target site was given for the build.' );
 		}
 	}, [ isBuildWowMissingSite, failBuildWow ] );
+
+	// Start the Atomic transfer while the customer is still in the interview, so the build
+	// doesn't wait on it after confirm. Entries that skipped the post-checkout chooser (the
+	// sites dashboard's "Create with AI") have not asked for it yet. A failure is left to
+	// the confirm request, which asks again and routes its error.
+	const hasStartedBuildWowTransferRef = useRef( false );
+	useEffect( () => {
+		if (
+			activeFlow !== 'build-wow' ||
+			buildWowSpecId ||
+			! buildWowSiteIdentifier ||
+			hasStartedBuildWowTransferRef.current
+		) {
+			return;
+		}
+		hasStartedBuildWowTransferRef.current = true;
+
+		requestBuildWowSite( buildWowSiteIdentifier )
+			.then( () => {
+				logBuildWowEvent( 'spec_page_start_success', {
+					site_identifier: buildWowSiteIdentifier,
+				} );
+			} )
+			.catch( ( error ) => {
+				logBuildWowEvent( 'spec_page_start_error', {
+					site_identifier: buildWowSiteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+			} );
+	}, [ activeFlow, buildWowSpecId, buildWowSiteIdentifier ] );
 
 	useEffect( () => {
 		if ( activeFlow === 'build-wow' && buildWowSpecId && buildWowSiteIdentifier ) {

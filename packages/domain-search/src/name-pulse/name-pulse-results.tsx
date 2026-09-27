@@ -7,7 +7,6 @@ import { DomainSearchNotice } from '../ui';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
-import { NAME_PULSE_TOP_RESULTS_COUNT } from './helpers';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 
 import './components/style.scss';
@@ -27,6 +26,7 @@ export const NamePulseResults = () => {
 		keywordResults,
 		creativeResults,
 		topResults,
+		topResultsCount,
 		isLoadingTlds,
 		isTldsError,
 		refetchTlds,
@@ -42,14 +42,18 @@ export const NamePulseResults = () => {
 	return (
 		<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 			<NamePulseSearchInput />
+			{ /* Keyed by the query so a new search brings back a dismissed notice. VStack
+			     runs its children through Children.toArray, so the key has to be prefixed
+			     to avoid colliding with the grid below, which is keyed on the query too. */ }
+			{ notice && ! isTldsError && (
+				<NamePulseSearchNotice
+					key={ `notice-${ query }` }
+					notice={ notice }
+					onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
+				/>
+			) }
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 6 } key={ query }>
-				{ notice && ! isTldsError && (
-					<NamePulseSearchNotice
-						notice={ notice }
-						onTransferClick={ allowsUsingOwnDomain ? events.onExternalDomainClick : undefined }
-					/>
-				) }
 				{ hasTldsError && (
 					<DomainSearchNotice status="error">
 						{ __( 'Couldn’t load domain endings.' ) }{ ' ' }
@@ -64,8 +68,8 @@ export const NamePulseResults = () => {
 						title={ __( 'Top results' ) }
 						results={ topResults }
 						isLoading={ isLoadingTop }
-						maxVisible={ NAME_PULSE_TOP_RESULTS_COUNT }
-						skeletonCount={ NAME_PULSE_TOP_RESULTS_COUNT }
+						maxVisible={ topResultsCount }
+						skeletonCount={ topResultsCount }
 					/>
 				) }
 				{ layout.exactGrid.show && ! hasTldsError && (

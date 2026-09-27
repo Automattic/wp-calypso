@@ -1,18 +1,18 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { domainRoute } from '../../app/router/domains';
+import Grid from '../../components/grid';
 import FeaturedCardEmails from './featured-card-emails';
 import FeaturedCardPrivacy from './featured-card-privacy';
 import FeaturedCardRenew from './featured-card-renew';
 import FeaturedCardSite from './featured-card-site';
 
 const SPACING = {
-	DEFAULT: 6,
-	SMALL: 4,
-};
+	DEFAULT: 'xl',
+	SMALL: 'lg',
+} as const;
 
 export default function FeaturedCards( { isDisabled }: { isDisabled?: boolean } ) {
 	const { domainName } = domainRoute.useParams();

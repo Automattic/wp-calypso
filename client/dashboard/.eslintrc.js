@@ -108,6 +108,11 @@ module.exports = {
 				paths: [
 					{
 						name: '@automattic/calypso-analytics',
+						importNames: [
+							'recordTracksEvent',
+							'recordTracksPageView',
+							'recordTracksPageViewWithPageParams',
+						],
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
 					},
 					{

@@ -1,9 +1,12 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
 	Agency,
+	AgencyHostingReferral,
+	AgencyHostingReferralResponse,
 	AgencyMediaUpload,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyVipPartnerOpportunity,
 } from './types';
 
 /**
@@ -55,5 +58,33 @@ export async function uploadAgencyPartnerDirectoryLogo(
 		path: `/agency/${ agencyId }/media`,
 		apiNamespace: 'wpcom/v2',
 		body: formData,
+	} );
+}
+
+/**
+ * Refers a client to WordPress VIP hosting on behalf of the agency.
+ */
+export async function submitAgencyVipPartnerOpportunity(
+	agencyId: number,
+	referral: AgencyVipPartnerOpportunity
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/vip/partner-opportunity',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
+	} );
+}
+
+/**
+ * Refers a client to a Pressable Premium plan on behalf of the agency.
+ */
+export async function submitAgencyPressablePremiumPlanReferral(
+	agencyId: number,
+	referral: AgencyHostingReferral
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/pressable/premium-plan-referral',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
 	} );
 }

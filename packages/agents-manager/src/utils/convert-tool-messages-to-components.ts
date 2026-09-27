@@ -55,6 +55,7 @@ interface Options {
 	currentPostId?: number | string;
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
+	canEscalateToHuman?: boolean;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -261,6 +262,7 @@ export default function convertToolMessagesToComponents( {
 	getChatComponent,
 	currentPostId,
 	isProcessing,
+	canEscalateToHuman = true,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
@@ -278,15 +280,23 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// The user asked for human support
-		if (
-			message.content.find(
-				( content ) =>
-					content.type === 'data' &&
-					content.data?.flags &&
-					typeof content.data.flags === 'object' &&
-					'forward_to_human_support' in content.data.flags
-			)
-		) {
+		const forwardToHumanSupportContent = message.content.find(
+			( content ) =>
+				content.type === 'data' &&
+				content.data?.flags &&
+				typeof content.data.flags === 'object' &&
+				'forward_to_human_support' in content.data.flags
+		);
+		if ( forwardToHumanSupportContent ) {
+			if ( ! canEscalateToHuman ) {
+				return {
+					...message,
+					content: message.content.filter(
+						( content ) => content !== forwardToHumanSupportContent
+					),
+				};
+			}
+
 			return {
 				...message,
 				content: [

@@ -77,9 +77,7 @@ function HelpCenterContent() {
 		adminBarButton.onclick = handleToggleHelpCenter;
 
 		// At >= 600px our PHP hides this admin bar item to avoid duplicating the toolbar button;
-		// under the omnibar that button is gone, so reveal it. Revealing from JS — which the
-		// unified experience dequeues with this bundle — keeps it hidden when unified, like the
-		// toolbar button.
+		// under the omnibar that button is gone, so reveal it.
 		if ( isAdminBarInEditor ) {
 			adminBarButton.style.setProperty( 'display', 'block', 'important' );
 		}

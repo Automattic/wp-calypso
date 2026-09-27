@@ -48,8 +48,10 @@ export interface AgentsManagerProps {
 	currentRoute?: string;
 	/** The ID of the currently selected site, or undefined for non-site contexts. */
 	currentSiteId?: number;
-	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
+	/** Explicit agent ID supplied by the host. */
 	agentId?: string;
+	/** Whether this screen is currently enabled only for internal users. */
+	isInternalOnly?: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -100,6 +102,7 @@ export default function AgentsManager( {
 	currentRoute,
 	currentSiteId,
 	agentId,
+	isInternalOnly = false,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -133,6 +136,7 @@ export default function AgentsManager( {
 						site,
 						siteKey,
 						currentRoute,
+						isInternalOnly,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
 						zendeskTicketProductFieldValue,

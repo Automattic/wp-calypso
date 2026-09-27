@@ -22,18 +22,17 @@ import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
-import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
-import EditorHelpCenterButton from '../editor-help-center-button';
 import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
@@ -111,7 +110,6 @@ export default function AgentDock( {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const navigationType = useNavigationType();
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
 	const agentId = agentConfig!.agentId;
@@ -203,15 +201,14 @@ export default function AgentDock( {
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	// `/zendesk` also needs the unified agent.
-	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
-	// `/support-guides` (the list) also needs the unified agent. Registered even
+	const showZendeskChat = ! isReaderChat && isWooAiProvider();
+	// `/support-guides` (the list) is registered even
 	// without an entry button: unregistering it mid-session (Site Editor
 	// navigation) would yank the route from under a user viewing it, and the
 	// wildcard redirect would reset their chat.
-	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat;
+	const showSupportGuides = ! isReaderChat;
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
-	// so unlike the list it doesn't need the unified agent.
+	// so unlike the list it can open directly from a chat link.
 	const showSupportGuide = ! isReaderChat;
 	// `/history` matches the chat header's history button.
 	const showChatHistory = ! isReaderChat;
@@ -286,7 +283,7 @@ export default function AgentDock( {
 		const inlineData = getAgentsManagerInlineData();
 		const siteDomain = inlineData?.site?.domain;
 
-		// Every item fires the unified AM event; items whose Big Sky event
+		// Every item fires the shared AM event; items whose Big Sky event
 		// is already live also dual-fire it so those dashboards keep working.
 		const recordMoreOptionsClick = ( menuItem: string ) =>
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_more_options_click', {
@@ -516,7 +513,6 @@ export default function AgentDock( {
 
 	return (
 		<>
-			<EditorHelpCenterButton onClose={ handleClose } onOpenChat={ openChat } />
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
 			{ isChatVisible &&
 				createAgentPortal(

@@ -205,10 +205,9 @@ export default function UpsellStep( {
 					acceptButtonUrl={ wpcomLink(
 						`/checkout/${
 							purchase.site_slug
-						}/business?coupon=${ couponCode }&cancel_to=${ redirectToDashboardLink().replace(
-							'/cancel',
-							''
-						) }`
+						}/business?coupon=${ couponCode }&cancel_to=${ redirectToDashboardLink( {
+							supportBackport: true,
+						} ).replace( '/cancel', '' ) }`
 					) }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );

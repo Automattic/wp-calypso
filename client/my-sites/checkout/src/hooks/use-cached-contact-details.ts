@@ -81,6 +81,9 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 			registrantEntityType: extra.es?.registrant_entity_type,
 			registrantIdentificationNumber: extra.es?.registrant_identification_number,
 			adminIdentificationNumber: extra.es?.admin_identification_number,
+			redEsAgreementAccepted: extra.es?.red_es_agreement_accepted
+				? String( extra.es.red_es_agreement_accepted )
+				: undefined,
 		},
 	};
 }

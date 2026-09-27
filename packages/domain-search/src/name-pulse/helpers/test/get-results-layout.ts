@@ -18,7 +18,7 @@ const SINGLE: NamePulseResultsLayout = {
 	wordCount: 1,
 	top: { show: true },
 	exactGrid: { show: true },
-	suggestions: { show: false },
+	suggestions: { show: true },
 	creative: { show: false },
 };
 
@@ -48,7 +48,7 @@ describe( 'getResultsLayout', () => {
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -87,7 +87,7 @@ describe( 'getResultsLayout', () => {
 			unknownEnding: 'd',
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -101,7 +101,7 @@ describe( 'getResultsLayout', () => {
 			subdomain: 'shop',
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -114,7 +114,7 @@ describe( 'getResultsLayout', () => {
 			isFreeSubdomain: true,
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );

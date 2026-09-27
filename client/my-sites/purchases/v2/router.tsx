@@ -6,6 +6,8 @@ import * as appRouterDomains from 'calypso/dashboard/app/router/domains';
 import * as appRouterEmails from 'calypso/dashboard/app/router/emails';
 import * as appRouterMe from 'calypso/dashboard/app/router/me';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
+import { isJetpackCloud } from 'calypso/dashboard/utils/jetpack';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Root from 'calypso/sites/v2/components/root';
 import {
 	createBrowserHistoryAndMemoryRouterSync,
@@ -37,7 +39,8 @@ function rehome< TRoute extends AnyRoute >(
  * Routes the billing components can navigate to that live outside this subtree.
  * They are included so `.fullPath`/`.to` resolve to real URLs; actually visiting
  * one leaves the embedded router, because the history sync hands any path this
- * tree owns no component for back to page.js.
+ * tree owns no component for back to page.js (or, on Jetpack Cloud, to
+ * WordPress.com).
  */
 function createExitRoute< TRoute extends AnyRoute >(
 	route: TRoute,
@@ -107,8 +110,20 @@ const createRouteTree = () => {
 	] );
 };
 
+/**
+ * Jetpack Cloud serves only the `/purchases/*` pages. Every other path the
+ * billing components link to (sites, domains, emails, tax details, …) is a
+ * Dashboard route, so it is sent to the WordPress.com Dashboard.
+ */
+export function getJetpackCloudExternalUrl( url: string ): string | undefined {
+	if ( ! isJetpackCloud() || url === '/purchases' || url.startsWith( '/purchases/' ) ) {
+		return undefined;
+	}
+	return dashboardLink( url );
+}
+
 export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
-	createBrowserHistoryAndMemoryRouterSync();
+	createBrowserHistoryAndMemoryRouterSync( { getExternalUrl: getJetpackCloudExternalUrl } );
 
 export const getRouter = ( config: AppConfig ) => {
 	const router = createRouter( {

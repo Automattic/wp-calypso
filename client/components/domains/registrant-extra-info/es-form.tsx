@@ -1,7 +1,8 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { camelCase } from '@automattic/js-utils';
+import { camelCase, isEmpty, pick } from '@automattic/js-utils';
 import { LocalizeProps, TranslateResult, localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -17,6 +18,12 @@ import type { ChangeEvent, ReactNode } from 'react';
 import './style.scss';
 
 const INDIVIDUAL_ENTITY_TYPE = '1';
+
+// TODO: replace with the Red.es agreement URL once it is known.
+const redEsAgreementUrl = 'https://example.com/red-es-terms-and-conditions';
+const defaultValues = {
+	redEsAgreementAccepted: false,
+};
 
 // Red.es only accepts NIF, NIE and CIF in upper case; foreign IDs are unaffected.
 const UPPERCASED_FIELD_IDS = [ 'registrant-identification-number', 'admin-identification-number' ];
@@ -95,6 +102,27 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 		];
 	}
 
+	componentDidMount() {
+		// Add defaults to the store to make accepting default values work.
+		const providedDetails = Object.keys( this.props.ccTldDetails );
+		const neededRequiredDetails = [ 'redEsAgreementAccepted' ].filter(
+			( key ) => ! providedDetails.includes( key )
+		);
+
+		// Bail early as we already have the details from a previous purchase.
+		if ( isEmpty( neededRequiredDetails ) ) {
+			return;
+		}
+
+		const payload = {
+			extra: {
+				es: pick( defaultValues, neededRequiredDetails ),
+			},
+		};
+
+		this.props.onContactDetailsChange?.( payload );
+	}
+
 	handleChangeEvent = ( event: ChangeEvent< HTMLInputElement | HTMLSelectElement > ) => {
 		const { id, value } = event.target;
 		const payload = {
@@ -107,6 +135,16 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 
 		this.props.onContactDetailsChange?.( payload );
 	};
+
+	handleAgreementChangeEvent = ( event: ChangeEvent< HTMLInputElement > ) => {
+		this.props.onContactDetailsChange?.( {
+			extra: { es: { redEsAgreementAccepted: event.target.checked } },
+		} );
+	};
+
+	getRedEsAgreementAcceptedErrorMessage() {
+		return this.getFieldError( 'redEsAgreementAccepted' ) ?? this.props.translate( 'Required' );
+	}
 
 	getFieldError( field: keyof EsDomainContactExtraDetailsErrors ) {
 		return this.props.contactDetailsValidationErrors?.extra?.es?.[ field ];
@@ -157,6 +195,7 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 			( ccTldDetails?.registrantIdentificationNumber as string ) ?? '';
 		const isOrganization =
 			Boolean( registrantEntityType ) && registrantEntityType !== INDIVIDUAL_ENTITY_TYPE;
+		const redEsAgreementAccepted = Boolean( ccTldDetails?.redEsAgreementAccepted );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -200,6 +239,25 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 					</FormSettingExplanation>
 				</FormFieldset>
 				{ isOrganization && this.renderAdminIdentificationNumberField() }
+				<FormFieldset>
+					<FormLabel>
+						<FormCheckbox
+							id="red-es-agreement-accepted"
+							checked={ redEsAgreementAccepted }
+							onChange={ this.handleAgreementChangeEvent }
+						/>
+						<span>
+							{ translate( 'I have read and agree to the {{a}}Red.es terms and conditions{{/a}}.', {
+								components: {
+									a: <a target="_blank" rel="noopener noreferrer" href={ redEsAgreementUrl } />,
+								},
+							} ) }
+						</span>
+						{ redEsAgreementAccepted || (
+							<FormInputValidation text={ this.getRedEsAgreementAcceptedErrorMessage() } isError />
+						) }
+					</FormLabel>
+				</FormFieldset>
 			</form>
 		);
 	}

@@ -21,13 +21,15 @@
 	--color-warning: var( --color-foreground );
 	--color-error-background: #fcf1f1;
 	--color-error: #e7000b;
+	--color-error-accent: var( --color-error );
 	--color-link: var( --color-primary );
 
 	/* === TYPOGRAPHY === */
-	--font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-		'Segoe UI Symbol', 'Noto Color Emoji';
-	--font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
-		monospace;
+	--font-sans:
+		ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+		'Noto Color Emoji';
+	--font-mono:
+		ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 	--font-weight-medium: 450;
 	--font-weight-semibold: 500;
 	--font-weight-bold: 600;
@@ -66,7 +68,8 @@
 	--radius-full: 9999px;
 
 	/* === SHADOWS === */
-	--shadow-sm: 0 0 0 1px color-mix( in srgb, var( --color-foreground ) 10%, transparent ),
+	--shadow-sm:
+		0 0 0 1px color-mix( in srgb, var( --color-foreground ) 10%, transparent ),
 		0 0 6px color-mix( in srgb, var( --color-foreground ) 5%, transparent );
 	--shadow-lg: 0 0 0 1px rgba( 0, 0, 0, 0.075 ), 0 2px 24px rgba( 0, 0, 0, 0.075 );
 	--shadow-outline: 0 0 0 1px color-mix( in srgb, var( --color-foreground ) 10%, transparent );
@@ -74,7 +77,8 @@
 		color-mix( in srgb, var( --color-foreground ) 25%, transparent );
 	/* === TRANSITIONS === */
 
-	--transition-colors: color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+	--transition-colors:
+		color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
 		background-color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
 		border-color 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
 		box-shadow 150ms cubic-bezier( 0.4, 0, 0.2, 1 ), fill 150ms cubic-bezier( 0.4, 0, 0.2, 1 ),
@@ -95,6 +99,7 @@
 	--color-warning-background: #2e281f;
 	--color-error-background: #2e1f1f;
 	--color-error: #ffdddf;
+	--color-error-accent: #e7000b;
 	--color-link: var( --color-white );
 }
 

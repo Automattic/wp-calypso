@@ -5,9 +5,11 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
-import type { Site } from '@automattic/api-core';
+import type { AppConfig } from '../../../app/context';
+import type { Site, User } from '@automattic/api-core';
 
 // Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
 // resolves to the given variation through its normal code path — no module or network mocking.
@@ -407,6 +409,34 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'Month-to-date site usage' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'shows the two-step-required notice when the site requires it and the user has no two-step', async () => {
+		// The notice links to /me, so it only renders where the dashboard variant supports it.
+		const configWithMeSupport: AppConfig = {
+			...APP_CONTEXT_DEFAULT_CONFIG,
+			supports: {
+				...APP_CONTEXT_DEFAULT_CONFIG.supports,
+				me: { billing: { monetizeSubscriptions: true }, security: { sshKey: true }, apps: true },
+			},
+		};
+		mockSite( {
+			...site,
+			jetpack: true,
+			jetpack_modules: [ 'sso' ],
+			options: { ...site.options, jetpack_sso_require_two_step: true },
+		} as Site );
+
+		render( <SiteOverview siteSlug={ site.slug } />, {
+			config: configWithMeSupport,
+			user: { ID: 1, two_step_enabled: false } as User,
+		} );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+
+		expect(
+			await screen.findByText( 'Set up two-step authentication to access WP Admin' )
+		).toBeVisible();
+		expect( screen.getByText( /Test Site requires two-step authentication/ ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of an inaccessible Jetpack site', async () => {

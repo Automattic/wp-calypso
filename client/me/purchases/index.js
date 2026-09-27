@@ -1,48 +1,19 @@
 import page from '@automattic/calypso-router';
-import {
-	makeLayout,
-	render as clientRender,
-	maybeRedirectToMultiSiteDashboard,
-} from 'calypso/controller';
-import { setupPreferences } from 'calypso/controller/preferences';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
-import * as billingController from 'calypso/me/purchases/billing-history/controller';
-import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
-import { siteSelection } from 'calypso/my-sites/controller';
-import * as controller from './controller';
+import { redirectToMultiSiteDashboard, redirectPurchaseByOwnershipToDashboard } from './controller';
 import * as paths from './paths';
 
 export default ( router ) => {
-	router(
-		paths.paymentMethods,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods' ),
-		sidebar,
-		paymentMethodsController.paymentMethods,
-		makeLayout,
-		clientRender
-	);
+	router( paths.paymentMethods, redirectToMultiSiteDashboard( '/me/billing/payment-methods' ) );
 
 	router(
 		paths.addNewPaymentMethod,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
-		sidebar,
-		controller.addNewPaymentMethod,
-		makeLayout,
-		clientRender
+		redirectToMultiSiteDashboard( '/me/billing/payment-methods/add' )
 	);
 
-	router(
-		paths.addCreditCard,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
-		sidebar,
-		controller.addNewPaymentMethod,
-		makeLayout,
-		clientRender
-	);
+	router( paths.addCreditCard, redirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ) );
 
 	// redirect legacy urls
 	router( '/payment-methods/add-credit-card', () => {
@@ -51,46 +22,23 @@ export default ( router ) => {
 
 	router(
 		paths.vatDetails,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/tax-details' ),
-		sidebar,
-		controller.vatDetails,
-		makeLayout,
-		clientRender
+		redirectToMultiSiteDashboard( '/me/billing/payment-methods/tax-details' )
 	);
 
-	router(
-		paths.billingHistory,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/history' ),
-		sidebar,
-		billingController.billingHistory,
-		makeLayout,
-		clientRender
-	);
+	router( paths.billingHistory, redirectToMultiSiteDashboard( '/me/billing/history' ) );
 
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/monetize-subscriptions/${ params.subscriptionId }`
-		),
-		sidebar,
-		membershipsController.subscription,
-		makeLayout,
-		clientRender
+		)
 	);
 
 	router(
 		paths.purchasesRoot + '/crm-downloads/:subscription',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/monetize-subscriptions/${ params.subscription }`
-		),
-		sidebar,
-		controller.crmDownloads,
-		makeLayout,
-		clientRender
+		)
 	);
 
 	router(
@@ -106,9 +54,7 @@ export default ( router ) => {
 	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
 	router(
 		paths.deprecated.otherPurchases,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/monetize-subscriptions' ),
-		() => page.redirect( paths.purchasesRoot )
+		redirectToMultiSiteDashboard( '/me/billing/monetize-subscriptions' )
 	);
 
 	router(
@@ -122,119 +68,54 @@ export default ( router ) => {
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( ( params ) => `/me/billing/history/${ params.receiptId }` ),
-		sidebar,
-		billingController.transaction,
-		makeLayout,
-		clientRender
+		redirectToMultiSiteDashboard( ( params ) => `/me/billing/history/${ params.receiptId }` )
 	);
 
-	router(
-		paths.purchasesRoot,
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/purchases' ),
-		sidebar,
-		controller.list,
-		makeLayout,
-		clientRender
-	);
+	router( paths.purchasesRoot, redirectToMultiSiteDashboard( '/me/billing/purchases' ) );
 
-	/**
-	 * The siteSelection middleware has been removed from this route.
-	 * No selected site!
-	 */
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
-			( params ) => `/me/billing/purchases/${ params.purchaseId }`
-		),
-		sidebar,
-		controller.managePurchase,
-		makeLayout,
-		clientRender
+		redirectToMultiSiteDashboard( ( params ) => `/me/billing/purchases/${ params.purchaseId }` )
 	);
 
 	router(
 		paths.managePurchaseByOwnership( ':ownershipId' ),
-		sidebar,
-		controller.managePurchaseByOwnership,
-		makeLayout,
-		clientRender
+		redirectPurchaseByOwnershipToDashboard
 	);
 
-	/**
-	 * The siteSelection middleware has been removed from this route.
-	 * No selected site!
-	 */
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
-		),
-		sidebar,
-		controller.cancelPurchase,
-		makeLayout,
-		clientRender
+		)
 	);
 
 	router(
 		paths.siteActionInterstitial( ':site', ':purchaseId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/site-level-actions`
-		),
-		sidebar,
-		controller.siteActionInterstitial,
-		makeLayout,
-		clientRender
+		)
 	);
 
 	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
-		),
-		sidebar,
-		siteSelection,
-		controller.confirmCancelDomain,
-		makeLayout,
-		clientRender
+		)
 	);
 
-	/**
-	 * The siteSelection middleware has been removed from this route.
-	 * No selected site!
-	 */
 	router(
 		paths.addPaymentMethod( ':site', ':purchaseId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
+		redirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/payment-method/change`
-		),
-		sidebar,
-		controller.changePaymentMethod,
-		makeLayout,
-		clientRender
+		)
 	);
 
-	/**
-	 * The siteSelection middleware has been removed from this route.
-	 * No selected site!
-	 */
 	router(
 		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
-			( params ) => `me/billing/purchases/${ params.purchaseId }/payment-method/change`
-		),
-		sidebar,
-		controller.changePaymentMethod,
-		makeLayout,
-		clientRender
+		redirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }/payment-method/change`
+		)
 	);
 
 	// redirect legacy urls

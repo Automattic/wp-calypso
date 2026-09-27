@@ -39,6 +39,16 @@ describe( 'createAgentConfig', () => {
 		sessionStorage.clear();
 	} );
 
+	it( 'records the site and user captured by its authentication provider', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '456',
+			sessionUserId: 123,
+			siteId: 456,
+		} );
+		expect( config.authenticationScope ).toEqual( { siteId: 456, userId: 123 } );
+	} );
+
 	it( 'does not add reader page context for regular agents', async () => {
 		setAgentsManagerData( {
 			currentPost: { id: 1, title: 'Reader post' },

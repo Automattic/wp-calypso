@@ -382,6 +382,10 @@ function isFeaturedImageSuggestionAvailable(
 	if ( ! isImageStudioAvailable() ) {
 		return false;
 	}
+	const blockEditor = ( window as any ).wp?.data?.select?.( 'core/block-editor' );
+	if ( ! blockEditor?.getSettings?.().mediaUpload ) {
+		return false;
+	}
 	return currentPostTypeSupportsFeaturedImage( currentPostType );
 }
 
@@ -1362,7 +1366,7 @@ type BlockSuggestion = {
 	id: string;
 	label: string;
 	prompt: string;
-	condition: ( block: any ) => boolean;
+	condition: ( block: any, canUploadFiles: boolean ) => boolean;
 	options?: SuggestionOption[];
 	// Runs on click instead of sending the prompt. AgentUI submits the prompt
 	// only when this resolves true, so returning false keeps the chat untouched.
@@ -1527,15 +1531,19 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		label: __( 'Generate image', __i18n_text_domain__ ),
 		// Empty prompt — opening Image Studio replaces sending anything to the agent.
 		prompt: '',
-		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
+		condition: ( block: any, canUploadFiles ) =>
+			block?.name === 'core/image' && canUploadFiles && isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
 	},
 	{
 		id: 'edit-image',
 		label: __( 'Edit image', __i18n_text_domain__ ),
 		prompt: '',
-		condition: ( block: any ) =>
-			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
+		condition: ( block: any, canUploadFiles ) =>
+			block?.name === 'core/image' &&
+			!! block?.attributes?.id &&
+			canUploadFiles &&
+			isImageStudioAvailable(),
 		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
 	},
 ];
@@ -1637,11 +1645,15 @@ export function useSuggestions( maxSuggestions?: number ): {
 	}, [] );
 
 	const editorContext = useSelect( ( select ) => {
-		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
+		const blockEditor = select( 'core/block-editor' ) as {
+			getSelectedBlock?: () => any;
+			getSettings?: () => { mediaUpload?: unknown };
+		};
 		const editor = select( 'core/editor' ) as {
 			getCurrentPostType?: () => string | undefined;
 		};
 		return {
+			canUploadFiles: !! blockEditor?.getSettings?.()?.mediaUpload,
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
 			postType: editor?.getCurrentPostType?.(),
 		};
@@ -1658,9 +1670,11 @@ export function useSuggestions( maxSuggestions?: number ): {
 	const applicable = useMemo(
 		() =>
 			selectedBlock && blockTransformationsEnabled
-				? BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
+				? BLOCK_SUGGESTIONS.filter( ( suggestion ) =>
+						suggestion.condition( selectedBlock, editorContext.canUploadFiles )
+					)
 				: [],
-		[ blockTransformationsEnabled, selectedBlock ]
+		[ blockTransformationsEnabled, selectedBlock, editorContext.canUploadFiles ]
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>

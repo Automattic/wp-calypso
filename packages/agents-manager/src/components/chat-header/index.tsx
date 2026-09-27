@@ -2,6 +2,7 @@ import { Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
+import { useAgentsManagerContext } from '../../contexts';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
@@ -22,6 +23,7 @@ interface Props {
 
 export default function ChatHeader( { onClose, options, title, onBack, isDocked }: Props ) {
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const { isInternalOnly } = useAgentsManagerContext();
 	const hasAiChatEntry = useHasAiChatEntryButton();
 
 	// Minimize only applies to the floating chat reachable from an AI chat entry button
@@ -45,6 +47,17 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 				<div className="agents-manager-chat-header__title" title={ title }>
 					{ title }
 				</div>
+			) }
+			{ isInternalOnly && (
+				<span
+					className="agents-manager-chat-header__internal-only"
+					title={ __(
+						'The current screen only has WordPress Agent enabled for internal use.',
+						__i18n_text_domain__
+					) }
+				>
+					{ __( 'A8C Only', __i18n_text_domain__ ) }
+				</span>
 			) }
 			<div className="agents-manager-chat-header__actions">
 				{ showMinimize && (

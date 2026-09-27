@@ -368,9 +368,19 @@ export async function getWowFunnelHandoffUrl( {
 		case 'editor':
 		default: {
 			const adminUrl = knownAdminUrl ?? ( await getSiteAdminUrl( siteIdentifier ) );
-			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
-			// because a plain site-editor.php load stays in view mode.
-			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );
+			// The funnel lands in Big Sky's easy mode, the same place a build-wow build lands.
+			// `canvasEdit` because easy mode only runs on the edit canvas, and a plain
+			// site-editor.php load stays in view mode.
+			//
+			// Deliberately no `p`. Easy mode always edits a page, so the plugin's
+			// load-site-editor.php redirect fills in `p=/page/{front page id}` from the site's
+			// own page_on_front — but only when `p` is empty. The `p=/` this used to send is the
+			// home *template* route, and would have stopped that substitution. Without `p`,
+			// core's site editor resolves the empty route to the front page too, so the landing
+			// is the same whether or not the plugin's redirect fires. Resolving the id here
+			// instead would mean trusting a Jetpack-synced option that may not have caught up
+			// with an import that finished seconds ago; the plugin reads it from the site itself.
+			return getSiteEditorUrl( adminUrl, { canvasEdit: true, easyMode: true } );
 		}
 	}
 }

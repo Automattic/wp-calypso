@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import {
+	getSiteAdminUrl,
+	getSiteEditorUrl,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
@@ -10,6 +12,7 @@ import {
 	getRememberedWowFunnelSite,
 	getWowFunnelConfig,
 	getWowFunnelDest,
+	getWowFunnelHandoffUrl,
 	getWowFunnelKey,
 	isKnownWowFunnel,
 	waitForWowFunnelReady,
@@ -30,6 +33,8 @@ jest.mock( '../blueprint-archive-import', () => ( {
 
 const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
 const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
+const mockGetSiteAdminUrl = getSiteAdminUrl as jest.Mock;
+const mockGetSiteEditorUrl = getSiteEditorUrl as jest.Mock;
 
 const never = () => new Promise< void >( () => {} );
 
@@ -246,5 +251,67 @@ describe( 'waitForWowFunnelReady', () => {
 		await Promise.resolve();
 
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'getWowFunnelHandoffUrl', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetSiteAdminUrl.mockResolvedValue( 'https://fetched.example.com/wp-admin/' );
+		mockGetSiteEditorUrl.mockReturnValue( 'https://example.com/editor' );
+	} );
+
+	/**
+	 * The funnel lands in Big Sky's easy mode, where a build-wow build lands too. Easy mode
+	 * only runs on the edit canvas, so the hand-off has to force it.
+	 */
+	it( 'hands the customer to the site editor in easy mode on the edit canvas', async () => {
+		const url = await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		expect( url ).toBe( 'https://example.com/editor' );
+		expect( mockGetSiteEditorUrl ).toHaveBeenCalledWith(
+			'https://site.example.com/wp-admin/',
+			expect.objectContaining( { canvasEdit: true, easyMode: true } )
+		);
+	} );
+
+	/**
+	 * Easy mode always edits a page, and the plugin substitutes the site's own front page for
+	 * the route — but only when the URL names no route. A `p` here (even `p=/`, the home
+	 * template) would stop that substitution.
+	 */
+	it( 'names no route, so the plugin can pick the front page itself', async () => {
+		await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		const options = mockGetSiteEditorUrl.mock.calls[ 0 ][ 1 ];
+		expect( options ).not.toHaveProperty( 'path' );
+	} );
+
+	it( 'uses the admin URL it is handed rather than fetching one', async () => {
+		await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		expect( mockGetSiteAdminUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fetches the admin URL when it is not handed one', async () => {
+		await getWowFunnelHandoffUrl( { dest: 'editor', siteIdentifier: 'site.example.com' } );
+
+		expect( mockGetSiteAdminUrl ).toHaveBeenCalledWith( 'site.example.com' );
+		expect( mockGetSiteEditorUrl ).toHaveBeenCalledWith(
+			'https://fetched.example.com/wp-admin/',
+			expect.objectContaining( { canvasEdit: true, easyMode: true } )
+		);
 	} );
 } );

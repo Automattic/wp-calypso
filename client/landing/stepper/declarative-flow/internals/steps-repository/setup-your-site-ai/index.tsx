@@ -12,7 +12,10 @@ import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
+import {
+	planSupportsBuildWow,
+	planSupportsBuildWowDsl,
+} from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
@@ -20,6 +23,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
 import type { Step as StepType } from '../../types';
+import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import './style.scss';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
@@ -42,9 +46,13 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// The build-wow destination lives in the ai-site-builder-spec flow, which bounces
 	// to plain onboarding without the site-spec feature; the card falls back to the
 	// legacy builder there.
-	const offerBuildWow =
+	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
+	const offerBuildWow = config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planSlug );
+	// Pre-production only: a build on the site-builder's DSL graph, for testing it end to end.
+	const offerBuildWowDsl =
 		config.isEnabled( 'site-spec' ) &&
-		planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
+		config.isEnabled( 'site-spec/build-wow-dsl' ) &&
+		planSupportsBuildWowDsl( planSlug );
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
@@ -87,15 +95,17 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const submitGenerateTheme = () => {
+	const submitGenerateTheme = ( graph?: BuildWowGraph ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
+			...( graph ? { graph } : {} ),
 		} );
 
 		navigation.submit( {
 			setupChoice: 'generate-theme',
 			siteSlug,
 			siteId,
+			graph,
 		} );
 	};
 
@@ -130,11 +140,18 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 
 		if ( offerBuildWow ) {
-			submitGenerateTheme();
+			submitGenerateTheme( 'blocks-first' );
 			return;
 		}
 
 		submitBuildWithAI();
+	};
+
+	const handleCustomDesignDslClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		submitGenerateTheme( 'dsl' );
 	};
 
 	const buildWithAIPromptCard = (
@@ -198,6 +215,16 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
+	const buildWithAIDslSummary = offerBuildWowDsl && (
+		<SummaryButton
+			title="Create a custom design (DSL)"
+			description="Pre-production only: build the site on the site-builder DSL graph."
+			decoration={ <BigSkyLogo.CentralLogo heartless /> }
+			onClick={ handleCustomDesignDslClick }
+			disabled={ isSubmitting }
+		/>
+	);
+
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
@@ -227,6 +254,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<>
 					{ startWithTemplateCard }
 					{ buildWithAISummary }
+					{ buildWithAIDslSummary }
 				</>
 			) }
 		</VStack>

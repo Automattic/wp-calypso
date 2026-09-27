@@ -21,8 +21,6 @@ type NamePulseSections = Pick<
 
 const AI_MODE_MIN_WORDS = 4;
 
-// The fqdn row is a placeholder that keeps the exact-match behaviour until that
-// mode is built.
 const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
 	empty: {
 		top: { show: false },
@@ -33,13 +31,13 @@ const SECTIONS_BY_MODE: Record< NamePulseMode, NamePulseSections > = {
 	fqdn: {
 		top: { show: true },
 		exactGrid: { show: true },
-		suggestions: { show: false },
+		suggestions: { show: true },
 		creative: { show: false },
 	},
 	single: {
 		top: { show: true },
 		exactGrid: { show: true },
-		suggestions: { show: false },
+		suggestions: { show: true },
 		creative: { show: false },
 	},
 	keyword: {

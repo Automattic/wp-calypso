@@ -4,7 +4,7 @@
 import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils/observe-editor-canvas-pointerdown';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
+import { Card } from '@wordpress/components';
 import {
 	useConstrainedTabbing,
 	useFocusOnMount,
@@ -202,12 +202,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }
-					{ ! isMobile && (
-						<Elevation
-							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
-							value={ 4 }
-						></Elevation>
-					) }
 				</Card>
 			</OptionalDraggable>
 		</PersistentRouter>
