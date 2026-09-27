@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
 const Notice = styled.p`
-	grid-column: 1 / -1;
 	margin: 8px 0 0;
 	font-size: 12px;
 	line-height: 1.5;

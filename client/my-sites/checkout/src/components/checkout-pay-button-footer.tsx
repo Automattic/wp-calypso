@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	margin-top: 16px;
+	margin-block-start: 16px;
 	font-size: 13px;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;

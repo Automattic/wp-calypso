@@ -746,10 +746,6 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 	 * method" link is also a <button> but is a text link, so it is excluded from
 	 * the 50px submit-button sizing below.
 	 */
-	.checkout-steps__submit-button-wrapper {
-		padding: 0;
-	}
-
 	.checkout-submit-button {
 		width: 100%;
 	}
@@ -758,6 +754,11 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		width: 100%;
 		height: 50px;
 		box-sizing: border-box;
+	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`

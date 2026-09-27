@@ -32,6 +32,10 @@ const TrustCardsRow = styled.div`
 	@media ( min-width: 1025px ) {
 		padding-inline-end: 64px;
 	}
+
+	& > .checkout-processor-notice {
+		grid-column: 1 / -1;
+	}
 `;
 
 const TrustCard = styled.div`
