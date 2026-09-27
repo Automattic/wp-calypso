@@ -2,13 +2,11 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
 const Notice = styled.p`
-	margin: 0 auto;
-	padding: 24px;
-	text-align: center;
-	font-size: 13px;
+	grid-column: 1 / -1;
+	margin: 8px 0 0;
+	font-size: 12px;
+	line-height: 1.5;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	max-width: 1280px;
-	box-sizing: border-box;
 	white-space: pre-line;
 `;
 

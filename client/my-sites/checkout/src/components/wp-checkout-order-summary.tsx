@@ -746,6 +746,10 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 	 * method" link is also a <button> but is a text link, so it is excluded from
 	 * the 50px submit-button sizing below.
 	 */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
+
 	.checkout-submit-button {
 		width: 100%;
 	}

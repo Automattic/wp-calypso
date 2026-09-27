@@ -1,8 +1,9 @@
 import { isPlan } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
-import { reusableBlock, shield } from '@wordpress/icons';
+import { lock, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { getRefundWindowSummary } from './refund-policies';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -34,27 +35,34 @@ const TrustCardsRow = styled.div`
 `;
 
 const TrustCard = styled.div`
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	display: grid;
+	grid-template-columns: 20px minmax( 0, 1fr );
+	column-gap: 10px;
+	row-gap: 8px;
 	padding: 20px;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	border-radius: 3px;
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
+
+	/* The icon gets its own column so the title and body share one left edge
+	   regardless of each glyph's built-in padding. */
+	& > * {
+		grid-column: 2;
+	}
+
+	& > svg {
+		grid-column: 1;
+		grid-row: 1;
+		align-self: center;
+		fill: ${ ( props ) => props.theme.colors.textColor };
+	}
 `;
 
 const TrustCardHeader = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 10px;
 	font-weight: 600;
 	font-size: 14px;
 	color: ${ ( props ) => props.theme.colors.textColor };
-
-	svg {
-		flex-shrink: 0;
-	}
 `;
 
 const TrustCardBody = styled.div`
@@ -82,8 +90,8 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 		<TrustCardsRow className="checkout-trust-cards">
 			{ refundSummary !== null && (
 				<TrustCard>
+					<Icon icon={ reusableBlock } size={ 20 } />
 					<TrustCardHeader>
-						<Icon icon={ reusableBlock } size={ 20 } />
 						{ translate( '%(days)d-day money back', {
 							args: { days: refundSummary.days },
 						} ) }
@@ -104,12 +112,12 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 			) }
 
 			<TrustCard>
-				<TrustCardHeader>
-					<Icon icon={ shield } size={ 20 } />
-					{ translate( 'SSL secure payment' ) }
-				</TrustCardHeader>
+				<Icon icon={ lock } size={ 20 } />
+				<TrustCardHeader>{ translate( 'SSL secure payment' ) }</TrustCardHeader>
 				<TrustCardBody>{ translate( 'Encrypted with 256-bit SSL.' ) }</TrustCardBody>
 			</TrustCard>
+
+			<CheckoutProcessorNotice />
 		</TrustCardsRow>
 	);
 }
