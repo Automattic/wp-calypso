@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencyTeamInviteInput } from './types';
+import type { AgencyTeamInviteActivationInput, AgencyTeamInviteInput } from './types';
 
 export async function inviteAgencyTeamMember(
 	agencyId: number,
@@ -8,6 +8,18 @@ export async function inviteAgencyTeamMember(
 	return wpcom.req.post(
 		{
 			path: `/agency/${ agencyId }/user-invites`,
+			apiNamespace: 'wpcom/v2',
+		},
+		input
+	);
+}
+
+export async function activateAgencyTeamMember(
+	input: AgencyTeamInviteActivationInput
+): Promise< { success: boolean } > {
+	return wpcom.req.post(
+		{
+			path: `/agency/${ input.agencyId }/user-invites/${ input.inviteId }`,
 			apiNamespace: 'wpcom/v2',
 		},
 		input
