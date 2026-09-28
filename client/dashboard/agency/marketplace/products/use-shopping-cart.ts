@@ -16,6 +16,9 @@ const STORAGE_KEYS: Record< MarketplaceType, string > = {
 	referral: 'referrals-shopping-card-selected-items',
 };
 
+/** The most units of one product a cart line can hold. */
+export const MAX_CART_ITEM_QUANTITY = 100;
+
 const listeners = new Set< () => void >();
 const snapshots = new Map< MarketplaceType, ShoppingCartItem[] >();
 
@@ -28,7 +31,11 @@ export function parseCartEntries( entries: string ): ShoppingCartItem[] {
 		.split( ',' )
 		.map( ( entry ) => {
 			const [ slug, quantity ] = entry.split( ':' );
-			return { slug, quantity: parseInt( quantity, 10 ) || 1, raw: entry };
+			return {
+				slug,
+				quantity: Math.min( MAX_CART_ITEM_QUANTITY, parseInt( quantity, 10 ) || 1 ),
+				raw: entry,
+			};
 		} )
 		.filter( ( item ) => item.slug );
 }
@@ -55,6 +62,11 @@ function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[]
 	}
 	snapshots.set( marketplaceType, items );
 	listeners.forEach( ( listener ) => listener() );
+}
+
+/** Empties the stored cart outside React, for the page a finished checkout returns to. */
+export function clearStoredCart( marketplaceType: MarketplaceType ) {
+	writeItems( marketplaceType, [] );
 }
 
 function subscribe( listener: () => void ) {

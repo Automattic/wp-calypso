@@ -49,6 +49,7 @@ export function dashboardOrigins(): string[] {
 		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
 		`http://my.a4a.localhost:${ port }`,
+		'https://agencies-beta.automattic.com',
 	];
 
 	// On calypso.live previews both apps are reached through the redirector,

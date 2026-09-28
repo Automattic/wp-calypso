@@ -55,6 +55,7 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -603,7 +604,7 @@ export default function CheckoutMain( {
 					transactionData,
 					dataForProcessor,
 					translate,
-					sitelessCheckoutType === 'a4a'
+					isExternalA4ACheckout( sitelessCheckoutType )
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),

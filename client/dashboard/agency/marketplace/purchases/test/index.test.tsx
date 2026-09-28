@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -70,7 +70,60 @@ async function openRowActions() {
 }
 
 describe( '<MarketplacePurchases>', () => {
-	afterEach( () => nock.cleanAll() );
+	afterEach( () => {
+		nock.cleanAll();
+		sessionStorage.clear();
+		window.history.replaceState( {}, '', '/purchases' );
+	} );
+
+	test( 'empties the cart and drops the receipt when a checkout returns here', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+	} );
+
+	test( 'drops the purchased plan the checkout adds to the return', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
+	test( 'leaves the cart alone without a receipt', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
 
 	test( 'reports a license whose site is being created', async () => {
 		mockAgency();
