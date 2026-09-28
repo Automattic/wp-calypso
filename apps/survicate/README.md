@@ -6,7 +6,10 @@ There is no logic here. `survicate.js` reads the config PHP emits on `window.wpc
 
 ## Development
 
-The bundle is ~30 KB minified, mostly `@automattic/calypso-analytics` (Tracks, for the suppression event) and `debug`.
+The bundle is ~11 KB minified. Two build rules keep it safe to serve from a fixed URL:
+
+- Everything except `@wordpress/data` is bundled, so `survicate.asset.json` always lists only `wp-data`. Jetpack caches that manifest for an hour, so a dependency that became external would be missing from the page until the cache expired. `@wordpress/data` stays external to share the page's registry and see the Help Center store.
+- `@automattic/calypso-analytics` is replaced by a no-op stub (`calypso-analytics-stub.js`), so the bundle records no Tracks events. On Atomic custom domains the wordpress.com consent cookies are absent, and the real module would track users who opted out.
 
 ### In Calypso
 

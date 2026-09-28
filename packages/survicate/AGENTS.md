@@ -240,8 +240,15 @@ rule. Properties:
   explicit `invokeSurvicateEvent()` was skipped, plus an `event_name` property).
 
 Recording is best-effort and wrapped in `try/catch` — a failing analytics call
-never interferes with suppression. The wp-admin bundle emits it too, with no
-property distinguishing the host yet.
+never interferes with suppression. The wp-admin bundle does **not** emit it:
+`apps/survicate` swaps `@automattic/calypso-analytics` for a no-op stub, because on
+Atomic custom domains the wordpress.com consent cookies are absent and the real
+module would record events for users who opted out.
+
+**Until Jetpack #52709 ships**, wp-admin still runs the older inline copy of this
+logic emitted by `jetpack-mu-wpcom/src/features/survicate/class-survicate.php`
+(Jetpack monorepo), not this package. Keep the two in sync when changing selectors
+or behavior; remove this note once wp-admin loads the `apps/survicate` bundle.
 
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no

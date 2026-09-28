@@ -29,6 +29,13 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			chunkFilename: '[id].[contenthash:8].min.js',
 			library: 'wpcomSurvicate',
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				'@automattic/calypso-analytics$': path.join( __dirname, 'calypso-analytics-stub.js' ),
+			},
+		},
 		plugins: [
 			// The base config's extraction plugin writes a PHP asset file; we want
 			// the JSON `survicate.asset.json` that class-survicate.php reads.
@@ -43,6 +50,15 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				injectPolyfill: false,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
+				// Bundle everything except `@wordpress/data`, which must stay external
+				// to share the page's registry (and so see the Help Center store).
+				// Jetpack caches this manifest for an hour while the bundle URL stays
+				// the same, so a newly externalized dependency would be missing from
+				// the page until the cache expired.
+				useDefaults: false,
+				requestToExternal: ( request ) =>
+					request === '@wordpress/data' ? [ 'wp', 'data' ] : undefined,
+				requestToHandle: ( request ) => ( request === '@wordpress/data' ? 'wp-data' : undefined ),
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
 		],
