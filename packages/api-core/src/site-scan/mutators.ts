@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { SiteScan, ThreatActionOptions } from './types';
 
-export function enqueueSiteScan( siteId: number ): Promise< void > {
+export function enqueueSiteScan( siteId: number ): Promise< { success: boolean } > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/scan/enqueue`,
 		apiNamespace: 'wpcom/v2',
