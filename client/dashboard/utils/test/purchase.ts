@@ -489,6 +489,7 @@ describe( 'isA4ASubscriptionMeta', () => {
 	test( 'accepts the marker with or without an instance key', () => {
 		expect( isA4ASubscriptionMeta( 'is-a4a' ) ).toBe( true );
 		expect( isA4ASubscriptionMeta( 'is-a4a:example.com' ) ).toBe( true );
+		expect( isA4ASubscriptionMeta( 'is-a4a:titan:example.com' ) ).toBe( true );
 	} );
 
 	test( 'rejects other values', () => {
