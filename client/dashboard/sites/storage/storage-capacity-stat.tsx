@@ -31,7 +31,7 @@ export function StorageCapacityStat( {
 	const locale = useIntlLocale();
 	// Calculate total and percentages
 	const totalBytes = currentCapacityBytes + addOnCapacityBytes;
-	const totalCapacity = formatStorage( totalBytes, locale );
+	const totalCapacity = formatStorage( totalBytes, locale, 0 );
 	const currentCapacityPercent = ( currentCapacityBytes / totalBytes ) * 100;
 	const addOnCapacityPercent = ( addOnCapacityBytes / totalBytes ) * 100;
 
@@ -68,7 +68,7 @@ export function StorageCapacityStat( {
 					{ sprintf(
 						// translators: %s is the plan storage amount
 						__( '%s plan storage' ),
-						formatStorage( currentCapacityBytes, locale )
+						formatStorage( currentCapacityBytes, locale, 0 )
 					) }
 				</Text>
 				<Text
@@ -79,7 +79,7 @@ export function StorageCapacityStat( {
 					{ sprintf(
 						// translators: %s is the storage add-on amount
 						__( '%s storage add-on' ),
-						formatStorage( addOnCapacityBytes, locale )
+						formatStorage( addOnCapacityBytes, locale, 0 )
 					) }
 				</Text>
 			</HStack>

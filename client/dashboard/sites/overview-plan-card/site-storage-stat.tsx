@@ -59,7 +59,7 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 				density="high"
 				strapline={ __( 'Storage' ) }
 				metric={ formatStorage( mediaStorage.storage_used_bytes, locale ) }
-				description={ formatStorage( mediaStorage.max_storage_bytes, locale ) }
+				description={ formatStorage( mediaStorage.max_storage_bytes, locale, 0 ) }
 				progressValue={ progressBarValue }
 				progressColor={ storageWarningColor }
 				progressLabel={ `${ storageUsagePercent }%` }
@@ -69,7 +69,7 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 					{ sprintf(
 						// translators: %s is the total storage quota (e.g., "53 GB")
 						__( 'Production and staging share a total storage quota of %s.' ),
-						formatStorage( getSharedStorageTotal( mediaStorage ), locale )
+						formatStorage( getSharedStorageTotal( mediaStorage ), locale, 0 )
 					) }
 				</Text>
 			) }

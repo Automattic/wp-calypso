@@ -19,8 +19,8 @@ function formatHours( hours: number ) {
 	return sprintf( _n( '%s hr', '%s hrs', rounded === 1 ? 1 : 2 ), String( rounded ) );
 }
 
-function formatBytesPerMonth( bytes: number, locale: string ) {
-	return `${ formatStorage( bytes, locale ) }-month`;
+function formatBytesPerMonth( bytes: number, locale: string, decimals?: number ) {
+	return `${ formatStorage( bytes, locale, decimals ) }-month`;
 }
 
 export default function OverviewFlexUsageCard( { site }: Props ) {
@@ -63,7 +63,7 @@ function StorageStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: nu
 			density="high"
 			strapline={ __( 'Storage' ) }
 			metric={ formatBytesPerMonth( usedBytes, locale ) }
-			description={ formatBytesPerMonth( capBytes, locale ) }
+			description={ formatBytesPerMonth( capBytes, locale, 0 ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
 		/>
@@ -79,7 +79,7 @@ function BandwidthStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: 
 			density="high"
 			strapline={ __( 'Bandwidth' ) }
 			metric={ formatStorage( usedBytes, locale ) }
-			description={ formatStorage( capBytes, locale ) }
+			description={ formatStorage( capBytes, locale, 0 ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
 		/>
