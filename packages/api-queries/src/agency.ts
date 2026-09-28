@@ -1,8 +1,10 @@
 import {
 	fetchAgency,
+	fetchAgencyLeadMatching,
 	fetchAgencyResources,
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
+	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
 	updateAgencyProfile,
@@ -17,6 +19,7 @@ import { queryClient } from './query-client';
 import type {
 	Agency,
 	AgencyHostingReferral,
+	AgencyLeadMatchingProfile,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
 	AgencyVipPartnerOpportunity,
@@ -178,6 +181,30 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 		meta: { statId: 'agcy-press-prem-submit' },
 		mutationFn: ( referral: AgencyHostingReferral ) =>
 			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
+	} );
+
+export const agencyLeadMatchingQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		queryFn: () => fetchAgencyLeadMatching( agencyId ),
+		enabled: !! agencyId,
+	} );
+
+export const agencyLeadMatchingMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-lead-matching-update' },
+		mutationFn: async ( profile: AgencyLeadMatchingProfile ) => {
+			const response = await updateAgencyLeadMatching( agencyId, profile );
+			// The preferences are saved but not passed on to lead matching when
+			// the sync fails, so a 2xx with a failed sync is an error too.
+			if ( ! response?.lead_matching_profile || response.sync?.status === 'failed' ) {
+				throw new Error( 'The lead matching preferences were not saved.' );
+			}
+			return response;
+		},
+		onSuccess: ( response ) => {
+			queryClient.setQueryData( agencyLeadMatchingQuery( agencyId ).queryKey, response );
+		},
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

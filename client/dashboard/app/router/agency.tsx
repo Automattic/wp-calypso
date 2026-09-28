@@ -1,6 +1,7 @@
 import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
+	agencyLeadMatchingQuery,
 	agencyProductsQuery,
 	agencyQuery,
 	agencyResourcesQuery,
@@ -62,10 +63,16 @@ import {
 	mayBeEligibleForPressableExpansionOffer,
 	pressableOfferLicensesQuery,
 } from '../../agency/overview/use-pressable-offer-eligibility';
+import {
+	getLeadMatchingSectionTitle,
+	isLeadMatchingSection,
+} from '../../agency/partner-directory/lead-matching/sections';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
 import {
@@ -377,6 +384,74 @@ export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/partner-directory/details' ).then( ( d ) =>
 		createLazyRoute( 'agency-partner-directory-details' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/lead-matching` – the preferences Hire an Expert
+// matches clients against. Like the profile details, only open once a
+// directory was approved.
+export const agencyPartnerDirectoryLeadMatchingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Lead matching' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: PARTNER_DIRECTORY_LEAD_MATCHING_SEGMENT,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! hasApprovedDirectory( agency?.profile?.partner_directory_application ) ) {
+			throw redirectAsNotAllowed( { to: PARTNER_DIRECTORY_ROUTE } );
+		}
+	},
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( agency?.id ) {
+			await queryClient.ensureQueryData( agencyLeadMatchingQuery( agency.id ) );
+		}
+	},
+} );
+
+const agencyPartnerDirectoryLeadMatchingIndexRoute = createRoute( {
+	getParentRoute: () => agencyPartnerDirectoryLeadMatchingRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/partner-directory/lead-matching' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-lead-matching' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/lead-matching/$section` – one section of the preferences
+export const agencyPartnerDirectoryLeadMatchingSectionRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: isLeadMatchingSection( params.section )
+					? getLeadMatchingSectionTitle( params.section )
+					: '',
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryLeadMatchingRoute,
+	path: '$section',
+	beforeLoad: ( { params } ) => {
+		if ( ! isLeadMatchingSection( params.section ) ) {
+			throw dashboardRedirect( { to: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/partner-directory/lead-matching/section-route' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-lead-matching-section' )( {
 			component: d.default,
 		} )
 	)
@@ -1979,6 +2054,10 @@ export const createAgencyRoutes = () => [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,
 			agencyPartnerDirectoryDetailsRoute,
+			agencyPartnerDirectoryLeadMatchingRoute.addChildren( [
+				agencyPartnerDirectoryLeadMatchingIndexRoute,
+				agencyPartnerDirectoryLeadMatchingSectionRoute,
+			] ),
 		] ),
 		marketplaceRoute,
 		marketplaceHostingRoute.addChildren( [
