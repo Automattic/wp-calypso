@@ -325,13 +325,15 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 }
 
 /* Agenttic UI: undocked chat */
-.agents-manager-chat--undocked.is-focused .agenttic.Chat-module_container.Chat-module_floating {
+.agents-manager-chat--undocked[data-overlay-panel-focused]
+	.agenttic.Chat-module_container.Chat-module_floating {
 	z-index: $agents-manager-z-index-focused;
 }
 
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Shared overlay base keeps the floating chat above the nav menu and lets it
-	// trade stacking with the Help Center panel via the focused offset above.
+	// trade stacking with the Help Center panel via the focused offset above,
+	// whose attribute `useRaiseOnFocus` sets.
 	z-index: $agents-manager-z-index-docked;
 }
 

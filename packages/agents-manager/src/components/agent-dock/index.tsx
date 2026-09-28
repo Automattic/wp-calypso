@@ -21,6 +21,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
+import useRaiseOnFocus from '../../hooks/use-raise-on-focus';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
@@ -132,6 +133,7 @@ export default function AgentDock( {
 		undock,
 		openSidebar,
 		closeSidebar,
+		portalNode,
 		createAgentPortal,
 	} = useAgentLayoutManager( {
 		defaultDocked: isReaderChat ? false : isPersistedDocked,
@@ -403,6 +405,8 @@ export default function AgentDock( {
 	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
 	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
+
+	useRaiseOnFocus( isChatVisible && ! isDocked ? portalNode : null, chatIsOpen );
 
 	// Recorded here rather than from the entry buttons: the dock only renders once
 	// the providers have loaded, so `provider_ids` is always set. `restored` marks
