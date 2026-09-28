@@ -1,4 +1,3 @@
-import { formatNumber } from '@automattic/number-formatters';
 import type { SiteMediaStorage } from '@automattic/api-core';
 
 const ALERT_FRACTION = 0.8;
@@ -31,17 +30,17 @@ export function getStorageUsagePercent( {
 /**
  * Mirrors WordPress core's `size_format()` so storage figures match wp-admin, minus a trailing `.0`.
  */
-export function formatStorage( bytes: number, decimals = 1 ): string {
+export function formatStorage( bytes: number, locale: string, decimals = 1 ): string {
 	let value = Math.max( bytes, 0 );
 	let unitIndex = 0;
 	while ( value >= 1024 && unitIndex < STORAGE_UNITS.length - 1 ) {
 		value /= 1024;
 		unitIndex++;
 	}
-	const isWhole = Number( value.toFixed( decimals ) ) % 1 === 0;
-	return `${ formatNumber( value, { decimals: isWhole ? 0 : decimals } ) } ${
-		STORAGE_UNITS[ unitIndex ]
-	}`;
+	const number = new Intl.NumberFormat( locale, { maximumFractionDigits: decimals } ).format(
+		value
+	);
+	return `${ number } ${ STORAGE_UNITS[ unitIndex ] }`;
 }
 
 /**

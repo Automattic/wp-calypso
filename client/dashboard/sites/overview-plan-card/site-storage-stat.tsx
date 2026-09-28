@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import { ErrorBoundary } from '../../components/error-boundary';
 import { Stat } from '../../components/stat';
 import { hasStagingSite } from '../../utils/site-staging-site';
@@ -31,6 +32,7 @@ function StorageStatUnavailable() {
 function SiteStorageStatInner( { site }: { site: Site } ) {
 	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const locale = useIntlLocale();
 
 	const storageUsagePercent = getStorageUsagePercent( mediaStorage );
 
@@ -56,8 +58,8 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 			<Stat
 				density="high"
 				strapline={ __( 'Storage' ) }
-				metric={ formatStorage( mediaStorage.storage_used_bytes ) }
-				description={ formatStorage( mediaStorage.max_storage_bytes ) }
+				metric={ formatStorage( mediaStorage.storage_used_bytes, locale ) }
+				description={ formatStorage( mediaStorage.max_storage_bytes, locale ) }
 				progressValue={ progressBarValue }
 				progressColor={ storageWarningColor }
 				progressLabel={ `${ storageUsagePercent }%` }
@@ -67,7 +69,7 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 					{ sprintf(
 						// translators: %s is the plan's total storage quota (e.g., "6.0 GB")
 						__( 'Your plan’s %s of storage is split evenly between production and staging.' ),
-						formatStorage( getSharedStorageTotal( mediaStorage ) )
+						formatStorage( getSharedStorageTotal( mediaStorage ), locale )
 					) }
 				</Text>
 			) }

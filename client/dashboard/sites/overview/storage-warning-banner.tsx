@@ -6,6 +6,7 @@ import {
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import Notice from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { formatStorage, getStorageAlertLevel } from '../../utils/site-storage';
@@ -38,6 +39,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 		userPreferenceMutation( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const locale = useIntlLocale();
 
 	if ( ! shouldShow || ! mediaStorage ) {
 		return null;
@@ -57,12 +59,12 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					isDismissible: true,
 					title: __( 'Your site is low on storage' ),
 					onClose: () => updateDismissed( new Date().toISOString() ),
-				}
+			  }
 			: {
 					variant: 'error' as const,
 					isDismissible: false,
 					title: __( 'Your site is out of storage' ),
-				};
+			  };
 
 	const upsellId =
 		alertLevel === 'warning'
@@ -90,8 +92,8 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 						'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
 					),
 					{
-						used: formatStorage( mediaStorage.storage_used_bytes ),
-						available: formatStorage( mediaStorage.max_storage_bytes ),
+						used: formatStorage( mediaStorage.storage_used_bytes, locale ),
+						available: formatStorage( mediaStorage.max_storage_bytes, locale ),
 					}
 				) }
 			</Notice>

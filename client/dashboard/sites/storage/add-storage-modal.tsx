@@ -12,6 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import { getCurrentDashboard } from '../../app/routing';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { formatStorage } from '../../utils/site-storage';
@@ -47,6 +48,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	);
 
 	const [ userSelectedTier, setUserSelectedTier ] = useState< StorageTierOption | null >( null );
+	const locale = useIntlLocale();
 
 	if ( ! isOpen ) {
 		return null;
@@ -159,7 +161,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 						description={ sprintf(
 							// translators: %s is the amount of storage used, e.g. "546.6 MB"
 							__( '%s used' ),
-							formatStorage( mediaStorage.storage_used_bytes )
+							formatStorage( mediaStorage.storage_used_bytes, locale )
 						) }
 						currentCapacityBytes={ planStorageBytes }
 						addOnCapacityBytes={ selectedAddOnStorageBytes }
