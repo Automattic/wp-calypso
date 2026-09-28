@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -82,11 +83,13 @@ export default function ClientCheckoutV2() {
 		<CheckoutErrorBoundary
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
-			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<ClientCheckoutContent />
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+			<CheckoutQueryClientProvider>
+				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+						<ClientCheckoutContent />
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			</CheckoutQueryClientProvider>
 		</CheckoutErrorBoundary>
 	);
 }
