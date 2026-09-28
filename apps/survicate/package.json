@@ -24,6 +24,7 @@
 	},
 	"dependencies": {
 		"@automattic/survicate": "workspace:^",
+		"@automattic/viewport": "workspace:^",
 		"@wordpress/data": "^10.48.0"
 	},
 	"devDependencies": {

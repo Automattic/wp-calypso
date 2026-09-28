@@ -4,10 +4,7 @@ import {
 	shouldLoadSurvicate,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
-
-// Matches the Multi-site Dashboard's `useViewportMatch( 'mobile', '<' )`, which
-// resolves to `(max-width: 480px)`, so both surfaces agree on "mobile".
-const MOBILE_BREAKPOINT = 480;
+import { isMobile } from '@automattic/viewport';
 
 function init() {
 	// Emitted by class-survicate.php (jetpack-mu-wpcom) as a `before` inline
@@ -19,7 +16,7 @@ function init() {
 
 	const { locale = '', traits = {} } = config;
 
-	if ( ! shouldLoadSurvicate( { locale, isMobile: window.innerWidth <= MOBILE_BREAKPOINT } ) ) {
+	if ( ! shouldLoadSurvicate( { locale, isMobile: !! isMobile() } ) ) {
 		return;
 	}
 

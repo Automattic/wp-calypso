@@ -2483,6 +2483,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/survicate": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
